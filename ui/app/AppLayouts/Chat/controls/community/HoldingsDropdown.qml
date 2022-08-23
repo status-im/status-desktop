@@ -15,35 +15,55 @@ import utils 1.0
 StatusDropdown {
     id: root
 
-    property real tokenAmountValue: 0
+    property var store
+
+    property var itemKey
+    property real tokenAmount: 0
     property string tokenName: d.defaultTokenNameText
     property url tokenImage: ""
+    property real collectibleAmount: 1
+    property string collectibleName: d.defaultCollectibleNameText
+    property url collectibleImage: ""
     property int operator: SQ.Utils.Operators.None
     property bool withOperatorSelector: true
 
-    signal addToken(string tokenText, url tokenImage, int operator)
+    signal addItem(var itemKey, string itemText, url itemImage, int operator)
 
     function reset() {
-        root.tokenAmountValue = 0
+        d.currentTabIndex = 0
+        root.itemKey = undefined
+        root.tokenAmount = 0
         root.tokenName = d.defaultTokenNameText
         root.tokenImage = ""
+        root.collectibleAmount = 1
+        root.collectibleName = d.defaultCollectibleNameText
+        root.collectibleImage = ""
         root.operator = SQ.Utils.Operators.None
     }
 
     QtObject {
         id: d
 
-        readonly property bool ready: root.tokenAmountValue > 0 && root.tokenName !== d.defaultTokenNameText
+        // Internal management properties:
+        readonly property bool tokensReady: root.tokenAmount > 0 && root.tokenName !== d.defaultTokenNameText
+        readonly property bool collectiblesReady: root.collectibleAmount > 0 && root.collectibleName !== d.defaultCollectibleNameText
+        readonly property string tokensState: "TOKENS"
+        readonly property string collectiblesState: "COLLECTIBLES"
+        readonly property string ensState: "ENS"
+        property bool isTokensLayout: true
+        property int currentTabIndex: 0
 
         // By design values:
         readonly property int initialHeight: 232
         readonly property int mainHeight: 256
+        readonly property int mainExtendedHeight: 276
         readonly property int operatorsHeight: 96
         readonly property int extendedHeight: 417
         readonly property int defaultWidth: 289
         readonly property int operatorsWidth: 159
 
         property string defaultTokenNameText: qsTr("Choose token")
+        property string defaultCollectibleNameText: qsTr("Choose collectible")
 
         function selectInitState() {
             if(root.withOperatorSelector)
@@ -53,29 +73,21 @@ StatusDropdown {
         }
     }
 
-    width: d.defaultWidth
-    height: d.initialHeight
+    implicitWidth: d.defaultWidth
+    implicitHeight: loader.implicitHeight
 
     contentItem: Loader {
         id: loader
-        anchors.fill: parent
+        anchors.top: parent.top
+        anchors.left: parent.left
+        width: parent.width
+        height: (item != null && typeof(item) !== 'undefined') ? item.implicitHeight : 0
         sourceComponent: root.withOperatorSelector ? operatorsSelectorView : tabsView
-
         onSourceComponentChanged: {
-            if(sourceComponent == tokensExtendedView) {
-                root.height = Math.min(item.contentHeight + item.anchors.topMargin + item.anchors.bottomMargin, d.extendedHeight)
-                root.width = d.defaultWidth
-            }
-            else if(sourceComponent == operatorsSelectorView) {
-                root.height = d.operatorsHeight
+            if(sourceComponent == operatorsSelectorView) {
                 root.width = d.operatorsWidth
             }
-            else if(sourceComponent == tabsView && root.withOperatorSelector)  {
-                root.height = d.mainHeight
-                root.width = d.defaultWidth
-            }
-            else if(sourceComponent == tabsView && !root.withOperatorSelector)  {
-                root.height = d.initialHeight
+            else {
                 root.width = d.defaultWidth
             }
         }
@@ -86,122 +98,12 @@ StatusDropdown {
     onWithOperatorSelectorChanged: d.selectInitState()
 
     Component {
-        id: tabsView
-
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 8
-            anchors.topMargin: 16
-            spacing: 8
-            StatusIconTextButton {
-                visible: root.withOperatorSelector
-                Layout.leftMargin: 8
-                spacing: 0
-                statusIcon: "next"
-                icon.width: 12
-                icon.height: 12
-                iconRotation: 180
-                text: qsTr("Back")
-                onClicked: loader.sourceComponent = operatorsSelectorView
-            }
-            StatusSwitchTabBar {
-                id: tabBar
-                Layout.preferredWidth: 273 // by design
-                Layout.preferredHeight: 36 // by design
-                StatusSwitchTabButton {
-                    text: qsTr("Token")
-                    fontPixelSize: 13
-                }
-                StatusSwitchTabButton {
-                    text: qsTr("Collectibles")
-                    fontPixelSize: 13
-                    enabled: false // TODO
-                }
-                StatusSwitchTabButton {
-                    text: qsTr("ENS")
-                    fontPixelSize: 13
-                    enabled: false // TODO
-                }
-            }
-            StackLayout {
-                Layout.fillWidth: true
-                currentIndex: tabBar.currentIndex
-                // Tokens layout definition:
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    StatusPickerButton {
-                        Layout.fillWidth: true
-                        Layout.topMargin: 8
-                        Layout.preferredHeight: 36
-                        bgColor: Theme.palette.baseColor5
-                        contentColor: Theme.palette.directColor1
-                        text: root.tokenName
-                        font.pixelSize: 13
-                        image.source: root.tokenImage
-                        onClicked: loader.sourceComponent = tokensExtendedView
-                    }
-
-                    StatusInput {
-                        Layout.fillWidth: true
-                        minimumHeight: 36
-                        maximumHeight: 36
-                        topPadding: 0
-                        bottomPadding: 0
-                        text: root.tokenAmountValue == 0 ? "" : root.tokenAmountValue.toString()
-                        font.pixelSize: 13
-                        rightPadding: amountText.implicitWidth + amountText.anchors.rightMargin + leftPadding
-                        input.placeholderText: "0"
-                        validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
-                        validators: StatusFloatValidator {  bottom: 0 }
-
-                        StatusBaseText {
-                            id: amountText
-                            anchors.right: parent.right
-                            anchors.rightMargin: 13
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: qsTr("Amount")
-                            color: Theme.palette.baseColor1
-                            font.pixelSize: 13
-                        }
-                        onTextChanged: root.tokenAmountValue = Number(text)
-                    }
-
-                    // Just a filler
-                    Item { Layout.fillHeight: true}
-
-                    StatusButton {
-                        enabled: d.ready
-                        text: qsTr("Add")
-                        height: 44
-                        Layout.alignment: Qt.AlignHCenter
-                        Layout.fillWidth: true
-                        onClicked: { root.addToken(root.tokenAmountValue.toString() + " " + root.tokenName, root.tokenImage, root.operator) }
-                    }
-                } // End of Tokens Layout definition
-
-                // TODO
-                Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                }
-
-                // TODO
-                Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                }
-            }
-        }
-    }
-
-    Component {
         id: operatorsSelectorView
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 8
+        ColumnLayout {            
             StatusPickerButton {
-                Layout.fillWidth: true
+                Layout.margins: 8
+                Layout.bottomMargin: 0
+                Layout.preferredWidth: 143 // by design
                 Layout.preferredHeight: 36
                 horizontalPadding: 12
                 spacing: 10
@@ -218,6 +120,8 @@ StatusDropdown {
                 }
             }
             StatusPickerButton {
+                Layout.margins: 8
+                Layout.topMargin: 0
                 Layout.fillWidth: true
                 Layout.preferredHeight: 36
                 horizontalPadding: 12
@@ -238,40 +142,182 @@ StatusDropdown {
     }
 
     Component {
-        id: tokensExtendedView
+        id: tabsView
 
-        // TODO: It probabily will be a reusable component for collectibles and channels
-        TokensListDropdownContent {
-            anchors.fill: parent
-            anchors.topMargin: 8
-            anchors.bottomMargin: 8
-            headerModel: ListModel {
-                ListElement { index: 0; icon: "next"; iconSize: 12; description: qsTr("Back"); rotation: 180; spacing: 0 }
-                ListElement { index: 1; icon: "add"; iconSize: 16; description: qsTr("Mint token"); rotation: 0; spacing: 8 }
-                ListElement { index: 2; icon: "invite-users"; iconSize: 16; description: qsTr("Import existing token"); rotation: 180; spacing: 8 }
+        ColumnLayout {
+            spacing: 0
+            state: d.currentTabIndex === 0 ? d.tokensState : (d.currentTabIndex === 1 ? d.collectiblesState : d.ensState)
+            states: [
+                State {
+                    name: d.tokensState
+                    PropertyChanges {target: tabsLoader; sourceComponent: tokensCollectiblesLayout}
+                    PropertyChanges {target: d; isTokensLayout: true}
+                },
+                State {
+                    name: d.collectiblesState
+                    PropertyChanges {target: tabsLoader; sourceComponent: tokensCollectiblesLayout}
+                    PropertyChanges {target: d; isTokensLayout: false}
+                },
+                State {
+                    name: d.ensState
+                    PropertyChanges {target: tabsLoader; sourceComponent: ensLayout}
+                }
+            ]
+            StatusIconTextButton {
+                visible: root.withOperatorSelector
+                Layout.leftMargin: 16
+                Layout.topMargin: 12
+                spacing: 0
+                statusIcon: "next"
+                icon.width: 12
+                icon.height: 12
+                iconRotation: 180
+                text: qsTr("Back")
+                onClicked: loader.sourceComponent = operatorsSelectorView
             }
-            // TODO: Replace to real data, now dummy model
-            model: ListModel {
-                ListElement {imageSource: "qrc:imports/assets/png/tokens/SOCKS.png"; name: "Unisocks"; shortName: "SOCKS"; selected: false; category: "Community tokens"}
-                ListElement {imageSource: "qrc:imports/assets/png/tokens/ZRX.png"; name: "Ox"; shortName: "ZRX"; selected: false; category: "Listed tokens"}
-                ListElement {imageSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "1inch"; shortName: "ZRX"; selected: false; category: "Listed tokens"}
-                ListElement {imageSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "Aave"; shortName: "AAVE"; selected: false; category: "Listed tokens"}
-                ListElement {imageSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "Amp"; shortName: "AMP"; selected: false; category: "Listed tokens"}
+            StatusSwitchTabBar {
+                id: tabBar
+                Layout.preferredWidth: 273 // by design
+                Layout.margins: 8
+                Layout.topMargin: root.withOperatorSelector ? 12 : 16
+                Layout.preferredHeight: 36 // by design
+                currentIndex: d.currentTabIndex
+                onCurrentIndexChanged: d.currentTabIndex = currentIndex
+                StatusSwitchTabButton {
+                    text: qsTr("Token")
+                    fontPixelSize: 13
+                }
+                StatusSwitchTabButton {
+                    text: qsTr("Collectible")
+                    fontPixelSize: 13
+                }
+                StatusSwitchTabButton {
+                    text: qsTr("ENS")
+                    fontPixelSize: 13
+                    enabled: false // TODO
+                }
             }
-            onHeaderItemClicked: {
-                if(index === 0) loader.sourceComponent = tabsView // Go back
-                // TODO:
-                else if(index === 1) console.log("TODO: Mint token")
-                else if(index === 2) console.log("TODO: Import existing token")
+            Loader {
+                id: tabsLoader
+                Layout.fillWidth: true
+                Layout.margins: 8
             }
+        }
+    }
+
+    Component {
+        id: tokensCollectiblesLayout
+
+        ColumnLayout {
+            spacing: 0
+            StatusPickerButton {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 36
+                bgColor: Theme.palette.baseColor5
+                contentColor: Theme.palette.directColor1
+                text: d.isTokensLayout ? root.tokenName : root.collectibleName
+                font.pixelSize: 13
+                image.source: d.isTokensLayout ? root.tokenImage : root.collectibleImage
+                onClicked: loader.sourceComponent = extendedView
+            }
+
+            RowLayout {
+                visible: !d.isTokensLayout
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter
+                Layout.leftMargin: 16
+                Layout.rightMargin: 6
+                Layout.topMargin: 8
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    text: qsTr("Specific amount")
+                    font.pixelSize: 13
+                    wrapMode: Text.WordWrap
+                    elide: Text.ElideRight
+                    clip: true
+                }
+                StatusSwitch { id: specificAmountSwitch }
+            }
+
+            StatusInput {
+                Layout.fillWidth: true
+                Layout.topMargin: 8
+                visible: d.isTokensLayout ? true : specificAmountSwitch.checked
+                minimumHeight: 36
+                maximumHeight: 36
+                topPadding: 0
+                bottomPadding: 0
+                text: d.isTokensLayout ? (root.tokenAmount === 0 ? "" : root.tokenAmount.toString()) :
+                                         (root.collectibleAmount === 0 ? "" : root.collectibleAmount.toString())
+                font.pixelSize: 13
+                rightPadding: amountText.implicitWidth + amountText.anchors.rightMargin + leftPadding
+                input.placeholderText: "0"
+                validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
+                validators: StatusFloatValidator {  bottom: 0 }
+
+                StatusBaseText {
+                    id: amountText
+                    anchors.right: parent.right
+                    anchors.rightMargin: 13
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: qsTr("Amount")
+                    color: Theme.palette.baseColor1
+                    font.pixelSize: 13
+                }
+                onTextChanged: {
+                    if(d.isTokensLayout)
+                        root.tokenAmount = Number(text)
+                    else
+                        root.collectibleAmount = Number(text)
+                }
+            }
+
+            StatusButton {
+                enabled: d.isTokensLayout ? d.tokensReady : d.collectiblesReady
+                text: qsTr("Add")
+                height: 44
+                Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
+                Layout.topMargin: 32
+                onClicked: {
+                    if(d.isTokensLayout)
+                        root.addItem(root.itemKey, root.tokenAmount.toString() + " " + root.tokenName, root.tokenImage, root.operator)
+                    else
+                        root.addItem(root.itemKey, root.collectibleAmount.toString() + " " + root.collectibleName, root.collectibleImage, root.operator)
+                }
+            }
+        }
+    }
+
+    // TODO
+    Component {
+        id: ensLayout
+        Item {}
+    } 
+
+    Component {
+        id: extendedView
+
+        ExtendedDropdownContent {
+            store: root.store
+            type: d.isTokensLayout ? ExtendedDropdownContent.Type.Tokens : ExtendedDropdownContent.Type.Collectibles
+            onGoBack: loader.sourceComponent = tabsView
             onItemClicked: {
                 // Go back
                 loader.sourceComponent = tabsView
 
-                // Update new token info
-                root.tokenName = shortName
-                root.tokenImage = imageSource                
+                if(d.isTokensLayout) {
+                    // Update new token item info
+                    root.tokenName = name
+                    root.tokenImage = iconSource
+                }
+                else {
+                    // Update new collectible item info
+                    root.collectibleName = name
+                    root.collectibleImage = iconSource
+                }
+                root.itemKey = key
             }
         }
-    }
+    }    
 }

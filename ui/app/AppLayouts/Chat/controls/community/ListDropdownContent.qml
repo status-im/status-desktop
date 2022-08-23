@@ -13,19 +13,22 @@ StatusListView {
     id: root
 
     property var headerModel
+    property bool isHeaderVisible: true
+    property int maxHeight: 381 // default by design
 
-    signal headerItemClicked(int index)
-    signal itemClicked(string name, string shortName, url imageSource)
+    signal headerItemClicked(string key)
+    signal itemClicked(var key, string name, var shortName,  url iconSource, var subItems)
 
     implicitWidth: 273
+    implicitHeight: Math.min(contentHeight, root.maxHeight)
     currentIndex: -1
     clip: true
-    headerPositioning: ListView.OverlayHeader
     header: Rectangle {
+        visible: root.isHeaderVisible
         z: 3 // Above delegate (z=1) and above section.delegate (z = 2)
         color: Theme.palette.statusPopupMenu.backgroundColor
         width: root.width
-        height: columnHeader.implicitHeight + 2 * columnHeader.anchors.topMargin
+        height: root.isHeaderVisible ? columnHeader.implicitHeight + 2 * columnHeader.anchors.topMargin : 0
         ColumnLayout {
             id: columnHeader
             anchors.top: parent.top
@@ -52,7 +55,7 @@ StatusListView {
     }// End of Header
     delegate: Rectangle {
         width: ListView.view.width
-        height: 44 // by design
+        height: 45 // by design
         color: mouseArea.containsMouse ? Theme.palette.baseColor4 : "transparent"
         RowLayout {
             anchors.fill: parent
@@ -60,9 +63,9 @@ StatusListView {
             spacing: 8
             StatusRoundedImage {
                 Layout.alignment: Qt.AlignVCenter
-                image.source: model.imageSource
-                visible: model.imageSource.toString() !== ""
-                Layout.preferredWidth: 28
+                image.source: model.iconSource
+                visible: model.iconSource.toString() !== ""
+                Layout.preferredWidth: 32
                 Layout.preferredHeight: Layout.preferredWidth
             }
             ColumnLayout {
@@ -78,13 +81,23 @@ StatusListView {
                     elide: Text.ElideRight
                 }
                 StatusBaseText {
+                    visible: !!model.shortName
                     Layout.fillWidth: true
-                    text: model.shortName
+                    text: !!model.shortName ? model.shortName : ""
                     color: Theme.palette.baseColor1
                     font.pixelSize: 12
                     clip: true
                     elide: Text.ElideRight
                 }
+            }
+            StatusIcon {
+                icon: "tiny/chevron-right"
+                visible: !!model.subItems && model.subItems.count > 0
+                Layout.alignment: Qt.AlignVCenter
+                Layout.rightMargin: 16
+                color: Theme.palette.baseColor1
+                width: 16
+                height: 16
             }
         }
         MouseArea {
@@ -92,7 +105,7 @@ StatusListView {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             hoverEnabled: true
-            onClicked: { root.itemClicked(model.name, model.shortName, model.imageSource) }
+            onClicked: { root.itemClicked(model.key, model.name, model.shortName, model.iconSource, model.subItems) }
         }
     }// End of Item
     section.property: "category"

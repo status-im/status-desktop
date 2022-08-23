@@ -45,6 +45,6 @@ SettingsPageLayout {
 
     Component {
         id: newPermissionView
-        CommunityNewPermissionView { }
+        CommunityNewPermissionView {}
     }
 }
