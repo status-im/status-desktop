@@ -151,5 +151,8 @@ proc declineVerificationRequest*(self: Controller, publicKey: string) =
 proc getReceivedVerificationRequests*(self: Controller): seq[VerificationRequest] =
   self.contactsService.getReceivedVerificationRequests()
 
+proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
+  return self.contactsService.getStatusForContactWithId(publicKey)
+
 proc hasReceivedVerificationRequestFrom*(self: Controller, fromId: string): bool =
   self.contactsService.hasReceivedVerificationRequestFrom(fromId)

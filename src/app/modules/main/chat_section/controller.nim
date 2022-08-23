@@ -319,6 +319,9 @@ proc getContactById*(self: Controller, id: string): ContactsDto =
 proc getContactDetails*(self: Controller, id: string): ContactDetails =
   return self.contactService.getContactDetails(id)
 
+proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
+  return self.contactService.getStatusForContactWithId(publicKey)
+
 proc acceptContactRequest*(self: Controller, publicKey: string) =
   self.contactService.acceptContactRequest(publicKey)
 

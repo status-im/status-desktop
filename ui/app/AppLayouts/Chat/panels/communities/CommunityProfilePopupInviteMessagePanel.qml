@@ -8,6 +8,7 @@ import StatusQ.Popups 0.1
 
 import utils 1.0
 import shared 1.0
+import shared.panels 1.0
 import shared.views 1.0
 import shared.status 1.0
 
@@ -40,6 +41,19 @@ ColumnLayout {
         input.verticalAlignment: TextEdit.AlignTop
         Layout.minimumHeight: 150 // TODO: implicitHeight is not calculated well from input.implicitHeight
         Layout.fillWidth: true
+        Layout.leftMargin: Style.current.padding
+        Layout.rightMargin: Style.current.padding
+    }
+
+    StatusModalDivider {
+        Layout.fillWidth: true
+    }
+
+    StyledText {
+        text: qsTr("Invites will be sent to:")
+        font.pixelSize: Style.current.primaryTextFontSize
+        Layout.leftMargin: Style.current.padding
+        Layout.rightMargin: Style.current.padding
     }
 
     PickedContacts {
@@ -49,5 +63,7 @@ ColumnLayout {
         pubKeys: root.pubKeys
         Layout.fillWidth: true
         Layout.fillHeight: true
+        Layout.leftMargin: Style.current.halfPadding
+        Layout.rightMargin: Style.current.halfPadding
     }
 }

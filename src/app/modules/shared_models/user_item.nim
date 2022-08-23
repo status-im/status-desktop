@@ -85,7 +85,7 @@ proc initUserItem*(
     icon: string,
     colorId: int = 0,
     colorHash: string = "",
-    onlineStatus: OnlineStatus = OnlineStatus.Inactive,
+    onlineStatus: OnlineStatus,
     isContact: bool,
     isVerified: bool,
     isUntrustworthy: bool,
