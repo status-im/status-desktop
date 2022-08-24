@@ -33,9 +33,7 @@ ChatItem* ChatSectionController::currentChat() const
 
 void ChatSectionController::setCurrentChatIndex(int index)
 {
-    assert(index >= 0 && index < m_chats->size());
-
-    auto chat = m_chats->get(index);
+    auto chat = index >= 0 && index < m_chats->size() ? m_chats->get(index) : ChatItemPtr();
     if (m_currentChat == chat)
         return;
 
