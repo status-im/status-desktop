@@ -77,7 +77,7 @@ StatusModal {
                     }
                 }
             ]
-            sensor.onClicked: {
+            onClicked: {
                 muteAllMessagesSwitch.clicked()
             }
         }

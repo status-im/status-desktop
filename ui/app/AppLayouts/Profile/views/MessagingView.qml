@@ -65,7 +65,7 @@ SettingsContentBase {
                     }
                 }
             ]
-            sensor.onClicked: {
+            onClicked: {
                 switch3.checked = !switch3.checked
             }
         }
@@ -246,7 +246,7 @@ SettingsContentBase {
                     }
                 }
             ]
-            sensor.onClicked: {
+            onClicked: {
                 showMessageLinksSwitch.checked = !showMessageLinksSwitch.checked
             }
         }
@@ -326,7 +326,7 @@ SettingsContentBase {
                         }
                     }
                 ]
-                sensor.onClicked: {
+                onClicked: {
                     imageSwitch.checked = !imageSwitch.checked
                 }
             }
@@ -387,7 +387,7 @@ SettingsContentBase {
                                 }
                             }
                         ]
-                        sensor.onClicked: {
+                        onClicked: {
                             siteSwitch.checked = !siteSwitch.checked
                         }
                     }
@@ -420,7 +420,7 @@ SettingsContentBase {
                     color: Theme.palette.baseColor1
                 }
             ]
-            sensor.onClicked: Global.openPopup(wakuNodeModalComponent)
+            onClicked: Global.openPopup(wakuNodeModalComponent)
         }
 
         Component {

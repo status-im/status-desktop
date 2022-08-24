@@ -68,7 +68,7 @@ Column {
         title: qsTr("Transfer ownership")
         icon.name: "exchange"
         type: StatusListItem.Type.Secondary
-        sensor.onClicked: root.transferOwnershipButtonClicked()
+        onClicked: root.transferOwnershipButtonClicked()
     }
 
     StatusListItem {
@@ -76,7 +76,7 @@ Column {
         title: qsTr("Leave community")
         icon.name: "arrow-left"
         type: StatusListItem.Type.Danger
-        sensor.onClicked: root.leaveButtonClicked()
+        onClicked: root.leaveButtonClicked()
     }
 
     /*     // TODO add this back when roles exist */

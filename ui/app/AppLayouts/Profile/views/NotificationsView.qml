@@ -251,7 +251,7 @@ SettingsContentBase {
                                 }
                             }
                         ]
-                        sensor.onClicked: {
+                        onClicked: {
                             allowNotifSwitch.clicked()
                         }
                     }
@@ -436,7 +436,7 @@ SettingsContentBase {
                                 }
                             }
                         ]
-                        sensor.onClicked: {
+                        onClicked: {
                             soundSwitch.clicked()
                         }
                     }

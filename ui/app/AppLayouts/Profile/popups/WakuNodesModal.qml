@@ -50,7 +50,7 @@ StatusModal {
                         onCheckedChanged: root.messagingStore.toggleUseMailservers(checked)
                     }
                 ]
-                sensor.onClicked: {
+                onClicked: {
                     root.messagingStore.toggleUseMailservers(!root.messagingStore.useMailservers)
                 }
             }
@@ -69,7 +69,7 @@ StatusModal {
                         onCheckedChanged: root.messagingStore.enableAutomaticMailserverSelection(checked)
                     }
                 ]
-                sensor.onClicked: {
+                onClicked: {
                     automaticSelectionSwitch.checked = !automaticSelectionSwitch.checked
                 }
             }
@@ -106,7 +106,7 @@ StatusModal {
                                 }
                             }
                         ]
-                        sensor.onClicked: {
+                        onClicked: {
                             nodeRadioBtn.checked = true
                         }
                     }

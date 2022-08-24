@@ -108,7 +108,7 @@ Item {
             StatusContactRequestsIndicatorListItem {
                 title: qsTr("Membership requests")
                 requestsCount: membershipRequests.nbRequests
-                sensor.onClicked: Global.openPopup(root.membershipRequestPopup, {
+                onClicked: Global.openPopup(root.membershipRequestPopup, {
                     communitySectionModule: root.communitySectionModule
                 })
             }

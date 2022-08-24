@@ -134,7 +134,7 @@ ColumnLayout {
             readonly property bool currentStoredValue: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
             checked: currentStoredValue
         } ]
-        sensor.onClicked: biometricsSwitch.toggle()
+        onClicked: biometricsSwitch.toggle()
     }
 
     StatusTabBar {
