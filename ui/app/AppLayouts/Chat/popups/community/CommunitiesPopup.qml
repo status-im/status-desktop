@@ -128,7 +128,7 @@ StatusModal {
                         icon.isLetterIdenticon: !model.image
                         icon.background.color: model.color || Theme.palette.primaryColor1
 
-                        sensor.onClicked: {
+                        onClicked: {
                             if (model.joined && model.isMember) {
                                 popup.setActiveCommunity(model.id);
                             } else {

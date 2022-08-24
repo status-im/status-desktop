@@ -21,7 +21,7 @@ StatusListItem {
     anchors.right: parent.right
     anchors.rightMargin: -Style.current.padding
 
-    sensor.onClicked: {
+    onClicked: {
         radioButton.checked = !radioButton.checked
     }
 

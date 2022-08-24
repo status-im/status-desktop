@@ -132,7 +132,7 @@ StatusModal {
                         ringSettings.ringSpecModel: model.colorHash
                         icon.isLetterIdenticon: true
                         icon.background.color: model.color
-                        sensor.onClicked: channelItemCheckbox.checked = !channelItemCheckbox.checked
+                        onClicked: channelItemCheckbox.checked = !channelItemCheckbox.checked
 
                         components: [
                             StatusCheckBox {
@@ -169,7 +169,7 @@ StatusModal {
             title: qsTr("Delete category")
             icon.name: "delete"
             type: StatusListItem.Type.Danger
-            sensor.onClicked: {
+            onClicked: {
                 Global.openPopup(deleteCategoryConfirmationDialogComponent, {
                     title: qsTr("Delete %1 category").arg(root.contentItem.categoryName.input.text),
                     confirmationText: qsTr("Are you sure you want to delete %1 category? Channels inside the category won’t be deleted.").arg(root.contentItem.categoryName.input.text)
