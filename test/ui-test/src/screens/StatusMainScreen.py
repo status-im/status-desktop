@@ -52,16 +52,20 @@ class StatusMainScreen:
     def __init__(self):
         verify_screen(MainScreenComponents.PUBLIC_CHAT_ICON.value)
 
-    # Wait for the banner to disappear otherwise the click might land badly
+    # Close banner and wait to disappear otherwise the click might land badly
     @staticmethod
-    def wait_for_banner_to_disappear(retry = 0):
-        if (retry > 5):
-            verify_failure("Banner did not disappear")
-        [bannerLoaded, _] = is_loaded_visible_and_enabled(MainScreenComponents.MODULE_WARNING_BANNER.value, 500)
-        time.sleep(1)
-        if (not bannerLoaded):
-            return
-        StatusMainScreen.wait_for_banner_to_disappear(retry + 1)
+    def wait_for_banner_to_disappear(timeoutMSec: int = 3000):
+        start = time.time()
+        while(start + timeoutMSec / 1000 > time.time()):
+            try:
+                obj = wait_and_get_obj(MainScreenComponents.MODULE_WARNING_BANNER.value, 100)
+                if not obj.visible:
+                    return
+                obj.close()
+            except:
+                return
+            sleep_test(0.1)
+        verify_failure(f"Banner is still visible after {timeoutMSec}ms")
 
     def join_chat_room(self, room: str):
         click_obj_by_name(MainScreenComponents.PUBLIC_CHAT_ICON.value)
