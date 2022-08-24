@@ -1,6 +1,7 @@
 from screens.StatusWalletScreen import StatusWalletScreen
-from scripts.decorators import verify_screenshot 
- 
+from scripts.decorators import verify_screenshot
+from common.Common import str_to_bool
+
 _statusMain = StatusMainScreen()
 _walletScreen = StatusWalletScreen()
 
@@ -44,6 +45,14 @@ def step(context, name, new_name):
 @When("the user deletes the saved address with name |any|")
 def step(context, name):
     _walletScreen.delete_saved_address(name)
+
+@When("the user toggles favourite for the saved address with name |any|")
+def step(context, name):
+    _walletScreen.toggle_favourite_for_saved_address(name)
+
+@Then("the saved address |any| has favourite status |any|")
+def step(context, name, favourite):
+    _walletScreen.check_favourite_status_for_saved_address(name, str_to_bool(favourite))
 
 @When("the user toggles the network |any|")
 def step(context, network_name):

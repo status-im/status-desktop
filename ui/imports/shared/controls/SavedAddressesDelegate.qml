@@ -56,6 +56,7 @@ StatusListItem {
             textToCopy: root.address
         },
         StatusRoundButton {
+            objectName: "savedAddressView_Delegate_favouriteButton"
             icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
             type: StatusRoundButton.Type.Tertiary
             icon.name: root.favourite ? "unfavourite" : "favourite"
@@ -64,6 +65,7 @@ StatusListItem {
             }
         },
         StatusRoundButton {
+            objectName: "savedAddressView_Delegate_menuButton"
             visible: !!root.name
             icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
             type: StatusRoundButton.Type.Tertiary

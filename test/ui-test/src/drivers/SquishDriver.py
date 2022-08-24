@@ -86,11 +86,7 @@ def get_child(obj, child_index=None):
 
 # It executes the click action into the given object:
 def click_obj(obj):
-    try:
-        squish.mouseClick(obj, squish.Qt.LeftButton)
-        return True
-    except LookupError:
-        return False
+    squish.mouseClick(obj, squish.Qt.LeftButton)
 
 # It executes the right-click action into the given object:
 def right_click_obj(obj):
@@ -104,8 +100,8 @@ def get_obj(objName: str):
     obj = squish.findObject(getattr(names, objName))
     return obj
 
-def wait_and_get_obj(objName: str):
-    obj = squish.waitForObject(getattr(names, objName))
+def wait_and_get_obj(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
+    obj = squish.waitForObject(getattr(names, objName), timeout)
     return obj
 
 def get_and_click_obj(obj_name: str):
@@ -318,7 +314,28 @@ def verify_not_found(realNameVarName: str, message: str, timeoutMSec: int = 500)
         test.fail(message, f'Unexpected: the object "{realNameVarName}" was found.')
     except LookupError as err:
         test.passes(message, f'Expected: the object "{realNameVarName}" was not found. Exception: {str(err)}.')
-        
-def grabScreenshot_and_save(obj, imageName:str, delay:int = 0):  
-    img = object.grabScreenshot(obj, {"delay": delay})  
+
+def grabScreenshot_and_save(obj, imageName:str, delay:int = 0):
+    img = object.grabScreenshot(obj, {"delay": delay})
     img.save(_SEARCH_IMAGES_PATH + imageName + ".png")
+
+def wait_for_prop_value(object, propertyName, value, timeoutMSec: int = 2000):
+    start = time.time()
+    while(start + timeoutMSec / 1000 > time.time()):
+        propertyNames = propertyName.split('.')
+        objThenVal = object
+        for name in propertyNames:
+            objThenVal = getattr(objThenVal, name)
+        if objThenVal == value:
+            return
+        squish.snooze(0.1)
+    raise Exception(f'Failed to match value "{value}" for property "{propertyName}" before timeout {timeoutMSec}ms; actual value: "{objThenVal}"')
+
+def get_child_item_with_object_name(item, objectName: str):
+    for index in range(item.components.count()):
+        if item.components.at(index).objectName == objectName:
+            return item.components.at(index)
+    raise Exception("Could not find child component with object name '{}'".format(objectName))
+
+def sleep_test(seconds: float):
+    squish.snooze(seconds)
