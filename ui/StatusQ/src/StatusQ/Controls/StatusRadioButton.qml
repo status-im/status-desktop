@@ -10,11 +10,25 @@ import StatusQ.Components 0.1
 RadioButton {
     id: statusRadioButton
 
+    /*!
+       \qmlproperty int StatusRadioButton::size
+       This property holds size type of the radio button.
+       Possible values are:
+       - Small
+       - Large (default size)
+    */
+    property int size: StatusRadioButton.Size.Large
+
+    enum Size {
+        Small,
+        Large
+    }
+
     width: indicator.implicitWidth
 
     indicator: Rectangle {
-        implicitWidth: 20
-        implicitHeight: 20
+        implicitWidth: size === StatusRadioButton.Size.Large ? 20 : 14
+        implicitHeight: size === StatusRadioButton.Size.Large ? 20 : 14
         x: 0
         y: 6
         radius: 10
@@ -22,8 +36,8 @@ RadioButton {
                                          : Theme.palette.directColor8
 
         Rectangle {
-            width: 12
-            height: 12
+            width: size === StatusRadioButton.Size.Large ? 12 : 8
+            height: size === StatusRadioButton.Size.Large ? 12 : 8
             radius: 6
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
