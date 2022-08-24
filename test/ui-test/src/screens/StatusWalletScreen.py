@@ -4,7 +4,7 @@ import sys
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from common.SeedUtils import *
-
+from .StatusMainScreen import StatusMainScreen
 
 class SigningPhrasePopUp(Enum):
     OK_GOT_IT_BUTTON: str = "signPhrase_Ok_Button"
@@ -30,7 +30,9 @@ class SavedAddressesScreen(Enum):
     EDIT: str = "mainWallet_Saved_Addreses_More_Edit"
     DELETE: str = "mainWallet_Saved_Addreses_More_Delete"
     CONFIRM_DELETE: str = "mainWallet_Saved_Addreses_More_Confirm_Delete"
-    
+    DELEGATE_MENU_BUTTON_OBJECT_NAME: str = "savedAddressView_Delegate_menuButton"
+    DELEGATE_FAVOURITE_BUTTON_OBJECT_NAME: str = "savedAddressView_Delegate_favouriteButton"
+
 class AddSavedAddressPopup(Enum):
     NAME_INPUT: str = "mainWallet_Saved_Addreses_Popup_Name_Input"
     ADDRESS_INPUT: str = "mainWallet_Saved_Addreses_Popup_Address_Input"
@@ -191,40 +193,56 @@ class StatusWalletScreen:
         type(AddSavedAddressPopup.NAME_INPUT.value, name)
         type(AddSavedAddressPopup.ADDRESS_INPUT.value, address)
         click_obj_by_name(AddSavedAddressPopup.ADD_BUTTON.value)
-        
-    def edit_saved_address(self, name: str, new_name: str):
-        list = get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
+
+    def _get_saved_address_delegate_item(self, name: str):
+        list = wait_and_get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
         found = -1
         for index in range(list.count):
-            if list.itemAtIndex(index).objectName == name:
+            if list.itemAtIndex(index).objectName == f"savedAddressView_Delegate_{name}":
                 found = index
-        
+
         assert found != -1, "saved address not found"
-        
-        # More icon is at index 2
-        time.sleep(1)
-        click_obj(list.itemAtIndex(found).components.at(2))
-        
+        return list.itemAtIndex(found)
+
+    def _find_saved_address_and_open_menu(self, name: str):
+        item = self._get_saved_address_delegate_item(name)
+        obj = get_child_item_with_object_name(item, SavedAddressesScreen.DELEGATE_MENU_BUTTON_OBJECT_NAME.value)
+        click_obj(obj)
+
+    def edit_saved_address(self, name: str, new_name: str):
+        StatusMainScreen.wait_for_banner_to_disappear()
+
+        self._find_saved_address_and_open_menu(name)
+
         click_obj_by_name(SavedAddressesScreen.EDIT.value)
         type(AddSavedAddressPopup.NAME_INPUT.value, new_name)
         click_obj_by_name(AddSavedAddressPopup.ADD_BUTTON.value)
-    
+
     def delete_saved_address(self, name: str):
-        list = get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
-        found = -1
-        for index in range(list.count):
-            if list.itemAtIndex(index).objectName == name:
-                found = index
-        
-        assert found != -1, "saved address not found"
-        
-        # More icon is at index 2
-        time.sleep(1)
-        click_obj(list.itemAtIndex(found).components.at(2))
-        
+        StatusMainScreen.wait_for_banner_to_disappear()
+
+        self._find_saved_address_and_open_menu(name)
+
         click_obj_by_name(SavedAddressesScreen.DELETE.value)
         click_obj_by_name(SavedAddressesScreen.CONFIRM_DELETE.value)
-    
+
+    def toggle_favourite_for_saved_address(self, name: str):
+        StatusMainScreen.wait_for_banner_to_disappear()
+
+        # Find the saved address and click favourite to toggle
+        item = self._get_saved_address_delegate_item(name)
+        favouriteButton = get_child_item_with_object_name(item, SavedAddressesScreen.DELEGATE_FAVOURITE_BUTTON_OBJECT_NAME.value)
+        click_obj(favouriteButton)
+
+    def check_favourite_status_for_saved_address(self, name: str, favourite: bool):
+        # Find the saved address
+        item = self._get_saved_address_delegate_item(name)
+        favouriteButton = get_child_item_with_object_name(item, SavedAddressesScreen.DELEGATE_FAVOURITE_BUTTON_OBJECT_NAME.value)
+
+        # if favourite is true, check that the favourite shows "unfavourite" icon and vice versa
+        wait_for_prop_value(favouriteButton, "icon.name", ("unfavourite" if favourite else "favourite"))
+        wait_for_prop_value(item, "titleTextIcon", ("star-icon" if favourite else ""))
+
     def toggle_network(self, network_name: str):
         click_obj_by_name(MainWalletScreen.NETWORK_SELECTOR_BUTTON.value)
 
@@ -250,18 +268,24 @@ class StatusWalletScreen:
         assert False, "symbol not found"
         
     def verify_saved_address_exists(self, name: str):
-        list = get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
+        list = wait_and_get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
         for index in range(list.count):
-            if list.itemAtIndex(index).objectName == name:
-                return  
-    
-        assert False, "no saved address found"
-        
+            if list.itemAtIndex(index).objectName == f"savedAddressView_Delegate_{name}":
+                return
+
+        verify_failure(f'FAIL: saved address {name} not found"')
+
     def verify_saved_address_doesnt_exist(self, name: str):
-        list = get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
+        # The list should be hidden when there are no saved addresses
+        try:
+            list = wait_and_get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value, 250)
+        except LookupError:
+            return
+
+        list = wait_and_get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
         for index in range(list.count):
-            if list.itemAtIndex(index).objectName == name:
-                assert False, "saved address found"  
+            if list.itemAtIndex(index).objectName == f"savedAddressView_Delegate_{name}":
+                verify_failure(f'FAIL: saved address {name} exists')
 
     def verify_transaction(self):
         print("TODO: fix notification and ensure there is one")

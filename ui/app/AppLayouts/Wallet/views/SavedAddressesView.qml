@@ -94,7 +94,7 @@ Item {
 
     StatusListView {
         id: listView
-        objectName: "savedAddresses"
+        objectName: "SavedAddressesView_savedAddresses"
         anchors.top: errorMessage.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
@@ -105,6 +105,8 @@ Item {
         spacing: 5
         model: RootStore.savedAddresses
         delegate: SavedAddressesDelegate {
+            objectName: "savedAddressView_Delegate_" + name
+
             name: model.name
             address: model.address
             favourite: model.favourite

@@ -14,3 +14,6 @@ def input_text(text: str, objName: str):
     
 def object_not_enabled(objName: str):
     verify_object_enabled(objName, 500, False)
+
+def str_to_bool(string: str):
+    return string.lower() in ["yes", "true", "1", "y", "enabled"]
