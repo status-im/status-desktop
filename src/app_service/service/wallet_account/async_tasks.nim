@@ -292,6 +292,7 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
       var changePctHour: string = ""
       var changePctDay: string = ""
       var changePct24hour: string = ""
+      var change24hour: string = ""
 
       if(marketValues.hasKey(networkDto.nativeCurrencySymbol)):
         marketCap = marketValues[networkDto.nativeCurrencySymbol]["MKTCAP"]
@@ -300,6 +301,7 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
         changePctHour = marketValues[networkDto.nativeCurrencySymbol]["CHANGEPCTHOUR"]
         changePctDay = marketValues[networkDto.nativeCurrencySymbol]["CHANGEPCTDAY"]
         changePct24hour = marketValues[networkDto.nativeCurrencySymbol]["CHANGEPCT24HOUR"]
+        change24hour = marketValues[networkDto.nativeCurrencySymbol]["CHANGE24HOUR"]
 
       builtTokens.add(WalletTokenDto(
           name: networkDto.nativeCurrencyName,
@@ -322,6 +324,7 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
           changePctHour: changePctHour,
           changePctDay: changePctDay,
           changePct24hour: changePct24hour,
+          change24hour: change24hour,
         )
       )
 
@@ -359,6 +362,7 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
       var changePctHour: string = ""
       var changePctDay: string = ""
       var changePct24hour: string = ""
+      var change24hour: string = ""
       var description: string = ""
       var assetWebsiteUrl: string = ""
       var builtOn: string = ""
@@ -377,6 +381,7 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
         changePctHour = marketValues[tokenDto.symbol]["CHANGEPCTHOUR"]
         changePctDay = marketValues[tokenDto.symbol]["CHANGEPCTDAY"]
         changePct24hour = marketValues[tokenDto.symbol]["CHANGEPCT24HOUR"]
+        change24hour = marketValues[tokenDto.symbol]["CHANGE24HOUR"]
 
       let tokenDescription = description.multiReplace([("|", ""),("Facebook",""),("Telegram",""),("Discord",""),("Youtube",""),("YouTube",""),("Instagram",""),("Reddit",""),("Github",""),("GitHub",""),("Whitepaper",""),("Medium",""),("Weibo",""),("LinkedIn",""),("Litepaper",""),("KakaoTalk",""),("BitcoinTalk",""),("Slack",""),("Docs",""),("Kakao",""),("Gitter","")])
       builtTokens.add(WalletTokenDto(
@@ -399,7 +404,8 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
           lowDay: lowDay,
           changePctHour: changePctHour,
           changePctDay: changePctDay,
-          changePct24hour: changePct24hour
+          changePct24hour: changePct24hour,
+          change24hour: change24hour,
         )
       )
 

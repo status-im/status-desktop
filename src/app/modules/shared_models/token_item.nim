@@ -23,6 +23,7 @@ type
     changePctHour: string
     changePctDay: string
     changePct24hour: string
+    change24hour: string
 
 proc initItem*(
   name, symbol: string,
@@ -42,6 +43,7 @@ proc initItem*(
   changePctHour: string,
   changePctDay: string,
   changePct24hour: string,
+  change24hour: string,
 ): Item =
   result.name = name
   result.symbol = symbol
@@ -62,6 +64,7 @@ proc initItem*(
   result.changePctHour = changePctHour
   result.changePctDay = changePctDay
   result.changePct24hour = changePct24hour
+  result.change24hour = change24hour
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
@@ -82,6 +85,7 @@ proc `$`*(self: Item): string =
     changePctHour: {self.changePctHour},
     changePctDay: {self.changePctDay},
     changePct24hour: {self.changePct24hour},
+    change24hour: {self.change24hour},
     ]"""
 
 proc getName*(self: Item): string =
@@ -137,3 +141,6 @@ proc getChangePctDay*(self: Item): string =
 
 proc getChangePct24hour*(self: Item): string =
   return self.changePct24hour
+
+proc getChange24hour*(self: Item): string =
+  return self.change24hour

@@ -27,6 +27,7 @@ type
     changePctHour*: string
     changePctDay*: string
     changePct24hour*: string
+    change24hour*: string
 
 proc newTokenDto*(
   name: string,
@@ -46,6 +47,7 @@ proc newTokenDto*(
   changePctHour: string = "",
   changePctDay: string = "",
   changePct24hour: string = "",
+  change24hour: string = "",
 ): TokenDto =
   return TokenDto(
     name: name,
@@ -65,6 +67,7 @@ proc newTokenDto*(
     changePctHour: changePctHour,
     changePctDay: changePctDay,
     changePct24hour: changePct24hour,
+    change24hour: change24hour,
   )
 
 proc toTokenDto*(jsonObj: JsonNode, isVisible: bool, hasIcon: bool = false, isCustom: bool = true): TokenDto =
@@ -88,6 +91,7 @@ proc toTokenDto*(jsonObj: JsonNode, isVisible: bool, hasIcon: bool = false, isCu
   discard jsonObj.getProp("changePctHour", result.changePctHour)
   discard jsonObj.getProp("changePctDay", result.changePctDay)
   discard jsonObj.getProp("changePct24hour", result.changePct24hour)
+  discard jsonObj.getProp("change24hour", result.change24hour)
 
   result.isVisible = isVisible
 

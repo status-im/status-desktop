@@ -60,6 +60,7 @@ proc setAssets(self: Module, tokens: seq[WalletTokenDto]) =
       t.changePctHour,
       t.changePctDay,
       t.changePct24hour,
+      t.change24hour,
     )
     items.add(item)
     
