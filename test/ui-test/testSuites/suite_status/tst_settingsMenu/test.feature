@@ -21,30 +21,34 @@ Feature: Status Desktop Settings Menu
         Then the backup seed phrase indicator is not displayed
 
 	@merge
-    Scenario: The user can switch his state to offline
-    	When the users switches his state to offline
+    Scenario: The user can switch state to offline
+    	When the users switches state to offline
     	Then the user appears offline
     	When the user restarts the app
     	And the user tester123 logs in with password TesTEr16843/!@00
     	Then the user appears offline
 
 	@merge
-    Scenario: The user can switch his state to online
-        When the users switches his state to offline
+    Scenario: The user can switch state to online
+        When the users switches state to offline
     	And the user restarts the app
     	And the user tester123 logs in with password TesTEr16843/!@00
     	Then the user appears offline
-    	When the users switches his state to online
+        When the users switches state to online
     	Then the user appears online
     	When the user restarts the app
     	And the user tester123 logs in with password TesTEr16843/!@00
     	Then the user appears online
 
-	Scenario: The user can switch his state to automatic
-    	When the users switches his state to automatic
+Scenario: The user can switch state to automatic
+        When the users switches state to automatic
     	Then the user status is automatic
     	When the user restarts the app
     	And the user tester123 logs in with password TesTEr16843/!@00
     	Then the user status is automatic
 
-
+Scenario: The user can change the password and login with new password
+    	When the user changes the password from TesTEr16843/!@00 to NewPassword@12345
+    	And the user restarts the app
+    	And the user tester123 logs in with password NewPassword@12345
+    	Then the user lands on the signed in app

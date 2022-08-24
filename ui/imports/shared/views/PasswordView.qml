@@ -168,6 +168,7 @@ Column {
     // TODO replace with StatusInput as soon as it supports password
     Input {
         id: currentPswInput
+        textField.objectName: "passwordViewCurrentPasswordTextField"
 
         property bool showPassword
 
@@ -204,6 +205,7 @@ Column {
         // TODO replace with StatusInput as soon as it supports password
         Input {
             id: newPswInput
+            textField.objectName: "passwordViewNewPasswordTextField"
 
             property bool showPassword
 
@@ -303,6 +305,7 @@ Column {
     // TODO replace with StatusInput as soon as it supports password
     Input {
         id: confirmPswInput
+        textField.objectName: "passwordViewNewPasswordConfirmTextField"
 
         property bool showPassword
 

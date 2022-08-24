@@ -26,6 +26,7 @@ SettingsContentBase {
     property PrivacyStore privacyStore
 
     titleRowComponentLoader.sourceComponent: StatusButton {
+        objectName: "profileSettingsChangePasswordButton"
         text: qsTr("Change Password")
         onClicked: changePasswordModal.open()
         enabled: !userProfile.isKeycardUser

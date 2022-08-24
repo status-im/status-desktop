@@ -78,6 +78,14 @@ class ProfileSettingsScreen(Enum):
     PERSONAL_SITE_LINK_IN_DIALOG: str = "personalSite_popup_TextEdit"
     CUSTOM_LINK_IN_DIALOG: str = "customLink_popup_TextEdit"
     CUSTOM_URL_IN_DIALOG: str = "customUrl_popup_TextEdit"
+    CHANGE_PASSWORD_BUTTON: str = "change_password_button"
+
+class ChangePasswordMenu(Enum):
+    CHANGE_PASSWORD_CURRENT_PASSWORD_INPUT: str = "change_password_menu_current_password_text_field"
+    CHANGE_PASSWORD_NEW_PASSWORD_INPUT: str = "change_password_menu_new_password_text_field"
+    CHANGE_PASSWORD_NEW_PASSWORD_CONFIRM_INPUT: str = "change_password_menu_new_password_confirm_text_field"
+    CHANGE_PASSWORD_SUBMIT_BUTTON: str = "change_password_menu_submit_button"
+    CHANGE_PASSWORD_SUCCESS_MENU_SIGN_OUT_QUIT_BUTTON: str = "change_password_success_menu_sign_out_quit_button"
 
 class ConfirmationDialog(Enum):
     SIGN_OUT_CONFIRMATION: str = "signOutConfirmation_StatusButton"
@@ -330,3 +338,17 @@ class SettingsScreen:
 
     def verify_seed_phrase_indicator_not_visible(self):
         verify_not_found(WalletSettingsScreen.BACKUP_SEED_PHRASE_BUTTON.value, "Check that backup seed phrase settings button is visible")
+        
+    def change_user_password(self, oldPassword: str, newPassword: str):
+        get_and_click_obj(ProfileSettingsScreen.CHANGE_PASSWORD_BUTTON.value)
+        
+        type(ChangePasswordMenu.CHANGE_PASSWORD_CURRENT_PASSWORD_INPUT.value, oldPassword)
+        
+        type(ChangePasswordMenu.CHANGE_PASSWORD_NEW_PASSWORD_INPUT.value, newPassword)
+
+        type(ChangePasswordMenu.CHANGE_PASSWORD_NEW_PASSWORD_CONFIRM_INPUT.value, newPassword)
+
+        click_obj_by_name(ChangePasswordMenu.CHANGE_PASSWORD_SUBMIT_BUTTON.value)
+        click_obj_by_name(ChangePasswordMenu.CHANGE_PASSWORD_SUCCESS_MENU_SIGN_OUT_QUIT_BUTTON.value)
+
+        
