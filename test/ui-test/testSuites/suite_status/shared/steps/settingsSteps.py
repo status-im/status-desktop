@@ -159,15 +159,15 @@ def step(context):
 def step(context):
     _settingsScreen.verify_seed_phrase_indicator_not_visible()
 
-@When("the users switches his state to offline")
+@When("the users switches state to offline")
 def step(context: any):
     _statusMain.set_user_state_offline()
         
-@When("the users switches his state to online")
+@When("the users switches state to online")
 def step(context: any):
     _statusMain.set_user_state_online()
             
-@When("the users switches his state to automatic")
+@When("the users switches state to automatic")
 def step(context: any):
     _statusMain.set_user_state_to_automatic()
     
@@ -194,3 +194,7 @@ def step(context, display_name):
 @When("in profile popup the user sets display name to \"|any|\"")
 def step(context, display_name):
     _statusMain.set_profile_popup_display_name(display_name)
+
+@When("the user changes the password from |any| to |any|")
+def step(context: any, oldPassword: str, newPassword: str):
+    _settingsScreen.change_user_password(oldPassword, newPassword)

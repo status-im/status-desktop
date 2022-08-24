@@ -43,6 +43,7 @@ StatusModal {
 
         StatusButton {
             id: submitBtn
+            objectName:"changePasswordSuccessModalSignOutAndQuitButton"
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Sign out & Quit")
             onClicked: {
