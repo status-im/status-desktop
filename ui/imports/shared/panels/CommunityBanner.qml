@@ -78,3 +78,4 @@ Rectangle {
         onClicked: root.buttonClicked()
     }
 }
+
