@@ -1,0 +1,23 @@
+{
+    "fleets": {
+        "eth.prod": {
+            "boot": {
+                "test-bootnode": "%BOOTNODE%"
+            },
+            "mail": {
+                %MAILSERVER_LIST%
+            },
+            "rendezvous": {
+                "fake": "/ip4/127.0.0.1/tcp/12345/ethv4/16Uiu2HAmV8Hq9e3zm9TMVP4zrVHo3BjqW5D6bDVV6VQntQd687e4"
+            },
+            "whisper": {
+                %WHISPER_LIST%,
+            }
+        }
+    },
+    "meta": {
+        "hostname": "localhost",
+        "timestamp": "2022-08-25T00:00:23.181054",
+        "warning": "Local test fleet configuration"
+    }
+}
