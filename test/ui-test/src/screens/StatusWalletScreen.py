@@ -242,9 +242,9 @@ class StatusWalletScreen:
     def verify_positive_balance(self, symbol: str):
         list = get_obj(AssetView.LIST.value)
         for index in range(list.count):
-            if list.itemAtIndex(index).objectName == symbol:
-                balance = list.itemAtIndex(index).children.at(2).text
-                assert balance != f"0 {symbol}", f"balance is not positive, balance: {balance}"
+            tokenListItem = list.itemAtIndex(index)
+            if tokenListItem.objectName == "AssetView_TokenListItem_" + symbol:
+                assert tokenListItem.balance != f"0 {symbol}", f"balance is not positive, balance: {balance}"
                 return
             
         assert False, "symbol not found"
