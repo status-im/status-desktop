@@ -7,7 +7,12 @@ proc isCompressedPubKey*(strPubKey: string): bool =
   return strPubKey.startsWith("zQ3") and allCharsInSet(strPubKey, CompressedKeyChars)
 
 proc parseAddress*(strAddress: string): Address =
-  fromHex(Address, strAddress)
+  var hexAddressValue: Address
+  try:
+    hexAddressValue = fromHex(Address, strAddress)
+  except Exception as e:
+    error "Error parsing address", msg = e.msg
+  return hexAddressValue
 
 proc isAddress*(strAddress: string): bool =
   try:

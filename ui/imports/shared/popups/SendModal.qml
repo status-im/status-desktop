@@ -38,11 +38,12 @@ StatusDialog {
     }
 
     function sendTransaction() {
+        let recipientAddress = Utils.isValidAddress(popup.addressText) ? popup.addressText : d.resolvedENSAddress
         stack.currentGroup.isPending = true
         let success = false
         success = popup.store.transfer(
             popup.selectedAccount.address,
-            recipientSelector.selectedRecipient.address,
+            recipientAddress,
             assetSelector.selectedAsset.symbol,
             amountToSendInput.text,
             gasSelector.selectedGasLimit,
@@ -77,7 +78,13 @@ StatusDialog {
         readonly property string maxFiatBalance: Utils.stripTrailingZeros(parseFloat(assetSelector.selectedAsset.totalBalance).toFixed(4))
         readonly property bool isReady: amountToSendInput.valid && !amountToSendInput.pending && recipientReady
         readonly property bool errorMode: networkSelector.suggestedRoutes && networkSelector.suggestedRoutes.length <= 0 || networkSelector.errorMode
-        property bool recipientReady: recipientSelector.isValid && !recipientSelector.isPending
+        readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending
+        readonly property bool isAddressValid: Utils.isValidAddress(recipientSelector.input.text)
+        property bool isENSValid: false
+        readonly property var resolveENS: Backpressure.debounce(popup, 500, function (ensName) {
+            store.resolveENS(ensName)
+        })
+        property string resolvedENSAddress
         onIsReadyChanged: {
             if(!isReady && stack.isLastGroup)
                 stack.back()
@@ -98,9 +105,8 @@ StatusDialog {
         amountToSendInput.input.edit.forceActiveFocus()
 
         if(popup.launchedFromChat) {
-            recipientSelector.selectedType = RecipientSelector.Type.Contact
-            recipientSelector.readOnly = true
-            recipientSelector.selectedRecipient = popup.preSelectedRecipient
+            recipientSelector.input.edit.readOnly = true
+            recipientSelector.input.text = popup.preSelectedRecipient.name
         }
 
         popup.recalculateRoutesAndFees()
@@ -177,7 +183,7 @@ StatusDialog {
                         Keys.onReleased: {
                             let amount = amountToSendInput.text.trim()
 
-                            if (isNaN(amount)) {
+                            if (!Utils.containsOnlyDigits(amount) || isNaN(amount)) {
                                 return
                             }
                             if (amount === "") {
@@ -288,41 +294,59 @@ StatusDialog {
                     spacing: Style.current.halfPadding
                     anchors.left: parent.left
 
-                    // To-do use standard StatusInput component once the flow for ens name resolution is clear
-                    RecipientSelector {
+                    StatusInput {
                         id: recipientSelector
-                        accounts: popup.store.accounts
-                        contactsStore: popup.contactsStore
-                        label: qsTr("To")
-                        input.placeholderText: qsTr("Enter an ENS name or address")
-                        input.anchors.leftMargin: 0
-                        input.anchors.rightMargin: 0
-                        input.textField.anchors.rightMargin: 0
-                        input.bgColor: Theme.palette.indirectColor1
-                        labelFont.pixelSize: 15
-                        labelFont.weight: Font.Normal
-                        input.height: 56
-                        inputWidth: parent.width
-                        isSelectorVisible: false
-                        addContactEnabled: false
-                        onSelectedRecipientChanged: gasSelector.estimateGas()
+                        property bool isPending: false
+
                         Layout.fillWidth: true
                         Layout.leftMargin: Style.current.bigPadding
-                        implicitHeight: 71
+                        Layout.rightMargin: Style.current.bigPadding
 
-                        StatusButton {
-                            anchors.right: parent.right
-                            anchors.rightMargin: Style.current.xlPadding
-                            anchors.bottom: parent.bottom
-                            anchors.bottomMargin: 8
+                        label: qsTr("To")
+                        placeholderText: qsTr("Enter an ENS name or address")
+                        input.background.color: Theme.palette.indirectColor1
+                        input.background.border.width: 0
+                        input.implicitHeight: 56
+                        input.clearable: true
+                        multiline: false
+                        input.rightComponent: RowLayout {
+                            StatusButton {
+                                visible: recipientSelector.text === ""
+                                border.width: 1
+                                border.color: Theme.palette.primaryColor1
+                                size: StatusBaseButton.Size.Tiny
+                                text: qsTr("Paste")
+                                onClicked: recipientSelector.input.edit.paste()
+                            }
+                            StatusFlatRoundButton {
+                                visible: recipientSelector.text !== ""
+                                type: StatusFlatRoundButton.Type.Secondary
+                                Layout.preferredWidth: 24
+                                Layout.preferredHeight: 24
+                                icon.name: "clear"
+                                icon.width: 16
+                                icon.height: 16
+                                icon.color: Theme.palette.baseColor1
+                                backgroundHoverColor: "transparent"
+                                onClicked: recipientSelector.input.edit.clear()
+                            }
+                        }
+                        Keys.onReleased: {
+                            if(!d.isAddressValid) {
+                                isPending = true
+                                Qt.callLater(d.resolveENS, input.edit.text)
+                            }
+                        }
+                    }
 
-                            visible: recipientSelector.input.textField.text === ""
-
-                            border.width: 1
-                            border.color: Theme.palette.primaryColor1
-                            size: StatusBaseButton.Size.Tiny
-                            text: qsTr("Paste")
-                            onClicked: recipientSelector.input.textField.paste()
+                    Connections {
+                        target: store.mainModuleInst
+                        onResolvedENS: {
+                            recipientSelector.isPending = false
+                            if(Utils.isValidAddress(resolvedAddress)) {
+                                d.resolvedENSAddress = resolvedAddress
+                                d.isENSValid = true
+                            }
                         }
                     }
 
@@ -361,7 +385,7 @@ StatusDialog {
                         id: fees
                         radius: 13
                         color: Theme.palette.indirectColor1
-                        Layout.preferredHeight: text.height + gasSelector.height + gasValidator.height + Style.current.padding
+                        Layout.preferredHeight: text.height + gasSelector.height + gasValidator.height + Style.current.xlPadding
                         Layout.fillWidth: true
                         Layout.leftMargin: Style.current.bigPadding
                         Layout.rightMargin: Style.current.bigPadding
@@ -402,9 +426,8 @@ StatusDialog {
                                     chainId: networkSelector.selectedNetwork && networkSelector.selectedNetwork.chainId ? networkSelector.selectedNetwork.chainId : 1
                                     property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                                         if (!(popup.selectedAccount && popup.selectedAccount.address &&
-                                            recipientSelector.selectedRecipient && recipientSelector.selectedRecipient.address &&
-                                            assetSelector.selectedAsset && assetSelector.selectedAsset.symbol &&
-                                            amountToSendInput.text)) {
+                                              popup.addressText && assetSelector.selectedAsset &&
+                                              assetSelector.selectedAsset.symbol && amountToSendInput.text)) {
                                             selectedGasLimit = 250000
                                             defaultGasLimit = selectedGasLimit
                                             return
@@ -412,9 +435,11 @@ StatusDialog {
 
                                         var chainID = networkSelector.selectedNetwork ? networkSelector.selectedNetwork.chainId: 1
 
+                                        var recipientAddress = popup.launchedFromChat ? popup.preSelectedRecipient.address : popup.addressText
+
                                         let gasEstimate = JSON.parse(popup.store.estimateGas(
                                                                         popup.selectedAccount.address,
-                                                                        recipientSelector.selectedRecipient.address,
+                                                                        recipientAddress,
                                                                         assetSelector.selectedAsset.symbol,
                                                                         amountToSendInput.text,
                                                                         chainID,

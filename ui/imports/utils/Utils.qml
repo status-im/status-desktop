@@ -702,6 +702,11 @@ QtObject {
         return JSON.stringify({imagePath: String(imgPath).replace("file://", ""), cropRect: cropRect})
     }
 
+    function containsOnlyDigits(msg) {
+        var reg = new RegExp('^[0-9]$')
+        return reg.test(msg)
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
