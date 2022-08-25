@@ -154,6 +154,9 @@ QtObject:
   proc setPassword*(self: View, value: string) {.slot.} =
     self.delegate.setPassword(value)
 
+  proc setDefaultWalletEmoji*(self: View, emoji: string) {.slot.} =
+    self.delegate.setDefaultWalletEmoji(emoji)
+
   proc getPassword*(self: View): string {.slot.} =
     return self.delegate.getPassword()
 
