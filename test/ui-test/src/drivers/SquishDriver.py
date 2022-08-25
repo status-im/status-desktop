@@ -151,6 +151,14 @@ def right_click_obj_by_name(objName: str):
 def hover_obj(obj):
     squish.mouseMove(obj)
 
+def move_mouse_over_object(obj):
+    # Start moving the cursor:
+    end_x = obj.x + (obj.width / 2)
+    y = round(int(obj.height) / 2)
+    x = 0
+    while x < end_x:
+        squish.mouseMove(obj, x, y)
+        x += 10
 
 def scroll_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))

@@ -109,3 +109,6 @@ def verify_screenshot(vp: str):
 
 def imagePresent(imageName: str, tolerant: bool = True, threshold: int = 99.5, minScale: int = 50, maxScale: int =  200, multiscale: bool = True):
     test.imagePresent(imageName, {"tolerant": tolerant, "threshold": threshold, "minScale": minScale, "maxScale": maxScale, "multiscale": multiscale})
+
+def passes(text: str):
+    test.passes(text)

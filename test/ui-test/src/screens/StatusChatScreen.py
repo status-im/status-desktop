@@ -43,6 +43,7 @@ class ChatComponents(Enum):
     TOOLBAR_INFO_BUTTON = "chatView_StatusChatInfoButton"
     CHAT_LOG = "chatView_log"
     LAST_MESSAGE_TEXT = "chatView_lastChatText_Text"
+    LAST_MESSAGE = "chatView_chatLogView_lastMsg_MessageView"
     MEMBERS_LISTVIEW = "chatView_chatMembers_ListView"
     REPLY_TO_MESSAGE_BUTTON = "chatView_replyToMessageButton"
     EDIT_MESSAGE_BUTTON = "chatView_editMessageButton"
@@ -72,6 +73,10 @@ class ChatStickerPopup(Enum):
     MODAL_CLOSE_BUTTON = "modal_Close_Button"
     STICKER_LIST_GRID = "chat_StickersPopup_StickerList_Grid"
 
+class ChatItems(Enum):
+    STATUS_MESSAGE_TEXT_MESSAGE = "StatusMessage_textMessage"
+    STATUS_TEXT_MESSAGE_CHAT_TEXT = "StatusTextMessage_chatText"
+
 class ChatMessagesHistory(Enum):
     CHAT_CREATED_TEXT = 1
     HAS_ADDED_TEXT = 0
@@ -87,7 +92,11 @@ class StatusChatScreen:
         verify_screen(ChatComponents.TOOLBAR_INFO_BUTTON.value)
     
     def chat_loaded(self):
-        verify(is_displayed(ChatComponents.LAST_MESSAGE_TEXT.value), "Checking chat is loaded by looking if last message is displayed.")
+        verify(is_displayed(ChatComponents.LAST_MESSAGE.value), "Checking chat is loaded by looking if last message is displayed.")
+
+    def get_message_at_index(self, index: int):
+        obj = wait_and_get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))
+        return obj
 
     # Screen actions region:
     def type_message_in_chat_input(self, message: str):
@@ -107,7 +116,7 @@ class StatusChatScreen:
     # Verifications region:      
     def verify_last_message_is_not_loaded(self):
         [loaded, _] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
-        verify_fasle(loaded, "Success: No message was found")
+        verify_false(loaded, "Success: No message was found")
           
     def send_gif(self):
         click_obj_by_name(ChatComponents.GIF_POPUP_BUTTON.value)
@@ -120,16 +129,24 @@ class StatusChatScreen:
 
     # Verifications region:        
     def verify_last_message_sent(self, message: str):
-        [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
-        verify(loaded, "Checking last message sent: " + message)
-        verify_text_contains(str(last_message_obj.text), str(message))
+        # Get the message text
+        # We don't search for StatusTextMessage_chatText directly, because there're 2 instances of it in a reply message
+        last_message_obj = self.get_message_at_index(0)
+        text_message_obj = getChildrenWithObjectName(last_message_obj, ChatItems.STATUS_MESSAGE_TEXT_MESSAGE.value)[0]
+        text_edit_obj = getChildrenWithObjectName(text_message_obj, ChatItems.STATUS_TEXT_MESSAGE_CHAT_TEXT.value)[0]
+        verify(not is_null(text_edit_obj), "Checking last message sent: " + message)
+        verify_text_contains(str(text_edit_obj.text), str(message))
 
     def verify_last_message_sent_is_not(self, message: str):
-        [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
-        if not loaded:
-            test.passes("Success: No message was found")
+        chat_log_obj = wait_and_get_obj(ChatComponents.CHAT_LOG.value)
+        last_message_obj = chat_log_obj.itemAtIndex(int(0))
+        text_message_objs = getChildrenWithObjectName(last_message_obj, ChatItems.STATUS_MESSAGE_TEXT_MESSAGE.value)
+        if len(text_message_objs) == 0:
+            passes("Success: No message was found")
             return
-        verify_text_does_not_contain(str(last_message_obj.text), str(message))
+        text_edit_obj = getChildrenWithObjectName(text_message_objs[0], ChatItems.STATUS_TEXT_MESSAGE_CHAT_TEXT.value)[0]
+        verify(not is_null(text_edit_obj), "Checking last message sent: " + message)
+        verify_text_does_not_contain(str(text_edit_obj.text), str(message))
     
     # This method expects to have just one mention / link in the last chat message 
     def verify_last_message_sent_contains_mention(self, displayName: str, message: str):
@@ -177,19 +194,20 @@ class StatusChatScreen:
     # NOTE: It is expecting a specific log order and will succeed only just after the chat is created and no messages have been sent.
     # TODO: Improvement --> Iterate through the complete history, check all messages and verify the `createdTxt` is displayed.   
     def verify_added_members_message_is_displayed_in_history(self, members):
-        chat_membersAdded_text_obj = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(ChatMessagesHistory.HAS_ADDED_TEXT.value)        
+        chat_membersAdded_text_obj = self.get_message_at_index(ChatMessagesHistory.HAS_ADDED_TEXT.value)        
         for member in members[0:]:
             verify_text_contains(str(chat_membersAdded_text_obj.message), member[0])
             
     # NOTE: It is expecting a specific log order and will succeed only just after the chat is created and no messages have been sent.
     # TODO: Improvement --> Iterate through the complete history, check all messages and verify the `createdTxt` is displayed.
     def verify_chat_created_message_is_displayed_in_history(self, createdTxt: str):
-        chat_createChat_text_obj = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(ChatMessagesHistory.CHAT_CREATED_TEXT.value)        
+        chat_createChat_text_obj = self.get_message_at_index(ChatMessagesHistory.CHAT_CREATED_TEXT.value)        
         verify_text_contains(str(chat_createChat_text_obj.message), createdTxt)
         
     def reply_to_message_at_index(self, index: int, message: str):
-        message_object_to_reply_to = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))
-        hover_obj(message_object_to_reply_to)
+        message_object_to_reply_to = self.get_message_at_index(index)
+        verify(not is_null(message_object_to_reply_to), "Message to reply to is loaded")
+        move_mouse_over_object(message_object_to_reply_to)
         click_obj_by_name(ChatComponents.REPLY_TO_MESSAGE_BUTTON.value)
         self.send_message(message)
     
@@ -214,13 +232,13 @@ class StatusChatScreen:
         return found
 
     def delete_message_at_index(self, index: int):
-        message_object_to_delete = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))
-        hover_obj(message_object_to_delete)
+        message_object_to_delete = self.get_message_at_index(index)
+        move_mouse_over_object(message_object_to_delete)
         click_obj_by_name(ChatComponents.DELETE_MESSAGE_BUTTON.value)
         click_obj_by_name(ChatComponents.CONFIRM_DELETE_MESSAGE_BUTTON.value)
 
     def cannot_delete_last_message(self):
-        [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
+        [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE.value)
         if not loaded:
             verify_failure("No message found")
             return 
