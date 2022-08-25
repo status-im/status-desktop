@@ -21,8 +21,7 @@ let RPC_URL_RESOLVED =
     NETWORK_RPC_URL
   else:
     echo "RPC URL IS NOT DEFINED"
-    "http://localhost:8545"
-    # "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
+    "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
 
 echo "USING THIS URL ", RPC_URL_RESOLVED
 const OPENSEA_API_KEY {.strdefine.} = ""

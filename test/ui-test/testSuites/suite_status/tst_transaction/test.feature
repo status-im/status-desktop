@@ -4,7 +4,7 @@ Feature: Status Desktop Transaction
 
     Background: Sign up & Enable wallet section & Toggle test networks
 		Given A first time user lands on the status desktop and navigates to import seed phrase
-		When The user inputs the seed phrase swim relax risk shy chimney please usual search industry board music segment
+		When The user inputs the seed phrase pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial
 		And user clicks on the following ui-component seedPhraseView_Submit_Button
 		When user signs up with username tester123 and password qqqqqqqqqq
 		Then the user lands on the signed in app
