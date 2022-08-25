@@ -43,11 +43,6 @@ type
   VerificationRequestArgs* = ref object of Args
     verificationRequest*: VerificationRequest
 
-# Local Constants:
-const CheckStatusIntervalInMilliseconds = 5000 # 5 seconds, this is timeout how often do we check for user status.
-const FiveMinsOnlineLimitInSeconds = int(5 * 60) # 5 minutes
-const TwoWeeksOnlineLimitInSeconds = int(14 * 24 * 60 * 60) # 2 weeks
-
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_RESOLVED* = "ensResolved"
 const SIGNAL_CONTACT_ADDED* = "contactAdded"
@@ -95,7 +90,6 @@ QtObject:
   # Forward declaration
   proc getContactById*(self: Service, id: string): ContactsDto
   proc saveContact(self: Service, contact: ContactsDto)
-  proc startCheckingContactStatuses(self: Service)
   proc fetchReceivedVerificationRequests*(self: Service) : seq[VerificationRequest]
 
   proc delete*(self: Service) =
@@ -145,19 +139,22 @@ QtObject:
       error "error fetching contacts: ", errDesription
       return
 
+  proc updateAndEmitStatuses(self: Service, statusUpdates: seq[StatusUpdateDto]) =
+    for s in statusUpdates:
+      if(not self.contactsStatus.hasKey(s.publicKey)):
+        # we shouldn't be here ever, but the following line ensures we have added a contact before setting status for it
+        discard self.getContactById(s.publicKey)
+
+      self.contactsStatus[s.publicKey] = s
+
+    let data = ContactsStatusUpdatedArgs(statusUpdates: statusUpdates)
+    self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
+
   proc doConnect(self: Service) =
     self.events.on(SignalType.Message.event) do(e:Args):
       var receivedData = MessageSignal(e)
       if(receivedData.statusUpdates.len > 0):
-        for s in receivedData.statusUpdates:
-          if(not self.contactsStatus.hasKey(s.publicKey)):
-            # we shouldn't be here ever, but the following line ensures we have added a contact before setting status for it
-            discard self.getContactById(s.publicKey)
-
-          self.contactsStatus[s.publicKey] = s
-
-        let data = ContactsStatusUpdatedArgs(statusUpdates: receivedData.statusUpdates)
-        self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
+        self.updateAndEmitStatuses(receivedData.statusUpdates)
 
       if(receivedData.contacts.len > 0):
         for c in receivedData.contacts:
@@ -194,6 +191,11 @@ QtObject:
           else:
             self.events.emit(SIGNAL_CONTACT_VERIFICATION_ADDED, data)
 
+    self.events.on(SignalType.StatusUpdatesTimedout.event) do(e:Args):
+      var receivedData = StatusUpdatesTimedoutSignal(e)
+      if(receivedData.statusUpdates.len > 0):
+        self.updateAndEmitStatuses(receivedData.statusUpdates)
+
   proc setImageServerUrl(self: Service) =
     try:
       let response = status_contacts.getImageServerURL()
@@ -207,7 +209,6 @@ QtObject:
     self.setImageServerUrl()
     self.fetchContacts()
     self.doConnect()
-    self.startCheckingContactStatuses()
 
     signalConnect(singletonInstance.userProfile, "imageChanged()", self, "onLoggedInUserImageChange()", 2)
 
@@ -500,22 +501,6 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc checkContactsStatus*(self: Service, response: string) {.slot.} =
-    let nowInMyLocalZone = now()
-    let timestampNow = uint64(nowInMyLocalZone.toTime().toUnix())
-    var updatedStatuses: seq[StatusUpdateDto]
-    for status in self.contactsStatus.mvalues:
-      if((timestampNow - status.clock > uint64(FiveMinsOnlineLimitInSeconds) and status.statusType == StatusType.Automatic) or
-         (timestampNow - status.clock > uint64(TwoWeeksOnlineLimitInSeconds) and status.statusType == StatusType.AlwaysOnline)):
-        status.statusType = StatusType.Inactive
-        updatedStatuses.add(status)
-
-    if(updatedStatuses.len > 0):
-      let data = ContactsStatusUpdatedArgs(statusUpdates: updatedStatuses)
-      self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
-
-    self.startCheckingContactStatuses()
-
   proc emitCurrentUserStatusChanged*(self: Service, currentStatusUser: CurrentUserStatus) =
     let currentUserStatusUpdate = StatusUpdateDto(publicKey: singletonInstance.userProfile.getPubKey(),
                                                   statusType: currentStatusUser.statusType,
@@ -523,18 +508,6 @@ QtObject:
                                                   text: currentStatusUser.text)
     let data = ContactsStatusUpdatedArgs(statusUpdates: @[currentUserStatusUpdate])
     self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
-
-  proc startCheckingContactStatuses(self: Service) =
-    if(self.closingApp):
-      return
-
-    let arg = TimerTaskArg(
-      tptr: cast[ByteAddress](timerTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "checkContactsStatus",
-      timeoutInMilliseconds: CheckStatusIntervalInMilliseconds
-    )
-    self.threadpool.start(arg)
 
   proc getContactDetails*(self: Service, pubKey: string): ContactDetails =
     result = ContactDetails()
