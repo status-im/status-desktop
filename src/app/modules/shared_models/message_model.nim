@@ -228,10 +228,13 @@ QtObject:
       if(self.items[i].responseToMessageWithId == messageId):
         result.add(self.items[i].id)
 
-  proc findIndexBasedOnTimestampToInsertTo(self: Model, timestamp: int64): int =
+  proc findIndexBasedOnTimestampToInsertTo(self: Model, timestamp: int64, localTimestamp: int64): int =
     for i in 0 ..< self.items.len:
-      if(timestamp > self.items[i].timestamp):
+      if timestamp > self.items[i].timestamp:
         return i
+      elif timestamp == self.items[i].timestamp:
+        if localTimestamp > self.items[i].localTimestamp:
+          return i
     return 0
 
   proc filterExistingItems(self: Model, items: seq[Item]): seq[Item] =
@@ -311,7 +314,7 @@ QtObject:
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
-    let position = self.findIndexBasedOnTimestampToInsertTo(item.timestamp)
+    let position = self.findIndexBasedOnTimestampToInsertTo(item.timestamp, item.localTimestamp)
 
     self.beginInsertRows(parentModelIndex, position, position)
     self.items.insert(item, position)
