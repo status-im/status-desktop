@@ -51,6 +51,10 @@ QtObject {
         root.startupModuleInst.setPassword(value)
     }
 
+    function setDefaultWalletEmoji(emoji) {
+        root.startupModuleInst.setDefaultWalletEmoji(emoji)
+    }
+
     function getPassword() {
         return root.startupModuleInst.getPassword()
     }

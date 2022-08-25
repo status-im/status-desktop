@@ -140,6 +140,9 @@ proc getDisplayName*(self: Controller): string =
 proc setPassword*(self: Controller, value: string) =
   self.tmpPassword = value
 
+proc setDefaultWalletEmoji*(self: Controller, emoji: string) =
+  self.accountsService.setDefaultWalletEmoji(emoji)
+
 proc getPassword*(self: Controller): string =
   return self.tmpPassword
 
@@ -202,6 +205,7 @@ proc cleanTmpData*(self: Controller) =
   self.tmpKeychainErrorOccurred = true
   self.setDisplayName("")
   self.setPassword("")
+  self.setDefaultWalletEmoji("")
   self.setPin("")
   self.setPinMatch(false)
   self.setPuk("")

@@ -61,6 +61,9 @@ method getDisplayName*(self: AccessInterface): string {.base.} =
 method setPassword*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setDefaultWalletEmoji*(self: AccessInterface, emoji: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getPassword*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 

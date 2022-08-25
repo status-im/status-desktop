@@ -189,6 +189,9 @@ method getDisplayName*[T](self: Module[T]): string =
 method setPassword*[T](self: Module[T], value: string) =
   self.controller.setPassword(value)
 
+method setDefaultWalletEmoji*[T](self: Module[T], emoji: string) =
+  self.controller.setDefaultWalletEmoji(emoji)
+
 method getPassword*[T](self: Module[T]): string =
   return self.controller.getPassword()
 

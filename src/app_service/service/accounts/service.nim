@@ -35,6 +35,7 @@ type
     importedAccount: GeneratedAccountDto
     isFirstTimeAccountLogin: bool
     keyStoreDir: string
+    defaultWalletEmoji: string
 
 proc delete*(self: Service) =
   discard
@@ -44,6 +45,7 @@ proc newService*(fleetConfiguration: FleetConfiguration): Service =
   result.fleetConfiguration = fleetConfiguration
   result.isFirstTimeAccountLogin = false
   result.keyStoreDir = main_constants.ROOTKEYSTOREDIR
+  result.defaultWalletEmoji = ""
 
 proc getLoggedInAccount*(self: Service): AccountDto =
   return self.loggedInAccount
@@ -57,6 +59,9 @@ proc isFirstTimeAccountLogin*(self: Service): bool =
 proc setKeyStoreDir(self: Service, key: string) = 
   self.keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, key) & main_constants.sep
   discard status_general.initKeystore(self.keyStoreDir)
+
+proc setDefaultWalletEmoji*(self: Service, emoji: string) =
+  self.defaultWalletEmoji = emoji
 
 proc init*(self: Service) =
   try:
@@ -192,7 +197,8 @@ proc prepareSubaccountJsonObject(self: Service, account: GeneratedAccountDto, di
       "wallet": true,
       "path": PATH_DEFAULT_WALLET,
       "name": "Status account",
-      "derived-from": account.address
+      "derived-from": account.address,
+      "emoji": self.defaultWalletEmoji
     },
     {
       "public-key": account.derivedAccounts.whisper.publicKey,
@@ -362,6 +368,7 @@ proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) =
         "path": PATH_DEFAULT_WALLET,
         "name": "Status account",
         "derived-from": keycardData.masterKey.address,
+        "emoji": self.defaultWalletEmoji,
       },
       {
         "public-key": keycardData.whisperKey.publicKey,
