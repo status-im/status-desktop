@@ -668,6 +668,7 @@ Loader {
                 Loader {
                     active: !root.isInPinnedPopup
                     sourceComponent: StatusFlatRoundButton {
+                        objectName: "replyToMessageButton"
                         width: d.chatButtonSize
                         height: d.chatButtonSize
                         icon.name: "reply"
@@ -758,6 +759,7 @@ Loader {
                                  messageContentType === Constants.messageContentType.audioType);
                     }
                     sourceComponent: StatusFlatRoundButton {
+                        objectName: "chatDeleteMessageButton"
                         width: d.chatButtonSize
                         height: d.chatButtonSize
                         icon.name: "delete"
@@ -781,6 +783,7 @@ Loader {
         id: deleteMessageConfirmationDialogComponent
 
         ConfirmationDialog {
+            confirmButtonObjectName: "chatButtonsPanelConfirmDeleteMessageButton"
             header.title: qsTrId("Confirm deleting this message")
             confirmationText: qsTrId("Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.")
             height: 260

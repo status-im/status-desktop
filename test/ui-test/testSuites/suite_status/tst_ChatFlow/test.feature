@@ -26,9 +26,7 @@ Feature: Status Desktop Chat
 
     Scenario: User can reply to their own message
          When user joins chat room test
-         Then user is able to send chat message
-         | message               |
-         | Reply to this         |
+         Then the user is able to send a random chat message
          Then the user can reply to the message at index 0 with "This is a reply"
 
     Scenario: User can edit a message
@@ -36,7 +34,7 @@ Feature: Status Desktop Chat
          Then user is able to send chat message
          | message               |
          | Edit me                 |
-         When the user edits the message at  index 0 and changes it to "Edited by me"
+         When the user edits the message at index 0 and changes it to "Edited by me"
          Then the message (edited) is displayed in the last message
 
 
@@ -68,7 +66,7 @@ Feature: Status Desktop Chat
         | tell me how you do? |
         When the user clears chat history
         Then the chat is cleared
-        
+
     Scenario: User can send a gif
          When the user opens app settings screen
          And the user opens the messaging settings
@@ -76,13 +74,13 @@ Feature: Status Desktop Chat
          And the user opens the chat section
          And user joins chat room automation-test
          Then The user is able to send a gif message
-         
+
     Scenario: The user is able to use emoji suggestions
          When user joins chat room automation-test
          When the user types "hello :thumbs"
 	    Then the user selects emoji in the suggestion list
          When the user pressed enter
-         Then then the message 👍 is displayed in the last message
+         Then the message 👍 is displayed in the last message
 
 
     @mayfail
@@ -127,12 +125,12 @@ Feature: Status Desktop Chat
           | second-chat |
           | first-chat  |
           When user switches to second-chat chat
-          Then the user is able to send  a random chat message 
+          Then the user is able to send a random chat message
           And user chats are sorted accordingly
           | second-chat |
           | third-chat  |
           | first-chat  |
-          
+
      Scenario: User can type message with emoji autoreplace
          When user joins chat room automation-test
          Then the user is able to send chat message "Hello :)"

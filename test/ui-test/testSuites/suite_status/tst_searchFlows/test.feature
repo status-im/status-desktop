@@ -45,7 +45,7 @@ Feature: Search feature (ctrl+F)
     Scenario: User can search for a message in a public channel
         When the user opens the chat section
         And user joins chat room search-automation-test-1
-        Then the user is able to send  a random chat message
+        Then the user is able to send a random chat message
         # Go back to the portal so that we see if the search really redirects
         When the user opens the community portal section
         And the user opens the search menu
