@@ -280,6 +280,7 @@ Rectangle {
                     active: !editMode && !!root.messageDetails.messageText
                     visible: active
                     sourceComponent: StatusTextMessage {
+                        objectName: "StatusMessage_textMessage"
                         textField.text: {
                             if (root.messageDetails.contentType === StatusMessage.ContentType.Sticker)
                                 return "";
