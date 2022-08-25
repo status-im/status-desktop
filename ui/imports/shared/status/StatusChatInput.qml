@@ -1033,6 +1033,8 @@ Rectangle {
                                         }
                                     }
                                 }
+
+                                inputScrollView.ensureVisible(cursorRectangle)
                             }
 
                             onTextChanged: {
