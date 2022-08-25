@@ -13,7 +13,6 @@ Feature: Status Desktop Transaction
 		And the user toggles test networks
 		And the user opens wallet screen
 		And the user accepts the signing phrase
-		#When the user imports a seed phrase with one and qqqqqqqqqq and swim relax risk shy chimney please usual search industry board music segment
 
     Scenario Outline: User sends a transaction
  		When the user sends a transaction to himself from account Status account of <amount> <token> on <chain_name> with password qqqqqqqqqq
@@ -23,8 +22,8 @@ Feature: Status Desktop Transaction
       	  | amount   | token | chain_name |
       	  | 0.000001 | ETH   | Ropsten    |
       	  | 0 		 | ETH   | Ropsten    |
-#      	  | 1 		 | STT   | Goerli     |
-#      	  | 0 		 | STT   | Goerli     |
+      	  | 1 		 | STT   | Goerli     |
+      	  | 0 		 | STT   | Goerli     |
 
 
 #    Scenario: User registers a ENS name

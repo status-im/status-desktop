@@ -29,6 +29,9 @@ mainWallet_Send_Popup_Password_Input = {"container": statusDesktop_mainWindow, "
 mainWallet_Send_Popup_Asset_Selector = {"container": statusDesktop_mainWindow, "objectName": "assetSelectorButton", "type": "StatusComboBox"}
 mainWallet_Send_Popup_Asset_List = {"container": statusDesktop_mainWindow, "objectName": "assetSelectorList", "type": "StatusListView"}
 mainWallet_Send_Popup_GasPrice_Input = {"container": statusDesktop_mainWindow, "objectName": "gasPriceSelectorInput", "type": "StyledTextField"}
+mainWallet_Send_Popup_GasSelector_LowGas_Button = {"container": statusDesktop_mainWindow, "objectName": "GasSelector_lowGasButton", "type": "GasSelectorButton"}
+mainWallet_Send_Popup_GasSelector_OptimalGas_Button = {"container": statusDesktop_mainWindow, "objectName": "GasSelector_optimalGasButton", "type": "GasSelectorButton"}
+mainWallet_Send_Popup_GasSelector_HighGas_Button = {"container": statusDesktop_mainWindow, "objectName": "GasSelector_highGasButton", "type": "GasSelectorButton"}
 
 # Add account popup:
 mainWallet_Add_Account_Popup_Main = {"container": statusDesktop_mainWindow, "objectName": "AddAccountModalContent", "type": "StatusScrollView", "visible": True}

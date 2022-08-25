@@ -6,9 +6,11 @@ from drivers.SquishDriverVerification import *
 from common.SeedUtils import *
 
 
+class Tokens(Enum):
+    ETH: str = "ETH"
+    
 class SigningPhrasePopUp(Enum):
     OK_GOT_IT_BUTTON: str = "signPhrase_Ok_Button"
-
 
 class MainWalletScreen(Enum):
     ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account"
@@ -48,6 +50,7 @@ class SendPopup(Enum):
     PASSWORD_INPUT: str = "mainWallet_Send_Popup_Password_Input"
     ASSET_SELECTOR: str = "mainWallet_Send_Popup_Asset_Selector"
     ASSET_LIST: str = "mainWallet_Send_Popup_Asset_List"
+    HIGH_GAS_BUTTON: str = "mainWallet_Send_Popup_GasSelector_HighGas_Button"
     
 class AddAccountPopup(Enum):
     SCROLL_BAR: str = "mainWallet_Add_Account_Popup_Main"
@@ -152,7 +155,7 @@ class StatusWalletScreen:
         time.sleep(1)
         type(SendPopup.AMOUNT_INPUT.value, amount)
 
-        if token != "ETH":
+        if token != Tokens.ETH.value:
             click_obj_by_name(SendPopup.ASSET_SELECTOR.value)
             asset_list = get_obj(SendPopup.ASSET_LIST.value)
             for index in range(asset_list.count):
@@ -169,16 +172,17 @@ class StatusWalletScreen:
                 break
         
         scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
-        time.sleep(2)
+        time.sleep(1)
         scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
-        time.sleep(2)
-        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
-        time.sleep(2)
+        time.sleep(1)
 
         self._click_repeater(SendPopup.NETWORKS_LIST.value, chain_name)
         
         # With the simulator, the gas price estimation doesn't work
-        type(SendPopup.GAS_PRICE_INPUT.value, "20")
+        if token != Tokens.ETH.value:
+            click_obj_by_name(SendPopup.HIGH_GAS_BUTTON.value)
+        else:
+            type(SendPopup.GAS_PRICE_INPUT.value, "20")
         
         click_obj_by_name(SendPopup.SEND_BUTTON.value)
         
@@ -253,7 +257,7 @@ class StatusWalletScreen:
         for index in range(list.count):
             tokenListItem = list.itemAtIndex(index)
             if tokenListItem.objectName == "AssetView_TokenListItem_" + symbol:
-                assert tokenListItem.balance != f"0 {symbol}", f"balance is not positive, balance: {balance}"
+                assert tokenListItem.balance != "0", f"balance is not positive, balance: {str(tokenListItem.balance)}"
                 return
             
         assert False, "symbol not found"

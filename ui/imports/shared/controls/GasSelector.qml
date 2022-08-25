@@ -216,6 +216,7 @@ Item {
 
         GasSelectorButton {
             id: lowGasButton
+            objectName: "GasSelector_lowGasButton"
             primaryText: qsTr("Low")
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
@@ -241,6 +242,7 @@ Item {
 
         GasSelectorButton {
             id: optimalGasButton
+            objectName: "GasSelector_optimalGasButton"
             primaryText: qsTr("Optimal")
             price: {
                 if (!root.suggestedFees.eip1559Enabled) {
@@ -271,6 +273,7 @@ Item {
 
         GasSelectorButton {
             id: highGasButton
+            objectName: "GasSelector_highGasButton"
             primaryText: qsTr("High")
             price: {
                 if (!root.suggestedFees.eip1559Enabled) return root.suggestedFees.gasPrice;

@@ -106,7 +106,7 @@ Feature: Status Desktop Wallet
         And the user imports a seed phrase with one and TesTEr16843/!@00 and pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial
         And the user toggles the network Ropsten
         Then the user has a positive balance of ETH
-        #And the user has a positive balance of STT
+        And the user has a positive balance of STT
 
     Scenario Outline: User can edit the default wallet account
         When the user opens app settings screen

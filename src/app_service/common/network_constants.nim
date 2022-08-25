@@ -14,16 +14,28 @@ let INFURA_TOKEN_RESOLVED =
     echo "INFURA_TOKEN_ENV NOT DEFINED"
     INFURA_TOKEN
 
-const NETWORK_RPC_URL = $getEnv("NETWORK_RPC_URL")
-let RPC_URL_RESOLVED =
-  if NETWORK_RPC_URL != "":
-    echo "RPC URL IS DEFINED ", NETWORK_RPC_URL
-    NETWORK_RPC_URL
+const ROPSTEN_NETWORK_RPC_URL = $getEnv("ROPSTEN_NETWORK_RPC_URL")
+let ROPSTEN_RPC_URL_RESOLVED =
+  if ROPSTEN_NETWORK_RPC_URL != "":
+    echo "RPC URL IS DEFINED ", ROPSTEN_NETWORK_RPC_URL
+    ROPSTEN_NETWORK_RPC_URL
   else:
-    echo "RPC URL IS NOT DEFINED"
-    "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
+    echo "ROPSTEN RPC URL IS NOT DEFINED"
+    "https://ropsten.infura.io/v3/" & INFURA_TOKEN_RESOLVED
 
-echo "USING THIS URL ", RPC_URL_RESOLVED
+echo "USING THIS URL FOR ROPSTEN ", ROPSTEN_RPC_URL_RESOLVED
+
+const GOERLI_NETWORK_RPC_URL = $getEnv("GOERLI_NETWORK_RPC_URL")
+let GOERLI_RPC_URL_RESOLVED =
+  if GOERLI_NETWORK_RPC_URL != "":
+    echo "RPC URL IS DEFINED ", GOERLI_NETWORK_RPC_URL
+    GOERLI_NETWORK_RPC_URL
+  else:
+    echo "GOERLI RPC URL IS NOT DEFINED"
+    "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED
+
+echo "USING THIS URL FOR GOERLI ", GOERLI_NETWORK_RPC_URL
+
 const OPENSEA_API_KEY {.strdefine.} = ""
 # allow runtime override via environment variable; core contributors can set a
 # an opensea API key in this way for local development
@@ -58,7 +70,7 @@ let NETWORKS* = %* [
   {
     "chainId": 3,
     "chainName": "Ropsten",
-    "rpcUrl": RPC_URL_RESOLVED,
+    "rpcUrl": ROPSTEN_RPC_URL_RESOLVED,
     "blockExplorerUrl": "https://ropsten.etherscan.io/",
     "iconUrl": "network/Network=Testnet",
     "chainColor": "#939BA1",
@@ -88,7 +100,7 @@ let NETWORKS* = %* [
   {
     "chainId": 5,
     "chainName": "Goerli",
-    "rpcUrl": "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "rpcUrl": GOERLI_RPC_URL_RESOLVED,
     "blockExplorerUrl": "https://goerli.etherscan.io/",
     "iconUrl": "network/Network=Testnet",
     "chainColor": "#939BA1",

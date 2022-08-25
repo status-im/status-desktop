@@ -19,7 +19,7 @@ pipeline {
 // docker run -p 8545:8545 --name ganache-cli --rm -d trufflesuite/ganache-cli:latest --database.dbPath ~/dev/test-ganache  -e 10 - -m "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial"
 // ganache --database.dbPath="/home/jonathan/dev/test-ganache" -e 10 -m "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial" -f "https://mainnet.infura.io/v3/3d880888a170473d92f0d95e82c8b342" --chain.chainId 1
 // ganache --database.dbPath="/home/jonathan/dev/test-ganache" -e 10 -m "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial" --chain.chainId 3
-
+// ganache --database.dbPath="/home/jonathan/dev/test-ganache-goerli" -e 10 -m "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial" --chain.chainId 5 -p 8546
 
   options {
     timestamps()
