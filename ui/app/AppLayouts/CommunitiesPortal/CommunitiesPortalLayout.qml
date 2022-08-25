@@ -9,6 +9,7 @@ import StatusQ.Components 0.1
 
 import utils 1.0
 import shared.popups 1.0
+import shared.panels 1.0
 
 import "controls"
 import "stores"

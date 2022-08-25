@@ -10,6 +10,7 @@ import StatusQ.Components 0.1
 import "../../layouts"
 
 import utils 1.0
+import shared.panels 1.0
 
 StackLayout {
     id: root
