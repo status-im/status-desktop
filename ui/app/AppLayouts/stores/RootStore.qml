@@ -172,7 +172,7 @@ QtObject {
     }
 
     function setActiveCommunity(communityId) {
-        mainModule.setActiveSectionById(communityId);
+        mainModuleInst.setActiveSectionById(communityId);
     }
 
     function switchAccount(newIndex) {
@@ -180,5 +180,9 @@ QtObject {
             walletSectionAccounts.switchAccount(newIndex)
         else
             walletSection.switchAccount(newIndex)
+    }
+
+    function resolveENS(value) {
+        mainModuleInst.resolveENS(value, "")
     }
 }
