@@ -97,6 +97,7 @@ class SettingsScreen:
         verify_screen(SidebarComponents.ADVANCED_OPTION.value)
     
     def open_wallet_settings(self):
+        StatusMainScreen.wait_for_banner_to_disappear()
         click_obj_by_name(SidebarComponents.WALLET_OPTION.value)
 
     def activate_wallet_option(self):
@@ -137,7 +138,6 @@ class SettingsScreen:
         
     def toggle_test_networks(self):
         click_obj_by_name(WalletSettingsScreen.NETWORKS_ITEM.value)
-        get_and_click_obj(WalletSettingsScreen.TESTNET_TOGGLE.value)
         click_obj_by_name(WalletSettingsScreen.TESTNET_TOGGLE.value)
         
     def open_language_and_currency_settings(self):

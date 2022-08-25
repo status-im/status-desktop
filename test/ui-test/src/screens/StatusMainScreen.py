@@ -45,10 +45,14 @@ class StatusMainScreen:
 
     # Wait for the banner to disappear otherwise the click might land badly
     @staticmethod
-    def wait_for_banner_to_disappear():
-        [bannerLoaded, _] = is_loaded_visible_and_enabled(MainScreenComponents.MODULE_WARNING_BANNER.value)
-        if (bannerLoaded):
-            StatusMainScreen.wait_for_banner_to_disappear()
+    def wait_for_banner_to_disappear(retry = 0):
+        if (retry > 5):
+            verify_failure("Banner did not disappear")
+        [bannerLoaded, _] = is_loaded_visible_and_enabled(MainScreenComponents.MODULE_WARNING_BANNER.value, 500)
+        time.sleep(1)
+        if (not bannerLoaded):
+            return
+        StatusMainScreen.wait_for_banner_to_disappear(retry + 1)
 
     def join_chat_room(self, room: str):
         click_obj_by_name(MainScreenComponents.PUBLIC_CHAT_ICON.value)
