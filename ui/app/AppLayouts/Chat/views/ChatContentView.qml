@@ -160,7 +160,7 @@ ColumnLayout {
     Component {
         id: contactsSelector
         GroupChatPanel {
-            sectionModule: chatSectionModule
+            sectionModule: root.chatSectionModule
             chatContentModule: root.chatContentModule
             rootStore: root.rootStore
             maxHeight: root.height

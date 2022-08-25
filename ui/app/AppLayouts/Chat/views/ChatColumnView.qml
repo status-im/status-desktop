@@ -240,7 +240,7 @@ Item {
                             Component.onCompleted: {
                                 parentModule.prepareChatContentModuleForChatId(model.itemId)
                                 chatContentModule = parentModule.getChatContentModule()
-                                chatSectionModule = root.chatSectionModule;
+                                chatSectionModule = root.parentModule
                             }
                         }
                     }
@@ -297,7 +297,7 @@ Item {
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(model.itemId)
                             chatContentModule = parentModule.getChatContentModule()
-                            chatSectionModule = root.chatSectionModule;
+                            chatSectionModule = root.parentModule
                             root.checkForCreateChatOptions(model.itemId)
                         }
                     }
