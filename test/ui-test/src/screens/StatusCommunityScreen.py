@@ -126,8 +126,8 @@ class StatusCommunityScreen:
 
     def _open_category_edit_popup(self, category):
         # For some reason it clicks on a first channel in category instead of category
-        click_obj(category.parent)
-        right_click_obj(category.parent)
+        click_obj(category.chatListCategory.statusChatListCategoryItem)
+        right_click_obj(category.chatListCategory.statusChatListCategoryItem)
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_EDIT_CATEGORY_MENU_ITEM.value)
 
     def verify_community_name(self, communityName: str):
@@ -192,8 +192,9 @@ class StatusCommunityScreen:
         verify(loaded, "Finding category: " + community_category_name)
 
         # For some reason it clicks on a first channel in category instead of category
-        click_obj(category.parent)
-        right_click_obj(category.parent)
+        click_obj(category.chatListCategory.statusChatListCategoryItem)
+        right_click_obj(category.chatListCategory.statusChatListCategoryItem)
+
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_DELETE_CATEGORY_MENU_ITEM.value)
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_CONFIRM_DELETE_CATEGORY_BUTTON.value)
 
