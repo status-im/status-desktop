@@ -9,7 +9,7 @@ import utils 1.0
 
 Menu {
     id: root
-    width: 132
+    width: 165
     height: 36
 
     background: Item {

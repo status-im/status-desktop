@@ -321,6 +321,31 @@ Rectangle {
         }
     }
 
+    function getLineStartPosition(selectionStart) {
+        const text = getPlainText()
+        const lastNewLinePos = text.lastIndexOf("\n\n", messageInputField.selectionStart)
+        return lastNewLinePos === -1 ? 0 : lastNewLinePos + 2
+    }
+
+    function prefixSelectedLine(prefix) {
+        const selectedLinePosition = getLineStartPosition(messageInputField.selectionStart)
+        insertInTextInput(selectedLinePosition, prefix)
+    }
+
+    function unprefixSelectedLine(prefix) {
+        if( isSelectedLinePrefixedBy(messageInputField.selectionStart, prefix) ) {
+            const selectedLinePosition = getLineStartPosition(messageInputField.selectionStart)
+            messageInputField.remove(selectedLinePosition, selectedLinePosition + prefix.length)
+        }
+    }
+
+    function isSelectedLinePrefixedBy(selectionStart, prefix) {
+        const selectedLinePosition = getLineStartPosition(selectionStart)
+        const text = getPlainText()
+        const selectedLine = text.substring(selectedLinePosition)
+        return selectedLine.startsWith(prefix)
+    }
+
     function wrapSelection(wrapWith) {
         if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
 
@@ -1069,7 +1094,7 @@ Rectangle {
                                                                                       (messageInputField.cursorRectangle.x + event.x) / 2
                                     x -= textFormatMenu.width / 2
 
-                                    textFormatMenu.popup(x, -messageInputField.height-2)
+                                    textFormatMenu.popup(x, messageInputField.y - textFormatMenu.height - 5)
                                     messageInputField.forceActiveFocus();
                                 }
                                 lastClick = now
@@ -1138,6 +1163,16 @@ Rectangle {
                                     onActionTriggered: checked ?
                                                            unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
                                                            wrapSelection(wrapper)
+                                }
+                                StatusChatInputTextFormationAction {
+                                    wrapper: "> "
+                                    icon.name: "quote"
+                                    text: qsTr("Quote")
+                                    checked: messageInputField.selectedText && isSelectedLinePrefixedBy(messageInputField.selectionStart, wrapper)
+
+                                    onActionTriggered: checked
+                                                       ? unprefixSelectedLine(wrapper)
+                                                       : prefixSelectedLine(wrapper)
                                 }
                                 onClosed: {
                                     messageInputField.deselect();
