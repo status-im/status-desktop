@@ -23,6 +23,7 @@ Item {
     property bool isContact: sender.isContact
     property int trustIndicator: sender.trustIndicator
     property bool amISender: false
+    property string messageOriginInfo: ""
 
     signal clicked(var sender, var mouse)
     signal resendClicked()
@@ -56,6 +57,14 @@ Item {
                 }
             }
         }       
+        StatusBaseText {
+            id: messageOriginInfo
+            Layout.alignment: Qt.AlignVCenter
+            visible: root.messageOriginInfo !== ""
+            color: Theme.palette.baseColor1
+            font.pixelSize: 10
+            text: root.messageOriginInfo
+        }
         StatusContactVerificationIcons {
             visible: !root.amISender
             isContact: root.isContact
@@ -78,7 +87,7 @@ Item {
         }
         StatusBaseText {
             id: tertiaryDetailText
-            visible: !root.amISender
+            visible: !root.amISender && messageOriginInfo == ""
             Layout.alignment: Qt.AlignVCenter
             font.pixelSize: 10
             elide: Text.ElideMiddle

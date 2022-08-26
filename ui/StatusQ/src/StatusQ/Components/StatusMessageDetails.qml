@@ -13,6 +13,7 @@ QtObject {
     property int contentType: 0
     property string messageText: ""
     property string messageContent: ""
+    property string messageOriginInfo: ""
 }
 
 

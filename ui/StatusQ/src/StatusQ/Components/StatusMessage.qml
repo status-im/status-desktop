@@ -267,6 +267,7 @@ Rectangle {
                     Layout.fillWidth: true
                     sender: root.messageDetails.sender
                     amISender: root.messageDetails.amISender
+                    messageOriginInfo: root.messageDetails.messageOriginInfo
                     resendText: root.resendText
                     showResendButton: root.hasExpired && root.messageDetails.amISender
                     onClicked: root.senderNameClicked(sender, mouse)
