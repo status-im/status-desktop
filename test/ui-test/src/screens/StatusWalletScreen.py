@@ -159,7 +159,8 @@ class StatusWalletScreen:
             click_obj_by_name(SendPopup.ASSET_SELECTOR.value)
             asset_list = get_obj(SendPopup.ASSET_LIST.value)
             for index in range(asset_list.count):
-                if(asset_list.itemAtIndex(index).objectName == token):
+                tokenObj = asset_list.itemAtIndex(index)
+                if(not squish.isNull(tokenObj) and tokenObj.objectName == "AssetSelector_ItemDelegate_" + token):
                     click_obj(asset_list.itemAtIndex(index))
                     break
         
@@ -173,17 +174,12 @@ class StatusWalletScreen:
         
         scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
         time.sleep(1)
-        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
-        time.sleep(1)
 
         self._click_repeater(SendPopup.NETWORKS_LIST.value, chain_name)
         
         # With the simulator, the gas price estimation doesn't work
-        if token != Tokens.ETH.value:
-            click_obj_by_name(SendPopup.HIGH_GAS_BUTTON.value)
-        else:
-            type(SendPopup.GAS_PRICE_INPUT.value, "20")
-        
+        type(SendPopup.GAS_PRICE_INPUT.value, "20")
+       
         click_obj_by_name(SendPopup.SEND_BUTTON.value)
         
         type(SendPopup.PASSWORD_INPUT.value, password)

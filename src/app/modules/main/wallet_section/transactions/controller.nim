@@ -84,7 +84,10 @@ proc loadTransactions*(self: Controller, address: string, toBlock: Uint256, limi
   self.transactionService.loadTransactions(address, toBlock, limit, loadMore)
 
 proc estimateGas*(self: Controller, from_addr: string, to: string, assetSymbol: string, value: string, data: string): string =
-  result = self.transactionService.estimateGas(from_addr, to, assetSymbol, value, data)
+  try:
+    result = self.transactionService.estimateGas(from_addr, to, assetSymbol, value, data)
+  except Exception as e:
+    result = "0"
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol: string,
     value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,maxFeePerGas: string,
