@@ -16,6 +16,7 @@ Column {
     property bool opened: true
     property bool dragged: false
 
+    property alias statusChatListCategoryItem: statusChatListCategoryItem
     property alias showActionButtons: statusChatListCategoryItem.showActionButtons
     property alias addButton: statusChatListCategoryItem.addButton
     property alias menuButton: statusChatListCategoryItem.menuButton
