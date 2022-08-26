@@ -133,6 +133,7 @@ Rectangle {
                 anchors.bottom: separatorBottom.top
                 clip: true
 
+                boundsBehavior: contentHeight > height ? Flickable.DragAndOvershootBounds : Flickable.StopAtBounds
                 spacing: navBarButtonSpacing
 
                 model: navBarCommunityModel
@@ -167,6 +168,7 @@ Rectangle {
 
         spacing: navBarButtonSpacing
 
+        boundsBehavior: Flickable.StopAtBounds
         model: navBarModel
     }
 
