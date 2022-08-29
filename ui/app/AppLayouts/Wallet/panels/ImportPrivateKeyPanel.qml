@@ -17,27 +17,28 @@ ColumnLayout {
     property bool valid: privateKey.valid
 
     function resetMe() {
-        _internal.errorString = ""
+        d.errorString = ""
         privateKey.text = ""
         privateKey.reset()
     }
 
-    function validateMe()  {
+    function validateMe() {
         if (privateKey.text === "") {
-            _internal.errorString = qsTr("You need to enter a private key")
+            d.errorString = qsTr("You need to enter a private key")
         } else if (!Utils.isPrivateKey(privateKey.text)) {
-            _internal.errorString = qsTr("Enter a valid private key (64 characters hexadecimal string)")
+            d.errorString = qsTr("Enter a valid private key (64 characters hexadecimal string)")
         } else {
-            _internal.errorString = ""
+            d.errorString = ""
         }
-        return _internal.errorString === ""
+        return d.errorString === "" && !d.invalidPrivateKeyError
     }
 
     QtObject {
-        id: _internal
-        property int privateKeyCharLimit: 66
+        id: d
+        readonly property int privateKeyCharLimit: 66
         property string errorString: ""
-        property bool accountAreadyAddedError: Utils.accountAlreadyExistsError(RootStore.derivedAddressesError)
+        readonly property bool accountAreadyAddedError: Utils.accountAlreadyExistsError(RootStore.derivedAddressesError)
+        readonly property bool invalidPrivateKeyError: Utils.isInvalidPrivateKey(RootStore.derivedAddressesError)
     }
 
     spacing: 24
@@ -46,12 +47,12 @@ ColumnLayout {
         id: privateKey
 
         label: qsTr("Private key")
-        charLimit: _internal.privateKeyCharLimit
+        charLimit: d.privateKeyCharLimit
         input.multiline: true
         minimumHeight: 80
         maximumHeight: 108
         placeholderText: qsTr("Paste the contents of your private key")
-        errorMessage: _internal.errorString
+        errorMessage: d.errorString
         validators: [
             StatusMinLengthValidator {
                 minLength: 1
@@ -62,6 +63,20 @@ ColumnLayout {
                     return Utils.isPrivateKey(value)
                 }
                 errorMessage: qsTr("Enter a valid private key (64 characters hexadecimal string)")
+            }
+        ]
+        asyncValidators: [
+            StatusAsyncValidator {
+                id: privateKeyAsyncValidator
+                Connections {
+                    target: d
+                    function onInvalidPrivateKeyErrorChanged() {
+                        privateKeyAsyncValidator.validationComplete("", !d.invalidPrivateKeyError)
+                    }
+                }
+                validate: (value) => !d.invalidPrivateKeyError
+                name: "asyncPKCheck"
+                errorMessage: qsTr("Enter a valid private key")
             }
         ]
         onTextChanged: {
@@ -95,10 +110,10 @@ ColumnLayout {
             icon.background.color: "transparent"
             border.width: 1
             border.color: Theme.palette.baseColor2
-            type: _internal.accountAreadyAddedError ? StatusListItem.Type.Danger : StatusListItem.Type.Primary
+            type: d.accountAreadyAddedError ? StatusListItem.Type.Danger : StatusListItem.Type.Primary
             statusListItemSubTitle.color: derivedAddress.hasActivity ?  Theme.palette.primaryColor1 : Theme.palette.baseColor1
-            title: _internal.accountAreadyAddedError ? qsTr("Account already added") : RootStore.derivedAddressesLoading ? qsTr("Pending") : derivedAddress.address
-            subTitle: RootStore.derivedAddressesLoading || _internal.accountAreadyAddedError ?  "" : derivedAddress.hasActivity ? qsTr("Has Activity"): qsTr("No Activity")
+            title: d.accountAreadyAddedError ? qsTr("Account already added") : RootStore.derivedAddressesLoading ? qsTr("Pending") : derivedAddress.address
+            subTitle: RootStore.derivedAddressesLoading || d.accountAreadyAddedError ?  "" : derivedAddress.hasActivity ? qsTr("Has Activity"): qsTr("No Activity")
             sensor.enabled: false
         }
     }
