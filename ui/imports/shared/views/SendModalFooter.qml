@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
+import QtGraphicalEffects 1.13
 
 import utils 1.0
 
@@ -14,8 +15,7 @@ Rectangle {
 
     property string maxFiatFees: ""
     property int estimatedTxTimeFlag: Constants.transactionEstimatedTime.unknown
-    property bool currentGroupPending: true
-    property bool currentGroupValid: false
+    property bool pending: true
     property bool isLastGroup: false
 
     signal nextButtonClicked()
@@ -29,16 +29,12 @@ Rectangle {
     radius: 8
     color: Theme.palette.baseColor3
 
-    Rectangle {
-        anchors.top: parent.top
-        width: parent.width
-        height: parent.radius
-        color: parent.color
-
-        StatusModalDivider {
-            anchors.top: parent.top
-            width: parent.width
-        }
+    layer.enabled: true
+    layer.effect: DropShadow {
+        verticalOffset: 2
+        radius: 16
+        samples: 17
+        color: Theme.palette.dropShadow
     }
 
     RowLayout {
@@ -95,8 +91,8 @@ Rectangle {
                 size: StatusBaseButton.Size.Large
                 normalColor: Theme.palette.primaryColor2
                 disabledColor: Theme.palette.baseColor2
-                enabled: currentGroupValid && !currentGroupPending
-                loading: currentGroupPending
+                enabled: !footer.pending
+                loading: footer.pending
                 onClicked: nextButtonClicked()
             }
         }
