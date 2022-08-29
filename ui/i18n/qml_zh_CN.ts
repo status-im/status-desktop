@@ -10856,6 +10856,30 @@ Assets won’t be sent yet.</source>
 		<source>public</source>
 		<translation>公共</translation>
 	</message>
+	<message>
+		<source>open-dapp2</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>ens-banner-message</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>app-connections</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>successful-connection</source>
+		<translation>连接成功</translation>
+	</message>
+	<message>
+		<source>all-connections</source>
+		<translation>所有连接</translation>
+	</message>
+	<message>
+		<source>token-price</source>
+		<translation>代币价格</translation>
+	</message>
 </context>
 <context>
 	<name>AboutView</name>
@@ -10984,6 +11008,10 @@ Assets won’t be sent yet.</source>
 		<source>Remove Account</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Related Accounts</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>ActivityCenterMessageComponentView</name>
@@ -11008,7 +11036,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Wrong password</source>
-		<translation></translation>
+		<translation>密码错误</translation>
 	</message>
 	<message>
 		<source>You need to enter a password</source>
@@ -11040,7 +11068,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>color</source>
-		<translation></translation>
+		<translation>颜色</translation>
 	</message>
 	<message>
 		<source>Loading...</source>
@@ -11048,6 +11076,10 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Add account</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Enter your password...</source>
 		<translation></translation>
 	</message>
 </context>
@@ -11339,7 +11371,7 @@ edit your notification preferences later in settings.</source>
 	</message>
 	<message>
 		<source>A new version of Status (%1) is available</source>
-		<translation></translation>
+		<translation>新版本Status (%1) 可用</translation>
 	</message>
 	<message>
 		<source>Download</source>
@@ -11359,7 +11391,7 @@ edit your notification preferences later in settings.</source>
 	</message>
 	<message>
 		<source>The mailserver you&apos;re connecting to is unavailable.</source>
-		<translation></translation>
+		<translation>连接的邮件服务器不可用。</translation>
 	</message>
 	<message>
 		<source>Pick another</source>
@@ -11418,7 +11450,7 @@ edit your notification preferences later in settings.</source>
 	</message>
 	<message>
 		<source>50%</source>
-		<translation></translation>
+		<translation>50%</translation>
 	</message>
 	<message>
 		<source>100%</source>
@@ -11434,7 +11466,7 @@ edit your notification preferences later in settings.</source>
 	</message>
 	<message>
 		<source>Appearance</source>
-		<translation></translation>
+		<translation>显示</translation>
 	</message>
 	<message>
 		<source>Light</source>
@@ -11446,6 +11478,18 @@ edit your notification preferences later in settings.</source>
 	</message>
 	<message>
 		<source>System</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Text size</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Zoom (requires restart)</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Mode</source>
 		<translation></translation>
 	</message>
 </context>
@@ -11644,6 +11688,10 @@ Do you wish to override the security check and continue?</source>
 		<source>Are you sure you want to delete this chat?</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Edit name and image</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>ChatView</name>
@@ -11665,6 +11713,10 @@ Do you wish to override the security check and continue?</source>
 	<message>
 		<source>Send</source>
 		<translation>发送</translation>
+	</message>
+	<message>
+		<source>Assets</source>
+		<translation></translation>
 	</message>
 </context>
 <context>
@@ -11758,7 +11810,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Import Community</source>
-		<translation></translation>
+		<translation>导入社区</translation>
 	</message>
 	<message>
 		<source>Create New Community</source>
@@ -11772,12 +11824,20 @@ Do you wish to override the security check and continue?</source>
 		<source>Popular</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Import using key</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>CommunityColorPicker</name>
 	<message>
 		<source>Community colour</source>
 		<translation>社区颜色</translation>
+	</message>
+	<message>
+		<source>Community color</source>
+		<translation></translation>
 	</message>
 </context>
 <context>
@@ -11855,6 +11915,10 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>community description</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Give it a short description</source>
 		<translation></translation>
 	</message>
 </context>
@@ -11977,6 +12041,50 @@ Do you wish to override the security check and continue?</source>
 		<source>You</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>All Members</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Banned</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>No members to search</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Search %1&apos;s %2 member%3</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>No banned members to search</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Search %1&apos;s %2 banned member%3</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Are you sure you ban &lt;b&gt;%1&lt;/b&gt; from %2?</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Ban %1</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Cancel</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Are you sure you kick &lt;b&gt;%1&lt;/b&gt; from %2?</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Kick %1</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>CommunityNameInput</name>
@@ -11990,6 +12098,10 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Community name</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Name your community</source>
 		<translation></translation>
 	</message>
 </context>
@@ -12062,7 +12174,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Transfer ownership</source>
-		<translation></translation>
+		<translation>转让</translation>
 	</message>
 	<message>
 		<source>Leave community</source>
@@ -12263,7 +12375,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Identity Verified Contacts</source>
-		<translation></translation>
+		<translation>已验证身份的联系人</translation>
 	</message>
 	<message>
 		<source>You don’t have any contacts yet</source>
@@ -12318,11 +12430,11 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>100%</source>
-		<translation></translation>
+		<translation>100%</translation>
 	</message>
 	<message>
 		<source>150%</source>
-		<translation></translation>
+		<translation>150%</translation>
 	</message>
 	<message>
 		<source>200%</source>
@@ -12341,7 +12453,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Edit category</source>
-		<translation></translation>
+		<translation>编辑类别</translation>
 	</message>
 	<message>
 		<source>New category</source>
@@ -12436,6 +12548,22 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Error creating the community</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source># Name the channel</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Delete channel</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Save changes</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Create channel</source>
 		<translation></translation>
 	</message>
 </context>
@@ -12653,6 +12781,10 @@ chat with them once they have accepted your contact request.</source>
 		<source>Back</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Release your username</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>EnsSearchView</name>
@@ -12850,7 +12982,7 @@ chat with them once they have accepted your contact request.</source>
 	</message>
 	<message>
 		<source>Search</source>
-		<translation></translation>
+		<translation>搜索</translation>
 	</message>
 	<message>
 		<source>All your contacts are already in the group</source>
@@ -13040,7 +13172,7 @@ chat with them once they have accepted your contact request.</source>
 	</message>
 	<message>
 		<source>intro-wizard-title1</source>
-		<translation></translation>
+		<translation>获取密钥</translation>
 	</message>
 	<message>
 		<source>a-set-of-keys-controls-your-account.-your-keys-live-on-your-device,-so-only-you-can-use-them.</source>
@@ -13069,6 +13201,18 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Seed phrases are used to back up and restore your keys. Only use this option if you already have a seed phrase.</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Login with Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Generate keys for a new Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Import a seed phrase into a new Keycard</source>
 		<translation></translation>
 	</message>
 </context>
@@ -13124,6 +13268,14 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Close the app now</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Alpha languages</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Beta languages</source>
 		<translation></translation>
 	</message>
 </context>
@@ -13227,6 +13379,61 @@ device, so only you can use them.</source>
 		<source>Password incorrect</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Enter Keycard PIN</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Plug in Keycard reader...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Insert your Keycard...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Reading Keycard...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Wrong Keycard!
+The card inserted is not linked to your profile.</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Insert another Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>PIN incorrect</source>
+		<translation></translation>
+	</message>
+	<message numerus="yes">
+		<source>%n attempt(s) remaining</source>
+		<translation>
+			<numerusform></numerusform>
+		</translation>
+	</message>
+	<message>
+		<source>Keycard locked</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Recover your Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Recover with seed phrase</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>The card inserted is empty</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Generate keys for a new Keycard</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>MenuPanel</name>
@@ -13255,7 +13462,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Download image</source>
-		<translation></translation>
+		<translation>下载图片</translation>
 	</message>
 	<message>
 		<source>Block User</source>
@@ -13305,6 +13512,26 @@ device, so only you can use them.</source>
 		<source>Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Verify Identity</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>ID Request Pending....</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Respond to ID Request...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Mark as Untrustworthy</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Remove Untrustworthy Mark</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>MessagingView</name>
@@ -13350,7 +13577,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Display Message Link Previews</source>
-		<translation></translation>
+		<translation>显示消息链接预览</translation>
 	</message>
 	<message>
 		<source>Fine tune which sites to allow link previews</source>
@@ -13366,7 +13593,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Message syncing</source>
-		<translation></translation>
+		<translation>消息同步</translation>
 	</message>
 	<message>
 		<source>Waku nodes</source>
@@ -13374,7 +13601,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>For security reasons, private chat history won&apos;t be synced.</source>
-		<translation></translation>
+		<translation>出于安全原因，不会同步私人聊天记录。</translation>
 	</message>
 </context>
 <context>
@@ -13699,7 +13926,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Unpin a previous message first</source>
-		<translation></translation>
+		<translation>先取消上一条置顶消息</translation>
 	</message>
 	<message>
 		<source>%1 messages</source>
@@ -13857,7 +14084,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Rename</source>
-		<translation></translation>
+		<translation>重命名</translation>
 	</message>
 	<message>
 		<source>Close</source>
@@ -13935,7 +14162,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Kb/s</source>
-		<translation></translation>
+		<translation>Kb/s</translation>
 	</message>
 	<message>
 		<source>Download</source>
@@ -14012,7 +14239,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Are you sure?</source>
-		<translation></translation>
+		<translation>是否确定？</translation>
 	</message>
 	<message>
 		<source>No saved addresses</source>
@@ -14059,6 +14286,10 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Restore Status Profile</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Recover Keycard</source>
 		<translation></translation>
 	</message>
 </context>
@@ -14133,6 +14364,14 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>View on etherscan</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Paste</source>
+		<translation>粘贴</translation>
+	</message>
+	<message>
+		<source>Fees</source>
 		<translation></translation>
 	</message>
 </context>
@@ -14255,7 +14494,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Your message is too long.</source>
-		<translation></translation>
+		<translation>您的消息太长。</translation>
 	</message>
 	<message>
 		<source>Please make your message shorter. We have set the limit to 2000 characters to be courteous of others.</source>
@@ -14459,7 +14698,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Your price limit</source>
-		<translation></translation>
+		<translation>您的限价</translation>
 	</message>
 	<message>
 		<source>Suggested minimum price limit</source>
@@ -14498,7 +14737,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>You can also use this key to import your community on another device</source>
-		<translation></translation>
+		<translation>你也可以用这个密钥在另一个设备上导入你的社区</translation>
 	</message>
 </context>
 <context>
@@ -14543,7 +14782,7 @@ device, so only you can use them.</source>
 	<name>UsernameLabel</name>
 	<message>
 		<source>You</source>
-		<translation>你</translation>
+		<translation>您</translation>
 	</message>
 </context>
 <context>
@@ -14590,7 +14829,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Jan</source>
-		<translation></translation>
+		<translation>一月</translation>
 	</message>
 	<message>
 		<source>Feb</source>
@@ -14670,7 +14909,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>NOW</source>
-		<translation></translation>
+		<translation>现在</translation>
 	</message>
 	<message>
 		<source>%1M</source>
@@ -14821,15 +15060,15 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Networks</source>
-		<translation></translation>
+		<translation>网络</translation>
 	</message>
 	<message>
 		<source>DApp Permissions</source>
-		<translation></translation>
+		<translation>DApp权限</translation>
 	</message>
 	<message>
 		<source>Testnet Mode</source>
-		<translation></translation>
+		<translation>测试网模式</translation>
 	</message>
 </context>
 <context>
@@ -14983,7 +15222,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>You need to enter a name</source>
-		<translation></translation>
+		<translation>输入名称</translation>
 	</message>
 	<message>
 		<source>History node address</source>
@@ -15216,7 +15455,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>New Tab</source>
-		<translation></translation>
+		<translation>新建选项卡</translation>
 	</message>
 	<message>
 		<source>Downloads Page</source>
@@ -15521,7 +15760,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Open in Status</source>
-		<translation></translation>
+		<translation>在Status中打开</translation>
 	</message>
 	<message>
 		<source>Open in my default browser</source>
@@ -15664,6 +15903,22 @@ Assets won’t be sent yet.</source>
 		<source>Standard colours</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>This is not a valid color</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Preview</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>White text should be legible on top of this color</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Standard colors</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>CommunityDelegate</name>
@@ -15775,7 +16030,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Invite new people</source>
-		<translation></translation>
+		<translation>邀请新朋友</translation>
 	</message>
 	<message>
 		<source>Try an airdrop to reward your community for engagement!</source>
@@ -15816,11 +16071,19 @@ Assets won’t be sent yet.</source>
 		<source>Selected tags</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>%1 / %2</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>CommunityTagsPicker</name>
 	<message>
 		<source>Tags</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Choose tags describing the community</source>
 		<translation></translation>
 	</message>
 </context>
@@ -15943,7 +16206,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Usernames ending with &apos;-eth&apos; are not allowed</source>
-		<translation></translation>
+		<translation>不允许使用以&apos;-eth&apos;结尾的用户名</translation>
 	</message>
 	<message>
 		<source>Usernames ending with &apos;_eth&apos; are not allowed</source>
@@ -16083,6 +16346,10 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Close</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>You&apos;re answer has been sent to %1.</source>
 		<translation></translation>
 	</message>
 </context>
@@ -16245,7 +16512,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Barbadian dollar</source>
-		<translation></translation>
+		<translation>巴巴多斯元</translation>
 	</message>
 	<message>
 		<source>Bangladeshi taka</source>
@@ -16361,7 +16628,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Japanese yen</source>
-		<translation></translation>
+		<translation>日元</translation>
 	</message>
 	<message>
 		<source>Kenyan shilling</source>
@@ -16369,7 +16636,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Kuwaiti dinar</source>
-		<translation></translation>
+		<translation>科威特 第纳尔</translation>
 	</message>
 	<message>
 		<source>Kazakhstani tenge</source>
@@ -16393,7 +16660,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Malawian kwacha</source>
-		<translation></translation>
+		<translation>马拉维 克瓦查</translation>
 	</message>
 	<message>
 		<source>Mexican peso</source>
@@ -16576,7 +16843,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>November</source>
-		<translation></translation>
+		<translation>十一月</translation>
 	</message>
 	<message>
 		<source>December</source>
@@ -16591,7 +16858,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>none</source>
-		<translation></translation>
+		<translation>无</translation>
 	</message>
 </context>
 <context>
@@ -16679,7 +16946,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>You&apos;re curently using version %1 of Status.</source>
-		<translation></translation>
+		<translation>您当前使用的是 Status %1 版本。</translation>
 	</message>
 	<message>
 		<source>There&apos;s new version available to download.</source>
@@ -16739,7 +17006,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>invite</source>
-		<translation></translation>
+		<translation>邀请</translation>
 	</message>
 	<message>
 		<source>friends to start messaging in Status</source>
@@ -16858,7 +17125,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Username removed</source>
-		<translation></translation>
+		<translation>用户名已删除</translation>
 	</message>
 	<message>
 		<source>The username %1 will be removed and your deposit will be returned once the transaction is mined</source>
@@ -16877,7 +17144,7 @@ Assets won’t be sent yet.</source>
 	<name>EnsTermsAndConditionsView</name>
 	<message>
 		<source>ENS usernames</source>
-		<translation></translation>
+		<translation>ENS用户名</translation>
 	</message>
 	<message>
 		<source>Terms of name registration</source>
@@ -16901,7 +17168,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Your address(es) will be publicly associated with your ENS name.</source>
-		<translation></translation>
+		<translation>您的地址将与您的ENS名称关联，并且公开可见。</translation>
 	</message>
 	<message>
 		<source>Usernames are created as subdomain nodes of stateofus.eth and are subject to the ENS smart contract terms.</source>
@@ -16980,7 +17247,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>An ENS name can replace your random 3-word name in chat. Be @yourname instead of %1.</source>
-		<translation></translation>
+		<translation>ENS名称可以替换聊天中随机生成的由3个单词组成的名称。显示为“@您的名称”而不是%1 。</translation>
 	</message>
 	<message>
 		<source>Simplify your ETH address</source>
@@ -17024,7 +17291,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Only available on Mainnet</source>
-		<translation></translation>
+		<translation>仅适用于主网</translation>
 	</message>
 </context>
 <context>
@@ -17061,7 +17328,7 @@ Assets won’t be sent yet.</source>
 	<name>FleetRadioSelector</name>
 	<message>
 		<source>Warning!</source>
-		<translation></translation>
+		<translation>警告！</translation>
 	</message>
 	<message>
 		<source>Change fleet to %1</source>
@@ -17079,7 +17346,7 @@ Assets won’t be sent yet.</source>
 	<name>GapComponent</name>
 	<message>
 		<source>fetch-messages</source>
-		<translation></translation>
+		<translation>↓获取消息</translation>
 	</message>
 	<message>
 		<source>between--1-and--2</source>
@@ -17098,7 +17365,7 @@ Assets won’t be sent yet.</source>
 	<name>GasSelectorButton</name>
 	<message>
 		<source>Low</source>
-		<translation></translation>
+		<translation>低</translation>
 	</message>
 </context>
 <context>
@@ -17352,6 +17619,12 @@ Assets won’t be sent yet.</source>
 		<source>Watch-Only</source>
 		<translation></translation>
 	</message>
+	<message numerus="yes">
+		<source>%n DApp(s) connected</source>
+		<translation>
+			<numerusform></numerusform>
+		</translation>
+	</message>
 </context>
 <context>
 	<name>MembershipRequestsPopup</name>
@@ -17405,7 +17678,7 @@ Assets won’t be sent yet.</source>
 	<name>MyProfileSettingsView</name>
 	<message>
 		<source>Display name</source>
-		<translation></translation>
+		<translation>显示名称</translation>
 	</message>
 	<message>
 		<source>Display Name</source>
@@ -17448,7 +17721,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>BALANCE: </source>
-		<translation></translation>
+		<translation>余额：</translation>
 	</message>
 	<message>
 		<source>Disabled</source>
@@ -17734,7 +18007,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>chat-name</source>
-		<translation></translation>
+		<translation>聊天名称</translation>
 	</message>
 	<message>
 		<source>Start chat</source>
@@ -17745,7 +18018,7 @@ Assets won’t be sent yet.</source>
 	<name>RecipientSelector</name>
 	<message>
 		<source>Invalid ethereum address</source>
-		<translation></translation>
+		<translation>无效的以太坊地址</translation>
 	</message>
 	<message>
 		<source>Address</source>
@@ -17772,7 +18045,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Enter an account name...</source>
-		<translation></translation>
+		<translation>输入帐户名称...</translation>
 	</message>
 	<message>
 		<source>You need to enter an account name</source>
@@ -17784,7 +18057,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>color</source>
-		<translation></translation>
+		<translation>颜色</translation>
 	</message>
 	<message>
 		<source>Change Name</source>
@@ -17804,6 +18077,34 @@ Assets won’t be sent yet.</source>
 	<message>
 		<source>Save</source>
 		<translation></translation>
+	</message>
+	<message>
+		<source>Edit group name and image</source>
+		<translation>编辑群组名称和图片</translation>
+	</message>
+	<message>
+		<source>Name the group</source>
+		<translation>群组名称</translation>
+	</message>
+	<message>
+		<source>Group image</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Choose an image as logo</source>
+		<translation>选择 Logo 图片</translation>
+	</message>
+	<message>
+		<source>Use as an icon for this group chat</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Standard colours</source>
+		<translation>标准颜色</translation>
+	</message>
+	<message>
+		<source>Save changes</source>
+		<translation>保存修改</translation>
 	</message>
 </context>
 <context>
@@ -17843,7 +18144,7 @@ Assets won’t be sent yet.</source>
 	<name>SearchEngineModal</name>
 	<message>
 		<source>Search engine</source>
-		<translation></translation>
+		<translation>搜索引擎</translation>
 	</message>
 	<message>
 		<source>None</source>
@@ -17854,7 +18155,7 @@ Assets won’t be sent yet.</source>
 	<name>SearchResults</name>
 	<message>
 		<source>Non contacts</source>
-		<translation></translation>
+		<translation>非联系人</translation>
 	</message>
 	<message>
 		<source>No profile found</source>
@@ -17865,7 +18166,7 @@ Assets won’t be sent yet.</source>
 	<name>SeedPhraseBackupWarning</name>
 	<message>
 		<source>Back up your seed phrase</source>
-		<translation></translation>
+		<translation>备份助记词</translation>
 	</message>
 	<message>
 		<source>Back up</source>
@@ -18081,7 +18382,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Unknown state</source>
-		<translation></translation>
+		<translation>未知状态</translation>
 	</message>
 </context>
 <context>
@@ -18113,7 +18414,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Start chat</source>
-		<translation></translation>
+		<translation>开始聊天</translation>
 	</message>
 </context>
 <context>
@@ -18227,7 +18528,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Selected tags</source>
-		<translation></translation>
+		<translation>选定的标签</translation>
 	</message>
 </context>
 <context>
@@ -18313,7 +18614,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Sign with password</source>
-		<translation></translation>
+		<translation>使用密码签名</translation>
 	</message>
 	<message>
 		<source>Next</source>
@@ -18381,7 +18682,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Recent GIFs will appear here</source>
-		<translation></translation>
+		<translation>最近的GIF会出现在这里</translation>
 	</message>
 	<message>
 		<source>Error while contacting Tenor API, please retry.</source>
@@ -18479,7 +18780,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Send %1 %2</source>
-		<translation></translation>
+		<translation>发送 %1 %2</translation>
 	</message>
 	<message>
 		<source>Next</source>
@@ -18512,7 +18813,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Search</source>
-		<translation></translation>
+		<translation>搜索</translation>
 	</message>
 	<message>
 		<source>In: </source>
@@ -18553,7 +18854,7 @@ Assets won’t be sent yet.</source>
 	<name>StatusStickerButton</name>
 	<message>
 		<source>Buy for %1 SNT</source>
-		<translation></translation>
+		<translation>购买 %1 SNT</translation>
 	</message>
 	<message>
 		<source>Uninstall</source>
@@ -18617,7 +18918,7 @@ Assets won’t be sent yet.</source>
 	<name>StatusValidator</name>
 	<message>
 		<source>invalid input</source>
-		<translation></translation>
+		<translation>输入无效</translation>
 	</message>
 </context>
 <context>
@@ -18719,6 +19020,15 @@ to login to Status?</source>
 	</message>
 	<message>
 		<source>I prefer to use my password</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Would you like to use TouchID instead of a PIN code
+to login to Status using your Keycard?</source>
+		<translation>是否使用 TouchID 代替密码解锁 Keycard 登录 Status</translation>
+	</message>
+	<message>
+		<source>I prefer to use my PIN</source>
 		<translation></translation>
 	</message>
 </context>
@@ -18846,7 +19156,7 @@ to login to Status?</source>
 	</message>
 	<message>
 		<source>Password needs to be 6 characters or more</source>
-		<translation></translation>
+		<translation>密码需要是6个以上字符</translation>
 	</message>
 	<message>
 		<source>Signing phrase</source>
@@ -18873,7 +19183,7 @@ to login to Status?</source>
 	<name>UnblockContactConfirmationDialog</name>
 	<message>
 		<source>Unblock User</source>
-		<translation></translation>
+		<translation>取消对用户的屏蔽</translation>
 	</message>
 	<message>
 		<source>Unblocking will allow new messages you received from %1 to reach you.</source>
@@ -18949,72 +19259,420 @@ to login to Status?</source>
 	</message>
 	<message>
 		<source>Select node automatically</source>
-		<translation></translation>
+		<translation>自动选择节点</translation>
 	</message>
 	<message>
 		<source>Waku Nodes</source>
-		<translation></translation>
+		<translation>Waku 节点</translation>
 	</message>
 	<message>
 		<source>Node %1</source>
-		<translation></translation>
+		<translation>节点 %1</translation>
 	</message>
 	<message>
 		<source>Add a new node</source>
-		<translation></translation>
+		<translation>添加新节点</translation>
 	</message>
 </context>
 <context>
 	<name>WalletFooter</name>
 	<message>
 		<source>Send</source>
-		<translation></translation>
+		<translation>发送</translation>
 	</message>
 	<message>
 		<source>Receive</source>
-		<translation></translation>
+		<translation>接收</translation>
 	</message>
 	<message>
 		<source>Buy / Sell</source>
-		<translation></translation>
+		<translation>买/卖</translation>
 	</message>
 </context>
 <context>
 	<name>WelcomeView</name>
 	<message>
 		<source>Welcome to Status</source>
-		<translation></translation>
+		<translation>欢迎使用Status！</translation>
 	</message>
 	<message>
 		<source>Your fully decentralized gateway to Ethereum and Web3. Crypto wallet, privacy first group chat, and dApp browser.</source>
-		<translation></translation>
+		<translation>通往以太坊和 Web3 的完全去中心化网关。加密钱包、隐私优先的群聊和 dApp 浏览器。</translation>
 	</message>
 	<message>
 		<source>I am new to Status</source>
-		<translation></translation>
+		<translation>我是Status新手</translation>
 	</message>
 	<message>
 		<source>I already use Status</source>
-		<translation></translation>
+		<translation>为什么要使用Status？</translation>
 	</message>
 </context>
 <context>
 	<name>main</name>
 	<message>
 		<source>StatusQ Documentation App</source>
-		<translation></translation>
+		<translation>StatusQ 知识库</translation>
 	</message>
 	<message>
 		<source>Status Desktop</source>
-		<translation></translation>
+		<translation>Status桌面</translation>
 	</message>
 	<message>
 		<source>Open Status</source>
-		<translation></translation>
+		<translation>打开Status</translation>
 	</message>
 	<message>
 		<source>Quit</source>
+		<translation>退出</translation>
+	</message>
+</context>
+<context>
+	<name>AssetDelegate</name>
+	<message>
+		<source>%1 %2</source>
 		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>CommunityMembersTabPanel</name>
+	<message>
+		<source>Kick</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Ban</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Unban</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>KeycardConfirmation</name>
+	<message>
+		<source>A factory reset will delete the key on this Keycard.
+Are you sure you want to do this?</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>I understand the key pair on this Keycard will be deleted</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>KeycardInit</name>
+	<message>
+		<source>Plug in Keycard reader...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Insert Keycard...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Reading Keycard...</source>
+		<translation>读取 Keycard 中...</translation>
+	</message>
+	<message>
+		<source>This is not a Keycard</source>
+		<translation>这不是一张 Keycard</translation>
+	</message>
+	<message>
+		<source>The card inserted is not a recognised Keycard,
+please remove and try and again</source>
+		<translation>无法识别插入的 Keycard, 请移除并重试</translation>
+	</message>
+	<message>
+		<source>Keycard is empty</source>
+		<translation>Keycard 是空的</translation>
+	</message>
+	<message>
+		<source>There is no key pair on this Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Keycard recognized</source>
+		<translation>Keycard 识别成功</translation>
+	</message>
+	<message>
+		<source>Keycard successfully factory reset</source>
+		<translation>Keycard 重置成功</translation>
+	</message>
+	<message>
+		<source>You can now use this Keycard as if it
+was a brand new empty Keycard</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>KeycardInitView</name>
+	<message>
+		<source>Plug in Keycard reader...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Insert your Keycard...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Reading Keycard...</source>
+		<translation>读取 Keycard 中...</translation>
+	</message>
+</context>
+<context>
+	<name>KeycardPinView</name>
+	<message>
+		<source>It is very important that you do not loose this PIN</source>
+		<translation>密码一定保存好不要遗失</translation>
+	</message>
+	<message>
+		<source>PINs don&apos;t match</source>
+		<translation>两次密码不一致</translation>
+	</message>
+	<message>
+		<source>Create new Keycard PIN</source>
+		<translation>创建新的 Keycard 密码</translation>
+	</message>
+	<message>
+		<source>Repeat Keycard PIN</source>
+		<translation>输入 Keycard 密码</translation>
+	</message>
+	<message>
+		<source>Keycard PIN set</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Enter Keycard PIN</source>
+		<translation>输入 Keycard 密码</translation>
+	</message>
+	<message>
+		<source>PIN incorrect</source>
+		<translation>密码错误</translation>
+	</message>
+	<message numerus="yes">
+		<source>%n attempt(s) remaining</source>
+		<translation>
+			<numerusform></numerusform>
+		</translation>
+	</message>
+</context>
+<context>
+	<name>KeycardPopup</name>
+	<message>
+		<source>Factory reset a Keycard</source>
+		<translation>将 Keycard 恢复出厂设置</translation>
+	</message>
+	<message>
+		<source>Cancel</source>
+		<translation>取消</translation>
+	</message>
+	<message>
+		<source>Factory reset this Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Done</source>
+		<translation>完成</translation>
+	</message>
+</context>
+<context>
+	<name>KeycardPukView</name>
+	<message>
+		<source>Enter PUK code to recover Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Recover Keycard</source>
+		<translation></translation>
+	</message>
+	<message numerus="yes">
+		<source>Invalid PUK code, %n attempt(s) remaining</source>
+		<translation>
+			<numerusform></numerusform>
+		</translation>
+	</message>
+</context>
+<context>
+	<name>KeycardStateView</name>
+	<message>
+		<source>This Keycard already stores keys</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>To generate new keys, you will need to perform a factory reset first</source>
+		<translation>需要先恢复出厂设置才能生成新的 key</translation>
+	</message>
+	<message>
+		<source>Factory reset</source>
+		<translation>恢复出厂设置</translation>
+	</message>
+	<message>
+		<source>Insert another Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>The keycard is empty</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Generate new keys for this Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Keycard locked and already stores keys</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>The Keycard you have inserted is locked, you will need to factory reset it before proceeding</source>
+		<translation>插入的 Keycard 已被锁定, 需要恢复出厂设置后继续</translation>
+	</message>
+	<message>
+		<source>Keycard locked</source>
+		<translation>Keycard 已锁</translation>
+	</message>
+	<message>
+		<source>Max pairing slots reached for this keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Max PUK retries reached for this keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Recover your Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Recover with seed phrase</source>
+		<translation>使用助记词恢复</translation>
+	</message>
+	<message>
+		<source>Recover with PUK</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>OnboardingLayout</name>
+	<message>
+		<source>Keys for this account already exist</source>
+		<translation>该账户密钥已存在</translation>
+	</message>
+	<message>
+		<source>Keys for this account already exist and can&apos;t be added again. If you&apos;ve lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Login failed</source>
+		<translation>登录失败</translation>
+	</message>
+	<message>
+		<source>Login failed. Please re-enter your password and try again.</source>
+		<translation>登录失败, 请重新输入密码重试.</translation>
+	</message>
+	<message>
+		<source>Keys for this account already exist and can&apos;t be added again. If you&apos;ve lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase. In case of Keycard try recovering using PUK or reinstall the app and try login with the Keycard option.</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Error importing seed</source>
+		<translation>导入助记词时出错</translation>
+	</message>
+</context>
+<context>
+	<name>SeedPhraseView</name>
+	<message>
+		<source>Write down your seed phrase</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>You will need this to recover your Keycard if you loose
+your PIN of if the wrong PIN is entered five times in a row.</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Next</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>SeedPhraseWordsInputView</name>
+	<message>
+		<source>Enter seed phrase words</source>
+		<translation>输入助记词</translation>
+	</message>
+	<message>
+		<source>Invalid word</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Next</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>StatusAddressPage</name>
+	<message>
+		<source>Copy Action: </source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>StatusColorSelector</name>
+	<message>
+		<source>Color</source>
+		<translation>颜色</translation>
+	</message>
+</context>
+<context>
+	<name>StatusDatePicker</name>
+	<message>
+		<source>Previous year</source>
+		<translation>上一年</translation>
+	</message>
+	<message>
+		<source>Previous month</source>
+		<translation>上一月</translation>
+	</message>
+	<message>
+		<source>Show current month</source>
+		<translation>显示当前月</translation>
+	</message>
+	<message>
+		<source>Next month</source>
+		<translation>下一月</translation>
+	</message>
+	<message>
+		<source>Next year</source>
+		<translation>下一年</translation>
+	</message>
+</context>
+<context>
+	<name>StatusImageCropPanelPage</name>
+	<message>
+		<source>Cycle image</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Cycle spacing</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Cycle frame margins</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Load external image</source>
+		<translation>加载外部图片</translation>
+	</message>
+	<message>
+		<source>Test Title</source>
+		<translation>测试标题</translation>
+	</message>
+	<message>
+		<source>Supported image formats (%1)</source>
+		<translation>支持的图片格式</translation>
 	</message>
 </context>
 </TS>
