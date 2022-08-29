@@ -685,6 +685,10 @@ QtObject {
         );
     }
 
+    function isInvalidPrivateKey(msg) {
+        return msg.includes("invalid private key");
+    }
+
     function isInvalidPath(msg) {
         return msg.includes("error parsing derivation path")
     }

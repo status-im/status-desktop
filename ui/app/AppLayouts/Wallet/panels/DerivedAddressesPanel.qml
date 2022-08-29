@@ -186,7 +186,7 @@ Item {
                                         selectedDerivedAddress.pathSubFix = actualIndex
                                         selectedDerivedAddress.hasActivity = element.hasActivity
                                         derivedAddressPopup.close()
-                                    }                                    
+                                    }
                                     Component.onCompleted: {
                                         if(RootStore.derivedAddressesList.count === 1 && index === 0) {
                                             selectedDerivedAddress.title = title

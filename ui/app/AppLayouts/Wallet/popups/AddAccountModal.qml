@@ -32,13 +32,6 @@ StatusModal {
 
     signal afterAddAccount()
 
-    MessageDialog {
-        id: accountError
-        title: qsTr("Adding the account failed")
-        icon: StandardIcon.Critical
-        standardButtons: StandardButton.Ok
-    }
-
     Timer {
         id: waitTimer
 
@@ -98,8 +91,7 @@ StatusModal {
                     d.passwordValidationError = qsTr("Wrong password")
                     scroll.contentY = -scroll.padding
                 } else {
-                    accountError.text = errMessage
-                    accountError.open()
+                    console.warn(`Unhandled error case. Status-go message: ${errMessage}`)
                 }
             }
         }
