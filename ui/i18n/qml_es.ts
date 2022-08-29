@@ -10878,6 +10878,30 @@ Assets won’t be sent yet.</source>
 		<source>public</source>
 		<translation>Público</translation>
 	</message>
+	<message>
+		<source>open-dapp2</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>ens-banner-message</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>app-connections</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>successful-connection</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>all-connections</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>token-price</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>AboutView</name>
@@ -11006,6 +11030,10 @@ Assets won’t be sent yet.</source>
 		<source>Remove Account</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Related Accounts</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>ActivityCenterMessageComponentView</name>
@@ -11070,6 +11098,10 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Add account</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Enter your password...</source>
 		<translation></translation>
 	</message>
 </context>
@@ -11470,6 +11502,18 @@ edit your notification preferences later in settings.</source>
 		<source>System</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Text size</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Zoom (requires restart)</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Mode</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>BackupSeedModal</name>
@@ -11666,6 +11710,10 @@ Do you wish to override the security check and continue?</source>
 		<source>Are you sure you want to delete this chat?</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Edit name and image</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>ChatView</name>
@@ -11686,6 +11734,10 @@ Do you wish to override the security check and continue?</source>
 	<name>CollectibleDetailsHeader</name>
 	<message>
 		<source>Send</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Assets</source>
 		<translation></translation>
 	</message>
 </context>
@@ -11794,11 +11846,19 @@ Do you wish to override the security check and continue?</source>
 		<source>Popular</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Import using key</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>CommunityColorPicker</name>
 	<message>
 		<source>Community colour</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Community color</source>
 		<translation></translation>
 	</message>
 </context>
@@ -11877,6 +11937,10 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>community description</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Give it a short description</source>
 		<translation></translation>
 	</message>
 </context>
@@ -11999,6 +12063,50 @@ Do you wish to override the security check and continue?</source>
 		<source>You</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>All Members</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Banned</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>No members to search</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Search %1&apos;s %2 member%3</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>No banned members to search</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Search %1&apos;s %2 banned member%3</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Are you sure you ban &lt;b&gt;%1&lt;/b&gt; from %2?</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Ban %1</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Cancel</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Are you sure you kick &lt;b&gt;%1&lt;/b&gt; from %2?</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Kick %1</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>CommunityNameInput</name>
@@ -12012,6 +12120,10 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Community name</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Name your community</source>
 		<translation></translation>
 	</message>
 </context>
@@ -12460,6 +12572,22 @@ Do you wish to override the security check and continue?</source>
 		<source>Error creating the community</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source># Name the channel</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Delete channel</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Save changes</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Create channel</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>CreateChatView</name>
@@ -12673,6 +12801,10 @@ chat with them once they have accepted your contact request.</source>
 	</message>
 	<message>
 		<source>Back</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Release your username</source>
 		<translation></translation>
 	</message>
 </context>
@@ -13093,6 +13225,18 @@ device, so only you can use them.</source>
 		<source>Seed phrases are used to back up and restore your keys. Only use this option if you already have a seed phrase.</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Login with Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Generate keys for a new Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Import a seed phrase into a new Keycard</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>LanguageView</name>
@@ -13146,6 +13290,14 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Close the app now</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Alpha languages</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Beta languages</source>
 		<translation></translation>
 	</message>
 </context>
@@ -13249,6 +13401,62 @@ device, so only you can use them.</source>
 		<source>Password incorrect</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Enter Keycard PIN</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Plug in Keycard reader...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Insert your Keycard...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Reading Keycard...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Wrong Keycard!
+The card inserted is not linked to your profile.</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Insert another Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>PIN incorrect</source>
+		<translation></translation>
+	</message>
+	<message numerus="yes">
+		<source>%n attempt(s) remaining</source>
+		<translation>
+			<numerusform></numerusform>
+			<numerusform></numerusform>
+		</translation>
+	</message>
+	<message>
+		<source>Keycard locked</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Recover your Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Recover with seed phrase</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>The card inserted is empty</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Generate keys for a new Keycard</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>MenuPanel</name>
@@ -13325,6 +13533,26 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Verify Identity</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>ID Request Pending....</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Respond to ID Request...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Mark as Untrustworthy</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Remove Untrustworthy Mark</source>
 		<translation></translation>
 	</message>
 </context>
@@ -14083,6 +14311,10 @@ device, so only you can use them.</source>
 		<source>Restore Status Profile</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Recover Keycard</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>SendContactRequestModal</name>
@@ -14155,6 +14387,14 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>View on etherscan</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Paste</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Fees</source>
 		<translation></translation>
 	</message>
 </context>
@@ -14416,7 +14656,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Hold</source>
-		<translation></translation>
+		<translation>Mantener</translation>
 	</message>
 	<message>
 		<source>to post</source>
@@ -14453,47 +14693,47 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Your priority fee is below our suggested parameters.</source>
-		<translation></translation>
+		<translation>Su tarifa prioritaria está por debajo de nuestros parámetros sugeridos.</translation>
 	</message>
 	<message>
 		<source>Current base fee</source>
-		<translation></translation>
+		<translation>Tarifa base actual</translation>
 	</message>
 	<message>
 		<source>%1 Gwei</source>
-		<translation></translation>
+		<translation>%1 Gwei</translation>
 	</message>
 	<message>
 		<source>Current minimum tip</source>
-		<translation></translation>
+		<translation>Propina mínima actual</translation>
 	</message>
 	<message>
 		<source>Current average tip</source>
-		<translation></translation>
+		<translation>Propina promedio actual</translation>
 	</message>
 	<message>
 		<source>Your tip limit</source>
-		<translation></translation>
+		<translation>Su límite de propina</translation>
 	</message>
 	<message>
 		<source>Suggested minimum tip</source>
-		<translation></translation>
+		<translation>Propina mínima sugerida</translation>
 	</message>
 	<message>
 		<source>Your price limit</source>
-		<translation></translation>
+		<translation>Su límite de precio</translation>
 	</message>
 	<message>
 		<source>Suggested minimum price limit</source>
-		<translation></translation>
+		<translation>Límite de precio mínimo sugerido</translation>
 	</message>
 	<message>
 		<source>Change Limit</source>
-		<translation></translation>
+		<translation>Límite de cambio</translation>
 	</message>
 	<message>
 		<source>Continue anyway</source>
-		<translation></translation>
+		<translation>Continuar de todas formas</translation>
 	</message>
 </context>
 <context>
@@ -14608,123 +14848,123 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Sat</source>
-		<translation></translation>
+		<translation>Sáb</translation>
 	</message>
 	<message>
 		<source>Jan</source>
-		<translation></translation>
+		<translation>Ene</translation>
 	</message>
 	<message>
 		<source>Feb</source>
-		<translation></translation>
+		<translation>Feb</translation>
 	</message>
 	<message>
 		<source>Mar</source>
-		<translation></translation>
+		<translation>Mar</translation>
 	</message>
 	<message>
 		<source>Apr</source>
-		<translation></translation>
+		<translation>Abr</translation>
 	</message>
 	<message>
 		<source>May</source>
-		<translation></translation>
+		<translation>May</translation>
 	</message>
 	<message>
 		<source>Jun</source>
-		<translation></translation>
+		<translation>Jun</translation>
 	</message>
 	<message>
 		<source>Jul</source>
-		<translation></translation>
+		<translation>Jul</translation>
 	</message>
 	<message>
 		<source>Aug</source>
-		<translation></translation>
+		<translation>Ago</translation>
 	</message>
 	<message>
 		<source>Sep</source>
-		<translation></translation>
+		<translation>Set</translation>
 	</message>
 	<message>
 		<source>Oct</source>
-		<translation></translation>
+		<translation>Oct</translation>
 	</message>
 	<message>
 		<source>Nov</source>
-		<translation></translation>
+		<translation>Nov</translation>
 	</message>
 	<message>
 		<source>Dec</source>
-		<translation></translation>
+		<translation>Dic</translation>
 	</message>
 	<message>
 		<source>Yesterday</source>
-		<translation></translation>
+		<translation>Ayer</translation>
 	</message>
 	<message>
 		<source>Sunday</source>
-		<translation></translation>
+		<translation>Domingo</translation>
 	</message>
 	<message>
 		<source>Monday</source>
-		<translation></translation>
+		<translation>Lunes</translation>
 	</message>
 	<message>
 		<source>Tuesday</source>
-		<translation></translation>
+		<translation>Martes</translation>
 	</message>
 	<message>
 		<source>Wednesday</source>
-		<translation></translation>
+		<translation>Miércoles</translation>
 	</message>
 	<message>
 		<source>Thursday</source>
-		<translation></translation>
+		<translation>Jueves</translation>
 	</message>
 	<message>
 		<source>Friday</source>
-		<translation></translation>
+		<translation>Viernes</translation>
 	</message>
 	<message>
 		<source>Saturday</source>
-		<translation></translation>
+		<translation>Sábado</translation>
 	</message>
 	<message>
 		<source>NOW</source>
-		<translation></translation>
+		<translation>AHORA</translation>
 	</message>
 	<message>
 		<source>%1M</source>
-		<translation></translation>
+		<translation>%1M</translation>
 	</message>
 	<message>
 		<source>%1H</source>
-		<translation></translation>
+		<translation>%1H</translation>
 	</message>
 	<message>
 		<source>%1D</source>
-		<translation></translation>
+		<translation>%1D</translation>
 	</message>
 	<message>
 		<source>words</source>
-		<translation></translation>
+		<translation>palabras</translation>
 	</message>
 	<message>
 		<source>You need to enter a password</source>
-		<translation></translation>
+		<translation>Debe ingresar una contraseña</translation>
 	</message>
 	<message>
 		<source>You need to repeat your password</source>
-		<translation></translation>
+		<translation>Necesitas repetir tu contraseña</translation>
 	</message>
 	<message>
 		<source>Passwords don&apos;t match</source>
-		<translation></translation>
+		<translation>Las contraseñas no coinciden</translation>
 	</message>
 	<message>
 		<source>You need to enter a PIN</source>
-		<translation></translation>
+		<translation>Debe ingresar un PIN</translation>
 	</message>
 	<message>
 		<source>The PIN must contain only digits</source>
@@ -14800,39 +15040,39 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>week ago</source>
-		<translation></translation>
+		<translation>hace una semana</translation>
 	</message>
 	<message>
 		<source>days ago</source>
-		<translation></translation>
+		<translation>días atrás</translation>
 	</message>
 	<message>
 		<source>day ago</source>
-		<translation></translation>
+		<translation>hace un dia</translation>
 	</message>
 	<message>
 		<source>hours ago</source>
-		<translation></translation>
+		<translation>hace horas</translation>
 	</message>
 	<message>
 		<source>hour ago</source>
-		<translation></translation>
+		<translation>hace una hora</translation>
 	</message>
 	<message>
 		<source>mins ago</source>
-		<translation></translation>
+		<translation>hace minutos</translation>
 	</message>
 	<message>
 		<source>min ago</source>
-		<translation></translation>
+		<translation>hace un minuto</translation>
 	</message>
 	<message>
 		<source>secs ago</source>
-		<translation></translation>
+		<translation>hace segundos</translation>
 	</message>
 	<message>
 		<source>sec ago</source>
-		<translation></translation>
+		<translation>hace un segundo</translation>
 	</message>
 </context>
 <context>
@@ -14843,15 +15083,15 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Networks</source>
-		<translation></translation>
+		<translation>Redes</translation>
 	</message>
 	<message>
 		<source>DApp Permissions</source>
-		<translation></translation>
+		<translation>Permisos de DApp</translation>
 	</message>
 	<message>
 		<source>Testnet Mode</source>
-		<translation></translation>
+		<translation>Modo Testnet</translation>
 	</message>
 </context>
 <context>
@@ -15686,6 +15926,22 @@ Assets won’t be sent yet.</source>
 		<source>Standard colours</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>This is not a valid color</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Preview</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>White text should be legible on top of this color</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Standard colors</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>CommunityDelegate</name>
@@ -15838,11 +16094,19 @@ Assets won’t be sent yet.</source>
 		<source>Selected tags</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>%1 / %2</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>CommunityTagsPicker</name>
 	<message>
 		<source>Tags</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Choose tags describing the community</source>
 		<translation></translation>
 	</message>
 </context>
@@ -16105,6 +16369,10 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Close</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>You&apos;re answer has been sent to %1.</source>
 		<translation></translation>
 	</message>
 </context>
@@ -17374,6 +17642,13 @@ Assets won’t be sent yet.</source>
 		<source>Watch-Only</source>
 		<translation></translation>
 	</message>
+	<message numerus="yes">
+		<source>%n DApp(s) connected</source>
+		<translation>
+			<numerusform></numerusform>
+			<numerusform></numerusform>
+		</translation>
+	</message>
 </context>
 <context>
 	<name>MembershipRequestsPopup</name>
@@ -17826,6 +18101,34 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Save</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Edit group name and image</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Name the group</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Group image</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Choose an image as logo</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Use as an icon for this group chat</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Standard colours</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Save changes</source>
 		<translation></translation>
 	</message>
 </context>
@@ -18554,79 +18857,79 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Disable Spellchecking</source>
-		<translation></translation>
+		<translation>Deshabilitar el corrector ortográfico</translation>
 	</message>
 </context>
 <context>
 	<name>StatusStackModal</name>
 	<message>
 		<source>StackModal</source>
-		<translation></translation>
+		<translation>StackModal</translation>
 	</message>
 	<message>
 		<source>Next</source>
-		<translation></translation>
+		<translation>Siguiente</translation>
 	</message>
 	<message>
 		<source>Finish</source>
-		<translation></translation>
+		<translation>Terminar</translation>
 	</message>
 </context>
 <context>
 	<name>StatusStickerButton</name>
 	<message>
 		<source>Buy for %1 SNT</source>
-		<translation></translation>
+		<translation>Comprar por %1 SNT</translation>
 	</message>
 	<message>
 		<source>Uninstall</source>
-		<translation></translation>
+		<translation>Desinstalar</translation>
 	</message>
 	<message>
 		<source>Install</source>
-		<translation></translation>
+		<translation>Instalar</translation>
 	</message>
 	<message>
 		<source>Free</source>
-		<translation></translation>
+		<translation>Libre</translation>
 	</message>
 	<message>
 		<source>Pending...</source>
-		<translation></translation>
+		<translation>Pendiente...</translation>
 	</message>
 	<message>
 		<source>Cancel</source>
-		<translation></translation>
+		<translation>Cancelar</translation>
 	</message>
 	<message>
 		<source>Update</source>
-		<translation></translation>
+		<translation>Actualizar</translation>
 	</message>
 </context>
 <context>
 	<name>StatusStickersPopup</name>
 	<message>
 		<source>You don&apos;t have any stickers yet</source>
-		<translation></translation>
+		<translation>Todavía no tienes ninguna pegatina</translation>
 	</message>
 	<message>
 		<source>Recently used stickers will appear here</source>
-		<translation></translation>
+		<translation>Las pegatinas usadas recientemente aparecerán aquí.</translation>
 	</message>
 	<message>
 		<source>Get Stickers</source>
-		<translation></translation>
+		<translation>Obtener pegatinas</translation>
 	</message>
 </context>
 <context>
 	<name>StatusTagSelectorPage</name>
 	<message>
 		<source>To: </source>
-		<translation></translation>
+		<translation>Para: </translation>
 	</message>
 	<message>
 		<source>USER LIMIT REACHED</source>
-		<translation></translation>
+		<translation>LÍMITE DE USUARIOS ALCANZADO</translation>
 	</message>
 </context>
 <context>
@@ -18744,6 +19047,15 @@ to login to Status?</source>
 		<source>I prefer to use my password</source>
 		<translation></translation>
 	</message>
+	<message>
+		<source>Would you like to use TouchID instead of a PIN code
+to login to Status using your Keycard?</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>I prefer to use my PIN</source>
+		<translation></translation>
+	</message>
 </context>
 <context>
 	<name>TransactionBubbleView</name>
@@ -18783,82 +19095,82 @@ to login to Status?</source>
 	<name>TransactionModal</name>
 	<message>
 		<source>Transaction Details</source>
-		<translation></translation>
+		<translation>Detalles de la transacción</translation>
 	</message>
 	<message>
 		<source> confirmation(s)</source>
-		<translation></translation>
+		<translation> confirmación(es)</translation>
 	</message>
 	<message>
 		<source>When the transaction has 12 confirmations you can consider it settled.</source>
-		<translation></translation>
+		<translation>Cuando la transacción tiene 12 confirmaciones, se puede considerar liquidada.</translation>
 	</message>
 	<message>
 		<source>Block</source>
-		<translation></translation>
+		<translation>Bloque</translation>
 	</message>
 	<message>
 		<source>Hash</source>
-		<translation></translation>
+		<translation>Hash</translation>
 	</message>
 	<message>
 		<source>From</source>
-		<translation></translation>
+		<translation>De</translation>
 	</message>
 	<message>
 		<source>To</source>
-		<translation></translation>
+		<translation>Para</translation>
 	</message>
 	<message>
 		<source>Gas limit</source>
-		<translation></translation>
+		<translation>Límite de gas</translation>
 	</message>
 	<message>
 		<source>Gas price</source>
-		<translation></translation>
+		<translation>Precio del gas</translation>
 	</message>
 	<message>
 		<source>Gas used</source>
-		<translation></translation>
+		<translation>Gas utilizado</translation>
 	</message>
 	<message>
 		<source>Nonce</source>
-		<translation></translation>
+		<translation>Nonce</translation>
 	</message>
 </context>
 <context>
 	<name>TransactionPreview</name>
 	<message>
 		<source>From</source>
-		<translation></translation>
+		<translation>De</translation>
 	</message>
 	<message>
 		<source>Recipient</source>
-		<translation></translation>
+		<translation>Destinatario</translation>
 	</message>
 	<message>
 		<source>Unknown</source>
-		<translation></translation>
+		<translation>Desconocido</translation>
 	</message>
 	<message>
 		<source>Asset</source>
-		<translation></translation>
+		<translation>Activo</translation>
 	</message>
 	<message>
 		<source>Amount</source>
-		<translation></translation>
+		<translation>Monto</translation>
 	</message>
 	<message>
 		<source>Network fee</source>
-		<translation></translation>
+		<translation>Tarifa de red</translation>
 	</message>
 	<message>
 		<source>Data</source>
-		<translation></translation>
+		<translation>Datos</translation>
 	</message>
 	<message>
 		<source>Data field</source>
-		<translation></translation>
+		<translation>Campo de datos</translation>
 	</message>
 </context>
 <context>
@@ -18957,86 +19269,436 @@ to login to Status?</source>
 	<name>ViewProfileMenuItem</name>
 	<message>
 		<source>View Profile</source>
-		<translation></translation>
+		<translation>Ver perfil</translation>
 	</message>
 </context>
 <context>
 	<name>WakuNodesModal</name>
 	<message>
 		<source>Waku nodes</source>
-		<translation></translation>
+		<translation>Nodos Waku</translation>
 	</message>
 	<message>
 		<source>Use Waku nodes</source>
-		<translation></translation>
+		<translation>Usar nodos Waku</translation>
 	</message>
 	<message>
 		<source>Select node automatically</source>
-		<translation></translation>
+		<translation>Seleccionar nodo automáticamente</translation>
 	</message>
 	<message>
 		<source>Waku Nodes</source>
-		<translation></translation>
+		<translation>Nodos Waku</translation>
 	</message>
 	<message>
 		<source>Node %1</source>
-		<translation></translation>
+		<translation>Nodo %1</translation>
 	</message>
 	<message>
 		<source>Add a new node</source>
-		<translation></translation>
+		<translation>Agregar un nuevo nodo</translation>
 	</message>
 </context>
 <context>
 	<name>WalletFooter</name>
 	<message>
 		<source>Send</source>
-		<translation></translation>
+		<translation>Enviar</translation>
 	</message>
 	<message>
 		<source>Receive</source>
-		<translation></translation>
+		<translation>Recibir</translation>
 	</message>
 	<message>
 		<source>Buy / Sell</source>
-		<translation></translation>
+		<translation>Comprar / Vender</translation>
 	</message>
 </context>
 <context>
 	<name>WelcomeView</name>
 	<message>
 		<source>Welcome to Status</source>
-		<translation></translation>
+		<translation>Bienvenido a Status</translation>
 	</message>
 	<message>
 		<source>Your fully decentralized gateway to Ethereum and Web3. Crypto wallet, privacy first group chat, and dApp browser.</source>
-		<translation></translation>
+		<translation>Su puerta de enlace completamente descentralizada a Ethereum y Web3. Monedero criptográfico, primer chat grupal de privacidad y navegador de dApps.</translation>
 	</message>
 	<message>
 		<source>I am new to Status</source>
-		<translation></translation>
+		<translation>Soy nuevo utilizando Status</translation>
 	</message>
 	<message>
 		<source>I already use Status</source>
-		<translation></translation>
+		<translation>Ya utilizo Status</translation>
 	</message>
 </context>
 <context>
 	<name>main</name>
 	<message>
 		<source>StatusQ Documentation App</source>
-		<translation></translation>
+		<translation>Documentación de la aplicación StatusQ</translation>
 	</message>
 	<message>
 		<source>Status Desktop</source>
-		<translation></translation>
+		<translation>Escritorio de Status</translation>
 	</message>
 	<message>
 		<source>Open Status</source>
-		<translation></translation>
+		<translation>Abrir Status</translation>
 	</message>
 	<message>
 		<source>Quit</source>
+		<translation>Salir</translation>
+	</message>
+</context>
+<context>
+	<name>AssetDelegate</name>
+	<message>
+		<source>%1 %2</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>CommunityMembersTabPanel</name>
+	<message>
+		<source>Kick</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Ban</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Unban</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>KeycardConfirmation</name>
+	<message>
+		<source>A factory reset will delete the key on this Keycard.
+Are you sure you want to do this?</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>I understand the key pair on this Keycard will be deleted</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>KeycardInit</name>
+	<message>
+		<source>Plug in Keycard reader...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Insert Keycard...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Reading Keycard...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>This is not a Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>The card inserted is not a recognised Keycard,
+please remove and try and again</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Keycard is empty</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>There is no key pair on this Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Keycard recognized</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Keycard successfully factory reset</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>You can now use this Keycard as if it
+was a brand new empty Keycard</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>KeycardInitView</name>
+	<message>
+		<source>Plug in Keycard reader...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Insert your Keycard...</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Reading Keycard...</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>KeycardPinView</name>
+	<message>
+		<source>It is very important that you do not loose this PIN</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>PINs don&apos;t match</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Create new Keycard PIN</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Repeat Keycard PIN</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Keycard PIN set</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Enter Keycard PIN</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>PIN incorrect</source>
+		<translation></translation>
+	</message>
+	<message numerus="yes">
+		<source>%n attempt(s) remaining</source>
+		<translation>
+			<numerusform></numerusform>
+			<numerusform></numerusform>
+		</translation>
+	</message>
+</context>
+<context>
+	<name>KeycardPopup</name>
+	<message>
+		<source>Factory reset a Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Cancel</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Factory reset this Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Done</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>KeycardPukView</name>
+	<message>
+		<source>Enter PUK code to recover Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Recover Keycard</source>
+		<translation></translation>
+	</message>
+	<message numerus="yes">
+		<source>Invalid PUK code, %n attempt(s) remaining</source>
+		<translation>
+			<numerusform></numerusform>
+			<numerusform></numerusform>
+		</translation>
+	</message>
+</context>
+<context>
+	<name>KeycardStateView</name>
+	<message>
+		<source>This Keycard already stores keys</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>To generate new keys, you will need to perform a factory reset first</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Factory reset</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Insert another Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>The keycard is empty</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Generate new keys for this Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Keycard locked and already stores keys</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>The Keycard you have inserted is locked, you will need to factory reset it before proceeding</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Keycard locked</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Max pairing slots reached for this keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Max PUK retries reached for this keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Recover your Keycard</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Recover with seed phrase</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Recover with PUK</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>OnboardingLayout</name>
+	<message>
+		<source>Keys for this account already exist</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Keys for this account already exist and can&apos;t be added again. If you&apos;ve lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Login failed</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Login failed. Please re-enter your password and try again.</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Keys for this account already exist and can&apos;t be added again. If you&apos;ve lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase. In case of Keycard try recovering using PUK or reinstall the app and try login with the Keycard option.</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Error importing seed</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>SeedPhraseView</name>
+	<message>
+		<source>Write down your seed phrase</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>You will need this to recover your Keycard if you loose
+your PIN of if the wrong PIN is entered five times in a row.</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Next</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>SeedPhraseWordsInputView</name>
+	<message>
+		<source>Enter seed phrase words</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Invalid word</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Next</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>StatusAddressPage</name>
+	<message>
+		<source>Copy Action: </source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>StatusColorSelector</name>
+	<message>
+		<source>Color</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>StatusDatePicker</name>
+	<message>
+		<source>Previous year</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Previous month</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Show current month</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Next month</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Next year</source>
+		<translation></translation>
+	</message>
+</context>
+<context>
+	<name>StatusImageCropPanelPage</name>
+	<message>
+		<source>Cycle image</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Cycle spacing</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Cycle frame margins</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Load external image</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Test Title</source>
+		<translation></translation>
+	</message>
+	<message>
+		<source>Supported image formats (%1)</source>
 		<translation></translation>
 	</message>
 </context>

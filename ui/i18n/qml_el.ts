@@ -1,323 +1,321 @@
-<!DOCTYPE TS><TS version="2.1" language="pl">
+<!DOCTYPE TS><TS version="2.1" language="el">
 <context>
 	<name></name>
 	<message>
 		<source>about-app</source>
-		<translation>O aplikacji</translation>
+		<translation>Σχετικά με</translation>
 	</message>
 	<message>
 		<source>about-key-storage-content</source>
-		<translation>Status nigdy nie uzyska dostępu do Twojego klucza prywatnego. Pamiętaj, aby wykonać kopię zapasową frazy odzyskiwania (Seed). Jeśli zgubisz telefon, jest to jedyny sposób, aby uzyskać dostęp do kluczy.</translation>
+		<translation>Το Status δεν θα έχει ποτέ πρόσβαση στο ιδιωτικό σας κλειδί. Φροντίστε να δημιουργήσετε αντίγραφα ασφαλείας της φράσης seed σας. Εάν χάσετε το τηλέφωνό σας, είναι ο μόνος τρόπος πρόσβασης στα κλειδιά σας.</translation>
 	</message>
 	<message>
 		<source>about-key-storage-title</source>
-		<translation>Informacje o przechowywaniu kluczy</translation>
+		<translation>Σχετικά με την αποθήκευση κλειδιών</translation>
 	</message>
 	<message>
 		<source>about-names-content</source>
-		<translation>Nikt nie może udawać, że jest Tobą! Domyślnie jesteś anonimowy i nigdy nie musisz ujawniać swojego prawdziwego imienia. Możesz zarejestrować własną, niestandardową nazwę za niewielką opłatą.</translation>
+		<translation>Κανείς δεν μπορεί να προσποιηθεί ότι είσαι εσύ! Είσαι ανώνυμος από προεπιλογή και δεν χρειάζεται να αποκαλύψεις το πραγματικό σου όνομα. Μπορείτε να καταχωρήσετε ένα προσαρμοσμένο όνομα έναντι μικρής χρέωσης.</translation>
 	</message>
 	<message>
 		<source>about-names-title</source>
-		<translation>Nazwy nie mogą być zmieniane</translation>
+		<translation>Δεν είναι δυνατή η αλλαγή των ονομάτων</translation>
 	</message>
 	<message>
 		<source>access-key</source>
-		<translation>Uzyskaj dostęp do kluczy</translation>
+		<translation>Κλειδί πρόσβασης</translation>
 	</message>
 	<message>
 		<source>access-existing-keys</source>
-		<translation>Uzyskaj dostęp do istniejących kluczy</translation>
+		<translation>Πρόσβαση στα υπάρχοντα κλειδιά</translation>
 	</message>
 	<message>
 		<source>accept-and-share-address</source>
-		<translation>Zaakceptuj i udostępnij adres</translation>
+		<translation>Αποδοχή και κοινή χρήση διεύθυνσης</translation>
 	</message>
 	<message>
 		<source>account-added</source>
-		<translation>Konto dodane</translation>
+		<translation>Προστέθηκε λογαριασμός</translation>
 	</message>
 	<message>
 		<source>account-color</source>
-		<translation>Kolor konta</translation>
+		<translation>Χρώμα λογαριασμού</translation>
 	</message>
 	<message>
 		<source>anyone</source>
-		<translation>Ktoś</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>messages-from-contacts-only-subtitle</source>
-		<translation>Tylko osoby dodane jako kontakty mogą rozpocząć nowy czat z Tobą lub zaprosić Cię do grupy</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>accept-new-chats-from</source>
-		<translation>Akceptuj nowe czaty od</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>account-name</source>
-		<translation>Nazwa konta</translation>
+		<translation>Όνομα λογαριασμού</translation>
 	</message>
 	<message>
 		<source>account-settings</source>
-		<translation>Ustawienia konta</translation>
+		<translation>Ρυθμίσεις λογαριασμού</translation>
 	</message>
 	<message>
 		<source>accounts</source>
-		<translation>Konta</translation>
+		<translation>Λογαριασμοί</translation>
 	</message>
 	<message>
 		<source>active-online</source>
-		<translation>Online</translation>
+		<translation>Σε σύνδεση</translation>
 	</message>
 	<message>
 		<source>active-unknown</source>
-		<translation>Nieznany</translation>
+		<translation>Άγνωστο</translation>
 	</message>
 	<message>
 		<source>add</source>
-		<translation>Dodaj</translation>
+		<translation>Προσθήκη</translation>
 	</message>
 	<message>
 		<source>add-a-watch-account</source>
-		<translation>Dodaj adresy tylko do obserwacji</translation>
+		<translation>Προσθέστε μια διεύθυνση μόνο για παρακολούθηση</translation>
 	</message>
 	<message>
 		<source>add-account</source>
-		<translation>Dodaj konto</translation>
+		<translation>Προσθέστε έναν λογαριασμό</translation>
 	</message>
 	<message>
 		<source>add-account-description</source>
-		<translation>Możesz zaimportować dowolny typ konta Ethereum, aby dodać je do swojego portfela Status</translation>
+		<translation>Μπορείτε να εισαγάγετε οποιονδήποτε τύπο λογαριασμού Ethereum για να τον προσθέσετε στο πορτοφόλι Status σας</translation>
 	</message>
 	<message>
 		<source>add-account-incorrect-password</source>
-		<translation>Hasło wygląda na nieprawidłowe. Wprowadź hasło, którego używasz do odblokowania aplikacji.</translation>
+		<translation>Ο κωδικός πρόσβασης φαίνεται να είναι λανθασμένος. Εισαγάγετε τον κωδικό πρόσβασης που χρησιμοποιείτε για να ξεκλειδώσετε την εφαρμογή.</translation>
 	</message>
 	<message>
 		<source>add-an-account</source>
-		<translation>Dodaj konto</translation>
+		<translation>Προσθέστε έναν λογαριασμό</translation>
 	</message>
 	<message>
 		<source>add-bootnode</source>
-		<translation>Dodaj bootnode</translation>
+		<translation>Προσθήκη bootnode</translation>
 	</message>
 	<message>
 		<source>add-contact</source>
-		<translation>Dodaj kontakt</translation>
+		<translation>Προσθήκη επαφής</translation>
 	</message>
 	<message>
 		<source>add-custom-token</source>
-		<translation>Dodaj niestandardowy token</translation>
+		<translation>Προσθήκη προσαρμοσμένου token</translation>
 	</message>
 	<message>
 		<source>add-mailserver</source>
-		<translation>Dodaj węzeł Status</translation>
+		<translation>Προσθήκη κόμβου ιστορικού</translation>
 	</message>
 	<message>
 		<source>add-members</source>
-		<translation>Dodaj użytkowników</translation>
+		<translation>Προσθήκη μελών</translation>
 	</message>
 	<message>
 		<source>add-network</source>
-		<translation>Dodaj sieć</translation>
+		<translation>Προσθήκη δικτύου</translation>
 	</message>
 	<message>
 		<source>add-node</source>
-		<translation>Dodaj węzeł</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>add-to-contacts</source>
-		<translation>Dodaj do kontaktów</translation>
+		<translation>Προσθήκη στις επαφές</translation>
 	</message>
 	<message>
 		<source>add-to-contacts-text</source>
-		<translation>Dodając użytkownika do swojej listy kontaktów, udostępniasz mu swój adres portfela</translation>
+		<translation>Προσθέτοντας έναν χρήστη στη λίστα επαφών σας, μοιράζεστε τη διεύθυνση του πορτοφολιού σας</translation>
 	</message>
 	<message>
 		<source>address</source>
-		<translation>Adres</translation>
+		<translation>Διεύθυνση</translation>
 	</message>
 	<message>
 		<source>address-received</source>
-		<translation>Adres otrzymany</translation>
+		<translation>Η διεύθυνση ελήφθη</translation>
 	</message>
 	<message>
 		<source>address-requested</source>
-		<translation>Żądany adres</translation>
+		<translation>Ζητήθηκε διεύθυνση</translation>
 	</message>
 	<message>
 		<source>address-request-accepted</source>
-		<translation>Żądanie adresu zostało zaakceptowane</translation>
+		<translation>Το αίτημα διεύθυνσης έγινε αποδεκτό</translation>
 	</message>
 	<message>
 		<source>advanced</source>
-		<translation>Zaawansowane</translation>
+		<translation>Προηγμένη</translation>
 	</message>
 	<message>
 		<source>advanced-settings</source>
-		<translation>Zaawansowane ustawienia</translation>
+		<translation>Προηγμένες ρυθμίσεις</translation>
 	</message>
 	<message>
 		<source>agree-by-continuing</source>
-		<translation>Kontynuując, zgadzasz się 
-na naszą </translation>
+		<translation>Συνεχίζοντας, συμφωνείτε
+ στο δικό μας </translation>
 	</message>
 	<message>
 		<source>all</source>
-		<translation>Wszystko</translation>
+		<translation>Όλα</translation>
 	</message>
 	<message>
 		<source>allow</source>
-		<translation>Zezwól</translation>
+		<translation>Να επιτρέπεται</translation>
 	</message>
 	<message>
 		<source>allowing-authorizes-this-dapp</source>
-		<translation>Zgadzając się, umożliwisz tej zdecentralizowanej aplikacji na pobranie adresu Twojego portfela i uruchomieniu Web3</translation>
+		<translation>Η άδεια επιτρέπει σε αυτήν την εφαρμογή να ανακτήσει τη διεύθυνση του πορτοφολιού σας και να ενεργοποιήσει το Web3</translation>
 	</message>
 	<message>
 		<source>already-have-asset</source>
-		<translation>Masz już to aktywo</translation>
+		<translation>Έχετε ήδη αυτό το περιουσιακό στοιχείο</translation>
 	</message>
 	<message>
 		<source>amount</source>
-		<translation>Ilość</translation>
+		<translation>Ποσό</translation>
 	</message>
 	<message>
 		<source>are-you-sure-description</source>
-		<translation>Nie będziesz w stanie ponownie zobaczyć całej frazy odzyskiwania (Seed)</translation>
+		<translation>Δεν θα μπορείτε να δείτε ξανά ολόκληρη τη φράση seed</translation>
 	</message>
 	<message>
 		<source>are-you-sure?</source>
-		<translation>Jesteś pewny?</translation>
+		<translation>Είστε σίγουρει?</translation>
 	</message>
 	<message>
 		<source>ask-in-status</source>
-		<translation>Zadaj pytanie lub zgłoś błąd</translation>
+		<translation>Κάντε μια ερώτηση ή αναφέρετε ένα σφάλμα</translation>
 	</message>
 	<message>
 		<source>at</source>
-		<translation>w</translation>
+		<translation>στο</translation>
 	</message>
 	<message>
 		<source>authorize</source>
-		<translation>Autoryzuj</translation>
+		<translation>Εξουσιοδοτώ</translation>
 	</message>
 	<message>
 		<source>available</source>
-		<translation>Dostępny</translation>
+		<translation>Διαθέσιμα</translation>
 	</message>
 	<message numerus="yes">
 		<source>available-participants</source>
 		<translation>
-			<numerusform>jednego</numerusform>
-			<numerusform>kilku</numerusform>
-			<numerusform>wielu</numerusform>
-			<numerusform>innych</numerusform>
+			<numerusform>Μπορείτε να επιλέξετε έναν ακόμη συμμετέχοντα</numerusform>
+			<numerusform>Μπορείτε να επιλέξετε {{count}} ακόμη συμμετέχοντες</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>back</source>
-		<translation>Powrót</translation>
+		<translation>Πίσω</translation>
 	</message>
 	<message>
 		<source>back-up-seed-phrase</source>
-		<translation>Utwórz kopię zapasową frazy odzyskiwania (Seed)</translation>
+		<translation>Αντίγραφο ασφαλείας φράσης seed</translation>
 	</message>
 	<message>
 		<source>back-up-your-seed-phrase</source>
-		<translation>Utwórz kopię zapasową frazy odzyskiwania (Seed)</translation>
+		<translation>Δημιουργήστε αντίγραφα ασφαλείας για τη φράση seed σας</translation>
 	</message>
 	<message>
 		<source>backup-recovery-phrase</source>
-		<translation>Utwórz kopię zapasową frazy odzyskiwania (Seed)</translation>
+		<translation>Αντίγραφο ασφαλείας φράσης seed</translation>
 	</message>
 	<message>
 		<source>balance</source>
-		<translation>Saldo</translation>
+		<translation>Υπόλοιπο</translation>
 	</message>
 	<message>
 		<source>begin-set-up</source>
-		<translation>Rozpocznij konfigurację</translation>
+		<translation>Έναρξη ρύθμισης</translation>
 	</message>
 	<message>
 		<source>biometric-auth-android-sensor-desc</source>
-		<translation>Sensor Touch ID</translation>
+		<translation>Αισθητήρας αφής</translation>
 	</message>
 	<message>
 		<source>biometric-auth-android-sensor-error-desc</source>
-		<translation>Niepowodzenie</translation>
+		<translation>Απέτυχε</translation>
 	</message>
 	<message>
 		<source>biometric-auth-android-title</source>
-		<translation>Wymagane uwierzytelnienie</translation>
+		<translation>Απαιτείται Πιστοποίηση</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-logout</source>
-		<translation>Zaloguj się ponownie</translation>
+		<translation>Επανασύνδεση</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-message</source>
-		<translation>Aby kontynuować, wymagane jest uwierzytelnianie biometryczne, a jeśli nie jest to możliwe, odblokuj klucze za pomocą hasła lub kodu dostępu</translation>
+		<translation>Απαιτείται βιομετρικός έλεγχος ταυτότητας για να συνεχιστεί, εάν δεν είναι δυνατόν, ξεκλειδώστε τα κλειδιά σας με τον κωδικό πρόσβασης σας</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-title</source>
-		<translation>Musisz się uwierzytelnić!</translation>
+		<translation>Πρέπει να κάνετε έλεγχο ταυτότητας!</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-try-again</source>
-		<translation>Spróbuj ponownie</translation>
+		<translation>Προσπάθησε ξανά</translation>
 	</message>
 	<message>
 		<source>biometric-auth-error</source>
-		<translation>Nie można przeprowadzić uwierzytelnienia biometrycznego ({{code}})</translation>
+		<translation>Δεν είναι δυνατή η εκτέλεση βιομετρικού ελέγχου ταυτότητας ({{code}})</translation>
 	</message>
 	<message>
 		<source>biometric-auth-login-error-title</source>
-		<translation>Błąd uwierzytelniania biometrycznego</translation>
+		<translation>Σφάλμα βιομετρικού ελέγχου ταυτότητας</translation>
 	</message>
 	<message>
 		<source>biometric-auth-login-ios-fallback-label</source>
-		<translation>Wprowadź hasło</translation>
+		<translation>Εισάγετε τον κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>biometric-auth-reason-login</source>
-		<translation>Zaloguj się do Status</translation>
+		<translation>Σύνδεση στο Status</translation>
 	</message>
 	<message>
 		<source>biometric-auth-reason-verify</source>
-		<translation>Zweryfikuj uwierzytelnianie</translation>
+		<translation>Επαλήθευση ελέγχου ταυτότητας</translation>
 	</message>
 	<message>
 		<source>biometric-secure-with</source>
-		<translation>Zabezpiecz za pomocą {{bio-type-label}}</translation>
+		<translation>Ασφαλίστε με {{bio-type-label}}</translation>
 	</message>
 	<message>
 		<source>biometric-enable-keycard</source>
-		<translation>Jeśli nie chcesz używać karty Keycard za każdym razem, aby uzyskać dostęp do aplikacji, włącz opcję logowanie {{bio-type-label}}</translation>
+		<translation>Εάν δεν θέλετε να χρησιμοποιείτε την Keycard σας κάθε φορά για πρόσβαση στην εφαρμογή, ενεργοποιήστε τη {{bio-type-label}} σύνδεση </translation>
 	</message>
 	<message>
 		<source>biometric-enable</source>
-		<translation>Jeśli nie chcesz wpisywać swojego hasła za każdym razem, aby uzyskać dostęp do aplikacji, włącz logowanie {{bio-type-label}}.</translation>
+		<translation>Εάν δεν θέλετε να εισάγετε τον κωδικό σας κάθε φορά για πρόσβαση στην εφαρμογή, ενεργοποιήστε τη {{bio-type-label}} σύνδεση </translation>
 	</message>
 	<message>
 		<source>biometric-disable-bioauth</source>
-		<translation>wyłącz {{bio-type-label}}</translation>
+		<translation>απενεργοποίηση {{bio-type-label}}</translation>
 	</message>
 	<message>
 		<source>biometric-disable-password-title</source>
-		<translation>Wyłącz zapisywanie hasła</translation>
+		<translation>Απενεργοποίηση αποθήκευσης κωδικού πρόσβασης</translation>
 	</message>
 	<message>
 		<source>biometric-disable-password-description</source>
-		<translation>Jeśli to wyłączysz, również </translation>
+		<translation>Εάν απενεργοποιήσετε αυτό, θα </translation>
 	</message>
 	<message>
 		<source>biometric-enable-button</source>
-		<translation>Włącz {{bio-type-label}}</translation>
+		<translation>Ενεργοποίηση {{bio-type-label}}</translation>
 	</message>
 	<message>
 		<source>biometric-fingerprint</source>
-		<translation>Odcisk palca</translation>
+		<translation>Δακτυλικό αποτύπωμα</translation>
 	</message>
 	<message>
 		<source>biometric-faceid</source>
@@ -329,40 +327,40 @@ na naszą </translation>
 	</message>
 	<message>
 		<source>blank-keycard-text</source>
-		<translation>Możesz kontynuować korzystanie z karty dostępu, kiedy wygenerujesz swoje klucze oraz imię</translation>
+		<translation>Μπορείτε να συνεχίσετε με την κάρτα-κλειδί σας μόλις δημιουργήσετε τα κλειδιά και το όνομά σας</translation>
 	</message>
 	<message>
 		<source>blank-keycard-title</source>
-		<translation>Wygląda na to, że kliknąłeś 
-złą kartę.</translation>
+		<translation>Φαίνεται ότι έχετε πατήσει
+ μια κενή κάρτα-κλειδί</translation>
 	</message>
 	<message>
 		<source>block</source>
-		<translation>Blok</translation>
+		<translation>Αποκλεισμός</translation>
 	</message>
 	<message>
 		<source>unblock</source>
-		<translation>Odblokuj</translation>
+		<translation>Ξεμπλοκάρετε</translation>
 	</message>
 	<message>
 		<source>block-contact</source>
-		<translation>Zablokuj tego użytkownika</translation>
+		<translation>Αποκλεισμός αυτού του χρήστη</translation>
 	</message>
 	<message>
 		<source>block-contact-details</source>
-		<translation>Zablokowanie usunie poprzednie wiadomości tego użytkownika i uniemożliwi otrzymywanie nowych od Ciebie.</translation>
+		<translation>Ο αποκλεισμός θα διαγράψει τα προηγούμενα μηνύματα αυτού του χρήστη και θα σταματήσει τη λήψη νέων από εσάς</translation>
 	</message>
 	<message>
 		<source>blocked-users</source>
-		<translation>Zablokowani użytkownicy</translation>
+		<translation>Αποκλεισμένοι χρήστες</translation>
 	</message>
 	<message>
 		<source>bootnode-address</source>
-		<translation>Adres bootnode</translation>
+		<translation>Διεύθυνση Bootnode</translation>
 	</message>
 	<message>
 		<source>bootnode-details</source>
-		<translation>Szczegóły bootnode</translation>
+		<translation>Λεπτομέρειες Bootnode</translation>
 	</message>
 	<message>
 		<source>bootnode-format</source>
@@ -374,197 +372,195 @@ złą kartę.</translation>
 	</message>
 	<message>
 		<source>bootnodes-enabled</source>
-		<translation>Bootnodes włączone</translation>
+		<translation>Οι bootnodes ενεργοποιήθηκαν</translation>
 	</message>
 	<message>
 		<source>bootnodes-settings</source>
-		<translation>Opcje bootnodes</translation>
+		<translation>Ρυθμίσεις Bootnodes</translation>
 	</message>
 	<message>
 		<source>browsed-websites</source>
-		<translation>Historia przeglądarki pojawi się tutaj</translation>
+		<translation>Το ιστορικό του προγράμματος περιήγησης θα εμφανιστεί εδώ</translation>
 	</message>
 	<message>
 		<source>browser</source>
-		<translation>Przeglądarka</translation>
+		<translation>Πρόγραμμα περιήγησης</translation>
 	</message>
 	<message>
 		<source>browser-not-secure</source>
-		<translation>Połączenie nie jest bezpieczne! Nie podpisuj transakcji ani nie przesyłaj danych osobowych na tej stronie.</translation>
+		<translation>Η σύνδεση δεν είναι ασφαλής! Μην υπογράφετε συναλλαγές και μην στέλνετε προσωπικά δεδομένα σε αυτόν τον ιστότοπο.</translation>
 	</message>
 	<message>
 		<source>browser-secure</source>
-		<translation>Połączenie jest bezpieczne. Upewnij się, że naprawdę ufasz tej stronie przed podpisaniem transakcji lub wprowadzeniem danych osobowych.</translation>
+		<translation>Η σύνδεση είναι ασφαλής. Βεβαιωθείτε ότι εμπιστεύεστε πραγματικά αυτόν τον ιστότοπο πριν υπογράψετε συναλλαγές ή εισαγάγετε προσωπικά δεδομένα.</translation>
 	</message>
 	<message>
 		<source>browsers</source>
-		<translation>Przeglądarki</translation>
+		<translation>Πρόγραμμα περιήγησης</translation>
 	</message>
 	<message>
 		<source>browsing-cancel</source>
-		<translation>Anuluj</translation>
+		<translation>Ακύρωση</translation>
 	</message>
 	<message>
 		<source>browsing-open-in-android-web-browser</source>
-		<translation>Otwórz w Android</translation>
+		<translation>Άνοιγμα σε Android</translation>
 	</message>
 	<message>
 		<source>browsing-open-in-ios-web-browser</source>
-		<translation>Otwórz w iOS</translation>
+		<translation>Άνοιγμα σε iOS</translation>
 	</message>
 	<message>
 		<source>browsing-open-in-status</source>
-		<translation>Otwórz w Status</translation>
+		<translation>Άνοιγμα στο Status</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-description1</source>
-		<translation>Wykryliśmy potencjalną szkodliwą aktywność z tego adresu. Aby Cię chronić oraz Twój portfel, uniemożliwiamy dalszą nawigację. 
+		<translation>Εντοπίσαμε πιθανή κακόβουλη δραστηριότητα από αυτήν τη διεύθυνση. Για να προστατεύσουμε εσάς και το πορτοφόλι σας, εμποδίζουμε την περαιτέρω πλοήγηση. 
 
-Jeśli uważasz, że to błąd, daj nam znać w </translation>
+ Εάν πιστεύετε ότι πρόκειται για σφάλμα, ενημερώστε μας στο </translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-description2</source>
-		<translation> czat publiczny.</translation>
+		<translation> δημόσια συνομιλία.</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-go-back</source>
-		<translation>Wróć</translation>
+		<translation>Πήγαινε πίσω</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-title</source>
-		<translation>Ta strona jest zablokowana</translation>
+		<translation>Αυτός ο ιστότοπος έχει αποκλειστεί</translation>
 	</message>
 	<message>
 		<source>browsing-title</source>
-		<translation>Przeglądaj</translation>
+		<translation>Περιήγηση</translation>
 	</message>
 	<message>
 		<source>bug-report</source>
-		<translation>Zgłoś błąd</translation>
+		<translation>Αναφορά σφάλματος</translation>
 	</message>
 	<message>
 		<source>bug-report-description</source>
-		<translation>* Opis</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>bug-report-description-placeholder</source>
-		<translation>Wymagane, nie może być puste</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>bug-report-steps</source>
-		<translation>Kroki do odtworzenia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>bug-report-steps-placeholder</source>
-		<translation>- otwórz aplikację
-- zrób coś
-- a potem jeszcze coś...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>bug-report-submit-email</source>
-		<translation>Prześlij e-mailem z archiwum logów</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>bug-report-submit-gh-issue</source>
-		<translation>Zgłoś problem na GitHubie bez logów</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>bug-report-too-short-description</source>
-		<translation>Opis jest za krótki</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>camera-access-error</source>
-		<translation>Aby nadać wymagane uprawnienia dla aparatu, przejdź do ustawień systemowych i upewnij się, że zaznaczono opcję Status &gt; Aparat.</translation>
+		<translation>Για να παραχωρήσετε την απαιτούμενη άδεια κάμερας, μεταβείτε στις ρυθμίσεις του συστήματός σας και βεβαιωθείτε ότι το Status  &gt; Κάμερα είναι επιλεγμένο.</translation>
 	</message>
 	<message>
 		<source>can-not-add-yourself</source>
-		<translation>To ty, aby rozpocząć rozmowę, wybierz kogoś innego</translation>
+		<translation>Εσείς είστε αυτός, για να ξεκινήσετε μια συνομιλία επιλέξτε κάποιον άλλο</translation>
 	</message>
 	<message>
 		<source>cancel</source>
-		<translation>Anuluj</translation>
+		<translation>Ακύρωση</translation>
 	</message>
 	<message>
 		<source>cancel-keycard-setup</source>
-		<translation>Anuluj konfigurację karty Keycard</translation>
+		<translation>Ακύρωση ρύθμισης Keycard</translation>
 	</message>
 	<message>
 		<source>cannot-read-card</source>
-		<translation>Nie można odczytać karty.
- Przyłóż ją do tylnej części telefonu</translation>
+		<translation>Δεν είναι δυνατή η ανάγνωση κάρτας.
+ Κρατήστε τη στο πίσω μέρος του τηλεφώνου σας</translation>
 	</message>
 	<message>
 		<source>cannot-use-default-pin</source>
-		<translation>Kod dostępu 000000 jest niedozwolony.
- Użyj innego numeru</translation>
+		<translation>Ο κωδικός 000000 δεν επιτρέπεται.
+ Παρακαλώ χρησιμοποιήστε έναν άλλο αριθμό</translation>
 	</message>
 	<message>
 		<source>card-is-blank</source>
-		<translation>Ta karta jest pusta</translation>
+		<translation>Αυτή η κάρτα είναι κενή</translation>
 	</message>
 	<message>
 		<source>card-reseted</source>
-		<translation>Karta została zresetowana</translation>
+		<translation>Έγινε επαναφορά της κάρτας</translation>
 	</message>
 	<message>
 		<source>card-unpaired</source>
-		<translation>Karta została odłączona od bieżącego urządzenia</translation>
+		<translation>Η κάρτα έχει αποσυνδεθεί από την τρέχουσα συσκευή</translation>
 	</message>
 	<message>
 		<source>change-fleet</source>
-		<translation>Zmień fleet na {{fleet}}</translation>
+		<translation>Αλλαγή στόλου σε {{fleet}}</translation>
 	</message>
 	<message>
 		<source>change-log-level</source>
-		<translation>Potwierdź i uruchom ponownie aplikację, aby zmienić poziom log na {{log-level}}</translation>
+		<translation>Επιβεβαιώστε και επανεκκινήστε την εφαρμογή για να αλλάξετε το επίπεδο καταγραφής σε {{log-level}}</translation>
 	</message>
 	<message>
 		<source>change-logging-enabled</source>
-		<translation>Czy na pewno chcesz {{enable}} logowanie?</translation>
+		<translation>Είστε βέβαιοι ότι θέλετε να {{enable}} σύνδεση;</translation>
 	</message>
 	<message>
 		<source>change-passcode</source>
-		<translation>Zmiana kodu dostępu</translation>
+		<translation>Αλλαγή κωδικού πρόσβασης</translation>
 	</message>
 	<message>
 		<source>change-password</source>
-		<translation>Zmień hasło</translation>
+		<translation>Αλλαγή κωδικού πρόσβασης</translation>
 	</message>
 	<message>
 		<source>change-pin</source>
-		<translation>Zmień 6-cyfrowy kod dostępu</translation>
+		<translation>Αλλάξτε τον 6ψήφιο κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>change-puk</source>
-		<translation>Zmień 12-cyfrowy PUK</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>change-pairing</source>
-		<translation>Zmień kod parowania</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>change-pairing-title</source>
-		<translation>Utwórz nowy kod parowania</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>change-pairing-description</source>
-		<translation>Zmiana kodu parowania nie wpływa na bieżące sparowania. Jednak każde nowe parowanie będzie wymagać nowego kodu.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>changed-amount-warning</source>
-		<translation>Kwota została zmieniona z {{old}} na {{new}}</translation>
+		<translation>Το ποσό άλλαξε από {{old}} σε {{new}}</translation>
 	</message>
 	<message>
 		<source>changed-asset-warning</source>
-		<translation>Aktywo zostało zmienione z {{old}} na {{new}}</translation>
+		<translation>Το περιουσιακό στοιχείο άλλαξε από {{old}} σε {{new}}</translation>
 	</message>
 	<message>
 		<source>chaos-mode</source>
-		<translation>Tryb Chaos</translation>
+		<translation>Λειτουργία χάους</translation>
 	</message>
 	<message>
 		<source>chaos-unicorn-day</source>
-		<translation>Chaos Dzień Jednorożca</translation>
+		<translation>Ημέρα Χάους Μονόκερου</translation>
 	</message>
 	<message>
 		<source>chaos-unicorn-day-details</source>
@@ -572,15 +568,15 @@ Jeśli uważasz, że to błąd, daj nam znać w </translation>
 	</message>
 	<message>
 		<source>chat</source>
-		<translation>Czat</translation>
+		<translation>Συνομιλία</translation>
 	</message>
 	<message>
 		<source>chat-and-transact</source>
-		<translation>Czatuj i przeprowadzaj prywatne transakcje z przyjaciółmi</translation>
+		<translation>Συνομιλήστε και πραγματοποιήστε συναλλαγές ιδιωτικά με φίλους</translation>
 	</message>
 	<message>
 		<source>chat-key</source>
-		<translation>Klucz czatu</translation>
+		<translation>Κλειδί συνομιλίας</translation>
 	</message>
 	<message>
 		<source>chat-name</source>
@@ -588,180 +584,178 @@ Jeśli uważasz, że to błąd, daj nam znać w </translation>
 	</message>
 	<message>
 		<source>chat-settings</source>
-		<translation>Ustawienia czatu</translation>
+		<translation>Ρυθμίσεις συνομιλίας</translation>
 	</message>
 	<message>
 		<source>chats</source>
-		<translation>Czaty</translation>
+		<translation>Συζητήσεις</translation>
 	</message>
 	<message>
 		<source>check-your-recovery-phrase</source>
-		<translation>Sprawdź swoją frazę odzyskiwania (Seed)</translation>
+		<translation>Ελέγξτε τη φράση seed σας</translation>
 	</message>
 	<message>
 		<source>choose-authentication-method</source>
-		<translation>Wybierz metodę uwierzytelniania</translation>
+		<translation>Επιλέξτε μια μέθοδο ελέγχου ταυτότητας</translation>
 	</message>
 	<message>
 		<source>clear</source>
-		<translation>Wyczyść</translation>
+		<translation>Εκκαθάριση</translation>
 	</message>
 	<message>
 		<source>clear-all</source>
-		<translation>Wyczyść wszystko</translation>
+		<translation>Εκκαθάριση όλων</translation>
 	</message>
 	<message>
 		<source>clear-history</source>
-		<translation>Wyczyść historię</translation>
+		<translation>Καθαρισμός ιστορικού</translation>
 	</message>
 	<message>
 		<source>clear-history-action</source>
-		<translation>Wyczyść</translation>
+		<translation>Εκκαθάριση</translation>
 	</message>
 	<message>
 		<source>clear-history-confirmation</source>
-		<translation>Wyczyścić historię?</translation>
+		<translation>Καθαρισμός ιστορικού?</translation>
 	</message>
 	<message>
 		<source>clear-history-confirmation-content</source>
-		<translation>Czy na pewno chcesz wyczyścić historię czatu?</translation>
+		<translation>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το ιστορικό συνομιλίας;</translation>
 	</message>
 	<message>
 		<source>clear-history-title</source>
-		<translation>Wyczyścić historię?</translation>
+		<translation>Καθαρισμός ιστορικού?</translation>
 	</message>
 	<message>
 		<source>close</source>
-		<translation>Zamknij</translation>
+		<translation>Κλείσιμο</translation>
 	</message>
 	<message>
 		<source>close-app-button</source>
-		<translation>Potwierdź</translation>
+		<translation>Επιβεβαίωση</translation>
 	</message>
 	<message>
 		<source>close-app-content</source>
-		<translation>Aplikacja zatrzyma się i zamknie. Po ponownym otwarciu wybrana sieć zostanie użyta.</translation>
+		<translation>Η εφαρμογή θα σταματήσει και θα κλείσει. Όταν την ανοίξετε ξανά, θα χρησιμοποιηθεί το επιλεγμένο δίκτυο</translation>
 	</message>
 	<message>
 		<source>close-app-title</source>
-		<translation>Ostrzeżenie!</translation>
+		<translation>Προειδοποίηση!</translation>
 	</message>
 	<message>
 		<source>command-button-send</source>
-		<translation>Wyślij</translation>
+		<translation>Αποστολή</translation>
 	</message>
 	<message>
 		<source>communities</source>
-		<translation>Społeczności</translation>
+		<translation></translation>
 	</message>
 	<message numerus="yes">
 		<source>community-members</source>
 		<translation>
-			<numerusform>jeden</numerusform>
-			<numerusform>kilku</numerusform>
-			<numerusform>wielu</numerusform>
-			<numerusform>inni</numerusform>
+			<numerusform></numerusform>
+			<numerusform></numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>members-label</source>
-		<translation>Użytkownicy</translation>
+		<translation>Μέλη</translation>
 	</message>
 	<message>
 		<source>open-membership</source>
-		<translation>Otwarte członkostwo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>member-kick</source>
-		<translation>Wyrzuć członka</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>member-ban</source>
-		<translation>Zablokuj członka</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-requests</source>
-		<translation>Prośby o członkostwo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-members-title</source>
-		<translation>Użytkownicy</translation>
+		<translation>Μέλη</translation>
 	</message>
 	<message>
 		<source>community-requests-to-join-title</source>
-		<translation>Prośby o członkostwo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>name-your-channel</source>
-		<translation>Nazwij swój kanał</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>name-your-channel-placeholder</source>
-		<translation>Nazwa kanału</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>give-a-short-description</source>
-		<translation>Podaj krótki opis</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>describe-channel</source>
-		<translation>Opisz kanał</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>communities-alpha</source>
-		<translation>Społeczności (alpha)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>communities-verified</source>
-		<translation>✓ Zweryfikowana Społeczność Statusu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>communities-enabled</source>
-		<translation>Społeczności włączone</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>request-access</source>
-		<translation>Żądanie dostępu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-request-pending</source>
-		<translation>Wniosek o członkostwo w trakcie rozpatrywania</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>create-community</source>
-		<translation>Utwórz społeczność</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>create-category</source>
-		<translation>Utwórz kategorię</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>rearrange-categories</source>
-		<translation>Zmień kolejność kategorii</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>edited</source>
-		<translation>Edytowane</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>edit-community</source>
-		<translation>Edytuj społeczność</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>editing-message</source>
-		<translation>Edycja wiadomości</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-edit-title</source>
-		<translation>Edytuj społeczność</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-invite-title</source>
-		<translation>Zaproś</translation>
+		<translation>Προσκαλέστε</translation>
 	</message>
 	<message>
 		<source>community-share-title</source>
-		<translation>Udostępnij</translation>
+		<translation>Κοινοποίηση</translation>
 	</message>
 	<message>
 		<source>invite</source>
@@ -769,271 +763,268 @@ Jeśli uważasz, że to błąd, daj nam znać w </translation>
 	</message>
 	<message>
 		<source>create-channel</source>
-		<translation>Utwórz kanał</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>import-community</source>
-		<translation>Importuj społeczność</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>import-community-title</source>
-		<translation>Importuj społeczność</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>name-your-community</source>
-		<translation>Nazwij swoją społeczność</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>name-your-community-placeholder</source>
-		<translation>Chwytliwe imię</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>give-a-short-description-community</source>
-		<translation>Podaj krótki opis</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>new-community-title</source>
-		<translation>Nowa społeczność</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>new-category</source>
-		<translation>Nowa kategoria</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>category-title</source>
-		<translation>Tytuł kategorii</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-title</source>
-		<translation>Wymagane członkostwo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>create-channel-title</source>
-		<translation>Nowy kanał</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>edit-channel-title</source>
-		<translation>Edytuj kanał</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-thumbnail-image</source>
-		<translation>Miniatura</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-emoji-thumbnail-title</source>
-		<translation>Miniaturka</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-thumbnail-upload</source>
-		<translation>Prześlij</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-image-take</source>
-		<translation>Zrób zdjęcie</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-image-pick</source>
-		<translation>Wybierz obraz</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-image-remove</source>
-		<translation>Usuń</translation>
+		<translation>Κατάργηση</translation>
 	</message>
 	<message>
 		<source>community-color</source>
-		<translation>Kolor społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-link</source>
-		<translation>Link do społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-color-placeholder</source>
-		<translation>Wybierz kolor</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-button</source>
-		<translation>Wymagane członkostwo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-none</source>
-		<translation>Brak</translation>
+		<translation>Κανένα</translation>
 	</message>
 	<message>
 		<source>membership-none-placeholder</source>
-		<translation>Możesz wymagać, aby nowi członkowie spełniali pewne kryteria, zanim będą mogli dołączyć. To może być zmienione w każdej chwili</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-approval</source>
-		<translation>Wymagaj zatwierdzenia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-approval-description</source>
-		<translation>Twoja społeczność może bezpłatnie dołączyć, ale nowi członkowie muszą najpierw zostać zatwierdzeni przez twórcę społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-invite</source>
-		<translation>Wymagaj zaproszenia od innego członka</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-invite-description</source>
-		<translation>Do Twojej społeczności można dołączyć tylko poprzez zaproszenie od istniejących członków społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-ens</source>
-		<translation>Wymagaj nazwy użytkownika ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-ens-description</source>
-		<translation>Twoja społeczność wymaga nazwy użytkownika ENS, aby móc się do niej przyłączyć.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-free</source>
-		<translation>Brak wymagań</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>membership-free-description</source>
-		<translation>Twoja społeczność jest darmowa i każdy może do niej dołączyć</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-roles</source>
-		<translation>Role</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-key</source>
-		<translation>Klucz prywatny społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-key-placeholder</source>
-		<translation>Wpisz klucz prywatny swojej społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>leave-community</source>
-		<translation>Opuść społeczność</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>enter-user-pk</source>
-		<translation>Wprowadź klucz publiczny użytkownika</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>import</source>
-		<translation>Importuj</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>complete-hardwallet-setup</source>
-		<translation>Ta karta jest teraz połączona. Potrzebujesz jej do podpisywania transakcji i odblokowywania kluczy</translation>
+		<translation>Αυτή η κάρτα είναι πλέον συνδεδεμένη. Τη χρειάζεστε για να υπογράψετε συναλλαγές και να ξεκλειδώσετε τα κλειδιά σας</translation>
 	</message>
 	<message>
 		<source>chat-notification-preferences</source>
-		<translation>Ustawienia powiadomień</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>completed</source>
-		<translation>Zakończono</translation>
+		<translation>Ολοκληρωμένα</translation>
 	</message>
 	<message>
 		<source>confirm</source>
-		<translation>Potwierdź</translation>
+		<translation>Επιβεβαίωση</translation>
 	</message>
 	<message>
 		<source>confirmation-request</source>
-		<translation>Prośba o potwierdzenie</translation>
+		<translation>Αίτημα επιβεβαίωσης</translation>
 	</message>
 	<message>
 		<source>confirmations</source>
-		<translation>Potwierdzenia</translation>
+		<translation>Επιβεβαιώσεις</translation>
 	</message>
 	<message>
 		<source>confirmations-helper-text</source>
-		<translation>Kiedy transakcja ma 12 potwierdzeń, możesz uznać ją za uregulowaną.</translation>
+		<translation>Όταν η συναλλαγή έχει 12 επιβεβαιώσεις, μπορείτε να την θεωρήσετε διευθετημένη.</translation>
 	</message>
 	<message>
 		<source>connect</source>
-		<translation>Połącz</translation>
+		<translation>Σύνδεση</translation>
 	</message>
 	<message>
 		<source>connect-mailserver-content</source>
-		<translation>Połącz z {{name}}?</translation>
+		<translation>Σύνδεση στο {{name}};</translation>
 	</message>
 	<message>
 		<source>connected</source>
-		<translation>Połączono</translation>
+		<translation>Συνδεδεμένος</translation>
 	</message>
 	<message>
 		<source>connected-to</source>
-		<translation>Podłączony do</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>connecting</source>
-		<translation>Trwa łączenie...</translation>
+		<translation>Σύνδεση...</translation>
 	</message>
 	<message>
 		<source>connecting-requires-login</source>
-		<translation>Połączenie z inną siecią wymaga logowania</translation>
+		<translation>Για τη σύνδεση σε άλλο δίκτυο απαιτείται σύνδεση λογαριασμού</translation>
 	</message>
 	<message>
 		<source>connection-with-the-card-lost</source>
-		<translation>Połączenie z kartą
- zostało utracone</translation>
+		<translation>Η σύνδεση με την κάρτα
+ έχει χαθεί</translation>
 	</message>
 	<message>
 		<source>connection-with-the-card-lost-setup-text</source>
-		<translation>Aby wznowić konfigurację, przyłóż kartę 
-z tyłu telefonu i utrzymuj fizyczny kontakt 
-między kartą a telefonem</translation>
+		<translation>Για να συνεχίσετε τη ρύθμιση κρατήστε την κάρτα στο
+πίσω μέρος του τηλεφώνου σας και κρατήστε την κάρτα σε επαφή με το τηλέφωνο</translation>
 	</message>
 	<message>
 		<source>connection-with-the-card-lost-text</source>
-		<translation>Aby kontynuować, przyłóż kartę do tylnej części telefonu</translation>
+		<translation>Για να συνεχίσετε κρατήστε την κάρτα στο πίσω μέρος του τηλεφώνου σας</translation>
 	</message>
 	<message>
 		<source>contact-code</source>
-		<translation>Klucz czatu</translation>
+		<translation>Κλειδί συνομιλίας</translation>
 	</message>
 	<message numerus="yes">
 		<source>contact-s</source>
 		<translation>
-			<numerusform>kontakt</numerusform>
-			<numerusform>kontaktów</numerusform>
-			<numerusform>kontaktów</numerusform>
-			<numerusform>kontakty</numerusform>
+			<numerusform>επαφή</numerusform>
+			<numerusform>επαφές</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>contacts</source>
-		<translation>Kontakty</translation>
+		<translation>Επαφές</translation>
 	</message>
 	<message>
 		<source>continue</source>
-		<translation>Kontynuuj</translation>
+		<translation>Συνέχεια</translation>
 	</message>
 	<message>
 		<source>contract-address</source>
-		<translation>Adres kontraktu</translation>
+		<translation>Διεύθυνση συμβολαίου</translation>
 	</message>
 	<message>
 		<source>contract-interaction</source>
-		<translation>Interakcja kontraktu</translation>
+		<translation>Αλληλεπίδραση συμβολαίου</translation>
 	</message>
 	<message>
 		<source>copy-info</source>
-		<translation>Kopiuj informacje</translation>
+		<translation>Αντιγραφή πληροφοριών</translation>
 	</message>
 	<message>
 		<source>copy-qr</source>
-		<translation>Skopiuj kod</translation>
+		<translation>Αντιγραφή κωδικού</translation>
 	</message>
 	<message>
 		<source>copy-to-clipboard</source>
-		<translation>Kopiuj</translation>
+		<translation>Αντιγραφή</translation>
 	</message>
 	<message>
 		<source>copy-transaction-hash</source>
-		<translation>Skopiuj ID transakcji</translation>
+		<translation>Αντιγραφή αναγνωριστικού συναλλαγής</translation>
 	</message>
 	<message>
 		<source>cost-fee</source>
-		<translation>Koszt/Opłata</translation>
+		<translation>Κόστος/Τέλος</translation>
 	</message>
 	<message>
 		<source>counter-9-plus</source>
@@ -1045,43 +1036,43 @@ między kartą a telefonem</translation>
 	</message>
 	<message>
 		<source>create</source>
-		<translation>Utwórz</translation>
+		<translation>Δημιουργία</translation>
 	</message>
 	<message>
 		<source>create-a-pin</source>
-		<translation>Utwórz 6-cyfrowy kod dostępu</translation>
+		<translation>Δημιουργήστε έναν 6ψήφιο κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>create-a-puk</source>
-		<translation>Utwórz 12-cyfrowy PUK</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>create-group-chat</source>
-		<translation>Utwórz czat grupowy</translation>
+		<translation>Δημιουργία ομαδικής συνομιλίας</translation>
 	</message>
 	<message>
 		<source>create-multiaccount</source>
-		<translation>Wygeneruj klucze</translation>
+		<translation>Δημιουργία κλειδιών</translation>
 	</message>
 	<message>
 		<source>create-new-key</source>
-		<translation>Uzyskaj nowe klucze</translation>
+		<translation>Λάβετε νέα κλειδιά</translation>
 	</message>
 	<message>
 		<source>create-pin</source>
-		<translation>Utwórz 6-cyfrowy kod dostępu</translation>
+		<translation>Δημιουργήστε 6ψήφιο κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>create-pin-description</source>
-		<translation>Będziesz potrzebować swojej karty i 6-cyfrowego kodu, aby odblokować aplikację Status oraz potwierdzać transakcje.</translation>
+		<translation>Θα χρειαστείτε την κάρτα σας + αυτόν τον 6ψήφιο κωδικό πρόσβασης για να ξεκλειδώσετε το Status και να επιβεβαιώσετε τις συναλλαγές</translation>
 	</message>
 	<message>
 		<source>created-group-chat-description</source>
-		<translation>Grupa {{group-name}}została utworzona</translation>
+		<translation>Δημιουργήσατε την ομάδα {{group-name}}</translation>
 	</message>
 	<message>
 		<source>members-count</source>
-		<translation>{{count}} członków</translation>
+		<translation>{{count}} μέλη</translation>
 	</message>
 	<message>
 		<source>cryptokitty-name</source>
@@ -1089,367 +1080,367 @@ między kartą a telefonem</translation>
 	</message>
 	<message>
 		<source>currency</source>
-		<translation>Waluta</translation>
+		<translation>Νόμισμα</translation>
 	</message>
 	<message>
 		<source>currency-display-name-aed</source>
-		<translation>Dirham Zjednoczonych Emiratów Arabskich</translation>
+		<translation>Ντιράμ Ηνωμένων Αραβικών Εμιράτων</translation>
 	</message>
 	<message>
 		<source>currency-display-name-afn</source>
-		<translation>Afgani afganistańskie</translation>
+		<translation>Αφγάνι Αφγανιστάν</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ars</source>
-		<translation>Argentyńskie Peso</translation>
+		<translation>Πέσο Αργεντινής</translation>
 	</message>
 	<message>
 		<source>currency-display-name-aud</source>
-		<translation>Dolar australijski</translation>
+		<translation>Δολάριο Αυστραλίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bbd</source>
-		<translation>Dolar Barbadosu</translation>
+		<translation>Δολάριο Μπαρμπάντος</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bdt</source>
-		<translation>Taka</translation>
+		<translation>Τάκα Μπαγκλαντές</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bgn</source>
-		<translation>Bułgarski Lew</translation>
+		<translation>Λεβ Βουλγαρίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bhd</source>
-		<translation>Bahrański dinar</translation>
+		<translation>Δηνάριο Μπαχρέιν</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bnd</source>
-		<translation>Dolar Brunei</translation>
+		<translation>Δολάριο Μπρουνέι Νταρουσαλάμ</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bob</source>
-		<translation>Boliwijski boliwar</translation>
+		<translation>Μπολιβιάνο Βολιβίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-brl</source>
-		<translation>Brazylijski Real</translation>
+		<translation>Ρεάλ Βραζιλίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-btn</source>
-		<translation>Ngultrum</translation>
+		<translation>Νγκούλτρουμ Μπουτάν</translation>
 	</message>
 	<message>
 		<source>currency-display-name-cad</source>
-		<translation>Dolar Kanadyjski</translation>
+		<translation>Δολάριο Καναδά</translation>
 	</message>
 	<message>
 		<source>currency-display-name-chf</source>
-		<translation>Frank szwajcarski</translation>
+		<translation>Φράγκο Ελβετίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-clp</source>
-		<translation>Peso chilijskie</translation>
+		<translation>Πέσο Χιλής</translation>
 	</message>
 	<message>
 		<source>currency-display-name-cny</source>
-		<translation>Juan chiński Renminbi</translation>
+		<translation>Γιουάν Ρενμίνμπι Κίνας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-cop</source>
-		<translation>Peso kolumbijskie</translation>
+		<translation>Πέσο Κολομβίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-crc</source>
-		<translation>Colon kostarykański</translation>
+		<translation>Κολόν Κόστα Ρίκα</translation>
 	</message>
 	<message>
 		<source>currency-display-name-czk</source>
-		<translation>Korona czeska</translation>
+		<translation>Κορόνα Τσεχίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-dkk</source>
-		<translation>Korona Duńska</translation>
+		<translation>Κορόνα Δανίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-dop</source>
-		<translation>Peso dominikańskie</translation>
+		<translation>Πέσο Δομινικανής Δημοκρατίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-egp</source>
-		<translation>Funt Egipski</translation>
+		<translation>Λίρα Αιγύπτου</translation>
 	</message>
 	<message>
 		<source>currency-display-name-etb</source>
-		<translation>Birr etiopski</translation>
+		<translation>Μπιρ Αιθιοπίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-eur</source>
-		<translation>Euro</translation>
+		<translation>Ευρώ</translation>
 	</message>
 	<message>
 		<source>currency-display-name-gbp</source>
-		<translation>Funt brytyjski</translation>
+		<translation>Βρετανική Λίρα</translation>
 	</message>
 	<message>
 		<source>currency-display-name-gel</source>
-		<translation>Gruzińskie Lari</translation>
+		<translation>Λάρι Γεωργίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ghs</source>
-		<translation>Cedi ghańskie</translation>
+		<translation>Σέντι Γκάνας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-hkd</source>
-		<translation>Dolar Hongkoński</translation>
+		<translation>Δολάριο Χονγκ Κονγκ</translation>
 	</message>
 	<message>
 		<source>currency-display-name-hrk</source>
-		<translation>Kuna chorwacka</translation>
+		<translation>Κούνα Κροατίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-huf</source>
-		<translation>Forint węgierski</translation>
+		<translation>Φιορίνι Ουγγαρίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-idr</source>
-		<translation>Rupia indonezyjska</translation>
+		<translation>Ρουπία Ινδονησίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ils</source>
-		<translation>Szekel izraelski</translation>
+		<translation>Σέκελ Ισραήλ</translation>
 	</message>
 	<message>
 		<source>currency-display-name-inr</source>
-		<translation>Indyjska Rupia</translation>
+		<translation>Ρουπία Ινδίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-isk</source>
-		<translation>Korona islandzka</translation>
+		<translation>Κορώνα Ισλανδίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-jmd</source>
-		<translation>Dolar Jamajski</translation>
+		<translation>Δολάριο Τζαμάικας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-jpy</source>
-		<translation>Jen japoński</translation>
+		<translation>Γιεν Ιαπωνίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-kes</source>
-		<translation>Kenijski Szyling</translation>
+		<translation>Σελίνι Κένυας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-krw</source>
-		<translation>Południowokoreański Won</translation>
+		<translation>Γουόν Νότιας Κορέας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-kwd</source>
-		<translation>Dinar kuwejcki</translation>
+		<translation>Δηνάριο Κουβέιτ</translation>
 	</message>
 	<message>
 		<source>currency-display-name-kzt</source>
-		<translation>Kazachstański Tenge</translation>
+		<translation>Τένγκε Καζακστάν</translation>
 	</message>
 	<message>
 		<source>currency-display-name-lkr</source>
-		<translation>Rupia lankijska</translation>
+		<translation>Ρουπία της Σρι Λάνκα</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mad</source>
-		<translation>Dirham marokański</translation>
+		<translation>Ντιρχάμ Μαρόκου</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mdl</source>
-		<translation>Mołdawski Lej</translation>
+		<translation>Λέου Μολδαβίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mur</source>
-		<translation>Rupia maurytyjska</translation>
+		<translation>Ρουπία Μαυρίκιου</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mwk</source>
-		<translation>Kwacha malawijska</translation>
+		<translation>Κουάτσα Μαλάουι</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mxn</source>
-		<translation>Meksykańskie Peso</translation>
+		<translation>Πέσο Μεξικού</translation>
 	</message>
 	<message>
 		<source>currency-display-name-myr</source>
-		<translation>Malezyjski Ringgit</translation>
+		<translation>Ρινγκίτ Μαλαισίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mzn</source>
-		<translation>Mozambijski Metikal</translation>
+		<translation>Μετικάλ Μοζαμβίκης</translation>
 	</message>
 	<message>
 		<source>currency-display-name-nad</source>
-		<translation>Dolar Namibijski</translation>
+		<translation>Δολάριο Ναμίμπια</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ngn</source>
-		<translation>Nigeryjska Naira</translation>
+		<translation>Νάιρα Νιγηρίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-nok</source>
-		<translation>Korona Norweska</translation>
+		<translation>Κορόνα Νορβηγίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-npr</source>
-		<translation>Nepalska Rupia</translation>
+		<translation>Ρουπία Νεπάλ</translation>
 	</message>
 	<message>
 		<source>currency-display-name-nzd</source>
-		<translation>Dolar nowozelandzki</translation>
+		<translation>Δολάριο Νέας Ζηλανδίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-omr</source>
-		<translation>Rial Omański</translation>
+		<translation>Ριάλ Ομάν</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pen</source>
-		<translation>Sol peruwiański</translation>
+		<translation>Σολ Περού</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pgk</source>
-		<translation>Kina Papui-Nowej Gwinei</translation>
+		<translation>Κίνα Παπούας Νέας Γουινέας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-php</source>
-		<translation>Peso filipińskie</translation>
+		<translation>Πέσο Φιλιππίνων</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pkr</source>
-		<translation>Pakistańska Rupia</translation>
+		<translation>Ρουπία Πακιστάν</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pln</source>
-		<translation>Polski złoty</translation>
+		<translation>Ζλότι Πολωνίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pyg</source>
-		<translation>Paragwajskie Guarani</translation>
+		<translation>Γκουαράνι Παραγουάης</translation>
 	</message>
 	<message>
 		<source>currency-display-name-qar</source>
-		<translation>Rial Katarski</translation>
+		<translation>Ριάλ Κατάρ</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ron</source>
-		<translation>Rumuński Lej</translation>
+		<translation>Λέου Ρουμανίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-rsd</source>
-		<translation>Serbski dinar</translation>
+		<translation>Δηνάριο Σερβίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-rub</source>
-		<translation>Rosyjski Rubel</translation>
+		<translation>Ρούβλι Ρωσίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-sar</source>
-		<translation>Rial Saudyjski</translation>
+		<translation>Ριάλ Σαουδικής Αραβίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-sek</source>
-		<translation>Korona szwedzka</translation>
+		<translation>Κορώνα Σουηδίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-sgd</source>
-		<translation>Dolar singapurski</translation>
+		<translation>Δολάριο Σιγκαπούρης</translation>
 	</message>
 	<message>
 		<source>currency-display-name-thb</source>
-		<translation>Baht tajlandzki</translation>
+		<translation>Μπατ Ταϊλάνδης</translation>
 	</message>
 	<message>
 		<source>currency-display-name-try</source>
-		<translation>Lira Turecka</translation>
+		<translation>Λίρα Τουρκίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ttd</source>
-		<translation>Dolar Trynidadu i Tobago</translation>
+		<translation>Δολάριο του Τρινιντάντ και Τομπάγκο</translation>
 	</message>
 	<message>
 		<source>currency-display-name-twd</source>
-		<translation>Dolar Tajwański</translation>
+		<translation>Νέο δολάριο Ταϊβάν</translation>
 	</message>
 	<message>
 		<source>currency-display-name-tzs</source>
-		<translation>Tanzański Szyling</translation>
+		<translation>Σελίνι Τανζανίας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-uah</source>
-		<translation>Hrywna ukraińska</translation>
+		<translation>Ουκρανία Χρυβνία</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ugx</source>
-		<translation>Ugandyjski Szyling</translation>
+		<translation>Σελίνι Ουγκάντας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-usd</source>
-		<translation>Dolar amerykański</translation>
+		<translation>Δολάριο Ηνωμένων Πολιτειών</translation>
 	</message>
 	<message>
 		<source>currency-display-name-uyu</source>
-		<translation>Urugwajskie Peso</translation>
+		<translation>Πέσο Ουρουγουάης</translation>
 	</message>
 	<message>
 		<source>currency-display-name-vef</source>
-		<translation>Boliwar Wenezuelski</translation>
+		<translation>Μπολιβάρ Βενεζουέλας</translation>
 	</message>
 	<message>
 		<source>currency-display-name-vnd</source>
-		<translation>Wietnam Dong</translation>
+		<translation>Ντονγκ Βιετνάμ</translation>
 	</message>
 	<message>
 		<source>currency-display-name-zar</source>
-		<translation>Południowoafrykański Rand</translation>
+		<translation>Ραντ Νότιας Αφρικής</translation>
 	</message>
 	<message>
 		<source>current-network</source>
-		<translation>Obecna sieć</translation>
+		<translation>Τρέχων δίκτυο</translation>
 	</message>
 	<message>
 		<source>current-pin</source>
-		<translation>Wprowadź 6-cyfrowy kod dostępu</translation>
+		<translation>Εισαγάγετε τον 6ψήφιο κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>current-pin-description</source>
-		<translation>Wprowadź swój 6-cyfrowy kod dostępu, aby kontynuować.</translation>
+		<translation>Εισαγάγετε τον 6ψήφιο κωδικό πρόσβασης για να συνεχίσετε</translation>
 	</message>
 	<message>
 		<source>custom</source>
-		<translation>Niestandardowe</translation>
+		<translation>Προσαρμοσμένο</translation>
 	</message>
 	<message>
 		<source>custom-networks</source>
-		<translation>Niestandardowe ustawienia sieci</translation>
+		<translation>Προσαρμοσμένα δίκτυα</translation>
 	</message>
 	<message>
 		<source>dapp</source>
-		<translation>dApp</translation>
+		<translation>ÐApp</translation>
 	</message>
 	<message>
 		<source>dapp-would-like-to-connect-wallet</source>
-		<translation>chciałby połączyć się z</translation>
+		<translation>θα ήθελε να συνδεθεί στο</translation>
 	</message>
 	<message>
 		<source>dapps</source>
-		<translation>dAppsy</translation>
+		<translation>ÐApps</translation>
 	</message>
 	<message>
 		<source>dapps-permissions</source>
-		<translation>Uprawnienia zdecentralizowanych aplikacji (dApps)</translation>
+		<translation>Δικαιώματα DApp</translation>
 	</message>
 	<message>
 		<source>data</source>
-		<translation>Dane</translation>
+		<translation>Δεδομένα</translation>
 	</message>
 	<message>
 		<source>datetime-ago</source>
-		<translation>temu</translation>
+		<translation>πριν</translation>
 	</message>
 	<message>
 		<source>datetime-ago-format</source>
@@ -1457,280 +1448,264 @@ między kartą a telefonem</translation>
 	</message>
 	<message>
 		<source>datetime-ago-format-short</source>
-		<translation>{{number}}{{time-intervals}}</translation>
+		<translation>{{number}} {{time-intervals}}</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-day</source>
 		<translation>
-			<numerusform>dzień</numerusform>
-			<numerusform>dni</numerusform>
-			<numerusform>dni</numerusform>
-			<numerusform>dni</numerusform>
+			<numerusform>μέρα</numerusform>
+			<numerusform>μέρες</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-hour</source>
 		<translation>
-			<numerusform>godzina</numerusform>
-			<numerusform>godzin</numerusform>
-			<numerusform>godzin</numerusform>
-			<numerusform>godzin(y)</numerusform>
+			<numerusform>ώρα</numerusform>
+			<numerusform>ώρες</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-minute</source>
 		<translation>
-			<numerusform>minuta</numerusform>
-			<numerusform>minut</numerusform>
-			<numerusform>minut</numerusform>
-			<numerusform>minut(y)</numerusform>
+			<numerusform>λεπτό</numerusform>
+			<numerusform>λεπτά</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-second</source>
 		<translation>
-			<numerusform>sekunda</numerusform>
-			<numerusform>sekund</numerusform>
-			<numerusform>sekund</numerusform>
-			<numerusform>sekund(y)</numerusform>
+			<numerusform>δευτερόλεπτο</numerusform>
+			<numerusform>δευτερόλεπτα</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-day-short</source>
 		<translation>
-			<numerusform>D</numerusform>
-			<numerusform>D</numerusform>
-			<numerusform>D</numerusform>
-			<numerusform>D</numerusform>
+			<numerusform>Μ</numerusform>
+			<numerusform>Μ</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-hour-short</source>
 		<translation>
-			<numerusform>G</numerusform>
-			<numerusform>G</numerusform>
-			<numerusform>G</numerusform>
-			<numerusform>G</numerusform>
+			<numerusform>Ω</numerusform>
+			<numerusform>Ω</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-minute-short</source>
 		<translation>
-			<numerusform>M</numerusform>
-			<numerusform>M</numerusform>
-			<numerusform>M</numerusform>
-			<numerusform>M</numerusform>
+			<numerusform>Λ</numerusform>
+			<numerusform>Λ</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-second-short</source>
 		<translation>
-			<numerusform>S</numerusform>
-			<numerusform>S</numerusform>
-			<numerusform>S</numerusform>
-			<numerusform>S</numerusform>
+			<numerusform>Τώρα</numerusform>
+			<numerusform>Μήνα</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>datetime-today</source>
-		<translation>dzisiaj</translation>
+		<translation>σήμερα</translation>
 	</message>
 	<message>
 		<source>datetime-yesterday</source>
-		<translation>wczoraj</translation>
+		<translation>εχθές</translation>
 	</message>
 	<message>
 		<source>decimals</source>
-		<translation>Liczby po przecinku</translation>
+		<translation>Δεκαδικά</translation>
 	</message>
 	<message>
 		<source>decline</source>
-		<translation>Odrzuć</translation>
+		<translation>Απόρριψη</translation>
 	</message>
 	<message>
 		<source>decryption-failed-content</source>
-		<translation>Nie udało się odszyfrować Twoich danych. Może być konieczne usunięcie starych danych i utworzenie nowego konta. Naciśnij &apos;Zastosuj&apos;, aby wymazać dane lub wybierz &apos;Anuluj&apos; aby spróbować ponownie</translation>
+		<translation>Παρουσιάστηκε σφάλμα κατά την αποκρυπτογράφηση των δεδομένων σας. Ίσως χρειαστεί να διαγράψετε τα παλιά σας δεδομένα και να δημιουργήσετε έναν νέο λογαριασμό. Πατήστε &quot;Εφαρμογή&quot; για διαγραφή ή &quot;Ακύρωση&quot; για να δοκιμάσετε ξανά</translation>
 	</message>
 	<message>
 		<source>default</source>
-		<translation>Domyślne</translation>
+		<translation>Προκαθορισμένο</translation>
 	</message>
 	<message>
 		<source>delete</source>
-		<translation>Usuń</translation>
+		<translation>Διαγραφή</translation>
 	</message>
 	<message>
 		<source>delete-and-leave-group</source>
-		<translation>Usuń i opuść grupę</translation>
+		<translation>Διαγραφή και έξοδος από την ομάδα</translation>
 	</message>
 	<message>
 		<source>delete-bootnode</source>
-		<translation>Usuń bootnode</translation>
+		<translation>Διαγραφή bootnode</translation>
 	</message>
 	<message>
 		<source>delete-bootnode-are-you-sure</source>
-		<translation>Czy na pewno chcesz usunąć ten bootnode?</translation>
+		<translation>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτόν τον bootnode;</translation>
 	</message>
 	<message>
 		<source>delete-bootnode-title</source>
-		<translation>Usuń bootnode</translation>
+		<translation>Διαγραφή bootnode</translation>
 	</message>
 	<message>
 		<source>delete-chat</source>
-		<translation>Usuń czat</translation>
+		<translation>Διαγραφή συνομιλίας</translation>
 	</message>
 	<message>
 		<source>delete-chat-confirmation</source>
-		<translation>Czy na pewno chcesz usunąć ten czat?</translation>
+		<translation>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτήν τη συζήτηση;</translation>
 	</message>
 	<message>
 		<source>delete-category-confirmation</source>
-		<translation>Czy na pewno chcesz usunąć tę kategorię?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>delete-confirmation</source>
-		<translation>Usunąć?</translation>
+		<translation>Διαγραφή;</translation>
 	</message>
 	<message>
 		<source>delete-mailserver</source>
-		<translation>Usuń węzeł Status</translation>
+		<translation>Διαγραφή κόμβου ιστορικού</translation>
 	</message>
 	<message>
 		<source>delete-mailserver-are-you-sure</source>
-		<translation>Czy na pewno chcesz usunąć ten węzeł Status?</translation>
+		<translation>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτόν τον κόμβο ιστορικού;</translation>
 	</message>
 	<message>
 		<source>delete-mailserver-title</source>
-		<translation>Usuń węzeł Status</translation>
+		<translation>Διαγραφή κόμβου ιστορικού</translation>
 	</message>
 	<message>
 		<source>delete-message</source>
-		<translation>Usuń wiadomość</translation>
+		<translation>Διαγραφή μηνύματος</translation>
 	</message>
 	<message>
 		<source>delete-my-account</source>
-		<translation>Usuń moje konto</translation>
+		<translation>Διαγραφή του λογαριασμού μου</translation>
 	</message>
 	<message>
 		<source>delete-network-confirmation</source>
-		<translation>Czy na pewno chcesz usunąć tę sieć?</translation>
+		<translation>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το δίκτυο;</translation>
 	</message>
 	<message>
 		<source>delete-network-error</source>
-		<translation>Przed usunięciem tej sieci proszę połączyć się z inną siecią</translation>
+		<translation>Συνδεθείτε σε διαφορετικό δίκτυο πριν διαγράψετε αυτό</translation>
 	</message>
 	<message>
 		<source>delete-network-title</source>
-		<translation>Usunąć sieć?</translation>
+		<translation>Διαγραφή δικτύου;</translation>
 	</message>
 	<message>
 		<source>delete-node</source>
-		<translation>Usuń węzeł</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>delete-node-are-you-sure</source>
-		<translation>Czy na pewno chcesz usunąć ten węzeł?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>delete-node-title</source>
-		<translation>Usuń węzeł</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>delete-profile</source>
-		<translation>Usuń profil</translation>
+		<translation>Διαγραφή προφίλ</translation>
 	</message>
 	<message>
 		<source>delete-my-profile</source>
-		<translation>Usuń mój profil</translation>
+		<translation>Διαγραφή του προφίλ μου</translation>
 	</message>
 	<message>
 		<source>delete-profile-warning</source>
-		<translation>Ostrzeżenie: jeśli nie zapisałeś swojej frazy Seed, utracisz dostęp do swoich funduszy po usunięciu swojego profilu</translation>
+		<translation>Προειδοποίηση: Εάν δεν έχετε γράψει τη φράση seed σας, θα χάσετε την πρόσβαση στα χρήματά σας μετά τη διαγραφή του προφίλ σας</translation>
 	</message>
 	<message>
 		<source>profile-deleted-title</source>
-		<translation>Profil usunięty</translation>
+		<translation>Το προφίλ διαγράφηκε</translation>
 	</message>
 	<message>
 		<source>profile-deleted-content</source>
-		<translation>Twój profil został pomyślnie usunięty</translation>
+		<translation>Το προφίλ σας διαγράφηκε με επιτυχία</translation>
 	</message>
 	<message>
 		<source>profile-deleted-keycard</source>
-		<translation>Możesz teraz przywrócić kolejną parę kluczy na swojej karcie Keycard</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>deny</source>
-		<translation>Odmów</translation>
+		<translation>Απόρριψη</translation>
 	</message>
 	<message>
 		<source>description</source>
-		<translation>Opis</translation>
+		<translation>Περιγραφή</translation>
 	</message>
 	<message>
 		<source>dev-mode</source>
-		<translation>Tryb deweloperski</translation>
+		<translation>Λειτουργία ανάπτυξης</translation>
 	</message>
 	<message>
 		<source>dev-mode-settings</source>
-		<translation>Ustawienia trybu deweloperskiego</translation>
+		<translation>Ρυθμίσεις λειτουργίας ανάπτυξης</translation>
 	</message>
 	<message>
 		<source>device-syncing</source>
-		<translation>Synchronizacja urządzeń</translation>
+		<translation>Συγχρονισμός συσκευής</translation>
 	</message>
 	<message>
 		<source>devices</source>
-		<translation>Urządzenia</translation>
+		<translation>Συσκευές</translation>
 	</message>
 	<message>
 		<source>disable</source>
-		<translation>wyłącz</translation>
+		<translation>απενεργοποίηση</translation>
 	</message>
 	<message>
 		<source>disabled</source>
-		<translation>Wyłączone</translation>
+		<translation>Απενεργοποιημένα</translation>
 	</message>
 	<message>
 		<source>disconnected</source>
-		<translation>Łączenie z peerami…</translation>
+		<translation>Συνομιλία εκτός σύνδεσης</translation>
 	</message>
 	<message>
 		<source>discover</source>
-		<translation>Odkryj</translation>
+		<translation>Ανακαλύψτε</translation>
 	</message>
 	<message>
 		<source>dismiss</source>
-		<translation>Odrzuć</translation>
+		<translation>Απόρριψη</translation>
 	</message>
 	<message>
 		<source>done</source>
-		<translation>Zrobione</translation>
+		<translation>Έγινε</translation>
 	</message>
 	<message>
 		<source>edit</source>
-		<translation>Edytuj</translation>
+		<translation>Επεξεργασία</translation>
 	</message>
 	<message>
 		<source>edit-group</source>
-		<translation>Edytuj grupę</translation>
+		<translation>Επεξεργασία ομάδας</translation>
 	</message>
 	<message>
 		<source>edit-profile</source>
-		<translation>Edytuj profil</translation>
+		<translation>Επεξεργασία προφίλ</translation>
 	</message>
 	<message>
 		<source>empty-chat-description</source>
-		<translation>W tym czacie nie ma 
-jeszcze wiadomości</translation>
+		<translation>Δεν υπάρχουν μηνύματα
+ σε αυτήν τη συνομιλία ακόμα</translation>
 	</message>
 	<message>
 		<source>empty-chat-description-one-to-one</source>
-		<translation>Wszystkie wysyłane tutaj wiadomości są szyfrowane i mogą być odczytane tylko przez Ciebie i </translation>
+		<translation>Όποια μηνύματα στέλνετε εδώ είναι κρυπτογραφημένα και μπορούν να διαβαστούν μόνο από εσάς και </translation>
 	</message>
 	<message>
 		<source>empty-chat-description-public</source>
-		<translation>Przez ostatnie {{quiet-hours}} było tu cicho. Rozpocznij rozmowę lub </translation>
+		<translation>Ήταν ήσυχα εδώ τις τελευταίες {{quiet-hours}}. Ξεκινήστε τη συνομιλία ή </translation>
 	</message>
 	<message>
 		<source>cleared-chat-description-public</source>
@@ -1738,19 +1713,19 @@ jeszcze wiadomości</translation>
 	</message>
 	<message>
 		<source>empty-chat-description-community</source>
-		<translation>Było tu cicho przez ostatnie {{quiet-hours}}.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>empty-chat-description-public-share-this</source>
-		<translation>udostępnij ten czat.</translation>
+		<translation>μοιραστείτε αυτήν τη συνομιλία.</translation>
 	</message>
 	<message>
 		<source>enable</source>
-		<translation>Włącz</translation>
+		<translation>Ενεργοποίηση</translation>
 	</message>
 	<message>
 		<source>encrypt-with-password</source>
-		<translation>Szyfruj za pomocą hasła</translation>
+		<translation>Κρυπτογράφηση με κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>ens-10-SNT</source>
@@ -1758,151 +1733,151 @@ jeszcze wiadomości</translation>
 	</message>
 	<message>
 		<source>ens-add-username</source>
-		<translation>Dodaj nazwę użytkownika</translation>
+		<translation>Προσθήκη ονόματος χρήστη</translation>
 	</message>
 	<message>
 		<source>ens-agree-to</source>
-		<translation>Zgadzam się na </translation>
+		<translation>Συμφωνώ να</translation>
 	</message>
 	<message>
 		<source>ens-chat-settings</source>
-		<translation>Ustawienia czatu</translation>
+		<translation>Ρυθμίσεις συνομιλίας</translation>
 	</message>
 	<message>
 		<source>ens-custom-domain</source>
-		<translation>Domena niestandardowa</translation>
+		<translation>Προσαρμοσμένος τομέας</translation>
 	</message>
 	<message>
 		<source>ens-custom-username-hints</source>
-		<translation>Wpisz całą nazwę użytkownika, w tym domenę niestandardową, taką jak nazwaużytkownika.domena.eth</translation>
+		<translation>Πληκτρολογήστε ολόκληρο το όνομα χρήστη, συμπεριλαμβανομένου του προσαρμοσμένου τομέα, όπως username.domain.eth</translation>
 	</message>
 	<message>
 		<source>ens-custom-username-taken</source>
-		<translation>Nazwa użytkownika nie należy do Ciebie :(</translation>
+		<translation>Το όνομα χρήστη δεν σας ανήκει :(</translation>
 	</message>
 	<message>
 		<source>ens-deposit</source>
-		<translation>Depozyt</translation>
+		<translation>Κατάθεση</translation>
 	</message>
 	<message>
 		<source>ens-displayed-with</source>
-		<translation>Twoje wiadomości są wyświetlane innym osobom za pomocą</translation>
+		<translation>Τα μηνύματά σας εμφανίζονται σε άλλους με</translation>
 	</message>
 	<message>
 		<source>ens-get-name</source>
-		<translation>Uzyskaj uniwersalną nazwę użytkownika</translation>
+		<translation>Αποκτήστε ένα καθολικό όνομα χρήστη</translation>
 	</message>
 	<message>
 		<source>ens-got-it</source>
-		<translation>Ok, rozumiem</translation>
+		<translation>Εντάξει, το κατάλαβα</translation>
 	</message>
 	<message>
 		<source>ens-locked</source>
-		<translation>Nazwa użytkownika zablokowana. Nie będzie można jej uwolnić do {{date}}</translation>
+		<translation>Το όνομα χρήστη είναι κλειδωμένο. Δεν θα μπορείτε να το απελευθερώσετε μέχρι {{date}}</translation>
 	</message>
 	<message>
 		<source>ens-network-restriction</source>
-		<translation>Dostępne tylko na Mainnet</translation>
+		<translation>Διατίθεται μόνο στο Mainnet</translation>
 	</message>
 	<message>
 		<source>ens-no-usernames</source>
-		<translation>Nie masz podłączonej żadnej nazwy użytkownika</translation>
+		<translation>Δεν έχετε συνδεδεμένο όνομα χρήστη</translation>
 	</message>
 	<message>
 		<source>ens-powered-by</source>
-		<translation>Napędzane przez Ethereum Name Services</translation>
+		<translation>Με την υποστήριξη των Ethereum Name Services</translation>
 	</message>
 	<message>
 		<source>ens-primary-username</source>
-		<translation>Podstawowa nazwa użytkownika</translation>
+		<translation>Κύριο όνομα χρήστη</translation>
 	</message>
 	<message>
 		<source>ens-register</source>
-		<translation>Zarejestruj</translation>
+		<translation>Εγγραφή</translation>
 	</message>
 	<message>
 		<source>ens-registration-in-progress</source>
-		<translation>Rejestracja w toku ...</translation>
+		<translation>Η εγγραφή βρίσκεται σε εξέλιξη ...</translation>
 	</message>
 	<message>
 		<source>ens-registration-failure</source>
-		<translation>Rejestracja nie powiodła się</translation>
+		<translation>Η εγγραφή απέτυχε</translation>
 	</message>
 	<message>
 		<source>ens-dismiss-message</source>
-		<translation>Kliknij tutaj, aby odrzucić</translation>
+		<translation>Κάντε κλικ εδώ για απόρριψη</translation>
 	</message>
 	<message>
 		<source>ens-registration-failed</source>
-		<translation>Aby zarejestrować nazwę użytkownika, proszę spróbować ponownie.</translation>
+		<translation>Για να καταχωρήσετε το όνομα χρήστη, δοκιμάστε ξανά.</translation>
 	</message>
 	<message>
 		<source>ens-registration-failed-title</source>
-		<translation>Transakcja nie powiodła się</translation>
+		<translation>Η συναλλαγή απέτυχε</translation>
 	</message>
 	<message>
 		<source>ens-release-username</source>
-		<translation>Zwolnij nazwę użytkownika</translation>
+		<translation>Απελευθερώστε το όνομα χρήστη</translation>
 	</message>
 	<message>
 		<source>ens-remove-hints</source>
-		<translation>Usunięcie spowoduje odłączenie nazwy użytkownika od twojego klucza.</translation>
+		<translation>Η κατάργηση θα αποσυνδέσει το όνομα χρήστη από το κλειδί σας.</translation>
 	</message>
 	<message>
 		<source>ens-remove-username</source>
-		<translation>Usuń nazwę użytkownika</translation>
+		<translation>Κατάργηση ονόματος χρήστη</translation>
 	</message>
 	<message>
 		<source>ens-saved</source>
-		<translation>jest teraz połączony z twoim kluczem czatu i może być używany w aplikacji Status.</translation>
+		<translation> είναι πλέον συνδεδεμένο με το κλειδί συνομιλίας και μπορεί να χρησιμοποιηθεί στο Status.</translation>
 	</message>
 	<message>
 		<source>ens-saved-title</source>
-		<translation>Nazwa użytkownika została dodana</translation>
+		<translation>Προστέθηκε όνομα χρήστη</translation>
 	</message>
 	<message>
 		<source>ens-show-username</source>
-		<translation>Pokaż moją nazwę użytkownika ENS w czatach</translation>
+		<translation>Εμφάνιση του ονόματος χρήστη ENS στις συζητήσεις</translation>
 	</message>
 	<message>
 		<source>ens-terms-header</source>
-		<translation>Warunki rejestracji nazwy.</translation>
+		<translation>Όροι εγγραφής ονόματος</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-1</source>
-		<translation>Fundusze są zdeponowane na 1 rok. Twoje SNT zostaną zablokowane, ale nie zostaną wydane.</translation>
+		<translation>Τα χρήματα κατατίθενται για 1 έτος. Το SNT σας θα κλειδωθεί, αλλά δεν θα δαπανηθεί.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-10</source>
-		<translation>0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e (Rejestr ENS).</translation>
+		<translation>0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e (Μητρώο ENS).</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-2</source>
-		<translation>Po upływie 1 roku możesz zwolnić nazwę i odzyskać depozyt lub nie podejmować żadnych działań, aby ją zachować.</translation>
+		<translation>Μετά από 1 έτος, μπορείτε να απελευθερώσετε το όνομα και να πάρετε την κατάθεσή σας πίσω, ή να μην κάνετε καμία ενέργεια για να κρατήσετε το όνομα.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-3</source>
-		<translation>Jeśli warunki umowy ulegną zmianie — np. Status dokona aktualizacji umowy — użytkownik ma prawo do zwolnienia nazwy użytkownika bez względu na czas posiadania.</translation>
+		<translation>Εάν οι όροι του συμβολαίου αλλάξουν -- π.χ. το Status κάνει αναβάθμιση του συμβολαίου -- ο χρήστης έχει το δικαίωμα να αποδεσμεύσει το όνομα χρήστη ανεξάρτητα από το χρόνο κράτησης.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-4</source>
-		<translation>Kontroler kontraktu nie ma dostępu do Twoich zdeponowanych środków. Mogą być one jedynie przeniesione z powrotem na adres, który je wysłał.</translation>
+		<translation>Ο ελεγκτής συμβολαίου δεν μπορεί να αποκτήσει πρόσβαση στα κατατεθειμένα σας χρήματα. Μπορούν να μετακινηθούν μόνο πίσω στη διεύθυνση που τα έστειλε.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-5</source>
-		<translation>Twój adres lub adresy będą publicznie powiązane z twoją nazwą ENS.</translation>
+		<translation>Οι διευθύνσεις σας θα συσχετιστούν δημόσια με το ENS όνομά σας.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-6</source>
-		<translation>Nazwy użytkowników są tworzone jako węzły subdomeny stateofus.eth i podlegają warunkom inteligentnego kontraktu (smart contract) ENS.</translation>
+		<translation>Τα ονόματα χρήστη δημιουργούνται ως κόμβοι υποτομέα του stateofus.eth και υπόκεινται στους όρους του έξυπνου συμβολαίου ENS.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-7</source>
-		<translation>Upoważniasz kontrakt do przeniesienia SNT w Twoim imieniu. Może to nastąpić tylko wtedy, gdy zatwierdzisz transakcję, aby autoryzować przelew.</translation>
+		<translation>Εξουσιοδοτείτε το συμβόλαιο για τη μεταφορά SNT εκ μέρους σας. Αυτό μπορεί να συμβεί μόνο όταν εγκρίνετε μια συναλλαγή για την εξουσιοδότηση της μεταφοράς.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-8</source>
-		<translation>Warunki te są gwarantowane przez logikę inteligentnego kontraktu w adresach:</translation>
+		<translation>Αυτοί οι όροι διασφαλίζονται από τη λογική του έξυπνου συμβολαίου στις διευθύνσεις:</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-9</source>
@@ -1910,155 +1885,155 @@ jeszcze wiadomości</translation>
 	</message>
 	<message>
 		<source>ens-terms-registration</source>
-		<translation>Warunki rejestracji nazwy.</translation>
+		<translation>Όροι εγγραφής ονόματος.</translation>
 	</message>
 	<message>
 		<source>ens-test-message</source>
-		<translation>Hej</translation>
+		<translation>Γεια</translation>
 	</message>
 	<message>
 		<source>ens-transaction-pending</source>
-		<translation>Transakcja w toku...</translation>
+		<translation>Εκκρεμεί συναλλαγή...</translation>
 	</message>
 	<message>
 		<source>ens-understand</source>
-		<translation>Rozumiem, że mój adres portfela będzie publicznie połączony z moją nazwą użytkownika.</translation>
+		<translation>Κατανοώ ότι η διεύθυνση πορτοφολιού μου θα συνδεθεί δημόσια με το όνομα χρήστη μου.</translation>
 	</message>
 	<message>
 		<source>ens-username</source>
-		<translation>Nazwa użytkownika ENS</translation>
+		<translation>Όνομα χρήστη ENS</translation>
 	</message>
 	<message>
 		<source>ens-username-available</source>
-		<translation>✓ Nazwa użytkownika jest dostępna!</translation>
+		<translation>✓ Διαθέσιμο όνομα χρήστη!</translation>
 	</message>
 	<message>
 		<source>ens-username-connected</source>
-		<translation>Ta nazwa użytkownika należy do Ciebie i jest połączona z Twoim kluczem czatu.</translation>
+		<translation>Αυτό το όνομα χρήστη σας ανήκει και συνδέεται με το κλειδί συνομιλίας σας.</translation>
 	</message>
 	<message>
 		<source>ens-username-connection-confirmation</source>
-		<translation>{{username}} zostanie połączony po zakończeniu transakcji.</translation>
+		<translation>{{username}} θα συνδεθεί μόλις ολοκληρωθεί η συναλλαγή.</translation>
 	</message>
 	<message>
 		<source>ens-username-hints</source>
-		<translation>Co najmniej 4 znaki. Tylko litery łacińskie, cyfry i małe litery.</translation>
+		<translation>Τουλάχιστον 4 χαρακτήρες. Λατινικά γράμματα, αριθμούς και πεζά μόνο.</translation>
 	</message>
 	<message>
 		<source>ens-username-invalid</source>
-		<translation>Tylko cyfry i litery.</translation>
+		<translation>Γράμματα και αριθμοί μόνο.</translation>
 	</message>
 	<message>
 		<source>ens-username-owned</source>
-		<translation>✓ Nazwa użytkownika jest twoją własnością.</translation>
+		<translation>✓ Το όνομα χρήστη ανήκει σε εσάς. </translation>
 	</message>
 	<message>
 		<source>ens-username-registration-confirmation</source>
-		<translation>Świetnie! Zostaniesz właścicielem {{username}} po zakończeniu transakcji.</translation>
+		<translation>Ωραία! Είστε κάτοχος του {{username}} μόλις ολοκληρωθεί η συναλλαγή.</translation>
 	</message>
 	<message>
 		<source>ens-username-you-can-follow-progress</source>
-		<translation>Możesz śledzić postęp w sekcji „Historia Transakcji” w swoim portfelu.</translation>
+		<translation>Μπορείτε να παρακολουθήσετε την πρόοδο στην ενότητα Ιστορικό Συναλλαγών του πορτοφολιού σας.</translation>
 	</message>
 	<message>
 		<source>ens-usernames</source>
-		<translation>Nazwy użytkowników ENS</translation>
+		<translation>ENS ονόματα χρήστη</translation>
 	</message>
 	<message>
 		<source>ens-usernames-details</source>
-		<translation>Zarejestruj uniwersalną nazwę użytkownika, aby być łatwo rozpoznawalnym przez innych użytkowników</translation>
+		<translation>Καταχωρήστε ένα καθολικό όνομα χρήστη ώστε να αναγνωρίζεται εύκολα από άλλους χρήστες</translation>
 	</message>
 	<message>
 		<source>wallet-address</source>
-		<translation>Adres portfela</translation>
+		<translation>Διεύθυνση πορτοφολιού</translation>
 	</message>
 	<message>
 		<source>ens-want-custom-domain</source>
-		<translation>Jestem właścicielem nazwy w innej domenie</translation>
+		<translation>Έχω ένα όνομα σε άλλο τομέα</translation>
 	</message>
 	<message>
 		<source>ens-want-domain</source>
-		<translation>Chcę mieć domenę stateofus.eth</translation>
+		<translation>Θέλω έναν τομέα stateofus.eth</translation>
 	</message>
 	<message>
 		<source>ens-welcome-hints</source>
-		<translation>Nazwy ENS przekształcają szalenie długie adresy w unikalne nazwy użytkowników.</translation>
+		<translation>Τα ονόματα ENS μετατρέπουν αυτές τις πολύ μεγάλες διευθύνσεις σε μοναδικά ονόματα χρήστη.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-customize</source>
-		<translation>Nazwa ENS może zastąpić twoje losowe 3-słowne imię na czacie. Bądź @własnanazwa zamiast {{name}}.</translation>
+		<translation>Ένα όνομα ENS μπορεί να αντικαταστήσει το τυχαίο όνομά σας 3 λέξεων στη συνομιλία. Γίνετε @yourname αντί για {{name}}.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-customize-title</source>
-		<translation>Dostosuj nazwę swojego czatu</translation>
+		<translation>Προσαρμόστε το όνομα της συνομιλίας σας</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-simplify</source>
-		<translation>Możesz otrzymać środki na swoją łatwą do udostępnienia nazwę ENS zamiast na swój szesnastkowy hash (0x ...).</translation>
+		<translation>Μπορείτε να λάβετε χρήματα στο εύχρηστο προς διαμοιρασμό όνομα ENS αντί για το δεκαεξαδικό κρυπτογράφημα (0x...).</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-simplify-title</source>
-		<translation>Uprość swój adres ETH</translation>
+		<translation>Απλοποιήστε τη διεύθυνση ETH σας</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-receive</source>
-		<translation>Inni mogą wysłać Ci fundusze za pośrednictwem czatu w jednym prostym kroku.</translation>
+		<translation>Άλλοι μπορούν να σας στείλουν χρήματα μέσω συνομιλίας με ένα απλό βήμα.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-receive-title</source>
-		<translation>Odbieraj transakcje na czacie</translation>
+		<translation>Λάβετε συναλλαγές στη συνομιλία</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-register</source>
-		<translation>Zarejestruj się raz, aby zachować nazwę na zawsze. Po 1 roku możesz zwolnić nazwę i odzyskać SNT.</translation>
+		<translation>Εγγραφείτε μία φορά για να διατηρήσετε το όνομα για πάντα. Μετά από 1 έτος, μπορείτε να αποδεσμεύσετε το όνομα και να λάβετε ξανά τα SNT.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-register-title</source>
-		<translation>10 SNT do rejestracji</translation>
+		<translation>10 SNT για εγγραφή</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-verify</source>
-		<translation>W kolejnych krokach możesz zweryfikować i dodać dowolne posiadane przez Ciebie nazwy użytkowników.</translation>
+		<translation>Μπορείτε να επαληθεύσετε και να προσθέσετε τα ονόματα χρήστη που σας ανήκουν στα επόμενα βήματα.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-verify-title</source>
-		<translation>Posiadasz już nazwę użytkownika?</translation>
+		<translation>Έχετε ήδη όνομα χρήστη;</translation>
 	</message>
 	<message>
 		<source>ens-your-username</source>
-		<translation>Twoja nazwa użytkownika</translation>
+		<translation>Το όνομα χρήστη σας</translation>
 	</message>
 	<message>
 		<source>ens-your-usernames</source>
-		<translation>Twoje nazwy użytkownika</translation>
+		<translation>Τα ονόματα χρήστη σας</translation>
 	</message>
 	<message>
 		<source>ens-your-your-name</source>
-		<translation>Twoja nazwa ENS</translation>
+		<translation>Το ENS όνομα σας</translation>
 	</message>
 	<message>
 		<source>ens-username-already-added</source>
-		<translation>Nazwa użytkownika jest już połączona z twoim kluczem czatu i może być używana wewnątrz aplikacji Status.</translation>
+		<translation>Το όνομα χρήστη είναι ήδη συνδεδεμένο με το κλειδί συνομιλίας σας και μπορεί να χρησιμοποιηθεί εντός του Status.</translation>
 	</message>
 	<message>
 		<source>ens-username-connected-continue</source>
-		<translation>Kontynuuj ustawianie opcji `Pokazuj moją nazwę użytkownika ENS w czatach`.</translation>
+		<translation>Συνεχίστε να ορίζετε «Εμφάνιση του ονόματος χρήστη ENS μου στις συζητήσεις».</translation>
 	</message>
 	<message>
 		<source>ens-username-connected-with-different-key</source>
-		<translation>Kontynuacja będzie wymagać transakcji w celu połączenia nazwy użytkownika z aktualnym kluczem czatu.</translation>
+		<translation>Εάν συνεχίσετε, απαιτείται μια συναλλαγή για τη σύνδεση του ονόματος χρήστη με το τρέχον κλειδί συνομιλίας σας.</translation>
 	</message>
 	<message>
 		<source>ens-username-owned-continue</source>
-		<translation>Kontynuacja spowoduje połączenie tej nazwy użytkownika z twoim kluczem czatu.</translation>
+		<translation>Εάν συνεχίσετε, θα συνδέσετε αυτό το όνομα χρήστη με το κλειδί συνομιλίας σας.</translation>
 	</message>
 	<message>
 		<source>ens-username-taken</source>
-		<translation>Nazwa użytkownika jest już zajęta :(</translation>
+		<translation>Το όνομα χρήστη χρησιμοποιείται ήδη :(</translation>
 	</message>
 	<message>
 		<source>ens-name-not-found</source>
-		<translation>Nie można rozpoznać nazwy ENS</translation>
+		<translation>Δεν είναι δυνατή η επίλυση του ονόματος ENS</translation>
 	</message>
 	<message>
 		<source>ens-username-registration-invalid</source>
@@ -2070,126 +2045,126 @@ jeszcze wiadomości</translation>
 	</message>
 	<message>
 		<source>enter-12-words</source>
-		<translation>Wpisz 12 słów swojej frazy odzyskiwania (Seed), oddzielonych pojedynczymi spacjami.</translation>
+		<translation>Εισαγάγετε τις 12 λέξεις της φράσης seed σας, χωρισμένες με μεμονωμένα κενά</translation>
 	</message>
 	<message>
 		<source>enter-a-private-key</source>
-		<translation>Wprowadź klucz prywatny</translation>
+		<translation>Εισαγάγετε ένα ιδιωτικό κλειδί</translation>
 	</message>
 	<message>
 		<source>enter-a-seed-phrase</source>
-		<translation>Wpisz frazę odzyskiwania (Seed)</translation>
+		<translation>Εισαγάγετε μια φράση seed</translation>
 	</message>
 	<message>
 		<source>enter-address</source>
-		<translation>Wprowadź adres</translation>
+		<translation>Εισαγάγετε διεύθυνση</translation>
 	</message>
 	<message>
 		<source>enter-contact-code</source>
-		<translation>ENS (vitalik94) lub klucz czatu (0x04...)</translation>
+		<translation>Εισαγάγετε το όνομα χρήστη ENS ή το κλειδί συνομιλίας</translation>
 	</message>
 	<message>
 		<source>enter-pair-code</source>
-		<translation>Wprowadź swój kod parowania</translation>
+		<translation>Εισαγάγετε τον κωδικό σύζευξης</translation>
 	</message>
 	<message>
 		<source>pair-code-placeholder</source>
-		<translation>Kod parowania</translation>
+		<translation>Κωδικός ζεύγους...</translation>
 	</message>
 	<message>
 		<source>enter-pair-code-description</source>
-		<translation>Kod parowania może być ustawiony z już sparowanego klienta Status.</translation>
+		<translation>Ο κωδικός σύζευξης εμφανίστηκε σε εσάς κατά τη ρύθμιση της Keycard</translation>
 	</message>
 	<message>
 		<source>enter-password</source>
-		<translation>Wprowadź hasło</translation>
+		<translation>Εισάγετε τον κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>enter-password-migration-prompt</source>
-		<translation>Wprowadź swoje hasło, aby przenieść kontakty, czaty i ustawienia wraz z Twoimi kluczami</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>migration-successful</source>
-		<translation>Migracja powiodła się</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>migration-successful-text</source>
-		<translation>Konto pomyślnie zmigrowane do Keycard</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>skip</source>
-		<translation>Pomiń</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>password-placeholder</source>
-		<translation>Hasło...</translation>
+		<translation>Κωδικός πρόσβασης...</translation>
 	</message>
 	<message>
 		<source>confirm-password-placeholder</source>
-		<translation>Potwierdź swoje hasło</translation>
+		<translation>Επιβεβαιώστε τον κωδικό πρόσβασης σας...</translation>
 	</message>
 	<message>
 		<source>enter-pin</source>
-		<translation>Wprowadź 6-cyfrowy kod dostępu</translation>
+		<translation>Εισαγάγετε τον 6ψήφιο κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>enter-puk-code</source>
-		<translation>Wprowadź kod PUK.</translation>
+		<translation>Εισαγάγετε τον κωδικό PUK</translation>
 	</message>
 	<message>
 		<source>enter-puk-code-description</source>
-		<translation>6-cyfrowy kod dostępu został zablokowany.
- Wprowadź kod PUK, aby odblokować kod dostępu.</translation>
+		<translation>Ο 6ψήφιος κωδικός πρόσβασης έχει αποκλειστεί.
+ Εισαγάγετε τον κωδικό PUK για να ξεμπλοκάρετε τον κωδικό πρόσβασης.</translation>
 	</message>
 	<message>
 		<source>enter-recipient-address-or-username</source>
-		<translation>Wprowadź adres lub nazwę użytkownika odbiorcy</translation>
+		<translation>Εισαγάγετε τη διεύθυνση ή το όνομα χρήστη του παραλήπτη</translation>
 	</message>
 	<message>
 		<source>enter-seed-phrase</source>
-		<translation>Wpisz frazę odzyskiwania (Seed)</translation>
+		<translation>Εισαγάγετε φράση seed</translation>
 	</message>
 	<message>
 		<source>enter-url</source>
-		<translation>Wprowadź adres URL</translation>
+		<translation>Εισαγάγετε διεύθυνση URL</translation>
 	</message>
 	<message>
 		<source>enter-watch-account-address</source>
-		<translation>Zeskanuj kod QR
-lub
-wprowadź adres do obejrzenia</translation>
+		<translation>Σάρωση κωδικού QR
+ ή
+ εισαγάγετε τη διεύθυνση για παρακολούθηση</translation>
 	</message>
 	<message>
 		<source>enter-word</source>
-		<translation>Wprowadź słowo</translation>
+		<translation>Εισαγάγετε λέξη</translation>
 	</message>
 	<message>
 		<source>enter-your-code</source>
-		<translation>Wprowadź swój 6-cyfrowy kod dostępu.</translation>
+		<translation>Εισαγάγετε τον 6ψήφιο κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>enter-your-password</source>
-		<translation>Wprowadź swoje hasło.</translation>
+		<translation>Εισάγετε τον κωδικό σας</translation>
 	</message>
 	<message>
 		<source>error</source>
-		<translation>Błąd</translation>
+		<translation>Σφάλμα</translation>
 	</message>
 	<message>
 		<source>error-unable-to-get-balance</source>
-		<translation>Nie można uzyskać historii transakcji</translation>
+		<translation>Δεν είναι δυνατή η λήψη υπολοίπου</translation>
 	</message>
 	<message>
 		<source>error-unable-to-get-prices</source>
-		<translation>Błąd konwersji waluty. Odśwież ekran, aby spróbować ponownie.</translation>
+		<translation>Σφάλμα μετατροπής νομίσματος. Ανανεώστε την οθόνη σας για να δοκιμάσετε ξανά.</translation>
 	</message>
 	<message>
 		<source>error-unable-to-get-token-balance</source>
-		<translation>Nie można uzyskać historii transakcji</translation>
+		<translation>Δεν είναι δυνατή η λήψη υπολοίπου token</translation>
 	</message>
 	<message>
 		<source>errors</source>
-		<translation>Błędy</translation>
+		<translation>Σφάλματα</translation>
 	</message>
 	<message>
 		<source>eth</source>
@@ -2197,217 +2172,217 @@ wprowadź adres do obejrzenia</translation>
 	</message>
 	<message>
 		<source>ethereum-node-started-incorrectly-description</source>
-		<translation>Węzeł Ethereum został uruchomiony z nieprawidłową konfiguracją, aplikacja zostanie zatrzymana w celu przywrócenia stanu pierwotnego. Skonfigurowany identyfikator sieci = {{network-id}}, rzeczywisty = {{fetched-network-id}}</translation>
+		<translation>Ο κόμβος Ethereum ξεκίνησε με εσφαλμένη ρύθμιση παραμέτρων, η εφαρμογή θα διακοπεί για ανάκτηση από αυτήν την κατάσταση. Ρυθμισμένο αναγνωριστικό δικτύου = {{network-id}}, πραγματικό = {{fetched-network-id}}</translation>
 	</message>
 	<message>
 		<source>ethereum-node-started-incorrectly-title</source>
-		<translation>Węzeł Ethereum został uruchomiony nieprawidłowo</translation>
+		<translation>Ο κόμβος Ethereum ξεκίνησε εσφαλμένα</translation>
 	</message>
 	<message>
 		<source>etherscan-lookup</source>
-		<translation>Wyszukaj na Etherscan</translation>
+		<translation>Κοιτάξτε στο Ethercan</translation>
 	</message>
 	<message>
 		<source>export-account</source>
-		<translation>Eksportuj konto</translation>
+		<translation>Εξαγωγή λογαριασμού</translation>
 	</message>
 	<message>
 		<source>export-key</source>
-		<translation>Eksportuj klucz prywatny</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-private-key</source>
-		<translation>Klucz prywatny społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>failed</source>
-		<translation>Niepowodzenie</translation>
+		<translation>Απέτυχε</translation>
 	</message>
 	<message>
 		<source>faq</source>
-		<translation>Często zadawane pytania</translation>
+		<translation>Συχνές ερωτήσεις</translation>
 	</message>
 	<message>
 		<source>fetch-messages</source>
-		<translation>↓ Pobierz wiadomości</translation>
+		<translation>↓ Λήψη μηνυμάτων</translation>
 	</message>
 	<message>
 		<source>fetch-timeline</source>
-		<translation>↓ Pobierz</translation>
+		<translation>↓ Λήψη</translation>
 	</message>
 	<message>
 		<source>find</source>
-		<translation>Znajdź</translation>
+		<translation>Εύρεση</translation>
 	</message>
 	<message>
 		<source>finish</source>
-		<translation>Zakończ</translation>
+		<translation>Τέλος</translation>
 	</message>
 	<message>
 		<source>finishing-card-setup</source>
-		<translation>Kończę konfigurację karty</translation>
+		<translation>Ολοκληρώνεται η ρύθμιση της κάρτας</translation>
 	</message>
 	<message>
 		<source>fleet</source>
-		<translation>Fleet</translation>
+		<translation>Στόλος</translation>
 	</message>
 	<message>
 		<source>fleet-settings</source>
-		<translation>Ustawienia fleet</translation>
+		<translation>Ρυθμίσεις στόλου</translation>
 	</message>
 	<message>
 		<source>follow-your-interests</source>
-		<translation>Dołącz do publicznego czatu i poznaj nowych ludzi</translation>
+		<translation>Μεταβείτε σε μια δημόσια συνομιλία και γνωρίστε νέα άτομα</translation>
 	</message>
 	<message>
 		<source>follow</source>
-		<translation>Śledź</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>free</source>
-		<translation>↓ Darmowy</translation>
+		<translation>↓ Δωρεάν</translation>
 	</message>
 	<message>
 		<source>from</source>
-		<translation>Od</translation>
+		<translation>Από</translation>
 	</message>
 	<message>
 		<source>gas-limit</source>
-		<translation>Limit Gasu</translation>
+		<translation>Όριο Gas</translation>
 	</message>
 	<message>
 		<source>gas-price</source>
-		<translation>Cena gasu</translation>
+		<translation>Τιμή Gas</translation>
 	</message>
 	<message>
 		<source>gas-used</source>
-		<translation>Użyty gas</translation>
+		<translation>Χρησιμοποιημένο gas</translation>
 	</message>
 	<message>
 		<source>generate-a-key</source>
-		<translation>Generuj klucze</translation>
+		<translation>Δημιουργία κλειδιών</translation>
 	</message>
 	<message>
 		<source>generate-a-new-account</source>
-		<translation>Wygeneruj konto</translation>
+		<translation>Δημιουργία λογαριασμού</translation>
 	</message>
 	<message>
 		<source>generate-a-new-key</source>
-		<translation>Wygeneruj nowy klucz</translation>
+		<translation>Δημιουργήστε ένα νέο κλειδί</translation>
 	</message>
 	<message>
 		<source>generate-account</source>
-		<translation>Generuj klucze</translation>
+		<translation>Δημιουργία κλειδιών</translation>
 	</message>
 	<message>
 		<source>generate-new-key</source>
-		<translation>Generuj klucze</translation>
+		<translation>Δημιουργία κλειδιών</translation>
 	</message>
 	<message>
 		<source>your-keys</source>
-		<translation>Twoje klucze</translation>
+		<translation>Τα κλειδιά σας</translation>
 	</message>
 	<message>
 		<source>generating-codes-for-pairing</source>
-		<translation>&gt; Pobieranie oprogramowania produktu na kartę
- &gt; Generowanie kodów odblokowujących i parujących</translation>
+		<translation>&gt; Λήψη λογισμικού προϊόντος στην κάρτα
+ &gt; Δημιουργία κωδικών ξεκλειδώματος &amp; σύζευξης</translation>
 	</message>
 	<message>
 		<source>generating-keys</source>
-		<translation>Generowanie kluczy ...</translation>
+		<translation>Δημιουργούνται κλειδιά...</translation>
 	</message>
 	<message>
 		<source>you-will-need-this-code</source>
-		<translation>Będziesz potrzebować tego kodu, aby otworzyć aplikację Status i podpisywać transakcje</translation>
+		<translation>Θα χρειαστείτε αυτόν τον κωδικό για να ανοίξετε το Status και να υπογράψετε συναλλαγές</translation>
 	</message>
 	<message>
 		<source>generating-mnemonic</source>
-		<translation>Generowanie frazy odzyskiwania (Seed)</translation>
+		<translation>Δημιουργία φράσης seed</translation>
 	</message>
 	<message>
 		<source>get-started</source>
-		<translation>Rozpocznij</translation>
+		<translation>Ξεκινήστε</translation>
 	</message>
 	<message>
 		<source>get-status-at</source>
-		<translation>Pobierz Status na http://status.im</translation>
+		<translation>Λήψη Status http://status.im</translation>
 	</message>
 	<message>
 		<source>get-stickers</source>
-		<translation>Pobierz naklejki</translation>
+		<translation>Λάβετε αυτοκόλλητα</translation>
 	</message>
 	<message>
 		<source>go-to-settings</source>
-		<translation>Przejdź do Ustawień</translation>
+		<translation>Μεταβείτε στις Ρυθμίσεις...</translation>
 	</message>
 	<message>
 		<source>got-it</source>
-		<translation>Rozumiem</translation>
+		<translation>Το έπιασα</translation>
 	</message>
 	<message>
 		<source>group-chat</source>
-		<translation>Czat grupowy</translation>
+		<translation>Ομαδική συζήτηση</translation>
 	</message>
 	<message>
 		<source>group-chat-admin</source>
-		<translation>Administrator</translation>
+		<translation>Διαχειριστής</translation>
 	</message>
 	<message>
 		<source>group-chat-admin-added</source>
-		<translation>**{{member}}** został administratorem</translation>
+		<translation>Ο χρήστης **{{member}}** έχει γίνει διαχειριστής</translation>
 	</message>
 	<message>
 		<source>group-chat-created</source>
-		<translation>**{{member}}** utworzył grupę **{{name}}**.</translation>
+		<translation>Ο χρήστης **{{member}}** δημιούργησε την ομάδα **{{name}}**</translation>
 	</message>
 	<message>
 		<source>group-chat-decline-invitation</source>
-		<translation>Odrzuć zaproszenie</translation>
+		<translation>Απόρριψη πρόσκλησης</translation>
 	</message>
 	<message>
 		<source>group-chat-member-added</source>
-		<translation>**{{member}}** został zaproszony</translation>
+		<translation>Ο χρήστης **{{member}}** έχει προσκληθεί</translation>
 	</message>
 	<message>
 		<source>group-chat-member-joined</source>
-		<translation>**{{member}}** dołączył do grupy</translation>
+		<translation>Ο χρήστης **{{member}}** συμμετέχει στην ομάδα</translation>
 	</message>
 	<message>
 		<source>group-chat-member-removed</source>
-		<translation>** {{member}} ** opuścił grupę</translation>
+		<translation>Ο χρήστης **{{member}}** αποχώρησε από την ομάδα</translation>
 	</message>
 	<message>
 		<source>group-chat-members-count</source>
-		<translation>{{selected}} / {{max}} członków</translation>
+		<translation>{{selected}} / {{max}} μέλη</translation>
 	</message>
 	<message>
 		<source>group-chat-name-changed</source>
-		<translation>{{member}} zmienił nazwę grupy na {{name}}</translation>
+		<translation>Ο χρήστης **{{member}}** άλλαξε το όνομα της ομάδας σε **{{name}}**</translation>
 	</message>
 	<message>
 		<source>group-chat-no-contacts</source>
-		<translation>Nie masz jeszcze żadnych kontaktów.
-Zaproś swoich znajomych do rozpoczęcia czatu</translation>
+		<translation>Δεν έχετε ακόμα επαφές.
+ Προσκαλέστε τους φίλους σας να για να ξεκινήσετε τη συζήτηση</translation>
 	</message>
 	<message>
 		<source>leave-chat</source>
-		<translation>Opuść czat</translation>
+		<translation>Αποχώρηση από συνομιλία</translation>
 	</message>
 	<message>
 		<source>leave-confirmation</source>
-		<translation>Opuść {{chat-name}}</translation>
+		<translation>Αποχώρηση από συνομιλία</translation>
 	</message>
 	<message>
 		<source>leave-chat-confirmation</source>
-		<translation>Historia czatu zostanie usunięta z Twojego urządzenia. Po ponownym dołączeniu nie będziesz w stanie odzyskać żadnej swojej historii.</translation>
+		<translation>Είστε βέβαιοι ότι θέλετε να αποχωρήσετε από τη συζήτηση;</translation>
 	</message>
 	<message>
 		<source>group-chat-all-contacts-invited</source>
-		<translation>Wszystkie Twoje kontakty są już w grupie</translation>
+		<translation>Όλες οι επαφές σας είναι ήδη στην ομάδα</translation>
 	</message>
 	<message>
 		<source>group-info</source>
-		<translation>Informacje o grupie</translation>
+		<translation>Πληροφορίες ομάδας</translation>
 	</message>
 	<message>
 		<source>gwei</source>
@@ -2419,39 +2394,40 @@ Zaproś swoich znajomych do rozpoczęcia czatu</translation>
 	</message>
 	<message>
 		<source>help</source>
-		<translation>pomoc</translation>
+		<translation>βοήθεια</translation>
 	</message>
 	<message>
 		<source>help-capitalized</source>
-		<translation>Pomoc</translation>
+		<translation>Βοήθεια</translation>
 	</message>
 	<message>
 		<source>help-center</source>
-		<translation>Centrum pomocy</translation>
+		<translation>Κέντρο βοήθειας</translation>
 	</message>
 	<message>
 		<source>hide-content-when-switching-apps</source>
-		<translation>Zablokuj zrzuty ekranu</translation>
+		<translation>Αποκλεισμός στιγμιότυπων οθόνης</translation>
 	</message>
 	<message>
 		<source>hide-content-when-switching-apps-ios</source>
-		<translation>Ukryj podgląd</translation>
+		<translation>Απόκρυψη προεπισκόπησης</translation>
 	</message>
 	<message>
 		<source>history</source>
-		<translation>Historia</translation>
+		<translation>Ιστορικό</translation>
 	</message>
 	<message>
 		<source>history-nodes</source>
-		<translation>Węzły Status</translation>
+		<translation>Κόμβοι ιστορικού</translation>
 	</message>
 	<message>
 		<source>hold-card</source>
-		<translation>przytrzymaj kartę z tyłu telefonu</translation>
+		<translation>Κρατήστε την κάρτα στο πίσω μέρος
+ του τηλεφώνου σας</translation>
 	</message>
 	<message>
 		<source>home</source>
-		<translation>Start</translation>
+		<translation>Αρχική</translation>
 	</message>
 	<message>
 		<source>hooks</source>
@@ -2459,683 +2435,683 @@ Zaproś swoich znajomych do rozpoczęcia czatu</translation>
 	</message>
 	<message>
 		<source>identifier</source>
-		<translation>Identyfikator</translation>
+		<translation>Αναγνωριστικό</translation>
 	</message>
 	<message>
 		<source>image-remove-current</source>
-		<translation>Usuń obecne zdjęcie</translation>
+		<translation>Κατάργηση τρέχουσας φωτογραφίας</translation>
 	</message>
 	<message>
 		<source>image-source-gallery</source>
-		<translation>Wybierz z galerii</translation>
+		<translation>Επιλέξτε από τη συλλογή</translation>
 	</message>
 	<message>
 		<source>image-source-make-photo</source>
-		<translation>Przechwyć</translation>
+		<translation>Λήψη</translation>
 	</message>
 	<message>
 		<source>image-source-title</source>
-		<translation>Edytuj zdjęcie</translation>
+		<translation>Επεξεργασία εικόνας</translation>
 	</message>
 	<message>
 		<source>profile-pic-take</source>
-		<translation>Zrób zdjęcie</translation>
+		<translation>Βγάλε φωτογραφία</translation>
 	</message>
 	<message>
 		<source>profile-pic-pick</source>
-		<translation>Wybierz z galerii</translation>
+		<translation>Επιλέξτε από τη συλλογή</translation>
 	</message>
 	<message>
 		<source>profile-pic-remove</source>
-		<translation>Usuń zdjęcie</translation>
+		<translation>Κατάργηση φωτογραφίας</translation>
 	</message>
 	<message>
 		<source>in-contacts</source>
-		<translation>W kontaktach</translation>
+		<translation>στις επαφές</translation>
 	</message>
 	<message>
 		<source>incoming</source>
-		<translation>Przychodzące</translation>
+		<translation>Εισερχόμενα</translation>
 	</message>
 	<message>
 		<source>incoming-transaction</source>
-		<translation>Transakcja przychodząca</translation>
+		<translation>Εισερχόμενη συναλλαγή</translation>
 	</message>
 	<message>
 		<source>incorrect-code::0</source>
-		<translation>str</translation>
+		<translation>οδός</translation>
 	</message>
 	<message>
 		<source>incorrect-code::1</source>
-		<translation>Przepraszamy, kod jest nieprawidłowy. Prosimy wprowadzić kod ponownie</translation>
+		<translation>Δυστυχώς, ο κωδικός δεν ήταν σωστός, εισαγάγετε τον ξανά</translation>
 	</message>
 	<message>
 		<source>initialization</source>
-		<translation>Rozpoczynanie</translation>
+		<translation>Αρχικοποίηση</translation>
 	</message>
 	<message>
 		<source>install</source>
-		<translation>↓ Zainstaluj</translation>
+		<translation>↓ Εγκατάσταση</translation>
 	</message>
 	<message>
 		<source>intro-message1</source>
-		<translation>Witamy w Status!
-Kliknij tę wiadomość, aby ustawić hasło i rozpocząć!</translation>
+		<translation>Καλώς ήλθατε στο Status!
+ Πατήστε αυτό το μήνυμα για να ορίσετε τον κωδικό πρόσβασης σας και να ξεκινήσετε.</translation>
 	</message>
 	<message>
 		<source>intro-privacy-policy-note1</source>
-		<translation>Status nie zbiera ani nie czerpie korzyści z twoich danych osobowych. Kontynuując, zgadzasz się z</translation>
+		<translation>Το Status δεν συλλέγει ούτε επωφελείται από τα προσωπικά σας δεδομένα. Συνεχίζοντας, συμφωνείτε με το </translation>
 	</message>
 	<message>
 		<source>intro-privacy-policy-note2</source>
-		<translation>Polityka prywatności</translation>
+		<translation>πολιτική απορρήτου</translation>
 	</message>
 	<message>
 		<source>intro-text</source>
-		<translation>Status jest twoją bramą do zdecentralizowanej sieci.</translation>
+		<translation>Το Status είναι η είσοδος σας στον αποκεντρωμένο ιστό</translation>
 	</message>
 	<message>
 		<source>intro-text1</source>
-		<translation>Rozmawiaj za pośrednictwem sieci typu peer-to-peer, w której wiadomości nie mogą być cenzurowane ani hakowane</translation>
+		<translation>Συνομιλήστε μέσω ενός peer-to-peer, κρυπτογραφημένου δικτύου όπου τα μηνύματα δεν μπορούν να λογοκριθούν ή να παραβιαστούν</translation>
 	</message>
 	<message>
 		<source>intro-text2</source>
-		<translation>Wysyłaj i odbieraj cyfrowe aktywa w dowolnym miejscu na świecie — bez konieczności posiadania konta bankowego</translation>
+		<translation>Αποστολή και λήψη ψηφιακών περιουσιακών στοιχείων οπουδήποτε στον κόσμο - δεν απαιτείται τραπεζικός λογαριασμός</translation>
 	</message>
 	<message>
 		<source>intro-text3</source>
-		<translation>Odkrywaj gry, giełdy i sieci społecznościowe, w których tylko Ty jesteś właścicielem swoich danych</translation>
+		<translation>Εξερευνήστε παιχνίδια, συναλλαγές και κοινωνικά δίκτυα όπου μόνο εσείς κατέχετε τα δεδομένα σας</translation>
 	</message>
 	<message>
 		<source>intro-title1</source>
-		<translation>Prawdziwie prywatna komunikacja</translation>
+		<translation>Πραγματικά ιδιωτική επικοινωνία</translation>
 	</message>
 	<message>
 		<source>intro-title2</source>
-		<translation>Bezpieczny portfel kryptowalutowy</translation>
+		<translation>Ασφαλές πορτοφόλι crypto</translation>
 	</message>
 	<message>
 		<source>intro-title3</source>
-		<translation>Zdecentralizowane aplikacje</translation>
+		<translation>Αποκεντρωμένες εφαρμογές</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text1</source>
-		<translation>Zestaw kluczy kontroluje Twoje konto. Twoje klucze są przechowywane w telefonie, więc tylko ty możesz ich używać</translation>
+		<translation>Ένα σύνολο κλειδιών ελέγχει το λογαριασμό σας. Τα κλειδιά σας ζουν στο τηλέφωνό σας, ώστε μόνο εσείς να μπορείτε να τα χρησιμοποιήσετε</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text2</source>
-		<translation>Jeden klucz jest przeznaczony do czatu. Dostarczany jest z czytelną nazwą, której nie można zmienić.</translation>
+		<translation>Ένα κλειδί είναι για συνομιλία. Έρχεται με ένα αναγνώσιμο όνομα που δεν μπορεί να αλλάξει.</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text3</source>
-		<translation>Jeśli posiadasz kartę Keycard, przechowuj w niej klucze dla większego bezpieczeństwa.</translation>
+		<translation>Εάν έχετε Keycard, αποθηκεύστε τα κλειδιά σας εκεί για βελτιωμένη ασφάλεια.</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text4</source>
-		<translation>Zabezpiecz i zaszyfruj swoje klucze</translation>
+		<translation>Ασφαλίστε και κρυπτογραφήστε τα κλειδιά σας</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text6</source>
-		<translation>Status będzie Cię powiadamiał o nowych wiadomościach. Możesz później edytować swoje preferencje dotyczące powiadomień w ustawieniach.</translation>
+		<translation>Το Status θα σας ειδοποιήσει για νέα μηνύματα. Μπορείτε να επεξεργαστείτε τις προτιμήσεις ειδοποιήσεων αργότερα στις ρυθμίσεις</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title-alt4</source>
-		<translation>Utwórz hasło</translation>
+		<translation>Δημιούργησε έναν κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title-alt5</source>
-		<translation>Potwierdź swoje hasło</translation>
+		<translation>Επιβεβαιώστε τον κωδικό πρόσβασης σας</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title1</source>
-		<translation>Zdobądź swoje klucze</translation>
+		<translation>Πάρτε τα κλειδιά σας</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title2</source>
-		<translation>Wybierz nazwę czatu</translation>
+		<translation>Επιλέξτε ένα όνομα συνομιλίας</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title3</source>
-		<translation>Wybierz miejsce przechowywania klucza</translation>
+		<translation>Επιλογή χώρου αποθήκευσης κλειδιών</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title4</source>
-		<translation>Utwórz 6-cyfrowy kod dostępu</translation>
+		<translation>Δημιουργήστε έναν 6ψήφιο κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title5</source>
-		<translation>Potwierdź kod dostępu</translation>
+		<translation>Επιβεβαιώστε τον κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title6</source>
-		<translation>Włącz powiadomienia</translation>
+		<translation>Ενεργοποίηση ειδοποιήσεων</translation>
 	</message>
 	<message>
 		<source>are-you-sure-to-cancel</source>
-		<translation>Czy na pewno chcesz anulować?</translation>
+		<translation>Είστε βέβαιοι ότι θέλετε να ακυρώσετε;</translation>
 	</message>
 	<message>
 		<source>you-will-start-from-scratch</source>
-		<translation>Zaczniesz od początku z nowym zestawem kluczy</translation>
+		<translation>Θα ξεκινήσετε από το μηδέν με ένα νέο σετ κλειδιών</translation>
 	</message>
 	<message>
 		<source>invalid-address-qr-code</source>
-		<translation>Zeskanowany kod QR nie zawiera prawidłowego adresu</translation>
+		<translation>Ο σαρωμένος κωδικός QR δεν περιέχει έγκυρη διεύθυνση</translation>
 	</message>
 	<message>
 		<source>invalid-format</source>
-		<translation>Niepoprawny format
-Musi być {{format}}</translation>
+		<translation>Μη έγκυρη μορφή
+Πρέπει να είναι {{format}}</translation>
 	</message>
 	<message>
 		<source>invalid-key-confirm</source>
-		<translation>Zastosuj</translation>
+		<translation>Εφαρμογή</translation>
 	</message>
 	<message>
 		<source>invalid-key-content</source>
-		<translation>Baza danych nie może zostać zaszyfrowana, ponieważ plik jest uszkodzony. Twoje środki i klucz czatu są bezpieczne. Inne dane, takie jak czaty i kontakty, nie mogą zostać przywrócone. Przycisk &apos;{{erase-multiaccounts-data-button-text}}&apos; usunie wszystkie inne dane i pozwoli Ci na dostęp do Twoich środków i wysyłanie wiadomości.</translation>
+		<translation>Η βάση δεδομένων δεν μπορεί να κρυπτογραφηθεί επειδή ένα αρχείο είναι κατεστραμμένο. Τα χρήματα και το κλειδί συνομιλίας σας είναι ασφαλή. Δεν είναι δυνατή η επαναφορά άλλων δεδομένων, όπως οι συζητήσεις και οι επαφές σας. Το κουμπί  &quot;{{erase-multiaccounts-data-button-text}}&quot;, θα καταργήσει όλα τα άλλα δεδομένα και σας επιτρέπει να έχετε πρόσβαση στα χρήματά σας και να στέλνετε μηνύματα</translation>
 	</message>
 	<message>
 		<source>invalid-number</source>
-		<translation>Nieprawidłowy numer</translation>
+		<translation>Μη έγκυρος αριθμός</translation>
 	</message>
 	<message>
 		<source>invalid-pairing-password</source>
-		<translation>Nieprawidłowe hasło parowania</translation>
+		<translation>Μη έγκυρος κωδικός σύζευξης</translation>
 	</message>
 	<message>
 		<source>invalid-range</source>
-		<translation>Nieprawidłowy format musi zawierać się między {{min}} a {{max}}</translation>
+		<translation>Μη έγκυρη μορφή, πρέπει να είναι μεταξύ {{min}} και {{max}}</translation>
 	</message>
 	<message>
 		<source>invalid-username-or-key</source>
-		<translation>Nieprawidłowa nazwa użytkownika lub klucz czatu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>join-me</source>
-		<translation>Hej, dołącz do mnie na Status: {{url}}</translation>
+		<translation>Γεια έλα μαζί μου στο Status: {{url}}</translation>
 	</message>
 	<message>
 		<source>join-a-community</source>
-		<translation>lub dołącz do społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>http-gateway-error</source>
-		<translation>Ups, żądanie się nie powiodło!</translation>
+		<translation>Ουπς, η αίτηση απέτυχε!</translation>
 	</message>
 	<message>
 		<source>sign-request-failed</source>
-		<translation>Nie można podpisać wiadomości</translation>
+		<translation>Δεν ήταν δυνατή η υπογραφή μηνύματος</translation>
 	</message>
 	<message>
 		<source>invite-friends</source>
-		<translation>Zaproś znajomych</translation>
+		<translation>Πρόσκληση φίλων</translation>
 	</message>
 	<message>
 		<source>invite-people</source>
-		<translation>Zaproś ludzi</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>invite-reward</source>
-		<translation>Zarabiaj kryptowaluty za każdego znajomego, którego zaprosisz!</translation>
+		<translation>Κερδίστε crypto για κάθε φίλο που προσκαλείτε!</translation>
 	</message>
 	<message>
 		<source>invite-select-account</source>
-		<translation>Wybierz konto, aby otrzymać premię za polecenie</translation>
+		<translation>Επιλέξτε έναν λογαριασμό για να λάβετε το μπόνους παραπομπής σας</translation>
 	</message>
 	<message>
 		<source>invited</source>
-		<translation>zaproszeni</translation>
+		<translation>προσκάλεσε</translation>
 	</message>
 	<message>
 		<source>invite-button</source>
-		<translation>Zaproś</translation>
+		<translation>Προσκαλέστε</translation>
 	</message>
 	<message>
 		<source>invite-receive-account</source>
-		<translation>Konto, aby otrzymać premię za polecenie</translation>
+		<translation>Λογαριασμός για να λάβετε το μπόνους παραπομπής σας</translation>
 	</message>
 	<message>
 		<source>how-it-works</source>
-		<translation>Jak to działa?</translation>
+		<translation>Πώς λειτουργεί</translation>
 	</message>
 	<message>
 		<source>invite-warning</source>
-		<translation>Ta promocja jest ważna tylko dla użytkowników urządzeń z systemem Android, którzy nie są mieszkańcami USA. Znajomy musi potwierdzić polecenie w ciągu 7 dni.</translation>
+		<translation>Αυτή η προσφορά ισχύει μόνο για χρήστες συσκευών Android, οι οποίοι δεν είναι κάτοικοι των ΗΠΑ. Ο φίλος πρέπει να επιβεβαιώσει την παραπομπή εντός 7 ημερών</translation>
 	</message>
 	<message>
 		<source>invite-instruction-first</source>
-		<translation>Wysyłasz znajomemu unikalny link z zaproszeniem do pobrania i dołączenia do platformy Status</translation>
+		<translation>Στέλνετε έναν μοναδικό σύνδεσμο πρόσκλησης στον φίλο σας για λήψη και συμμετοχή στο Status</translation>
 	</message>
 	<message>
 		<source>invite-instruction-second</source>
-		<translation>Twój znajomy pobiera Status i tworzy konto (na Androidzie)</translation>
+		<translation>Ο φίλος σας κατεβάζει το Status και δημιουργεί έναν λογαριασμό (σε Android)</translation>
 	</message>
 	<message>
 		<source>invite-instruction-third</source>
-		<translation>Czat z Twoim znajomym rozpoczął się, w którym to potwierdzi on Twoje polecenie</translation>
+		<translation>Ξεκινά μια συνομιλία με τον φίλο σας, όπου επιβεβαιώνουν την παραπομπή σας</translation>
 	</message>
 	<message>
 		<source>invite-instruction-fourth</source>
-		<translation>Otrzymasz premię za polecenie, a twój znajomy pakiet startowy</translation>
+		<translation>Λαμβάνετε το μπόνους παραπομπής και ο φίλος σας το Πακέτο Εκκίνησης</translation>
 	</message>
 	<message>
 		<source>invite-instruction-fifth</source>
-		<translation>Bonus za polecenie możesz zrealizować w dowolnym momencie.</translation>
+		<translation>Μπορείτε να επιλέξετε να εξαργυρώσετε το μπόνους παραπομπής σας ανά πάσα στιγμή.</translation>
 	</message>
 	<message>
 		<source>invite-reward-you</source>
-		<translation>Ty:</translation>
+		<translation>Εσείς: </translation>
 	</message>
 	<message>
 		<source>invite-reward-you-name</source>
-		<translation>Premia za polecenie</translation>
+		<translation>Μπόνους παραπομπής</translation>
 	</message>
 	<message>
 		<source>invite-reward-you-description</source>
-		<translation>Zaproś znajomego i otrzymaj {{reward}} jako bonus za polecenie. Użyj go, aby uzyskać naklejki, nazwę ENS i korzystać ze zdecentralizowanych aplikacji</translation>
+		<translation>Προσκαλέστε έναν φίλο και λάβετε {{reward}} ως μπόνους παραπομπής. Χρησιμοποιήστε το για να λάβετε αυτοκόλλητα, ένα όνομα ENS και να δοκιμάσετε dapps</translation>
 	</message>
 	<message>
 		<source>invite-reward-friend</source>
-		<translation>Znajomy: </translation>
+		<translation>Φίλος: </translation>
 	</message>
 	<message>
 		<source>invite-reward-friend-name</source>
-		<translation>Pakiet startowy</translation>
+		<translation>Πακέτο εκκίνησης</translation>
 	</message>
 	<message>
 		<source>invite-reward-friend-description</source>
-		<translation>Twój znajomy otrzyma Pakiet Startowy składający się z {{reward}} na początek</translation>
+		<translation>Ο φίλος σας θα λάβει ένα πακέτο εκκίνησης που αποτελείται από μερικά {{reward}} για να ξεκινήσει</translation>
 	</message>
 	<message>
 		<source>invite-privacy-policy1</source>
-		<translation>Akceptując wyrażasz zgodę na program poleceń</translation>
+		<translation>Με την αποδοχή συμφωνείτε με το πρόγραμμα παραπομπής</translation>
 	</message>
 	<message>
 		<source>invite-privacy-policy2</source>
-		<translation>Warunki i zasady.</translation>
+		<translation>Όροι και Προϋποθέσεις.</translation>
 	</message>
 	<message>
 		<source>invite-privacy-policy-public</source>
-		<translation>Zainstalowałeś Status poprzez link polecający. Dołączając do tego czatu, przypisujesz się do osoby polecającej i zgadzasz się na</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>invite-chat-name</source>
-		<translation>Polecenie Znajomego</translation>
+		<translation>Παραπομπή φίλου</translation>
 	</message>
 	<message>
 		<source>invite-chat-starter-pack</source>
-		<translation>Pakiet startowy</translation>
+		<translation>Πακέτο εκκίνησης</translation>
 	</message>
 	<message>
 		<source>invite-chat-intro</source>
-		<translation>Zostałeś polecony przez znajomego, aby dołączyć do Status. Oto trochę kryptowalut na dobry początek! Użyj Ich, aby zarejestrować nazwę ENS lub kupić pakiet naklejek.</translation>
+		<translation>Σας παρέπεμψε ένας φίλος για να συμμετάσχετε στο Status. Εδώ είναι μερικά crypto για να ξεκινήσετε! Χρησιμοποιήστε τα για να καταχωρήσετε ένα όνομα ENS ή να αγοράσετε ένα πακέτο αυτοκόλλητων</translation>
 	</message>
 	<message>
 		<source>invite-public-chat-home</source>
-		<translation>Zaproszenie polecające</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>invite-public-chat-intro</source>
-		<translation>Oto trochę kryptowalut na dobry początek! Użyj ich, aby zarejestrować nazwę ENS lub kupić pakiet naklejek</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>invite-chat-accept</source>
-		<translation>Przyjmij</translation>
+		<translation>Αποδέχομαι</translation>
 	</message>
 	<message>
 		<source>invite-chat-pending</source>
-		<translation>Oczekujące</translation>
+		<translation>Εκκρεμούν</translation>
 	</message>
 	<message>
 		<source>invite-chat-accept-join</source>
-		<translation>Zaakceptuj i dołącz</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>invite-chat-rule</source>
-		<translation>Akceptacja wynagrodzi również znajomego premią w postaci bonusu kryptowalutowego</translation>
+		<translation>Η αποδοχή θα ανταμείψει επίσης το φίλο σας με ένα μπόνους παραπομπής κρυπτογράφησης</translation>
 	</message>
 	<message>
 		<source>redeem-now</source>
-		<translation>Zrealizuj teraz</translation>
+		<translation>Εξαργυρώστε τώρα</translation>
 	</message>
 	<message>
 		<source>redeem-amount</source>
-		<translation>Dostępne bonusy: {{quantity}}</translation>
+		<translation>{{quantity}} διαθέσιμα μπόνους</translation>
 	</message>
 	<message>
 		<source>redeem-success</source>
-		<translation>Skutecznie zrealizowany bonus!</translation>
+		<translation>Εξαργυρώστε το μπόνους επιτυχίας!</translation>
 	</message>
 	<message>
 		<source>attribution-received</source>
-		<translation>{{attrib}} z {{max}} otrzymanych premii</translation>
+		<translation>{{attrib}} από τα {{max}} μπόνους που ελήφθησαν</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-title</source>
-		<translation>Pakiet startowy</translation>
+		<translation>Πακέτο εκκίνησης</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-description</source>
-		<translation>Oto trochę kryptowalut na dobry początek! Użyj ich, aby zarejestrować nazwę ENS lub kupić pakiet naklejek</translation>
+		<translation>Εδώ είναι μερικά crypto για να ξεκινήσετε! Χρησιμοποιήστε τα για να πάρετε αυτοκόλλητα, ένα όνομα ENS και να δοκιμάσετε dapps</translation>
 	</message>
 	<message>
 		<source>advertiser-title</source>
-		<translation>Prywatność domyślnie</translation>
+		<translation>Απόρρητο από προεπιλογή</translation>
 	</message>
 	<message>
 		<source>advertiser-description</source>
-		<translation>Odkryłeś Status dzięki partnerowi. Czy masz coś przeciwko, jeśli Status sprawdzi tylko raz Twój adres IP, aby go wynagrodzić? Informacje te nie zostaną wykorzystane do niczego innego i zostaną całkowicie usunięte po 7 dniach.</translation>
+		<translation>Ανακαλύψατε το Status χάρη σε έναν συνεργάτη. Σας πειράζει εάν το Status ελέγξει τη διεύθυνση IP σας μία φορά, ώστε να ανταμειφθεί; Αυτές οι πληροφορίες δεν θα χρησιμοποιηθούν για οτιδήποτε άλλο και θα καταργηθούν εντελώς μετά από 7 ημέρες.</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-accept</source>
-		<translation>Akceptuj</translation>
+		<translation>Αποδοχή</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-decline</source>
-		<translation>Odrzuć</translation>
+		<translation>Απόρριψη</translation>
 	</message>
 	<message>
 		<source>dapp-starter-pack-title</source>
-		<translation>Pakiet startowy</translation>
+		<translation>Πακέτο εκκίνησης</translation>
 	</message>
 	<message>
 		<source>dapp-starter-pack-description</source>
-		<translation>Oto trochę kryptowalut na dobry początek! Użyj ich, aby kupić naklejki, zmienić nazwę ENS lub korzystać ze zdecentralizowanych aplikacji</translation>
+		<translation>Να και κάποια crypto για να ξεκινήσετε! Χρησιμοποιήστε τα για να λάβετε αυτοκόλλητα, ένα όνομα ENS και να δοκιμάσετε dapps</translation>
 	</message>
 	<message>
 		<source>dapp-starter-pack-accept</source>
-		<translation>Zaakceptuj i otwórz</translation>
+		<translation>Αποδοχή και Άνοιγμα</translation>
 	</message>
 	<message>
 		<source>starter-pack-coming</source>
-		<translation>Pakiet startowy już w drodze</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>starter-pack-coming-description</source>
-		<translation>Może to zająć od kilku minut do kilku godzin</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>starter-pack-received</source>
-		<translation>Otrzymano pakiet startowy</translation>
+		<translation>Το Πακέτο Εκκίνησης ελήφθη</translation>
 	</message>
 	<message>
 		<source>starter-pack-received-description</source>
-		<translation>Oto trochę kryptowalut na dobry początek! Użyj ich, aby kupić naklejki, zmienić nazwę ENS lub korzystać ze zdecentralizowanych aplikacji</translation>
+		<translation>Εδώ είναι μερικά crypto για να ξεκινήσετε! Χρησιμοποιήστε τα για να πάρετε αυτοκόλλητα, ένα όνομα ENS και να δοκιμάσετε dapps</translation>
 	</message>
 	<message>
 		<source>join-group-chat</source>
-		<translation>Dołącz do grupy</translation>
+		<translation>Συμμετοχή στην ομάδα</translation>
 	</message>
 	<message>
 		<source>join-group-chat-description</source>
-		<translation>{{username}}zaprosił Cię abyś dołączył do grupy {{group-name}}</translation>
+		<translation>Ο χρήστης {{username}} σας προσκάλεσε να συμμετάσχετε στην ομάδα {{group-name}}</translation>
 	</message>
 	<message>
 		<source>joined-group-chat-description</source>
-		<translation>Dołączyłeś do {{group-name}} z zaproszenia od {{username}}.</translation>
+		<translation>Έχετε ενταχθεί στην ομάδα {{group-name}} με πρόσκληση από {{username}}</translation>
 	</message>
 	<message>
 		<source>key</source>
-		<translation>Klucz</translation>
+		<translation>Κλειδί</translation>
 	</message>
 	<message>
 		<source>keycard</source>
-		<translation>Karta Keycard</translation>
+		<translation>Keycard</translation>
 	</message>
 	<message>
 		<source>keycard-access-reset</source>
-		<translation>Dostęp do karty jest zresetowany</translation>
+		<translation>Έχει γίνει επαναφορά πρόσβασης στην Keycard</translation>
 	</message>
 	<message>
 		<source>keycard-can-use-with-new-passcode</source>
-		<translation>Możesz używać tej karty z nowym kodem dostępu</translation>
+		<translation>Μπορείτε να χρησιμοποιήσετε αυτήν την κάρτα με τον νέο κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>keycard-applet-install-instructions</source>
-		<translation>Aby zainstalować aplet, postępuj zgodnie z instrukcjami na https://github.com/status-im/keycard-cli#keycard-applet-installation</translation>
+		<translation>Για να εγκαταστήσετε το applet ακολουθήστε τις οδηγίες στη διεύθυνση https://github.com/status-im/keycard-cli#keycard-applet-installation</translation>
 	</message>
 	<message>
 		<source>keycard-blocked</source>
-		<translation>Karta kluczy została zablokowana.
-Aby kontynuować korzystanie z karty, musisz zresetować kartę.</translation>
+		<translation>Η Keycard έχει αποκλειστεί.
+ Πρέπει να επαναφέρετε την κάρτα για να συνεχίσετε να τη χρησιμοποιείτε.</translation>
 	</message>
 	<message>
 		<source>keycard-cancel-setup-text</source>
-		<translation>Spowoduje to anulowanie konfiguracji karty kluczy. Zdecydowanie zaleca się zakończenie konfiguracji w celu użycia karty Keycard. Czy naprawdę chcesz anulować?</translation>
+		<translation>Αυτό θα ακυρώσει τη ρύθμιση της κάρτας. Συνιστάται ιδιαίτερα να ολοκληρώσετε τη ρύθμιση προκειμένου να χρησιμοποιήσετε την κάρτα-κλειδί. Θέλετε πραγματικά να ακυρώσετε;</translation>
 	</message>
 	<message>
 		<source>keycard-cancel-setup-title</source>
-		<translation>Niebezpieczna operacja</translation>
+		<translation>Επικίνδυνη λειτουργία</translation>
 	</message>
 	<message>
 		<source>keycard-desc</source>
-		<translation>Posiadasz kartę Keycard? Przechowuj na niej swoje klucze; będzie Ci ona potrzebna do transakcji</translation>
+		<translation>Έχετε Keycard; Αποθηκεύστε τα κλειδιά σας σε αυτήν· θα την χρειαστείτε για συναλλαγές</translation>
 	</message>
 	<message>
 		<source>keycard-dont-ask-card</source>
-		<translation>Nie pytaj o kartę, aby się zalogować</translation>
+		<translation>Μη ζητήσετε κάρτα για σύνδεση</translation>
 	</message>
 	<message>
 		<source>keycard-reset-passcode</source>
-		<translation>Resetuj kod dostępu.</translation>
+		<translation>Επαναφορά κωδικού πρόσβασης</translation>
 	</message>
 	<message>
 		<source>keycard-factory-reset</source>
-		<translation>Przywróć kartę do ustawień fabrycznych</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>keycard-factory-reset-title</source>
-		<translation>Czy na pewno chcesz przywrócić ustawienia fabryczne?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>keycard-factory-reset-text</source>
-		<translation>Wykonanie tej czynności spowoduje usunięcie wszystkich fraz mnemotechnicznych zapisanych na karcie. Upewnij się, że masz kopię zapasową wyrażenia mnemotechnicznego, którego używałeś z tą kartą.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>keycard-enter-new-passcode</source>
-		<translation>Wprowadź nowy kod dostępu {{step}}/2</translation>
+		<translation>Εισαγάγετε νέο κωδικό πρόσβασης {{step}}/2</translation>
 	</message>
 	<message>
 		<source>keycard-has-multiaccount-on-it</source>
-		<translation>Ta karta jest pełna. Każda karta może pomieścić jedną główną parę kluczy</translation>
+		<translation>Αυτή η κάρτα είναι γεμάτη. Κάθε κάρτα μπορεί να κρατήσει ένα κύριο keypair</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-finishing-header</source>
-		<translation>Kończę</translation>
+		<translation>Ολοκλήρωση</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-intro-header</source>
-		<translation>Przechowuj swoje klucze na karcie Keycard</translation>
+		<translation>Αποθηκεύστε τα κλειδιά σας στην Keycard</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-intro-text</source>
-		<translation>Przygotuj się, może to zająć kilka minut, ale ważne jest to, abyś zabezpieczył swoje konto</translation>
+		<translation>Ετοιμαστείτε, αυτό μπορεί να διαρκέσει λίγα λεπτά, αλλά είναι σημαντικό να προστατέψετε τον λογαριασμό σας</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-pairing-header</source>
-		<translation>Parowanie karty ...</translation>
+		<translation>Σύζευξη της κάρτας...</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-preparing-header</source>
-		<translation>Przygotowanie karty ...</translation>
+		<translation>Προετοιμασία της κάρτας...</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-puk-code-header</source>
-		<translation>Zapisz kody
- i przechowuj je bezpiecznie</translation>
+		<translation>Γράψτε τους κωδικούς
+ και φυλάξτε τους με ασφάλεια</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-recovery-phrase-description</source>
-		<translation>Potrzebujesz tej frazy odzyskiwania (Seed), aby odzyskać swój klucz. Zapisz ją. Przechowuj ją w bezpiecznym miejscu, poza siecią i poza tym urządzeniem.</translation>
+		<translation>Χρειάζεστε αυτήν τη φράση seed για να πάρετε πίσω το κλειδί σας. Σημειώστε τη. Διατηρήστε την ασφαλή, εκτός σύνδεσης και διαχωρίστε την από αυτήν τη συσκευή.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-recovery-phrase-header</source>
-		<translation>Utwórz kopię zapasową frazy odzyskiwania (Seed)</translation>
+		<translation>Αντίγραφο ασφαλείας φράσης seed</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-recovery-phrase-text</source>
-		<translation>Tylko dla twoich oczu. To jest magiczny Seed użyty do wygenerowania Twojego klucza.</translation>
+		<translation>Μόνο για τα μάτια σας . Αυτός είναι το μαγικό seed που χρησιμοποιείται για τη δημιουργία του κλειδιού σας.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-header</source>
-		<translation>Przytrzymaj kartę z tyłu
- telefonu, aby rozpocząć</translation>
+		<translation>Κρατήστε την κάρτα στο πίσω μέρος
+ του τηλεφώνου σας για να ξεκινήσετε</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-pin-text</source>
-		<translation>Będziesz musiał utworzyć 6-cyfrowy kod dostępu, który będzie używany do ochrony dostępu do Twojej karty Keycard.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-mnemonic-text</source>
-		<translation>Będziesz również potrzebował kartki papieru i ołówka, aby zapisać swoje hasło.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step1</source>
-		<translation>Utwórz kod dostępu</translation>
+		<translation>Δημιουργήστε έναν κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step1-text</source>
-		<translation>Około 1 minuty. Utwórz 6-cyfrowy kod dostępu, aby zaszyfrować swoje klucze</translation>
+		<translation>Περίπου 1 λεπτό. Δημιουργήστε έναν 6ψήφιο κωδικό πρόσβασης για κρυπτογράφηση των κλειδιών σας</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step2</source>
-		<translation>Zapisz PUK i kod parowania</translation>
+		<translation>Σημειώστε το PUK και τον κωδικό σύζευξης</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step2-text</source>
-		<translation>Około 1 minuty. Będziesz potrzebować do tego kartki papieru i długopisu</translation>
+		<translation>Περίπου 1 λεπτό. Θα χρειαστείτε ένα κομμάτι χαρτί και ένα μολύβι για αυτό</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step3</source>
-		<translation>Utwórz kopię zapasową frazy odzyskiwania (Seed)</translation>
+		<translation>Δημιουργήστε αντίγραφα ασφαλείας για τη φράση seed</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step3-text</source>
-		<translation>Około 1 minuty. Na tym etapie również potrzebna jest kartka papieru i długopis</translation>
+		<translation>Περίπου 1 λεπτό. Απαιτούνται επίσης ένα κομμάτι χαρτί και ένα μολύβι</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-text</source>
-		<translation>I utrzymuj kontakt między kartą a telefonem
- podczas konfiguracji. Konfiguracja zajmie około 4 minut</translation>
+		<translation>Και διατηρήστε την κάρτα στην τηλεφωνική επαφή
+ κατά τη διάρκεια της εγκατάστασης. Η εγκατάσταση θα διαρκέσει περίπου 4 λεπτά</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-intro-button-text</source>
-		<translation>Rozpocznij odzyskiwanie</translation>
+		<translation>Ξεκινήστε την ανάκτηση</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-intro-header</source>
-		<translation>Odzyskaj klucze przechowywane na karcie Keycard</translation>
+		<translation>Ανάκτηση κλειδιών που είναι αποθηκευμένα στην κάρτα-κλειδί</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-intro-text</source>
-		<translation>Jeśli wcześniej generowałeś klucze za pomocą karty Keycard, a teraz chcesz używać tych kluczy na tym urządzeniu</translation>
+		<translation>Εάν δημιουργήσατε κλειδιά χρησιμοποιώντας μια κάρτα-κλειδί πριν και τώρα θέλετε να χρησιμοποιήσετε αυτά τα κλειδιά σε αυτήν τη συσκευή</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-no-key-header</source>
-		<translation>Nie ma tu nic do odzyskiwania</translation>
+		<translation>Δεν υπάρχει τίποτα
+για ανάκτηση εδώ</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-no-key-text</source>
-		<translation>Twoja karta Keycard nie zawiera żadnego klucza. Aby z niej skorzystać, wygeneruj nowy klucz i wybierz swoją kartę Keycard przechowywać klucz</translation>
+		<translation>Η Keycard σας δεν έχει αποθηκευμένο κλειδί σε αυτήν. Για να την χρησιμοποιήσετε, δημιουργήστε ένα νέο κλειδί και επιλέξτε την Keycard σας για να αποθηκεύσετε το κλειδί</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-phrase-confirm-header</source>
-		<translation>Potwierdź frazę odzyskiwania (Seed)</translation>
+		<translation>Επιβεβαιώστε τη φράση seed</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-phrase-confirmation-text</source>
-		<translation>Nie będziesz mieć drugiej szansy! Jeżeli utracisz dostęp, na przykład poprzez utratę karty Keycard, możesz uzyskać dostęp do twoich kluczy jedynie dzięki twojej frazie Seed. Nikt, oprócz Ciebie nie posiada Twojej frazy Seed. Zapisz ją i przechowuj w bezpiecznym miejscu.</translation>
+		<translation>Δεν θα έχετε δεύτερη ευκαιρία! Εάν χάσετε την πρόσβαση, χάνοντας για παράδειγμα την κάρτα-κλειδί σας, μπορείτε να αποκτήσετε πρόσβαση στα κλειδιά σας μόνο με τη φράση seed σας. Κανείς, εκτός από εσάς δεν έχει τη φράση seed σας. Σημειώστε τη. Κρατήστε την ΑΣΦΑΛΗ.</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-phrase-confirmation-title</source>
-		<translation>Czy fraza odzyskiwania (Seed) została zapisana?</translation>
+		<translation>Σημειώσατε τη φράση seed;</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-success-header</source>
-		<translation>Twoje klucze zostały
- pomyślnie odzyskane</translation>
+		<translation>Τα κλειδιά σας έχουν ανακτηθεί με επιτυχία</translation>
 	</message>
 	<message>
 		<source>keycard-redeem-title</source>
-		<translation>Odbierz na</translation>
+		<translation>Εξαργύρωση σε</translation>
 	</message>
 	<message>
 		<source>keycard-redeem-tx</source>
-		<translation>Odbierz aktywa</translation>
+		<translation>Εξαργύρωση περιουσιακών στοιχείων</translation>
 	</message>
 	<message>
 		<source>keycard-redeem-tx-desc</source>
-		<translation>Stuknij w kartę, aby podpisać i odebrać aktywa</translation>
+		<translation>Πατήστε την κάρτα για να υπογράψετε και να λάβετε περιουσιακά στοιχεία</translation>
 	</message>
 	<message>
 		<source>keycard-unauthorized-operation</source>
-		<translation>Nie masz uprawnień do wykonania tej operacji.
- Wybierz ważną kartę i spróbuj ponownie.</translation>
+		<translation>Δεν έχετε εξουσιοδότηση για την εκτέλεση αυτής της λειτουργίας.
+ Πατήστε έγκυρη κάρτα και δοκιμάστε ξανά.</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-title</source>
-		<translation>Karta Keycard jest zamrożona</translation>
+		<translation>Η Keycard έχει παγώσει</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-details</source>
-		<translation>Aby chronić swoje zasoby, karta została zawieszona. Zresetuj kartę, aby ją odblokować i móc wysyłać transakcje. Możesz to zrobić za pomocą PUK lub wyrażenia mnemomicznego.</translation>
+		<translation>Για την προστασία των περιουσιακών σας στοιχείων, η κάρτα σας έχει παγώσει. Επαναφέρετε την πρόσβαση στην κάρτα για να ξεκλειδώσετε κλειδιά και να στείλετε συναλλαγές. Δημιουργήστε έναν νέο κωδικό πρόσβασης και εισαγάγετε το PUK για πρόσβαση στους λογαριασμούς σας σε αυτήν την κάρτα</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-reset</source>
-		<translation>Zresetuj za pomocą PUK</translation>
+		<translation>Επαναφορά πρόσβασης στην κάρτα</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-factory-reset</source>
-		<translation>Zresetuj regułą mnemotechniczną,</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>your-card-is-frozen</source>
-		<translation>Twoja karta Keycard jest zamrożona. Zresetuj dostęp do karty</translation>
+		<translation>Η Keycard σας έχει παγώσει. Επαναφορά πρόσβασης στην κάρτα</translation>
 	</message>
 	<message>
 		<source>keycard-is-blocked-title</source>
-		<translation>Karta Keycard jest zablokowana</translation>
+		<translation>Η Keycard έχει αποκλειστεί</translation>
 	</message>
 	<message>
 		<source>keycard-is-blocked-details</source>
-		<translation>Nie możesz już używać tej karty do uzyskiwania dostępu lub zalogowania się na to konto. Było zbyt wiele nieudanych prób wprowadzenia kodu dostępu i kodu PUK.</translation>
+		<translation>Δεν μπορείτε πλέον να χρησιμοποιήσετε αυτήν την κάρτα για πρόσβαση ή εγγραφή για αυτόν τον λογαριασμό. Υπήρξαν πάρα πολλές αποτυχημένες προσπάθειες κωδικού πρόσβασης και PUK.</translation>
 	</message>
 	<message>
 		<source>keycard-is-blocked-instructions</source>
-		<translation>Aby uzyskać dostęp do swojego konta, musisz zresetować kartę do ustawień fabrycznych. Naciśnij poniższy przycisk, aby rozpocząć procedurę, będziesz potrzebować swojego wyrażenia mnemomicznego.</translation>
+		<translation>Για να αποκτήσετε πρόσβαση στον λογαριασμό σας, επανεγκαταστήστε το Status και χρησιμοποιήστε μια νέα Keycard, χρησιμοποιήστε ένα διαφορετικό πορτοφόλι ή επαναφέρετε την Keycard χειροκίνητα.</translation>
 	</message>
 	<message>
 		<source>language</source>
-		<translation>Język</translation>
+		<translation>Γλώσσα</translation>
 	</message>
 	<message>
 		<source>learn-more</source>
-		<translation>Dowiedz się więcej</translation>
+		<translation>Μάθετε περισσότερα</translation>
 	</message>
 	<message>
 		<source>learn-more-about-keycard</source>
-		<translation>Dowiedz się więcej o Keycard</translation>
+		<translation>Μάθετε περισσότερα για την Keycard</translation>
 	</message>
 	<message>
 		<source>leave</source>
-		<translation>Opuść</translation>
+		<translation>Αποχώρηση</translation>
 	</message>
 	<message>
 		<source>joined</source>
-		<translation>Dołączono</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>leave-group</source>
-		<translation>Opuść grupę</translation>
+		<translation>Αποχώρηση από την ομάδα</translation>
 	</message>
 	<message>
 		<source>left</source>
-		<translation>pozostało</translation>
+		<translation>αριστερά</translation>
 	</message>
 	<message>
 		<source>lets-go</source>
-		<translation>Zaczynamy</translation>
+		<translation>Πάμε</translation>
 	</message>
 	<message>
 		<source>les-ulc</source>
@@ -3143,100 +3119,100 @@ Aby kontynuować korzystanie z karty, musisz zresetować kartę.</translation>
 	</message>
 	<message>
 		<source>linked-on</source>
-		<translation>Połączono w dniu {{date}}</translation>
+		<translation>Συνδέθηκε στις {{date}}</translation>
 	</message>
 	<message>
 		<source>load-messages-before</source>
-		<translation>przed {{date}}</translation>
+		<translation>πριν από τις {{date}}</translation>
 	</message>
 	<message>
 		<source>load-more-messages</source>
-		<translation>↓ Pobierz więcej wiadomości</translation>
+		<translation>↓ Λήψη περισσότερων μηνυμάτων</translation>
 	</message>
 	<message>
 		<source>load-more-timeline</source>
-		<translation>↓ Pobierz więcej</translation>
+		<translation>↓ Λήψη περισσότερων</translation>
 	</message>
 	<message>
 		<source>loading</source>
-		<translation>Ładowanie...</translation>
+		<translation>Φόρτωση...</translation>
 	</message>
 	<message>
 		<source>log-level</source>
-		<translation>Poziom Log</translation>
+		<translation>Επίπεδο καταγραφής</translation>
 	</message>
 	<message>
 		<source>log-level-settings</source>
-		<translation>Ustawienia poziomu logów</translation>
+		<translation>Ρυθμίσεις επιπέδου καταγραφής</translation>
 	</message>
 	<message>
 		<source>logging</source>
-		<translation>Logowanie</translation>
+		<translation>Σύνδεση</translation>
 	</message>
 	<message>
 		<source>logging-enabled</source>
-		<translation>Logowanie włączone?</translation>
+		<translation>Η σύνδεση ενεργοποιήθηκε;</translation>
 	</message>
 	<message>
 		<source>login-pin-description</source>
-		<translation>Wprowadź swój 6-cyfrowy kod dostępu, aby odblokować swoje klucze</translation>
+		<translation>Εισαγάγετε τον 6ψήφιο κωδικό πρόσβασης για να ξεκλειδώσετε τα κλειδιά σας</translation>
 	</message>
 	<message>
 		<source>logout</source>
-		<translation>Wyloguj</translation>
+		<translation>Αποσύνδεση</translation>
 	</message>
 	<message>
 		<source>logout-app-content</source>
-		<translation>Konto zostanie wylogowane. Po ponownym odblokowaniu będzie używana wybrana sieć.</translation>
+		<translation>Ο λογαριασμός θα αποσυνδεθεί. Όταν το ξεκλειδώσετε ξανά, θα χρησιμοποιηθεί το επιλεγμένο δίκτυο</translation>
 	</message>
 	<message>
 		<source>logout-are-you-sure</source>
-		<translation>Czy na pewno chcesz
-się wylogować?</translation>
+		<translation>Είστε σίγουροι ότι θέλετε
+ να αποσυνδεθείτε;</translation>
 	</message>
 	<message>
 		<source>logout-title</source>
-		<translation>Wylogować?</translation>
+		<translation>Αποσύνδεση?</translation>
 	</message>
 	<message>
 		<source>logout-key-management</source>
-		<translation>Musisz się wylogować, aby uzyskać dostęp do zarządzania kluczami.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>looking-for-cards</source>
-		<translation>Szukam kart...</translation>
+		<translation>Αναζήτηση καρτών...</translation>
 	</message>
 	<message>
 		<source>lost-connection</source>
-		<translation>Utracono połączenie</translation>
+		<translation>Χάθηκε η σύνδεση</translation>
 	</message>
 	<message>
 		<source>mailserver-address</source>
-		<translation>Adres węzła Status</translation>
+		<translation>Διεύθυνση κόμβου ιστορικού</translation>
 	</message>
 	<message>
 		<source>mailserver-automatic</source>
-		<translation>Automatyczna selekcja</translation>
+		<translation>Αυτόματη επιλογή</translation>
 	</message>
 	<message>
 		<source>mailserver-automatic-switch-explanation</source>
-		<translation>Wybierz najszybszy dostępny węzeł dla Status</translation>
+		<translation>Επιλέξτε τον ταχύτερο διαθέσιμο κόμβο ιστορικού</translation>
 	</message>
 	<message>
 		<source>mailserver-connection-error</source>
-		<translation>Nie udało się połączyć z węzłem Status</translation>
+		<translation>Δεν ήταν δυνατή η σύνδεση στον κόμβο ιστορικού</translation>
 	</message>
 	<message>
 		<source>mailserver-details</source>
-		<translation>Szczegóły węzła Status</translation>
+		<translation>Λεπτομέρειες κόμβου ιστορικού</translation>
 	</message>
 	<message>
 		<source>mailserver-error-content</source>
-		<translation>Wybrany węzeł Status nie może zostać osiągnięty.</translation>
+		<translation>Δεν ήταν δυνατή η πρόσβαση στον κόμβο ιστορικού που επιλέξατε.</translation>
 	</message>
 	<message>
 		<source>mailserver-error-title</source>
-		<translation>Błąd podczas łączenia się z węzłem Status</translation>
+		<translation>Σφάλμα σύνδεσης με κόμβο ιστορικού</translation>
 	</message>
 	<message>
 		<source>mailserver-format</source>
@@ -3244,490 +3220,486 @@ się wylogować?</translation>
 	</message>
 	<message>
 		<source>mailserver-pick-another</source>
-		<translation>Wybierz inny węzeł Status</translation>
+		<translation>Επιλέξτε έναν άλλο κόμβο ιστορικού</translation>
 	</message>
 	<message>
 		<source>mailserver-reconnect</source>
-		<translation>Nie udało się połączyć z węzłem Status. Kliknij, aby ponowić połączenie</translation>
+		<translation>Δεν ήταν δυνατή η σύνδεση στον κόμβο ιστορικού. Πατήστε για επανασύνδεση</translation>
 	</message>
 	<message>
 		<source>mailserver-request-error-content</source>
-		<translation>Następujący błąd został zwrócony przez węzeł Status: {{error}}</translation>
+		<translation>Το ακόλουθο σφάλμα επιστράφηκε από τον κόμβο ιστορικού: {{error}}</translation>
 	</message>
 	<message>
 		<source>mailserver-request-error-status</source>
-		<translation>Wystąpił błąd podczas pobierania historii, sprawdź logi, aby uzyskać szczegóły</translation>
+		<translation>Παρουσιάστηκε σφάλμα κατά την ανάκτηση ιστορικού, ελέγξτε τα αρχεία καταγραφής για λεπτομέρειες</translation>
 	</message>
 	<message>
 		<source>mailserver-request-error-title</source>
-		<translation>Błąd podczas prośby otrzymania węzła Status</translation>
+		<translation>Σφάλμα αιτήματος κόμβου ιστορικού</translation>
 	</message>
 	<message>
 		<source>mailserver-request-retry</source>
-		<translation>Ponów prośbę</translation>
+		<translation>Επανάληψη αιτήματος</translation>
 	</message>
 	<message>
 		<source>mailserver-retry</source>
-		<translation>Ponów</translation>
+		<translation>Επανάληψη</translation>
 	</message>
 	<message>
 		<source>main-currency</source>
-		<translation>Główna waluta</translation>
+		<translation>Κύριο νόμισμα</translation>
 	</message>
 	<message>
 		<source>main-networks</source>
-		<translation>Główne sieci</translation>
+		<translation>Κύρια δίκτυα</translation>
 	</message>
 	<message>
 		<source>main-wallet</source>
-		<translation>Portfel główny</translation>
+		<translation>Κύριο πορτοφόλι</translation>
 	</message>
 	<message>
 		<source>mainnet-network</source>
-		<translation>Sieć główna</translation>
+		<translation>Κύριο δίκτυο</translation>
 	</message>
 	<message>
 		<source>make-admin</source>
-		<translation>Uczyń administratorem</translation>
+		<translation>Κάντον διαχειριστή</translation>
 	</message>
 	<message>
 		<source>manage-keys-and-storage</source>
-		<translation>Zarządzanie kluczami i przechowywaniem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>mark-all-read</source>
-		<translation>Oznacz wszystkie jako przeczytane</translation>
+		<translation>Σήμανση όλων ως αναγνωσμένων</translation>
 	</message>
 	<message numerus="yes">
 		<source>members</source>
 		<translation>
-			<numerusform>1 użytkownik</numerusform>
-			<numerusform>użytkowników</numerusform>
-			<numerusform>użytkowników</numerusform>
-			<numerusform>Użytkownicy: {{count}}</numerusform>
+			<numerusform>1 μέλος</numerusform>
+			<numerusform>{{count}} μέλη</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>members-active</source>
 		<translation>
-			<numerusform>1 członek</numerusform>
-			<numerusform>członków</numerusform>
-			<numerusform>członków</numerusform>
-			<numerusform>{{count}} członkowie</numerusform>
+			<numerusform>1 μέλος</numerusform>
+			<numerusform>{{count}} μέλη</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>members-active-none</source>
-		<translation>brak członków</translation>
+		<translation>δεν υπάρχουν μέλη</translation>
 	</message>
 	<message>
 		<source>members-title</source>
-		<translation>Użytkownicy</translation>
+		<translation>Μέλη</translation>
 	</message>
 	<message>
 		<source>message</source>
-		<translation>Wiadomość</translation>
+		<translation>Μήνυμα</translation>
 	</message>
 	<message>
 		<source>message-not-sent</source>
-		<translation>Wiadomość nie wysłana</translation>
+		<translation>Το μήνυμα δεν εστάλη</translation>
 	</message>
 	<message>
 		<source>message-options-cancel</source>
-		<translation>Anuluj</translation>
+		<translation>Ακύρωση</translation>
 	</message>
 	<message>
 		<source>message-reply</source>
-		<translation>Odpowiedz</translation>
+		<translation>Απάντηση</translation>
 	</message>
 	<message>
 		<source>replying-to</source>
-		<translation>Odpowiedź do {{author}}</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>data-syncing</source>
-		<translation>Synchronizacja danych</translation>
+		<translation>Συγχρονισμός δεδομένων</translation>
 	</message>
 	<message>
 		<source>messages</source>
-		<translation>Wiadomości</translation>
+		<translation>Μηνύματα</translation>
 	</message>
 	<message>
 		<source>chat-is-a-contact</source>
-		<translation>Kontakt</translation>
+		<translation>Επικοινωνία</translation>
 	</message>
 	<message>
 		<source>chat-is-not-a-contact</source>
-		<translation>To nie kontakt</translation>
+		<translation>Δεν είναι επαφή</translation>
 	</message>
 	<message>
 		<source>might-break</source>
-		<translation>Może zepsuć niektóre zdecentralizowane aplikacje</translation>
+		<translation>Ίσως σπάσει μερικά ÐApps</translation>
 	</message>
 	<message>
 		<source>migrations-failed-content</source>
 		<translation>{{message}}
- wersja schematu: początkowa {{initial-version}}, aktualna {{current-version}}, ostatnia {{last-version}} 
+ έκδοση διαγράμματος: αρχική {{initial-version}} , τρέχουσα {{current-version}} , τελευταία {{last-version}} 
 
-Wystąpił błąd bazy danych. Twoje fundusze i klucz czatu są bezpieczne. Inne dane, takie jak czaty i kontakty, nie mogą zostać przywrócone. Przycisk &apos;{{erase-multiaccounts-data-button-text}}&apos; usunie wszystkie inne dane i umożliwi Ci dostęp do twoich środków oraz wysyłania wiadomości.</translation>
+ Παρουσιάστηκε σφάλμα βάσης δεδομένων. Τα χρήματα και το κλειδί συνομιλίας σας είναι ασφαλή. Δεν είναι δυνατή η επαναφορά άλλων δεδομένων, όπως οι συζητήσεις και οι επαφές σας. Το κουμπί  &quot;{{erase-multiaccounts-data-button-text}}&quot;, θα καταργήσει όλα τα άλλα δεδομένα και σας επιτρέπει να έχετε πρόσβαση στα χρήματά σας και να στέλνετε μηνύματα.</translation>
 	</message>
 	<message>
 		<source>mobile-network-ask-me</source>
-		<translation>Zapytaj mnie, gdy używam sieci komórkowej</translation>
+		<translation>Να ενημερώνομαι όταν βρίσκομαι σε δίκτυο κινητής τηλεφωνίας</translation>
 	</message>
 	<message>
 		<source>mobile-network-continue-syncing</source>
-		<translation>Kontynuuj synchronizację</translation>
+		<translation>Συνέχιση συγχρονισμού</translation>
 	</message>
 	<message>
 		<source>mobile-network-continue-syncing-details</source>
-		<translation>Możesz to później zmienić w ustawieniach</translation>
+		<translation>Μπορείτε να το αλλάξετε αργότερα στις ρυθμίσεις</translation>
 	</message>
 	<message>
 		<source>mobile-network-go-to-settings</source>
-		<translation>Przejdź do ustawień</translation>
+		<translation>Μεταβείτε στις ρυθμίσεις</translation>
 	</message>
 	<message>
 		<source>mobile-network-settings</source>
-		<translation>Dane komórkowe</translation>
+		<translation>Δεδομένα κινητής τηλεφωνίας</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-configure</source>
-		<translation>Możesz skonfigurować synchronizację bardziej
-szczegółowo w</translation>
+		<translation>Μπορείτε να ρυθμίσετε το συγχρονισμό σε περισσότερη
+ λεπτομέρεια στο</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-offline</source>
-		<translation>Brak dostępu do sieci Wi-Fi, synchronizacja wiadomości jest wyłączona.</translation>
+		<translation>Δεν υπάρχει Wi-Fi, ο συγχρονισμός μηνυμάτων απενεργοποιήθηκε.</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-offline-details</source>
-		<translation>Synchronizacja przy użyciu danych komórkowych jest wyłączona</translation>
+		<translation>Ο συγχρονισμός με χρήση δικτύου κινητής τηλεφωνίας είναι απενεργοποιημένος</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-remember-choice</source>
-		<translation>Zapamiętaj mój wybór</translation>
+		<translation>Θυμήσου την επιλογή μου</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-settings</source>
-		<translation>ustawienia</translation>
+		<translation>ρυθμίσεις</translation>
 	</message>
 	<message>
 		<source>mobile-network-start-syncing</source>
-		<translation>Rozpocznij synchronizację</translation>
+		<translation>Έναρξη συγχρονισμού</translation>
 	</message>
 	<message>
 		<source>mobile-network-stop-syncing</source>
-		<translation>Zatrzymaj synchronizację</translation>
+		<translation>Διακοπή συγχρονισμού</translation>
 	</message>
 	<message>
 		<source>mobile-network-stop-syncing-details</source>
-		<translation>Do czasu połączenia z Wi-Fi?</translation>
+		<translation>Μέχρι να συνδεθείτε στο Wi-Fi;</translation>
 	</message>
 	<message>
 		<source>mobile-network-use-mobile</source>
-		<translation>Użyj danych komórkowych</translation>
+		<translation>Χρήση δεδομένων κινητής τηλεφωνίας</translation>
 	</message>
 	<message>
 		<source>mobile-network-use-mobile-data</source>
-		<translation>Status zużywa dużo danych podczas synchronizacji czatów i portfela.</translation>
+		<translation>Το Status χρησιμοποιεί πολλά δεδομένα κατά το συγχρονισμό των συνομιλιών και του πορτοφολιού.</translation>
 	</message>
 	<message>
 		<source>mobile-network-use-wifi</source>
-		<translation>Tylko Wi-Fi</translation>
+		<translation>Μόνο Wi-Fi</translation>
 	</message>
 	<message>
 		<source>mobile-syncing-sheet-details</source>
-		<translation>Status zużywa dużo danych podczas synchronizacji czatów i portfela.</translation>
+		<translation>Το Status χρησιμοποιεί πολλά δεδομένα κατά το συγχρονισμό των συνομιλιών και του πορτοφολιού.</translation>
 	</message>
 	<message>
 		<source>mobile-syncing-sheet-title</source>
-		<translation>Synchronizować przy użyciu danych komórkowych?</translation>
+		<translation>Συγχρονισμός με χρήση δεδομένων κινητής τηλεφωνίας;</translation>
 	</message>
 	<message>
 		<source>more</source>
-		<translation>więcej</translation>
+		<translation>περισσότερα</translation>
 	</message>
 	<message>
 		<source>multiaccount-exists-title</source>
-		<translation>Klucze do tego konta już istnieją</translation>
+		<translation>Υπάρχουν ήδη κλειδιά για αυτόν τον λογαριασμό</translation>
 	</message>
 	<message>
 		<source>multiaccount-exists-content</source>
-		<translation>Klucze do tego konta już istnieją i nie mogą być dodane ponownie. Jeśli zgubiłeś hasło, kod dostępu lub kartę Keycard, odinstaluj aplikację, zainstaluj ją ponownie i uzyskaj dostęp do kluczy, wprowadzając swoją frazę Seed</translation>
+		<translation>Τα κλειδιά για αυτόν τον λογαριασμό υπάρχουν ήδη και δεν μπορούν να προστεθούν ξανά. Εάν έχετε χάσει τον κωδικό πρόσβασής σας ή την Keycard, απεγκαταστήστε την εφαρμογή, εγκαταστήστε ξανά και αποκτήστε πρόσβαση στα κλειδιά σας εισάγοντας τη φράση seed σας</translation>
 	</message>
 	<message>
 		<source>multiaccounts-recover-enter-phrase-text</source>
-		<translation>Wprowadź 12, 15, 18, 21 lub 24 słowa.
-Oddziel słowa pojedynczą spacją.</translation>
+		<translation>Εισαγάγετε 12, 15, 18, 21 ή 24 λέξεις.
+ Διαχωρίστε τις λέξεις με ένα μόνο διάστημα.</translation>
 	</message>
 	<message>
 		<source>multiaccounts-recover-enter-phrase-title</source>
-		<translation>Wpisz swoją frazę odzyskiwania (Seed)</translation>
+		<translation>Εισαγάγετε τη φράση seed σας</translation>
 	</message>
 	<message>
 		<source>name</source>
-		<translation>Nazwa</translation>
+		<translation>Όνομα</translation>
 	</message>
 	<message>
 		<source>name-of-token</source>
-		<translation>Nazwa twojego tokena</translation>
+		<translation>Το όνομα του token σας</translation>
 	</message>
 	<message>
 		<source>need-help</source>
-		<translation>Potrzebujesz pomocy?</translation>
+		<translation>Χρειάζεστε βοήθεια?</translation>
 	</message>
 	<message>
 		<source>glossary</source>
-		<translation>Słowniczek</translation>
+		<translation>Γλωσσάριο</translation>
 	</message>
 	<message>
 		<source>account-title</source>
-		<translation>Konto</translation>
+		<translation>Λογαριασμός</translation>
 	</message>
 	<message>
 		<source>account-content</source>
-		<translation>Możesz porównać konta w Statusie do kont bankowych. Podobnie jak konto bankowe, konto zazwyczaj ma adres i saldo; Używasz tego konta do transakcji na Ethereum. Możesz mieć wiele kont w swoim portfelu. Wszystkie dostępne po odblokowaniu Statusu.</translation>
+		<translation>Μπορείτε να συγκρίνετε λογαριασμούς του Status με τραπεζικούς λογαριασμούς. Όπως ένας τραπεζικός λογαριασμός, ένας λογαριασμός έχει συνήθως διεύθυνση και υπόλοιπο. Χρησιμοποιείτε αυτόν τον λογαριασμό για συναλλαγές στο Ethereum. Μπορείτε να έχετε πολλούς λογαριασμούς στο πορτοφόλι σας. Όλα προσβάσιμα με ξεκλείδωμα Status.</translation>
 	</message>
 	<message>
 		<source>chat-key-title</source>
-		<translation>Klucz czatu</translation>
+		<translation>Κλειδί συνομιλίας</translation>
 	</message>
 	<message>
 		<source>chat-key-content</source>
-		<translation>Wiadomości w protokole czatu Status są wysyłane i odbierane przy użyciu kluczy szyfrujących. Klucz czatu publicznego to ciąg znaków, które udostępniasz innym, aby mogli wysyłać Ci wiadomości w statusie.</translation>
+		<translation>Τα μηνύματα στο πρωτόκολλο συνομιλίας του Status αποστέλλονται και λαμβάνονται μέσω κλειδιών κρυπτογράφησης. Το δημόσιο κλειδί συνομιλίας είναι μια σειρά χαρακτήρων που μοιράζεστε με άλλους, ώστε να μπορούν να σας στέλνουν μηνύματα στο Status.</translation>
 	</message>
 	<message>
 		<source>chat-name-title</source>
-		<translation>Nazwa czatu</translation>
+		<translation>Όνομα Συνομιλίας</translation>
 	</message>
 	<message>
 		<source>chat-name-content</source>
-		<translation>Trzy losowe słowa, uzyskane algorytmicznie z twojego klucza czatu i używane jako twoja domyślna nazwa na czacie. Nazwy czatów są całkowicie unikalne; żaden inny użytkownik nie może mieć takich samych trzech słów, nazwy.</translation>
+		<translation>Τρεις τυχαίες λέξεις, που παράγονται αλγοριθμικά από το κλειδί συνομιλίας σας και χρησιμοποιούνται ως το προεπιλεγμένο ψευδώνυμό σας στη συνομιλία. Τα ονόματα συνομιλίας είναι εντελώς μοναδικά· κανένας άλλος χρήστης δεν μπορεί να έχει τις ίδιες τρεις λέξεις.</translation>
 	</message>
 	<message>
 		<source>ens-name-title</source>
-		<translation>Nazwa ENS</translation>
+		<translation>Όνομα ENS</translation>
 	</message>
 	<message>
 		<source>ens-name-content</source>
-		<translation>Niestandardowa nazwa dla twojego klucza czatu, którą możesz zarejestrować za pomocą usługi Ethereum Name Service, w skrócie ENS. Nazwy ENS to zdecentralizowane nazwy użytkowników.</translation>
+		<translation>Προσαρμοσμένο ψευδώνυμο για το κλειδί συνομιλίας που μπορείτε να καταχωρήσετε χρησιμοποιώντας την υπηρεσία ονόματος Ethereum. Τα ονόματα ENS είναι αποκεντρωμένα ονόματα χρήστη.</translation>
 	</message>
 	<message>
 		<source>mailserver-title</source>
-		<translation>Węzeł Status</translation>
+		<translation>Κόμβος ιστορικού</translation>
 	</message>
 	<message>
 		<source>mailserver-content</source>
-		<translation>Węzeł w sieci Status, który kieruje i przechowuje wiadomości przez maksymalnie 30 dni.</translation>
+		<translation>Ένας κόμβος στο δίκτυο του Status που δρομολογεί και αποθηκεύει μηνύματα, για έως και 30 ημέρες.</translation>
 	</message>
 	<message>
 		<source>peer-title</source>
-		<translation>Peer</translation>
+		<translation>Ομότιμος</translation>
 	</message>
 	<message>
 		<source>peer-content</source>
-		<translation>Urządzenie podłączone do sieci czatu aplikacji Status. Każdy użytkownik może reprezentować jedno lub więcej połączeń, w zależności od liczby posiadanych urządzeń.</translation>
+		<translation>Μια συσκευή συνδεδεμένη στο δίκτυο συνομιλίας του Status. Κάθε χρήστης μπορεί να αντιπροσωπεύει έναν ή περισσότερους ομότιμους, ανάλογα με τον αριθμό των συσκευών τους.</translation>
 	</message>
 	<message>
 		<source>seed-phrase-title</source>
-		<translation>Fraza odzyskiwania (Seed)</translation>
+		<translation>Φράση Seed</translation>
 	</message>
 	<message>
 		<source>seed-phrase-content</source>
-		<translation>Zestaw łatwych do czytania słów, losowo wybranych ze standardowej listy BIP39 i używanych do odzyskiwania lub uzyskiwania dostępu do konta Ethereum na innych portfelach i urządzeniach. Określany również jako „fraza mnemoniczna”, „fraza odzyskiwania” lub „kopia zapasowa portfela” w całym ekosystemie kryptowalut. Większość aplikacji kryptowalutowych używa tego samego standardu do generowania kont.</translation>
+		<translation>Ένα σύνολο λέξεων φιλικών προς ανάγνωση, που επιλέχθηκαν τυχαία από την καθιερωμένη λίστα BIP39 και χρησιμοποιούνται για ανάκτηση ή πρόσβαση στον Ethereum λογαριασμό σας σε άλλα πορτοφόλια και συσκευές. Αναφέρεται επίσης ως «μνημονική φράση», «φράση ανάκτησης» ή «αντίγραφο ασφαλείας πορτοφολιού» σε ολόκληρο το οικοσύστημα crypto. Οι περισσότερες εφαρμογές crypto χρησιμοποιούν το ίδιο πρότυπο για τη δημιουργία λογαριασμών.</translation>
 	</message>
 	<message>
 		<source>wallet-key-title</source>
-		<translation>Adres konta</translation>
+		<translation>Διεύθυνση λογαριασμού</translation>
 	</message>
 	<message>
 		<source>wallet-key-content</source>
-		<translation>64-znakowy adres szesnastkowy oparty na standardzie Ethereum i rozpoczynający się od 0x. Publiczny adres Twojego konta jest udostępniany innym osobom, gdy chcesz otrzymać środki. Nazywany jest również „adresem Ethereum” lub „adresem portfela”.</translation>
+		<translation>Δεκαεξαδική διεύθυνση 64 χαρακτήρων με βάση την προδιαγραφή του Ethereum και ξεκινώντας με 0x. Δημόσια, η διεύθυνση του λογαριασμού σας κοινοποιείται σε άλλους όταν θέλετε να λάβετε χρήματα. Αναφέρεται επίσης ως «διεύθυνση Ethereum» ή «διεύθυνση πορτοφολιού».</translation>
 	</message>
 	<message>
 		<source>buy-crypto-title</source>
-		<translation>Wygląda na to, że Twój portfel jest pusty</translation>
+		<translation>Φαίνεται ότι το πορτοφόλι σας είναι άδειο</translation>
 	</message>
 	<message>
 		<source>buy-crypto-description</source>
-		<translation>Znajdź zdecentralizowaną aplikację, aby kupić kryptowaluty</translation>
+		<translation>Βρείτε ένα dapp για να αγοράσετε crypto τώρα</translation>
 	</message>
 	<message>
 		<source>buy-crypto</source>
-		<translation>Kup kryptowaluty</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>buy-crypto-choose-a-service</source>
-		<translation>Wybierz usługę, której chcesz użyć do zakupu kryptowalut</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>buy-crypto-leaving</source>
-		<translation>Opuszczasz aplikację Status i wchodzisz na zewnętrzną stronę internetową w celu sfinalizowania zakupu.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>opening-buy-crypto</source>
-		<translation>Otwieram {{site}} ...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>network</source>
-		<translation>Sieć</translation>
+		<translation>Δίκτυο</translation>
 	</message>
 	<message>
 		<source>network-chain</source>
-		<translation>Łańcuch sieci</translation>
+		<translation>Αλυσίδα δικτύου</translation>
 	</message>
 	<message>
 		<source>network-details</source>
-		<translation>Szczegóły sieci</translation>
+		<translation>Λεπτομέρειες δικτύου</translation>
 	</message>
 	<message>
 		<source>network-info</source>
-		<translation>Informacje o sieci</translation>
+		<translation>Πληροφορίες δικτύου</translation>
 	</message>
 	<message>
 		<source>network-fee</source>
-		<translation>Opłata sieciowa</translation>
+		<translation>Χρέωση δικτύου</translation>
 	</message>
 	<message>
 		<source>network-id</source>
-		<translation>Identyfikator sieci</translation>
+		<translation>Αναγνωριστικό δικτύου</translation>
 	</message>
 	<message>
 		<source>network-invalid-network-id</source>
-		<translation>Podany identyfikator sieci nie jest zgodny z identyfikatorem sieci podanym w adresie URL RPC</translation>
+		<translation>Το καθορισμένο αναγνωριστικό δικτύου δεν αντιστοιχεί στο αναγνωριστικό δικτύου από τη διεύθυνση URL RPC</translation>
 	</message>
 	<message>
 		<source>network-invalid-status-code</source>
-		<translation>Nieprawidłowy kod statusu: {{code}}</translation>
+		<translation>Μη έγκυρος κωδικός κατάστασης: {{code}}</translation>
 	</message>
 	<message>
 		<source>network-invalid-url</source>
-		<translation>Adres URL sieci jest nieprawidłowy</translation>
+		<translation>Η διεύθυνση URL δικτύου δεν είναι έγκυρη</translation>
 	</message>
 	<message>
 		<source>network-settings</source>
-		<translation>Ustawienia sieci</translation>
+		<translation>Ρυθμίσεις δικτύου</translation>
 	</message>
 	<message>
 		<source>new</source>
-		<translation>Nowy</translation>
+		<translation>Νέο</translation>
 	</message>
 	<message>
 		<source>new-chat</source>
-		<translation>Nowy czat</translation>
+		<translation>Νέα συνομιλία</translation>
 	</message>
 	<message>
 		<source>new-contact</source>
-		<translation>Nowy kontakt</translation>
+		<translation>Νέα επαφή</translation>
 	</message>
 	<message>
 		<source>new-contract</source>
-		<translation>Nowy kontrakt</translation>
+		<translation>Νέο Συμβόλαιο</translation>
 	</message>
 	<message>
 		<source>new-group</source>
-		<translation>Nowa grupa</translation>
+		<translation>Νέα ομάδα</translation>
 	</message>
 	<message>
 		<source>new-group-chat</source>
-		<translation>Nowy czat grupowy</translation>
+		<translation>Νέα ομαδική συνομιλία</translation>
 	</message>
 	<message>
 		<source>new-network</source>
-		<translation>Nowa sieć</translation>
+		<translation>Νέο δίκτυο</translation>
 	</message>
 	<message>
 		<source>new-pin-description</source>
-		<translation>Powtórz nowy 6-cyfrowy kod dostępu.</translation>
+		<translation>Εισαγάγετε νέο 6ψήφιο κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>new-puk-description</source>
-		<translation>Wprowadź nowy 12-cyfrowy PUK</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>new-public-group-chat</source>
-		<translation>Dołącz do publicznego czatu</translation>
+		<translation>Συμμετοχή σε δημόσια συνομιλία</translation>
 	</message>
 	<message>
 		<source>next</source>
-		<translation>Dalej</translation>
+		<translation>Επόμενο</translation>
 	</message>
 	<message>
 		<source>no</source>
-		<translation>Nie</translation>
+		<translation>Όχι</translation>
 	</message>
 	<message>
 		<source>no-collectibles</source>
-		<translation>Brak dostępnych przedmiotów kolekcjonerskich</translation>
+		<translation>Δεν υπάρχουν διαθέσιμα συλλεκτικά αντικείμενα</translation>
 	</message>
 	<message>
 		<source>no-contacts</source>
-		<translation>W tej chwili brak kontaktów</translation>
+		<translation>Δεν υπάρχουν επαφές ακόμη</translation>
 	</message>
 	<message>
 		<source>no-keycard-applet-on-card</source>
-		<translation>Brak apletu Keycard na karcie</translation>
+		<translation>Δεν υπάρχει εφαρμογή Keycard στην κάρτα</translation>
 	</message>
 	<message>
 		<source>no-messages</source>
-		<translation>Brak wiadomości</translation>
+		<translation>Δεν υπάρχουν μηνύματα</translation>
 	</message>
 	<message>
 		<source>no-pairing-slots-available</source>
-		<translation>Ta karta jest już sparowana z 5 urządzeniami i nie można jej sparować z tym urządzeniem. Użyj jednego ze sparowanych urządzeń, zaloguj się za pomocą tej karty i zwolnij gniazda parowania na karcie</translation>
+		<translation>Έχει γίνει ήδη σύζευξη αυτής της κάρτα σε 5 συσκευές και δεν μπορεί να γίνει σε αυτήν. Χρησιμοποιήστε μία από τις συσκευές που έχει γίνει σύζευξη, συνδεθείτε με αυτήν την κάρτα και ελευθερώστε τις θέσεις σύζευξης στην κάρτα</translation>
 	</message>
 	<message>
 		<source>no-result</source>
-		<translation>Brak wyników</translation>
+		<translation>Δεν υπάρχουν αποτελέσματα</translation>
 	</message>
 	<message>
 		<source>no-tokens-found</source>
-		<translation>Nie znaleziono tokenów</translation>
+		<translation>Δεν βρέθηκαν tokens</translation>
 	</message>
 	<message>
 		<source>node-info</source>
-		<translation>Informacje o węźle</translation>
+		<translation>Πληροφορίες κόμβου</translation>
 	</message>
 	<message>
 		<source>node-address</source>
-		<translation>Adres węzła</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>node-details</source>
-		<translation>Szczegóły węzła</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>node-version</source>
-		<translation>Wersja węzła</translation>
+		<translation>Έκδοση κόμβου</translation>
 	</message>
 	<message>
 		<source>nonce</source>
-		<translation>Nonce</translation>
+		<translation>Όχι</translation>
 	</message>
 	<message>
 		<source>none</source>
-		<translation>Brak</translation>
+		<translation>Κανένα</translation>
 	</message>
 	<message>
 		<source>not-applicable</source>
-		<translation>Nie dotyczy niepodpisanych transakcji</translation>
+		<translation>Δεν ισχύει για συναλλαγές χωρίς υπογραφή</translation>
 	</message>
 	<message>
 		<source>not-keycard-text</source>
-		<translation>Karta, której użyłeś, nie jest kartą Keycard. Aby z niej korzystać, należy zakupić kartę Keycard.</translation>
+		<translation>Η κάρτα που χρησιμοποιήσατε δεν είναι Keycard. Πρέπει να αγοράσετε μια Keycard για να τη χρησιμοποιήσετε</translation>
 	</message>
 	<message>
 		<source>not-keycard-title</source>
-		<translation>To nie jest karta Keycard</translation>
+		<translation>Δεν είναι Keycard</translation>
 	</message>
 	<message>
 		<source>notifications</source>
-		<translation>Powiadomienia</translation>
+		<translation>Ειδοποιήσεις</translation>
 	</message>
 	<message>
 		<source>local-notifications</source>
-		<translation>Powiadomienia lokalne</translation>
+		<translation>Τοπικές ειδοποιήσεις</translation>
 	</message>
 	<message>
 		<source>local-notifications-subtitle</source>
@@ -3743,31 +3715,31 @@ Oddziel słowa pojedynczą spacją.</translation>
 	</message>
 	<message>
 		<source>show-notifications</source>
-		<translation>Pokaż powiadomienia</translation>
+		<translation>Εμφάνιση ειδοποιήσεων</translation>
 	</message>
 	<message>
 		<source>notification-settings</source>
-		<translation>Powiadomienia</translation>
+		<translation>Ειδοποιήσεις</translation>
 	</message>
 	<message>
 		<source>notifications-servers</source>
-		<translation>Serwery powiadomień</translation>
+		<translation>Διακομιστές ειδοποιήσεων</translation>
 	</message>
 	<message>
 		<source>notifications-preferences</source>
-		<translation>Preferencje powiadomień</translation>
+		<translation>Προτιμήσεις ειδοποιήσεων</translation>
 	</message>
 	<message>
 		<source>notifications-switch</source>
-		<translation>Pokaż powiadomienia</translation>
+		<translation>Εμφάνιση ειδοποιήσεων</translation>
 	</message>
 	<message>
 		<source>notifications-non-contacts</source>
-		<translation>Powiadomienia od osób niebędących kontaktami</translation>
+		<translation>Ειδοποιήσεις από όλους</translation>
 	</message>
 	<message>
 		<source>notifications-transactions</source>
-		<translation>Transakcje portfelowe</translation>
+		<translation>Συναλλαγές πορτοφολιού</translation>
 	</message>
 	<message>
 		<source>send-push-notifications</source>
@@ -3775,111 +3747,111 @@ Oddziel słowa pojedynczą spacją.</translation>
 	</message>
 	<message>
 		<source>send-push-notifications-description</source>
-		<translation>W przypadku wyłączenia osoba odbierająca twoje wiadomości nie zostanie powiadomiona o ich przybyciu</translation>
+		<translation>Όταν απενεργοποιηθεί, το άτομο που λαμβάνει τα μηνύματά σας δεν θα ειδοποιηθεί για την άφιξή τους</translation>
 	</message>
 	<message>
 		<source>push-notifications-server-enabled</source>
-		<translation>Serwer włączony</translation>
+		<translation>Ο διακομιστής ενεργοποιήθηκε</translation>
 	</message>
 	<message>
 		<source>push-notifications-servers</source>
-		<translation>Serwery powiadomień Push</translation>
+		<translation>Διακομιστές ειδοποιήσεων προώθησης</translation>
 	</message>
 	<message>
 		<source>push-inbound-transaction</source>
-		<translation>Otrzymałeś {{value}} {{currency}}</translation>
+		<translation>Λάβατε {{value}} {{currency}}</translation>
 	</message>
 	<message>
 		<source>push-outbound-transaction</source>
-		<translation>Wysłałeś {{value}} {{currency}}</translation>
+		<translation>Στείλατε {{value}} {{currency}}</translation>
 	</message>
 	<message>
 		<source>push-failed-transaction</source>
-		<translation>Twoja transakcja się nie powiodła</translation>
+		<translation>Η συναλλαγή σας απέτυχε</translation>
 	</message>
 	<message>
 		<source>push-inbound-transaction-body</source>
-		<translation>Od {{from}} do {{to}}</translation>
+		<translation>Από {{from}} στον {{to}}</translation>
 	</message>
 	<message>
 		<source>push-outbound-transaction-body</source>
-		<translation>Od {{from}} do {{to}}</translation>
+		<translation>Από {{from}} έως {{to}}</translation>
 	</message>
 	<message>
 		<source>push-failed-transaction-body</source>
-		<translation>{{value}} {{currency}} do {{to}}</translation>
+		<translation>{{value}} {{currency}} στην {{to}}</translation>
 	</message>
 	<message>
 		<source>allow-mention-notifications</source>
-		<translation>Pokaż @ wzmianki</translation>
+		<translation>Εμφάνιση @ αναφορών</translation>
 	</message>
 	<message>
 		<source>server</source>
-		<translation>Serwer</translation>
+		<translation>Διακομιστής</translation>
 	</message>
 	<message>
 		<source>specify-server-public-key</source>
-		<translation>Wprowadź klucz publiczny serwera</translation>
+		<translation>Εισαγάγετε δημόσιο κλειδί διακομιστή</translation>
 	</message>
 	<message>
 		<source>notify</source>
-		<translation>Powiadamiaj</translation>
+		<translation>Ειδοποίηση</translation>
 	</message>
 	<message>
 		<source>off</source>
-		<translation>Wył.</translation>
+		<translation>Ανενεργό</translation>
 	</message>
 	<message>
 		<source>offline</source>
-		<translation>Offline</translation>
+		<translation>Εκτός σύνδεσης</translation>
 	</message>
 	<message>
 		<source>offline-messaging-use-history-nodes</source>
-		<translation>Użyj nodów Status</translation>
+		<translation>Χρήση κόμβων ιστορικού</translation>
 	</message>
 	<message>
 		<source>offline-messaging-use-history-explanation</source>
-		<translation>Włącz węzły aplikacji Status, aby pobrać wiadomości, które zostały wysłane, gdy aplikacja była zamknięta. Po włączeniu węzeł Status pobiera Twój adres IP. Po wyłączeniu nie będziesz otrzymywać wiadomości, gdy aplikacja jest zamknięta, i nie zobaczysz ich po późniejszym otwarciu aplikacji.</translation>
+		<translation>Ενεργοποίηση κόμβων ιστορικού για τη λήψη μηνυμάτων που στάλθηκαν ενώ η εφαρμογή ήταν κλειστή. Όταν ενεργοποιηθεί, ένας κόμβος ιστορικού λαμβάνει τη διεύθυνση IP σας. Όταν απενεργοποιηθεί, δεν θα λαμβάνετε μηνύματα όταν η εφαρμογή είναι κλειστή και δεν θα τα βλέπετε όταν ανοίγετε την εφαρμογή αργότερα.</translation>
 	</message>
 	<message>
 		<source>ok</source>
-		<translation>OK</translation>
+		<translation>Εντάξει</translation>
 	</message>
 	<message>
 		<source>ok-continue</source>
-		<translation>OK, kontynuuj</translation>
+		<translation>Εντάξει, συνεχίστε</translation>
 	</message>
 	<message>
 		<source>ok-got-it</source>
-		<translation>OK, rozumiem</translation>
+		<translation>Εντάξει, το κατάλαβα</translation>
 	</message>
 	<message>
 		<source>okay</source>
-		<translation>W porządku</translation>
+		<translation>Εντάξει</translation>
 	</message>
 	<message>
 		<source>on</source>
-		<translation>Wł.</translation>
+		<translation>Ενεργό</translation>
 	</message>
 	<message>
 		<source>open</source>
-		<translation>Otwórz</translation>
+		<translation>Άνοιγμα</translation>
 	</message>
 	<message>
 		<source>open-home</source>
-		<translation>Otwórz...</translation>
+		<translation>Ανοίξτε...</translation>
 	</message>
 	<message>
 		<source>open-dapp</source>
-		<translation>Otwórz dAppkę</translation>
+		<translation>Άνοιγμα ÐApp</translation>
 	</message>
 	<message>
 		<source>open-dapp-store</source>
-		<translation>Odkryj dAppsy</translation>
+		<translation>Ανακαλύψτε ÐApps</translation>
 	</message>
 	<message>
 		<source>open-nfc-settings</source>
-		<translation>Otwórz ustawienia NFC</translation>
+		<translation>Ανοίξτε τις ρυθμίσεις NFC</translation>
 	</message>
 	<message>
 		<source>open-on-block-explorer</source>
@@ -3887,758 +3859,769 @@ Oddziel słowa pojedynczą spacją.</translation>
 	</message>
 	<message>
 		<source>optional</source>
-		<translation>opcjonalne</translation>
+		<translation>προαιρετικό</translation>
 	</message>
 	<message>
 		<source>or</source>
-		<translation>LUB</translation>
+		<translation>Ή</translation>
 	</message>
 	<message>
 		<source>outgoing</source>
-		<translation>Wychodzące</translation>
+		<translation>Εξερχόμενα</translation>
 	</message>
 	<message>
 		<source>outgoing-transaction</source>
-		<translation>Transakcja wychodząca</translation>
+		<translation>Εξερχόμενη συναλλαγή</translation>
 	</message>
 	<message>
 		<source>pair</source>
-		<translation>Sparuj urządzenia</translation>
+		<translation>Σύζευξη συσκευών</translation>
 	</message>
 	<message>
 		<source>pair-card</source>
-		<translation>Sparuj z tym urządzeniem</translation>
+		<translation>Σύζευξη με αυτήν τη συσκευής</translation>
 	</message>
 	<message>
 		<source>pair-code</source>
-		<translation>Kod parowania</translation>
+		<translation>Κωδικός σύζευξης</translation>
 	</message>
 	<message>
 		<source>pair-code-explanation</source>
-		<translation>Paruje kartę z innym urządzeniem (maksymalnie z 5), aby odblokować klucze i podpisywać transakcje za pomocą tej samej karty Keycard</translation>
+		<translation>Σύζευξη κάρτας σε διαφορετική συσκευή (έως 5) για να ξεκλειδώσετε κλειδιά και να υπογράψετε συναλλαγές με την ίδια Keycard</translation>
 	</message>
 	<message>
 		<source>pair-this-card</source>
-		<translation>Sparuj tę kartę</translation>
+		<translation>Σύζευξη αυτής της κάρτας</translation>
 	</message>
 	<message>
 		<source>pair-this-device</source>
-		<translation>Reklamuj urządzenie</translation>
+		<translation>Διαφήμιση συσκευής</translation>
 	</message>
 	<message>
 		<source>pair-this-device-description</source>
-		<translation>Sparuj swoje urządzenia, aby synchronizować między nimi kontakty i czaty</translation>
+		<translation>Σύζευξη των συσκευών σας για συγχρονισμό επαφών και συνομιλιών μεταξύ τους</translation>
 	</message>
 	<message>
 		<source>paired-devices</source>
-		<translation>Sparowane urządzenia</translation>
+		<translation>Σύζευξη συσκευών</translation>
 	</message>
 	<message>
 		<source>pairing</source>
-		<translation>Parowanie</translation>
+		<translation>Σύζευξη</translation>
 	</message>
 	<message>
 		<source>pairing-card</source>
-		<translation>Karta parowania</translation>
+		<translation>Κάρτα σύζευξης</translation>
 	</message>
 	<message>
 		<source>pairing-code-placeholder</source>
-		<translation>Kod parowania...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>pairing-code_error1</source>
-		<translation>Kody parowania nie są zgodne.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>confirm-pairing-code-placeholder</source>
-		<translation>Potwierdź swój kod parowania...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>pairing-go-to-installation</source>
-		<translation>Przejdź do ustawień parowania</translation>
+		<translation>Μεταβείτε στις ρυθμίσεις σύζευξης</translation>
 	</message>
 	<message>
 		<source>pairing-maximum-number-reached-content</source>
-		<translation>Proszę wyłączyć jedno z urządzeń przed włączeniem nowego.</translation>
+		<translation>Απενεργοποιήστε μία από τις συσκευές σας πριν ενεργοποιήσετε μια νέα.</translation>
 	</message>
 	<message>
 		<source>pairing-maximum-number-reached-title</source>
-		<translation>Osiągnięto maksymalną liczbę urządzeń</translation>
+		<translation>Συμπληρώθηκε ο μέγιστος αριθμός συσκευών</translation>
 	</message>
 	<message>
 		<source>pairing-new-installation-detected-content</source>
-		<translation>Zostało wykryte nowe urządzenie.
-Aby prawidłowo korzystać z urządzeń, ważne jest, aby je sparować i włączyć przed ich użyciem.
-Przejdź do sekcji &apos;Urządzenia&apos; w ustawieniach, aby sparować urządzenia.</translation>
+		<translation>Εντοπίστηκε μια νέα συσκευή.
+ Για να χρησιμοποιήσετε σωστά τις συσκευές σας, είναι σημαντική η σύζευξη και η ενεργοποίηση προτού τις χρησιμοποιήσετε.
+ Μεταβείτε στην ενότητα της συσκευής κάτω από τις ρυθμίσεις για να γίνει σύζευξη των συσκευών σας.</translation>
 	</message>
 	<message>
 		<source>pairing-new-installation-detected-title</source>
-		<translation>Wykryto nowe urządzenie</translation>
+		<translation>Εντοπίστηκε νέα συσκευή</translation>
 	</message>
 	<message>
 		<source>pairing-no-info</source>
-		<translation>Brak informacji</translation>
+		<translation>Δεν υπάρχουν πληροφορίες</translation>
 	</message>
 	<message>
 		<source>pairing-please-set-a-name</source>
-		<translation>Nadaj nazwę swojemu urządzeniu.</translation>
+		<translation>Ορίστε ένα όνομα για τη συσκευή σας.</translation>
 	</message>
 	<message>
 		<source>passphrase</source>
-		<translation>Passphrase</translation>
+		<translation>Φράση πρόσβασης</translation>
 	</message>
 	<message>
 		<source>password</source>
-		<translation>Hasło</translation>
+		<translation>Κωδικός πρόσβασης</translation>
 	</message>
 	<message>
 		<source>password-description</source>
-		<translation>Przynajmniej 6 znaków. Twoje hasło chroni Twoje klucze. Potrzebujesz go, aby odblokować aplikację Status i dokonywać transakcji.</translation>
+		<translation>Τουλάχιστον 6 χαρακτήρες. Ο κωδικός πρόσβασης σας προστατεύει τα κλειδιά σας. Τον χρειάζεστε για να ξεκλειδώσετε το Status και να κάνετε συναλλαγές.</translation>
 	</message>
 	<message>
 		<source>password-placeholder2</source>
-		<translation>Potwierdź hasło</translation>
+		<translation>Επιβεβαίωση του κωδικού πρόσβασής σας</translation>
 	</message>
 	<message>
 		<source>password_error1</source>
-		<translation>Hasła nie pasują do siebie.</translation>
+		<translation>Οι κωδικοί πρόσβασης δεν ταιριάζουν.</translation>
 	</message>
 	<message>
 		<source>paste</source>
-		<translation>Wklej</translation>
+		<translation>Επικόλληση</translation>
 	</message>
 	<message>
 		<source>paste-json</source>
-		<translation>Wklej JSON</translation>
+		<translation>Επικόλληση JSON</translation>
 	</message>
 	<message>
 		<source>pay-to-chat</source>
-		<translation>Zapłać, by rozmawiać</translation>
+		<translation>Πληρωμή για συνομιλία</translation>
 	</message>
 	<message>
 		<source>peers</source>
-		<translation>Peery</translation>
+		<translation>Ομότιμοι</translation>
 	</message>
 	<message>
 		<source>pending</source>
-		<translation>W oczekiwaniu</translation>
+		<translation>Εκκρεμούν</translation>
 	</message>
 	<message>
 		<source>pending-confirmation</source>
-		<translation>Oczekujące potwierdzenie...</translation>
+		<translation>Εκκρεμεί επιβεβαίωση...</translation>
 	</message>
 	<message>
 		<source>permissions</source>
-		<translation>Uprawnienia</translation>
+		<translation>Άδειες</translation>
 	</message>
 	<message>
 		<source>phone-e164</source>
-		<translation>Międzynarodowy 1</translation>
+		<translation>Διεθνές 1</translation>
 	</message>
 	<message>
 		<source>photos-access-error</source>
-		<translation>Aby nadać wymagane uprawnienia do zdjęć, przejdź do ustawień systemowych i upewnij się, że zaznaczono opcję Status &gt; Zdjęcia.</translation>
+		<translation>Για να παραχωρήσετε την άδεια των απαιτούμενων φωτογραφιών, μεταβείτε στις ρυθμίσεις του συστήματός σας και βεβαιωθείτε ότι το Status &gt; Φωτογραφίες είναι επιλεγμένο.</translation>
 	</message>
 	<message>
 		<source>pin-changed</source>
-		<translation>6-cyfrowy kod dostępu został zmieniony</translation>
+		<translation>Ο 6ψήφιος κωδικός πρόσβασης άλλαξε</translation>
 	</message>
 	<message>
 		<source>puk-changed</source>
-		<translation>Zmieniono 12-cyfrowy PUK</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>pairing-changed</source>
-		<translation>Kod parowania został zmieniony</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>pin-code</source>
-		<translation>6-cyfrowy kod dostępu.</translation>
+		<translation>6ψήφιος κωδικός πρόσβασης</translation>
 	</message>
 	<message>
 		<source>pin-mismatch</source>
-		<translation>Nieprawidłowy kod dostępu</translation>
+		<translation>Λανθασμένος κωδικός πρόσβασης</translation>
 	</message>
 	<message>
 		<source>pin-retries-left</source>
-		<translation>Pozostało {{number}}</translation>
+		<translation>Απομένουν {{number}}</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-blocked-before</source>
-		<translation>Uważaj, masz tylko</translation>
+		<translation>Προσέξτε, έχετε μόνο</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-frozen-before</source>
-		<translation>Uważaj, masz tylko</translation>
+		<translation>Προσέξτε, έχετε μόνο</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt</source>
-		<translation> jedną próbę </translation>
+		<translation> μία προσπάθεια </translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-blocked-after</source>
-		<translation>zanim Twoja karta Keycard zostanie zablokowana</translation>
+		<translation>πριν μπλοκαριστεί η Keycard σας</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-frozen-after</source>
-		<translation>zanim Twoja karta Keycard zostanie zamrożona</translation>
+		<translation>προτού παγώσει η Keycard σας</translation>
 	</message>
 	<message>
 		<source>preview-privacy</source>
-		<translation>Podgląd trybu prywatności</translation>
+		<translation>Προεπισκόπηση της λειτουργίας απορρήτου</translation>
 	</message>
 	<message>
 		<source>privacy</source>
-		<translation>Prywatność</translation>
+		<translation>Απόρρητο</translation>
 	</message>
 	<message>
 		<source>privacy-photos</source>
-		<translation>Prywatność zdjęcia profilowego</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>privacy-and-security</source>
-		<translation>Prywatność i bezpieczeństwo</translation>
+		<translation>Απόρρητο και ασφάλεια</translation>
 	</message>
 	<message>
 		<source>privacy-policy</source>
-		<translation>Polityka prywatności</translation>
+		<translation>Πολιτική απορρήτου</translation>
 	</message>
 	<message>
 		<source>privacy-show-to-warning</source>
-		<translation>Osoby, które widziały już Twoje zdjęcie profilowe, będą nadal to robić</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>processing</source>
-		<translation>Momencik</translation>
+		<translation>Μια στιγμή</translation>
 	</message>
 	<message>
 		<source>product-information</source>
-		<translation>Informacje o produkcie</translation>
+		<translation>Πληροφορίες Προϊόντος</translation>
 	</message>
 	<message>
 		<source>profile</source>
-		<translation>Profil</translation>
+		<translation>Προφίλ</translation>
 	</message>
 	<message>
 		<source>profile-details</source>
-		<translation>Szczegóły profilu</translation>
+		<translation>Λεπτομέρειες προφίλ</translation>
 	</message>
 	<message>
 		<source>public-chat</source>
-		<translation>Czat publiczny</translation>
+		<translation>Δημόσια συνομιλία</translation>
 	</message>
 	<message>
 		<source>public-chats</source>
-		<translation>Czaty publiczne</translation>
+		<translation>Δημόσιες συνομιλίες</translation>
 	</message>
 	<message>
 		<source>public-group-status</source>
-		<translation>Publiczny</translation>
+		<translation>Δημόσιο</translation>
 	</message>
 	<message>
 		<source>public-group-topic</source>
-		<translation>Temat</translation>
+		<translation>Θέμα</translation>
 	</message>
 	<message>
 		<source>join-new-public-chat</source>
-		<translation>Dołącz do publicznego czatu</translation>
+		<translation>Λάβετε μέρος σε μια δημόσια συνομιλία</translation>
 	</message>
 	<message>
 		<source>join-new-private-chat</source>
-		<translation>Rozpocznij nowy prywatny czat</translation>
+		<translation>Ξεκινήστε μια νέα ιδιωτική συνομιλία</translation>
 	</message>
 	<message>
 		<source>search-no-chat-found</source>
-		<translation>Brak wyników wyszukiwania. Czy masz na myśli</translation>
+		<translation>Δεν υπάρχουν αποτελέσματα αναζήτησης. Μήπως εννοείτε</translation>
 	</message>
 	<message>
 		<source>public-key</source>
-		<translation>Klucz publiczny</translation>
+		<translation>Δημόσιο κλειδί</translation>
 	</message>
 	<message>
 		<source>puk-and-pairing-codes-displayed</source>
-		<translation>Wyświetlany kod PUK i kody parowania</translation>
+		<translation>Εμφάνιση κωδικών PUK και ζεύξης</translation>
 	</message>
 	<message>
 		<source>puk-code</source>
-		<translation>Kod PUK</translation>
+		<translation>Κωδικός PUK</translation>
 	</message>
 	<message>
 		<source>puk-code-explanation</source>
-		<translation>Jeśli zapomnisz swojego 6-cyfrowego kodu dostępu lub wprowadzisz go niepoprawnie 3 razy, będziesz potrzebować tego kodu do odblokowania karty.</translation>
+		<translation>Εάν ξεχάσετε τον 6ψήφιο κωδικό πρόσβασης ή τον εισαγάγετε εσφαλμένα 3 φορές, θα χρειαστείτε αυτόν τον κωδικό για να ξεκλειδώσετε την κάρτα σας.</translation>
 	</message>
 	<message>
 		<source>puk-mismatch</source>
-		<translation>Błędny kod PUK</translation>
+		<translation>Λανθασμένος κωδικός PUK</translation>
 	</message>
 	<message>
 		<source>quiet-days</source>
-		<translation>{{quiet-days}} dni</translation>
+		<translation>{{quiet-days}} ημέρες</translation>
 	</message>
 	<message>
 		<source>quiet-hours</source>
-		<translation>{{quiet-hours}} godzin</translation>
+		<translation>{{quiet-hours}} ώρες</translation>
 	</message>
 	<message>
 		<source>re-encrypt-key</source>
-		<translation>Zaszyfruj ponownie swoje klucze</translation>
+		<translation>Ξανακρυπτογραφήστε τα κλειδιά σας</translation>
 	</message>
 	<message>
 		<source>receive</source>
-		<translation>Otrzymaj</translation>
+		<translation>Λήψη</translation>
 	</message>
 	<message>
 		<source>receive-transaction</source>
-		<translation>Otrzymaj transakcję</translation>
+		<translation>Λήψη συναλλαγής</translation>
 	</message>
 	<message>
 		<source>recent</source>
-		<translation>Najnowsze</translation>
+		<translation>Πρόσφατα</translation>
 	</message>
 	<message>
 		<source>recent-recipients</source>
-		<translation>Kontakty</translation>
+		<translation>Επαφές</translation>
 	</message>
 	<message>
 		<source>recently-used-stickers</source>
-		<translation>Tutaj pojawią się ostatnio używane naklejki</translation>
+		<translation>Τα αυτοκόλλητα που χρησιμοποιήθηκαν πρόσφατα θα εμφανίζονται εδώ</translation>
 	</message>
 	<message>
 		<source>recipient</source>
-		<translation>Odbiorca</translation>
+		<translation>Παραλήπτης</translation>
 	</message>
 	<message>
 		<source>recipient-code</source>
-		<translation>Wprowadź adres odbiorcy</translation>
+		<translation>Εισαγάγετε τη διεύθυνση παραλήπτη</translation>
 	</message>
 	<message>
 		<source>recipient-code-placeholder</source>
-		<translation>0x ... lub nazwa_użytkownika.domena.eth</translation>
+		<translation>0x... ή  username.domain.eth</translation>
 	</message>
 	<message>
 		<source>recover</source>
-		<translation>Odzyskaj</translation>
+		<translation>Ανάκτηση</translation>
 	</message>
 	<message>
 		<source>recover-key</source>
-		<translation>Uzyskaj dostęp do istniejących kluczy</translation>
+		<translation>Πρόσβαση στα υπάρχοντα κλειδιά</translation>
 	</message>
 	<message>
 		<source>recover-keycard-multiaccount-not-supported</source>
-		<translation>Klucze do tego konta już istnieją i nie mogą być dodane ponownie. Jeśli zgubiłeś hasło, kod dostępu lub kartę Keycard, odinstaluj aplikację, zainstaluj ją ponownie i uzyskaj dostęp do kluczy, wprowadzając swoją frazę Seed</translation>
+		<translation>Τα κλειδιά για αυτόν τον λογαριασμό υπάρχουν ήδη και δεν μπορούν να προστεθούν ξανά. Εάν έχετε χάσει τον κωδικό πρόσβασής σας ή την Keycard, απεγκαταστήστε την εφαρμογή, εγκαταστήστε ξανά και αποκτήστε πρόσβαση στα κλειδιά σας εισάγοντας τη φράση seed σας</translation>
 	</message>
 	<message>
 		<source>recover-with-keycard</source>
-		<translation>Odzyskaj za pomocą karty Keycard</translation>
+		<translation>Ανάκτηση με Keycard</translation>
 	</message>
 	<message>
 		<source>recovering-key</source>
-		<translation>Uzyskiwanie dostępu do kluczy...</translation>
+		<translation>Πρόσβαση σε κλειδιά...</translation>
 	</message>
 	<message>
 		<source>recovery-confirm-phrase</source>
-		<translation>Potwierdź frazę odzyskiwania (Seed)</translation>
+		<translation>Επιβεβαιώστε τη φράση seed</translation>
 	</message>
 	<message>
 		<source>recovery-phrase</source>
-		<translation>Fraza odzyskiwania (Seed)</translation>
+		<translation>Φράση Seed</translation>
 	</message>
 	<message>
 		<source>recovery-success-text</source>
-		<translation>Będziesz musiał stworzyć nowy kod lub hasło, aby ponownie zaszyfrować swoje klucze</translation>
+		<translation>Θα πρέπει να δημιουργήσετε έναν νέο κωδικό ή κωδικό πρόσβασης για να κρυπτογραφήσετε ξανά τα κλειδιά σας</translation>
 	</message>
 	<message>
 		<source>recovery-typo-dialog-description</source>
-		<translation>Zwróć uwagę, że twoja fraza Seed musi posiadać te same słowa i kolejność, w jakiej je otrzymałeś</translation>
+		<translation>Λάβετε υπόψη ότι η φράση seed σας πρέπει να χρησιμοποιεί τις ίδιες ακριβώς λέξεις και σειρά όπως την λάβατε</translation>
 	</message>
 	<message>
 		<source>recovery-typo-dialog-title</source>
-		<translation>Czy fraza odzyskiwania (Seed) jest poprawna?</translation>
+		<translation>Είναι σωστή η φράση seed;</translation>
 	</message>
 	<message>
 		<source>remember-me</source>
-		<translation>Zapamiętaj mnie</translation>
+		<translation>Θυμήσου με</translation>
 	</message>
 	<message>
 		<source>remind-me-later</source>
-		<translation>Pokaż mi to jeszcze raz</translation>
+		<translation>Δείξε μου ξανά</translation>
 	</message>
 	<message>
 		<source>remove</source>
-		<translation>Usuń</translation>
+		<translation>Κατάργηση</translation>
 	</message>
 	<message>
 		<source>remove-from-chat</source>
-		<translation>Usuń z czatu</translation>
+		<translation>Κατάργηση από τη συνομιλία</translation>
 	</message>
 	<message>
 		<source>remove-from-contacts</source>
-		<translation>Usuń z kontaktów</translation>
+		<translation>Κατάργηση από επαφές</translation>
 	</message>
 	<message>
 		<source>remove-from-contacts-text</source>
-		<translation>Usuwając użytkownika z listy kontaktów, nie ukrywasz przed nim adresu swojego portfela.</translation>
+		<translation>Αφαιρώντας έναν χρήστη από τη λίστα επαφών σας, δεν αποκρύπτετε τη διεύθυνση του πορτοφολιού σας από αυτόν</translation>
 	</message>
 	<message>
 		<source>remove-network</source>
-		<translation>Usuń sieć</translation>
+		<translation>Κατάργηση δικτύου</translation>
 	</message>
 	<message>
 		<source>remove-token</source>
-		<translation>Usuń token</translation>
+		<translation>Κατάργηση token</translation>
 	</message>
 	<message>
 		<source>removed</source>
-		<translation>usunięci</translation>
+		<translation>αφαιρέθηκε</translation>
 	</message>
 	<message>
 		<source>repeat-pin</source>
-		<translation>Powtórz nowy 6-cyfrowy kod dostępu.</translation>
+		<translation>Επαναλάβετε νέο 6ψήφιο κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>repeat-puk</source>
-		<translation>Powtórz nowy 12-cyfrowy PUK</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>report-bug-email-template</source>
-		<translation>1. Opis problemu
- {{description}}
- 
+		<translation>1. Περιγραφή ζητήματος
+ (Περιγράψτε τη λειτουργία που θα σας άρεσε ή συνοψίστε εν συντομία το σφάλμα και τι κάνατε, τι περιμένατε να συμβεί και τι πραγματικά συμβαίνει. Ενότητες παρακάτω) 
 
- 2. Kroki do reprodukcji
- {{steps}}
- 
 
- 3. Proszę, dołącz zrzuty ekranu, które mogą pokazać problem
+ 2. Βήματα αναπαραγωγής
+ (Περιγράψτε πώς μπορούμε να επαναλάβουμε το σφάλμα βήμα προς βήμα.)
+ -Ανοιγμα Status
+ -...
+ - Βήμα 3 κ.λπ. 
+
+
+ 3. Αναμενόμενη συμπεριφορά
+ (Περιγράψτε τι περιμένατε να συμβεί.) 
+
+
+ 4. Πραγματική συμπεριφορά
+ (Περιγράψτε τι πραγματικά συνέβη.) 
+
+
+ 5. Επισυνάψτε στιγμιότυπα οθόνης που μπορούν να επιδείξουν το πρόβλημα, παρακαλώ
 </translation>
 	</message>
 	<message>
 		<source>request-transaction</source>
-		<translation>Poproś o transakcję</translation>
+		<translation>Αίτημα συναλλαγής</translation>
 	</message>
 	<message>
 		<source>required-field</source>
-		<translation>Pole wymagane</translation>
+		<translation>Υποχρεωτικό πεδίο</translation>
 	</message>
 	<message>
 		<source>resend-message</source>
-		<translation>Wyślij ponownie</translation>
+		<translation>Στείλτε ξανά</translation>
 	</message>
 	<message>
 		<source>reset-card</source>
-		<translation>Zresetuj kartę</translation>
+		<translation>Επαναφορά κάρτας</translation>
 	</message>
 	<message>
 		<source>reset-card-description</source>
-		<translation>Ta operacja zresetuje kartę do stanu początkowego. Spowoduje to usunięcie wszystkich danych karty, w tym kluczy prywatnych. Operacja jest nieodwracalna.</translation>
+		<translation>Αυτή η λειτουργία θα επαναφέρει την κάρτα στην αρχική κατάσταση. Θα διαγράψει όλα τα δεδομένα της κάρτας, συμπεριλαμβανομένων των ιδιωτικών κλειδιών. Η λειτουργία δεν είναι αναστρέψιμη.</translation>
 	</message>
 	<message>
 		<source>retry</source>
-		<translation>Ponów próbę</translation>
+		<translation>Επανάληψη</translation>
 	</message>
 	<message>
 		<source>revoke-access</source>
-		<translation>Odwołaj dostęp</translation>
+		<translation>Ανάκληση πρόσβασης</translation>
 	</message>
 	<message>
 		<source>rinkeby-network</source>
-		<translation>Sieć testowa Rinkeby</translation>
+		<translation>Δίκτυο δοκιμών Rinkeby</translation>
 	</message>
 	<message>
 		<source>ropsten-network</source>
-		<translation>Sieć testowa Ropsten</translation>
+		<translation>Δοκιμαστικό δίκτυο Ropsten</translation>
 	</message>
 	<message>
 		<source>rpc-url</source>
-		<translation>URL RPC</translation>
+		<translation>Διεύθυνση URL RPC</translation>
 	</message>
 	<message>
 		<source>save</source>
-		<translation>Zapisz</translation>
+		<translation>Αποθήκευση</translation>
 	</message>
 	<message>
 		<source>save-password</source>
-		<translation>Zapisz hasło aż do wylogowania</translation>
+		<translation>Αποθήκευση κωδικού</translation>
 	</message>
 	<message>
 		<source>save-password-unavailable</source>
-		<translation>Ustaw hasło urządzenia, aby zapisać hasło</translation>
+		<translation>Ορίστε τον κωδικό πρόσβασης της συσκευής για να αποθηκεύσετε τον κωδικό σας</translation>
 	</message>
 	<message>
 		<source>save-password-unavailable-android</source>
-		<translation>Zapisanie hasła jest niedostępne: Twoje urządzenie może być zrootowane lub nie ma niezbędnych funkcji zabezpieczeń.</translation>
+		<translation>Η αποθήκευση κωδικού πρόσβασης δεν είναι διαθέσιμη: η συσκευή σας ενδέχεται να είναι rooted ή να μην διαθέτει τις απαραίτητες λειτουργίες ασφαλείας.</translation>
 	</message>
 	<message>
 		<source>scan-qr</source>
-		<translation>Skanuj QR</translation>
+		<translation>Σάρωση κωδικού QR</translation>
 	</message>
 	<message>
 		<source>scan-qr-code</source>
-		<translation>Zeskanuj kod QR z adresem portfela</translation>
+		<translation>Σάρωση κωδικού QR με διεύθυνση πορτοφολιού</translation>
 	</message>
 	<message>
 		<source>search</source>
-		<translation>Szukaj</translation>
+		<translation>Αναζήτηση</translation>
 	</message>
 	<message>
 		<source>secret-keys-confirmation-text</source>
-		<translation>Będziesz ich potrzebować, aby nadal korzystać z karty Keycard na wypadek, w przypadku kiedy utracisz swój telefon.</translation>
+		<translation>Θα τους χρειαστείτε για να συνεχίσετε να χρησιμοποιείτε την Keycard σας σε περίπτωση που χάσετε το τηλέφωνό σας.</translation>
 	</message>
 	<message>
 		<source>secret-keys-confirmation-title</source>
-		<translation>Kody zapisane?</translation>
+		<translation>Σημειώσατε τους κωδικούς;</translation>
 	</message>
 	<message>
 		<source>security</source>
-		<translation>Bezpieczeństwo</translation>
+		<translation>Ασφάλεια</translation>
 	</message>
 	<message>
 		<source>see-details</source>
-		<translation>Zobacz szczegóły</translation>
+		<translation>Δείτε λεπτομέρειες</translation>
 	</message>
 	<message>
 		<source>see-it-again</source>
-		<translation>ZOBACZ PONOWNIE</translation>
+		<translation>ΝΑ ΤΟ ΞΑΝΑΔΩ</translation>
 	</message>
 	<message>
 		<source>select-account-first</source>
-		<translation>Najpierw wybierz konto</translation>
+		<translation>Επιλέξτε πρώτα έναν λογαριασμό</translation>
 	</message>
 	<message>
 		<source>select-chat</source>
-		<translation>Wybierz czat, aby rozpocząć wysyłanie wiadomości</translation>
+		<translation>Επιλέξτε συνομιλία για να ξεκινήσετε την αποστολή μηνυμάτων</translation>
 	</message>
 	<message>
 		<source>selected</source>
-		<translation>Wybrany</translation>
+		<translation>Επιλεγμένο</translation>
 	</message>
 	<message>
 		<source>select</source>
-		<translation>Wybierz</translation>
+		<translation>Επιλογή</translation>
 	</message>
 	<message>
 		<source>select-account</source>
-		<translation>Wybierz konto</translation>
+		<translation>Επιλογή λογαριασμού</translation>
 	</message>
 	<message>
 		<source>send-logs</source>
-		<translation>Zgłoś błąd</translation>
+		<translation>Αναφορά σφάλματος</translation>
 	</message>
 	<message>
 		<source>send-logs-to</source>
-		<translation>Zgłoś błąd do {{email}}</translation>
+		<translation>Αναφορά σφάλματος στο {{email}}</translation>
 	</message>
 	<message>
 		<source>send-message</source>
-		<translation>Wyślij wiadomość</translation>
+		<translation>Αποστολή μηνύματος</translation>
 	</message>
 	<message>
 		<source>send-request</source>
-		<translation>Wyślij prośbę transakcji</translation>
+		<translation>Αποστολή αιτήματος</translation>
 	</message>
 	<message>
 		<source>send-request-amount</source>
-		<translation>Ilość</translation>
+		<translation>Ποσό</translation>
 	</message>
 	<message>
 		<source>send-request-amount-max-decimals</source>
-		<translation>Maks. liczba miejsc po przecinku to {{asset-decimals}}</translation>
+		<translation>Ο μέγιστος αριθμός δεκαδικών είναι {{asset-decimals}}</translation>
 	</message>
 	<message>
 		<source>send-request-unknown-token</source>
-		<translation>Nieznany token - {{asset}}</translation>
+		<translation>Άγνωστο token - {{asset}}</translation>
 	</message>
 	<message>
 		<source>send-sending-to</source>
-		<translation>do {{recipient-name}}</translation>
+		<translation>στον {{recipient-name}}</translation>
 	</message>
 	<message>
 		<source>send-transaction</source>
-		<translation>Wyślij transakcję</translation>
+		<translation>Αποστολή συναλλαγής</translation>
 	</message>
 	<message>
 		<source>sending</source>
-		<translation>Wysyłanie</translation>
+		<translation>Αποστολή</translation>
 	</message>
 	<message>
 		<source>sent-at</source>
-		<translation>Wysłano w</translation>
+		<translation>Στάλθηκε στις</translation>
 	</message>
 	<message>
 		<source>set-a-topic</source>
-		<translation>Utwórz temat</translation>
+		<translation>Δημιουργία θέματος</translation>
 	</message>
 	<message>
 		<source>set-currency</source>
-		<translation>Ustaw walutę</translation>
+		<translation>Ορίστε νόμισμα</translation>
 	</message>
 	<message>
 		<source>set-dapp-access-permissions</source>
-		<translation>Ustaw uprawnienia dostępu zdecentralizowanym aplikacjom</translation>
+		<translation>Ορίστε δικαιώματα πρόσβασης DApp</translation>
 	</message>
 	<message>
 		<source>settings</source>
-		<translation>Ustawienia</translation>
+		<translation>Ρυθμίσεις</translation>
 	</message>
 	<message>
 		<source>share</source>
-		<translation>Udostępnij</translation>
+		<translation>Κοινοποίηση</translation>
 	</message>
 	<message>
 		<source>shared</source>
-		<translation>Udostępnione</translation>
+		<translation>Κοινόχρηστο</translation>
 	</message>
 	<message>
 		<source>share-address</source>
-		<translation>Udostępnij adres</translation>
+		<translation>Κοινοποίηση διεύθυνσης</translation>
 	</message>
 	<message>
 		<source>share-chat</source>
-		<translation>Udostępnij czat</translation>
+		<translation>Κοινοποίηση συνομιλίας</translation>
 	</message>
 	<message>
 		<source>share-contact-code</source>
-		<translation>Udostępnij mój klucz czatu</translation>
+		<translation>Κοινοποίηση του κλειδιού συνομιλίας μου</translation>
 	</message>
 	<message>
 		<source>share-dapp-text</source>
-		<translation>Sprawdź tą zdecentralizowaną aplikację, której używam na platformie Status: {{link}}</translation>
+		<translation>Δείτε αυτό το DApp που χρησιμοποιώ στο Status: {{link}}</translation>
 	</message>
 	<message>
 		<source>share-link</source>
-		<translation>Udostępnij link</translation>
+		<translation>Κοινοποίηση συνδέσμου</translation>
 	</message>
 	<message>
 		<source>share-my-profile</source>
-		<translation>Udostępnij mój profil</translation>
+		<translation>Κοινοποίηση του προφίλ μου</translation>
 	</message>
 	<message>
 		<source>share-profile</source>
-		<translation>Udostępnij profil</translation>
+		<translation>Κοινή χρήση προφίλ</translation>
 	</message>
 	<message>
 		<source>share-profile-link</source>
-		<translation>Udostępnij link do profilu</translation>
+		<translation>Κοινή χρήση συνδέσμου προφίλ</translation>
 	</message>
 	<message>
 		<source>share-public-chat-text</source>
-		<translation>Sprawdź ten czat publiczny w aplikacji Status: {{link}}</translation>
+		<translation>Δείτε αυτήν τη δημόσια συνομιλία στην εφαρμογή του Status: {{link}}</translation>
 	</message>
 	<message>
 		<source>sharing-copied-to-clipboard</source>
-		<translation>Skopiowane do schowka</translation>
+		<translation>Αντιγράφηκε</translation>
 	</message>
 	<message>
 		<source>sharing-copy-to-clipboard</source>
-		<translation>Skopiuj do schowka</translation>
+		<translation>Αντιγραφή</translation>
 	</message>
 	<message>
 		<source>share-logs</source>
-		<translation>Udostępniaj dzienniki</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>sharing-share</source>
-		<translation>Udostępnij</translation>
+		<translation>Κοινοποίηση</translation>
 	</message>
 	<message>
 		<source>show-less</source>
-		<translation>Pokaż mniej</translation>
+		<translation>Δείξε λιγότερα</translation>
 	</message>
 	<message>
 		<source>show-more</source>
-		<translation>Pokaż więcej</translation>
+		<translation>Δείτε περισσότερα</translation>
 	</message>
 	<message>
 		<source>show-qr</source>
-		<translation>Pokaż kod QR</translation>
+		<translation>Εμφάνιση κωδικού QR</translation>
 	</message>
 	<message>
 		<source>show-transaction-data</source>
-		<translation>Pokaż dane transakcji</translation>
+		<translation>Εμφάνιση δεδομένων συναλλαγής</translation>
 	</message>
 	<message>
 		<source>sign-and-send</source>
-		<translation>Podpisz i wyślij</translation>
+		<translation>Υπογραφή και αποστολή</translation>
 	</message>
 	<message>
 		<source>sign-in</source>
-		<translation>Zaloguj się</translation>
+		<translation>Ξεκλείδωμα</translation>
 	</message>
 	<message>
 		<source>sign-message</source>
-		<translation>Podpisz wiadomość</translation>
+		<translation>Υπογραφή μηνύματος</translation>
 	</message>
 	<message>
 		<source>sign-out</source>
-		<translation>Wyloguj się</translation>
+		<translation>Αποσύνδεση</translation>
 	</message>
 	<message>
 		<source>sign-with</source>
-		<translation>Podpisz się za pomocą</translation>
+		<translation>Συνδεθείτε με</translation>
 	</message>
 	<message>
 		<source>sign-with-password</source>
-		<translation>Podpisz się hasłem</translation>
+		<translation>Υπογράψτε με κωδικό πρόσβασης</translation>
 	</message>
 	<message>
 		<source>sign-you-in</source>
-		<translation>Logujemy Cię…</translation>
+		<translation>Σύνδεση…</translation>
 	</message>
 	<message>
 		<source>signing</source>
-		<translation>Podpisywanie</translation>
+		<translation>Υπογραφή</translation>
 	</message>
 	<message>
 		<source>signing-a-message</source>
-		<translation>Podpisywanie wiadomości</translation>
+		<translation>Υπογραφή μηνύματος</translation>
 	</message>
 	<message>
 		<source>signing-phrase</source>
-		<translation>Fraza podpisująca</translation>
+		<translation>Φράση υπογραφής</translation>
 	</message>
 	<message>
 		<source>something-went-wrong</source>
-		<translation>Coś poszło nie tak</translation>
+		<translation>Κάτι πήγε στραβά</translation>
 	</message>
 	<message>
 		<source>soon</source>
-		<translation>Wkrótce</translation>
+		<translation>Σύντομα</translation>
 	</message>
 	<message>
 		<source>specify-address</source>
-		<translation>Określ adres</translation>
+		<translation>Καθορισμός διεύθυνσης</translation>
 	</message>
 	<message>
 		<source>specify-name</source>
-		<translation>Podaj nazwę</translation>
+		<translation>Καθορίστε ένα όνομα</translation>
 	</message>
 	<message>
 		<source>specify-symbol</source>
-		<translation>Określ symbol</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>specify-network-id</source>
-		<translation>Podaj id sieci</translation>
+		<translation>Καθορίστε το αναγνωριστικό δικτύου</translation>
 	</message>
 	<message>
 		<source>specify-rpc-url</source>
-		<translation>Podaj URL RPC</translation>
+		<translation>Καθορίστε μια διεύθυνση URL RPC</translation>
 	</message>
 	<message>
 		<source>start-chat</source>
-		<translation>Rozpocznij czat</translation>
+		<translation>Έναρξη συνομιλίας</translation>
 	</message>
 	<message>
 		<source>start-conversation</source>
-		<translation>Rozpocznij rozmowę</translation>
+		<translation>Έναρξη συνομιλίας</translation>
 	</message>
 	<message>
 		<source>start-group-chat</source>
-		<translation>Rozpocznij czat grupowy</translation>
+		<translation>Έναρξη ομαδικής συνομιλίας</translation>
 	</message>
 	<message>
 		<source>start-new-chat</source>
-		<translation>Rozpocznij nowy czat</translation>
+		<translation>Έναρξη νέας συνομιλίας</translation>
 	</message>
 	<message>
 		<source>status</source>
@@ -4646,543 +4629,543 @@ Przejdź do sekcji &apos;Urządzenia&apos; w ustawieniach, aby sparować urządz
 	</message>
 	<message>
 		<source>status-confirmed</source>
-		<translation>Potwierdzone</translation>
+		<translation>Επιβεβαιωμένα</translation>
 	</message>
 	<message>
 		<source>status-hardwallet</source>
-		<translation>Portfel sprzętowy Status</translation>
+		<translation>Status hardwallet</translation>
 	</message>
 	<message>
 		<source>status-keycard</source>
-		<translation>Karta Keycard aplikacji Status</translation>
+		<translation>Status Keycard</translation>
 	</message>
 	<message>
 		<source>status-pending</source>
-		<translation>W oczekiwaniu</translation>
+		<translation>Εκκρεμούν</translation>
 	</message>
 	<message>
 		<source>status-tx-not-found</source>
-		<translation>Nie znaleziono TX</translation>
+		<translation>Το TX δεν βρέθηκε</translation>
 	</message>
 	<message>
 		<source>status-sent</source>
-		<translation>Wysłano</translation>
+		<translation>Απεσταλμένα</translation>
 	</message>
 	<message>
 		<source>status-not-sent-tap</source>
-		<translation>Nie potwierdzona. Dotknij, aby zobaczyć opcje</translation>
+		<translation>Δεν έχει επιβεβαιωθεί. Πατήστε για επιλογές</translation>
 	</message>
 	<message>
 		<source>status-not-sent-click</source>
-		<translation>Nie wysłano. Dotknij, aby zobaczyć opcje</translation>
+		<translation>Δεν έχει επιβεβαιωθεί. Κάντε κλικ για επιλογές</translation>
 	</message>
 	<message>
 		<source>step-i-of-n</source>
-		<translation>Krok {{step}} z {{number}}</translation>
+		<translation>Βήμα {{step}} από {{number}}</translation>
 	</message>
 	<message>
 		<source>sticker-market</source>
-		<translation>Rynek naklejek</translation>
+		<translation>Αγορά αυτοκόλλητων</translation>
 	</message>
 	<message>
 		<source>sticker</source>
-		<translation>Naklejka</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>submit</source>
-		<translation>Prześlij</translation>
+		<translation>Υποβολή</translation>
 	</message>
 	<message>
 		<source>submit-bug</source>
-		<translation>Zgłoś błąd</translation>
+		<translation>Υποβάλετε ένα σφάλμα</translation>
 	</message>
 	<message>
 		<source>success</source>
-		<translation>Sukces</translation>
+		<translation>Επιτυχία</translation>
 	</message>
 	<message>
 		<source>symbol</source>
-		<translation>Symbol</translation>
+		<translation>Σύμβολο</translation>
 	</message>
 	<message>
 		<source>sync-all-devices</source>
-		<translation>Synchronizuj wszystkie urządzenia</translation>
+		<translation>Συγχρονισμός όλων των συσκευών</translation>
 	</message>
 	<message>
 		<source>sync-in-progress</source>
-		<translation>Synchronizacja...</translation>
+		<translation>Συγχρονισμός...</translation>
 	</message>
 	<message>
 		<source>sync-settings</source>
-		<translation>Ustawienia synchronizacji</translation>
+		<translation>Ρυθμίσεις συγχρονισμού</translation>
 	</message>
 	<message>
 		<source>sync-synced</source>
-		<translation>W synchronizacji</translation>
+		<translation>Σε συγχρονισμό</translation>
 	</message>
 	<message>
 		<source>syncing-devices</source>
-		<translation>Synchronizuję ...</translation>
+		<translation>Συγχρονισμός...</translation>
 	</message>
 	<message>
 		<source>tag-was-lost</source>
-		<translation>Znacznik został zgubiony</translation>
+		<translation>Η ετικέτα χάθηκε</translation>
 	</message>
 	<message>
 		<source>tap-card-again</source>
-		<translation>Przyłóż ponownie kartę do tylnej części telefonu</translation>
+		<translation>Βάλτε ξανά την κάρτα στο πίσω μέρος του τηλεφώνου σας</translation>
 	</message>
 	<message>
 		<source>test-networks</source>
-		<translation>Sieci testowe</translation>
+		<translation>Δοκιμαστικά δίκτυα</translation>
 	</message>
 	<message>
 		<source>text-input-disabled</source>
-		<translation>Proszę poczekać chwilę…</translation>
+		<translation>Παρακαλώ περιμένετε μια στιγμή...</translation>
 	</message>
 	<message>
 		<source>this-device</source>
-		<translation>To urządzenie</translation>
+		<translation>Αυτή η συσκευή</translation>
 	</message>
 	<message>
 		<source>this-device-desc</source>
-		<translation>Twoje klucze będą zaszyfrowane i bezpiecznie przechowywane na Twoim urządzeniu</translation>
+		<translation>Τα κλειδιά σας θα κρυπτογραφηθούν και θα αποθηκευτούν με ασφάλεια στη συσκευή σας</translation>
 	</message>
 	<message>
 		<source>this-is-you-signing</source>
-		<translation>To jest Twoja fraza podpisująca</translation>
+		<translation>Αυτή είναι η φράση υπογραφής σας</translation>
 	</message>
 	<message>
 		<source>this-will-take-few-seconds</source>
-		<translation>Zajmie to kilka sekund.</translation>
+		<translation>Αυτό θα διαρκέσει μερικά δευτερόλεπτα</translation>
 	</message>
 	<message>
 		<source>three-words-description</source>
-		<translation>Powinieneś zobaczyć te 3 słowa przed podpisaniem każdej transakcji</translation>
+		<translation>Θα πρέπει να δείτε αυτές τις 3 λέξεις πριν υπογράψετε κάθε συναλλαγή</translation>
 	</message>
 	<message>
 		<source>three-words-description-2</source>
-		<translation>Jeśli zobaczysz inną kombinację, anuluj transakcję i wyloguj się</translation>
+		<translation>Εάν δείτε διαφορετικό συνδυασμό, ακυρώστε τη συναλλαγή και αποσυνδεθείτε</translation>
 	</message>
 	<message>
 		<source>to</source>
-		<translation>Do</translation>
+		<translation>Προς</translation>
 	</message>
 	<message>
 		<source>to-block</source>
-		<translation>Zablokuj</translation>
+		<translation>Αποκλεισμός</translation>
 	</message>
 	<message>
 		<source>to-encrypt-enter-password</source>
-		<translation>Aby zaszyfrować konto, wprowadź swoje hasło</translation>
+		<translation>Για να κρυπτογραφήσετε τον λογαριασμό εισάγετε τον κωδικό πρόσβασης σας</translation>
 	</message>
 	<message>
 		<source>to-see-this-message</source>
-		<translation>Aby zobaczyć tę wiadomość,</translation>
+		<translation>Για να δείτε αυτό το μήνυμα,</translation>
 	</message>
 	<message>
 		<source>token-auto-validate-decimals-error</source>
-		<translation>Błędne oznaczenia dziesiętne dla tokena {{symbol}} pod adresem {{address}} - ustawione na {{expected}} ale wykryte jako {{actual}}</translation>
+		<translation>Λανθασμένα δεκαδικά ψηφία για το token {{symbol}} στη διεύθυνση {{address}} - ορίστηκε ως {{expected}} αλλά εντοπίστηκε ως {{actual}}</translation>
 	</message>
 	<message>
 		<source>token-auto-validate-name-error</source>
-		<translation>Nieprawidłowa nazwa tokena {{symbol}} pod adresem {{address}} - ustawiona na {{expected}}, ale wykryta jako {{actual}}</translation>
+		<translation>Λάθος όνομα για το token {{symbol}} στη διεύθυνση {{address}} - ορίστηκε ως {{expected}} αλλά εντοπίστηκε ως {{actual}}</translation>
 	</message>
 	<message>
 		<source>token-auto-validate-symbol-error</source>
-		<translation>Nieprawidłowa nazwa tokena {{symbol}} pod adresem {{address}} - ustawiona na {{expected}}, ale wykryta jako {{actual}}</translation>
+		<translation>Λάθος σύμβολο για το token {{symbol}} στη διεύθυνση {{address}} - ορίστηκε ως {{expected}} αλλά εντοπίστηκε ως {{actual}}</translation>
 	</message>
 	<message>
 		<source>token-details</source>
-		<translation>Szczegóły tokena</translation>
+		<translation>Λεπτομέρειες token</translation>
 	</message>
 	<message>
 		<source>topic-name-error</source>
-		<translation>Używaj tylko małych liter (od a do z), cyfr i myślników (-). Nie używaj kluczy czatu</translation>
+		<translation>Χρησιμοποιήστε μόνο πεζά γράμματα (a έως z), αριθμούς και παύλες (-). Μην χρησιμοποιείτε τα κλειδιά συνομιλίας</translation>
 	</message>
 	<message>
 		<source>transaction</source>
-		<translation>Transakcja</translation>
+		<translation>Συναλλαγή</translation>
 	</message>
 	<message>
 		<source>transaction-data</source>
-		<translation>Dane transakcyjne</translation>
+		<translation>Δεδομένα συναλλαγών</translation>
 	</message>
 	<message>
 		<source>transaction-declined</source>
-		<translation>Transakcja odrzucona</translation>
+		<translation>Η συναλλαγή απορρίφθηκε</translation>
 	</message>
 	<message>
 		<source>transactions-management-enabled</source>
-		<translation>Zarządzanie transakcjami (alfa)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>transaction-description</source>
-		<translation>Uznaj ją za kompletną po 12 potwierdzeniach w sieci.</translation>
+		<translation>Θεωρήστε ότι ολοκληρώθηκε μετά από 12 επιβεβαιώσεις στο δίκτυο.</translation>
 	</message>
 	<message>
 		<source>transaction-details</source>
-		<translation>Szczegóły transakcji</translation>
+		<translation>Λεπτομέρειες Συναλλαγής</translation>
 	</message>
 	<message>
 		<source>transaction-failed</source>
-		<translation>Transakcja nieudana</translation>
+		<translation>Η συναλλαγή απέτυχε</translation>
 	</message>
 	<message>
 		<source>transaction-history</source>
-		<translation>Historia transakcji</translation>
+		<translation>Ιστορικό συναλλαγών</translation>
 	</message>
 	<message>
 		<source>transaction-request</source>
-		<translation>Żądanie transakcji</translation>
+		<translation>Αίτημα Συναλλαγής</translation>
 	</message>
 	<message>
 		<source>transaction-sent</source>
-		<translation>Transakcja wysłana</translation>
+		<translation>Η συναλλαγή εστάλη</translation>
 	</message>
 	<message>
 		<source>transaction-signed</source>
-		<translation>Transakcja została pomyślnie podpisana</translation>
+		<translation>Η συναλλαγή έχει υπογραφεί με επιτυχία</translation>
 	</message>
 	<message>
 		<source>transactions</source>
-		<translation>Transakcje</translation>
+		<translation>Συναλλαγές</translation>
 	</message>
 	<message>
 		<source>transactions-filter-select-all</source>
-		<translation>Zaznacz wszystko</translation>
+		<translation>Επιλογή όλων</translation>
 	</message>
 	<message>
 		<source>transactions-filter-title</source>
-		<translation>Filtruj historię</translation>
+		<translation>Ιστορικό φίλτρου</translation>
 	</message>
 	<message>
 		<source>type</source>
-		<translation>Rodzaj</translation>
+		<translation>Πληκτρολογήστε</translation>
 	</message>
 	<message>
 		<source>transactions-history</source>
-		<translation>Historia transakcji</translation>
+		<translation>Ιστορικό συναλλαγών</translation>
 	</message>
 	<message>
 		<source>transactions-history-empty</source>
-		<translation>Brak transakcji w Twojej historii</translation>
+		<translation>Δεν υπάρχουν ακόμη συναλλαγές στο ιστορικό σας</translation>
 	</message>
 	<message>
 		<source>transactions-history-loading</source>
-		<translation>Ładowanie historii transakcji. Może to chwilę potrwać.</translation>
+		<translation>Φόρτωση ιστορικού συναλλαγών. Αυτό μπορεί να διαρκέσει λίγο.</translation>
 	</message>
 	<message>
 		<source>transactions-sign</source>
-		<translation>Podpisz</translation>
+		<translation>Υπογραφή</translation>
 	</message>
 	<message>
 		<source>tribute-required-by-multiaccount</source>
-		<translation>{{multiaccount-name}} wymaga SNT do rozpoczęcia czatu.</translation>
+		<translation>{{multiaccount-name}} απαιτεί το SNT για να ξεκινήσει μια συζήτηση.</translation>
 	</message>
 	<message>
 		<source>tribute-state-paid</source>
-		<translation>Danina zapłacona</translation>
+		<translation>Το αφιέρωμα πληρώθηκε</translation>
 	</message>
 	<message>
 		<source>tribute-state-pending</source>
-		<translation>Danina w toku</translation>
+		<translation>Το αφιέρωμα εκκρεμεί</translation>
 	</message>
 	<message>
 		<source>tribute-state-required</source>
-		<translation>Wymagana danina w postaci {{snt-amount}} SNT</translation>
+		<translation>Απαιτείται αφιέρωμα {{snt-amount}} SNT</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk</source>
-		<translation>Danina dla Rozmowy</translation>
+		<translation>Tribute to talk</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-add-friends</source>
-		<translation>Dodaj znajomych jako kontakt, aby umożliwić czaty bez płacenia daniny.</translation>
+		<translation>Προσθέστε φίλους ως επαφή για να επιτρέψετε συνομιλίες χωρίς πληρωμή αφιερώματος.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-are-you-friends</source>
-		<translation>Jesteście przyjaciółmi?</translation>
+		<translation>Είστε φίλοι?</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-ask-to-be-added</source>
-		<translation>Poproś o dodanie jako kontakt</translation>
+		<translation>Ζητήστε να προστεθεί ως επαφή</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-contact-received-your-tribute</source>
-		<translation> otrzymał twoją daninę. Możecie teraz bezpiecznie ze sobą rozmawiać.</translation>
+		<translation> έλαβε το αφιέρωμά σας. Τώρα μπορείτε να συνομιλήσετε με ασφάλεια μεταξύ σας.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-desc</source>
-		<translation>Zarabiaj na swojej uwadze, wymagając SNT od nowych osób do rozpoczęcia czatu</translation>
+		<translation>Δημιουργήστε έσοδα από την προσοχή σας, απαιτώντας SNT για την έναρξη μιας συνομιλίας από νέα άτομα</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-disabled</source>
-		<translation>Danina dla Rozmowy wyłączona</translation>
+		<translation>Το Tribute to Talk απενεργοποιήθηκε</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-disabled-note</source>
-		<translation>Od teraz nowe osoby mogą rozpocząć z Tobą czat bez wysyłania SNT.</translation>
+		<translation>Από τώρα και στο εξής, τα νέα άτομα μπορούν να ξεκινήσουν μια συνομιλία μαζί σας χωρίς να στείλουν SNT.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-enabled</source>
-		<translation>Masz włączoną funkcję Danina dla Rozmowy.</translation>
+		<translation>Έχετε ενεργοποιήσει το Tribute to Talk.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-finish-desc</source>
-		<translation>Od tej pory będziesz otrzymywać wiadomości tylko od kontaktów i osób, które zapłaciły</translation>
+		<translation>Από τώρα και στο εξής, θα λαμβάνετε μόνο συνομιλίες από επαφές και άτομα που πληρώνουν </translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-learn-more-1</source>
-		<translation>Twój czas i uwaga są Twoimi najcenniejszymi aktywami. Funkcja &apos;Danina dla Rozmowy&apos; pozwala Ci ustawić ilość SNT wymaganą dla nowych osób, aby rozpocząć z Tobą czat.</translation>
+		<translation>Ο χρόνος και η προσοχή σας είναι τα πιο πολύτιμα περιουσιακά σας στοιχεία. Το Tribute to Talk σας επιτρέπει να ορίσετε ένα ποσό SNT που απαιτείται για να ξεκινήσουν νέα άτομα μια συνομιλία μαζί σας.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-learn-more-2</source>
-		<translation>Każdy, kto nie znajduje się na twojej liście kontaktów, zostanie poproszony o zapłatę, a Ty możesz odpowiedzieć, gdy już to zrobi.</translation>
+		<translation>Όποιος δεν περιλαμβάνεται στη λίστα επαφών σας θα κληθεί να πληρώσει και μπορείτε να απαντήσετε μόλις το κάνει.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-learn-more-3</source>
-		<translation>Zawsze możesz odesłać pieniądze z powrotem, ale aby mieć pewność, że przyjaciele mogą swobodnie do Ciebie dotrzeć, dodaj ich najpierw jako kontakt.</translation>
+		<translation>Μπορείτε πάντα να στείλετε τα χρήματα πίσω, αλλά για να διασφαλίσετε ότι οι φίλοι σας μπορούν να επικοινωνήσουν μαζί σας ελεύθερα, προσθέστε τα πρώτα ως επαφή.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-paywall-learn-more-1</source>
-		<translation>Nasz czas i uwaga są naszymi najcenniejszymi aktywami. Danina dla Rozmowy pozwala Ci nawiązać kontakt z innymi ludźmi w zamian za płatność w SNT</translation>
+		<translation>Ο χρόνος και η προσοχή μας είναι τα πιο πολύτιμα περιουσιακά στοιχεία μας. Το Tribute to Talk σάς επιτρέπει να επικοινωνείτε με νέα άτομα με αντάλλαγμα μια πληρωμή SNT.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-paywall-learn-more-2</source>
-		<translation>Aby rozpocząć rozmowę z kimś, kto ma ustawioną daninę, po prostu zapłać wymaganą ilość SNT, a zostaniesz dodany jako kontakt.</translation>
+		<translation>Για να ξεκινήσετε μια συνομιλία με κάποιον που έχει ένα σύνολο αφιερωμάτων, απλώς πληρώστε το απαιτούμενο SNT και θα προστεθείτε ως επαφή.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-paywall-learn-more-3</source>
-		<translation>Jeśli ich znasz, możesz udostępnić swój profil poza aplikacją Status, aby zostać dodanym za darmo.</translation>
+		<translation>Εάν τους γνωρίζετε, μπορείτε να μοιραστείτε το προφίλ σας εκτός του Status για να προστεθούν δωρεάν.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-pending</source>
-		<translation>Danina oczekująca na potwierdzenie</translation>
+		<translation>Εκκρεμεί επιβεβαίωση αφιερώματος</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-pending-note</source>
-		<translation>Danina oczekuje na potwierdzenie w sieci. Możesz sprawdzić jej stan w historii transakcji</translation>
+		<translation>Εκκρεμεί επιβεβαίωση της συναλλαγής αφιερώματος στο δίκτυο. Μπορείτε να ελέγξετε την κατάστασή του στο ιστορικό συναλλαγών</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-removing-note</source>
-		<translation>Usunięcie opcji Danina dla Rozmowy pozwoli nowym osobom na rozpoczęcie czatu bez wysyłania SNT. Wymaga dokonania transakcji.</translation>
+		<translation>Η κατάργηση του Tribute to Talk θα επιτρέψει στα νέα άτομα να ξεκινήσουν μια συζήτηση χωρίς να στείλουν SNT. Απαιτείται μια συναλλαγή.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-set-snt-amount</source>
-		<translation>Ustaw ilość SNT wymaganą dla nowych osób do rozpoczęcia czatu</translation>
+		<translation>Ορισμός του ποσού SNT που απαιτείται για την έναρξη μιας συνομιλίας από νέα άτομα</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-signing</source>
-		<translation>Oczekiwanie na podpisanie transakcji...</translation>
+		<translation>Αναμονή για υπογραφή συναλλαγής</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-transaction-failed-note</source>
-		<translation>Transakcja nie powiodła się, a Twoje ustawienia Daniny dla Rozmowy nie zostały zmienione</translation>
+		<translation>Η συναλλαγή απέτυχε και οι ρυθμίσεις Tribute to Talk δεν έχουν αλλάξει</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-tribute-received1</source>
-		<translation>Danina otrzymana. Ty i</translation>
+		<translation>Το αφιέρωμα ελήφθη. Εσύ και </translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-tribute-received2</source>
-		<translation>są teraz kontaktami i mogą bezpiecznie rozmawiać ze sobą.</translation>
+		<translation> είναι πλέον επαφές και μπορούν να συνομιλήσουν με ασφάλεια μεταξύ τους.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-you-require-snt</source>
-		<translation>Wymagasz SNT dla nowych osób, aby rozpocząć czat.</translation>
+		<translation>Χρειάζεστε SNT για να ξεκινήσετε συνομιλία με νέα άτομα.</translation>
 	</message>
 	<message>
 		<source>try-again</source>
-		<translation>Spróbuj ponownie</translation>
+		<translation>Προσπάθησε ξανά</translation>
 	</message>
 	<message>
 		<source>try-keeping-the-card-still</source>
-		<translation>Spróbuj trzymać kartę nieruchomo</translation>
+		<translation>Προσπαθήστε να κρατήσετε την κάρτα ακίνητη</translation>
 	</message>
 	<message>
 		<source>turn-nfc-on</source>
-		<translation>Włącz NFC aby kontynuować</translation>
+		<translation>Ενεργοποιήστε το NFC για να συνεχίσετε</translation>
 	</message>
 	<message>
 		<source>turn-nfc-description</source>
-		<translation>NFC jest wyłączone na Twoim urządzeniu. Możesz je włączyć w ustawieniach</translation>
+		<translation>Το NFC είναι απενεργοποιημένο στη συσκευή σας. Μπορείτε να το ενεργοποιήσετε στις ρυθμίσεις</translation>
 	</message>
 	<message>
 		<source>keycard-init-title</source>
-		<translation>Szukam kart ...</translation>
+		<translation>Αναζήτηση καρτών...</translation>
 	</message>
 	<message>
 		<source>keycard-init-description</source>
-		<translation>Przyłóż kartę do tylnej części telefonu, aby kontynuować</translation>
+		<translation>Βάλτε την κάρτα στο πίσω μέρος του τηλεφώνου σας για να συνεχίσετε</translation>
 	</message>
 	<message>
 		<source>keycard-awaiting-title</source>
-		<translation>Nadal szukam...</translation>
+		<translation>Συνεχίζεται η αναζήτηση...</translation>
 	</message>
 	<message>
 		<source>keycard-awaiting-description</source>
-		<translation>Spróbuj przesunąć kartę, aby znaleźć czytnik NFC w swoim urządzeniu</translation>
+		<translation>Δοκιμάστε να μετακινήσετε την κάρτα γύρω για να βρείτε τη λειτουργία ανάγνωσης NFC στη συσκευή σας</translation>
 	</message>
 	<message>
 		<source>keycard-processing-title</source>
-		<translation>Przetwarzanie...</translation>
+		<translation>Επεξεργασία...</translation>
 	</message>
 	<message>
 		<source>keycard-processing-description</source>
-		<translation>Spróbuj trzymać kartę nieruchomo</translation>
+		<translation>Δοκιμάστε να κρατήσετε την κάρτα ακίνητη</translation>
 	</message>
 	<message>
 		<source>keycard-connected-title</source>
-		<translation>Połączono</translation>
+		<translation>Συνδεδεμένος</translation>
 	</message>
 	<message>
 		<source>keycard-connected-description</source>
-		<translation>Spróbuj trzymać kartę nieruchomo</translation>
+		<translation>Δοκιμάστε να κρατήσετε την κάρτα ακίνητη</translation>
 	</message>
 	<message>
 		<source>keycard-error-title</source>
-		<translation>Utracono połączenie</translation>
+		<translation>Η σύνδεση χάθηκε</translation>
 	</message>
 	<message>
 		<source>keycard-error-description</source>
-		<translation>Podłącz ponownie kartę, aby kontynuować</translation>
+		<translation>Συνδέστε ξανά την κάρτα για να συνεχίσετε</translation>
 	</message>
 	<message>
 		<source>keycard-success-title</source>
-		<translation>Sukces</translation>
+		<translation>Επιτυχία</translation>
 	</message>
 	<message>
 		<source>keycard-success-description</source>
-		<translation>Możesz teraz wyjąć kartę</translation>
+		<translation>Μπορείτε να αφαιρέσετε την κάρτα τώρα</translation>
 	</message>
 	<message>
 		<source>keycard-recover</source>
-		<translation>karta zgubiona bądź zawieszona?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>keycard-recover-title</source>
-		<translation>Czy utworzyć nową kartę dla tego konta?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>keycard-recover-text</source>
-		<translation>Jeśli masz swoje wyrażenie mnemoniczne, możesz utworzyć nową kartę Keycard powiązaną z tym kontem. Możesz użyć nowej karty Keycard lub przywrócić ustawienia fabryczne zawieszonej karty.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>keycard-backup</source>
-		<translation>Utwórz kopię zapasową karty Keycard</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>keycard-backup-success-title</source>
-		<translation>Wykonanie kopii zapasowej zakończone sukcesem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>keycard-backup-success-body</source>
-		<translation>Karta zapasowa została utworzona pomyślnie. Możesz jej teraz używać na swoim koncie tak samo, jak karty głównej.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>type-a-message</source>
-		<translation>Napisz wiadomość</translation>
+		<translation>Μήνυμα</translation>
 	</message>
 	<message>
 		<source>ulc-enabled</source>
-		<translation>ULC włączone</translation>
+		<translation>Το ULC ενεργοποιήθηκε</translation>
 	</message>
 	<message>
 		<source>backup-enabled</source>
-		<translation>Włączony</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>backup-disabled</source>
-		<translation>Wyłączone</translation>
+		<translation>Απενεργοποιημένα</translation>
 	</message>
 	<message>
 		<source>backup-settings</source>
-		<translation>Ustawienia kopii zapasowej</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>backup-through-waku</source>
-		<translation>Backup przez waku</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>perform-backup</source>
-		<translation>Wykonaj kopię zapasową</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>backing-up</source>
-		<translation>Tworzenie kopii zapasowej...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>last-backup-performed</source>
-		<translation>Ostatnia wykonana kopia zapasowa:</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>unable-to-read-this-code</source>
-		<translation>Nie można odczytać tego kodu</translation>
+		<translation>Δεν είναι δυνατή η ανάγνωση αυτού του κωδικού</translation>
 	</message>
 	<message>
 		<source>unblock-contact</source>
-		<translation>Odblokuj tego użytkownika</translation>
+		<translation>Κατάργηση αποκλεισμού αυτού του χρήστη</translation>
 	</message>
 	<message>
 		<source>unknown-status-go-error</source>
-		<translation>Nieznany błąd status-go</translation>
+		<translation>Άγνωστο σφάλμα status-go</translation>
 	</message>
 	<message>
 		<source>unlock</source>
-		<translation>Odblokuj</translation>
+		<translation>Ξεκλείδωμα</translation>
 	</message>
 	<message>
 		<source>unpair-card</source>
-		<translation>Odłącz kartę</translation>
+		<translation>Αποσύνδεση κάρτας</translation>
 	</message>
 	<message>
 		<source>unpair-card-confirmation</source>
-		<translation>Ta operacja spowoduje odłączenie karty od bieżącego urządzenia. Wymagana autoryzacja 6-cyfrowym kodem dostępu. Czy chcesz kontynuować?</translation>
+		<translation>Αυτή η λειτουργία θα αποσυνδέσει την κάρτα από την τρέχουσα συσκευή. Απαιτείται εξουσιοδότηση 6ψήφιου κωδικού πρόσβασης. Θέλετε να συνεχίσετε?</translation>
 	</message>
 	<message>
 		<source>unpaired-keycard-text</source>
-		<translation>Wybrana karta Keycard nie jest powiązana z tym telefonem</translation>
+		<translation>Η Keycard που πατήσατε δεν σχετίζεται με αυτό το τηλέφωνο</translation>
 	</message>
 	<message>
 		<source>unpaired-keycard-title</source>
-		<translation>Wygląda na to, że Twoja karta została odparowana</translation>
+		<translation>Φαίνεται ότι η κάρτα σας έχει αποσυνδεθεί</translation>
 	</message>
 	<message>
 		<source>unpair-keycard</source>
-		<translation>Odepnij kartę Keycard od tego telefonu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>unpair-keycard-warning</source>
-		<translation>Twój kod parowania/PUK i PIN pozostają bez zmian</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>update</source>
-		<translation>Aktualizacja</translation>
+		<translation>Ενημέρωση</translation>
 	</message>
 	<message>
 		<source>url</source>
-		<translation>URL</translation>
+		<translation>Διεύθυνση URL</translation>
 	</message>
 	<message>
 		<source>usd-currency</source>
-		<translation>USD</translation>
+		<translation>Δολάριο ΗΠΑ</translation>
 	</message>
 	<message>
 		<source>use-valid-contact-code</source>
-		<translation>Wprowadź lub zeskanuj prawidłowy klucz czatu, lub nazwę użytkownika</translation>
+		<translation>Εισαγάγετε ή σαρώστε ένα έγκυρο κλειδί συνομιλίας ή όνομα χρήστη</translation>
 	</message>
 	<message>
 		<source>validation-amount-invalid-number</source>
-		<translation>Kwota nie jest prawidłową liczbą</translation>
+		<translation>Το ποσό δεν είναι έγκυρος αριθμός</translation>
 	</message>
 	<message>
 		<source>validation-amount-is-too-precise</source>
-		<translation>Kwota jest zbyt dokładna. Maksymalna liczba miejsc po przecinku wynosi {{decimals}}.</translation>
+		<translation>Το ποσό είναι πολύ ακριβές. Ο μέγιστος αριθμός δεκαδικών είναι {{decimals}}.</translation>
 	</message>
 	<message>
 		<source>version</source>
-		<translation>Wersja aplikacji</translation>
+		<translation>Έκδοση εφαρμογής</translation>
 	</message>
 	<message>
 		<source>app-commit</source>
@@ -5190,391 +5173,388 @@ Przejdź do sekcji &apos;Urządzenia&apos; w ustawieniach, aby sparować urządz
 	</message>
 	<message>
 		<source>view</source>
-		<translation>Zobacz</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>view-cryptokitties</source>
-		<translation>Zobacz w CryptoKitties</translation>
+		<translation>Προβολή στο CryptoKitties</translation>
 	</message>
 	<message>
 		<source>view-cryptostrikers</source>
-		<translation>Zobacz w CryptoStrikers</translation>
+		<translation>Προβολή στο CryptoStrikers</translation>
 	</message>
 	<message>
 		<source>view-etheremon</source>
-		<translation>Zobacz w Etheremon</translation>
+		<translation>Προβολή στο Etheremon</translation>
 	</message>
 	<message>
 		<source>view-gitcoin</source>
-		<translation>Zobacz w Gitcoin</translation>
+		<translation>Προβολή στο Gitcoin</translation>
 	</message>
 	<message>
 		<source>view-profile</source>
-		<translation>Zobacz profil</translation>
+		<translation>Εμφάνιση προφίλ</translation>
 	</message>
 	<message>
 		<source>view-details</source>
-		<translation>Wyświetl szczegóły</translation>
+		<translation>Δείτε λεπτομέρειες</translation>
 	</message>
 	<message>
 		<source>view-signing</source>
-		<translation>Wyświetl frazę podpisującą</translation>
+		<translation>Προβολή φράσης υπογραφής</translation>
 	</message>
 	<message>
 		<source>view-superrare</source>
-		<translation>Zobacz w SuperRare</translation>
+		<translation>Προβολή στο SuperRare</translation>
 	</message>
 	<message>
 		<source>waiting-for-wifi</source>
-		<translation>Brak dostępu do sieci Wi-Fi, synchronizacja wiadomości jest wyłączona.</translation>
+		<translation>Δεν υπάρχει Wi-Fi, ο συγχρονισμός μηνυμάτων απενεργοποιήθηκε.</translation>
 	</message>
 	<message>
 		<source>waiting-for-wifi-change</source>
-		<translation>Ustawienia</translation>
+		<translation>Ρυθμίσεις</translation>
 	</message>
 	<message>
 		<source>waiting-to-sign</source>
-		<translation>Oczekiwanie na podpisanie transakcji...</translation>
+		<translation>Αναμονή για υπογραφή συναλλαγής...</translation>
 	</message>
 	<message>
 		<source>wallet</source>
-		<translation>Portfel</translation>
+		<translation>Πορτοφόλι</translation>
 	</message>
 	<message>
 		<source>wallet-asset</source>
-		<translation>Aktywo</translation>
+		<translation>Περιουσιακό στοιχείο</translation>
 	</message>
 	<message>
 		<source>wallet-assets</source>
-		<translation>Aktywa</translation>
+		<translation>Περιουσιακά στοιχεία</translation>
 	</message>
 	<message>
 		<source>wallet-backup-recovery-title</source>
-		<translation>Utwórz kopię zapasową frazy odzyskiwania (Seed)</translation>
+		<translation>Δημιουργήστε αντίγραφα ασφαλείας για τη φράση seed σας</translation>
 	</message>
 	<message>
 		<source>wallet-choose-recipient</source>
-		<translation>Wybierz Odbiorcę</translation>
+		<translation>Επιλέξτε Παραλήπτη</translation>
 	</message>
 	<message>
 		<source>wallet-collectibles</source>
-		<translation>Artykuły kolekcjonerskie</translation>
+		<translation>Συλλεκτικά</translation>
 	</message>
 	<message>
 		<source>wallet-insufficient-funds</source>
-		<translation>Niewystarczające środki</translation>
+		<translation>Ανεπαρκή κεφάλαια</translation>
 	</message>
 	<message>
 		<source>wallet-insufficient-gas</source>
-		<translation>Za mało ETH żeby zapłacić za gas</translation>
+		<translation>Δεν υπάρχει αρκετό ETH για gas</translation>
 	</message>
 	<message>
 		<source>wallet-invalid-address</source>
-		<translation>Błędny adres: 
-{{data}}</translation>
+		<translation>Μη έγκυρη διεύθυνση:
+ {{data}}</translation>
 	</message>
 	<message>
 		<source>wallet-invalid-address-checksum</source>
-		<translation>Błąd w adresie:
+		<translation>Σφάλμα στη διεύθυνση:
  {{data}}</translation>
 	</message>
 	<message>
 		<source>wallet-invalid-chain-id</source>
-		<translation>Typ sieci nie pasuje do:
- {{data}}. Aktualny łańcuch to: {{chain}}.</translation>
+		<translation>Το δίκτυο δεν ταιριάζει:
+ {{data}} αλλά η τρέχουσα αλυσίδα είναι {{chain}}</translation>
 	</message>
 	<message>
 		<source>wallet-manage-assets</source>
-		<translation>Zarządzaj aktywami</translation>
+		<translation>Διαχείριση περιουσιακών στοιχείων</translation>
 	</message>
 	<message>
 		<source>wallet-manage-accounts</source>
-		<translation>Zarządzaj kontami</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wallet-request</source>
-		<translation>Prośba</translation>
+		<translation>Αίτημα</translation>
 	</message>
 	<message>
 		<source>wallet-send</source>
-		<translation>Wyślij</translation>
+		<translation>Αποστολή</translation>
 	</message>
 	<message>
 		<source>wallet-send-min-units</source>
-		<translation>Minimum 21000 jednostek</translation>
+		<translation>Ελάχιστο 21000 μονάδες</translation>
 	</message>
 	<message>
 		<source>wallet-send-min-wei</source>
-		<translation>Min 1 Gwei</translation>
+		<translation>Ελάχιστο 1 wei</translation>
 	</message>
 	<message>
 		<source>wallet-settings</source>
-		<translation>Ustawienia portfela</translation>
+		<translation>Ρυθμίσεις πορτοφολιού</translation>
 	</message>
 	<message>
 		<source>wallet-total-value</source>
-		<translation>Całkowita wartość</translation>
+		<translation>Συνολική αξία</translation>
 	</message>
 	<message>
 		<source>wallet-transaction-total-fee</source>
-		<translation>Całkowita opłata</translation>
+		<translation>Συνολικό Τέλος</translation>
 	</message>
 	<message>
 		<source>wants-to-access-profile</source>
-		<translation>chce uzyskać dostęp do Twojego profilu</translation>
+		<translation>θέλει να αποκτήσει πρόσβαση στο προφίλ σας</translation>
 	</message>
 	<message>
 		<source>warning</source>
-		<translation>Ostrzeżenie</translation>
+		<translation>Προειδοποίηση</translation>
 	</message>
 	<message>
 		<source>warning-message</source>
-		<translation>Niestety, ograniczamy wysyłanie kilku wiadomości w krótkich odstępach czasu, aby zapobiec spamowi. Spróbuj ponownie za chwilę</translation>
+		<translation>Λυπούμαστε, περιορίζουμε την γρήγορη αποστολή πολλών μηνυμάτων για την αποτροπή ανεπιθύμητων μηνυμάτων. Δοκιμάστε ξανά σε λίγο</translation>
 	</message>
 	<message>
 		<source>web-view-error</source>
-		<translation>Nie można załadować strony</translation>
+		<translation>Δεν είναι δυνατή η φόρτωση της σελίδας</translation>
 	</message>
 	<message>
 		<source>welcome-screen-text</source>
-		<translation>Skonfiguruj swój portfel, zaproś znajomych na czat
- i przeglądaj popularne zdecentralizowane aplikacje!</translation>
+		<translation>Ρυθμίστε το πορτοφόλι σας, προσκαλέστε φίλους να συνομιλήσουν
+ και περιηγηθείτε στα δημοφιλή dapps!</translation>
 	</message>
 	<message>
 		<source>welcome-to-status</source>
-		<translation>Witamy w Status!</translation>
+		<translation>Καλώς ήλθατε στο Status!</translation>
 	</message>
 	<message>
 		<source>welcome-to-status-description</source>
-		<translation>Skonfiguruj swój portfel kryptowalutowy, zaproś znajomych do czatu i przeglądaj zdecentralizowane aplikacje</translation>
+		<translation>Ρυθμίστε το πορτοφόλι crypto, προσκαλέστε φίλους για συνομιλία και περιήγηση σε αποκεντρωμένες εφαρμογές</translation>
 	</message>
 	<message>
 		<source>welcome-blank-message</source>
-		<translation>Twoje czaty pojawią się tutaj. Aby rozpocząć nowe czaty, naciśnij przycisk ⊕</translation>
+		<translation>Οι συζητήσεις σας θα εμφανιστούν εδώ. Για να ξεκινήσετε νέες συνομιλίες, πατήστε το κουμπί ⊕</translation>
 	</message>
 	<message>
 		<source>welcome-community-blank-message</source>
-		<translation>Tutaj pojawią się Twoje kanały. Aby utworzyć nowy kanał, kliknij przycisk ⊕ i wybierz &quot;Utwórz kanał&quot;</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>welcome-community-blank-message-edit-chats</source>
-		<translation>Tutaj pojawią się Twoje kanały. Aby utworzyć nowy kanał, wróć do ekranu społeczności, kliknij przycisk ⊕ i wybierz &quot;Utwórz kanał&quot;</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>welcome-blank-community-message</source>
-		<translation>Twoje społeczności pojawią się tutaj.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>fetch-community</source>
-		<translation>Społeczność pobierania</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>fetching-community</source>
-		<translation>Pobieranie społeczności...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>seed-phrase-placeholder</source>
-		<translation>Fraza odzyskiwania (Seed)</translation>
+		<translation>Φράση Seed</translation>
 	</message>
 	<message>
 		<source>word-count</source>
-		<translation>Liczba słów</translation>
+		<translation>Καταμέτρηση λέξεων</translation>
 	</message>
 	<message>
 		<source>word-n</source>
-		<translation>Słowo #{{number}}</translation>
+		<translation>Λέξη #{{number}}</translation>
 	</message>
 	<message>
 		<source>word-n-description</source>
-		<translation>Aby sprawdzić, czy poprawnie zapisałeś kopię zapasową swojej frazy odzyskiwania (Seed), wprowadź słowo #{{number}} powyżej.</translation>
+		<translation>Για να ελέγξετε αν έχετε δημιουργήσει σωστά αντίγραφα ασφαλείας της φράσης seed σας, εισαγάγετε τη λέξη #{{number}} παραπάνω.</translation>
 	</message>
 	<message numerus="yes">
 		<source>words-n</source>
 		<translation>
-			<numerusform>jedno</numerusform>
-			<numerusform>kilka</numerusform>
-			<numerusform>wiele</numerusform>
-			<numerusform>inne</numerusform>
+			<numerusform>1 λέξη</numerusform>
+			<numerusform>{{count}} λέξεις</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>write-down-and-store-securely</source>
-		<translation>Zapisz kody
- i przechowuj je bezpiecznie</translation>
+		<translation>Σημειώστε τους κωδικούς
+ &amp; αποθηκεύστε τους με ασφάλεια</translation>
 	</message>
 	<message>
 		<source>wrong-address</source>
-		<translation>Nieprawidłowy adres</translation>
+		<translation>Λάθος διεύθυνση</translation>
 	</message>
 	<message>
 		<source>wrong-card</source>
-		<translation>Zła karta</translation>
+		<translation>Λάθος κάρτα</translation>
 	</message>
 	<message>
 		<source>wrong-card-text</source>
-		<translation>Wybrana karta nie odpowiada wybranym kluczom</translation>
+		<translation>Η επιλεγμένη κάρτα δεν αντιστοιχεί στα κλειδιά που επιλέξατε</translation>
 	</message>
 	<message>
 		<source>wrong-contract</source>
-		<translation>Niewłaściwa kontrakt</translation>
+		<translation>Λάθος συμβόλαιο</translation>
 	</message>
 	<message>
 		<source>contract-isnt-supported</source>
-		<translation>Kontrakt nie jest obsługiwany</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wrong-keycard-text</source>
-		<translation>Wybrana karta Keycard nie jest powiązana z tym telefonem</translation>
+		<translation>Η Keycard που πατήσατε δεν σχετίζεται με αυτό το τηλέφωνο</translation>
 	</message>
 	<message>
 		<source>wrong-keycard-title</source>
-		<translation>Wygląda na to, że kliknąłeś 
-złą kartę.</translation>
+		<translation>Φαίνεται ότι έχετε πατήσει 
+λανθασμένη κάρτα-κλειδί</translation>
 	</message>
 	<message>
 		<source>wrong-password</source>
-		<translation>Nieprawidłowe hasło</translation>
+		<translation>Λάθος κωδικός</translation>
 	</message>
 	<message>
 		<source>wrong-word</source>
-		<translation>Złe słowo</translation>
+		<translation>Λάθος λέξη</translation>
 	</message>
 	<message>
 		<source>yes</source>
-		<translation>Tak</translation>
+		<translation>Ναι</translation>
 	</message>
 	<message>
 		<source>You</source>
-		<translation>Ty</translation>
+		<translation>Εσείς</translation>
 	</message>
 	<message>
 		<source>you</source>
-		<translation>ty</translation>
+		<translation>εσείς</translation>
 	</message>
 	<message>
 		<source>you-already-have-an-asset</source>
-		<translation>Masz już aktywo {{value}}</translation>
+		<translation>Έχετε ήδη ένα περιουσιακό στοιχείο {{value}}</translation>
 	</message>
 	<message>
 		<source>you-are-all-set</source>
-		<translation>Wszystko gotowe!</translation>
+		<translation>Είστε έτοιμοι!</translation>
 	</message>
 	<message>
 		<source>you-are-all-set-description</source>
-		<translation>Jeśli zgubisz swój telefon, możesz teraz uzyskać dostęp do swoich funduszy i klucza czatu, używając frazy Seed</translation>
+		<translation>Εάν χάσετε το τηλέφωνό σας, μπορείτε πλέον να αποκτήσετε πρόσβαση στα χρήματά σας και στο κλειδί συνομιλίας χρησιμοποιώντας τη φράση seed σας</translation>
 	</message>
 	<message>
 		<source>you-can-change-account</source>
-		<translation>Możesz zmienić nazwę konta i kolor na taki, jaki chcesz.</translation>
+		<translation>Μπορείτε να αλλάξετε το όνομα και το χρώμα του λογαριασμού σε αυτό που θέλετε</translation>
 	</message>
 	<message>
 		<source>you-dont-have-stickers</source>
-		<translation>Nie masz jeszcze żadnych naklejek</translation>
+		<translation>Δεν έχετε ακόμα αυτοκόλλητα</translation>
 	</message>
 	<message>
 		<source>you-dont-have-contacts-invite-friends</source>
-		<translation>Nie masz jeszcze żadnych kontaktów.
-Zaproś swoich znajomych do rozpoczęcia czatu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>your-contact-code</source>
-		<translation>Przyznanie dostępu upoważnia tą dAppkę do odzyskania klucza czatu</translation>
+		<translation>Η παραχώρηση πρόσβασης επιτρέπει σε αυτό το DApp την ανάκτηση του κλειδιού συνομιλίας σας</translation>
 	</message>
 	<message>
 		<source>your-data-belongs-to-you</source>
-		<translation>Jeżeli zgubisz swoją frazę Seed, stracisz swoje dane i środki</translation>
+		<translation>Εάν χάσετε τη φράση seed, χάνετε τα δεδομένα και τα χρήματά σας</translation>
 	</message>
 	<message>
 		<source>your-data-belongs-to-you-description</source>
-		<translation>Jeśli utracisz dostęp, na przykład poprzez zgubienie swojego telefonu, możesz uzyskać dostęp do swoich kluczy tylko za pomocą frazy Seed. Nikt oprócz Ciebie nie ma Twojej frazy Seed. Zapisz ją. Przechowuj ją bezpiecznie</translation>
+		<translation>Εάν χάσετε την πρόσβαση, χάνοντας για παράδειγμα το τηλέφωνό σας, μπορείτε να αποκτήσετε πρόσβαση στα κλειδιά σας μόνο με τη φράση seed σας. Κανείς, εκτός από εσάς δεν έχει τη φράση seed σας. Σημειώστε τη. Κρατησε τη ασφαλη</translation>
 	</message>
 	<message>
 		<source>your-recovery-phrase</source>
-		<translation>Twoja fraza Seed</translation>
+		<translation>Η φράση seed σας</translation>
 	</message>
 	<message>
 		<source>your-recovery-phrase-description</source>
-		<translation>To jest Twoja fraza odzyskiwania (Seed). Używasz jej, aby udowodnić, że to Twój portfel. Możesz ją zobaczyć tylko raz! Zapisz ją na papierze i przechowuj w bezpiecznym miejscu. Będzie ona potrzebna, jeśli stracisz lub ponownie zainstalujesz Twój portfel.</translation>
+		<translation>Αυτή είναι η φράση seed σας. Τη χρησιμοποιείτε για να αποδείξετε ότι αυτό είναι το πορτοφόλι σας. Θα τη δείτε μόνο μία φορά! Γράψτε τη σε χαρτί και φυλάξτε τη σε ασφαλές μέρος. Θα τη χρειαστείτε εάν χάσετε ή επανεγκαταστήσετε το πορτοφόλι σας.</translation>
 	</message>
 	<message>
 		<source>custom-seed-phrase</source>
-		<translation>Nieprawidłowa fraza odzyskiwania (Seed)</translation>
+		<translation>Μη έγκυρη φράση seed</translation>
 	</message>
 	<message>
 		<source>custom-seed-phrase-text-1</source>
-		<translation>Ta fraza odzyskiwania (Seed) nie pasuje do naszego obsługiwanego słownika. Sprawdź, czy nie ma błędnie wpisanych słów.</translation>
+		<translation>Αυτή η φράση seed δεν ταιριάζει με το υποστηριζόμενο λεξικό μας. Ελέγξτε για λέξεις με ορθογραφικά λάθη.</translation>
 	</message>
 	<message>
 		<source>to-enable-biometric</source>
-		<translation>Aby włączyć {{bio-type-label}}, musisz zapisać swoje hasło na ekranie odblokowania.</translation>
+		<translation>Για να ενεργοποιήσετε το {{bio-type-label}}, πρέπει να αποθηκεύσετε τον κωδικό πρόσβασής σας στην οθόνη ξεκλειδώματος</translation>
 	</message>
 	<message>
 		<source>ok-save-pass</source>
-		<translation>OK, zapisz hasło</translation>
+		<translation>Εντάξει, αποθήκευση κωδικού πρόσβασης</translation>
 	</message>
 	<message>
 		<source>lock-app-with</source>
-		<translation>Zablokuj aplikację za pomocą</translation>
+		<translation>Κλείδωμα εφαρμογής με</translation>
 	</message>
 	<message>
 		<source>grant-face-id-permissions</source>
-		<translation>Aby nadać wymagane uprawnienia Face ID, należy przejść do ustawień systemowych i upewnić się, że opcja Status &gt; Face ID jest zaznaczona</translation>
+		<translation>Για να παραχωρήσετε την απαιτούμενη άδεια στο Face ID, μεταβείτε στις ρυθμίσεις του συστήματός σας και βεβαιωθείτε ότι το Status &gt; Face ID είναι επιλεγμένο</translation>
 	</message>
 	<message>
 		<source>request-feature</source>
-		<translation>Poproś o funkcję</translation>
+		<translation>Ζητήστε ένα χαρακτηριστικό</translation>
 	</message>
 	<message>
 		<source>select-account-dapp</source>
-		<translation>Wybierz konto, którego chcesz używać ze zdecentralizowanymi aplikacjami</translation>
+		<translation>Επιλέξτε τον λογαριασμό που θέλετε να χρησιμοποιήσετε με τα Dapps</translation>
 	</message>
 	<message>
 		<source>apply</source>
-		<translation>Zastosuj</translation>
+		<translation>Εφαρμογή</translation>
 	</message>
 	<message>
 		<source>on-status-tree</source>
-		<translation>On Status tree</translation>
+		<translation>Δέντρο εντός Status</translation>
 	</message>
 	<message>
 		<source>off-status-tree</source>
-		<translation>Off Status tree</translation>
+		<translation>Δέντρο εκτός Status</translation>
 	</message>
 	<message>
 		<source>derivation-path</source>
-		<translation>Ścieżka wyprowadzenia</translation>
+		<translation>Διαδρομή προέλευσης</translation>
 	</message>
 	<message>
 		<source>storage</source>
-		<translation>Przechowywanie</translation>
+		<translation>Αποθήκευση</translation>
 	</message>
 	<message>
 		<source>keycard-free-pairing-slots</source>
-		<translation>Keycard ma {{n}} wolne miejsca na parowanie</translation>
+		<translation>Η Keycard έχει {{n}} υποδοχές δωρεάν ζεύξης </translation>
 	</message>
 	<message>
 		<source>public-chat-description</source>
-		<translation>Dołącz do publicznych czatów dotyczących twoich zainteresowań! Każdy może założyć nowy.</translation>
+		<translation>Λάβετε μέρος σε δημόσιες συνομιλίες για τα ενδιαφέροντά σας! Ο καθένας μπορεί να ξεκινήσει μια νέα.</translation>
 	</message>
 	<message>
 		<source>delete-account</source>
-		<translation>Usuń konto</translation>
+		<translation>Διαγραφή λογαριασμού</translation>
 	</message>
 	<message>
 		<source>delete-keys-keycard</source>
-		<translation>Usuń klucze z karty Keycard</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>watch-only</source>
-		<translation>Tylko do oglądania</translation>
+		<translation>Μόνο για παρακολούθηση</translation>
 	</message>
 	<message>
 		<source>cant-report-bug</source>
-		<translation>Nie można zgłosić błędu</translation>
+		<translation>Δεν είναι δυνατή η αναφορά σφάλματος</translation>
 	</message>
 	<message>
 		<source>mail-should-be-configured</source>
-		<translation>Aplikacja mailowa powinna być skonfigurowana</translation>
+		<translation>Ο πελάτης αλληλογραφίας πρέπει να ρυθμιστεί</translation>
 	</message>
 	<message>
 		<source>check-on-block-explorer</source>
@@ -5582,418 +5562,418 @@ Zaproś swoich znajomych do rozpoczęcia czatu</translation>
 	</message>
 	<message>
 		<source>check-on-opensea</source>
-		<translation>Sprawdź na Opensea</translation>
+		<translation>Ελέγξτε στο opensea</translation>
 	</message>
 	<message>
 		<source>transactions-load-more</source>
-		<translation>Załaduj więcej</translation>
+		<translation>Φόρτωσε περισσότερα</translation>
 	</message>
 	<message>
 		<source>private-key</source>
-		<translation>Klucz prywatny</translation>
+		<translation>Ιδιωτικό κλειδί</translation>
 	</message>
 	<message>
 		<source>generate-an-account</source>
-		<translation>Wygeneruj konto</translation>
+		<translation>Δημιουργία λογαριασμού</translation>
 	</message>
 	<message>
 		<source>add-watch-account</source>
-		<translation>Dodaj konto tylko do oglądania</translation>
+		<translation>Προσθήκη λογαριασμού μόνο για παρακολούθηση</translation>
 	</message>
 	<message>
 		<source>add-seed-account</source>
-		<translation>Dodaj konto z frazą odzyskiwania (Seed)</translation>
+		<translation>Προσθέστε λογαριασμό με μια φράση seed</translation>
 	</message>
 	<message>
 		<source>account-exists-title</source>
-		<translation>Konto już istnieje</translation>
+		<translation>Ο λογαριασμός υπάρχει ήδη</translation>
 	</message>
 	<message>
 		<source>add-private-key-account</source>
-		<translation>Dodaj konto z klucza prywatnego</translation>
+		<translation>Προσθήκη λογαριασμού από ιδιωτικό κλειδί</translation>
 	</message>
 	<message>
 		<source>profile-not-found</source>
-		<translation>Nie znaleziono użytkownika</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>waku-bloom-filter-mode</source>
-		<translation>Tryb filtra Waku Bloom</translation>
+		<translation>Λειτουργία φίλτρου άνθισης Waku</translation>
 	</message>
 	<message>
 		<source>wakuv2-settings</source>
-		<translation>Ustawienia Waku v2</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wakuv2-node-format</source>
-		<translation>/ip4/{node-ip}/tcp/{port}/p2p/{id}</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wakuv2-change-nodes</source>
-		<translation>Czy na pewno chcesz zmienić węzły Waku v2?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>appearance</source>
-		<translation>Wygląd</translation>
+		<translation>Εμφάνιση</translation>
 	</message>
 	<message>
 		<source>preference</source>
-		<translation>Preferencje</translation>
+		<translation>Προτίμηση</translation>
 	</message>
 	<message>
 		<source>light</source>
-		<translation>Jasny</translation>
+		<translation>Φωτεινό</translation>
 	</message>
 	<message>
 		<source>dark</source>
-		<translation>Ciemny</translation>
+		<translation>Σκοτεινό</translation>
 	</message>
 	<message>
 		<source>system</source>
-		<translation>System</translation>
+		<translation>Σύστημα</translation>
 	</message>
 	<message>
 		<source>give-permissions-camera</source>
-		<translation>Daj pozwolenie
-na dostęp do kamery</translation>
+		<translation>Δώστε άδεια
+για πρόσβαση στην κάμερα</translation>
 	</message>
 	<message>
 		<source>photos</source>
-		<translation>Zdjęcia</translation>
+		<translation>Φωτογραφίες</translation>
 	</message>
 	<message>
 		<source>image</source>
-		<translation>Obraz</translation>
+		<translation>Εικόνα</translation>
 	</message>
 	<message>
 		<source>sign-anyway</source>
-		<translation>Podpisz mimo to</translation>
+		<translation>Υπογράψτε ούτως ή άλλως</translation>
 	</message>
 	<message>
 		<source>tx-fail-description1</source>
-		<translation>Ta transakcja prawdopodobnie się nie powiedzie. Podpisuj na własne ryzyko, korzystając z niestandardowej opłaty sieciowej.</translation>
+		<translation>Αυτή η συναλλαγή είναι πιθανό να αποτύχει. Υπογράψτε με δική σας ευθύνη χρησιμοποιώντας προσαρμοσμένη χρέωση δικτύου.</translation>
 	</message>
 	<message>
 		<source>tx-fail-description2</source>
-		<translation>Ta transakcja prawdopodobnie się nie powiedzie. Ustaw niestandardową opłatę sieciową, aby podpisać transakcję na własne ryzyko.</translation>
+		<translation>Αυτή η συναλλαγή είναι πιθανό να αποτύχει. Ορίστε μια προσαρμοσμένη χρέωση δικτύου για να υπογράψετε με δική σας ευθύνη.</translation>
 	</message>
 	<message>
 		<source>set-custom-fee</source>
-		<translation>Ustaw opłatę niestandardową</translation>
+		<translation>Ορίστε προσαρμοσμένη χρέωση</translation>
 	</message>
 	<message>
 		<source>not-enough-snt</source>
-		<translation>Niewystarczająca ilość SNT</translation>
+		<translation>Δεν υπάρχει αρκετό SNT</translation>
 	</message>
 	<message>
 		<source>add-new-contact</source>
-		<translation>Dodaj nowy kontakt</translation>
+		<translation>Προσθήκη νέας επαφής</translation>
 	</message>
 	<message>
 		<source>you-dont-have-contacts</source>
-		<translation>Nie masz jeszcze żadnych kontaktów.</translation>
+		<translation>Δεν έχετε ακόμα επαφές.</translation>
 	</message>
 	<message>
 		<source>set-max</source>
-		<translation>Ustaw maksymalnie</translation>
+		<translation>Ορισμός μέγιστου</translation>
 	</message>
 	<message>
 		<source>continue-anyway</source>
-		<translation>Mimo to kontynuuj</translation>
+		<translation>Συνεχίστε ούτως ή άλλως</translation>
 	</message>
 	<message>
 		<source>private-notifications</source>
-		<translation>Prywatne powiadomienia</translation>
+		<translation>Ιδιωτικές ειδοποιήσεις</translation>
 	</message>
 	<message>
 		<source>private-notifications-descr</source>
-		<translation>Status będzie Cię powiadamiał o nowych wiadomościach. Możesz edytować swoje preferencje dotyczące powiadomień później w ustawieniach.</translation>
+		<translation>Το Status θα σας ειδοποιήσει για νέα μηνύματα. Μπορείτε να επεξεργαστείτε τις προτιμήσεις ειδοποιήσεων αργότερα στις ρυθμίσεις.</translation>
 	</message>
 	<message>
 		<source>maybe-later</source>
-		<translation>Może później</translation>
+		<translation>Ίσως αργότερα.</translation>
 	</message>
 	<message>
 		<source>join</source>
-		<translation>Dołącz</translation>
+		<translation>Συμμετοχή</translation>
 	</message>
 	<message>
 		<source>registered</source>
-		<translation>zarejestrowany</translation>
+		<translation>εγγεγραμμένος</translation>
 	</message>
 	<message>
 		<source>not-registered</source>
-		<translation>niezarejestrowany</translation>
+		<translation>μη εγγεγραμμένος</translation>
 	</message>
 	<message>
 		<source>audio-recorder-error</source>
-		<translation>Błąd Dyktafonu</translation>
+		<translation>Σφάλμα ηχογράφησης</translation>
 	</message>
 	<message>
 		<source>audio-recorder</source>
-		<translation>Dyktafon</translation>
+		<translation>Ηχογράφηση</translation>
 	</message>
 	<message>
 		<source>audio-recorder-max-ms-reached</source>
-		<translation>Osiągnięto maksymalny czas nagrywania</translation>
+		<translation>Συμπληρώθηκε ο μέγιστος χρόνος καταγραφής</translation>
 	</message>
 	<message>
 		<source>audio-recorder-permissions-error</source>
-		<translation>Musisz wyrazić zgodę na wysyłanie wiadomości audio</translation>
+		<translation>Πρέπει να δώσετε άδεια για την αποστολή ηχητικών μηνυμάτων</translation>
 	</message>
 	<message>
 		<source>audio</source>
-		<translation>Audio</translation>
+		<translation>Ήχος</translation>
 	</message>
 	<message>
 		<source>update-to-see-image</source>
-		<translation>Zaktualizuj do najnowszej wersji, aby zobaczyć tutaj ładny obraz!</translation>
+		<translation>Ενημερώστε την τελευταία έκδοση για να δείτε μια ωραία εικόνα εδώ!</translation>
 	</message>
 	<message>
 		<source>update-to-listen-audio</source>
-		<translation>Zaktualizuj do najnowszej wersji, aby odsłuchać wiadomość audio tutaj!</translation>
+		<translation>Ενημερώστε την τελευταία έκδοση για να ακούσετε ένα ηχητικό μήνυμα εδώ!</translation>
 	</message>
 	<message>
 		<source>update-to-see-sticker</source>
-		<translation>Zaktualizuj do najnowszej wersji, aby zobaczyć tutaj ładną naklejkę!</translation>
+		<translation>Ενημερώστε την τελευταία έκδοση για να δείτε ένα ωραίο αυτοκόλλητο εδώ!</translation>
 	</message>
 	<message>
 		<source>webview-camera-permission-requests</source>
-		<translation>Prośby o pozwolenie na dostęp do kamery internetowej</translation>
+		<translation>Αιτήματα άδειας κάμερας Webview</translation>
 	</message>
 	<message>
 		<source>webview-camera-permission-requests-subtitle</source>
-		<translation>Po włączeniu tej funkcji strony internetowe i zdecentralizowane aplikacje mogą poprosić o użycie kamery.</translation>
+		<translation>Όταν είναι ενεργοποιημένη, ιστότοποι και dapps μπορούν να ζητήσουν να χρησιμοποιήσουν την κάμερα σας</translation>
 	</message>
 	<message>
 		<source>page-would-like-to-use-camera</source>
-		<translation>chciałby użyć twojego aparatu</translation>
+		<translation>θα ήθελε να χρησιμοποιήσει την κάμερα σας</translation>
 	</message>
 	<message>
 		<source>page-camera-request-blocked</source>
-		<translation>dostęp do aparatu zablokowany. Aby odblokować dostęp do kamery, przejdź do Ustawień</translation>
+		<translation>τα αιτήματα κάμερας αποκλείστηκαν. Για να ενεργοποιήσετε τα αιτήματα κάμερας, μεταβείτε στις Ρυθμίσεις</translation>
 	</message>
 	<message>
 		<source>nickname</source>
-		<translation>Pseudonim</translation>
+		<translation>Ψευδώνυμο</translation>
 	</message>
 	<message>
 		<source>add-nickname</source>
-		<translation>Dodaj pseudonim (opcjonalnie)</translation>
+		<translation>Προσθέστε ένα ψευδώνυμο (προαιρετικό)</translation>
 	</message>
 	<message>
 		<source>nickname-description</source>
-		<translation>Pseudonimy pomagają Ci identyfikować innych w Statusie.
-Tylko Ty możesz zobaczyć dodane przez siebie pseudonimy.</translation>
+		<translation>Τα ψευδώνυμα σας βοηθούν να αναγνωρίσετε άλλους στο Status.
+ Μόνο εσείς μπορείτε να δείτε τα ψευδώνυμα που έχετε προσθέσει</translation>
 	</message>
 	<message>
 		<source>accept</source>
-		<translation>Akceptuj</translation>
+		<translation>Αποδοχή</translation>
 	</message>
 	<message>
 		<source>group-invite</source>
-		<translation>Zaproszenie do grupy</translation>
+		<translation>Ομαδική πρόσκληση</translation>
 	</message>
 	<message>
 		<source>group-invite-link</source>
-		<translation>Link z zaproszeniem do grupy</translation>
+		<translation>Σύνδεσμος πρόσκλησης ομάδας</translation>
 	</message>
 	<message>
 		<source>pending-invitations</source>
-		<translation>Oczekujące wnioski o członkostwo</translation>
+		<translation>Εκκρεμείς αιτήσεις μελών</translation>
 	</message>
 	<message>
 		<source>empty-pending-invitations-descr</source>
-		<translation>Osoby, które chcą dołączyć do grupy
-poprzez link zapraszający pojawią się tutaj</translation>
+		<translation>Άτομα που επιθυμούν να συμμετάσχουν στην ομάδα
+ μέσω συνδέσμου πρόσκλησης θα εμφανίζονται εδώ</translation>
 	</message>
 	<message>
 		<source>introduce-yourself</source>
-		<translation>Przedstaw się za pomocą krótkiego opisu</translation>
+		<translation>Συστήστε τον εαυτό σας με ένα σύντομο μήνυμα</translation>
 	</message>
 	<message>
 		<source>request-pending</source>
-		<translation>Prośba w toku...</translation>
+		<translation>Το αίτημά σας είναι σε αναμονή…</translation>
 	</message>
 	<message>
 		<source>membership-declined</source>
-		<translation>Wniosek o członkostwo został odrzucony</translation>
+		<translation>Το αίτημα ιδιότητας μέλους απορρίφθηκε</translation>
 	</message>
 	<message>
 		<source>remove-group</source>
-		<translation>Usuń grupę</translation>
+		<translation>Κατάργηση ομάδας</translation>
 	</message>
 	<message>
 		<source>request-membership</source>
-		<translation>Wnioskuj o członkostwo</translation>
+		<translation>Αίτηση ιδιότητας μέλους</translation>
 	</message>
 	<message>
 		<source>membership-description</source>
-		<translation>Członkostwo w grupie wymaga akceptacji przez administratora grupy</translation>
+		<translation>Η συμμετοχή στην ομάδα απαιτεί την αποδοχή από τον διαχειριστή της ομάδας</translation>
 	</message>
 	<message>
 		<source>group-membership-request</source>
-		<translation>Prośba o członkostwo w grupie</translation>
+		<translation>Αίτηση μέλους ομάδας</translation>
 	</message>
 	<message>
 		<source>members-limit-reached</source>
-		<translation>Osiągnięto limit członków</translation>
+		<translation>Συμπληρώθηκε το όριο των μελών</translation>
 	</message>
 	<message>
 		<source>favourite</source>
-		<translation>Ulubione</translation>
+		<translation>Αγαπημένο</translation>
 	</message>
 	<message>
 		<source>favourites</source>
-		<translation>Ulubione</translation>
+		<translation>Αγαπημένα</translation>
 	</message>
 	<message>
 		<source>new-favourite</source>
-		<translation>Nowe ulubione</translation>
+		<translation>Νέο αγαπημένο</translation>
 	</message>
 	<message>
 		<source>edit-favourite</source>
-		<translation>Edytuj ulubione</translation>
+		<translation>Επεξεργασία αγαπημένου</translation>
 	</message>
 	<message>
 		<source>remove-favourite</source>
-		<translation>Usuń ulubione</translation>
+		<translation>Κατάργηση αγαπημένου</translation>
 	</message>
 	<message>
 		<source>add-favourite</source>
-		<translation>Dodaj ulubione</translation>
+		<translation>Προσθήκη αγαπημένου</translation>
 	</message>
 	<message>
 		<source>add-to-favourites</source>
-		<translation>Dodaj do ulubionych</translation>
+		<translation>Προσθήκη στα αγαπημένα</translation>
 	</message>
 	<message>
 		<source>favourites-empty</source>
-		<translation>Adresy dodane do ulubionych pojawią się tutaj</translation>
+		<translation>Οι διευθύνσεις που προστέθηκαν στα αγαπημένα θα εμφανίζονται εδώ</translation>
 	</message>
 	<message>
 		<source>contacts-empty</source>
-		<translation>Kontakty z nazwami ENS będą wyświetlane tutaj</translation>
+		<translation>Οι επαφές με ονόματα ENS θα εμφανίζονται εδώ</translation>
 	</message>
 	<message>
 		<source>my-accounts</source>
-		<translation>Moje konta</translation>
+		<translation>Οι λογαριασμοί μου</translation>
 	</message>
 	<message>
 		<source>my-accounts-empty</source>
-		<translation>Twoje dostępne konta pojawią się tutaj</translation>
+		<translation>Οι διαθέσιμοι λογαριασμοί σας θα εμφανίζονται εδώ</translation>
 	</message>
 	<message>
 		<source>recent-empty</source>
-		<translation>Ostatnio używane adresy pojawią się tutaj</translation>
+		<translation>Οι διευθύνσεις που χρησιμοποιήθηκαν πρόσφατα θα εμφανίζονται εδώ</translation>
 	</message>
 	<message>
 		<source>address-or-ens-name</source>
-		<translation>Adres lub nazwa ENS</translation>
+		<translation>Διεύθυνση ή όνομα ENS</translation>
 	</message>
 	<message>
 		<source>name-optional</source>
-		<translation>Nazwa (opcjonalnie)</translation>
+		<translation>Όνομα (προαιρετικό)</translation>
 	</message>
 	<message>
 		<source>mute</source>
-		<translation>Wycisz</translation>
+		<translation>Σίγαση</translation>
 	</message>
 	<message>
 		<source>unmute</source>
-		<translation>Wyłącz wyciszenie</translation>
+		<translation>Κατάργηση σίγασης</translation>
 	</message>
 	<message>
 		<source>scan-tokens</source>
-		<translation>Skanuj tokeny</translation>
+		<translation>Σάρωση tokens</translation>
 	</message>
 	<message>
 		<source>my-status</source>
-		<translation>Mój status</translation>
+		<translation>Η κατάστασή μου</translation>
 	</message>
 	<message>
 		<source>contacts-descr</source>
-		<translation>W tym miejscu pojawią się Twoje kontakty. Będziesz otrzymywać aktualizacje statusu od każdej osoby, którą dodasz jako kontakt.</translation>
+		<translation>Οι επαφές σας θα εμφανίζονται εδώ. Θα λάβετε ενημερώσεις κατάστασης από οποιονδήποτε προσθέτετε ως επαφή</translation>
 	</message>
 	<message>
 		<source>status-updates-descr</source>
-		<translation>Tutaj będą pojawiać się aktualizacje statusów. Dodaj profil jako kontakt, aby otrzymywać aktualizacje na swojej osi czasu.</translation>
+		<translation>Οι ενημερώσεις κατάστασης θα εμφανίζονται εδώ. Προσθέστε το προφίλ ως επαφή για να λαμβάνετε ενημερώσεις στο χρονολόγιo σας.</translation>
 	</message>
 	<message>
 		<source>whats-on-your-mind</source>
-		<translation>Co ci chodzi po głowie...</translation>
+		<translation>Τι σκέφτεστε…</translation>
 	</message>
 	<message>
 		<source>cant-open-public-chat</source>
-		<translation>Nie można utworzyć czatu publicznego</translation>
+		<translation>Δεν είναι δυνατό το άνοιγμα δημόσιας συνομιλίας</translation>
 	</message>
 	<message>
 		<source>invalid-public-chat-topic</source>
-		<translation>Nieprawidłowy temat czatu publicznego</translation>
+		<translation>Μη έγκυρο θέμα δημόσιας συνομιλίας</translation>
 	</message>
 	<message>
 		<source>now</source>
-		<translation>Teraz</translation>
+		<translation>Τώρα</translation>
 	</message>
 	<message>
 		<source>statuses-my-status-descr</source>
-		<translation>Podziel się tym, czym chcesz. Każdy, kto odwiedzi twój profil, będzie w stanie zobaczyć twój status. Osoby, które dodadzą Cię do swoich kontaktów, będą otrzymywać aktualizacje dotyczące Ciebie na swojej osi czasu.</translation>
+		<translation>Μοιραστείτε ό,τι έχετε στο μυαλό σας. Όποιος επισκέπτεται το προφίλ σας θα μπορεί να δει την κατάστασή σας. Τα άτομα που σας προσθέτουν ως επαφή θα λαμβάνουν τις ενημερώσεις σας στο χρονολόγιo τους</translation>
 	</message>
 	<message>
 		<source>statuses-descr</source>
-		<translation>Dziel się tym, co myślisz, i bądź na bieżąco ze swoimi kontaktami</translation>
+		<translation>Μοιραστείτε ό,τι έχετε στο μυαλό σας και παραμείνετε ενημερωμένοι με τις επαφές σας</translation>
 	</message>
 	<message>
 		<source>new-status</source>
-		<translation>Nowy status</translation>
+		<translation>Νέα κατάσταση</translation>
 	</message>
 	<message>
 		<source>chat-link-previews</source>
-		<translation>Podgląd linków czatu</translation>
+		<translation>Προεπισκοπήσεις συνδέσμου συνομιλίας</translation>
 	</message>
 	<message>
 		<source>you-can-choose-preview-websites</source>
-		<translation>Możesz wybrać, które z poniższych serwisów mogą wyświetlać podgląd linków do opisów i zdjęć w czatach</translation>
+		<translation>Μπορείτε να επιλέξετε ποιοι από τους παρακάτω ιστότοπους μπορούν να κάνουν προεπισκόπηση συνδέσμου περιγραφών και εικόνων σε συζητήσεις</translation>
 	</message>
 	<message>
 		<source>previewing-may-share-metadata</source>
-		<translation>Podgląd linków z tych witryn internetowych może spowodować udostępnienie twoich metadanych ich właścicielom</translation>
+		<translation>Η προεπισκόπηση συνδέσμων από αυτούς τους ιστότοπους ενδέχεται να κοινοποιεί τα μεταδεδομένα σας στους κατόχους τους</translation>
 	</message>
 	<message>
 		<source>websites</source>
-		<translation>Strony internetowe</translation>
+		<translation>Ιστότοποι</translation>
 	</message>
 	<message>
 		<source>enable-all</source>
-		<translation>Włącz wszystkie</translation>
+		<translation>Ενεργοποίηση όλων</translation>
 	</message>
 	<message>
 		<source>disable-all</source>
-		<translation>Wyłącz wszystkie</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>warning-sending-to-contract-descr</source>
-		<translation>Podany adres to smart contract, wysyłanie środków na ten adres może skutkować ich utratą. Aby wejść w interakcję ze zdecentralizowaną aplikacją, otwórz ją w przeglądarce Status dApp.</translation>
+		<translation>Η διεύθυνση που εισαγάγατε είναι ένα έξυπνο συμβόλαιο, η αποστολή χρημάτων σε αυτήν τη διεύθυνση ενδέχεται να οδηγήσει σε απώλεια χρημάτων. Για να αλληλεπιδράσετε με ένα DApp, ανοίξτε το DApp στο Status DApp Browser.</translation>
 	</message>
 	<message>
 		<source>dont-ask</source>
-		<translation>Nie pytaj mnie ponownie</translation>
+		<translation>Μη με ξαναρωτήσεις</translation>
 	</message>
 	<message>
 		<source>enable-link-previews</source>
-		<translation>Włączyć podgląd linków na czacie?</translation>
+		<translation>Ενεργοποίηση προεπισκοπήσεων συνδέσμων στη συνομιλία;</translation>
 	</message>
 	<message>
 		<source>once-enabled-share-metadata</source>
-		<translation>Po włączeniu tej funkcji łącza publikowane na czacie mogą udostępniać witrynie metadane użytkownika.</translation>
+		<translation>Μόλις ενεργοποιηθεί, οι σύνδεσμοι που δημοσιεύονται στη συνομιλία ενδέχεται να μοιράζονται τα μεταδεδομένα σας με την τοποθεσία</translation>
 	</message>
 	<message>
 		<source>external-storage-denied</source>
-		<translation>Odmowa dostępu do zewnętrznej pamięci masowej</translation>
+		<translation>Δεν επιτρέπεται η πρόσβαση σε εξωτερικό χώρο αποθήκευσης</translation>
 	</message>
 	<message>
 		<source>timeline</source>
-		<translation>Oś czasu</translation>
+		<translation>Χρονοδιάγραμμα</translation>
 	</message>
 	<message>
 		<source>main-account</source>
@@ -6001,271 +5981,271 @@ poprzez link zapraszający pojawią się tutaj</translation>
 	</message>
 	<message>
 		<source>ethereum-address</source>
-		<translation>Adres Ethereum</translation>
+		<translation>Διεύθυνση Ethereum</translation>
 	</message>
 	<message>
 		<source>default-assets</source>
-		<translation>Domyślne ERC20 i ERC721</translation>
+		<translation>Προεπιλεγμένα ERC20 και ERC721</translation>
 	</message>
 	<message>
 		<source>increase-gas</source>
-		<translation>Zwiększ Gas</translation>
+		<translation>Αύξηση Gas</translation>
 	</message>
 	<message>
 		<source>cancelling</source>
-		<translation>Anulowanie</translation>
+		<translation>Ακύρωση</translation>
 	</message>
 	<message>
 		<source>refresh</source>
-		<translation>Odśwież</translation>
+		<translation>Ανανέωση</translation>
 	</message>
 	<message>
 		<source>close-all</source>
-		<translation>Zamknij wszystkie</translation>
+		<translation>Κλείσιμο όλων</translation>
 	</message>
 	<message>
 		<source>tabs</source>
-		<translation>Karty</translation>
+		<translation>Καρτέλες</translation>
 	</message>
 	<message>
 		<source>new-tab</source>
-		<translation>Nowa karta</translation>
+		<translation>Νέα καρτέλα</translation>
 	</message>
 	<message>
 		<source>empty-tab</source>
-		<translation>Pusta karta</translation>
+		<translation>Κενή καρτέλα</translation>
 	</message>
 	<message>
 		<source>open-in-new-tab</source>
-		<translation>Otwórz w nowej karcie</translation>
+		<translation>Άνοιγμα σε νέα καρτέλα</translation>
 	</message>
 	<message>
 		<source>has-permissions</source>
-		<translation>ma pozwolenie na dostęp</translation>
+		<translation>έχει άδεια πρόσβασης</translation>
 	</message>
 	<message>
 		<source>connect-wallet</source>
-		<translation>Podłącz portfel</translation>
+		<translation>Σύνδεση πορτοφολιού</translation>
 	</message>
 	<message>
 		<source>open-chat</source>
-		<translation>Utwórz czat publiczny</translation>
+		<translation>Άνοιγμα συνομιλίας</translation>
 	</message>
 	<message>
 		<source>favourite-description</source>
-		<translation>Twoje ulubione strony pojawią się tutaj</translation>
+		<translation>Οι αγαπημένοι σας ιστότοποι θα εμφανίζονται εδώ</translation>
 	</message>
 	<message>
 		<source>transfers-fetching-failure</source>
-		<translation>Historia przelewów nie może zostać zaktualizowana. Sprawdź swoje połączenie i pociągnij w dół, aby spróbować ponownie</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>move-and-reset</source>
-		<translation>Przenieś i zresetuj</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>move-keystore-file-to-keycard</source>
-		<translation>Przenieść plik keystore na kartę Keycard?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>database-reset-title</source>
-		<translation>Reset bazy danych</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>database-reset-content</source>
-		<translation>Czaty, kontakty i ustawienia zostały usunięte. Możesz używać swojego konta za pomocą karty Keycard</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>database-reset-warning</source>
-		<translation>Baza danych zostanie zresetowana. Czaty, kontakty i ustawienia zostaną usunięte</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>empty-keycard-required</source>
-		<translation>Wymaga pustej karty Keycard</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>current</source>
-		<translation>Obecne</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>choose-storage</source>
-		<translation>Wybierz miejsce na dane</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>choose-new-location-for-keystore</source>
-		<translation>Wybierz nową lokalizację, aby zapisać plik keystore</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>get-a-keycard</source>
-		<translation>Zdobądź kartę Keycard</translation>
+		<translation>Αποκτήστε μια Keycard</translation>
 	</message>
 	<message>
 		<source>keycard-upsell-subtitle</source>
-		<translation>Zwiększone bezpieczeństwo i wygoda</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>actions</source>
-		<translation>Działania</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>move-keystore-file</source>
-		<translation>Przenieś plik keystore</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>select-new-location-for-keys</source>
-		<translation>Wybierz nową lokalizację do zapisania klucza prywatnego lub kluczy prywatnych</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>reset-database</source>
-		<translation>Zresetuj bazę danych</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>reset-database-warning</source>
-		<translation>Usuń czaty, kontakty i ustawienia. Wymagane w przypadku utraty hasła</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>reset-database-warning-keycard</source>
-		<translation>Usuń czaty, kontakty i ustawienia.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>key-managment</source>
-		<translation>Zarządzanie kluczami</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>choose-actions</source>
-		<translation>Wybierz działania</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>master-account</source>
-		<translation>Konto główne</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>back-up</source>
-		<translation>Utwórz kopię zapasową</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>key-on-device</source>
-		<translation>Klucz prywatny jest zapisany na tym urządzeniu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>seed-key-uid-mismatch</source>
-		<translation>Podana fraza Seed nie pasuje</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>seed-key-uid-mismatch-desc-1</source>
-		<translation>Wprowadzona fraza Seed nie pasuje do {{multiaccount-name}}.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>seed-key-uid-mismatch-desc-2</source>
-		<translation>Aby zarządzać kluczami dla tego konta, zweryfikuj swoją frazę odzyskiwania (Seed) i spróbuj ponownie.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>recover-with-seed-phrase</source>
-		<translation>Odzyskaj za pomocą frazy Seed</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>transfer-ma-unknown-error-desc-1</source>
-		<translation>Wygląda na to, że Twoje multikonto nie zostało usunięte. Baza danych mogła zostać zresetowana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>transfer-ma-unknown-error-desc-2</source>
-		<translation>Sprawdź listę swoich kont i spróbuj ponownie. Jeśli konto nie jest wymienione, przejdź do sekcji &apos;Dostań się do istniejących kluczy&apos;, aby odzyskać je za pomocą frazy odzyskiwania (Seed)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>everyone</source>
-		<translation>Wszystkich</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>show-profile-pictures</source>
-		<translation>Zobacz zdjęcia profilowe z</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>show-profile-pictures-to</source>
-		<translation>Pokaż swoje zdjęcie profilowe dla</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>non-archival-node</source>
-		<translation>Punkt końcowy RPC nie obsługuje żądań archiwalnych. Twoja historia lokalnych przelewów może być niekompletna.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>custom-node</source>
-		<translation>Używasz niestandardowego punktu końcowego RPC. Twoja historia lokalnych przelewów może być niekompletna.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>connection-status</source>
-		<translation>Stan połączenia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>peer-to-peer</source>
-		<translation>Peer to peer (Od osoby do osoby)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>not-connected-to-peers</source>
-		<translation>Nie jest połączony z żadnym peerem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>unable-to-send-messages</source>
-		<translation>Nie można wysyłać i odbierać wiadomości</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>can-send-messages</source>
-		<translation>Możesz wysyłać i odbierać nowe wiadomości</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>not-connected-nodes</source>
-		<translation>Nie podłączony do węzła Statusu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>unable-to-fetch</source>
-		<translation>Nie można pobrać historii czatu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>nodes-disabled</source>
-		<translation>Węzły Status wyłączone</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>waiting-wi-fi</source>
-		<translation>Czekam na Wi-Fi…</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>you-can-fetch</source>
-		<translation>Możesz pobrać historię czatu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>youre-on-mobile-network</source>
-		<translation>Korzystasz z sieci komórkowej</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>status-mobile-descr</source>
-		<translation>Status ma tendencję do zużywania dużej ilości danych podczas synchronizowania czatów. Możesz zrezygnować z synchronizacji, gdy korzystasz z sieci komórkowej.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>restore-defaults</source>
-		<translation>Przywróć domyślne</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>rpc-usage-info</source>
-		<translation>Statystyki użycia RPC</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>rpc-usage-get-stats</source>
-		<translation>Odśwież</translation>
+		<translation>Ανανέωση</translation>
 	</message>
 	<message>
 		<source>rpc-usage-reset</source>
-		<translation>Resetuj</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>rpc-usage-filter</source>
-		<translation>Metody filtrowania</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>rpc-usage-filter-methods</source>
-		<translation>Metody filtrowania</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>rpc-usage-copy</source>
-		<translation>Skopiuj do schowka</translation>
+		<translation>Αντιγραφή</translation>
 	</message>
 	<message>
 		<source>rpc-usage-total</source>
@@ -6277,393 +6257,390 @@ poprzez link zapraszający pojawią się tutaj</translation>
 	</message>
 	<message>
 		<source>community-message-preview</source>
-		<translation>Zaproszenie do dołączenia do {{community-name}}</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>non-contacts</source>
-		<translation>Spoza listy kontaktów</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community</source>
-		<translation>Społeczność</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>verified-community</source>
-		<translation>✓ Zweryfikowana społeczność</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-info-not-found</source>
-		<translation>Nie znaleziono informacji o społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-info</source>
-		<translation>Informacje o społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>not-found</source>
-		<translation>Nie znaleziono</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>activity</source>
-		<translation>Aktywność</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>reject-and-delete</source>
-		<translation>Odrzuć i usuń</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>accept-and-add</source>
-		<translation>Zaakceptuj i dodaj</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>one-day</source>
-		<translation>Jeden dzień</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>three-days</source>
-		<translation>Trzy dni</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>one-week</source>
-		<translation>Jeden tydzień</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>one-month</source>
-		<translation>Jeden miesiąc</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>my-profile</source>
-		<translation>Mój profil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>bip39-password-placeholder</source>
-		<translation>hasło BIP39</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>public-channel</source>
-		<translation>Kanał publiczny</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>default-sync-period</source>
-		<translation>Synchronizuj historię dla</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>what-is-shared</source>
-		<translation>Co jest udostępnione</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>view-data</source>
-		<translation>Wyświetl dane</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>data-collected</source>
-		<translation>Zebrane dane</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>data-collected-subtitle</source>
-		<translation>Poniższa tabela pokazuje dokładne dane, które są przechowywane i zostaną wysłane. Dane są sprawdzane zgodnie z zasadami publicznymi, aby zapewnić, że nie są wysyłane żadne dane wrażliwe. Nie ufaj, zweryfikuj.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>view-rules</source>
-		<translation>Wyświetl zasady</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>expand-all</source>
-		<translation>Rozwiń wszystko</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>about-sharing-data</source>
-		<translation>O udostępnianiu danych</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-1</source>
-		<translation>Dane są sprawdzane zgodnie z zasadami publicznymi, aby zapewnić, że nie są wysyłane żadne dane wrażliwe. Nie ufaj, zweryfikuj.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-2</source>
-		<translation>Dane użytkowania kompleksowo zaszyfrowane są przesyłane przez sieć peer-to-peer Status</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-3</source>
-		<translation>Zamiast zwykłego klucza czatu używany jest klucz jednorazowy</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-4</source>
-		<translation>Dane użytkowania nie mogą być powiązane z Twoim adresem IP</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-5</source>
-		<translation>Zbiorcze dane wszystkich użytkowników są publicznie dostępne</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>view-public-dashboard</source>
-		<translation>Wyświetl publiczny pulpit nawigacyjny</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-6</source>
-		<translation>Dane są usuwane z telefonu po ich wysłaniu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>allow-and-send</source>
-		<translation>Zezwól i wyślij</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>no-thanks</source>
-		<translation>Nie, dziękuję</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>help-improve-status</source>
-		<translation>Pomóż ulepszyć Status</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>thank-you</source>
-		<translation>Dziękuję</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>current-password</source>
-		<translation>Aktualne hasło</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>reset-password</source>
-		<translation>Zresetuj hasło</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>password-reset-success</source>
-		<translation>Hasło zostało zmienione</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>password-reset-success-message</source>
-		<translation>Musisz się ponownie zalogować</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>password-reset-in-progress</source>
-		<translation>Zmiana hasła...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>new-password</source>
-		<translation>Nowe hasło</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>confirm-new-password</source>
-		<translation>Potwierdź nowe hasło</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>password-mismatch</source>
-		<translation>Nowe hasło i potwierdzenie nie pasują do siebie</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>terms-of-service</source>
-		<translation>Warunki Użytkowania</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>accept-status-tos-prefix</source>
-		<translation>Akceptuję Status</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>updates-to-tos</source>
-		<translation>Aktualizacje Warunków Użytkowania</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>updates-to-tos-desc</source>
-		<translation>Zanim przejdziesz dalej, zapoznaj się z Warunkami Użytkowania i potwierdź, że bierzesz pełną odpowiedzialność za sposób korzystania z aplikacji.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>what-changed</source>
-		<translation>Co się zmieniło</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wc-new-tos-based-on-principles-prefix</source>
-		<translation>Nowe Warunki Użytkowania zaprojektowane w oparciu o nasze</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>principles</source>
-		<translation>Zasady</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wc-how-to-use-status-app</source>
-		<translation>Jak korzystać z aplikacji Status, w tym zachowanie prywatności i bezpieczeństwa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wc-brand-guide</source>
-		<translation>Wskazówki dotyczące używania brandingu, takiego jak znaki towarowe i logo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wc-disclaimer</source>
-		<translation>Zastrzeżenia (w tym dostawcy zewnętrzni), gwarancje i oświadczenia prawne</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wc-dispute</source>
-		<translation>Postanowienia dotyczące rozstrzygania sporów</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>status-is-open-source</source>
-		<translation>Status jest otwartoźródłowy</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>build-yourself</source>
-		<translation>Aby korzystać z aplikacji bez niniejszych Warunków Użytkowania, możesz zbudować własną wersję</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>accept-and-continue</source>
-		<translation>Zaakceptuj i kontynuuj</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>empty-activity-center</source>
-		<translation>Twoje powiadomienia z czatu
-pojawią się tutaj</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>pinned-messages</source>
-		<translation>Przypięte wiadomości</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>pin</source>
-		<translation>Przypnij</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>unpin</source>
-		<translation>Odepnij</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>no-pinned-messages</source>
-		<translation>Brak przypiętych wiadomości</translation>
+		<translation></translation>
 	</message>
 	<message numerus="yes">
 		<source>pinned-messages-count</source>
 		<translation>
-			<numerusform>Jeden</numerusform>
-			<numerusform>Kilka</numerusform>
-			<numerusform>Wiele</numerusform>
-			<numerusform>Inne</numerusform>
+			<numerusform></numerusform>
+			<numerusform></numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>pinned-messages-empty</source>
-		<translation>Tutaj pojawią się przypięte wiadomości. Aby przypiąć wiadomość, naciśnij i przytrzymaj ją, a następnie dotknij &quot;Przypnij&quot;</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>pinned-by</source>
-		<translation>Przypięte przez</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>pin-limit-reached</source>
-		<translation>Osiągnięto limit przypięć. Najpierw odepnij poprzednią wiadomość.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>max-fee</source>
-		<translation>Maksymalna opłata</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>max-priority-fee</source>
-		<translation>Maksymalna opłata priorytetowa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>miners-higher-fee</source>
-		<translation>Górnicy prawdopodobnie uwzględnią Twoją transakcję wcześniej, jeśli zapłacisz wyższą opłatę.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>gas-amount-limit</source>
-		<translation>Limit ilości gazu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>per-gas-tip-limit</source>
-		<translation>Limit na końcówkę gazu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>per-gas-price-limit</source>
-		<translation>Limit ceny za gaz</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>current-base-fee</source>
-		<translation>Aktualna opłata podstawowa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>fee-explanation</source>
-		<translation>Maksymalna łączna cena za transakcję. Jeżeli opłata bazowa bloku przekroczy tę kwotę, zostanie ona uwzględniona w kolejnym bloku z niższą opłatą bazową.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>slow</source>
-		<translation>Powolny</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>optimal</source>
-		<translation>Optymalny</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>fast</source>
-		<translation>Szybki</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>see-suggestions</source>
-		<translation>Zobacz propozycje</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>maximum-fee</source>
-		<translation>Maksymalna opłata</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>low-tip</source>
-		<translation>napiwek jest za niski</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>lower-than-average-tip</source>
-		<translation>niższy niż przeciętny napiwek</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>below-base-fee</source>
-		<translation>opłata maksymalna poniżej opłaty podstawowej</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>reduced-tip</source>
-		<translation>napiwek priorytetowy zostanie zmniejszony</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>are-you-sure</source>
-		<translation>Jesteś pewny?</translation>
+		<translation>Είστε σίγουρει?</translation>
 	</message>
 	<message>
 		<source>bad-fees-description</source>
-		<translation>Twoja opłata priorytetowa jest poniżej naszych sugerowanych parametrów.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>change-tip</source>
-		<translation>Zmień napiwek</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>current-minimum-tip</source>
-		<translation>Aktualna minimalny napiwek</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>current-average-tip</source>
-		<translation>Aktualny średni napiwek</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>your-tip-limit</source>
-		<translation>Twój limit napiwków</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>your-price-limit</source>
-		<translation>Twój limit ceny</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>suggested-min-tip</source>
-		<translation>Sugerowany min. napiwek</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>suggested-price-limit</source>
-		<translation>Sugerowany limit ceny</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>include</source>
-		<translation>Dołącz</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>category</source>
-		<translation>Kategoria</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>edit-chats</source>
-		<translation>Edytuj czaty</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>edit-categories</source>
@@ -6671,187 +6648,187 @@ pojawią się tutaj</translation>
 	</message>
 	<message>
 		<source>hide</source>
-		<translation>Ukryj</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>account-is-used</source>
-		<translation>Konto jest używane z Dapps w przeglądarce.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>normal</source>
-		<translation>Normalny</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>never</source>
-		<translation>Nigdy</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>fee-options</source>
-		<translation>Proponowane opcje opłat</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>fee-cap</source>
-		<translation>Pułap opłat</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>tip-cap</source>
-		<translation>Pułap napiwku</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>collectibles-leak-metadata</source>
-		<translation>Tutaj możesz wyświetlić swoje NFT. Jeśli to zrobisz, udostępnisz swój portfel i adres IP</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>display-collectibles</source>
-		<translation>Eksponuj kolekcje</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>disable-later-in-settings</source>
-		<translation>Możesz wyłączyć to później w Ustawieniach</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>use-as-profile-picture</source>
-		<translation>Użyj jako zdjęcie profilowe</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>view-on-opensea</source>
-		<translation>Wyświetl na OpenSea</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>profile-picture-updated</source>
-		<translation>Zaktualizowano zdjęcie profilowe</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>status-automatic</source>
-		<translation>Automatycznie</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>status-automatic-subtitle</source>
-		<translation>Ustaw status automatycznie</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>status-dnd</source>
-		<translation>Nie przeszkadzać</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>status-dnd-subtitle</source>
-		<translation>Wycisz wszystkie powiadomienia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>status-always-online</source>
-		<translation>Zawsze online</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>status-inactive</source>
-		<translation>Nieaktywny</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>status-inactive-subtitle</source>
-		<translation>Ukrywa Twój status online</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>two-minutes</source>
-		<translation>dwie minuty</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>swap</source>
-		<translation>Zamień</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>select-token-to-swap</source>
-		<translation>Wybierz token do zamiany</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>select-token-to-receive</source>
-		<translation>Wybierz token do otrzymania</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>minimum-received</source>
-		<translation>Otrzymane minimum</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>powered-by-paraswap</source>
-		<translation>Obsługiwane przez Paraswap</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>priority</source>
-		<translation>Priorytet</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>switch-to-simple-interface</source>
-		<translation>Przełącz na prosty interfejs</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>transaction-fee</source>
-		<translation>Opłata transakcyjna</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>swap-details</source>
-		<translation>Szczegóły zamiany</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>slippage</source>
-		<translation>Wahanie</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>price-impact</source>
-		<translation>Wpływ ceny</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>total-gas</source>
-		<translation>Całkowity gas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>token</source>
-		<translation>Token</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>approve-limit</source>
-		<translation>Zatwierdź limit</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>approve-token</source>
-		<translation>Zatwierdź token</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>approve-token-contract-desc</source>
-		<translation>Zatwierdzenie tokena z kontraktem pozwala mu na wydanie Twojego salda tokenów. Jeśli uważasz, że dany projekt jest niegodny zaufania, nie zatwierdzaj z nim tokena, lub zatwierdzaj z nim tylko kwotę, którą wykorzystasz.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>unlimited</source>
-		<translation>Bez ograniczeń</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>approve</source>
-		<translation>Zatwierdź</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>limit</source>
-		<translation>Limit</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>last-transaction</source>
-		<translation>Ostatnia transakcja</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>price-impact-desc</source>
-		<translation>Szacowany wpływ ceny dla tej transakcji. Jeśli aktualna opłata bazowa za blok przekracza tę wartość, Twoja transakcja zostanie uwzględniona w kolejnym bloku z niższą opłatą bazową.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>safe-estimate</source>
-		<translation>Bezpieczne oszacowanie</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>current-average</source>
-		<translation>Aktualna średnia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>current-base</source>
-		<translation>Aktualna baza</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>maximum-fee-desc</source>
-		<translation>Maksymalna łączna cena za transakcję. Jeśli aktualna opłata bazowa za blok przekracza tę wartość, Twoja transakcja zostanie uwzględniona w kolejnym bloku z niższą opłatą bazową.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>insufficient-balance-to-cover-fee</source>
@@ -7104,7 +7081,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Settings</source>
-		<translation>Ustawienia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mainnet</source>
@@ -7636,7 +7613,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Communities</source>
-		<translation>Społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Search for communities or topics</source>
@@ -7732,7 +7709,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>View Profile</source>
-		<translation>Zobacz profil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Roles</source>
@@ -8284,7 +8261,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>My Profile</source>
-		<translation>Mój profil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter ENS username or chat key</source>
@@ -8296,7 +8273,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>No profile found</source>
-		<translation>Nie znaleziono profilu</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>ENS username</source>
@@ -8348,7 +8325,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Profile</source>
-		<translation>Profil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>App version</source>
@@ -8486,7 +8463,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Appearance</source>
-		<translation>Wygląd</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Dark</source>
@@ -8498,7 +8475,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Back up seed phrase</source>
-		<translation>Kopia zapasowa frazy źródłowej</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Step %1 of 3</source>
@@ -8530,7 +8507,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Are you sure?</source>
-		<translation>Jesteś pewien?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You will not be able to see the whole seed phrase again</source>
@@ -8582,7 +8559,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Profile picture</source>
-		<translation>Zdjęcie profilowe</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Crop your image (optional)</source>
@@ -8722,7 +8699,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Hey</source>
-		<translation>Hej</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>(pending)</source>
@@ -9098,7 +9075,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Invalid network id</source>
-		<translation>Niepoprawny klucz sieci</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>RPC URL</source>
@@ -9258,7 +9235,7 @@ packs will not need to be re-purchased.</source>
 	</message>
 	<message>
 		<source>Backup Seed Phrase</source>
-		<translation>Kopia zapasowa frazy źródłowej</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Display all profile pictures (not only contacts)</source>
@@ -9454,7 +9431,7 @@ packs will not need to be re-purchased.</source>
 	</message>
 	<message>
 		<source>Back up your seed phrase</source>
-		<translation>Zrób kopię zapasową frazy źródłowej</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Recipient</source>
@@ -10331,7 +10308,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Advanced</source>
-		<translation>Zaawansowane</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Custom Network Fee</source>
@@ -10899,7 +10876,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>public</source>
-		<translation>Publiczny</translation>
+		<translation>Δημόσιο</translation>
 	</message>
 	<message>
 		<source>open-dapp2</source>
@@ -10985,7 +10962,7 @@ Assets won’t be sent yet.</source>
 	<name>AcceptRejectOptionsButtonsPanel</name>
 	<message>
 		<source>View Profile</source>
-		<translation>Zobacz profil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline and block</source>
@@ -11073,7 +11050,7 @@ Assets won’t be sent yet.</source>
 	<name>AddAccountModal</name>
 	<message>
 		<source>Advanced</source>
-		<translation>Zaawansowane</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Generate an account</source>
@@ -11249,11 +11226,11 @@ Assets won’t be sent yet.</source>
 	<name>AdvancedView</name>
 	<message>
 		<source>disable</source>
-		<translation>wyłącz</translation>
+		<translation>απενεργοποίηση</translation>
 	</message>
 	<message>
 		<source>enable</source>
-		<translation>Włącz</translation>
+		<translation>Ενεργοποίηση</translation>
 	</message>
 	<message>
 		<source>Fleet</source>
@@ -11396,7 +11373,7 @@ edit your notification preferences later in settings.</source>
 	</message>
 	<message>
 		<source>Profile Picture</source>
-		<translation>Zdjęcie profilowe</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Make this my Profile Pic</source>
@@ -11511,7 +11488,7 @@ edit your notification preferences later in settings.</source>
 	</message>
 	<message>
 		<source>Appearance</source>
-		<translation>Wygląd</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Light</source>
@@ -11542,7 +11519,7 @@ edit your notification preferences later in settings.</source>
 	<name>BackupSeedModal</name>
 	<message>
 		<source>Back up your seed phrase</source>
-		<translation>Zrób kopię zapasową frazy źródłowej</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Continue</source>
@@ -11627,7 +11604,7 @@ edit your notification preferences later in settings.</source>
 	<name>BrowserLayout</name>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transakcja w toku...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error sending the transaction</source>
@@ -11768,7 +11745,7 @@ Do you wish to override the security check and continue?</source>
 	<name>CollectibleModal</name>
 	<message>
 		<source>description</source>
-		<translation>Opis</translation>
+		<translation>Περιγραφή</translation>
 	</message>
 	<message>
 		<source>unnamed</source>
@@ -11820,7 +11797,7 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunitiesPopup</name>
 	<message>
 		<source>Communities</source>
-		<translation>Społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>1 member</source>
@@ -12238,7 +12215,7 @@ Do you wish to override the security check and continue?</source>
 	</message>
 	<message>
 		<source>Settings</source>
-		<translation>Ustawienia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Overview</source>
@@ -12346,7 +12323,7 @@ Do you wish to override the security check and continue?</source>
 	<name>ContactPanel</name>
 	<message>
 		<source>View Profile</source>
-		<translation>Zobacz profil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send message</source>
@@ -12866,7 +12843,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>EnsView</name>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transakcja w toku...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View on etherscan</source>
@@ -13123,7 +13100,7 @@ chat with them once they have accepted your contact request.</source>
 	</message>
 	<message>
 		<source>Profile picture</source>
-		<translation>Zdjęcie profilowe</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your profile</source>
@@ -13355,7 +13332,7 @@ device, so only you can use them.</source>
 	<name>LeftTabView</name>
 	<message>
 		<source>Settings</source>
-		<translation>Ustawienia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sign out</source>
@@ -13367,7 +13344,7 @@ device, so only you can use them.</source>
 	</message>
 	<message>
 		<source>Sign out &amp; Quit</source>
-		<translation>Wyloguj się i wyjdź</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wallet</source>
@@ -13458,8 +13435,6 @@ The card inserted is not linked to your profile.</source>
 		<translation>
 			<numerusform></numerusform>
 			<numerusform></numerusform>
-			<numerusform></numerusform>
-			<numerusform></numerusform>
 		</translation>
 	</message>
 	<message>
@@ -13487,15 +13462,15 @@ The card inserted is not linked to your profile.</source>
 	<name>MenuPanel</name>
 	<message>
 		<source>Settings</source>
-		<translation>Ustawienia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Apps</source>
-		<translation>Aplikacje</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>About &amp; Help</source>
-		<translation>O programie i pomoc</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
@@ -14068,7 +14043,7 @@ The card inserted is not linked to your profile.</source>
 	</message>
 	<message>
 		<source>My Profile</source>
-		<translation>Mój profil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1&apos;s Profile</source>
@@ -14143,7 +14118,7 @@ The card inserted is not linked to your profile.</source>
 	<name>ProfileSectionStore</name>
 	<message>
 		<source>Profile</source>
-		<translation>Profil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>ENS usernames</source>
@@ -14159,43 +14134,43 @@ The card inserted is not linked to your profile.</source>
 	</message>
 	<message>
 		<source>Communities</source>
-		<translation>Społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Appearance</source>
-		<translation>Wygląd</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Back up seed phrase</source>
-		<translation>Kopia zapasowa frazy źródłowej</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Advanced</source>
-		<translation>Zaawansowane</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Messaging</source>
-		<translation>Wiadomości</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Notifications &amp; Sounds</source>
-		<translation>Powiadomienia i dźwięki</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Language &amp; Currency</source>
-		<translation>Język i waluta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Devices settings</source>
-		<translation>Ustawienia urządzeń</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>About</source>
-		<translation>O programie</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sign out &amp; Quit</source>
-		<translation>Wyloguj się i wyjdź</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
@@ -14636,7 +14611,7 @@ The card inserted is not linked to your profile.</source>
 	<name>StatusExpandableSettingsItemPage</name>
 	<message>
 		<source>Back up seed phrase</source>
-		<translation>Kopia zapasowa frazy źródłowej</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not Implemented</source>
@@ -14699,7 +14674,7 @@ The card inserted is not linked to your profile.</source>
 	<name>TabNetworkAndFees</name>
 	<message>
 		<source>Advanced</source>
-		<translation>Zaawansowane</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Custom</source>
@@ -14792,7 +14767,7 @@ The card inserted is not linked to your profile.</source>
 	<name>UploadProfilePicModal</name>
 	<message>
 		<source>Profile picture</source>
-		<translation>Zdjęcie profilowe</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Remove</source>
@@ -14845,7 +14820,7 @@ The card inserted is not linked to your profile.</source>
 	</message>
 	<message>
 		<source>now</source>
-		<translation>Teraz</translation>
+		<translation>Τώρα</translation>
 	</message>
 	<message>
 		<source>Sun</source>
@@ -15485,7 +15460,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Settings</source>
-		<translation>Ustawienia</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
@@ -15598,14 +15573,14 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Sign out &amp; Quit</source>
-		<translation>Wyloguj się i wyjdź</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>ChangeProfilePicModal</name>
 	<message>
 		<source>Profile picture</source>
-		<translation>Zdjęcie profilowe</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Remove</source>
@@ -17672,8 +17647,6 @@ Assets won’t be sent yet.</source>
 		<translation>
 			<numerusform></numerusform>
 			<numerusform></numerusform>
-			<numerusform></numerusform>
-			<numerusform></numerusform>
 		</translation>
 	</message>
 </context>
@@ -17741,7 +17714,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Communities</source>
-		<translation>Społeczności</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Accounts</source>
@@ -17790,8 +17763,6 @@ Assets won’t be sent yet.</source>
 		<translation>
 			<numerusform></numerusform>
 			<numerusform></numerusform>
-			<numerusform></numerusform>
-			<numerusform></numerusform>
 		</translation>
 	</message>
 </context>
@@ -17822,7 +17793,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>Advanced</source>
-		<translation>Zaawansowane</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Custom</source>
@@ -17956,7 +17927,7 @@ Assets won’t be sent yet.</source>
 	</message>
 	<message>
 		<source>My Profile</source>
-		<translation>Mój profil</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
@@ -18220,7 +18191,7 @@ Assets won’t be sent yet.</source>
 	<name>SeedPhraseBackupWarning</name>
 	<message>
 		<source>Back up your seed phrase</source>
-		<translation>Zrób kopię zapasową frazy źródłowej</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Back up</source>
@@ -19298,7 +19269,7 @@ to login to Status using your Keycard?</source>
 	<name>ViewProfileMenuItem</name>
 	<message>
 		<source>View Profile</source>
-		<translation>Zobacz profil</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
@@ -19510,8 +19481,6 @@ was a brand new empty Keycard</source>
 		<translation>
 			<numerusform></numerusform>
 			<numerusform></numerusform>
-			<numerusform></numerusform>
-			<numerusform></numerusform>
 		</translation>
 	</message>
 </context>
@@ -19547,8 +19516,6 @@ was a brand new empty Keycard</source>
 	<message numerus="yes">
 		<source>Invalid PUK code, %n attempt(s) remaining</source>
 		<translation>
-			<numerusform></numerusform>
-			<numerusform></numerusform>
 			<numerusform></numerusform>
 			<numerusform></numerusform>
 		</translation>
