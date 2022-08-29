@@ -62,9 +62,9 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
-        text: qsTr("Add / remove from group")
+        text: root.amIChatAdmin ? qsTr("Add / remove from group") : qsTr("Add to group")
         icon.name: "add-to-dm"
-        enabled: root.amIChatAdmin && (root.chatType === Constants.chatType.privateGroupChat)
+        enabled: (root.chatType === Constants.chatType.privateGroupChat)
         onTriggered: { root.addRemoveGroupMember() }
     }
 
@@ -88,7 +88,6 @@ StatusPopupMenu {
         text: qsTr("Edit name and image")
         icon.name: "edit_pencil"
         enabled: root.chatType === Constants.chatType.privateGroupChat
-                 && root.amIChatAdmin
         onTriggered: {
             Global.openPopup(renameGroupPopupComponent, {
                 activeGroupName: root.chatName,
