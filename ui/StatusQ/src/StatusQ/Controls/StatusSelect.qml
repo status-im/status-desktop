@@ -23,6 +23,7 @@ Item {
     property var model
     property alias selectMenu: selectMenu
     property color bgColorHover: bgColor
+    // TODO: Fix the indirect handling of children
     property alias selectedItemComponent: selectedItemContainer.children
     property bool caretVisible: true
     property int caretRightMargin: 16
@@ -54,7 +55,7 @@ Item {
     Rectangle {
         property bool hovered: false
         id: inputRectangle
-        height: 56
+        height: selectedItemContainer.implicitHeight
         color: hovered ? bgColorHover : bgColor
         radius: 8
         anchors.top: root.hasLabel ? inputLabel.bottom : parent.top
@@ -64,7 +65,7 @@ Item {
         border.width: !!validationError ? 1 : 0
         border.color: Theme.palette.dangerColor1
 
-        Item {
+        GridLayout {
             id: selectedItemContainer
             anchors.fill: parent
         }
