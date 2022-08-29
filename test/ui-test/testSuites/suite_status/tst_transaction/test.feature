@@ -25,7 +25,7 @@ Feature: Status Desktop Transaction
       	  | 1 		 | STT   | Goerli     |
       	  | 0 		 | STT   | Goerli     |
 
-
-#    Scenario: User registers a ENS name
-#		When the user registers a random ens name with password qqqqqqqqqq
-#		Then the transaction is in progress
+    @mayfail
+    Scenario: User registers a ENS name
+		When the user registers a random ens name with password qqqqqqqqqq
+		Then the transaction is in progress

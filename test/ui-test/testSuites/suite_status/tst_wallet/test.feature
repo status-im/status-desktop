@@ -98,6 +98,7 @@ Feature: Status Desktop Wallet
       	  | name | address 								      |
       	  | one  | 0x8397bc3c5a60a1883174f722403d63a8833312b7 |
 
+    @onlythis
     Scenario:  User can toggle network and see balances
         When the user opens app settings screen
         And the user opens the wallet settings
