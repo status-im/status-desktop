@@ -64,12 +64,6 @@ class PasswordStrengthPossibilities(Enum):
 class MainScreen(Enum):
     SETTINGS_BUTTON = "settings_navbar_settings_icon_StatusIcon"
     
-class UserContextStatusMenu(Enum):
-    USER_CONTEXT_MENU_VIEW_MY_PROFILE_BUTTON: str = "userContextMenu_ViewMyProfile_Action"
-    
-class MyProfileModal(Enum):
-    MY_PROFILE_MODAL_USER_IMAGE: str = "myProfileModal_UserImage"
-    
 class LoginView(Enum):
     LOGIN_VIEW_USER_IMAGE: str = "loginView_userImage"
     PASSWORD_INPUT = "loginView_passwordInput"
@@ -201,7 +195,7 @@ class StatusWelcomeScreen:
             
     def profile_modal_image_is_updated(self):
         click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
-        click_obj_by_name(UserContextStatusMenu.USER_CONTEXT_MENU_VIEW_MY_PROFILE_BUTTON.value)
+        click_obj_by_name(MainScreenComponents.USERSTATUSMENU_OPEN_PROFILE_POPUP.value)
         imagePresent("profiletestimage", True, 97, 95, 100, True)
         
     def profile_settings_image_is_updated(self):

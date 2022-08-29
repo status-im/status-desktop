@@ -174,3 +174,15 @@ def step(context: any):
 @Then("the user status is automatic")
 def step(context: any):
     _statusMain.user_is_set_to_automatic()   
+
+@When("the user opens own profile popup")
+def step(context: any):
+    _statusMain.open_own_profile_popup()
+
+@Then("in profile popup the user's display name should be \"|any|\"")
+def step(context, display_name):
+    _statusMain.verify_profile_popup_display_name(display_name)
+
+@When("in profile popup the user sets display name to \"|any|\"")
+def step(context, display_name):
+    _statusMain.set_profile_popup_display_name(display_name)

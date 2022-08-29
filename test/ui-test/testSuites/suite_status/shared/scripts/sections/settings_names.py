@@ -107,9 +107,6 @@ languageView_language_StatusPickerButton = {"container": languageView_language_S
 languageView_language_ListView = {"container": languageView_language_StatusListPicker,  "type": "ListView", "unnamed": 1}
 languageView_language_StatusInput = {"container": languageView_language_ListView,  "type": "StatusInput", "unnamed": 1}
 
-# My Profile Modal
-myProfileModal_UserImage = {"container": statusDesktop_mainWindow_overlay, "objectName": "myProfileModalUserImage", "type": "UserImage", "visible": True}
-
 # Backup seed phrase:
 backup_seed_phrase_popup_Acknowledgements_havePen_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "Acknowledgements_havePen", "type": "StatusCheckBox", "checkable": True, "visible": True}
 backup_seed_phrase_popup_Acknowledgements_writeDown_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "Acknowledgements_writeDown", "type": "StatusCheckBox", "checkable": True, "visible": True}
@@ -123,9 +120,3 @@ backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord = {"container": st
 backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord_inputText = {"container": backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord, "objectName": "BackupSeedStepBase_inputText", "type": "TextEdit", "visible": True}
 backup_seed_phrase_popup_ConfirmStoringSeedPhrasePanel_storeCheck = {"container": statusDesktop_mainWindow_overlay, "objectName": "ConfirmStoringSeedPhrasePanel_storeCheck", "type": "StatusCheckBox", "checkable": True, "visible": True}
 backup_seed_phrase_popup_BackupSeedModal_completeAndDeleteSeedPhraseButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "BackupSeedModal_completeAndDeleteSeedPhraseButton", "type": "StatusButton", "visible": True}
-
-# User Status Profile Menu
-userContextmenu_AlwaysActiveButton= {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuAlwaysOnlineAction", "type": "StatusMenuItemDelegate", "visible": True}
-userContextmenu_InActiveButton= {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuInactiveAction", "type": "StatusMenuItemDelegate", "visible": True}
-userContextmenu_AutomaticButton= {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuAutomaticAction", "type": "StatusMenuItemDelegate", "visible": True}
-
