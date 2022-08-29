@@ -130,7 +130,7 @@ QtObject:
   proc confirmTransactionStatus(self: Service, pendingTransactions: JsonNode) =
     for trx in pendingTransactions.getElems():
       let transactionReceipt = self.getTransactionReceipt(trx["network_id"].getInt, trx["hash"].getStr)
-      if transactionReceipt.kind != JNull:
+      if transactionReceipt != nil and transactionReceipt.kind != JNull:
         self.deletePendingTransaction(trx["network_id"].getInt, trx["hash"].getStr)
         let ev = TransactionMinedArgs(
                   data: trx["additionalData"].getStr,

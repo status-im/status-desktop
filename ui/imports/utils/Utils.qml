@@ -714,7 +714,7 @@ QtObject {
     }
 
     function containsOnlyDigits(msg) {
-        var reg = new RegExp('^[0-9]$')
+        var reg = new RegExp('[+-]?([0-9]*[.])?[0-9]+')
         return reg.test(msg)
     }
 

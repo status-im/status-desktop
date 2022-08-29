@@ -23,7 +23,7 @@ Item {
     property var tokenAssetSourceFn: function (symbol) {
         return ""
     }
-    property var searchTokenSymbolByAddress: function (address) {
+    property var searchTokenSymbolByAddressFn: function (address) {
         return ""
     }
 
@@ -74,7 +74,7 @@ Item {
             filters: [
                 ExpressionFilter {
                     expression: {
-                        var tokenSymbolByAddress = searchTokenSymbolByAddress(d.searchString)
+                        var tokenSymbolByAddress = searchTokenSymbolByAddressFn(d.searchString)
                         return symbol.startsWith(d.searchString.toUpperCase()) || name.toUpperCase().startsWith(d.searchString.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
                     }
                 }
