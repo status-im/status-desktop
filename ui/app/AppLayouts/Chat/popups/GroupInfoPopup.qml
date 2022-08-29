@@ -65,15 +65,13 @@ StatusModal {
             return qsTr("1 member");
         }
     }
-    header.editable: !addMembers && popup.isAdmin
+    header.editable: !addMembers
     header.asset.isLetterIdenticon: (popup.chatDetails.icon === "")
     header.asset.name: (popup.chatDetails.icon !== "") ? popup.chatDetails.icon : popup.chatDetails.name
     header.asset.isImage: (popup.chatDetails.icon !== "")
     header.asset.bgColor: popup.chatDetails ? popup.chatDetails.color : "transparent"
 
-    onEditButtonClicked: {
-        renameGroupPopup.open()
-    }
+    onEditButtonClicked: renameGroupPopup.open()
 
     onClosed: {
         chatSectionModule.clearMyContacts()
@@ -230,13 +228,6 @@ StatusModal {
                         StatusPopupMenu {
                             id: contextMenu
                             StatusMenuItem {
-                                icon.name: "admin"
-                                icon.width: 16
-                                icon.height: 16
-                                text: qsTr("Make Admin")
-                                onTriggered: popup.chatSectionModule.makeAdmin("", popup.chatDetails.id,  model.pubKey)
-                            }
-                            StatusMenuItem {
                                 icon.name: "remove-contact"
                                 icon.width: 16
                                 icon.height: 16
@@ -266,7 +257,7 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
-            visible: !popup.addMembers && popup.isAdmin
+            visible: !popup.addMembers
             text: qsTr("Add members")
             onClicked: {
                 popup.addMembers = true;

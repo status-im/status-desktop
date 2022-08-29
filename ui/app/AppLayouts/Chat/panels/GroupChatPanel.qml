@@ -81,7 +81,8 @@ RowLayout {
                  d.groupUsersModel.insert(d.groupUsersModel.count,
                                       {"pubKey": entry.pubKey,
                                        "name": entry.name,
-                                       "icon": entry.icon})
+                                       "icon": entry.icon,
+                                       "isReadonly": !root.chatContentModule.amIChatAdmin()})
              }
          }
 
@@ -93,7 +94,8 @@ RowLayout {
                                  "displayName": entry2.name,
                                  "icon": entry2.icon,
                                  "isIdenticon": false,
-                                 "onlineStatus": false})
+                                 "onlineStatus": false,
+                                 "isReadonly": !root.chatContentModule.amIChatAdmin()})
          }
 
          // Update contacts list used by StatusTagSelector
