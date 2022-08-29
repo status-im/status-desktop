@@ -72,7 +72,7 @@ Item {
 
             UserImage {
                 id: userImage
-                objectName: "myProfileModalUserImage"
+                objectName: "ProfileHeader_userImage"
                 name: root.displayName
                 pubkey: root.pubkey
                 image: root.icon
@@ -122,6 +122,7 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             visible: root.displayNamePlusIconsVisible
             StyledText {
+                objectName: "ProfileHeader_displayName"
                 Layout.maximumWidth: root.width - Style.current.xlPadding
                 text: root.displayName
                 elide: Text.ElideRight
@@ -153,6 +154,7 @@ Item {
 
             Loader {
                 sourceComponent: SVGImage {
+                    objectName: "ProfileHeader_displayNameEditIcon"
                     height: compact ? 10 : 16
                     width: compact ? 10 : 16
                     source: Style.svg("edit-message")

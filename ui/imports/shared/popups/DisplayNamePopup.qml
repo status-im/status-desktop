@@ -23,6 +23,7 @@ StatusModal {
     contentItem: Item {
         StatusInput {
             id: displayNameInput
+            input.edit.objectName: "DisplayNamePopup_displayNameInput"
             width: parent.width - Style.current.padding
             anchors.top: parent.top
             anchors.topMargin: Style.current.padding
@@ -35,7 +36,8 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
-            id: doneBtn
+            id: okBtn
+            objectName: "DisplayNamePopup_okButton"
             text: qsTr("OK")
             enabled: !!displayNameInput.text && displayNameInput.valid
             onClicked: {

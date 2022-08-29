@@ -2,10 +2,12 @@ Feature: User Identity
 
     As a user I want to set my identity, that is: display name, bio and social links.
 
-    Scenario: User sets display name, bio and social links
+    Background: Sign up and land
         Given A first time user lands on the status desktop and generates new key
         When user signs up with username tester123 and password TesTEr16843/!@00
         Then the user lands on the signed in app
+
+    Scenario: User sets display name, bio and social links
         When the user opens app settings screen
         And the user opens the profile settings
         Then the user's display name should be "tester123"
@@ -22,3 +24,9 @@ Feature: User Identity
         Then the user's display name should be "tester123_changed"
         And the user's bio should be "Hello, I am super tester!"
         And the user's social links should be: "twitter_handle", personal site: "status.im", "customLink": "customUrl"
+
+    Scenario: The user sets can change own display name in profile popup
+        When the user opens own profile popup
+        Then in profile popup the user's display name should be "tester123"
+        When in profile popup the user sets display name to "tester123_changed"
+        Then in profile popup the user's display name should be "tester123_changed"

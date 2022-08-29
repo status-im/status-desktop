@@ -36,9 +36,11 @@ Feature: Status Desktop Settings Menu
     	And the user tester123 logs in with password TesTEr16843/!@00
     	Then the user appears online
 
-Scenario: The user can switch his state to automatic
+	Scenario: The user can switch his state to automatic
     	When the users switches his state to automatic
     	Then the user status is automatic
     	When the user restarts the app
     	And the user tester123 logs in with password TesTEr16843/!@00
     	Then the user status is automatic
+
+

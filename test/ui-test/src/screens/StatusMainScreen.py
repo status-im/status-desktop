@@ -31,7 +31,16 @@ class MainScreenComponents(Enum):
     USERSTATUSMENU_ALWAYS_ACTIVE_ACTION = "userContextmenu_AlwaysActiveButton"
     USERSTATUSMENU_INACTIVE_ACTION = "userContextmenu_InActiveButton"
     USERSTATUSMENU_AUTOMATIC_ACTION = "userContextmenu_AutomaticButton"
+    USERSTATUSMENU_OPEN_PROFILE_POPUP = "userContextMenu_ViewMyProfileAction"
+class ProfilePopup(Enum):
+    USER_IMAGE = "ProfileHeader_userImage"
+    DISPLAY_NAME = "ProfileHeader_displayName"
+    DISPLAY_NAME_EDIT_ICON = "ProfileHeader_displayNameEditIcon"
 
+class DisplayNamePopup(Enum):
+    DISPLAY_NAME_INPUT = "DisplayNamePopup_displayNameInput"
+    DISPLAY_NAME_OK_BUTTON = "DisplayNamePopup_okButton"
+    
 class ChatNamePopUp(Enum):
     CHAT_NAME_TEXT = "chat_name_PlaceholderText"
     INPUT_ROOM_TOPIC_TEXT = "joinPublicChat_input"
@@ -127,3 +136,16 @@ class StatusMainScreen:
     def set_user_state_to_automatic(self):
         click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
         click_obj_by_name(MainScreenComponents.USERSTATUSMENU_AUTOMATIC_ACTION.value)
+
+    def open_own_profile_popup(self):
+        click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
+        click_obj_by_name(MainScreenComponents.USERSTATUSMENU_OPEN_PROFILE_POPUP.value)
+
+    def verify_profile_popup_display_name(self, display_name: str):
+        verify_text_matching(ProfilePopup.DISPLAY_NAME.value, display_name)
+
+    def set_profile_popup_display_name(self, display_name: str):
+        click_obj_by_name(ProfilePopup.DISPLAY_NAME_EDIT_ICON.value)
+        name_changed = setText(DisplayNamePopup.DISPLAY_NAME_INPUT.value, display_name)
+        verify(name_changed, "set display name")
+        click_obj_by_name(DisplayNamePopup.DISPLAY_NAME_OK_BUTTON.value)
