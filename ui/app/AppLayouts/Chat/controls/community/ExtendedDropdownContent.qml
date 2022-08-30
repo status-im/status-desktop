@@ -9,18 +9,23 @@ import StatusQ.Core 0.1
 
 import shared.panels 1.0
 
-ColumnLayout {
+Item {
     id: root
 
     property var store
     property int type: ExtendedDropdownContent.Type.Tokens
 
-    signal goBack()
+    readonly property bool canGoBack: root.state !== d.listView_depth1_State
+
     signal itemClicked(string key, string name, url iconSource)
 
     enum Type{
         Tokens,
         Collectibles
+    }
+
+    function goBack() {
+        root.state = d.listView_depth1_State
     }
 
     QtObject {
@@ -48,7 +53,6 @@ ColumnLayout {
         }
     }
 
-    spacing: 0
     state: d.listView_depth1_State
     states: [
         State {
@@ -71,138 +75,113 @@ ColumnLayout {
         }
     ]
 
-    // Header
-    RowLayout {
-        Layout.fillWidth: true
-        Layout.leftMargin: 16
-        Layout.rightMargin: 8
-        Layout.topMargin: 5
+    StatusFlatRoundButton {
+        id: filterButton
+        implicitWidth: 32
+        implicitHeight: 32
+        visible: d.isFilterOptionVisible
+        type: StatusFlatRoundButton.Type.Secondary
+        icon.name: "filter"
 
-        StatusIconTextButton {
-            Layout.alignment: Qt.AlignVCenter
-            spacing: 0
-            statusIcon: "next"
-            icon.width: 12
-            icon.height: 12
-            iconRotation: 180
-            text: qsTr("Back")
-            onClicked: {
-                if(root.state == d.listView_depth1_State) {
-                    root.goBack()
-                }
-                else {
-                    root.state = d.listView_depth1_State
-                }
-            }
+        anchors.right: parent.right
+        anchors.bottom: parent.top
+        anchors.bottomMargin: 3
+
+        onClicked: {
+            filterOptionsPopup.x = filterButton.x + filterButton.width - filterOptionsPopup.width
+            filterOptionsPopup.y = filterButton.y + filterButton.height + 8
+            filterOptionsPopup.open()
         }
+    }
 
-        // Just a filler to fit layout
-        Item { Layout.fillWidth: true; height: filterButton.implicitHeight }
+    // Filter options popup:
+    StatusDropdown {
+        id: filterOptionsPopup
+        width: d.filterPopupWidth
+        height: d.filterPopupHeight
+        contentItem: ColumnLayout {
+            anchors.fill: parent
+            anchors.topMargin: 8
+            anchors.bottomMargin: 8
+            ListView {
+                Layout.fillWidth: true
+                Layout.preferredHeight: model.count * d.filterItemsHeight
+                model: ListModel {
+                    ListElement { text: qsTr("Most viewed"); selected: true }
+                    ListElement { text: qsTr("Newest first"); selected: false }
+                    ListElement { text: qsTr("Oldest first"); selected: false }
+                }
+                delegate: StatusItemPicker {
+                    width: ListView.view.width
+                    height: d.filterItemsHeight
+                    color: sensor1.containsMouse ? Theme.palette.baseColor4 : "transparent"
+                    name: model.text
+                    namePixelSize: 13
+                    selectorType: StatusItemPicker.SelectorType.RadioButton
+                    radioGroup: filterRadioBtnGroup
+                    radioButtonSize: StatusRadioButton.Size.Small
+                    selected: model.selected
 
-        StatusFlatRoundButton {
-            id: filterButton
-            implicitWidth: 32
-            implicitHeight: 32
-            visible: d.isFilterOptionVisible
-            type: StatusFlatRoundButton.Type.Secondary
-            icon.name: "filter"
-
-            onClicked: {
-                filterOptionsPopup.x = filterButton.x + filterButton.width - filterOptionsPopup.width
-                filterOptionsPopup.y = filterButton.y + filterButton.height + 8
-                filterOptionsPopup.open()
-            }
-        }
-
-        // Filter options popup:
-        StatusDropdown {
-            id: filterOptionsPopup
-            width: d.filterPopupWidth
-            height: d.filterPopupHeight
-            contentItem: ColumnLayout {
-                anchors.fill: parent
-                anchors.topMargin: 8
-                anchors.bottomMargin: 8
-                ListView {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: model.count * d.filterItemsHeight
-                    model: ListModel {
-                        ListElement { text: qsTr("Most viewed"); selected: true }
-                        ListElement { text: qsTr("Newest first"); selected: false }
-                        ListElement { text: qsTr("Oldest first"); selected: false }
-                    }
-                    delegate: StatusItemPicker {
-                        width: ListView.view.width
-                        height: d.filterItemsHeight
-                        color: sensor1.containsMouse ? Theme.palette.baseColor4 : "transparent"
-                        name: model.text
-                        namePixelSize: 13
-                        selectorType: StatusItemPicker.SelectorType.RadioButton
-                        radioGroup: filterRadioBtnGroup
-                        radioButtonSize: StatusRadioButton.Size.Small
-                        selected: model.selected
-
-                        MouseArea {
-                            id: sensor1
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            hoverEnabled: true
-                            onClicked: {
-                                selected = !selected
-                                console.log("TODO: Clicked filter option: " + model.text)
-                                filterOptionsPopup.close()
-                            }
+                    MouseArea {
+                        id: sensor1
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onClicked: {
+                            selected = !selected
+                            console.log("TODO: Clicked filter option: " + model.text)
+                            filterOptionsPopup.close()
                         }
                     }
+                }
 
-                    // Not visual element to control filter options
-                    ButtonGroup {
-                        id: filterRadioBtnGroup
+                // Not visual element to control filter options
+                ButtonGroup {
+                    id: filterRadioBtnGroup
+                }
+            }
+
+            Separator { Layout.fillWidth: true }
+
+            ListView {
+                Layout.fillWidth: true
+                Layout.preferredHeight: model.count * d.filterItemsHeight
+                model: ListModel {
+                    ListElement { key: "LIST"; text: qsTr("List"); selected: true }
+                    ListElement { key: "THUMBNAILS"; text: qsTr("Thumbnails"); selected: false }
+                }
+                delegate:  StatusItemPicker {
+                    width: ListView.view.width
+                    height: d.filterItemsHeight
+                    color: sensor2.containsMouse ? Theme.palette.baseColor4 : "transparent"
+                    name: model.text
+                    namePixelSize: 13
+                    selectorType: StatusItemPicker.SelectorType.RadioButton
+                    radioGroup: visualizationRadioBtnGroup
+                    radioButtonSize: StatusRadioButton.Size.Small
+                    selected: model.selected
+
+                    MouseArea {
+                        id: sensor2
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onClicked: {
+                            selected = !selected
+                            if(model.key === "LIST") {
+                                root.state = d.listView_depth2_State
+                            }
+                            else if(model.key === "THUMBNAILS") {
+                                 root.state = d.thumbnailsViewState
+                            }
+                            filterOptionsPopup.close()
+                        }
                     }
                 }
 
-                Separator { Layout.fillWidth: true }
-
-                ListView {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: model.count * d.filterItemsHeight
-                    model: ListModel {
-                        ListElement { key: "LIST"; text: qsTr("List"); selected: true }
-                        ListElement { key: "THUMBNAILS"; text: qsTr("Thumbnails"); selected: false }
-                    }
-                    delegate:  StatusItemPicker {
-                        width: ListView.view.width
-                        height: d.filterItemsHeight
-                        color: sensor2.containsMouse ? Theme.palette.baseColor4 : "transparent"
-                        name: model.text
-                        namePixelSize: 13
-                        selectorType: StatusItemPicker.SelectorType.RadioButton
-                        radioGroup: visualizationRadioBtnGroup
-                        radioButtonSize: StatusRadioButton.Size.Small
-                        selected: model.selected
-
-                        MouseArea {
-                            id: sensor2
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            hoverEnabled: true
-                            onClicked: {
-                                selected = !selected
-                                if(model.key === "LIST") {
-                                    root.state = d.listView_depth2_State
-                                }
-                                else if(model.key === "THUMBNAILS") {
-                                     root.state = d.thumbnailsViewState
-                                }
-                                filterOptionsPopup.close()
-                            }
-                        }
-                    }
-
-                    // Not visual element to control visualization options
-                    ButtonGroup {
-                        id: visualizationRadioBtnGroup
-                    }
+                // Not visual element to control visualization options
+                ButtonGroup {
+                    id: visualizationRadioBtnGroup
                 }
             }
         }
@@ -211,9 +190,8 @@ ColumnLayout {
     // List elements content
     Loader {
         id: contentLoader
-        Layout.preferredWidth: 289 // by design
-        Layout.bottomMargin: 5
-        Layout.preferredHeight: (item != null && typeof(item) !== 'undefined') ? item.implicitHeight : 0
+
+        anchors.fill: parent
     }
 
     Component {
@@ -267,6 +245,9 @@ ColumnLayout {
         ThumbnailsDropdownContent {
             title: d.currentItemName
             titleImage: d.currentItemSource
+
+            padding: 0
+
             model: d.currentModel
             onItemClicked: {
                 d.reset()
