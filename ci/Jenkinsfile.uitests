@@ -94,38 +94,40 @@ pipeline {
             "-p ${goerli_rpc_port}:${goerli_rpc_port}",
             "-e 10 -m=\\'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial\\' -p ${goerli_rpc_port} --chain.chainId 5"
           ) { c ->
-            script {
-              def ropsten_rpc_port = 855 + env.EXECUTOR_NUMBER
-              docker.image('trufflesuite/ganache:v7.4.1').withRun(
-                "-p ${ropsten_rpc_port}:${ropsten_rpc_port}",
-                "-e 10 -m=\\'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial\\' -p ${ropsten_rpc_port} --chain.chainId 3"
-              ) { d ->
-                withEnv(["GOERLI_NETWORK_RPC_URL=http://localhost:${goerli_rpc_port}", "ROPSTEN_NETWORK_RPC_URL=http://localhost:${ropsten_rpc_port}"]){
-                  wrap([
-                    $class: 'Xvfb',
-                    autoDisplayName: true,
-                    parallelBuild: true,
-                    screen: '2560x1440x24',
-                  ]) {
-                    script {
-                      def res = squish([
-                        extraOptions: '''
-                          --retry
-                          2
+            withEnv(["GOERLI_NETWORK_RPC_URL=http://localhost:${goerli_rpc_port}"]){
+              script {
+                def ropsten_rpc_port = 855 + env.EXECUTOR_NUMBER
+                docker.image('trufflesuite/ganache:v7.4.1').withRun(
+                  "-p ${ropsten_rpc_port}:${ropsten_rpc_port}",
+                  "-e 10 -m=\\'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial\\' -p ${ropsten_rpc_port} --chain.chainId 3"
+                ) { d ->
+                  withEnv(["ROPSTEN_NETWORK_RPC_URL=http://localhost:${ropsten_rpc_port}"]){
+                    wrap([
+                      $class: 'Xvfb',
+                      autoDisplayName: true,
+                      parallelBuild: true,
+                      screen: '2560x1440x24',
+                    ]) {
+                      script {
+                        def res = squish([
+                          extraOptions: '''
+                            --retry
+                            2
 
-                          --tags
-                          onlythis
-                          
-                          --config
-                          addAUT
-                          nim_status_client
-                          ${WORKSPACE}/bin
-                        ''',
-                        squishPackageName: 'squish-6.7.2-qt514x-linux64',
-                        testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
-                      ])
-                      if ( res != "SUCCESS" ) {
-                        throw new Exception("squish test didn't end with success")
+                            --tags
+                            onlythis
+                            
+                            --config
+                            addAUT
+                            nim_status_client
+                            ${WORKSPACE}/bin
+                          ''',
+                          squishPackageName: 'squish-6.7.2-qt514x-linux64',
+                          testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
+                        ])
+                        if ( res != "SUCCESS" ) {
+                          throw new Exception("squish test didn't end with success")
+                        }
                       }
                     }
                   }
