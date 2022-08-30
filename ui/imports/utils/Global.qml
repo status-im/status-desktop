@@ -85,6 +85,8 @@ QtObject {
     }
 
     function openLink(link) {
+        // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
+        link = globalUtils.plainText(link);
         if (localAccountSensitiveSettings.showBrowserSelector) {
             openChooseBrowserPopup(link);
         } else {
