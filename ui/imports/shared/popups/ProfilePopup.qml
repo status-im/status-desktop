@@ -77,8 +77,10 @@ StatusDialog {
         // All this should be improved more, but for now we leave it like this.
         const contactDetails = Utils.getContactDetailsAsJson(publicKey);
 
+        isCurrentUser = popup.profileStore.pubkey === publicKey;
+
         userPublicKey = publicKey;
-        userDisplayName = contactDetails.displayName;
+        userDisplayName = isCurrentUser ? Qt.binding(() => { return popup.profileStore.displayName }) : contactDetails.displayName;
         userName = contactDetails.alias;
         userNickname = contactDetails.localNickname;
         userEnsName = contactDetails.name;
@@ -116,7 +118,6 @@ StatusDialog {
         isVerified = outgoingVerificationStatus === Constants.verificationStatus.verified
 
         text = ""; // this is most likely unneeded
-        isCurrentUser = popup.profileStore.pubkey === publicKey;
 
         popup.open();
 
