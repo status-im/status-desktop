@@ -118,9 +118,3 @@ Column {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:440;width:360}
-}
-##^##*/

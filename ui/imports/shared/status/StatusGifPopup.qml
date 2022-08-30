@@ -12,15 +12,10 @@ import shared.panels 1.0
 import shared.stores 1.0
 import shared.controls 1.0
 
+import "./StatusGifPopup"
+
 Popup {
     id: root
-
-    enum Category {
-        Trending,
-        Recent,
-        Favorite,
-        Search
-    }
 
     property var gifSelected: function () {}
     property var searchGif: Backpressure.debounce(searchBox, 500, function (query) {
@@ -30,20 +25,20 @@ Popup {
         previousCategory = currentCategory
         currentCategory = newCategory
         searchBox.text = ""
-        if (currentCategory === StatusGifPopup.Category.Trending) {
+        if (currentCategory === GifPopupDefinitions.Category.Trending) {
             RootStore.getTrendingsGifs()
-        } else if(currentCategory === StatusGifPopup.Category.Favorite) {
+        } else if(currentCategory === GifPopupDefinitions.Category.Favorite) {
             RootStore.getFavoritesGifs()
-        } else if(currentCategory === StatusGifPopup.Category.Recent) {
+        } else if(currentCategory === GifPopupDefinitions.Category.Recent) {
             RootStore.getRecentsGifs()
         }
     }
     property var toggleFavorite: function(item) {
-        RootStore.toggleFavoriteGif(item.id, currentCategory === StatusGifPopup.Category.Favorite)
+        RootStore.toggleFavoriteGif(item.id, currentCategory === GifPopupDefinitions.Category.Favorite)
     }
     property alias searchString: searchBox.text
-    property int currentCategory: StatusGifPopup.Category.Trending
-    property int previousCategory: StatusGifPopup.Category.Trending
+    property int currentCategory: GifPopupDefinitions.Category.Trending
+    property int previousCategory: GifPopupDefinitions.Category.Trending
 
     modal: false
     width: 360
@@ -69,16 +64,16 @@ Popup {
         if (RootStore.isTenorWarningAccepted) {
             RootStore.getTrendingsGifs()
         } else {
-            confirmationPopup.open()
+            confirmationPopupLoader.active = true
         }
     }
 
     onClosed: {
-        root.currentCategory = StatusGifPopup.Category.Trending
-        root.previousCategory = StatusGifPopup.Category.Trending
+        root.currentCategory = GifPopupDefinitions.Category.Trending
+        root.previousCategory = GifPopupDefinitions.Category.Trending
 
-        if (confirmationPopup.opened) {
-            confirmationPopup.close()
+        if (confirmationPopupLoader.active) {
+            confirmationPopupLoader.active = false
         }
     }
 
@@ -111,9 +106,9 @@ Popup {
                             toggleCategory(previousCategory)
                             return
                         }
-                        if (root.currentCategory !== StatusGifPopup.Category.Search) {
+                        if (root.currentCategory !== GifPopupDefinitions.Category.Search) {
                             root.previousCategory = root.currentCategory
-                            root.currentCategory = StatusGifPopup.Category.Search
+                            root.currentCategory = GifPopupDefinitions.Category.Search
                         }
                         Qt.callLater(searchGif, searchBox.text)
                     }
@@ -123,11 +118,11 @@ Popup {
             StatusBaseText {
                 id: headerText
                 text: {
-                    if (currentCategory === StatusGifPopup.Category.Trending) {
+                    if (currentCategory === GifPopupDefinitions.Category.Trending) {
                         return qsTr("TRENDING")
-                    } else if(currentCategory === StatusGifPopup.Category.Favorite) {
+                    } else if(currentCategory === GifPopupDefinitions.Category.Favorite) {
                         return qsTr("FAVORITES")
-                    } else if(currentCategory === StatusGifPopup.Category.Recent) {
+                    } else if(currentCategory === GifPopupDefinitions.Category.Recent) {
                         return qsTr("RECENT")
                     }
                     return ""
@@ -150,7 +145,7 @@ Popup {
                     const headerTextHeight = searchBox.text === "" ? headerText.height : 0
                     return 400 - gifHeader.height - headerTextHeight
                 }
-                sourceComponent: RootStore.gifColumnA.rowCount() === 0 ? empty : gifItems
+                sourceComponent: RootStore.gifColumnA.rowCount() === 0 ? emptyPlaceholderComponent : gifItemsComponent
             }
 
             Row {
@@ -163,27 +158,27 @@ Popup {
 
                 StatusTabBarIconButton {
                     icon.name: "flash"
-                    highlighted: StatusGifPopup.Category.Trending === root.currentCategory
+                    highlighted: GifPopupDefinitions.Category.Trending === root.currentCategory
                     onClicked: {
-                        toggleCategory(StatusGifPopup.Category.Trending)
+                        toggleCategory(GifPopupDefinitions.Category.Trending)
                     }
                     enabled: RootStore.isTenorWarningAccepted
                 }
 
                 StatusTabBarIconButton {
                     icon.name: "time"
-                    highlighted: StatusGifPopup.Category.Recent === root.currentCategory
+                    highlighted: GifPopupDefinitions.Category.Recent === root.currentCategory
                     onClicked: {
-                        toggleCategory(StatusGifPopup.Category.Recent)
+                        toggleCategory(GifPopupDefinitions.Category.Recent)
                     }
                     enabled: RootStore.isTenorWarningAccepted
                 }
 
                 StatusTabBarIconButton {
                     icon.name: "favourite"
-                    highlighted: StatusGifPopup.Category.Favorite === root.currentCategory
+                    highlighted: GifPopupDefinitions.Category.Favorite === root.currentCategory
                     onClicked: {
-                        toggleCategory(StatusGifPopup.Category.Favorite)
+                        toggleCategory(GifPopupDefinitions.Category.Favorite)
                     }
                     enabled: RootStore.isTenorWarningAccepted
                 }
@@ -195,134 +190,25 @@ Popup {
             opacity: 0.4
             radius: Style.current.radius
             anchors.fill: parent
-            visible: confirmationPopup.opened
+            visible: confirmationPopupLoader.active
         }
     }
 
-    Popup {
-        id: confirmationPopup
+    Loader {
+        id: confirmationPopupLoader
 
         anchors.centerIn: parent
-        height: 278
-        width: 291
 
-        horizontalPadding: 6
-        verticalPadding: 32
-
-        modal: false
-        closePolicy: Popup.NoAutoClose
-
-        background: Rectangle {
-            radius: Style.current.radius
-            color: Style.current.background
-            border.color: Style.current.border
-            layer.enabled: true
-            layer.effect: DropShadow{
-                verticalOffset: 3
-                radius: 8
-                samples: 15
-                fast: true
-                cached: true
-                color: "#22000000"
-            }
+        sourceComponent: ConfirmationPopup {
+            visible: true
         }
-
-        SVGImage {
-            id: gifImage
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            source: Style.svg(`gifs-${Style.current.name}`)
-        }
-
-        StatusBaseText {
-            id: title
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: gifImage.bottom
-            anchors.topMargin: 8
-            text: qsTr("Enable Tenor GIFs?")
-            font.weight: Font.Medium
-            font.pixelSize: Style.current.primaryTextFontSize
-        }
-
-        StatusBaseText {
-            id: headline
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: title.bottom
-            anchors.topMargin: 4
-
-            text: qsTr("Once enabled, GIFs posted in the chat may share your metadata with Tenor.")
-            width: parent.width
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
-            font.pixelSize: 13
-            color: Style.current.secondaryText
-        }
-
-        StatusButton {
-            id: removeBtn
-            objectName: "enableGifsButton"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            text: qsTr("Enable")
-
-            size: StatusBaseButton.Size.Small
-
-            onClicked: {
-                RootStore.setIsTenorWarningAccepted(true)
-                RootStore.getTrendingsGifs()
-                confirmationPopup.close()
-            }
-        }
+        active: false
     }
 
     Component {
-        id: empty
-        Rectangle {
-            height: parent.height
-            width: parent.width
-            color: Style.current.background
+        id: gifItemsComponent
 
-            StatusBaseText {
-                id: emptyText
-                anchors.centerIn: parent
-                text: {
-                    if(currentCategory === StatusGifPopup.Category.Favorite) {
-                        return qsTr("Favorite GIFs will appear here")
-                    } else if(currentCategory === StatusGifPopup.Category.Recent) {
-                        return qsTr("Recent GIFs will appear here")
-                    }
-
-                    return qsTr("Error while contacting Tenor API, please retry.")
-                }
-                font.pixelSize: 15
-                color: Style.current.secondaryText
-            }
-
-            StatusButton {
-                id: retryBtn
-                anchors.top: emptyText.bottom
-                anchors.topMargin: Style.current.padding
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                text: qsTr("Retry")
-                visible: currentCategory === StatusGifPopup.Category.Trending || currentCategory === StatusGifPopup.Category.Search
-                onClicked: {
-                    if (searchBox.text === "") {
-                        RootStore.getTrendingsGifs()
-
-                        return
-                    }
-
-                    searchGif(searchBox.text)
-                }
-            }
-        }
-    }
-
-    Component {
-        id: gifItems
         StatusScrollView {
-            id: scrollView
             property ScrollBar vScrollBar: ScrollBar.vertical
             topPadding: Style.current.smallPadding
             leftPadding: Style.current.smallPadding
@@ -332,7 +218,7 @@ Popup {
 
             Row {
                 id: gifs
-                width: scrollView.availableWidth
+                width: parent.availableWidth
                 spacing: Style.current.halfPadding
 
                 property string lastHoveredId
@@ -375,9 +261,15 @@ Popup {
             }
         }
     }
+
+    Component {
+        id: emptyPlaceholderComponent
+
+        EmptyPlaceholder {
+            currentCategory: root.currentCategory
+            onDoRetry: searchBox.text === ""
+                        ? RootStore.getTrendingsGifs()
+                        : searchGif(searchBox.text)
+        }
+    }
 }
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:440;width:360}
-}
-##^##*/

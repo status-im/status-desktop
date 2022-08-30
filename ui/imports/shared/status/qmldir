@@ -14,7 +14,6 @@ StatusEmojiSection 1.0 StatusEmojiSection.qml
 StatusEmojiSuggestionPopup 1.0 StatusEmojiSuggestionPopup.qml
 StatusETHTransactionModal 1.0 StatusETHTransactionModal.qml
 StatusExpandableAddress 1.0 StatusExpandableAddress.qml
-StatusGifColumn 1.0 StatusGifColumn.qml
 StatusGifPopup 1.0 StatusGifPopup.qml
 StatusImageModal 1.0 StatusImageModal.qml
 StatusImageRadioButton 1.0 StatusImageRadioButton.qml
