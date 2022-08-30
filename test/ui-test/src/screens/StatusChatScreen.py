@@ -107,7 +107,7 @@ class StatusChatScreen:
     # Verifications region:      
     def verify_last_message_is_not_loaded(self):
         [loaded, _] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
-        verify_fasle(loaded, "Success: No message was found")
+        verify_false(loaded, "Success: No message was found")
           
     def send_gif(self):
         click_obj_by_name(ChatComponents.GIF_POPUP_BUTTON.value)
