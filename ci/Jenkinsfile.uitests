@@ -86,10 +86,10 @@ pipeline {
        script {
           def goerli_rpc_port = 865 + env.EXECUTOR_NUMBER
           docker.image('trufflesuite/ganache:v7.4.1').withRun(
-            "-p 127.0.0.1:${goerli_rpc_port}:${goerli_rpc_port} -v ${env.WORKSPACE}/test/ui-test/fixtures/ganache-dbs/goerli/:/goerli-db",
+            "-p ${goerli_rpc_port}:${goerli_rpc_port} -v ${env.WORKSPACE}/test/ui-test/fixtures/ganache-dbs/goerli/:/goerli-db",
             "-e 10 -m=\\'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial\\' -p ${goerli_rpc_port} --chain.chainId 5 --database.dbPath /goerli-db"
           ) { c ->
-            withEnv(["GOERLI_NETWORK_RPC_URL=http://127.0.0.1:${goerli_rpc_port}"]){
+            withEnv(["GOERLI_NETWORK_RPC_URL=http://localhost:${goerli_rpc_port}"]){
               wrap([
                 $class: 'Xvfb',
                 autoDisplayName: true,
