@@ -36,6 +36,9 @@ let GOERLI_RPC_URL_RESOLVED =
 
 echo "USING THIS URL FOR GOERLI ", GOERLI_NETWORK_RPC_URL
 
+const GOERLI_SNT_ADDRESS = "0x07E591F0285D013c130E0788c58332CA30DC6493"
+# const GOERLI_SNT_ADDRESS = $getEnv("GOERLI_SNT_ADDRES")
+
 const OPENSEA_API_KEY {.strdefine.} = ""
 # allow runtime override via environment variable; core contributors can set a
 # an opensea API key in this way for local development
@@ -111,6 +114,12 @@ let NETWORKS* = %* [
     "isTest": true,
     "layer": 1,
     "enabled": true,
+    "customTokens": [
+      {
+        "symbol": "STT",
+        "address": GOERLI_SNT_ADDRESS
+      }
+    ]
   },
   {
     "chainId": 10,
