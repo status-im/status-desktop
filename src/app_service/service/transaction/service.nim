@@ -370,22 +370,28 @@ QtObject:
     return self.transferTokens(from_addr, to_addr, assetSymbol, value, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, chainId, uuid, eip1559Enabled)
 
   proc suggestedFees*(self: Service, chainId: int): SuggestedFees =
-    let response = eth.suggestedFees(chainId).result
-    return SuggestedFees(
-      gasPrice: parseFloat(response{"gasPrice"}.getStr),
-      baseFee: parseFloat(response{"baseFee"}.getStr),
-      maxPriorityFeePerGas: parseFloat(response{"maxPriorityFeePerGas"}.getStr),
-      maxFeePerGasL: parseFloat(response{"maxFeePerGasLow"}.getStr),
-      maxFeePerGasM: parseFloat(response{"maxFeePerGasMedium"}.getStr),
-      maxFeePerGasH: parseFloat(response{"maxFeePerGasHigh"}.getStr),
-      eip1559Enabled: response{"eip1559Enabled"}.getbool,
-    )
+    try:
+      let response = eth.suggestedFees(chainId).result
+      return SuggestedFees(
+        gasPrice: parseFloat(response{"gasPrice"}.getStr),
+        baseFee: parseFloat(response{"baseFee"}.getStr),
+        maxPriorityFeePerGas: parseFloat(response{"maxPriorityFeePerGas"}.getStr),
+        maxFeePerGasL: parseFloat(response{"maxFeePerGasLow"}.getStr),
+        maxFeePerGasM: parseFloat(response{"maxFeePerGasMedium"}.getStr),
+        maxFeePerGasH: parseFloat(response{"maxFeePerGasHigh"}.getStr),
+        eip1559Enabled: response{"eip1559Enabled"}.getbool,
+      )
+    except Exception as e:
+      error "Error getting suggested fees", msg = e.msg
 
   proc suggestedRoutes*(self: Service, account: string, amount: float64, token: string, disabledChainIDs: seq[uint64]): SuggestedRoutes =
-    let response = eth.suggestedRoutes(account, amount, token, disabledChainIDs)
-    return SuggestedRoutes(
-      networks: Json.decode($response.result{"networks"}, seq[NetworkDto])
-    )
+    try:
+      let response = eth.suggestedRoutes(account, amount, token, disabledChainIDs)
+      return SuggestedRoutes(
+        networks: Json.decode($response.result{"networks"}, seq[NetworkDto])
+      )
+    except Exception as e:
+      error "Error getting suggested routes", msg = e.msg
 
   proc fetchCryptoServices*(self: Service): seq[CryptoRampDto] =
     try:
