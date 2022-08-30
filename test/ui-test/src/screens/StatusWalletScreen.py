@@ -1,5 +1,6 @@
 from enum import Enum
 import time
+import os
 import sys
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
@@ -78,6 +79,8 @@ class WalletTabBar(Enum):
 class StatusWalletScreen:
     
     def accept_signing_phrase(self):
+        test.log("GOERLI URL", str(os.getenv('GOERLI_NETWORK_RPC_URL')))
+        test.log("ROPSTEN URL", str(os.getenv('ROPSTEN_NETWORK_RPC_URL')))
         click_obj_by_name(SigningPhrasePopUp.OK_GOT_IT_BUTTON.value)
         
     def add_watch_only_account(self, account_name: str, address: str):
