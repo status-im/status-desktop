@@ -306,8 +306,11 @@ Item {
                     if ((event.key === Qt.Key_Backspace || event.key === Qt.Key_Escape)
                             && getText(cursorPosition, (cursorPosition-1)) === ""
                             && (namesList.count-1) >= 0) {
-                        removeMember(namesModel.get(namesList.count-1).pubKey);
-                        namesModel.remove((namesList.count-1), 1);
+                        const item = namesModel.get(namesList.count-1)
+                        if (!item.isReadonly) {
+                            removeMember(item.pubKey);
+                            namesModel.remove((namesList.count-1), 1);
+                        }
                     }
                     if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter) && (sortedList.count > 0)) {
                         root.insertTag(sortedList.get(userListView.currentIndex).name,
