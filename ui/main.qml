@@ -158,6 +158,8 @@ StatusWindow {
                 }
                 startupOnboarding.unload()
                 startupOnboarding.visible = false
+
+                Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
             }
         }
     }
@@ -207,12 +209,13 @@ StatusWindow {
     }
 
     function changeThemeFromOutside() {
-        Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
+        Style.changeTheme(startupOnboarding.visible ? Universal.System : localAppSettings.theme,
+                          systemPalette.isCurrentSystemThemeDark())
     }
 
     Component.onCompleted: {
         Global.applicationWindow = this;
-        Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark());
+        Style.changeTheme(Universal.System, systemPalette.isCurrentSystemThemeDark());
 
         restoreAppState();
     }
