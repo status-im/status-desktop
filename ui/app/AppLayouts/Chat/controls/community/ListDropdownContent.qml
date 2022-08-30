@@ -33,7 +33,7 @@ StatusListView {
             id: columnHeader
             anchors.top: parent.top
             anchors.left: parent.left
-            anchors.leftMargin: 16
+            anchors.leftMargin: 6
             anchors.rightMargin: anchors.leftMargin
             anchors.topMargin: 8
             anchors.bottomMargin: 2 * anchors.topMargin
@@ -59,7 +59,7 @@ StatusListView {
         color: mouseArea.containsMouse ? Theme.palette.baseColor4 : "transparent"
         RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: 14
+            anchors.leftMargin: 6
             spacing: 8
             StatusRoundedImage {
                 Layout.alignment: Qt.AlignVCenter
@@ -114,7 +114,7 @@ StatusListView {
         width: ListView.view.width
         height: 34 // by design
         StatusBaseText {
-            anchors.leftMargin: 18
+            anchors.leftMargin: 8
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             text: section

@@ -90,7 +90,7 @@ Item {
         }
         active: root.dirty
         flickable: root.contentItem
-        saveChangesButtonEnabled: root.contentItem && root.contentItem.saveChangesButtonEnabled
+        saveChangesButtonEnabled: !!root.contentItem && !!root.contentItem.saveChangesButtonEnabled
         onResetChangesClicked: root.resetChangesClicked()
         onSaveChangesClicked: root.saveChangesClicked()
     }
