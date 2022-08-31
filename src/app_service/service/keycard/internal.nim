@@ -11,6 +11,14 @@ type
     availableSlots*: int
     keyUID*: string
 
+  WalletAccount* = object
+    path*: string
+    address*: string
+
+  CardMetadata* = object
+    name*: string
+    walletAccounts*: seq[WalletAccount]
+
   KeycardEvent* = object
     error*: string
     applicationInfo*: ApplicationInfo
@@ -19,6 +27,7 @@ type
     keyUid*: string
     pinRetries*: int
     pukRetries*: int
+    cardMetadata*: CardMetadata
     eip1581Key*: KeyDetails
     encryptionKey*: KeyDetails
     masterKey*: KeyDetails
@@ -27,49 +36,63 @@ type
     whisperKey*: KeyDetails
 
 proc toKeyDetails(jsonObj: JsonNode): KeyDetails =
-  discard jsonObj.getProp(RequestParamAddress, result.address)
-  discard jsonObj.getProp(RequestParamPrivateKey, result.privateKey)
-  if jsonObj.getProp(RequestParamPublicKey, result.publicKey):
+  discard jsonObj.getProp(ResponseParamAddress, result.address)
+  discard jsonObj.getProp(ResponseParamPrivateKey, result.privateKey)
+  if jsonObj.getProp(ResponseParamPublicKey, result.publicKey):
     result.publicKey = "0x" & result.publicKey
 
 proc toApplicationInfo(jsonObj: JsonNode): ApplicationInfo =
-  discard jsonObj.getProp(ResponseInitialized, result.initialized)
-  discard jsonObj.getProp(ResponseInstanceUID, result.instanceUID)
-  discard jsonObj.getProp(ResponseVersion, result.version)
-  discard jsonObj.getProp(ResponseAvailableSlots, result.availableSlots)
-  discard jsonObj.getProp(ResponseKeyUID, result.keyUID)
+  discard jsonObj.getProp(ResponseParamInitialized, result.initialized)
+  discard jsonObj.getProp(ResponseParamInstanceUID, result.instanceUID)
+  discard jsonObj.getProp(ResponseParamVersion, result.version)
+  discard jsonObj.getProp(ResponseParamAvailableSlots, result.availableSlots)
+  discard jsonObj.getProp(ResponseParamAppInfoKeyUID, result.keyUID)
+
+proc toWalletAccount(jsonObj: JsonNode): WalletAccount =
+  discard jsonObj.getProp(ResponseParamPath, result.path)
+  discard jsonObj.getProp(ResponseParamAddress, result.address)
+
+proc toCardMetadata(jsonObj: JsonNode): CardMetadata =
+  discard jsonObj.getProp(ResponseParamName, result.name)
+  var accountsArr: JsonNode
+  if jsonObj.getProp(ResponseParamWallets, accountsArr) and accountsArr.kind == JArray:
+    for acc in accountsArr:
+      result.walletAccounts.add(acc.toWalletAccount())
 
 proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
-  discard jsonObj.getProp(ErrorKey, result.error)
-  discard jsonObj.getProp(RequestParamFreeSlots, result.freePairingSlots)
-  discard jsonObj.getProp(RequestParamPINRetries, result.pinRetries)
-  discard jsonObj.getProp(RequestParamPUKRetries, result.pukRetries)
-  if jsonObj.getProp(RequestParamKeyUID, result.keyUid):
+  discard jsonObj.getProp(ResponseParamErrorKey, result.error)
+  discard jsonObj.getProp(ResponseParamFreeSlots, result.freePairingSlots)
+  discard jsonObj.getProp(ResponseParamPINRetries, result.pinRetries)
+  discard jsonObj.getProp(ResponseParamPUKRetries, result.pukRetries)
+  if jsonObj.getProp(ResponseParamKeyUID, result.keyUid):
     result.keyUid = "0x" & result.keyUid
 
   var obj: JsonNode
-  if(jsonObj.getProp(RequestParamAppInfo, obj)):
+  if(jsonObj.getProp(ResponseParamAppInfo, obj)):
     result.applicationInfo = toApplicationInfo(obj)
 
-  if(jsonObj.getProp(RequestParamEIP1581Key, obj)):
+  if(jsonObj.getProp(ResponseParamEIP1581Key, obj)):
     result.eip1581Key = toKeyDetails(obj)
 
-  if(jsonObj.getProp(RequestParamEncKey, obj)):
+  if(jsonObj.getProp(ResponseParamEncKey, obj)):
     result.encryptionKey = toKeyDetails(obj)
 
-  if(jsonObj.getProp(RequestParamMasterKey, obj)):
+  if(jsonObj.getProp(ResponseParamMasterKey, obj)):
     result.masterKey = toKeyDetails(obj)
 
-  if(jsonObj.getProp(RequestParamWalletKey, obj)):
+  if(jsonObj.getProp(ResponseParamWalletKey, obj)):
     result.walletKey = toKeyDetails(obj)
 
-  if(jsonObj.getProp(RequestParamWalleRootKey, obj)):
+  if(jsonObj.getProp(ResponseParamWalleRootKey, obj)):
     result.walletRootKey = toKeyDetails(obj)
 
-  if(jsonObj.getProp(RequestParamWhisperKey, obj)):
+  if(jsonObj.getProp(ResponseParamWhisperKey, obj)):
     result.whisperKey = toKeyDetails(obj)
 
   var indexesArr: JsonNode
-  if jsonObj.getProp(RequestParamMnemonicIdxs, indexesArr) and indexesArr.kind == JArray:
+  if jsonObj.getProp(ResponseParamMnemonicIdxs, indexesArr) and indexesArr.kind == JArray:
     for ind in indexesArr:
       result.seedPhraseIndexes.add(ind.getInt)
+
+  if(jsonObj.getProp(ResponseParamCardMeta, obj)):
+    result.cardMetadata = toCardMetadata(obj)

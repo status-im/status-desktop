@@ -1,26 +1,3 @@
-const ResponseKeyType* = "type"
-const ResponseKeyEvent* = "event"
-
-const ResponseTypeValueKeycardFlowResult* = "keycard.flow-result"
-const ResponseTypeValueInsertCard* = "keycard.action.insert-card"
-const ResponseTypeValueCardInserted* = "keycard.action.card-inserted"
-const ResponseTypeValueSwapCard* = "keycard.action.swap-card"
-const ResponseTypeValueEnterPairing* = "keycard.action.enter-pairing"
-const ResponseTypeValueEnterPIN* = "keycard.action.enter-pin"
-const ResponseTypeValueEnterPUK* = "keycard.action.enter-puk"
-const ResponseTypeValueEnterNewPair* = "keycard.action.enter-new-pairing"
-const ResponseTypeValueEnterNewPIN* = "keycard.action.enter-new-pin"
-const ResponseTypeValueEnterNewPUK* = "keycard.action.enter-new-puk"
-const ResponseTypeValueEnterTXHash* = "keycard.action.enter-tx-hash"
-const ResponseTypeValueEnterPath* = "keycard.action.enter-bip44-path"
-const ResponseTypeValueEnterMnemonic* = "keycard.action.enter-mnemonic"
-
-const ResponseInitialized* = "initialized"
-const ResponseInstanceUID* = "instanceUID"
-const ResponseVersion* = "version"
-const ResponseAvailableSlots* = "availableSlots"
-const ResponseKeyUID* = "keyUID"
-
 const ErrorKey* = "error"
 const ErrorOK* = "ok"
 const ErrorCancel* = "cancel"
@@ -73,6 +50,47 @@ const RequestParamCardMeta* = "card-metadata"
 const RequestParamCardName* = "card-name"
 const RequestParamWalletPaths* = "wallet-paths"
 
-const RequestParamAddress* = "address"
-const RequestParamPublicKey* = "publicKey"
-const RequestParamPrivateKey* = "privateKey"
+const ResponseKeyType* = "type"
+const ResponseKeyEvent* = "event"
+
+const ResponseTypeValueKeycardFlowResult* = "keycard.flow-result"
+const ResponseTypeValueInsertCard* = "keycard.action.insert-card"
+const ResponseTypeValueCardInserted* = "keycard.action.card-inserted"
+const ResponseTypeValueSwapCard* = "keycard.action.swap-card"
+const ResponseTypeValueEnterPairing* = "keycard.action.enter-pairing"
+const ResponseTypeValueEnterPIN* = "keycard.action.enter-pin"
+const ResponseTypeValueEnterPUK* = "keycard.action.enter-puk"
+const ResponseTypeValueEnterNewPair* = "keycard.action.enter-new-pairing"
+const ResponseTypeValueEnterNewPIN* = "keycard.action.enter-new-pin"
+const ResponseTypeValueEnterNewPUK* = "keycard.action.enter-new-puk"
+const ResponseTypeValueEnterTXHash* = "keycard.action.enter-tx-hash"
+const ResponseTypeValueEnterPath* = "keycard.action.enter-bip44-path"
+const ResponseTypeValueEnterMnemonic* = "keycard.action.enter-mnemonic"
+const ResponseTypeValueEnterCardName* = "keycard.action.enter-cardname"
+const ResponseTypeValueEnterWallets* = "keycard.action.enter-wallets"
+
+const ResponseParamInitialized* = "initialized"
+const ResponseParamInstanceUID* = "instanceUID"
+const ResponseParamVersion* = "version"
+const ResponseParamAvailableSlots* = "availableSlots"
+const ResponseParamAppInfoKeyUID* = "keyUID"
+const ResponseParamName* = "name"
+const ResponseParamWallets* = "wallets"
+const ResponseParamPath* = "path"
+const ResponseParamAddress* = "address"
+const ResponseParamPublicKey* = "publicKey"
+const ResponseParamPrivateKey* = "privateKey"
+const ResponseParamErrorKey* = ErrorKey
+const ResponseParamCardMeta* = RequestParamCardMeta
+const ResponseParamFreeSlots* = RequestParamFreeSlots
+const ResponseParamPINRetries* = RequestParamPINRetries
+const ResponseParamPUKRetries* = RequestParamPUKRetries
+const ResponseParamKeyUID* = RequestParamKeyUID
+const ResponseParamAppInfo* = RequestParamAppInfo
+const ResponseParamEIP1581Key* = RequestParamEIP1581Key
+const ResponseParamEncKey* = RequestParamEncKey
+const ResponseParamMasterKey* = RequestParamMasterKey
+const ResponseParamWalletKey* = RequestParamWalletKey
+const ResponseParamWalleRootKey* = RequestParamWalleRootKey
+const ResponseParamWhisperKey* = RequestParamWhisperKey
+const ResponseParamMnemonicIdxs* = RequestParamMnemonicIdxs
