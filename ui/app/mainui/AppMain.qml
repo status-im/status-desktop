@@ -397,6 +397,8 @@ Item {
 
         rightPanel: ColumnLayout {
             spacing: 0
+            objectName: "mainRightView"
+
             ModuleWarning {
                 id: versionWarning
                 width: parent.width
