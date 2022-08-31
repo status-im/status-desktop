@@ -253,8 +253,8 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                keycardStore: profileView.store.keycardStore
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.keycard)
+                keycardStore: root.store.keycardStore
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.keycard)
                 contentWidth: d.contentWidth
             }
         }

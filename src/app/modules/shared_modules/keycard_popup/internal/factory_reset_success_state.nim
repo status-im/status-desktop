@@ -11,3 +11,13 @@ proc delete*(self: FactoryResetSuccessState) =
 method executePrimaryCommand*(self: FactoryResetSuccessState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+  elif self.flowType == FlowType.SetupNewKeycard:
+    controller.runLoadAccountFlow()
+
+method executeSecondaryCommand*(self: FactoryResetSuccessState, controller: Controller) =
+  if self.flowType == FlowType.SetupNewKeycard:
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+
+method resolveKeycardNextState*(self: FactoryResetSuccessState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+  controller: Controller): State =
+  return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)

@@ -9,17 +9,23 @@ proc delete*(self: InsertKeycardState) =
   self.State.delete
 
 method executePrimaryCommand*(self: InsertKeycardState, controller: Controller) =
-  if self.flowType == FlowType.FactoryReset:
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: InsertKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
+  let state = ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
+  if not state.isNil:
+    return state
   if keycardFlowType == ResponseTypeValueInsertCard and 
     keycardEvent.error.len > 0 and
     keycardEvent.error == ErrorConnection:
-      controller.setKeycardData(ResponseTypeValueInsertCard)
+      controller.setKeycardData(getPredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = true))
       return nil
   if keycardFlowType == ResponseTypeValueCardInserted:
-    controller.setKeycardData("")
-    return createState(StateType.ReadingKeycard, self.flowType, nil)
+    controller.setKeycardData(getPredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = false))
+    if self.flowType == FlowType.SetupNewKeycard:
+      return createState(StateType.KeycardInserted, self.flowType, self.getBackState)
+    return createState(StateType.KeycardInserted, self.flowType, nil)
   return nil

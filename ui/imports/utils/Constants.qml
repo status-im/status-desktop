@@ -67,9 +67,16 @@ QtObject {
         readonly property string loginKeycardEmpty: "LoginKeycardEmpty"
     }
 
+    readonly property QtObject predefinedKeycardData: QtObject {
+        readonly property int wronglyInsertedCard: 1
+        readonly property int hideKeyPair: 2
+        readonly property int wrongSeedPhrase: 4
+    }
+
     readonly property QtObject keycardSharedFlow: QtObject {
         readonly property string general: "General"
         readonly property string factoryReset: "FactoryReset"
+        readonly property string setupNewKeycard: "SetupNewKeycard"
     }
 
     readonly property QtObject keycardSharedState: QtObject {
@@ -77,12 +84,31 @@ QtObject {
         readonly property string pluginReader: "PluginReader"
         readonly property string readingKeycard: "ReadingKeycard"
         readonly property string insertKeycard: "InsertKeycard"
+        readonly property string keycardInserted: "KeycardInserted"
+        readonly property string createPin: "CreatePin"
+        readonly property string repeatPin: "RepeatPin"
+        readonly property string pinSet: "PinSet"
+        readonly property string pinVerified: "PinVerified"
         readonly property string enterPin: "EnterPin"
+        readonly property string wrongPin: "WrongPin"
+        readonly property string maxPinRetriesReached: "MaxPinRetriesReached"
         readonly property string factoryResetConfirmation: "FactoryResetConfirmation"
+        readonly property string factoryResetConfirmationDisplayMetadata: "FactoryResetConfirmationDisplayMetadata"
         readonly property string factoryResetSuccess: "FactoryResetSuccess"
+        readonly property string keycardEmptyMetadata: "KeycardEmptyMetadata"
+        readonly property string keycardMetadataDisplay: "KeycardMetadataDisplay"
         readonly property string keycardEmpty: "KeycardEmpty"
+        readonly property string keycardNotEmpty: "KeycardNotEmpty"
         readonly property string notKeycard: "NotKeycard"
         readonly property string recognizedKeycard: "RecognizedKeycard"
+        readonly property string selectExistingKeyPair: "SelectExistingKeyPair"
+        readonly property string enterSeedPhrase: "EnterSeedPhrase"
+        readonly property string wrongSeedPhrase: "WrongSeedPhrase"
+        readonly property string seedPhraseDisplay: "SeedPhraseDisplay"
+        readonly property string seedPhraseEnterWords: "SeedPhraseEnterWords"
+        readonly property string keyPairMigrateSuccess: "KeyPairMigrateSuccess"
+        readonly property string keyPairMigrateFailure: "KeyPairMigrateFailure"
+        readonly property string migratingKeyPair: "MigratingKeyPair"
     }
 
     readonly property QtObject keychain: QtObject {
@@ -339,6 +365,17 @@ QtObject {
             readonly property int pukCellHeight: 60
             readonly property int sharedFlowImageWidth: 240
             readonly property int sharedFlowImageHeight: 240
+            readonly property int popupWidth: 640
+            readonly property int popupHeight: 640
+            readonly property int popupBiggerHeight: 766
+            readonly property int titleHeight: 44
+            readonly property int messageHeight: 48
+        }
+
+        readonly property QtObject keyPairType: QtObject {
+            readonly property int profile: 0
+            readonly property int seedImport: 1
+            readonly property int privateKeyImport: 2
         }
 
         readonly property QtObject shared: QtObject {

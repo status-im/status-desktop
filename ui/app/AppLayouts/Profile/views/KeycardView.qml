@@ -12,10 +12,12 @@ import utils 1.0
 import shared.panels 1.0
 import shared.controls 1.0
 import shared.status 1.0
+import shared.popups.keycard 1.0
 
 import "../stores"
 import "../controls"
 import "../panels"
+import "../popups"
 
 SettingsContentBase {
     id: root
@@ -32,6 +34,29 @@ SettingsContentBase {
     ColumnLayout {
         id: contentColumn
         spacing: Constants.settingsSection.itemSpacing
+
+        Connections {
+            target: root.keycardStore.keycardModule
+
+            onDisplayKeycardSharedModuleFlow: {
+                keycardPopup.active = true
+            }
+            onDestroyKeycardSharedModuleFlow: {
+                keycardPopup.active = false
+            }
+        }
+
+        Loader {
+            id: keycardPopup
+            active: false
+            sourceComponent: KeycardPopup {
+                sharedKeycardModule: root.keycardStore.keycardModule.keycardSharedModule
+            }
+
+            onLoaded: {
+                keycardPopup.item.open()
+            }
+        }
 
         Image {
             Layout.alignment: Qt.AlignCenter
@@ -70,8 +95,8 @@ SettingsContentBase {
                     color: Theme.palette.baseColor1
                 }
             ]
-            sensor.onClicked: {
-                console.warn("TODO: Run Set up Keycard flow...")
+            onClicked: {
+                root.keycardStore.runSetupKeycardPopup()
             }
         }
 
@@ -92,7 +117,7 @@ SettingsContentBase {
                     color: Theme.palette.baseColor1
                 }
             ]
-            sensor.onClicked: {
+            onClicked: {
                 console.warn("TODO: Generate a seed phrase...")
             }
         }
@@ -107,7 +132,7 @@ SettingsContentBase {
                     color: Theme.palette.baseColor1
                 }
             ]
-            sensor.onClicked: {
+            onClicked: {
                 console.warn("TODO: Import or restore via a seed phrase...")
             }
         }
@@ -122,7 +147,7 @@ SettingsContentBase {
                     color: Theme.palette.baseColor1
                 }
             ]
-            sensor.onClicked: {
+            onClicked: {
                 console.warn("TODO: Import from Keycard to Status Desktop...")
             }
         }
@@ -144,7 +169,7 @@ SettingsContentBase {
                     color: Theme.palette.baseColor1
                 }
             ]
-            sensor.onClicked: {
+            onClicked: {
                 console.warn("TODO: Check what’s on a Keycard...")
             }
         }
@@ -159,7 +184,7 @@ SettingsContentBase {
                     color: Theme.palette.baseColor1
                 }
             ]
-            sensor.onClicked: {
+            onClicked: {
                 console.warn("TODO: Factory reset a Keycard...")
             }
         }
