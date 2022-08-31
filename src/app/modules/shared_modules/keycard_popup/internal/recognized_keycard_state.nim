@@ -9,11 +9,15 @@ proc delete*(self: RecognizedKeycardState) =
   self.State.delete
 
 method executePrimaryCommand*(self: RecognizedKeycardState, controller: Controller) =
-  if self.flowType == FlowType.FactoryReset:
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method getNextSecondaryState*(self: RecognizedKeycardState, controller: Controller): State =
-  if controller.containsMetadata():
-    discard # from here we will jump to enter pin view once we add that in keycard settings
-  else:
-    return createState(StateType.FactoryResetConfirmation, self.flowType, nil)
+  if self.flowType == FlowType.FactoryReset:
+    if controller.containsMetadata():
+      return createState(StateType.EnterPin, self.flowType, nil)
+    else:
+      return createState(StateType.FactoryResetConfirmation, self.flowType, nil)
+  if self.flowType == FlowType.SetupNewKeycard:
+    return createState(StateType.CreatePin, self.flowType, self.getBackState)

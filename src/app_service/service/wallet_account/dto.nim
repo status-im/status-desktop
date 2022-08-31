@@ -2,6 +2,12 @@ import tables, json, sequtils, sugar, strutils
 
 include  ../../common/json_utils
 
+const WalletTypeDefaultStatusAccount* = ""
+const WalletTypeGenerated* = "generated"
+const WalletTypeSeed* = "seed"
+const WalletTypeWatch* = "watch"
+const WalletTypeKey* = "key"
+
 type BalanceDto* = object
   balance*: float64
   currencyBalance*: float64

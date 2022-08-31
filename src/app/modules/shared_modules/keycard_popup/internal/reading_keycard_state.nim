@@ -9,21 +9,16 @@ proc delete*(self: ReadingKeycardState) =
   self.State.delete
 
 method executePrimaryCommand*(self: ReadingKeycardState, controller: Controller) =
-  if self.flowType == FlowType.FactoryReset:
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+
+method getNextSecondaryState*(self: ReadingKeycardState, controller: Controller): State =
+  let (flowType, flowEvent) = controller.getLastReceivedKeycardData()
+  # this is used in case a keycard is not inserted in the moment when flow is run (we're animating an insertion)
+  return ensureReaderAndCardPresenceAndResolveNextState(self, flowType, flowEvent, controller)
 
 method resolveKeycardNextState*(self: ReadingKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
-  if self.flowType == FlowType.FactoryReset:
-    if keycardFlowType == ResponseTypeValueSwapCard and 
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorNotAKeycard:
-        return createState(StateType.NotKeycard, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
-      keycardEvent.error.len > 0:
-      if keycardEvent.error == ErrorOk:
-        return createState(StateType.FactoryResetSuccess, self.flowType, nil)
-      if keycardEvent.error == ErrorNoKeys:
-        return createState(StateType.KeycardEmpty, self.flowType, nil)
-      controller.setContainsMetadata(keycardEvent.error != ErrorNoData)
-      return createState(StateType.RecognizedKeycard, self.flowType, nil)
+  # this is used in case a keycard is inserted and we jump to the first meaningful screen
+  return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)

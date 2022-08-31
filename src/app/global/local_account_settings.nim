@@ -7,7 +7,7 @@ const LS_KEY_STORE_TO_KEYCHAIN* = "storeToKeychain"
 const DEFAULT_STORE_TO_KEYCHAIN = "notNow"
 # Local Account Settings values:
 const LS_VALUE_STORE* = "store"
-const LS_VALUE_NOTNOW* = "notNow"
+const LS_VALUE_NOT_NOW* = "notNow"
 const LS_VALUE_NEVER* = "never"
 
 QtObject:

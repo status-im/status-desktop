@@ -9,5 +9,6 @@ proc delete*(self: KeycardEmptyState) =
   self.State.delete
 
 method executePrimaryCommand*(self: KeycardEmptyState, controller: Controller) =
-  if self.flowType == FlowType.FactoryReset:
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

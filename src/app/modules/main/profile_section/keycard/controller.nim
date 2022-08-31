@@ -4,6 +4,8 @@ import io_interface
 
 import ../../../../core/eventemitter
 
+import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
+
 logScope:
   topics = "profile-section-keycard-module-controller"
 
@@ -23,4 +25,9 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  discard
+  self.events.on(SignalSharedKeycarModuleFlowTerminated) do(e: Args):
+    let args = SharedKeycarModuleFlowTerminatedArgs(e)
+    self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
+
+  self.events.on(SignalSharedKeycarModuleDisplayPopup) do(e: Args):
+    self.delegate.onDisplayKeycardSharedModuleFlow()

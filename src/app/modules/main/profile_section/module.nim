@@ -99,7 +99,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
     result, events, settingsService, ensService, walletAccountService, networkService
   )
   result.communitiesModule = communities_module.newModule(result, communityService)
-  result.keycardModule = keycard_module.newModule(result, events, keycardService, walletAccountService)
+  result.keycardModule = keycard_module.newModule(result, events, keycardService, privacyService, accountsService, 
+    walletAccountService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 

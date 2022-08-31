@@ -1,6 +1,7 @@
 import NimQml
 import io_interface
 import internal/[state, state_wrapper]
+import models/[key_pair_model, key_pair_item, key_pair_selected_item]
 
 QtObject:
   type
@@ -8,11 +9,30 @@ QtObject:
       delegate: io_interface.AccessInterface
       currentState: StateWrapper
       currentStateVariant: QVariant
+      keyPairModel: KeyPairModel
+      keyPairModelVariant: QVariant
+      selectedKeyPairItem: KeyPairSelectedItem
+      selectedKeyPairItemVariant: QVariant
+      keyPairStoredOnKeycardIsKnown: bool
+      keyPairStoredOnKeycard: KeyPairSelectedItem
+      keyPairStoredOnKeycardVariant: QVariant
       keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
 
   proc delete*(self: View) =
     self.currentStateVariant.delete
     self.currentState.delete
+    if not self.keyPairModel.isNil:
+      self.keyPairModel.delete
+    if not self.keyPairModelVariant.isNil:
+      self.keyPairModelVariant.delete
+    if not self.selectedKeyPairItem.isNil:
+      self.selectedKeyPairItem.delete
+    if not self.selectedKeyPairItemVariant.isNil:
+      self.selectedKeyPairItemVariant.delete
+    if not self.keyPairStoredOnKeycard.isNil:
+      self.keyPairStoredOnKeycard.delete
+    if not self.keyPairStoredOnKeycardVariant.isNil:
+      self.keyPairStoredOnKeycardVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -25,6 +45,7 @@ QtObject:
     signalConnect(result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2)
     signalConnect(result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
     signalConnect(result.currentState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
+    signalConnect(result.currentState, "tertiaryActionClicked()", result, "onTertiaryActionClicked()", 2)
 
   proc currentStateObj*(self: View): State =
     return self.currentState.getStateObj()
@@ -57,5 +78,84 @@ QtObject:
   proc onSecondaryActionClicked*(self: View) {.slot.} =
     self.delegate.onSecondaryActionClicked()
 
-  proc runFactoryResetFlow*(self: View) {.slot.} =
-    self.delegate.runFactoryResetFlow()
+  proc onTertiaryActionClicked*(self: View) {.slot.} =
+    self.delegate.onTertiaryActionClicked()
+
+  proc keyPairModel*(self: View): KeyPairModel =
+    return self.keyPairModel
+
+  proc keyPairModelChanged(self: View) {.signal.}
+  proc getKeyPairModel(self: View): QVariant {.slot.} =
+    return self.keyPairModelVariant
+  QtProperty[QVariant] keyPairModel:
+    read = getKeyPairModel
+    notify = keyPairModelChanged
+
+  proc createKeyPairModel*(self: View, items: seq[KeyPairItem]) =
+    if self.keyPairModel.isNil:
+      self.keyPairModel = newKeyPairModel()
+    if self.keyPairModelVariant.isNil:
+      self.keyPairModelVariant = newQVariant(self.keyPairModel)
+    if self.selectedKeyPairItem.isNil:
+      self.selectedKeyPairItem = newKeyPairSelectedItem()
+    if self.selectedKeyPairItemVariant.isNil:
+      self.selectedKeyPairItemVariant = newQVariant(self.selectedKeyPairItem)
+    if self.keyPairStoredOnKeycard.isNil:
+      self.keyPairStoredOnKeycard = newKeyPairSelectedItem()
+    if self.keyPairStoredOnKeycardVariant.isNil:
+      self.keyPairStoredOnKeycardVariant = newQVariant(self.keyPairStoredOnKeycard)
+    self.keyPairModel.setItems(items)
+    self.keyPairModelChanged()
+
+  proc getSelectedKeyPairItem*(self: View): QVariant {.slot.} =
+    return self.selectedKeyPairItemVariant
+  QtProperty[QVariant] selectedKeyPairItem:
+    read = getSelectedKeyPairItem
+  proc setSelectedKeyPairByTheAddressItIsDerivedFrom*(self: View, address: string) {.slot.} =
+    let item = self.keyPairModel.findItemByDerivedFromAddress(address)
+    self.delegate.setSelectedKeyPair(item)
+    self.selectedKeyPairItem.setItem(item)
+
+  proc getKeyPairStoredOnKeycardIsKnown*(self: View): bool {.slot.} =
+    return self.keyPairStoredOnKeycardIsKnown
+  QtProperty[bool] keyPairStoredOnKeycardIsKnown:
+    read = getKeyPairStoredOnKeycardIsKnown
+  proc setKeyPairStoredOnKeycardIsKnown*(self: View, value: bool) =
+    self.keyPairStoredOnKeycardIsKnown = value
+
+  proc getKeyPairStoredOnKeycard*(self: View): QVariant {.slot.} =
+    return self.keyPairStoredOnKeycardVariant
+  QtProperty[QVariant] keyPairStoredOnKeycard:
+    read = getKeyPairStoredOnKeycard
+  proc setKeyPairStoredOnKeycard*(self: View, item: KeyPairItem) =
+    self.keyPairStoredOnKeycard.setItem(item)
+
+  proc setPin*(self: View, value: string) {.slot.} =
+    self.delegate.setPin(value)
+
+  proc setPassword*(self: View, value: string) {.slot.} =
+    self.delegate.setPassword(value)
+
+  proc checkRepeatedKeycardPinWhileTyping*(self: View, pin: string): bool {.slot.} =
+    return self.delegate.checkRepeatedKeycardPinWhileTyping(pin)
+
+  proc getMnemonic*(self: View): string {.slot.} =
+    return self.delegate.getMnemonic()
+
+  proc setSeedPhrase*(self: View, value: string) {.slot.} =
+    self.delegate.setSeedPhrase(value)
+
+  proc getSeedPhrase*(self: View): string {.slot.} =
+    return self.delegate.getSeedPhrase()
+
+  proc validSeedPhrase*(self: View, value: string): bool {.slot.} =
+    return self.delegate.validSeedPhrase(value)
+  
+  proc loggedInUserUsesBiometricLogin*(self: View): bool {.slot.} =
+    return self.delegate.loggedInUserUsesBiometricLogin()
+
+  proc migratingProfileKeyPair*(self: View): bool {.slot.} =
+    return self.delegate.migratingProfileKeyPair()
+
+  proc isProfileKeyPairMigrated*(self: View): bool {.slot.} =
+    return self.delegate.isProfileKeyPairMigrated()

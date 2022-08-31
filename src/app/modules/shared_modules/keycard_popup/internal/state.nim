@@ -1,24 +1,39 @@
 import ../controller
 from ../../../../../app_service/service/keycard/service import KeycardEvent, KeyDetails
+from ../io_interface import FlowType
 
-export KeycardEvent, KeyDetails
-
-type FlowType* {.pure.} = enum
-  General = "General"
-  FactoryReset = "FactoryReset"
-  
+export FlowType, KeycardEvent, KeyDetails
 
 type StateType* {.pure.} = enum
   NoState = "NoState"
   PluginReader = "PluginReader"
   ReadingKeycard = "ReadingKeycard"
   InsertKeycard = "InsertKeycard"
+  KeycardInserted = "KeycardInserted"
+  CreatePin = "CreatePin"
+  RepeatPin = "RepeatPin"
+  PinSet = "PinSet"
+  PinVerified = "PinVerified"
   EnterPin = "EnterPin"
+  WrongPin = "WrongPin"
+  MaxPinRetriesReached = "MaxPinRetriesReached"
   FactoryResetConfirmation = "FactoryResetConfirmation"
+  FactoryResetConfirmationDisplayMetadata = "FactoryResetConfirmationDisplayMetadata"
   FactoryResetSuccess = "FactoryResetSuccess"
+  KeycardEmptyMetadata = "KeycardEmptyMetadata"
+  KeycardMetadataDisplay = "KeycardMetadataDisplay"
   KeycardEmpty = "KeycardEmpty"
+  KeycardNotEmpty = "KeycardNotEmpty"
   NotKeycard = "NotKeycard"
   RecognizedKeycard = "RecognizedKeycard"
+  SelectExistingKeyPair = "SelectExistingKeyPair"
+  EnterSeedPhrase = "EnterSeedPhrase"
+  WrongSeedPhrase = "WrongSeedPhrase"
+  SeedPhraseDisplay = "SeedPhraseDisplay"
+  SeedPhraseEnterWords = "SeedPhraseEnterWords"
+  KeyPairMigrateSuccess = "KeyPairMigrateSuccess"
+  KeyPairMigrateFailure = "KeyPairMigrateFailure"
+  MigratingKeyPair = "MigratingKeyPair"
 
 
 ## This is the base class for all state we may have in onboarding/login flow.
@@ -70,6 +85,10 @@ method getNextPrimaryState*(self: State, controller: Controller): State  {.inlin
 method getNextSecondaryState*(self: State, controller: Controller): State {.inline base.} =
   return nil
 
+## Returns next state instance in case the "tertiary" action is triggered
+method getNextTertiaryState*(self: State, controller: Controller): State {.inline base.} =
+  return nil
+
 ## This method is executed in case "back" button is clicked
 method executeBackCommand*(self: State, controller: Controller) {.inline base.} =
   discard
@@ -80,6 +99,10 @@ method executePrimaryCommand*(self: State, controller: Controller) {.inline base
 
 ## This method is executed in case "secondary" action is triggered
 method executeSecondaryCommand*(self: State, controller: Controller) {.inline base.} =
+  discard
+
+## This method is executed in case "tertiary" action is triggered
+method executeTertiaryCommand*(self: State, controller: Controller) {.inline base.} =
   discard
 
 ## This method is used for handling aync responses for keycard related states

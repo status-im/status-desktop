@@ -11,10 +11,15 @@ proc delete*(self: FactoryResetConfirmationState) =
 method executePrimaryCommand*(self: FactoryResetConfirmationState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset:
     controller.runGetAppInfoFlow(factoryReset = true)
-
+  elif self.flowType == FlowType.SetupNewKeycard:
+    controller.setKeycardData(getPredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
+    controller.runGetAppInfoFlow(factoryReset = true)
+    
 method executeSecondaryCommand*(self: FactoryResetConfirmationState, controller: Controller) =
-  if self.flowType == FlowType.FactoryReset:
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
-method getNextPrimaryState*(self: FactoryResetConfirmationState, controller: Controller): State =
-  return createState(StateType.PluginReader, self.flowType, nil)
+method resolveKeycardNextState*(self: FactoryResetConfirmationState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+  controller: Controller): State =
+  return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)

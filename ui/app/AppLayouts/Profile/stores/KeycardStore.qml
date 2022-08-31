@@ -6,4 +6,7 @@ QtObject {
 
     property var keycardModule
 
+    function runSetupKeycardPopup() {
+        root.keycardModule.runSetupKeycardPopup()
+    }
 }
