@@ -6,7 +6,7 @@ import ../../../constants as status_const
 
 import constants
 
-type FlowType {.pure.} = enum
+type KCSFlowType* {.pure.} = enum
   NoFlow = -1 # this type is added only for the desktop app purpose
   GetAppInfo = 0 # enumeration of these flows should follow enumeration in the `status-keycard-go`
   RecoverAccount
@@ -53,11 +53,13 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
     closingApp: bool
-    currentFlow: FlowType
+    currentFlow: KCSFlowType
+    lastReceivedKeycardData: tuple[flowType: string, flowEvent: KeycardEvent]
+    setPayloadForCurrentFlow: JsonNode
 
   #################################################
   # Forward declaration section
-  proc runTimer(self: Service)
+  proc startGetMetadataFlow*(self: Service)
 
   #################################################
 
@@ -74,7 +76,7 @@ QtObject:
     result.events = events
     result.threadpool = threadpool
     result.closingApp = false
-    result.currentFlow = FlowType.NoFlow
+    result.currentFlow = KCSFlowType.NoFlow
 
   proc init*(self: Service) =
     debug "init keycard using ", pairingsJson=status_const.KEYCARDPAIRINGDATAFILE
@@ -98,10 +100,14 @@ QtObject:
     
     let flowType = typeObj.getStr
     let flowEvent = toKeycardEvent(eventObj)
+    self.lastReceivedKeycardData = (flowType: flowType, flowEvent: flowEvent)
     self.events.emit(SignalKeycardResponse, KeycardArgs(flowType: flowType, flowEvent: flowEvent))
 
   proc receiveKeycardSignal(self: Service, signal: string) {.slot.} =
     self.processSignal(signal)
+
+  proc getLastReceivedKeycardData*(self: Service): tuple[flowType: string, flowEvent: KeycardEvent] =
+    return self.lastReceivedKeycardData
 
   proc buildSeedPhrasesFromIndexes*(self: Service, seedPhraseIndexes: seq[int]): seq[string] =
     var seedPhrase: seq[string]
@@ -109,31 +115,42 @@ QtObject:
       seedPhrase.add(englishWords[ind])
     return seedPhrase
 
+  proc updateLocalPayloadForCurrentFlow(self: Service, obj: JsonNode, cleanBefore = false) =
+    if cleanBefore:
+      self.setPayloadForCurrentFlow = %* {}
+    for k, v in obj:
+      self.setPayloadForCurrentFlow[k] = v
+
+  proc getCurrentFlow*(self: Service): KCSFlowType =
+    return self.currentFlow
+
   proc startFlow(self: Service, payload: JsonNode) =
+    self.updateLocalPayloadForCurrentFlow(payload, cleanBefore = true)
     let response = keycard_go.keycardStartFlow(self.currentFlow.int, $payload)
-    debug "keycardStartFlow", flowType=self.currentFlow.int, payload=payload, response=response
+    debug "keycardStartFlow", currentFlow=self.currentFlow.int, payload=payload, response=response
 
   proc resumeFlow(self: Service, payload: JsonNode) =
+    self.updateLocalPayloadForCurrentFlow(payload)
     let response = keycard_go.keycardResumeFlow($payload)
-    debug "keycardResumeFlow", flowType=self.currentFlow.int, payload=payload, response=response
+    debug "keycardResumeFlow", currentFlow=self.currentFlow.int, payload=payload, response=response
 
   proc cancelCurrentFlow*(self: Service) =
     let response = keycard_go.keycardCancelFlow()
-    self.currentFlow = FlowType.NoFlow
-    debug "keycardCancelFlow", flowType=self.currentFlow.int, response=response
+    self.currentFlow = KCSFlowType.NoFlow
+    debug "keycardCancelFlow", currentFlow=self.currentFlow.int, response=response
 
   proc generateRandomPUK*(self: Service): string =
     for i in 0 ..< PUKLengthForStatusApp:
       result = result & $rand(0 .. 9)
 
   proc onTimeout(self: Service, response: string) {.slot.} =
-    if(self.closingApp or self.currentFlow == FlowType.NoFlow):
+    if(self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
       return
-    debug "onTimeout, about to start flow: ", flowType=self.currentFlow
-    self.startFlow(%* { })
+    debug "onTimeout, about to start flow: ", currentFlow=self.currentFlow
+    self.startFlow(self.setPayloadForCurrentFlow)
 
   proc runTimer(self: Service) =
-    if(self.closingApp or self.currentFlow == FlowType.NoFlow):
+    if(self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
       return
 
     let arg = TimerTaskArg(
@@ -148,7 +165,7 @@ QtObject:
     var payload = %* { }
     if factoryReset:
       payload[RequestParamFactoryReset] = %* factoryReset
-    self.currentFlow = FlowType.LoadAccount
+    self.currentFlow = KCSFlowType.LoadAccount
     self.startFlow(payload)
 
   proc startLoadAccountFlowWithSeedPhrase*(self: Service, seedPhraseLength: int, seedPhrase: string, factoryReset: bool) =
@@ -163,38 +180,47 @@ QtObject:
     }
     if factoryReset:
       payload[RequestParamFactoryReset] = %* factoryReset
-    self.currentFlow = FlowType.LoadAccount
+    self.currentFlow = KCSFlowType.LoadAccount
     self.startFlow(payload)
 
   proc startLoginFlow*(self: Service) =
     let payload = %* { }
-    self.currentFlow = FlowType.Login
+    self.currentFlow = KCSFlowType.Login
     self.startFlow(payload)
 
   proc startLoginFlowAutomatically*(self: Service, pin: string) =
     let payload = %* { 
       RequestParamPIN: pin
     }
-    self.currentFlow = FlowType.Login
+    self.currentFlow = KCSFlowType.Login
     self.startFlow(payload)
 
   proc startRecoverAccountFlow*(self: Service) =
     let payload = %* { }
-    self.currentFlow = FlowType.RecoverAccount
+    self.currentFlow = KCSFlowType.RecoverAccount
     self.startFlow(payload)    
 
   proc startGetAppInfoFlow*(self: Service, factoryReset: bool) =
     var payload = %* { }
     if factoryReset:
       payload[RequestParamFactoryReset] = %* factoryReset
-    self.currentFlow = FlowType.GetAppInfo
+    self.currentFlow = KCSFlowType.GetAppInfo
     self.startFlow(payload)
 
   proc startGetMetadataFlow*(self: Service) =
     let payload = %* { 
       RequestParamResolveAddr: true
     }
-    self.currentFlow = FlowType.GetMetadata
+    self.currentFlow = KCSFlowType.GetMetadata
+    self.startFlow(payload)
+
+  proc startStoreMetadataFlow*(self: Service, cardName: string, pin: string, walletPaths: seq[string]) =
+    let payload = %* { 
+      RequestParamPIN: pin,
+      RequestParamCardName: cardName,
+      RequestParamWalletPaths: walletPaths
+    }
+    self.currentFlow = KCSFlowType.StoreMetadata
     self.startFlow(payload)
 
   proc storePin*(self: Service, pin: string, puk: string) =
