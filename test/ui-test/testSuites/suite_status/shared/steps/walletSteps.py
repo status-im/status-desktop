@@ -1,5 +1,6 @@
 from screens.StatusWalletScreen import StatusWalletScreen
-
+from scripts.decorators import verify_screenshot 
+ 
 _statusMain = StatusMainScreen()
 _walletScreen = StatusWalletScreen()
 
@@ -12,6 +13,7 @@ def step(context):
     _walletScreen.accept_signing_phrase()
 
 @When("the user adds watch only account with |any| and |any|")
+@verify_screenshot
 def step(context, account_name, address):
     _walletScreen.add_watch_only_account(account_name, address)
 
@@ -43,7 +45,7 @@ def step(context, name, new_name):
 def step(context, name):
     _walletScreen.delete_saved_address(name)
 
-@When("the user toggles the network |any|")    
+@When("the user toggles the network |any|")
 def step(context, network_name):
     _walletScreen.toggle_network(network_name)
 

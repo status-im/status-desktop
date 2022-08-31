@@ -1,7 +1,9 @@
 from drivers.SquishDriver import *
+import squish
 from remotesystem import RemoteSystem
 import time
 import platform
+from typing import Dict, Any
 
 # The default maximum timeout to find ui object
 _MAX_WAIT_OBJ_TIMEOUT = 5000
@@ -11,7 +13,6 @@ _MIN_WAIT_OBJ_TIMEOUT = 500
 
 # The default maximum timeout to wait for close the app in seconds
 _MAX_WAIT_CLOSE_APP_TIMEOUT = 20
-
 
 def verify_screen(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
     result = is_loaded_visible_and_enabled(objName, timeout)
@@ -104,9 +105,18 @@ def verify_failure(errorMsg: str):
 def log(text: str):
     test.log(text)
     
+    
+def verify_or_create_screenshot(vp: str, obj: Dict[str, Any]):
+    try:
+        test.vpWithObject(vp, obj)
+    except RuntimeError:
+        squish.createVisualVP(obj, vp)
+    except squish.SquishVerificationFailedException:
+        raise
+    
 def verify_screenshot(vp: str):
     test.vp(vp)
-
+    
 def imagePresent(imageName: str, tolerant: bool = True, threshold: int = 99.5, minScale: int = 50, maxScale: int =  200, multiscale: bool = True):
     test.imagePresent(imageName, {"tolerant": tolerant, "threshold": threshold, "minScale": minScale, "maxScale": maxScale, "multiscale": multiscale})
 

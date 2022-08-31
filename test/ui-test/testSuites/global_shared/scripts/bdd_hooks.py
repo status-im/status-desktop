@@ -19,7 +19,9 @@ def hook(context):
     context.userData["status_data_folder_path"] = _status_data_folder_path
     context.userData["fixtures_root"] = os.path.join(os.path.dirname(__file__), "../../../fixtures/")
     context.userData["search_images"] = os.path.join(os.path.dirname(__file__), "../shared/searchImages/")
-
+    
+    context.userData["scenario_name"] = context._data["title"]
+    
     base_path = os.path.join(os.path.dirname(__file__))
     split_path = base_path.split("/")
 
@@ -39,3 +41,7 @@ def hook(context):
     currentApplicationContext().detach()
     snooze(_app_closure_timeout)
 
+
+@OnStepEnd
+def hook(context):
+    context.userData["step_name"] = context._data["text"]
