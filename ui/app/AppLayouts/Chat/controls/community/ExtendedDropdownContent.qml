@@ -77,8 +77,8 @@ Item {
 
     StatusFlatRoundButton {
         id: filterButton
-        implicitWidth: 32
-        implicitHeight: 32
+        width: 32
+        height: 32
         visible: d.isFilterOptionVisible
         type: StatusFlatRoundButton.Type.Secondary
         icon.name: "filter"

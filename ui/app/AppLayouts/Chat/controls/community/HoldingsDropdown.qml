@@ -20,6 +20,10 @@ StatusDropdown {
     property string collectibleName: d.defaultCollectibleNameText
     property bool collectiblesSpecificAmount: false
 
+    property int ensType: EnsPanel.EnsType.Any
+    property string ensDomainName: ""
+    property bool ensDomainNameValid: false
+
     property url collectibleImage: ""
     property int operator: SQ.Utils.Operators.None
     property bool withOperatorSelector: true
@@ -36,6 +40,8 @@ StatusDropdown {
         root.collectibleName = d.defaultCollectibleNameText
         root.collectibleImage = ""
         root.collectiblesSpecificAmount = false
+        root.ensType = EnsPanel.EnsType.Any
+        root.ensDomainName = ""
         root.operator = SQ.Utils.Operators.None
     }
 
@@ -51,6 +57,7 @@ StatusDropdown {
         // Internal management properties:
         readonly property bool tokensReady: root.tokenAmount > 0 && root.tokenName !== d.defaultTokenNameText
         readonly property bool collectiblesReady: root.collectibleAmount > 0 && root.collectibleName !== d.defaultCollectibleNameText
+        readonly property bool ensReady: root.ensType === EnsPanel.EnsType.Any || root.ensDomainNameValid
 
         readonly property string operatorsState: "OPERATORS"
         readonly property string tabsState: "TABS"
@@ -128,7 +135,8 @@ StatusDropdown {
                 PropertyChanges {
                     target: root; topPadding: root.withOperatorSelector ? d.topPaddingWithBack : d.extendedTopPadding
                     width: d.defaultWidth
-                    height: (loader.item.state === d.collectiblesState && root.collectiblesSpecificAmount) ? d.enlargedHeight : d.defaultHeight
+                    height: (loader.item.state === d.collectiblesState && root.collectiblesSpecificAmount)
+                            || (loader.item.state === d.ensState && root.ensType === EnsPanel.EnsType.CustomSubdomain) ? d.enlargedHeight : d.defaultHeight
                 }
             },
             State {
@@ -168,7 +176,7 @@ StatusDropdown {
                 },
                 State {
                     name: d.ensState
-                    PropertyChanges {target: holdingsTabs; sourceComponent: ensLayout; addButtonEnabled: false}
+                    PropertyChanges {target: holdingsTabs; sourceComponent: ensLayout; addButtonEnabled: d.ensReady}
                 }
             ]
 
@@ -245,10 +253,33 @@ StatusDropdown {
         }
     }
 
-    // TODO
     Component {
         id: ensLayout
-        EnsPanel {}
+
+        EnsPanel {
+            ensType: root.ensType
+            onEnsTypeChanged: root.ensType = ensType
+
+            domainName: root.ensDomainName
+            onDomainNameChanged: root.ensDomainName = domainName
+            onDomainNameValidChanged: root.ensDomainNameValid = domainNameValid
+
+            Connections {
+                target: d
+
+                function onAddClicked() {
+                    const icon = "qrc:imports/assets/icons/profile/ensUsernames.svg"
+
+                    if (root.ensType === EnsPanel.EnsType.Any) {
+                        root.addItem("EnsAny", qsTr("Any ENS username"), icon,
+                                     root.operator)
+                    } else {
+                        root.addItem("EnsAny", qsTr(`ENS username on '%1' domain`).arg(root.ensDomainName), icon,
+                                     root.operator)
+                    }
+                }
+            }
+        }
     }
 
     Component {
