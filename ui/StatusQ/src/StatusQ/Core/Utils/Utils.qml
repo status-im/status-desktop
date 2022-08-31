@@ -244,6 +244,23 @@ QtObject {
     function elideText(text, leftCharsCount, rightCharsCount = leftCharsCount) {
         return text.substr(0, leftCharsCount) + "..." + text.substr(text.length - rightCharsCount)
     }
+
+    function ensureVisible(flickable, rect) {
+        const rectRight = rect.x + rect.width
+        const rectBottom = rect.y + rect.height
+        const flickableRight = flickable.contentX + flickable.width
+        const flickableBottom = flickable.contentY + flickable.height
+
+        if (flickable.contentX >= rect.x)
+            flickable.contentX = rect.x
+        else if (flickableRight <= rectRight)
+            flickable.contentX = rectRight - flickable.width
+
+        if (flickable.contentY >= rect.y)
+            flickable.contentY = rect.y
+        else if (flickableBottom <= rectBottom)
+            flickable.contentY = rectBottom - flickable.height
+    }
 }
 
 

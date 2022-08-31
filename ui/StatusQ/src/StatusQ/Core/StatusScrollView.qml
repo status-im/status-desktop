@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 
 import StatusQ.Controls 0.1
+import StatusQ.Core.Utils 0.1
 
 /*!
    \qmltype StatusScrollView
@@ -62,5 +63,9 @@ Flickable {
     ScrollBar.vertical: StatusScrollBar {
         policy: ScrollBar.AsNeeded
         visible: resolveVisibility(policy, root.height, root.contentHeight)
+    }
+
+    function ensureVisible(rect) {
+        Utils.ensureVisible(this, rect)
     }
 }

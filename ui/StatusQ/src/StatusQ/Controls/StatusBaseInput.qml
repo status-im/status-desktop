@@ -7,6 +7,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 
 /*!
       \qmltype StatusBaseInput
@@ -339,17 +340,6 @@ Item {
                     }
                     clip: true
 
-                    function ensureVisible(r) {
-                        if (contentX >= r.x)
-                            contentX = r.x
-                        else if (contentX + width <= r.x + r.width)
-                            contentX = r.x + r.width - width
-                        if (contentY >= r.y)
-                            contentY = r.y
-                        else if (contentY + height <= r.y + r.height)
-                            contentY = r.y + r.height - height
-                    }
-
                     TextEdit {
                         id: edit
                         property string previousText: text
@@ -374,7 +364,7 @@ Item {
                             edit.keyEvent = event.key
                             root.keyPressed(event);
                         }
-                        onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
+                        onCursorRectangleChanged: Utils.ensureVisible(flick, cursorRectangle)
                         onActiveFocusChanged: if (root.pristine) root.pristine = false
                         onTextChanged: {
                             if (previousText === text) {
