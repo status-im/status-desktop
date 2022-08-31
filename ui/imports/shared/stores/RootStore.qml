@@ -106,6 +106,22 @@ QtObject {
         chatSectionChatContentInputArea.getTrendingsGifs()
     }
 
+    function updateWhitelistedUnfurlingSites(hostname, whitelisted) {
+        // no way to send update notification for individual array entries
+        let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
+
+        if (!settings)
+            settings = {}
+
+        if (settings[hostname] === whitelisted)
+            return
+
+        settings[hostname] = whitelisted
+        localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
+        if(hostname === "media.tenor.com" && whitelisted === false)
+            RootStore.setIsTenorWarningAccepted(false)
+    }
+
     function getRecentsGifs() {
         chatSectionChatContentInputArea.getRecentsGifs()
     }
