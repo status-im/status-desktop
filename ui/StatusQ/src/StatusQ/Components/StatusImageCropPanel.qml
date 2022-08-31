@@ -216,6 +216,7 @@ Item {
                 anchors.fill: parent
 
                 enabled: root.interactive
+                cursorShape: Qt.SizeAllCursor
 
                 property var lastDragPoint: null
                 onReleased: lastDragPoint = null
