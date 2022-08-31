@@ -14,8 +14,6 @@ Rectangle {
 
     signal doRetry()
 
-    height: parent.height
-    width: parent.width
     color: Style.current.background
 
     StatusBaseText {

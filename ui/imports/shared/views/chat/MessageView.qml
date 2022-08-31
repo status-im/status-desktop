@@ -637,6 +637,9 @@ Loader {
                     messageStore: root.messageStore
                     store: root.rootStore
                     isCurrentUser: root.amISender
+                    onImageClicked: {
+                        root.imageClicked(image);
+                    }
                 }
             }
 

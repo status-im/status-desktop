@@ -22,6 +22,9 @@ Column {
     property string linkUrls: ""
     property bool isCurrentUser: false
     property bool isImageLink: false
+
+    signal imageClicked(var image)
+
     spacing: Style.current.halfPadding
     height: childrenRect.height
 
@@ -76,12 +79,12 @@ Column {
                 }
             }
 
-           Connections {
-               id: linkFetchConnections
-               enabled: false
-               target: root.messageStore.messageModule
-               onLinkPreviewDataWasReceived: {
-                    let response
+            Connections {
+                id: linkFetchConnections
+                enabled: false
+                target: root.messageStore.messageModule
+                onLinkPreviewDataWasReceived: {
+                    let response = {}
                     try {
                         response = JSON.parse(previewData)
                     } catch (e) {
@@ -106,8 +109,8 @@ Column {
                         linkData.address = link
                         return linkMessageLoader.sourceComponent = unfurledLinkComponent
                     }
-               }
-           }
+                }
+            }
 
             Connections {
                 id: linkCommunityFetchConnections
@@ -134,37 +137,26 @@ Column {
                 // Reset the height in case we set it to 0 below. See note below
                 // for more information
                 this.height = undefined
-                if (Utils.hasImageExtension(link)) {
-                    if (RootStore.displayChatImages) {
-                        linkData = {
-                            thumbnailUrl: link
-                        }
-                        return unfurledImageComponent
-                    } else {
-                        if (RootStore.neverAskAboutUnfurlingAgain || (isImageLink && index > 0)) {
-                            return
-                        }
 
-                        isImageLink = true
-                        return enableLinkComponent
-                    }
-                }
-
-                let linkWhiteListed = false
                 const linkHostname = Utils.getHostname(link)
                 if (!localAccountSensitiveSettings.whitelistedUnfurlingSites) {
                     localAccountSensitiveSettings.whitelistedUnfurlingSites = {}
                 }
-                const linkExists = Object.keys(localAccountSensitiveSettings.whitelistedUnfurlingSites).some(function(whitelistedHostname) {
-                    const exists = linkHostname.endsWith(whitelistedHostname)
-                    if (exists) {
-                        linkWhiteListed = localAccountSensitiveSettings.whitelistedUnfurlingSites[whitelistedHostname] === true
-                    }
-                    return exists
+
+                const whitelistHosts = Object.keys(localAccountSensitiveSettings.whitelistedUnfurlingSites)
+                const linkExists = whitelistHosts.some(function(hostname) {
+                    return linkHostname.endsWith(hostname)
                 })
-                if (!linkWhiteListed && linkExists && !RootStore.neverAskAboutUnfurlingAgain) {
+
+                const linkWhiteListed = linkExists && whitelistHosts.some(function(hostname) {
+                    return linkHostname.endsWith(hostname) && localAccountSensitiveSettings.whitelistedUnfurlingSites[hostname] === true
+                })
+
+                const isImage = Utils.hasImageExtension(link)
+                if (!linkWhiteListed && linkExists && !RootStore.neverAskAboutUnfurlingAgain && !isImage) {
                     return enableLinkComponent
                 }
+
                 if (linkWhiteListed) {
                     if (fetched) {
                         if (linkData.communityId) {
@@ -193,6 +185,20 @@ Column {
 
                     root.messageStore.getLinkPreviewData(link, linkMessageLoader.uuid)
                 }
+
+                if (isImage) {
+                    if (RootStore.displayChatImages) {
+                        linkData = {
+                            thumbnailUrl: link
+                        }
+                        return unfurledImageComponent
+                    }
+                    else if (!(RootStore.neverAskAboutUnfurlingAgain || (isImageLink && index > 0))) {
+                        isImageLink = true
+                        return enableLinkComponent
+                    }
+                }
+
                 // setting the height to 0 allows the "enable link" dialog to
                 // disappear correctly when RootStore.neverAskAboutUnfurlingAgain
                 // is true. The height is reset at the top of this method.

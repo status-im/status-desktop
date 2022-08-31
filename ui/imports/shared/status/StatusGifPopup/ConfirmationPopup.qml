@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.14
+import QtQuick.Controls 2.14
 import QtGraphicalEffects 1.0
 
 import StatusQ.Core 0.1
@@ -80,6 +80,7 @@ Popup {
 
         onClicked: {
             RootStore.setIsTenorWarningAccepted(true)
+            RootStore.updateWhitelistedUnfurlingSites("media.tenor.com", true)
             RootStore.getTrendingsGifs()
             root.close()
         }

@@ -9,6 +9,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
 import shared.controls 1.0
+import shared.stores 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -263,7 +264,7 @@ SettingsContentBase {
             previewableSites.clear()
             var oneEntryIsActive = false
             whitelist.forEach(entry => {
-                                  entry.isWhitelisted = localAccountSensitiveSettings.whitelistedUnfurlingSites[entry.address] || false
+                                  entry.isWhitelisted = !!localAccountSensitiveSettings.whitelistedUnfurlingSites[entry.address]
                                   if (entry.isWhitelisted) {
                                       oneEntryIsActive = true
                                   }
@@ -301,6 +302,11 @@ SettingsContentBase {
                 onSettingsLoaded: {
                     generalColumn.populatePreviewableSites()
                 }
+            }
+
+            Connections {
+                target: localAccountSensitiveSettings
+                onWhitelistedUnfurlingSitesChanged: generalColumn.populatePreviewableSites()
             }
 
             // Manually add switch for the image unfurling
@@ -356,6 +362,7 @@ SettingsContentBase {
                             case "medium":
                                 filename = "medium"; break;
                             case "tenor gifs":
+                            case "tenor gifs subdomain":
                                 filename = "tenor"; break;
                             case "giphy gifs":
                             case "giphy gifs shortener":
@@ -375,20 +382,7 @@ SettingsContentBase {
                             StatusSwitch {
                                 id: siteSwitch
                                 checked: !!model.isWhitelisted
-                                onCheckedChanged: {
-                                    let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
-
-                                    if (!settings) {
-                                        settings = {}
-                                    }
-
-                                    if (settings[address] === this.checked) {
-                                        return
-                                    }
-
-                                    settings[address] = this.checked
-                                    localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
-                                }
+                                onCheckedChanged: RootStore.updateWhitelistedUnfurlingSites(model.address, checked)
                             }
                         ]
                         onClicked: {
