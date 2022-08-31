@@ -238,7 +238,7 @@ class StatusWalletScreen:
     def toggle_network(self, network_name: str):
         click_obj_by_name(MainWalletScreen.NETWORK_SELECTOR_BUTTON.value)
 
-        list = get_obj(NetworkSelectorPopup.LAYER_1_REPEATER.value)
+        list = wait_and_get_obj(NetworkSelectorPopup.LAYER_1_REPEATER.value)
         for index in range(list.count):
             if list.itemAt(index).objectName == network_name:
                 click_obj(list.itemAt(index))
