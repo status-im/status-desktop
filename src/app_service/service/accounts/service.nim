@@ -427,6 +427,16 @@ proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) =
   except Exception as e:
     error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
 
+proc createAccountFromMnemonic*(self: Service, mnemonic: string): GeneratedAccountDto =
+  if mnemonic.len == 0:
+    error "empty mnemonic"
+    return
+  try:
+    let response = status_account.createAccountFromMnemonic(mnemonic)
+    return toGeneratedAccountDto(response.result)
+  except Exception as e:
+    error "error: ", procName="createAccountFromMnemonic", errName = e.name, errDesription = e.msg
+
 proc importMnemonic*(self: Service, mnemonic: string): string =
   if mnemonic.len == 0:
     return "empty mnemonic"
@@ -538,6 +548,10 @@ proc loginAccountKeycard*(self: Service, keycardData: KeycardEvent): string =
       error = response.result["error"].getStr
       if error == "":
         debug "Account logged in succesfully"
+        # this should be fetched later from waku
+        self.loggedInAccount.name = alias
+        self.loggedInAccount.keyUid = keycardData.keyUid
+        self.loggedInAccount.keycardPairing = accountDataJson{"keycard-pairing"}.getStr
         return
   except Exception as e:
     error "error: ", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
@@ -555,3 +569,46 @@ proc verifyAccountPassword*(self: Service, account: string, password: string): b
     return false
   except Exception as e:
     error "error: ", procName="verifyAccountPassword", errName = e.name, errDesription = e.msg
+
+
+proc convertToKeycardAccount*(self: Service, keyUid: string, password: string): bool = 
+  try:
+    self.setKeyStoreDir(keyUid)
+
+    var accountDataJson = %* {
+      "name": self.getLoggedInAccount().name,
+      "key-uid": keyUid
+    }
+    var settingsJson = %* { }
+
+    self.addKeycardDetails(settingsJson, accountDataJson)
+    
+    if(accountDataJson.isNil or settingsJson.isNil):
+      let description = "at least one json object is not prepared well"
+      error "error: ", procName="convertToKeycardAccount", errDesription = description
+      return
+
+    let hashedCurrentPassword = hashString(password)
+    let hashedNewPassword = hashString(keyUid)
+
+    let response = status_account.convertToKeycardAccount(self.keyStoreDir, accountDataJson, settingsJson, hashedCurrentPassword, 
+    hashedNewPassword)
+
+    if(response.result.contains("error")):
+      let errMsg = response.result["error"].getStr
+      if(errMsg.len == 0):
+        return true
+      else:
+        error "error: ", procName="convertToKeycardAccount", errDesription = errMsg
+    return false
+  except Exception as e:
+    error "error: ", procName="convertToKeycardAccount", errName = e.name, errDesription = e.msg
+
+proc verifyPassword*(self: Service, password: string): bool =
+  try:
+    let hashedPassword = hashString(password)
+    let response = status_account.verifyPassword(hashedPassword)
+    return response.result.getBool
+  except Exception as e:
+    error "error: ", procName="verifyPassword", errName = e.name, errDesription = e.msg
+  return false

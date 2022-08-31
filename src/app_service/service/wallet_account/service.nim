@@ -61,12 +61,6 @@ proc hex2Balance*(input: string, decimals: int): string =
   result = $i
   if(r > 0): result = fmt"{result}.{d}"
 
-proc fetchAccounts(): seq[WalletAccountDto] =
-  let response = status_go_accounts.getAccounts()
-  return response.result.getElems().map(
-    x => x.toWalletAccountDto()
-  ).filter(a => not a.isChat)
-
 type AccountSaved = ref object of Args
   account: WalletAccountDto
 
@@ -156,11 +150,17 @@ QtObject:
       error "error: ", errDesription
       return 0.0
 
+  proc fetchAccounts*(self: Service): seq[WalletAccountDto] =
+    let response = status_go_accounts.getAccounts()
+    return response.result.getElems().map(
+        x => x.toWalletAccountDto()
+      ).filter(a => not a.isChat)
+
   proc init*(self: Service) =
     signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
     
     try:
-      let accounts = fetchAccounts()
+      let accounts = self.fetchAccounts()
       for account in accounts:
         account.relatedAccounts = accounts.filter(x => not account.derivedFrom.isEmptyOrWhitespace and (cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0))
         self.walletAccounts[account.address] = account
@@ -211,7 +211,7 @@ QtObject:
     return self.getWalletAccounts().map(a => a.getCurrencyBalance()).foldl(a + b, 0.0)
 
   proc addNewAccountToLocalStore(self: Service) =
-    let accounts = fetchAccounts()
+    let accounts = self.fetchAccounts()
     var newAccount = accounts[0]
     for account in accounts:
       if not self.walletAccounts.haskey(account.address):
@@ -452,3 +452,24 @@ QtObject:
 
   proc findTokenSymbolByAddress*(self: Service, address: string): string =
     return self.tokenService.findTokenSymbolByAddressInAllNetworks(address)
+
+  proc fetchBalanceForAddress*(self: Service, address: string): float64 =
+    let currency = self.settingsService.getCurrency()
+    let networks = self.networkService.getNetworks()
+    var networkSymbols: seq[string]
+    var allTokens: seq[TokenDto]
+    for n in networks:
+      networkSymbols.add(n.nativeCurrencySymbol)
+      allTokens.add(getTokensForChainId(n))
+    allTokens.add(getCustomTokens())
+    allTokens = deduplicate(allTokens)
+
+    var prices = fetchPrices(networkSymbols, allTokens, currency)
+    let tokenBalances = getTokensBalances(@[address], allTokens)
+
+    var totalBalance = 0.0
+    for token in allTokens:
+      let balanceForToken = tokenBalances{address}{token.addressAsString()}.getStr
+      let chainBalanceForToken = parsefloat(hex2Balance(balanceForToken, token.decimals))
+      totalBalance = totalBalance + chainBalanceForToken * prices[token.symbol]
+    return totalBalance

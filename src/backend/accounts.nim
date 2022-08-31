@@ -114,6 +114,19 @@ proc multiAccountImportMnemonic*(mnemonic: string): RpcResponse[JsonNode] {.rais
     error "error doing rpc request", methodName = "multiAccountImportMnemonic", exception=e.msg
     raise newException(RpcException, e.msg)
 
+proc createAccountFromMnemonic*(mnemonic: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* {
+    "mnemonicPhrase": mnemonic,
+    "Bip39Passphrase": ""
+  }
+
+  try:
+    let response = status_go.createAccountFromMnemonic($payload)
+    result.result = Json.decode(response, JsonNode)
+  except RpcException as e:
+    error "error doing rpc request", methodName = "createAccountFromMnemonic", exception=e.msg
+    raise newException(RpcException, e.msg)
+
 proc deriveAccounts*(accountId: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* {
     "accountID": accountId,
@@ -302,3 +315,6 @@ proc getDerivedAddressForPrivateKey*(privateKey: string,): RpcResponse[JsonNode]
   let payload = %* [privateKey]
   result = core.callPrivateRPC("wallet_getDerivedAddressForPrivateKey", payload)
 
+proc verifyPassword*(password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [password]
+  return core.callPrivateRPC("accounts_verifyPassword", payload)
