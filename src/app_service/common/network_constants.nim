@@ -32,7 +32,8 @@ let GOERLI_RPC_URL_RESOLVED =
     GOERLI_NETWORK_RPC_URL
   else:
     echo "GOERLI RPC URL IS NOT DEFINED"
-    "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED
+    "http://localhost:8577"
+    # "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED
 
 echo "USING THIS URL FOR GOERLI ", GOERLI_NETWORK_RPC_URL
 
