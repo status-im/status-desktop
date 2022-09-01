@@ -183,19 +183,10 @@ Popup {
         }
 
         categories = newCategories;
-    }
 
-    Connections {
-        id: connectionSettings
-        target: Global
-        onSettingsLoaded: {
-            connectionSettings.enabled = false
-            // Add recent
-            if (!localAccountSensitiveSettings.recentEmojis || !localAccountSensitiveSettings.recentEmojis.length) {
-                return
-            }
-            categories[0] = localAccountSensitiveSettings.recentEmojis
-            emojiSectionsRepeater.itemAt(0).allEmojis = localAccountSensitiveSettings.recentEmojis
+        const recent = localAccountSensitiveSettings.recentEmojis;
+        if (!!recent) {
+            emojiSectionsRepeater.itemAt(0).allEmojis = recent;
         }
     }
 
