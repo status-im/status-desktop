@@ -240,8 +240,9 @@ class StatusWalletScreen:
 
         list = wait_and_get_obj(NetworkSelectorPopup.LAYER_1_REPEATER.value)
         for index in range(list.count):
-            if list.itemAt(index).objectName == network_name:
-                click_obj(list.itemAt(index))
+            item = list.itemAt(index)
+            if item.objectName == network_name:
+                click_obj(item)
                 click_obj_by_name(MainWalletScreen.ACCOUNT_NAME.value)
                 time.sleep(2)
                 return
