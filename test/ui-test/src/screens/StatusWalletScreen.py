@@ -255,7 +255,7 @@ class StatusWalletScreen:
         
     def verify_positive_balance(self, symbol: str):
         # TODO find a way to wait for the balance to update
-        time.sleep(2)
+        time.sleep(5)
         list = get_obj(AssetView.LIST.value)
         for index in range(list.count):
             tokenListItem = list.itemAtIndex(index)
