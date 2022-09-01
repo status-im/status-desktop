@@ -123,16 +123,16 @@ class StatusWalletScreen:
         
         words = mnemonic.split()
         scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(1)
+        time.sleep(2)
 
         scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(1)
+        time.sleep(2)
 
         scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(1)
+        time.sleep(2)
 
         input_seed_phrase(AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value, words)
-        time.sleep(1)
+        time.sleep(2)
         
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
         
@@ -236,7 +236,9 @@ class StatusWalletScreen:
         click_obj_by_name(SavedAddressesScreen.CONFIRM_DELETE.value)
     
     def toggle_network(self, network_name: str):
+        time.sleep(2)
         click_obj_by_name(MainWalletScreen.NETWORK_SELECTOR_BUTTON.value)
+        time.sleep(2)
 
         list = wait_and_get_obj(NetworkSelectorPopup.LAYER_1_REPEATER.value)
         for index in range(list.count):
