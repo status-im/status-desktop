@@ -1,148 +1,95 @@
 import QtQuick 2.13
+import QtQuick.Layouts 1.3
+
+import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Core 0.1
 
 import utils 1.0
 import shared 1.0
-import shared.panels 1.0
-import shared.stores 1.0
 
+StatusListItem {
+    id: root
 
-Rectangle {
-    id: transactionListItem
+    property var modelData
+    property string symbol
+    property bool isIncoming
+    property int transferStatus
+    property string currentCurrency
+    property string cryptoValue
+    property string fiatValue
+    property string networkIcon
+    property string networkColor
+    property string networkName
+    property string shortTimeStamp
+    property string resolvedSymbol: root.symbol != "" ? root.symbol : "ETH"
+    property string savedAddressName
 
-    property var tokens
-    property string currentAccountAddress: ""
-    property string ethValue: ""
-    property bool isHovered: false
-    property string symbol: ""
-    property string locale: ""
-    property bool isIncoming: to === currentAccountAddress
-
-    signal launchTransactionModal()
-
-    anchors.right: parent.right
-    anchors.left: parent.left
-    height: 64
-    color: isHovered ? Style.current.secondaryBackground : Style.current.transparent
-    radius: 8
-
-    Component.onCompleted: {
-        const count = transactionListItem.tokens.length
-        for (var i = 0; i < count; i++) {
-            let token = transactionListItem.tokens[i]
-            if (token.address === contract) {
-                transactionListItem.symbol = token.symbol
-                break
-            }
+    asset.isImage: true
+    asset.name: Style.png("tokens/%1".arg(resolvedSymbol))
+    statusListItemTitle.font.weight: Font.Medium
+    title: isIncoming ? qsTr("Receive %1").arg(resolvedSymbol) : !!savedAddressName ?
+                            qsTr("Send %1 to %2").arg(resolvedSymbol).arg(savedAddressName) :
+                            qsTr("Send %1 to %2").arg(resolvedSymbol).arg(Utils.compactAddress(modelData.to, 4))
+    subTitle: shortTimeStamp
+    inlineTagModel: 1
+    inlineTagDelegate: InformationTag {
+        tagPrimaryLabel.text: networkName
+        tagPrimaryLabel.color: networkColor
+        image.source: Style.svg("tiny/%1".arg(networkIcon))
+        background: Rectangle {
+            id: controlBackground
+            implicitWidth: 51
+            implicitHeight: 24
+            color: "transparent"
+            border.width: 1
+            border.color: Theme.palette.baseColor2
+            radius: 36
         }
+        rightComponent: transferStatus === Constants.TransactionStatus.Success ? completedIcon : loadingIndicator
     }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: launchTransactionModal()
-        cursorShape: Qt.PointingHandCursor
-        hoverEnabled: true
-        onEntered: {
-            transactionListItem.isHovered = true
-        }
-        onExited: {
-            transactionListItem.isHovered = false
-        }
-    }
-
-    Row {
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.smallPadding
-        anchors.verticalCenter: parent.verticalCenter
-        spacing: 5
-
-        Image {
-            id: assetIcon
-            width: 40
-            height: 40
-            source: Style.png("tokens/"
-                    + (transactionListItem.symbol
-                       != "" ? transactionListItem.symbol : "ETH"))
-            anchors.verticalCenter: parent.verticalCenter
-            onStatusChanged: {
-                if (assetIcon.status == Image.Error) {
-                    assetIcon.source = Style.png("tokens/DEFAULT-TOKEN@3x")
+    components: [
+        ColumnLayout {
+            Row {
+                Layout.alignment: Qt.AlignRight
+                spacing: 4
+                StatusIcon {
+                    color: isIncoming ? Theme.palette.successColor1 : Theme.palette.dangerColor1
+                    icon: "arrow-up"
+                    rotation: isIncoming ? 135 : 45
+                    height: 18
+                }
+                StatusBaseText {
+                    text: "%1 %2".arg(cryptoValue).arg(resolvedSymbol)
+                    font.pixelSize: 15
+                    color: Theme.palette.directColor1
                 }
             }
-
-            anchors.leftMargin: Style.current.padding
+            StatusBaseText {
+                Layout.alignment: Qt.AlignRight
+                text: "%1 %2".arg(fiatValue).arg(currentCurrency.toUpperCase())
+                font.pixelSize: 15
+                color: Theme.palette.baseColor1
+            }
         }
+    ]
 
-        StyledText {
-            id: transferIcon
-            anchors.verticalCenter: parent.verticalCenter
-            height: 15
-            width: 15
-            color: isIncoming ? Style.current.success : Style.current.danger
-            text: isIncoming ? "↓" : "↑"
-        }
-
-        StyledText {
-            id: transactionValue
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: Style.current.primaryTextFontSize
-            text: ethValue + " " + transactionListItem.symbol
+    Component {
+        id: loadingIndicator
+        StatusLoadingIndicator {
+            height: 10
+            width: 10
         }
     }
 
-    Row {
-        anchors.right: timeInfo.left
-        anchors.rightMargin: Style.current.smallPadding
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.bigPadding
-        spacing: 5
-
-        StyledText {
-            text: isIncoming ?
-                    qsTr("From ") :
-                    qsTr("To ")
-            color: Style.current.secondaryText
-            font.pixelSize: Style.current.primaryTextFontSize
-            font.strikeout: false
-        }
-
-        Address {
-            id: addressValue
-            text: isIncoming ? from : to
-            maxWidth: 120
-            width: 120
-            horizontalAlignment: Text.AlignRight
-            font.pixelSize: Style.current.primaryTextFontSize
-            color: Style.current.textColor
-        }
-    }
-
-    Row {
-        id: timeInfo
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.smallPadding
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.bigPadding
-        spacing: 5
-
-        StyledText {
-            text: " • "
-            font.weight: Font.Bold
-            color: Style.current.secondaryText
-            font.pixelSize: Style.current.primaryTextFontSize
-        }
-
-        StyledText {
-            id: timeIndicator
-            text: qsTr("At ")
-            color: Style.current.secondaryText
-            font.pixelSize: Style.current.primaryTextFontSize
-            font.strikeout: false
-        }
-        StyledText {
-            id: timeValue
-            text: Utils.formatLongDateTime(timestamp * 1000, RootStore.accountSensitiveSettings.isDDMMYYDateFormat, RootStore.accountSensitiveSettings.is24hTimeFormat)
-            font.pixelSize: Style.current.primaryTextFontSize
-            anchors.rightMargin: Style.current.smallPadding
+    Component {
+        id: completedIcon
+        StatusIcon {
+            visible: icon !== ""
+            icon: "checkmark"
+            color: Theme.palette.baseColor1
+            width: 10
+            height: 10
         }
     }
 }

@@ -13,6 +13,7 @@ Control {
     property alias tagPrimaryLabel: tagPrimaryLabel
     property alias tagSecondaryLabel: tagSecondaryLabel
     property alias controlBackground: controlBackground
+    property alias rightComponent: rightComponent.sourceComponent
 
     horizontalPadding: Style.current.halfPadding
     verticalPadding: 5
@@ -61,6 +62,10 @@ Control {
             color: Theme.palette.baseColor1
             visible: text !== ""
             elide: Text.ElideMiddle
+        }
+        Loader {
+            id: rightComponent
+            Layout.alignment: Qt.AlignVCenter
         }
     }
 }

@@ -74,3 +74,9 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+
+  proc getNameByAddress*(self: Model, address: string): string =
+    for item in self.items:
+      if(item.getAddress() == address):
+        return item.getName()
+    return ""

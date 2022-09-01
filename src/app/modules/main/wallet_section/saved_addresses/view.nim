@@ -42,3 +42,6 @@ QtObject:
 
   proc deleteSavedAddress*(self: View, address: string): string {.slot.} =
     return self.delegate.deleteSavedAddress(address)
+
+  proc getNameByAddress*(self: View, address: string): string {.slot.} =
+    return self.model.getNameByAddress(address)

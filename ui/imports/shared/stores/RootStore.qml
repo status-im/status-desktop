@@ -50,12 +50,24 @@ QtObject {
         return networksModule.all.getIconUrl(chainId)
     }
 
+    function getNetworkShortName(chainId) {
+        return networksModule.all.getNetworkShortName(chainId)
+    }
+
     function getNetworkIconUrl(symbol) {
         return networksModule.all.getNetworkIconUrl(symbol)
     }
 
     function getNetworkName(symbol) {
         return networksModule.all.getNetworkName(symbol)
+    }
+
+    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
+        return profileSectionModule.ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
+    }
+
+    function hex2Dec(value) {
+        return globalUtils.hex2Dec(value)
     }
 
     readonly property var formationChars: (["*", "`", "~"])
@@ -156,5 +168,14 @@ QtObject {
 
     function hex2Eth(value) {
         return globalUtils.hex2Eth(value)
+    }
+
+    function findTokenSymbolByAddress(address) {
+        return  walletSectionAllTokens.findTokenSymbolByAddress(address)
+
+    }
+
+    function getNameForSavedWalletAddress(address) {
+        return walletSectionSavedAddresses.getNameByAddress(address)
     }
 }

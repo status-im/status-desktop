@@ -1,4 +1,4 @@
-import strformat, stint
+import strformat
 
 type
   Item* = object
@@ -7,7 +7,7 @@ type
     address: string
     blockNumber: string
     blockHash: string
-    timestamp: UInt256
+    timestamp: int
     gasPrice: string
     gasLimit: string
     gasUsed: string
@@ -17,23 +17,37 @@ type
     fro: string
     to: string
     contract: string
+    chainId: int
+    maxFeePerGas: string
+    maxPriorityFeePerGas: string
+    input: string
+    txHash: string
+    multiTransactionID: int
+    isTimeStamp: bool
 
 proc initItem*(
-  id,
-  typ,
-  address,
-  blockNumber,
+  id: string,
+  typ: string,
+  address: string,
+  blockNumber: string,
   blockHash: string,
-  timestamp: UInt256,
-  gasPrice,
-  gasLimit,
-  gasUsed,
-  nonce,
-  txStatus,
-  value,
-  fro,
-  to,
-  contract: string
+  timestamp: int,
+  gasPrice: string,
+  gasLimit: string,
+  gasUsed: string,
+  nonce: string,
+  txStatus: string,
+  value: string,
+  fro: string,
+  to: string,
+  contract: string,
+  chainId: int,
+  maxFeePerGas: string,
+  maxPriorityFeePerGas: string,
+  input: string,
+  txHash: string,
+  multiTransactionID: int,
+  isTimeStamp: bool
 ): Item =
   result.id = id
   result.typ = typ
@@ -50,6 +64,13 @@ proc initItem*(
   result.fro = fro
   result.to = to
   result.contract = contract
+  result.chainId = chainId
+  result.maxFeePerGas = maxFeePerGas
+  result.maxPriorityFeePerGas = maxPriorityFeePerGas
+  result.input = input
+  result.txHash = txHash
+  result.multiTransactionID = multiTransactionID
+  result.isTimeStamp = isTimeStamp
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
@@ -68,6 +89,13 @@ proc `$`*(self: Item): string =
     fro: {self.fro},
     to: {self.to},
     contract: {self.contract},
+    chainId: {self.chainId},
+    maxFeePerGas: {self.maxFeePerGas},
+    maxPriorityFeePerGas: {self.maxPriorityFeePerGas},
+    input: {self.input},
+    txHash: {self.txHash},
+    multiTransactionID: {self.multiTransactionID},
+    isTimeStamp: {self.isTimeStamp},
     ]"""
 
 proc getId*(self: Item): string =
@@ -85,8 +113,8 @@ proc getBlockNumber*(self: Item): string =
 proc getBlockHash*(self: Item): string =
   return self.blockHash
 
-proc getTimestamp*(self: Item): string =
-  return $self.timestamp
+proc getTimestamp*(self: Item): int =
+  return self.timestamp
 
 proc getGasPrice*(self: Item): string =
   return self.gasPrice
@@ -114,3 +142,24 @@ proc getTo*(self: Item): string =
 
 proc getContract*(self: Item): string =
   return self.contract
+
+proc getChainId*(self: Item): int =
+  return self.chainId
+
+proc getMaxFeePerGas*(self: Item): string =
+  return self.maxFeePerGas
+
+proc getMaxPriorityFeePerGas*(self: Item): string =
+  return self.maxPriorityFeePerGas
+
+proc  getInput*(self: Item): string =
+  return self.input
+
+proc  getTxHash*(self: Item): string =
+  return self.txHash
+
+proc  getMultiTransactionID*(self: Item): int =
+  return self.multiTransactionID
+
+proc  getIsTimeStamp*(self: Item): bool =
+  return self.isTimeStamp

@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.3
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -13,48 +14,43 @@ import "../popups"
 import "../stores"
 import "../controls"
 
-Item {
+ColumnLayout {
     id: historyView
 
     property var account
     property int pageSize: 20 // number of transactions per page
+    property bool isLoading: false
 
     function fetchHistory() {
         if (RootStore.isFetchingHistory(historyView.account.address)) {
-            loadingImg.active = true
+            isLoading = true
         } else {
             RootStore.loadTransactionsForAccount(historyView.account.address, pageSize)
         }
-    }
-
-    Loader {
-        id: loadingImg
-        active: false
-        sourceComponent: loadingImageComponent
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        anchors.top: parent.top
-    }
-
-    Component {
-        id: loadingImageComponent
-        StatusLoadingIndicator {}
     }
 
     Connections {
         target: RootStore.history
         onLoadingTrxHistoryChanged: function(isLoading, address) {
             if (historyView.account.address.toLowerCase() === address.toLowerCase()) {
-                loadingImg.active = isLoading
+                isLoading = isLoading
             }
         }
     }
 
+    Loader {
+        id: loadingImg
+        active: isLoading
+        sourceComponent: loadingImageComponent
+        Layout.alignment: Qt.AlignRight | Qt.AlignTop
+        Layout.rightMargin: Style.current.padding
+    }
+
     StyledText {
         id: nonArchivalNodeError
+        Layout.alignment: Qt.AlignTop
+
         visible: RootStore.isNonArchivalNode
-        height: visible ? implicitHeight : 0
-        anchors.top: parent.top
         text: qsTr("Status Desktop is connected to a non-archival node. Transaction history may be incomplete.")
         font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.danger
@@ -62,57 +58,78 @@ Item {
 
     StyledText {
         id: noTxs
-        anchors.top: nonArchivalNodeError.bottom
         visible: transactionListRoot.count === 0
-        height: visible ? implicitHeight : 0
         text: qsTr("No transactions found")
         font.pixelSize: Style.current.primaryTextFontSize
     }
 
     StatusListView {
         id: transactionListRoot
-        anchors.top: noTxs.bottom
-        anchors.topMargin: Style.current.padding
-        anchors.bottom: loadMoreButton.top
-        anchors.bottomMargin: Style.current.padding
-        width: parent.width
+        Layout.alignment: Qt.AlignTop
+        Layout.topMargin: nonArchivalNodeError.visible || noTxs.visible ? Style.current.padding : 0
+        Layout.bottomMargin:  Style.current.padding
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
         model: RootStore.historyTransactions
-        delegate: TransactionDelegate {
-            tokens: RootStore.tokens
-            locale: RootStore.locale
-            currentAccountAddress: account.address
-            ethValue: RootStore.hex2Eth(value)
-            onLaunchTransactionModal: {
-                transactionModal.transaction = model
-                transactionModal.open()
+        delegate: Loader {
+            width: parent.width
+            sourceComponent: isTimeStamp ? dateHeader : transactionDelegate
+            onLoaded:  {
+                item.modelData = model
             }
         }
 
-        ScrollBar.vertical: ScrollBar {
-            id: scrollBar
-        }
+        ScrollBar.vertical: StatusScrollBar {}
 
-        onCountChanged: {
-            if (loadMoreButton.loadedMore)
-                transactionListRoot.positionViewAtEnd();
+        footer:  StatusButton {
+            id: loadMoreButton
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            text: qsTr("Load More")
+            // TODO: handle case when requested limit === transaction count -- there
+            // is currently no way to know that there are no more results
+            enabled: !isLoading && RootStore.historyTransactions.hasMore 
+            onClicked: fetchHistory()
         }
     }
 
-    StatusButton {
-        id: loadMoreButton
-        text: qsTr("Load More")
-        // TODO: handle case when requested limit === transaction count -- there
-        // is currently no way to know that there are no more results
-        enabled: !loadingImg.active && RootStore.historyTransactions.hasMore
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
-        property bool loadedMore: false
-
-        onClicked: {
-            fetchHistory()
-            loadMoreButton.loadedMore = true
+    Component {
+        id: dateHeader
+        StatusListItem {
+            property var modelData
+            height: 40
+            title: Utils.formatShortDate(modelData.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat)
+            statusListItemTitle.color: Theme.palette.baseColor1
+            color: Theme.palette.statusListItem.backgroundColor
+            sensor.enabled: false
         }
+    }
+
+    Component {
+        id: transactionDelegate
+        TransactionDelegate {
+            isIncoming: modelData !== undefined ? modelData.to === account.address: false
+            currentCurrency: RootStore.currentCurrency
+            cryptoValue: modelData !== undefined ? RootStore.hex2Eth(modelData.value) : ""
+            fiatValue: RootStore.getFiatValue(cryptoValue, resolvedSymbol, RootStore.currentCurrency)
+            networkIcon: modelData !== undefined ? RootStore.getNetworkIcon(modelData.chainId) : ""
+            networkColor: modelData !== undefined ? RootStore.getNetworkColor(modelData.chainId) : ""
+            networkName: modelData !== undefined ? RootStore.getNetworkShortName(modelData.chainId) : ""
+            symbol: modelData !== undefined ? RootStore.findTokenSymbolByAddress(modelData.contract) : ""
+            transferStatus: modelData !== undefined ? RootStore.hex2Dec(modelData.txStatus) : ""
+            shortTimeStamp: modelData !== undefined ? Utils.formatShortTime(modelData.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat) : ""
+            savedAddressName: modelData !== undefined ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""
+            onClicked: {
+                transactionModal.transaction = modelData
+                transactionModal.open()
+            }
+        }
+    }
+
+    Component {
+        id: loadingImageComponent
+        StatusLoadingIndicator {}
     }
 
     TransactionModal {
