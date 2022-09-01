@@ -202,10 +202,10 @@ Popup {
 
     contentItem: ColumnLayout {
         anchors.fill: parent
-        spacing: 0
+        spacing: Style.current.smallPadding
 
         Item {
-            property int headerMargin: 8
+            readonly property int headerMargin: 8
 
             id: emojiHeader
             Layout.fillWidth: true
@@ -278,13 +278,9 @@ Popup {
             property int activeCategory: 0
 
             id: scrollView
-            leftPadding: Style.current.smallPadding
-            rightPadding: Style.current.smallPadding / 2
+            padding: Style.current.smallPadding
             Layout.fillWidth: true
-            Layout.rightMargin: Style.current.smallPadding / 2
-            Layout.topMargin: Style.current.smallPadding
-            Layout.alignment: Qt.AlignTop | Qt.AlignLeft
-            Layout.preferredHeight: 400 - Style.current.smallPadding - emojiHeader.height
+            Layout.fillHeight: true
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
@@ -316,7 +312,7 @@ Popup {
                 })
 
                 categrorySectionHeightRatios = ratios
-                return totalHeight
+                return totalHeight - scrollView.topPadding - scrollView.bottomPadding
             }
 
             Repeater {
@@ -334,12 +330,10 @@ Popup {
         Row {
             Layout.fillWidth: true
             height: 40
-            leftPadding: Style.current.smallPadding / 2
-            rightPadding: Style.current.smallPadding / 2
             spacing: 0
 
             Repeater {
-                model: EmojiJSON.emojiCategories
+                model: StatusQUtils.Emoji.emojiJSON.emojiCategories
 
                 StatusTabBarIconButton {
                     icon.name: modelData
@@ -353,8 +347,3 @@ Popup {
         }
     }
 }
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:440;width:360}
-}
-##^##*/
