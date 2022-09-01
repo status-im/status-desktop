@@ -1,16 +1,11 @@
-import QtQuick 2.13
+import QtQuick 2.14
 
-import utils 1.0
-import "."
-
-import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
 StatusInput {
-    id: searchBox
     placeholderText: qsTr("Search")
     input.icon.name: "search"
     input.clearable: true
     leftPadding: 0
-    rightPadding: 0
+    rightPadding: 4
 }
