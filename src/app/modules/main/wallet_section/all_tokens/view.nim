@@ -74,3 +74,6 @@ QtObject:
 
   proc getTokenDetails*(self: View, address: string) {.slot.} =
     self.delegate.getTokenDetails(address)
+
+  proc findTokenSymbolByAddress*(self: View, address: string): string {.slot.} =
+    return self.delegate.findTokenSymbolByAddress(address)

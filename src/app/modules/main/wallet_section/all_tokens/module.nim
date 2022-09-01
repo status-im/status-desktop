@@ -88,3 +88,6 @@ method getTokenDetails*(self: Module, address: string) =
 
 method tokenDetailsWereResolved*(self: Module, tokenDetails: string) =
   self.view.tokenDetailsWereResolved(tokenDetails)
+
+method findTokenSymbolByAddress*(self: Module, address: string): string =
+  return self.controller.findTokenSymbolByAddress(address)

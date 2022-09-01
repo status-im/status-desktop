@@ -55,6 +55,10 @@ proc init*(self: Controller) =
         let addresses = accounts.map(account => account.address)
         self.delegate.setHistoryFetchState(addresses, false)
         self.delegate.setIsNonArchivalNode(true)
+      of "fetching-history-error":
+        let accounts = self.getWalletAccounts()
+        let addresses = accounts.map(account => account.address)
+        self.delegate.setHistoryFetchState(addresses, false)
       else:
         echo "Unhandled wallet signal: ", data.eventType
 

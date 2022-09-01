@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat, sequtils, tables, sugar, algorithm
+import NimQml, Tables, strutils, strformat, sequtils, tables, sugar, algorithm, std/[times, os], stint
 
 import ./item
 import ../../../../../app_service/service/eth/utils as eth_service_utils
@@ -21,15 +21,24 @@ type
     From
     To
     Contract
+    ChainID
+    MaxFeePerGas
+    MaxPriorityFeePerGas
+    Input
+    TxHash
+    MultiTransactionID
+    IsTimeStamp
 
 QtObject:
   type
     Model* = ref object of QAbstractListModel
       items: seq[Item]
+      itemsWithDateHeaders: seq[Item]
       hasMore: bool
 
   proc delete(self: Model) =
     self.items = @[]
+    self.itemsWithDateHeaders = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -41,20 +50,20 @@ QtObject:
     result.hasMore = true
 
   proc `$`*(self: Model): string =
-    for i in 0 ..< self.items.len:
-      result &= fmt"""[{i}]:({$self.items[i]})"""
+    for i in 0 ..< self.itemsWithDateHeaders.len:
+      result &= fmt"""[{i}]:({$self.itemsWithDateHeaders[i]})"""
 
   proc countChanged(self: Model) {.signal.}
 
   proc getCount*(self: Model): int {.slot.} =
-    self.items.len
+    self.itemsWithDateHeaders.len
 
   QtProperty[int] count:
     read = getCount
     notify = countChanged
 
   method rowCount(self: Model, index: QModelIndex = nil): int =
-    return self.items.len
+    return self.itemsWithDateHeaders.len
 
   method roleNames(self: Model): Table[int, string] =
     {
@@ -73,16 +82,23 @@ QtObject:
       ModelRole.From.int:"from",
       ModelRole.To.int:"to",
       ModelRole.Contract.int:"contract",
+      ModelRole.ChainID.int:"chainId",
+      ModelRole.MaxFeePerGas.int:"maxFeePerGas",
+      ModelRole.MaxPriorityFeePerGas.int:"maxPriorityFeePerGas",
+      ModelRole.Input.int:"input",
+      ModelRole.TxHash.int:"txHash",
+      ModelRole.MultiTransactionID.int:"multiTransactionID",
+      ModelRole.IsTimeStamp.int: "isTimeStamp"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return
 
-    if (index.row < 0 or index.row >= self.items.len):
+    if (index.row < 0 or index.row >= self.itemsWithDateHeaders.len):
       return
 
-    let item = self.items[index.row]
+    let item = self.itemsWithDateHeaders[index.row]
     let enumRole = role.ModelRole
 
     case enumRole:
@@ -116,17 +132,31 @@ QtObject:
       result = newQVariant(item.getTo())
     of ModelRole.Contract:
       result = newQVariant(item.getContract())
+    of ModelRole.ChainID:
+      result = newQVariant(item.getChainId())
+    of ModelRole.MaxFeePerGas:
+      result = newQVariant(item.getMaxFeePerGas())
+    of ModelRole.MaxPriorityFeePerGas:
+      result = newQVariant(item.getMaxPriorityFeePerGas())
+    of ModelRole.Input:
+      result = newQVariant(item.getInput())
+    of ModelRole.TxHash:
+      result = newQVariant(item.getTxHash())
+    of ModelRole.MultiTransactionID:
+      result = newQVariant(item.getMultiTransactionID())
+    of ModelRole.IsTimeStamp:
+      result = newQVariant(item.getIsTimeStamp())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
-    self.items = items
+    self.itemsWithDateHeaders = items
     self.endResetModel()
     self.countChanged()
 
   proc getLastTxBlockNumber*(self: Model): string {.slot.} =
-    if (self.items.len == 0):
+    if (self.itemsWithDateHeaders.len == 0):
       return "0x0"
-    return self.items[^1].getBlockNumber()
+    return self.itemsWithDateHeaders[^1].getBlockNumber()
 
   proc hasMoreChanged*(self: Model) {.signal.}
 
@@ -160,7 +190,7 @@ QtObject:
         t.address,
         t.blockNumber,
         t.blockHash,
-        t.timestamp,
+        toInt(t.timestamp),
         t.gasPrice,
         t.gasLimit,
         t.gasUsed,
@@ -169,14 +199,32 @@ QtObject:
         t.value,
         t.fromAddress,
         t.to,
-        t.contract
+        t.contract,
+        t.chainId,
+        t.maxFeePerGas,
+        t.maxPriorityFeePerGas,
+        t.input,
+        t.txHash,
+        t.multiTransactionID,
+        false
       ))
 
       var allTxs = self.items.concat(newTxItems)
       allTxs.sort(cmpTransactions, SortOrder.Descending)
       eth_service_utils.deduplicate(allTxs, tx => tx.getId())
 
-      self.setItems(allTxs)
+      # add day headers to the transaction list
+      var itemsWithDateHeaders: seq[Item] = @[]
+      var tempTimeStamp: Time
+      for tx in allTxs:
+        let duration =  fromUnix(tx.getTimestamp()) - tempTimeStamp
+        if(duration.inDays != 0):
+          itemsWithDateHeaders.add(initItem("", "", "", "", "",  tx.getTimestamp(), "", "", "", "", "", "", "", "", "", 0, "", "", "", "", 0, true))
+        itemsWithDateHeaders.add(tx)
+        tempTimeStamp = fromUnix(tx.getTimestamp())
+
+      self.items = allTxs
+      self.setItems(itemsWithDateHeaders)
       self.setHasMore(true)
     else:
       self.setHasMore(false)

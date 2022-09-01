@@ -295,6 +295,15 @@ QtObject {
         return qsTr("%1D").arg(diffDay)
     }
 
+    function formatShortDate(value, isDDMMYYDateFormat) {
+        const formatDDMMYY = "d MMMM yyyy"
+        const formatMMDDYY = "MMMM d yyyy"
+        const currentFormat = isDDMMYYDateFormat ? formatDDMMYY : formatMMDDYY
+        var timeStamp =  checkTimestamp(value, "formatLongDate") ? Qt.formatDate(new Date(value), currentFormat) :
+                         Qt.formatDate(new Date(), currentFormat)
+        return formatShortDateStr(timeStamp)
+    }
+
     // To-do move to Wallet Store, this should not be under Utils.
     function findAssetByChainAndSymbol(chainIdToFind, assets, symbolToFind) {
         for(var i=0; i<assets.rowCount(); i++) {

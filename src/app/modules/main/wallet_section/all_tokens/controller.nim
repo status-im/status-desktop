@@ -62,3 +62,6 @@ proc removeCustomToken*(self: Controller, chainId: int, address: string) =
 
 proc getTokenDetails*(self: Controller, address: string) =
   self.tokenService.getTokenDetails(address)
+
+method findTokenSymbolByAddress*(self: Controller, address: string): string =
+  return self.walletAccountService.findTokenSymbolByAddress(address)

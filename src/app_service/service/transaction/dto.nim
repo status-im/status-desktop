@@ -43,7 +43,12 @@ type
     value*: string
     fromAddress*: string
     to*: string
-    chainId*: int
+    chainId*: int    
+    maxFeePerGas*: string
+    maxPriorityFeePerGas*: string
+    input*: string
+    txHash*: string
+    multiTransactionID*: int
 
 proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   result = TransactionDto()
@@ -63,7 +68,11 @@ proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   discard jsonObj.getProp("from", result.fromAddress)
   discard jsonObj.getProp("to", result.to)
   discard jsonObj.getProp("networkId", result.chainId)
-
+  discard jsonObj.getProp("maxFeePerGas", result.maxFeePerGas)
+  discard jsonObj.getProp("maxPriorityFeePerGas", result.maxPriorityFeePerGas)
+  discard jsonObj.getProp("input", result.input)
+  discard jsonObj.getProp("txHash", result.txHash)
+  discard jsonObj.getProp("multiTransactionID", result.multiTransactionID)
 
 proc cmpTransactions*(x, y: TransactionDto): int =
   # Sort proc to compare transactions from a single account.
