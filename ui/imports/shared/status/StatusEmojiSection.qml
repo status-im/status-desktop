@@ -23,8 +23,7 @@ Item {
     anchors.top: index === 0 ? parent.top : parent.children[index - 1].bottom
     anchors.topMargin: 0
 
-    // childrenRect caused a binding loop here
-    height: this.visible ? emojiGrid.height + categoryText.height + noRecentText.height + Style.current.padding : 0
+    implicitHeight: visible ? childrenRect.height + Style.current.padding : 0
 
     StyledText {
         id: categoryText
