@@ -23,12 +23,23 @@ chatView_userMentioned_ProfileView ={"container": statusDesktop_mainWindow_overl
 emojiSuggestions_first_inputListRectangle ={"container": statusDesktop_mainWindow_overlay, "objectName": "inputListRectangle_0", "type": "Rectangle"}
 emojiPopup_Emoji_Button_Placeholder = {"container": statusDesktop_mainWindow, "objectName": "statusEmoji_%NAME%", "type": "StatusEmoji", "visible": True}
 chatInput_Emoji_Button = {"container": statusDesktop_mainWindow, "objectName": "statusChatInputEmojiButton", "type": "StatusFlatRoundButton", "visible": True}
-chatView_ChatToolbarMoreOptionsButton = {"container": statusDesktop_mainWindow, "objectName": "chatToolbarMoreOptionsButton", "type": "StatusFlatRoundButton"}
+chatView_ChatToolbarMoreOptionsButton = {"container": statusDesktop_mainWindow, "objectName": "chatToolbarMoreOptionsButton", "type": "StatusFlatRoundButton", "visible": True}
 chatInput_Root = {"container": statusDesktop_mainWindow, "objectName": "statusChatInput", "type": "Rectangle", "visible": True}
 chatView_gifPopupButton = {"container": statusDesktop_mainWindow, "objectName": "gifPopupButton", "type": "StatusFlatRoundButton", "visible": True}
 
 # More options menu
 clearHistoryMenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "clearHistoryMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
+editNameAndImageMenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "editNameAndImageMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
+leaveChatMenuItem = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "deleteOrLeaveMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
+
+# group chat edit popup
+groupChatEdit_main = {"container": statusDesktop_mainWindow_overlay, "objectName": "groupChatEdit_main", "type": "StatusDialog", "visible": True}
+groupChatEdit_name = {"container": statusDesktop_mainWindow_overlay, "objectName": "groupChatEdit_name", "type": "TextEdit", "visible": True}
+groupChatEdit_save= {"container": statusDesktop_mainWindow_overlay, "objectName": "groupChatEdit_save", "type": "StatusButton", "visible": True}
+groupChatEdit_colorRepeater = {"container": statusDesktop_mainWindow, "type": "Repeater", "objectName": "statusColorRepeater", "visible": True}
+groupChatEdit_workflowItem= {"container": statusDesktop_mainWindow, "type": "Item", "objectName": "imageCropWorkflow"}
+groupChatEdit_cropperAcceptButton = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "imageCropperAcceptButton"}
+groupChatEdit_image = {"container": statusDesktop_mainWindow_overlay, "objectName": "groupChatEdit_image", "type": "EditCroppedImagePanel"}
 
 # Gif popup:
 gifPopup_enableGifButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "enableGifsButton", "type": "StatusButton"}

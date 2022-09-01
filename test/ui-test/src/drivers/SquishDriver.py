@@ -111,6 +111,11 @@ def get_objects(objName: str):
     objs = squish.findAllObjects(getattr(names, objName))
     return objs
 
+def hover_and_click_object_by_name(objName: str):
+    obj = squish.waitForObject(getattr(names, objName))
+    hover_obj(obj)
+    squish.mouseClick(obj, squish.Qt.LeftButton)
+
 # It executes the left-click action into object with given object name:
 def click_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))

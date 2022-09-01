@@ -202,6 +202,7 @@ Item {
 
             StatusBaseText {
                 id: usernameText
+                objectName: "currentUserNameLabel"
                 text: root.startupStore.selectedLoginAccount.username
                 font.pixelSize: 17
                 anchors.left: userImage.right

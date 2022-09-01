@@ -35,6 +35,8 @@ Item {
     property bool userSelectedImage: false
     readonly property bool nothingToShow: state === d.noImageState
 
+    readonly property alias cropWorkflow : imageCropWorkflow
+
     function chooseImageToCrop() {
         imageCropWorkflow.chooseImageToCrop()
     }

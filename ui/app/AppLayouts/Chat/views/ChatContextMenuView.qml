@@ -77,6 +77,7 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
+        objectName: "editNameAndImageMenuItem"
         text: qsTr("Edit name and image")
         icon.name: "edit_pencil"
         enabled: root.chatType === Constants.chatType.privateGroupChat

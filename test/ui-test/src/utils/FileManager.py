@@ -26,6 +26,7 @@ def clear_directory(dir: str):
 def copy_directory(src: str, dst: str):
     if os.path.isdir(src) and os.path.isdir(dst):
         try:
+            distutils.dir_util._path_created = {} # clear dir_util cache
             distutils.dir_util.copy_tree(src, dst)
         except OSError:
             os.remove(dst)

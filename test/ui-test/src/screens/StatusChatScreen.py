@@ -60,6 +60,9 @@ class ChatComponents(Enum):
     EDIT_MESSAGE_INPUT = "chatView_editMessageInputComponent"
     EDIT_MESSAGE_TEXTAREA = "chatView_editMessageInputTextArea"
 
+    EDIT_NAME_AND_IMAGE_MENUITEM = "editNameAndImageMenuItem"
+    LEAVE_CHAT_MENUITEM = "leaveChatMenuItem"
+
     GIF_POPUP_BUTTON = "chatView_gifPopupButton"
     ENABLE_GIF_BUTTON = "gifPopup_enableGifButton"
     GIF_MOUSEAREA = "gifPopup_gifMouseArea"
@@ -84,6 +87,14 @@ class ChatMessagesHistory(Enum):
 class Emoji(Enum):
     EMOJI_SUGGESTIONS_FIRST_ELEMENT = "emojiSuggestions_first_inputListRectangle"
 
+class GroupChatEditPopup(Enum):
+    GROUP_CHAT_EDIT_NAME = "groupChatEdit_name"
+    GROUP_CHAT_EDIT_COLOR_REPEATER = "groupChatEdit_colorRepeater"
+    GROUP_CHAT_EDIT_IMAGE = "groupChatEdit_image"
+    GROUP_CHAT_EDIT_SAVE = "groupChatEdit_save"
+    GROUP_CHAT_EDIT_MAIN = "groupChatEdit_main"
+    GROUP_CHAT_CROP_WORKFLOW_ITEM = "groupChatEdit_workflowItem"
+    GROUP_CHAT_CROPPER_ACCEPT_BUTTON = "groupChatEdit_cropperAcceptButton"
 
 class StatusChatScreen:
 
@@ -112,7 +123,46 @@ class StatusChatScreen:
     def clear_history(self):
         click_obj_by_name(ChatComponents.MORE_OPTIONS_BUTTON.value)
         click_obj_by_name(ChatComponents.CLEAR_HISTORY_MENUITEM.value)
-            
+
+    def open_group_chat_edit_popup(self):
+        time.sleep(2)
+        hover_and_click_object_by_name(ChatComponents.MORE_OPTIONS_BUTTON.value)
+        time.sleep(2)
+        hover_and_click_object_by_name(ChatComponents.EDIT_NAME_AND_IMAGE_MENUITEM.value)
+
+    def leave_chat(self):
+        time.sleep(2)
+        hover_and_click_object_by_name(ChatComponents.MORE_OPTIONS_BUTTON.value)
+        time.sleep(2)
+        hover_and_click_object_by_name(ChatComponents.LEAVE_CHAT_MENUITEM.value)
+
+    def group_chat_edit_name(self, name):
+        setText(GroupChatEditPopup.GROUP_CHAT_EDIT_NAME.value, name)
+
+    def group_chat_edit_save(self):
+        # save may be disabled, eg. if color from scenario is already set
+        obj = get_obj(GroupChatEditPopup.GROUP_CHAT_EDIT_SAVE.value)
+        if (is_visible_and_enabled(obj)):
+            click_obj_by_name(GroupChatEditPopup.GROUP_CHAT_EDIT_SAVE.value)
+        else:
+            press_escape(GroupChatEditPopup.GROUP_CHAT_EDIT_MAIN.value)
+
+    def group_chat_edit_color(self, newColor: str):
+        colorList = get_obj(GroupChatEditPopup.GROUP_CHAT_EDIT_COLOR_REPEATER.value)
+        for index in range(colorList.count):
+            color = colorList.itemAt(index)
+            if(color.radioButtonColor == newColor):
+                click_obj(colorList.itemAt(index))
+
+    def group_chat_edit_image(self, fixtures_root: str):
+        self._group_chat_input_image("file:///"+ fixtures_root + "images/ui-test-image0.jpg")
+
+    def _group_chat_input_image(self, groupChatUrl: str):
+        parentObject = get_obj(GroupChatEditPopup.GROUP_CHAT_EDIT_IMAGE.value)
+        workflow = parentObject.cropWorkflow
+        workflow.cropImage(groupChatUrl)
+        click_obj_by_name(GroupChatEditPopup.GROUP_CHAT_CROPPER_ACCEPT_BUTTON.value)
+
     # Verifications region:      
     def verify_last_message_is_not_loaded(self):
         [loaded, _] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
@@ -175,6 +225,14 @@ class StatusChatScreen:
     def verify_chat_title(self, title: str):
         info_btn = get_obj(ChatComponents.TOOLBAR_INFO_BUTTON.value)
         verify_text(str(info_btn.title), title)
+
+    def verify_chat_color(self, color: str):
+        info_btn = get_obj(ChatComponents.TOOLBAR_INFO_BUTTON.value)
+        verify_text(str(info_btn.asset.color.name), str(color.lower()))
+
+    def verify_chat_image(self, path: str):
+        fullPath = path + "images/ui-test-image0.jpg"
+        imagePresent(fullPath, True, 95, 25, 150, True)
         
     def verify_members_added(self, members):
         self.verify_total_members_is_displayed_in_toolbar(members)
@@ -196,13 +254,13 @@ class StatusChatScreen:
     def verify_added_members_message_is_displayed_in_history(self, members):
         chat_membersAdded_text_obj = self.get_message_at_index(ChatMessagesHistory.HAS_ADDED_TEXT.value)        
         for member in members[0:]:
-            verify_text_contains(str(chat_membersAdded_text_obj.message), member[0])
+            verify_text_contains(str(chat_membersAdded_text_obj.messageText), member[0])
             
     # NOTE: It is expecting a specific log order and will succeed only just after the chat is created and no messages have been sent.
     # TODO: Improvement --> Iterate through the complete history, check all messages and verify the `createdTxt` is displayed.
     def verify_chat_created_message_is_displayed_in_history(self, createdTxt: str):
         chat_createChat_text_obj = self.get_message_at_index(ChatMessagesHistory.CHAT_CREATED_TEXT.value)        
-        verify_text_contains(str(chat_createChat_text_obj.message), createdTxt)
+        verify_text_contains(str(chat_createChat_text_obj.messageText), createdTxt)
         
     def reply_to_message_at_index(self, index: int, message: str):
         message_object_to_reply_to = self.get_message_at_index(index)
@@ -344,4 +402,3 @@ class StatusChatScreen:
                 click_obj(chat)
                 return
         verify(False, "Chat switched")
-        

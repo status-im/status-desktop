@@ -20,6 +20,7 @@ class SLoginComponents(Enum):
     PASSWORD_INPUT = "loginView_passwordInput"
     SUBMIT_BTN = "loginView_submitBtn"
     CHANGE_ACCOUNT_BTN = "loginView_changeAccountBtn"
+    CURRENT_USERNAME_LABEL = "loginView_currentUserNameLabel"
     ERR_MSG_LABEL = "loginView_errMsgLabel"
 
 
@@ -43,9 +44,15 @@ class StatusLoginScreen():
         self.enter_password(password)        
         
     def select_account(self, account):
+        if self.is_account_selected(account):
+            return
         self.open_accounts_selector_popup()
         accounts_popup = self.get_accounts_selector_popup()
         accounts_popup.select_account(account)
+
+    def is_account_selected(self, account):
+        obj = get_obj(SLoginComponents.CURRENT_USERNAME_LABEL.value)
+        return obj.text == account
     
     def enter_password(self, password):
         click_obj_by_name(SLoginComponents.PASSWORD_INPUT.value)
