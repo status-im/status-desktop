@@ -135,7 +135,7 @@ class StatusWalletScreen:
         time.sleep(2)
         
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
-        time.sleep(2)
+        time.sleep(5)
         
     def generate_new_account(self, account_name: str, password: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
@@ -255,10 +255,12 @@ class StatusWalletScreen:
         
     def verify_positive_balance(self, symbol: str):
         # TODO find a way to wait for the balance to update
-        time.sleep(5)
+        obj = get_obj(MainWalletScreen.ACCOUNT_NAME.value)
+        test.log("ACCOUNT NAME", str(obj.text))
         list = get_obj(AssetView.LIST.value)
         for index in range(list.count):
             tokenListItem = list.itemAtIndex(index)
+            test.log("This balance", "Symbol " + str(tokenListItem.objectName) + " - Balance " + str(tokenListItem.balance))
             if tokenListItem.objectName == "AssetView_TokenListItem_" + symbol:
                 assert tokenListItem.balance != "0", f"balance is not positive, balance: {str(tokenListItem.balance)}"
                 return
