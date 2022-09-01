@@ -13,6 +13,7 @@ import time
 from enum import Enum
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
+from utils.ObjectAccess import *
 import time
 
 class MainScreenComponents(Enum):
@@ -23,7 +24,7 @@ class MainScreenComponents(Enum):
     SETTINGS_BUTTON = "navBarListView_Settings_navbar_StatusNavBarTabButton"
     WALLET_BUTTON = "wallet_navbar_wallet_icon_StatusIcon"
     START_CHAT_BTN = "mainWindow_startChat"
-    CHAT_LIST = "chatList_Repeater"
+    CHAT_LIST = "chatList"
     MARK_AS_READ_BUTTON = "mark_as_Read_StatusMenuItemDelegate"
     COMMUNITY_NAVBAR_BUTTONS = "navBarListView_All_Community_Buttons"
     MODULE_WARNING_BANNER = "moduleWarning_Banner"
@@ -32,6 +33,7 @@ class MainScreenComponents(Enum):
     USERSTATUSMENU_INACTIVE_ACTION = "userContextmenu_InActiveButton"
     USERSTATUSMENU_AUTOMATIC_ACTION = "userContextmenu_AutomaticButton"
     USERSTATUSMENU_OPEN_PROFILE_POPUP = "userContextMenu_ViewMyProfileAction"
+
 class ProfilePopup(Enum):
     USER_IMAGE = "ProfileHeader_userImage"
     DISPLAY_NAME = "ProfileHeader_displayName"
@@ -91,12 +93,16 @@ class StatusMainScreen:
         if loaded:
             click_obj(chat_button)
         verify(loaded, "Trying to get chat: " + chatName)
-        
+
+    def verify_chat_does_not_exist(self, chatName: str):
+        [loaded, chat_button] = self._find_chat(chatName)
+        verify_false(loaded, "Chat "+chatName+ " exists")
+
     def _find_chat(self, chatName: str):
         [loaded, chat_lists] = is_loaded(MainScreenComponents.CHAT_LIST.value)
         if loaded:
-            for index in range(chat_lists.count):
-                chat = chat_lists.itemAt(index)
+            for index in range(chat_lists.statusChatListItems.count):
+                chat = chat_lists.statusChatListItems.itemAt(index)
                 if(chat.objectName == chatName):
                     return True, chat        
         return False, None

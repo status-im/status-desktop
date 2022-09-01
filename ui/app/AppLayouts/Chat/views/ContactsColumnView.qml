@@ -147,6 +147,7 @@ Item {
 
             StatusChatList {
                 id: channelList
+                objectName: "ContactsColumnView_chatList"
                 width: scroll.availableWidth
                 model: SortFilterProxyModel {
                     sourceModel: root.chatSectionModule.model

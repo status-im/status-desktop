@@ -36,10 +36,30 @@ def step(context,displayName,message):
 @When("the user clears chat history")
 def step(context):
     _statusChat.clear_history()
+
+@When("the user opens the edit group chat popup")
+def step(context):
+    _statusChat.open_group_chat_edit_popup()
     
 @When("the user types \"|any|\"") 
 def step(context, message): 
     _statusChat.type_message_in_chat_input(message)
+
+@When("the user changes the group name to |any|")
+def step(context, groupName):
+    _statusChat.group_chat_edit_name(groupName)
+
+@When("the user changes the group color to |any|")
+def step(context, groupColor):
+    _statusChat.group_chat_edit_color(groupColor)
+
+@When("the user changes the group image")
+def step(context):
+    _statusChat.group_chat_edit_image(context.userData["fixtures_root"])
+
+@When("the user saves changes")
+def step(context):
+    _statusChat.group_chat_edit_save()
 
 @When("the user pressed enter")
 def step(context):
@@ -63,7 +83,7 @@ def step(contenxt):
     
 @Then("the user is able to send chat message \"|any|\"")
 def step(context, message):
-     _statusChat.send_message(message)
+    _statusChat.send_message(message)
 
 @When("the user sends the chat message |any|")
 def step(context, message):
@@ -93,6 +113,14 @@ def step(context, createdTxt):
 @Then("the chat title is |any|")
 def step(context, title):
     _statusChat.verify_chat_title(title)
+
+@Then("the chat color is |any|")
+def step(context, color):
+    _statusChat.verify_chat_color(color)
+
+@Then("the chat image is changed")
+def step(context):
+    _statusChat.verify_chat_image(context.userData["fixtures_root"])
     
 @Then("the group chat contains the following members")
 def step(context):
@@ -144,7 +172,7 @@ def step(context, emoji_short_name, message):
 
 @Then("the emoji |any| is displayed in the last message")
 def step(context, emoji):
-     _statusChat.verify_last_message_sent(emoji)
+    _statusChat.verify_last_message_sent(emoji)
 
 @Then("the message |any| is displayed in the last message")
 def step(context, message):
@@ -178,3 +206,11 @@ def step(context):
 @When("user switches to |any| chat")
 def step(context, chatName):
     _statusChat.switch_to_chat(chatName)
+
+@When("the user leaves current chat")
+def step(context):
+    _statusChat.leave_chat()
+
+@Then("chat |any| does not exist")
+def step(context, chatName):
+    _statusMain.verify_chat_does_not_exist(chatName)

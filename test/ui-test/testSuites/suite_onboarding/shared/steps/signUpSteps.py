@@ -33,6 +33,7 @@ def step(context, username):
 @Then("the user lands on the signed in app")
 def step(context): 
     _mainScreen
+    time.sleep(2)
     
     
 @When("The user inputs the seed phrase |any|")

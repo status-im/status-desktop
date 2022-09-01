@@ -15,6 +15,7 @@ import StatusQ.Popups.Dialog 0.1
 
 StatusDialog {
     id: root
+    objectName: "groupChatEdit_main"
 
     property string activeGroupImageData
     property string activeGroupColor
@@ -52,6 +53,7 @@ StatusDialog {
 
         StatusInput {
             id: groupName
+            input.edit.objectName: "groupChatEdit_name"
             Layout.alignment: Qt.AlignHCenter
             label: qsTr("Name the group")
             charLimit: d.nameCharLimit
@@ -66,7 +68,7 @@ StatusDialog {
 
         EditCroppedImagePanel {
             id: imageEditor
-
+            objectName: "groupChatEdit_image"
             Layout.preferredWidth: 128
             Layout.preferredHeight: Layout.preferredWidth / aspectRatio
             Layout.alignment: Qt.AlignHCenter
@@ -121,6 +123,7 @@ StatusDialog {
 
         StatusColorSelectorGrid {
             id: colorSelectionGrid
+            objectName: "groupChatEdit_color"
             Layout.alignment: Qt.AlignHCenter
             diameter: 40
             selectorDiameter: 16
@@ -138,6 +141,7 @@ StatusDialog {
         rightButtons: ObjectModel {
             StatusButton {
                 id: saveBtn
+                objectName: "groupChatEdit_save"
                 text: qsTr("Save changes")
                 enabled: groupName.text.trim().length > 0 &&
                          ((groupName.text != root.activeGroupName) ||

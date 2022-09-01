@@ -10,6 +10,7 @@
 
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
+from utils.ObjectAccess import *
 
 # It defines the identifier for each Account View component:
 class SAccountsComponents(Enum):
@@ -37,10 +38,9 @@ class StatusAccountsScreen():
         account_obj = None
         [is_loaded, accountsList] = is_loaded_visible_and_enabled(SAccountsComponents.ACCOUNTS_POPUP.value)
         if is_loaded:
-            for index in range(accountsList.count):
-                a = accountsList.itemAtIndex(index)
-                if(a.label == account):
-                    account_obj = a
+            for child in getChildrenOfType(accountsList, "AccountMenuItemPanel"):
+                if(child.label == account):
+                    account_obj = child
                     found = True
-                    break        
+                    break
         return found, account_obj
