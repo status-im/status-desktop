@@ -1251,7 +1251,7 @@ Rectangle {
                                     control.emojiPopupOpened = true
                                     togglePopup(emojiPopup, emojiBtn)
                                     emojiPopup.x = Global.applicationWindow.width - emojiPopup.width - Style.current.halfPadding
-                                    emojiPopup.y = Global.applicationWindow.height - emojiPopup.height - control.height
+                                    emojiPopup.y = Global.applicationWindow.height - emojiPopup.height - control.height - Style.current.halfPadding
                                 }
                             }
 
