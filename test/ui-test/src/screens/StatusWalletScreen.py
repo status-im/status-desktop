@@ -135,6 +135,7 @@ class StatusWalletScreen:
         time.sleep(2)
         
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
+        time.sleep(2)
         
     def generate_new_account(self, account_name: str, password: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
