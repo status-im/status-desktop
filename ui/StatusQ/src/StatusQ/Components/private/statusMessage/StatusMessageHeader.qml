@@ -23,6 +23,7 @@ Item {
     property bool isContact: sender.isContact
     property int trustIndicator: sender.trustIndicator
     property bool amISender: false
+    property bool displayNameClickable: true
     property string messageOriginInfo: ""
 
     signal clicked(var sender, var mouse)
@@ -49,8 +50,9 @@ Item {
             MouseArea {
                 id: mouseArea
                 anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
+                enabled: root.displayNameClickable
                 hoverEnabled: true
                 onClicked: {
                     root.clicked(this, mouse)

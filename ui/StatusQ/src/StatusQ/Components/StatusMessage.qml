@@ -67,6 +67,7 @@ Rectangle {
     property bool hideQuickActions: false
     property color overrideBackgroundColor: "transparent"
     property bool overrideBackground: false
+    property bool profileClickable: true
 
     property alias previousMessageIndex: dateGroupLabel.previousMessageIndex
     property alias previousMessageTimestamp: dateGroupLabel.previousMessageTimestamp
@@ -242,9 +243,10 @@ Rectangle {
                     ringSettings: root.messageDetails.sender.profileImage.ringSettings
 
                     MouseArea {
-                        cursorShape: Qt.PointingHandCursor
+                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
                         anchors.fill: parent
+                        enabled: root.profileClickable
                         onClicked: root.profilePictureClicked(this, mouse)
                     }
                 }
@@ -275,6 +277,7 @@ Rectangle {
                     visible: root.showHeader && !editMode
                     timestamp.text: root.timestampString
                     timestamp.tooltip.text: root.timestampTooltipString
+                    displayNameClickable: root.profileClickable
                 }
                 Loader {
                     Layout.fillWidth: true
