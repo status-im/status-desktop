@@ -58,6 +58,7 @@ Item {
         }
 
         StatusAddressPanel {
+            objectName: "addressPanel"
             address: currentAccount.mixedcaseAddress
 
             autHideCopyIcon: true

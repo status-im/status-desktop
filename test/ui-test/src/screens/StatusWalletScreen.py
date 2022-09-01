@@ -16,6 +16,7 @@ class SigningPhrasePopUp(Enum):
 class MainWalletScreen(Enum):
     ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account"
     ACCOUNT_NAME: str = "mainWallet_Account_Name"
+    ACCOUNT_ADDRESS_PANEL: str = "mainWallet_Address_Panel"
     SEND_BUTTON_FOOTER: str = "mainWallet_Footer_Send_Button"
     SAVED_ADDRESSES_BUTTON: str = "mainWallet_Saved_Addresses_Button"
     NETWORK_SELECTOR_BUTTON: str = "mainWallet_Network_Selector_Button"
@@ -257,6 +258,8 @@ class StatusWalletScreen:
         # TODO find a way to wait for the balance to update
         obj = get_obj(MainWalletScreen.ACCOUNT_NAME.value)
         test.log("ACCOUNT NAME", str(obj.text))
+        obj2 = get_obj(MainWalletScreen.ACCOUNT_ADDRESS_PANEL.value)
+        test.log("ACCOUNT ADDRESS", str(obj2.address))
         list = get_obj(AssetView.LIST.value)
         for index in range(list.count):
             tokenListItem = list.itemAtIndex(index)
