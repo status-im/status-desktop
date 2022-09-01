@@ -106,7 +106,7 @@ Feature: Status Desktop Wallet
         And the user opens wallet screen
         And the user imports a seed phrase with one and TesTEr16843/!@00 and pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial
         Then the new account one is added
-        When the user toggles the network Ropsten
+        #When the user toggles the network Ropsten
         Then the user has a positive balance of ETH
         And the user has a positive balance of STT
 
