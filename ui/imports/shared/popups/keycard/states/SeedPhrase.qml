@@ -31,7 +31,6 @@ Item {
         anchors.leftMargin: Style.current.xlPadding
         anchors.rightMargin: Style.current.xlPadding
         spacing: Style.current.padding
-        clip: true
 
         StatusBaseText {
             id: title

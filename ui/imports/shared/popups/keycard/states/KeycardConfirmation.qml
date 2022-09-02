@@ -20,6 +20,7 @@ Item {
     Component {
         id: knownKeyPairComponent
         KeyPairItem {
+            keyPairType:  root.sharedKeycardModule.keyPairStoredOnKeycard.pairType
             keyPairPubKey: root.sharedKeycardModule.keyPairStoredOnKeycard.pubKey
             keyPairName: root.sharedKeycardModule.keyPairStoredOnKeycard.name
             keyPairIcon: root.sharedKeycardModule.keyPairStoredOnKeycard.icon
@@ -129,7 +130,7 @@ Item {
         Item {
             visible: !loader.active
             Layout.fillWidth: true
-            Layout.fillHeight: visible? true : false
+            Layout.fillHeight: visible
         }
     }
 }

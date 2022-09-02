@@ -96,7 +96,7 @@ Item {
             Repeater {
                 model: root.tabs
                  StatusSwitchTabButton {
-                    text: qsTr("%1 words").arg(modelData)
+                    text: qsTr("%n word(s)", "", modelData)
                     id: seedPhraseWords
                     objectName: `${modelData}SeedButton`
                 }

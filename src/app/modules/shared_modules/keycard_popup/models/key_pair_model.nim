@@ -83,8 +83,8 @@ QtObject:
     of ModelRole.DerivedFrom:
       result = newQVariant(item.derivedFrom)
 
-  proc findItemByDerivedFromAddress*(self: KeyPairModel, address: string): KeyPairItem =
+  proc findItemByPublicKey*(self: KeyPairModel, publicKey: string): KeyPairItem =
     for i in 0 ..< self.items.len:
-      if(self.items[i].derivedFrom == address):
+      if(self.items[i].pubKey == publicKey):
         return self.items[i]
     return nil

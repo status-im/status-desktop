@@ -51,10 +51,10 @@ StatusModal {
         id: d
         property bool primaryButtonEnabled: false
         property bool seedPhraseRevealed: false
-        property bool disablePopupClose: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
-                                         (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess &&
-                                         root.sharedKeycardModule.migratingProfileKeyPair())
+        readonly property bool disablePopupClose: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                                                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
+                                                  (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess &&
+                                                   root.sharedKeycardModule.migratingProfileKeyPair())
 
         onDisablePopupCloseChanged: {
             hasCloseButton = !disablePopupClose
@@ -189,6 +189,14 @@ StatusModal {
             id: selectKeyPairComponent
             SelectKeyPair {
                 sharedKeycardModule: root.sharedKeycardModule
+
+                Component.onCompleted: {
+                    d.primaryButtonEnabled = false
+                }
+
+                onKeyPairSelected: {
+                    d.primaryButtonEnabled = true
+                }
             }
         }
 
@@ -414,16 +422,15 @@ StatusModal {
                     }
                 }
                 else if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
-                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmation ||
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.selectExistingKeyPair ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmation ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseDisplay ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseEnterWords ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterSeedPhrase) {
                         return d.primaryButtonEnabled
                     }
-                    if ((root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.selectExistingKeyPair &&
-                            root.sharedKeycardModule.keyPairModel.count === 0) ||
-                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||

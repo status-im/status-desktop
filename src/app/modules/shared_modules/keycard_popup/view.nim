@@ -111,8 +111,8 @@ QtObject:
     return self.selectedKeyPairItemVariant
   QtProperty[QVariant] selectedKeyPairItem:
     read = getSelectedKeyPairItem
-  proc setSelectedKeyPairByTheAddressItIsDerivedFrom*(self: View, address: string) {.slot.} =
-    let item = self.keyPairModel.findItemByDerivedFromAddress(address)
+  proc setSelectedKeyPair*(self: View, publicKey: string) {.slot.} =
+    let item = self.keyPairModel.findItemByPublicKey(publicKey)
     self.delegate.setSelectedKeyPair(item)
     self.selectedKeyPairItem.setItem(item)
 

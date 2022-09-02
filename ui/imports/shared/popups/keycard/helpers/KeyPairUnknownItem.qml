@@ -24,7 +24,6 @@ Rectangle {
 
     color: Style.current.grey
     radius: Style.current.halfPadding
-    clip: true
     implicitWidth: 448
     implicitHeight: 198
 
@@ -61,7 +60,7 @@ Rectangle {
             color: "transparent"
             title: root.keyPairName
 
-            icon {
+            asset {
                 width: 24
                 height: 24
                 name: root.keyPairIcon
@@ -69,7 +68,7 @@ Rectangle {
                 letterSize: Math.max(4, this.image.width / 2.4)
                 charactersLen: 2
                 isLetterIdenticon: false
-                background.color: Theme.palette.primaryColor3
+                bgColor: Theme.palette.primaryColor3
             }
         }
 

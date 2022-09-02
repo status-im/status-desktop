@@ -52,6 +52,16 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.tmpSeedPhraseLength = 0
   result.tmpSelectedKeyPairIsProfile = false
 
+proc serviceApplicable[T](service: T): bool =
+  if not service.isNil:
+    return true
+  var serviceName = ""
+  when (service is wallet_account_service.Service):
+    serviceName = "WalletAccountService"
+  when (service is privacy_service.Service):
+    serviceName = "PrivacyService"
+  debug "service doesn't meant to be used from the context it's used, check the context shared popup module is used", service=serviceName
+
 proc disconnect*(self: Controller) =
   for id in self.connectionIds:
     self.events.disconnect(id)
@@ -154,7 +164,7 @@ proc getLastReceivedKeycardData*(self: Controller): tuple[flowType: string, flow
 proc setMetadataFromKeycard*(self: Controller, cardMetadata: CardMetadata) =
   self.delegate.setKeyPairStoredOnKeycard(cardMetadata)
 
-proc cancelCurrentFlow(self: Controller) =
+proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
   # in most cases we're running another flow after canceling the current one, 
   # this way we're giving to the keycard some time to cancel the current flow 
@@ -187,14 +197,12 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
   self.events.emit(SignalSharedKeycarModuleFlowTerminated, data)
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
-  if self.walletAccountService.isNil:
-    debug "walletAccountService doesn't meant to be used from the context it's used, check the context shared popup module is used"
+  if not serviceApplicable(self.walletAccountService):
     return
   return self.walletAccountService.fetchAccounts()
 
 proc getBalanceForAddress*(self: Controller, address: string): float64 =
-  if self.walletAccountService.isNil:
-    debug "walletAccountService doesn't meant to be used from the context it's used, check the context shared popup module is used"
+  if not serviceApplicable(self.walletAccountService):
     return
   return self.walletAccountService.fetchBalanceForAddress(address)
 
@@ -211,26 +219,22 @@ proc generateRandomPUK*(self: Controller): string =
   return self.keycardService.generateRandomPUK()
 
 proc isMnemonicBackedUp*(self: Controller): bool =
-  if self.privacyService.isNil:
-    debug "privacyService doesn't meant to be used from the context it's used, check the context shared popup module is used"
+  if not serviceApplicable(self.privacyService):
     return
   return self.privacyService.isMnemonicBackedUp()
 
 proc getMnemonic*(self: Controller): string =
-  if self.privacyService.isNil:
-    debug "privacyService doesn't meant to be used from the context it's used, check the context shared popup module is used"
+  if not serviceApplicable(self.privacyService):
     return
   return self.privacyService.getMnemonic()
 
 proc removeMnemonic*(self: Controller) =
-  if self.privacyService.isNil:
-    debug "privacyService doesn't meant to be used from the context it's used, check the context shared popup module is used"
+  if not serviceApplicable(self.privacyService):
     return
   self.privacyService.removeMnemonic()
 
 proc getMnemonicWordAtIndex*(self: Controller, index: int): string =
-  if self.privacyService.isNil:
-    debug "privacyService doesn't meant to be used from the context it's used, check the context shared popup module is used"
+  if not serviceApplicable(self.privacyService):
     return
   return self.privacyService.getMnemonicWordAtIndex(index)
 

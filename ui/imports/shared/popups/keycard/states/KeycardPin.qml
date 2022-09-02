@@ -82,7 +82,7 @@ Item {
                 else if(root.state === Constants.keycardSharedState.repeatPin) {
                     let pinsMatch = root.sharedKeycardModule.checkRepeatedKeycardPinWhileTyping(pinInput)
                     if (pinsMatch) {
-                        info.text = qsTr("It is very important that you do not loose this PIN")
+                        info.text = qsTr("It is very important that you do not lose this PIN")
                         root.sharedKeycardModule.currentState.doTertiaryAction()
                     } else {
                         info.text = qsTr("PINs don't match")
@@ -119,6 +119,7 @@ Item {
                      root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinSet)
 
             sourceComponent: KeyPairItem {
+                keyPairType:  root.sharedKeycardModule.selectedKeyPairItem.pairType
                 keyPairPubKey: root.sharedKeycardModule.selectedKeyPairItem.pubKey
                 keyPairName: root.sharedKeycardModule.selectedKeyPairItem.name
                 keyPairIcon: root.sharedKeycardModule.selectedKeyPairItem.icon
@@ -198,7 +199,7 @@ Item {
             }
             PropertyChanges {
                 target: info
-                text: qsTr("It is very important that you do not loose this PIN")
+                text: qsTr("It is very important that you do not lose this PIN")
                 color: Theme.palette.dangerColor1
                 font.pixelSize: Constants.keycard.general.fontSize3
             }
@@ -223,7 +224,7 @@ Item {
             }
             PropertyChanges {
                 target: info
-                text: qsTr("It is very important that you do not loose this PIN")
+                text: qsTr("It is very important that you do not lose this PIN")
                 color: Theme.palette.dangerColor1
                 font.pixelSize: Constants.keycard.general.fontSize3
             }

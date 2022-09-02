@@ -16,6 +16,7 @@ StatusListItem {
     property ButtonGroup buttonGroup
     property bool usedAsSelectOption: false
 
+    property int keyPairType: Constants.keycard.keyPairType.unknown
     property string keyPairPubKey: ""
     property string keyPairName: ""
     property string keyPairIcon: ""
@@ -23,29 +24,28 @@ StatusListItem {
     property string keyPairDerivedFrom: ""
     property string keyPairAccounts: ""
 
+    signal keyPairSelected()
+
     color: Style.current.grey
     title: root.keyPairName
-    titleAsideText: Utils.getElidedCompressedPk(root.keyPairPubKey)
+    titleAsideText: root.keyPairType === Constants.keycard.keyPairType.profile?
+                        Utils.getElidedCompressedPk(d.myPublicKey) : ""
 
-    image {
-        width: 40
-        height: 40
-        source: root.keyPairImage
-    }
-
-    icon {
+    asset {
         width: root.keyPairIcon? 24 : 40
         height: root.keyPairIcon? 24 : 40
-        name: root.keyPairIcon
-        color: Utils.colorForPubkey(root.keyPairPubKey)
-        letterSize: Math.max(4, this.image.width / 2.4)
+        name: root.keyPairImage? root.keyPairImage : root.keyPairIcon
+        color: root.keyPairType === Constants.keycard.keyPairType.profile?
+                   Utils.colorForPubkey(d.myPublicKey) : Theme.palette.primaryColor1
+        letterSize: Math.max(4, this.width / 2.4)
         charactersLen: 2
-        isLetterIdenticon: !root.keyPairIcon && !this.image.source.toString()
-        background.color: Theme.palette.primaryColor3
+        isLetterIdenticon: !root.keyPairIcon && !this.name.toString()
+        bgColor: Theme.palette.primaryColor3
     }
 
     ringSettings {
-        ringSpecModel: Utils.getColorHashAsJson(root.keyPairPubKey)
+        ringSpecModel: root.keyPairType === Constants.keycard.keyPairType.profile?
+                           Utils.getColorHashAsJson(d.myPublicKey) : []
         ringPxSize: Math.max(this.icon.width / 24.0)
     }
 
@@ -56,7 +56,7 @@ StatusListItem {
         height: Style.current.bigPadding
         radius: 6
         closeButtonVisible: false
-        icon {
+        asset {
             emoji: model.emoji
             emojiSize: Emoji.size.verySmall
             isLetterIdenticon: !!model.emoji
@@ -72,22 +72,16 @@ StatusListItem {
 
     components: [
         StatusRadioButton {
+            id: radioButton
             visible: root.usedAsSelectOption
             ButtonGroup.group: root.buttonGroup
             onCheckedChanged: {
                 if (!root.usedAsSelectOption)
                     return
-                let checkCondition = root.sharedKeycardModule.selectedKeyPairItem.derivedFrom === root.keyPairDerivedFrom
-                if (checked && checked != checkCondition) {
-                    root.sharedKeycardModule.setSelectedKeyPairByTheAddressItIsDerivedFrom(root.keyPairDerivedFrom)
+                if (checked) {
+                    root.sharedKeycardModule.setSelectedKeyPair(root.keyPairPubKey)
+                    root.keyPairSelected()
                 }
-            }
-            Component.onCompleted: {
-                if (!root.usedAsSelectOption)
-                    return
-                checked = Qt.binding(function() {
-                    return root.sharedKeycardModule.selectedKeyPairItem.derivedFrom === root.keyPairDerivedFrom
-                })
             }
         }
     ]
@@ -109,9 +103,14 @@ StatusListItem {
         }
     }
 
+    QtObject {
+        id: d
+        property string myPublicKey: userProfile.pubKey
+    }
+
     onClicked: {
         if (!root.usedAsSelectOption)
             return
-        root.sharedKeycardModule.setSelectedKeyPairByTheAddressItIsDerivedFrom(root.keyPairDerivedFrom)
+        radioButton.checked = true
     }
 }
