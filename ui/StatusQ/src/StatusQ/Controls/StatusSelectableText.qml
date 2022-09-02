@@ -5,7 +5,7 @@ import QtQuick.Controls 2.14 as QC
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-
+import StatusQ.Core.Utils 0.1
 
 Item {
     id: statusSelectableText
