@@ -93,7 +93,7 @@ pipeline {
           def goerli_rpc_port = 8577
           // def goerli_rpc_port = 855 + env.EXECUTOR_NUMBER
           docker.image('trufflesuite/ganache:v7.4.1').withRun(
-            "-p 127.0.0.1:8577:8545",
+            "-p 8577:8545",
             "-e 10 -m=\\'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial\\' --chain.chainId 5"
           ) { c ->
             withEnv(["GOERLI_NETWORK_RPC_URL_BKP=http://127.0.0.1:${goerli_rpc_port}"]){
