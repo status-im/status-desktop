@@ -10,9 +10,112 @@ import StatusQ.Core.Theme 0.1
 
 import "data" 1.0
 
-StatusAppThreePanelLayout {
+StatusSectionLayout {
     id: root
     property bool createChat: false
+
+    notificationCount: 1
+    onNotificationButtonClicked: { notificationCount = 0; }
+    showHeader: !root.createChat
+
+    headerContent: RowLayout {
+        id: chatHeader
+
+        signal chatInfoButtonClicked()
+        signal menuButtonClicked()
+        signal membersButtonClicked()
+        signal searchButtonClicked()
+
+        StatusChatInfoButton {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignLeft
+            Layout.leftMargin: padding
+            title: "Amazing Funny Squirrel"
+            subTitle: "Contact"
+            icon.color: Theme.palette.miscColor7
+            type: StatusChatInfoButton.Type.OneToOneChat
+            pinnedMessagesCount: 1
+        }
+
+        RowLayout {
+            id: actionButtons
+            Layout.alignment: Qt.AlignRight
+            Layout.rightMargin: padding
+            spacing: 8
+
+            StatusFlatRoundButton {
+                id: menuButton
+                objectName: "chatToolbarMoreOptionsButton"
+                width: 32
+                height: 32
+                icon.name: "more"
+                type: StatusFlatRoundButton.Type.Secondary
+
+                // initializing the tooltip
+                tooltip.visible: !!tooltip.text && menuButton.hovered && !contextMenu.open
+                tooltip.text: qsTr("More")
+                tooltip.orientation: StatusToolTip.Orientation.Bottom
+                tooltip.y: parent.height + 12
+
+                property bool showMoreMenu: false
+                onClicked: {
+                    menuButton.highlighted = true
+
+                    let originalOpenHandler = contextMenu.openHandler
+                    let originalCloseHandler = contextMenu.closeHandler
+
+                    contextMenu.openHandler = function () {
+                        if (!!originalOpenHandler) {
+                            originalOpenHandler()
+                        }
+                    }
+
+                    contextMenu.closeHandler = function () {
+                        menuButton.highlighted = false
+                        if (!!originalCloseHandler) {
+                            originalCloseHandler()
+                        }
+                    }
+
+                    contextMenu.openHandler = originalOpenHandler
+                    contextMenu.popup(-contextMenu.width + menuButton.width, menuButton.height + 4)
+                }
+                StatusPopupMenu {
+                    id: contextMenu
+
+                    StatusMenuItem {
+                        text: "Mute Chat"
+                        icon.name: "notification"
+                    }
+                    StatusMenuItem {
+                        text: "Mark as Read"
+                        icon.name: "checkmark-circle"
+                    }
+                    StatusMenuItem {
+                        text: "Clear History"
+                        icon.name: "close-circle"
+                    }
+
+                    StatusMenuSeparator {}
+
+                    StatusMenuItem {
+                        text: "Leave Chat"
+                        icon.name: "arrow-left"
+                        type: StatusMenuItem.Type.Danger
+                    }
+                }
+            }
+
+            Rectangle {
+                width: 1
+                height: 24
+                color: Theme.palette.directColor7
+                Layout.alignment: Qt.AlignVCenter
+                visible: (notificationButton.visible && menuButton.visible)
+            }
+        }
+    }
 
     leftPanel: Item {
         anchors.fill: parent
@@ -163,58 +266,6 @@ StatusAppThreePanelLayout {
             id: chatChannelView
             ChatChannelView {
                 model: Models.chatMessagesModel
-            }
-        }
-    }
-
-    rightPanel: Item {
-        anchors.fill: parent
-
-        StatusChatToolBar {
-            width: parent.width
-            toolbarComponent: statusChatInfoButton
-            searchButton.visible: false
-            membersButton.visible: false
-            notificationCount: 1
-
-            onNotificationButtonClicked: notificationCount = 0
-
-            popupMenu: StatusPopupMenu {
-                id: contextMenu
-
-                StatusMenuItem {
-                    text: "Mute Chat"
-                    icon.name: "notification"
-                }
-                StatusMenuItem {
-                    text: "Mark as Read"
-                    icon.name: "checkmark-circle"
-                }
-                StatusMenuItem {
-                    text: "Clear History"
-                    icon.name: "close-circle"
-                }
-
-                StatusMenuSeparator {}
-
-                StatusMenuItem {
-                    text: "Leave Chat"
-                    icon.name: "arrow-left"
-                    type: StatusMenuItem.Type.Danger
-                }
-            }
-
-            Component {
-                id: statusChatInfoButton
-
-                StatusChatInfoButton {
-                   width: Math.min(implicitWidth, parent.width)
-                   title: "Amazing Funny Squirrel"
-                   subTitle: "Contact"
-                   icon.color: Theme.palette.miscColor7
-                   type: StatusChatInfoButton.Type.OneToOneChat
-                   pinnedMessagesCount: 1
-                }
             }
         }
     }

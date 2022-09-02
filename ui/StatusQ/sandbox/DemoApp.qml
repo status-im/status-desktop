@@ -63,7 +63,7 @@ Rectangle {
         visible: titleStyle === "windows"
     }
 
-    StatusAppLayout {
+    StatusMainLayout {
         id: statusAppLayout
         anchors.top: windowsTitle.visible ? windowsTitle.bottom : demoApp.top
         anchors.left: demoApp.left
@@ -73,7 +73,7 @@ Rectangle {
         height: demoApp.height - demoApp.border.width * 2
         width: demoApp.width - demoApp.border.width * 2
 
-        appNavBar: StatusAppNavBar {
+        leftPanel: StatusAppNavBar {
 
             id: navBar
 
@@ -181,7 +181,7 @@ Rectangle {
             }
         }
 
-        appView: Loader {
+        rightPanel: Loader {
             id: appView
             anchors.fill: parent
             sourceComponent: statusAppChatView

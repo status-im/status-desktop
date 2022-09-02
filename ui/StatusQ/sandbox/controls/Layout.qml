@@ -12,93 +12,73 @@ import StatusQ.Popups 0.1
 Column {
     spacing: 10
 
-    StatusChatToolBar {
-        toolbarComponent: chatInfoButton1
+    StatusToolBar {
         width: 518
-
-        Component {
-            id: chatInfoButton1
-
-            StatusChatInfoButton {
-                width: Math.min(implicitWidth, parent.width)
-                title: "Some contact"
-                subTitle: "Contact"
-                icon.color: Theme.palette.miscColor7
-                type: StatusChatInfoButton.Type.OneToOneChat
-             }
+        headerContent: StatusChatInfoButton {
+            width: Math.min(implicitWidth, parent.width)
+            title: "Some contact"
+            subTitle: "Contact"
+            icon.color: Theme.palette.miscColor7
+            type: StatusChatInfoButton.Type.OneToOneChat
         }
     }
 
-    StatusChatToolBar {
-        toolbarComponent: chatInfoButton2
+    StatusToolBar {
         width: 518
 
-        Component {
-            id: chatInfoButton2
-            StatusChatInfoButton {
-                width: Math.min(implicitWidth, parent.width)
-                title: "Some contact"
-                subTitle: "Contact"
-                icon.color: Theme.palette.miscColor7
-                type: StatusChatInfoButton.Type.PublicChat
-                pinnedMessagesCount: 1
-                muted: true
-             }
+        headerContent: StatusChatInfoButton {
+            width: Math.min(implicitWidth, parent.width)
+            title: "Some contact"
+            subTitle: "Contact"
+            icon.color: Theme.palette.miscColor7
+            type: StatusChatInfoButton.Type.PublicChat
+            pinnedMessagesCount: 1
+            muted: true
         }
     }
 
 
-    StatusChatToolBar {
+    StatusToolBar {
         notificationCount: 1
-        toolbarComponent: chatInfoButton3
         width: 518
 
-        Component {
-            id: chatInfoButton3
-
-            StatusChatInfoButton {
-                width: Math.min(implicitWidth, parent.width)
-                title: "Some contact"
-                subTitle: "Contact"
-                icon.color: Theme.palette.miscColor7
-                type: StatusChatInfoButton.Type.OneToOneChat
-                pinnedMessagesCount: 1
-             }
+        headerContent: StatusChatInfoButton {
+            width: Math.min(implicitWidth, parent.width)
+            title: "Some contact"
+            subTitle: "Contact"
+            icon.color: Theme.palette.miscColor7
+            type: StatusChatInfoButton.Type.OneToOneChat
+            pinnedMessagesCount: 1
         }
     }
 
-    StatusChatToolBar {
+    StatusToolBar {
         notificationCount: 1
-        toolbarComponent: tagSelector
         width: 518
 
-        Component {
-            id: tagSelector
-
-            StatusTagSelector {
-                namesModel: ListModel {
-                    ListElement {
-                        publicId: "0x0"
-                        name: "Maria"
-                        icon: ""
-                        isIdenticon: false
-                        onlineStatus: 3
-                        isReadonly: true
-                        tagIcon: "crown"
-                    }
-                    ListElement {
-                        publicId: "0x1"
-                        name: "James"
-                        icon: ""
-                        isIdenticon: false
-                        onlineStatus: 1
-                        isReadonly: false
-                        tagIcon: ""
-                    }
+        StatusTagSelector {
+            namesModel: ListModel {
+                ListElement {
+                    publicId: "0x0"
+                    name: "Maria"
+                    icon: ""
+                    isIdenticon: false
+                    onlineStatus: 3
+                    isReadonly: true
+                    tagIcon: "crown"
                 }
-                toLabelText: qsTr("To: ")
-                warningText: qsTr("USER LIMIT REACHED")
+                ListElement {
+                    publicId: "0x1"
+                    name: "James"
+                    icon: ""
+                    isIdenticon: false
+                    onlineStatus: 1
+                    isReadonly: false
+                    tagIcon: ""
+                }
             }
+            toLabelText: qsTr("To: ")
+            warningText: qsTr("USER LIMIT REACHED")
         }
     }
 

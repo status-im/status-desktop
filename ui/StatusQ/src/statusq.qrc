@@ -24,7 +24,7 @@
         <file>StatusQ/Components/StatusChatListCategory.qml</file>
         <file>StatusQ/Components/StatusChatListCategoryItem.qml</file>
         <file>StatusQ/Components/StatusChatListItem.qml</file>
-        <file>StatusQ/Components/StatusChatToolBar.qml</file>
+        <file>StatusQ/Components/StatusToolBar.qml</file>
         <file>StatusQ/Components/StatusColorSpace.qml</file>
         <file>StatusQ/Components/StatusCommunityCard.qml</file>
         <file>StatusQ/Components/StatusCommunityTags.qml</file>
@@ -143,10 +143,7 @@
         <file>StatusQ/Core/StatusScrollView.qml</file>
         <file>StatusQ/Core/StatusTooltipSettings.qml</file>
         <file>StatusQ/Layout/qmldir</file>
-        <file>StatusQ/Layout/StatusAppLayout.qml</file>
         <file>StatusQ/Layout/StatusAppNavBar.qml</file>
-        <file>StatusQ/Layout/StatusAppThreePanelLayout.qml</file>
-        <file>StatusQ/Layout/StatusAppTwoPanelLayout.qml</file>
         <file>StatusQ/Platform/qmldir</file>
         <file>StatusQ/Platform/StatusMacNotification.qml</file>
         <file>StatusQ/Platform/StatusMacTrafficLights.qml</file>

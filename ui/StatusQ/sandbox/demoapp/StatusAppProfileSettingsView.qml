@@ -8,7 +8,7 @@ import StatusQ.Core.Theme 0.1
 
 import "data" 1.0
 
-StatusAppTwoPanelLayout {
+StatusSectionLayout {
     id: root
 
     leftPanel: Item {

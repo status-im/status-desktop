@@ -63,11 +63,11 @@ StatusWindow {
         }
     }
 
-    StatusAppLayout {
+    StatusMainLayout {
         id: appLayout
         anchors.fill: parent
 
-        appNavBar: StatusAppNavBar {
+        leftPanel: StatusAppNavBar {
             height: rootWindow.height
 
             communityTypeRole: "sectionType"
@@ -105,30 +105,34 @@ StatusWindow {
             }
         }
 
-        appView: StackView {
-            id: stackView
+        rightPanel: Item {
             anchors.fill: parent
-            initialItem: libraryDocumentationCmp
-        }
-
-        ThemeSwitch {
-            anchors.top: parent.top
-            anchors.topMargin: 32
-            anchors.right: parent.right
-            anchors.rightMargin: 32
-            lightThemeEnabled: storeSettings.lightTheme
-            onLightThemeEnabledChanged: {
-                Theme.palette = lightThemeEnabled ? rootWindow.darkTheme : rootWindow.lightTheme
-                storeSettings.lightTheme = lightThemeEnabled
+            StackView {
+                id: stackView
+                anchors.fill: parent
+                initialItem: libraryDocumentationCmp
+            }
+            ThemeSwitch {
+                anchors.top: parent.top
+                anchors.topMargin: 32
+                anchors.right: parent.right
+                anchors.rightMargin: 32
+                lightThemeEnabled: storeSettings.lightTheme
+                onLightThemeEnabledChanged: {
+                    Theme.palette = lightThemeEnabled ? rootWindow.darkTheme : rootWindow.lightTheme
+                    storeSettings.lightTheme = lightThemeEnabled
+                }
             }
         }
+
     }
 
     Component {
         id: libraryDocumentationCmp
 
-        StatusAppTwoPanelLayout {
+        StatusSectionLayout {
             id: mainPageView
+            showHeader: false
 
             function page(name, fillPage) {
                 storeSettings.fillPage = fillPage ? true : false
@@ -343,8 +347,8 @@ StatusWindow {
                 }
             }
 
-            rightPanel: Item {
-                id: rightPanel
+            centerPanel: Item {
+                id: centerPanel
                 anchors.fill: parent
 
                 StatusScrollView {
@@ -357,7 +361,7 @@ StatusWindow {
 
                     Item {
                         id: pageWrapper
-                        width: rightPanel.width
+                        width: centerPanel.width
                         anchors.top: parent.top
                         height: Math.max(rootWindow.height, viewLoader.height + 128)
                         scale: rootWindow.factor
@@ -415,8 +419,9 @@ StatusWindow {
     Component {
         id: examplesCmp
 
-        StatusAppTwoPanelLayout {
+        StatusSectionLayout {
             id: examplesView
+            showHeader: false
 
             function example(name) {
                 examplesLoader.source = Qt.resolvedUrl("./examples/" + name + ".qml")
@@ -444,16 +449,19 @@ StatusWindow {
                 }
             }
 
-            rightPanel: StatusScrollView {
-                id: examplesRightPanel
+            centerPanel: Item {
                 anchors.fill: parent
-                anchors.margins: 64
-                anchors.topMargin: anchors.margins + 32
+                StatusScrollView {
+                    id: examplesCenterPanel
+                    anchors.fill: parent
+                    anchors.margins: 64
+                    anchors.topMargin: anchors.margins + 32
 
-                Loader {
-                    id: examplesLoader
-                    width: examplesRightPanel.availableWidth
-                    source: storeSettings.selectedExample !== "" ? storeSettings.selectedExample : examplesView.defaultExampleSource
+                    Loader {
+                        id: examplesLoader
+                        width: examplesCenterPanel.availableWidth
+                        source: storeSettings.selectedExample !== "" ? storeSettings.selectedExample : examplesView.defaultExampleSource
+                    }
                 }
             }
         }

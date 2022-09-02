@@ -5,12 +5,12 @@ import QtQuick.Layouts 1.13
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Layout 0.1
 import StatusQ.Components 0.1
 
 import "../demoapp/data" 1.0
 
-
-StatusScrollView {
+StatusSectionLayout {
     id: root
 
     QtObject {
@@ -31,124 +31,129 @@ StatusScrollView {
             console.info("Clicked community ID: " + communityId)
         }
     }
+    centerPanel: Item {
+        anchors.fill: parent
+        clip: true
+        StatusScrollView {
+            anchors.fill: parent
+            contentHeight: column.height + d.layoutVMargin
+            contentWidth: column.width + d.layoutHMargin
 
-    contentHeight: column.height + d.layoutVMargin
-    contentWidth: column.width + d.layoutHMargin
-    clip: true
+            ColumnLayout {
+                id: column
+                spacing: 18
 
-    ColumnLayout {
-        id: column
-        spacing: 18
-
-        StatusBaseText {
-            Layout.topMargin: d.layoutVMargin
-            Layout.leftMargin: d.layoutHMargin
-            text: qsTr("Find community")
-            font.weight: Font.Bold
-            font.pixelSize: d.titlePixelSize
-            color: Theme.palette.directColor1
-        }
-
-        // Tags definition - Now hidden - Out of scope
-        // TODO: Replace by `StatusListItemTagRow`
-        Row {
-            visible: d.tagsModel.count > 0
-            Layout.leftMargin: d.layoutHMargin
-            Layout.rightMargin: d.layoutHMargin
-            width: 1234 // by design
-            spacing: d.stylePadding/2
-
-            Repeater {
-                model: d.tagsModel
-                delegate: StatusListItemTag {
-                    border.color: Theme.palette.baseColor2
-                    color: "transparent"
-                    height: 32
-                    radius: 36
-                    closeButtonVisible: false
-                    icon.emoji: model.emoji
-                    icon.height: 32
-                    icon.width: icon.height
-                    icon.color: "transparent"
-                    icon.isLetterIdenticon: true
-                    title: model.name
-                    titleText.font.pixelSize: 15
-                    titleText.color: Theme.palette.primaryColor1
+                StatusBaseText {
+                    Layout.topMargin: d.layoutVMargin
+                    Layout.leftMargin: d.layoutHMargin
+                    text: qsTr("Find community")
+                    font.weight: Font.Bold
+                    font.pixelSize: d.titlePixelSize
+                    color: Theme.palette.directColor1
                 }
-            }
-        }
 
-        StatusBaseText {
-            Layout.leftMargin: d.layoutHMargin
-            Layout.topMargin: 20
-            text: qsTr("Featured")
-            font.weight: Font.Bold
-            font.pixelSize: d.subtitlePixelSize
-            color: Theme.palette.directColor1
-        }
+                // Tags definition - Now hidden - Out of scope
+                // TODO: Replace by `StatusListItemTagRow`
+                Row {
+                    visible: d.tagsModel.count > 0
+                    Layout.leftMargin: d.layoutHMargin
+                    Layout.rightMargin: d.layoutHMargin
+                    width: 1234 // by design
+                    spacing: d.stylePadding/2
 
-        GridLayout {
-            id: featuredGrid
-            Layout.leftMargin: d.layoutHMargin
-            columns: 3
-            columnSpacing: d.stylePadding
-            rowSpacing: d.stylePadding
-
-            Repeater {
-                model: d.featuredCommunitiesModel
-                delegate: StatusCommunityCard {
-                    locale: "es"
-                    communityId: model.communityId
-                    loaded: model.available
-                    logo: model.logo
-                    name: model.name
-                    description: model.description
-                    members: model.members
-                    popularity: model.popularity
-                    communityColor: model.communityColor
-                    categories: ListModel {
-                        ListElement { name: "sport"; emoji: "🎾"}
-                        ListElement { name: "food"; emoji: "🥑"}
-                        ListElement { name: "privacy"; emoji: "👻"}
+                    Repeater {
+                        model: d.tagsModel
+                        delegate: StatusListItemTag {
+                            border.color: Theme.palette.baseColor2
+                            color: "transparent"
+                            height: 32
+                            radius: 36
+                            closeButtonVisible: false
+                            icon.emoji: model.emoji
+                            icon.height: 32
+                            icon.width: icon.height
+                            icon.color: "transparent"
+                            icon.isLetterIdenticon: true
+                            title: model.name
+                            titleText.font.pixelSize: 15
+                            titleText.color: Theme.palette.primaryColor1
+                        }
                     }
-
-                    onClicked: { d.navigateToCommunity(communityId) }
                 }
-            }
-        }
 
-        StatusBaseText {
-            Layout.leftMargin: d.layoutHMargin
-            Layout.topMargin: 20
-            text: qsTr("Popular")
-            font.weight: Font.Bold
-            font.pixelSize: d.subtitlePixelSize
-            color: Theme.palette.directColor1
-        }
+                StatusBaseText {
+                    Layout.leftMargin: d.layoutHMargin
+                    Layout.topMargin: 20
+                    text: qsTr("Featured")
+                    font.weight: Font.Bold
+                    font.pixelSize: d.subtitlePixelSize
+                    color: Theme.palette.directColor1
+                }
 
-        GridLayout {
-            Layout.leftMargin: d.layoutHMargin
-            columns: 3
-            columnSpacing: d.stylePadding
-            rowSpacing: d.stylePadding
+                GridLayout {
+                    id: featuredGrid
+                    Layout.leftMargin: d.layoutHMargin
+                    columns: 3
+                    columnSpacing: d.stylePadding
+                    rowSpacing: d.stylePadding
 
-            Repeater {
-                model: d.popularCommunitiesModel
-                delegate: StatusCommunityCard {
-                    locale: "es"
-                    communityId: model.communityId
-                    loaded: model.available
-                    logo: model.logo
-                    name: model.name
-                    description: model.description
-                    members: model.members
-                    activeUsers: model.activeUsers
-                    popularity: model.popularity
-                    tokenLogo: model.tokenLogo
-                    isPrivate: model.isPrivate
-                    banner: model.banner
+                    Repeater {
+                        model: d.featuredCommunitiesModel
+                        delegate: StatusCommunityCard {
+                            locale: "es"
+                            communityId: model.communityId
+                            loaded: model.available
+                            logo: model.logo
+                            name: model.name
+                            description: model.description
+                            members: model.members
+                            popularity: model.popularity
+                            communityColor: model.communityColor
+                            categories: ListModel {
+                                ListElement { name: "sport"; emoji: "🎾"}
+                                ListElement { name: "food"; emoji: "🥑"}
+                                ListElement { name: "privacy"; emoji: "👻"}
+                            }
 
-                    onClicked: { d.navigateToCommunity(communityId) }
+                            onClicked: { d.navigateToCommunity(communityId) }
+                        }
+                    }
+                }
+
+                StatusBaseText {
+                    Layout.leftMargin: d.layoutHMargin
+                    Layout.topMargin: 20
+                    text: qsTr("Popular")
+                    font.weight: Font.Bold
+                    font.pixelSize: d.subtitlePixelSize
+                    color: Theme.palette.directColor1
+                }
+
+                GridLayout {
+                    Layout.leftMargin: d.layoutHMargin
+                    columns: 3
+                    columnSpacing: d.stylePadding
+                    rowSpacing: d.stylePadding
+
+                    Repeater {
+                        model: d.popularCommunitiesModel
+                        delegate: StatusCommunityCard {
+                            locale: "es"
+                            communityId: model.communityId
+                            loaded: model.available
+                            logo: model.logo
+                            name: model.name
+                            description: model.description
+                            members: model.members
+                            activeUsers: model.activeUsers
+                            popularity: model.popularity
+                            tokenLogo: model.tokenLogo
+                            isPrivate: model.isPrivate
+                            banner: model.banner
+
+                            onClicked: { d.navigateToCommunity(communityId) }
+                        }
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.12
 
 import StatusQ.Core 0.1
 import StatusQ.Popups 0.1
@@ -10,7 +11,7 @@ import StatusQ.Core.Theme 0.1
 
 import "data" 1.0
 
-StatusAppThreePanelLayout {
+StatusSectionLayout {
     id: root
 
     property string communityDetailModalTitle: ""
@@ -22,6 +23,101 @@ StatusAppThreePanelLayout {
         color: SplitHandle.pressed ? Theme.palette.baseColor2
                                    : (SplitHandle.hovered ? Qt.darker(Theme.palette.baseColor5, 1.1) : "transparent")
     }
+
+    headerContent: RowLayout {
+        id: statusToolBar
+
+        StatusFlatRoundButton {
+            id: searchButton
+            Layout.alignment: Qt.AlignLeft
+            Layout.leftMargin: padding
+            icon.name: "search"
+            type: StatusFlatRoundButton.Type.Secondary
+            // initializing the tooltip
+            tooltip.text: qsTr("Search")
+            tooltip.orientation: StatusToolTip.Orientation.Bottom
+            tooltip.y: parent.height + 12
+            onClicked: {
+                searchButton.highlighted = !searchButton.highlighted;
+                searchPopup.setSearchSelection(communityDetailModalTitle,
+                                               "",
+                                               communityDetailModalImage);
+                searchPopup.open();
+            }
+        }
+
+        StatusChatInfoButton {
+            Layout.preferredWidth: Math.min(implicitWidth, parent.width)
+            Layout.fillHeight: true
+            title: "general"
+            subTitle: "Community Chat"
+            icon.color: Theme.palette.miscColor6
+            type: StatusChatInfoButton.Type.CommunityChat
+        }
+
+        Item {
+            Layout.fillWidth: true
+        }
+
+        StatusFlatRoundButton {
+            id: membersButton
+            icon.name: "group-chat"
+            type: StatusFlatRoundButton.Type.Secondary
+            // initializing the tooltip
+            tooltip.text: qsTr("Members")
+            tooltip.orientation: StatusToolTip.Orientation.Bottom
+            tooltip.y: parent.height + 12
+            onClicked: {
+                membersButton.highlighted = !membersButton.highlighted;
+                root.showRightPanel = !root.showRightPanel;
+            }
+        }
+
+        StatusSearchPopup {
+            id: searchPopup
+            searchOptionsPopupMenu: searchPopupMenu
+            onAboutToHide: {
+                if (searchPopupMenu.visible) {
+                    searchPopupMenu.close();
+                }
+                //clear menu
+                for (var i = 2; i < searchPopupMenu.count; i++) {
+                    searchPopupMenu.removeItem(searchPopupMenu.takeItem(i));
+                }
+            }
+            onClosed: {
+                statusToolBar.searchButton.highlighted = false
+                searchPopupMenu.dismiss();
+            }
+            onSearchTextChanged: {
+                if (searchPopup.searchText !== "") {
+                    searchPopup.loading = true;
+                    searchModelSimTimer.start();
+                } else {
+                    searchPopup.searchResults = [];
+                    searchModelSimTimer.stop();
+                }
+            }
+            Timer {
+                id: searchModelSimTimer
+                interval: 500
+                onTriggered: {
+                    if (searchPopup.searchText.startsWith("c")) {
+                        searchPopup.searchResults = Models.searchResultsA;
+                    } else {
+                        searchPopup.searchResults = Models.searchResultsB;
+                    }
+                    searchPopup.loading = false;
+                }
+            }
+        }
+        StatusSearchLocationMenu {
+            id: searchPopupMenu
+            searchPopup: searchPopup
+            locationModel: Models.optionsModel
+        }
+    }
+
     leftPanel: Item {
         id: leftPanel
 
@@ -164,79 +260,12 @@ StatusAppThreePanelLayout {
     }
 
     centerPanel: Item {
-        StatusChatToolBar {
-            id: statusChatToolBar
-
-            width: parent.width
-            toolbarComponent: statusChatInfoButton
-
-            onSearchButtonClicked: {
-                searchButton.highlighted = !searchButton.highlighted;
-                searchPopup.setSearchSelection(communityDetailModalTitle,
-                                               "",
-                                               communityDetailModalImage);
-                searchPopup.open();
-            }
-            membersButton.onClicked: membersButton.highlighted = !membersButton.highlighted
-            onMembersButtonClicked: {
-                root.showRightPanel = !root.showRightPanel;
-            }
-
-            Component {
-                id: statusChatInfoButton
-
-                StatusChatInfoButton {
-                   width: Math.min(implicitWidth, parent.width)
-                   title: "general"
-                   subTitle: "Community Chat"
-                   icon.color: Theme.palette.miscColor6
-                   type: StatusChatInfoButton.Type.CommunityChat
-                }
-            }
-        }
-
-        StatusSearchPopup {
-            id: searchPopup
-            searchOptionsPopupMenu: searchPopupMenu
-            onAboutToHide: {
-                if (searchPopupMenu.visible) {
-                    searchPopupMenu.close();
-                }
-                //clear menu
-                for (var i = 2; i < searchPopupMenu.count; i++) {
-                    searchPopupMenu.removeItem(searchPopupMenu.takeItem(i));
-                }
-            }
-            onClosed: {
-                statusChatToolBar.searchButton.highlighted = false
-                searchPopupMenu.dismiss();
-            }
-            onSearchTextChanged: {
-                if (searchPopup.searchText !== "") {
-                    searchPopup.loading = true;
-                    searchModelSimTimer.start();
-                } else {
-                    searchPopup.searchResults = [];
-                    searchModelSimTimer.stop();
-                }
-            }
-            Timer {
-                id: searchModelSimTimer
-                interval: 500
-                onTriggered: {
-                    if (searchPopup.searchText.startsWith("c")) {
-                        searchPopup.searchResults = Models.searchResultsA;
-                    } else {
-                        searchPopup.searchResults = Models.searchResultsB;
-                    }
-                    searchPopup.loading = false;
-                }
-            }
-        }
-        StatusSearchLocationMenu {
-            id: searchPopupMenu
-            searchPopup: searchPopup
-            locationModel: Models.optionsModel
+        anchors.fill: parent
+        StatusBaseText {
+            id: titleText
+            anchors.centerIn: parent
+            font.pixelSize: 15
+            text: qsTr("Community content here")
         }
     }
 
