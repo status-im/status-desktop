@@ -112,7 +112,7 @@ Item {
             objectName: "testingAccountsJSON"
             Layout.fillWidth: true
             wrapMode: Text.WrapAnywhere
-            text: walletSectionAccounts.testingAccounts
+            text: "TESTING ACCOUNTS: " + walletSectionAccounts.testingAccounts
         }
     }
 }

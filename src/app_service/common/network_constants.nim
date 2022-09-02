@@ -105,7 +105,7 @@ let NETWORKS* = %* [
   {
     "chainId": 5,
     "chainName": "Goerli",
-    "rpcUrl": GOERLI_RPC_URL_RESOLVED,
+    "rpcUrl": "http://127.0.0.1:8577",
     "blockExplorerUrl": "https://goerli.etherscan.io/",
     "iconUrl": "network/Network=Testnet",
     "chainColor": "#939BA1",
