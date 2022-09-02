@@ -23,6 +23,9 @@ proc init*(self: Controller) =
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
+proc getTestingAccounts*(self: Controller): string =
+  return self.walletAccountService.testingAccounts
+
 proc generateNewAccount*(self: Controller, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string =
   return self.walletAccountService.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)
 
