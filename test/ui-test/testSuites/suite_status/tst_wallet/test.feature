@@ -17,7 +17,6 @@ Feature: Status Desktop Wallet
        Examples:
          | account_name | address                                      |
          | one          | 0x8397bc3c5a60a1883174f722403d63a8833312b7   |
-         | two          | 0xf51ba8631618b9b3521ff4eb9adfd8a837455226   |
 
 
     Scenario Outline: User generates a new account from wallet

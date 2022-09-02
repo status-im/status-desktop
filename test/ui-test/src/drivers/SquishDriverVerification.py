@@ -1,9 +1,18 @@
 from drivers.SquishDriver import *
 import squish
+import testData
+import squishinfo
 from remotesystem import RemoteSystem
 import time
 import platform
+from scripts.global_names import mainWindow_RighPanel
 from typing import Dict, Any
+import objectMap
+
+import os
+import os.path
+import subprocess
+import sys
 
 # The default maximum timeout to find ui object
 _MAX_WAIT_OBJ_TIMEOUT = 5000
@@ -106,7 +115,14 @@ def log(text: str):
     test.log(text)
     
     
-def verify_or_create_screenshot(vp: str, obj: Dict[str, Any]):
+def verify_or_create_screenshot(vp: str, obj: Dict[str, Any] = mainWindow_RighPanel):
+    obj = squish.waitForObject(mainWindow_RighPanel)
+    obj_name = objectMap.symbolicName(obj)
+    img = squish.grabWidget(obj)
+    filename = "foo" + ".png"
+    img.save(filename , "PNG")
+    testData.get(filename)
+
     try:
         test.vpWithObject(vp, obj)
     except RuntimeError:

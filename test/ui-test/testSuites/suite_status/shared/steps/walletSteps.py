@@ -15,7 +15,7 @@ def step(context):
 @When("the user adds watch only account with |any| and |any|")
 @verify_screenshot
 def step(context, account_name, address):
-    _walletScreen.add_watch_only_account(account_name, address)
+    _walletScreen.add_watch_only_account(context, account_name, address)
 
 @When("the user generates a new account with |any| and |any|")
 def step(context, account_name, password):
@@ -34,6 +34,7 @@ def step(context, account_name, amount, token, chain_name, password):
     _walletScreen.send_transaction(account_name, amount, token, chain_name, password)
     
 @When("the user adds a saved address named |any| and address |any|")
+@verify_screenshot
 def step(context, name, address):
     _walletScreen.add_saved_address(name, address)
 
@@ -46,6 +47,7 @@ def step(context, name):
     _walletScreen.delete_saved_address(name)
 
 @When("the user toggles the network |any|")
+@verify_screenshot
 def step(context, network_name):
     _walletScreen.toggle_network(network_name)
 

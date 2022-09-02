@@ -76,7 +76,7 @@ class StatusWalletScreen:
     def accept_signing_phrase(self):
         click_obj_by_name(SigningPhrasePopUp.OK_GOT_IT_BUTTON.value)
         
-    def add_watch_only_account(self, account_name: str, address: str):
+    def add_watch_only_account(self, context, account_name: str, address: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
         
         type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
@@ -87,6 +87,7 @@ class StatusWalletScreen:
         click_obj_by_name(AddAccountPopup.TYPE_WATCH_ONLY.value)
         
         type(AddAccountPopup.ADDRESS_INPUT.value, address)
+        verify_or_create_screenshot(context.userData["vp_base_path"] + "_popup")
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
 
     def import_private_key(self, account_name: str, password: str, private_key: str):

@@ -42,6 +42,6 @@ def hook(context):
     snooze(_app_closure_timeout)
 
 
-@OnStepEnd
+@OnStepStart
 def hook(context):
     context.userData["step_name"] = context._data["text"]
