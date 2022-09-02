@@ -49,11 +49,11 @@ StatusPopupMenu {
                 } else {
                     item.value = model.value
                     item.text = model.title;
-                    item.iconSettings.name = model.iconName;
-                    item.iconSettings.color = model.iconColor;
-                    item.iconSettings.isLetterIdenticon = !model.imageSource && !model.iconName
-                    item.image.source = model.imageSource;
-                    item.image.isIdenticon = model.isIdenticon;
+                    item.assetSettings.name = !!model.imageSource ? !!model.imageSource : model.iconName;
+                    item.assetSettings.color = model.iconColor;
+                    item.assetSettings.isImage = !!model.imageSource;
+                    item.assetSettings.isLetterIdenticon = !model.imageSource && !model.iconName
+                    item.assetSettings.imgIsIdenticon = model.isIdenticon;
                     root.insertItem(index + numDefaultItems, item);
                 }
             }
@@ -68,10 +68,10 @@ StatusPopupMenu {
                 searchPopup.resetSearchSelection()
                 searchPopup.setSearchSelection(text,
                                                "",
-                                               image.source,
-                                               image.isIdenticon,
-                                               iconSettings.name,
-                                               iconSettings.color)
+                                               "",
+                                               assetSettings.isIdenticon,
+                                               assetSettings.name,
+                                               assetSettings.color)
                 root.itemClicked(value, "")
             }
         }
@@ -102,10 +102,10 @@ StatusPopupMenu {
                     sourceComponent: StatusSearchPopupMenuItem {
                         value: model.value
                         text: model.text
-                        image.source: model.imageSource
-                        iconSettings.name: model.iconName
-                        iconSettings.color: model.isUserIcon ? Theme.palette.userCustomizationColors[model.colorId] : model.iconColor
-                        iconSettings.charactersLen: model.isUserIcon ? 2 : 1
+                        assetSettings.isImage: !!model.imageSource
+                        assetSettings.name: !!model.imageSource ? model.imageSource : model.iconName
+                        assetSettings.color: model.isUserIcon ? Theme.palette.userCustomizationColors[model.colorId] : model.iconColor
+                        assetSettings.charactersLen: model.isUserIcon ? 2 : 1
                         ringSettings.ringSpecModel: model.colorHash
                         onTriggered: {
                             searchPopup.resetSearchSelection()

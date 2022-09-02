@@ -19,11 +19,8 @@ Rectangle {
     property string subTitle: ""
     property bool muted: false
     property int pinnedMessagesCount: 0
-    property StatusImageSettings image: StatusImageSettings {
-        width: 36
-        height: 36
-    }
-    property StatusIconSettings icon: StatusIconSettings {
+
+    property StatusAssetSettings asset: StatusAssetSettings {
         width: 36
         height: 36
         charactersLen: 2
@@ -65,8 +62,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 4
             anchors.verticalCenter: parent.verticalCenter
-            image: statusChatInfoButton.image
-            icon: statusChatInfoButton.icon
+            asset: statusChatInfoButton.asset
             name: statusChatInfoButton.title
         }
 

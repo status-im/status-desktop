@@ -41,7 +41,7 @@ StatusSectionLayout {
                     model: Models.demoProfileGeneralMenuItems
                     delegate: StatusNavigationListItem {
                         title: model.title
-                        icon.name: model.icon
+                        asset.name: model.icon
                     }
                 }
 
@@ -51,7 +51,7 @@ StatusSectionLayout {
                     model: Models.demoProfileSettingsMenuItems
                     delegate: StatusNavigationListItem {
                         title: model.title
-                        icon.name: model.icon
+                        asset.name: model.icon
                     }
                 }
 
@@ -65,7 +65,7 @@ StatusSectionLayout {
                     model: Models.demoProfileOtherMenuItems
                     delegate: StatusNavigationListItem {
                         title: model.title
-                        icon.name: model.icon
+                        asset.name: model.icon
                     }
                 }
             }

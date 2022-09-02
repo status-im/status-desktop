@@ -118,7 +118,7 @@ Row {
             hoverColor: Theme.palette.statusFloatingButtonHighlight
             normalColor: Theme.palette.baseColor3
             icon.name: "more"
-            icon.background.color: "transparent"
+            icon.bgColor: "transparent"
             onClicked: popupMenu.popup(parent.x, y + height + 8)
         }
     }

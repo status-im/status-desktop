@@ -18,19 +18,13 @@ Rectangle {
     property bool expandable: true
     property bool expanded: false
 
-    property StatusIconSettings icon: StatusIconSettings {
-        width: !!statusExpandableItem.icon.name.toString() ? 24 : 40
-        height: !!statusExpandableItem.icon.name.toString() ? 24 : 40
+    property StatusAssetSettings asset: StatusAssetSettings {
+        width: !statusExpandableItem.asset.isImage ? 24 : 40
+        height: !statusExpandableItem.asset.isImage ? 24 : 40
         color: Theme.palette.directColor1
-        background: StatusIconBackgroundSettings {
-            width: 32
-            height: 32
-            color: Theme.palette.primaryColor2
-        }
-    }
-    property StatusImageSettings image: StatusImageSettings {
-        width: 40
-        height: 40
+        bgWidth: 32
+        bgHeight: 32
+        bgColor: Theme.palette.primaryColor2
     }
 
     enum Type {
@@ -73,8 +67,7 @@ Rectangle {
             anchors.topMargin: (statusExpandableItem.type === StatusExpandableItem.Type.Secondary) ? 12.5 : 25
             anchors.left: parent.left
             anchors.leftMargin: (statusExpandableItem.type === StatusExpandableItem.Type.Secondary) ? 16 : 11
-            image: statusExpandableItem.image
-            icon: statusExpandableItem.icon
+            asset: statusExpandableItem.asset
             name: primaryText.text
             active: (statusExpandableItem.type !== StatusExpandableItem.Type.Tertiary)
         }
@@ -89,10 +82,10 @@ Rectangle {
 
             anchors.verticalCenter: (statusExpandableItem.type === StatusExpandableItem.Type.Secondary) ? identicon.verticalCenter : undefined
 
-            width: !!additionalText.text ? (button.visible ? parent.width - icon.background.width - button.width - additionalText.contentWidth - 110 :
-                                                          parent.width - icon.background.width - additionalText.contentWidth - 110) :
-                                        (button.visible ? parent.width - icon.background.width - button.width - 70 :
-                                                          parent.width - icon.background.width - 70)
+            width: !!additionalText.text ? (button.visible ? parent.width - asset.bgWidth - button.width - additionalText.contentWidth - 110 :
+                                                          parent.width - asset.bgWidth - additionalText.contentWidth - 110) :
+                                        (button.visible ? parent.width - asset.bgWidth - button.width - 70 :
+                                                          parent.width - asset.bgWidth - 70)
 
             font.weight: (statusExpandableItem.type === StatusExpandableItem.Type.Primary) ? Font.Medium : Font.Normal
             font.pixelSize: (statusExpandableItem.type === StatusExpandableItem.Type.Primary) ? 15 : 17

@@ -17,24 +17,17 @@ Rectangle {
     property bool closeButtonVisible: true
     signal clicked()
 
-    property StatusImageSettings image: StatusImageSettings {
-        width: 20
-        height: 20
-        isIdenticon: false
-    }
-
-    property StatusIconSettings icon: StatusIconSettings {
+    property StatusAssetSettings asset: StatusAssetSettings {
         height: 20
         width: 20
         rotation: 0
         isLetterIdenticon: false
         letterSize: 10
         color: Theme.palette.primaryColor1
-        background: StatusIconBackgroundSettings {
-            width: 15
-            height: 15
-            color: Theme.palette.primaryColor3
-        }
+        bgWidth: 15
+        bgHeight: 15
+        bgColor: Theme.palette.primaryColor3
+        imgIsIdenticon: false
     }
 
     RowLayout {
@@ -45,12 +38,10 @@ Rectangle {
         StatusSmartIdenticon {
             id: iconOrImage
             Layout.leftMargin: 4
-            image: root.image
-            icon: root.icon
+            asset: root.asset
             name: root.title
-            active: root.icon.isLetterIdenticon ||
-                    !!root.icon.name ||
-                    !!root.image.source.toString()
+            active: root.asset.isLetterIdenticon ||
+                    !!root.asset.name
         }
 
         StatusBaseText {

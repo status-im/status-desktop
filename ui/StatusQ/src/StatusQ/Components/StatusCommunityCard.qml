@@ -360,11 +360,11 @@ Rectangle {
                         height: 24
                         radius: 20
                         closeButtonVisible: false
-                        icon.emoji: model.emoji
-                        icon.height: 24
-                        icon.width: icon.height
-                        icon.color: "transparent"
-                        icon.isLetterIdenticon: true
+                        asset.emoji: model.emoji
+                        asset.width: 24
+                        asset.height: 24
+                        asset.color: "transparent"
+                        asset.isLetterIdenticon: true
                         title: model.name
                         titleText.font.pixelSize: 13
                         titleText.color: d.fontColor

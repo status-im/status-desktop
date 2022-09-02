@@ -6,7 +6,7 @@ import StatusQ.Core.Theme 0.1
 Item {
     id: root
 
-    property StatusIconSettings icon: StatusIconSettings {
+    property StatusAssetSettings icon: StatusAssetSettings {
         width: 24
         height: 24
         name: ""

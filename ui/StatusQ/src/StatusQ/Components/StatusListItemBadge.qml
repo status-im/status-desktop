@@ -13,17 +13,12 @@ Control {
     property string primaryText: ""
     property string secondaryText: ""
 
-    property StatusImageSettings image: StatusImageSettings {
-        height: 16
-        width: 16
-        isIdenticon: false
-    }
-    property StatusIconSettings icon: StatusIconSettings {
+    property StatusAssetSettings asset: StatusAssetSettings {
         height: 16
         width: 16
         isLetterIdenticon: false
-        background: StatusIconBackgroundSettings {}
         color: "transparent"
+        imgIsIdenticon: false
     }
 
     background: Rectangle {
@@ -43,22 +38,22 @@ Control {
             anchors.horizontalCenterOffset: -spacing
             spacing: 2
             StatusRoundedImage {
-                implicitWidth: root.image.width
-                implicitHeight: root.image.height
-                visible: !root.icon.isLetterIdenticon
-                image.source: root.image.source
+                implicitWidth: root.asset.width
+                implicitHeight: root.asset.height
+                visible: !root.asset.isLetterIdenticon
+                image.source: root.asset.name
                 border.color: Theme.palette.baseColor1
-                border.width: root.image.isIdenticon ? 1 : 0
+                border.width: root.asset.imgIsIdenticon ? 1 : 0
             }
             StatusLetterIdenticon {
-                implicitWidth: root.icon.width
-                implicitHeight: root.icon.width
+                implicitWidth: root.asset.width
+                implicitHeight: root.asset.width
                 letterSize: 11
-                visible: root.icon.isLetterIdenticon
-                color: root.icon.color
+                visible: root.asset.isLetterIdenticon
+                color: root.asset.color
                 name: root.primaryText
-                emoji: root.icon.emoji
-                emojiSize: root.icon.emojiSize
+                emoji: root.asset.emoji
+                emojiSize: root.asset.emojiSize
             }
             StatusBaseText {
                 font.weight: Font.Medium

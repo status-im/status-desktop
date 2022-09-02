@@ -45,11 +45,11 @@ ListView {
             sender.ensName: model.ensName
             sender.isContact: model.isContact
             sender.trustIndicator: model.trustIndicator
-            sender.profileImage {
+            sender.profileImage: StatusProfileImageSettings {
                 width: 40
                 height: 40
                 pubkey: model.senderId
-                source: model.profileImage || ""
+                name: model.profileImage || ""
                 colorId: 1
                 colorHash: ListModel {
                     ListElement { colorId: 13; segmentLength: 5 }
@@ -70,11 +70,11 @@ ListView {
             sender.id: model.replySenderId || ""
             sender.userName:  model.isReply ? model.replySenderName: ""
             sender.ensName: model.isReply ? model.replySenderEnsName : ""
-            sender.profileImage {
+            sender.profileImage: StatusProfileImageSettings {
                 width: 20
                 height: 20
+                name: model.isReply ? model.replyProfileImage: ""
                 pubkey: model.replySenderId
-                source:  model.isReply ? model.replyProfileImage: ""
                 colorId: 1
                 colorHash: ListModel {
                     ListElement { colorId: 13; segmentLength: 5 }

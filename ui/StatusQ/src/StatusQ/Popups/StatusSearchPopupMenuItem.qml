@@ -11,20 +11,13 @@ MenuItem {
 
     property string value: ""
 
-    property StatusImageSettings image: StatusImageSettings {
+    property StatusAssetSettings assetSettings: StatusAssetSettings {
         height: 16
         width: 16
-        isIdenticon: false
-    }
-
-    property StatusIconSettings iconSettings: StatusIconSettings {
-        height: 16
-        width: 16
-        isLetterIdenticon: (root.image.source.toString() === ""
-                            && root.iconSettings.name.toString() === "")
-        background: StatusIconBackgroundSettings {}
+        isLetterIdenticon: (name.toString() === "")
         color: (name === "channel") ? Theme.palette.directColor1 : "transparent"
         letterSize: charactersLen > 1 ? 8 : 11
+        imgIsIdenticon: false
     }
 
     property alias ringSettings: identicon.ringSettings
@@ -37,14 +30,13 @@ MenuItem {
         anchors.left: parent.left
         anchors.leftMargin: 12
         Item {
-            Layout.preferredWidth: root.iconSettings.width
-            Layout.preferredHeight: root.iconSettings.height
+            Layout.preferredWidth: root.assetSettings.width
+            Layout.preferredHeight: root.assetSettings.height
             Layout.alignment: Qt.AlignVCenter
             StatusSmartIdenticon {
                 id: identicon
                 anchors.centerIn: parent
-                image: root.image
-                icon: root.iconSettings
+                asset: root.assetSettings
                 name: root.text
                 ringSettings: root.ringSettings
             }

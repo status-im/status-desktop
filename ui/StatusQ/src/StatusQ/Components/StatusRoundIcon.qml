@@ -5,33 +5,31 @@ import StatusQ.Core.Theme 0.1
 Rectangle {
     id: statusRoundedIcon
 
-    property StatusIconSettings icon: StatusIconSettings {
+    property StatusAssetSettings asset: StatusAssetSettings {
         width: 24
         height: 24
         rotation: 0
         color: Theme.palette.primaryColor1
-        background: StatusIconBackgroundSettings {
-            width: 40
-            height: 40
-            color: Theme.palette.primaryColor3
-        }
+        bgWidth: 40
+        bgHeight: 40
+        bgColor: Theme.palette.primaryColor3
     }
 
-    color: icon.background.color
-    implicitWidth: icon.background.width
-    implicitHeight: icon.background.height
-    radius: icon.background.width / 2
+    color: asset.bgColor
+    implicitWidth: asset.bgWidth
+    implicitHeight: asset.bgHeight
+    radius: asset.bgWidth / 2
 
 
     StatusIcon {
         id: statusIcon
         anchors.centerIn: parent
 
-        width: statusRoundedIcon.icon.width
-        height: statusRoundedIcon.icon.height
+        width: statusRoundedIcon.asset.width
+        height: statusRoundedIcon.asset.height
 
-        color: statusRoundedIcon.icon.color
-        icon: statusRoundedIcon.icon.name
-        rotation: statusRoundedIcon.icon.rotation
+        color: statusRoundedIcon.asset.color
+        icon: statusRoundedIcon.asset.name
+        rotation: statusRoundedIcon.asset.rotation
     }
 }

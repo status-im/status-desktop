@@ -239,7 +239,7 @@ Rectangle {
                     id: waitTimer
                     interval: lockTimeout
                     onTriggered: {
-                        if(advancedInput.edit.text)
+                        if(advancedInput.text)
                             advancedInput.locked = true
                     }
                 }
@@ -311,7 +311,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: advancedInput
-                edit.color: Theme.palette.directColor1
+                input.color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: basicInput
@@ -370,7 +370,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: advancedInput
-                edit.color: disabled ? Theme.palette.directColor5 : Theme.palette.dangerColor1
+                input.edit.color: disabled ? Theme.palette.directColor5 : Theme.palette.dangerColor1
             }
             PropertyChanges {
                 target: basicInput
@@ -429,7 +429,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: advancedInput
-                edit.color: Theme.palette.directColor1
+                input.color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: basicInput
@@ -488,7 +488,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: advancedInput
-                edit.color: Theme.palette.directColor1
+                input.color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: basicInput

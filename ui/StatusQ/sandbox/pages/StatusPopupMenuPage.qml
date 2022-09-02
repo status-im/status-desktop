@@ -55,30 +55,30 @@ GridLayout {
 
         StatusMenuItem { 
             text: "One" 
-            iconSettings.name: "info"
+            assetSettings.name: "info"
         }
 
         StatusMenuSeparator {}
 
         StatusMenuItem { 
             text: "Two"
-            iconSettings.name: "info"
+            assetSettings.name: "info"
         }
 
         StatusMenuItem { 
             text: "Three"
-            iconSettings.name: "info"
+            assetSettings.name: "info"
         }
 
         StatusPopupMenu {
             title: "Four"
             StatusMenuItem { 
                 text: "One"
-                iconSettings.name: "info"
+                assetSettings.name: "info"
             }
             StatusMenuItem { 
                 text: "Three"
-                iconSettings.name: "info"
+                assetSettings.name: "info"
             }
         }
     }
@@ -108,14 +108,16 @@ GridLayout {
 
             StatusMenuItem { 
                 text: "vitalik.eth"
-                image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
+                assetSettings.isImage: true
+                assetSettings.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
 CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-                image.isIdenticon: true
+                assetSettings.imgIsIdenticon: true
             }
 
             StatusMenuItem { 
                 text: "Pascal"
-                image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
+                assetSettings.isImage: true
+                assetSettings.name: "qrc:/demoapp/data/profile-image-1.jpeg"
             }
         }
 
@@ -124,21 +126,21 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
 
             StatusMenuItem { 
                 text: "welcome" 
-                iconSettings.name: "channel"
-                iconSettings.color: Theme.palette.directColor1
+                assetSettings.name: "channel"
+                assetSettings.color: Theme.palette.directColor1
             }
             StatusMenuItem { 
                 text: "support" 
-                iconSettings.name: "channel"
-                iconSettings.color: Theme.palette.directColor1
+                assetSettings.name: "channel"
+                assetSettings.color: Theme.palette.directColor1
             }
 
             StatusMenuHeadline { text: "Public" }
 
             StatusMenuItem { 
                 text: "news" 
-                iconSettings.name: "channel"
-                iconSettings.color: Theme.palette.directColor1
+                assetSettings.name: "channel"
+                assetSettings.color: Theme.palette.directColor1
             }
         }
 
@@ -147,8 +149,8 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
 
             StatusMenuItem { 
                 text: "welcome" 
-                iconSettings.isLetterIdenticon: true
-                iconSettings.background.color: "red"
+                assetSettings.isLetterIdenticon: true
+                assetSettings.bgColor: "red"
             }
         }
     }

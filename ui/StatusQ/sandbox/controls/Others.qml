@@ -40,7 +40,7 @@ ColumnLayout {
         }
 
         StatusRoundIcon {
-            icon.name: "info"
+            asset.name: "info"
         }
     }
 

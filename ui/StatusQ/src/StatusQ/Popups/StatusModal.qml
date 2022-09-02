@@ -224,8 +224,7 @@ QC.Popup {
             titleElide: header.titleElide
             subTitle: header.subTitle
             subTitleElide: header.subTitleElide
-            image: header.image
-            icon: header.icon
+            asset: header.asset
             popupMenu: header.popupMenu
             headerImageEditable: header.headerImageEditable
             editable: header.editable

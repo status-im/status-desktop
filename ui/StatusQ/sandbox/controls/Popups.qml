@@ -109,7 +109,8 @@ Column {
         anchors.centerIn: parent
         header.title: "Some Title"
         header.subTitle: "Subtitle"
-        header.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
+        header.asset.isImage: true
+        header.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
     }
 
     StatusModal {
@@ -117,7 +118,8 @@ Column {
         anchors.centerIn: parent
         header.title: "Some Title"
         header.subTitle: "Subtitle"
-        header.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
+        header.asset.isImage: true
+        header.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
         leftButtons: [
             StatusBackButton { }
         ]
@@ -136,7 +138,8 @@ Column {
         anchors.centerIn: parent
         header.title: "Some Title"
         header.subTitle: "Subtitle"
-        header.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
+        header.asset.isImage: true
+        header.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
 
         headerActionButton: StatusFlatRoundButton {
             type: StatusFlatRoundButton.Type.Secondary
@@ -164,7 +167,8 @@ Column {
     StatusModal {
         id: modalExample
         anchors.centerIn: parent
-        header.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
+        header.asset.isImage: true
+        header.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
         header.title: "Header"
         header.subTitle: "SubTitle"
         rightButtons: [
@@ -227,8 +231,8 @@ Column {
         anchors.centerIn: parent
         header.title: "Header"
         header.subTitle: "SubTitle"
-        header.icon.isLetterIdenticon: true
-        header.icon.background.color: "red"
+        header.asset.isLetterIdenticon: true
+        header.asset.bgColor: "red"
 
         contentItem: StatusBaseText {
             anchors.centerIn: parent
@@ -252,9 +256,9 @@ Column {
         anchors.centerIn: parent
         header.title: "Header"
         header.subTitle: "SubTitle"
-        header.image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
-CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-        header.image.isIdenticon: true
+        header.asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+                      nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
+        header.asset.imgIsIdenticon: true
 
         contentItem: StatusBaseText {
             anchors.centerIn: parent
@@ -279,9 +283,9 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         header.title: "Header"
         header.subTitle: "SubTitle"
         header.headerImageEditable: true
-        header.image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
-CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-        header.image.isIdenticon: true
+        header.asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+                      nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
+        header.asset.imgIsIdenticon: true
 
         contentItem: StatusBaseText {
             anchors.centerIn: parent
@@ -306,9 +310,9 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         header.title: "Some super long text here that exceeds the available space"
         header.subTitle: "Some super long text here that exceeds the available space"
         header.subTitleElide: Text.ElideMiddle
-        header.image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
-CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-        header.image.isIdenticon: true
+        header.asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+                      nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
+        header.asset.imgIsIdenticon: true
 
         contentItem: StatusBaseText {
             anchors.centerIn: parent
@@ -340,7 +344,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     sourceComponent: popupMenu.delegate
                     onLoaded: {
                         item.action.text = model.name
-                        item.action.iconSettings.name = model.iconName
+                        item.action.assetSettings.name = model.iconName
                     }
                 }
             }

@@ -10,7 +10,7 @@ Loader {
 
     property bool noHover: false
     property bool noMouseArea: false
-    property StatusImageSettings image: StatusImageSettings {
+    property StatusAssetSettings asset: StatusAssetSettings {
         width: 140
         height: 140
     }
@@ -26,8 +26,8 @@ Loader {
         color: Theme.palette.baseColor2
         radius: 16
 
-        width: image.width
-        height: image.height
+        width: asset.width
+        height: asset.height
 
         function reload() {
             // From the documentation (https://doc.qt.io/qt-5/qml-qtquick-image.html#sourceSize-prop)
@@ -53,7 +53,7 @@ Loader {
             horizontalAlignment: Image.AlignHCenter
             verticalAlignment: Image.AlignVCenter
             cache: true
-            source: image.source
+            source: asset.name
 
             onStatusChanged: {
                 if (status === Image.Ready) {

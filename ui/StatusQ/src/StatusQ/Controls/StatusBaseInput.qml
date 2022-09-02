@@ -218,21 +218,19 @@ Item {
     property bool showBackground: true
 
     /*!
-        \qmlproperty StatusIconSettings StatusBaseInput::icon
+        \qmlproperty StatusAssetSettings StatusBaseInput::icon
         This property holds a set of settings for the icon of the StatusBaseInput.
     */
-    property StatusIconSettings icon: StatusIconSettings {
+    property StatusAssetSettings asset: StatusAssetSettings {
         width: 24
         height: 24
         name: ""
         color: Theme.palette.baseColor1
         emoji: ""
         letterSize: emoji ? 11 : 14
-        background: StatusIconBackgroundSettings {
-            width: 30
-            height: 30
-            color: Theme.palette.indirectColor1
-        }
+        bgWidth: 30
+        bgHeight: 30
+        bgColor: Theme.palette.indirectColor1
     }
 
     /*!
@@ -318,8 +316,8 @@ Item {
                     sourceComponent: {
                         if (root.leftComponent) return root.leftComponent
                         if (!root.leftIcon) return undefined
-                        if (root.icon.emoji || root.icon.isLetterIdenticon) return identiconComponent
-                        if (root.icon.name) return isIconSelectable ? identiconComponent : iconComponent
+                        if (root.asset.emoji || root.asset.isLetterIdenticon) return identiconComponent
+                        if (root.asset.name) return isIconSelectable ? identiconComponent : iconComponent
                         return undefined
                     }
                 }
@@ -420,8 +418,8 @@ Item {
                         if (root.rightComponent) return root.rightComponent
                         if (root.clearable) return clearButton
                         if (root.leftIcon) return undefined
-                        if (root.icon.emoji) return identiconComponent
-                        if (root.icon.name) return isIconSelectable ? identiconComponent : iconComponent
+                        if (root.asset.emoji) return identiconComponent
+                        if (root.asset.name) return isIconSelectable ? identiconComponent : iconComponent
                         return undefined
                     }
                 }
@@ -455,14 +453,16 @@ Item {
         StatusSmartIdenticon {
             id: identicon
 
-            icon.width: 24
-            icon.height: 24
-            icon.background: root.icon.background
-            icon.color: root.icon.color
-            icon.letterSize: root.icon.letterSize
-            icon.emoji: root.icon.emoji
-            icon.name: !root.icon.emoji ? root.icon.name : ""
-            icon.isLetterIdenticon: root.icon.isLetterIdenticon
+            asset.width: 24
+            asset.height: 24
+            asset.bgWidth: root.asset.bgWidth
+            asset.bgHeight: root.asset.bgHeight
+            asset.bgColor: root.asset.bgColor
+            asset.color: root.asset.color
+            asset.letterSize: root.asset.letterSize
+            asset.emoji: root.asset.emoji
+            asset.name: !root.asset.emoji ? root.asset.name : ""
+            asset.isLetterIdenticon: root.asset.isLetterIdenticon
             name: root.letterIconName
 
             MouseArea {
@@ -482,10 +482,10 @@ Item {
         StatusIcon {
             id: statusIcon
 
-            icon: root.icon.name
-            width: root.icon.width
-            height: root.icon.height
-            color: root.icon.color
+            icon: root.asset.name
+            width: root.asset.width
+            height: root.asset.height
+            color: root.asset.color
         }
     }
 }

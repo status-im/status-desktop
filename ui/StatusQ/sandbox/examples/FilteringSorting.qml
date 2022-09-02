@@ -35,7 +35,7 @@ ColumnLayout {
             id: searchInput
 
             Layout.fillWidth: true
-            input.icon.name: "search"
+            input.asset.name: "search"
             placeholderText: "nickname.."
         }
 
@@ -43,7 +43,7 @@ ColumnLayout {
             id: contactBtn
 
             icon.name: "tiny/tiny-contact"
-            identicon.icon.color: Theme.palette.primaryColor1
+            identicon.asset.color: Theme.palette.primaryColor1
             onClicked: highlighted = !highlighted
         }
 
@@ -51,7 +51,7 @@ ColumnLayout {
             id: verifiedBtn
 
             icon.name: "tiny/tiny-checkmark"
-            identicon.icon.color: Theme.palette.primaryColor1
+            identicon.asset.color: Theme.palette.primaryColor1
             onClicked: highlighted = !highlighted
         }
     }
@@ -94,6 +94,7 @@ ColumnLayout {
             nickName: model.nick
             isVerified: model.isVerified
             isContact: model.isContact
+            asset.isLetterIdenticon: true
         }
     }
 

@@ -10,7 +10,7 @@ Rectangle {
     property string subTitle: ""
     property alias subTitleComponent: statusDescriptionListItemSubTitle
     property string value: ""
-    property StatusIconSettings icon: StatusIconSettings {
+    property StatusAssetSettings asset: StatusAssetSettings {
         width: 23
         height: 23
     }
@@ -59,7 +59,7 @@ Rectangle {
 
         StatusFlatRoundButton {
             id: statusFlatRoundButton
-            visible: !!statusDescriptionListItem.icon.name
+            visible: !!statusDescriptionListItem.asset.name
             anchors.verticalCenter: statusDescriptionListItemSubTitle.verticalCenter
             anchors.left: statusDescriptionListItemSubTitle.right
             anchors.leftMargin: 4
@@ -67,9 +67,9 @@ Rectangle {
             width: 32
             height: 32
 
-            icon.name: statusDescriptionListItem.icon.name
-            icon.width: statusDescriptionListItem.icon.width
-            icon.height: statusDescriptionListItem.icon.height
+            icon.name: statusDescriptionListItem.asset.name
+            icon.width: statusDescriptionListItem.asset.width
+            icon.height: statusDescriptionListItem.asset.height
 
             StatusToolTip {
                 id: statusToolTip

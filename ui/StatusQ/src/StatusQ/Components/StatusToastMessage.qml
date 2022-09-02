@@ -75,10 +75,10 @@ Control {
     property int duration: 0
 
     /*!
-        \qmlproperty StatusIconSettings StatusToastMessage::icon
+        \qmlproperty StatusAssetSettings StatusToastMessage::icon
         This property holds a set of settings for the icon of the ToastMessage.
     */
-    property StatusIconSettings icon: StatusIconSettings {
+    property StatusAssetSettings icon: StatusAssetSettings {
         width: 23
         height: 23
     }

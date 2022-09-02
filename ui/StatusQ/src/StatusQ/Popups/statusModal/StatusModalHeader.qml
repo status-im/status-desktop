@@ -15,8 +15,7 @@ Rectangle {
     property int subTitleElide
     property alias actionButton: actionButtonLoader.sourceComponent
 
-    property alias image: imageWithTitle.image
-    property alias icon: imageWithTitle.icon
+    property alias asset: imageWithTitle.asset
     property bool editable: false
     property alias headerImageEditable: imageWithTitle.headerImageEditable
     property bool hasCloseButton: true

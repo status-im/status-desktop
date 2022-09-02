@@ -294,7 +294,7 @@ Item {
                     bottomPadding: 0
                     placeholderText: root.placeholderSearchText
                     text: root.searchText
-                    input.icon.name: "search"
+                    input.asset.name: "search"
 
                     onTextChanged: root.searchText = text
                 }
@@ -303,11 +303,11 @@ Item {
                 width: content.itemWidth
                 height: content.itemHeight
                 color: mouseArea.containsMouse ? Theme.palette.baseColor4 : "transparent"
-                image: StatusImageSettings {
-                    source: root.proxy.imageSource(model) ? root.proxy.imageSource(model) : ""
+                asset: StatusAssetSettings {
+                    name: root.proxy.imageSource(model) ? root.proxy.imageSource(model) : ""
                     width: 15
                     height: 15
-                    isIdenticon: false
+                    imgIsIdenticon: false
                 }
                 name: root.proxy.name(model)
                 shortName: root.proxy.shortName(model)

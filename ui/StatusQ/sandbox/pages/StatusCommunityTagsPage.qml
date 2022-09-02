@@ -36,7 +36,7 @@ Item {
             leftPadding: 0
             rightPadding: 0
             label: qsTr("Select tags that will fit your Community")
-            input.icon.name: "search"
+            input.asset.name: "search"
             placeholderText: qsTr("Search tags")
             Layout.fillWidth: true
         }

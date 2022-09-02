@@ -3,30 +3,25 @@ import StatusQ.Core.Theme 0.1
 
 QtObject {
     id: root
-
-    property url source
     property int width
     property int height
     property bool isIdenticon: false
 
     property string name
     property string pubkey
-    property string image
     property bool showRing: true
     property bool interactive: true
 
     property int colorId // TODO: default value Utils.colorIdForPubkey(pubkey)
     property var colorHash // TODO: default value Utils.getColorHashAsJson(pubkey)
 
-    property StatusImageSettings imageSettings: StatusImageSettings {
+    property StatusAssetSettings assetSettings: StatusAssetSettings {
         width: root.width
         height: root.height
-        source: root.source
-    }
-
-    readonly property StatusIconSettings iconSettings: StatusIconSettings {
-        width: root.width
-        height: root.height
+        name: root.name
+        isImage: name.includes("data")
+        isLetterIdenticon: (name === "")
+        imgIsIdenticon: root.isIdenticon
         color: Theme.palette.userCustomizationColors[root.colorId]
         charactersLen: 2
     }

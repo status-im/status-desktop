@@ -43,7 +43,7 @@ Column {
         selectMenu.delegate: StatusMenuItemDelegate {
             statusPopupMenu: select
             action: StatusMenuItem {
-                iconSettings.name: "filled-account"
+                assetSettings.name: "filled-account"
                 text: name
                 onTriggered: {
                     selectedItem.text = name

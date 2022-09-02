@@ -12,15 +12,13 @@ Action {
     icon.color: "transparent"
     property int type: StatusMenuItem.Type.Normal
     property real iconRotation: 0
-    property StatusImageSettings image: StatusImageSettings {
-        height: 16
+    property StatusAssetSettings assetSettings: StatusAssetSettings {
         width: 16
-        isIdenticon: false
-    }
-    property StatusIconSettings iconSettings: StatusIconSettings {
-        isLetterIdenticon: false
-        background: StatusIconBackgroundSettings {}
+        height: 16
         color: "transparent"
+        isLetterIdenticon: false
+        imgIsIdenticon: false
+        name: statusMenuItem.icon.name
     }
 
     property StatusFontSettings fontSettings: StatusFontSettings {}

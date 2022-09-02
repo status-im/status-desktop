@@ -16,10 +16,9 @@ Rectangle {
 
     signal clicked(var mouse)
 
-    property StatusIconSettings icon: StatusIconSettings {
+    property StatusAssetSettings icon: StatusAssetSettings {
         width: 24
         height: 24
-        background: StatusIconBackgroundSettings {}
     }
 
     color: {
@@ -41,14 +40,14 @@ Rectangle {
         }
 
         StatusRoundIcon {
-            icon.name: root.icon.name
-            icon.width: root.icon.width
-            icon.height: root.icon.height
-            icon.rotation: root.icon.rotation
-            icon.color: Theme.palette.white
-            icon.background.width: 40
-            icon.background.height: 40
-            icon.background.color: root.icon.color
+            asset.name: root.icon.name
+            asset.width: root.icon.width
+            asset.height: root.icon.height
+            asset.rotation: root.icon.rotation
+            asset.color: Theme.palette.white
+            asset.bgWidth: 40
+            asset.bgHeight: 40
+            asset.bgColor: root.icon.color
             anchors.top: parent.top
             anchors.topMargin: 8
             anchors.left: parent.left

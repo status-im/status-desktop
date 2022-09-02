@@ -135,10 +135,7 @@
         <file>StatusQ/Core/StatusBaseText.qml</file>
         <file>StatusQ/Core/StatusFontSettings.qml</file>
         <file>StatusQ/Core/StatusIcon.qml</file>
-        <file>StatusQ/Core/StatusIconBackgroundSettings.qml</file>
-        <file>StatusQ/Core/StatusIconSettings.qml</file>
         <file>StatusQ/Core/StatusIdenticonRingSettings.qml</file>
-        <file>StatusQ/Core/StatusImageSettings.qml</file>
         <file>StatusQ/Core/StatusModalHeaderSettings.qml</file>
         <file>StatusQ/Core/StatusScrollView.qml</file>
         <file>StatusQ/Core/StatusTooltipSettings.qml</file>

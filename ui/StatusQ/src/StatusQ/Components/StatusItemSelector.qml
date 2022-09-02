@@ -170,7 +170,8 @@ Rectangle {
             StatusListItemTag {
                 visible: itemsModel.count === 0
                 title: root.defaultItemText
-                image.source: root.defaultItemImageSource
+                asset.name: root.defaultItemImageSource
+                asset.isImage: true
                 color: Theme.palette.baseColor2
                 closeButtonVisible: false
                 titleText.color: Theme.palette.baseColor1
@@ -200,7 +201,8 @@ Rectangle {
                     }
                     StatusListItemTag {
                         title: model.text
-                        image.source: model.imageSource
+                        asset.name: model.imageSource
+                        asset.isImage: true
                         color: Theme.palette.primaryColor3
                         closeButtonVisible: false
                         titleText.color: Theme.palette.primaryColor1

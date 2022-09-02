@@ -26,14 +26,13 @@ TabButton {
             id: identicon
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            image.source: statusIconTabButton.icon.source
-            image.width: 28
-            image.height: 28
-            icon.height: statusIconTabButton.icon.height
-            icon.width: statusIconTabButton.icon.width
-            icon.name: statusIconTabButton.icon.name
-            icon.color: (statusIconTabButton.hovered || highlighted || statusIconTabButton.checked) ? Theme.palette.primaryColor1 : statusIconTabButton.icon.color
-            icon.isLetterIdenticon: statusIconTabButton.name !== "" && !statusIconTabButton.icon.source.toString()
+            asset.isImage: (statusIconTabButton.icon.source.toString() !== "")
+            asset.name: asset.isImage ?
+                        statusIconTabButton.icon.source : statusIconTabButton.icon.name
+            asset.width: asset.isImage ? 28 : statusIconTabButton.icon.width
+            asset.height: asset.isImage ? 28 : statusIconTabButton.icon.height
+            asset.color: (statusIconTabButton.hovered || highlighted || statusIconTabButton.checked) ? Theme.palette.primaryColor1 : statusIconTabButton.icon.color
+            asset.isLetterIdenticon: statusIconTabButton.name !== "" && !asset.isImage
             name: statusIconTabButton.name
         }
     }

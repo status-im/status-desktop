@@ -14,13 +14,13 @@ Button {
     property var type: StatusPickerButton.Type.Next
 
     /*!
-       \qmlproperty StatusImageSettings StatusPickerButton::image
+       \qmlproperty StatusAssetSettings StatusPickerButton::image
        This property holds the image settings information.
     */
-    property StatusImageSettings image: StatusImageSettings {
+    property StatusAssetSettings asset: StatusAssetSettings {
         width: 20
         height: 20
-        isIdenticon: false
+        imgIsIdenticon: false
     }
 
     enum Type {
@@ -51,11 +51,11 @@ Button {
             height: root.icon.height
         }
         StatusRoundedImage {
-            visible: root.image.source.toString() !== ""
+            visible: root.asset.name.toString() !== ""
             Layout.alignment: Qt.AlignVCenter
-            Layout.preferredWidth: root.image.width
-            Layout.preferredHeight: root.image.height
-            image.source: root.image.source
+            Layout.preferredWidth: root.asset.width
+            Layout.preferredHeight: root.asset.height
+            image.source: root.asset.name
         }
         StatusBaseText {
             Layout.fillWidth: true

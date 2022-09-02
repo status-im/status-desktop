@@ -33,7 +33,7 @@ StatusSectionLayout {
             Layout.leftMargin: padding
             title: "Amazing Funny Squirrel"
             subTitle: "Contact"
-            icon.color: Theme.palette.miscColor7
+            asset.color: Theme.palette.miscColor7
             type: StatusChatInfoButton.Type.OneToOneChat
             pinnedMessagesCount: 1
         }
@@ -179,7 +179,7 @@ StatusSectionLayout {
             topPadding: 8
             bottomPadding: 8
             placeholderText: "Search"
-            input.icon.name: "search"
+            input.asset.name: "search"
         }
 
         Column {

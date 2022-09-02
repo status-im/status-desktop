@@ -13,7 +13,8 @@ StatusModal {
 
     header.title: "Cryptokitties"
     header.subTitle: "Public Community"
-    header.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
+    header.asset.isImage: true
+    header.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
 
     contentItem: Column {
         width: root.width
@@ -43,7 +44,7 @@ StatusModal {
             title: "Share community"
             subTitle: "https://join.status.im/u/0x04...45f19"
             tooltip.text: "Copy to clipboard"
-            icon.name: "copy"
+            asset.name: "copy"
             iconButton.onClicked: tooltip.visible = !tooltip.visible
             width: parent.width
         }
@@ -57,7 +58,7 @@ StatusModal {
             anchors.horizontalCenter: parent.horizontalCenter
             statusListItemTitle.font.pixelSize: 17
             title: "Members"
-            icon.name: "group-chat"
+            asset.name: "group-chat"
             label: "184"
             components: [
                 StatusIcon {
@@ -72,7 +73,7 @@ StatusModal {
             anchors.horizontalCenter: parent.horizontalCenter
             statusListItemTitle.font.pixelSize: 17
             title: "Notifications"
-            icon.name: "notification"
+            asset.name: "notification"
             components: [
                 StatusSwitch {}
             ]
@@ -87,7 +88,7 @@ StatusModal {
             anchors.horizontalCenter: parent.horizontalCenter
             statusListItemTitle.font.pixelSize: 17
             title: "Edit community"
-            icon.name: "edit"
+            asset.name: "edit"
             type: StatusListItem.Type.Secondary
         }
 
@@ -95,7 +96,7 @@ StatusModal {
             anchors.horizontalCenter: parent.horizontalCenter
             statusListItemTitle.font.pixelSize: 17
             title: "Transfer ownership"
-            icon.name: "exchange"
+            asset.name: "exchange"
             type: StatusListItem.Type.Secondary
         }
 
@@ -103,7 +104,7 @@ StatusModal {
             anchors.horizontalCenter: parent.horizontalCenter
             statusListItemTitle.font.pixelSize: 17
             title: "Leave community"
-            icon.name: "arrow-left"
+            asset.name: "arrow-left"
             type: StatusListItem.Type.Secondary
         }
     }

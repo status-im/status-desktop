@@ -120,7 +120,6 @@ StatusListItem {
     }
     subTitle: d.composeSubtitile()
     statusListItemSubTitle.font.pixelSize: 10
-    icon.isLetterIdenticon: !root.image.source.toString()
     statusListItemIcon.badge.visible: true
     statusListItemIcon.badge.color: root.status === 1 ? Theme.palette.successColor1 : Theme.palette.baseColor1 // FIXME
     color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
@@ -129,10 +128,8 @@ StatusListItem {
     implicitWidth: 256
     implicitHeight: Math.max(56, statusListItemTitleArea.height + leftPadding)
     leftPadding: 8
-    image.width: 32
-    image.height: 32
-    icon.width: 32
-    icon.height: 32
+    asset.width: 32
+    asset.height: 32
     statusListItemIcon.anchors.verticalCenter: sensor.verticalCenter
     statusListItemIcon.anchors.top: undefined
     statusListItemIcon.badge.border.width: 2

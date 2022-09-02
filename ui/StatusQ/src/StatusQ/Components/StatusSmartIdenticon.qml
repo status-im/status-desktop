@@ -4,7 +4,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 Loader {
-    id: statusSmartIdenticon
+    id: root
 
     property string name: ""
     property int dZ: 100
@@ -12,55 +12,46 @@ Loader {
     // Badge color properties must be set if badgeItem.visible = true
     property alias badge: statusBadge
 
-    property StatusIconSettings icon: StatusIconSettings {
-        width: 40
-        height: 40
-    }
-
-    property StatusImageSettings image: StatusImageSettings {
+    property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
     }
 
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
         initalAngleRad: 0
-        ringPxSize: Math.max(1.5, statusSmartIdenticon.image.width / 24.0)
+        ringPxSize: Math.max(1.5, root.asset.width/ 24.0)
         distinctiveColors: Theme.palette.identiconRingColors
     }
 
-    readonly property size effectiveSize: !!statusSmartIdenticon.image.source.toString()
-                                          ? Qt.size(statusSmartIdenticon.image.width, statusSmartIdenticon.image.width)
-                                          : Qt.size(statusSmartIdenticon.icon.width, statusSmartIdenticon.icon.height)
-
-    sourceComponent: statusSmartIdenticon.icon.isLetterIdenticon ? letterIdenticon :
-                     !!statusSmartIdenticon.image.source.toString() ? roundedImage :
-                     !!statusSmartIdenticon.icon.name.toString() ? roundedIcon : letterIdenticon
+    sourceComponent: (root.asset.isLetterIdenticon || root.asset.name === "") ? letterIdenticon :
+                     !root.asset.isImage ? roundedIcon : roundedImage
 
     Component {
         id: roundedImage
         Item {
-            width: statusSmartIdenticon.image.width
-            height: statusSmartIdenticon.image.height
+            width: root.asset.width
+            height: root.asset.height
             StatusRoundedImage {
                 id: statusRoundImage
                 width: parent.width
                 height: parent.height
-                image.source: statusSmartIdenticon.image.source
+                image.source: root.asset.name
                 showLoadingIndicator: true
-                border.width: statusSmartIdenticon.image.isIdenticon ? 1 : 0
+                border.width: root.asset.imgIsIdenticon ? 1 : 0
                 border.color: Theme.palette.directColor7
-                color: statusSmartIdenticon.image.isIdenticon ?
+                color: root.asset.imgIsIdenticon ?
                            Theme.palette.statusRoundedImage.backgroundColor :
                            "transparent"
             }
             Loader {
                 anchors.centerIn: parent
-                active: statusRoundImage.image.status === Image.Error
+                active: root.asset.imgStatus === Image.Error ||
+                        statusRoundImage.image.status === Image.Error
                 sourceComponent: letterIdenticon
                 onLoaded: {
                     item.color = Theme.palette.miscColor5
-                    item.width = statusSmartIdenticon.image.width
-                    item.height = statusSmartIdenticon.image.height
+                    item.width = root.asset.width
+                    item.height = root.asset.height
                 }
             }
         }
@@ -69,14 +60,14 @@ Loader {
     Component {
         id: roundedIcon
         StatusRoundIcon {
-            icon.background.width: statusSmartIdenticon.icon.background.width
-            icon.background.height: statusSmartIdenticon.icon.background.height
-            icon.background.color: statusSmartIdenticon.icon.background.color
-            icon.width: statusSmartIdenticon.icon.width
-            icon.height: statusSmartIdenticon.icon.height
-            icon.name: statusSmartIdenticon.icon.name
-            icon.rotation: statusSmartIdenticon.icon.rotation
-            icon.color: statusSmartIdenticon.icon.color
+            asset.bgWidth: root.asset.bgWidth
+            asset.bgHeight: root.asset.bgHeight
+            asset.bgColor: root.asset.bgColor
+            asset.width: root.asset.width
+            asset.height: root.asset.height
+            asset.name: root.asset.name
+            asset.rotation: root.asset.rotation
+            asset.color: root.asset.color
         }
     }
 
@@ -84,33 +75,33 @@ Loader {
         id: letterIdenticon
         StatusLetterIdenticon {
             objectName: "statusSmartIdenticonLetter"
-            width: statusSmartIdenticon.icon.width
-            height: statusSmartIdenticon.icon.height
-            color: statusSmartIdenticon.icon.color
-            name: statusSmartIdenticon.name
-            emoji: statusSmartIdenticon.icon.emoji
-            emojiSize: statusSmartIdenticon.icon.emojiSize
-            letterSize: statusSmartIdenticon.icon.letterSize
-            charactersLen: statusSmartIdenticon.icon.charactersLen
+            width: root.asset.width
+            height: root.asset.height
+            color: root.asset.color
+            name: root.name
+            emoji: root.asset.emoji
+            emojiSize: root.asset.emojiSize
+            letterSize: root.asset.letterSize
+            charactersLen: root.asset.charactersLen
         }
     }
 
     // Next components are painted above main sourceComponent
     StatusIdenticonRing {
-        settings: statusSmartIdenticon.ringSettings
+        settings: root.ringSettings
         anchors.fill: parent
-        z: statusSmartIdenticon.dZ/2
+        z: root.dZ/2
     }
 
     // State component
     StatusBadge {
         id: statusBadge
         visible: false
-        anchors.bottom: statusSmartIdenticon.bottom
-        anchors.right: statusSmartIdenticon.right
+        anchors.bottom: root.bottom
+        anchors.right: root.right
         border.width: 3
         implicitHeight: 15
         implicitWidth: 15
-        z: statusSmartIdenticon.dZ
+        z: root.dZ
     }
 }

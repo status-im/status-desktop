@@ -34,8 +34,7 @@ MenuItem {
             StatusIcon {
                 anchors.centerIn: parent
                 width: {
-                    let width = statusPopupMenuItem.action && statusPopupMenuItem.action.icon.width ||
-                        statusPopupMenuItem.action.iconSettings && statusPopupMenuItem.action.iconSettings.width
+                    let width = statusPopupMenuItem.action && statusPopupMenuItem.action.assetSettings.width
                     return !!width ? width : 18
                 }
                 rotation: !!statusPopupMenuItem.action.iconRotation ? statusPopupMenuItem.action.iconRotation : 0
@@ -43,17 +42,16 @@ MenuItem {
                     if (statusPopupMenuItem.subMenu && !!statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex] &&
                         statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].icon.toString() !== "") {
                         return statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].icon;
-                    } else if (!!statusPopupMenuItem.action && statusPopupMenuItem.action.icon.name !== "") {
-                        return statusPopupMenuItem.action.icon.name;
-                    } else if (!!statusPopupMenuItem.action.iconSettings && statusPopupMenuItem.action.iconSettings.name !== "") {
-                        return statusPopupMenuItem.action.iconSettings.name;
+                    } else if (!!statusPopupMenuItem.action && statusPopupMenuItem.action.assetSettings.name !== "") {
+                        return statusPopupMenuItem.action.assetSettings.name;
+                    } else if (!!statusPopupMenuItem.action.assetSettings && statusPopupMenuItem.action.assetSettings.name !== "") {
+                        return statusPopupMenuItem.action.assetSettings.name;
                     } else {
                         return "";
                     }
                 }
                 color: {
-                    let c = !!statusPopupMenuItem.action.iconSettings && statusPopupMenuItem.action.iconSettings.color ||
-                            !!statusPopupMenuItem.action && statusPopupMenuItem.action.icon.color
+                    let c = !!statusPopupMenuItem.action.assetSettings && statusPopupMenuItem.action.assetSettings.color
 
                     if (!Qt.colorEqual(c, "transparent")) {
                         return c
@@ -81,7 +79,7 @@ MenuItem {
                 height: 16
                 color: {
                     let subMenuItemIcon = statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex]
-                    return subMenuItemIcon && subMenuItemIcon.color ? subMenuItemIcon.color : statusPopupMenuItem.action.iconSettings.background.color
+                    return subMenuItemIcon && subMenuItemIcon.color ? subMenuItemIcon.color : statusPopupMenuItem.action.assetSettings.bgColor
                 }
                 name: statusPopupMenuItem.text
                 letterSize: 11
@@ -97,13 +95,13 @@ MenuItem {
             implicitHeight: 24
             StatusRoundedImage {
                 anchors.centerIn: parent
-                width: statusPopupMenuItem.action.image.width
-                height: statusPopupMenuItem.action.image.height
+                width: statusPopupMenuItem.action.assetSettings.width
+                height: statusPopupMenuItem.action.assetSettings.height
                 image.source: statusPopupMenuItem.subMenu ?
                     statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].source :
-                    statusPopupMenuItem.action.image.source
+                    statusPopupMenuItem.action.assetSettings.name
                 border.width: (statusPopupMenuItem.subMenu && statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].isIdenticon) || 
-                    statusPopupMenuItem.action.image.isIdenticon ? 1 : 0
+                    statusPopupMenuItem.action.assetSettings.imgIsIdenticon ? 1 : 0
                 border.color: Theme.palette.directColor7
             }
         }
@@ -114,12 +112,13 @@ MenuItem {
             let subMenuItemIcon = statusPopupMenu.subMenuItemIcons && statusPopupMenu.subMenuItemIcons[parent.subMenuIndex]
             
             if ((parent.subMenu && subMenuItemIcon && subMenuItemIcon.source) || 
-                statusPopupMenuItem.action.image && !!statusPopupMenuItem.action.image.source.toString()) {
+                statusPopupMenuItem.action.assetSettings && !!statusPopupMenuItem.action.assetSettings.name.toString()
+                && statusPopupMenuItem.action.assetSettings.isImage) {
                 return statusRoundImageCmp
             }
 
             return (parent.subMenu && subMenuItemIcon && subMenuItemIcon.isLetterIdenticon) || 
-                (statusPopupMenuItem.action.iconsSettings && statusPopupMenuItem.action.iconSettings.isLetterIdenticon) ? 
+                (statusPopupMenuItem.action.assetSettings && statusPopupMenuItem.action.assetSettings.isLetterIdenticon) ?
                 statusLetterIdenticonCmp : indicatorComponent
         }
         anchors.verticalCenter: parent.verticalCenter
@@ -127,11 +126,11 @@ MenuItem {
         anchors.leftMargin: 8
         active: {
             if (enabled) {
-                let hasIconSettings = !!statusPopupMenuItem.action.icon.name ||
-                  (statusPopupMenuItem.action.iconSettings && 
-                    (!!statusPopupMenuItem.action.iconSettings.name || !!statusPopupMenuItem.action.iconSettings.isLetterIdenticon))
+                let hasIconSettings = !!statusPopupMenuItem.action.assetSettings.name ||
+                  (statusPopupMenuItem.action.assetSettings &&
+                    (!!statusPopupMenuItem.action.assetSettings.name || !!statusPopupMenuItem.action.assetSettings.isLetterIdenticon))
 
-                let hasImageSettings = statusPopupMenuItem.action.image && !!statusPopupMenuItem.action.image.source.toString()
+                let hasImageSettings = statusPopupMenuItem.action.assetSettings && !!statusPopupMenuItem.action.assetSettings.name.toString()
 
                 return enabled && (parent.subMenu && !!statusPopupMenu.subMenuItemIcons[parent.subMenuIndex]) || hasIconSettings || hasImageSettings
             }

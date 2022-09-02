@@ -21,11 +21,8 @@ Rectangle {
     property bool hasUnreadMessages: false
     property int notificationsCount: 0
     property bool muted: false
-    property StatusImageSettings image: StatusImageSettings {
-        width: 24
-        height: 24
-    }
-    property StatusIconSettings icon: StatusIconSettings {
+
+    property StatusAssetSettings asset: StatusAssetSettings {
         width: 24
         height: 24
         color: Theme.palette.miscColor5
@@ -85,8 +82,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 8
             anchors.verticalCenter: parent.verticalCenter
-            image: root.image
-            icon: root.icon
+            asset: root.asset
             name: root.name
         }
 

@@ -14,8 +14,9 @@ GridLayout {
     StatusChatInfoToolBar {
         chatInfoButton.title: "Cryptokitties"        
         chatInfoButton.subTitle: "128 Members"
-        chatInfoButton.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
-        chatInfoButton.icon.color: Theme.palette.miscColor6
+        chatInfoButton.asset.isImage: true
+        chatInfoButton.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
+        chatInfoButton.asset.color: Theme.palette.miscColor6
 
         popupMenu: StatusPopupMenu {
 

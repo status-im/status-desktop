@@ -33,9 +33,8 @@ Column {
 
     StatusInput {
         label: "Label"
-
-        input.icon.name: "search"
-        placeholderText: "Input with icon"
+        input.asset.name: "search"
+        input.placeholderText: "Input with icon"
     }
 
     StatusInput {
@@ -112,9 +111,9 @@ Column {
     StatusInput {
         label: "StatusInput"
         secondaryLabel: "with right icon"
-        input.icon.width: 15
-        input.icon.height: 11
-        input.icon.name: text !== "" ? "checkmark" : ""
+        input.asset.width: 15
+        input.asset.height: 11
+        input.asset.name: text !== "" ? "checkmark" : ""
         input.leftIcon: false
     }
 
@@ -192,9 +191,9 @@ Column {
     StatusInput {
         property bool toggled: true
         label: "Input with emoji icon"
-        placeholderText: "Enter Name"
-        input.icon.emoji: toggled ? "😁" : "🧸"
-        input.icon.color: "blue"
+        input.placeholderText: "Enter Name"
+        input.asset.emoji: toggled ? "😁" : "🧸"
+        input.asset.color: "blue"
         input.isIconSelectable: true
         onIconClicked: {
             toggled = !toggled
@@ -204,10 +203,10 @@ Column {
     StatusInput {
         property bool toggled: true
         label: "Input with selectable icon which is not an emoji"
-        placeholderText: "Enter Name"
-        input.icon.emoji: ""
-        input.icon.name: toggled ? "filled-account" : "image"
-        input.icon.color: "blue"
+        input.placeholderText: "Enter Name"
+        input.asset.emoji: ""
+        input.asset.name: toggled ? "filled-account" : "image"
+        input.asset.color: "blue"
         input.isIconSelectable: true
         onIconClicked: {
             toggled = !toggled

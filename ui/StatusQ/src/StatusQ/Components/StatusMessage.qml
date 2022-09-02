@@ -226,20 +226,15 @@ Rectangle {
             spacing: 8
 
             Item {
+                implicitWidth: profileImage.width
+                implicitHeight: profileImage.visible ? profileImage.height : 0
                 Layout.alignment: Qt.AlignTop
-
-                implicitWidth: profileImage.effectiveSize.width
-                implicitHeight: profileImage.visible ? profileImage.effectiveSize.height : 0
-
                 StatusSmartIdenticon {
                     id: profileImage
-
                     active: root.showHeader
                     visible: active
-
                     name: root.messageDetails.sender.userName
-                    image: root.messageDetails.sender.profileImage.imageSettings
-                    icon: root.messageDetails.sender.profileImage.iconSettings
+                    asset: root.messageDetails.sender.profileImage.assetSettings
                     ringSettings: root.messageDetails.sender.profileImage.ringSettings
 
                     MouseArea {
@@ -324,7 +319,8 @@ Rectangle {
                     active: root.messageDetails.contentType === StatusMessage.ContentType.Sticker && !editMode
                     visible: active
                     sourceComponent: StatusSticker {
-                        image.source: root.messageDetails.messageContent
+                        asset.isImage: true
+                        asset.name: root.messageDetails.messageContent
                         onLoaded: root.stickerLoaded()
                         onClicked: {
                             root.stickerClicked()

@@ -51,7 +51,7 @@ StatusSectionLayout {
             Layout.fillHeight: true
             title: "general"
             subTitle: "Community Chat"
-            icon.color: Theme.palette.miscColor6
+            asset.color: Theme.palette.miscColor6
             type: StatusChatInfoButton.Type.CommunityChat
         }
 
@@ -129,8 +129,9 @@ StatusSectionLayout {
 
             chatInfoButton.title: "CryptoKitties"
             chatInfoButton.subTitle: "128 Members"
-            chatInfoButton.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
-            chatInfoButton.icon.color: Theme.palette.miscColor6
+            chatInfoButton.asset.isImage: true
+            chatInfoButton.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
+            chatInfoButton.asset.color: Theme.palette.miscColor6
             chatInfoButton.onClicked:  { chatInfoButtonClicked(); }
 
             popupMenu: StatusPopupMenu {
@@ -262,7 +263,6 @@ StatusSectionLayout {
     centerPanel: Item {
         anchors.fill: parent
         StatusBaseText {
-            id: titleText
             anchors.centerIn: parent
             font.pixelSize: 15
             text: qsTr("Community content here")
@@ -302,8 +302,10 @@ StatusSectionLayout {
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy
                 isContact: model.isContact
-                image.source: model.icon
-                image.isIdenticon: false
+                asset.name: model.icon
+                asset.isImage: (asset.name !== "")
+                asset.isLetterIdenticon: (asset.name === "")
+                asset.imgIsIdenticon: false
                 status: model.onlineStatus
             }
         }

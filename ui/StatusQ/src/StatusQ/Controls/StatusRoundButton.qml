@@ -7,7 +7,7 @@ import StatusQ.Components 0.1
 Rectangle {
     id: statusRoundButton
 
-    property StatusIconSettings icon: StatusIconSettings {
+    property StatusAssetSettings icon: StatusAssetSettings {
         width: 23
         height: 23
         rotation: 0

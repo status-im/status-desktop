@@ -26,7 +26,7 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
 
         expandable: false
-        icon.name: "seed-phrase"
+        asset.name: "seed-phrase"
         primaryText: "Back up seed phrase"
         secondaryText: "Back up your seed phrase now to secure this account ajhaDH SDHSAHDLSADBSA,DLISAHDLASD ADASDHASLDHALSDHAS DAS,DASJDGLIASGD"
         button.text: qsTr("Back up seed phrase")
@@ -36,7 +36,7 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
 
         expandable: true
-        icon.name: "secret"
+        asset.name: "secret"
         primaryText: "Account signing phrase"
         secondaryText: "View your signing phrase and ensure that you never get scammed. View your signing phrase and ensure that you never get scammed."
         expandableComponent: notImplemented
@@ -46,7 +46,7 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
 
         expandable: true
-        icon.name: "seed-phrase"
+        asset.name: "seed-phrase"
         primaryText: "View private key"
         secondaryText: "Back up your seed phrase now to secure this account"
         expandableComponent: notImplemented
@@ -74,7 +74,8 @@ Column {
 
         type: StatusExpandableItem.Type.Secondary
         expandable: true
-        image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
+        asset.isImage: true
+        asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
         primaryText: "CryptoKitties"
         additionalText: "1456 USD"
         expandableComponent: notImplemented
@@ -85,7 +86,8 @@ Column {
 
         type: StatusExpandableItem.Type.Secondary
         expandable: true
-        image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
+        asset.isImage: true
+        asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
         primaryText: "Adding Really long text to test scenario of having very long text along with tertiary text"
         additionalText: "564.90 USD"
         expandableComponent: notImplemented

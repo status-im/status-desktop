@@ -34,34 +34,29 @@ Rectangle {
     property bool loading: false
     property bool loadingFailed: false
 
-    property StatusIconSettings icon: StatusIconSettings {
-        height: isLetterIdenticon ? 40 : 20
-        width: isLetterIdenticon ? 40 : 20
+    property StatusAssetSettings asset: StatusAssetSettings {
+        height: isImage ? 40 : 20
+        width: isImage ? 40 : 20
         rotation: 0
         isLetterIdenticon: false
         letterSize: 21
         charactersLen: 1
-        color: isLetterIdenticon ? background.color : type === StatusListItem.Type.Danger ?
+        color: isLetterIdenticon ? bgColor : type === StatusListItem.Type.Danger ?
             Theme.palette.dangerColor1 : Theme.palette.primaryColor1
-        background: StatusIconBackgroundSettings {
-            width: 40
-            height: 40
-            color: {
-                if (sensor.containsMouse) {
-                    return type === StatusListItem.Type.Secondary ||
-                           type === StatusListItem.Type.Danger ? "transparent" :
-                           Theme.palette.primaryColor3
-                }
-                return type === StatusListItem.Type.Danger ?
-                    Theme.palette.dangerColor3 : Theme.palette.primaryColor3
+        bgWidth: 40
+        bgHeight: 40
+        bgColor: {
+            if (sensor.containsMouse) {
+                return type === StatusListItem.Type.Secondary ||
+                        type === StatusListItem.Type.Danger ? "transparent" :
+                                                              Theme.palette.primaryColor3
             }
+            return type === StatusListItem.Type.Danger ?
+                        Theme.palette.dangerColor3 : Theme.palette.primaryColor3
         }
+        imgIsIdenticon: false
     }
-    property StatusImageSettings image: StatusImageSettings {
-        width: 40
-        height: 40
-        isIdenticon: false
-    }
+
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
         initalAngleRad: 0
         ringPxSize: 1.5
@@ -143,13 +138,11 @@ Rectangle {
             anchors.top: parent.top
             anchors.topMargin: 12
             visible: !iconOrImageLoadingOverlay.visible
-            image: statusListItem.image
-            icon: statusListItem.icon
+            asset: statusListItem.asset
             name: statusListItem.title
-            active: statusListItem.icon.isLetterIdenticon ||
-                    !!statusListItem.icon.name ||
-                    !!statusListItem.image.source.toString() ||
-                    !!statusListItem.icon.emoji
+            active: statusListItem.asset.isLetterIdenticon ||
+                    !!statusListItem.asset.name ||
+                    !!statusListItem.asset.emoji
             badge.border.color: statusListItem.color
             ringSettings: statusListItem.ringSettings
         }

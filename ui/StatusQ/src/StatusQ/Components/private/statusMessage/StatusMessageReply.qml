@@ -58,10 +58,8 @@ Item {
                     id: profileImage
                     Layout.alignment: Qt.AlignTop
                     name: replyDetails.sender.userName
-                    image: replyDetails.sender.profileImage.imageSettings
-                    icon: replyDetails.sender.profileImage.iconSettings
+                    asset: replyDetails.sender.profileImage.assetSettings
                     ringSettings: replyDetails.sender.profileImage.ringSettings
-
                     MouseArea {
                         cursorShape: Qt.PointingHandCursor
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -105,9 +103,10 @@ Item {
                 Layout.alignment: Qt.AlignLeft
                 visible: replyDetails.contentType === StatusMessage.ContentType.Sticker
                 StatusSticker {
-                    image.width: 48
-                    image.height: 48
-                    image.source: replyDetails.messageContent
+                    asset.width: 48
+                    asset.height: 48
+                    asset.name: replyDetails.messageContent
+                    asset.isImage: true
                 }
             }
             Item {

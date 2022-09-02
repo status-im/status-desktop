@@ -17,18 +17,18 @@ ColumnLayout {
 
     StatusNavigationListItem {
         title: "Menu Item"
-        icon.name: "info"
+        asset.name: "info"
     }
 
     StatusNavigationListItem {
         title: "Menu Item"
-        icon.name: "info"
+        asset.name: "info"
         badge.value: 1
     }
     StatusNavigationListItem {
         title: "Menu Item (selected) with very long text"
         selected: true
-        icon.name: "info"
+        asset.name: "info"
         badge.value: 1
     }
 
@@ -121,18 +121,20 @@ ColumnLayout {
     StatusChatListItem {
         name: "community-channel-emoji"
         type: StatusChatListItem.Type.CommunityChat
-        icon.emoji: "😁"
+        asset.emoji: "😁"
     }
 
     StatusChatListItem {
         name: "community-channel-with-image"
-        image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
+        asset.isImage: true
+        asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
         type: StatusChatListItem.Type.CommunityChat
     }
 
     StatusChatListItem {
         name: "Weird Crazy Otter"
-        image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
+        asset.isImage: true
+        asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
         type: StatusChatListItem.Type.OneToOneChat
     }
 
@@ -217,7 +219,7 @@ ColumnLayout {
         title: "Title"
         subTitle: "Super long description that causes a multiline paragraph and makes the size of the component grow. Let's see how it behaves."
         tertiaryTitle: "Tertiary title"
-        icon.name: "info"
+        asset.name: "info"
 
         statusListItemTitle.font.pixelSize: 17
         statusListItemTitle.font.weight: Font.Bold
@@ -226,27 +228,29 @@ ColumnLayout {
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        icon.name: "info"
+        asset.name: "info"
     }
 
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
+        asset.isImage: true
+        asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
     }
 
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
-CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-        image.isIdenticon: true
+        asset.isImage: true
+        asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+                      nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
+        asset.imgIsIdenticon: true
     }
 
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        icon.name: "info"
+        asset.name: "info"
         components: [StatusButton {
             text: "Button"
             size: StatusBaseButton.Size.Small
@@ -256,35 +260,35 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        icon.name: "info"
+        asset.name: "info"
         components: [StatusSwitch {}]
     }
 
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        icon.name: "info"
+        asset.name: "info"
         components: [StatusRadioButton {}]
     }
 
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        icon.name: "info"
+        asset.name: "info"
         components: [StatusCheckBox {}]
     }
 
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        icon.name: "info"
+        asset.name: "info"
         label: "Text"
     }
 
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        icon.name: "info"
+        asset.name: "info"
         label: "Text"
         components: [
             StatusButton {
@@ -297,7 +301,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        icon.name: "info"
+        asset.name: "info"
         label: "Text"
         components: [StatusSwitch {}]
     }
@@ -305,7 +309,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        icon.name: "info"
+        asset.name: "info"
         label: "Text"
         components: [
           StatusRadioButton {}
@@ -315,7 +319,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        icon.name: "info"
+        asset.name: "info"
         label: "Text"
         components: [StatusCheckBox {}]
     }
@@ -323,7 +327,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusListItem {
         title: "Title"
         subTitle: "Subtitle"
-        icon.name: "info"
+        asset.name: "info"
         label: "Text"
         components: [
             StatusBadge {
@@ -340,14 +344,14 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
 
     StatusListItem {
         title: "Title"
-        icon.name: "info"
+        asset.name: "info"
         type: StatusListItem.Type.Secondary
     }
 
     StatusListItem {
         title: "Title"
-        icon.isLetterIdenticon: true
-        icon.color: "orange"
+        asset.isLetterIdenticon: true
+        asset.color: "orange"
     }
 
     StatusListItem {
@@ -357,17 +361,19 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
 
     StatusListItem {
         title: "Title"
-        icon.name: "delete"
+        asset.name: "delete"
         type: StatusListItem.Type.Danger
     }
 
     StatusListItem {
         title: "List Item with Badge"
         subTitle: "Subtitle"
-        image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
-CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-        image.isIdenticon: true
-        badge.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
+        asset.isImage: true
+        asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+                      nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
+        asset.imgIsIdenticon: true
+        badge.asset.isImage: true
+        badge.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
         badge.primaryText: "CryptoKitties"
         badge.secondaryText: "#test"
     }
@@ -375,26 +381,26 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusListItem {
         title: "List Item with Badge 2"
         subTitle: "Subtitle"
-        icon.isLetterIdenticon: true
+        asset.isLetterIdenticon: true
         badge.primaryText: "CryptoKitties"
         badge.secondaryText: "#test"
-        badge.icon.color: "orange"
-        badge.icon.isLetterIdenticon: true
+        badge.asset.color: "orange"
+        badge.asset.isLetterIdenticon: true
     }
 
     StatusListItem {
         title: "List Item with Tags"
-        icon.isLetterIdenticon: true
+        asset.isLetterIdenticon: true
         bottomModel: 3
         bottomDelegate: StatusListItemTag {
             title: "tag"
-            icon.isLetterIdenticon: true
+            asset.isLetterIdenticon: true
         }
     }
 
     StatusListItem {
         title: "List Item with Inline Tags"
-        icon.isLetterIdenticon: true
+        asset.isLetterIdenticon: true
         tagsModel: ListModel{
             ListElement {
                 name: "helloworld.eth"
@@ -422,9 +428,9 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             height: 24
             radius: 6
             closeButtonVisible: false
-            icon.emoji: model.emoji
-            icon.emojiSize: Emoji.size.verySmall
-            icon.isLetterIdenticon: true
+            asset.emoji: model.emoji
+            asset.emojiSize: Emoji.size.verySmall
+            asset.isLetterIdenticon: true
             title: model.name
             titleText.font.pixelSize: 12
             titleText.color: Theme.palette.indirectColor1
@@ -434,10 +440,10 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusListItem {
         title: "List Item with Emoji"
         subTitle: "Emoji"
-        icon.emoji: "😁"
-        icon.color: "yellow"
-        icon.letterSize: 14
-        icon.isLetterIdenticon: true
+        asset.emoji: "😁"
+        asset.color: "yellow"
+        asset.letterSize: 14
+        asset.isLetterIdenticon: true
     }
 
     StatusDescriptionListItem {
@@ -456,7 +462,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         title: "Title"
         subTitle: "Subtitle"
         tooltip.text: "Tooltip"
-        icon.name: "info"
+        asset.name: "info"
         iconButton.onClicked: tooltip.visible = !tooltip.visible
     }
 
@@ -471,9 +477,10 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         pubKey: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
         isVerified: true
         isContact: true
-        image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+        asset.isImage: true
+        asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                       nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-        image.isIdenticon: true
+        asset.imgIsIdenticon: true
         status: 1 // FIXME: use enum
         ringSettings.ringSpecModel:
             ListModel {
@@ -491,16 +498,19 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusMemberListItem {
         nickName: "carmen.eth"
         isUntrustworthy: true
+        asset.isLetterIdenticon: true
     }
 
     StatusMemberListItem {
         nickName: "very-long-annoying-nickname.eth"
         isUntrustworthy: true
+        asset.isLetterIdenticon: true
     }
 
     StatusMemberListItem {
         nickName: "This girl I know from work"
         userName: "annabelle"
+        asset.isLetterIdenticon: true
         status: 1 // FIXME: use enum
     }
 
@@ -509,15 +519,21 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         userName: "annabelle"
         pubKey: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
         isContact: true
-        image.source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+        asset.isImage: true
+        asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                        nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-        image.isIdenticon: true
+        asset.imgIsIdenticon: true
     }
 
     StatusMemberListItem {
         nickName: "admin.guy"
+        userName: "adguy"
         isAdmin: true
+        asset.isLetterIdenticon: true
         isUntrustworthy: true
+        Component.onCompleted: {
+            print(asset.name, asset.isImage, asset.isLetterIdenticon)
+        }
     }
 
     StatusBaseText {
@@ -531,10 +547,12 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         title: "Nokia 3310"
         subTitle: "Incoming device"
         label: "loading: true"
-        icon.emoji: "😁"
-        icon.color: "hotpink"
-        icon.letterSize: 14
-        icon.isLetterIdenticon: true
+        asset.width: 40
+        asset.height: 40
+        asset.emoji: "😁"
+        asset.color: "hotpink"
+        asset.letterSize: 14
+        asset.isLetterIdenticon: true
         loading: true
     }
 
@@ -542,10 +560,12 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         title: "Nokia 3310"
         subTitle: "Device"
         label: "loadingFailed: true"
-        icon.emoji: "😁"
-        icon.color: "hotpink"
-        icon.letterSize: 14
-        icon.isLetterIdenticon: true
+        asset.width: 40
+        asset.height: 40
+        asset.emoji: "😁"
+        asset.color: "hotpink"
+        asset.letterSize: 14
+        asset.isLetterIdenticon: true
         loadingFailed: true
     }
 }
