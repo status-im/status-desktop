@@ -261,14 +261,24 @@ class StatusWalletScreen:
         obj2 = get_obj(MainWalletScreen.ACCOUNT_ADDRESS_PANEL.value)
         test.log("ACCOUNT ADDRESS", str(obj2.address))
         list = get_obj(AssetView.LIST.value)
-        for index in range(list.count):
-            tokenListItem = list.itemAtIndex(index)
-            test.log("This balance", "Symbol " + str(tokenListItem.objectName) + " - Balance " + str(tokenListItem.balance))
-            if tokenListItem.objectName == "AssetView_TokenListItem_" + symbol:
-                assert tokenListItem.balance != "0", f"balance is not positive, balance: {str(tokenListItem.balance)}"
-                return
-            
-        assert False, "symbol not found"
+        reset = 0
+        while (reset < 3):
+            found = False
+            for index in range(list.count):
+                tokenListItem = list.itemAtIndex(index)
+                test.log("This balance", "Symbol " + str(tokenListItem.objectName) + " - Balance " + str(tokenListItem.balance))
+                if tokenListItem.objectName == "AssetView_TokenListItem_" + symbol:
+                    found = True
+                    if (tokenListItem.balance == "0" and reset < 3):
+                        # Wait some more
+                        break
+                    return
+            if not found:
+                verify_failure("Symbol " + symbol + " not found in the asset list")
+            reset += 1
+            time.sleep(5)
+        
+        verify_failure("Balance was not positive")
         
     def verify_saved_address_exists(self, name: str):
         list = get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
