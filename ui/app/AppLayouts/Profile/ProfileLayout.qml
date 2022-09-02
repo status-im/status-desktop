@@ -30,7 +30,7 @@ StatusSectionLayout {
     QtObject {
         id: d
 
-        readonly property int topMargin: secureYourSeedPhrase.visible ? secureYourSeedPhrase.height : 0
+        readonly property int topMargin: 0
         readonly property int bottomMargin: 56
         readonly property int leftMargin: 48
         readonly property int rightMargin: 48
@@ -53,50 +53,13 @@ StatusSectionLayout {
 
     centerPanel: Item {
         anchors.fill: parent
-        ModuleWarning {
-            id: secureYourSeedPhrase
-            width: parent.width
-            visible: {
-              if (profileContainer.currentIndex !== Constants.settingsSubsection.profile) {
-                return false
-              }
-              if (root.store.profileStore.userDeclinedBackupBanner) {
-                return false
-              }
-              return !root.store.profileStore.privacyStore.mnemonicBackedUp
-            }
-            color: Style.current.red
-            btnWidth: 100
-            text: qsTr("Secure your seed phrase")
-            btnText: qsTr("Back up now")
-
-            onClick: function(){
-                Global.openBackUpSeedPopup();
-            }
-
-            onClosed: {
-                root.store.profileStore.userDeclinedBackupBanner = true
-            }
-        }
-
-        StatusBanner {
-            id: banner
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: visible ? childrenRect.height : 0
-            visible: profileContainer.currentIndex === Constants.settingsSubsection.wallet &&
-                     root.store.walletStore.areTestNetworksEnabled
-            type: StatusBanner.Type.Danger
-            statusText: qsTr("Testnet mode is enabled. All balances, transactions and dApp interactions will be on testnets.")
-        }
 
         StackLayout {
             id: profileContainer
 
             readonly property var currentItem: (currentIndex >= 0 && currentIndex < children.length) ? children[currentIndex] : null
 
-            anchors.top: banner.visible? banner.bottom : parent.top
+            anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
