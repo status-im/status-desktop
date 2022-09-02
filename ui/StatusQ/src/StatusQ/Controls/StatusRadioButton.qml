@@ -1,14 +1,12 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import QtQml 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
-
 RadioButton {
-    id: statusRadioButton
+    id: root
 
     /*!
        \qmlproperty int StatusRadioButton::size
@@ -24,32 +22,29 @@ RadioButton {
         Large
     }
 
-    width: indicator.implicitWidth
-
     indicator: Rectangle {
-        implicitWidth: size === StatusRadioButton.Size.Large ? 20 : 14
-        implicitHeight: size === StatusRadioButton.Size.Large ? 20 : 14
-        x: 0
-        y: 6
-        radius: 10
-        color: statusRadioButton.checked ? Theme.palette.primaryColor1
-                                         : Theme.palette.directColor8
+        implicitWidth: root.size === StatusRadioButton.Size.Large ? 20 : 14
+        implicitHeight: root.size === StatusRadioButton.Size.Large ? 20 : 14
+        x: root.text ? (root.mirrored ? root.width - width - root.rightPadding : root.leftPadding) : root.leftPadding + (root.availableWidth - width) / 2
+        y: root.topPadding + (root.availableHeight - height) / 2
+        radius: width / 2
+        color: root.checked ? Theme.palette.primaryColor1 : Theme.palette.directColor8
 
         Rectangle {
-            width: size === StatusRadioButton.Size.Large ? 12 : 8
-            height: size === StatusRadioButton.Size.Large ? 12 : 8
-            radius: 6
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            color: statusRadioButton.checked ? Theme.palette.white : "transparent"
-            visible: statusRadioButton.checked
+            width: root.size === StatusRadioButton.Size.Large ? 12 : 8
+            height: root.size === StatusRadioButton.Size.Large ? 12 : 8
+            radius: width / 2
+            anchors.centerIn: parent
+            color: Theme.palette.white
+            visible: root.checked
         }
     }
     contentItem: StatusBaseText {
-        text: statusRadioButton.text
+        font: root.font
+        text: root.text
         color: Theme.palette.directColor1
         verticalAlignment: Text.AlignVCenter
-        leftPadding: !!statusRadioButton.text ? statusRadioButton.indicator.width + statusRadioButton.spacing
-                                              : statusRadioButton.indicator.width
+        leftPadding: root.indicator && !root.mirrored ? root.indicator.width + root.spacing : 0
+        rightPadding: root.indicator && root.mirrored ? root.indicator.width + root.spacing : 0
     }
 }

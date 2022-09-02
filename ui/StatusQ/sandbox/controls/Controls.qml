@@ -113,9 +113,20 @@ GridLayout {
     StatusSwitch {
 
     }
+    StatusSwitch {
+        text: "Switch with text"
+    }
 
     StatusRadioButton {
-        text: "i'm radio!"
+        text: "Radio button 1"
+        checked: true
+    }
+    StatusRadioButton {
+        text: "Radio button 2 (clicking on this text will uncheck the above)"
+    }
+    StatusRadioButton {
+        LayoutMirroring.enabled : true
+        text: "Radio button 3 (forced right-to-left)"
     }
 
     StatusCheckBox {}
