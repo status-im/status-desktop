@@ -132,6 +132,21 @@ Rectangle {
 
         // set to true when pasted text comes from this component (was copied within this component)
         property bool internalPaste: false
+
+        readonly property StateGroup emojiPopupTakeover: StateGroup {
+            states: State {
+                when: control.emojiPopupOpened
+
+                PropertyChanges {
+                    target: emojiPopup
+
+                    parent: control
+                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                    x: control.width - emojiPopup.width - Style.current.halfPadding
+                    y: -emojiPopup.height
+                }
+            }
+        }
     }
 
     function insertInTextInput(start, text) {
@@ -1239,7 +1254,6 @@ Rectangle {
                             StatusQ.StatusFlatRoundButton {
                                 id: emojiBtn
                                 objectName: "statusChatInputEmojiButton"
-                                enabled: !control.emojiPopupOpened
                                 implicitHeight: 32
                                 implicitWidth: 32
                                 icon.name: "emojis"
@@ -1249,9 +1263,8 @@ Rectangle {
                                 color: "transparent"
                                 onClicked: {
                                     control.emojiPopupOpened = true
+
                                     togglePopup(emojiPopup, emojiBtn)
-                                    emojiPopup.x = Global.applicationWindow.width - emojiPopup.width - Style.current.halfPadding
-                                    emojiPopup.y = Global.applicationWindow.height - emojiPopup.height - control.height - Style.current.halfPadding
                                 }
                             }
 
