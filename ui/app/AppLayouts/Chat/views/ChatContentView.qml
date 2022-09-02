@@ -35,7 +35,6 @@ ColumnLayout {
     property var rootStore
     property var contactsStore
     property bool isActiveChannel: false
-    property bool isConnected: false
     property var emojiPopup
     property alias textInputField: chatInput
     property UsersStore usersStore: UsersStore {}
@@ -61,52 +60,6 @@ ColumnLayout {
     onHeightChanged: {
         if(root.height > 0) {
             chatInput.forceInputActiveFocus()
-        }
-    }
-
-    Rectangle {
-        id: connectedStatusRect
-        Layout.fillWidth: true
-        height: 40
-        Layout.alignment: Qt.AlignHCenter
-        z: 60
-        visible: false
-        color: isConnected ? Style.current.green : Style.current.darkGrey
-        Text {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            color: Style.current.white
-            id: connectedStatusLbl
-            text: isConnected ?
-                      qsTr("Connected") :
-                      qsTr("Disconnected")
-        }
-
-        Connections {
-            target: mainModule
-            onOnlineStatusChanged: {
-                if (connected === isConnected) return;
-                isConnected = connected;
-                if(isConnected) {
-                    onlineStatusTimer.start();
-                } else {
-                    connectedStatusRect.visible = true;
-                }
-            }
-        }
-        Component.onCompleted: {
-            isConnected = mainModule.isOnline
-            if(!isConnected){
-                connectedStatusRect.visible = true
-            }
-        }
-    }
-
-    Timer {
-        id: onlineStatusTimer
-        interval: 5000
-        onTriggered: {
-            connectedStatusRect.visible = false;
         }
     }
 

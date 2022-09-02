@@ -38,7 +38,6 @@ Item {
     property bool isReply: false
     property bool isImage: false
     property bool isExtendedInput: isReply || isImage
-    property bool isConnected: false
     property string contactToRemove: ""
     property bool isSectionActive: mainModule.activeSection.id === parentModule.getMySectionId()
     property string activeChatId: parentModule && parentModule.activeItem.id
@@ -217,7 +216,6 @@ Item {
                             rootStore: root.rootStore
                             contactsStore: root.contactsStore
                             emojiPopup: root.emojiPopup
-                            isConnected: root.isConnected
                             sendTransactionNoEnsModal: cmpSendTransactionNoEns
                             receiveTransactionModal: cmpReceiveTransaction
                             sendTransactionWithEnsModal: cmpSendTransactionWithEns
@@ -266,7 +264,6 @@ Item {
                         clip: true
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
-                        isConnected: root.isConnected
                         emojiPopup: root.emojiPopup
                         sendTransactionNoEnsModal: cmpSendTransactionNoEns
                         receiveTransactionModal: cmpReceiveTransaction

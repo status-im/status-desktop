@@ -5,6 +5,7 @@ import QtMultimedia 5.13
 import Qt.labs.qmlmodels 1.0
 import Qt.labs.platform 1.1
 import Qt.labs.settings 1.0
+import QtQml.Models 2.14
 
 import AppLayouts.Wallet 1.0
 import AppLayouts.Node 1.0
@@ -28,6 +29,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core 0.1
 
 import AppLayouts.Browser.stores 1.0 as BrowserStores
@@ -45,18 +47,6 @@ Item {
     property RootStore rootStore: RootStore { }
     // set from main.qml
     property var sysPalette
-
-    Connections {
-        target: rootStore.aboutModuleInst
-        onAppVersionFetched: {
-            rootStore.setLatestVersionInfo(available, version, url);
-            if (!available) {
-                versionUpToDate.show()
-            } else {
-                versionWarning.show()
-            }
-        }
-    }
 
     Connections {
         target: rootStore.mainModuleInst
@@ -399,52 +389,187 @@ Item {
             spacing: 0
             objectName: "mainRightView"
 
-            ModuleWarning {
-                id: versionWarning
-                width: parent.width
-                height: 32
-                visible: appMain.rootStore.newVersionAvailable
-                color: Style.current.green
-                btnWidth: 100
-                text: qsTr("A new version of Status (%1) is available").arg(appMain.rootStore.latestVersion)
-                btnText: qsTr("Download")
-                onClick: function(){
-                    Global.openDownloadModal(appMain.rootStore.newVersionAvailable, appMain.rootStore.latestVersion, appMain.rootStore.downloadURL)
-                }
-                onClosed: {
-                    appMain.rootStore.resetLastVersion();
+            ColumnLayout {
+                id: bannersLayout
+
+                property var updateBanner: null
+                property var connectedBanner: null
+                readonly property bool isConnected: mainModule.isOnline
+
+                function processUpdateAvailable() {
+                    if (!updateBanner)
+                        updateBanner = updateBannerComponent.createObject(this)
                 }
 
-                function show() {
-                    versionWarning.visible = true
+                function processConnected() {
+                    if (!connectedBanner)
+                        connectedBanner = connectedBannerComponent.createObject(this)
                 }
+
+                Layout.fillWidth: true
+                Layout.maximumHeight: implicitHeight
+                spacing: 1
+
+                onIsConnectedChanged: {
+                    processConnected()
+                }
+
+                Connections {
+                    target: rootStore.aboutModuleInst
+                    onAppVersionFetched: {
+                        rootStore.setLatestVersionInfo(available, version, url);
+                        bannersLayout.processUpdateAvailable()
+                    }
+                }
+
+                ModuleWarning {
+                    id: testnetBanner
+                    Layout.fillWidth: true
+                    text: qsTr("Testnet mode is enabled. All balances, transactions and dApp interactions will be on testnets.")
+                    buttonText: qsTr("Turn off")
+                    type: ModuleWarning.Danger
+                    active: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
+
+                    onClicked: {
+                        testnetBannerDialog.open()
+                    }
+
+                    onCloseClicked: {
+                        testnetBannerDialog.open()
+                    }
+
+                    StatusDialog {
+                        id: testnetBannerDialog
+
+                        width: 400
+                        title: qsTr("Turn off Testnet mode")
+
+                        StatusBaseText {
+                            anchors.fill: parent
+                            text: qsTr("Closing this banner will turn off Testnet mode.\nAll future transactions will be on mainnet or other active networks.")
+                            font.pixelSize: 15
+                            wrapMode: Text.WordWrap
+                        }
+
+                        footer: StatusDialogFooter {
+                            rightButtons: ObjectModel {
+                                StatusButton {
+                                    type: StatusButton.Danger
+                                    text: qsTr("Turn off Testnet")
+                                    onClicked: {
+                                        appMain.rootStore.profileSectionStore.walletStore.toggleTestNetworksEnabled()
+                                        testnetBannerDialog.close()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                ModuleWarning {
+                    id: secureYourSeedPhrase
+                    Layout.fillWidth: true
+                    active: !appMain.rootStore.profileSectionStore.profileStoree.userDeclinedBackupBanner
+                              && !appMain.rootStore.profileSectionStore.profileStore.privacyStore.mnemonicBackedUp
+                    type: ModuleWarning.Danger
+                    text: qsTr("Secure your seed phrase")
+                    buttonText: qsTr("Back up now")
+
+                    onClicked: {
+                        Global.openBackUpSeedPopup();
+                    }
+
+                    onCloseClicked: {
+                        appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner = true
+                    }
+                }
+
+                Component {
+                    id: connectedBannerComponent
+
+                    ModuleWarning {
+                        readonly property bool isConnected: bannersLayout.isConnected
+
+                        Layout.fillWidth: true
+                        text: isConnected ? qsTr("Connected") : qsTr("Disconnected")
+                        type: isConnected ? ModuleWarning.Success : ModuleWarning.Danger
+
+                        function updateState() {
+                            if (isConnected)
+                                showFor()
+                            else
+                                show();
+                        }
+
+                        Component.onCompleted: {
+                            updateState()
+                        }
+                        onIsConnectedChanged: {
+                            updateState();
+                        }
+                        onCloseClicked: {
+                            hide();
+                        }
+                        onHideStarted: {
+                            bannersLayout.connectedBanner = null
+                        }
+                        onHideFinished: {
+                            destroy()
+                        }
+                    }
+                }
+
+                Component {
+                    id: updateBannerComponent
+
+                    ModuleWarning {
+                        readonly property string version: appMain.rootStore.latestVersion
+                        readonly property bool updateAvailable: appMain.rootStore.newVersionAvailable
+
+                        Layout.fillWidth: true
+                        type: ModuleWarning.Success
+                        text: updateAvailable ? qsTr("A new version of Status (%1) is available").arg(version)
+                                              : qsTr("Your version is up to date")
+
+                        buttonText: updateAvailable ? qsTr("Update")
+                                                    : qsTr("Close")
+
+                        function updateState() {
+                            if (updateAvailable)
+                                show()
+                            else
+                                showFor(5000)
+                        }
+
+                        Component.onCompleted: {
+                            updateState()
+                        }
+                        onUpdateAvailableChanged: {
+                            updateState();
+                        }
+                        onClicked: {
+                            if (updateAvailable)
+                                Global.openDownloadModal(appMain.rootStore.newVersionAvailable,
+                                                         appMain.rootStore.latestVersion,
+                                                         appMain.rootStore.downloadURL)
+                            else
+                                close()
+                        }
+                        onCloseClicked: {
+                            if (updateAvailable)
+                                appMain.rootStore.resetLastVersion();
+                            hide()
+                        }
+                        onHideStarted: {
+                            bannersLayout.updateBanner = null
+                        }
+                        onHideFinished: {
+                            destroy()
+                        }
+                    }
+                }
+
             }
-
-            ModuleWarning {
-                id: versionUpToDate
-                width: parent.width
-                height: 32
-                visible: false
-                color: Style.current.green
-                btnWidth: 100
-                text: qsTr("Your version is up to date")
-                btnText: qsTr("Close")
-
-                Timer {
-                    id: timer
-                }
-                function show() {
-                    versionUpToDate.visible = true
-                    timer.setTimeout(function() {
-                        versionUpToDate.close()
-                    }, 4000);
-                }
-
-                onClick: function(){
-                    versionUpToDate.close()
-                }
-            }
-
 
             Item {
                 Layout.fillWidth: true
@@ -693,6 +818,7 @@ Item {
                     }
                 }
             }
+
         } // ColumnLayout
         property var mailserverNotWorkingPopup: null
 
