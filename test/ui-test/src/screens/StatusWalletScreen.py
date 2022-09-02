@@ -125,16 +125,16 @@ class StatusWalletScreen:
         
         words = mnemonic.split()
         scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(2)
+        time.sleep(1)
 
         scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(2)
+        time.sleep(1)
 
         scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(2)
+        time.sleep(1)
 
         input_seed_phrase(AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value, words)
-        time.sleep(2)
+        time.sleep(1)
         
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
         time.sleep(5)
