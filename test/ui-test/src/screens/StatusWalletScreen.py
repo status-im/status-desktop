@@ -22,6 +22,8 @@ class MainWalletScreen(Enum):
     NETWORK_SELECTOR_BUTTON: str = "mainWallet_Network_Selector_Button"
     RIGHT_SIDE_TABBAR: str = "mainWallet_Right_Side_Tab_Bar"
     TESTING_ACCOUNTS_TEXT: str = "mainWallet_testingAccountsJSON"
+    MAILSERVER_DIALOG: str = "mailserver_dialog"
+    MAILSERVER_RETRY: str = "mailserver_retry"
 
 class AssetView(Enum):
     LIST: str = "mainWallet_Assets_View_List"
@@ -135,6 +137,10 @@ class StatusWalletScreen:
 
         input_seed_phrase(AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value, words)
         time.sleep(1)
+        
+        visible, _ = is_loaded_visible_and_enabled(MainWalletScreen.MAILSERVER_DIALOG.value, 500)
+        if (visible):
+            click_obj_by_name(MainWalletScreen.MAILSERVER_RETRY.value)
         
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
         time.sleep(5)
