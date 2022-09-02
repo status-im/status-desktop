@@ -75,11 +75,8 @@
         <file>main.qml</file>
         <file>ThemeSwitch.qml</file>
         <file>examples/FilteringSorting.qml</file>
-        <file>images/RARI.png</file>
-        <file>images/SRToken.png</file>
         <file>demoapp/data/profile-image-1.jpeg</file>
         <file>demoapp/data/profile-image-2.jpeg</file>
-        <file>pages/StatusItemSelectorPage.qml</file>
         <file>pages/StatusComboBoxPage.qml</file>
     </qresource>
 </RCC>
