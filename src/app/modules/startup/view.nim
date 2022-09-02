@@ -242,9 +242,9 @@ QtObject:
     read = getKeycardData
     notify = keycardDataChanged
 
-  proc runKeycardSharedModuleFlow*(self: View) {.signal.}
-  proc emitRunKeycardSharedModuleFlow*(self: View) =
-    self.runKeycardSharedModuleFlow()
+  proc displayKeycardSharedModuleFlow*(self: View) {.signal.}
+  proc emitDisplayKeycardSharedModuleFlow*(self: View) =
+    self.displayKeycardSharedModuleFlow()
 
   proc destroyKeycardSharedModuleFlow*(self: View) {.signal.}
   proc emitDestroyKeycardSharedModuleFlow*(self: View) =

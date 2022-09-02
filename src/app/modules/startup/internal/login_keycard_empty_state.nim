@@ -10,21 +10,19 @@ proc delete*(self: LoginKeycardEmptyState) =
 
 method executePrimaryCommand*(self: LoginKeycardEmptyState, controller: Controller) =
   if self.flowType == FlowType.AppLogin:
-    controller.runLoadAccountFlow(factoryReset = true)
+    if not controller.isSelectedLoginAccountKeycardAccount():
+      controller.login()
+    else:
+      controller.runLoadAccountFlow(factoryReset = true)
 
 method getNextSecondaryState*(self: LoginKeycardEmptyState, controller: Controller): State =
+  controller.cancelCurrentFlow()
   return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
 
 method getNextTertiaryState*(self: LoginKeycardEmptyState, controller: Controller): State =
+  controller.cancelCurrentFlow()
   return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
 
 method resolveKeycardNextState*(self: LoginKeycardEmptyState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
-  if self.flowType == FlowType.AppLogin:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorConnection:
-        controller.resumeCurrentFlowLater()
-        return createState(StateType.KeycardPluginReader, FlowType.FirstRunNewUserNewKeycardKeys, self)
-    if keycardFlowType == ResponseTypeValueInsertCard:
-      return createState(StateType.KeycardInsertKeycard, FlowType.FirstRunNewUserNewKeycardKeys, self)
+  return ensureReaderAndCardPresenceAndResolveNextLoginState(self, keycardFlowType, keycardEvent, controller)

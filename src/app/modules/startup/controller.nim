@@ -1,5 +1,5 @@
 import chronicles, strutils, os
-
+import uuids
 import io_interface
 
 import ../../global/global_singleton
@@ -33,10 +33,12 @@ type
     keychainService: keychain_service.Service
     profileService: profile_service.Service
     keycardService: keycard_service.Service
+    connectionIds: seq[UUID]
     tmpProfileImageDetails: ProfileImageDetails
     tmpDisplayName: string
     tmpPassword: string
     tmpSelectedLoginAccountKeyUid: string
+    tmpSelectedLoginAccountIsKeycardAccount: bool
     tmpPin: string
     tmpPinMatch: bool
     tmpPuk: string
@@ -68,43 +70,59 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.tmpSeedPhraseLength = 0
   result.tmpKeychainErrorOccurred = true
   result.tmpRecoverUsingSeedPhraseWhileLogin = false
+  result.tmpSelectedLoginAccountIsKeycardAccount = false
 
 # Forward declaration
 proc cleanTmpData*(self: Controller)
 
+proc disconnect*(self: Controller) =
+  for id in self.connectionIds:
+    self.events.disconnect(id)
+
 proc delete*(self: Controller) =
-  discard
+  self.disconnect()
 
 proc init*(self: Controller) =
-  self.events.on(SignalType.NodeLogin.event) do(e:Args):
+  var handlerId = self.events.onWithUUID(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     self.delegate.onNodeLogin(signal.event.error)
+  self.connectionIds.add(handlerId)
 
-  self.events.on(SignalType.NodeStopped.event) do(e:Args):
+  handlerId = self.events.onWithUUID(SignalType.NodeStopped.event) do(e:Args):
     self.events.emit("nodeStopped", Args())
     self.accountsService.clear()
     self.cleanTmpData()
     self.delegate.emitLogOut()
+  self.connectionIds.add(handlerId)
 
-  self.events.on(SignalType.NodeReady.event) do(e:Args):
+  handlerId = self.events.onWithUUID(SignalType.NodeReady.event) do(e:Args):
     self.events.emit("nodeReady", Args())
+  self.connectionIds.add(handlerId)
 
-  self.events.on(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e:Args):
+  handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e:Args):
     let args = KeyChainServiceArg(e)
     self.delegate.emitObtainingPasswordSuccess(args.data)
+  self.connectionIds.add(handlerId)
 
-  self.events.on(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
+  handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
     let args = KeyChainServiceArg(e)
     self.tmpKeychainErrorOccurred = true
     self.delegate.emitObtainingPasswordError(args.errDescription, args.errType)
+  self.connectionIds.add(handlerId)
   
-  self.events.on(SignalKeycardResponse) do(e: Args):
+  handlerId = self.events.onWithUUID(SignalKeycardResponse) do(e: Args):
     let args = KeycardArgs(e)
     self.delegate.onKeycardResponse(args.flowType, args.flowEvent)
+  self.connectionIds.add(handlerId)
 
-  self.events.on(SignalSharedKeycarModuleFlowTerminated) do(e: Args):
+  handlerId = self.events.onWithUUID(SignalSharedKeycarModuleFlowTerminated) do(e: Args):
     let args = SharedKeycarModuleFlowTerminatedArgs(e)
     self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
+  self.connectionIds.add(handlerId)
+
+  handlerId = self.events.onWithUUID(SignalSharedKeycarModuleDisplayPopup) do(e: Args):
+    self.delegate.onDisplayKeycardSharedModuleFlow()
+  self.connectionIds.add(handlerId)
 
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
@@ -201,6 +219,7 @@ proc getRecoverUsingSeedPhraseWhileLogin*(self: Controller): bool =
 
 proc cleanTmpData*(self: Controller) =
   self.tmpSelectedLoginAccountKeyUid = ""
+  self.tmpSelectedLoginAccountIsKeycardAccount = false
   self.tmpProfileImageDetails = ProfileImageDetails()
   self.tmpKeychainErrorOccurred = true
   self.setDisplayName("")
@@ -306,8 +325,12 @@ proc getSelectedLoginAccount(self: Controller): AccountDto =
 proc keyUidMatch*(self: Controller, keyUid: string): bool =
   return self.tmpSelectedLoginAccountKeyUid == keyUid
 
-proc setSelectedLoginAccountKeyUid*(self: Controller, keyUid: string) =
+proc isSelectedLoginAccountKeycardAccount*(self: Controller): bool =
+  return self.tmpSelectedLoginAccountIsKeycardAccount
+
+proc setSelectedLoginAccount*(self: Controller, keyUid: string, isKeycardAccount: bool) =
   self.tmpSelectedLoginAccountKeyUid = keyUid
+  self.tmpSelectedLoginAccountIsKeycardAccount = isKeycardAccount
   let selectedAccount = self.getSelectedLoginAccount()
   singletonInstance.localAccountSettings.setFileName(selectedAccount.name)
 
@@ -339,7 +362,7 @@ proc loginAccountKeycard*(self: Controller) =
   if(error.len > 0):
     self.delegate.emitAccountLoginError(error)
 
-proc cancelCurrentFlow(self: Controller) =
+proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
   # in most cases we're running another flow after canceling the current one, 
   # this way we're giving to the keycard some time to cancel the current flow 

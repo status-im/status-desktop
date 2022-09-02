@@ -20,6 +20,9 @@ method executePrimaryCommand*(self: KeycardWrongPinState, controller: Controller
   
 method resolveKeycardNextState*(self: KeycardWrongPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
+  let state = ensureReaderAndCardPresenceOnboarding(self, keycardFlowType, keycardEvent, controller)
+  if not state.isNil:
+    return state
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
     if keycardFlowType == ResponseTypeValueEnterPIN and 
       keycardEvent.error.len > 0 and

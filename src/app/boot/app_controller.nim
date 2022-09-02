@@ -241,7 +241,8 @@ proc delete*(self: AppController) =
   self.contactsService.delete
   self.bookmarkService.delete
   self.gifService.delete
-  self.startupModule.delete
+  if not self.startupModule.isNil:
+    self.startupModule.delete
   self.mainModule.delete
   self.languageService.delete
 
@@ -358,6 +359,9 @@ proc userLoggedIn*(self: AppController) =
   let importedAccount = self.accountsService.getImportedAccount()
   if(importedAccount.isValid()):
     self.privacyService.removeMnemonic()
+
+  if not self.startupModule.isNil:
+    self.startupModule.delete
 
 proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) =
   var pubKey = self.settingsService.getPublicKey()

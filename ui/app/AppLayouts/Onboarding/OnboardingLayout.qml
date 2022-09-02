@@ -142,7 +142,7 @@ case of Keycard try recovering using PUK or reinstall the app and try login with
             }
             msgDialog.open()
         }
-        onRunKeycardSharedModuleFlow: {
+        onDisplayKeycardSharedModuleFlow: {
             keycardPopup.active = true
         }
         onDestroyKeycardSharedModuleFlow: {
@@ -275,7 +275,6 @@ case of Keycard try recovering using PUK or reinstall the app and try login with
 
         onLoaded: {
             keycardPopup.item.open()
-            keycardPopup.item.sharedKeycardModule.runFactoryResetFlow()
         }
     }
 }

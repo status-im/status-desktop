@@ -17,6 +17,9 @@ method executePrimaryCommand*(self: KeycardEnterSeedPhraseWordsState, controller
 
 method resolveKeycardNextState*(self: KeycardEnterSeedPhraseWordsState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
+  let state = ensureReaderAndCardPresenceOnboarding(self, keycardFlowType, keycardEvent, controller)
+  if not state.isNil:
+    return state
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.keyUid.len > 0:
