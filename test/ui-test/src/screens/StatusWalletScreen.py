@@ -21,6 +21,7 @@ class MainWalletScreen(Enum):
     SAVED_ADDRESSES_BUTTON: str = "mainWallet_Saved_Addresses_Button"
     NETWORK_SELECTOR_BUTTON: str = "mainWallet_Network_Selector_Button"
     RIGHT_SIDE_TABBAR: str = "mainWallet_Right_Side_Tab_Bar"
+    TESTING_ACCOUNTS_TEXT: str = "mainWallet_testingAccountsJSON"
 
 class AssetView(Enum):
     LIST: str = "mainWallet_Assets_View_List"
@@ -260,6 +261,8 @@ class StatusWalletScreen:
         test.log("ACCOUNT NAME", str(obj.text))
         obj2 = get_obj(MainWalletScreen.ACCOUNT_ADDRESS_PANEL.value)
         test.log("ACCOUNT ADDRESS", str(obj2.address))
+        obj3 = get_obj(MainWalletScreen.TESTING_ACCOUNTS_TEXT.value)
+        test.log("TESTING ACCOUNTS", str(obj3.text))
         list = get_obj(AssetView.LIST.value)
         reset = 0
         while (reset < 3):

@@ -142,6 +142,7 @@ method viewDidLoad*(self: Module) =
   self.refreshWalletAccounts()
   self.moduleLoaded = true
   self.delegate.accountsModuleDidLoad()
+  self.view.setTestingAccounts(self.controller.getTestingAccounts())
 
 method generateNewAccount*(self: Module, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string =
   return self.controller.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)

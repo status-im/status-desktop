@@ -27,6 +27,7 @@ QtObject:
       derivedAddresses: DerivedAddressModel
       derivedAddressesLoading: bool
       derivedAddressesError: string
+      testingAccounts: string
       modelVariant: QVariant
       generatedVariant: QVariant
       importedVariant: QVariant
@@ -154,6 +155,19 @@ QtObject:
     read = getDerivedAddressesError
     write = setDerivedAddressesError
     notify = derivedAddressErrorChanged
+
+  proc testingAccountsChanged*(self: View) {.signal.}
+  proc getTestingAccounts(self: View): string {.slot.} =
+    return self.testingAccounts
+
+  proc setTestingAccounts*(self: View, testingAccounts: string) =
+    self.testingAccounts = testingAccounts
+    echo "SETTING ", testingAccounts
+    self.testingAccountsChanged()
+
+  QtProperty[string] testingAccounts:
+    read = getTestingAccounts
+    notify = testingAccountsChanged
 
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)

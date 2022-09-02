@@ -1,0 +1,89 @@
+library 'status-jenkins-lib@v1.5.1'
+
+pipeline {
+  agent { label 'windows' }
+
+  parameters {
+    booleanParam(
+      name: 'RELEASE',
+      description: 'Decides whether binaries are built with debug symbols.',
+      defaultValue: params.RELEASE ?: false
+    )
+    choice(
+      name: 'VERBOSE',
+      description: 'Level of verbosity based on nimbus-build-system setup.',
+      choices: ['0', '1', '2']
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 25, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '3',
+    ))
+  }
+
+  environment {
+    TARGET = 'windows'
+    /* Improve make performance */
+    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    /* Disable colors in Nim compiler logs */
+    NIMFLAGS = '--colors:off'
+    /* Control output the filename */
+    STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe')}"
+    /* 7zip archive filename */
+    STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z')}"
+    /* RFC 3161 timestamping URL for DigiCert */
+    WINDOWS_CODESIGN_TIMESTAMP_URL = 'http://timestamp.digicert.com'
+  }
+
+  stages {
+    stage('Deps') {
+      steps {
+        /* trigger fetching of git submodules */
+        sh 'make check-pkg-target-windows'
+        /* TODO: Re-add caching of Nim compiler. */
+        sh 'make deps'
+      }
+    }
+
+    stage('status-go') {
+      steps { sh 'make status-go' }
+    }
+
+    stage('Package') {
+      steps { script {
+        windows.bundle("${env.STATUS_CLIENT_EXE} ${env.STATUS_CLIENT_7Z}")
+      } }
+    }
+
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps { script {
+            zip_url = s3.uploadArtifact(env.STATUS_CLIENT_7Z)
+            exe_url = s3.uploadArtifact(env.STATUS_CLIENT_EXE)            
+            env.PKG_URL = exe_url
+            jenkins.setBuildDesc(Zip: zip_url, Exe: exe_url)
+          } }
+        }
+        stage('Archive') {
+          steps { script {
+            archiveArtifacts(env.STATUS_CLIENT_EXE)
+            archiveArtifacts(env.STATUS_CLIENT_7Z)
+          } }
+        }
+      }
+    }
+  }
+  post {
+    success { script { github.notifyPR(true) } }
+    failure { script { github.notifyPR(false) } }
+    always { cleanWs() }
+  }
+}

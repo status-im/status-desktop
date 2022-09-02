@@ -10,6 +10,7 @@ signPhrase_Ok_Button = {"container": statusDesktop_mainWindow, "type": "StatusFl
 mainWallet_Saved_Addresses_Button = {"container": statusDesktop_mainWindow, "objectName": "savedAddressesBtn", "type": "StatusButton"}
 mainWallet_Network_Selector_Button = {"container": statusDesktop_mainWindow, "objectName": "networkSelectorButton", "type": "StatusListItem"}
 mainWallet_Right_Side_Tab_Bar = {"container": statusDesktop_mainWindow, "objectName": "rightSideWalletTabBar", "type": "StatusTabBar"}
+mainWallet_testingAccountsJSON = {"container": statusDesktop_mainWindow, "objectName": "testingAccountsJSON", "type": "StatusBaseText"}
 
 # Assets view:
 mainWallet_Assets_View_List = {"container": statusDesktop_mainWindow, "objectName": "assetViewStatusListView", "type": "StatusListView"}
