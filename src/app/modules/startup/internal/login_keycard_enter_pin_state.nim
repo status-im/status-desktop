@@ -10,17 +10,24 @@ proc delete*(self: LoginKeycardEnterPinState) =
 
 method executePrimaryCommand*(self: LoginKeycardEnterPinState, controller: Controller) =
   if self.flowType == FlowType.AppLogin:
-    if controller.getPin().len == PINLengthForStatusApp:
+    if not controller.isSelectedLoginAccountKeycardAccount():
+      controller.login()
+    elif controller.getPin().len == PINLengthForStatusApp:
       controller.enterKeycardPin(controller.getPin())
 
 method getNextSecondaryState*(self: LoginKeycardEnterPinState, controller: Controller): State =
+  controller.cancelCurrentFlow()
   return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
 
 method getNextTertiaryState*(self: LoginKeycardEnterPinState, controller: Controller): State =
+  controller.cancelCurrentFlow()
   return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
 
 method resolveKeycardNextState*(self: LoginKeycardEnterPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
+  let state = ensureReaderAndCardPresenceLogin(self, keycardFlowType, keycardEvent, controller)
+  if not state.isNil:
+    return state
   if self.flowType == FlowType.AppLogin:
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.error.len == 0:

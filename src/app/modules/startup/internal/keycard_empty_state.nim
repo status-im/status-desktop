@@ -10,15 +10,9 @@ proc delete*(self: KeycardEmptyState) =
 
 method executePrimaryCommand*(self: KeycardEmptyState, controller: Controller) =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.runLoadAccountFlow(factoryReset = true)
+    self.setFlowType(FlowType.FirstRunNewUserNewKeycardKeys)
+    controller.runLoadAccountFlow()
 
 method resolveKeycardNextState*(self: KeycardEmptyState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
-  if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorConnection:
-        controller.resumeCurrentFlowLater()
-        return createState(StateType.KeycardPluginReader, FlowType.FirstRunNewUserNewKeycardKeys, self)
-    if keycardFlowType == ResponseTypeValueInsertCard:
-      return createState(StateType.KeycardInsertKeycard, FlowType.FirstRunNewUserNewKeycardKeys, self)
+  return ensureReaderAndCardPresenceAndResolveNextOnboardingState(self, keycardFlowType, keycardEvent, controller)

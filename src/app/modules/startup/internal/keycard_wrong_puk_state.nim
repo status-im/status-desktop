@@ -18,6 +18,9 @@ method executePrimaryCommand*(self: KeycardWrongPukState, controller: Controller
   
 method resolveKeycardNextState*(self: KeycardWrongPukState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
+  let state = ensureReaderAndCardPresenceOnboarding(self, keycardFlowType, keycardEvent, controller)
+  if not state.isNil:
+    return state
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
     if keycardFlowType == ResponseTypeValueEnterPUK and 
       keycardEvent.error.len > 0 and

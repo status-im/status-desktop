@@ -14,12 +14,6 @@ Item {
 
     property StartupStore startupStore
 
-    Component.onCompleted: {
-        if(root.startupStore.currentStartupState.stateType === Constants.startupState.keycardPluginReader) {
-            root.startupStore.doPrimaryAction()
-        }
-    }
-
     QtObject {
         id: d
 

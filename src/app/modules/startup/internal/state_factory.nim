@@ -1,6 +1,7 @@
 import chronicles
 import ../../../../app_service/service/keycard/constants
 import ../controller
+from ../../../../app_service/service/keycard/service import KCSFlowType
 from ../../../../app_service/service/keycard/service import PINLengthForStatusApp
 from ../../../../app_service/service/keycard/service import PUKLengthForStatusApp
 import state
@@ -10,6 +11,10 @@ logScope:
 
 # Forward declaration
 proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State
+proc ensureReaderAndCardPresenceOnboarding*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
+proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
+proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
+proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
 
 include biometrics_state 
 include keycard_create_pin_state 
@@ -132,3 +137,152 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newLoginKeycardEmptyState(flowType, backState)
   
   error "No implementation available for state ", state=stateToBeCreated
+
+proc ensureReaderAndCardPresenceOnboarding*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
+  if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    keycardEvent.error.len > 0 and
+    keycardEvent.error == ErrorConnection:
+      controller.resumeCurrentFlowLater()
+      if state.stateType == StateType.KeycardPluginReader:
+        return nil
+      return createState(StateType.KeycardPluginReader, state.flowType, state)
+  if keycardFlowType == ResponseTypeValueInsertCard and 
+    keycardEvent.error.len > 0 and
+    keycardEvent.error == ErrorConnection:
+      if state.stateType == StateType.KeycardInsertKeycard:
+        return nil
+      return createState(StateType.KeycardInsertKeycard, state.flowType, state.getBackState)
+  if keycardFlowType == ResponseTypeValueCardInserted:
+    controller.setKeycardData("")
+    return createState(StateType.KeycardReadingKeycard, state.flowType, state.getBackState)
+
+proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
+  if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    keycardEvent.error.len > 0 and
+    keycardEvent.error == ErrorConnection:
+      controller.resumeCurrentFlowLater()
+      if state.stateType == StateType.Login:
+        return nil
+      return createState(StateType.Login, state.flowType, state)
+  if keycardFlowType == ResponseTypeValueInsertCard and 
+    keycardEvent.error.len > 0 and
+    keycardEvent.error == ErrorConnection:
+      if state.stateType == StateType.LoginKeycardInsertKeycard:
+        return nil
+      return createState(StateType.LoginKeycardInsertKeycard, state.flowType, state.getBackState)
+  if keycardFlowType == ResponseTypeValueCardInserted:
+    controller.setKeycardData("")
+    return createState(StateType.LoginKeycardReadingKeycard, state.flowType, state.getBackState)
+
+proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
+  let ensureState = ensureReaderAndCardPresenceOnboarding(state, keycardFlowType, keycardEvent, controller)
+  if not ensureState.isNil:
+    return ensureState
+  
+  if state.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
+    if keycardFlowType == ResponseTypeValueEnterNewPIN and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorRequireInit:
+        return createState(StateType.KeycardCreatePin, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueEnterPIN and 
+      keycardEvent.error.len == 0:
+        return createState(StateType.KeycardNotEmpty, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0 and
+      (keycardEvent.error == ErrorHasKeys or 
+      keycardEvent.error == RequestParamPUKRetries):
+        return createState(StateType.KeycardNotEmpty, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueEnterMnemonic and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorLoadingKeys:
+        controller.buildSeedPhrasesFromIndexes(keycardEvent.seedPhraseIndexes)
+        return createState(StateType.KeycardPinSet, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+      keycardEvent.keyUid.len > 0:
+        controller.setKeyUid(keycardEvent.keyUid)
+        return createState(StateType.UserProfileCreate, state.flowType, state)
+  
+  if state.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+    if keycardFlowType == ResponseTypeValueEnterNewPIN and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorRequireInit:
+        return createState(StateType.KeycardCreatePin, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueEnterPIN and 
+      keycardEvent.error.len == 0:
+        return createState(StateType.KeycardNotEmpty, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0 and
+      (keycardEvent.error == ErrorHasKeys or 
+      keycardEvent.error == RequestParamPUKRetries):
+        return createState(StateType.KeycardNotEmpty, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+      keycardEvent.keyUid.len > 0:
+        controller.setKeyUid(keycardEvent.keyUid)
+        return createState(StateType.KeycardPinSet, state.flowType, state.getBackState)
+  
+  if state.flowType == FlowType.FirstRunOldUserKeycardImport:
+    if keycardFlowType == ResponseTypeValueEnterPIN and 
+      keycardEvent.error.len == 0:
+        return createState(StateType.KeycardEnterPin, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueEnterPUK and 
+      keycardEvent.error.len == 0:
+      if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+        return createState(StateType.KeycardMaxPinRetriesReached, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorNoKeys:
+        return createState(StateType.KeycardEmpty, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == RequestParamPUKRetries:
+        return createState(StateType.KeycardMaxPukRetriesReached, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == RequestParamFreeSlots:
+        return createState(StateType.KeycardMaxPairingSlotsReached, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueEnterNewPIN and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorRequireInit:
+        return createState(StateType.KeycardCreatePin, state.flowType, state.getBackState)
+  
+  if state.flowType == FlowType.AppLogin:
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == RequestParamPUKRetries:
+        return createState(StateType.KeycardMaxPukRetriesReached, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueEnterNewPIN and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorRequireInit:
+        return createState(StateType.KeycardCreatePin, state.flowType, state.getBackState)
+
+proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
+  let ensureState = ensureReaderAndCardPresenceLogin(state, keycardFlowType, keycardEvent, controller)
+  if not ensureState.isNil:
+    return ensureState
+  if state.flowType == FlowType.AppLogin:
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+      keycardEvent.error.len == 0:
+        controller.setKeycardEvent(keycardEvent)
+        controller.loginAccountKeycard()
+        return nil
+    if keycardFlowType == ResponseTypeValueEnterPIN and 
+      keycardEvent.error.len == 0:
+        if not controller.keyUidMatch(keycardEvent.keyUid):
+          return createState(StateType.LoginKeycardWrongKeycard, state.flowType, nil)
+        let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
+        if value == LS_VALUE_STORE:
+          controller.tryToObtainDataFromKeychain()
+          return nil
+        return createState(StateType.LoginKeycardEnterPin, state.flowType, nil)
+    if keycardFlowType == ResponseTypeValueEnterPUK and 
+      keycardEvent.error.len == 0:
+        if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+          return createState(StateType.LoginKeycardMaxPinRetriesReached, state.flowType, nil)
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorNoKeys:
+        return createState(StateType.LoginKeycardEmpty, state.flowType, nil)
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == RequestParamPUKRetries:
+        return createState(StateType.LoginKeycardMaxPukRetriesReached, state.flowType, nil)

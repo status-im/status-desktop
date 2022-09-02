@@ -16,18 +16,6 @@ method executeSecondaryCommand*(self: KeycardMaxPairingSlotsReachedState, contro
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
     controller.runRecoverAccountFlow()
 
-method getNextSecondaryState*(self: KeycardMaxPairingSlotsReachedState, controller: Controller): State =
-  if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    return createState(StateType.KeycardPluginReader, self.flowType, nil)
-  return nil
-
 method resolveKeycardNextState*(self: KeycardMaxPairingSlotsReachedState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
-  if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorConnection:
-        controller.resumeCurrentFlowLater()
-        return createState(StateType.KeycardPluginReader, FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard, self.getBackState)
-    if keycardFlowType == ResponseTypeValueInsertCard:
-      return createState(StateType.KeycardInsertKeycard, FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard, self.getBackState)
+  return ensureReaderAndCardPresenceAndResolveNextOnboardingState(self, keycardFlowType, keycardEvent, controller)

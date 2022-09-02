@@ -16,9 +16,13 @@ method getNextPrimaryState*(self: WelcomeStateOldUser, controller: Controller): 
   # We will handle here a click on `Scan sync code`
   discard
 
-method getNextSecondaryState*(self: WelcomeStateOldUser, controller: Controller): State =
-  return createState(StateType.KeycardPluginReader, FlowType.FirstRunOldUserKeycardImport, self)  
-
 method getNextTertiaryState*(self: WelcomeStateOldUser, controller: Controller): State =
   return createState(StateType.UserProfileEnterSeedPhrase, FlowType.FirstRunOldUserImportSeedPhrase, self)
 
+method executeSecondaryCommand*(self: WelcomeStateOldUser, controller: Controller) =
+  self.setFlowType(FlowType.FirstRunOldUserKeycardImport)
+  controller.runRecoverAccountFlow()
+
+method resolveKeycardNextState*(self: WelcomeStateOldUser, keycardFlowType: string, keycardEvent: KeycardEvent, 
+  controller: Controller): State =
+  return ensureReaderAndCardPresenceAndResolveNextOnboardingState(self, keycardFlowType, keycardEvent, controller)

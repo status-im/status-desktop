@@ -8,6 +8,10 @@ proc newBiometricsState*(flowType: FlowType, backState: State): BiometricsState 
 proc delete*(self: BiometricsState) =
   self.State.delete
 
+method executeBackCommand*(self: BiometricsState, controller: Controller) =
+  if self.flowType == FlowType.FirstRunOldUserKeycardImport:
+    controller.runRecoverAccountFlow()
+
 method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
   let storeToKeychain = true # true, cause we have support for keychain for mac os
   if self.flowType == FlowType.FirstRunNewUserNewKeys:

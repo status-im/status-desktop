@@ -29,6 +29,7 @@ type
     controller: Controller
     events: EventEmitter
     keycardService: keycard_service.Service
+    accountsService: accounts_service.Service
     keycardSharedModule: keycard_shared_module.AccessInterface
 
 proc newModule*[T](delegate: T,
@@ -43,6 +44,7 @@ proc newModule*[T](delegate: T,
   result.delegate = delegate
   result.events = events
   result.keycardService = keycardService
+  result.accountsService = accountsService
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, generalService, accountsService, keychainService,
@@ -102,7 +104,8 @@ method getKeycardSharedModule*[T](self: Module[T]): QVariant =
   return self.keycardSharedModule.getModuleAsVariant()
 
 proc createSharedKeycardModule[T](self: Module[T]) =
-  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, self.events, self.keycardService)
+  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, self.events, self.keycardService, 
+  privacyService = nil, self.accountsService, walletAccountService = nil)
 
 proc isSharedKeycardModuleFlowRunning[T](self: Module[T]): bool =
   return not self.keycardSharedModule.isNil
@@ -220,7 +223,8 @@ method importAccountSuccess*[T](self: Module[T]) =
   self.view.importAccountSuccess()
 
 method setSelectedLoginAccount*[T](self: Module[T], item: login_acc_item.Item) =
-  self.controller.setSelectedLoginAccountKeyUid(item.getKeyUid())
+  self.controller.cancelCurrentFlow()
+  self.controller.setSelectedLoginAccount(item.getKeyUid(), item.getKeycardCreatedAccount())
   if item.getKeycardCreatedAccount():
     self.view.setCurrentStartupState(newLoginState(FlowType.AppLogin, nil)) # nim garbage collector will handle all abandoned state objects
     self.controller.runLoginFlow()
@@ -294,10 +298,16 @@ method setKeycardData*[T](self: Module[T], value: string) =
 
 method runFactoryResetPopup*[T](self: Module[T]) =
   self.createSharedKeycardModule()
-  self.view.emitRunKeycardSharedModuleFlow()
+  if self.keycardSharedModule.isNil:
+    return
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.FactoryReset)
+  
+method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
+  self.view.emitDisplayKeycardSharedModuleFlow()
 
 method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
   if self.isSharedKeycardModuleFlowRunning():
+    self.controller.cancelCurrentFlow()
     self.view.emitDestroyKeycardSharedModuleFlow()
     self.keycardSharedModule.delete
     self.keycardSharedModule = nil

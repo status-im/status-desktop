@@ -83,6 +83,10 @@ proc delete*(self: State) =
   discard
 
 ## Returns flow type
+method setFlowType*(self: State, flowType: FlowType) {.inline base.} =
+  self.flowType = flowType
+
+## Returns flow type
 method flowType*(self: State): FlowType {.inline base.} =
   self.flowType
 

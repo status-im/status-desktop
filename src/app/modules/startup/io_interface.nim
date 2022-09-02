@@ -16,6 +16,9 @@ method load*(self: AccessInterface) {.base.} =
 method getKeycardSharedModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onDisplayKeycardSharedModuleFlow*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
