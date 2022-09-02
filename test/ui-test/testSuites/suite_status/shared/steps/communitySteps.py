@@ -12,6 +12,10 @@ _statusMainScreen = StatusMainScreen()
 def step(context: any):
     _statusMainScreen.open_community_portal()
 
+@When("the user opens the community named |any|")
+def step(context, community_name):
+    _statusMainScreen.click_community(community_name)
+
 @Then("the user lands on the community portal section")
 def step(context):
     StatusCommunityPortalScreen()
@@ -121,4 +125,21 @@ def step(context, message_index):
 @Then("the amount of pinned messages is |any|")
 def step(context, amount):
     _statusCommunityScreen.check_pin_count(amount)
+
+@Then("the user blocks member with name |any|")
+def step(context, member):
+    _statusCommunityScreen.block_member(member)
+
+@Then("the user can see that |any| was blocked")
+def step(context, member):
+    _statusCommunityScreen.check_member_is_blocked(member, True)
+
+@Then("the user unblocks member with name |any|")
+def step(context, member):
+    _statusCommunityScreen.unblock_member(member)
+
+@Then("the user can see that |any| was unblocked")
+def step(context, member):
+    _statusCommunityScreen.check_member_is_blocked(member, False)
+
 

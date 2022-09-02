@@ -307,6 +307,7 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
+        objectName: "unblockUserMenuItem"
         text: qsTr("Unblock User")
         icon.name: "remove-circle"
         enabled: root.isProfile && !root.isMe && root.isBlockedContact
@@ -336,6 +337,7 @@ StatusPopupMenu {
 
     StatusMenuItem {
         id: blockMenuItem
+        objectName: "blockUserMenuItem"
         text: qsTr("Block User")
         icon.name: "cancel"
         type: StatusMenuItem.Type.Danger

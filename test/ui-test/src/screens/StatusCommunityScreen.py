@@ -76,6 +76,13 @@ class CreateOrEditCommunityCategoryPopup(Enum):
     COMMUNITY_CATEGORY_LIST: str = "createOrEditCommunityCategoryChannelList_ListView"
     COMMUNITY_CATEGORY_BUTTON: str = "createOrEditCommunityCategoryBtn_StatusButton"
 
+class CommunityUserListPanel(Enum):
+    COMMUNITY_MEMBER_PLACEHOLDER: str = "communityMember_StatusMemberListItem_Placeholder"
+
+class CommunityMembersContextMenu(Enum):
+    BLOCK_MENU_ITEM: str = "communityMemberContenxtMenu_blockUser_MenuItem"
+    UNBLOCK_MENU_ITEM: str = "communityMemberContenxtMenu_unblockUser_MenuItem"
+
 class StatusCommunityScreen:
 
     def __init__(self):
@@ -331,3 +338,22 @@ class StatusCommunityScreen:
     def check_pin_count(self, wanted_pin_count: int):
         pin_text_obj = wait_and_get_obj(CommunityScreenComponents.PIN_TEXT.value)
         verify_equals(pin_text_obj.text, wanted_pin_count)
+
+    def block_member(self, member: str):
+        right_click_obj_by_wildcards_name(CommunityUserListPanel.COMMUNITY_MEMBER_PLACEHOLDER.value, member)
+        block_user_obj = get_obj(CommunityMembersContextMenu.BLOCK_MENU_ITEM.value)
+        hover_obj(block_user_obj)
+        click_obj(block_user_obj)
+        
+    def check_member_is_blocked(self, member: str, blocked: bool):
+        right_click_obj_by_wildcards_name(CommunityUserListPanel.COMMUNITY_MEMBER_PLACEHOLDER.value, member)
+        block_user_obj = get_obj(CommunityMembersContextMenu.BLOCK_MENU_ITEM.value)
+        verify(block_user_obj.enabled != blocked, "Check member blocked failed")
+
+        
+    def unblock_member(self, member: str):
+        right_click_obj_by_wildcards_name(CommunityUserListPanel.COMMUNITY_MEMBER_PLACEHOLDER.value, member)
+        block_user_obj = get_obj(CommunityMembersContextMenu.UNBLOCK_MENU_ITEM.value)
+        hover_obj(block_user_obj)
+        click_obj(block_user_obj)
+

@@ -47,3 +47,10 @@ communitySettings_EditCommunity_ColorPicker_Button = {"container": communitySett
 # Community color popup:
 communitySettings_ColorPanel_HexColor_Input = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelHexInput", "type": "TextEdit"}
 communitySettings_SaveColor_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelSelectColorButton", "type": "StatusButton", "visible": True}
+
+# Community members panel:
+communityMember_StatusMemberListItem_Placeholder = {"container": statusDesktop_mainWindow, "objectName": "memberListItem_%NAME%", "type": "StatusMemberListItem", "visible": True}
+
+#Community members context menu:
+communityMemberContenxtMenu_blockUser_MenuItem =  {"container": statusDesktop_mainWindow_overlay, "objectName": "blockUserMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
+communityMemberContenxtMenu_unblockUser_MenuItem =  {"container": statusDesktop_mainWindow_overlay, "objectName": "unblockUserMenuItem", "type": "StatusMenuItemDelegate", "visible": True}

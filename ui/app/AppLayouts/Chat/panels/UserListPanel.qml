@@ -73,6 +73,7 @@ Item {
         section.property: "onlineStatus"
         section.delegate: (root.width > 58) ? sectionDelegateComponent : null
         delegate: StatusMemberListItem {
+            objectName: "memberListItem_" + model.displayName
             anchors.left: parent.left
             anchors.leftMargin: 8
             anchors.right: parent.right

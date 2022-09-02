@@ -37,6 +37,9 @@ class StatusLoginScreen():
 
     def __init__(self):
         verify_screen(SLoginComponents.MAIN_VIEW.value)
+        
+    def login_to_current_account(self, password):
+        self.enter_password(password) 
 
     def login(self, account, password):
         self.select_account(account)

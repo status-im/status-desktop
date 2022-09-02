@@ -131,6 +131,14 @@ def click_obj_by_wildcards_name(objName: str, wildcardString: str):
     obj = squish.waitForObject(wildcardRealName)
     squish.mouseClick(obj, squish.Qt.LeftButton)
 
+def right_click_obj_by_wildcards_name(objName: str, wildcardString: str):
+    wildcardRealName = copy.deepcopy(getattr(names, objName))
+    wildcardRealName["objectName"] = Wildcard(wildcardString)
+
+    obj = squish.waitForObject(wildcardRealName)
+    squish.mouseClick(obj, squish.Qt.RightButton)
+
+
 # Replaces all occurrences of objectNamePlaceholder with newValue in the objectName from the realName
 # Then use the new objectName as a wildcard search pattern, waiting for the object with the new Real Name
 # and return it if found. Raise an exception if not found.

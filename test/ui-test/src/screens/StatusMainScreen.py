@@ -100,6 +100,16 @@ class StatusMainScreen:
     def open_wallet(self):
         click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)
 
+    def click_community(self, community_name: str):
+        wait_and_get_obj(MainScreenComponents.COMMUNITY_NAVBAR_BUTTONS.value)
+        community_buttons = get_objects(MainScreenComponents.COMMUNITY_NAVBAR_BUTTONS.value)
+        for index in range(len(community_buttons)):
+            community_button = community_buttons[index]
+            if (community_button.name == community_name):
+                click_obj(community_button)
+                return
+        verify_failure("Community named " + community_name + " not found in the community nav buttons")
+
     def verify_communities_count(self, expected_count: int):
         objects = get_objects(MainScreenComponents.COMMUNITY_NAVBAR_BUTTONS.value)
         verify_equals(len(objects), int(expected_count))
