@@ -1,7 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
-import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
@@ -104,15 +103,6 @@ Item {
             Layout.rightMargin: -root.StackView.view.anchors.rightMargin
             sendModal: root.sendModal
             walletStore: RootStore
-        }
-
-
-
-        StatusBaseText {
-            objectName: "testingAccountsJSON"
-            Layout.fillWidth: true
-            wrapMode: Text.WrapAnywhere
-            text: walletSectionAccounts.testingAccounts
         }
     }
 }

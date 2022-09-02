@@ -108,7 +108,6 @@ QtObject:
     walletAccounts: OrderedTable[string, WalletAccountDto]
     timerStartTimeInSeconds: int64
     priceCache: TimedCache
-    testingAccounts*: string
 
   # Forward declaration
   proc buildAllTokens(self: Service, calledFromTimerOrInit = false)
@@ -160,9 +159,6 @@ QtObject:
   proc init*(self: Service) =
     signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
     
-
-    
-
     try:
       let accounts = fetchAccounts()
       for account in accounts:
@@ -170,20 +166,9 @@ QtObject:
         self.walletAccounts[account.address] = account
 
       self.buildAllTokens(true)
-
-
-      let client = newHttpClient()
-      client.headers = newHttpHeaders({ "Content-Type": "application/json" })
-      let body = %*{"jsonrpc": "2.0", "method": "eth_accounts"}
-      let response = client.request("http://127.0.0.1:8577", httpMethod = HttpPost, body = $body)
-      echo "ETH ACCOUNTS POST status ", response.status
-      echo "ETH ACCOUNTS POST body ", response.body
-      self.testingAccounts = $response.body
-      echo "ETH ACCOUNTS POST testingAccounts ", self.testingAccounts
-
     except Exception as e:
       let errDesription = e.msg
-      error "error ETH ACCOUNTS POST: ", errDesription
+      error "error: ", errDesription
       return
 
     self.events.on(SignalType.Message.event) do(e: Args):
