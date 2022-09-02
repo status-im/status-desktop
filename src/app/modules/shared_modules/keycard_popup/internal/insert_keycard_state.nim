@@ -8,6 +8,11 @@ proc newInsertKeycardState*(flowType: FlowType, backState: State): InsertKeycard
 proc delete*(self: InsertKeycardState) =
   self.State.delete
 
+method executeBackCommand*(self: InsertKeycardState, controller: Controller) =
+  if self.flowType == FlowType.SetupNewKeycard:
+    if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
+      controller.cancelCurrentFlow()
+
 method executePrimaryCommand*(self: InsertKeycardState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard:

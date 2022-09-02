@@ -193,7 +193,7 @@ proc prepareKeyPairsModel[T](self: Module[T]) =
       if self.isProfileKeyPairMigrated():
         continue
       if item.isNil:
-        item = initKeyPairItem(pubKey = singletonInstance.userProfile.getPubKey(),
+        item = initKeyPairItem(pubKey = a.publicKey,
           name = singletonInstance.userProfile.getName(),
           image = singletonInstance.userProfile.getIcon(),
           icon = "",
@@ -208,7 +208,7 @@ proc prepareKeyPairsModel[T](self: Module[T]) =
     if a.walletType == WalletTypeSeed:
       let diffImports = countOfKeyPairsForType(items, KeyPairType.SeedImport)
       if item.isNil:
-        item = initKeyPairItem(pubKey = "",
+        item = initKeyPairItem(pubKey = a.publicKey,
           name = "Seed Phrase " & $(diffImports + 1), # string created here should be transalted, but so far it's like it is
           image = "",
           icon = "key_pair_seed_phrase",
@@ -220,7 +220,7 @@ proc prepareKeyPairsModel[T](self: Module[T]) =
     if a.walletType == WalletTypeKey:
       let diffImports = countOfKeyPairsForType(items, KeyPairType.PrivateKeyImport)
       if item.isNil:
-        item = initKeyPairItem(pubKey = "",
+        item = initKeyPairItem(pubKey = a.publicKey,
           name = "Key " & $(diffImports + 1), # string created here should be transalted, but so far it's like it is
           image = "",
           icon = "key_pair_private_key",
@@ -229,11 +229,9 @@ proc prepareKeyPairsModel[T](self: Module[T]) =
         items.add(item)
       item.addAccount(a.name, a.path, a.address, a.emoji, a.color, icon = "", balance = 0.0)
       continue
-  self.view.createKeyPairModel(items)
   if items.len == 0:
     debug "sm_there is no any key pair for the logged in user that is not already migrated to a keycard"
-    return
-  self.view.setSelectedKeyPairByTheAddressItIsDerivedFrom(items[0].derivedFrom())
+  self.view.createKeyPairModel(items)
 
 method runFlow*[T](self: Module[T], flowToRun: FlowType) =
   if flowToRun == FlowType.General:

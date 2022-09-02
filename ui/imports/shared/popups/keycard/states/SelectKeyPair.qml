@@ -18,6 +18,8 @@ Item {
 
     property var sharedKeycardModule
 
+    signal keyPairSelected()
+
     ColumnLayout {
         anchors.fill: parent
         anchors.topMargin: Style.current.xlPadding
@@ -79,6 +81,10 @@ Item {
             filterProfilePair: true
             keyPairModel: root.sharedKeycardModule.keyPairModel
             buttonGroup: keyPairsButtonGroup
+
+            onKeyPairSelected: {
+                root.keyPairSelected()
+            }
         }
 
         StatusBaseText {
@@ -104,6 +110,10 @@ Item {
             sharedKeycardModule: root.sharedKeycardModule
             keyPairModel: root.sharedKeycardModule.keyPairModel
             buttonGroup: keyPairsButtonGroup
+
+            onKeyPairSelected: {
+                root.keyPairSelected()
+            }
         }
     }
 }

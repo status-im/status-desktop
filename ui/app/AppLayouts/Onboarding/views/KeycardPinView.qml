@@ -86,7 +86,7 @@ Item {
                 else if(root.state === Constants.startupState.keycardRepeatPin) {
                     let pinsMatch = root.startupStore.checkRepeatedKeycardPinWhileTyping(pinInput)
                     if (pinsMatch) {
-                        info.text = qsTr("It is very important that you do not loose this PIN")
+                        info.text = qsTr("It is very important that you do not lose this PIN")
                         root.startupStore.doPrimaryAction()
                     } else {
                         info.text = qsTr("PINs don't match")
@@ -120,7 +120,7 @@ Item {
             }
             PropertyChanges {
                 target: info
-                text: qsTr("It is very important that you do not loose this PIN")
+                text: qsTr("It is very important that you do not lose this PIN")
             }
             PropertyChanges {
                 target: message
@@ -136,7 +136,7 @@ Item {
             }
             PropertyChanges {
                 target: info
-                text: qsTr("It is very important that you do not loose this PIN")
+                text: qsTr("It is very important that you do not lose this PIN")
                 color: Theme.palette.dangerColor1
             }
             PropertyChanges {

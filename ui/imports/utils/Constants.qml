@@ -373,6 +373,7 @@ QtObject {
         }
 
         readonly property QtObject keyPairType: QtObject {
+            readonly property int unknown: -1
             readonly property int profile: 0
             readonly property int seedImport: 1
             readonly property int privateKeyImport: 2

@@ -251,7 +251,7 @@ StatusGridView {
             Repeater {
                 model: _internal.seedPhraseWordsOptions
                  StatusSwitchTabButton {
-                    text: qsTr("%1 words").arg(modelData)
+                    text: qsTr("%n word(s)", "", modelData)
                 }
             }
             onCurrentIndexChanged: {

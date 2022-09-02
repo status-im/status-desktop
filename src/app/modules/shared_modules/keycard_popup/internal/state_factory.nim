@@ -160,9 +160,13 @@ proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycard
       keycardEvent.error == ErrorConnection:
         if state.stateType == StateType.InsertKeycard:
           return nil
-        return createState(StateType.InsertKeycard, state.flowType, state)
+        if state.stateType == StateType.SelectExistingKeyPair:
+          return createState(StateType.InsertKeycard, state.flowType, state)
+        return createState(StateType.InsertKeycard, state.flowType, state.getBackState)
     if keycardFlowType == ResponseTypeValueCardInserted:
       controller.setKeycardData(getPredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = false))
+      if state.stateType == StateType.SelectExistingKeyPair:
+        return createState(StateType.InsertKeycard, state.flowType, state)
       return createState(StateType.KeycardInserted, state.flowType, state.getBackState)
 
 proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
@@ -222,4 +226,6 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
     if keycardFlowType == ResponseTypeValueEnterNewPIN and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorRequireInit:
+        if state.stateType == StateType.SelectExistingKeyPair:
+          return createState(StateType.RecognizedKeycard, state.flowType, state)
         return createState(StateType.RecognizedKeycard, state.flowType, state.getBackState)

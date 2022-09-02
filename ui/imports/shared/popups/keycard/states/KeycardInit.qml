@@ -29,7 +29,7 @@ Item {
     QtObject {
         id: d
 
-        property bool hideKeyPair: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.hideKeyPair
+        readonly property bool hideKeyPair: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.hideKeyPair
     }
 
     Timer {
@@ -75,6 +75,7 @@ Item {
     Component {
         id: keyPairComponent
         KeyPairItem {
+            keyPairType:  root.sharedKeycardModule.selectedKeyPairItem.pairType
             keyPairPubKey: root.sharedKeycardModule.selectedKeyPairItem.pubKey
             keyPairName: root.sharedKeycardModule.selectedKeyPairItem.name
             keyPairIcon: root.sharedKeycardModule.selectedKeyPairItem.icon
@@ -87,6 +88,7 @@ Item {
     Component {
         id: knownKeyPairComponent
         KeyPairItem {
+            keyPairType:  root.sharedKeycardModule.keyPairStoredOnKeycard.pairType
             keyPairPubKey: root.sharedKeycardModule.keyPairStoredOnKeycard.pubKey
             keyPairName: root.sharedKeycardModule.keyPairStoredOnKeycard.name
             keyPairIcon: root.sharedKeycardModule.keyPairStoredOnKeycard.icon
@@ -220,7 +222,7 @@ Item {
         Item {
             visible: !loader.active
             Layout.fillWidth: true
-            Layout.fillHeight: this.visible? true : false
+            Layout.fillHeight: visible
         }
     }
 

@@ -8,6 +8,11 @@ proc newRecognizedKeycardState*(flowType: FlowType, backState: State): Recognize
 proc delete*(self: RecognizedKeycardState) =
   self.State.delete
 
+method executeBackCommand*(self: RecognizedKeycardState, controller: Controller) =
+  if self.flowType == FlowType.SetupNewKeycard:
+    if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
+      controller.cancelCurrentFlow()
+
 method executePrimaryCommand*(self: RecognizedKeycardState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard:
