@@ -3,6 +3,7 @@ import squish
 from remotesystem import RemoteSystem
 import time
 import platform
+from scripts.global_names import mainWindow_RighPanel
 from typing import Dict, Any
 
 # The default maximum timeout to find ui object
@@ -106,13 +107,14 @@ def log(text: str):
     test.log(text)
     
     
-def verify_or_create_screenshot(vp: str, obj: Dict[str, Any]):
+def verify_or_create_screenshot(vp: str, obj_name: Dict[str, Any] = mainWindow_RighPanel):
     try:
-        test.vpWithObject(vp, obj)
+        test.vpWithObject(vp, obj_name)
     except RuntimeError:
-        squish.createVisualVP(obj, vp)
+        squish.createVisualVP(obj_name, vp)
     except squish.SquishVerificationFailedException:
         raise
+    
     
 def verify_screenshot(vp: str):
     test.vp(vp)
