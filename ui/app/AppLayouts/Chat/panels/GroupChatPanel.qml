@@ -25,6 +25,7 @@ RowLayout {
          property ListModel contactsModel: ListModel { }
          property var addedMembersIds: []
          property var removedMembersIds: []
+         property bool isAdminMode: false
 
          function initialize () {
              groupUsersModel.clear()
@@ -32,6 +33,12 @@ RowLayout {
              addedMembersIds = []
              removedMembersIds = []
              tagSelector.namesModel.clear()
+             for (var k = 0; k < groupUsersModelListView.count; k++) {
+                 var groupEntry = groupUsersModelListView.itemAtIndex(k);
+                 if (rootStore.isCurrentUser(groupEntry.pubKey) && groupEntry.isAdmin) {
+                     d.isAdminMode = true;
+                 }
+             }
          }
 
          function find(val, array) {
@@ -51,7 +58,6 @@ RowLayout {
          delegate: Item {
              property string pubKey: model.pubKey
              property string name: model.displayName
-             property string icon: model.icon
              property bool isAdmin: model.isAdmin
          }
      }
@@ -62,8 +68,13 @@ RowLayout {
          model: root.rootStore.contactsModel
          delegate: Item {
              property string pubKey: model.pubKey
-             property string name: model.displayName
+             property string displayName: model.displayName
+             property string localNickname: model.localNickname
+             property bool isVerified: model.isVerified
+             property bool isUntrustworthy: model.isUntrustworthy
+             property bool isContact: model.isContact
              property string icon: model.icon
+             property bool onlineStatus: model.onlineStatus
          }
      }
 
@@ -76,24 +87,26 @@ RowLayout {
          for (var i = 0; i < groupUsersModelListView.count; i ++) {
              var entry = groupUsersModelListView.itemAtIndex(i)
 
-             // Add all group users different than me
-             if(!entry.isAdmin) {
-                 d.groupUsersModel.insert(d.groupUsersModel.count,
-                                      {"pubKey": entry.pubKey,
-                                       "name": entry.name,
-                                       "icon": entry.icon})
-             }
+             // Add all group users
+             d.groupUsersModel.append({pubKey: entry.pubKey,
+                                       name: entry.name,
+                                       tagIcon: entry.isAdmin ? "crown" : "",
+                                       isReadonly: d.isAdminMode ? entry.isAdmin : !rootStore.isCurrentUser(entry.pubKey)
+                                      })
          }
 
          // Build contactsModel type from model type (to fit with expected StatusTagSelector format
          for (var j = 0; j < contactsModelListView.count; j ++) {
              var entry2 = contactsModelListView.itemAtIndex(j)
-             d.contactsModel.insert(d.contactsModel.count,
-                                {"pubKey": entry2.pubKey,
-                                 "displayName": entry2.name,
-                                 "icon": entry2.icon,
-                                 "isIdenticon": false,
-                                 "onlineStatus": false})
+             d.contactsModel.append({pubKey: entry2.pubKey,
+                                     displayName: entry2.displayName,
+                                     localNickname: entry2.localNickname,
+                                     isVerified: entry2.isVerified,
+                                     isUntrustworthy: entry2.isUntrustworthy,
+                                     isContact: entry2.isContact,
+                                     icon: entry2.icon,
+                                     isImage: true,
+                                     onlineStatus: entry2.onlineStatus})
          }
 
          // Update contacts list used by StatusTagSelector
@@ -159,6 +172,9 @@ RowLayout {
          }
          compressedKeyGetter: function(pubKey) {
              return Utils.getCompressedPk(pubKey);
+         }
+         colorIdForPubkeyGetter: function (pubKey) {
+             return Utils.colorIdForPubkey(pubKey);
          }
      }
 

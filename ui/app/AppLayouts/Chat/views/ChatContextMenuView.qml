@@ -62,9 +62,9 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
-        text: qsTr("Add / remove from group")
+        text: root.amIChatAdmin ? qsTr("Add / remove from group") : qsTr("Add to group")
         icon.name: "add-to-dm"
-        enabled: root.amIChatAdmin && (root.chatType === Constants.chatType.privateGroupChat)
+        enabled: (root.chatType === Constants.chatType.privateGroupChat)
         onTriggered: { root.addRemoveGroupMember() }
     }
 

@@ -30,7 +30,14 @@ Page {
         delegate: Item {
             property string pubKey: model.pubKey
             property string displayName: model.displayName
+            property string localNickname: model.localNickname
+            property bool isVerified: model.isVerified
+            property bool isUntrustworthy: model.isUntrustworthy
+            property bool isContact: model.isContact
             property string icon: model.icon
+            property bool onlineStatus: model.onlineStatus
+            property string tagIcon: !!model.tagIcon ? model.tagIcon : ""
+            property bool isAdmin: model.isAdmin
         }
     }
 
@@ -39,8 +46,17 @@ Page {
             for (var i = 0; i < contactsModelListView.count; i ++) {
                 var entry = contactsModelListView.itemAtIndex(i);
                 contactsModel.insert(contactsModel.count,
-                {"pubKey": entry.pubKey, "displayName": entry.displayName,
-                    "icon": entry.icon});
+                                     {"pubKey": entry.pubKey,
+                                      "displayName": entry.displayName,
+                                      "localNickname": entry.localNickname,
+                                      "isVerified": entry.isVerified,
+                                      "isUntrustworthy": entry.isUntrustworthy,
+                                      "isContact": entry.isContact,
+                                      "icon": entry.icon,
+                                      "isImage": true,
+                                      "onlineStatus": entry.onlineStatus,
+                                      "tagIcon": entry.tagIcon ? entry.tagIcon : "",
+                                      "isReadonly": entry.isAdmin})
             }
             tagSelector.sortModel(root.contactsModel);
         } else {

@@ -28,6 +28,7 @@ StatusSectionLayout {
     property bool hasAddedContacts: root.contactsStore.myContactsModel.count > 0
 
     property RootStore rootStore
+    property var chatContentModule: root.rootStore.currentChatContentModule()
 
     property Component pinnedMessagesListPopupComponent
     property Component membershipRequestPopup
@@ -55,6 +56,7 @@ StatusSectionLayout {
 
         function onActiveItemChanged() {
             Global.closeCreateChatView()
+            groupChatLoader.active = false;
         }
     }
 
@@ -65,9 +67,11 @@ StatusSectionLayout {
 
     headerContent: ChatHeaderContentView {
         id: headerContent
-        visible: !!root.rootStore.currentChatContentModule()
+        visible: (!!root.rootStore.currentChatContentModule() && !groupChatLoader.active)
         rootStore: root.rootStore
+        chatContentModule: root.chatContentModule
         onSearchButtonClicked: root.openAppSearch()
+        onAddRemoveGroupMemberClicked: groupChatLoader.active = true;
     }
 
     leftPanel: Loader {
@@ -92,6 +96,27 @@ StatusSectionLayout {
         onOpenAppSearch: {
             root.openAppSearch();
         }
+        Loader {
+            id: groupChatLoader
+            anchors.fill: parent
+            active: false
+            anchors {
+                leftMargin: Style.current.padding
+                rightMargin: (headerContent.height + Style.current.padding)
+                //move a bit up as we still need the activity button
+                topMargin: -(headerContent.height + Style.current.halfPadding)
+                bottomMargin: Style.current.halfPadding
+            }
+            sourceComponent: GroupChatPanel {
+                anchors.fill: parent
+                maxHeight: parent.height
+                rootStore: root.rootStore
+                chatContentModule: root.chatContentModule
+                sectionModule: root.rootStore.chatCommunitySectionModule
+                onPanelClosed: { groupChatLoader.active = false; }
+            }
+        }
+        Keys.onEscapePressed: { groupChatLoader.active = false; }
     }
 
     showRightPanel: {
