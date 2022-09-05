@@ -21,6 +21,8 @@ ColumnLayout {
     property int pageSize: 20 // number of transactions per page
     property bool isLoading: false
 
+    signal launchTransactionDetail(var transaction)
+
     function fetchHistory() {
         if (RootStore.isFetchingHistory(historyView.account.address)) {
             isLoading = true
@@ -78,7 +80,7 @@ ColumnLayout {
             onLoaded:  {
                 item.modelData = model
             }
-        }
+        }       
 
         ScrollBar.vertical: StatusScrollBar {}
 
@@ -99,7 +101,7 @@ ColumnLayout {
         StatusListItem {
             property var modelData
             height: 40
-            title: Utils.formatShortDate(modelData.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat)
+            title: modelData !== undefined && !!modelData ? Utils.formatShortDate(modelData.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat) : ""
             statusListItemTitle.color: Theme.palette.baseColor1
             color: Theme.palette.statusListItem.backgroundColor
             sensor.enabled: false
@@ -109,30 +111,23 @@ ColumnLayout {
     Component {
         id: transactionDelegate
         TransactionDelegate {
-            isIncoming: modelData !== undefined ? modelData.to === account.address: false
+            isIncoming: modelData !== undefined && !!modelData ? modelData.to === account.address: false
             currentCurrency: RootStore.currentCurrency
-            cryptoValue: modelData !== undefined ? RootStore.hex2Eth(modelData.value) : ""
+            cryptoValue: modelData !== undefined && !!modelData ? RootStore.hex2Eth(modelData.value) : ""
             fiatValue: RootStore.getFiatValue(cryptoValue, resolvedSymbol, RootStore.currentCurrency)
-            networkIcon: modelData !== undefined ? RootStore.getNetworkIcon(modelData.chainId) : ""
-            networkColor: modelData !== undefined ? RootStore.getNetworkColor(modelData.chainId) : ""
-            networkName: modelData !== undefined ? RootStore.getNetworkShortName(modelData.chainId) : ""
-            symbol: modelData !== undefined ? RootStore.findTokenSymbolByAddress(modelData.contract) : ""
-            transferStatus: modelData !== undefined ? RootStore.hex2Dec(modelData.txStatus) : ""
-            shortTimeStamp: modelData !== undefined ? Utils.formatShortTime(modelData.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat) : ""
-            savedAddressName: modelData !== undefined ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""
-            onClicked: {
-                transactionModal.transaction = modelData
-                transactionModal.open()
-            }
+            networkIcon: modelData !== undefined && !!modelData ? RootStore.getNetworkIcon(modelData.chainId) : ""
+            networkColor: modelData !== undefined && !!modelData ? RootStore.getNetworkColor(modelData.chainId) : ""
+            networkName: modelData !== undefined && !!modelData ? RootStore.getNetworkShortName(modelData.chainId) : ""
+            symbol: modelData !== undefined && !!modelData ? RootStore.findTokenSymbolByAddress(modelData.contract) : ""
+            transferStatus: modelData !== undefined && !!modelData ? RootStore.hex2Dec(modelData.txStatus) : ""
+            shortTimeStamp: modelData !== undefined && !!modelData ? Utils.formatShortTime(modelData.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat) : ""
+            savedAddressName: modelData !== undefined && !!modelData ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""
+            onClicked: launchTransactionDetail(modelData)
         }
     }
 
     Component {
         id: loadingImageComponent
         StatusLoadingIndicator {}
-    }
-
-    TransactionModal {
-        id: transactionModal
     }
 }

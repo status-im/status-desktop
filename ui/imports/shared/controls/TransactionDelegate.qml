@@ -25,12 +25,13 @@ StatusListItem {
     property string resolvedSymbol: root.symbol != "" ? root.symbol : "ETH"
     property string savedAddressName
 
+    state: "normal"
     asset.isImage: true
     asset.name: Style.png("tokens/%1".arg(resolvedSymbol))
-    statusListItemTitle.font.weight: Font.Medium
-    title: isIncoming ? qsTr("Receive %1").arg(resolvedSymbol) : !!savedAddressName ?
+    title: modelData !== undefined && !!modelData ?
+               isIncoming ? qsTr("Receive %1").arg(resolvedSymbol) : !!savedAddressName ?
                             qsTr("Send %1 to %2").arg(resolvedSymbol).arg(savedAddressName) :
-                            qsTr("Send %1 to %2").arg(resolvedSymbol).arg(Utils.compactAddress(modelData.to, 4))
+                            qsTr("Send %1 to %2").arg(resolvedSymbol).arg(Utils.compactAddress(modelData.to, 4)): ""
     subTitle: shortTimeStamp
     inlineTagModel: 1
     inlineTagDelegate: InformationTag {
@@ -60,8 +61,8 @@ StatusListItem {
                     height: 18
                 }
                 StatusBaseText {
+                    id: cryptoValueText
                     text: "%1 %2".arg(cryptoValue).arg(resolvedSymbol)
-                    font.pixelSize: 15
                     color: Theme.palette.directColor1
                 }
             }
@@ -92,4 +93,41 @@ StatusListItem {
             height: 10
         }
     }
+
+    states: [
+        State {
+            name: "normal"
+            PropertyChanges {
+                target: asset
+                width: 40
+                height: 40
+            }
+            PropertyChanges {
+                target: statusListItemTitle
+                font.weight: Font.Medium
+                font.pixelSize: 15
+            }
+            PropertyChanges {
+                target: cryptoValueText
+                font.pixelSize: 15
+            }
+        },
+        State {
+            name: "big"
+            PropertyChanges {
+                target: asset
+                width: 50
+                height: 50
+            }
+            PropertyChanges {
+                target: statusListItemTitle
+                font.weight: Font.Bold
+                font.pixelSize: 17
+            }
+            PropertyChanges {
+                target: cryptoValueText
+                font.pixelSize: 17
+            }
+        }
+    ]
 }

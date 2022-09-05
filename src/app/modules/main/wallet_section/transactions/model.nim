@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat, sequtils, tables, sugar, algorithm, std/[times, os], stint
+import NimQml, Tables, strutils, strformat, sequtils, tables, sugar, algorithm, std/[times, os], stint, parseutils
 
 import ./item
 import ../../../../../app_service/service/eth/utils as eth_service_utils
@@ -28,6 +28,9 @@ type
     TxHash
     MultiTransactionID
     IsTimeStamp
+    BaseGasFees
+    TotalFees
+    MaxTotalFees
 
 QtObject:
   type
@@ -88,7 +91,10 @@ QtObject:
       ModelRole.Input.int:"input",
       ModelRole.TxHash.int:"txHash",
       ModelRole.MultiTransactionID.int:"multiTransactionID",
-      ModelRole.IsTimeStamp.int: "isTimeStamp"
+      ModelRole.IsTimeStamp.int: "isTimeStamp",
+      ModelRole.BaseGasFees.int: "baseGasFees",
+      ModelRole.TotalFees.int: "totalFees",
+      ModelRole.MaxTotalFees.int: "maxTotalFees"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -145,7 +151,13 @@ QtObject:
     of ModelRole.MultiTransactionID:
       result = newQVariant(item.getMultiTransactionID())
     of ModelRole.IsTimeStamp:
-      result = newQVariant(item.getIsTimeStamp())
+      result = newQVariant(item.getIsTimeStamp())      
+    of ModelRole.BaseGasFees:
+      result = newQVariant(item.getBaseGasFees())
+    of ModelRole.TotalFees:
+      result = newQVariant(item.getTotalFees())
+    of ModelRole.MaxTotalFees:
+      result = newQVariant(item.getMaxTotalFees())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
@@ -206,7 +218,10 @@ QtObject:
         t.input,
         t.txHash,
         t.multiTransactionID,
-        false
+        false,
+        t.baseGasFees,
+        t.totalFees,
+        t.maxTotalFees,
       ))
 
       var allTxs = self.items.concat(newTxItems)
@@ -219,7 +234,7 @@ QtObject:
       for tx in allTxs:
         let duration =  fromUnix(tx.getTimestamp()) - tempTimeStamp
         if(duration.inDays != 0):
-          itemsWithDateHeaders.add(initItem("", "", "", "", "",  tx.getTimestamp(), "", "", "", "", "", "", "", "", "", 0, "", "", "", "", 0, true))
+          itemsWithDateHeaders.add(initItem("", "", "", "", "",  tx.getTimestamp(), "", "", "", "", "", "", "", "", "", 0, "", "", "", "", 0, true, "", "", ""))
         itemsWithDateHeaders.add(tx)
         tempTimeStamp = fromUnix(tx.getTimestamp())
 

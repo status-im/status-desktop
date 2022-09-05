@@ -11,3 +11,4 @@ ProfileView 1.0 ProfileView.qml
 AssetsView 1.0 AssetsView.qml
 HistoryView 1.0 HistoryView.qml
 AssetsDetailView 1.0 AssetsDetailView.qml
+TransactionDetailView 1.0 TransactionDetailView.qml

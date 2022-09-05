@@ -6,6 +6,7 @@ import StatusQ.Controls 0.1
 import utils 1.0
 import shared.views 1.0
 
+import "./"
 import "../stores"
 import "../panels"
 import "../views/collectibles"
@@ -15,6 +16,7 @@ Item {
 
     property alias currentTabIndex: walletTabBar.currentIndex
     property var store
+    property var contactsStore
     property var sendModal
 
     ColumnLayout {
@@ -80,6 +82,10 @@ Item {
                     }
                     HistoryView {
                         account: RootStore.currentAccount
+                        onLaunchTransactionDetail: {
+                            transactionDetailView.transaction = transaction
+                            stack.currentIndex = 3
+                        }
                     }
                 }
             }
@@ -92,6 +98,14 @@ Item {
                 id: assetDetailView
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                onGoBack: stack.currentIndex = 0
+            }
+            TransactionDetailView {
+                id: transactionDetailView
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                sendModal: root.sendModal
+                contactsStore: root.contactsStore
                 onGoBack: stack.currentIndex = 0
             }
         }

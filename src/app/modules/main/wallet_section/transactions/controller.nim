@@ -113,3 +113,6 @@ proc getChainIdForBrowser*(self: Controller): int =
 
 proc getEstimatedTime*(self: Controller, chainId: int, maxFeePerGas: string): EstimatedTime = 
   return self.transactionService.getEstimatedTime(chainId, maxFeePerGas)
+
+proc getLastTxBlockNumber*(self: Controller): string =
+  return self.transactionService.getLastTxBlockNumber(self.networkService.getNetworkForBrowser().chainId)

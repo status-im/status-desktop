@@ -54,6 +54,7 @@ Item {
         id: walletContainer
         RightTabView {
             store: root.store
+            contactsStore: root.contactsStore
             sendModal: root.sendModal
         }
     }

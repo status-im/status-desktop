@@ -150,3 +150,6 @@ QtObject:
 
   proc getEstimatedTime*(self: View, chainId: int, maxFeePerGas: string): int {.slot.} =
     return self.delegate.getEstimatedTime(chainId, maxFeePerGas)
+
+  proc getLastTxBlockNumber*(self: View): string {.slot.} =
+    return self.delegate.getLastTxBlockNumber()
