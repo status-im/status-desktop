@@ -109,21 +109,21 @@ StatusModal {
             switch(advancedSelection.expandableItem.addAccountType) {
             case SelectGeneratedAccount.AddAccountType.GenerateNew:
                 errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor,
-                                                          accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath,
+                                                          accountNameInput.input.asset.emoji, advancedSelection.expandableItem.completePath,
                                                           advancedSelection.expandableItem.derivedFromAddress)
                 break
             case SelectGeneratedAccount.AddAccountType.ImportSeedPhrase:
                 errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, passwordInput.text,
-                                                           accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji,
+                                                           accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.asset.emoji,
                                                            advancedSelection.expandableItem.completePath)
                 break
             case SelectGeneratedAccount.AddAccountType.ImportPrivateKey:
                 errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text,
-                                                                 accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                                                                 accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.asset.emoji)
                 break
             case SelectGeneratedAccount.AddAccountType.WatchOnly:
                 errMessage = RootStore.addWatchOnlyAccount(advancedSelection.expandableItem.watchAddress, accountNameInput.text,
-                                                           colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                                                           colorSelectionGrid.selectedColor, accountNameInput.input.asset.emoji)
                 break
             }
 
