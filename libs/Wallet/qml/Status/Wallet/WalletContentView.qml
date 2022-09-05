@@ -22,13 +22,16 @@ Item {
         }
         TabBar {
             id: tabBar
-            width: parent.width
+            Layout.fillWidth: true
 
             TabButton {
                 text: qsTr("Assets")
             }
             TabButton {
                 text: qsTr("Positions")
+            }
+            TabButton {
+                text: qsTr("Saved Addresses")
             }
         }
 
@@ -67,6 +70,13 @@ Item {
                         anchors.centerIn: parent
                         text: "TODO"
                     }
+                }
+            }
+
+            Loader {
+                active: SwipeView.isCurrentItem
+                sourceComponent: SavedAddressesView {
+
                 }
             }
         }

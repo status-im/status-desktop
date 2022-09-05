@@ -23,6 +23,7 @@ qt6_add_qml_module(Wallet
         qml/Status/Wallet/AssetView.qml
         qml/Status/Wallet/WalletContentView.qml
         qml/Status/Wallet/WalletView.qml
+        qml/Status/Wallet/SavedAddressesView.qml
 
     # Required to suppress "qmllint may not work" warning
     OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Status/Wallet/
@@ -79,4 +80,6 @@ target_sources(Wallet
         src/WalletAsset.cpp
         include/Status/Wallet/WalletController.h
         src/WalletController.cpp
+        include/Status/Wallet/SavedAddressesController.h
+        src/SavedAddressesController.cpp
 )
