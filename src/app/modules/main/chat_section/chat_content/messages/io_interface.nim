@@ -21,6 +21,9 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method updateChatIdentifier*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method updateChatFetchMoreMessages*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method newMessagesLoaded*(self: AccessInterface, messages: seq[MessageDto], reactions: seq[ReactionDto],
   pinnedMessages: seq[PinnedMessageDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -79,7 +82,7 @@ method getSectionId*(self: AccessInterface): string {.base.} =
 
 method getChatId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method getChatType*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -129,4 +132,7 @@ method didIJoinedChat*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getMessages*(self: AccessInterface): seq[message_item.Item] =
+  raise newException(ValueError, "No implementation available")
+
+method onMailserverSynced*(self: AccessInterface, syncedFrom: int64) =
   raise newException(ValueError, "No implementation available")

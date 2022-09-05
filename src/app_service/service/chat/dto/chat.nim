@@ -75,6 +75,7 @@ type ChatDto* = object
   joined*: int64 # indicates when the user joined the chat last time
   syncedTo*: int64
   syncedFrom*: int64
+  firstMessageTimestamp: int64 # valid only for community chats, 0 - undefined, 1 - no messages, >1 valid timestamps
   canPost*: bool
   position*: int
   categoryId*: string
@@ -132,6 +133,7 @@ proc `$`*(self: ChatDto): string =
     canPost: {self.canPost},
     syncedTo: {self.syncedTo},
     syncedFrom: {self.syncedFrom},
+    firstMessageTimestamp: {self.firstMessageTimestamp},
     categoryId: {self.categoryId},
     position: {self.position},
     highlight: {self.highlight}
@@ -219,6 +221,7 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("joined", result.joined)
   discard jsonObj.getProp("syncedTo", result.syncedTo)
   discard jsonObj.getProp("syncedFrom", result.syncedFrom)
+  discard jsonObj.getProp("firstMessageTimestamp", result.firstMessageTimestamp)
   discard jsonObj.getProp("highlight", result.highlight)
   var permissionObj: JsonNode
   if(jsonObj.getProp("permissions", permissionObj)):
@@ -309,3 +312,21 @@ proc isPublicChat*(chatDto: ChatDto): bool =
 
 proc isOneToOneChat*(chatDto: ChatDto): bool =
   return chatDto.chatType == ChatType.OneToOne
+
+proc hasMoreMessagesToRequest*(chatDto: ChatDto, syncedFrom: int64): bool =
+  # only for community chat we can determine the first message ever sent to the chat
+  if chatDto.chatType != ChatType.CommunityChat:
+    return true
+
+  const firstMessageTimestampUndefined = 0
+  const firstMessageTimestampNoMessages = 1
+
+  if chatDto.firstMessageTimestamp == firstMessageTimestampUndefined:
+    return true
+  if chatDto.firstMessageTimestamp == firstMessageTimestampNoMessages:
+    return false
+
+  return syncedFrom > chatDto.firstMessageTimestamp
+
+proc hasMoreMessagesToRequest*(chatDto: ChatDto): bool =
+  chatDto.hasMoreMessagesToRequest(chatDto.syncedFrom)
