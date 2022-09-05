@@ -111,8 +111,8 @@ SettingsContentBase {
                 property string newKey
 
                 function descriptionForState(state) {
-                    if (state == Constants.translationsState.alpha) return qsTr("Alpha languages")
-                    if (state == Constants.translationsState.beta) return qsTr("Beta languages")
+                    if (state === Constants.translationsState.alpha) return qsTr("Alpha languages")
+                    if (state === Constants.translationsState.beta) return qsTr("Beta languages")
                     return ""
                 }
 
@@ -202,23 +202,18 @@ SettingsContentBase {
             }
 
             StatusRadioButton {
-                id: ddmmyyFormat
-                ButtonGroup.group: dateFormatGroup
                 text: qsTr("DD/MM/YY")
                 font.pixelSize: 13
                 checked: root.languageStore.isDDMMYYDateFormat
-                onCheckedChanged: root.languageStore.setIsDDMMYYDateFormat(checked)
+                onToggled: root.languageStore.setIsDDMMYYDateFormat(checked)
             }
 
             StatusRadioButton {
-                id: mmddyyFormat
-                ButtonGroup.group: dateFormatGroup
                 text: qsTr("MM/DD/YY")
                 font.pixelSize: 13
                 checked: !root.languageStore.isDDMMYYDateFormat
+                onToggled: root.languageStore.setIsDDMMYYDateFormat(!checked)
             }
-
-            ButtonGroup { id: dateFormatGroup }
         }
 
         // Time format options:
@@ -236,23 +231,18 @@ SettingsContentBase {
             }
 
             StatusRadioButton {
-                id: h24Format
-                ButtonGroup.group: timeFormatGroup
                 text: qsTr("24-Hour Time")
                 font.pixelSize: 13
                 checked: root.languageStore.is24hTimeFormat
-                onCheckedChanged: root.languageStore.setIs24hTimeFormat(checked)
+                onToggled: root.languageStore.setIs24hTimeFormat(checked)
             }
 
             StatusRadioButton {
-                id: h12Format
-                ButtonGroup.group: timeFormatGroup
                 text: qsTr("12-Hour Time")
                 font.pixelSize: 13
                 checked: !root.languageStore.is24hTimeFormat
+                onToggled: root.languageStore.setIs24hTimeFormat(!checked)
             }
-
-            ButtonGroup { id: timeFormatGroup }
         }
 
         // TEMPORARY: It should be removed as it is only used in Linux OS but it must be investigated how to change language in execution time, as well, in Linux (will be addressed in another task)
