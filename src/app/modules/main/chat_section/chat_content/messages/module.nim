@@ -60,7 +60,8 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  self.view.model().appendItem(self.createFetchMoreMessagesItem())
+  if self.controller.getChatDetails().hasMoreMessagesToRequest():
+    self.view.model().appendItem(self.createFetchMoreMessagesItem())
   self.view.model().appendItem(self.createChatIdentifierItem())
 
   self.moduleLoaded = true
@@ -237,7 +238,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       # messages are sorted from the most recent to the least recent one
       viewItems.add(item)
 
-    viewItems.add(self.createFetchMoreMessagesItem())
+    if self.controller.getChatDetails().hasMoreMessagesToRequest():
+      viewItems.add(self.createFetchMoreMessagesItem())
     viewItems.add(self.createChatIdentifierItem())
     self.view.model().removeItem(FETCH_MORE_MESSAGES_MESSAGE_ID)
     self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
@@ -466,6 +468,12 @@ method updateChatIdentifier*(self: Module) =
   # Add new loaded messages
   self.view.model().appendItem(self.createChatIdentifierItem())
 
+method updateChatFetchMoreMessages*(self: Module) =
+  self.view.model().removeItem(FETCH_MORE_MESSAGES_MESSAGE_ID)
+
+  if (self.controller.getChatDetails().hasMoreMessagesToRequest()):
+    self.view.model().appendItem(self.createFetchMoreMessagesItem())
+
 method getLinkPreviewData*(self: Module, link: string, uuid: string): string =
   return self.controller.getLinkPreviewData(link, uuid)
 
@@ -507,3 +515,8 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
 
 method getMessages*(self: Module): seq[message_item.Item] =
   return self.view.model().items
+
+method onMailserverSynced*(self: Module, syncedFrom: int64) =
+  let chatDto = self.controller.getChatDetails()
+  if (not chatDto.hasMoreMessagesToRequest(syncedFrom)):
+    self.view.model().removeItem(FETCH_MORE_MESSAGES_MESSAGE_ID)

@@ -22,6 +22,10 @@ type
 
   MailserverAvailableArgs* = ref object of Args
 
+  MailserverSyncedArgs* = ref object of Args
+    chatId*: string
+    syncedFrom*: int64
+
   RequestMoreMessagesTaskArg = ref object of QObjectTaskArg
     chatId*: string
 
@@ -33,12 +37,27 @@ type
 const SIGNAL_ACTIVE_MAILSERVER_CHANGED* = "activeMailserverChanged"
 const SIGNAL_MAILSERVER_AVAILABLE* = "mailserverAvailable"
 const SIGNAL_MAILSERVER_NOT_WORKING* = "mailserverNotWorking"
+const SIGNAL_MAILSERVER_SYNCED* = "mailserverSynced"
 
 const requestMoreMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[RequestMoreMessagesTaskArg](argEncoded)
   try:
     info "Requesting additional message history for chat", chatId=arg.chatId
-    discard status_mailservers.syncChatFromSyncedFrom(arg.chatId)
+    let response = status_mailservers.syncChatFromSyncedFrom(arg.chatId)
+
+    if(not response.error.isNil):
+      error "Could not request additional messages due to error", errDescription = response.error.message
+
+    let syncedFrom = response.result.getInt()
+    if(syncedFrom != 0):
+      let resultJson = %* {
+        "chatId": arg.chatId,
+        "syncedFrom": syncedFrom
+      }
+      arg.finish(%resultJson)
+    else:
+      warn "Syncing mailserver failed", errDescription=arg.chatId
+
   except Exception as e:
     warn "Could not request additional messages due to error", errDescription=e.msg
 
@@ -88,11 +107,20 @@ QtObject:
       let fleet = self.settingsService.getFleet()
       discard self.settingsService.pinMailserver(MAILSERVER_ADDRESS, fleet)
 
+  proc mailserverSynced*(self: Service, syncInfo: string) {.slot.} =
+    let syncInfoParsed = parseJson(syncInfo)
+    let signalData = MailserverSyncedArgs(
+      chatId: syncInfoParsed["chatId"].getStr(),
+      syncedFrom: syncInfoParsed["syncedFrom"].getInt()
+      )
+    self.events.emit(SIGNAL_MAILSERVER_SYNCED, signalData)
+
   proc requestMoreMessages*(self: Service, chatId: string) =
     let arg = RequestMoreMessagesTaskArg(
       tptr: cast[ByteAddress](requestMoreMessagesTask),
       vptr: cast[ByteAddress](self.vptr),
-      chatId: chatId
+      chatId: chatId,
+      slot: "mailserverSynced"
     )
     self.threadpool.start(arg)
 

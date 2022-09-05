@@ -176,6 +176,12 @@ proc init*(self: Controller) =
       return
     self.delegate.onChatMemberUpdated(args.id, args.admin, args.joined)
 
+  self.events.on(SIGNAL_MAILSERVER_SYNCED) do(e: Args):
+    let args = MailserverSyncedArgs(e)
+    if (args.chatId != self.chatId):
+      return
+    self.delegate.onMailserverSynced(args.syncedFrom)
+
 proc getMySectionId*(self: Controller): string =
   return self.sectionId
 
