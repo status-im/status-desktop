@@ -72,3 +72,6 @@ method getEstimatedTime*(self: AccessInterface, chainId: int, maxFeePerGas: stri
 # inheritance, which is not well supported in Nim.
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getLastTxBlockNumber*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -422,3 +422,11 @@ QtObject:
     except Exception as e:
       error "Error estimating transaction time", message = e.msg
       return EstimatedTime.Unknown
+
+  proc getLastTxBlockNumber*(self: Service, chainId: int): string =
+    try:
+      let response = eth.getBlockByNumber(chainId, "latest")
+      return response.result{"number"}.getStr
+    except Exception as e:
+      error "Error getting latest block number", message = e.msg
+      return ""

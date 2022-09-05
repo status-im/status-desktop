@@ -49,6 +49,21 @@ type
     input*: string
     txHash*: string
     multiTransactionID*: int
+    baseGasFees*: string
+    totalFees*: string
+    maxTotalFees*: string
+
+
+proc getTotalFees(tip: string, baseFee: string, gasUsed: string, maxFee: string): string =
+    var maxFees = stint.fromHex(Uint256, maxFee)
+    var totalGasUsed = stint.fromHex(Uint256, tip) + stint.fromHex(Uint256, baseFee)
+    if totalGasUsed >  maxFees:
+      totalGasUsed = maxFees
+    var totalGasUsedInHex = (totalGasUsed * stint.fromHex(Uint256, gasUsed)).toHex
+    return totalGasUsedInHex
+
+proc getMaxTotalFees(maxFee: string, gasLimit: string): string =
+    return (stint.fromHex(Uint256, maxFee) * stint.fromHex(Uint256, gasLimit)).toHex
 
 proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   result = TransactionDto()
@@ -73,6 +88,9 @@ proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   discard jsonObj.getProp("input", result.input)
   discard jsonObj.getProp("txHash", result.txHash)
   discard jsonObj.getProp("multiTransactionID", result.multiTransactionID)
+  discard jsonObj.getProp("base_gas_fee", result.baseGasFees)
+  result.totalFees = getTotalFees(result.maxPriorityFeePerGas, result.baseGasFees, result.gasUsed, result.maxFeePerGas)
+  result.maxTotalFees = getMaxTotalFees(result.maxFeePerGas, result.gasLimit)
 
 proc cmpTransactions*(x, y: TransactionDto): int =
   # Sort proc to compare transactions from a single account.

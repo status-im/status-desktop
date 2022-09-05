@@ -61,6 +61,9 @@ QtObject:
   proc hex2Eth*(self: Utils, value: string): string {.slot.} =
     return stripTrailingZeroes(conversion.wei2Eth(stint.fromHex(StUint[256], value)))
 
+  proc hex2Gwei*(self: Utils, value: string): string {.slot.} =
+    return stripTrailingZeroes(conversion.wei2Eth(stint.fromHex(StUint[256], value)*1000000000))
+
   proc gwei2Hex*(self: Utils, gwei: float): string {.slot.} =
     return "0x" & conversion.gwei2Wei(gwei).toHex()
 

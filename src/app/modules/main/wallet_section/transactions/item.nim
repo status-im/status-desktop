@@ -24,6 +24,9 @@ type
     txHash: string
     multiTransactionID: int
     isTimeStamp: bool
+    baseGasFees: string
+    totalFees: string
+    maxTotalFees: string
 
 proc initItem*(
   id: string,
@@ -47,7 +50,10 @@ proc initItem*(
   input: string,
   txHash: string,
   multiTransactionID: int,
-  isTimeStamp: bool
+  isTimeStamp: bool,
+  baseGasFees: string,
+  totalFees: string,
+  maxTotalFees: string
 ): Item =
   result.id = id
   result.typ = typ
@@ -71,6 +77,9 @@ proc initItem*(
   result.txHash = txHash
   result.multiTransactionID = multiTransactionID
   result.isTimeStamp = isTimeStamp
+  result.baseGasFees = baseGasFees
+  result.totalFees = totalFees
+  result.maxTotalFees = maxTotalFees
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
@@ -96,6 +105,9 @@ proc `$`*(self: Item): string =
     txHash: {self.txHash},
     multiTransactionID: {self.multiTransactionID},
     isTimeStamp: {self.isTimeStamp},
+    baseGasFees: {self.baseGasFees},
+    totalFees: {self.totalFees},
+    maxTotalFees: {self.maxTotalFees},
     ]"""
 
 proc getId*(self: Item): string =
@@ -163,3 +175,12 @@ proc  getMultiTransactionID*(self: Item): int =
 
 proc  getIsTimeStamp*(self: Item): bool =
   return self.isTimeStamp
+
+proc  getBaseGasFees*(self: Item): string =
+  return self.baseGasFees
+
+proc  getTotalFees*(self: Item): string =
+  return self.totalFees
+
+proc  getMaxTotalFees*(self: Item): string =
+  return self.maxTotalFees

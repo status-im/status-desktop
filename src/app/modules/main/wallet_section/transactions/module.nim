@@ -113,3 +113,6 @@ method getChainIdForBrowser*(self: Module): int =
 
 method getEstimatedTime*(self: Module, chainId: int, maxFeePerGas: string): int = 
   return self.controller.getEstimatedTime(chainId, maxFeePerGas).int
+
+method getLastTxBlockNumber*(self: Module): string =
+    return self.controller.getLastTxBlockNumber()

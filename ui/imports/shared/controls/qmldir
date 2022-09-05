@@ -27,3 +27,5 @@ InformationTile 1.0 InformationTile.qml
 SocialLinkPreview 1.0 SocialLinkPreview.qml
 AssetsDetailsHeader 1.0 AssetsDetailsHeader.qml
 InformationTag 1.0 InformationTag.qml
+TransactionDetailsHeader.qml 1.0 TransactionDetailsHeader.qml
+SavedAddressesDelegate 1.0 SavedAddressesDelegate.qml

@@ -38,6 +38,7 @@ QtObject {
     property var historyTransactions: walletSectionTransactions.model
     property bool isNonArchivalNode:  history.isNonArchivalNode
 
+    property var currentAccount: walletSectionCurrent
     property var walletTokensModule: walletSectionAllTokens
     property var tokens: walletSectionAllTokens.all
     property var accounts: walletSectionAccounts.model
@@ -170,6 +171,10 @@ QtObject {
         return globalUtils.hex2Eth(value)
     }
 
+    function hex2Gwei(value) {
+        return globalUtils.hex2Gwei(value)
+    }
+
     function findTokenSymbolByAddress(address) {
         return  walletSectionAllTokens.findTokenSymbolByAddress(address)
 
@@ -177,5 +182,21 @@ QtObject {
 
     function getNameForSavedWalletAddress(address) {
         return walletSectionSavedAddresses.getNameByAddress(address)
+    }
+
+    function createOrUpdateSavedAddress(name, address) {
+        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address)
+    }
+
+    function deleteSavedAddress(address) {
+        return walletSectionSavedAddresses.deleteSavedAddress(address)
+    }
+
+    function getLatestBlockNumber() {
+        return walletSectionTransactions.getLastTxBlockNumber()
+    }
+
+    function getGasEthValue(gweiValue, gasLimit) {
+        return profileSectionModule.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
     }
 }
