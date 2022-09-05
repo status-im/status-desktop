@@ -22,6 +22,7 @@ import "../panels"
 StatusModal {
     id: root
 
+    property int minPswLen: 10
     readonly property int marginBetweenInputs: Style.dp(38)
     readonly property alias passwordValidationError: d.passwordValidationError
 
@@ -59,7 +60,8 @@ StatusModal {
 
         function onDerivedAddressesErrorChanged() {
             if(Utils.isInvalidPasswordMessage(RootStore.derivedAddressesError))
-                d.passwordValidationError = qsTr("Wrong password")
+                d.passwordValidationError = qsTr("Password must be at least %n character(s) long", "", root.minPswLen);
+
         }
     }
 
