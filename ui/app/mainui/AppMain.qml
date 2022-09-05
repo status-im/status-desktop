@@ -354,8 +354,8 @@ Item {
                 icon.source: appMain.rootStore.userProfileInst.icon
                 width: 32
                 height: 32
-                identicon.width: width
-                identicon.height: height
+                identicon.asset.width: width
+                identicon.asset.height: height
                 identicon.asset.charactersLen: 2
                 identicon.asset.color: Utils.colorForPubkey(appMain.rootStore.userProfileInst.pubKey)
                 identicon.ringSettings.ringSpecModel: Utils.getColorHashAsJson(appMain.rootStore.userProfileInst.pubKey)
