@@ -38,6 +38,7 @@ PanelAndContentBase {
 
             account: WalletController.currentAccount
             assetController: panel.currentAssetController
+            savedAddressesController: WalletController.createSavedAddressesController()
         }
     }
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Status/Wallet/WalletAccount.h"
-#include "Status/Wallet/DerivedWalletAddress.h"
 
 #include <Helpers/QObjectVectorModel.h>
 
@@ -16,6 +15,7 @@ namespace Status::Wallet {
 
 class NewWalletAccountController;
 class AccountAssetsController;
+class SavedAddressesController;
 
 /// \todo move account creation to its own controller
 class WalletController: public QObject
@@ -38,6 +38,7 @@ public:
     /// \todo consider if complex approach of keeping ownership here and enforcing a unique instance
     ///       or not reusing the account list and make it singleton are better options
     Q_INVOKABLE [[nodiscard]] Status::Wallet::NewWalletAccountController* createNewWalletAccountController() const;
+    Q_INVOKABLE [[nodiscard]] Status::Wallet::SavedAddressesController* createSavedAddressesController() const;
 
     QAbstractListModel *accountsModel() const;
 
