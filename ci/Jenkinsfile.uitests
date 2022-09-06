@@ -77,6 +77,7 @@ pipeline {
 
     stage('build') {
       steps { sh 'make' }
+
     }
 
 // docker run -p 8546:8546 --name ganache-goerli -v /home/jonathan/dev/test-ganache-goerli-test/:/goerli-db --rm  trufflesuite/ganache:v7.4.1 -e 10 -m "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial" -p 8546 --chain.chainId 5 --database.dbPath /goerli-db
@@ -96,6 +97,7 @@ pipeline {
             "-p 8577:8545",
             "-e 10 -m=\\'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial\\' --chain.chainId 5"
           ) { c ->
+            sh "curl -X POST --insecure -H \"Content-Type: application/json\" --data '{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[], \"id\":64}' http://0.0.0.0:8577"
             withEnv(["GOERLI_NETWORK_RPC_URL_BKP=http://0.0.0.0:${goerli_rpc_port}"]){
               wrap([
                 $class: 'Xvfb',
