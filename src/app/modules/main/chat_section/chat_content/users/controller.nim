@@ -99,11 +99,11 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_CONTACT_UNTRUSTWORTHY) do(e: Args):
       var args = TrustArgs(e)
       self.delegate.contactUpdated(args.publicKey)
-    
+
     self.events.on(SIGNAL_CONTACT_TRUSTED) do(e: Args):
       var args = TrustArgs(e)
       self.delegate.contactUpdated(args.publicKey)
-        
+
     self.events.on(SIGNAL_REMOVED_TRUST_STATUS) do(e: Args):
       var args = TrustArgs(e)
       self.delegate.contactUpdated(args.publicKey)
@@ -181,3 +181,9 @@ proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
 
 proc getStatusForContact*(self: Controller, contactId: string): StatusUpdateDto =
   return self.contactService.getStatusForContactWithId(contactId)
+
+proc addGroupMembers*(self: Controller, pubKeys: seq[string]) =
+  self.chatService.addGroupMembers("", self.chatId, pubKeys)
+
+proc removeGroupMembers*(self: Controller, pubKeys: seq[string]) =
+  self.chatService.removeMembersFromGroupChat("", self.chatId, pubKeys)

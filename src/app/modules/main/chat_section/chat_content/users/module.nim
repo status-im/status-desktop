@@ -140,7 +140,7 @@ method addChatMember*(self: Module,  member: ChatMember) =
   else:
     let statusUpdateDto = self.controller.getStatusForContact(member.id)
     status = toOnlineStatus(statusUpdateDto.statusType)
-  
+
   self.view.model().addItem(initMemberItem(
     pubKey = member.id,
     displayName = contactDetails.details.displayName,
@@ -186,7 +186,7 @@ method onChatMembersAddedOrRemoved*(self: Module,  ids: seq[string]) =
   self.onChatMembersAdded(membersAdded)
   for id in membersRemoved:
     self.onChatMemberRemoved(id)
-    
+
 
 method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined: bool) =
   let contactDetails = self.controller.getContactDetails(publicKey)
@@ -207,3 +207,8 @@ method getMembersPublicKeys*(self: Module): string =
   let publicKeys = self.controller.getMembersPublicKeys()
   return publicKeys.join(" ")
 
+method addGroupMembers*(self: Module, pubKeys: seq[string]) =
+  self.controller.addGroupMembers(pubKeys)
+
+method removeGroupMembers*(self: Module, pubKeys: seq[string]) =
+  self.controller.removeGroupMembers(pubKeys)
