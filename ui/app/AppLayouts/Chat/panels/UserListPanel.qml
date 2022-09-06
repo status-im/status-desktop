@@ -95,7 +95,7 @@ Item {
             }
             asset.isImage: (asset.name !== "")
             asset.isLetterIdenticon: (asset.name === "")
-            asset.color: Utils.colorForPubkey(model.pubKey) // FIXME: use model.colorId
+            asset.color:  Utils.colorForColorId(model.colorId)
             status: model.onlineStatus
             ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey) // FIXME: use model.colorHash
             onClicked: {

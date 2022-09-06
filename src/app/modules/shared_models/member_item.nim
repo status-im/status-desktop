@@ -17,7 +17,7 @@ proc initMemberItem*(
   localNickname: string,
   alias: string,
   icon: string,
-  colorId: int = 0,
+  colorId: int,
   colorHash: string = "",
   onlineStatus: OnlineStatus = OnlineStatus.Inactive,
   isContact: bool = false,

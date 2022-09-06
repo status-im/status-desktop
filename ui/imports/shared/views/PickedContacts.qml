@@ -58,7 +58,7 @@ Item {
             asset.width: 40
             asset.height: 40
             color: "transparent"
-            asset.color: Utils.colorForPubkey(model.pubKey)
+            asset.color: Utils.colorForColorId(model.colorId)
             ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
             statusListItemIcon.badge.border.color: Theme.palette.baseColor4
             statusListItemIcon.badge.implicitHeight: 14 // 10 px + 2 px * 2 borders

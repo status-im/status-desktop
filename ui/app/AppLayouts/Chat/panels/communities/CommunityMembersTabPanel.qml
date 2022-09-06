@@ -140,7 +140,7 @@ Item {
                 nickName: model.localNickname
                 userName: model.displayName
                 status: model.onlineStatus
-                asset.color: Utils.colorForPubkey(model.pubKey) // FIXME: use model.colorId
+                asset.color: Utils.colorForColorId(model.colorId)
                 asset.name: model.icon
                 asset.isImage: true
                 asset.imgIsIdenticon: false

@@ -41,12 +41,13 @@ method delete*(self: Module) =
 
 proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
   let contact =  self.controller.getContact(publicKey)
-  let (name, image, _) = self.controller.getContactNameAndImage(contact.id)
+  let contactDetails = self.controller.getContactDetails(contact.id)
 
   return initUserItem(
     pubKey = contact.id,
-    displayName = name,
-    icon = image,
+    displayName = contactDetails.displayName,
+    icon = contactDetails.icon,
+    colorId = contactDetails.colorId,
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
     isContact = contact.isContact(),
     isBlocked = contact.isBlocked(),
