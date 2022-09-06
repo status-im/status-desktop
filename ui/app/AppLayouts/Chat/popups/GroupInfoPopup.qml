@@ -216,7 +216,7 @@ StatusModal {
                 asset.name: model.icon
                 asset.isImage: !!model.icon
                 ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
-                asset.color: Utils.colorForPubkey(model.pubKey)
+                asset.color: Utils.colorForColorId(model.colorId)
                 asset.charactersLen: 2
                 asset.isLetterIdenticon: model.icon === ""
                 asset.height: asset.isLetterIdenticon ? 40 : 20

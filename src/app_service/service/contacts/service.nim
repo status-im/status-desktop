@@ -8,6 +8,8 @@ import ../../common/types as common_types
 
 import ../settings/service as settings_service
 import ../network/service as network_service
+import ../visual_identity/service as procs_from_visual_identity_service
+
 import ./dto/contacts as contacts_dto
 import ./dto/status_update as status_update_dto
 import ./dto/contact_details
@@ -514,6 +516,7 @@ QtObject:
     let (name, icon, _) = self.getContactNameAndImage(pubKey)
     result.displayName = name
     result.icon = icon
+    result.colorId = procs_from_visual_identity_service.colorIdOf(pubKey)
     result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
     result.details = self.getContactById(pubKey)
 

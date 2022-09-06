@@ -237,6 +237,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
         icon = contactDetails.icon,
+        colorId = contactDetails.colorId,
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(member.id).statusType),
         isContact = contactDetails.details.isContact,
         isAdmin = member.admin
@@ -260,6 +261,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
         icon = contactDetails.icon,
+        colorId = contactDetails.colorId,
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(bannedMemberId).statusType),
         isContact = contactDetails.details.isContact
       )
@@ -273,6 +275,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
         icon = contactDetails.icon,
+        colorId = contactDetails.colorId,
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(requestDto.publicKey).statusType),
         isContact = contactDetails.details.isContact,
         requestToJoinId = requestDto.id
@@ -287,6 +290,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
         icon = contactDetails.icon,
+        colorId = contactDetails.colorId,
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(requestDto.publicKey).statusType),
         isContact = contactDetails.details.isContact,
         requestToJoinId = requestDto.id

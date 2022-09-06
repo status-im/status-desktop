@@ -39,7 +39,7 @@ StatusListView {
         asset.width: asset.isImage ? 40 : 20
         asset.name: model.icon
         asset.isImage: model.icon !== ""
-        asset.color: Utils.colorForPubkey(model.pubKey)
+        asset.color: Utils.colorForColorId(model.colorId)
         asset.charactersLen: 2
         ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
 

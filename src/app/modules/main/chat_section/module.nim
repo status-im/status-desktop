@@ -215,6 +215,7 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
     pubKey = contactDetails.details.id,
     displayName = contactDetails.displayName,
     icon = contactDetails.icon,
+    colorId = contactDetails.colorId,
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
     isContact = contactDetails.details.isContact(),
     isVerified = contactDetails.details.isContactVerified(),

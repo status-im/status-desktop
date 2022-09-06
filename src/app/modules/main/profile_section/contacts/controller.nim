@@ -91,6 +91,9 @@ proc getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, largeImage: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
+proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
+  return self.contactsService.getContactDetails(contactId)
+
 proc unblockContact*(self: Controller, publicKey: string) =
   self.contactsService.unblockContact(publicKey)
 

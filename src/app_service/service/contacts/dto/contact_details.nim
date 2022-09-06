@@ -9,4 +9,5 @@ type
     displayName*: string
     icon*: string
     isCurrentUser*: bool
+    colorId*: int
     details*: ContactsDto

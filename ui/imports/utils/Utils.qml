@@ -576,15 +576,17 @@ QtObject {
         return globalUtils.getColorId(publicKey)
     }
 
-    function colorForPubkey(publicKey) {
-        const pubKeyColorId = colorIdForPubkey(publicKey)
-
-        if (pubKeyColorId < 0 || pubKeyColorId >=  Theme.palette.userCustomizationColors.length) {
-            console.warn("Utils.colorForPubkey : colorId for publicKey is out of bounds")
+    function colorForColorId(colorId)  {
+        if (colorId < 0 || colorId >=  Theme.palette.userCustomizationColors.length) {
+            console.warn("Utils.colorForColorId : colorId is out of bounds")
             return StatusColors.colors['blue']
         }
+        return Theme.palette.userCustomizationColors[colorId]
+    }
 
-        return Theme.palette.userCustomizationColors[pubKeyColorId]
+    function colorForPubkey(publicKey) {
+        const pubKeyColorId = colorIdForPubkey(publicKey)
+        return colorForColorId(pubKeyColorId)
     }
 
     function getCompressedPk(publicKey) {
