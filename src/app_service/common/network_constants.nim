@@ -29,11 +29,11 @@ const GOERLI_NETWORK_RPC_URL = $getEnv("GOERLI_NETWORK_RPC_URL")
 let GOERLI_RPC_URL_RESOLVED =
   if GOERLI_NETWORK_RPC_URL != "":
     echo "RPC URL IS DEFINED ", GOERLI_NETWORK_RPC_URL
-    "http://127.0.0.1:8577"
+    "http://0.0.0.0:8577"
     # GOERLI_NETWORK_RPC_URL
   else:
     echo "GOERLI RPC URL IS NOT DEFINED"
-    "http://127.0.0.1:8577"
+    "http://0.0.0.0:8577"
     # "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED
 
 echo "USING THIS URL FOR GOERLI ", GOERLI_RPC_URL_RESOLVED
@@ -105,7 +105,7 @@ let NETWORKS* = %* [
   {
     "chainId": 5,
     "chainName": "Goerli",
-    "rpcUrl": "http://127.0.0.1:8577",
+    "rpcUrl": "http://0.0.0.0:8577",
     "blockExplorerUrl": "https://goerli.etherscan.io/",
     "iconUrl": "network/Network=Testnet",
     "chainColor": "#939BA1",

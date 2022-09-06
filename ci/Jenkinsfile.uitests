@@ -96,7 +96,7 @@ pipeline {
             "-p 8577:8545",
             "-e 10 -m=\\'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial\\' --chain.chainId 5"
           ) { c ->
-            withEnv(["GOERLI_NETWORK_RPC_URL_BKP=http://127.0.0.1:${goerli_rpc_port}"]){
+            withEnv(["GOERLI_NETWORK_RPC_URL_BKP=http://0.0.0.0:${goerli_rpc_port}"]){
               wrap([
                 $class: 'Xvfb',
                 autoDisplayName: true,
