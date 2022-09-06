@@ -12,6 +12,7 @@ Item {
 
     property StatusMessageDetails replyDetails
     property string audioMessageInfoText: ""
+    property bool profileClickable: true
 
     signal replyProfileClicked(var sender, var mouse)
 
@@ -61,9 +62,10 @@ Item {
                     asset: replyDetails.sender.profileImage.assetSettings
                     ringSettings: replyDetails.sender.profileImage.ringSettings
                     MouseArea {
-                        cursorShape: Qt.PointingHandCursor
+                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
                         anchors.fill: parent
+                        enabled: root.profileClickable
                         onClicked: replyProfileClicked(this, mouse)
                     }
                 }

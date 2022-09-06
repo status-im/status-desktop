@@ -214,6 +214,7 @@ Rectangle {
             visible: active
             sourceComponent: StatusMessageReply {
                 replyDetails: root.replyDetails
+                profileClickable: root.profileClickable
                 onReplyProfileClicked: root.replyProfileClicked(sender, mouse)
                 audioMessageInfoText: root.audioMessageInfoText
             }
