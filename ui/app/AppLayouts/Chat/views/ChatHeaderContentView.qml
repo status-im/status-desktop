@@ -25,13 +25,26 @@ RowLayout {
 
     signal searchButtonClicked()
 
+    QtObject {
+        id: d
+
+        readonly property string stateInfoButtonContent: ""
+        readonly property string stateMembersSelectorContent: "selectingMembers"
+
+        readonly property bool selectingMembers: root.state == stateMembersSelectorContent
+    }
+
     Loader {
         id: loader
-        sourceComponent: statusChatInfoButton
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignLeft
         Layout.leftMargin: padding
+
+        sourceComponent: {
+            if (d.selectingMembers) return membersSelector
+            return statusChatInfoButton
+        }
     }
 
     RowLayout {
@@ -39,6 +52,7 @@ RowLayout {
         Layout.alignment: Qt.AlignRight
         Layout.rightMargin: padding
         spacing: 8
+        visible: !d.selectingMembers
 
         StatusFlatRoundButton {
             id: searchButton
@@ -209,7 +223,7 @@ RowLayout {
                                 )
                 }
                 onAddRemoveGroupMember: {
-                    loader.sourceComponent = contactsSelector
+                    root.state = d.stateMembersSelectorContent
                 }
                 onFetchMoreMessages: {
                     root.rootStore.messageStore.requestMoreMessages();
@@ -236,8 +250,6 @@ RowLayout {
             visible: (menuButton.visible || membersButton.visible || searchButton.visible)
         }
     }
-
-    Keys.onEscapePressed: { loader.sourceComponent = statusChatInfoButton }
 
     // Chat toolbar content option 1:
     Component {
@@ -329,13 +341,15 @@ RowLayout {
 
     // Chat toolbar content option 2:
     Component {
-        id: contactsSelector
-        GroupChatPanel {
+        id: membersSelector
+
+        MembersEditSelectorView {
             sectionModule: root.chatSectionModule
             chatContentModule: root.chatContentModule
             rootStore: root.rootStore
-            maxHeight: root.height
-            onPanelClosed: loader.sourceComponent = statusChatInfoButton
+
+            onConfirmed: root.state = d.stateInfoButtonContent
+            onRejected: root.state = d.stateInfoButtonContent
         }
     }
 }

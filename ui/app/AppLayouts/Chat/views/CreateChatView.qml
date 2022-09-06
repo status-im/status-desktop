@@ -11,129 +11,88 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.status 1.0
+import shared.controls.delegates 1.0
 
 Page {
     id: root
-    Behavior on anchors.bottomMargin { NumberAnimation { duration: 30 }}
 
-    property ListModel contactsModel: ListModel { }
     property var rootStore
     property var emojiPopup: null
 
-    Keys.onEscapePressed: Global.closeCreateChatView()
-
-    StatusListView {
-        id: contactsModelListView
-        anchors.left: parent.left
-        anchors.right: parent.right
-        model: root.rootStore.contactsModel
-        delegate: Item {
-            property string pubKey: model.pubKey
-            property string displayName: model.displayName
-            property string icon: model.icon
-        }
-    }
-
-    onVisibleChanged: {
-        if (visible) {
-            for (var i = 0; i < contactsModelListView.count; i ++) {
-                var entry = contactsModelListView.itemAtIndex(i);
-                contactsModel.insert(contactsModel.count,
-                {"pubKey": entry.pubKey, "displayName": entry.displayName,
-                    "icon": entry.icon});
-            }
-            tagSelector.sortModel(root.contactsModel);
-        } else {
-            contactsModel.clear();
-            tagSelector.namesModel.clear();
-        }
-    }
-
-    function createChat() {
-        if (tagSelector.namesModel.count === 1) {
-            var ensName = tagSelector.namesModel.get(0).name.includes(".eth") ? tagSelector.namesModel.get(0).name : "";
-            root.rootStore.chatCommunitySectionModule.createOneToOneChat("", tagSelector.namesModel.get(0).pubKey, ensName);
-        } else {
-            var groupName = "";
-            var pubKeys = [];
-            for (var i = 0; i < tagSelector.namesModel.count; i++) {
-                groupName += (tagSelector.namesModel.get(i).name + (i === tagSelector.namesModel.count - 1 ? "" : "&"));
-                pubKeys.push(tagSelector.namesModel.get(i).pubKey);
-            }
-            root.rootStore.chatCommunitySectionModule.createGroupChat("", groupName, JSON.stringify(pubKeys));
-        }
-
-        chatInput.textInput.clear();
-        chatInput.textInput.textFormat = TextEdit.PlainText;
-        chatInput.textInput.textFormat = TextEdit.RichText;
-        Global.changeAppSectionBySectionType(Constants.appSection.chat)
-    }
+    padding: 0
 
     Behavior on opacity { NumberAnimation {}}
+    Behavior on anchors.bottomMargin { NumberAnimation { duration: 30 }}
+
     background: Rectangle {
         anchors.fill: parent
         color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
     }
 
-    // TODO: Could it be replaced to `GroupChatPanel`?
-    header: RowLayout {
-        id: headerRow
-        width: parent.width
-        height: tagSelector.height
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.halfPadding
-        clip: true
-        spacing: Style.current.padding
-        StatusTagSelector {
-            id: tagSelector
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-            Layout.leftMargin: 17
-            maxHeight: root.height
-            nameCountLimit: 20
-            listLabel: contactsModel.count ? qsTr("Contacts") : ""
-            textEdit.enabled: contactsModel.count
-            toLabelText: qsTr("To: ")
-            warningText: qsTr("USER LIMIT REACHED")
-            ringSpecModelGetter: function(pubKey) {
-                return Utils.getColorHashAsJson(pubKey);
-            }
-            compressedKeyGetter: function(pubKey) {
-                return Utils.getCompressedPk(pubKey);
-            }
-            colorIdForPubkeyGetter: function (pubKey) {
-                return Utils.colorIdForPubkey(pubKey);
-            }
-            onTextChanged: {
-                sortModel(root.contactsModel);
-            }
-        }
+    header: Item {
+        implicitHeight: headerLayout.implicitHeight + headerLayout.anchors.topMargin + headerLayout.anchors.bottomMargin
 
-        StatusButton {
-            id: confirmButton
-            objectName: "createChatConfirmButton"
-            implicitWidth: 106
-            implicitHeight: 44
-            Layout.alignment: Qt.AlignTop
-            enabled: tagSelector.namesModel.count > 0
-            text: qsTr("Confirm")
-            onClicked: {
-                root.rootStore.createChatInitMessage = chatInput.textInput.text;
-                root.rootStore.createChatFileUrls = chatInput.fileUrls;
-                root.createChat();
+        RowLayout {
+            id: headerLayout
+            anchors {
+                fill: parent
+                topMargin: 8
             }
-        }
 
-        Item {
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            Layout.alignment: Qt.AlignTop
-            Layout.topMargin: 5
+            MembersSelectorView {
+                id: membersSelector
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.leftMargin: 16
+                Layout.rightMargin: 16
+
+                rootStore: root.rootStore
+                enabled: root.rootStore.contactsModel.count > 0
+
+                function createChat() {
+                    if (model.count === 0) {
+                        console.warn("Can't create chat with no members")
+                        return
+                    }
+
+                    if (model.count === 1) {
+                        const member = model.get(0)
+                        const ensName = member.displayName.includes(".eth") ? member.displayName : ""
+                        root.rootStore.chatCommunitySectionModule.createOneToOneChat("", member.pubKey, ensName)
+                    } else {
+                        var groupName = "";
+                        var pubKeys = [];
+                        for (var i = 0; i < model.count; i++) {
+                            const member = model.get(i)
+                            groupName += (member.displayName + (i === model.count - 1 ? "" : "&"))
+                            pubKeys.push(member.pubKey)
+                        }
+                        root.rootStore.chatCommunitySectionModule.createGroupChat("", groupName, JSON.stringify(pubKeys))
+                    }
+                }
+
+                onConfirmed: {
+                    root.rootStore.createChatInitMessage = chatInput.textInput.text
+                    root.rootStore.createChatFileUrls = chatInput.fileUrls
+                    createChat()
+
+                    cleanup()
+                    chatInput.textInput.clear()
+                }
+
+                onRejected: {
+                    cleanup()
+                    Global.closeCreateChatView()
+                }
+
+                onVisibleChanged: if (visible) edit.forceActiveFocus()
+            }
+
             StatusActivityCenterButton {
-                id: notificationButton
-                width: parent.width
-                height: parent.height
-                tooltip.offset: width/2
+                Layout.preferredWidth: 32
+                Layout.preferredHeight: 32
+
                 unreadNotificationsCount: root.rootStore.unreadNotificationsCount
                 onClicked: Global.openActivityCenterPopup()
             }
@@ -141,61 +100,91 @@ Page {
     }
 
     contentItem: Item {
-        StatusChatInput {
-            id: chatInput
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            visible: tagSelector.namesModel.count > 0
-            chatType: tagSelector.namesModel.count == 1? Constants.chatType.oneToOne : Constants.chatType.privateGroupChat
-
-            emojiPopup: root.emojiPopup
-            recentStickers: root.rootStore.stickersModuleInst.recent
-            stickerPackList: root.rootStore.stickersModuleInst.stickerPacks
-            closeGifPopupAfterSelection: true
-
-            onSendTransactionCommandButtonClicked: {
-                root.rootStore.createChatStartSendTransactionProcess = true;
-                root.createChat();
+        ColumnLayout {
+            anchors {
+                fill: parent
+                topMargin: 32
+                bottomMargin: 12
+                leftMargin: 8
             }
 
-            onReceiveTransactionCommandButtonClicked: {
-                root.rootStore.createChatStartReceiveTransactionProcess = true;
-                root.createChat();
+            StatusBaseText {
+                Layout.alignment: Qt.AlignTop
+                Layout.leftMargin: 8
+
+                visible: contactsList.visible
+
+                font.pixelSize: 15
+                text: qsTr("Contacts")
+                color: Theme.palette.baseColor1
             }
 
-            onStickerSelected: {
-                root.rootStore.createChatStickerHashId = hashId;
-                root.rootStore.createChatStickerPackId = packId;
-                root.rootStore.createChatStickerUrl = url;
-                root.createChat();
+            StatusListView {
+                id: contactsList
+
+                Layout.fillHeight: true
+
+                visible: membersSelector.suggestionsModel.count &&
+                         !(membersSelector.edit.text !== "")
+
+                implicitWidth: contentItem.childrenRect.width
+
+                model: membersSelector.suggestionsModel
+                delegate: ContactListItemDelegate {
+                    onClicked: membersSelector.entryAccepted(this)
+                }
             }
 
-            onSendMessage: {
-                root.rootStore.createChatFileUrls = chatInput.fileUrls;
-                root.rootStore.createChatInitMessage = chatInput.textInput.text;
-                root.createChat();
+            StatusChatInput {
+                id: chatInput
+
+                Layout.alignment: Qt.AlignBottom
+                Layout.fillWidth: true
+
+                visible: membersSelector.model.count > 0
+                chatType: membersSelector.model.count === 1? Constants.chatType.oneToOne : Constants.chatType.privateGroupChat
+
+                emojiPopup: root.emojiPopup
+                recentStickers: root.rootStore.stickersModuleInst.recent
+                stickerPackList: root.rootStore.stickersModuleInst.stickerPacks
+                closeGifPopupAfterSelection: true
+
+                onSendTransactionCommandButtonClicked: {
+                    root.rootStore.createChatStartSendTransactionProcess = true;
+                    root.createChat();
+                }
+
+                onReceiveTransactionCommandButtonClicked: {
+                    root.rootStore.createChatStartReceiveTransactionProcess = true;
+                    root.createChat();
+                }
+
+                onStickerSelected: {
+                    root.rootStore.createChatStickerHashId = hashId;
+                    root.rootStore.createChatStickerPackId = packId;
+                    root.rootStore.createChatStickerUrl = url;
+                    root.createChat();
+                }
+
+                onSendMessage: {
+                    root.rootStore.createChatFileUrls = chatInput.fileUrls;
+                    root.rootStore.createChatInitMessage = chatInput.textInput.text;
+                    root.createChat();
+                }
             }
         }
 
         StatusBaseText {
+            anchors.centerIn: parent
             width: Math.min(553, parent.width - 2 * Style.current.padding)
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -(headerRow.height/2)
+            visible: root.rootStore.contactsModel.count === 0
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            visible: contactsModel.count === 0
             wrapMode: Text.WordWrap
             font.pixelSize: 15
             color: Theme.palette.baseColor1
             text: qsTr("You can only send direct messages to your Contacts.\n
 Send a contact request to the person you would like to chat with, you will be able to chat with them once they have accepted your contact request.")
-            Component.onCompleted: {
-                if (visible) {
-                    tagSelector.enabled = false;
-                }
-            }
         }
     }
 }

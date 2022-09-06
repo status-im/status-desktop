@@ -57,3 +57,9 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 
 method getMembersPublicKeys*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method addGroupMembers*(self: AccessInterface, pubKeys: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method removeGroupMembers*(self: AccessInterface, pubKeys: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")

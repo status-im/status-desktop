@@ -52,6 +52,9 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
+  proc getItems*(self: Model): seq[MemberItem] =
+    self.items
+
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
       result &= fmt"""Member Model:
@@ -142,27 +145,12 @@ QtObject:
       result = newQVariant(item.requestToJoinId)
 
   proc addItem*(self: Model, item: MemberItem) =
-    # we need to maintain online contact on top, that means
-    # if we add an item online status we add it as the last online item (before the first offline item)
-    # if we add an item with offline status we add it as the first offline item (after the last online item)
-    var position = -1
-    for i in 0 ..< self.items.len:
-      if(self.items[i].onlineStatus == OnlineStatus.Inactive):
-        position = i
-        break
-
-    if(position == -1):
-      position = self.items.len
-
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    self.beginInsertRows(parentModelIndex, position, position)
-    self.items.insert(item, position)
+    self.beginInsertRows(newQModelIndex(), self.items.len, self.items.len)
+    self.items.add(item)
     self.endInsertRows()
     self.countChanged()
 
-  proc findIndexForMessageId(self: Model, pubKey: string): int =
+  proc findIndexForMember(self: Model, pubKey: string): int =
     for i in 0 ..< self.items.len:
       if(self.items[i].pubKey == pubKey):
         return i
@@ -179,11 +167,11 @@ QtObject:
     self.countChanged()
 
   proc isContactWithIdAdded*(self: Model, id: string): bool =
-    return self.findIndexForMessageId(id) != -1
+    return self.findIndexForMember(id) != -1
 
   proc setName*(self: Model, pubKey: string, displayName: string,
       ensName: string, localNickname: string) =
-    let ind = self.findIndexForMessageId(pubKey)
+    let ind = self.findIndexForMember(pubKey)
     if(ind == -1):
       return
 
@@ -199,7 +187,7 @@ QtObject:
       ])
 
   proc setIcon*(self: Model, pubKey: string, icon: string) =
-    let ind = self.findIndexForMessageId(pubKey)
+    let ind = self.findIndexForMember(pubKey)
     if(ind == -1):
       return
 
@@ -221,7 +209,7 @@ QtObject:
       joined: bool,
       isUntrustworthy: bool,
       ) =
-    let ind = self.findIndexForMessageId(pubKey)
+    let ind = self.findIndexForMember(pubKey)
     if(ind == -1):
       return
 
@@ -259,7 +247,7 @@ QtObject:
       isContact: bool,
       isUntrustworthy: bool,
       ) =
-    let ind = self.findIndexForMessageId(pubKey)
+    let ind = self.findIndexForMember(pubKey)
     if(ind == -1):
       return
 
@@ -284,7 +272,7 @@ QtObject:
 
   proc setOnlineStatus*(self: Model, pubKey: string,
       onlineStatus: OnlineStatus) =
-    let ind = self.findIndexForMessageId(pubKey)
+    let ind = self.findIndexForMember(pubKey)
     if(ind == -1):
       return
 
@@ -298,7 +286,7 @@ QtObject:
 
 # TODO: rename me to removeItemByPubkey
   proc removeItemById*(self: Model, pubKey: string) =
-    let ind = self.findIndexForMessageId(pubKey)
+    let ind = self.findIndexForMember(pubKey)
     if(ind == -1):
       return
 
