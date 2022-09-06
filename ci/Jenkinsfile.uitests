@@ -98,6 +98,7 @@ pipeline {
             "-e 10 -m=\\'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial\\' --chain.chainId 5"
           ) { c ->
             sh "curl -X POST --insecure -H \"Content-Type: application/json\" --data '{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[], \"id\":64}' http://0.0.0.0:8577"
+
             withEnv(["GOERLI_NETWORK_RPC_URL_BKP=http://0.0.0.0:${goerli_rpc_port}"]){
               wrap([
                 $class: 'Xvfb',
