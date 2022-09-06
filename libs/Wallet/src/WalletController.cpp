@@ -1,7 +1,7 @@
 #include "Status/Wallet/WalletController.h"
 
-#include "NewWalletAccountController.h"
-#include "AccountAssetsController.h"
+#include <QQmlEngine>
+#include <QJSEngine>
 
 #include <StatusGo/Wallet/WalletApi.h>
 
@@ -14,8 +14,9 @@
 
 #include <Onboarding/Common/Constants.h>
 
-#include <QQmlEngine>
-#include <QJSEngine>
+#include "NewWalletAccountController.h"
+#include "AccountAssetsController.h"
+#include "SavedAddressesController.h"
 
 namespace GoAccounts = Status::StatusGo::Accounts;
 namespace WalletGo = Status::StatusGo::Wallet;
@@ -38,6 +39,11 @@ WalletController *WalletController::create(QQmlEngine *qmlEngine, QJSEngine *jsE
 NewWalletAccountController* WalletController::createNewWalletAccountController() const
 {
     return new NewWalletAccountController(m_accounts);
+}
+
+SavedAddressesController *WalletController::createSavedAddressesController() const
+{
+    return new SavedAddressesController();
 }
 
 QAbstractListModel* WalletController::accountsModel() const

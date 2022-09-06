@@ -5,11 +5,14 @@ import QtQml.Models
 
 import Status.Wallet
 
+import "SavedAddresses"
+
 Item {
     id: root
 
     required property WalletAccount account
     required property AccountAssetsController assetController
+    required property SavedAddressesController savedAddressesController
 
     ColumnLayout {
         anchors.fill: parent
@@ -76,7 +79,7 @@ Item {
             Loader {
                 active: SwipeView.isCurrentItem
                 sourceComponent: SavedAddressesView {
-
+                    savedAddressesController: root.savedAddressesController
                 }
             }
         }
