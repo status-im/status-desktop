@@ -133,6 +133,9 @@ Rectangle {
         // set to true when pasted text comes from this component (was copied within this component)
         property bool internalPaste: false
 
+        property int leftOfMentionIndex: -1
+        property int rightOfMentionIndex: -1
+
         readonly property StateGroup emojiPopupTakeover: StateGroup {
             states: State {
                 when: control.emojiPopupOpened
@@ -144,6 +147,32 @@ Rectangle {
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                     x: control.width - emojiPopup.width - Style.current.halfPadding
                     y: -emojiPopup.height
+                }
+            }
+        }
+
+        function updateMentionsPositions() {
+            if (mentionsPos.length == 0) {
+                return
+            }
+
+            const unformattedText = messageInputField.getText(0, messageInputField.length)
+            if (!unformattedText.includes("@")) {
+                return
+            }
+
+            const keyEvent = messageInputField.keyEvent
+            if ((keyEvent.key === Qt.Key_Right) || (keyEvent.key === Qt.Key_Left)
+                    || (keyEvent.key === Qt.Key_Up) || (keyEvent.key === Qt.Key_Down)) {
+                return
+            }
+
+            for (var k = 0; k < mentionsPos.length; k++) {
+                const aliasIndex = unformattedText.indexOf(mentionsPos[k].name)
+
+                if ((aliasIndex !== -1) && (aliasIndex - 1 !== mentionsPos[k].leftIndex)) {
+                    mentionsPos[k].leftIndex = aliasIndex - 1
+                    mentionsPos[k].rightIndex = aliasIndex + mentionsPos[k].name.length
                 }
             }
         }
@@ -244,6 +273,24 @@ Rectangle {
             if (event) {
                 event.accepted = true
                 messageTooLongDialog.open()
+            }
+        }
+
+        const symbolPressed = event.text.length > 0 &&
+                            event.key !== Qt.Key_Backspace &&
+                            event.key !== Qt.Key_Delete &&
+                            event.key !== Qt.Key_Escape
+        if (mentionsPos.length > 0 && symbolPressed) {
+            for (var i = 0; i < mentionsPos.length; i++) {
+                if (messageInputField.cursorPosition === mentionsPos[i].leftIndex) {
+                    d.leftOfMentionIndex = i
+                    event.accepted = true
+                    return
+                } else if (messageInputField.cursorPosition === mentionsPos[i].rightIndex) {
+                    d.rightOfMentionIndex = i
+                    event.accepted = true
+                    return
+                }
             }
         }
 
@@ -493,6 +540,23 @@ Rectangle {
         }
         // the text doesn't get registered to the textarea fast enough
         // we can only get it in the `released` event
+
+        let eventText = event.text
+        if(event.key === Qt.Key_Space) {
+            eventText = "&nbsp;"
+        }
+
+        if(d.rightOfMentionIndex !== -1) {
+            messageInputField.insert(mentionsPos[d.rightOfMentionIndex].rightIndex, eventText)
+
+            d.rightOfMentionIndex = -1
+        }
+
+        if(d.leftOfMentionIndex !== -1) {
+            messageInputField.insert(mentionsPos[d.leftOfMentionIndex].leftIndex, eventText)
+
+            d.leftOfMentionIndex = -1
+        }
 
         messageInputField.readOnly = false
 
@@ -1019,6 +1083,16 @@ Rectangle {
                             leftPadding: 0
                             padding: 0
                             Keys.onPressed: {
+                                if (mentionsPos.length > 0) {
+                                    for (var i = 0; i < mentionsPos.length; i++) {
+                                        if ((messageInputField.cursorPosition === (mentionsPos[i].leftIndex))
+                                                && (event.key === Qt.Key_Delete)) {
+                                            messageInputField.remove(mentionsPos[i].rightIndex, mentionsPos[i].leftIndex)
+                                            mentionsPos.pop(i)
+                                        }
+                                    }
+                                }
+
                                 keyEvent = event;
                                 onKeyPress(event)
                                 cursorWhenPressed = cursorPosition;
@@ -1062,17 +1136,6 @@ Rectangle {
                                         }
                                     }
                                 }
-                                if ((mentionsPos.length > 0) && (cursorPosition < length) && getText(cursorPosition, length).includes("@")
-                                        && (keyEvent.key !== Qt.Key_Right) && (keyEvent.key !== Qt.Key_Left) && (keyEvent.key !== Qt.Key_Up)
-                                        && (keyEvent.key !== Qt.Key_Down)) {
-                                    var unformattedText = getText(cursorPosition, length);
-                                    for (var k = 0; k < mentionsPos.length; k++) {
-                                        if ((unformattedText.indexOf(mentionsPos[k].name) !== -1) && (unformattedText.indexOf(mentionsPos[k].name) !== mentionsPos[k].leftIndex)) {
-                                            mentionsPos[k].leftIndex = (cursorPosition + unformattedText.indexOf(mentionsPos[k].name) - 1);
-                                            mentionsPos[k].rightIndex = (cursorPosition + unformattedText.indexOf(mentionsPos[k].name) + mentionsPos[k].name.length);
-                                        }
-                                    }
-                                }
 
                                 inputScrollView.ensureVisible(cursorRectangle)
                             }
@@ -1097,6 +1160,9 @@ Rectangle {
                                     var removeFrom = (cursorPosition < messageLimit) ? cursorWhenPressed : messageLimit;
                                     remove(removeFrom, cursorPosition);
                                 }
+
+                                d.updateMentionsPositions()
+
                                 messageLengthLimit.remainingChars = (messageLimit - length);
                             }
 
