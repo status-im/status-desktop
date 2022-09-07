@@ -45,20 +45,16 @@ SettingsContentBase {
         spacing: Constants.settingsSection.itemSpacing
         width: root.contentWidth
 
-        Item {
-            id: currency
+        RowLayout {
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
-            height: 38
             z: root.z + 2
 
             StatusBaseText {
                 text: qsTr("Set Display Currency")
-                anchors.left: parent.left
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
             }
+            Item { Layout.fillWidth: true }
             StatusListPicker {
                 id: currencyPicker
 
@@ -74,9 +70,6 @@ SettingsContentBase {
                 }
 
                 z: root.z + 2
-                width: 104
-                height: parent.height
-                anchors.right: parent.right
                 inputList: root.currencyStore.currenciesModel
                 printSymbol: true
                 placeholderSearchText: qsTr("Search Currencies")
@@ -91,23 +84,18 @@ SettingsContentBase {
             }
         }
 
-        Item {
-            id: language
+        RowLayout {
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
-            height: 38
             z: root.z + 1
 
             StatusBaseText {
                 text: qsTr("Language")
-                anchors.left: parent.left
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
             }
+            Item { Layout.fillWidth: true }
             StatusListPicker {
                 id: languagePicker
-
                 property string newKey
 
                 function descriptionForState(state) {
@@ -160,9 +148,6 @@ SettingsContentBase {
                 }
 
                 z: root.z + 1
-                width: 104
-                height: parent.height
-                anchors.right: parent.right
                 placeholderSearchText: qsTr("Search Languages")
                 maxPickerHeight: 350
 
@@ -172,7 +157,6 @@ SettingsContentBase {
                         if (Qt.platform.os === Constants.linux) {
                             root.changeLanguage(key)
                             linuxConfirmationDialog.active = true
-                            linuxConfirmationDialog.item.newLocale = key
                             linuxConfirmationDialog.item.open()
                         }
                         else {
@@ -196,9 +180,6 @@ SettingsContentBase {
             spacing: Style.current.padding
             StatusBaseText {
                 text: qsTr("Date Format")
-                anchors.left: parent.left
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
             }
 
             StatusRadioButton {
@@ -225,9 +206,6 @@ SettingsContentBase {
             spacing: Style.current.padding
             StatusBaseText {
                 text: qsTr("Time Format")
-                anchors.left: parent.left
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
             }
 
             StatusRadioButton {
@@ -250,13 +228,11 @@ SettingsContentBase {
             id: linuxConfirmationDialog
             active: false
             sourceComponent: ConfirmationDialog {
-                property string newLocale
-
                 header.title: qsTr("Change language")
                 confirmationText: qsTr("Display language has been changed. You must restart the application for changes to take effect.")
                 confirmButtonLabel: qsTr("Close the app now")
                 onConfirmButtonClicked: {
-                    loader.active = false
+                    linuxConfirmationDialog.active = false
                     Qt.quit()
                 }
             }
