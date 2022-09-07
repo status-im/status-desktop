@@ -1,5 +1,6 @@
 singleton Style 1.0 Style.qml
 singleton Utils 1.0 Utils.qml
+singleton LocaleUtils 1.0 LocaleUtils.qml
 singleton Global 1.0 Global.qml
 singleton Constants 1.0 Constants.qml
 singleton SelectedMessage 1.0 SelectedMessage.qml
