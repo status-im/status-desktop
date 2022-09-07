@@ -57,13 +57,17 @@ public:
         return m_objects.size();
     };
 
-    void clear() {
+    void reset(const ObjectContainer& objects) {
         beginResetModel();
-        m_objects.clear();
+        m_objects = objects;
         endResetModel();
     };
 
-    void push_back(const std::shared_ptr<T> newValue) {
+    void clear() {
+        reset({});
+    };
+
+    void push_back(const std::shared_ptr<T>& newValue) {
         beginInsertRows(QModelIndex(), m_objects.size(), m_objects.size());
         m_objects.push_back(newValue);
         endInsertRows();
@@ -82,7 +86,7 @@ public:
         }
     };
 
-    void set(size_t row, const std::shared_ptr<T> newVal) {
+    void set(size_t row, const std::shared_ptr<T>& newVal) {
         m_objects.at(row) = newVal;
         emit dataChanged(index(row), index(row), {});
     };

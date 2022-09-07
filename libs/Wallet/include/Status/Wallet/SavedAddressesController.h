@@ -21,8 +21,8 @@ public:
     enum Error
     {
         NoneError,
-        UnknownAddressError,
-        AddressAlreadyPresentError
+        SaveAddressError,
+        RetrieveSavedAddressesError
     };
     Q_ENUM(Error)
 
@@ -31,7 +31,7 @@ public:
     QAbstractListModel* savedAddresses() const;
 
     Q_INVOKABLE void saveAddress(const QString& address, const QString& name);
-    // Q_INVOKABLE void removeAddress(const QString& address);
+    Q_INVOKABLE void refresh();
 
 signals:
     void error(Status::Wallet::SavedAddressesController::Error error);

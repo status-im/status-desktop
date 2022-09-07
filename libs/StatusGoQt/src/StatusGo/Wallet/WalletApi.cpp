@@ -34,6 +34,35 @@ DerivedAddresses getDerivedAddressesForPath(const HashedPassword &password, cons
     return resultJson.get<CallPrivateRpcResponse>().result;
 }
 
+SavedAddresses getSavedAddresses()
+{
+    json inputJson = {
+        {"jsonrpc", "2.0"},
+        {"method", "wallet_getSavedAddresses"}
+    };
+
+    auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
+    const auto resultJson = json::parse(result);
+    checkPrivateRpcCallResultAndReportError(resultJson);
+
+    const auto &data = resultJson.get<CallPrivateRpcResponse>().result;
+    return data.is_null() ? nlohmann::json() : data;
+}
+
+void saveAddress(const Accounts::EOAddress &address, const QString &name)
+{
+    std::vector<json> params = { SavedAddress({ address, name }) };
+    json inputJson = {
+        {"jsonrpc", "2.0"},
+        {"method", "wallet_addSavedAddress"},
+        {"params", params}
+    };
+
+    auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
+    auto resultJson = json::parse(result);
+    checkPrivateRpcCallResultAndReportError(resultJson);
+}
+
 NetworkConfigurations getEthereumChains(bool onlyEnabled)
 {
     std::vector<json> params = {onlyEnabled};

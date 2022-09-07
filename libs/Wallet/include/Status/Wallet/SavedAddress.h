@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QtQmlIntegration>
 
 namespace Status::Wallet
@@ -23,4 +25,6 @@ private:
     const QString m_address;
     const QString m_name;
 };
+
+using SavedAddressPtr = std::shared_ptr<SavedAddress>;
 }
