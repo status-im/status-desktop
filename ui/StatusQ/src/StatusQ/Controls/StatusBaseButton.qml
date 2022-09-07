@@ -89,7 +89,7 @@ Rectangle {
 
     color: {
         if (statusBaseButton.enabled)
-            return !statusButton.loading && (sensor.containsMouse || highlighted) ? hoverColor
+            return !statusBaseButton.loading && (sensor.containsMouse || highlighted) ? hoverColor
                                                        : normalColor;
         return disaledColor
     }
