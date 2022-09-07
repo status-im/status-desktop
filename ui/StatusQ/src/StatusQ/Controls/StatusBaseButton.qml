@@ -89,7 +89,7 @@ Rectangle {
 
     color: {
         if (statusBaseButton.enabled)
-            return sensor.containsMouse || highlighted ? hoverColor
+            return !statusButton.loading && (sensor.containsMouse || highlighted) ? hoverColor
                                                        : normalColor;
         return disaledColor
     }
@@ -106,7 +106,7 @@ Rectangle {
                              : Qt.PointingHandCursor
 
         hoverEnabled: true
-        enabled: !loading && statusBaseButton.enabled
+        enabled: statusBaseButton.enabled
 
         Loader {
             anchors.centerIn: parent
