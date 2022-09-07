@@ -39,8 +39,8 @@ Item {
         let isValid = true
         let error = ""
         const hasTyped = checkDirty ? isDirty : true
-        const balance = parseFloat(txtBalance.text || "0.00")
-        formattedInputValue = parseFloat(inputAmount.text || "0.00")
+        const balance = parseFloat(txtBalance.text || "0.00") // FIXME i18n
+        formattedInputValue = parseFloat(inputAmount.text || "0.00") // FIXME i18n
         const noInput = inputAmount.text === ""
         if (noInput && hasTyped) {
             error = noInputErrorMessage
@@ -98,7 +98,7 @@ Item {
         StyledText {
             id: txtBalance
             property bool hovered: false
-            text: selectAsset.selectedAsset ? Utils.stripTrailingZeros(selectAsset.selectedAsset.value) : "0.00"
+            text: selectAsset.selectedAsset ? Utils.stripTrailingZeros(selectAsset.selectedAsset.value) : "0.00" // FIXME i18n
             anchors.right: parent.right
             font.weight: Font.Medium
             font.pixelSize: 13
@@ -115,8 +115,8 @@ Item {
                     txtBalance.hovered = true
                 }
                 onClicked: {
-                    inputAmount.text = Utils.stripTrailingZeros(selectAsset.selectedAsset.value)
-                    txtFiatBalance.text = root.getFiatValue(inputAmount.text, selectAsset.selectedAsset.symbol, root.currentCurrency)
+                    inputAmount.text = Utils.stripTrailingZeros(selectAsset.selectedAsset.value) // FIXME i18n
+                    txtFiatBalance.text = root.getFiatValue(inputAmount.text, selectAsset.selectedAsset.symbol, root.currentCurrency) // FIXME i18n
                 }
             }
         }
@@ -125,7 +125,7 @@ Item {
     Input {
         id: inputAmount
         label: qsTr("Asset & Amount")
-        placeholderText: "0.00"
+        placeholderText: "0.00" // FIXME i18n
         anchors.top: parent.top
         customHeight: 56
         validationErrorAlignment: TextEdit.AlignRight
@@ -167,7 +167,7 @@ Item {
          anchors.rightMargin: Style.current.smallPadding
          defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")
          getCurrencyBalanceString: function (currencyBalance) {
-             return Utils.toLocaleString(currencyBalance.toFixed(2), RootStore.locale, {"currency": true}) + " " + root.currentCurrency.toUpperCase()
+             return LocaleUtils.formatCurrency(currencyBalance, root.currentCurrency.toUpperCase())
          }
          tokenAssetSourceFn: function (symbol) {
              return symbol ? Style.png("tokens/" + symbol) : defaultToken
@@ -182,11 +182,11 @@ Item {
              if (!selectAsset.selectedAsset) {
                  return
              }
-             txtBalance.text = Utils.stripTrailingZeros(parseFloat(selectAsset.selectedAsset.balance).toFixed(4))
+             txtBalance.text = Utils.stripTrailingZeros(parseFloat(selectAsset.selectedAsset.balance).toFixed(4)) // FIXME i18n
              if (inputAmount.text === "" || isNaN(inputAmount.text)) {
                  return
              }
-            txtFiatBalance.text = root.getFiatValue(inputAmount.text, selectAsset.selectedAsset.symbol, root.currentCurrency)
+            txtFiatBalance.text = root.getFiatValue(inputAmount.text, selectAsset.selectedAsset.symbol, root.currentCurrency) // FIXME i18n
             root.validate(true)
         }
     }

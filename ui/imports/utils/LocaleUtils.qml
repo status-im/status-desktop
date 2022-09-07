@@ -32,7 +32,6 @@ QtObject {
     }
 
     // TODO enforce 24h time format when desired
-    // TODO check default (crypto) currency float precision
     // TODO strip trailing zeros in numbers/currencies
 
     // DATE/TIME
@@ -124,7 +123,7 @@ QtObject {
      Converts the Number to a crypto currency string using the currency and conventions of the specified locale.
      If symbol is specified it will be used as the currency symbol.
     */
-    function formatCryptoCurrency(value, symbol, precision = 15, locale = "") {
+    function formatCryptoCurrency(value, symbol, precision = 18, locale = "") {
         if (!symbol) {
             console.warn("LocaleUtils.formatCryptoCurrency(): missing 'symbol' for %1, will be replaced with '???'"
                          .arg(value.toString()))

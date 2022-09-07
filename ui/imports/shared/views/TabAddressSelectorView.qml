@@ -153,7 +153,7 @@ Item {
                     objectName: model.name
                     height: visible ? 64 : 0
                     title: !!model.name ? model.name : ""
-                    subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), store.locale, {"model.currency": true}) + " " + store.currentCurrency.toUpperCase()
+                    subTitle: LocaleUtils.formatCurrency(model.currencyBalance, store.currentCurrency.toUpperCase())
                     asset.emoji: !!model.emoji ? model.emoji: ""
                     asset.color: model.color
                     asset.name: !model.emoji ? "filled-account": ""

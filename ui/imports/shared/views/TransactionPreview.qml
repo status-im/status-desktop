@@ -334,7 +334,7 @@ Item {
                 StyledText {
                     font.pixelSize: 15
                     height: 22
-                    text: (root.amount && root.amount.value) ? Utils.stripTrailingZeros(root.amount.value) : ""
+                    text: (root.amount && root.amount.value) ? Utils.stripTrailingZeros(root.amount.value) : "" // FIXME i18n
                     anchors.left: parent.left
                     anchors.right: txtAmountSymbol.left
                     anchors.rightMargin: 5
@@ -359,7 +359,7 @@ Item {
                     id: txtAmountFiat
                     font.pixelSize: 15
                     height: 22
-                    text: "~" + (root.amount && root.amount.fiatValue ? root.amount.fiatValue : "0.00")
+                    text: "~" + (root.amount && root.amount.fiatValue ? root.amount.fiatValue : "0.00") // FIXME i18n
                     anchors.right: txtAmountCurrency.left
                     anchors.rightMargin: 5
                     anchors.verticalCenter: parent.verticalCenter
@@ -400,7 +400,7 @@ Item {
                         font.pixelSize: 15
                         width: 75
                         height: 22
-                        text: (root.gas && root.gas.value) ? Utils.stripTrailingZeros(root.gas.value) : ""
+                        text: (root.gas && root.gas.value) ? Utils.stripTrailingZeros(root.gas.value) : "" // FIXME i18n
                         anchors.verticalCenter: parent.verticalCenter
                         horizontalAlignment: Text.AlignRight
                         verticalAlignment: Text.AlignVCenter
@@ -434,7 +434,7 @@ Item {
                         id: txtFeeFiat
                         font.pixelSize: 15
                         height: 22
-                        text: "~" + ((root.gas && root.gas.fiatValue) ? root.gas.fiatValue : "0.00")
+                        text: "~" + ((root.gas && root.gas.fiatValue) ? root.gas.fiatValue : "0.00") // FIXME i18n
                         anchors.verticalCenter: parent.verticalCenter
                         horizontalAlignment: Text.AlignRight
                         verticalAlignment: Text.AlignVCenter

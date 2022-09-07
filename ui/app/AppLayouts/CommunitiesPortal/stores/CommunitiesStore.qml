@@ -13,7 +13,7 @@ QtObject {
     property bool discordDataExtractionInProgress: root.communitiesModuleInst.discordDataExtractionInProgress
     property int discordImportErrorsCount: root.communitiesModuleInst.discordImportErrorsCount
     property int discordImportWarningsCount: root.communitiesModuleInst.discordImportWarningsCount
-    property string locale: localAppSettings.language
+    property string locale: Qt.locale().name
     property var advancedModule: profileSectionModule.advancedModule
     property bool isCommunityHistoryArchiveSupportEnabled: advancedModule? advancedModule.isCommunityHistoryArchiveSupportEnabled : false
 

@@ -152,11 +152,10 @@ Rectangle {
                         Layout.alignment: Qt.AlignVCenter
                         text: {
                             if (Global.appMain) {
-                                return "%1%2".arg(SharedStore.RootStore.currencyStore.currentCurrencySymbol)
-                                .arg(Utils.toLocaleString(model.balance.toFixed(2), appSettings.locale, {"model.currency": true}))
+                                return LocaleUtils.formatCurrency(model.balance, SharedStore.RootStore.currencyStore.currentCurrencySymbol)
                             }
                             // without language/model refactor no way to read currency symbol or `appSettings.locale` before user logs in
-                            return "$%1".arg(Utils.toLocaleString(model.balance.toFixed(2), localAppSettings.language, {"model.currency": true}))
+                            return LocaleUtils.formatCurrency(model.balance, "$")
                         }
                         wrapMode: Text.WordWrap
                         font.pixelSize: Constants.keycard.general.fontSize2

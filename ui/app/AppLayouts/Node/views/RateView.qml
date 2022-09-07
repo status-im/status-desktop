@@ -37,7 +37,7 @@ Column {
             // TODO: replace with StatusInput from StatusQ at some point
             Input {
                 id: uploadRate
-                text: Math.round(parseInt(store.nodeModelInst.uploadRate, 10) / 1024 * 100) / 100
+                text: LocaleUtils.formatNumber(Math.round(parseInt(store.nodeModelInst.uploadRate, 10) / 1024 * 100) / 100)
                 width: parent.width
                 readOnly: true
                 customHeight: 44
@@ -67,7 +67,7 @@ Column {
             // TODO: replace with StatusInput from StatusQ at some point
             Input {
                 id: downloadRate
-                text: Math.round(parseInt(store.nodeModelInst.downloadRate, 10) / 1024 * 100) / 100
+                text: LocaleUtils.formatNumber(Math.round(parseInt(store.nodeModelInst.downloadRate, 10) / 1024 * 100) / 100)
                 width: parent.width
                 readOnly: true
                 customHeight: 44

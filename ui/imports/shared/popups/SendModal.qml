@@ -75,7 +75,7 @@ StatusDialog {
 
     QtObject {
         id: d
-        readonly property string maxFiatBalance: Utils.stripTrailingZeros(parseFloat(assetSelector.selectedAsset.totalBalance).toFixed(4))
+        readonly property string maxFiatBalance: Utils.stripTrailingZeros(parseFloat(assetSelector.selectedAsset.totalBalance).toFixed(4)) // FIXME i18n
         readonly property bool isReady: amountToSendInput.valid && !amountToSendInput.pending && recipientReady
         readonly property bool errorMode: networkSelector.suggestedRoutes && networkSelector.suggestedRoutes.length <= 0 || networkSelector.errorMode
         readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending
@@ -151,7 +151,7 @@ StatusDialog {
                         Layout.alignment: Qt.AlignVCenter
                     }
                     StatusListItemTag {
-                        title: assetSelector.selectedAsset.totalBalance > 0 ? qsTr("Max: ") + (assetSelector.selectedAsset ? d.maxFiatBalance : "0.00") : qsTr("No balances active")
+                        title: assetSelector.selectedAsset.totalBalance > 0 ? qsTr("Max: ") + (assetSelector.selectedAsset ? d.maxFiatBalance : "0.00") : qsTr("No balances active") // FIXME i18n
                         closeButtonVisible: false
                         titleText.font.pixelSize: 12
                         Layout.preferredHeight: 22
@@ -169,7 +169,7 @@ StatusDialog {
                         anchors.left: parent.left
                         anchors.leftMargin: -Style.current.padding
                         width: parent.width - assetSelector.width
-                        placeholderText: "0.00" + " " + assetSelector.selectedAsset.symbol
+                        placeholderText: "0.00" + " " + assetSelector.selectedAsset.symbol // FIXME i18n
                         errorMessageCmp.anchors.rightMargin: -100
                         input.edit.color: d.errorMode ? Theme.palette.dangerColor1 : Theme.palette.directColor1
                         validators: [
@@ -187,9 +187,9 @@ StatusDialog {
                                 return
                             }
                             if (amount === "") {
-                                txtFiatBalance.text = "0.00"
+                                txtFiatBalance.text = "0.00" // FIXME i18n
                             } else {
-                                txtFiatBalance.text = popup.store.getFiatValue(amount, assetSelector.selectedAsset.symbol, popup.store.currentCurrency)
+                                txtFiatBalance.text = popup.store.getFiatValue(amount, assetSelector.selectedAsset.symbol, popup.store.currentCurrency) // FIXME i18n
                             }
                             gasSelector.estimateGas()
                             popup.recalculateRoutesAndFees()
@@ -202,7 +202,7 @@ StatusDialog {
                         assets: popup.selectedAccount.assets
                         defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")
                         getCurrencyBalanceString: function (currencyBalance) {
-                            return Utils.toLocaleString(currencyBalance.toFixed(2), popup.store.locale, {"currency": true}) + " " + popup.store.currentCurrency.toUpperCase()
+                            return LocaleUtils.formatCurrency(currencyBalance, popup.store.currentCurrency.toUpperCase())
                         }
                         tokenAssetSourceFn: function (symbol) {
                             return symbol ? Style.png("tokens/" + symbol) : defaultToken
@@ -220,7 +220,7 @@ StatusDialog {
                             if (amountToSendInput.text === "" || isNaN(amountToSendInput.text)) {
                                 return
                             }
-                            txtFiatBalance.text = popup.store.getFiatValue(amountToSendInput.text, assetSelector.selectedAsset.symbol, popup.store.currentCurrency)
+                            txtFiatBalance.text = popup.store.getFiatValue(amountToSendInput.text, assetSelector.selectedAsset.symbol, popup.store.currentCurrency) // FIXME i18n
                             gasSelector.estimateGas()
                             popup.recalculateRoutesAndFees()
                         }
@@ -234,7 +234,7 @@ StatusDialog {
                         font.weight: Font.Medium
                         font.pixelSize: 12
                         inputMethodHints: Qt.ImhFormattedNumbersOnly
-                        text: "0.00"
+                        text: "0.00" // FIXME i18n
                         selectByMouse: true
                         background: Rectangle {
                             color: Style.current.transparent
@@ -242,7 +242,7 @@ StatusDialog {
                         padding: 0
                         Keys.onReleased: {
                             let balance = txtFiatBalance.text.trim()
-                            if (balance === "" || isNaN(balance)) {
+                            if (balance === "" || isNaN(balance)) { // FIXME i18n
                                 return
                             }
                             // To-Do Not refactored yet
@@ -366,7 +366,7 @@ StatusDialog {
                         id: networkSelector
                         store: popup.store
                         selectedAccount: popup.selectedAccount
-                        amountToSend: isNaN(parseFloat(amountToSendInput.text)) ? 0 : parseFloat(amountToSendInput.text)
+                        amountToSend: isNaN(parseFloat(amountToSendInput.text)) ? 0 : parseFloat(amountToSendInput.text) // FIXME i18n
                         requiredGasInEth: gasSelector.selectedGasEthValue
                         assets: popup.selectedAccount.assets
                         selectedAsset: assetSelector.selectedAsset
@@ -459,7 +459,7 @@ StatusDialog {
                                     Layout.fillWidth: true
                                     selectedAccount: popup.selectedAccount
                                     selectedAmount: amountToSendInput.text === "" ? 0.0 :
-                                                    parseFloat(amountToSendInput.text)
+                                                    parseFloat(amountToSendInput.text) // FIXME i18n
                                     selectedAsset: assetSelector.selectedAsset
                                     selectedGasEthValue: gasSelector.selectedGasEthValue
                                     selectedNetwork: networkSelector.selectedNetwork ? networkSelector.selectedNetwork: null

@@ -15,7 +15,6 @@ Item {
         readonly property var alwaysVisible : ["ETH", "SNT", "DAI", "STT"]
     }
 
-    property string locale: ""
     property string currency: ""
     property string currencySymbol: ""
 
@@ -57,7 +56,7 @@ Item {
         anchors.leftMargin: Style.current.smallPadding
         font.pixelSize: 15
         color: Style.current.secondaryText
-        text: qsTr("%1 %2").arg(enabledNetworkBalance.toString()).arg(symbol)
+        text: LocaleUtils.formatCryptoCurrency(enabledNetworkBalance, symbol)
     }
 
     StyledText {
@@ -68,6 +67,6 @@ Item {
         anchors.rightMargin: 0
         font.pixelSize: 15
         font.strikeout: false
-        text: enabledNetworkCurrencyBalance.toLocaleCurrencyString(Qt.locale(), assetDelegate.currencySymbol)
+        text: LocaleUtils.formatCurrency(enabledNetworkCurrencyBalance, assetDelegate.currencySymbol)
     }
 }

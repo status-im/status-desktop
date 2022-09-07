@@ -12,6 +12,7 @@ import StatusQ.Components 0.1
 import StatusQ.Core.Backpressure 1.0
 
 import shared.controls 1.0
+import utils 1.0
 
 Item {
     id: root
@@ -28,7 +29,7 @@ Item {
     }
 
     // Define this in the usage to get balance in currency selected by user
-    property var getCurrencyBalanceString: function (currencyBalance) { return "" }
+    property var getCurrencyBalanceString: function (currencyBalance) { return LocaleUtils.formatNumber(currencyBalance) }
 
     function resetInternal() {
         assets = null
@@ -165,7 +166,7 @@ Item {
                             Layout.fillWidth: true
                             horizontalAlignment: Text.AlignRight
                             font.pixelSize: 15
-                            text: parseFloat(totalBalance).toLocaleCurrencyString(Qt.locale(), symbol)
+                            text: LocaleUtils.formatCryptoCurrency(totalBalance, symbol)
                         }
                     }
                     RowLayout {

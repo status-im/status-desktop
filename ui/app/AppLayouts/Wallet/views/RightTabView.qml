@@ -31,7 +31,6 @@ Item {
                     Layout.fillWidth: true
                     Layout.leftMargin: Style.current.padding
                     Layout.rightMargin: Style.current.padding
-                    locale: RootStore.locale
                     currency: RootStore.currentCurrency
                     currentAccount: RootStore.currentAccount
                     store: root.store

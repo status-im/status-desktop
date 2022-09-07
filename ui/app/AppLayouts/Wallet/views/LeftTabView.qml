@@ -57,9 +57,7 @@ Rectangle {
             StyledTextEdit {
                 id: walletAmountValue
                 color: Style.current.textColor
-                text: {
-                    Utils.toLocaleString(parseFloat(RootStore.totalCurrencyBalance).toFixed(2), localAppSettings.language, {"currency": true}) + " " + RootStore.currentCurrency.toUpperCase()
-                }
+                text: LocaleUtils.formatCurrency(RootStore.totalCurrencyBalance, RootStore.currentCurrency.toUpperCase())
                 selectByMouse: true
                 cursorVisible: true
                 readOnly: true
@@ -91,7 +89,7 @@ Rectangle {
                 width: ListView.view.width
                 highlighted: RootStore.currentAccount.name === model.name
                 title: model.name
-                subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), RootStore.locale, {"model.currency": true}) + " " + RootStore.currentCurrency.toUpperCase()
+                subTitle: LocaleUtils.formatCurrency(model.currencyBalance, RootStore.currentCurrency.toUpperCase())
                 asset.emoji: !!model.emoji ? model.emoji: ""
                 asset.color: model.color
                 asset.name: !model.emoji ? "filled-account": ""

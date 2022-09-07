@@ -18,7 +18,6 @@ import "../stores"
 Item {
     id: root
 
-    property string locale: ""
     property string currency: ""
     property var currentAccount
     property var store
@@ -44,7 +43,7 @@ Item {
                 font.pixelSize: 28
                 font.bold: true
                 color: Theme.palette.baseColor1
-                text: "%1 %2".arg(Utils.toLocaleString(root.currentAccount.currencyBalance.toFixed(2), root.locale, {"currency": true})).arg(root.currency.toUpperCase())
+                text: LocaleUtils.formatCurrency(root.currentAccount.currencyBalance, root.currency.toUpperCase())
             }
         }
 

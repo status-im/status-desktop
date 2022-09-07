@@ -337,7 +337,7 @@ Item {
             visible: root.suggestedFees.eip1559Enabled
             width: 125
             customHeight: 56
-            text: formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
+            text: formatDec(root.suggestedFees.maxPriorityFeePerGas, 2); // FIXME i18n
             placeholderText: "20"
             onTextChanged: {
                 if (root.validate()) {
@@ -405,7 +405,7 @@ Item {
             visible: root.suggestedFees.eip1559Enabled
             text: {
                 let v = selectedGasEthValue > 0.00009 ? selectedGasEthValue :
-                    (selectedGasEthValue < 0.000001 ? "0.000000..." : selectedGasEthValue.toFixed(6))
+                    (selectedGasEthValue < 0.000001 ? "0.000000..." : selectedGasEthValue.toFixed(6)) // FIXME i18n
                 return qsTr("Maximum priority fee: %1 ETH").arg(v)
             }
             anchors.top: errorsText.bottom

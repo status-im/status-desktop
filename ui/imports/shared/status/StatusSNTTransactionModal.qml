@@ -34,7 +34,7 @@ ModalPopup {
 
     height: 540
 
-    title: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(assetPrice)).arg(asset.symbol)
+    title: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(assetPrice)).arg(asset.symbol) // FIXME i18n
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
@@ -93,7 +93,7 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group1
-            headerText: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(root.assetPrice)).arg(root.asset.symbol)
+            headerText: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(root.assetPrice)).arg(root.asset.symbol) // FIXME i18n
             footerText: qsTr("Continue")
             showBackBtn: false
             StatusAccountSelector {
@@ -164,7 +164,7 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group2
-            headerText: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(root.assetPrice)).arg(root.asset.symbol)
+            headerText: qsTr("Authorize %1 %2").arg(Utils.stripTrailingZeros(root.assetPrice)).arg(root.asset.symbol) // FIXME i18n
             footerText: qsTr("Sign with password")
 
             TransactionPreview {
@@ -187,7 +187,7 @@ ModalPopup {
         }
         TransactionFormGroup {
             id: group3
-            headerText: qsTr("Send %1 %2").arg(Utils.stripTrailingZeros(root.assetPrice)).arg(root.asset.symbol)
+            headerText: qsTr("Send %1 %2").arg(Utils.stripTrailingZeros(root.assetPrice)).arg(root.asset.symbol) // FIXME i18n
             footerText: qsTr("Sign with password")
 
             TransactionSigner {

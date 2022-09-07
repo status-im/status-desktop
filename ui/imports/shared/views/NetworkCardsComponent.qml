@@ -76,15 +76,14 @@ Item {
                 model: networkCardsComponent.allNetworks
                 StatusCard {
                     id: fromNetwork
-                    property var tokenBalanceOnChain: Utils.toLocaleString(parseFloat(d.getBalance(model.chainId)).toFixed(4), locale, {"currency": true})
-                    property var hasGas: assets.hasGas(model.chainId, model.nativeCurrencySymbol, requiredGasInEth + parseFloat(amountToSend))
+                    readonly property double tokenBalanceOnChain: parseFloat(d.getBalance(model.chainId))
+                    readonly property bool hasGas: assets.hasGas(model.chainId, model.nativeCurrencySymbol, requiredGasInEth + amountToSend)
                     primaryText: model.chainName
-                    secondaryText: (parseFloat(tokenBalanceOnChain) === 0 && amountToSend !== 0) ?
-                                   qsTr("No Balance") : !hasGas ? qsTr("No Gas") :
+                    secondaryText: (!tokenBalanceOnChain && amountToSend) ? qsTr("No Balance") : !hasGas ? qsTr("No Gas") :
                                    (selectedNetwork && selectedNetwork.chainName === model.chainName) ?
-                                   amountToSend: 0
-                    tertiaryText: qsTr("BALANCE: ") + tokenBalanceOnChain
-                    state: tokenBalanceOnChain === 0 || !hasGas ? "unavailable" : networkCardsComponent.errorMode ? "error" : "default"
+                                   LocaleUtils.formatNumber(amountToSend): 0
+                    tertiaryText: qsTr("BALANCE: %1").arg(LocaleUtils.formatNumber(tokenBalanceOnChain))
+                    state: !tokenBalanceOnChain || !hasGas ? "unavailable" : networkCardsComponent.errorMode ? "error" : "default"
                     cardIcon.source: Style.png(model.iconUrl)
                     disabledText: qsTr("Disabled")
                     advancedMode: networkCardsComponent.customMode
@@ -108,7 +107,7 @@ Item {
                     }
                     onAdvancedInputTextChanged: {
                         if(selectedNetwork && selectedNetwork.chainName === model.chainName) {
-                            d.customAmountToSend = isNaN(parseFloat(advancedInputText)) ? 0 : parseFloat(advancedInputText)
+                            d.customAmountToSend = isNaN(parseFloat(advancedInputText)) ? 0 : parseFloat(advancedInputText) // FIXME i18n parse correctly
                         }
                     }
                 }
@@ -158,7 +157,7 @@ Item {
                     }
                     onAdvancedInputTextChanged: {
                         if(selectedNetwork && selectedNetwork.chainName === model.chainName)
-                            d.customAmountToReceive = isNaN(parseFloat(advancedInputText)) ? 0 : parseFloat(advancedInputText)
+                            d.customAmountToReceive = isNaN(parseFloat(advancedInputText)) ? 0 : parseFloat(advancedInputText) // FIXME i18n parse correctly
                     }
                 }
             }

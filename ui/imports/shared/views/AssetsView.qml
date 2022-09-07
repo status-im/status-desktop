@@ -46,7 +46,7 @@ Item {
             objectName: "AssetView_TokenListItem_" + symbol
             width: parent.width
             title: name
-            subTitle: qsTr("%1 %2").arg(Utils.toLocaleString(enabledNetworkBalance, RootStore.locale, {"currency": true})).arg(symbol)
+            subTitle: LocaleUtils.formatCryptoCurrency(enabledNetworkBalance, symbol)
             asset.name: symbol ? Style.png("tokens/" + symbol) : ""
             asset.isImage: true
             components: [
@@ -59,7 +59,7 @@ Item {
                         anchors.right: parent.right
                         font.pixelSize: 15
                         font.strikeout: false
-                        text: enabledNetworkCurrencyBalance.toLocaleCurrencyString(Qt.locale(), RootStore.currencyStore.currentCurrencySymbol)
+                        text: LocaleUtils.formatCurrency(enabledNetworkCurrencyBalance, RootStore.currencyStore.currentCurrencySymbol)
                     }
                     Row {
                         anchors.horizontalCenter: parent.horizontalCenter

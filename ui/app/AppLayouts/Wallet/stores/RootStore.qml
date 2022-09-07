@@ -19,7 +19,7 @@ QtObject {
 
     property var currencyStore: SharedStore.RootStore.currencyStore
     property string currentCurrency: currencyStore.currentCurrency
-    property string totalCurrencyBalance: walletSection.totalCurrencyBalance
+    property double totalCurrencyBalance: walletSection.totalCurrencyBalance
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 
