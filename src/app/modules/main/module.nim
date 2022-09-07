@@ -730,6 +730,7 @@ method communityJoined*[T](
     community.joined):
     singletonInstance.globalEvents.myRequestToJoinCommunityAcccepted("Community Request Accepted",
       fmt "Your request to join community {community.name} is accepted", community.id)
+    self.displayEphemeralNotification(fmt "{community.name} membership approved ", "", conf.COMMUNITIESPORTAL_SECTION_ICON, false, EphemeralNotificationType.Success.int, "")
 
   if setActive:
     self.setActiveSection(communitySectionItem)
