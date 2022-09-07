@@ -321,7 +321,6 @@ Item {
                 anchors.bottomMargin: Style.current.padding
                 anchors.right: chatBox.right
                 anchors.rightMargin: Style.current.padding
-                timestamp: new Date().getTime()
                 visible: true
             }
 

@@ -9,7 +9,7 @@ import utils 1.0
 StyledText {
     id: chatTime
 
-    property string timestamp
+    property date timestamp: new Date()
 
     color: Style.current.secondaryText
     text: LocaleUtils.formatTime(chatTime.timestamp, Locale.ShortFormat)

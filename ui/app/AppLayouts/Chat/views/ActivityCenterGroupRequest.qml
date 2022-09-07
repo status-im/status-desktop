@@ -108,7 +108,7 @@ Item {
                 font.pixelSize: 10
                 visible: true
                 color: Style.current.secondaryText
-                //timestamp: root.timestamp
+                timestamp: groupRequestContent.timestamp
             }
         }
 
