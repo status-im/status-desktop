@@ -508,6 +508,14 @@ ColumnLayout {
     }
 
     StatusMemberListItem {
+        nickName: "untrusted-admin.eth"
+        asset.isLetterIdenticon: true
+        isUntrustworthy: true
+        isAdmin: true
+        isContact: true
+    }
+
+    StatusMemberListItem {
         nickName: "This girl I know from work"
         userName: "annabelle"
         asset.isLetterIdenticon: true

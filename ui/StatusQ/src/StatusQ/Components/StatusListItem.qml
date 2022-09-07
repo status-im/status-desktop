@@ -175,7 +175,7 @@ Rectangle {
             anchors.left: iconOrImage.active ? iconOrImage.right : parent.left
             anchors.right: statusListItemLabel.visible ? statusListItemLabel.left : statusListItemComponentsSlot.left
             anchors.leftMargin: iconOrImage.active ? 16 : statusListItem.leftPadding
-            anchors.rightMargin: statusListItem.rightPadding
+            anchors.rightMargin: Math.max(statusListItem.rightPadding, titleIconsRow.requiredWidth)
             anchors.verticalCenter:  bottomModel.length === 0 ? parent.verticalCenter : undefined
 
             height: childrenRect.height
@@ -271,6 +271,9 @@ Rectangle {
 
             Loader {
                 id: titleIconsRow
+
+                readonly property int requiredWidth: active ? width + anchors.leftMargin * 2 : 0
+
                 anchors.left: !statusListItem.titleAsideText ? statusListItemTitle.right : statusListItemTitleAsideText.right
                 anchors.verticalCenter: statusListItemTitle.verticalCenter
                 anchors.leftMargin: 4
