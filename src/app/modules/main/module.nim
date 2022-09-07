@@ -901,6 +901,10 @@ method ephemeralNotificationClicked*[T](self: Module[T], id: int64) =
   else:
     self.osNotificationClicked(item.details)
 
+method onMyRequestAdded*[T](self: Module[T]) =
+    self.displayEphemeralNotification("Your Request has been submitted", "" , "checkmark-circle", false, EphemeralNotificationType.Success.int, "")
+
+
 method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, chatId: string, 
   url: string, userId: string, groupName: string, listOfUserIds: seq[string]) =
   
