@@ -91,6 +91,53 @@ QtObject {
         return value.toLocaleString(Qt.locale(locale), format)
     }
 
+    function getTimeDifference(d1, d2) {
+        const day1Year = d1.getFullYear()
+        const day1Month = d1.getMonth()
+        const day1Time = d1.getTime()
+
+        const day2Year = d2.getFullYear()
+        const day2Month = d2.getMonth()
+        const day2Time = d2.getTime()
+
+        const inYears = day2Year-day1Year
+        if (inYears > 0) {
+            return qsTr("%n year(s) ago", "", inYears)
+        }
+
+        const inMonths = (day2Month+12*day2Year)-(day1Month+12*day1Year)
+        if (inMonths > 0) {
+            return qsTr("%n month(s) ago", "", inMonths)
+        }
+
+        const inWeeks = parseInt((day2Time-day2Time)/(24*3600*1000*7))
+        if (inWeeks > 0) {
+            return qsTr("%n week(s) ago", "", inWeeks)
+        }
+
+        const inDays = parseInt((day2Time-day1Time)/(24*3600*1000))
+        if (inDays > 0) {
+            return qsTr("%n day(s) ago", "", inDays)
+        }
+
+        const inHours = parseInt((day2Time-day1Time)/(3600*1000));
+        if (inHours > 0) {
+            return qsTr("%n hour(s) ago", "", inHours)
+        }
+
+        const inMins = parseInt((day2Time-day1Time)/(60*1000))
+        if (inMins > 0) {
+            return qsTr("%n min(s) ago", "x minute(s) ago", inMins)
+        }
+
+        const inSecs = parseInt((day2Time-day1Time)/1000);
+        if (inSecs > 0) {
+            return qsTr("%n sec(s) ago", "x second(s) ago", inSecs)
+        }
+
+        return qsTr("now")
+    }
+
     // NUMBERS
     /**
       Converts the Number to a string suitable for the specified locale with the specified precision.

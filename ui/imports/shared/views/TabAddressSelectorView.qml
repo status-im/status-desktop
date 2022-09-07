@@ -198,7 +198,7 @@ Item {
                     implicitWidth: parent.width
                     height: visible ? 64 : 0
                     title: isIncoming ? from : to
-                    subTitle: Utils.getTimeDifference(new Date(parseInt(timestamp) * 1000), new Date())
+                    subTitle: LocaleUtils.getTimeDifference(new Date(parseInt(timestamp) * 1000), new Date())
                     statusListItemTitle.elide: Text.ElideMiddle
                     statusListItemTitle.wrapMode: Text.NoWrap
                     radius: 0

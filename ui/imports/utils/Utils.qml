@@ -451,68 +451,6 @@ QtObject {
         return StatusQUtils.Utils.elideText(compressedPk, 6, 3)
     }
 
-    function getTimeDifference(d1, d2) {
-        var timeString = ""
-        var day1Year = d1.getFullYear()
-        var day1Month = d1.getMonth()
-        var day1Time = d1.getTime()
-
-        var day2Year = d2.getFullYear()
-        var day2Month = d2.getMonth()
-        var day2Time = d2.getTime()
-
-        var inYears = day2Year-day1Year
-
-        if(inYears > 0) {
-            timeString =  inYears > 1 ? qsTr("years ago") : qsTr("year ago")
-            return inYears + " " + timeString
-        }
-
-        var inMonths = (day2Month+12*day2Year)-(day1Month+12*day1Year)
-
-        if(inMonths > 0) {
-            timeString =  inMonths > 1 ? qsTr("months ago") : qsTr("month ago")
-            return inMonths + " " + timeString
-        }
-
-        var inWeeks = parseInt((day2Time-day2Time)/(24*3600*1000*7))
-
-        if(inWeeks > 0) {
-            timeString =  inWeeks > 1 ? qsTr("weeks ago") : qsTr("week ago")
-            return inWeeks + " " + timeString
-        }
-
-        var inDays = parseInt((day2Time-day1Time)/(24*3600*1000))
-
-        if(inDays > 0) {
-            timeString =  inDays > 1 ? qsTr("days ago") : qsTr("day ago")
-            return inDays + " " + timeString
-        }
-
-        var inHours = parseInt((day2Time-day1Time)/(3600*1000));
-
-        if(inHours > 0) {
-            timeString =  inHours > 1 ? qsTr("hours ago") : qsTr("hour ago")
-            return inHours + " " + timeString
-        }
-
-        var inMins = parseInt((day2Time-day1Time)/(60*1000))
-
-        if(inMins > 0) {
-            timeString =  inMins > 1 ? qsTr("mins ago") : qsTr("min ago")
-            return inMins + " " + timeString
-        }
-
-        var inSecs = parseInt((day2Time-day1Time)/(1000));
-
-        if(inSecs > 0) {
-            timeString =  inSecs > 1 ? qsTr("secs ago") : qsTr("sec ago")
-            return inSecs + " " + timeString
-        }
-
-        return qsTr("now")
-    }
-
     function elideIfTooLong(str, maxLength) {
         return (str.length > maxLength) ? str.substr(0, maxLength-4) + '...' : str;
     }
