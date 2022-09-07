@@ -125,6 +125,7 @@ target_sources(${PROJECT_NAME}
         src/StatusGo/Wallet/DerivedAddress.h
         src/StatusGo/Wallet/NetworkConfiguration.h
         src/StatusGo/Wallet/Token.h
+        src/StatusGo/Wallet/SavedAddress.h
         src/StatusGo/Wallet/wallet_types.h
         src/StatusGo/Wallet/WalletApi.h
         src/StatusGo/Wallet/WalletApi.cpp

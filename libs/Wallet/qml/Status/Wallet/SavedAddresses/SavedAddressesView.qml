@@ -10,10 +10,29 @@ Item {
 
     required property SavedAddressesController savedAddressesController
 
+    Component.onCompleted: savedAddressesController.refresh()
+
     ListView {
         id: list
         anchors.fill: parent
-        model: SavedAddressesController.savedAddresses
+        model: savedAddressesController.savedAddresses
+
+        header: RowLayout {
+            width: list.width
+            spacing: 0
+
+            Label {
+                text: qsTr("Address")
+                font.bold: true
+                Layout.fillWidth: true
+            }
+
+            Label {
+                text: qsTr("Name")
+                font.bold: true
+                Layout.fillWidth: true
+            }
+        }
 
         delegate: RowLayout {
             width: list.width
@@ -39,6 +58,7 @@ Item {
 
         AddSavedAddressesView {
             id: addView
+            x: (parent.width - width) / 2
             y: parent.height - height
             savedAddressesController: root.savedAddressesController
         }

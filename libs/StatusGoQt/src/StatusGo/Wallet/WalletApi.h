@@ -7,6 +7,7 @@
 #include "DerivedAddress.h"
 #include "NetworkConfiguration.h"
 #include "Token.h"
+#include "SavedAddress.h"
 
 #include "Types.h"
 
@@ -19,7 +20,20 @@ namespace Status::StatusGo::Wallet
 /// \brief Retrieve a list of derived account addresses
 /// \see \c generateAccountWithDerivedPath
 /// \throws \c CallPrivateRpcError
-DerivedAddresses getDerivedAddressesForPath(const HashedPassword &password, const Accounts::EOAddress &derivedFrom, const Accounts::DerivationPath &path, int pageSize, int pageNumber);
+DerivedAddresses getDerivedAddressesForPath(const HashedPassword &password,
+                                            const Accounts::EOAddress &derivedFrom,
+                                            const Accounts::DerivationPath &path,
+                                            int pageSize, int pageNumber);
+
+/// \brief Retrieve a list of saved wallet addresses
+/// \see \c getSavedAddresses
+/// \throws \c CallPrivateRpcError
+SavedAddresses getSavedAddresses();
+
+/// \brief Add a new or update existing saved wallet address
+/// \see \c addSavedAddress
+/// \throws \c CallPrivateRpcError
+void saveAddress(const Accounts::EOAddress& address, const QString& name);
 
 /// \note status-go's GetEthereumChains@api.go which calls
 ///       NetworkManager@client.go -> network.Manager.get()
