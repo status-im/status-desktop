@@ -125,6 +125,7 @@ RowLayout {
                     chatDescription = chatContentModule.chatDetails.description
                     chatEmoji = chatContentModule.chatDetails.emoji
                     chatColor = chatContentModule.chatDetails.color
+                    chatIcon = chatContentModule.chatDetails.icon
                     chatType = chatContentModule.chatDetails.type
                     chatMuted = chatContentModule.chatDetails.muted
                     channelPosition = chatContentModule.chatDetails.position
@@ -259,9 +260,7 @@ RowLayout {
                 case Constants.chatType.publicChat:
                     return qsTr("Public chat")
                 case Constants.chatType.privateGroupChat:
-                    let cnt = root.usersStore.usersModule.model.count
-                    if(cnt > 1) return qsTr("%n member(s)", "", cnt);
-                    return qsTr("1 member");
+                    return qsTr("%n member(s)", "", chatContentModule.usersModule.model.count)
                 case Constants.chatType.communityChat:
                     return Utils.linkifyAndXSS(chatContentModule.chatDetails.description).trim()
                 default:
@@ -269,6 +268,8 @@ RowLayout {
                 }
             }
             asset.name: chatContentModule? chatContentModule.chatDetails.icon : ""
+            asset.isImage: chatContentModule.chatDetails.icon !== ""
+            asset.isLetterIdenticon: chatContentModule.chatDetails.icon === ""
             ringSettings.ringSpecModel: chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
                                             Utils.getColorHashAsJson(chatContentModule.chatDetails.id) : ""
             asset.color: chatContentModule?
@@ -289,7 +290,7 @@ RowLayout {
                 }
                 Global.openPopup(pinnedMessagesPopupComponent, {
                                      store: rootStore,
-                                     messageStore: messageStore,
+                                     messageStore: root.rootStore.messageStore,
                                      pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
                                      messageToPin: ""
                                  })
