@@ -216,6 +216,9 @@ method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheC
 
 method runAuthenticationPopup*(self: AccessInterface, keyUid: string, bip44Path: string, txHash: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+  
+method onMyRequestAdded*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController
 type
