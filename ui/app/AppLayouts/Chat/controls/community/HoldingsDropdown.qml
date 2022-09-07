@@ -7,107 +7,168 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1 as SQ
 
+
 StatusDropdown {
     id: root
 
     property var store
 
-    property var itemKey
+    property string tokenKey: ""
+    property string collectibleKey: ""
+
     property real tokenAmount: 0
-    property string tokenName: d.defaultTokenNameText
-    property url tokenImage: ""
     property real collectibleAmount: 1
-    property string collectibleName: d.defaultCollectibleNameText
     property bool collectiblesSpecificAmount: false
 
     property int ensType: EnsPanel.EnsType.Any
     property string ensDomainName: ""
-    property bool ensDomainNameValid: false
 
-    property url collectibleImage: ""
-    property int operator: SQ.Utils.Operators.None
-    property bool withOperatorSelector: true
+    signal addToken(string key, real amount, int operator)
+    signal addCollectible(string key, real amount, int operator)
+    signal addEns(bool any, string customDomain, int operator)
 
-    signal addItem(var itemKey, string itemText, url itemImage, int operator)
+    signal updateToken(string key, real amount)
+    signal updateCollectible(string key, real amount)
+    signal updateEns(bool any, string customDomain)
+
+    signal removeClicked
 
     function reset() {
-        d.currentTabIndex = 0
-        root.itemKey = undefined
+        d.currentHoldingType = HoldingTypes.Type.Token
+        d.operator = SQ.Utils.Operators.None
+
+        root.tokenKey = ""
+        root.collectibleKey = ""
         root.tokenAmount = 0
-        root.tokenName = d.defaultTokenNameText
-        root.tokenImage = ""
         root.collectibleAmount = 1
-        root.collectibleName = d.defaultCollectibleNameText
-        root.collectibleImage = ""
         root.collectiblesSpecificAmount = false
         root.ensType = EnsPanel.EnsType.Any
         root.ensDomainName = ""
-        root.operator = SQ.Utils.Operators.None
+
+        statesStack.clear()
     }
 
+    width: d.defaultWidth
     padding: d.padding
 
-    onOpened: d.selectInitState()
     onClosed: root.reset()
-    onWithOperatorSelectorChanged: d.selectInitState()
+
+    enum FlowType {
+        Add, AddWithOperators, Update
+    }
+
+    function openFlow(flowType) {
+        switch (flowType) {
+            case HoldingsDropdown.FlowType.AddWithOperators:
+                statesStack.push(d.operatorsState)
+                break
+            case HoldingsDropdown.FlowType.Add:
+                statesStack.push(d.addState)
+                break
+            case HoldingsDropdown.FlowType.Update:
+                statesStack.push(d.updateState)
+                break
+            default:
+                console.warn("Unknown flow type.")
+                return
+        }
+
+        open()
+    }
+
+    function setActiveTab(holdingType) {
+        d.currentHoldingType = holdingType
+    }
 
     QtObject {
         id: d
 
-        // Internal management properties:
-        readonly property bool tokensReady: root.tokenAmount > 0 && root.tokenName !== d.defaultTokenNameText
-        readonly property bool collectiblesReady: root.collectibleAmount > 0 && root.collectibleName !== d.defaultCollectibleNameText
-        readonly property bool ensReady: root.ensType === EnsPanel.EnsType.Any || root.ensDomainNameValid
+        // Internal management properties and signals:
+        readonly property bool tokensReady: root.tokenAmount > 0 && root.tokenKey
+        readonly property bool collectiblesReady: root.collectibleAmount > 0 && root.collectibleKey
+        readonly property bool ensReady: root.ensType === EnsPanel.EnsType.Any || d.ensDomainNameValid
 
         readonly property string operatorsState: "OPERATORS"
-        readonly property string tabsState: "TABS"
+        readonly property string addState: "ADD"
+        readonly property string updateState: "UPDATE"
         readonly property string extendedState: "EXTENDED"
 
-        readonly property string tokensState: "TOKENS"
-        readonly property string collectiblesState: "COLLECTIBLES"
-        readonly property string ensState: "ENS"
-
+        property int holdingsTabMode: HoldingsTabs.Mode.Add
         property int extendedDropdownType: ExtendedDropdownContent.Type.Tokens
-        property int currentTabIndex: 0
+
+        property int currentHoldingType: HoldingTypes.Type.Token
+
+        property int operator: SQ.Utils.Operators.None
+        property bool ensDomainNameValid: false
+
+        signal addClicked
+        signal updateClicked
 
         // By design values:
         readonly property int padding: 8
-        readonly property int topPaddingWithBack: 12
-        readonly property int extendedTopPadding: 16
 
         readonly property int operatorsWidth: 159
         readonly property int operatorsHeight: 96
 
         readonly property int defaultWidth: 289
-        readonly property int defaultHeight: 232
-        readonly property int enlargedHeight: 276
-        readonly property int extendedHeight: 417
+        readonly property int extendedContentHeight: 380
 
-        readonly property int backButtonExtraLeftMargin: 4
+        readonly property int tabsAddModeBaseHeight: 232 - padding * 2
+        readonly property int tabsAddModeExtendedHeight: 277 - padding * 2
 
-        property string defaultTokenNameText: qsTr("Choose token")
-        property string defaultCollectibleNameText: qsTr("Choose collectible")
+        readonly property int tabsUpdateModeBaseHeight: 284 - padding * 2
+        readonly property int tabsUpdateModeExtendedHeight: tabsUpdateModeBaseHeight
+                                                            + (tabsAddModeExtendedHeight - tabsAddModeBaseHeight)
 
-        signal addClicked
+        readonly property int backButtonWidth: 56
+        readonly property int backButtonHeight: 24
+        readonly property int backButtonToContentSpace: 8
 
-        function selectInitState() {
-            if(root.withOperatorSelector)
-                content.state = d.operatorsState
-            else
-                content.state = d.tabsState
+        readonly property string defaultTokenNameText: qsTr("Choose token")
+        readonly property string defaultCollectibleNameText: qsTr("Choose collectible")
+    }
+
+    QtObject {
+        id: statesStack
+
+        property alias currentState: content.state
+        property int size: 0
+        property var states: []
+
+        function push(state) {
+            states.push(state)
+            currentState = state
+            size++
+        }
+
+        function pop() {
+            states.pop()
+            currentState = states.length ? states[states.length - 1] : ""
+            size--
+        }
+
+        function clear() {
+            currentState = ""
+            size = 0
+            states = []
         }
     }
 
     contentItem: ColumnLayout {
         id: content
 
-        spacing: 10
+        spacing: d.backButtonToContentSpace
 
         StatusIconTextButton {
             id: backButton
 
-            Layout.leftMargin: d.backButtonExtraLeftMargin
+            Layout.preferredWidth: d.backButtonWidth
+            Layout.preferredHeight: d.backButtonHeight
+
+            visible: statesStack.size > 1
+
             spacing: 0
+            leftPadding: 4
             statusIcon: "next"
             icon.width: 12
             icon.height: 12
@@ -125,25 +186,22 @@ StatusDropdown {
             State {
                 name: d.operatorsState
                 PropertyChanges {target: loader; sourceComponent: operatorsSelectorView}
-                PropertyChanges {target: backButton; visible: false}
                 PropertyChanges {target: root; width: d.operatorsWidth; height: d.operatorsHeight }
             },
             State {
-                name: d.tabsState
+                name: d.addState
                 PropertyChanges {target: loader; sourceComponent: tabsView}
-                PropertyChanges {target: backButton; visible: root.withOperatorSelector}
-                PropertyChanges {
-                    target: root; topPadding: root.withOperatorSelector ? d.topPaddingWithBack : d.extendedTopPadding
-                    width: d.defaultWidth
-                    height: (loader.item.state === d.collectiblesState && root.collectiblesSpecificAmount)
-                            || (loader.item.state === d.ensState && root.ensType === EnsPanel.EnsType.CustomSubdomain) ? d.enlargedHeight : d.defaultHeight
-                }
+                PropertyChanges {target: root; height: undefined} // use implicit height
+            },
+            State {
+                name: d.updateState
+                extend: d.addState
+                PropertyChanges {target: d; holdingsTabMode: HoldingsTabs.Mode.Update}
             },
             State {
                 name: d.extendedState
                 PropertyChanges {target: loader; sourceComponent: extendedView}
-                PropertyChanges {target: backButton; visible: true}
-                PropertyChanges {target: root; topPadding: d.topPaddingWithBack; width: d.defaultWidth; height: d.extendedHeight}
+                PropertyChanges {target: root; height: d.extendedContentHeight}
             }
         ]
     }
@@ -153,8 +211,8 @@ StatusDropdown {
 
         OperatorsSelector {
             onOperatorSelected: {
-                root.operator = operator
-                content.state = d.tabsState
+                d.operator = operator
+                statesStack.push(d.addState)
             }
         }
     }
@@ -165,34 +223,50 @@ StatusDropdown {
         HoldingsTabs {
             id: holdingsTabs
 
+            readonly property var holdingTypes: [
+                HoldingTypes.Type.Token, HoldingTypes.Type.Collectible, HoldingTypes.Type.Ens
+            ]
+            readonly property var labels: [qsTr("Token"), qsTr("Collectible"), qsTr("ENS")]
+
+            readonly property bool extendedHeight:
+                d.currentHoldingType === HoldingTypes.Type.Collectible && collectiblesSpecificAmount ||
+                d.currentHoldingType === HoldingTypes.Type.Ens && root.ensType === EnsPanel.EnsType.CustomSubdomain
+
+            implicitHeight: extendedHeight
+                            ? (mode === HoldingsTabs.Mode.Add ? d.tabsAddModeExtendedHeight : d.tabsUpdateModeExtendedHeight)
+                            : (mode === HoldingsTabs.Mode.Add ? d.tabsAddModeBaseHeight : d.tabsUpdateModeBaseHeight)
+
             states: [
                 State {
-                    name: d.tokensState
-                    PropertyChanges {target: holdingsTabs; sourceComponent: tokensLayout; addButtonEnabled: d.tokensReady}
+                    name: HoldingTypes.Type.Token
+                    PropertyChanges {target: holdingsTabs; sourceComponent: tokensLayout; addOrUpdateButtonEnabled: d.tokensReady}
                 },
                 State {
-                    name: d.collectiblesState
-                    PropertyChanges {target: holdingsTabs; sourceComponent: collectiblesLayout; addButtonEnabled: d.collectiblesReady}
+                    name: HoldingTypes.Type.Collectible
+                    PropertyChanges {target: holdingsTabs; sourceComponent: collectiblesLayout; addOrUpdateButtonEnabled: d.collectiblesReady}
                 },
                 State {
-                    name: d.ensState
-                    PropertyChanges {target: holdingsTabs; sourceComponent: ensLayout; addButtonEnabled: d.ensReady}
+                    name: HoldingTypes.Type.Ens
+                    PropertyChanges {target: holdingsTabs; sourceComponent: ensLayout; addOrUpdateButtonEnabled: d.ensReady}
                 }
             ]
 
-            tabLabels: [qsTr("Token"), qsTr("Collectible"), qsTr("ENS")]
-            state: [d.tokensState, d.collectiblesState, d.ensState][currentIndex]
+            tabLabels: labels
+            state: d.currentHoldingType
+            mode: d.holdingsTabMode
 
-            currentIndex: d.currentTabIndex
-            onCurrentIndexChanged: d.currentTabIndex = currentIndex
+            currentIndex: holdingTypes.indexOf(d.currentHoldingType)
+            onCurrentIndexChanged: d.currentHoldingType = holdingTypes[currentIndex]
 
             onAddClicked: d.addClicked()
+            onUpdateClicked: d.updateClicked()
+            onRemoveClicked: root.removeClicked()
 
             Connections {
                 target: backButton
 
                 function onClicked() {
-                    content.state = d.operatorsState
+                    statesStack.pop()
                 }
             }
         }
@@ -204,22 +278,38 @@ StatusDropdown {
         TokensPanel {
             id: tokensPanel
 
-            tokenName: root.tokenName
-            tokenImage: root.tokenImage
+            tokenName: d.defaultTokenNameText
             amount: root.tokenAmount === 0 ? "" : root.tokenAmount.toString()
             onAmountChanged: root.tokenAmount = Number(amount)
 
             onPickerClicked: {
                 d.extendedDropdownType = ExtendedDropdownContent.Type.Tokens
-                content.state = d.extendedState
+                statesStack.push(d.extendedState)
             }
 
             Connections {
                 target: d
 
                 function onAddClicked() {
-                    root.addItem(root.itemKey, qsTr("%1 %2").arg(root.tokenAmount.toString()).arg(root.tokenName),
-                                 root.tokenImage, root.operator)
+                    root.addToken(root.tokenKey, root.tokenAmount, d.operator)
+                }
+
+                function onUpdateClicked() {
+                    root.updateToken(root.tokenKey, root.tokenAmount)
+                }
+            }
+
+            readonly property string tokenKey: root.tokenKey
+
+            onTokenKeyChanged: {
+                const modelItem = store.getTokenByKey(tokenKey)
+
+                if (modelItem) {
+                    tokensPanel.tokenName = modelItem.name
+                    tokensPanel.tokenImage = modelItem.iconSource
+                } else {
+                    tokensPanel.tokenName = d.defaultTokenNameText
+                    tokensPanel.tokenImage = ""
                 }
             }
         }
@@ -229,8 +319,10 @@ StatusDropdown {
         id: collectiblesLayout
 
         CollectiblesPanel {
-            collectibleName: root.collectibleName
-            collectibleImage: root.collectibleImage
+            id: collectiblesPanel
+
+            collectibleName: d.defaultCollectibleNameText
+
             amount: root.collectibleAmount === 0 ? "" : root.collectibleAmount.toString()
             onAmountChanged: root.collectibleAmount = Number(amount)
 
@@ -239,15 +331,32 @@ StatusDropdown {
 
             onPickerClicked: {
                 d.extendedDropdownType = ExtendedDropdownContent.Type.Collectibles
-                content.state = d.extendedState
+                statesStack.push(d.extendedState)
             }
 
             Connections {
                 target: d
 
                 function onAddClicked() {
-                    root.addItem(root.itemKey, qsTr("%1 %2").arg(root.collectibleAmount.toString()).arg(root.collectibleName),
-                                 root.tokenImage, root.operator)
+                    root.addCollectible(root.collectibleKey, root.collectibleAmount, d.operator)
+                }
+
+                function onUpdateClicked() {
+                    root.updateCollectible(root.collectibleKey, root.collectibleAmount)
+                }
+            }
+
+            readonly property string collectibleKey: root.collectibleKey
+
+            onCollectibleKeyChanged: {
+                const modelItem = store.getCollectibleByKey(collectibleKey)
+
+                if (modelItem) {
+                    collectiblesPanel.collectibleName = modelItem.name
+                    collectiblesPanel.collectibleImage = modelItem.iconSource
+                } else {
+                    collectiblesPanel.collectibleName = d.defaultCollectibleNameText
+                    collectiblesPanel.collectibleImage = ""
                 }
             }
         }
@@ -262,21 +371,17 @@ StatusDropdown {
 
             domainName: root.ensDomainName
             onDomainNameChanged: root.ensDomainName = domainName
-            onDomainNameValidChanged: root.ensDomainNameValid = domainNameValid
+            onDomainNameValidChanged: d.ensDomainNameValid = domainNameValid
 
             Connections {
                 target: d
 
                 function onAddClicked() {
-                    const icon = "qrc:imports/assets/icons/profile/ensUsernames.svg"
+                    root.addEns(root.ensType === EnsPanel.EnsType.Any, root.ensDomainName, d.operator)
+                }
 
-                    if (root.ensType === EnsPanel.EnsType.Any) {
-                        root.addItem("EnsAny", qsTr("Any ENS username"), icon,
-                                     root.operator)
-                    } else {
-                        root.addItem("EnsAny", qsTr(`ENS username on '%1' domain`).arg(root.ensDomainName), icon,
-                                     root.operator)
-                    }
+                function onUpdateClicked() {
+                    root.updateEns(root.ensType === EnsPanel.EnsType.Any, root.ensDomainName)
                 }
             }
         }
@@ -292,21 +397,12 @@ StatusDropdown {
             type: d.extendedDropdownType
 
             onItemClicked: {
-                // Go back
-                content.state = d.tabsState
+                statesStack.pop()
 
-                if(d.extendedDropdownType === ExtendedDropdownContent.Type.Tokens) {
-                    // Update new token item info
-                    root.tokenName = name
-                    root.tokenImage = iconSource
-                }
-                else {
-                    // Update new collectible item info
-                    root.collectibleName = name
-                    root.collectibleImage = iconSource
-                }
-
-                root.itemKey = key
+                if(d.extendedDropdownType === ExtendedDropdownContent.Type.Tokens)
+                    root.tokenKey = key
+                else
+                    root.collectibleKey = key
             }
 
             Connections {
@@ -316,7 +412,7 @@ StatusDropdown {
                     if (extendedDropdown.canGoBack)
                         extendedDropdown.goBack()
                     else
-                        content.state = d.tabsState
+                        statesStack.pop()
                 }
             }
         }

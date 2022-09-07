@@ -5,9 +5,12 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Utils 0.1 as SQ
 
 import utils 1.0
 import shared.panels 1.0
+
+import SortFilterProxyModel 0.2
 
 import "../../../Chat/controls/community"
 import "../../stores"
@@ -53,15 +56,155 @@ Flickable {
             defaultItemText: qsTr("Example: 10 SNT")
             andOperatorText: qsTr("and")
             orOperatorText: qsTr("or")
-            popupItem: HoldingsDropdown {
+
+            // roles: type, key, name, amount, imageSource, operator
+            ListModel {
+                id: holdingsModel
+            }
+
+            property int editedIndex
+
+            function getText(type, name, amount) {
+                switch (type) {
+                    case HoldingTypes.Type.Token:
+                    case HoldingTypes.Type.Collectible:
+                        return qsTr("%1 %2").arg(amount.toString()).arg(name)
+                    case HoldingTypes.Type.Ens:
+                        if (name)
+                            return qsTr("ENS username on '%1' domain").arg(name)
+                        else
+                            return qsTr("Any ENS username")
+                    default:
+                        return ""
+                }
+            }
+
+            itemsModel: SortFilterProxyModel {
+                sourceModel: holdingsModel
+
+                proxyRoles: ExpressionRole {
+                    name: "text"
+                    expression: tokensSelector.getText(model.type, model.name, model.amount)
+               }
+            }
+
+            HoldingsDropdown {
                 id: dropdown
                 store: root.store
-                withOperatorSelector: tokensSelector.itemsModel.count > 0
-                onAddItem: {
-                    tokensSelector.addItem(itemText, itemImage, operator)
-                    d.permissions.append([{itemKey: itemKey}, {operator: operator}])
+
+                function addItem(type, item, amount, operator) {
+                    const key = item.key
+                    const name = item.name
+                    const imageSource = item.iconSource.toString()
+
+                    holdingsModel.append({ type, key, name, amount, imageSource, operator })
+                    d.permissions.append([{ key }, { operator }])
+                }
+
+                onAddToken: {
+                    const modelItem = store.getTokenByKey(key)
+                    addItem(HoldingTypes.Type.Token, modelItem, amount, operator)
                     dropdown.close()
                 }
+
+                onAddCollectible: {
+                    const modelItem = store.getCollectibleByKey(key)
+                    addItem(HoldingTypes.Type.Collectible, modelItem, amount, operator)
+                    dropdown.close()
+                }
+
+                onAddEns: {
+                    const key = any ? "EnsAny" : "EnsCustom"
+                    const name = any ? "" : customDomain
+                    const icon = "qrc:imports/assets/icons/profile/ensUsernames.svg"
+
+                    holdingsModel.append({type: HoldingTypes.Type.Ens, key, name, amount: 1, imageSource: icon, operator })
+                    d.permissions.append([{ key }, { operator }])
+                    dropdown.close()
+                }
+
+                onUpdateToken: {
+                    const modelItem = store.getTokenByKey(key)
+                    const name = modelItem.name
+                    const imageSource = modelItem.iconSource.toString()
+
+                    holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Token, key, name, amount, imageSource })
+                    dropdown.close()
+                }
+
+                onUpdateCollectible: {
+                    const modelItem = store.getCollectibleByKey(key)
+                    const name = modelItem.name
+                    const imageSource = modelItem.iconSource.toString()
+
+                    holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Collectible, key, name, amount, imageSource })
+                    dropdown.close()
+                }
+
+                onUpdateEns: {
+                    const key = any ? "EnsAny" : "EnsCustom"
+                    const name = any ? "" : customDomain
+                    const icon = "qrc:imports/assets/icons/profile/ensUsernames.svg"
+
+                    holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Ens, key, name: name, amount: 1, imageSource: icon })
+                    dropdown.close()
+                }
+
+                onRemoveClicked: {
+                    holdingsModel.remove(tokensSelector.editedIndex)
+
+                    if (holdingsModel.count) {
+                        holdingsModel.set(0, { operator: SQ.Utils.Operators.None})
+                    }
+
+                    dropdown.close()
+                }
+            }
+
+            addButton.onClicked: {
+                dropdown.parent = tokensSelector.addButton
+                dropdown.x = tokensSelector.addButton.width + 4
+                dropdown.y = 0
+
+                if (tokensSelector.itemsModel.count === 0)
+                    dropdown.openFlow(HoldingsDropdown.FlowType.Add)
+                else
+                    dropdown.openFlow(HoldingsDropdown.FlowType.AddWithOperators)
+            }
+
+            onItemClicked: {
+                if (mouse.button !== Qt.LeftButton)
+                    return
+
+                dropdown.parent = item
+                dropdown.x = mouse.x + 4
+                dropdown.y = 1
+
+                const modelItem = tokensSelector.itemsModel.get(index)
+
+                dropdown.openFlow(HoldingsDropdown.FlowType.Update)
+                dropdown.setActiveTab(modelItem.type)
+
+                switch(modelItem.type) {
+                    case HoldingTypes.Type.Token:
+                        dropdown.tokenKey = modelItem.key
+                        dropdown.tokenAmount = modelItem.amount
+                        break
+                    case HoldingTypes.Type.Collectible:
+                        dropdown.collectibleKey = modelItem.key
+                        dropdown.collectibleAmount = modelItem.amount
+                        dropdown.collectiblesSpecificAmount = modelItem.amount !== 1
+                        break
+                    case HoldingTypes.Type.Ens:
+                        dropdown.ensType = modelItem.name ? EnsPanel.EnsType.CustomSubdomain
+                                                          : EnsPanel.EnsType.Any
+                        dropdown.ensDomainName = modelItem.name
+                        break
+                    default:
+                        console.warn("Unsupported holdings type.")
+                }
+
+                editedIndex = index
             }
         }
         Rectangle {
