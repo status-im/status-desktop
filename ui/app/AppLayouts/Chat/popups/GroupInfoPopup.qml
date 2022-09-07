@@ -66,13 +66,8 @@ StatusModal {
         }
     }
     header.editable: !addMembers && popup.isAdmin
-    header.asset.isLetterIdenticon: {
-        if (popup.chatDetails && popup.chatDetails.icon !== "") {
-            return false
-        }
-        return true
-    }
-    header.asset.name: popup.chatDetails ? popup.chatDetails.name || popup.chatDetails.icon : ""
+    header.asset.isLetterIdenticon: (popup.chatDetails.icon === "")
+    header.asset.name: (popup.chatDetails.icon !== "") ? popup.chatDetails.icon : popup.chatDetails.name
     header.asset.isImage: (popup.chatDetails.icon !== "")
     header.asset.bgColor: popup.chatDetails ? popup.chatDetails.color : "transparent"
 
