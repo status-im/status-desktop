@@ -12,12 +12,12 @@ StyledText {
     property string timestamp
 
     color: Style.current.secondaryText
-    text: Utils.formatShortTime(parseInt(chatTime.timestamp, 10), RootStore.accountSensitiveSettings.is24hTimeFormat)
+    text: LocaleUtils.formatTime(chatTime.timestamp, Locale.ShortFormat)
     font.pixelSize: Style.current.asideTextFontSize
 
     StatusQ.StatusToolTip {
         visible: hhandler.hovered
-        text: Utils.formatLongDateTime(parseInt(chatTime.timestamp, 10), RootStore.accountSensitiveSettings.isDDMMYYDateFormat, RootStore.accountSensitiveSettings.is24hTimeFormat)
+        text: LocaleUtils.formatDateTime(chatTime.timestamp)
         maxWidth: 350
     }
 

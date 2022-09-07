@@ -19,8 +19,7 @@ Item {
 
     QtObject {
         id: d
-         readonly property string formattedDate: nextMessageIndex > -1 ? Utils.formatLongDate(nextMsgTimestamp, RootStore.accountSensitiveSettings.isDDMMYYDateFormat) :
-                                                                         Utils.formatLongDate(undefined, RootStore.accountSensitiveSettings.isDDMMYYDateFormat)
+         readonly property string formattedDate: nextMessageIndex > -1 ? LocaleUtils.formatDate(nextMsgTimestamp) : LocaleUtils.formatDate()
     }
 
     Timer {

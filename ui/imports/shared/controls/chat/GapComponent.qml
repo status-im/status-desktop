@@ -44,8 +44,7 @@ Item {
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
         color: Style.current.secondaryText
-        text: qsTr("Between %1 and %2").arg(Utils.formatLongDate(root.gapFrom * 1000, RootStore.accountSensitiveSettings.isDDMMYYDateFormat))
-            .arg(Utils.formatLongDate(root.gapTo * 1000, RootStore.accountSensitiveSettings.isDDMMYYDateFormat))
+        text: qsTr("Between %1 and %2").arg(LocaleUtils.formatDate(root.gapFrom * 1000)).arg(Utils.formatDate(root.gapTo * 1000))
     }
     Separator {
         anchors.top: fetchDate.bottom

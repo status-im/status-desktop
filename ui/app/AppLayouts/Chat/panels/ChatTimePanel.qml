@@ -8,13 +8,13 @@ import utils 1.0
 StyledText {
     id: chatTime
     color: Style.current.secondaryText
-    text: Utils.formatShortTime(timestamp)
+    text: LocaleUtils.formatTime(timestamp, Locale.ShortFormat)
     font.pixelSize: Style.current.asideTextFontSize
     property int timestamp
 
     StatusQ.StatusToolTip {
         visible: hhandler.hovered
-        text: Utils.formatLongDateTime(chatTime.timestamp, RootStore.accountSensitiveSettings.isDDMMYYDateFormat, RootStore.accountSensitiveSettings.is24hTimeFormat)
+        text: LocaleUtils.formatDateTime(chatTime.timestamp)
         maxWidth: 350
     }
 

@@ -56,7 +56,7 @@ Item {
         searchOptionsPopupMenu: searchPopupMenu
         searchResults: appSearch.store.resultModel
         formatTimestampFn: function (ts) {
-            return Utils.formatLongDateTime(parseInt(ts, 10), RootStore.accountSensitiveSettings.isDDMMYYDateFormat, RootStore.accountSensitiveSettings.is24hTimeFormat)
+            return LocaleUtils.formatDateTime(ts)
         }
         onSearchTextChanged: {
             if (searchPopup.searchText !== "") {

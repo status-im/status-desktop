@@ -440,12 +440,9 @@ Loader {
             }
 
 
-            timestampString: Utils.formatShortTime(timestamp,
-                                                   localAccountSensitiveSettings.is24hTimeFormat)
+            timestampString: LocaleUtils.formatTime(timestamp, Locale.ShortFormat)
 
-            timestampTooltipString: Utils.formatLongDateTime(timestamp,
-                                                             localAccountSensitiveSettings.isDDMMYYDateFormat,
-                                                             localAccountSensitiveSettings.is24hTimeFormat);
+            timestampTooltipString: LocaleUtils.formatDateTime(timestamp)
 
             onEditCancelled: {
                 root.messageStore.setEditModeOff(root.messageId)

@@ -38,25 +38,6 @@ QtObject {
                                 (!startsWith0x(value) && value.length === 64))
     }
 
-    function getCurrentThemeAccountColor(color) {
-        const upperCaseColor = color.toUpperCase()
-        if (Style.current.accountColors.indexOf(upperCaseColor) > -1) {
-            return upperCaseColor
-        }
-
-        let colorIndex
-        if (Style.current.name === Constants.lightThemeName) {
-            colorIndex = Style.darkTheme.accountColors.indexOf(upperCaseColor)
-        } else {
-             colorIndex = Style.lightTheme.accountColors.indexOf(upperCaseColor)
-        }
-        if (colorIndex === -1) {
-            // Unknown color
-            return false
-        }
-        return Style.current.accountColors[colorIndex]
-    }
-
     function getReplyMessageStyle(msg, isCurrentUser) {
         return `<style type="text/css">`+
                     `a {`+
@@ -89,7 +70,7 @@ QtObject {
         if(!value.match(/^([a-z\s]+)$/)){
             return false;
         }
-        return  Utils.seedPhraseValidWordCount(value);
+        return Utils.seedPhraseValidWordCount(value);
     }
 
     function compactAddress(addr, numberOfChars) {
@@ -163,145 +144,6 @@ QtObject {
 
     function setColorAlpha(color, alpha) {
         return Qt.hsla(color.hslHue, color.hslSaturation, color.hslLightness, alpha)
-    }
-
-    function checkTimestamp(value, errorLocation) {
-        if(Number.isInteger(value) && value > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    function formatTime(value, is24hTimeFormat) {
-        const format24h = "hh:mm:ss t"
-        const format12h = "h:mm:ss AP t"
-        const currentTimeFormat = is24hTimeFormat ? format24h : format12h
-
-        return checkTimestamp(value, "formatTime") ? Qt.formatTime(new Date(value), currentTimeFormat) :
-                         Qt.formatTime(new Date(), currentTimeFormat)
-    }
-
-    function formatShortTime(value, is24hTimeFormat) {
-        const format24h = "hh:mm"
-        const format12h = "h:mm AP"
-        const currentTimeFormat = is24hTimeFormat ? format24h : format12h
-
-        return checkTimestamp(value, "formatShortTime") ? Qt.formatTime(new Date(value), currentTimeFormat) :
-                         Qt.formatTime(new Date(), currentTimeFormat)
-    }
-
-    function formatShortDateStr(longStr) {
-        const dmKeys = {
-            // Days
-            Sunday: qsTr("Sun"),
-            Monday: qsTr("Mon"),
-            Tuesday: qsTr("Tue"),
-            Wednesday: qsTr("Wed"),
-            Thursday: qsTr("Thu"),
-            Friday: qsTr("Fri"),
-            Saturday: qsTr("Sat"),
-            // Months
-            January: qsTr("Jan"),
-            February: qsTr("Feb"),
-            March: qsTr("Mar"),
-            April: qsTr("Apr"),
-            May: qsTr("May"),
-            June: qsTr("Jun"),
-            July: qsTr("Jul"),
-            August: qsTr("Aug"),
-            September: qsTr("Sep"),
-            October: qsTr("Oct"),
-            November: qsTr("Nov"),
-            December: qsTr("Dec")
-        };
-
-        let shortStr = longStr;
-        for (const [key, value] of Object.entries(dmKeys)) {
-            shortStr = shortStr.replace(key, value);
-            shortStr = shortStr.replace(key.toLowerCase(), value);
-            shortStr = shortStr.replace(key.toUpperCase(), value);
-        }
-
-        return shortStr;
-    }
-
-    function formatLongDate(value, isDDMMYYDateFormat) {
-        const formatDDMMYY = "dddd d MMMM yyyy"
-        const formatMMDDYY = "dddd, MMMM d, yyyy"
-        const currentFormat = isDDMMYYDateFormat ? formatDDMMYY : formatMMDDYY
-        return checkTimestamp(value, "formatLongDate") ? Qt.formatDate(new Date(value), currentFormat) :
-                         Qt.formatDate(new Date(), currentFormat)
-    }
-
-    function formatLongDateTime(value, isDDMMYYDateFormat, is24hTimeFormat) {
-        const formatDDMMYY = "dddd d MMMM yyyy"
-        const formatMMDDYY = "dddd, MMMM d, yyyy"
-        const format24h = "hh:mm:ss t"
-        const format12h = "h:mm:ss AP t"
-        const currentDateFormat = isDDMMYYDateFormat ? formatDDMMYY : formatMMDDYY
-        const currentTimeFormat = is24hTimeFormat ? format24h : format12h
-        return checkTimestamp(value, "formatLongDateTime") ? Qt.formatDateTime(new Date(value), currentDateFormat + " " + currentTimeFormat) :
-                         Qt.formatDateTime(new Date(), currentDateFormat + " " + currentTimeFormat)
-    }
-
-     // WARN: It is not used!! TO BE REMOVE??
-    function formatDateTime(timestamp, locale) {
-        let now = new Date()
-        let yesterday = new Date()
-        yesterday.setDate(now.getDate()-1)
-        let messageDate = new Date(Math.floor(timestamp))
-        let lastWeek = new Date()
-        lastWeek.setDate(now.getDate()-7)
-
-        let minutes = messageDate.getMinutes();
-        let hours = messageDate.getHours();
-
-        if (now.toDateString() === messageDate.toDateString()) {
-            return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
-        } else if (yesterday.toDateString() === messageDate.toDateString()) {
-            return qsTr("Yesterday")
-        } else if (lastWeek.getTime() < messageDate.getTime()) {
-            let days = [qsTr("Sunday"),
-                        qsTr("Monday"),
-                        qsTr("Tuesday"),
-                        qsTr("Wednesday"),
-                        qsTr("Thursday"),
-                        qsTr("Friday"),
-                        qsTr("Saturday")];
-            return days[messageDate.getDay()];
-        } else {
-            return formatShortDateStr(new Date().toLocaleDateString(Qt.locale(locale)))
-        }
-    }
-
-    // WARN: It is not used!! TO BE REMOVE??
-    function formatAgeFromTime(timestamp, epoch) {
-        epoch++ // pretending the parameter is not unused
-        const now = new Date()
-        const messageDate = new Date(Math.floor(timestamp))
-        const diffMs = now - messageDate
-        const diffMin = Math.floor(diffMs / 60000)
-        if (diffMin < 1) {
-            return qsTr("NOW")
-        }
-        const diffHour = Math.floor(diffMin / 60)
-        if (diffHour < 1) {
-            return qsTr("%1M").arg(diffMin)
-        }
-        const diffDay = Math.floor(diffHour / 24)
-        if (diffDay < 1) {
-            return qsTr("%1H").arg(diffHour)
-        }
-        return qsTr("%1D").arg(diffDay)
-    }
-
-    function formatShortDate(value, isDDMMYYDateFormat) {
-        const formatDDMMYY = "d MMMM yyyy"
-        const formatMMDDYY = "MMMM d yyyy"
-        const currentFormat = isDDMMYYDateFormat ? formatDDMMYY : formatMMDDYY
-        var timeStamp =  checkTimestamp(value, "formatLongDate") ? Qt.formatDate(new Date(value), currentFormat) :
-                         Qt.formatDate(new Date(), currentFormat)
-        return formatShortDateStr(timeStamp)
     }
 
     // To-do move to Wallet Store, this should not be under Utils.
@@ -566,7 +408,7 @@ QtObject {
         if (publicKey === "") {
             return ""
         }
-        let jsonObj = globalUtils.getEmojiHashAsJson(publicKey)
+        let jsonObj = globalUtilsInst.getEmojiHashAsJson(publicKey)
         return JSON.parse(jsonObj)
     }
 
@@ -574,7 +416,7 @@ QtObject {
         if (publicKey === "") {
             return ""
         }
-        let jsonObj = globalUtils.getColorHashAsJson(publicKey)
+        let jsonObj = globalUtilsInst.getColorHashAsJson(publicKey)
         return JSON.parse(jsonObj)
     }
 
@@ -582,7 +424,7 @@ QtObject {
         if (publicKey === "") {
             return 0
         }
-        return globalUtils.getColorId(publicKey)
+        return globalUtilsInst.getColorId(publicKey)
     }
 
     function colorForColorId(colorId)  {
@@ -602,7 +444,7 @@ QtObject {
         if (publicKey === "") {
             return ""
         }
-        return globalUtils.getCompressedPk(publicKey)
+        return globalUtilsInst.getCompressedPk(publicKey)
     }
 
     function getElidedCompressedPk(publicKey) {
@@ -722,5 +564,4 @@ QtObject {
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
     }
-
 }
