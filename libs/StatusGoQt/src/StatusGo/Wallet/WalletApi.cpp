@@ -49,9 +49,9 @@ SavedAddresses getSavedAddresses()
     return data.is_null() ? nlohmann::json() : data;
 }
 
-void saveAddress(const Accounts::EOAddress &address, const QString &name)
+void saveAddress(const SavedAddress &address)
 {
-    std::vector<json> params = { SavedAddress({ address, name }) };
+    std::vector<json> params = { address };
     json inputJson = {
         {"jsonrpc", "2.0"},
         {"method", "wallet_addSavedAddress"},

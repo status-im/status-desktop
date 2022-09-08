@@ -3,7 +3,7 @@
 namespace Status::Wallet
 {
 
-SavedAddress::SavedAddress(const QString& address, const QString& name, QObject *parent)
+SavedAddress::SavedAddress(const QString &address, const QString &name, QObject *parent)
     : QObject(parent)
     , m_address(address)
     , m_name(name)

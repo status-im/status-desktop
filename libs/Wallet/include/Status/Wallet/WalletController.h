@@ -37,8 +37,12 @@ public:
     /// \note caller (QML) takes ownership of the returned object
     /// \todo consider if complex approach of keeping ownership here and enforcing a unique instance
     ///       or not reusing the account list and make it singleton are better options
-    Q_INVOKABLE [[nodiscard]] Status::Wallet::NewWalletAccountController* createNewWalletAccountController() const;
-    Q_INVOKABLE [[nodiscard]] Status::Wallet::SavedAddressesController* createSavedAddressesController() const;
+    Q_INVOKABLE [[nodiscard]] Status::Wallet::NewWalletAccountController *createNewWalletAccountController() const;
+    /// Separated controler for working with wallet saved addresses
+    /// \note caller (QML) takes ownership of the returned object
+    /// \todo consider if complex approach of keeping ownership here and enforcing a unique instance
+    ///       or not reusing the saved addresses list and make it singleton are better options
+    Q_INVOKABLE [[nodiscard]] Status::Wallet::SavedAddressesController *createSavedAddressesController() const;
 
     QAbstractListModel *accountsModel() const;
 

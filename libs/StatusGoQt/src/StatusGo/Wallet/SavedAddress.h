@@ -11,8 +11,6 @@
 
 namespace Accounts = Status::StatusGo::Accounts;
 
-using json = nlohmann::json;
-
 namespace Status::StatusGo::Wallet {
 
 /// \brief Define a saved wallet address as returned by the corresponding API
