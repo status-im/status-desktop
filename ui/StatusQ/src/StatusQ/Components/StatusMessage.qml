@@ -37,6 +37,7 @@ Rectangle {
     property string errorLoadingImageText: ""
     property string audioMessageInfoText: ""
     property string pinnedMsgInfoText: ""
+    property string messageAttachments: ""
     property var reactionIcons: [
         Emoji.iconSource("❤"),
         Emoji.iconSource("👍"),
@@ -99,6 +100,20 @@ Rectangle {
 
     function startMessageFoundAnimation() {
         messageFoundAnimation.start();
+    }
+
+    onMessageAttachmentsChanged: {
+        root.prepareAttachmentsModel()
+    }
+
+    function prepareAttachmentsModel() {
+        attachmentsModel.clear()
+        if (!root.messageAttachments) {
+            return
+        }
+        root.messageAttachments.split(" ").forEach(source => {
+            attachmentsModel.append({source})
+        })
     }
 
     implicitWidth: messageLayout.implicitWidth
@@ -316,6 +331,24 @@ Rectangle {
                         shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
                     }
                 }
+
+                Loader {
+                    active: !!root.messageAttachments && !editMode
+                    visible: active
+                    sourceComponent: Column {
+                        spacing: 4
+                        Layout.fillWidth: true
+                        Repeater {
+                            model: attachmentsModel
+                            delegate: StatusImageMessage {
+                                source: model.source
+                                onClicked: root.imageClicked(image, mouse, imageSource)
+                                shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
+                            }
+                        }
+                    }
+                }
+
                 Loader {
                     active: root.messageDetails.contentType === StatusMessage.ContentType.Sticker && !editMode
                     visible: active
@@ -405,5 +438,12 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: -8
         visible: hoverHandler.hovered && !root.hideQuickActions
+    }
+
+    ListModel {
+        id: attachmentsModel
+        Component.onCompleted: {
+            root.prepareAttachmentsModel()
+        }
     }
 }
