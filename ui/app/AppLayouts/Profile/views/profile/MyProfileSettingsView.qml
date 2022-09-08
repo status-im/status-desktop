@@ -109,6 +109,7 @@ ColumnLayout {
         }
 
         displayName.text: profileStore.displayName
+        displayName.validationMode: StatusInput.ValidationMode.Always
         bio.text: profileStore.bio
         socialLinksModel: staticSocialLinksSubsetModel
 
