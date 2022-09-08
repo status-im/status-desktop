@@ -7,6 +7,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1 as SQ
 
+import utils 1.0
 
 StatusDropdown {
     id: root
@@ -279,8 +280,8 @@ StatusDropdown {
             id: tokensPanel
 
             tokenName: d.defaultTokenNameText
-            amount: root.tokenAmount === 0 ? "" : root.tokenAmount.toString()
-            onAmountChanged: root.tokenAmount = Number(amount)
+            amount: root.tokenAmount === 0 ? "" : LocaleUtils.formatNumber(root.tokenAmount, 18) // FIXME i18n check precision
+            onAmountChanged: root.tokenAmount = LocaleUtils.readNumber(amount)
 
             onPickerClicked: {
                 d.extendedDropdownType = ExtendedDropdownContent.Type.Tokens
@@ -323,8 +324,8 @@ StatusDropdown {
 
             collectibleName: d.defaultCollectibleNameText
 
-            amount: root.collectibleAmount === 0 ? "" : root.collectibleAmount.toString()
-            onAmountChanged: root.collectibleAmount = Number(amount)
+            amount: root.collectibleAmount === 0 ? "" : LocaleUtils.formatNumber(root.collectibleAmount, 18) // FIXME i18n check precision
+            onAmountChanged: root.collectibleAmount = LocaleUtils.readNumber(amount)
 
             specificAmount: root.collectiblesSpecificAmount
             onSpecificAmountChanged: root.collectiblesSpecificAmount = specificAmount

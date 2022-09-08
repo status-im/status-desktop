@@ -17,18 +17,6 @@ QtObject {
             }
             return value
         }
-
-        // try to parse floating point number according to locale's decimal separator, fall back to '.'
-        function readNumber(value, locale) {
-            if (typeof value === "string") {
-                try {
-                    value = Number.fromLocaleString(Qt.locale(locale), value)
-                } catch (error) {
-                    value = Number(value)
-                }
-            }
-            return value
-        }
     }
 
     // TODO enforce 24h time format when desired
@@ -139,6 +127,17 @@ QtObject {
     }
 
     // NUMBERS
+    // try to parse floating point number according to locale's decimal separator, fall back to '.'
+    function readNumber(value, locale = "") {
+        if (typeof value === "string") {
+            try {
+                value = Number.fromLocaleString(Qt.locale(locale), value)
+            } catch (error) {
+                value = Number(value)
+            }
+        }
+        return value
+    }
     /**
       Converts the Number to a string suitable for the specified locale with the specified precision.
 
@@ -146,7 +145,7 @@ QtObject {
       - if 'locale' is not specified, the default locale will be used.
     */
     function formatNumber(value, precision = 2, locale = "") {
-        value = d.readNumber(value, locale)
+        value = readNumber(value, locale)
         return value.toLocaleString(Qt.locale(locale), 'f', precision)
     }
 
@@ -156,7 +155,7 @@ QtObject {
       If symbol is specified it will be used as the currency symbol.
     */
     function formatCurrency(value, symbol = "", locale = "") {
-        value = d.readNumber(value, locale)
+        value = readNumber(value, locale)
         if (!symbol) {
             symbol = Qt.locale(locale).currencySymbol(Locale.CurrencySymbol)
             console.warn("LocaleUtils.formatCurrency(): missing 'symbol' for %1, will be replaced with locale's default (%2)"
