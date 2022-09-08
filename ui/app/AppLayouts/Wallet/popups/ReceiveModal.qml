@@ -283,7 +283,6 @@ StatusModal {
             layer1Networks: RootStore.layer1Networks
             layer2Networks: RootStore.layer2Networks
             testNetworks: RootStore.testNetworks
-            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
             onToggleNetwork: {
                 RootStore.toggleNetwork(chainId)

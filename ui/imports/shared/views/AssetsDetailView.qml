@@ -70,17 +70,17 @@ Item {
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Market Cap")
-                secondaryText: token && token.marketCap !== "" ? token.marketCap : "---"
+                secondaryText: token && token.marketCap ? token.marketCap : "---" // FIXME i18n "marketCap" is a string already containing the currency symbol :/
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day Low")
-                secondaryText: token && token.lowDay !== "" ? token.lowDay : "---"
+                secondaryText: token && token.lowDay ? token.lowDay : "---" // FIXME i18n "lowDay" is a string already containing the currency symbol :/
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day High")
-                secondaryText: token && token.highDay ? token.highDay : "---"
+                secondaryText: token && token.highDay ? token.highDay : "---" // FIXME i18n "highDay" is a string already containing the currency symbol :/
             }
             Item {
                 Layout.fillWidth: true
@@ -89,7 +89,7 @@ Item {
                 readonly property string changePctHour: token ? token.changePctHour : ""
                 maxWidth: parent.width
                 primaryText: qsTr("Hour")
-                secondaryText: changePctHour ? "%1%".arg(changePctHour) : "---"
+                secondaryText: changePctHour ? "%1%".arg(LocaleUtils.formatNumber(changePctHour)) : "---"
                 secondaryLabel.color: Math.sign(Number(changePctHour)) === 0 ? Theme.palette.directColor1 :
                                                                                Math.sign(Number(changePctHour)) === -1 ? Theme.palette.dangerColor1 :
                                                                                                                          Theme.palette.successColor1
@@ -98,7 +98,7 @@ Item {
                 readonly property string changePctDay: token ? token.changePctDay : ""
                 maxWidth: parent.width
                 primaryText: qsTr("Day")
-                secondaryText: changePctDay ? "%1%".arg(changePctDay) : "---"
+                secondaryText: changePctDay ? "%1%".arg(LocaleUtils.formatNumber(changePctDay)) : "---"
                 secondaryLabel.color: Math.sign(Number(changePctDay)) === 0 ? Theme.palette.directColor1 :
                                                                               Math.sign(Number(changePctDay)) === -1 ? Theme.palette.dangerColor1 :
                                                                                                                        Theme.palette.successColor1
@@ -107,7 +107,7 @@ Item {
                 readonly property string changePct24hour: token ? token.changePct24hour : ""
                 maxWidth: parent.width
                 primaryText: qsTr("24 Hours")
-                secondaryText: changePct24hour ? "%1%".arg(changePct24hour) : "---"
+                secondaryText: changePct24hour ? "%1%".arg(LocaleUtils.formatNumber(changePct24hour)) : "---"
                 secondaryLabel.color: Math.sign(Number(changePct24hour)) === 0 ? Theme.palette.directColor1 :
                                                                                  Math.sign(Number(changePct24hour)) === -1 ? Theme.palette.dangerColor1 :
                                                                                                                              Theme.palette.successColor1

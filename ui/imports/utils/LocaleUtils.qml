@@ -127,7 +127,7 @@ QtObject {
     }
 
     // NUMBERS
-    // try to parse floating point number according to locale's decimal separator, fall back to '.'
+    // try to parse (floating point) number according to locale's conventions, fall back to '.' as decimal separator
     function readNumber(value, locale = "") {
         if (typeof value === "string") {
             try {
@@ -145,8 +145,14 @@ QtObject {
       - if 'locale' is not specified, the default locale will be used.
     */
     function formatNumber(value, precision = 2, locale = "") {
+        var loc = Qt.locale(locale)
+        loc.numberOptions |= Locale.RejectTrailingZeroesAfterDot
         value = readNumber(value, locale)
-        return value.toLocaleString(Qt.locale(locale), 'f', precision)
+        if (value === 0)
+            return loc.zeroDigit
+        if (Number.isInteger(value))
+            precision = 0
+        return value.toLocaleString(loc, 'f', precision)
     }
 
     // CURRENCY

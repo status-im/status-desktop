@@ -74,10 +74,9 @@ Control {
             anchors.left: parent.left
             anchors.leftMargin: identiconLoader.width
             Repeater {
-                id: chainRepeater
                 model: balances ? balances : null
                 delegate: InformationTag {
-                    tagPrimaryLabel.text: model.balance
+                    tagPrimaryLabel.text: LocaleUtils.formatNumber(model.balance)
                     tagPrimaryLabel.color: root.getNetworkColor(model.chainId)
                     image.source: Style.svg("tiny/%1".arg(root.getNetworkIcon(model.chainId)))
                 }

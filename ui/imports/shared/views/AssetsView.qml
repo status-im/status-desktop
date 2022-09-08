@@ -44,7 +44,7 @@ Item {
         delegate: StatusListItem {
             readonly property int balance: enabledNetworkBalance // Needed for the tests
             objectName: "AssetView_TokenListItem_" + symbol
-            width: parent.width
+            width: ListView.view.width
             title: name
             subTitle: LocaleUtils.formatCryptoCurrency(enabledNetworkBalance, symbol)
             asset.name: symbol ? Style.png("tokens/" + symbol) : ""
@@ -52,13 +52,11 @@ Item {
             components: [
                 Column {
                     id: valueColumn
-                    property string textColor: Math.sign(Number(changePct24hour)) === 0 ? Theme.palette.baseColor1 :
-                                               Math.sign(Number(changePct24hour)) === -1 ? Theme.palette.dangerColor1 :
-                                                                                           Theme.palette.successColor1
+                    readonly property string textColor: Math.sign(Number(changePct24hour)) === 0 ? Theme.palette.baseColor1 :
+                                                                                                   Math.sign(Number(changePct24hour)) === -1 ? Theme.palette.dangerColor1 :
+                                                                                                                                               Theme.palette.successColor1
                     StatusBaseText {
                         anchors.right: parent.right
-                        font.pixelSize: 15
-                        font.strikeout: false
                         text: LocaleUtils.formatCurrency(enabledNetworkCurrencyBalance, RootStore.currencyStore.currentCurrencySymbol)
                     }
                     Row {
@@ -66,10 +64,8 @@ Item {
                         spacing: 8
                         StatusBaseText {
                             id: change24HourText
-                            font.pixelSize: 15
-                            font.strikeout: false
                             color: valueColumn.textColor
-                            text: change24hour !== "" ? change24hour : "---"
+                            text: change24hour !== "" ? change24hour : "---" // FIXME i18n "change24hour" is a string already containing the currency symbol :/
                         }
                         Rectangle {
                             width: 1
@@ -77,10 +73,8 @@ Item {
                             color: Theme.palette.directColor9
                         }
                         StatusBaseText {
-                            font.pixelSize: 15
-                            font.strikeout: false
                             color: valueColumn.textColor
-                            text: changePct24hour !== "" ? "%1%".arg(changePct24hour) : "---"
+                            text: changePct24hour !== "" ? "%1%".arg(LocaleUtils.formatNumber(changePct24hour)) : "---"
                         }
                     }
                 }
