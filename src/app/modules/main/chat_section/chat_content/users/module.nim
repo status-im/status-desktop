@@ -75,7 +75,7 @@ method onNewMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
     let status = toOnlineStatus(statusUpdateDto.statusType)
     self.view.model().addItem(initMemberItem(
       pubKey = m.`from`,
-      displayName = contactDetails.details.displayName,
+      displayName = contactDetails.displayName,
       ensName = contactDetails.details.name, # is it correct?
       localNickname = contactDetails.details.localNickname,
       alias = contactDetails.details.alias,
@@ -133,7 +133,6 @@ method addChatMember*(self: Module,  member: ChatMember) =
   let isMe = member.id == singletonInstance.userProfile.getPubKey()
   let contactDetails = self.controller.getContactDetails(member.id)
   var status = OnlineStatus.Online
-  var displayName = contactDetails.details.displayName
   if (isMe):
     let currentUserStatus = intToEnum(singletonInstance.userProfile.getCurrentUserStatus(), StatusType.Unknown)
     status = toOnlineStatus(currentUserStatus)
@@ -143,7 +142,7 @@ method addChatMember*(self: Module,  member: ChatMember) =
 
   self.view.model().addItem(initMemberItem(
     pubKey = member.id,
-    displayName = contactDetails.details.displayName,
+    displayName = contactDetails.displayName,
     ensName = contactDetails.details.name,
     localNickname = contactDetails.details.localNickname,
     alias = contactDetails.details.alias,
