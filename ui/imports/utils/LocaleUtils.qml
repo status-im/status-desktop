@@ -1,6 +1,7 @@
 pragma Singleton
 
 import QtQml 2.14
+import Qt.labs.settings 1.0
 
 QtObject {
     id: root
@@ -19,16 +20,18 @@ QtObject {
         }
     }
 
+    readonly property Settings settings: Settings {
+        category: "Locale"
+        property bool timeFormatUsesDefaults: true
+        property bool timeFormatUses24Hours: is24hTimeFormat_default()
+    }
+
     // TODO enforce 24h time format when desired
     // TODO strip trailing zeros in numbers/currencies
 
     // DATE/TIME
-    function isDDMMYYDateFormat_default(locale = "") {
-        return Qt.locale(locale).dateFormat(Locale.ShortFormat).startsWith("d")
-    }
-
-    function is24hTimeFormat_default(locale = "") {
-        return !d.amPmFormatChars.some(ampm => Qt.locale(locale).timeFormat(Locale.LongFormat).includes(ampm))
+    function is24hTimeFormat_default() {
+        return !d.amPmFormatChars.some(ampm => Qt.locale().timeFormat(Locale.LongFormat).includes(ampm))
     }
 
     /**

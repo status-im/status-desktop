@@ -172,31 +172,6 @@ SettingsContentBase {
             Layout.bottomMargin: Style.current.padding
         }
 
-        // Date format options:
-        Column {
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-            spacing: Style.current.padding
-            StatusBaseText {
-                text: qsTr("Date Format")
-            }
-
-            StatusRadioButton {
-                text: qsTr("DD/MM/YY")
-                font.pixelSize: 13
-                checked: root.languageStore.isDDMMYYDateFormat
-                onToggled: root.languageStore.setIsDDMMYYDateFormat(checked)
-            }
-
-            StatusRadioButton {
-                text: qsTr("MM/DD/YY")
-                font.pixelSize: 13
-                checked: !root.languageStore.isDDMMYYDateFormat
-                onToggled: root.languageStore.setIsDDMMYYDateFormat(!checked)
-            }
-        }
-
         // Time format options:
         Column {
             Layout.fillWidth: true
@@ -207,19 +182,23 @@ SettingsContentBase {
             StatusBaseText {
                 text: qsTr("Time Format")
             }
-
-            StatusRadioButton {
-                text: qsTr("24-Hour Time")
+            StatusCheckBox {
+                id: use24hDefault
+                text: qsTr("Use System Settings")
                 font.pixelSize: 13
-                checked: root.languageStore.is24hTimeFormat
-                onToggled: root.languageStore.setIs24hTimeFormat(checked)
+                checked: LocaleUtils.settings.timeFormatUsesDefaults
+                onToggled: {
+                    LocaleUtils.settings.timeFormatUsesDefaults = checked
+                    if (checked)
+                        LocaleUtils.settings.timeFormatUses24Hours = LocaleUtils.is24hTimeFormat_default()
+                }
             }
-
-            StatusRadioButton {
-                text: qsTr("12-Hour Time")
+            StatusCheckBox {
+                text: qsTr("Use 24-Hour Time")
                 font.pixelSize: 13
-                checked: !root.languageStore.is24hTimeFormat
-                onToggled: root.languageStore.setIs24hTimeFormat(!checked)
+                enabled: !use24hDefault.checked
+                checked: LocaleUtils.settings.timeFormatUses24Hours
+                onToggled: LocaleUtils.settings.timeFormatUses24Hours = checked
             }
         }
 
