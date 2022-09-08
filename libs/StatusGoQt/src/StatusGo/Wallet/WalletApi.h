@@ -33,7 +33,7 @@ SavedAddresses getSavedAddresses();
 /// \brief Add a new or update existing saved wallet address
 /// \see \c addSavedAddress
 /// \throws \c CallPrivateRpcError
-void saveAddress(const Accounts::EOAddress& address, const QString& name);
+void saveAddress(const SavedAddress &address);
 
 /// \note status-go's GetEthereumChains@api.go which calls
 ///       NetworkManager@client.go -> network.Manager.get()

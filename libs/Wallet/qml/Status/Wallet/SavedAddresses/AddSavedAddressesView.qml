@@ -23,6 +23,8 @@ Popup {
 
         TextField {
             id: addressFiled
+            maximumLength: 42
+            validator: RegularExpressionValidator { regularExpression: /^0x[a-fA-F0-9]{40}$/ }
             Layout.fillWidth: true
         }
 
@@ -38,7 +40,7 @@ Popup {
 
         Button {
             text: qsTr("Confirm")
-            enabled: addressFiled.text.length && nameFiled.text.length
+            enabled: addressFiled.length === addressFiled.maximumLength && nameFiled.text.length
             onClicked: {
                 savedAddressesController.saveAddress(addressFiled.text, nameFiled.text);
                 addressFiled.clear();

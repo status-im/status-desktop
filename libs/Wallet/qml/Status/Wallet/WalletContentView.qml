@@ -12,7 +12,6 @@ Item {
 
     required property WalletAccount account
     required property AccountAssetsController assetController
-    required property SavedAddressesController savedAddressesController
 
     ColumnLayout {
         anchors.fill: parent
@@ -79,7 +78,7 @@ Item {
             Loader {
                 active: SwipeView.isCurrentItem
                 sourceComponent: SavedAddressesView {
-                    savedAddressesController: root.savedAddressesController
+                    savedAddressesController: WalletController.createSavedAddressesController()
                 }
             }
         }

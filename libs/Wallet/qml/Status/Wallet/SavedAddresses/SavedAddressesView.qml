@@ -23,12 +23,14 @@ Item {
 
             Label {
                 text: qsTr("Address")
+                horizontalAlignment: Text.AlignHCenter
                 font.bold: true
                 Layout.fillWidth: true
             }
 
             Label {
                 text: qsTr("Name")
+                horizontalAlignment: Text.AlignHCenter
                 font.bold: true
                 Layout.fillWidth: true
             }
