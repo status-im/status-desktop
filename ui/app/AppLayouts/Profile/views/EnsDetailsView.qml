@@ -17,7 +17,7 @@ Item {
     property string username: ""
     property string walletAddress: "-"
     property string key: "-"
-    property int expiration: 0
+    property var expiration: 0
 
     signal backBtnClicked();
     signal usernameReleased(username: string);
@@ -61,7 +61,6 @@ Item {
             releaseBtn.visible = isStatus
             releaseBtn.enabled = (Date.now() / 1000) > expirationTime && expirationTime > 0 &&
                     root.ensUsernamesStore.preferredUsername != username
-                    releaseBtn.enabled = true
             expiration = new Date(expirationTime * 1000).getTime()
         }
         onLoading: {
