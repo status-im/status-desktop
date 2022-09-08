@@ -226,14 +226,6 @@ Item {
                     onLeaveGroup: {
                         chatSectionModule.leaveChat("", chatId, true);
                     }
-                    onDisplayGroupInfoPopup: {
-                        chatSectionModule.prepareChatContentModuleForChatId(chatId)
-                        let chatContentModule = chatSectionModule.getChatContentModule()
-                        Global.openPopup(root.store.groupInfoPopupComponent, {
-                                             chatContentModule: chatContentModule,
-                                             chatDetails: chatContentModule.chatDetails
-                                         })
-                    }
                     onUpdateGroupChatDetails: {
                         chatSectionModule.updateGroupChatDetails(
                             chatId,
