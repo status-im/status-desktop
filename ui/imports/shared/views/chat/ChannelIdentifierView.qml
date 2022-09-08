@@ -2,6 +2,7 @@ import QtQuick 2.14
 import shared 1.0
 import shared.panels 1.0
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 
@@ -49,15 +50,16 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    StyledText {
+    StatusBaseText {
         id: descText
+        width: parent.width
         wrapMode: Text.Wrap
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: 310
         text: {
             switch(root.chatType) {
                 case Constants.chatType.privateGroupChat:
                     return qsTr("Welcome to the beginning of the <span style='color: %1'>%2</span> group!").arg(Style.current.textColor).arg(root.chatName);
+                case Constants.chatType.communityChat:
+                    return qsTr("Welcome to the beginning of the <span style='color: %1'>#%2</span> channel!").arg(Style.current.textColor).arg(root.chatName);
                 case Constants.chatType.oneToOne:
                     return qsTr("Any messages you send here are encrypted and can only be read by you and <span style='color: %1'>%2</span>").arg(Style.current.textColor).arg(root.chatName)
                 default: return "";
