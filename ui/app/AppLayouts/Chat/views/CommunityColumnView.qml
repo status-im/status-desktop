@@ -357,15 +357,6 @@ Item {
                     Global.openProfilePopup(publicKey)
                 }
 
-                onDisplayGroupInfoPopup: {
-                communitySectionModule.prepareChatContentModuleForChatId(chatId)
-                let chatContentModule = communitySectionModule.getChatContentModule()
-                Global.openPopup(root.store.groupInfoPopupComponent, {
-                                     chatContentModule: chatContentModule,
-                                     chatDetails: chatContentModule.chatDetails
-                                 })
-                }
-
                 onEditCommunityChannel: {
                     communitySectionModule.editCommunityChannel(
                         chatId,

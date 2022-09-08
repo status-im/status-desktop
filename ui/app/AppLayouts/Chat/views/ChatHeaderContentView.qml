@@ -204,13 +204,6 @@ RowLayout {
                     Global.openProfilePopup(publicKey)
                 }
 
-                onDisplayGroupInfoPopup: {
-                    Global.openPopup(root.rootStore.groupInfoPopupComponent, {
-                                         chatContentModule: chatContentModule,
-                                         chatDetails: chatContentModule.chatDetails
-                                     })
-                }
-
                 onEditCommunityChannel: {
                     root.rootStore.editCommunityChannel(
                                 chatId,
@@ -321,16 +314,11 @@ RowLayout {
                     return false
 
                 return chatContentModule.chatDetails.type !== Constants.chatType.publicChat &&
-                        chatContentModule.chatDetails.type !== Constants.chatType.communityChat
+                        chatContentModule.chatDetails.type !== Constants.chatType.communityChat &&
+                        chatContentModule.chatDetails.type !== Constants.chatType.privateGroupChat
             }
             onClicked: {
                 switch (chatContentModule.chatDetails.type) {
-                case Constants.chatType.privateGroupChat:
-                    Global.openPopup(root.rootStore.groupInfoPopupComponent, {
-                                         chatContentModule: chatContentModule,
-                                         chatDetails: chatContentModule.chatDetails
-                                     })
-                    break;
                 case Constants.chatType.oneToOne:
                     Global.openProfilePopup(chatContentModule.chatDetails.id)
                     break;

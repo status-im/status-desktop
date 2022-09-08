@@ -167,14 +167,6 @@ StatusSectionLayout {
     }
 
     Component {
-        id: groupInfoPopupComponent
-        GroupInfoPopup {
-            chatSectionModule: root.rootStore.chatCommunitySectionModule
-            store: root.rootStore
-        }
-    }
-
-    Component {
         id: statusStickerPackClickPopup
         StatusStickerPackClickPopup{
             store: root.rootStore
@@ -210,10 +202,6 @@ StatusSectionLayout {
             Global.changeAppSectionBySectionType(Constants.appSection.chat)
             root.rootStore.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
         }
-    }
-
-    Component.onCompleted: {
-        rootStore.groupInfoPopupComponent = groupInfoPopupComponent;
     }
 
     ActivityCenterPopup {

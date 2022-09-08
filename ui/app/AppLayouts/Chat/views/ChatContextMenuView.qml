@@ -30,7 +30,6 @@ StatusPopupMenu {
     property var emojiPopup
 
     signal displayProfilePopup(string publicKey)
-    signal displayGroupInfoPopup(string chatId)
     signal requestAllHistoricMessages(string chatId)
     signal unmuteChat(string chatId)
     signal muteChat(string chatId)
@@ -52,13 +51,6 @@ StatusPopupMenu {
     ViewProfileMenuItem {
         enabled: root.chatType === Constants.chatType.oneToOne
         onTriggered: root.displayProfilePopup(root.chatId)
-    }
-
-    StatusMenuItem {
-        text: qsTr("View Members")
-        icon.name: "group-chat"
-        enabled: root.chatType === Constants.chatType.privateGroupChat
-        onTriggered: root.displayGroupInfoPopup(root.chatId)
     }
 
     StatusMenuItem {
