@@ -6,8 +6,8 @@ import StatusQ.Core.Theme 0.1
 
 Rectangle {
     id: root
-    width: layout.width + layout.anchors.margins
-    height: 30
+    implicitWidth: layout.width + layout.anchors.margins
+    implicitHeight: 30
     color: Theme.palette.primaryColor3
     radius: 15
 
@@ -15,7 +15,7 @@ Rectangle {
 
     property string title: ""
     property bool closeButtonVisible: true
-    signal clicked()
+    signal clicked(var mouse)
 
     property StatusAssetSettings asset: StatusAssetSettings {
         height: 20
@@ -61,9 +61,7 @@ Rectangle {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    root.clicked()
-                }
+                onClicked: root.clicked(mouse)
             }
         }
     }

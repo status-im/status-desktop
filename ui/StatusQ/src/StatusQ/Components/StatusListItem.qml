@@ -135,8 +135,7 @@ Rectangle {
             id: iconOrImage
             anchors.left: parent.left
             anchors.leftMargin: statusListItem.leftPadding
-            anchors.top: parent.top
-            anchors.topMargin: 12
+            anchors.verticalCenter: parent.verticalCenter
             visible: !iconOrImageLoadingOverlay.visible
             asset: statusListItem.asset
             name: statusListItem.title

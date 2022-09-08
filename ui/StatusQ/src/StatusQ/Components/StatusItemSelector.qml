@@ -27,12 +27,15 @@ import StatusQ.Core.Utils 0.1
             defaultItemText: qsTr("Example: 10 SNT")
             andOperatorText: qsTr("and")
             orOperatorText: qsTr("or")
-            popupItem: CustomPopup {
-                id: customPopup
-                onAddItem: {
-                    tokensSelector.addItem(itemText, itemImage, operator)
-                    customPopup.close()
-                }
+
+            CustomPopup {
+                id: popup
+            }
+
+            addButton.onClicked: {
+                popup.x = mouse.x
+                popup.y = mouse.y
+                popup.open()
             }
         }
    \endqml
@@ -66,10 +69,10 @@ Rectangle {
     */
     property url defaultItemImageSource: ""
     /*!
-       \qmlproperty QC.Popup StatusItemSelector::popupItem
-       This property holds a custom popup item to be opened near the `add` button in order to select new items.
+       \qmlproperty StatusRoundButton StatusItemSelector::addButton
+       This property holds an alias to the `add` button.
     */
-    property QC.Popup popupItem
+    readonly property alias addButton: addItemButton
     /*!
        \qmlproperty ListModel StatusItemSelector::itemsModel
        This property holds the data that will be populated in the items selector.
@@ -90,7 +93,7 @@ Rectangle {
         }
        \endqml
     */
-    property ListModel itemsModel: ListModel { }
+    property var itemsModel: ListModel { }
     /*!
        \qmlproperty string StatusItemSelector::andOperatorText
        This property holds the string text representation for an `AND` logical operator.
@@ -101,27 +104,24 @@ Rectangle {
        This property holds the string text representation for an `OR` logical operator.
     */
     property string orOperatorText: qsTr("or")
-    /*
-        \qmlmethod StatusItemSelector::addItem()
-        It is used to add new items into the selector control. The expected arguments are:
-        string `text`, url `imageSource` and int `operator` (None = 0, And = 1 and Or = 2)
+    /*!
+       \qmlsignal StatusItemSelector::itemClicked
+       This signal is emitted when the item is clicked.
     */
-    function addItem(text, imageSource, operator) {
-        itemsModel.insert(itemsModel.count, { "text": text, "imageSource": imageSource.toString(), "operator": operator })
-    }
+    signal itemClicked(var item, int index, var mouse)
+
 
     QtObject {
         id: d
 
         function operatorTextFormat(operator) {
-            switch(operator)
-            {
-            case Utils.Operators.And:
-                return root.andOperatorText
-            case Utils.Operators.Or:
-                return root.orOperatorText
-            case Utils.Operators.None:
-                return ""
+            switch(operator) {
+                case Utils.Operators.And:
+                    return root.andOperatorText
+                case Utils.Operators.Or:
+                    return root.orOperatorText
+                case Utils.Operators.None:
+                    return ""
             }
         }
     }
@@ -179,8 +179,10 @@ Rectangle {
             }
             Repeater {
                 model: itemsModel
+
                 RowLayout {
                     spacing: flow.spacing
+
                     StatusBaseText {                        
                         visible: model.operator !== Utils.Operators.None
                         Layout.alignment: Qt.AlignVCenter
@@ -207,7 +209,13 @@ Rectangle {
                         closeButtonVisible: false
                         titleText.color: Theme.palette.primaryColor1
                         titleText.font.pixelSize: 15
-                        //onClicked: // TODO: Open remove or edit dialog
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+                            onClicked: root.itemClicked(parent, model.index, mouse)
+                        }
                     }
                 }
             }
@@ -218,11 +226,6 @@ Rectangle {
                 height: width
                 type: StatusRoundButton.Type.Secondary
                 icon.name: "add"
-                onClicked: {
-                    root.popupItem.x = addItemButton.x + addItemButton.width + 4 * flow.spacing
-                    root.popupItem.y = addItemButton.y + addItemButton.height
-                    root.popupItem.open()
-                }
             }
         }
     }

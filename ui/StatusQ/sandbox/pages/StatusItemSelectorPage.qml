@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Components 0.1
@@ -15,24 +15,43 @@ ColumnLayout {
         defaultItemText: "Example: Empty items"
         andOperatorText: "and"
         orOperatorText: "or"
-        popupItem: StatusDropdown {
+
+        itemsModel: ListModel {
+            id: model
+        }
+
+        StatusDropdown {
             id: dropdown
+
+            parent: selector.addButton
             width: 200
             contentItem: ColumnLayout {
                 spacing: 10
                 StatusInput {
                     id: input
+                    text: "Sample"
                     Layout.fillWidth: true
                 }
                 StatusButton {
                     Layout.alignment: Qt.AlignHCenter
                     text: "Add element"
                     onClicked: {
-                        selector.addItem(input.text, "qrc:/images/SNT.png", selector.itemsModel.count > 0 ? Utils.Operators.Or : Utils.Operators.None)
+                        model.append({
+                            text: input.text,
+                            imageSource: "qrc:/images/SNT.png",
+                            operator: model.count > 0 ? Utils.Operators.Or : Utils.Operators.None
+                        })
+
                         dropdown.close()
                     }
                 }
             }
+        }
+
+        addButton.onClicked: {
+            dropdown.x = mouse.x
+            dropdown.y = mouse.y
+            dropdown.open()
         }
     }
 
