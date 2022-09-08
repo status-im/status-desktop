@@ -18,37 +18,25 @@ StatusBaseText {
         if (previousMessageIndex === -1)
             return "";
 
-        const now = new Date()
-        const yesterday = new Date()
-        yesterday.setDate(now.getDate()-1)
-
         const currentMsgDate = new Date(messageTimestamp);
         const prevMsgDate = new Date(previousMessageTimestamp);
 
         if (!!prevMsgDate && currentMsgDate.getDay() === prevMsgDate.getDay())
             return "";
 
-        if (now == currentMsgDate)
+        const now = new Date();
+        if (now.getFullYear() == currentMsgDate.getFullYear() && now.getMonth() == currentMsgDate.getMonth() && now.getDate() == currentMsgDate.getDate())
             return qsTr("Today");
 
-        if (yesterday == currentMsgDate)
+        const yesterday = new Date();
+        yesterday.setDate(now.getDate()-1);
+        if (yesterday.getFullYear() == currentMsgDate.getFullYear() && yesterday.getMonth() == currentMsgDate.getMonth() && yesterday.getDate() == currentMsgDate.getDate())
             return qsTr("Yesterday");
 
-        const monthNames = [
-                             qsTr("January"),
-                             qsTr("February"),
-                             qsTr("March"),
-                             qsTr("April"),
-                             qsTr("May"),
-                             qsTr("June"),
-                             qsTr("July"),
-                             qsTr("August"),
-                             qsTr("September"),
-                             qsTr("October"),
-                             qsTr("November"),
-                             qsTr("December")
-                         ];
-
-        return monthNames[currentMsgDate.getMonth()] + ", " + currentMsgDate.getDate();
+        // FIXME Qt6: replace with Intl.DateTimeFormat
+        const monthName = Qt.locale().standaloneMonthName(currentMsgDate.getMonth(), Locale.LongFormat)
+        if (now.getFullYear() > currentMsgDate.getFullYear())
+            return "%1 %2, %3".arg(monthName).arg(currentMsgDate.getDate()).arg(currentMsgDate.getFullYear())
+        return "%1, %2".arg(monthName).arg(currentMsgDate.getDate())
     }
 }
