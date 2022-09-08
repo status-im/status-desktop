@@ -261,7 +261,8 @@ Column {
                 container: root.container
                 source: linkData.thumbnailUrl
                 visible: linkData.thumbnailUrl.length
-                imageWidth: 300
+                readonly property int previewWidth: parseInt(linkData.width)
+                imageWidth: Math.min(300, previewWidth > 0 ? previewWidth : 300)
                 isCurrentUser: root.isCurrentUser
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top

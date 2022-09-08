@@ -361,7 +361,6 @@ SettingsContentBase {
                                 filename = "github"; break;
                             case "medium":
                                 filename = "medium"; break;
-                            case "tenor gifs":
                             case "tenor gifs subdomain":
                                 filename = "tenor"; break;
                             case "giphy gifs":
