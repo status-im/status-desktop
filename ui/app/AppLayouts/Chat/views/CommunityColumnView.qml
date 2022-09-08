@@ -94,12 +94,25 @@ Item {
         }
     }
 
+    StatusButton {
+        id: joinCommunityButton
+        text: root.communityData.access === Constants.communityChatOnRequestAccess
+              ? qsTr("Request to join")
+              : qsTr("Join Community")
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: communityHeader.bottom
+        anchors.topMargin: 8
+        anchors.bottomMargin: Style.current.halfPadding
+        visible: !communityData.joined
+        onClicked: root.store.requestToJoinCommunity(communityData.id, root.store.userProfileInst.name)
+    }
+
     Loader {
         id: membershipRequests
 
         property int nbRequests: root.communityData.pendingRequestsToJoin.count || 0
 
-        anchors.top: communityHeader.bottom
+        anchors.top: joinCommunityButton.visible ? joinCommunityButton.bottom : communityHeader.bottom
         anchors.topMargin: active ? 8 : 0
         anchors.horizontalCenter: parent.horizontalCenter
 
