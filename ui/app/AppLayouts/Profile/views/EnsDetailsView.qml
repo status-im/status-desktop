@@ -17,7 +17,7 @@ Item {
     property string username: ""
     property string walletAddress: "-"
     property string key: "-"
-    property var expiration: 0
+    property int expiration: 0
 
     signal backBtnClicked();
     signal usernameReleased(username: string);
@@ -155,7 +155,7 @@ Item {
         anchors.topMargin: 2
         anchors.left: parent.left
         anchors.leftMargin: 24
-        text: qsTr("Username locked. You won't be able to release it until %1").arg(Utils.formatShortDateStr(new Date(expiration).toDateString()))
+        text: qsTr("Username locked. You won't be able to release it until %1").arg(LocaleUtils.formatDate(expiration, Locale.ShortFormat))
         color: Style.current.darkGrey
     }
 

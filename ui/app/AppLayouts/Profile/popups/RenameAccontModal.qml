@@ -79,7 +79,7 @@ StatusModal {
             anchors.top: selectedColor.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            titleText: qsTr("color").toUpperCase()
+            titleText: qsTr("COLOUR")
             selectedColor: currentAccount.color
             selectedColorIndex: {
                 for (let i = 0; i < model.length; i++) {
@@ -91,7 +91,6 @@ StatusModal {
                 if(selectedColor !== currentAccount.color) {
                     accountNameInput.input.asset.color = selectedColor
                 }
-
             }
         }
 

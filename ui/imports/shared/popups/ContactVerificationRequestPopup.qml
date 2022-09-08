@@ -115,7 +115,7 @@ StatusModal {
             wrapMode: Text.WordWrap
             anchors.top: responseMessage.bottom
             anchors.topMargin: 58
-            text: qsTr("You're answer has been sent to %1.").arg(root.senderDisplayName)
+            text: qsTr("Your answer has been sent to %1.").arg(root.senderDisplayName)
             font.pixelSize: 13
             horizontalAlignment:  Text.AlignHCenter
         }

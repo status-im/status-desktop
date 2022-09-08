@@ -28,8 +28,7 @@ StatusListView {
         width: parent.width
         title: model.name
         subTitle: model.description
-        tertiaryTitle: qsTr(model.members.count === 1 ?"%1 member"
-                                                      :"%1 members").arg(model.members.count)
+        tertiaryTitle: qsTr("%n member(s)", "", model.members.count)
         asset.name: model.image
         asset.isImage: asset.name.includes("data")
         asset.isLetterIdenticon: !model.image
