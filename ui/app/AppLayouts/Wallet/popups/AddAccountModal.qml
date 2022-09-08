@@ -23,7 +23,7 @@ StatusModal {
     id: root
 
     property int minPswLen: 10
-    readonly property int marginBetweenInputs: Style.dp(38)
+    readonly property int marginBetweenInputs: 38
     readonly property alias passwordValidationError: d.passwordValidationError
 
     property var emojiPopup: null
@@ -46,7 +46,7 @@ StatusModal {
         enabled: root.opened
 
         function onEmojiSelected (emojiText, atCursor) {
-            accountNameInput.input.icon.emoji = emojiText
+            accountNameInput.input.asset.emoji = emojiText
         }
     }
 
@@ -61,7 +61,6 @@ StatusModal {
         function onDerivedAddressesErrorChanged() {
             if(Utils.isInvalidPasswordMessage(RootStore.derivedAddressesError))
                 d.passwordValidationError = qsTr("Password must be at least %n character(s) long", "", root.minPswLen);
-
         }
     }
 
@@ -161,14 +160,14 @@ StatusModal {
         bottomPadding: Style.current.halfPadding
         leftPadding: Style.current.padding
         rightPadding: Style.current.padding
-        height: Style.dp(400)
+        height: 400
         objectName: "AddAccountModalContent"
 
         Column {
             property alias accountNameInput: accountNameInput
             width: scroll.availableWidth
             spacing: Style.current.halfPadding
-            topPadding: Style.dp(20)
+            topPadding: 20
 
             // To-Do Password hidden option not supported in StatusQ StatusInput
             Item {
