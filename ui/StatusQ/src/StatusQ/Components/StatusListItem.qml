@@ -31,6 +31,8 @@ Rectangle {
     property Component bottomDelegate
     property alias tagsModel: tagsRepeater.model
     property Component tagsDelegate
+    property var inlineTagModel: []
+    property Component inlineTagDelegate
     property bool loading: false
     property bool loadingFailed: false
 
@@ -278,25 +280,67 @@ Rectangle {
                 anchors.leftMargin: 4
             }
 
-            StatusBaseText {
-                id: statusListItemSubTitle
-                objectName: "statusListItemSubTitle"
+            RowLayout {
+                id: statusListItemSubtitleTagsRow
                 anchors.top: statusListItemTitle.bottom
+                anchors.topMargin: 4
                 width: parent.width
-                text: statusListItem.subTitle
-                font.pixelSize: 15
-                color: statusListItem.loadingFailed ? Theme.palette.dangerColor1
-                                                    : !statusListItem.enabled || !statusListItem.tertiaryTitle
-                                                      ? Theme.palette.baseColor1
-                                                      : Theme.palette.directColor1
-                height: visible ? contentHeight : 0
-                visible: !!statusListItem.subTitle
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                spacing: 4
+
+                StatusBaseText {
+                    id: statusListItemSubTitle
+                    objectName: "statusListItemSubTitle"
+
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredWidth: inlineTagModelRepeater.count > 0 ? contentWidth : parent.width
+
+                    text: statusListItem.subTitle
+                    font.pixelSize: 15
+                    color: statusListItem.loadingFailed ? Theme.palette.dangerColor1
+                                                        : !statusListItem.enabled || !statusListItem.tertiaryTitle
+                                                          ? Theme.palette.baseColor1
+                                                          : Theme.palette.directColor1
+                    visible: !!statusListItem.subTitle
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                }
+
+                StatusBaseText {
+                    id: dot
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.topMargin: -48
+
+                    text: "."
+                    font.pixelSize: 40
+                    color: Theme.palette.baseColor1
+                    lineHeightMode: Text.FixedHeight
+                    lineHeight: 24
+
+                    visible: inlineTagModelRepeater.count > 0
+                }
+
+                StatusScrollView {
+                    id: inlineTagModelRepeaterRow
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredHeight: row.height
+                    contentHeight: row.height
+                    contentWidth: row.width
+                    padding: 0
+                    clip: true
+                    Row {
+                        id: row
+                        Repeater {
+                            id: inlineTagModelRepeater
+                            model: inlineTagModel
+                            delegate: inlineTagDelegate
+                        }
+                    }
+                }
             }
 
             StatusBaseText {
                 id: statusListItemTertiaryTitle
-                anchors.top: statusListItemSubTitle.bottom
+                anchors.top: statusListItemSubtitleTagsRow.bottom
                 width: parent.width
                 height: visible ? contentHeight : 0
                 text: statusListItem.tertiaryTitle

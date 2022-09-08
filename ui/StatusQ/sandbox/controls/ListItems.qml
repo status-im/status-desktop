@@ -576,4 +576,42 @@ ColumnLayout {
         asset.isLetterIdenticon: true
         loadingFailed: true
     }
+
+    StatusListItem {
+        implicitWidth: 600
+        title: "List Item with Tags"
+        subTitle: "03:32"
+        asset.isLetterIdenticon: true
+        inlineTagModel: 6
+        inlineTagDelegate: StatusListItemTag {
+            height: 24
+            title: "tag"
+            asset.isLetterIdenticon: true
+        }
+        components: [
+            ColumnLayout {
+                Row {
+                    Layout.alignment: Qt.AlignRight
+                    spacing: 4
+                    StatusIcon {
+                        color:  Theme.palette.successColor1
+                        icon: "arrow-up"
+                        rotation: 135
+                        height: 18
+                    }
+                    StatusBaseText {
+                        text: "0.0000015 ETH"
+                        font.pixelSize: 15
+                        color: Theme.palette.directColor1
+                    }
+                }
+                StatusBaseText {
+                    Layout.alignment: Qt.AlignRight
+                    text: "1201.10 USD"
+                    font.pixelSize: 15
+                    color: Theme.palette.baseColor1
+                }
+            }
+        ]
+    }
 }
