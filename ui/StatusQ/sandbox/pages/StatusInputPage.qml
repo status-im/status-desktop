@@ -56,6 +56,15 @@ Column {
         input.clearable: true
     }
 
+    StatusPasswordInput {
+        placeholderText: "Password"
+    }
+
+    StatusPasswordInput {
+        signingPhrase: "orange hello cygnet"
+        placeholderText: "Password"
+    }
+
     Item {
         implicitWidth: 480
         implicitHeight: 82
