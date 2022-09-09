@@ -74,7 +74,7 @@ Item {
         delegate: StatusMemberListItem {
             width: ListView.view.width
             nickName: model.localNickname
-            userName: model.displayName
+            userName: model.displayName !== "" ? model.displayName : model.alias
             pubKey: Utils.getCompressedPk(model.pubKey)
             isContact: model.isContact
             isVerified: model.isVerified

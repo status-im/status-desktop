@@ -57,7 +57,7 @@ MembersSelectorBase {
         readonly property string _pubKey: model.pubKey
 
         height: ListView.view.height
-        text: model.displayName
+        text: model.displayName !== "" ? model.displayName : model.alias
         isReadonly: {
             if (model.isAdmin) return true
             if (root.chatContentModule.amIChatAdmin()) return false
