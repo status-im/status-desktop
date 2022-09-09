@@ -1,6 +1,8 @@
 import NimQml, Tables, strformat, sequtils, sugar
 import user_item
 
+import ../../../app_service/common/types
+
 type
   ModelRole {.pure.} = enum
     PubKey = UserRole + 1

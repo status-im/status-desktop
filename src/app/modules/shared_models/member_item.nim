@@ -1,6 +1,8 @@
 import strformat
 import user_item
 
+import ../../../app_service/common/types
+
 export user_item
 
 type

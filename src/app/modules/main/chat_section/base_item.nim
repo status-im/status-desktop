@@ -1,4 +1,6 @@
 import sequtils, sugar
+
+import ../../../../app_service/common/types
 import ../../../../app_service/service/contacts/dto/contacts
 
 import ../../shared_models/[color_hash_item, color_hash_model]
@@ -25,12 +27,13 @@ type
     categoryId: string
     highlight: bool
     trustStatus: TrustStatus
+    onlineStatus: OnlineStatus
 
 proc setup*(self: BaseItem, id, name, icon: string, color, emoji, description: string,
     `type`: int, amIChatAdmin: bool, lastMessageTimestamp: int, hasUnreadMessages: bool, notificationsCount: int, muted,
     blocked, active: bool, position: int, categoryId: string = "", colorId: int = 0,
     colorHash: seq[ColorHashSegment] = @[], highlight: bool = false,
-    trustStatus: TrustStatus = TrustStatus.Unknown) =
+    trustStatus: TrustStatus = TrustStatus.Unknown, onlineStatus = OnlineStatus.Inactive) =
   self.id = id
   self.name = name
   self.amIChatAdmin = amIChatAdmin
@@ -52,15 +55,16 @@ proc setup*(self: BaseItem, id, name, icon: string, color, emoji, description: s
   self.categoryId = categoryId
   self.highlight = highlight
   self.trustStatus = trustStatus
+  self.onlineStatus = onlineStatus
 
 proc initBaseItem*(id, name, icon: string, color, emoji, description: string, `type`: int,
     amIChatAdmin: bool, lastMessageTimestamp: int, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
     position: int, categoryId: string = "", colorId: int = 0, colorHash: seq[ColorHashSegment] = @[],
-    highlight: bool = false, trustStatus: TrustStatus = TrustStatus.Unknown): BaseItem =
+    highlight: bool = false, trustStatus: TrustStatus = TrustStatus.Unknown, onlineStatus = OnlineStatus.Inactive): BaseItem =
   result = BaseItem()
   result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin, lastMessageTimestamp,
     hasUnreadMessages, notificationsCount, muted, blocked, active, position, categoryId, colorId,
-    colorHash, highlight, trustStatus)
+    colorHash, highlight, trustStatus, onlineStatus)
 
 proc delete*(self: BaseItem) =
   discard
@@ -169,3 +173,9 @@ method trustStatus*(self: BaseItem): TrustStatus {.inline base.} =
 
 method `trustStatus=`*(self: var BaseItem, value: TrustStatus) {.inline base.} =
   self.trustStatus = value
+
+method onlineStatus*(self: BaseItem): OnlineStatus {.inline base.} =
+  self.onlineStatus
+
+method `onlineStatus=`*(self: var BaseItem, value: OnlineStatus) {.inline base.} =
+  self.onlineStatus = value

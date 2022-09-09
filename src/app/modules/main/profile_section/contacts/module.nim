@@ -7,6 +7,7 @@ import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
 import ../../../../core/eventemitter
+import ../../../../../app_service/common/types
 import ../../../../../app_service/service/contacts/dto/contacts as contacts_dto
 import ../../../../../app_service/service/contacts/service as contacts_service
 import ../../../../../app_service/service/chat/service as chat_service

@@ -2,6 +2,7 @@ import NimQml, Tables, strformat, sequtils, sugar
 
 # TODO: use generics to remove duplication between user_model and member_model
 
+import ../../../app_service/common/types
 import ../../../app_service/service/contacts/dto/contacts
 import member_item
 

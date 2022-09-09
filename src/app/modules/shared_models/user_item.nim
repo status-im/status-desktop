@@ -2,10 +2,6 @@ import strformat
 import ../../../app_service/common/types
 
 type
-  OnlineStatus* {.pure.} = enum
-    Inactive = 0
-    Online
-
   ContactRequest* {.pure.} = enum
     None = 0
     IncomingPending
@@ -112,12 +108,6 @@ proc initUserItem*(
     contactRequest = contactRequest,
     incomingVerificationStatus = incomingVerificationStatus,
     outgoingVerificationStatus = outgoingVerificationStatus)
-
-proc toOnlineStatus*(statusType: StatusType): OnlineStatus =
-  if(statusType == StatusType.AlwaysOnline or statusType == StatusType.Automatic):
-    return OnlineStatus.Online
-  else:
-    return OnlineStatus.Inactive
 
 proc `$`*(self: UserItem): string =
   result = fmt"""User Item(
