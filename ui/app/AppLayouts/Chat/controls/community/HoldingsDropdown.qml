@@ -53,6 +53,9 @@ StatusDropdown {
     width: d.defaultWidth
     padding: d.padding
 
+    // force keeping within the bounds of the enclosing window
+    margins: 0
+
     onClosed: root.reset()
 
     enum FlowType {
