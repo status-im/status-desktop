@@ -12,6 +12,8 @@ import SortFilterProxyModel 0.2
 MembersSelectorBase {
     id: root
 
+    limitReached: model.count >= membersLimit - 1 // -1 because creator is not on the list of members when creating chat
+
     function cleanup() {
         root.edit.clear()
         d.selectedMembers.clear()

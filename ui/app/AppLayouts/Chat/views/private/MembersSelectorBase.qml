@@ -19,10 +19,12 @@ InlineSelectorPanel {
     id: root
 
     property var rootStore
-    readonly property bool limitReached: model.count >= d.membersLimit
+
+    readonly property int membersLimit: 20 // see: https://github.com/status-im/status-mobile/issues/13066
+    property bool limitReached: model.count >= membersLimit
 
     label.text: qsTr("To:")
-    warningLabel.text: qsTr("%1 USER LIMIT REACHED").arg(d.membersLimit)
+    warningLabel.text: qsTr("%1 USER LIMIT REACHED").arg(membersLimit)
     warningLabel.visible: limitReached
 
     suggestionsModel: SortFilterProxyModel {
@@ -65,12 +67,6 @@ InlineSelectorPanel {
     suggestionsDelegate: ContactListItemDelegate {
         highlighted: ListView.isCurrentItem
         onClicked: root.entryAccepted(this)
-    }
-
-    QtObject {
-        id: d
-
-        readonly property int membersLimit: 20 // see: https://github.com/status-im/status-mobile/issues/13066
     }
 
     Component.onCompleted: {
