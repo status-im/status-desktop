@@ -99,6 +99,8 @@ Loader {
         visible: false
         anchors.bottom: root.bottom
         anchors.right: root.right
+        anchors.rightMargin: -border.width
+        anchors.bottomMargin: -border.width
         border.width: 3
         implicitHeight: 15
         implicitWidth: 15

@@ -21,6 +21,7 @@ Rectangle {
     property bool hasUnreadMessages: false
     property int notificationsCount: 0
     property bool muted: false
+    property int onlineStatus: StatusChatListItem.OnlineStatus.Inactive
 
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 24
@@ -48,6 +49,11 @@ Rectangle {
         Unknown1, // 4
         Unknown2, // 5
         CommunityChat // 6
+    }
+
+    enum OnlineStatus {
+        Inactive,
+        Online
     }
 
     implicitWidth: 288
@@ -84,6 +90,15 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             asset: root.asset
             name: root.name
+
+            badge {
+                visible: type === StatusChatListItem.Type.OneToOneChat
+                color: onlineStatus === StatusChatListItem.OnlineStatus.Online ? Theme.palette.successColor1 : Theme.palette.baseColor1
+                border.width: 1
+                border.color: root.color
+                implicitHeight: 9
+                implicitWidth: 9
+            }
         }
 
         StatusIcon {

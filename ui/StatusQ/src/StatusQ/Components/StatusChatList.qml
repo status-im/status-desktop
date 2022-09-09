@@ -123,6 +123,7 @@ Column {
                     asset.isImage: model.icon.includes("data")
                     asset.name: model.icon
                     ringSettings.ringSpecModel: model.colorHash
+                    onlineStatus: model.onlineStatus
 
                     sensor.cursorShape: dragSensor.cursorShape
 
