@@ -37,6 +37,7 @@ type
     changePctDay*: string
     changePct24hour*: string
     change24hour*: string
+    currencyPrice*: float64
 
 type
   WalletAccountDto* = ref object of RootObj
@@ -125,6 +126,7 @@ proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
   discard jsonObj.getProp("changePctDay", result.changePctDay)
   discard jsonObj.getProp("changePct24hour", result.changePct24hour)
   discard jsonObj.getProp("change24hour", result.change24hour)
+  discard jsonObj.getProp("currencyPrice", result.currencyPrice)
 
   var totalBalanceObj: JsonNode
   if(jsonObj.getProp("totalBalance", totalBalanceObj)):
@@ -165,5 +167,6 @@ proc walletTokenDtoToJson*(dto: WalletTokenDto): JsonNode =
     "changePctHour": dto.changePctHour,
     "changePctDay": dto.changePctDay,
     "changePct24hour": dto.changePct24hour,
-    "change24hour": dto.change24hour
+    "change24hour": dto.change24hour,
+    "currencyPrice": dto.currencyPrice,
   }

@@ -92,6 +92,7 @@ proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto]) =
       t.changePctDay,
       t.changePct24hour,
       t.change24hour,
+      t.currencyPrice,
     )
     items.add(item)
     totalCurrencyBalanceForAllAssets += t.enabledNetworkBalance.currencybalance

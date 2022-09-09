@@ -325,6 +325,7 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
           changePctDay: changePctDay,
           changePct24hour: changePct24hour,
           change24hour: change24hour,
+          currencyPrice: prices[networkDto.nativeCurrencySymbol],
         )
       )
 
@@ -406,6 +407,7 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
           changePctDay: changePctDay,
           changePct24hour: changePct24hour,
           change24hour: change24hour,
+          currencyPrice: prices[tokenDto.symbol],
         )
       )
 
