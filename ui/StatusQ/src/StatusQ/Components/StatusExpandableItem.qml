@@ -13,6 +13,7 @@ Rectangle {
     property alias button: button
     property alias expandableComponent: expandableRegion.sourceComponent
     property alias expandableItem: expandableRegion.item
+    property bool separatorVisible: true
 
     property int type: StatusExpandableItem.Type.Primary
     property bool expandable: true
@@ -49,7 +50,7 @@ Rectangle {
         height: 1
 
         color: Theme.palette.baseColor2
-        visible: (statusExpandableItem.type === StatusExpandableItem.Type.Tertiary)
+        visible: (statusExpandableItem.type === StatusExpandableItem.Type.Tertiary) && separatorVisible
     }
 
 
@@ -57,7 +58,7 @@ Rectangle {
         id: header
         anchors.top: parent.top
         width: parent.width
-        height: 64
+        height: statusExpandableItem.type === StatusExpandableItem.Type.Tertiary ? 40 : 64
         radius: (statusExpandableItem.type === StatusExpandableItem.Type.Secondary) ? 8 : 0
         color: statusExpandableItem.type === StatusExpandableItem.Type.Secondary && sensor.containsMouse ? Theme.palette.baseColor2 : "transparent"
 
@@ -78,7 +79,7 @@ Rectangle {
                         (statusExpandableItem.type === StatusExpandableItem.Type.Tertiary) ? parent.top : undefined
             anchors.topMargin: (statusExpandableItem.type === StatusExpandableItem.Type.Tertiary) ? 29 : 17
             anchors.left: identicon.active ? identicon.right : parent.left
-            anchors.leftMargin: (statusExpandableItem.type === StatusExpandableItem.Type.Primary) ?  10 : 16
+            anchors.leftMargin: (statusExpandableItem.type === StatusExpandableItem.Type.Primary) ?  10 : !identicon.active ? 0 : 16
 
             anchors.verticalCenter: (statusExpandableItem.type === StatusExpandableItem.Type.Secondary) ? identicon.verticalCenter : undefined
 
@@ -174,7 +175,7 @@ Rectangle {
     Loader {
         id: expandableRegion
         anchors.top: header.bottom
-        anchors.topMargin: 16
+        anchors.topMargin: (statusExpandableItem.type === StatusExpandableItem.Type.Tertiary) ? 24 : 16
         anchors.left: parent.left
         anchors.leftMargin: (statusExpandableItem.type === StatusExpandableItem.Type.Primary) ? 48 : 0
         anchors.right: parent.right
@@ -195,7 +196,7 @@ Rectangle {
         State {
             name: "EXPANDED"
             PropertyChanges {target: expandImage; icon: "chevron-up"}
-            PropertyChanges {target: statusExpandableItem; height: 82 + expandableRegion.height + 22}
+            PropertyChanges {target: statusExpandableItem; height: 82 + expandableRegion.height}
             PropertyChanges {target: expandableRegion; visible: true}
         },
         State {
