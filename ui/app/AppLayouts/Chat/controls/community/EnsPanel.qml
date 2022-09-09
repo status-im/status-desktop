@@ -53,6 +53,7 @@ ColumnLayout {
         // intercepting event by the StatusRadioButton
         MouseArea {
             anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
             onClicked: root.ensType = EnsPanel.EnsType.Any
         }
     }
@@ -76,6 +77,7 @@ ColumnLayout {
 
         MouseArea {
             anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
             onClicked: root.ensType = EnsPanel.EnsType.CustomSubdomain
         }
     }

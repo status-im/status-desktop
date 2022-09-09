@@ -32,6 +32,7 @@ Flickable {
         id: d
         property bool isPrivate: false
         property ListModel permissions: ListModel{}
+        property int permissionType: PermissionTypes.Type.None
     }
 
     contentWidth: mainLayout.width
@@ -116,7 +117,7 @@ Flickable {
                 onAddEns: {
                     const key = any ? "EnsAny" : "EnsCustom"
                     const name = any ? "" : customDomain
-                    const icon = "qrc:imports/assets/icons/profile/ensUsernames.svg"
+                    const icon = Style.svg("ensUsernames")
 
                     holdingsModel.append({type: HoldingTypes.Type.Ens, key, name, amount: 1, imageSource: icon, operator })
                     d.permissions.append([{ key }, { operator }])
@@ -144,7 +145,7 @@ Flickable {
                 onUpdateEns: {
                     const key = any ? "EnsAny" : "EnsCustom"
                     const name = any ? "" : customDomain
-                    const icon = "qrc:imports/assets/icons/profile/ensUsernames.svg"
+                    const icon = Style.svg("ensUsernames")
 
                     holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Ens, key, name: name, amount: 1, imageSource: icon })
                     dropdown.close()
@@ -166,7 +167,7 @@ Flickable {
                 dropdown.x = tokensSelector.addButton.width + 4
                 dropdown.y = 0
 
-                if (tokensSelector.itemsModel.count === 0)
+                if (holdingsModel.count === 0)
                     dropdown.openFlow(HoldingsDropdown.FlowType.Add)
                 else
                     dropdown.openFlow(HoldingsDropdown.FlowType.AddWithOperators)
@@ -214,11 +215,59 @@ Flickable {
             color: Style.current.separator
         }
         StatusItemSelector {
+            id: permissionsSelector
+
             Layout.fillWidth: true
             icon: Style.svg("profile/security")
             iconSize: 24
+            useIcons: true
             title: qsTr("Is allowed to")
             defaultItemText: qsTr("Example: View and post")
+
+            Binding on itemsModel {
+                when: d.permissionType !== PermissionTypes.Type.None
+                value: QtObject {
+                    id: permissionsListObjectModel
+
+                    readonly property int operator: SQ.Utils.Operators.None
+                    property string text: ""
+                    property string imageSource: ""
+                }
+            }
+
+            addButton.visible: d.permissionType === PermissionTypes.Type.None
+
+            PermissionsDropdown {
+                id: permissionsDropdown
+
+                initialPermissionType: d.permissionType
+
+                onDone: {
+                    d.permissionType = permissionType
+                    permissionsListObjectModel.text = title
+                    permissionsListObjectModel.imageSource = asset
+                    permissionsDropdown.close()
+                }
+            }
+
+            addButton.onClicked: {
+                permissionsDropdown.mode = PermissionsDropdown.Mode.Add
+                permissionsDropdown.parent = permissionsSelector.addButton
+                permissionsDropdown.x = permissionsSelector.addButton.width + 4
+                permissionsDropdown.y = 0
+                permissionsDropdown.open()
+            }
+
+            onItemClicked: {
+                if (mouse.button !== Qt.LeftButton)
+                    return
+
+                permissionsDropdown.mode = PermissionsDropdown.Mode.Update
+                permissionsDropdown.parent = item
+                permissionsDropdown.x = mouse.x + 4
+                permissionsDropdown.y = 1
+                permissionsDropdown.open()
+            }
         }
         Rectangle {
             Layout.leftMargin: 16
