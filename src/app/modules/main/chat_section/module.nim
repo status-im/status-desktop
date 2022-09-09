@@ -13,6 +13,7 @@ import ../../../global/app_sections_config as conf
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../core/notifications/details as notification_details
+import ../../../../app_service/common/types
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
@@ -135,6 +136,7 @@ proc buildChatSectionUI(
     var chatImage = ""
     var colorHash: ColorHashDto = @[]
     var colorId: int = 0
+    var onlineStatus = OnlineStatus.Inactive
     let isUsersListAvailable = (chatDto.chatType != ChatType.OneToOne and
       chatDto.chatType != ChatType.Public)
     var blocked = false
@@ -146,6 +148,8 @@ proc buildChatSectionUI(
       blocked = contactDetails.details.isBlocked()
       colorHash = self.controller.getColorHash(chatDto.id)
       colorId = self.controller.getColorId(chatDto.id)
+      onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(chatDto.id).statusType)
+
     elif(chatDto.chatType == ChatType.PrivateGroupChat):
       chatImage = chatDto.icon
 
@@ -158,7 +162,7 @@ proc buildChatSectionUI(
     let channelItem = initItem(chatDto.id, chatName, chatImage, chatDto.color,
       chatDto.emoji, chatDto.description, chatDto.chatType.int, amIChatAdmin, chatDto.timestamp.int, hasNotification,
       notificationsCount, chatDto.muted, blocked, chatDto.active, chatDto.position,
-      chatDto.categoryId, colorId, colorHash)
+      chatDto.categoryId, colorId, colorHash, onlineStatus = onlineStatus)
     self.view.chatsModel().appendItem(channelItem)
     self.addSubmodule(chatDto.id, belongToCommunity, isUsersListAvailable, events, settingsService,
       contactService, chatService, communityService, messageService, gifService, mailserversService)
@@ -410,12 +414,15 @@ method addNewChat*(
   var chatImage = chatDto.icon
   var colorHash: ColorHashDto = @[]
   var colorId: int = 0
+  var onlineStatus = OnlineStatus.Inactive
+
   var isUsersListAvailable = true
   if(chatDto.chatType == ChatType.OneToOne):
     isUsersListAvailable = false
     (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
     colorHash = self.controller.getColorHash(chatDto.id)
     colorId = self.controller.getColorId(chatDto.id)
+    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(chatDto.id).statusType)
 
   var amIChatAdmin = false
   if(belongsToCommunity):
@@ -426,7 +433,8 @@ method addNewChat*(
   if chatDto.categoryId.len == 0:
     let item = initItem(chatDto.id, chatName, chatImage, chatDto.color, chatDto.emoji,
       chatDto.description, chatDto.chatType.int, amIChatAdmin, chatDto.timestamp.int, hasNotification, notificationsCount,
-      chatDto.muted, blocked=false, active=false, position = 0, chatDto.categoryId, colorId, colorHash, chatDto.highlight)
+      chatDto.muted, blocked=false, active=false, position = 0, chatDto.categoryId, colorId, colorHash, chatDto.highlight,
+      onlineStatus = onlineStatus)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
                       communityService, messageService, gifService, mailserversService)
     self.chatContentModules[chatDto.id].load()
@@ -863,3 +871,8 @@ method downloadMessages*(self: Module, chatId: string, filePath: string) =
     return
 
   self.chatContentModules[chatId].downloadMessages(filePath)
+
+method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto]) =
+  for s in statusUpdates:
+    let status = toOnlineStatus(s.statusType)
+    self.view.chatsModel().updateItemOnlineStatus(s.publicKey, status)

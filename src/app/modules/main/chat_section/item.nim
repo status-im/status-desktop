@@ -2,16 +2,20 @@ import strformat, json
 import base_item, sub_model, sub_item
 import ../../shared_models/color_hash_model
 
+import ../../../../app_service/common/types
+import ../../../../app_service/service/contacts/dto/contacts
+
 type
   Item* = ref object of BaseItem
     subItems: SubModel
 
 proc initItem*(id, name, icon: string, color, emoji, description: string,
     `type`: int, amIChatAdmin: bool, lastMessageTimestamp: int, hasUnreadMessages: bool, notificationsCount: int, muted,
-    blocked, active: bool, position: int, categoryId: string, colorId: int = 0, colorHash: seq[ColorHashSegment] = @[], highlight: bool = false): Item =
+    blocked, active: bool, position: int, categoryId: string, colorId: int = 0, colorHash: seq[ColorHashSegment] = @[], highlight: bool = false,
+    trustStatus: TrustStatus = TrustStatus.Unknown, onlineStatus = OnlineStatus.Inactive): Item =
   result = Item()
   result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin, lastMessageTimestamp, hasUnreadMessages,
-  notificationsCount, muted, blocked, active, position, categoryId, colorId, colorHash, highlight)
+  notificationsCount, muted, blocked, active, position, categoryId, colorId, colorHash, highlight, trustStatus, onlineStatus)
   result.subItems = newSubModel()
 
 proc delete*(self: Item) =
@@ -41,6 +45,7 @@ proc `$`*(self: Item): string =
     categoryId: {self.categoryId},
     highlight: {self.highlight},
     trustStatus: {self.trustStatus},
+    onlineStatus: {self.onlineStatus},
     subItems:[
       {$self.subItems}
     ]"""
@@ -65,6 +70,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "categoryId": self.categoryId,
     "highlight": self.highlight,
     "trustStatus": self.trustStatus,
+    "onlineStatus": self.onlineStatus
   }
 
 proc appendSubItems*(self: Item, items: seq[SubItem]) =

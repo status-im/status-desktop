@@ -313,3 +313,6 @@ method downloadMessages*(self: AccessInterface, chatId: string, filePath: string
 
 method updateLastMessageTimestamp*(self: AccessInterface, chatId: string, lastMessageTimestamp: int) =
   raise newException(ValueError, "No implementation available")
+
+method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUpdateDto]) =
+  raise newException(ValueError, "No implementation available")

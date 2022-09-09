@@ -226,6 +226,10 @@ proc init*(self: Controller) =
       return
     self.delegate.createOneToOneChat(args.communityId, args.chatId, args.ensName)
 
+  self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
+    let args = ContactsStatusUpdatedArgs(e)
+    self.delegate.contactsStatusUpdated(args.statusUpdates)
+
   self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
     self.delegate.setLoadingHistoryMessagesInProgress(true)
 

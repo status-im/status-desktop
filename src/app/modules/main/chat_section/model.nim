@@ -1,4 +1,5 @@
 import NimQml, Tables, strutils, strformat, json
+import ../../../../app_service/common/types
 from ../../../../app_service/service/chat/dto/chat import ChatType
 from ../../../../app_service/service/contacts/dto/contacts import TrustStatus
 import item, sub_item, base_item, sub_model
@@ -27,6 +28,7 @@ type
     CategoryId
     Highlight
     TrustStatus
+    OnlineStatus
 
 QtObject:
   type
@@ -92,6 +94,7 @@ QtObject:
       ModelRole.CategoryId.int:"categoryId",
       ModelRole.Highlight.int:"highlight",
       ModelRole.TrustStatus.int:"trustStatus",
+      ModelRole.OnlineStatus.int:"onlineStatus",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -149,6 +152,8 @@ QtObject:
       result = newQVariant(item.highlight)
     of ModelRole.TrustStatus:
       result = newQVariant(item.trustStatus.int)
+    of ModelRole.OnlineStatus:
+      result = newQVariant(item.onlineStatus.int)
 
   proc appendItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
@@ -304,6 +309,16 @@ QtObject:
         self.dataChanged(index, index,
           @[ModelRole.Name.int, ModelRole.Description.int, ModelRole.Emoji.int, ModelRole.Color.int])
         return
+  
+  proc updateItemOnlineStatus*(self: Model, id: string, onlineStatus: OnlineStatus) =
+    ## This updates only first level items, it doesn't update subitems, since subitems cannot have onlineStatus.
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        if(self.items[i].onlineStatus != onlineStatus):
+          self.items[i].BaseItem.onlineStatus = onlineStatus
+          let index = self.createIndex(i, 0, nil)
+          self.dataChanged(index, index, @[ModelRole.OnlineStatus.int])
+          return
 
   proc updateNotificationsForItemOrSubItemById*(self: Model, id: string, hasUnreadMessages: bool,
     notificationsCount: int) =

@@ -14,6 +14,7 @@ import ../../shared_models/section_item
 import ../../shared_models/[member_item, member_model, section_model]
 import ../../../global/global_singleton
 import ../../../core/eventemitter
+import ../../../../app_service/common/types
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/chat/dto/chat

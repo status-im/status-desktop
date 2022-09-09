@@ -15,9 +15,20 @@ type
     Gap = 10
     Edit = 11
 
-type StatusType* {.pure.} = enum
-  Unknown = 0
-  Automatic
-  DoNotDisturb
-  AlwaysOnline
-  Inactive
+type
+  StatusType* {.pure.} = enum
+    Unknown = 0
+    Automatic
+    DoNotDisturb
+    AlwaysOnline
+    Inactive
+
+  OnlineStatus* {.pure.} = enum
+    Inactive = 0
+    Online
+
+proc toOnlineStatus*(statusType: StatusType): OnlineStatus =
+  if(statusType == StatusType.AlwaysOnline or statusType == StatusType.Automatic):
+    return OnlineStatus.Online
+  else:
+    return OnlineStatus.Inactive

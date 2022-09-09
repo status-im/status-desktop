@@ -2,6 +2,8 @@ import strformat
 import ./member_model, ./member_item
 import ../main/communities/models/[pending_request_item, pending_request_model]
 
+import ../../../app_service/common/types
+
 type
   SectionType* {.pure.} = enum
     Chat = 0

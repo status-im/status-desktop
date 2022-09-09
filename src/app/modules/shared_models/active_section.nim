@@ -1,6 +1,8 @@
 import NimQml
-import section_item, user_item
+import section_item
 import ../../../app_service/service/contacts/dto/contacts
+
+import ../../../app_service/common/types
 
 QtObject:
   type ActiveSection* = ref object of QObject
