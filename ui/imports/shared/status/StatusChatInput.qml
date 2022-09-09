@@ -264,7 +264,7 @@ Rectangle {
                 event.accepted = true;
                 return
             }
-            if (messageInputField.length < messageLimit) {
+            if (messageInputField.length <= messageLimit) {
                 control.sendMessage(event)
                 control.hideExtendedArea();
                 event.accepted = true
