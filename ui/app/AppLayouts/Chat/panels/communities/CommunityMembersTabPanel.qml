@@ -142,8 +142,8 @@ Item {
                 status: model.onlineStatus
                 asset.color: Utils.colorForColorId(model.colorId)
                 asset.name: model.icon
-                asset.isImage: true
-                asset.imgIsIdenticon: false
+                asset.isImage: !!model.icon
+                asset.isLetterIdenticon: !model.icon
                 asset.width: 40
                 asset.height: 40
                 ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
