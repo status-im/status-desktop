@@ -299,6 +299,7 @@ Item {
 
                     AccountMenuItemPanel {
                         label: qsTr("Add new user")
+                        asset.name: "add"
                         onClicked: {
                             accountsPopup.close()
                             root.startupStore.doSecondaryAction()
@@ -307,7 +308,7 @@ Item {
 
                     AccountMenuItemPanel {
                         label: qsTr("Add existing Status user")
-                        image: "wallet"
+                        asset.name: "wallet"
                         onClicked: {
                             accountsPopup.close()
                             root.startupStore.doTertiaryAction()
