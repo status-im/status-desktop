@@ -65,6 +65,7 @@ method refreshWalletAccounts*(self: Module) =
           t.changePctDay,
           t.changePct24hour,
           t.change24hour,
+          t.currencyPrice,
         ))
     )
 

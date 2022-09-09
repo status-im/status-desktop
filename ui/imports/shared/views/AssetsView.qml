@@ -69,7 +69,7 @@ Item {
                             font.pixelSize: 15
                             font.strikeout: false
                             color: valueColumn.textColor
-                            text: change24hour !== "" ? change24hour : "---"
+                            text: currencyPrice.toLocaleCurrencyString(Qt.locale(), RootStore.currencyStore.currentCurrencySymbol)
                         }
                         Rectangle {
                             width: 1

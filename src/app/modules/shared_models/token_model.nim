@@ -23,6 +23,7 @@ type
     ChangePctDay
     ChangePct24hour
     Change24hour
+    CurrencyPrice
 
 QtObject:
   type
@@ -77,6 +78,7 @@ QtObject:
       ModelRole.ChangePctDay.int:"changePctDay",
       ModelRole.ChangePct24hour.int:"changePct24hour",
       ModelRole.Change24hour.int:"change24hour",
+      ModelRole.CurrencyPrice.int:"currencyPrice",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -128,6 +130,8 @@ QtObject:
       result = newQVariant(item.getChangePct24hour())
     of ModelRole.Change24hour:
       result = newQVariant(item.getChange24hour())
+    of ModelRole.CurrencyPrice:
+      result = newQVariant(item.getCurrencyPrice())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -152,6 +156,7 @@ QtObject:
       of "changePctDay": result = $item.getChangePctDay()
       of "changePct24hour": result = $item.getChangePct24hour()
       of "change24hour": result = $item.getChange24hour()
+      of "currencyPrice": result = $item.getCurrencyPrice()
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
