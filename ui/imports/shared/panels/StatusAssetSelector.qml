@@ -29,7 +29,7 @@ Item {
     }
 
     // Define this in the usage to get balance in currency selected by user
-    property var getCurrencyBalanceString: function (currencyBalance) { return LocaleUtils.formatNumber(currencyBalance) }
+    property var getCurrencyBalanceString: function (currencyBalance) { return "" }
 
     function resetInternal() {
         assets = null
@@ -166,7 +166,7 @@ Item {
                             Layout.fillWidth: true
                             horizontalAlignment: Text.AlignRight
                             font.pixelSize: 15
-                            text: LocaleUtils.formatCryptoCurrency(totalBalance, symbol)
+                            text: LocaleUtils.formatCurrency(totalBalance, symbol)
                         }
                     }
                     RowLayout {

@@ -66,7 +66,7 @@ StatusRadioButton {
                 id: secondaryLabel
                 font.pixelSize: 13
                 font.weight: Font.Medium
-                text: LocaleUtils.formatCryptoCurrency(d.ethValue, "ETH")
+                text: LocaleUtils.formatCryptoCurrency(d.ethValue, "ETH", 6)
                 color: Theme.palette.primaryColor1
             }
             StatusBaseText {

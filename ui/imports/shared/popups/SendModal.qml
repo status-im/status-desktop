@@ -151,7 +151,8 @@ StatusDialog {
                         Layout.alignment: Qt.AlignVCenter
                     }
                     StatusListItemTag {
-                        title: assetSelector.selectedAsset.totalBalance > 0 ? qsTr("Max: ") + (assetSelector.selectedAsset ? d.maxFiatBalance : "0.00") : qsTr("No balances active") // FIXME i18n
+                        title: assetSelector.selectedAsset.totalBalance > 0 ? qsTr("Max: %1").arg(assetSelector.selectedAsset ? LocaleUtils.formatNumber(d.maxFiatBalance) : "0.00")
+                                                                            : qsTr("No balances active")
                         closeButtonVisible: false
                         titleText.font.pixelSize: 12
                         Layout.preferredHeight: 22

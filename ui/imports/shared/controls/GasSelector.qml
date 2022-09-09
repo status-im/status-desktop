@@ -26,7 +26,7 @@ Item {
     property alias selectedGasPrice: inputGasPrice.text
     property alias selectedGasLimit: inputGasLimit.text
     property string defaultGasLimit: "0"
-    property string maxFiatFees: selectedGasFiatValue + root.defaultCurrency.toUpperCase()
+    property string maxFiatFees: LocaleUtils.formatCurrency(selectedGasFiatValue, root.defaultCurrency.toUpperCase())
     property int estimatedTxTimeFlag: Constants.transactionEstimatedTime.unknown
     property int chainId: 1
 
@@ -185,7 +185,7 @@ Item {
         anchors.top: parent.top
         anchors.left: prioritytext.right
         anchors.leftMargin: Style.current.smallPadding
-        text: qsTr("Current base fee: %1 %2").arg(root.suggestedFees.baseFee).arg("Gwei")
+        text: qsTr("Current base fee: %1").arg(LocaleUtils.formatCryptoCurrency(root.suggestedFees.baseFee, "Gwei", 6))
         font.weight: Font.Medium
         font.pixelSize: 13
         color: Style.current.secondaryText
@@ -200,9 +200,7 @@ Item {
         defaultBottomPadding: 2
         size: StatusBaseButton.Size.Tiny
         visible: root.suggestedFees.eip1559Enabled
-        text: advancedMode ?
-            qsTr("Use suggestions") :
-            qsTr("Use custom")
+        text: advancedMode ? qsTr("Use suggestions") : qsTr("Use custom")
         font.pixelSize: 13
         onClicked: advancedMode = !advancedMode
     }
@@ -228,7 +226,7 @@ Item {
             onCheckedChanged: {
                 if(checked) {
                     if (root.suggestedFees.eip1559Enabled){
-                        inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
+                        inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2); // FIXME i18n
                         inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasL, 2);
                     } else {
                         inputGasPrice.text = price
@@ -258,7 +256,7 @@ Item {
             onCheckedChanged: {
                 if(checked) {
                     if (root.suggestedFees.eip1559Enabled){
-                        inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
+                        inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2); // FIXME i18n
                         inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasM, 2);
                     } else {
                         inputGasPrice.text = root.suggestedFees.gasPrice
@@ -283,7 +281,7 @@ Item {
             onCheckedChanged: {
                 if(checked) {
                     if (root.suggestedFees.eip1559Enabled){
-                        inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
+                        inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2); // FIXME i18n
                         inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasH, 2);
                     } else {
                         inputGasPrice.text = price
@@ -403,11 +401,7 @@ Item {
             id: maxPriorityFeeText
             anchors.left: parent.left
             visible: root.suggestedFees.eip1559Enabled
-            text: {
-                let v = selectedGasEthValue > 0.00009 ? selectedGasEthValue :
-                    (selectedGasEthValue < 0.000001 ? "0.000000..." : selectedGasEthValue.toFixed(6)) // FIXME i18n
-                return qsTr("Maximum priority fee: %1 ETH").arg(v)
-            }
+            text: qsTr("Maximum priority fee: %1").arg(LocaleUtils.formatCryptoCurrency(selectedGasEthValue, "ETH", 6))
             anchors.top: errorsText.bottom
             anchors.topMargin: Style.current.smallPadding + 5
             font.pixelSize: 13
