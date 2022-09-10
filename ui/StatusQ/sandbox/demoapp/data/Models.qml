@@ -1007,7 +1007,7 @@ QtObject {
             localName: ""
             profileImage: ""
             contentType: StatusMessage.ContentType.Text
-            message: 'Simple text message with reactions'
+            message: 'Simple text message from another user with reactions'
             messageContent: ""
             isContact: false
             trustIndicator: StatusContactVerificationIcons.TrustedType.None
@@ -1029,10 +1029,53 @@ QtObject {
                     numberOfReactions: 2
                     didIReactWithThisEmoji: false
                     jsonArrayOfUsersReactedWithThisEmoji: '["User 1", "User 3"]'
-//                    jsonArrayOfUsersReactedWithThisEmoji: [
-//                        ListElement { text: "User 1" },
-//                        ListElement { text: "User 3" }
-//                    ]
+                    emojiId: 1
+                },
+                ListElement {
+                    numberOfReactions: 3
+                    didIReactWithThisEmoji: true
+                    jsonArrayOfUsersReactedWithThisEmoji: '["Teenage Mutant Turtle", "User 1", "User 3"]'
+                    emojiId: 3
+                },
+                ListElement {
+                    numberOfReactions: 1
+                    didIReactWithThisEmoji: false
+                    jsonArrayOfUsersReactedWithThisEmoji: '["User 3"]'
+                    emojiId: 4
+                }
+            ]
+        }
+        ListElement {
+            timestamp: "1657937930"
+            amIsender: true
+            senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
+            userName: "You"
+            ensName: ""
+            localName: ""
+            profileImage: ""
+            contentType: StatusMessage.ContentType.Text
+            message: 'Simple text message from current user with reactions'
+            messageContent: ""
+            isContact: false
+            trustIndicator: StatusContactVerificationIcons.TrustedType.None
+            hasMention: false
+            editMode: false
+            isReply: false
+            replySenderId: ""
+            replySenderName: ""
+            replyProfileImage: ""
+            replyMessageText: ""
+            replyAmISender: false
+            replyContentType: StatusMessage.ContentType.Text
+            replyMessageContent: ""
+            isPinned: false
+            pinnedBy: ""
+            hasExpired: false
+            reactions: [
+                ListElement {
+                    numberOfReactions: 2
+                    didIReactWithThisEmoji: false
+                    jsonArrayOfUsersReactedWithThisEmoji: '["User 1", "User 3"]'
                     emojiId: 1
                 },
                 ListElement {

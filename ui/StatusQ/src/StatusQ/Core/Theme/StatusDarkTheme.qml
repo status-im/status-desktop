@@ -159,8 +159,8 @@ ThemePalette {
     property QtObject statusMessage: QtObject {
         property color emojiReactionBackground: "#2d2823"
         property color emojiReactionBackgroundHovered: "#3a3632"
-        property color emojiReactionActiveBackground: "#353a4d"
-        property color emojiReactionActiveBackgroundHovered: "#cbd5f1"
+        property color emojiReactionActiveBackground: getColor('blue')
+        property color emojiReactionActiveBackgroundHovered: Qt.darker(emojiReactionActiveBackground, 1.1)
     }
 }
 

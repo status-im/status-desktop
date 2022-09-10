@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.14
 import QtGraphicalEffects 1.13
 
 import StatusQ.Core 0.1
@@ -73,100 +74,65 @@ Item {
 
         Repeater {
             id: reactionRepeater
+
             width: childrenRect.width
             model: root.emojiReactionsModel
 
-            Rectangle {
-                id: emojiContainer
+            Control {
+                id: reactionDelegate
 
-                readonly property bool isHovered: mouseArea.containsMouse
+                topPadding: 2
+                bottomPadding: 2
+                leftPadding: 2
+                rightPadding: 6
 
-                width: emojiImage.width + emojiCount.width + (root.imageMargin * 2) +  + 8
-                height: 20
-                radius: 10
-                color: model.didIReactWithThisEmoji ?
-                           (isHovered ? Theme.palette.statusMessage.emojiReactionActiveBackgroundHovered : Theme.palette.statusMessage.emojiReactionActiveBackground) :
-                           (isHovered ? Theme.palette.statusMessage.emojiReactionBackgroundHovered : Theme.palette.statusMessage.emojiReactionBackground)
+                background: Rectangle {
+                    radius: 10
+                    color: model.didIReactWithThisEmoji
+                               ? (reactionDelegate.hovered ? Theme.palette.statusMessage.emojiReactionActiveBackgroundHovered
+                                                         : Theme.palette.statusMessage.emojiReactionActiveBackground)
+                               : (reactionDelegate.hovered ? Theme.palette.statusMessage.emojiReactionBackgroundHovered
+                                                         : Theme.palette.statusMessage.emojiReactionBackground)
 
-                StatusToolTip {
-                    visible: mouseArea.containsMouse
-                    maxWidth: 400
-                    text: d.showReactionAuthors(model.jsonArrayOfUsersReactedWithThisEmoji, model.emojiId)
+                    // Rounded corner to cover one corner
+                    Rectangle {
+                        anchors.top: parent.top
+                        anchors.left: parent.left
+                        width: 10
+                        height: 10
+                        radius: 2
+                        color: parent.color
+                    }
                 }
 
-                // Rounded corner to cover one corner
-                Rectangle {
-                    color: parent.color
-                    width: 10
-                    height: 10
-                    anchors.top: parent.top
-                    anchors.left: !root.isCurrentUser ? parent.left : undefined
-                    anchors.leftMargin: 0
-                    anchors.right: !root.isCurrentUser ? undefined : parent.right
-                    anchors.rightMargin: 0
-                    radius: 2
-                    z: -1
-                }
+                contentItem: Row {
+                    spacing: 4
 
-                // This is a workaround to get a "border" around the rectangle including the weird rectangle
-                Loader {
-                    active: model.didIReactWithThisEmoji
-                    anchors.top: parent.top
-                    anchors.topMargin: -1
-                    anchors.left: parent.left
-                    anchors.leftMargin: -1
-                    z: -2
+                    StatusEmoji {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 15
+                        height: 15
 
-                    sourceComponent: Component {
-                        Rectangle {
-                            width: emojiContainer.width + 2
-                            height: emojiContainer.height + 2
-                            radius: emojiContainer.radius
-                            color: Theme.palette.primaryColor1
-
-                            Rectangle {
-                                color: parent.color
-                                width: 10
-                                height: 10
-                                anchors.top: parent.top
-                                anchors.left: !root.isCurrentUser ? parent.left : undefined
-                                anchors.leftMargin: 0
-                                anchors.right: !root.isCurrentUser ? undefined : parent.right
-                                anchors.rightMargin: 0
-                                radius: 2
-                                z: -1
-                            }
+                        source: {
+                            if (model.emojiId >= 1 && model.emojiId <= root.icons.length)
+                                return root.icons[model.emojiId - 1];
+                            return "";
                         }
                     }
-                }
 
-                // TODO: Use Row
-
-                StatusEmoji {
-                    id: emojiImage
-
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    anchors.leftMargin: root.imageMargin
-
-                    width: 15
-                    height: 15
-
-                    source: {
-                        if (model.emojiId >= 1 && model.emojiId <= root.icons.length)
-                            return root.icons[model.emojiId - 1];
-                        return "";
+                    StatusBaseText {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: model.numberOfReactions
+                        font.pixelSize: 12
+                        color: model.didIReactWithThisEmoji ? Theme.palette.indirectColor1 : Theme.palette.directColor1
                     }
+
                 }
 
-                StatusBaseText {
-                    id: emojiCount
-                    text: model.numberOfReactions
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: emojiImage.right
-                    anchors.leftMargin: root.imageMargin
-                    font.pixelSize: 12
-                    color: model.didIReactWithThisEmoji ? Theme.palette.primaryColor1 : Theme.palette.directColor1
+                StatusToolTip {
+                    visible: reactionDelegate.hovered
+                    maxWidth: 400
+                    text: d.showReactionAuthors(model.jsonArrayOfUsersReactedWithThisEmoji, model.emojiId)
                 }
 
                 MouseArea {
@@ -194,7 +160,7 @@ Item {
             StatusIcon {
                 id: addEmojiButton
 
-                property bool isHovered: false // TODO: Replace with mouseArea.containsMouse
+                readonly property bool isHovered: addEmojiButtonMouseArea.containsMouse
 
                 anchors.left: parent.left
                 anchors.leftMargin: 2.5
@@ -211,8 +177,6 @@ Item {
                 anchors.fill: addEmojiButton
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
-                onEntered: addEmojiButton.isHovered = true
-                onExited: addEmojiButton.isHovered = false
                 onClicked: {
                     root.addEmojiClicked(this, mouse);
                 }
