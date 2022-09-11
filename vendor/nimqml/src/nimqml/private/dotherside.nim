@@ -192,7 +192,7 @@ proc dos_qvariant_setULongLong(variant: DosQVariant, value: culonglong) {.cdecl,
 proc dos_qvariant_setBool(variant: DosQVariant, value: bool) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qvariant_setString(variant: DosQVariant, value: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qvariant_assign(leftValue: DosQVariant, rightValue: DosQVariant) {.cdecl, dynlib: dynLibName, importc.}
-proc dos_qvariant_setFloat(variant: DosQVariant, value: float) {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qvariant_setFloat(variant: DosQVariant, value: cfloat) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qvariant_setDouble(variant: DosQVariant, value: cdouble) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qvariant_setQObject(variant: DosQVariant, value: DosQObject) {.cdecl, dynlib: dynLibName, importc.}
 
