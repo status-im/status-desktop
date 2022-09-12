@@ -44,15 +44,14 @@ Item {
     StatusListView {
         id: userListView
         objectName: "userListPanel"
-        clip: true
-        ScrollBar.vertical: ScrollBar {
-            policy: ScrollBar.AsNeeded
-        }
+
         anchors {
             top: titleText.bottom
             topMargin: Style.current.padding
             left: parent.left
+            leftMargin: Style.current.halfPadding
             right: parent.right
+            rightMargin: Style.current.halfPadding
             bottom: parent.bottom
             bottomMargin: Style.current.bigPadding
         }
@@ -73,10 +72,7 @@ Item {
         section.property: "onlineStatus"
         section.delegate: (root.width > 58) ? sectionDelegateComponent : null
         delegate: StatusMemberListItem {
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.right: parent.right
-            anchors.rightMargin: 8
+            width: ListView.view.width
             nickName: model.localNickname
             userName: model.displayName
             pubKey: Utils.getCompressedPk(model.pubKey)
@@ -95,7 +91,7 @@ Item {
             }
             asset.isImage: (asset.name !== "")
             asset.isLetterIdenticon: (asset.name === "")
-            asset.color:  Utils.colorForColorId(model.colorId)
+            asset.color: Utils.colorForColorId(model.colorId)
             status: model.onlineStatus
             ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey) // FIXME: use model.colorHash
             onClicked: {
@@ -131,7 +127,7 @@ Item {
                         case Constants.onlineStatus.online:
                             return qsTr("Online")
                         default:
-                             return qsTr("Inactive")
+                            return qsTr("Inactive")
                     }
                 }
             }
