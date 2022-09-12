@@ -90,7 +90,7 @@ ColumnLayout {
 
         onPinnedMessagesLimitReached: {
             if(!chatContentModule) {
-                console.debug("error on open pinned messages limit reached from message context menu - chat content module is not set")
+                console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
                 return
             }
             Global.openPopup(Global.pinnedMessagesPopup, {

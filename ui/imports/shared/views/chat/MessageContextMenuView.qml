@@ -193,7 +193,7 @@ StatusPopupMenu {
         icon: root.selectedUserIcon
         trustStatus: d.contactDetails && d.contactDetails.trustStatus ? d.contactDetails.trustStatus
                                                                       : Constants.trustStatus.unknown
-        isContact: root.isMyMutualContact
+        isContact: root.isContact
         isCurrentUser: root.isMe
     }
 

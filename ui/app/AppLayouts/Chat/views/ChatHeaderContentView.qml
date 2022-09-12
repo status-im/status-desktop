@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.13
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 
@@ -262,7 +263,7 @@ RowLayout {
                 case Constants.chatType.privateGroupChat:
                     return qsTr("%n member(s)", "", chatContentModule.usersModule.model.count)
                 case Constants.chatType.communityChat:
-                    return Utils.linkifyAndXSS(chatContentModule.chatDetails.description).trim()
+                    return SQUtils.Utils.linkifyAndXSS(chatContentModule.chatDetails.description).trim()
                 default:
                     return ""
                 }
@@ -288,7 +289,7 @@ RowLayout {
                     console.debug("error on open pinned messages - chat content module is not set")
                     return
                 }
-                Global.openPopup(pinnedMessagesPopupComponent, {
+                Global.openPopup(Global.pinnedMessagesPopup, {
                                      store: rootStore,
                                      messageStore: root.rootStore.messageStore,
                                      pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
