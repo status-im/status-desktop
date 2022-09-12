@@ -150,7 +150,7 @@ Loader {
         messageContextMenu.messageSenderId = root.senderId
         messageContextMenu.messageContentType = root.messageContentType
         messageContextMenu.pinnedMessage = root.pinnedMessage
-        messageContextMenu.canPin = d.canPin
+        messageContextMenu.canPin = !!root.messageStore && root.messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins
 
         messageContextMenu.selectedUserPublicKey = root.senderId
         messageContextMenu.selectedUserDisplayName = root.senderDisplayName
@@ -232,8 +232,6 @@ Loader {
     QtObject {
         id: d
 
-        readonly property bool canPin: !!messageStore &&
-                                       messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins
         readonly property int chatButtonSize: 32
 
         property string activeMessage
@@ -732,7 +730,7 @@ Loader {
                                 return;
                             }
 
-                            if (d.canPin) {
+                            if (!!root.messageStore && root.messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins) {
                                 messageStore.pinMessage(root.messageId)
                                 return;
                             }
@@ -742,7 +740,7 @@ Loader {
                                 return;
                             }
 
-                            Global.openPopup(pinnedMessagesPopupComponent, {
+                            Global.openPopup(Global.pinnedMessagesPopup, {
                                                  store: root.rootStore,
                                                  messageStore: messageStore,
                                                  pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
