@@ -102,7 +102,7 @@ Item {
                     messageContextMenu.myPublicKey = userProfile.pubKey
                     messageContextMenu.selectedUserPublicKey = model.pubKey
                     messageContextMenu.selectedUserDisplayName = model.displayName
-                    messageContextMenu.selectedUserIcon = image.source
+                    messageContextMenu.selectedUserIcon = asset.source
                     messageContextMenu.popup(4, 4)
                 } else if (mouse.button === Qt.LeftButton && !!messageContextMenu) {
                     Global.openProfilePopup(model.pubKey);
