@@ -82,7 +82,7 @@ Item {
         anchors.left: parent.left
         anchors.top: topHeader.bottom
         anchors.leftMargin: Style.current.padding
-        width: root.contentWidth - 2 * Style.current.padding
+        width: root.contentWidth - Style.current.padding
         height: d.titleRowHeight
         visible: root.sectionTitle !== ""
 
