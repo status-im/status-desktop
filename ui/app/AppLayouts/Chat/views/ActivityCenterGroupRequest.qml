@@ -23,7 +23,7 @@ Item {
     property int previousNotificationIndex
     property int previousNotificationTimestamp
     property bool hideReadNotifications: false
-    property bool acCurrentFilterAll: false
+    property bool acCurrentActivityCategoryAll: false
 
     StatusDateGroupLabel {
         id: dateGroupLbl
@@ -47,7 +47,7 @@ Item {
                 return false
             }
 
-            return acCurrentFilterAll;
+            return acCurrentActivityCategoryAll;
         }
         width: parent.width
         height: visible ? 60 : 0
