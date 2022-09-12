@@ -30,6 +30,8 @@ SettingsContentBase {
 
     headerComponents: [
         StatusButton {
+            implicitHeight: 38
+            size: StatusBaseButton.Size.Normal
             text: qsTr("Send contact request to chat key")
             onClicked: {
                 sendContactRequest.open()
@@ -65,6 +67,7 @@ SettingsContentBase {
         SearchBox {
             id: searchBox
             anchors.left: parent.left
+            anchors.leftMargin: Style.current.padding
             anchors.right: parent.right
             placeholderText: qsTr("Search by a display name or chat key")
         }
@@ -74,10 +77,11 @@ SettingsContentBase {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: searchBox.bottom
-            anchors.topMargin: (2 * Style.current.padding)
-            
+            anchors.topMargin: Style.current.padding
+
             StatusTabButton {
                 id: contactsBtn
+                leftPadding: Style.current.padding
                 width: implicitWidth
                 text: qsTr("Contacts")
             }
@@ -110,10 +114,12 @@ SettingsContentBase {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: contactsTabBar.bottom
+            anchors.topMargin: Style.current.smallPadding
             anchors.bottom: parent.bottom
             currentIndex: contactsTabBar.currentIndex
             // CONTACTS
             Column {
+                spacing: Style.current.padding
                 ContactsListPanel {
                     id: verifiedContacts
                     width: parent.width
