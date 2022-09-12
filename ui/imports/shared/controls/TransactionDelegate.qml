@@ -60,14 +60,14 @@ StatusListItem {
                     height: 18
                 }
                 StatusBaseText {
-                    text: "%1 %2".arg(cryptoValue).arg(resolvedSymbol)
+                    text: LocaleUtils.formatCryptoCurrency(cryptoValue, resolvedSymbol) // FIXME i18n check precision
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
                 }
             }
             StatusBaseText {
                 Layout.alignment: Qt.AlignRight
-                text: "%1 %2".arg(fiatValue).arg(currentCurrency.toUpperCase())
+                text: LocaleUtils.formatCurrency(fiatValue, currentCurrency.toUpperCase())
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
             }

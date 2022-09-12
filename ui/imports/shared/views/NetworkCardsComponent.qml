@@ -15,7 +15,6 @@ Item {
 
     property var assets
     property var store
-    property string locale: ""
     property var selectedAsset
     property var suggestedRoutes
     property bool customMode: false
@@ -130,7 +129,7 @@ Item {
                 StatusCard {
                     id: toCard
                     primaryText: model.chainName
-                    secondaryText: (selectedNetwork && selectedNetwork.chainName === model.chainName) ? amountToSend: 0
+                    secondaryText: (selectedNetwork && selectedNetwork.chainName === model.chainName) ? amountToSend: 0 // FIXME i18n
                     tertiaryText: ""
                     // To-do preferred in not something that is supported yet
                     state: networkCardsComponent.errorMode ? "error" : "default"
@@ -138,7 +137,7 @@ Item {
                     cardIcon.source: Style.png(model.iconUrl)
                     disabledText: qsTr("Disabled")
                     advancedMode: networkCardsComponent.customMode
-                    advancedInputText: (selectedNetwork && selectedNetwork.chainName === model.chainName) ? amountToSend: 0
+                    advancedInputText: (selectedNetwork && selectedNetwork.chainName === model.chainName) ? amountToSend: 0 // FIXME i18n
                     Component.onCompleted: {
                         disabled = store.checkIfDisabledByUser(model.chainId)
                         if(selectedNetwork && selectedNetwork.chainName === model.chainName)

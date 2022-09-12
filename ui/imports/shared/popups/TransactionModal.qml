@@ -27,7 +27,7 @@ ModalPopup {
       id: confirmationsCount
       text: {
           if(transaction !== undefined)
-              return RootStore.getLatestBlockNumber() - RootStore.hex2Dec(transaction.blockNumber) + qsTr(" confirmation(s)")
+              return qsTr("%n confirmation(s)", "", RootStore.getLatestBlockNumber() - RootStore.hex2Dec(transaction.blockNumber)) // FIXME i18n getLatestBlockNumber() used?
           else
               return ""
       }
