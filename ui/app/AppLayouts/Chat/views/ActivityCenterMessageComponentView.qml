@@ -24,14 +24,14 @@ Item {
         if (hideReadNotifications && model.read) {
             return false
         }
-        return  acCurrentFilter === ActivityCenterPopup.Filter.All ||
-                (model.notificationType === Constants.activityCenterNotificationTypeMention && acCurrentFilter === ActivityCenterPopup.Filter.Mentions) ||
-                (model.notificationType === Constants.activityCenterNotificationTypeOneToOne && acCurrentFilter === ActivityCenterPopup.Filter.ContactRequests) ||
-                (model.notificationType === Constants.activityCenterNotificationTypeReply && acCurrentFilter === ActivityCenterPopup.Filter.Replies)
+        return acCurrentActivityCategory === ActivityCenterPopup.ActivityCategory.All ||
+                (model.notificationType === Constants.activityCenterNotificationTypeMention && acCurrentActivityCategory === ActivityCenterPopup.ActivityCategory.Mentions) ||
+                (model.notificationType === Constants.activityCenterNotificationTypeOneToOne && acCurrentActivityCategory === ActivityCenterPopup.ActivityCategory.ContactRequests) ||
+                (model.notificationType === Constants.activityCenterNotificationTypeReply && acCurrentActivityCategory === ActivityCenterPopup.ActivityCategory.Replies)
     }
 
     property var store
-    property int acCurrentFilter
+    property int acCurrentActivityCategory
     property var chatSectionModule
     property int previousNotificationIndex
     property bool hideReadNotifications

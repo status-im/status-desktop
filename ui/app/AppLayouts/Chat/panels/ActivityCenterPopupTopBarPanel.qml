@@ -1,5 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 
 import utils 1.0
 
@@ -9,88 +10,64 @@ import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
 import ".."
+import "../popups"
 
 Item {
     id: root
-    width: parent.width
-    height: 64
 
     property bool hasMentions: false
     property bool hasReplies: false
     property bool hideReadNotifications: false
-    property bool allBtnHighlighted: false
-    property bool repliesBtnHighlighted: false
-    property bool mentionsBtnHighlighted: false
+
+    property int currentActivityCategory: ActivityCenterPopup.ActivityCategory.All
+
     property alias errorText: errorText.text
-    signal allBtnClicked()
-    signal repliesBtnClicked()
-    signal mentionsBtnClicked()
-    signal preferencesClicked()
+
+    signal categoryTriggered(int category)
     signal markAllReadClicked()
-    signal hideReadNotificationsTriggered()
 
-    Row {
-        id: filterButtons
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
+    height: 64
+
+    RowLayout {
+        id: row
+        anchors.fill: parent
         anchors.leftMargin: Style.current.padding
-        height: allBtn.height
-        spacing: Style.current.padding
-
-       StatusFlatButton {
-           id: allBtn
-           text: qsTr("All")
-           size: StatusBaseButton.Size.Small
-           highlighted: root.allBtnHighlighted
-           onClicked: root.allBtnClicked();
-       }
-
-       StatusFlatButton {
-           id: mentionsBtn
-           text: qsTr("Mentions")
-           enabled: hasMentions
-           size: StatusBaseButton.Size.Small
-           highlighted: root.mentionsBtnHighlighted
-           onClicked: {
-               root.mentionsBtnClicked();
-           }
-       }
-
-       StatusFlatButton {
-           id: repliesbtn
-           text: qsTr("Replies")
-           enabled: hasReplies
-           size: StatusBaseButton.Size.Small
-           highlighted: root.repliesBtnHighlighted
-           onClicked: {
-               root.repliesBtnClicked();
-           }
-       }
-
-//       StatusFlatButton {
-//           id: contactRequestsBtn
-//           //% "Contact requests"
-//           text: qsTr("Replies")
-//           enabled: hasContactRequests
-//           size: StatusBaseButton.Size.Small
-//           highlighted: activityCenter.currentFilter === ActivityCenter.Filter.ContactRequests
-//           onClicked: activityCenter.currentFilter = ActivityCenter.Filter.ContactRequests
-//       }
-    }
-
-    Row {
-        id: otherButtons
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        height: markAllReadBtn.height
         spacing: Style.current.padding
+
+        StatusListView {
+            id: listView
+            // NOTE: some entries are hidden until implimentation
+            model: [ { text: qsTr("All"), category: ActivityCenterPopup.ActivityCategory.All, visible: true },
+                     { text: qsTr("Admin"), category: ActivityCenterPopup.ActivityCategory.Admin, visible: false },
+                     { text: qsTr("Mentions"), category: ActivityCenterPopup.ActivityCategory.Mentions, visible: true },
+                     { text: qsTr("Replies"), category: ActivityCenterPopup.ActivityCategory.Replies, visible: true },
+                     { text: qsTr("Contact requests"), category: ActivityCenterPopup.ActivityCategory.ContactRequests, visible: true },
+                     { text: qsTr("Identity verification"), category: ActivityCenterPopup.ActivityCategory.IdentityVerification, visible: false },
+                     { text: qsTr("Transactions"), category: ActivityCenterPopup.ActivityCategory.Transactions, visible: false },
+                     { text: qsTr("Membership"), category: ActivityCenterPopup.ActivityCategory.Membership, visible: false },
+                     { text: qsTr("System"), category: ActivityCenterPopup.ActivityCategory.System, visible: false } ]
+            orientation: StatusListView.Horizontal
+            spacing: 0
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            delegate: StatusFlatButton {
+                visible: modelData.visible
+                width: visible ? implicitWidth : 0
+                text: modelData.text
+                anchors.verticalCenter: parent.verticalCenter
+                height: 32
+                size: StatusBaseButton.Size.Small
+                highlighted: modelData.category == root.currentActivityCategory
+                onClicked: root.categoryTriggered(modelData.category)
+            }
+        }
 
         StatusFlatRoundButton {
             id: markAllReadBtn
             icon.name: "double-checkmark"
-            width: 32
-            height: 32
             onClicked: markAllReadClicked()
 
             StatusToolTip {
@@ -100,34 +77,13 @@ Item {
         }
 
         StatusFlatRoundButton {
-            id: moreActionsBtn
-            icon.name: "more"
-            width: 32
-            height: 32
-            type: StatusFlatRoundButton.Type.Secondary
-            onClicked: {
-                let p = moreActionsBtn.mapToItem(otherButtons, moreActionsBtn.x, moreActionsBtn.y)
-                moreActionsMenu.popup(moreActionsBtn.width - moreActionsMenu.width, p.y + moreActionsBtn.height + 4)
-            }
+            id: hideReadNotificationsBtn
+            icon.name: "hide"
+            onClicked: hideReadNotifications = !hideReadNotifications
 
-            StatusPopupMenu {
-                id: moreActionsMenu
-
-                StatusMenuItem {
-                    icon.name: "hide"
-                    text: hideReadNotifications ?
-                              qsTr("Show read notifications") :
-                              qsTr("Hide read notifications")
-                    onTriggered: hideReadNotifications = !hideReadNotifications
-                }
-
-                StatusMenuItem {
-                    icon.name: "notification"
-                    text: qsTr("Notification settings")
-                    onTriggered: {
-                        root.preferencesClicked();
-                    }
-                }
+            StatusToolTip {
+              visible: markAllReadBtn.hovered
+              text: hideReadNotifications ? qsTr("Show read notifications") : qsTr("Hide read notifications")
             }
         }
     }
@@ -135,7 +91,7 @@ Item {
     StatusBaseText {
         id: errorText
         visible: !!text
-        anchors.top: filterButtons.bottom
+        anchors.top: parent.top
         anchors.topMargin: Style.current.smallPadding
         color: Theme.palette.dangerColor1
     }

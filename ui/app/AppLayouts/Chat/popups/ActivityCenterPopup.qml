@@ -18,13 +18,18 @@ import "../panels"
 Popup {
     id: root
 
-    enum Filter {
+    enum ActivityCategory {
         All,
+        Admin,
         Mentions,
         Replies,
-        ContactRequests
+        ContactRequests,
+        IdentityVerification,
+        Transactions,
+        Membership,
+        System
     }
-    property int currentFilter: ActivityCenterPopup.Filter.All
+    property int currentActivityCategory: ActivityCenterPopup.ActivityCategory.All
     property bool hasMentions: false
     property bool hasReplies: false
 //    property bool hasContactRequests: false
@@ -74,24 +79,13 @@ Popup {
 
     ActivityCenterPopupTopBarPanel {
         id: activityCenterTopBar
+        width: parent.width
         hasReplies: root.hasReplies
         hasMentions: root.hasMentions
         hideReadNotifications: root.hideReadNotifications
-        allBtnHighlighted: root.currentFilter === ActivityCenterPopup.Filter.All
-        mentionsBtnHighlighted: root.currentFilter === ActivityCenterPopup.Filter.Mentions
-        repliesBtnHighlighted: root.currentFilter === ActivityCenterPopup.Filter.Replies
-        onAllBtnClicked: {
-            root.currentFilter = ActivityCenterPopup.Filter.All;
-        }
-        onRepliesBtnClicked: {
-            root.currentFilter = ActivityCenterPopup.Filter.Replies;
-        }
-        onMentionsBtnClicked: {
-            root.currentFilter = ActivityCenterPopup.Filter.Mentions;
-        }
-        onPreferencesClicked: {
-            root.close()
-            Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.notifications);
+        currentActivityCategory: root.currentActivityCategory
+        onCategoryTriggered: {
+            root.currentActivityCategory = category;
         }
         onMarkAllReadClicked: {
             errorText = root.store.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
@@ -100,6 +94,8 @@ Popup {
 
     StatusScrollView {
         id: scrollView
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.top: activityCenterTopBar.bottom
         anchors.topMargin: 13
         anchors.bottom: parent.bottom
@@ -110,7 +106,7 @@ Popup {
 
         Column {
             id: notificationsContainer
-            width: parent.width
+            width: scrollView.availableWidth
             spacing: 0
 
             // TODO remove this once it is handled by the activity center
@@ -120,7 +116,8 @@ Popup {
 
 //                delegate: ContactRequest {
 //                    visible: !hideReadNotifications &&
-//                             (root.currentFilter === ActivityCenter.Filter.All || root.currentFilter === ActivityCenter.Filter.ContactRequests)
+//                             (root.currentActivityCategory === ActivityCenter.ActivityCategory.All ||
+//                              root.currentActivityCategory === ActivityCenter.ActivityCategory.ContactRequests)
 //                    name: Utils.removeStatusEns(model.name)
 //                    address: model.address
 //                    localNickname: model.localNickname
@@ -154,7 +151,7 @@ Popup {
 
                 delegate: Item {
                     id: notificationDelegate
-                    width: parent.width
+                    width: parent.availableWidth
                     height: notifLoader.active ? childrenRect.height : 0
 
                     property int idx: DelegateModel.itemsIndex
@@ -188,7 +185,8 @@ Popup {
                             }
                             return -1;
                         }
-                        property string previousNotificationTimestamp: notificationDelegate.idx === 0 ? "" : root.store.activityCenterList.getNotificationData(previousNotificationIndex, "timestamp")
+                        readonly property string previousNotificationTimestamp: notificationDelegate.idx === 0 ? "" :
+                                                       root.store.activityCenterList.getNotificationData(previousNotificationIndex, "timestamp")
                         onPreviousNotificationTimestampChanged: {
                             root.store.messageStore.prevMsgTimestamp = previousNotificationTimestamp;
                         }
@@ -221,7 +219,7 @@ Popup {
                         ActivityCenterMessageComponentView {
                             id: activityCenterMessageView
                             store: root.store
-                            acCurrentFilter: root.currentFilter
+                            acCurrentActivityCategory: root.currentActivityCategory
                             chatSectionModule: root.chatSectionModule
                             messageContextMenu: root.messageContextMenu
                             hideReadNotifications: root.hideReadNotifications
@@ -244,7 +242,7 @@ Popup {
                         ActivityCenterGroupRequest {
                             store: root.store
                             hideReadNotifications: root.hideReadNotifications
-                            acCurrentFilterAll: root.currentFilter === ActivityCenter.Filter.All
+                            acCurrentActivityCategoryAll: root.currentActivityCategory === ActivityCenter.ActivityCategory.All
                         }
                     }
                 }
