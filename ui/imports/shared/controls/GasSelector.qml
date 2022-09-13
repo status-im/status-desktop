@@ -196,8 +196,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.bigPadding
         height: 22
-        defaultTopPadding: 2
-        defaultBottomPadding: 2
+        verticalPadding: 2
         size: StatusBaseButton.Size.Tiny
         visible: root.suggestedFees.eip1559Enabled
         text: advancedMode ?

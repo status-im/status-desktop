@@ -101,6 +101,7 @@ StatusSectionLayout {
                         id: importBtn
                         Layout.fillHeight: true
                         text: qsTr("Import using key")
+                        verticalPadding: 0
                         onClicked: Global.openPopup(importCommunitiesPopupComponent)
                     }
 
@@ -108,6 +109,7 @@ StatusSectionLayout {
                         id: createBtn
                         objectName: "createCommunityButton"
                         Layout.fillHeight: true
+                        verticalPadding: 0
                         text: qsTr("Create New Community")
                         onClicked: {
                             if (localAccountSensitiveSettings.isDiscordImportToolEnabled) {

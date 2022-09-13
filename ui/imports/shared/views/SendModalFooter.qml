@@ -94,7 +94,7 @@ Rectangle {
                 objectName: "sendModalFooterSendButton"
                 size: StatusBaseButton.Size.Large
                 normalColor: Theme.palette.primaryColor2
-                disaledColor: Theme.palette.baseColor2
+                disabledColor: Theme.palette.baseColor2
                 enabled: currentGroupValid && !currentGroupPending
                 loading: currentGroupPending
                 onClicked: nextButtonClicked()

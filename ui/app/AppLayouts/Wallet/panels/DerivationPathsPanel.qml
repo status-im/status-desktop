@@ -49,11 +49,8 @@ ColumnLayout {
             size: StatusBaseButton.Size.Tiny
             text: qsTr("Reset")
             font.pixelSize: 15
-            defaultLeftPadding: 0
-            defaultRightPadding: 0
-            defaultTopPadding: 0
-            defaultBottomPadding: 0
-            color: "transparent"
+            padding: 0
+            normalColor: "transparent"
             onClicked: derivationPathSelect.reset()
         }
     }

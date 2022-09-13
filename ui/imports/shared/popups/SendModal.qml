@@ -312,8 +312,7 @@ StatusDialog {
                         input.rightComponent: RowLayout {
                             StatusButton {
                                 visible: recipientSelector.text === ""
-                                border.width: 1
-                                border.color: Theme.palette.primaryColor1
+                                borderColor: Theme.palette.primaryColor1
                                 size: StatusBaseButton.Size.Tiny
                                 text: qsTr("Paste")
                                 onClicked: recipientSelector.input.edit.paste()
