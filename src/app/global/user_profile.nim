@@ -6,7 +6,7 @@ QtObject:
   type UserProfile* = ref object of QObject
     # fields which cannot change
     username: string
-    address: string
+    keyUid: string
     pubKey: string
     # fields which may change during runtime
     ensName: string
@@ -27,16 +27,16 @@ QtObject:
     new(result, delete)
     result.setup
 
-  proc setFixedData*(self: UserProfile, username: string, address: string, pubKey: string) =
+  proc setFixedData*(self: UserProfile, username: string, keyUid: string, pubKey: string) =
     self.username = username
-    self.address = address
+    self.keyUid = keyUid
     self.pubKey = pubKey
 
-  proc getAddress*(self: UserProfile): string {.slot.} =
-    self.address
+  proc getKeyUid*(self: UserProfile): string {.slot.} =
+    self.keyUid
 
-  QtProperty[string] address:
-    read = getAddress
+  QtProperty[string] keyUid:
+    read = getKeyUid
 
 
   proc getPubKey*(self: UserProfile): string {.slot.} =

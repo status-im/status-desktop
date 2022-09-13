@@ -67,13 +67,13 @@ method viewDidLoad*(self: Module) =
   self.delegate.profileModuleDidLoad()
 
 method storeIdentityImage*(self: Module, imageUrl: string, aX: int, aY: int, bX: int, bY: int) =
-  let address = singletonInstance.userProfile.getAddress()
+  let keyUid = singletonInstance.userProfile.getKeyUid()
   let image = singletonInstance.utils.formatImagePath(imageUrl)
-  self.controller.storeIdentityImage(address, image, aX, aY, bX, bY)
+  self.controller.storeIdentityImage(keyUid, image, aX, aY, bX, bY)
 
 method deleteIdentityImage*(self: Module) =
-  let address = singletonInstance.userProfile.getAddress()
-  self.controller.deleteIdentityImage(address)
+  let keyUid = singletonInstance.userProfile.getKeyUid()
+  self.controller.deleteIdentityImage(keyUid)
 
 method setDisplayName*(self: Module, displayName: string) =
   self.controller.setDisplayName(displayName)
