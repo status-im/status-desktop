@@ -150,13 +150,13 @@ GridLayout {
         implicitHeight: 48
         StatusChatInfoButton {
             title: "Iuri Matias elided"
-            subTitle: "Contact"
+            subTitle: "Very long subtitle should elide as well"
             asset.color: Theme.palette.miscColor7
             asset.isImage: true
             asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
             type: StatusChatInfoButton.Type.OneToOneChat
             muted: true
-            pinnedMessagesCount: 1
+            pinnedMessagesCount: 10
             width: 100
         }
     }
@@ -197,6 +197,14 @@ GridLayout {
         subTitle: "Community Chat"
         asset.color: Theme.palette.miscColor7
         type: StatusChatInfoButton.Type.CommunityChat
+    }
+
+    StatusChatInfoButton {
+        title: "community-channel"
+        subTitle: "Some very long description text to see how the whole item wraps or elides"
+        asset.color: Theme.palette.miscColor7
+        type: StatusChatInfoButton.Type.CommunityChat
+        pinnedMessagesCount: 3
     }
 
     StatusSlider {

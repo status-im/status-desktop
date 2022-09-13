@@ -28,8 +28,8 @@ Column {
 
         headerContent: StatusChatInfoButton {
             width: Math.min(implicitWidth, parent.width)
-            title: "Some contact"
-            subTitle: "Contact"
+            title: "Muted public chat"
+            subTitle: "Some subtitle"
             asset.color: Theme.palette.miscColor7
             type: StatusChatInfoButton.Type.PublicChat
             pinnedMessagesCount: 1
@@ -44,11 +44,32 @@ Column {
 
         headerContent: StatusChatInfoButton {
             width: Math.min(implicitWidth, parent.width)
-            title: "Some contact"
-            subTitle: "Contact"
+            title: "Group chat"
+            subTitle: "Group chat subtitle"
             asset.color: Theme.palette.miscColor7
-            type: StatusChatInfoButton.Type.OneToOneChat
+            type: StatusChatInfoButton.Type.GroupChat
             pinnedMessagesCount: 1
+        }
+    }
+
+    StatusToolBar {
+        width: 518
+
+        headerContent: StatusChatInfoButton {
+            title: "Community chat"
+            subTitle: "Some very long description text to see how the whole item wraps or ellides"
+            asset.color: Theme.palette.miscColor7
+            type: StatusChatInfoButton.Type.CommunityChat
+            pinnedMessagesCount: 3
+        }
+    }
+
+    StatusToolBar {
+        headerContent: StatusChatInfoButton {
+            title: "Very long chat name"
+            asset.color: Theme.palette.miscColor7
+            type: StatusChatInfoButton.Type.CommunityChat
+            pinnedMessagesCount: 1234567891
         }
     }
 
@@ -473,8 +494,5 @@ Column {
                 }
             }
         }
-
-
     }
 }
-

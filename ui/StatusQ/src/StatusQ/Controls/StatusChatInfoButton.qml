@@ -1,24 +1,20 @@
 import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
-Rectangle {
-    id: statusChatInfoButton
+Button {
+    id: root
     objectName: "chatInfoButton"
 
-    implicitWidth: identicon.width +
-                   Math.max(
-                       statusChatInfoButtonTitle.anchors.leftMargin + statusChatInfoButtonTitle.implicitWidth,
-                       statusChatInfoButtonTitle.anchors.leftMargin + statusChatInfoButtonSubTitle.implicitWidth
-                       ) + 8
-    implicitHeight: 48
-
-    property string title: ""
-    property string subTitle: ""
-    property bool muted: false
-    property int pinnedMessagesCount: 0
+    property string title: text
+    property string subTitle
+    property bool muted
+    property int pinnedMessagesCount
 
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 36
@@ -29,9 +25,7 @@ Rectangle {
 
     property int type: StatusChatInfoButton.Type.PublicChat
     property alias tooltip: statusToolTip
-    property alias sensor: sensor
 
-    signal clicked(var mouse)
     signal pinnedMessagesCountClicked(var mouse)
     signal unmute()
     signal linkActivated(string link)
@@ -46,192 +40,162 @@ Rectangle {
         CommunityChat // 6
     }
 
-    radius: 8
-    color: sensor.enabled && sensor.containsMouse ? Theme.palette.baseColor2 : "transparent"
+    horizontalPadding: 4
+    verticalPadding: 2
+    spacing: 4
 
-    MouseArea {
-        id: sensor
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+    background: Rectangle {
+        radius: 8
+        color: root.enabled && root.hovered ? Theme.palette.baseColor2 : "transparent"
 
-        onClicked: statusChatInfoButton.clicked(mouse)
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+            cursorShape: root.hovered ? Qt.PointingHandCursor : undefined
+        }
+    }
 
+    contentItem: RowLayout {
+        spacing: root.spacing
+
+        // identicon
         StatusSmartIdenticon {
             id: identicon
-            anchors.left: parent.left
-            anchors.leftMargin: 4
-            anchors.verticalCenter: parent.verticalCenter
-            asset: statusChatInfoButton.asset
-            name: statusChatInfoButton.title
+            asset: root.asset
+            name: root.title
         }
 
-        Item {
-            id: statusChatInfoButtonTitle
-            anchors.top: identicon.top
-            anchors.topMargin: statusChatInfoButtonSubTitle.visible ? 0 : 8
-            anchors.left: identicon.right
-            anchors.leftMargin: 8
+        // text
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 2
 
-            width: Math.min(parent.width - anchors.leftMargin
-                            - identicon.width - identicon.anchors.leftMargin,
-                            implicitWidth)
-            height: chatName.height
+            // title
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignLeading | Qt.AlignBottom
+                spacing: root.spacing
 
-            implicitWidth: statusIcon.width + chatName.anchors.leftMargin + chatName.implicitWidth
-                           + mutedDelta
+                StatusIcon {
+                    visible: root.type !== StatusChatInfoButton.Type.OneToOneChat
+                    Layout.preferredWidth: 14
+                    Layout.preferredHeight: 14
+                    color: root.muted ? Theme.palette.baseColor1 : Theme.palette.directColor1
+                    icon: {
+                        switch (root.type) {
+                        case StatusChatInfoButton.Type.PublicCat:
+                            return "tiny/public-chat"
+                        case StatusChatInfoButton.Type.GroupChat:
+                            return "tiny/group"
+                        case StatusChatInfoButton.Type.CommunityChat:
+                            return "tiny/channel"
+                        default:
+                            return "tiny/public-chat"
+                        }
+                    }
+                }
 
-            property real mutedDelta: mutedIcon.visible ? mutedIcon.width + 8 : 0
+                StatusBaseText {
+                    objectName: "statusChatInfoButtonNameText"
+                    Layout.fillWidth: true
+                    elide: Text.ElideRight
+                    text: root.type === StatusChatInfoButton.Type.PublicChat && !root.title.startsWith("#") ?
+                              "#" + root.title
+                            : root.title
+                    color: root.muted ? Theme.palette.directColor5 : Theme.palette.directColor1
+                    font.weight: Font.Medium
+                }
 
-            StatusIcon {
-                id: statusIcon
-                anchors.top: parent.top
-                anchors.topMargin: -2
-                anchors.left: parent.left
+                StatusIcon {
+                    objectName: "mutedIcon"
+                    Layout.preferredWidth: 13
+                    Layout.preferredHeight: 13
+                    icon: "tiny/muted"
+                    color: mutedIconSensor.containsMouse ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                    visible: root.muted
 
-                visible: statusChatInfoButton.type !== StatusChatInfoButton.Type.OneToOneChat
-                width: visible ? 14 : 0
-                color: statusChatInfoButton.muted ? Theme.palette.baseColor1 : Theme.palette.directColor1
-                icon: {
-                    switch (statusChatInfoButton.type) {
-                    case StatusChatInfoButton.Type.PublicCat:
-                        return "tiny/public-chat"
-                        break;
-                    case StatusChatInfoButton.Type.GroupChat:
-                        return "tiny/group"
-                        break;
-                    case StatusChatInfoButton.Type.CommunityChat:
-                        return "tiny/channel"
-                        break;
-                    default:
-                        return "tiny/public-chat"
+                    MouseArea {
+                        id: mutedIconSensor
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        anchors.fill: parent
+                        onClicked: root.unmute()
+                    }
+
+                    StatusToolTip {
+                        id: statusToolTip
+                        text: qsTr("Unmute")
+                        visible: mutedIconSensor.containsMouse
+                        orientation: StatusToolTip.Orientation.Bottom
+                        y: parent.height + 12
                     }
                 }
             }
 
-            StatusBaseText {
-                id: chatName
-                objectName: "statusChatInfoButtonNameText"
+            // subtitle
+            RowLayout {
+                id: subtitleRow
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignLeading | Qt.AlignTop
+                Layout.rightMargin: 4
+                spacing: 0
 
-                anchors.left: statusIcon.visible ? statusIcon.right : parent.left
-                anchors.leftMargin: statusIcon.visible ? 1 : 0
-                anchors.top: parent.top
-
-                elide: Text.ElideRight
-                width: Math.min(implicitWidth, parent.width
-                                - statusIcon.width
-                                - statusChatInfoButtonTitle.mutedDelta)
-
-                text: statusChatInfoButton.type === StatusChatInfoButton.Type.PublicChat &&
-                      !statusChatInfoButton.title.startsWith("#") ?
-                          "#" + statusChatInfoButton.title :
-                          statusChatInfoButton.title
-                color: statusChatInfoButton.muted ? Theme.palette.directColor5 : Theme.palette.directColor1
-                font.pixelSize: 15
-                font.weight: Font.Medium
-            }
-
-            StatusIcon {
-                objectName: "mutedIcon"
-                id: mutedIcon
-                anchors.left: chatName.right
-                anchors.leftMargin: 4
-                anchors.top: chatName.top
-                anchors.topMargin: -2
-                width: 13
-                icon: "tiny/muted"
-                color: mutedIconSensor.containsMouse ? Theme.palette.directColor1 : Theme.palette.baseColor1
-                visible: statusChatInfoButton.muted
-
-                MouseArea {
-                    id: mutedIconSensor
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.fill: parent
-                    onClicked: statusChatInfoButton.unmute()
+                StatusSelectableText {
+                    Layout.fillWidth: implicitWidth + separator.width + pinIcon.width + pinText.width > subtitleRow.width
+                    text: root.subTitle
+                    color: Theme.palette.baseColor1
+                    font.pixelSize: 12
+                    onLinkActivated: root.linkActivated(link)
                 }
 
-                StatusToolTip {
-                    id: statusToolTip
-                    text: "Unmute"
-                    visible: mutedIconSensor.containsMouse
-                    orientation: StatusToolTip.Orientation.Bottom
-                    y: parent.height + 12
+                Rectangle {
+                    id: separator
+                    Layout.preferredHeight: 12
+                    Layout.preferredWidth: 1
+                    Layout.leftMargin: 4
+                    Layout.rightMargin: 2
+                    color: Theme.palette.directColor7
+                    visible: root.subTitle && root.pinnedMessagesCount
                 }
-            }
-        }
 
-        Item {
-            id: statusChatInfoButtonSubTitle
-            anchors.left: statusChatInfoButtonTitle.left
-            anchors.top: statusChatInfoButtonTitle.bottom
-            visible: !!statusChatInfoButton.subTitle || statusChatInfoButton.pinnedMessagesCount > 0
-            height: visible ? chatType.height : 0
-            width: Math.min(parent.width - statusChatInfoButtonTitle.anchors.leftMargin
-                            - identicon.width - identicon.anchors.leftMargin - 8,
-                            implicitWidth)
-
-            implicitWidth: chatType.implicitWidth + pinIconDelta + 8
-
-
-            property real pinIconDelta: pinIcon.visible ? pinIcon.width + pinIcon.anchors.leftMargin
-                                                          + divider.width + divider.anchors.leftMargin
-                                                        : 0
-
-            StatusSelectableText {
-                id: chatType
-                text: statusChatInfoButton.subTitle
-                color: Theme.palette.baseColor1
-                font.pixelSize: 12
-                width: Math.min(parent.width - (pinIcon.visible ? divider.width + divider.anchors.leftMargin + pinIcon.width + pinIcon.anchors.leftMargin : 0),
-                                implicitWidth)
-                onLinkActivated: statusChatInfoButton.linkActivated(link)
-            }
-
-            Rectangle {
-                id: divider
-                height: 12
-                width: 1
-                color: Theme.palette.directColor7
-                anchors.left: chatType.right
-                anchors.leftMargin: 4
-                anchors.verticalCenter: chatType.verticalCenter
-                visible: !!chatType.text && pinIcon.visible
-            }
-
-            StatusIcon {
-                id: pinIcon
-
-                anchors.left: divider.visible ? divider.right : parent.left
-                anchors.leftMargin: -2
-                anchors.verticalCenter: chatType.verticalCenter
-                height: 14
-                visible: statusChatInfoButton.pinnedMessagesCount > 0
-                icon: "pin"
-                color: Theme.palette.baseColor1
-            }
-
-            StatusBaseText {
-                objectName: "StatusChatInfo_pinText"
-                anchors.left: pinIcon.right
-                anchors.leftMargin: -6
-                anchors.verticalCenter: pinIcon.verticalCenter
-
-                width: 14
-                text: statusChatInfoButton.pinnedMessagesCount
-                font.pixelSize: 12
-                font.underline: pinCountSensor.containsMouse
-                visible: pinIcon.visible
-                color: pinCountSensor.containsMouse ? Theme.palette.directColor1 : Theme.palette.baseColor1
-
-                MouseArea {
-                    objectName: "pinMessagesCounterSensor"
-                    id: pinCountSensor
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: statusChatInfoButton.pinnedMessagesCountClicked(mouse)
+                StatusIcon {
+                    id: pinIcon
+                    Layout.preferredHeight: 14
+                    Layout.preferredWidth: 14
+                    visible: root.pinnedMessagesCount > 0
+                    icon: "pin"
+                    color: Theme.palette.baseColor1
                 }
+
+                StatusBaseText {
+                    id: pinText
+                    TextMetrics {
+                         id: tm
+                         font: pinText.font
+                         elide: Text.ElideRight
+                         elideWidth: pinText.width
+                         text: qsTr("%Ln pinned message(s)", "", root.pinnedMessagesCount)
+                     }
+
+                    objectName: "StatusChatInfo_pinText"
+                    Layout.fillWidth: true
+                    text: tm.elidedText !== tm.text ? root.pinnedMessagesCount : tm.text
+                    font.pixelSize: 12
+                    font.underline: pinCountSensor.containsMouse
+                    visible: root.pinnedMessagesCount
+                    color: pinCountSensor.containsMouse ? Theme.palette.directColor1 : Theme.palette.baseColor1
+
+                    MouseArea {
+                        objectName: "pinMessagesCounterSensor"
+                        id: pinCountSensor
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.pinnedMessagesCountClicked(mouse)
+                    }
+                }
+
+                Item { Layout.fillWidth: true }
             }
         }
     }
