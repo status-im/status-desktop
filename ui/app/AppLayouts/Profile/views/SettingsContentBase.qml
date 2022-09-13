@@ -16,8 +16,6 @@ Item {
     property int contentWidth
     readonly property int contentHeight: (root.height - d.topHeaderHeight - d.titleRowHeight)
 
-    property string backButtonName: ""
-
     property alias titleRowComponentLoader: loader
     property list<Item> headerComponents
     default property Item content
@@ -25,7 +23,6 @@ Item {
     property bool dirty: false
     property bool saveChangesButtonEnabled: false
 
-    signal backButtonClicked()
     signal baseAreaClicked()
     signal saveChangesClicked()
     signal resetChangesClicked()
@@ -56,35 +53,10 @@ Item {
         }
     }
 
-    Item {
-        id: topHeader
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.leftMargin: -Style.current.padding
-        width: root.contentWidth + Style.current.padding
-        height: d.topHeaderHeight
-
-        StatusFlatButton {
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.topMargin: Style.current.halfPadding
-            visible: root.backButtonName != ""
-            icon.name: "arrow-left"
-            icon.width: 20
-            icon.height: 20
-            text: root.backButtonName
-            size: StatusBaseButton.Size.Large
-            onClicked: root.backButtonClicked()
-        }
-    }
-
     RowLayout {
         id: titleRow
-        anchors.left: parent.left
-        anchors.top: topHeader.bottom
-        anchors.leftMargin: Style.current.padding
-        width: root.contentWidth - Style.current.padding
-        height: d.titleRowHeight
+        width: visible ? root.contentWidth : 0
+        height: visible ? d.titleRowHeight : 0
         visible: root.sectionTitle !== ""
 
         StatusBaseText {
@@ -103,9 +75,8 @@ Item {
     StatusScrollView {
         id: scrollView
         objectName: "settingsContentBaseScrollView"
-        anchors.top: titleRow.visible ? titleRow.bottom : topHeader.bottom
+        anchors.top: titleRow.visible ? titleRow.bottom : parent.top
         anchors.bottom: parent.bottom
-        anchors.left: parent.left
         anchors.topMargin: Style.current.bigPadding
         padding: 0
         width: root.contentWidth

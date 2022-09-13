@@ -11,7 +11,6 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
 
-import "../stores"
 import "../controls"
 import "../popups"
 import "../panels"
@@ -21,15 +20,16 @@ SettingsContentBase {
     id: root
 
     property var emojiPopup
-    property WalletStore walletStore
+    property var rootStore
+    property var walletStore
 
     readonly property int mainViewIndex: 0;
     readonly property int networksViewIndex: 1;
     readonly property int accountViewIndex: 2;
     readonly property int dappPermissionViewIndex: 3;
 
-    onBackButtonClicked: {
-        stackContainer.currentIndex = mainViewIndex
+    function resetStack() {
+        stackContainer.currentIndex = mainViewIndex;
     }
 
     StackLayout {
@@ -39,22 +39,22 @@ SettingsContentBase {
         currentIndex: mainViewIndex
 
         onCurrentIndexChanged: {
-            root.backButtonName = ""
+            root.rootStore.backButtonName = ""
             root.sectionTitle = qsTr("Wallet")
             root.titleRowComponentLoader.sourceComponent = undefined
 
             if(currentIndex == root.networksViewIndex) {
-                root.backButtonName = qsTr("Wallet")
+                root.rootStore.backButtonName = qsTr("Wallet")
                 root.sectionTitle = qsTr("Networks")
 
                 root.titleRowComponentLoader.sourceComponent = testnetModeSwitchComponent
             }
             else if(currentIndex == root.accountViewIndex) {
-                root.backButtonName = qsTr("Wallet")
+                root.rootStore.backButtonName = qsTr("Wallet")
                 root.sectionTitle = ""
             }
             else if(currentIndex == root.dappPermissionViewIndex) {
-                root.backButtonName = qsTr("Wallet")
+                root.rootStore.backButtonName = qsTr("Wallet")
                 root.sectionTitle = qsTr("DApp Permissions")
             }
         }

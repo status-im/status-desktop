@@ -6,6 +6,13 @@ import "../../views/communities"
 SettingsPageLayout {
     id: root
 
+    property string previousPageName
+    function updateState() {
+        if (root.state === d.newPermissionViewState) {
+            root.state = d.welcomeViewState;
+        }
+    }
+
     QtObject {
         id: d
 
@@ -18,22 +25,16 @@ SettingsPageLayout {
         State {
             name: d.welcomeViewState
             PropertyChanges {target: root; title: qsTr("Permissions")}
-            PropertyChanges {target: root; previousPage: ""}
+            PropertyChanges {target: root; previousPageName: ""}
             PropertyChanges {target: root; content: welcomeView}
         },
         State {
             name: d.newPermissionViewState
             PropertyChanges {target: root; title: qsTr("New permission")}
-            PropertyChanges {target: root; previousPage: qsTr("Permissions")}
+            PropertyChanges {target: root; previousPageName: qsTr("Permissions")}
             PropertyChanges {target: root; content: newPermissionView}
         }
     ]
-
-    onPreviousPageClicked: {
-        if(root.state === d.newPermissionViewState) {
-            root.state = d.welcomeViewState
-        }
-    }
 
     // Community Permissions possible view contents:
     Component {

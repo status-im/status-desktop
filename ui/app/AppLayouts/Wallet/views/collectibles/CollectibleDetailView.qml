@@ -15,8 +15,6 @@ import "../../controls"
 Item {
     id: root
 
-    signal goBack()
-
     CollectibleDetailsHeader {
         id: collectibleHeader
         anchors.top: parent.top
@@ -26,7 +24,6 @@ Item {
         asset.isImage: true
         primaryText: RootStore.collectiblesStore.name
         secondaryText: RootStore.collectiblesStore.collectibleId
-        onGoBack: root.goBack()
     }
 
     ColumnLayout {

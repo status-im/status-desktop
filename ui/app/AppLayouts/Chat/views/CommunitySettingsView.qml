@@ -57,14 +57,17 @@ StatusSectionLayout {
     signal backToCommunityClicked
     signal openLegacyPopupClicked // TODO: remove me when migration to new settings is done
 
-    leftPanel: Item {
+    onBackButtonClicked: {
+        centerPanelContentLoader.item.children[d.currentIndex].updateState();
+    }
+
+    leftPanel: ColumnLayout {
         anchors.fill: parent
 
         ColumnLayout {
             anchors {
                 top: parent.top
                 bottom: footer.top
-                topMargin: 16
                 bottomMargin: 16
                 horizontalCenter: parent.horizontalCenter
             }
@@ -138,6 +141,7 @@ StatusSectionLayout {
     }
 
     centerPanel: Loader {
+        id: centerPanelContentLoader
         anchors.fill: parent
         //anchors.margins: 32
         anchors {
@@ -163,7 +167,9 @@ StatusSectionLayout {
                 archiveSupportEnabled: root.community.historyArchiveSupportEnabled
                 requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
                 pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
-
+                onCurrentIndexChanged: {
+                    root.backButtonName = (currentIndex === 1) ? qsTr("Overview") : "";
+                }
                 archiveSupportOptionVisible: root.rootStore.isCommunityHistoryArchiveSupportEnabled
                 editable: root.community.amISectionAdmin
 
@@ -218,7 +224,11 @@ StatusSectionLayout {
                 onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id)
             }
 
-            CommunityPermissionsSettingsPanel {}
+            CommunityPermissionsSettingsPanel {
+                onStateChanged: {
+                    root.backButtonName = previousPageName;
+                }
+            }
         }
     }
 

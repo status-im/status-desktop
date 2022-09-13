@@ -34,6 +34,14 @@ StackLayout {
     property bool editable: false
     property bool owned: false
 
+    function updateState() {
+        if (editCommunityPage.dirty) {
+            editCommunityPage.notifyDirty();
+        } else {
+            root.currentIndex = 0;
+        }
+    }
+
     signal edited(Item item) // item containing edited fields (name, description, logoImagePath, color, options, etc..)
 
     signal inviteNewPeopleClicked
@@ -160,7 +168,6 @@ StackLayout {
     SettingsPageLayout {
         id: editCommunityPage
 
-        previousPage: qsTr("Overview")
         title: qsTr("Edit Community")
         editable: true
 
@@ -202,14 +209,6 @@ StackLayout {
                                               isValidRect(bannerCropRect)
                                    })
                 function isValidRect(r /*rect*/) { return r.width !== 0 && r.height !== 0 }
-            }
-        }
-
-        onPreviousPageClicked: {
-            if (dirty) {
-                notifyDirty()
-            } else {
-                root.currentIndex = 0
             }
         }
 

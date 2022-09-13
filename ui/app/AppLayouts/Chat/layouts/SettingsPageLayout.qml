@@ -17,7 +17,6 @@ Item {
     property Component content
 
     // optional
-    property string previousPage
     property bool dirty: false
     property bool editable: false
 
@@ -26,7 +25,6 @@ Item {
         Qt.size(settingsDirtyToastMessage.implicitWidth,
                 settingsDirtyToastMessage.implicitHeight + settingsDirtyToastMessage.anchors.bottomMargin)
 
-    signal previousPageClicked
     signal saveChangesClicked
     signal resetChangesClicked
 
@@ -48,25 +46,17 @@ Item {
         anchors.fill: parent
         spacing: 16
 
-        StatusIconTextButton {
-            implicitHeight: 32
-            visible: root.previousPage
-            spacing: 8
-            statusIcon: "arrow"
-            icon.width: 24
-            icon.height: 24
-            text: root.previousPage
-            font.pixelSize: 15
-            onClicked: root.previousPageClicked()
-        }
-
-        StatusBaseText {
+        Item {
+            width: parent.width
+            Layout.preferredHeight: 56
             Layout.leftMargin: 36
-
-            text: root.title
-            color: Theme.palette.directColor1
-            font.pixelSize: 26
-            font.bold: true
+            StatusBaseText {
+                anchors.verticalCenter: parent.verticalCenter
+                text: root.title
+                color: Theme.palette.directColor1
+                font.pixelSize: 26
+                font.bold: true
+            }
         }
 
         Loader {

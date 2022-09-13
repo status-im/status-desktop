@@ -47,6 +47,8 @@ StatusSectionLayout {
     centerPanel: Item {
         implicitWidth: parent.width
         implicitHeight: parent.height
+        anchors.left: parent.left
+        anchors.leftMargin: d.layoutHMargin
         clip: true
 
         StatusScrollView {
@@ -60,7 +62,6 @@ StatusSectionLayout {
                 spacing: 18
 
                 StatusBaseText {
-                    Layout.leftMargin: d.layoutHMargin
                     text: qsTr("Find community")
                     font.weight: Font.Bold
                     font.pixelSize: d.titlePixelSize
@@ -75,7 +76,6 @@ StatusSectionLayout {
                     StatusInput {
                         id: searcher
                         implicitWidth: 327
-                        Layout.leftMargin: d.layoutHMargin
                         Layout.alignment: Qt.AlignVCenter
                         enabled: false // Out of scope
                         placeholderText: qsTr("Search")
@@ -123,12 +123,10 @@ StatusSectionLayout {
 
                 CommunityTagsRow {
                     tags: root.communitiesStore.communityTags
-                    Layout.leftMargin: d.layoutHMargin
                     Layout.fillWidth: true
                 }
 
                 StatusBaseText {
-                    Layout.leftMargin: d.layoutHMargin
                     Layout.topMargin: 20
                     text: qsTr("Featured")
                     font.weight: Font.Bold
@@ -138,7 +136,6 @@ StatusSectionLayout {
 
                 GridLayout {
                     id: featuredGrid
-                    Layout.leftMargin: d.layoutHMargin
                     columns: 3
                     columnSpacing: Style.current.padding
                     rowSpacing: Style.current.padding
@@ -163,7 +160,6 @@ StatusSectionLayout {
                 }
 
                 StatusBaseText {
-                    Layout.leftMargin: d.layoutHMargin
                     Layout.topMargin: 20
                     text: qsTr("Popular")
                     font.weight: Font.Bold
@@ -172,7 +168,6 @@ StatusSectionLayout {
                 }
 
                 GridLayout {
-                    Layout.leftMargin: d.layoutHMargin
                     columns: 3
                     columnSpacing: Style.current.padding
                     rowSpacing: Style.current.padding
