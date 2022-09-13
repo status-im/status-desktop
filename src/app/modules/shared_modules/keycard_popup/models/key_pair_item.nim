@@ -20,6 +20,8 @@ type
 type
   KeyPairItem* = ref object of RootObj
     pubKey: string
+    keyUid: string
+    locked: bool
     name: string
     image: string
     icon: string
@@ -28,15 +30,18 @@ type
     accounts: seq[WalletAccountDetails]
     
 proc initKeyPairItem*(
-    pubKey: string,
-    name: string,
-    image: string,
-    icon: string,
-    pairType: KeyPairType,
-    derivedFrom: string
+    pubKey = "",
+    keyUid = "",
+    locked = false,
+    name = "",
+    image = "",
+    icon = "",
+    pairType = KeyPairType.Unknown,
+    derivedFrom = ""
     ): KeyPairItem =
   result = KeyPairItem()
   result.pubKey = pubKey
+  result.keyUid = keyUid
   result.name = name
   result.image = image
   result.icon = icon
@@ -56,18 +61,38 @@ proc `$`*(self: KeyPairItem): string =
 
 proc pubKey*(self: KeyPairItem): string {.inline.} =
   self.pubKey
+proc setPubKey*(self: KeyPairItem, value: string) {.inline.} =
+  self.pubKey = value
+
+proc keyUid*(self: KeyPairItem): string {.inline.} =
+  self.keyUid
+proc setKeyUid*(self: KeyPairItem, value: string) {.inline.} =
+  self.keyUid = value
+
+proc locked*(self: KeyPairItem): bool {.inline.} =
+  self.locked
+proc setLocked*(self: KeyPairItem, value: bool) {.inline.} =
+  self.locked = value
 
 proc name*(self: KeyPairItem): string {.inline.} =
   self.name
+proc setName*(self: KeyPairItem, value: string) {.inline.} =
+  self.name = value
 
 proc image*(self: KeyPairItem): string {.inline.} =
   self.image
+proc setImage*(self: KeyPairItem, value: string) {.inline.} =
+  self.image = value
 
 proc icon*(self: KeyPairItem): string {.inline.} =
   self.icon
+proc setIcon*(self: KeyPairItem, value: string) {.inline.} =
+  self.icon = value
 
 proc pairType*(self: KeyPairItem): KeyPairType {.inline.} =
   self.pairType
+proc setPairType*(self: KeyPairItem, value: KeyPairType) {.inline.} =
+  self.pairType = value
 
 proc derivedFrom*(self: KeyPairItem): string {.inline.} =
   self.derivedFrom

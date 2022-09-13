@@ -125,7 +125,7 @@ proc init*(self: Controller) =
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(e: Args):
-    let args = SharedKeycarModuleArgs(e)
+    let args = SharedKeycarModuleBaseArgs(e)
     if args.uniqueIdentifier != UNIQUE_STARTUP_MODULE_IDENTIFIER:
       return
     self.delegate.onDisplayKeycardSharedModuleFlow()

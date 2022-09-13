@@ -16,6 +16,7 @@ type StateType* {.pure.} = enum
   PinVerified = "PinVerified"
   EnterPin = "EnterPin"
   WrongPin = "WrongPin"
+  WrongKeychainPin = "WrongKeychainPin"
   MaxPinRetriesReached = "MaxPinRetriesReached"
   FactoryResetConfirmation = "FactoryResetConfirmation"
   FactoryResetConfirmationDisplayMetadata = "FactoryResetConfirmationDisplayMetadata"
@@ -24,7 +25,9 @@ type StateType* {.pure.} = enum
   KeycardMetadataDisplay = "KeycardMetadataDisplay"
   KeycardEmpty = "KeycardEmpty"
   KeycardNotEmpty = "KeycardNotEmpty"
+  KeycardLocked = "KeycardLocked"
   NotKeycard = "NotKeycard"
+  WrongKeycard = "WrongKeycard"
   RecognizedKeycard = "RecognizedKeycard"
   SelectExistingKeyPair = "SelectExistingKeyPair"
   EnterSeedPhrase = "EnterSeedPhrase"
@@ -34,6 +37,14 @@ type StateType* {.pure.} = enum
   KeyPairMigrateSuccess = "KeyPairMigrateSuccess"
   KeyPairMigrateFailure = "KeyPairMigrateFailure"
   MigratingKeyPair = "MigratingKeyPair"
+  EnterPassword = "EnterPassword"
+  WrongPassword = "WrongPassword"
+  BiometricsPasswordFailed = "BiometricsPasswordFailed"
+  BiometricsPinFailed = "BiometricsPinFailed"
+  BiometricsPinInvalid = "BiometricsPinInvalid"
+  EnterBiometricsPassword = "EnterBiometricsPassword"
+  WrongBiometricsPassword = "WrongBiometricsPassword"
+  BiometricsReadyToSign = "BiometricsReadyToSign"
 
 
 ## This is the base class for all state we may have in onboarding/login flow.

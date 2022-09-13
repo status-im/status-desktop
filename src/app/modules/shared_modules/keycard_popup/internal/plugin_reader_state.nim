@@ -18,6 +18,10 @@ method executePrimaryCommand*(self: PluginReaderState, controller: Controller) =
     self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
+method executeTertiaryCommand*(self: PluginReaderState, controller: Controller) =
+  if self.flowType == FlowType.Authentication:
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+
 method resolveKeycardNextState*(self: PluginReaderState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
   return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)

@@ -29,11 +29,9 @@ Item {
         onWrongSeedPhraseChanged: {
             if (wrongSeedPhrase) {
                 invalidSeedTxt.text = qsTr("The phrase you’ve entered does not match this Keycard’s seed phrase")
-                invalidSeedTxt.visible = true
             }
             else {
                 invalidSeedTxt.text = ""
-                invalidSeedTxt.visible = false
             }
         }
 
@@ -50,7 +48,6 @@ Item {
                     root.sharedKeycardModule.setSeedPhrase(mnemonicString)
                 } else {
                     invalidSeedTxt.text = qsTr("Invalid seed phrase")
-                    invalidSeedTxt.visible = true
                     d.allEntriesValid = false
                 }
             }
@@ -65,11 +62,9 @@ Item {
             d.allEntriesValid = d.allEntriesValid && d.seedPhrases_en.words.includes(word)
             if (d.allEntriesValid) {
                 invalidSeedTxt.text = ""
-                invalidSeedTxt.visible = false
             }
             else {
                 invalidSeedTxt.text = qsTr("The phrase you’ve entered is invalid")
-                invalidSeedTxt.visible = true
             }
         }
 
@@ -311,7 +306,6 @@ Item {
             id: invalidSeedTxt
             Layout.alignment: Qt.AlignHCenter
             color: Theme.palette.dangerColor1
-            visible: false
         }
     }
 

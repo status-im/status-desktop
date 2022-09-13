@@ -22,6 +22,7 @@ import shared 1.0
 import shared.controls 1.0
 import shared.panels 1.0
 import shared.popups 1.0
+import shared.popups.keycard 1.0
 import shared.status 1.0
 
 import StatusQ.Core.Theme 0.1
@@ -50,7 +51,16 @@ Item {
 
     Connections {
         target: rootStore.mainModuleInst
+
         onDisplayUserProfile: Global.openProfilePopup(publicKey)
+
+        onDisplayKeycardSharedModuleFlow: {
+            keycardPopup.active = true
+        }
+
+        onDestroyKeycardSharedModuleFlow: {
+            keycardPopup.active = false
+        }
     }
 
     Connections {
@@ -1176,5 +1186,17 @@ Item {
         }
         Global.settingsHasLoaded();
         Global.errorSound = errorSound;
+    }
+
+    Loader {
+        id: keycardPopup
+        active: false
+        sourceComponent: KeycardPopup {
+            sharedKeycardModule: rootStore.mainModuleInst.keycardSharedModule
+        }
+
+        onLoaded: {
+            keycardPopup.item.open()
+        }
     }
 }

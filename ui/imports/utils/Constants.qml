@@ -79,6 +79,7 @@ QtObject {
         readonly property string general: "General"
         readonly property string factoryReset: "FactoryReset"
         readonly property string setupNewKeycard: "SetupNewKeycard"
+        readonly property string authentication: "Authentication"
     }
 
     readonly property QtObject keycardSharedState: QtObject {
@@ -93,6 +94,7 @@ QtObject {
         readonly property string pinVerified: "PinVerified"
         readonly property string enterPin: "EnterPin"
         readonly property string wrongPin: "WrongPin"
+        readonly property string wrongKeychainPin: "WrongKeychainPin"
         readonly property string maxPinRetriesReached: "MaxPinRetriesReached"
         readonly property string factoryResetConfirmation: "FactoryResetConfirmation"
         readonly property string factoryResetConfirmationDisplayMetadata: "FactoryResetConfirmationDisplayMetadata"
@@ -101,7 +103,9 @@ QtObject {
         readonly property string keycardMetadataDisplay: "KeycardMetadataDisplay"
         readonly property string keycardEmpty: "KeycardEmpty"
         readonly property string keycardNotEmpty: "KeycardNotEmpty"
+        readonly property string keycardLocked: "KeycardLocked"
         readonly property string notKeycard: "NotKeycard"
+        readonly property string wrongKeycard: "WrongKeycard"
         readonly property string recognizedKeycard: "RecognizedKeycard"
         readonly property string selectExistingKeyPair: "SelectExistingKeyPair"
         readonly property string enterSeedPhrase: "EnterSeedPhrase"
@@ -111,6 +115,14 @@ QtObject {
         readonly property string keyPairMigrateSuccess: "KeyPairMigrateSuccess"
         readonly property string keyPairMigrateFailure: "KeyPairMigrateFailure"
         readonly property string migratingKeyPair: "MigratingKeyPair"
+        readonly property string enterPassword: "EnterPassword"
+        readonly property string wrongPassword: "WrongPassword"
+        readonly property string biometricsPasswordFailed: "BiometricsPasswordFailed"
+        readonly property string biometricsPinFailed: "BiometricsPinFailed"
+        readonly property string biometricsPinInvalid: "BiometricsPinInvalid"
+        readonly property string biometricsReadyToSign: "BiometricsReadyToSign"
+        readonly property string enterBiometricsPassword: "EnterBiometricsPassword"
+        readonly property string wrongBiometricsPassword: "WrongBiometricsPassword"
     }
 
     readonly property QtObject keychain: QtObject {
@@ -372,6 +384,7 @@ QtObject {
             readonly property int popupBiggerHeight: 766
             readonly property int titleHeight: 44
             readonly property int messageHeight: 48
+            readonly property int footerButtonsHeight: 44
         }
 
         readonly property QtObject keyPairType: QtObject {

@@ -10,19 +10,37 @@ proc newMigratingKeyPairState*(flowType: FlowType, backState: State): MigratingK
 proc delete*(self: MigratingKeyPairState) =
   self.State.delete
 
-method executePrimaryCommand*(self: MigratingKeyPairState, controller: Controller) =
+method procDoMigration(self: MigratingKeyPairState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
-    # Ran authentication popup and get pass from there...
     let password = controller.getPassword()
-    self.migrationSuccess = controller.verifyPassword(password)
+    controller.setPassword("")
     if controller.getSelectedKeyPairIsProfile():
-      self.migrationSuccess = self.migrationSuccess and controller.convertToKeycardAccount(password)
+      self.migrationSuccess = controller.verifyPassword(password)
+      if not self.migrationSuccess:
+        return
+    let selectedKeyPairDto = controller.getSelectedKeyPairDto()
+    self.migrationSuccess = controller.addMigratedKeyPair(selectedKeyPairDto)
     if not self.migrationSuccess:
       return
-    controller.runStoreMetadataFlow(controller.getSelectedKeyPairName(), controller.getPin(), 
+    if controller.getSelectedKeyPairIsProfile():
+      self.migrationSuccess = self.migrationSuccess and controller.convertSelectedKeyPairToKeycardAccount(password)
+    if not self.migrationSuccess:
+      return
+    controller.runStoreMetadataFlow(selectedKeyPairDto.keypairName, controller.getPin(), 
       controller.getSelectedKeyPairWalletPaths())
 
-method getNextPrimaryState*(self: MigratingKeyPairState, controller: Controller): State =
+method executePrimaryCommand*(self: MigratingKeyPairState, controller: Controller) =
+  if self.flowType == FlowType.SetupNewKeycard:
+    if controller.getSelectedKeyPairIsProfile():
+      controller.authenticateUser()
+    else:
+      self.procDoMigration(controller)
+
+method executeSecondaryCommand*(self: MigratingKeyPairState, controller: Controller) =
+  if self.flowType == FlowType.SetupNewKeycard:
+    self.procDoMigration(controller)
+
+method getNextSecondaryState*(self: MigratingKeyPairState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycard:
     if not self.migrationSuccess:
       return createState(StateType.KeyPairMigrateFailure, self.flowType, nil)

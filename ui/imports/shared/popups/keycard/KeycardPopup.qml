@@ -44,6 +44,9 @@ StatusModal {
         if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
             return qsTr("Factory reset a Keycard")
         }
+        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+            return qsTr("Authenticate")
+        }
         return ""
     }
 
@@ -65,6 +68,7 @@ StatusModal {
         if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
             if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.selectExistingKeyPair ||
                     root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardNotEmpty ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardLocked ||
                     root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmptyMetadata ||
                     root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPin ||
                     root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.repeatPin ||
@@ -86,7 +90,7 @@ StatusModal {
                 return
             }
         }
-        else if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
+        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
             if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.selectExistingKeyPair ||
                     root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinVerified ||
                     root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
@@ -98,6 +102,31 @@ StatusModal {
                     root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmation)
             {
                 root.sharedKeycardModule.currentState.doSecondaryAction()
+                return
+            }
+        }
+        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+            if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPassword ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPasswordFailed ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterBiometricsPassword ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongBiometricsPassword ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPassword ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
+                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
+            {
+                root.sharedKeycardModule.currentState.doTertiaryAction()
                 return
             }
         }
@@ -120,10 +149,16 @@ StatusModal {
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmptyMetadata ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardNotEmpty ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardLocked ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay)
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPasswordFailed ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid)
                 {
                     return initComponent
                 }
@@ -140,6 +175,7 @@ StatusModal {
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.repeatPin ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinSet ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinVerified)
                 {
@@ -158,6 +194,12 @@ StatusModal {
                 {
                     return enterSeedPhraseWordsComponent
                 }
+                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPassword ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterBiometricsPassword ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongBiometricsPassword ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPassword) {
+                    return passwordComponent
+                }
 
                 return undefined
             }
@@ -167,6 +209,10 @@ StatusModal {
             id: initComponent
             KeycardInit {
                 sharedKeycardModule: root.sharedKeycardModule
+
+                Component.onCompleted: {
+                    d.primaryButtonEnabled = false
+                }
             }
         }
 
@@ -204,6 +250,14 @@ StatusModal {
             id: keycardPinComponent
             KeycardPin {
                 sharedKeycardModule: root.sharedKeycardModule
+
+                Component.onCompleted: {
+                    d.primaryButtonEnabled = false
+                }
+
+                onPinUpdated: {
+                    d.primaryButtonEnabled = pin.length === Constants.keycard.general.keycardPinLength
+                }
             }
         }
 
@@ -252,14 +306,29 @@ StatusModal {
                 }
             }
         }
+
+        Component {
+            id: passwordComponent
+            EnterPassword {
+                sharedKeycardModule: root.sharedKeycardModule
+
+                Component.onCompleted: {
+                    d.primaryButtonEnabled = false
+                }
+
+                onPasswordValid: {
+                    d.primaryButtonEnabled = valid
+                }
+            }
+        }
     }
 
     leftButtons: [
         StatusBackButton {
             id: backButton
             visible: root.sharedKeycardModule.currentState.displayBackButton
-            height: primaryButton.height
-            width: primaryButton.height
+            height: Constants.keycard.general.footerButtonsHeight
+            width: height
             onClicked: {
                 root.sharedKeycardModule.currentState.backAction()
             }
@@ -268,11 +337,71 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
+            id: tertiaryButton
+            height: Constants.keycard.general.footerButtonsHeight
+            text: {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPasswordFailed ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterBiometricsPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongBiometricsPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin)
+                        return qsTr("Cancel")
+                }
+                return ""
+            }
+            visible: {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPasswordFailed ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterBiometricsPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongBiometricsPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin)
+                        return true
+                }
+                return false
+            }
+
+            onClicked: {
+                root.sharedKeycardModule.currentState.doTertiaryAction()
+            }
+        },
+        StatusButton {
             id: secondaryButton
+            height: Constants.keycard.general.footerButtonsHeight
             text: {
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.selectExistingKeyPair ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardNotEmpty ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardLocked ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmptyMetadata ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
@@ -285,7 +414,7 @@ StatusModal {
                         return qsTr("Cancel")
                     }
                 }
-                else if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinVerified ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
@@ -296,12 +425,36 @@ StatusModal {
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmation)
                         return qsTr("Cancel")
                 }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+                    if (root.sharedKeycardModule.loggedInUserUsesBiometricLogin()) {
+                        if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPassword ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPassword)
+                            return qsTr("Use biometrics instead")
+                        if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPasswordFailed)
+                            return qsTr("Use password instead")
+                        if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin)
+                            return qsTr("Use biometrics")
+                        if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty)
+                            return qsTr("Use PIN")
+                    }
+                }
                 return ""
             }
             visible: {
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.selectExistingKeyPair ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardNotEmpty ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardLocked ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmptyMetadata ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
@@ -314,7 +467,7 @@ StatusModal {
                         return true
                     }
                 }
-                else if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinVerified ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
@@ -326,9 +479,42 @@ StatusModal {
                         return true
                     }
                 }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+                    if (root.sharedKeycardModule.loggedInUserUsesBiometricLogin()) {
+                        if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPassword ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPasswordFailed ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPassword ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty)
+                            return true
+                    }
+                }
                 return false
             }
-            highlighted: focus
+            enabled: {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+                    if (root.sharedKeycardModule.loggedInUserUsesBiometricLogin() &&
+                            (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty))
+                        return false
+                }
+                return true
+            }
 
             onClicked: {
                 root.sharedKeycardModule.currentState.doSecondaryAction()
@@ -336,6 +522,7 @@ StatusModal {
         },
         StatusButton {
             id: primaryButton
+            height: Constants.keycard.general.footerButtonsHeight
             text: {
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
@@ -362,13 +549,14 @@ StatusModal {
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin) {
-                        return qsTr("I don’t know the pin")
+                        return qsTr("I don’t know the PIN")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmation ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {
                         return qsTr("Factory reset this Keycard")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.selectExistingKeyPair ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardLocked ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmptyMetadata ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetSuccess ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseDisplay ||
@@ -377,22 +565,23 @@ StatusModal {
                         return qsTr("Next")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached) {
-                        return qsTr("Tmp-Next")
+                        return qsTr("Unlock Keycard")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
                         return qsTr("Done")
                     }
-                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess &&
-                            root.sharedKeycardModule.migratingProfileKeyPair()) {
-                        return qsTr("Restart app & sign in using your new Keycard")
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess) {
+                        if (root.sharedKeycardModule.migratingProfileKeyPair())
+                            return qsTr("Restart app & sign in using your new Keycard")
+                        return qsTr("Done")
                     }
                     return qsTr("Cancel")
                 }
-                else if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin) {
-                        return qsTr("I don’t know the pin")
+                        return qsTr("I don’t know the PIN")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmation ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {
@@ -404,13 +593,44 @@ StatusModal {
                         return qsTr("Next")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached) {
-                        return qsTr("Tmp-Next")
+                        return qsTr("Unlock Keycard")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetSuccess) {
                         return qsTr("Done")
                     }
                     return qsTr("Cancel")
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin) {
+                        return qsTr("Authenticate")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterBiometricsPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongBiometricsPassword) {
+                        return qsTr("Update password & authenticate")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin) {
+                        return qsTr("Update PIN & authenticate")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPasswordFailed ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid) {
+                        return qsTr("Try biometrics again")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached) {
+                        return qsTr("Unlock Keycard")
+                    }
                 }
                 return ""
             }
@@ -421,7 +641,7 @@ StatusModal {
                         return false
                     }
                 }
-                else if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.selectExistingKeyPair ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmation ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata ||
@@ -439,10 +659,31 @@ StatusModal {
                         return false
                     }
                 }
-                else if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmation ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {
                         return d.primaryButtonEnabled
+                    }
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterBiometricsPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongBiometricsPassword ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin) {
+                        return d.primaryButtonEnabled
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached) {
+                        return true
                     }
                 }
                 return true
@@ -451,16 +692,31 @@ StatusModal {
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseEnterWords ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterSeedPhrase) {
-                        if (root.sharedKeycardModule.migratingProfileKeyPair()) {
                             if (root.sharedKeycardModule.loggedInUserUsesBiometricLogin())
                                 return "touch-id"
+                            if (root.sharedKeycardModule.isProfileKeyPairMigrated())
+                                return "keycard"
                             return "password"
-                        }
+                    }
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+                    if (root.sharedKeycardModule.loggedInUserUsesBiometricLogin()) {
+                        if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPasswordFailed ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty)
+                            return "touch-id"
                     }
                 }
                 return ""
             }
-            highlighted: focus
 
             onClicked: {
                 root.sharedKeycardModule.currentState.doPrimaryAction()

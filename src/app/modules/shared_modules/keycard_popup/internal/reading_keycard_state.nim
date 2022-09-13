@@ -18,6 +18,10 @@ method executePrimaryCommand*(self: ReadingKeycardState, controller: Controller)
     self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
+method executeTertiaryCommand*(self: ReadingKeycardState, controller: Controller) =
+  if self.flowType == FlowType.Authentication:
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+
 method getNextSecondaryState*(self: ReadingKeycardState, controller: Controller): State =
   let (flowType, flowEvent) = controller.getLastReceivedKeycardData()
   # this is used in case a keycard is not inserted in the moment when flow is run (we're animating an insertion)

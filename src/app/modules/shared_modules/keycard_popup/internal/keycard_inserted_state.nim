@@ -24,3 +24,7 @@ method executePrimaryCommand*(self: KeycardInsertedState, controller: Controller
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+
+method executeTertiaryCommand*(self: KeycardInsertedState, controller: Controller) =
+  if self.flowType == FlowType.Authentication:
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

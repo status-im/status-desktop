@@ -26,6 +26,5 @@ method resolveKeycardNextState*(self: SeedPhraseEnterWordsState, keycardFlowType
   if self.flowType == FlowType.SetupNewKeycard:
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.keyUid.len > 0:
-        controller.setKeyUid(keycardEvent.keyUid)
         controller.removeMnemonic()
         return createState(StateType.MigratingKeyPair, self.flowType, nil)

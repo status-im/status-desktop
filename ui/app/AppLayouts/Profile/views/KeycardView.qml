@@ -15,9 +15,6 @@ import shared.status 1.0
 import shared.popups.keycard 1.0
 
 import "../stores"
-import "../controls"
-import "../panels"
-import "../popups"
 
 SettingsContentBase {
     id: root
