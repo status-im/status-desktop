@@ -27,12 +27,18 @@ Column {
                 text: "Look I'm a tooltip on a button!"
             }
             onClicked: console.warn("Primary button clicked")
+            onPressed: console.warn("Primary button pressed")
         }
 
         StatusButton {
             text: "Button"
             enabled: false
             type: StatusBaseButton.Type.Primary
+
+            StatusToolTip {
+                visible: parent.hovered
+                text: "Tooltip on a disabled button, should not be visible!"
+            }
             onClicked: console.warn("Primary disabled button clicked, this should not happen !!!")
         }
 

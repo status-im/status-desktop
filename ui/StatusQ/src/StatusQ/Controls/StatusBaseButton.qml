@@ -63,6 +63,8 @@ Button {
         }
     }
 
+    spacing: root.size === StatusBaseButton.Size.Large ? 6 : 4
+
     icon.height: 24
     icon.width: 24
 
@@ -74,16 +76,10 @@ Button {
                 return !root.loading && (root.hovered || root.highlighted) ? hoverColor : normalColor;
             return disabledColor;
         }
-        MouseArea {
-            anchors.fill: parent
-            enabled: root.enabled
-            acceptedButtons: Qt.NoButton
-            cursorShape: root.loading ? Qt.ArrowCursor : Qt.PointingHandCursor
-        }
     }
 
     contentItem: RowLayout {
-        spacing: root.size === StatusBaseButton.Size.Large ? 6 : 4
+        spacing: root.spacing
         StatusIcon {
             Layout.preferredWidth: visible ? root.icon.width : 0
             Layout.preferredHeight: visible ? root.icon.height : 0
@@ -123,8 +119,8 @@ Button {
         anchors.fill: parent
         acceptedButtons: Qt.AllButtons
         enabled: root.loading
-        hoverEnabled: enabled
         onPressed: mouse.accepted = true
         onWheel: wheel.accepted = true
+        cursorShape: !root.loading ? Qt.PointingHandCursor: undefined // always works; 'undefined' resets to default cursor
     }
 }
