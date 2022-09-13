@@ -19,8 +19,14 @@ type
     name*: string
     walletAccounts*: seq[WalletAccount]
 
+  TransactionSignature* = object
+    r*: string
+    s*: string
+    v*: string
+
   KeycardEvent* = object
     error*: string
+    instanceUID*: string
     applicationInfo*: ApplicationInfo
     seedPhraseIndexes*: seq[int]
     freePairingSlots*: int
@@ -28,6 +34,7 @@ type
     pinRetries*: int
     pukRetries*: int
     cardMetadata*: CardMetadata
+    txSignature*: TransactionSignature
     eip1581Key*: KeyDetails
     encryptionKey*: KeyDetails
     masterKey*: KeyDetails
@@ -43,7 +50,7 @@ proc toKeyDetails(jsonObj: JsonNode): KeyDetails =
 
 proc toApplicationInfo(jsonObj: JsonNode): ApplicationInfo =
   discard jsonObj.getProp(ResponseParamInitialized, result.initialized)
-  discard jsonObj.getProp(ResponseParamInstanceUID, result.instanceUID)
+  discard jsonObj.getProp(ResponseParamAppInfoInstanceUID, result.instanceUID)
   discard jsonObj.getProp(ResponseParamVersion, result.version)
   discard jsonObj.getProp(ResponseParamAvailableSlots, result.availableSlots)
   discard jsonObj.getProp(ResponseParamAppInfoKeyUID, result.keyUID)
@@ -59,8 +66,14 @@ proc toCardMetadata(jsonObj: JsonNode): CardMetadata =
     for acc in accountsArr:
       result.walletAccounts.add(acc.toWalletAccount())
 
+proc toTransactionSignature(jsonObj: JsonNode): TransactionSignature =
+  discard jsonObj.getProp(ResponseParamTxSignatureR, result.r)
+  discard jsonObj.getProp(ResponseParamTxSignatureS, result.s)
+  discard jsonObj.getProp(ResponseParamTxSignatureV, result.v)
+
 proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
   discard jsonObj.getProp(ResponseParamErrorKey, result.error)
+  discard jsonObj.getProp(ResponseParamInstanceUID, result.instanceUID)
   discard jsonObj.getProp(ResponseParamFreeSlots, result.freePairingSlots)
   discard jsonObj.getProp(ResponseParamPINRetries, result.pinRetries)
   discard jsonObj.getProp(ResponseParamPUKRetries, result.pukRetries)
@@ -96,3 +109,6 @@ proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
 
   if(jsonObj.getProp(ResponseParamCardMeta, obj)):
     result.cardMetadata = toCardMetadata(obj)
+
+  if(jsonObj.getProp(ResponseParamTXSignature, obj)):
+    result.txSignature = toTransactionSignature(obj)

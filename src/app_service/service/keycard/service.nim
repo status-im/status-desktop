@@ -23,6 +23,9 @@ type KCSFlowType* {.pure.} = enum
   StoreMetadata
   GetMetadata
 
+const EmptyTxHash = "0000000000000000000000000000000000000000000000000000000000000000"
+const DefaultBIP44Path = "m/0"
+
 const PINLengthForStatusApp* = 6
 const PUKLengthForStatusApp* = 12
 
@@ -33,7 +36,7 @@ const SupportedMnemonicLength24* = 24
 const MnemonicLengthForStatusApp = SupportedMnemonicLength12
 const TimerIntervalInMilliseconds = 3 * 1000 # 3 seconds
 
-const SignalKeycardResponse* = "keycardResponse"
+const SIGNAL_KEYCARD_RESPONSE* = "keycardResponse"
 
 logScope:
   topics = "keycard-service"
@@ -101,7 +104,7 @@ QtObject:
     let flowType = typeObj.getStr
     let flowEvent = toKeycardEvent(eventObj)
     self.lastReceivedKeycardData = (flowType: flowType, flowEvent: flowEvent)
-    self.events.emit(SignalKeycardResponse, KeycardArgs(flowType: flowType, flowEvent: flowEvent))
+    self.events.emit(SIGNAL_KEYCARD_RESPONSE, KeycardArgs(flowType: flowType, flowEvent: flowEvent))
 
   proc receiveKeycardSignal(self: Service, signal: string) {.slot.} =
     self.processSignal(signal)
@@ -170,7 +173,7 @@ QtObject:
 
   proc startLoadAccountFlowWithSeedPhrase*(self: Service, seedPhraseLength: int, seedPhrase: string, factoryReset: bool) =
     if seedPhrase.len == 0:
-      info "empty seed phrase provided"
+      error "empty seed phrase provided"
       return
     var payload = %* {
       RequestParamOverwrite: true,
@@ -223,9 +226,21 @@ QtObject:
     self.currentFlow = KCSFlowType.StoreMetadata
     self.startFlow(payload)
 
+  proc startSignFlow*(self: Service, bip44Path: string, txHash: string) =
+    var payload = %* { 
+      RequestParamTXHash: EmptyTxHash,
+      RequestParamBIP44Path: DefaultBIP44Path
+    }
+    if txHash.len > 0:
+      payload[RequestParamTXHash] = %* txHash
+    if bip44Path.len > 0:
+      payload[RequestParamBIP44Path] = %* bip44Path
+    self.currentFlow = KCSFlowType.Sign
+    self.startFlow(payload)
+
   proc storePin*(self: Service, pin: string, puk: string) =
     if pin.len == 0:
-      info "empty pin provided"
+      error "empty pin provided"
       return
     var payload = %* {
       RequestParamOverwrite: true,
@@ -239,7 +254,7 @@ QtObject:
 
   proc enterPin*(self: Service, pin: string) =
     if pin.len == 0:
-      info "empty pin provided"
+      error "empty pin provided"
       return
     var payload = %* {
       RequestParamPIN: pin
@@ -248,7 +263,7 @@ QtObject:
 
   proc enterPuk*(self: Service, puk: string) =
     if puk.len == 0:
-      info "empty puk provided"
+      error "empty puk provided"
       return
     var payload = %* {
       RequestParamPUK: puk
@@ -257,7 +272,7 @@ QtObject:
 
   proc storeSeedPhrase*(self: Service, seedPhraseLength: int, seedPhrase: string) =
     if seedPhrase.len == 0:
-      info "empty seed phrase provided"
+      error "empty seed phrase provided"
       return
     var payload = %* {
       RequestParamOverwrite: true,
