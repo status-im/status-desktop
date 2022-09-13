@@ -34,7 +34,7 @@ proc init*(self: Controller) =
     self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(e: Args):
-    let args = SharedKeycarModuleArgs(e)
+    let args = SharedKeycarModuleBaseArgs(e)
     if args.uniqueIdentifier != UNIQUE_SETTING_KEYCARD_MODULE_IDENTIFIER:
       return
     self.delegate.onDisplayKeycardSharedModuleFlow()

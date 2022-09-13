@@ -246,7 +246,7 @@ proc init*(self: Controller) =
     self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED, data)
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(e: Args):
-    let args = SharedKeycarModuleArgs(e)
+    let args = SharedKeycarModuleBaseArgs(e)
     if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_IDENTIFIER or 
       self.authenticateUserFlowRequestedBy.len == 0:
         return

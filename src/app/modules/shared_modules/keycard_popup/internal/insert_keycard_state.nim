@@ -18,6 +18,10 @@ method executePrimaryCommand*(self: InsertKeycardState, controller: Controller) 
     self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
+method executeTertiaryCommand*(self: InsertKeycardState, controller: Controller) =
+  if self.flowType == FlowType.Authentication:
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+
 method resolveKeycardNextState*(self: InsertKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
   let state = ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)

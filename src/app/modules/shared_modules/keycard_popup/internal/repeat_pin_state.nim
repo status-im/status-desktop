@@ -31,4 +31,5 @@ method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, k
     if keycardFlowType == ResponseTypeValueEnterMnemonic and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorLoadingKeys:
+        controller.setKeycardUid(keycardEvent.instanceUID)
         return createState(StateType.PinSet, self.flowType, nil)

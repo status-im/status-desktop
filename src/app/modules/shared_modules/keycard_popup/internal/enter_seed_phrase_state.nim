@@ -13,9 +13,7 @@ proc delete*(self: EnterSeedPhraseState) =
 method executePrimaryCommand*(self: EnterSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     self.verifiedSeedPhrase = controller.validSeedPhrase(controller.getSeedPhrase()) and
-      (not controller.getSelectedKeyPairIsProfile() or
-      controller.getSelectedKeyPairIsProfile() and 
-      controller.seedPhraseRefersToLoggedInUser(controller.getSeedPhrase()))
+      controller.seedPhraseRefersToSelectedKeyPair(controller.getSeedPhrase())
     if self.verifiedSeedPhrase:
       controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
     else:
@@ -38,5 +36,4 @@ method resolveKeycardNextState*(self: EnterSeedPhraseState, keycardFlowType: str
   if self.flowType == FlowType.SetupNewKeycard:
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.keyUid.len > 0:
-        controller.setKeyUid(keycardEvent.keyUid)
         return createState(StateType.MigratingKeyPair, self.flowType, nil)

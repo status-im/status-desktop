@@ -4,6 +4,7 @@ import key_pair_item
 type
   ModelRole {.pure.} = enum
     PubKey = UserRole + 1
+    Locked
     Name
     Image
     Icon
@@ -52,6 +53,7 @@ QtObject:
   method roleNames(self: KeyPairModel): Table[int, string] =
     {
       ModelRole.PubKey.int: "pubKey",
+      ModelRole.Locked.int: "locked",
       ModelRole.Name.int: "name",
       ModelRole.Image.int: "image",
       ModelRole.Icon.int: "icon",
@@ -70,6 +72,8 @@ QtObject:
     case enumRole:
     of ModelRole.PubKey:
       result = newQVariant(item.pubKey)
+    of ModelRole.Locked:
+      result = newQVariant(item.locked)
     of ModelRole.Name:
       result = newQVariant(item.name)
     of ModelRole.Image:

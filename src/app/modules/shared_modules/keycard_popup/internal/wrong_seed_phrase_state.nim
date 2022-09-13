@@ -17,7 +17,7 @@ method executePrimaryCommand*(self: WrongSeedPhraseState, controller: Controller
     controller.setKeycardData(getPredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = false))
     sleep(500) # just to shortly remove text on the UI side
     self.verifiedSeedPhrase = controller.validSeedPhrase(controller.getSeedPhrase()) and
-      controller.seedPhraseRefersToLoggedInUser(controller.getSeedPhrase())
+      controller.seedPhraseRefersToSelectedKeyPair(controller.getSeedPhrase())
     if self.verifiedSeedPhrase:
       controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
     else:
@@ -35,6 +35,5 @@ method resolveKeycardNextState*(self: WrongSeedPhraseState, keycardFlowType: str
   if self.flowType == FlowType.SetupNewKeycard:
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.keyUid.len > 0:
-        controller.setKeyUid(keycardEvent.keyUid)
         controller.setKeycardData(getPredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = false))
         return createState(StateType.MigratingKeyPair, self.flowType, nil)

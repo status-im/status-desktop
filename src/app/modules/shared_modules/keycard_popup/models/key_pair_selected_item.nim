@@ -13,10 +13,25 @@ QtObject:
     result.QObject.setup
 
   proc keyPairSelectedItemChanged*(self: KeyPairSelectedItem) {.signal.}
+  proc keyPairSelectedItemLockedChanged*(self: KeyPairSelectedItem) {.signal.}
+  proc keyPairSelectedItemIconChanged*(self: KeyPairSelectedItem) {.signal.}
 
   proc setItem*(self: KeyPairSelectedItem, item: KeyPairItem) =
     self.item = item
     self.keyPairSelectedItemChanged()
+    self.keyPairSelectedItemLockedChanged()
+    self.keyPairSelectedItemIconChanged()
+
+  proc updateLockedState*(self: KeyPairSelectedItem, locked: bool) =
+    if self.item.isNil:
+      return
+    self.item.setLocked(locked)
+    if locked:
+      self.item.setIcon("lock")
+    else:
+      self.item.setIcon("keycard")
+    self.keyPairSelectedItemLockedChanged()
+    self.keyPairSelectedItemIconChanged()
 
   proc getPubKey*(self: KeyPairSelectedItem): string {.slot.} =
     if(self.item.isNil):
@@ -25,6 +40,14 @@ QtObject:
   QtProperty[string] pubKey:
     read = getPubKey
     notify = keyPairSelectedItemChanged
+
+  proc getLocked*(self: KeyPairSelectedItem): bool {.slot.} =
+    if(self.item.isNil):
+      return false
+    return self.item.locked()
+  QtProperty[bool] locked:
+    read = getLocked
+    notify = keyPairSelectedItemLockedChanged
 
   proc getName*(self: KeyPairSelectedItem): string {.slot.} =
     if(self.item.isNil):
@@ -48,7 +71,7 @@ QtObject:
     return self.item.icon()
   QtProperty[string] icon:
     read = getIcon
-    notify = keyPairSelectedItemChanged
+    notify = keyPairSelectedItemIconChanged
 
   proc getPairType*(self: KeyPairSelectedItem): int {.slot.} =
     if(self.item.isNil):

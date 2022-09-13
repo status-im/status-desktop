@@ -33,12 +33,13 @@ type
     tmpPin: string
     tmpPinMatch: bool
     tmpPassword: string
-    tmpKeyUid: string
     tmpSelectedKeyPairIsProfile: bool
-    tmpSelectedKeyPairName: string
+    tmpSelectedKeyPairDto: KeyPairDto
     tmpSelectedKeyPairWalletPaths: seq[string]
     tmpSeedPhrase: string
     tmpSeedPhraseLength: int
+    tmpKeyUidWhichIsBeingAuthenticating: string
+    tmpUsePinFromBiometrics: bool
 
 proc newController*(delegate: io_interface.AccessInterface,
   uniqueIdentifier: string,
@@ -64,6 +65,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.tmpPinMatch = false
   result.tmpSeedPhraseLength = 0
   result.tmpSelectedKeyPairIsProfile = false
+  result.tmpUsePinFromBiometrics = false
 
 proc serviceApplicable[T](service: T): bool =
   if not service.isNil:
@@ -138,6 +140,12 @@ proc setPin*(self: Controller, value: string) =
 proc getPin*(self: Controller): string =
   return self.tmpPin
 
+proc setUsePinFromBiometrics*(self: Controller, value: bool) =
+  self.tmpUsePinFromBiometrics = value
+
+proc usePinFromBiometrics*(self: Controller): bool =
+  return self.tmpUsePinFromBiometrics
+
 proc setPinMatch*(self: Controller, value: bool) =
   self.tmpPinMatch = value
 
@@ -150,8 +158,8 @@ proc setPassword*(self: Controller, value: string) =
 proc getPassword*(self: Controller): string =
   return self.tmpPassword
 
-proc setKeyUid*(self: Controller, value: string) =
-  self.tmpKeyUid = value
+proc getKeyUidWhichIsBeingAuthenticating*(self: Controller): string =
+  self.tmpKeyUidWhichIsBeingAuthenticating
 
 proc setSelectedKeyPairIsProfile*(self: Controller, value: bool) =
   self.tmpSelectedKeyPairIsProfile = value
@@ -159,11 +167,14 @@ proc setSelectedKeyPairIsProfile*(self: Controller, value: bool) =
 proc getSelectedKeyPairIsProfile*(self: Controller): bool =
   return self.tmpSelectedKeyPairIsProfile
 
-proc setSelectedKeyPairName*(self: Controller, value: string) =
-  self.tmpSelectedKeyPairName = value
+proc setSelectedKeyPairDto*(self: Controller, keyPairDto: KeyPairDto) =
+  self.tmpSelectedKeyPairDto = keyPairDto
 
-proc getSelectedKeyPairName*(self: Controller): string =
-  return self.tmpSelectedKeyPairName
+proc getSelectedKeyPairDto*(self: Controller): KeyPairDto =
+  return self.tmpSelectedKeyPairDto
+
+proc setKeycardUid*(self: Controller, value: string) =
+  self.tmpSelectedKeyPairDto.keycardUid = value
 
 proc setSelectedKeyPairWalletPaths*(self: Controller, paths: seq[string]) =
   self.tmpSelectedKeyPairWalletPaths = paths
@@ -186,16 +197,16 @@ proc validSeedPhrase*(self: Controller, seedPhrase: string): bool =
   let err = self.accountsService.validateMnemonic(seedPhrase)
   return err.len == 0
 
-proc seedPhraseRefersToLoggedInUser*(self: Controller, seedPhrase: string): bool =
+proc seedPhraseRefersToSelectedKeyPair*(self: Controller, seedPhrase: string): bool =
   let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)
-  return acc.keyUid == singletonInstance.userProfile.getAddress()  
+  return acc.keyUid == self.tmpSelectedKeyPairDto.keyUid
 
 proc verifyPassword*(self: Controller, password: string): bool =
   return self.accountsService.verifyPassword(password)
 
-proc convertToKeycardAccount*(self: Controller, password: string): bool =
+proc convertSelectedKeyPairToKeycardAccount*(self: Controller, password: string): bool =
   singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
-  return self.accountsService.convertToKeycardAccount(self.tmpKeyUid, password)
+  return self.accountsService.convertToKeycardAccount(self.tmpSelectedKeyPairDto.keyUid, password)
 
 proc getLoggedInAccount*(self: Controller): AccountDto =
   return self.accountsService.getLoggedInAccount()
@@ -231,15 +242,39 @@ proc runLoadAccountFlow*(self: Controller, factoryReset = false) =
   self.cancelCurrentFlow()
   self.keycardService.startLoadAccountFlow(factoryReset)
 
+proc runSignFlow*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
+  ## For signing a transaction  we need to provide a key uid of a keypair that an account we want to sign a transaction 
+  ## for belongs to. If we're just doing an authentication for a logged in user, then default key uid is always the key 
+  ## uid of the logged in user.
+  self.tmpKeyUidWhichIsBeingAuthenticating = keyUid
+  if self.tmpKeyUidWhichIsBeingAuthenticating.len == 0:
+    self.tmpKeyUidWhichIsBeingAuthenticating = singletonInstance.userProfile.getKeyUid()
+  self.cancelCurrentFlow()
+  self.keycardService.startSignFlow(bip44Path, txHash)
+
 proc resumeCurrentFlowLater*(self: Controller) =
   self.keycardService.resumeCurrentFlowLater()
 
 proc readyToDisplayPopup*(self: Controller) =
-  self.events.emit(SignalSharedKeycarModuleDisplayPopup, Args())
+  let data = SharedKeycarModuleBaseArgs(uniqueIdentifier: self.uniqueIdentifier)
+  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP, data)
 
 proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
-  let data = SharedKeycarModuleFlowTerminatedArgs(lastStepInTheCurrentFlow: lastStepInTheCurrentFlow)
-  self.events.emit(SignalSharedKeycarModuleFlowTerminated, data)
+  let (_, flowEvent) = self.getLastReceivedKeycardData()
+  var data = SharedKeycarModuleFlowTerminatedArgs(uniqueIdentifier: self.uniqueIdentifier,
+    lastStepInTheCurrentFlow: lastStepInTheCurrentFlow)
+  if lastStepInTheCurrentFlow:
+    data.data = self.tmpPassword
+    data.keyUid = flowEvent.keyUid
+    data.txR = flowEvent.txSignature.r
+    data.txS = flowEvent.txSignature.s
+    data.txV = flowEvent.txSignature.v
+  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED, data)
+
+proc authenticateUser*(self: Controller) =
+  self.disconnectKeycardReponseSignal()
+  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: self.uniqueIdentifier)
+  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   if not serviceApplicable(self.walletAccountService):
@@ -250,6 +285,26 @@ proc getBalanceForAddress*(self: Controller, address: string): float64 =
   if not serviceApplicable(self.walletAccountService):
     return
   return self.walletAccountService.fetchBalanceForAddress(address)
+
+proc addMigratedKeyPair*(self: Controller, keyPair: KeyPairDto): bool =
+  if not serviceApplicable(self.walletAccountService):
+    return
+  return self.walletAccountService.addMigratedKeyPair(keyPair)
+
+proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
+  if not serviceApplicable(self.walletAccountService):
+    return
+  return self.walletAccountService.getAllMigratedKeyPairs()
+
+proc getMigratedKeyPairByKeyUid*(self: Controller, keyUid: string): seq[KeyPairDto] =
+  if not serviceApplicable(self.walletAccountService):
+    return
+  return self.walletAccountService.getMigratedKeyPairByKeyUid(keyUid)
+
+proc getSigningPhrase*(self: Controller): string =
+  if not serviceApplicable(self.settingsService):
+    return
+  return self.settingsService.getSigningPhrase()
 
 proc enterKeycardPin*(self: Controller, pin: string) =
   self.keycardService.enterPin(pin)
@@ -290,3 +345,13 @@ proc loggedInUserUsesBiometricLogin*(self: Controller): bool =
   if (value != LS_VALUE_STORE):
     return false
   return true
+
+proc tryToObtainDataFromKeychain*(self: Controller) =
+  if(not self.loggedInUserUsesBiometricLogin()):
+    return
+  let loggedInAccount = self.getLoggedInAccount()
+  self.keychainService.tryToObtainData(loggedInAccount.name)
+
+proc tryToStoreDataToKeychain*(self: Controller, password: string) =
+  let loggedInAccount = self.getLoggedInAccount()
+  self.keychainService.storeData(loggedInAccount.name, password)

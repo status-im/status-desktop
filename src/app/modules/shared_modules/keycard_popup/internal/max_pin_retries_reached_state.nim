@@ -11,10 +11,17 @@ proc delete*(self: MaxPinRetriesReachedState) =
 method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Controller): State =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard:
+      debug "Run Unlock Keycard flow... (not developed yet)"
       return createState(StateType.FactoryResetConfirmation, self.flowType, self)
+  if self.flowType == FlowType.Authentication:
+      debug "Run Unlock Keycard flow... (not developed yet)"
   return nil
 
 method executeSecondaryCommand*(self: MaxPinRetriesReachedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+
+method executeTertiaryCommand*(self: MaxPinRetriesReachedState, controller: Controller) =
+  if self.flowType == FlowType.Authentication:
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

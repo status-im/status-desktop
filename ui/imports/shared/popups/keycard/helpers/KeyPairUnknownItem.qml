@@ -65,7 +65,7 @@ Rectangle {
                 height: 24
                 name: root.keyPairIcon
                 color: Utils.colorForPubkey(root.keyPairPubKey)
-                letterSize: Math.max(4, this.image.width / 2.4)
+                letterSize: Math.max(4, asset.width / 2.4)
                 charactersLen: 2
                 isLetterIdenticon: false
                 bgColor: Theme.palette.primaryColor3

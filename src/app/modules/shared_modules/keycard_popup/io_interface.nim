@@ -66,7 +66,7 @@ method onTertiaryActionClicked*(self: AccessInterface) {.base.} =
 method onKeycardResponse*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runFlow*(self: AccessInterface, flowToRun: FlowType) {.base.} =
+method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Path = "", txHash = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setPin*(self: AccessInterface, value: string) {.base.} =
@@ -105,6 +105,17 @@ method migratingProfileKeyPair*(self: AccessInterface): bool {.base.} =
 method isProfileKeyPairMigrated*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getSigningPhrase*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method keychainObtainedDataFailure*(self: AccessInterface, errorDescription: string, errorType: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method keychainObtainedDataSuccess*(self: AccessInterface, data: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
 type
   DelegateInterface* = concept c

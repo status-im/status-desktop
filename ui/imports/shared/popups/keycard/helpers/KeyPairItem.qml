@@ -23,6 +23,7 @@ StatusListItem {
     property string keyPairImage: ""
     property string keyPairDerivedFrom: ""
     property string keyPairAccounts: ""
+    property bool keyPairCardLocked: false
 
     signal keyPairSelected()
 
@@ -36,17 +37,18 @@ StatusListItem {
         height: root.keyPairIcon? 24 : 40
         name: root.keyPairImage? root.keyPairImage : root.keyPairIcon
         color: root.keyPairType === Constants.keycard.keyPairType.profile?
-                   Utils.colorForPubkey(d.myPublicKey) : Theme.palette.primaryColor1
-        letterSize: Math.max(4, this.width / 2.4)
+                   Utils.colorForPubkey(d.myPublicKey) :
+                   root.keyPairCardLocked? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
+        letterSize: Math.max(4, asset.width / 2.4)
         charactersLen: 2
-        isLetterIdenticon: !root.keyPairIcon && !this.name.toString()
-        bgColor: Theme.palette.primaryColor3
+        isLetterIdenticon: !root.keyPairIcon && !asset.name.toString()
+        bgColor: root.keyPairCardLocked? Theme.palette.dangerColor3 : Theme.palette.primaryColor3
     }
 
     ringSettings {
         ringSpecModel: root.keyPairType === Constants.keycard.keyPairType.profile?
                            Utils.getColorHashAsJson(d.myPublicKey) : []
-        ringPxSize: Math.max(this.icon.width / 24.0)
+        ringPxSize: Math.max(asset.width / 24.0)
     }
 
     tagsModel: ListModel{}
