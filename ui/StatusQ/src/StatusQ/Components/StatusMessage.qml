@@ -242,7 +242,7 @@ Rectangle {
             spacing: 8
 
             Item {
-                implicitWidth: profileImage.width
+                implicitWidth: root.messageDetails.sender.profileImage.assetSettings.width
                 implicitHeight: profileImage.visible ? profileImage.height : 0
                 Layout.alignment: Qt.AlignTop
                 StatusSmartIdenticon {
