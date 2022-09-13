@@ -76,6 +76,7 @@ QtObject:
   proc communityChanged*(self: View, communityId: string) {.signal.}
   proc discordOldestMessageTimestampChanged*(self: View) {.signal.}
   proc discordImportErrorsCountChanged*(self: View) {.signal.}
+  proc communityAccessRequested*(self: View, communityId: string) {.signal.}
 
   proc setCommunityTags*(self: View, communityTags: string) =
     self.communityTags = newQVariant(communityTags)

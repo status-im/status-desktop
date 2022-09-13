@@ -232,6 +232,9 @@ method reorderCommunityCategories*(self: Module, communityId: string, categoryId
 method communityMuted*(self: Module, communityId: string, muted: bool) =
   self.view.model().setMuted(communityId, muted)
 
+method communityAccessRequested*(self: Module, communityId: string) =
+  self.view.communityAccessRequested(communityId)
+
 method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[DiscordCategoryDto], channels: seq[DiscordChannelDto], oldestMessageTimestamp: int, errors: Table[string, DiscordImportError], errorsCount: int) =
 
   for filePath in errors.keys:
