@@ -14,7 +14,7 @@ method executePrimaryCommand*(self: LoginKeycardReadingKeycardState, controller:
   if self.flowType == FlowType.AppLogin:
     if not controller.isSelectedLoginAccountKeycardAccount():
       controller.login()
-    elif not controller.keychainErrorOccurred():
+    elif not controller.keychainErrorOccurred() and controller.getPin().len == PINLengthForStatusApp:
       controller.enterKeycardPin(controller.getPin())
 
 method getNextPrimaryState*(self: LoginKeycardReadingKeycardState, controller: Controller): State =

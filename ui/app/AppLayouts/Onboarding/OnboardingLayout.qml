@@ -64,6 +64,7 @@ OnboardingBasePage {
                 return seedPhraseInputViewComponent
             }
             if (root.startupStore.currentStartupState.stateType === Constants.startupState.login ||
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginPlugin ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardInsertKeycard ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardReadingKeycard ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEnterPin ||
@@ -71,7 +72,8 @@ OnboardingBasePage {
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardWrongPin ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPinRetriesReached ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPukRetriesReached ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEmpty)
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEmpty ||
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginNotKeycard)
             {
                 return loginViewComponent
             }

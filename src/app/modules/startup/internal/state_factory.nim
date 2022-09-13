@@ -47,6 +47,7 @@ include welcome_state_new_user
 include welcome_state_old_user
 include welcome_state
 include login_state
+include login_plugin_state
 include login_keycard_insert_keycard_state
 include login_keycard_reading_keycard_state
 include login_keycard_enter_pin_state 
@@ -55,6 +56,7 @@ include login_keycard_wrong_pin_state
 include login_keycard_max_pin_retries_reached_state
 include login_keycard_max_puk_retries_reached_state
 include login_keycard_empty_state
+include login_not_keycard_state
 
 proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State =
   if stateToBeCreated == StateType.AllowNotifications:
@@ -119,6 +121,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newKeycardMaxPukRetriesReachedState(flowType, backState)
   if stateToBeCreated == StateType.Login:
     return newLoginState(flowType, backState)
+  if stateToBeCreated == StateType.LoginPlugin:
+    return newLoginPluginState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardInsertKeycard:
     return newLoginKeycardInsertKeycardState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardReadingKeycard:
@@ -135,6 +139,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newLoginKeycardMaxPukRetriesReachedState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardEmpty:
     return newLoginKeycardEmptyState(flowType, backState)
+  if stateToBeCreated == StateType.LoginNotKeycard:
+    return newLoginNotKeycardState(flowType, backState)
   
   error "No implementation available for state ", state=stateToBeCreated
 
@@ -161,9 +167,9 @@ proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, ke
     keycardEvent.error.len > 0 and
     keycardEvent.error == ErrorConnection:
       controller.resumeCurrentFlowLater()
-      if state.stateType == StateType.Login:
+      if state.stateType == StateType.LoginPlugin:
         return nil
-      return createState(StateType.Login, state.flowType, state)
+      return createState(StateType.LoginPlugin, state.flowType, nil)
   if keycardFlowType == ResponseTypeValueInsertCard and 
     keycardEvent.error.len > 0 and
     keycardEvent.error == ErrorConnection:
@@ -279,10 +285,10 @@ proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardF
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           return createState(StateType.LoginKeycardMaxPinRetriesReached, state.flowType, nil)
     if keycardFlowType == ResponseTypeValueSwapCard and 
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorNoKeys:
-        return createState(StateType.LoginKeycardEmpty, state.flowType, nil)
-    if keycardFlowType == ResponseTypeValueSwapCard and 
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == RequestParamPUKRetries:
-        return createState(StateType.LoginKeycardMaxPukRetriesReached, state.flowType, nil)
+      keycardEvent.error.len > 0:
+        if keycardEvent.error == ErrorNoKeys:
+          return createState(StateType.LoginKeycardEmpty, state.flowType, nil)
+        if keycardEvent.error == ErrorNotAKeycard:
+          return createState(StateType.LoginNotKeycard, state.flowType, nil)
+        if keycardEvent.error == RequestParamPUKRetries:
+          return createState(StateType.LoginKeycardMaxPukRetriesReached, state.flowType, nil)
