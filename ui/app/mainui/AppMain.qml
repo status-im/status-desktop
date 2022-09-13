@@ -38,6 +38,7 @@ import AppLayouts.Browser.stores 1.0 as BrowserStores
 import AppLayouts.stores 1.0
 
 import "popups"
+import "activitycenter/popups"
 
 Item {
     id: appMain

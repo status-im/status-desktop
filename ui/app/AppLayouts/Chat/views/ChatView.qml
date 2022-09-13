@@ -58,7 +58,6 @@ StatusSectionLayout {
     }
 
     notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList && headerContent.membersButton.visible ? 0 : 14
-    notificationButton.highlighted: activityCenter.visible
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     notificationCount: root.rootStore.unreadNotificationsCount
 
@@ -201,16 +200,7 @@ StatusSectionLayout {
         }
     }
 
-    ActivityCenterPopup {
-        id: activityCenter
-        y: 56
-        height: (root.height - 56) * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
-        store: root.rootStore
-        chatSectionModule: root.rootStore.currentChatContentModule()
-        messageContextMenu: MessageContextMenuView {
-            id: contextmenu
-            store: root.rootStore
-            reactionModel: root.rootStore.emojiReactionsModel
-        }
+    Component.onCompleted: {
+        rootStore.groupInfoPopupComponent = groupInfoPopupComponent;
     }
 }
