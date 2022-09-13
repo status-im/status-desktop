@@ -4,6 +4,7 @@ import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
 import ./communities/models/[pending_request_item, pending_request_model]
 import ../shared_models/[user_item, member_item, member_model, section_item, section_model, active_section]
+import ../shared_modules/keycard_popup/module as keycard_shared_module
 import ../../global/app_sections_config as conf
 import ../../global/app_signals
 import ../../global/global_singleton
@@ -73,6 +74,13 @@ type
     viewVariant: QVariant
     controller: Controller
     channelGroupModules: OrderedTable[string, chat_section_module.AccessInterface]
+    events: EventEmitter
+    keycardService: keycard_service.Service
+    settingsService: settings_service.Service
+    privacyService: privacy_service.Service
+    accountsService: accounts_service.Service
+    walletAccountService: wallet_account_service.Service
+    keychainService: keychain_service.Service
     walletSectionModule: wallet_section_module.AccessInterface
     browserSectionModule: browser_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
@@ -82,6 +90,7 @@ type
     appSearchModule: app_search_module.AccessInterface
     nodeSectionModule: node_section_module.AccessInterface
     networksModule: networks_module.AccessInterface
+    keycardSharedModule: keycard_shared_module.AccessInterface
     moduleLoaded: bool
     statusUrlGroupName: string
     statusUrlGroupMembers: seq[string] # used only for creating group chat from the status url
@@ -145,6 +154,14 @@ proc newModule*[T](
   )
   result.moduleLoaded = false
 
+  result.events = events
+  result.keycardService = keycardService
+  result.settingsService = settingsService
+  result.privacyService = privacyService
+  result.accountsService = accountsService
+  result.walletAccountService = walletAccountService
+  result.keychainService = keychainService
+
   # Submodules
   result.channelGroupModules = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule(
@@ -160,7 +177,7 @@ proc newModule*[T](
     result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
     devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService,
-    networkService, keycardService
+    networkService, keycardService, keychainService
   )
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
@@ -184,6 +201,8 @@ method delete*[T](self: Module[T]) =
   self.appSearchModule.delete
   self.nodeSectionModule.delete
   self.networksModule.delete
+  if not self.keycardSharedModule.isNil:
+    self.keycardSharedModule.delete
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
@@ -927,3 +946,29 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
 
         cModule.makeChatWithIdActive(chatId)
         break
+
+method getKeycardSharedModule*[T](self: Module[T]): QVariant =
+  return self.keycardSharedModule.getModuleAsVariant()
+
+proc createSharedKeycardModule[T](self: Module[T]) =
+  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_IDENTIFIER, 
+    self.events, self.keycardService, self.settingsService, self.privacyService, self.accountsService, 
+    self.walletAccountService, self.keychainService)
+
+proc isSharedKeycardModuleFlowRunning[T](self: Module[T]): bool =
+  return not self.keycardSharedModule.isNil
+
+method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
+  if self.isSharedKeycardModuleFlowRunning():
+    self.view.emitDestroyKeycardSharedModuleFlow()
+    self.keycardSharedModule.delete
+    self.keycardSharedModule = nil
+
+method runAuthenticationPopup*[T](self: Module[T], keyUid: string, bip44Path: string, txHash: string) =
+  self.createSharedKeycardModule()
+  if self.keycardSharedModule.isNil:
+    return
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.Authentication, keyUid, bip44Path, txHash)
+
+method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
+  self.view.emitDisplayKeycardSharedModuleFlow()

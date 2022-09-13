@@ -1,4 +1,4 @@
-import ../shared_models/section_item, io_interface, chronicles
+import chronicles
 import ../../global/app_sections_config as conf
 import ../../global/global_singleton
 import ../../global/app_signals
@@ -18,8 +18,13 @@ import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/node/service as node_service
 
+import ../shared_models/section_item, io_interface
+import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
+
 logScope:
   topics = "main-module-controller"
+
+const UNIQUE_MAIN_MODULE_IDENTIFIER* = "MainModule"
 
 type
   Controller* = ref object of RootObj
@@ -37,6 +42,7 @@ type
     mailserversService: mailservers_service.Service
     nodeService: node_service.Service
     activeSectionId: string
+    authenticateUserFlowRequestedBy: string
 
 # Forward declaration
 proc setActiveSection*(self: Controller, sectionId: string)
@@ -91,9 +97,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
     let args = KeyChainServiceArg(e)
-    # with the following condition we guard unintentional props deletion from the `.ini` file
     if self.accountsService.getLoggedInAccount().isValid():
-      singletonInstance.localAccountSettings.removeKey(LS_KEY_STORE_TO_KEYCHAIN)
       self.delegate.emitStoringPasswordError(args.errDescription)
 
   self.events.on(SIGNAL_COMMUNITY_JOINED) do(e:Args):
@@ -225,6 +229,33 @@ proc init*(self: Controller) =
   self.events.on(chat_service.SIGNAL_CHAT_LEFT) do(e: Args):
     let args = chat_service.ChatArgs(e)
     self.delegate.onChatLeft(args.chatId)
+
+  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED) do(e: Args):
+    let args = SharedKeycarModuleFlowTerminatedArgs(e)
+    if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_IDENTIFIER or 
+      self.authenticateUserFlowRequestedBy.len == 0:
+        return
+    self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
+    let data = SharedKeycarModuleArgs(uniqueIdentifier: self.authenticateUserFlowRequestedBy,
+      data: args.data,
+      keyUid: args.keyUid,
+      txR: args.txR,
+      txS: args.txS,
+      txV: args.txV)
+    self.authenticateUserFlowRequestedBy = ""
+    self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED, data)
+
+  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(e: Args):
+    let args = SharedKeycarModuleArgs(e)
+    if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_IDENTIFIER or 
+      self.authenticateUserFlowRequestedBy.len == 0:
+        return
+    self.delegate.onDisplayKeycardSharedModuleFlow()
+
+  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER) do(e: Args):
+    let args = SharedKeycarModuleAuthenticationArgs(e)
+    self.authenticateUserFlowRequestedBy = args.uniqueIdentifier
+    self.delegate.runAuthenticationPopup(args.keyUid, args.bip44Path, args.txHash)
 
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()

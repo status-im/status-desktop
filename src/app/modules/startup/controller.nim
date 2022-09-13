@@ -16,6 +16,8 @@ import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
 logScope:
   topics = "startup-controller"
 
+const UNIQUE_STARTUP_MODULE_IDENTIFIER* = "SartupModule"
+
 type ProfileImageDetails = object
   url*: string
   croppedImage*: string
@@ -110,17 +112,22 @@ proc init*(self: Controller) =
     self.delegate.emitObtainingPasswordError(args.errDescription, args.errType)
   self.connectionIds.add(handlerId)
   
-  handlerId = self.events.onWithUUID(SignalKeycardResponse) do(e: Args):
+  handlerId = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
     let args = KeycardArgs(e)
     self.delegate.onKeycardResponse(args.flowType, args.flowEvent)
   self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SignalSharedKeycarModuleFlowTerminated) do(e: Args):
+  handlerId = self.events.onWithUUID(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED) do(e: Args):
     let args = SharedKeycarModuleFlowTerminatedArgs(e)
+    if args.uniqueIdentifier != UNIQUE_STARTUP_MODULE_IDENTIFIER:
+      return
     self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
   self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SignalSharedKeycarModuleDisplayPopup) do(e: Args):
+  handlerId = self.events.onWithUUID(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(e: Args):
+    let args = SharedKeycarModuleArgs(e)
+    if args.uniqueIdentifier != UNIQUE_STARTUP_MODULE_IDENTIFIER:
+      return
     self.delegate.onDisplayKeycardSharedModuleFlow()
   self.connectionIds.add(handlerId)
 

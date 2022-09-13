@@ -205,6 +205,18 @@ method onStatusUrlRequested*(self: AccessInterface, action: StatusUrlAction, com
 method getVerificationRequestFrom*(self: AccessInterface, publicKey: string): VerificationRequest {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getKeycardSharedModule*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onDisplayKeycardSharedModuleFlow*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+  
+method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method runAuthenticationPopup*(self: AccessInterface, keyUid: string, bip44Path: string, txHash: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c

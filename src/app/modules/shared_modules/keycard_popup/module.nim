@@ -8,9 +8,11 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 
 import ../../../../app_service/service/keycard/service as keycard_service
+import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/privacy/service as privacy_service
 import ../../../../app_service/service/accounts/service as accounts_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../app_service/service/keychain/service as keychain_service
 
 export io_interface
 
@@ -25,21 +27,26 @@ type
     controller: Controller
     initialized: bool
     tmpLocalState: State # used when flow is run, until response arrives to determine next state appropriatelly
+    authenticationPopupIsAlreadyRunning: bool
 
 proc newModule*[T](delegate: T,
+  uniqueIdentifier: string,
   events: EventEmitter,
   keycardService: keycard_service.Service,
+  settingsService: settings_service.Service,
   privacyService: privacy_service.Service,
   accountsService: accounts_service.Service,
-  walletAccountService: wallet_account_service.Service):
+  walletAccountService: wallet_account_service.Service,
+  keychainService: keychain_service.Service):
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, keycardService, privacyService, accountsService,
-    walletAccountService)
+  result.controller = controller.newController(result, uniqueIdentifier, events, keycardService, settingsService,
+    privacyService, accountsService, walletAccountService, keychainService)
   result.initialized = false
+  result.authenticationPopupIsAlreadyRunning = false
 
 method delete*[T](self: Module[T]) =
   self.view.delete

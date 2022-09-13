@@ -30,6 +30,7 @@ type
     events: EventEmitter
     keycardService: keycard_service.Service
     accountsService: accounts_service.Service
+    keychainService: keychain_service.Service
     keycardSharedModule: keycard_shared_module.AccessInterface
 
 proc newModule*[T](delegate: T,
@@ -45,6 +46,7 @@ proc newModule*[T](delegate: T,
   result.events = events
   result.keycardService = keycardService
   result.accountsService = accountsService
+  result.keychainService = keychainService
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, generalService, accountsService, keychainService,
@@ -104,8 +106,9 @@ method getKeycardSharedModule*[T](self: Module[T]): QVariant =
   return self.keycardSharedModule.getModuleAsVariant()
 
 proc createSharedKeycardModule[T](self: Module[T]) =
-  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, self.events, self.keycardService, 
-  privacyService = nil, self.accountsService, walletAccountService = nil)
+  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_STARTUP_MODULE_IDENTIFIER, 
+    self.events, self.keycardService, settingsService = nil, privacyService = nil, self.accountsService, 
+    walletAccountService = nil, self.keychainService)
 
 proc isSharedKeycardModuleFlowRunning[T](self: Module[T]): bool =
   return not self.keycardSharedModule.isNil
