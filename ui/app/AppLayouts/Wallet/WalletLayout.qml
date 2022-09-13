@@ -64,9 +64,13 @@ Item {
         anchors.top: seedPhraseWarning.bottom
         height: root.height - seedPhraseWarning.height
         width: root.width
-
+        backButtonName: RootStore.backButtonName
         notificationCount: RootStore.unreadNotificationsCount
         onNotificationButtonClicked: Global.openActivityCenterPopup()
+        onBackButtonClicked: {
+            rightPanelStackView.currentItem.resetStack();
+        }
+
         Component.onCompleted: {
             // Read in RootStore
 //            if(RootStore.firstTimeLogin){
@@ -105,8 +109,8 @@ Item {
         centerPanel: StackView {
             id: rightPanelStackView
             anchors.fill: parent
-            anchors.leftMargin: 49
-            anchors.rightMargin: 49
+            anchors.leftMargin: 64
+            anchors.rightMargin: 64
             initialItem: walletContainer
             replaceEnter: Transition {
                 NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 400; easing.type: Easing.OutCubic }

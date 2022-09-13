@@ -21,8 +21,20 @@ StatusSectionLayout {
     property var systemPalette
     property var emojiPopup
 
+    backButtonName: root.store.backButtonName
     notificationCount: root.store.unreadNotificationsCount
     onNotificationButtonClicked: Global.openActivityCenterPopup()
+    onBackButtonClicked: {
+        switch (profileContainer.currentIndex) {
+        case 1:
+            Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging)
+            break;
+        case 4:
+            walletView.resetStack();
+            break;
+        }
+    }
+
     Component.onCompleted: {
         Global.privacyModuleInst = store.privacyStore.privacyModule
     }
@@ -32,8 +44,8 @@ StatusSectionLayout {
 
         readonly property int topMargin: 0
         readonly property int bottomMargin: 56
-        readonly property int leftMargin: 48
-        readonly property int rightMargin: 48
+        readonly property int leftMargin: 64
+        readonly property int rightMargin: 64
 
         readonly property int contentWidth: 560
     }
@@ -73,6 +85,11 @@ StatusSectionLayout {
                 if(visibleChildren[0] === ensContainer){
                     ensContainer.goToStart();
                 }
+                if (currentIndex === 1) {
+                    root.store.backButtonName = root.store.getNameForSubsection(Constants.settingsSubsection.messaging);
+                } else {
+                    root.store.backButtonName = "";
+                }
             }
 
             MyProfileView {
@@ -92,11 +109,6 @@ StatusSectionLayout {
                 contactsStore: root.store.contactsStore
                 sectionTitle: qsTr("Contacts")
                 contentWidth: d.contentWidth
-                backButtonName: root.store.getNameForSubsection(Constants.settingsSubsection.messaging)
-
-                onBackButtonClicked: {
-                    Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging)
-                }
             }
 
             EnsView {
@@ -125,9 +137,10 @@ StatusSectionLayout {
             }
 
             WalletView {
+                id: walletView
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-
+                rootStore: root.store
                 walletStore: root.store.walletStore
                 emojiPopup: root.emojiPopup
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.wallet)

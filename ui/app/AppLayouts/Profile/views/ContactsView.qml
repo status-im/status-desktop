@@ -66,7 +66,6 @@ SettingsContentBase {
         SearchBox {
             id: searchBox
             anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
             anchors.right: parent.right
             placeholderText: qsTr("Search by a display name or chat key")
         }

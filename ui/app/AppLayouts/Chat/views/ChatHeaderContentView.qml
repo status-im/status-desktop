@@ -37,12 +37,8 @@ RowLayout {
 
     Loader {
         id: loader
-        Layout.fillWidth: true
+        Layout.fillWidth: d.selectingMembers
         Layout.fillHeight: true
-        Layout.alignment: Qt.AlignLeft
-        Layout.leftMargin: padding
-        Layout.rightMargin: Style.current.padding
-
         sourceComponent: {
             if (d.selectingMembers) return membersSelector
             return statusChatInfoButton
@@ -52,7 +48,6 @@ RowLayout {
     RowLayout {
         id: actionButtons
         Layout.alignment: Qt.AlignRight
-        Layout.rightMargin: padding
         spacing: 8
         visible: !d.selectingMembers
 

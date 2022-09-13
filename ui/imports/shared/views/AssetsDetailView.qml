@@ -90,21 +90,6 @@ Item {
         }
     }
 
-    signal goBack()
-    StatusFlatButton {
-        id: backButton
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.topMargin: -Style.current.xlPadding
-        anchors.leftMargin: -Style.current.xlPadding
-        icon.name: "arrow-left"
-        icon.width: 20
-        icon.height: 20
-        text: qsTr("Assets")
-        size: StatusBaseButton.Size.Large
-        onClicked: root.goBack()
-    }
-
     AssetsDetailsHeader {
         id: tokenDetailsHeader
         anchors.top: parent.top

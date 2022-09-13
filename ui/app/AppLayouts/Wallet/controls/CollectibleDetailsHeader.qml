@@ -11,26 +11,12 @@ import StatusQ.Controls 0.1
 ColumnLayout {
     id: root
 
-    signal goBack()
-
     property alias primaryText: collectibleName.text
     property alias secondaryText: collectibleId.text
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
         isImage: true
-    }
-
-    StatusFlatButton {
-        Layout.topMargin: -Style.current.xlPadding
-        Layout.leftMargin: -Style.current.xlPadding
-        visible: root.backButtonName != ""
-        icon.name: "arrow-left"
-        icon.width: 20
-        icon.height: 20
-        text: qsTr("Assets")
-        size: StatusBaseButton.Size.Large
-        onClicked: root.goBack()
     }
 
     RowLayout {

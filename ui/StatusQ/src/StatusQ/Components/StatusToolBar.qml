@@ -18,19 +18,20 @@ ToolBar {
     signal notificationButtonClicked()
 
     implicitWidth: visible ? 518 : 0
-    implicitHeight: visible ? 60 : 0
-    padding: 8
+    implicitHeight: visible ? 56 : 0
+    padding: 4
     background: null
 
     RowLayout {
         anchors.fill: parent
+        anchors.rightMargin: 4
         spacing: 0
         StatusFlatButton {
             icon.name: "arrow-left"
             icon.width: 20
             icon.height: 20
             Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-            Layout.leftMargin: 12
+            Layout.leftMargin: 18
             visible: !!root.backButtonName
             text: root.backButtonName
             size: StatusBaseButton.Size.Large
@@ -41,6 +42,7 @@ ToolBar {
             id: headerContentItem
             Layout.fillWidth: !!headerContent
             Layout.fillHeight: !!headerContent
+            Layout.leftMargin: 8
             background: null
             contentItem: (!!headerContent) ? headerContent : null
         }

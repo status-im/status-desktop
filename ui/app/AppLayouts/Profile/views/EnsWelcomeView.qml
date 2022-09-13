@@ -20,7 +20,6 @@ Item {
         id: sview
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         anchors.top: parent.top
-        anchors.topMargin: 24
         anchors.bottom: startBtn.top
         anchors.bottomMargin: Style.current.padding
         anchors.left: parent.left

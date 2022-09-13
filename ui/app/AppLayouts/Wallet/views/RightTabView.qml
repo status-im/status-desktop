@@ -20,6 +20,10 @@ Item {
     property var contactsStore
     property var sendModal
 
+    function resetStack() {
+        stack.currentIndex = 0;
+    }
+
     ColumnLayout {
         anchors.fill: parent
 
@@ -27,13 +31,14 @@ Item {
             id: stack
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height - footer.height
+            onCurrentIndexChanged: {
+                RootStore.backButtonName = ((currentIndex === 1) || (currentIndex === 2)) ? qsTr("Assets") : "";
+            }
 
             ColumnLayout {
                 anchors.fill: parent
                 WalletHeader {
                     Layout.fillWidth: true
-                    Layout.leftMargin: Style.current.padding
-                    Layout.rightMargin: Style.current.padding
                     locale: RootStore.locale
                     currency: RootStore.currentCurrency
                     currentAccount: RootStore.currentAccount
@@ -65,7 +70,8 @@ Item {
                 StackLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.margins: Style.current.padding
+                    Layout.topMargin: Style.current.padding
+                    Layout.bottomMargin: Style.current.padding
                     currentIndex: walletTabBar.currentIndex
 
                     AssetsView {
@@ -93,13 +99,11 @@ Item {
             CollectibleDetailView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                onGoBack: stack.currentIndex = 0
             }
             AssetsDetailView {
                 id: assetDetailView
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                onGoBack: stack.currentIndex = 0
                 visible: (stack.currentIndex === 2)
             }
             TransactionDetailView {

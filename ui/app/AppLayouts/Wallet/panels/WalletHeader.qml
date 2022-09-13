@@ -24,23 +24,25 @@ Item {
     property var store
     property var walletStore
 
-    implicitHeight: childrenRect.height
+    implicitHeight: 88
 
     GridLayout {
         width: parent.width
-        rowSpacing: Style.current.halfPadding
         columns: 2
 
         // account + balance
-        Row {
+        RowLayout {
+            Layout.preferredHeight: 56
             spacing: Style.current.halfPadding
             StatusBaseText {
                 objectName: "accountName"
+                Layout.alignment: Qt.AlignVCenter
                 font.pixelSize: 28
                 font.bold: true
                 text: currentAccount.name
             }
             StatusBaseText {
+                Layout.alignment: Qt.AlignVCenter
                 font.pixelSize: 28
                 font.bold: true
                 color: Theme.palette.baseColor1
@@ -52,7 +54,6 @@ Item {
         NetworkFilter {
             id: networkFilter
             Layout.alignment: Qt.AlignTrailing
-            Layout.fillHeight: true
             Layout.rowSpan: 2
             store: root.walletStore
         }
