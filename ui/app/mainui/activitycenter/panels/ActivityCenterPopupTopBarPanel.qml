@@ -9,7 +9,6 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
-import ".."
 import "../popups"
 
 Item {

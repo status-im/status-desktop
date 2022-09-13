@@ -8,7 +8,7 @@ import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
 
-import "../controls/activityCenter" as ActivityCenter
+import "../controls"
 
 Rectangle {
     id: wrapper
@@ -55,7 +55,8 @@ Rectangle {
 
     Component {
         id: replyComponent
-        ActivityCenter.ReplyComponent {
+
+        ReplyComponent {
             width: childrenRect.width
             height: parent.height
             repliedMessageContent: wrapper.repliedMessageContent
@@ -64,7 +65,8 @@ Rectangle {
 
     Component {
         id: communityBadgeComponent
-        ActivityCenter.CommunityBadge {
+
+        CommunityBadge {
             width: childrenRect.width
             height: parent.height
 
@@ -82,7 +84,8 @@ Rectangle {
 
     Component {
         id: channelBadgeComponent
-        ActivityCenter.ChannelBadge {
+
+        ChannelBadge {
             width: childrenRect.width
             height: parent.height
 

@@ -92,6 +92,7 @@ Popup {
         }
     }
 
+   // TODO: replace with StatusListView
     StatusScrollView {
         id: scrollView
         anchors.left: parent.left
@@ -108,33 +109,6 @@ Popup {
             id: notificationsContainer
             width: scrollView.availableWidth
             spacing: 0
-
-            // TODO remove this once it is handled by the activity center
-//            Repeater {
-//                id: contactList
-//                model: root.store.contactRequests
-
-//                delegate: ContactRequest {
-//                    visible: !hideReadNotifications &&
-//                             (root.currentActivityCategory === ActivityCenter.ActivityCategory.All ||
-//                              root.currentActivityCategory === ActivityCenter.ActivityCategory.ContactRequests)
-//                    name: Utils.removeStatusEns(model.name)
-//                    address: model.address
-//                    localNickname: model.localNickname
-//                    identicon: model.thumbnailImage || model.identicon
-//                    // TODO set to transparent bg if the notif is read
-//                    color: Utils.setColorAlpha(Style.current.blue, 0.1)
-//                    radius: 0
-//                    profileClick: function (showFooter, userName, fromAuthor, identicon, textParam, nickName) {
-//                        Global.openProfilePopup(fromAuthor)
-//                    }
-//                    onBlockContactActionTriggered: {
-//                        blockContactConfirmationDialog.contactName = name
-//                        blockContactConfirmationDialog.contactAddress = address
-//                        blockContactConfirmationDialog.open()
-//                    }
-//                }
-//            }
 
             Repeater {
                 model: notifDelegateList
