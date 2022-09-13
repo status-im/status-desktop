@@ -155,6 +155,14 @@ QtObject:
     let item = self.model.getItemBySectionType(sectionType.SectionType)
     self.delegate.setActiveSection(item)
 
+  proc setActiveCommunityOrAddNewCommunityById*(self: View, communityId: string) {.slot.} =
+    if (self.model.isItemExist(communityId)):
+      self.setActiveSectionById(communityId)
+      return 
+    self.delegate.joinToCommunityOrAddSectionById(communityId);
+    
+
+
   proc switchTo*(self: View, sectionId: string, chatId: string) {.slot.} =
     self.delegate.switchTo(sectionId, chatId)
 

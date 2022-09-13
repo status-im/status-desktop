@@ -173,7 +173,7 @@ QtObject:
     of ModelRole.BannedMembersModel:
       result = newQVariant(item.bannedMembers)
 
-  proc isItemExist(self: SectionModel, id: string): bool =
+  proc isItemExist*(self: SectionModel, id: string): bool =
     for it in self.items:
       if(it.id == id):
         return true

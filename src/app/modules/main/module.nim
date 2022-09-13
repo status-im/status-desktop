@@ -874,6 +874,14 @@ method ephemeralNotificationClicked*[T](self: Module[T], id: int64) =
   else:
     self.osNotificationClicked(item.details)
 
+method joinToCommunityOrAddSectionById*[T](self: Module[T], communityId: string) =
+  let community = self.controller.getCommunityById(communityId)
+  if(not community.joined):
+    let channelGroup = community.toChannelGroupDto()
+    let communitySectionItem = self.createChannelGroupItem(channelGroup)
+    self.view.model().addItem(communitySectionItem)
+    self.setActiveSection(communitySectionItem)
+
 method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, chatId: string, 
   url: string, userId: string, groupName: string, listOfUserIds: seq[string]) =
   

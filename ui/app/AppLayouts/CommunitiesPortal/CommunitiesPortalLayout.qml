@@ -40,7 +40,8 @@ StatusSectionLayout {
         property int subtitlePixelSize: 17
 
         function navigateToCommunity(communityId) {
-            root.communitiesStore.setActiveCommunity(communityId)
+//            root.communitiesStore.setActiveCommunity(communityId)
+            root.communitiesStore.navigateToCommunity(communityId)
         }
     }
 
