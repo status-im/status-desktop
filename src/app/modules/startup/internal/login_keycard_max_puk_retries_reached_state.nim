@@ -12,3 +12,7 @@ method getNextPrimaryState*(self: LoginKeycardMaxPukRetriesReachedState, control
   if self.flowType == FlowType.AppLogin:
     controller.setRecoverUsingSeedPhraseWhileLogin(true)
     return createState(StateType.UserProfileEnterSeedPhrase, self.flowType, nil)
+
+method resolveKeycardNextState*(self: LoginKeycardMaxPukRetriesReachedState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+  controller: Controller): State =
+  return ensureReaderAndCardPresenceAndResolveNextLoginState(self, keycardFlowType, keycardEvent, controller)

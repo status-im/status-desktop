@@ -57,6 +57,7 @@ QtObject {
         readonly property string keycardMaxPinRetriesReached: "KeycardMaxPinRetriesReached"
         readonly property string keycardMaxPukRetriesReached: "KeycardMaxPukRetriesReached"
         readonly property string login: "Login"
+        readonly property string loginPlugin: "LoginPlugin"
         readonly property string loginKeycardInsertKeycard: "LoginKeycardInsertKeycard"
         readonly property string loginKeycardReadingKeycard: "LoginKeycardReadingKeycard"
         readonly property string loginKeycardEnterPin: "LoginKeycardEnterPin"
@@ -65,6 +66,7 @@ QtObject {
         readonly property string loginKeycardMaxPinRetriesReached: "LoginKeycardMaxPinRetriesReached"
         readonly property string loginKeycardMaxPukRetriesReached: "LoginKeycardMaxPukRetriesReached"
         readonly property string loginKeycardEmpty: "LoginKeycardEmpty"
+        readonly property string loginNotKeycard: "LoginNotKeycard"
     }
 
     readonly property QtObject predefinedKeycardData: QtObject {

@@ -99,7 +99,6 @@ method load*[T](self: Module[T]) =
       error "cannot run the app in login flow cause list of login accounts is empty"
       quit() # quit the app
     self.setSelectedLoginAccount(items[0])
-    self.view.setCurrentStartupState(newLoginState(FlowType.AppLogin, nil))
   self.delegate.startupDidLoad()
 
 method getKeycardSharedModule*[T](self: Module[T]): QVariant =
@@ -228,8 +227,8 @@ method importAccountSuccess*[T](self: Module[T]) =
 method setSelectedLoginAccount*[T](self: Module[T], item: login_acc_item.Item) =
   self.controller.cancelCurrentFlow()
   self.controller.setSelectedLoginAccount(item.getKeyUid(), item.getKeycardCreatedAccount())
+  self.view.setCurrentStartupState(newLoginState(FlowType.AppLogin, nil))
   if item.getKeycardCreatedAccount():
-    self.view.setCurrentStartupState(newLoginState(FlowType.AppLogin, nil)) # nim garbage collector will handle all abandoned state objects
     self.controller.runLoginFlow()
   else:  
     self.controller.tryToObtainDataFromKeychain()

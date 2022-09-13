@@ -47,6 +47,7 @@ type StateType* {.pure.} = enum
   KeycardMaxPinRetriesReached = "KeycardMaxPinRetriesReached"
   KeycardMaxPukRetriesReached = "KeycardMaxPukRetriesReached"
   Login = "Login"
+  LoginPlugin = "LoginPlugin"
   LoginKeycardInsertKeycard = "LoginKeycardInsertKeycard"
   LoginKeycardReadingKeycard = "LoginKeycardReadingKeycard"
   LoginKeycardEnterPin = "LoginKeycardEnterPin"
@@ -55,6 +56,7 @@ type StateType* {.pure.} = enum
   LoginKeycardMaxPinRetriesReached = "LoginKeycardMaxPinRetriesReached"
   LoginKeycardMaxPukRetriesReached = "LoginKeycardMaxPukRetriesReached"
   LoginKeycardEmpty = "LoginKeycardEmpty"
+  LoginNotKeycard = "LoginNotKeycard"
 
 
 ## This is the base class for all state we may have in onboarding/login flow.

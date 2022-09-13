@@ -12,6 +12,12 @@ method executePrimaryCommand*(self: LoginKeycardInsertKeycardState, controller: 
   if self.flowType == FlowType.AppLogin:
     if not controller.isSelectedLoginAccountKeycardAccount():
       controller.login()
+    elif not controller.keychainErrorOccurred() and controller.getPin().len == PINLengthForStatusApp:
+      controller.enterKeycardPin(controller.getPin())
+
+method getNextPrimaryState*(self: LoginKeycardInsertKeycardState, controller: Controller): State =
+  if controller.keychainErrorOccurred():
+    return createState(StateType.LoginKeycardEnterPin, self.flowType, nil)
 
 method getNextSecondaryState*(self: LoginKeycardInsertKeycardState, controller: Controller): State =
   controller.cancelCurrentFlow()

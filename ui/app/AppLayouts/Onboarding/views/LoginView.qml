@@ -520,6 +520,49 @@ Item {
             }
             PropertyChanges {
                 target: info
+                visible: false
+            }
+            PropertyChanges {
+                target: message
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: button
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: link
+                text: ""
+                visible: false
+            }
+        },
+        State {
+            name: Constants.startupState.loginPlugin
+            when: root.startupStore.selectedLoginAccount.keycardCreatedAccount &&
+                  root.startupStore.currentStartupState.stateType === Constants.startupState.loginPlugin
+            PropertyChanges {
+                target: image
+                source: Style.svg("keycard/card3@2x")
+                Layout.preferredHeight: sourceSize.height
+                Layout.preferredWidth: sourceSize.width
+            }
+            PropertyChanges {
+                target: title
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: passwordSection
+                visible: false
+            }
+            PropertyChanges {
+                target: pinSection
+                visible: false
+            }
+            PropertyChanges {
+                target: info
                 text: qsTr("Plug in Keycard reader...")
                 visible: true
                 font.pixelSize: Constants.keycard.general.fontSize2
@@ -907,6 +950,53 @@ Item {
                 target: link
                 text: qsTr("Generate keys for a new Keycard")
                 visible: true
+            }
+        },
+        State {
+            name: Constants.startupState.loginNotKeycard
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginNotKeycard
+            PropertyChanges {
+                target: image
+                source: Style.svg("keycard/card-wrong3@2x")
+                Layout.preferredHeight: sourceSize.height
+                Layout.preferredWidth: sourceSize.width
+            }
+            PropertyChanges {
+                target: title
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: passwordSection
+                visible: false
+            }
+            PropertyChanges {
+                target: pinSection
+                visible: false
+            }
+            PropertyChanges {
+                target: info
+                text: qsTr("This is not a Keycard")
+                visible: true
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.dangerColor1
+            }
+            PropertyChanges {
+                target: message
+                text: qsTr("The card inserted is not a recognised Keycard,\nplease remove and try and again")
+                visible: true
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.baseColor1
+            }
+            PropertyChanges {
+                target: button
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: link
+                text: ""
+                visible: false
             }
         }
     ]

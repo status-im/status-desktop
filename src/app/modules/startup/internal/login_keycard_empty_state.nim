@@ -10,10 +10,7 @@ proc delete*(self: LoginKeycardEmptyState) =
 
 method executePrimaryCommand*(self: LoginKeycardEmptyState, controller: Controller) =
   if self.flowType == FlowType.AppLogin:
-    if not controller.isSelectedLoginAccountKeycardAccount():
-      controller.login()
-    else:
-      controller.runLoadAccountFlow(factoryReset = true)
+    controller.runLoadAccountFlow(factoryReset = true)
 
 method getNextSecondaryState*(self: LoginKeycardEmptyState, controller: Controller): State =
   controller.cancelCurrentFlow()
