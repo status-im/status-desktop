@@ -218,3 +218,16 @@ QtObject:
   proc displayUserProfile*(self:View, publicKey: string) {.signal.}
   proc emitDisplayUserProfileSignal*(self: View, publicKey: string) =
     self.displayUserProfile(publicKey)
+
+  proc getKeycardSharedModule(self: View): QVariant {.slot.} =
+    return self.delegate.getKeycardSharedModule()
+  QtProperty[QVariant] keycardSharedModule:
+    read = getKeycardSharedModule
+    
+  proc displayKeycardSharedModuleFlow*(self: View) {.signal.}
+  proc emitDisplayKeycardSharedModuleFlow*(self: View) =
+    self.displayKeycardSharedModuleFlow()
+
+  proc destroyKeycardSharedModuleFlow*(self: View) {.signal.}
+  proc emitDestroyKeycardSharedModuleFlow*(self: View) =
+    self.destroyKeycardSharedModuleFlow()

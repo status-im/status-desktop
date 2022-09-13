@@ -3,17 +3,38 @@ import ../../../../app/core/eventemitter
 from ../../../../app_service/service/keycard/service import KeycardEvent, CardMetadata, KeyDetails
 import models/key_pair_item
 
-const SignalSharedKeycarModuleDisplayPopup* = "SignalSharedKeycarModuleDisplayPopup"
-const SignalSharedKeycarModuleFlowTerminated* = "sharedKeycarModuleFlowTerminated"
+const SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP* = "sharedKeycarModuleDisplayPopup"
+const SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED* = "sharedKeycarModuleFlowTerminated"
+const SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER* = "sharedKeycarModuleAuthenticateUser"
+const SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED* = "sharedKeycarModuleUserAuthenticated"
 
 type
-  SharedKeycarModuleFlowTerminatedArgs* = ref object of Args
+  SharedKeycarModuleBaseArgs* = ref object of Args
+    uniqueIdentifier*: string
+
+type
+  SharedKeycarModuleArgs* = ref object of SharedKeycarModuleBaseArgs
+    data*: string
+    keyUid*: string
+    txR*: string
+    txS*: string
+    txV*: string
+
+type
+  SharedKeycarModuleFlowTerminatedArgs* = ref object of SharedKeycarModuleArgs
     lastStepInTheCurrentFlow*: bool
+
+type
+  SharedKeycarModuleAuthenticationArgs* = ref object of SharedKeycarModuleBaseArgs
+    keyUid*: string
+    bip44Path*: string
+    txHash*: string
 
 type FlowType* {.pure.} = enum
   General = "General"
   FactoryReset = "FactoryReset"
   SetupNewKeycard = "SetupNewKeycard"
+  Authentication = "Authentication"
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
