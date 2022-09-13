@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, std/algorithm, strformat, strutils, chronicles, json_serialization
+import NimQml, Tables, json, sequtils, std/algorithm, strformat, strutils, chronicles, json_serialization, sugar
 
 import ./dto/community as community_dto
 
@@ -265,6 +265,7 @@ QtObject:
     if(not self.joinedCommunities.hasKey(community.id)):
       if (community.joined and community.isMember):
         self.joinedCommunities[community.id] = community
+        keepIf(self.myCommunityRequests, request => request.communityId != community.id)
         self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
       return
 

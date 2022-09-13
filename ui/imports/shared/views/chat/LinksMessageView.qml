@@ -240,7 +240,6 @@ Column {
         InvitationBubbleView {
             store: root.store
             communityId: linkData.communityId
-            isLink: true
             anchors.left: parent.left
         }
     }

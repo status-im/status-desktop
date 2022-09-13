@@ -32,7 +32,7 @@ type CommunityMembershipRequestDto* = object
   chatId*: string
   communityId*: string
   state*: int
-  our*: string
+  our*: string #FIXME: should be bool
 
 type CommunitySettingsDto* = object
   id*: string

@@ -62,6 +62,10 @@ proc init*(self: Controller) =
     let args = CommunityMutedArgs(e)
     self.delegate.communityMuted(args.communityId, args.muted)
 
+  self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e:Args):
+    let args = CommunityRequestArgs(e)
+    self.delegate.communityAccessRequested(args.communityRequest.communityId)
+
   self.events.on(SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED) do(e:Args):
     let args = DiscordCategoriesAndChannelsArgs(e)
     self.delegate.discordCategoriesAndChannelsExtracted(args.categories, args.channels, args.oldestMessageTimestamp, args.errors, args.errorsCount)
