@@ -8,8 +8,7 @@ import ../network/service as network_service
 import ../../common/account_constants
 import ../../../app/global/global_singleton
 
-import dto
-import derived_address
+import dto, derived_address, key_pair_dto
 
 import ../../../app/core/eventemitter
 import ../../../app/core/signals/types
@@ -20,8 +19,7 @@ import ../../../backend/eth as status_go_eth
 import ../../../backend/transactions as status_go_transactions
 import ../../../backend/cache
 
-export dto
-export derived_address
+export dto, derived_address, key_pair_dto
 
 logScope:
   topics = "wallet-account-service"
@@ -473,3 +471,74 @@ QtObject:
       let chainBalanceForToken = parsefloat(hex2Balance(balanceForToken, token.decimals))
       totalBalance = totalBalance + chainBalanceForToken * prices[token.symbol]
     return totalBalance
+
+  proc responseHasNoErrors(self: Service, procName: string, response: RpcResponse[JsonNode]): bool =
+    var errMsg = ""
+    if not response.error.isNil:
+      errMsg = "(" & $response.error.code & ") " & response.error.message
+    elif response.result.kind == JObject and response.result.contains("error"):
+      errMsg = response.result["error"].getStr
+    if(errMsg.len == 0):
+      return true
+    error "error: ", procName=procName, errDesription = errMsg
+    return false
+
+  proc addMigratedKeyPair*(self: Service, keyPair: KeyPairDto): bool =
+    try:
+      let response = backend.addMigratedKeyPair(
+        keyPair.keycardUid,
+        keyPair.keyPairName,
+        keyPair.keyUid,
+        keyPair.accountsAddresses)
+      return self.responseHasNoErrors("addMigratedKeyPair", response)
+    except Exception as e:
+      error "error: ", procName="addMigratedKeyPair", errName = e.name, errDesription = e.msg
+    return false
+
+  proc getAllMigratedKeyPairs*(self: Service): seq[KeyPairDto] = 
+    try:
+      let response = backend.getAllMigratedKeyPairs()
+      if self.responseHasNoErrors("getAllMigratedKeyPairs", response):
+        return map(response.result.getElems(), proc(x: JsonNode): KeyPairDto = toKeyPairDto(x))
+    except Exception as e:
+      error "error: ", procName="getAllMigratedKeyPairs", errName = e.name, errDesription = e.msg
+
+  proc getMigratedKeyPairByKeyUid*(self: Service, keyUid: string): seq[KeyPairDto] = 
+    try:
+      let response = backend.getMigratedKeyPairByKeyUID(keyUid)
+      if self.responseHasNoErrors("getMigratedKeyPairByKeyUid", response):
+        return map(response.result.getElems(), proc(x: JsonNode): KeyPairDto = toKeyPairDto(x))
+    except Exception as e:
+      error "error: ", procName="getMigratedKeyPairByKeyUid", errName = e.name, errDesription = e.msg
+
+  proc setKeycardName*(self: Service, keycardUid: string, name: string): bool =
+    try:
+      let response = backend.setKeycardName(keycardUid, name)
+      return self.responseHasNoErrors("setKeycardName", response)
+    except Exception as e:
+      error "error: ", procName="setKeycardName", errName = e.name, errDesription = e.msg
+    return false
+
+  proc setKeycardLocked*(self: Service, keycardUid: string): bool =
+    try:
+      let response = backend.keycardLocked(keycardUid)
+      return self.responseHasNoErrors("setKeycardLocked", response)
+    except Exception as e:
+      error "error: ", procName="setKeycardLocked", errName = e.name, errDesription = e.msg
+    return false
+
+  proc setKeycardUnlocked*(self: Service, keycardUid: string): bool =
+    try:
+      let response = backend.keycardUnlocked(keycardUid)
+      return self.responseHasNoErrors("setKeycardUnlocked", response)
+    except Exception as e:
+      error "error: ", procName="setKeycardUnlocked", errName = e.name, errDesription = e.msg
+    return false
+
+  proc deleteKeycard*(self: Service, keycardUid: string): bool =
+    try:
+      let response = backend.deleteKeycard(keycardUid)
+      return self.responseHasNoErrors("deleteKeycard", response)
+    except Exception as e:
+      error "error: ", procName="deleteKeycard", errName = e.name, errDesription = e.msg
+    return false
