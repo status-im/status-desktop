@@ -40,7 +40,7 @@ StatusStackModal {
         readonly property Item skipButton: StatusButton {
             visible: currentIndex === 0
             normalColor: "transparent"
-            border.color: Theme.palette.baseColor2
+            borderColor: Theme.palette.baseColor2
             text: qsTr("Not Now")
             onClicked: root.close()
         }

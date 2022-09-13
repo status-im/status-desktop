@@ -43,8 +43,7 @@ StatusModal {
             }
             input.rightComponent: StatusButton {
                 anchors.verticalCenter: parent.verticalCenter
-                border.width: 1
-                border.color: Theme.palette.primaryColor1
+                borderColor: Theme.palette.primaryColor1
                 size: StatusBaseButton.Size.Tiny
                 text: qsTr("Copy")
                 onClicked: {

@@ -56,8 +56,7 @@ ColumnLayout {
                 StatusButton {
                     Layout.alignment: Qt.AlignRight
                     Layout.preferredHeight: 22
-                    defaultTopPadding: 0
-                    defaultBottomPadding: 0
+                    verticalPadding: 0
                     size: StatusBaseButton.Size.Small
                     icon.name: "hide"
                     text: qsTr("Show Unpreferred Networks")

@@ -261,7 +261,6 @@ Item {
                             id: joinBtn
                             anchors.fill: parent
                             anchors.verticalCenter: parent.verticalCenter
-                            radius: 16
                             enabled: true
                             text: qsTr("Unsupported state")
                             onClicked: {

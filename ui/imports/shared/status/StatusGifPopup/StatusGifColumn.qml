@@ -63,7 +63,7 @@ Column {
                 rightPadding: (6/104) * thumb.width
                 bottomPadding: (6/104) * thumb.width
                 leftPadding: (6/104) * thumb.width
-                color: "transparent"
+                normalColor: "transparent"
                 visible: !loader.visible && model.id === root.lastHoveredId
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom

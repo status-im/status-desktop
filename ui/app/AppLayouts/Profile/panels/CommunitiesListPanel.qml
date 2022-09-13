@@ -48,7 +48,7 @@ StatusListView {
                 objectName: "CommunitiesListPanel_leaveCommunityPopupButton"
                 size: StatusBaseButton.Size.Small
                 type: StatusBaseButton.Type.Danger
-                border.color: "transparent"
+                borderColor: "transparent"
                 text: qsTr("Leave community")
                 onClicked: {
                     Global.openPopup(leaveCommunityPopup, {
