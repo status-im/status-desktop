@@ -10,7 +10,7 @@ import utils 1.0
 
 Rectangle {
     property string communityId
-    signal backupButtonClicked(var mouse)
+    signal backupButtonClicked()
 
     id: root
     height: childrenRect.height + Style.current.padding
@@ -83,7 +83,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: backUpText.bottom
         anchors.topMargin: Style.current.padding
-        onClicked: root.backupButtonClicked(mouse)
+        onClicked: root.backupButtonClicked()
     }
 }
 
