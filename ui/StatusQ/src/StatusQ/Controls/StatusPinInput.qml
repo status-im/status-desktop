@@ -77,6 +77,20 @@ Item {
     */
     property int circleDiameter: 16
 
+    /*!
+       \qmlproperty int StatusPinInput::additionalSpacingOnEveryNItems
+       This property allows you to customize spacing among every N-th pin. By default the value is 0, which
+       means only regular `circleSpacing` will be applied, meaning that spacing among all pins will be the same.
+    */
+    property int additionalSpacingOnEveryNItems: 0
+
+    /*!
+       \qmlproperty int StatusPinInput::additionalSpacing
+       This property allows you to customize spacing between pin circles on every `additionalSpacingOnEveryNItems` items.
+       This additionalSpacing won't be applied if `additionalSpacingOnEveryNItems` is set to `0`.
+    */
+    property int additionalSpacing: 0
+
     QtObject {
         id: d
         property int currentPinIndex: 0
@@ -151,8 +165,8 @@ Item {
         }
     }
 
-    width: (root.circleDiameter + root.circleSpacing) * root.pinLen - root.circleSpacing
-    height: root.circleDiameter
+    implicitWidth: childrenRect.width
+    implicitHeight: childrenRect.height
 
     // Pin input data management object:
     TextInput {
@@ -196,56 +210,66 @@ Item {
             id: repeater
             model: root.pinLen
 
-            Rectangle {
-                id: background
+            Item {
+                id: container
                 property string innerState: "EMPTY"
                 property alias blinkingAnimation: blinkingAnimation
                 property alias innerOpacity: inner.opacity
 
-                 width: root.circleDiameter
-                 height: width
-                 color: Theme.palette.primaryColor2
-                 radius: 0.5 * width
+                height: root.circleDiameter
+                width: {
+                    if (index > 0 && index < root.pinLen-1 && (index+1) % root.additionalSpacingOnEveryNItems == 0) {
+                        return root.circleDiameter + root.additionalSpacing
+                    }
+                    return root.circleDiameter
+                }
 
-                 Rectangle {
-                     id: inner
-                     state: background.innerState
-                     anchors.centerIn: parent
-                     height: width
-                     color: Theme.palette.primaryColor1
-                     radius: 0.5 * width
-                     states: [
-                         State {
-                             name: "NEXT"
-                             StateChangeScript { script: { if(inputText.focus) blinkingAnimation.start() } }
-                             PropertyChanges {target: inner; width: root.circleDiameter / 2}                             
-                         },
-                         State {
-                             name: "FILLED"                             
-                             StateChangeScript { script: if(blinkingAnimation.running) blinkingAnimation.stop() }
-                             PropertyChanges {target: inner; width: root.circleDiameter}
-                             PropertyChanges {target: inner; opacity: 1}
-                         },
-                         State {
-                             name: "EMPTY"
-                             StateChangeScript { script: if(blinkingAnimation.running) blinkingAnimation.stop() }
-                             PropertyChanges {target: inner; width: 0}
-                             PropertyChanges {target: inner; opacity: 1}
-                         }
-                     ]
+                Rectangle {
+                    width: root.circleDiameter
+                    height: width
+                    color: Theme.palette.primaryColor2
+                    radius: 0.5 * width
 
-                     // Animation on transitions
-                     Behavior on width { NumberAnimation { duration: 200 } }
+                    Rectangle {
+                        id: inner
+                        state: container.innerState
+                        anchors.centerIn: parent
+                        height: width
+                        color: Theme.palette.primaryColor1
+                        radius: 0.5 * width
+                        states: [
+                            State {
+                                name: "NEXT"
+                                StateChangeScript { script: { if(inputText.focus) blinkingAnimation.start() } }
+                                PropertyChanges {target: inner; width: root.circleDiameter / 2}
+                            },
+                            State {
+                                name: "FILLED"
+                                StateChangeScript { script: if(blinkingAnimation.running) blinkingAnimation.stop() }
+                                PropertyChanges {target: inner; width: root.circleDiameter}
+                                PropertyChanges {target: inner; opacity: 1}
+                            },
+                            State {
+                                name: "EMPTY"
+                                StateChangeScript { script: if(blinkingAnimation.running) blinkingAnimation.stop() }
+                                PropertyChanges {target: inner; width: 0}
+                                PropertyChanges {target: inner; opacity: 1}
+                            }
+                        ]
 
-                     // Animation on "cursor" blinking
-                     SequentialAnimation {
-                         id: blinkingAnimation
-                         loops: Animation.Infinite
-                         running: visible
-                         NumberAnimation { target: inner; property: "opacity"; to: 0; duration: 800;}
-                         NumberAnimation { target: inner; property: "opacity"; to: 1; duration: 800;}
-                     }
-                 }
+                        // Animation on transitions
+                        Behavior on width { NumberAnimation { duration: 200 } }
+
+                        // Animation on "cursor" blinking
+                        SequentialAnimation {
+                            id: blinkingAnimation
+                            loops: Animation.Infinite
+                            running: visible
+                            NumberAnimation { target: inner; property: "opacity"; to: 0; duration: 800;}
+                            NumberAnimation { target: inner; property: "opacity"; to: 1; duration: 800;}
+                        }
+                    }
+                }
             }
         }
     }

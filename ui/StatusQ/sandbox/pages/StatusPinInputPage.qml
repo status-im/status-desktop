@@ -72,4 +72,73 @@ Column {
         text: "Introduced PIN: " + regexPinInput.pinInput
         font.pixelSize: 12
     }
+
+    // PUK input that accepts only numbers
+    StatusBaseText {
+        topPadding: 100
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: Theme.palette.directColor1
+        text: "Enter Keycard PUK"
+        font.pixelSize: 30
+        font.bold: true
+    }
+
+    StatusPinInput {
+        id: numbersPukInput
+        anchors.horizontalCenter: parent.horizontalCenter
+        validator: StatusRegularExpressionValidator { regularExpression: /[0-9]+/ }
+        pinLen: 12
+    }
+
+    StatusBaseText {
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: Theme.palette.dangerColor1
+        text: "Only numbers allowed"
+        font.pixelSize: 16
+    }
+
+    StatusBaseText {
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: Theme.palette.directColor1
+        text: "Introduced PUK: " + numbersPukInput.pinInput
+        font.pixelSize: 12
+    }
+
+    // PUK input that accepts only numbers
+    StatusBaseText {
+        topPadding: 100
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: Theme.palette.directColor1
+        text: "Enter Keycard PUK"
+        font.pixelSize: 30
+        font.bold: true
+    }
+
+    StatusPinInput {
+        id: numbersPukInputWithSpacing
+        anchors.horizontalCenter: parent.horizontalCenter
+        validator: StatusRegularExpressionValidator { regularExpression: /[0-9]+/ }
+        pinLen: 12
+        additionalSpacing: 32
+        additionalSpacingOnEveryNItems: 4
+
+        Component.onCompleted: {
+            numbersPukInputWithSpacing.statesInitialization()
+            numbersPukInputWithSpacing.forceFocus()
+        }
+    }
+
+    StatusBaseText {
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: Theme.palette.dangerColor1
+        text: "Only numbers allowed"
+        font.pixelSize: 16
+    }
+
+    StatusBaseText {
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: Theme.palette.directColor1
+        text: "Introduced PUK: " + numbersPukInputWithSpacing.pinInput
+        font.pixelSize: 12
+    }
 }
