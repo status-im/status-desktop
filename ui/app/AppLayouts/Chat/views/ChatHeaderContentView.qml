@@ -21,6 +21,7 @@ RowLayout {
 
     property var rootStore
     property var chatContentModule: root.rootStore.currentChatContentModule()
+    property var emojiPopup
     property int padding: 8
 
     signal searchButtonClicked()

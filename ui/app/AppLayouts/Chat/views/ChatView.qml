@@ -67,6 +67,7 @@ StatusSectionLayout {
         id: headerContent
         visible: !!root.rootStore.currentChatContentModule()
         rootStore: root.rootStore
+        emojiPopup: root.emojiPopup
         onSearchButtonClicked: root.openAppSearch()
     }
 
@@ -178,7 +179,6 @@ StatusSectionLayout {
 
     ConfirmationDialog {
         id: removeContactConfirmationDialog
-        // % "Remove contact"
         header.title: qsTr("Remove contact")
         confirmationText: qsTr("Are you sure you want to remove this contact?")
         onConfirmButtonClicked: {
