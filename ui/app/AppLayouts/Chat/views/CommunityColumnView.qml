@@ -55,9 +55,7 @@ Item {
         id: communityHeader
         objectName: "communityHeaderButton"
         title: communityData.name
-        subTitle: communityData.members.count <= 1 ?
-                                     qsTr("1 Member") :
-                                     qsTr("%1 Members").arg(communityData.members.count)
+        subTitle: qsTr("%n Member(s)", "", communityData.members.count)
         asset.name: communityData.image
         asset.color: communityData.color
         asset.isImage: true
@@ -91,6 +89,8 @@ Item {
         StatusToolTip {
             text: qsTr("Start chat")
             visible: parent.hovered
+            orientation: StatusToolTip.Orientation.Bottom
+            y: parent.height + 12
         }
     }
 
