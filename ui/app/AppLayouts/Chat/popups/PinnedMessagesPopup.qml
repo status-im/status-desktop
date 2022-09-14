@@ -72,8 +72,8 @@ StatusDialog {
                     responseToMessageWithId: model.responseToMessageWithId
                     senderId: model.senderId
                     senderDisplayName: model.senderDisplayName
-                    senderLocalName: model.senderLocalName
-                    senderEnsName: model.senderEnsVerified ? model.senderDisplayName : ""
+                    senderOptionalName: model.senderOptionalName
+                    senderIsEnsVerified: model.senderEnsVerified
                     senderIcon: model.senderIcon
                     amISender: model.amISender
                     messageText: model.messageText

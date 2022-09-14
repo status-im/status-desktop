@@ -45,9 +45,9 @@ QtObject:
   QtProperty[string] senderDisplayName:
     read = senderDisplayName
 
-  proc senderLocalName*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.senderLocalName
-  QtProperty[string] senderLocalName:
-    read = senderLocalName
+  proc senderOptionalName*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.senderOptionalName
+  QtProperty[string] senderOptionalName:
+    read = senderOptionalName
 
   proc senderEnsVerified*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.senderEnsVerified
   QtProperty[bool] senderEnsVerified:

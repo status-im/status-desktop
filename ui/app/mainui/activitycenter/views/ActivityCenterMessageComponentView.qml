@@ -130,7 +130,8 @@ Item {
             messageText: model.message.messageText
             responseToMessageWithId: model.message.responseToMessageWithId
             senderId: model.message.senderId
-            senderLocalName: model.message.senderLocalName
+            senderOptionalName: model.message.senderOptionalName
+            senderIsEnsVerified: model.message.senderEnsVerified
             senderIcon: model.message.senderIcon
             amISender: model.message.amISender
             messageImage: model.message.messageImage

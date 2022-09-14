@@ -37,7 +37,7 @@ type
     responseToMessageWithId: string
     senderId: string
     senderDisplayName: string
-    senderLocalName: string
+    senderOptionalName: string
     amISender: bool
     senderIsAdded: bool
     senderIcon: string
@@ -71,7 +71,7 @@ proc initItem*(
     responseToMessageWithId,
     senderId,
     senderDisplayName,
-    senderLocalName,
+    senderOptionalName,
     senderIcon: string,
     amISender: bool,
     senderIsAdded: bool,
@@ -98,7 +98,7 @@ proc initItem*(
   result.responseToMessageWithId = responseToMessageWithId
   result.senderId = senderId
   result.senderDisplayName = senderDisplayName
-  result.senderLocalName = senderLocalName
+  result.senderOptionalName = senderOptionalName
   result.amISender = amISender
   result.senderIsAdded = senderIsAdded
   result.senderIcon = senderIcon
@@ -132,7 +132,7 @@ proc `$`*(self: Item): string =
     responseToMessageWithId: {self.responseToMessageWithId},
     senderId: {self.senderId},
     senderDisplayName: {$self.senderDisplayName},
-    senderLocalName: {self.senderLocalName},
+    senderOptionalName: {self.senderOptionalName},
     amISender: {$self.amISender},
     senderIsAdded: {$self.senderIsAdded},
     seen: {$self.seen},
@@ -173,11 +173,11 @@ proc senderDisplayName*(self: Item): string {.inline.} =
 proc `senderDisplayName=`*(self: Item, value: string) {.inline.} =
   self.senderDisplayName = value
 
-proc senderLocalName*(self: Item): string {.inline.} =
-  self.senderLocalName
+proc senderOptionalName*(self: Item): string {.inline.} =
+  self.senderOptionalName
 
-proc `senderLocalName=`*(self: Item, value: string) {.inline.} =
-  self.senderLocalName = value
+proc `senderOptionalName=`*(self: Item, value: string) {.inline.} =
+  self.senderOptionalName = value
 
 proc senderIcon*(self: Item): string {.inline.} =
   self.senderIcon
@@ -295,7 +295,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "responseToMessageWithId": self.responseToMessageWithId,
     "senderId": self.senderId,
     "senderDisplayName": self.senderDisplayName,
-    "senderLocalName": self.senderLocalName,
+    "senderOptionalName": self.senderOptionalName,
     "amISender": self.amISender,
     "senderIsAdded": self.senderIsAdded,
     "senderIcon": self.senderIcon,

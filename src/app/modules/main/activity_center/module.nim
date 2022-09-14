@@ -75,8 +75,8 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     chatDetails.communityId, # we don't received community id via `activityCenterNotifications` api call
     message.responseTo,
     message.`from`,
-    contactDetails.details.displayName,
-    contactDetails.details.localNickname,
+    contactDetails.defaultDisplayName,
+    contactDetails.optionalName,
     contactDetails.icon,
     contactDetails.isCurrentUser,
     contactDetails.details.added,

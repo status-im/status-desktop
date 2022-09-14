@@ -251,7 +251,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
       let contactDetails = self.controller.getContactDetails(member.id)
       result = initMemberItem(
         pubKey = member.id,
-        displayName = contactDetails.displayName,
+        displayName = contactDetails.defaultDisplayName,
         ensName = contactDetails.details.name,
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
@@ -275,7 +275,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
       let contactDetails = self.controller.getContactDetails(bannedMemberId)
       result = initMemberItem(
         pubKey = bannedMemberId,
-        displayName = contactDetails.displayName,
+        displayName = contactDetails.defaultDisplayName,
         ensName = contactDetails.details.name,
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
@@ -289,7 +289,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
       let contactDetails = self.controller.getContactDetails(requestDto.publicKey)
       result = initMemberItem(
         pubKey = requestDto.publicKey,
-        displayName = contactDetails.displayName,
+        displayName = contactDetails.defaultDisplayName,
         ensName = contactDetails.details.name,
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
@@ -304,7 +304,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
       let contactDetails = self.controller.getContactDetails(requestDto.publicKey)
       result = initMemberItem(
         pubKey = requestDto.publicKey,
-        displayName = contactDetails.displayName,
+        displayName = contactDetails.defaultDisplayName,
         ensName = contactDetails.details.name,
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
@@ -820,7 +820,7 @@ method contactUpdated*[T](self: Module[T], publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.activeSection().updateMember(
     publicKey,
-    contactDetails.displayName,
+    contactDetails.defaultDisplayName,
     contactDetails.details.name,
     contactDetails.details.localNickname,
     contactDetails.details.alias,

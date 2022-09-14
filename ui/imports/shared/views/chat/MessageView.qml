@@ -39,8 +39,8 @@ Loader {
     property string responseToMessageWithId: ""
     property string senderId: ""
     property string senderDisplayName: ""
-    property string senderLocalName: ""
-    property string senderEnsName: ""
+    property string senderOptionalName: ""
+    property bool senderIsEnsVerified: false
     property string senderIcon: ""
     property bool amISender: false
     property bool senderIsAdded: false
@@ -542,9 +542,9 @@ Loader {
 
                 amISender: root.amISender
                 sender.id: root.senderId
-                sender.userName: root.senderDisplayName
-                sender.localName: root.senderLocalName
-                sender.ensName: root.senderEnsName
+                sender.displayName: root.senderDisplayName
+                sender.secondaryName: root.senderOptionalName
+                sender.isEnsVerified: root.senderIsEnsVerified
                 sender.isContact: root.senderIsAdded
                 sender.trustIndicator: root.senderTrustStatus
                 sender.profileImage {
@@ -575,9 +575,9 @@ Loader {
                 amISender: delegate.replyMessage && delegate.replyMessage.amISender
                 sender.id: delegate.replyMessage ? delegate.replyMessage.senderId : ""
                 sender.isContact: delegate.replyMessage && delegate.replyMessage.senderIsAdded
-                sender.userName:  delegate.replyMessage ? delegate.replyMessage.senderDisplayName: ""
-                sender.ensName: delegate.replyMessage && delegate.replyMessage.ensVerified ? delegate.replyMessage.senderDisplayName : ""
-                sender.localName: delegate.replyMessage ? delegate.replyMessage.senderLocalName : ""
+                sender.displayName:  delegate.replyMessage ? delegate.replyMessage.senderDisplayName: ""
+                sender.isEnsVerified: delegate.replyMessage && delegate.replyMessage.senderEnsVerified
+                sender.secondaryName: delegate.replyMessage ? delegate.replyMessage.senderOptionalName : ""
                 sender.profileImage {
                     width: 20
                     height: 20
