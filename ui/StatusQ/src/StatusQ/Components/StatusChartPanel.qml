@@ -56,30 +56,30 @@ Page {
     id: root
 
     /*!
-        \qmlproperty real StatusChartPanel::graphsModel
+        \qmlproperty var StatusChartPanel::graphsModel
         This property holds the graphs model options to be set on the left side tab bar of the header.
     */
     property var graphsModel
     /*!
-        \qmlproperty real StatusChartPanel::timeRangeModel
+        \qmlproperty var StatusChartPanel::timeRangeModel
         This property holds the time range options to be set on the right side tab bar of the header.
     */
     property var timeRangeModel
 
     /*!
-        \qmlproperty real StatusChartPanel::graphComponent
+        \qmlproperty alias StatusChartPanel::graphComponent
         This property holds holds a reference to the graph component.
     */
     property alias chart: graphComponent
 
     /*!
-        \qmlproperty real StatusChartPanel::timeRangeTabBarIndex
+        \qmlproperty alias StatusChartPanel::timeRangeTabBarIndex
         This property holds holds a reference to the time range tab bar current index.
     */
     property alias timeRangeTabBarIndex: timeRangeTabBar.currentIndex
 
     /*!
-        \qmlproperty real StatusChartPanel::selectedTimeRange
+        \qmlproperty string StatusChartPanel::selectedTimeRange
         This property holds holds the text of the current time range tab bar selected tab.
     */
     property string selectedTimeRange: timeRangeTabBar.currentItem.text
@@ -104,14 +104,14 @@ Page {
     Component.onCompleted: {
         if (!!timeRangeModel) {
             for (var i = 0; i < timeRangeModel.length; i++) {
-                var timeTab = tabButton.createObject(root, { text: qsTr(timeRangeModel[i].text.toString()),
+                var timeTab = tabButton.createObject(root, { text: timeRangeModel[i].text,
                                                              enabled: timeRangeModel[i].enabled });
                 timeRangeTabBar.addItem(timeTab);
             }
         }
         if (!!graphsModel) {
             for (var j = 0; j < graphsModel.length; j++) {
-                var graphTab = tabButton.createObject(root, { text: qsTr(graphsModel[j].text.toString()),
+                var graphTab = tabButton.createObject(root, { text: graphsModel[j].text,
                                                               enabled: graphsModel[j].enabled });
                 graphsTabBar.addItem(graphTab);
             }
