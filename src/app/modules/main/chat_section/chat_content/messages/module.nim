@@ -78,7 +78,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     responseToMessageWithId = "",
     senderId = chatDto.id,
     senderDisplayName = "",
-    senderLocalName = "",
+    senderOptionalName = "",
     senderIcon = "",
     amISender = false,
     senderIsAdded = false,
@@ -117,7 +117,7 @@ proc createChatIdentifierItem(self: Module): Item =
     responseToMessageWithId = "",
     senderId = chatDto.id,
     senderDisplayName = chatName,
-    senderLocalName = "",
+    senderOptionalName = "",
     senderIcon = chatIcon,
     amISender = false,
     senderIsAdded,
@@ -182,8 +182,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         m.communityId,
         m.responseTo,
         m.`from`,
-        sender.details.displayName,
-        sender.details.localNickname,
+        sender.defaultDisplayName,
+        sender.optionalName,
         sender.icon,
         isCurrentUser,
         sender.details.added,
@@ -219,7 +219,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
             let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
             let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
             item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id,
-            userWhoAddedThisReaction.userNameOrAlias(), r.id)
+            userWhoAddedThisReaction.userDefaultDisplayName(), r.id)
           else:
             error "wrong emoji id found when loading messages", methodName="newMessagesLoaded"
 
@@ -273,8 +273,8 @@ method messageAdded*(self: Module, message: MessageDto) =
     message.communityId,
     message.responseTo,
     message.`from`,
-    sender.details.displayName,
-    sender.details.localNickname,
+    sender.defaultDisplayName,
+    sender.optionalName,
     sender.icon,
     isCurrentUser,
     sender.details.added,
@@ -356,7 +356,7 @@ method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, 
     if(item.shouldAddReaction(emojiIdAsEnum, reactionFrom)):
       let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
       self.view.model().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = false,
-      userWhoAddedThisReaction.id, userWhoAddedThisReaction.userNameOrAlias(), reactionId)
+      userWhoAddedThisReaction.id, userWhoAddedThisReaction.userDefaultDisplayName(), reactionId)
     else:
       self.view.model().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = false)
   else:
@@ -413,8 +413,8 @@ method updateContactDetails*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)
   for item in self.view.model().modelContactUpdateIterator(contactId):
     if(item.senderId == contactId):
-      item.senderDisplayName = updatedContact.details.displayName
-      item.senderLocalName = updatedContact.details.localNickname
+      item.senderDisplayName = updatedContact.defaultDisplayName
+      item.senderOptionalName = updatedContact.optionalName
       item.senderIcon = updatedContact.icon
       item.senderIsAdded = updatedContact.details.added
       item.senderTrustStatus = updatedContact.details.trustStatus

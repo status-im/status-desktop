@@ -11,10 +11,10 @@ proc replaceMentionsWithPubKeys*(allKnownContacts: seq[ContactsDto], message: st
   let nameMentions = findAll(message, namePattern)
   var updatedMessage = message
 
-  # In the following lines we're free to compare to `x.userNameOrAlias()` cause that's actually what we're displaying
+  # In the following lines we're free to compare to `x.userDefaultDisplayName()` cause that's actually what we're displaying
   # in the mentions suggestion list.
   for mention in aliasMentions:
-    let listOfMatched = allKnownContacts.filter(x => "@" & x.userNameOrAlias().toLowerAscii == mention.toLowerAscii)
+    let listOfMatched = allKnownContacts.filter(x => "@" & x.userDefaultDisplayName().toLowerAscii == mention.toLowerAscii)
     if(listOfMatched.len > 0):
       updatedMessage = updatedMessage.replaceWord(mention, '@' & listOfMatched[0].id)
 
@@ -24,8 +24,8 @@ proc replaceMentionsWithPubKeys*(allKnownContacts: seq[ContactsDto], message: st
       updatedMessage = updatedMessage.replaceWord(mention, '@' & listOfMatched[0].id)
 
   for mention in nameMentions:
-    let listOfMatched = allKnownContacts.filter(x => x.userNameOrAlias().toLowerAscii == mention.toLowerAscii or
-      "@" & x.userNameOrAlias().toLowerAscii == mention.toLowerAscii)
+    let listOfMatched = allKnownContacts.filter(x => x.userDefaultDisplayName().toLowerAscii == mention.toLowerAscii or
+      "@" & x.userDefaultDisplayName().toLowerAscii == mention.toLowerAscii)
     if(listOfMatched.len > 0):
       updatedMessage = updatedMessage.replaceWord(mention, '@' & listOfMatched[0].id)
   return updatedMessage

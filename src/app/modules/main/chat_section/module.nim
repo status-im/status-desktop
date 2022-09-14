@@ -143,7 +143,7 @@ proc buildChatSectionUI(
     let belongToCommunity = chatDto.communityId != ""
     if(chatDto.chatType == ChatType.OneToOne):
       let contactDetails = self.controller.getContactDetails(chatDto.id)
-      chatName = contactDetails.displayName
+      chatName = contactDetails.defaultDisplayName
       chatImage = contactDetails.icon
       blocked = contactDetails.details.isBlocked()
       colorHash = self.controller.getColorHash(chatDto.id)
@@ -217,7 +217,7 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
 
   return initUserItem(
     pubKey = contactDetails.details.id,
-    displayName = contactDetails.displayName,
+    displayName = contactDetails.defaultDisplayName,
     icon = contactDetails.icon,
     colorId = contactDetails.colorId,
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
@@ -682,10 +682,10 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
       self.view.contactRequestsModel().addItem(item)
       self.updateParentBadgeNotifications()
       singletonInstance.globalEvents.showNewContactRequestNotification("New Contact Request",
-      fmt "{contactDetails.displayName} added you as contact",
+      fmt "{contactDetails.defaultDisplayName} added you as contact",
         singletonInstance.userProfile.getPubKey())
 
-  let chatName = contactDetails.displayName
+  let chatName = contactDetails.defaultDisplayName
   let chatImage = contactDetails.icon
   let trustStatus = contactDetails.details.trustStatus
   self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, trustStatus)
@@ -711,7 +711,7 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let renderedMessageText = self.controller.getRenderedText(message.parsedText)
   let plainText = singletonInstance.utils.plainText(renderedMessageText)
-  singletonInstance.globalEvents.showMessageNotification(contactDetails.displayName, plainText, sectionIdMsgBelongsTo, 
+  singletonInstance.globalEvents.showMessageNotification(contactDetails.defaultDisplayName, plainText, sectionIdMsgBelongsTo,
     self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat, 
     message.id, notificationType.int, 
     chatTypeMsgBelongsTo == ChatType.OneToOne, chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)

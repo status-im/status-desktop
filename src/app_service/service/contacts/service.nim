@@ -351,16 +351,22 @@ QtObject:
 
     return self.contactsStatus[publicKey]
 
-  proc getContactNameAndImage*(self: Service, publicKey: string):
-      tuple[name: string, image: string, largeImage: string] =
+  proc getContactNameAndImageInternal(self: Service, publicKey: string):
+      tuple[name: string, optionalName: string, image: string, largeImage: string] =
     ## This proc should be used accross the app in order to have for the same contact
     ## same image and name displayed everywhere in the app.
     let contactDto = self.getContactById(publicKey)
-    result.name = contactDto.userNameOrAlias()
+    result.name = contactDto.userDefaultDisplayName()
+    result.optionalName = contactDto.userOptionalName()
     if(contactDto.image.thumbnail.len > 0):
       result.image = contactDto.image.thumbnail
     if(contactDto.image.large.len > 0):
       result.largeImage = contactDto.image.large
+
+  proc getContactNameAndImage*(self: Service, publicKey: string):
+      tuple[name: string, image: string, largeImage: string] =
+    let tempRes = self.getContactNameAndImageInternal(publicKey)
+    return (tempRes.name, tempRes.image, tempRes.largeImage)
 
   proc saveContact(self: Service, contact: ContactsDto) =
     # we must keep local contacts updated
@@ -513,8 +519,9 @@ QtObject:
 
   proc getContactDetails*(self: Service, pubKey: string): ContactDetails =
     result = ContactDetails()
-    let (name, icon, _) = self.getContactNameAndImage(pubKey)
-    result.displayName = name
+    let (name, optionalName, icon, _) = self.getContactNameAndImageInternal(pubKey)
+    result.defaultDisplayName = name
+    result.optionalName = optionalName
     result.icon = icon
     result.colorId = procs_from_visual_identity_service.colorIdOf(pubKey)
     result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()

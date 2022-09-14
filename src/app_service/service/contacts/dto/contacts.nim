@@ -149,15 +149,23 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("IsSyncing", result.isSyncing)
   discard jsonObj.getProp("Removed", result.removed)
 
-proc userNameOrAlias*(contact: ContactsDto): string =
-  if(contact.localNickname.len > 0):
-    result = contact.localNickname
-  elif(contact.name.len > 0 and contact.ensVerified):
+proc userExtractedName(contact: ContactsDto): string =
+  if(contact.name.len > 0 and contact.ensVerified):
     result = prettyEnsName(contact.name)
   elif contact.displayName.len > 0:
     result = contact.displayName
   else:
     result = contact.alias
+
+proc userDefaultDisplayName*(contact: ContactsDto): string =
+  if(contact.localNickname.len > 0):
+    result = contact.localNickname
+  else:
+    result = userExtractedName(contact)
+
+proc userOptionalName*(contact: ContactsDto): string =
+  if(contact.localNickname.len > 0):
+    result = userExtractedName(contact)
 
 proc isContactRequestReceived*(self: ContactsDto): bool =
   return self.hasAddedUs

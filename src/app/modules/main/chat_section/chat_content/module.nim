@@ -79,7 +79,7 @@ method load*(self: Module) =
   var trustStatus = TrustStatus.Unknown
   if(chatDto.chatType == ChatType.OneToOne):
     let contactDto = self.controller.getContactById(self.controller.getMyChatId())
-    chatName = contactDto.userNameOrAlias()
+    chatName = contactDto.userDefaultDisplayName()
     isContact = contactDto.isContact
     trustStatus = contactDto.trustStatus
     if(contactDto.image.thumbnail.len > 0):
@@ -167,8 +167,8 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     m.communityId,
     m.responseTo,
     m.`from`,
-    contactDetails.details.displayName,
-    contactDetails.details.localNickname,
+    contactDetails.defaultDisplayName,
+    contactDetails.optionalName,
     contactDetails.icon,
     isCurrentUser,
     contactDetails.details.added,
@@ -206,7 +206,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
         let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
         let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
         item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id,
-        userWhoAddedThisReaction.userNameOrAlias(), r.id)
+        userWhoAddedThisReaction.userDefaultDisplayName(), r.id)
       else:
         error "wrong emoji id found when loading messages", methodName="buildPinnedMessageItem"
 
@@ -296,7 +296,7 @@ method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, 
     if(item.shouldAddReaction(emojiIdAsEnum, reactionFrom)):
       let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
       self.view.pinnedModel().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = false,
-      userWhoAddedThisReaction.id, userWhoAddedThisReaction.userNameOrAlias(), reactionId)
+      userWhoAddedThisReaction.id, userWhoAddedThisReaction.userDefaultDisplayName(), reactionId)
     else:
       self.view.pinnedModel().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = false)
   else:
@@ -320,8 +320,8 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)
   for item in self.view.pinnedModel().modelContactUpdateIterator(contactId):
     if(item.senderId == contactId):
-      item.senderDisplayName = updatedContact.details.displayName
-      item.senderLocalName = updatedContact.details.localNickname
+      item.senderDisplayName = updatedContact.defaultDisplayName
+      item.senderOptionalName = updatedContact.optionalName
       item.senderEnsVerified = updatedContact.details.ensVerified
       item.senderIcon = updatedContact.icon
       item.senderTrustStatus = updatedContact.details.trustStatus

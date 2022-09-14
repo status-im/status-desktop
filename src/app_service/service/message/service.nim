@@ -687,7 +687,7 @@ proc renderInline(self: Service, parsedText: ParsedText): string =
       if isCompressedPubKey(id):
         id = status_accounts.decompressPk(id).result
       let contactDto = self.contactService.getContactById(id)
-      result = fmt("<a href=\"//{id}\" class=\"mention\">{contactDto.userNameOrAlias()}</a>")
+      result = fmt("<a href=\"//{id}\" class=\"mention\">{contactDto.userDefaultDisplayName()}</a>")
     of PARSED_TEXT_CHILD_TYPE_STATUS_TAG:
       result = fmt("<a href=\"#{value}\" class=\"status-tag\">#{value}</a>")
     of PARSED_TEXT_CHILD_TYPE_DEL:

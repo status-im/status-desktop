@@ -12,7 +12,7 @@ type
     ResponseToMessageWithId
     SenderId
     SenderDisplayName
-    SenderLocalName
+    SenderOptionalName
     SenderIcon
     AmISender
     SenderIsAdded
@@ -89,7 +89,7 @@ QtObject:
       ModelRole.ResponseToMessageWithId.int:"responseToMessageWithId",
       ModelRole.SenderId.int:"senderId",
       ModelRole.SenderDisplayName.int:"senderDisplayName",
-      ModelRole.SenderLocalName.int:"senderLocalName",
+      ModelRole.SenderOptionalName.int:"senderOptionalName",
       ModelRole.SenderIcon.int:"senderIcon",
       ModelRole.AmISender.int:"amISender",
       ModelRole.SenderIsAdded.int:"senderIsAdded",
@@ -150,8 +150,8 @@ QtObject:
       result = newQVariant(item.senderDisplayName)
     of ModelRole.SenderTrustStatus:
       result = newQVariant(item.senderTrustStatus.int)
-    of ModelRole.SenderLocalName:
-      result = newQVariant(item.senderLocalName)
+    of ModelRole.SenderOptionalName:
+      result = newQVariant(item.senderOptionalName)
     of ModelRole.SenderIcon:
       result = newQVariant(item.senderIcon)
     of ModelRole.AmISender:
@@ -401,7 +401,7 @@ QtObject:
       var roles: seq[int]
       if(self.items[i].senderId == contactId):
         roles = @[ModelRole.SenderDisplayName.int,
-          ModelRole.SenderLocalName.int,
+          ModelRole.SenderOptionalName.int,
           ModelRole.SenderIcon.int,
           ModelRole.SenderIsAdded.int,
           ModelRole.SenderTrustStatus.int,

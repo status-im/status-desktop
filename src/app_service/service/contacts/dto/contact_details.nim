@@ -6,7 +6,8 @@ export contacts
 
 type
   ContactDetails* = object
-    displayName*: string
+    defaultDisplayName*: string
+    optionalName*: string
     icon*: string
     isCurrentUser*: bool
     colorId*: int
