@@ -621,7 +621,7 @@ run-macos: nim_status_client
 	cp status-dev.icns bin/StatusDev.app/Contents/Resources/
 	cd bin/StatusDev.app/Contents/MacOS && \
 		ln -fs ../../../nim_status_client ./
-	npx fileicon set bin/nim_status_client status-dev.icns
+	./node_modules/.bin/fileicon set bin/nim_status_client status-dev.icns
 	echo -e "\e[92mRunning:\e[39m bin/StatusDev.app/Contents/MacOS/nim_status_client"
 	./bin/StatusDev.app/Contents/MacOS/nim_status_client
 
