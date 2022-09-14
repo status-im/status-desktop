@@ -43,3 +43,5 @@ StatusCommunityTags 0.1 StatusCommunityTags.qml
 StatusItemSelector 0.1 StatusItemSelector.qml
 StatusCard 0.1 StatusCard.qml
 StatusDatePicker 0.1 StatusDatePicker.qml
+StatusChart 0.1 StatusChart.qml
+StatusChartPanel 0.1 StatusChartPanel.qml
