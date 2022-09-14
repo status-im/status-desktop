@@ -480,7 +480,7 @@ Item {
                 ModuleWarning {
                     id: secureYourSeedPhrase
                     Layout.fillWidth: true
-                    active: !appMain.rootStore.profileSectionStore.profileStoree.userDeclinedBackupBanner
+                    active: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner
                               && !appMain.rootStore.profileSectionStore.profileStore.privacyStore.mnemonicBackedUp
                     type: ModuleWarning.Danger
                     text: qsTr("Secure your seed phrase")
