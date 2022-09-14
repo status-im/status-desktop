@@ -192,8 +192,7 @@ Item {
             showCategoryActionButtons: communityData.amISectionAdmin
             showPopupMenu: communityData.amISectionAdmin && communityData.canManageUsers
 
-            // onChatItemSelected: root.store.chatsModelInst.channelView.setActiveChannel(id)
-            // onChatItemUnmuted: root.store.chatsModelInst.channelView.unmuteChatItem(id)
+            onChatItemUnmuted: root.communitySectionModule.unmuteChat(id)
             onChatItemReordered: function(categoryId, chatId, from, to){
                 root.store.reorderCommunityChat(categoryId, chatId, to)
             }
