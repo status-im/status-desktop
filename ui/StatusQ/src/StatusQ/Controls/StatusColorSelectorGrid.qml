@@ -36,6 +36,7 @@ Column {
 
     StatusBaseText {
         id: title
+        width: parent.width
         verticalAlignment: Text.AlignVCenter
         font.pixelSize: 13
         color: Theme.palette.baseColor1
@@ -46,6 +47,7 @@ Column {
         columns: 6
         rowSpacing: 16
         columnSpacing: 32
+
         Repeater {
             objectName: "statusColorRepeater"
             model: root.model

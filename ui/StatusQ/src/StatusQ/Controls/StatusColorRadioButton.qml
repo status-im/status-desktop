@@ -8,11 +8,13 @@ RadioButton {
 
     property string radioButtonColor: ""
     property string selectionColor: StatusColors.colors['white']
-    property int diameter: 48
-    property int selectorDiameter: 20
+    property int diameter: 44
+    property int selectorDiameter: 16
 
-    implicitWidth: 48
-    implicitHeight: 48
+    spacing: 0
+
+    implicitWidth: 44
+    implicitHeight: 44
 
     indicator: Rectangle {
         implicitWidth: control.diameter
@@ -21,13 +23,13 @@ RadioButton {
         color: radioButtonColor
 
         Rectangle {
+            anchors.centerIn: parent
             width: control.selectorDiameter
             height: control.selectorDiameter
+            visible: control.checked
             radius: width/2
             color: selectionColor
             border.color: StatusColors.colors['grey3']
-            visible: control.checked
-            anchors.centerIn: parent
         }
     }
 }
