@@ -89,7 +89,7 @@ Item {
         }
         StatusBaseText {
             id: tertiaryDetailText
-            visible: !root.amISender && messageOriginInfo == ""
+            visible: !root.amISender && root.messageOriginInfo === ""
             Layout.alignment: Qt.AlignVCenter
             font.pixelSize: 10
             elide: Text.ElideMiddle

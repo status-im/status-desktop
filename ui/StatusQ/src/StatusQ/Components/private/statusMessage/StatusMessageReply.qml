@@ -58,7 +58,7 @@ Item {
                 StatusSmartIdenticon {
                     id: profileImage
                     Layout.alignment: Qt.AlignTop
-                    name: replyDetails.sender.userName
+                    name: replyDetails.sender.displayName
                     asset: replyDetails.sender.profileImage.assetSettings
                     ringSettings: replyDetails.sender.profileImage.ringSettings
                     MouseArea {

@@ -40,9 +40,8 @@ ListView {
             messageContent: model.messageContent
             amISender: model.amIsender
             sender.id: model.senderId
-            sender.userName: model.userName
-            sender.localName: model.localName
-            sender.ensName: model.ensName
+            sender.displayName: model.senderDisplayName
+            sender.secondaryName: model.senderOptionalName
             sender.isContact: model.isContact
             sender.trustIndicator: model.trustIndicator
             sender.profileImage: StatusProfileImageSettings {
@@ -68,8 +67,8 @@ ListView {
         replyDetails: StatusMessageDetails {
             amISender:  model.isReply && model.replyAmISender
             sender.id: model.replySenderId || ""
-            sender.userName:  model.isReply ? model.replySenderName: ""
-            sender.ensName: model.isReply ? model.replySenderEnsName : ""
+            sender.displayName:  model.isReply ? model.replySenderName: ""
+            sender.secondaryName: model.isReply ? model.replySenderEnsName : ""
             sender.profileImage: StatusProfileImageSettings {
                 width: 20
                 height: 20

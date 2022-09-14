@@ -437,9 +437,8 @@ QtObject {
             timestamp: "1656937930"
             amIsender: false
             senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
-            userName: "Ferocious Herringbone Sinewave"
-            ensName: ""
-            localName: ""
+            senderDisplayName: "Ferocious Herringbone Sinewave"
+            senderOptionalName: ""
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                           nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
             contentType: StatusMessage.ContentType.Text
@@ -465,9 +464,8 @@ QtObject {
             timestamp: "1657937930"
             amIsender: false
             senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
-            userName: "Teenage Mutant Turtle"
-            ensName: ""
-            localName: ""
+            senderDisplayName: "Teenage Mutant Turtle"
+            senderOptionalName: ""
             profileImage: ""
             contentType: StatusMessage.ContentType.Text
             message: 'Simple text message'
@@ -492,9 +490,8 @@ QtObject {
             timestamp: "1657937930"
             amIsender: false
             senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
-            userName: "Teenage Mutant Turtle"
-            ensName: ""
-            localName: "Bro from work"
+            senderDisplayName: "Bro from work"
+            senderOptionalName: "Teenage Mutant Turtle"
             profileImage: ""
             contentType: StatusMessage.ContentType.Text
             message: '<code>Renamed, contact</code>'
@@ -519,9 +516,8 @@ QtObject {
             timestamp: "1657937930"
             amIsender: false
             senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
-            userName: "Teenage Mutant Turtle"
-            ensName: "@turtle.statusofus.eth"
-            localName: "Bro from work"
+            senderOptionalName: "@turtle.statusofus.eth"
+            senderDisplayName: "Bro from work"
             profileImage: ""
             contentType: StatusMessage.ContentType.Text
             message: '<code>ENS, Renamed, Contact, Untrustworthy</code>'
@@ -546,9 +542,8 @@ QtObject {
             timestamp: "1658937930"
             senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
             amIsender: false
-            userName: "Teenage Mutant Turtle"
-            ensName: "@turtle.statusofus.eth"
-            localName: "Bro from work"
+            senderOptionalName: "@turtle.statusofus.eth"
+            senderDisplayName: "Bro from work"
             profileImage: ""
             message: '<code>ENS, renamed, contact, verified</code>'
             contentType: StatusMessage.ContentType.Text
@@ -573,9 +568,8 @@ QtObject {
             timestamp: "1658937930"
             senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
             amIsender: false
-            userName: "Teenage Mutant Turtle"
-            ensName: ""
-            localName: "Bro from work"
+            senderOptionalName: "Teenage Mutant Turtle"
+            senderDisplayName: "Bro from work"
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg="
             message: 'With profile image, no ENS'
             contentType: StatusMessage.ContentType.Text
@@ -600,9 +594,8 @@ QtObject {
             timestamp: "1658937930"
             senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
             amIsender: false
-            userName: "Teenage Mutant Turtle"
-            ensName: "@turtle.statusofus.eth"
-            localName: "Bro from work"
+            senderOptionalName: "@turtle.statusofus.eth"
+            senderDisplayName: "Bro from work"
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg="
             message: 'With profile image and ENS'
             contentType: StatusMessage.ContentType.Text
@@ -627,9 +620,8 @@ QtObject {
             timestamp: "1658937930"
             senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
             amIsender: true
-            userName: "You"
-            ensName: "@ghd.statusofus.eth"
-            localName: ""
+            senderDisplayName: "You"
+            senderOptionalName: "@ghd.statusofus.eth"
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg="
             message: 'Message with image'
             contentType: StatusMessage.ContentType.Image
@@ -654,9 +646,8 @@ QtObject {
             timestamp: "1658937930"
             senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
             amIsender: true
-            userName: "You"
-            ensName: "@ghd.statusofus.eth"
-            localName: ""
+            senderDisplayName: "You"
+            senderOptionalName: "@ghd.statusofus.eth"
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg="
             message: '👍'
             contentType: StatusMessage.ContentType.Emoji
@@ -681,9 +672,8 @@ QtObject {
             timestamp: "1658937930"
             senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
             amIsender: true
-            userName: "You"
-            ensName: "@ghd.statusofus.eth"
-            localName: ""
+            senderDisplayName: "You"
+            senderOptionalName: "@ghd.statusofus.eth"
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg="
             message: 'Message with sticker'
             contentType: StatusMessage.ContentType.Sticker
@@ -708,9 +698,8 @@ QtObject {
             timestamp: "1660937930"
             senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
             amIsender: true
-            userName: "You"
-            ensName: "@ghd.statusofus.eth"
-            localName: ""
+            senderDisplayName: "You"
+            senderOptionalName: "@ghd.statusofus.eth"
             message: ""
             isCurrentUser: true
             contentType: StatusMessage.ContentType.Audio
@@ -737,9 +726,8 @@ QtObject {
             timestamp: "1660937930"
             senderId: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
             amIsender: true
-            userName: "You"
-            ensName: "@ghd.statusofus.eth"
-            localName: ""
+            senderDisplayName: "You"
+            senderOptionalName: "@ghd.statusofus.eth"
             message: "Hi Johnny"
             isCurrentUser: true
             contentType: StatusMessage.ContentType.Text
@@ -766,9 +754,8 @@ QtObject {
             timestamp: "1660937930"
             senderId: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
             amIsender: false
-            userName: "Pompie"
-            ensName: "@ghd.statusofus.eth"
-            localName: ""
+            senderDisplayName: "Pompie"
+            senderOptionalName: "@ghd.statusofus.eth"
             message: '<p>Do you have a Bitcoin wallet or Coinbase wallet?<br />You can earn up to 0.06021BTC every 3 hours with your phone or PC...<br />Without referrals nor registration fee...<br />If you are interested ask me “HOW”<br /><a href="https://t.me/Markstones455">https://t.me/Markstones455</a></p>'
             isCurrentUser: true
             contentType: StatusMessage.ContentType.Text
@@ -795,9 +782,8 @@ QtObject {
             timestamp: "1660937930"
             senderId: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
             amIsender: false
-            userName: "Pompie"
-            ensName: "@ghd.statusofus.eth"
-            localName: ""
+            senderDisplayName: "Pompie"
+            senderOptionalName: "@ghd.statusofus.eth"
             message: '<p><a href="//0x0431859bd00be79baef9617f4719ce73d2d261a2496f9a861f447a2f8ba34bf7ba03e572bb39fcf2df43564d39f6364bfe9be0a1fca3bf741e8f4b9492f86db427" class="mention">Uniform Dark Pike</a></p>'
             isCurrentUser: true
             contentType: StatusMessage.ContentType.Text
@@ -824,9 +810,8 @@ QtObject {
             timestamp: "1660937930"
             senderId: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
             amIsender: false
-            userName: "Pompie"
-            ensName: "@ghd.statusofus.eth"
-            localName: ""
+            senderDisplayName: "Pompie"
+            senderOptionalName: "@ghd.statusofus.eth"
             message: "Replying to text message"
             isCurrentUser: true
             contentType: StatusMessage.ContentType.Text
@@ -854,9 +839,8 @@ QtObject {
             timestamp: "1660937930"
             senderId: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
             amIsender: false
-            userName: "Pompie"
-            ensName: "@ghd.statusofus.eth"
-            localName: ""
+            senderDisplayName: "Pompie"
+            senderOptionalName: "@ghd.statusofus.eth"
             message: "Replying to a Image Message"
             isCurrentUser: true
             contentType: StatusMessage.ContentType.Text
@@ -884,9 +868,8 @@ QtObject {
             timestamp: "1660937930"
             senderId: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
             amIsender: false
-            userName: "Pompie"
-            ensName: "@ghd.statusofus.eth"
-            localName: ""
+            senderDisplayName: "Pompie"
+            senderOptionalName: "@ghd.statusofus.eth"
             message: "Replying to a sticker message"
             isCurrentUser: true
             contentType: StatusMessage.ContentType.Text
@@ -914,9 +897,8 @@ QtObject {
             timestamp: "1660937930"
             senderId: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
             amIsender: false
-            userName: "Pompie"
-            ensName: "@ghd.statusofus.eth"
-            localName: ""
+            senderDisplayName: "Pompie"
+            senderOptionalName: "@ghd.statusofus.eth"
             message: "Replying to a Audio message"
             isCurrentUser: true
             contentType: StatusMessage.ContentType.Text
@@ -944,9 +926,8 @@ QtObject {
             timestamp: "1660937930"
             senderId: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
             amIsender: false
-            userName: "Pumba"
-            ensName: "@quite.statusofus.eth"
-            localName: ""
+            senderDisplayName: "Pumba"
+            senderOptionalName: "@quite.statusofus.eth"
             message: "This is me"
             isCurrentUser: true
             contentType: StatusMessage.ContentType.Sticker
@@ -973,9 +954,8 @@ QtObject {
             timestamp: "1660937930"
             senderId: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
             amIsender: true
-            userName: "You"
-            ensName: "@ghd.statusofus.eth"
-            localName: ""
+            senderDisplayName: "You"
+            senderOptionalName: "@ghd.statusofus.eth"
             message: ""
             isCurrentUser: true
             contentType: StatusMessage.ContentType.Image
@@ -1002,9 +982,8 @@ QtObject {
             timestamp: "1657937930"
             amIsender: false
             senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
-            userName: "Teenage Mutant Turtle"
-            ensName: ""
-            localName: ""
+            senderDisplayName: "Teenage Mutant Turtle"
+            senderOptionalName: ""
             profileImage: ""
             contentType: StatusMessage.ContentType.Text
             message: 'Simple text message from another user with reactions'

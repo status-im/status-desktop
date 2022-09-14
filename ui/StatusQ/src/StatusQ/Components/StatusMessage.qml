@@ -249,7 +249,7 @@ Rectangle {
                     id: profileImage
                     active: root.showHeader
                     visible: active
-                    name: root.messageDetails.sender.userName
+                    name: root.messageDetails.sender.displayName
                     asset: root.messageDetails.sender.profileImage.assetSettings
                     ringSettings: root.messageDetails.sender.profileImage.ringSettings
 
