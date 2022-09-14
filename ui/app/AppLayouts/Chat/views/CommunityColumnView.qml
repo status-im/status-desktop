@@ -32,7 +32,6 @@ Item {
     property var store
     property bool hasAddedContacts: false
     property var communityData: store.mainModuleInst ? store.mainModuleInst.activeSection || {} : {}
-    property Component pinnedMessagesPopupComponent
     property Component membershipRequestPopup
 
     signal infoButtonClicked
