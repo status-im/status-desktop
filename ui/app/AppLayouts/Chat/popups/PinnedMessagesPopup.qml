@@ -1,24 +1,17 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.3
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
+import QtQml.Models 2.14
 
 import StatusQ.Core 0.1
-import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Controls 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
-import shared 1.0
-import shared.views 1.0
-import shared.panels 1.0
-import shared.popups 1.0
 import shared.views.chat 1.0
 
-import "../controls"
-import "../panels"
-//TODO remove or make view?
-import "../views"
-
-// TODO: replace with StatusMOdal
-ModalPopup {
-    id: popup
+StatusDialog {
+    id: root
 
     property var store
     property var messageStore
@@ -27,56 +20,26 @@ ModalPopup {
     property string messageToUnpin
     property var emojiReactionsModel
 
-    header: Item {
-        height: childrenRect.height
-        width: parent.width
+    width: 800
+    height: 428
+    padding: 0
 
-        StyledText {
-            id: title
-            text: !!popup.messageToPin ? qsTr("Pin limit reached") :
-                                               qsTr("Pinned messages")
-            anchors.top: parent.top
-            anchors.left: parent.left
-            font.bold: true
-            font.pixelSize: 17
-        }
+    title: root.messageToPin ? qsTr("Pin limit reached") : qsTr("Pinned messages")
 
-        StyledText {
-            property int nbMessages: pinnedMessageListView.count
-
-            id: nbPinnedMessages
-            text: {
-                if (!!popup.messageToPin) {
-                    return qsTr("Unpin a previous message first")
-                }
-
-                return nbMessages > 1 ? qsTr("%1 messages").arg(nbMessages) :
-                                        qsTr("%1 message").arg(nbMessages)
-            }
-            anchors.left: parent.left
-            anchors.top: title.bottom
-            anchors.topMargin: 2
-            font.pixelSize: 15
-            color: Style.current.secondaryText
-        }
-
-        Separator {
-            anchors.top: nbPinnedMessages.bottom
-            anchors.topMargin: Style.current.padding
-            anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
-        }
+    header: StatusDialogHeader {
+        visible: root.title
+        headline.title: root.title
+        headline.subtitle: root.messageToPin ? qsTr("Unpin a previous message first")
+                                              : qsTr("%n message(s)", "", pinnedMessageListView.count)
+        actions.closeButton.onClicked: root.close()
     }
 
-    Item {
-        anchors.fill: parent
-
-        StyledText {
+    contentItem: ColumnLayout {
+        StatusBaseText {
             visible: pinnedMessageListView.count === 0
             text: qsTr("Pinned messages will appear here.")
-            anchors.centerIn: parent
+            Layout.alignment: Qt.AlignCenter
+            verticalAlignment: Text.AlignVCenter
             color: Style.current.secondaryText
         }
 
@@ -86,15 +49,9 @@ ModalPopup {
 
         StatusListView {
             id: pinnedMessageListView
-            model: popup.pinnedMessagesModel
-            height: parent.height
-            anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
-            topMargin: Style.current.halfPadding
-            anchors.top: parent.top
-            anchors.topMargin: -Style.current.halfPadding
+            model: root.pinnedMessagesModel
+            Layout.fillWidth: true
+            Layout.fillHeight: count
 
             delegate: Item {
                 id: messageDelegate
@@ -107,8 +64,8 @@ ModalPopup {
 
                     width: parent.width
 
-                    rootStore: popup.store
-                    messageStore: popup.messageStore
+                    rootStore: root.store
+                    messageStore: root.messageStore
                     messageContextMenu: msgContextMenu
 
                     messageId: model.id
@@ -134,13 +91,13 @@ ModalPopup {
                     // This is possible since we have all data loaded before we load qml.
                     // When we fetch messages to fulfill a gap we have to set them at once.
                     prevMessageIndex: index - 1
-                    prevMessageAsJsonObj: popup.messageStore? popup.messageStore.getMessageByIndexAsJson(index - 1) : {}
+                    prevMessageAsJsonObj: root.messageStore? root.messageStore.getMessageByIndexAsJson(index - 1) : {}
                     nextMessageIndex: index + 1
-                    nextMessageAsJsonObj: popup.messageStore? popup.messageStore.getMessageByIndexAsJson(index + 1) : {}
+                    nextMessageAsJsonObj: root.messageStore? root.messageStore.getMessageByIndexAsJson(index + 1) : {}
 
                     // Additional params
                     isInPinnedPopup: true
-                    disableHover: !!popup.messageToPin
+                    disableHover: !!root.messageToPin
                 }
 
                 MouseArea {
@@ -148,45 +105,46 @@ ModalPopup {
                     enabled: !!popup.messageToPin
                     cursorShape: Qt.PointingHandCursor
                     z: 55
-                    onClicked: radio.toggle()
+                    onClicked: {
+                        if (!radio.checked)
+                            radio.checked = true
+                    }
                 }
 
-                StatusQControls.StatusRadioButton {
+                StatusRadioButton {
                     id: radio
-                    visible: !!popup.messageToPin
+                    visible: !!root.messageToPin
                     anchors.right: parent.right
-                    anchors.rightMargin: 18
+                    anchors.rightMargin: Style.current.bigPadding
                     anchors.verticalCenter: parent.verticalCenter
                     ButtonGroup.group: pinButtonGroup
-                    function toggle() {
-                        radio.checked = !radio.checked
-                        if (radio.checked) {
-                            popup.messageToUnpin = model.id
-                        }
+                    onCheckedChanged: { // NB this should be `onToggled` but MouseArea above handles the whole delegate
+                        root.messageToUnpin = checked ? model.id : ""
                     }
                 }
             }
         }
+
         MessageContextMenuView {
             id: msgContextMenu
-            reactionModel: popup.emojiReactionsModel
-            store: popup.store
+            reactionModel: root.emojiReactionsModel
+            store: root.store
             pinnedPopup: true
             pinnedMessage: true
             onShouldCloseParentPopup: {
-                popup.close()
+                root.close()
             }
 
             onPinMessage: {
-                popup.messageStore.pinMessage(messageId)
+                root.messageStore.pinMessage(messageId)
             }
 
             onUnpinMessage: {
-                popup.messageStore.unpinMessage(messageId)
+                root.messageStore.unpinMessage(messageId)
             }
 
             onToggleReaction: {
-                popup.messageStore.toggleReaction(messageId, emojiId)
+                root.messageStore.toggleReaction(messageId, emojiId)
             }
 
             onOpenProfileClicked: {
@@ -195,24 +153,21 @@ ModalPopup {
         }
     }
 
-
-    footer: Item {
-        width: parent.width
-        height: btnUnpin.height
-
-        StatusQControls.StatusButton {
-            id: btnUnpin
-            visible: !!popup.messageToPin
-            enabled: !!popup.messageToUnpin
-            text: qsTr("Unpin")
-            type: StatusQControls.StatusBaseButton.Type.Danger
-            anchors.right: parent.right
-            onClicked: {
-                popup.messageStore.unpinMessage(popup.messageToUnpin)
-                popup.messageToUnpin = ""
-                popup.messageStore.pinMessage(popup.messageToPin)
-                popup.messageToPin = ""
-                popup.close()
+    footer: StatusDialogFooter {
+        id: footer
+        visible: !!root.messageToPin
+        rightButtons: ObjectModel {
+            StatusButton {
+                visible: footer.visible
+                enabled: !!root.messageToUnpin && pinButtonGroup.checkedButton
+                text: qsTr("Unpin selected message and pin new message")
+                onClicked: {
+                    root.messageStore.unpinMessage(root.messageToUnpin)
+                    root.messageToUnpin = ""
+                    root.messageStore.pinMessage(root.messageToPin)
+                    root.messageToPin = ""
+                    root.close()
+                }
             }
         }
     }

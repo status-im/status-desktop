@@ -38,7 +38,6 @@ ColumnLayout {
     property var emojiPopup
     property alias textInputField: chatInput
     property UsersStore usersStore: UsersStore {}
-    property Component pinnedMessagesPopupComponent
 
     onChatContentModuleChanged: {
         root.usersStore.usersModule = root.chatContentModule.usersModule

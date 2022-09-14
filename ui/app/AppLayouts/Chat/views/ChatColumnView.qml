@@ -54,7 +54,6 @@ Item {
     property var contactDetails: Utils.getContactDetailsAsJson(root.activeChatId)
     property bool isUserAdded: root.contactDetails.isAdded
     property bool contactRequestReceived: root.contactDetails.requestReceived
-    property Component pinnedMessagesListPopupComponent
 
     signal openAppSearch()
     signal openStickerPackPopup(string stickerPackId)
@@ -222,7 +221,6 @@ Item {
                             stickersLoaded: root.stickersLoaded
                             isBlocked: model.blocked
                             isActiveChannel: categoryChatLoader.isActiveChannel
-                            pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
                             onOpenStickerPackPopup: {
                                 root.openStickerPackPopup(stickerPackId)
                             }
@@ -271,7 +269,6 @@ Item {
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
                         isActiveChannel: chatLoader.isActiveChannel
-                        pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
                         }

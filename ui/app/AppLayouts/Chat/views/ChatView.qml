@@ -29,7 +29,6 @@ StatusSectionLayout {
 
     property RootStore rootStore
 
-    property Component pinnedMessagesListPopupComponent
     property Component membershipRequestPopup
     property var emojiPopup
     property bool stickersLoaded: false
@@ -84,7 +83,6 @@ StatusSectionLayout {
         parentModule: root.rootStore.chatCommunitySectionModule
         rootStore: root.rootStore
         contactsStore: root.contactsStore
-        pinnedMessagesListPopupComponent: root.pinnedMessagesListPopupComponent
         stickersLoaded: root.stickersLoaded
         emojiPopup: root.emojiPopup
         onOpenStickerPackPopup: {
@@ -160,7 +158,6 @@ StatusSectionLayout {
             store: root.rootStore
             emojiPopup: root.emojiPopup
             hasAddedContacts: root.hasAddedContacts
-            pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
             membershipRequestPopup: root.membershipRequestPopup
             onInfoButtonClicked: root.communityInfoButtonClicked()
             onManageButtonClicked: root.communityManageButtonClicked()

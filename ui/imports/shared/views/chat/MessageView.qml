@@ -428,7 +428,8 @@ Loader {
 
             hideQuickActions: root.isChatBlocked ||
                               root.placeholderMessage ||
-                              root.activityCenterMessage
+                              root.activityCenterMessage ||
+                              root.isInPinnedPopup
 
             overrideBackground: root.activityCenterMessage || root.placeholderMessage
             overrideBackgroundColor: {
