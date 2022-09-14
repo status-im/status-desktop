@@ -95,6 +95,12 @@ Rectangle {
     */
     property var itemsModel: ListModel { }
     /*!
+       \qmlproperty bool StatusItemSelector::useIcons
+       This property determines if the imageSource role from the model will be handled as
+       an image or an icon.
+    */
+    property bool useIcons: false
+    /*!
        \qmlproperty string StatusItemSelector::andOperatorText
        This property holds the string text representation for an `AND` logical operator.
     */
@@ -168,7 +174,7 @@ Rectangle {
             Layout.fillWidth: true
             spacing: 6
             StatusListItemTag {
-                visible: itemsModel.count === 0
+                visible: !itemsModel || itemsModel.count === 0
                 title: root.defaultItemText
                 asset.name: root.defaultItemImageSource
                 asset.isImage: true
@@ -204,7 +210,8 @@ Rectangle {
                     StatusListItemTag {
                         title: model.text
                         asset.name: model.imageSource
-                        asset.isImage: true
+                        asset.isImage: !root.useIcons
+                        asset.bgColor: "transparent"
                         color: Theme.palette.primaryColor3
                         closeButtonVisible: false
                         titleText.color: Theme.palette.primaryColor1
