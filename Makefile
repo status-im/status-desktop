@@ -360,6 +360,12 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | $(STATUSGO) $(STATUSKEYCARD
 			libkeycard.dylib \
 			@rpath/libkeycard.dylib \
 			bin/nim_status_client) || true)
+ifeq ($(detected_OS),Darwin)
+ifeq ("$(wildcard ./node_modules/.bin/fileicon)","")
+	echo -e "\e[92mInstalling:\e[39m fileicon"
+	npm i
+endif
+endif
 
 nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
 
@@ -601,10 +607,6 @@ run: $(RUN_TARGET)
 
 ICON_TOOL := node_modules/.bin/fileicon
 
-$(ICON_TOOL):
-	echo -e "\e[92mInstalling:\e[39m fileicon"
-	npm i
-
 # Currently not in use: https://github.com/status-im/status-desktop/pull/1858
 # STATUS_PORT ?= 30306
 
@@ -613,7 +615,7 @@ run-linux: nim_status_client
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)" \
 	./bin/nim_status_client
 
-run-macos: nim_status_client $(ICON_TOOL)
+run-macos: nim_status_client
 	mkdir -p bin/StatusDev.app/Contents/{MacOS,Resources}
 	cp Info.dev.plist bin/StatusDev.app/Contents/Info.plist
 	cp status-dev.icns bin/StatusDev.app/Contents/Resources/
