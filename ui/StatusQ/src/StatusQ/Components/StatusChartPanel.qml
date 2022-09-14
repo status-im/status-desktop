@@ -123,7 +123,7 @@ Page {
         height: childrenRect.height
         RowLayout {
             anchors.left: parent.left
-            anchors.leftMargin: 40
+            anchors.leftMargin: 46
             anchors.right: parent.right
             StatusTabBar {
                 id: graphsTabBar

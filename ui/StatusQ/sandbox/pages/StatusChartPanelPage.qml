@@ -158,7 +158,7 @@ Item {
                        ticks: {
                            fontSize: 10,
                            fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
-                           padding: 16,
+                           padding: 16
                        }
                     }],
                     yAxes: [{
@@ -177,7 +177,7 @@ Item {
                        ticks: {
                           fontSize: 10,
                           fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
-                          padding: 24,
+                          padding: 8,
                           min: d.minStep,
                           max: d.maxStep,
                           stepSize: d.stepSize,
