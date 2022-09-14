@@ -251,7 +251,6 @@ RowLayout {
 
         StatusChatInfoButton {
             objectName: "chatInfoBtnInHeader"
-            width: Math.min(implicitWidth, parent.width)
             title: chatContentModule? chatContentModule.chatDetails.name : ""
             subTitle: {
                 if(!chatContentModule)
@@ -310,7 +309,7 @@ RowLayout {
                 chatContentModule.unmuteChat()
             }
 
-            sensor.enabled: {
+            hoverEnabled: {
                 if(!chatContentModule)
                     return false
 
