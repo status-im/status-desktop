@@ -26,11 +26,11 @@ QtObject:
 
   proc activityNotificationsChanged*(self: View) {.signal.}
 
-  proc getModel(self: View): QVariant {.slot.} =
+  proc getActivityNotificationModel(self: View): QVariant {.slot.} =
     return newQVariant(self.modelVariant)
 
-  QtProperty[QVariant] model:
-    read = getModel
+  QtProperty[QVariant] activityNotificationsModel:
+    read = getActivityNotificationModel
     notify = activityNotificationsChanged
 
   proc hasMoreToShowChanged*(self: View) {.signal.}
