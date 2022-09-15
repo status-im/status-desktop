@@ -1072,7 +1072,7 @@ Rectangle {
 
                             textFormat: Text.RichText
                             font.pixelSize: 15
-                            font.family: Style.current.fontRegular.name
+                            font.family: Style.current.baseFont.name
                             wrapMode: TextArea.Wrap
                             placeholderText: control.chatInputPlaceholder
                             placeholderTextColor: Style.current.secondaryText

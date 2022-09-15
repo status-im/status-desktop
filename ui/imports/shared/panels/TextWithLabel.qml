@@ -11,7 +11,7 @@ import "./"
 Item {
     property string text: "My Text"
     property string label: "My Label"
-    property string fontFamily: Style.current.fontRegular.name
+    property string fontFamily: Style.current.baseFont.name
     property string textToCopy: ""
     property alias value: textItem
     property bool wrap: false

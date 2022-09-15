@@ -127,7 +127,7 @@ Item {
     TextMetrics {
         id: textMetrics
         font.weight: Font.Medium
-        font.family: Style.current.fontBold.name
+        font.family: Style.current.baseFont.name
         font.pixelSize: 15
         text: root.text
     }
@@ -215,7 +215,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             text: root.text
             font.weight: Font.Medium
-            font.family: Style.current.fontBold.name
+            font.family: Style.current.baseFont.name
             font.pixelSize: 15
             states: [
                 State {

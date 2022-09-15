@@ -31,14 +31,14 @@ Item {
         StyledText {
             id: txtPackName
             text: packName
-            font.family: Style.current.fontBold.name
+            font.family: Style.current.baseFont.name
             font.weight: Font.Bold
             font.pixelSize: packNameFontSize
         }
         StyledText {
             color: Style.current.secondaryText
             text: packAuthor
-            font.family: Style.current.fontRegular.name
+            font.family: Style.current.baseFont.name
             font.pixelSize: 15
         }
     }

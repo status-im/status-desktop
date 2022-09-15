@@ -35,7 +35,7 @@ Rectangle {
                     text: qsTr("Back up")
                     font.pixelSize: 13
                     font.weight: Font.Medium
-                    font.family: Style.current.fontRegular.name
+                    font.family: Style.current.baseFont.name
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     anchors.top: parent.top

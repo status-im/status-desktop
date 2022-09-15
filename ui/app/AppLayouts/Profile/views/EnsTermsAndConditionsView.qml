@@ -165,7 +165,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    font.family: Style.current.fontHexRegular.name
+                    font.family: Style.current.monoFont.name
                     color: Theme.palette.directColor1
                 }
 
@@ -189,7 +189,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    font.family: Style.current.fontHexRegular.name
+                    font.family: Style.current.monoFont.name
                     color: Theme.palette.directColor1
                 }
 

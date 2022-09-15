@@ -120,7 +120,7 @@ Item {
         visible: label !== ""
         text: qsTr("Recipient")
         font.pixelSize: 13
-        font.family: Style.current.fontRegular.name
+        font.family: Style.current.baseFont.name
         font.weight: Font.Medium
         color: Style.current.textColor
         height: 18
@@ -131,7 +131,7 @@ Item {
         visible: text !== ""
         text: ""
         font.pixelSize: 13
-        font.family: Style.current.fontRegular.name
+        font.family: Style.current.baseFont.name
         font.weight: Font.Medium
         color: Style.current.danger
         height: 18
