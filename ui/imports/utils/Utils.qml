@@ -605,12 +605,19 @@ QtObject {
         return globalUtils.getCompressedPk(publicKey)
     }
 
+    function getElidedPk(publicKey) {
+        if (publicKey === "") {
+            return ""
+        }
+        return StatusQUtils.Utils.elideText(publicKey, 5, 3)
+    }
+
     function getElidedCompressedPk(publicKey) {
         if (publicKey === "") {
             return ""
         }
         let compressedPk = getCompressedPk(publicKey)
-        return StatusQUtils.Utils.elideText(compressedPk, 6, 3)
+        return getElidedPk(compressedPk, 6, 3)
     }
 
     function getTimeDifference(d1, d2) {

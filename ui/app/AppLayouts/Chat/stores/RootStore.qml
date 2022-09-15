@@ -121,8 +121,12 @@ QtObject {
 
     property var mainModuleInst: mainModule
     property var activityCenterModuleInst: activityCenterModule
-    property var activityCenterList: activityCenterModuleInst.model
+    property var activityCenterList: activityCenterModuleInst.activityNotificationsModel
     property int unreadNotificationsCount: activityCenterList.unreadCount
+
+    function loadMoreNotifications() {
+        activityCenterModuleInst.loadMoreNotifications()
+    }
 
     property var communitiesModuleInst: communitiesModule
     property var communitiesList: communitiesModuleInst.model
