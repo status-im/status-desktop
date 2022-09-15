@@ -1,4 +1,5 @@
 AddressInput 1.0 AddressInput.qml
+AmountInput 1.0 AmountInput.qml
 AssetAndAmountInput 1.0 AssetAndAmountInput.qml
 AssetDelegate 1.0 AssetDelegate.qml
 ContactSelector 1.0 ContactSelector.qml
