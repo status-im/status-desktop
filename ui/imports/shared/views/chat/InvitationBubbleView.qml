@@ -100,6 +100,15 @@ Item {
 
             states: [
                 State {
+                    name: "pending"
+                    when: d.invitationPending
+                    PropertyChanges {
+                        target: joinBtn
+                        text: qsTr("Pending")
+                        enabled: false
+                    }
+                },
+                State {
                     name: "requiresEns"
                     when: d.invitedCommunity.ensOnly && !userProfile.ensName
                     PropertyChanges {
@@ -114,16 +123,6 @@ Item {
                     PropertyChanges {
                         target: joinBtn
                         text: qsTr("You need to be invited")
-                        enabled: false
-                    }
-                },
-                State {
-                    name: "pending"
-                    when: d.invitedCommunity.access === Constants.communityChatOnRequestAccess &&
-                          d.invitationPending
-                    PropertyChanges {
-                        target: joinBtn
-                        text: qsTr("Pending")
                         enabled: false
                     }
                 },

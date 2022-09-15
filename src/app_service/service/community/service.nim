@@ -517,6 +517,17 @@ QtObject:
       return false
     return self.allCommunities[communityId].canJoin
 
+  proc processRequestsToJoinCommunity(self: Service, responseResult: JsonNode): bool =
+    if responseResult{"requestsToJoinCommunity"} == nil or responseResult{"requestsToJoinCommunity"}.kind == JNull:
+      return false
+
+    for jsonCommunityReqest in responseResult["requestsToJoinCommunity"]:
+      let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
+      self.myCommunityRequests.add(communityRequest)
+      self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_ADDED, CommunityRequestArgs(communityRequest: communityRequest))
+
+    return true
+
   proc joinCommunity*(self: Service, communityId: string): string =
     result = ""
     try:
@@ -540,6 +551,9 @@ QtObject:
       if not response.result.hasKey("communitiesSettings") or response.result["communitiesSettings"].kind != JArray or response.result["communitiesSettings"].len == 0:
         error "error: ", procName="joinCommunity", errDesription = "no 'communitiesSettings' key in response"
         return
+
+      if not self.processRequestsToJoinCommunity(response.result):
+        error "error: ", procName="joinCommunity", errDesription = "no 'requestsToJoinCommunity' key in response"
 
       var updatedCommunity = response.result["communities"][0].toCommunityDto()
       let communitySettings = response.result["communitiesSettings"][0].toCommunitySettingsDto()
@@ -570,11 +584,9 @@ QtObject:
     try:
       let response = status_go.requestToJoinCommunity(communityId, ensName)
 
-      if response.result{"requestsToJoinCommunity"} != nil and response.result{"requestsToJoinCommunity"}.kind != JNull:
-        for jsonCommunityReqest in response.result["requestsToJoinCommunity"]:
-          let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
-          self.myCommunityRequests.add(communityRequest)
-          self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_ADDED, CommunityRequestArgs(communityRequest: communityRequest))
+      if not self.processRequestsToJoinCommunity(response.result):
+        error "error: ", procName="requestToJoinCommunity", errDesription = "no 'requestsToJoinCommunity' key in response"
+
     except Exception as e:
       error "Error requesting to join the community", msg = e.msg, communityId, ensName
 
