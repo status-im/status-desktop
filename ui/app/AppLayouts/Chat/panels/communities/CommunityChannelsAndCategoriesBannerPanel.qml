@@ -1,6 +1,4 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -28,7 +26,7 @@ Rectangle {
     radius: 16
     color: Style.current.transparent
 
-   Rectangle {
+    Rectangle {
         width: 66
         height: 4
         color: Style.current.secondaryMenuBackground
@@ -74,8 +72,6 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 48
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: 15
-        color: Theme.palette.directColor1
         wrapMode: Text.WordWrap
         anchors.right: parent.right
         anchors.rightMargin: Style.current.xlPadding
@@ -99,6 +95,7 @@ Rectangle {
         text: qsTr("Add categories")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: addMembersBtn.bottom
+        anchors.topMargin: Style.current.halfPadding
 
         onClicked: {
             root.addCategoriesClicked();

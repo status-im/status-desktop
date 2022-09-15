@@ -1,5 +1,4 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -9,10 +8,11 @@ import StatusQ.Components 0.1
 import utils 1.0
 
 Rectangle {
+    id: root
+
     property string communityId
     signal backupButtonClicked()
 
-    id: root
     height: childrenRect.height + Style.current.padding
     anchors.left: parent.left
     anchors.leftMargin: Style.current.padding
@@ -68,13 +68,11 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 48
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: 15
         wrapMode: Text.WordWrap
         anchors.right: parent.right
         anchors.rightMargin: Style.current.xlPadding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.xlPadding
-        color: Theme.palette.directColor1
     }
 
     StatusButton {
