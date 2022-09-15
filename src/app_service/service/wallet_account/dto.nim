@@ -13,6 +13,7 @@ type BalanceDto* = object
   currencyBalance*: float64
   address*: string
   chainId*: int
+  enabled*: bool
 
 type
   WalletTokenDto* = object
@@ -107,6 +108,7 @@ proc toBalanceDto*(jsonObj: JsonNode): BalanceDto =
   discard jsonObj.getProp("currencyBalance", result.currencyBalance)
   discard jsonObj.getProp("address", result.address)
   discard jsonObj.getProp("chainId", result.chainId)
+  discard jsonObj.getProp("enabled", result.enabled)
 
 proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
   result = WalletTokenDto()

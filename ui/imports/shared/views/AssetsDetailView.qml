@@ -43,8 +43,8 @@ Item {
         asset.name: token && token.symbol ? Style.png("tokens/%1".arg(token.symbol)) : ""
         asset.isImage: true
         primaryText: token ? token.name : ""
-        secondaryText: token ? qsTr("%1 %2").arg(Utils.toLocaleString(token.totalBalance, RootStore.locale, {"currency": true})).arg(token.symbol) : ""
-        tertiaryText: token ? "%1 %2".arg(Utils.toLocaleString(token.totalCurrencyBalance.toFixed(2), RootStore.locale, {"currency": true})).arg(RootStore.currencyStore.currentCurrency.toUpperCase()) : ""
+        secondaryText: token ? `${token.enabledNetworkBalance} ${token.symbol}` : ""
+        tertiaryText: token ? "%1 %2".arg(Utils.toLocaleString(token.enabledNetworkCurrencyBalance.toFixed(2), RootStore.locale, {"currency": true})).arg(RootStore.currencyStore.currentCurrency.toUpperCase()) : ""
         balances: token && token.balances ? token.balances :  null
         getNetworkColor: function(chainId){
             return RootStore.getNetworkColor(chainId)
