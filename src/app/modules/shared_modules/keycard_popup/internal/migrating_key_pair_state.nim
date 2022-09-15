@@ -10,7 +10,7 @@ proc newMigratingKeyPairState*(flowType: FlowType, backState: State): MigratingK
 proc delete*(self: MigratingKeyPairState) =
   self.State.delete
 
-method procDoMigration(self: MigratingKeyPairState, controller: Controller) =
+proc doMigration(self: MigratingKeyPairState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     let password = controller.getPassword()
     controller.setPassword("")
@@ -34,11 +34,11 @@ method executePrimaryCommand*(self: MigratingKeyPairState, controller: Controlle
     if controller.getSelectedKeyPairIsProfile():
       controller.authenticateUser()
     else:
-      self.procDoMigration(controller)
+      self.doMigration(controller)
 
 method executeSecondaryCommand*(self: MigratingKeyPairState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
-    self.procDoMigration(controller)
+    self.doMigration(controller)
 
 method getNextSecondaryState*(self: MigratingKeyPairState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycard:

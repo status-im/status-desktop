@@ -14,7 +14,7 @@ method getNextPrimaryState*(self: PinVerifiedState, controller: Controller): Sta
       return createState(StateType.KeycardMetadataDisplay, self.flowType, nil)
   return nil
 
-method executeSecondaryCommand*(self: PinVerifiedState, controller: Controller) =
+method executeTertiaryCommand*(self: PinVerifiedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

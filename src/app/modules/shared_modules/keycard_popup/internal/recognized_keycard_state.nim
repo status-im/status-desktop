@@ -13,10 +13,10 @@ method executeBackCommand*(self: RecognizedKeycardState, controller: Controller)
     if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
       controller.cancelCurrentFlow()
 
-method executePrimaryCommand*(self: RecognizedKeycardState, controller: Controller) =
+method executeTertiaryCommand*(self: RecognizedKeycardState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method getNextSecondaryState*(self: RecognizedKeycardState, controller: Controller): State =
   if self.flowType == FlowType.FactoryReset:

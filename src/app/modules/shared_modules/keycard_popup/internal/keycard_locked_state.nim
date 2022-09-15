@@ -12,6 +12,6 @@ method getNextPrimaryState*(self: KeycardLockedState, controller: Controller): S
   if self.flowType == FlowType.SetupNewKeycard:
     return createState(StateType.FactoryResetConfirmation, self.flowType, self)
 
-method executeSecondaryCommand*(self: KeycardLockedState, controller: Controller) =
+method executeTertiaryCommand*(self: KeycardLockedState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

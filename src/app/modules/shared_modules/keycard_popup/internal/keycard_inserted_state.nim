@@ -20,11 +20,8 @@ method getNextSecondaryState*(self: KeycardInsertedState, controller: Controller
     return createState(StateType.ReadingKeycard, self.flowType, self.getBackState)
   return createState(StateType.ReadingKeycard, self.flowType, nil)
 
-method executePrimaryCommand*(self: KeycardInsertedState, controller: Controller) =
-  if self.flowType == FlowType.FactoryReset or
-    self.flowType == FlowType.SetupNewKeycard:
-      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
-
 method executeTertiaryCommand*(self: KeycardInsertedState, controller: Controller) =
-  if self.flowType == FlowType.Authentication:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.Authentication:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

@@ -8,7 +8,7 @@ proc newKeycardEmptyMetadataState*(flowType: FlowType, backState: State): Keycar
 proc delete*(self: KeycardEmptyMetadataState) =
   self.State.delete
 
-method executeSecondaryCommand*(self: KeycardEmptyMetadataState, controller: Controller) =
+method executeTertiaryCommand*(self: KeycardEmptyMetadataState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

@@ -12,7 +12,7 @@ method executePrimaryCommand*(self: SelectExistingKeyPairState, controller: Cont
   if self.flowType == FlowType.SetupNewKeycard:
     controller.runLoadAccountFlow()
 
-method executeSecondaryCommand*(self: SelectExistingKeyPairState, controller: Controller) =
+method executeTertiaryCommand*(self: SelectExistingKeyPairState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

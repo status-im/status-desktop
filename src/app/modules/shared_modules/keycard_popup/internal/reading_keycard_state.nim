@@ -13,14 +13,11 @@ method executeBackCommand*(self: ReadingKeycardState, controller: Controller) =
     if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
       controller.cancelCurrentFlow()
 
-method executePrimaryCommand*(self: ReadingKeycardState, controller: Controller) =
-  if self.flowType == FlowType.FactoryReset or
-    self.flowType == FlowType.SetupNewKeycard:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
-
 method executeTertiaryCommand*(self: ReadingKeycardState, controller: Controller) =
-  if self.flowType == FlowType.Authentication:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.Authentication:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method getNextSecondaryState*(self: ReadingKeycardState, controller: Controller): State =
   let (flowType, flowEvent) = controller.getLastReceivedKeycardData()
