@@ -60,7 +60,7 @@ Item {
         asset.isImage: true
         onClicked: root.infoButtonClicked()
         anchors.top: parent.top
-        anchors.topMargin: 5
+        anchors.topMargin: Style.current.smallPadding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.halfPadding
         anchors.right: (implicitWidth > parent.width - 50) ? adHocChatButton.left : undefined
@@ -377,16 +377,16 @@ Item {
             spacing: Style.current.bigPadding
 
             Loader {
-                id: emptyViewAndSuggestionsLoader
                 active: communityData.amISectionAdmin &&
                         (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
-                        !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(communityData.id))
+                         !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(communityData.id))
                 width: parent.width
                 height: {
                     // I dont know why, the binding doesn't work well if this isn't here
                     item && item.height
-                    return this.active ? item.height : 0
+                    return active ? item.height : 0
                 }
+
                 sourceComponent: Component {
                     CommunityWelcomeBannerPanel {
                         activeCommunity: communityData
@@ -399,21 +399,16 @@ Item {
             } // Loader
 
             Loader {
-                id: channelsAndCategoriesAdminBox
                 active: communityData.amISectionAdmin &&
                         (!localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners ||
-                        !localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners.includes(communityData.id))
+                         !localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners.includes(communityData.id))
                 width: parent.width
                 height: {
                     // I dont know why, the binding doesn't work well if this isn't here
                     item && item.height
-                    return this.active ? item.height : 0
+                    return active ? item.height : 0
                 }
                 sourceComponent: Component {
-                    Item {
-                        width: parent.width
-                        height: channelsAndCategoriesBanner.height
-
                         CommunityChannelsAndCategoriesBannerPanel {
                             id: channelsAndCategoriesBanner
                             communityId: communityData.id
@@ -424,37 +419,20 @@ Item {
                                 Global.openPopup(createCategoryPopup);
                             }
                         }
-
-                        MouseArea {
-                            anchors.fill: channelsAndCategoriesBanner
-                            acceptedButtons: Qt.RightButton
-                            propagateComposedEvents: true
-                            onClicked: {
-                                /* Prevents sending events to the component beneath
-                                if Right Mouse Button is clicked. */
-                                mouse.accepted = false;
-                            }
-                        }
-                    }
                 }
             } // Loader
 
             Loader {
-                id: backUpBannerLoader
                 active: communityData.amISectionAdmin &&
-                            (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
-                            !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(communityData.id))
+                        (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
+                         !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(communityData.id))
                 width: parent.width
                 height: {
                     // I dont know why, the binding doesn't work well if this isn't here
                     item && item.height
-                    active ? item.height : 0
+                    return active ? item.height : 0
                 }
                 sourceComponent: Component {
-                    Item {
-                        width: parent.width
-                        height: backupBanner.height
-
                         BackUpCommuntyBannerPanel {
                             id: backupBanner
                             communityId: communityData.id
@@ -465,17 +443,6 @@ Item {
                                 })
                             }
                         }
-                        MouseArea {
-                            anchors.fill: backupBanner
-                            acceptedButtons: Qt.RightButton
-                            propagateComposedEvents: true
-                            onClicked: {
-                                /* Prevents sending events to the component beneath
-                                if Right Mouse Button is clicked. */
-                                mouse.accepted = false;
-                            }
-                        }
-                    }
                 }
             } // Loader
         } // Column
