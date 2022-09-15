@@ -47,7 +47,7 @@ Rectangle {
         anchors.leftMargin: headerButton.margin
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: 13
-        font.family: Style.current.fontMedium.name
+        font.family: Style.current.baseFont.name
         font.weight: Font.Medium
         color: Style.current.blue
     }

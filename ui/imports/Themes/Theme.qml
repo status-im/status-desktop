@@ -2,17 +2,19 @@ import QtQuick 2.13
 import utils 1.0
 
 QtObject {
-    property QtObject fontMedium: FontLoader { id: _fontMedium; source: "../../fonts/Inter/Inter-Medium.otf"; }
-    property QtObject fontBold: FontLoader { id: _fontBold; source: "../../fonts/Inter/Inter-Bold.otf"; }
-    property QtObject fontLight: FontLoader { id: _fontLight; source: "../../fonts/Inter/Inter-Light.otf"; }
-    property QtObject fontRegular: FontLoader { id: _fontRegular; source: "../../fonts/Inter/Inter-Regular.otf"; }
+    readonly property FontLoader baseFont: FontLoader { source: "../../fonts/Inter/Inter-Regular.otf" }
+    readonly property FontLoader monoFont: FontLoader { source: "../../fonts/InterStatus/InterStatus-Regular.otf" }
+    readonly property FontLoader codeFont: FontLoader { source: "../../fonts/RobotoMono/RobotoMono-Regular.ttf" }
 
-    property QtObject fontHexMedium: FontLoader { id: _fontHexMedium; source: "../../fonts/InterStatus/InterStatus-Medium.otf"; }
-    property QtObject fontHexBold: FontLoader { id: _fontHexBold; source: "../../fonts/InterStatus/InterStatus-Bold.otf"; }
-    property QtObject fontHexLight: FontLoader { id: _fontHexLight; source: "../../fonts/InterStatus/InterStatus-Light.otf"; }
-    property QtObject fontHexRegular: FontLoader { id: _fontHexRegular; source: "../../fonts/InterStatus/InterStatus-Regular.otf"; }
+    readonly property QtObject _d: QtObject {
+        readonly property FontLoader baseFontMedium: FontLoader { source: "../../fonts/Inter/Inter-Medium.otf" }
+        readonly property FontLoader baseFontBold: FontLoader { source: "../../fonts/Inter/Inter-Bold.otf" }
+        readonly property FontLoader baseFontLight: FontLoader { source: "../../fonts/Inter/Inter-Light.otf" }
 
-    property QtObject fontCodeRegular: FontLoader { id: _fontCodeRegular; source: "../../fonts/RobotoMono/RobotoMono-Regular.ttf"; }
+        readonly property FontLoader monoFontMedium: FontLoader { source: "../../fonts/InterStatus/InterStatus-Medium.otf" }
+        readonly property FontLoader monoFontBold: FontLoader { source: "../../fonts/InterStatus/InterStatus-Bold.otf" }
+        readonly property FontLoader monoFontLight: FontLoader { source: "../../fonts/InterStatus/InterStatus-Light.otf" }
+    }
 
     property string name
 

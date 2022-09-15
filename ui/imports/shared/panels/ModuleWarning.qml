@@ -145,7 +145,7 @@ Item {
                     text: button.text
                     font.pixelSize: 12
                     font.weight: Font.Medium
-                    font.family: Style.current.fontRegular.name
+                    font.family: Style.current.baseFont.name
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     color: Theme.palette.indirectColor1

@@ -60,7 +60,7 @@ Item {
             anchors.bottomMargin: Style.current.smallPadding
             anchors.topMargin: Style.current.smallPadding
             anchors.fill: parent
-            font.family: Style.current.fontRegular.name
+            font.family: Style.current.baseFont.name
             color: Style.current.textColor
             placeholderTextColor: Style.current.secondaryText
             selectionColor: Style.current.primarySelectionColor

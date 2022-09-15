@@ -69,7 +69,7 @@ Rectangle {
         id: addressText
         width: 108
         text: address
-        font.family: Style.current.fontHexRegular.name
+        font.family: Style.current.monoFont.name
         elide: Text.ElideMiddle
         anchors.bottom: accountImage.bottom
         anchors.bottomMargin: 0

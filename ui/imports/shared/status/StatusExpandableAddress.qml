@@ -27,7 +27,7 @@ Item {
             id: addressText
             text: root.address
             font.pixelSize: 13
-            font.family: Style.current.fontHexRegular.name
+            font.family: Style.current.monoFont.name
             color: Style.current.secondaryText
             elide: Text.ElideMiddle
             horizontalAlignment: Text.AlignHCenter
