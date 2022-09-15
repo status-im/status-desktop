@@ -68,7 +68,7 @@ Flickable {
                 switch (type) {
                     case HoldingTypes.Type.Token:
                     case HoldingTypes.Type.Collectible:
-                        return qsTr("%1 %2").arg(amount.toString()).arg(name)
+                        return `${LocaleUtils.numberToLocaleString(amount)} ${name}`
                     case HoldingTypes.Type.Ens:
                         if (name)
                             return qsTr("ENS username on '%1' domain").arg(name)
@@ -182,9 +182,6 @@ Flickable {
 
                 const modelItem = tokensSelector.itemsModel.get(index)
 
-                dropdown.openFlow(HoldingsDropdown.FlowType.Update)
-                dropdown.setActiveTab(modelItem.type)
-
                 switch(modelItem.type) {
                     case HoldingTypes.Type.Token:
                         dropdown.tokenKey = modelItem.key
@@ -203,6 +200,9 @@ Flickable {
                     default:
                         console.warn("Unsupported holdings type.")
                 }
+
+                dropdown.openFlow(HoldingsDropdown.FlowType.Update)
+                dropdown.setActiveTab(modelItem.type)
 
                 editedIndex = index
             }

@@ -4,7 +4,8 @@ import QtQuick.Layouts 1.14
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Controls.Validators 0.1
+
+import shared.controls 1.0
 
 ColumnLayout {
     id: root
@@ -13,9 +14,15 @@ ColumnLayout {
     property alias collectibleName: pickerButton.text
     property url collectibleImage
 
-    property alias amount: amountInput.text
+    property alias amountText: amountInput.text
+    property alias amount: amountInput.amount
+    readonly property bool amountValid: amountInput.valid && amountInput.text.length > 0
 
     signal pickerClicked
+
+    function setAmount(amount) {
+        amountInput.setAmount(amount)
+    }
 
     spacing: 0
 
@@ -50,30 +57,14 @@ ColumnLayout {
         StatusSwitch { id: specificAmountSwitch }
     }
 
-    StatusInput {
+    AmountInput {
         id: amountInput
+
+        visible: specificAmountSwitch.checked
 
         Layout.fillWidth: true
         Layout.topMargin: 8
-        visible: specificAmountSwitch.checked
-        minimumHeight: 36
-        maximumHeight: 36
-        topPadding: 0
-        bottomPadding: 0
-        font.pixelSize: 13
-        rightPadding: amountText.implicitWidth + amountText.anchors.rightMargin + leftPadding
-        input.placeholderText: "0"
-        validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
-        validators: StatusFloatValidator {  bottom: 0 }
 
-        StatusBaseText {
-            id: amountText
-            anchors.right: parent.right
-            anchors.rightMargin: 13
-            anchors.verticalCenter: parent.verticalCenter
-            text: qsTr("Amount")
-            color: Theme.palette.baseColor1
-            font.pixelSize: 13
-        }
+        allowDecimals: false
     }
 }

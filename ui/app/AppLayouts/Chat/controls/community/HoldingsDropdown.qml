@@ -14,9 +14,9 @@ StatusDropdown {
     property var store
 
     property string tokenKey: ""
-    property string collectibleKey: ""
-
     property real tokenAmount: 0
+
+    property string collectibleKey: ""
     property real collectibleAmount: 1
     property bool collectiblesSpecificAmount: false
 
@@ -36,6 +36,8 @@ StatusDropdown {
     function reset() {
         d.currentHoldingType = HoldingTypes.Type.Token
         d.operator = SQ.Utils.Operators.None
+        d.tokenAmountText = ""
+        d.collectibleAmountText = ""
 
         root.tokenKey = ""
         root.collectibleKey = ""
@@ -95,6 +97,9 @@ StatusDropdown {
 
         property int holdingsTabMode: HoldingsTabs.Mode.Add
         property int extendedDropdownType: ExtendedDropdownContent.Type.Tokens
+
+        property string tokenAmountText: ""
+        property string collectibleAmountText: ""
 
         property int currentHoldingType: HoldingTypes.Type.Token
 
@@ -279,24 +284,15 @@ StatusDropdown {
             id: tokensPanel
 
             tokenName: d.defaultTokenNameText
-            amount: root.tokenAmount === 0 ? "" : root.tokenAmount.toString()
-            onAmountChanged: root.tokenAmount = Number(amount)
+            amountText: d.tokenAmountText
+            onAmountTextChanged: d.tokenAmountText = amountText
+
+            readonly property real effectiveAmount: amountValid ? amount : 0
+            onEffectiveAmountChanged: root.tokenAmount = effectiveAmount
 
             onPickerClicked: {
                 d.extendedDropdownType = ExtendedDropdownContent.Type.Tokens
                 statesStack.push(d.extendedState)
-            }
-
-            Connections {
-                target: d
-
-                function onAddClicked() {
-                    root.addToken(root.tokenKey, root.tokenAmount, d.operator)
-                }
-
-                function onUpdateClicked() {
-                    root.updateToken(root.tokenKey, root.tokenAmount)
-                }
             }
 
             readonly property string tokenKey: root.tokenKey
@@ -312,6 +308,23 @@ StatusDropdown {
                     tokensPanel.tokenImage = ""
                 }
             }
+
+            Component.onCompleted: {
+                if (d.tokenAmountText.length === 0 && root.tokenAmount)
+                    tokensPanel.setAmount(root.tokenAmount)
+            }
+
+            Connections {
+                target: d
+
+                function onAddClicked() {
+                    root.addToken(root.tokenKey, root.tokenAmount, d.operator)
+                }
+
+                function onUpdateClicked() {
+                    root.updateToken(root.tokenKey, root.tokenAmount)
+                }
+            }
         }
     }
 
@@ -322,9 +335,11 @@ StatusDropdown {
             id: collectiblesPanel
 
             collectibleName: d.defaultCollectibleNameText
+            amountText: d.collectibleAmountText
+            onAmountTextChanged: d.collectibleAmountText = amountText
 
-            amount: root.collectibleAmount === 0 ? "" : root.collectibleAmount.toString()
-            onAmountChanged: root.collectibleAmount = Number(amount)
+            readonly property real effectiveAmount: amountValid ? amount : 0
+            onEffectiveAmountChanged: root.collectibleAmount = effectiveAmount
 
             specificAmount: root.collectiblesSpecificAmount
             onSpecificAmountChanged: root.collectiblesSpecificAmount = specificAmount
@@ -334,15 +349,24 @@ StatusDropdown {
                 statesStack.push(d.extendedState)
             }
 
+            Component.onCompleted: {
+                if (d.collectibleAmountText.length === 0 && root.collectibleAmount)
+                    collectiblesPanel.setAmount(root.collectibleAmount)
+            }
+
+            function getAmount() {
+                return specificAmount ? effectiveAmount : 1
+            }
+
             Connections {
                 target: d
 
                 function onAddClicked() {
-                    root.addCollectible(root.collectibleKey, root.collectibleAmount, d.operator)
+                    root.addCollectible(root.collectibleKey, collectiblesPanel.getAmount(), d.operator)
                 }
 
                 function onUpdateClicked() {
-                    root.updateCollectible(root.collectibleKey, root.collectibleAmount)
+                    root.updateCollectible(root.collectibleKey, collectiblesPanel.getAmount())
                 }
             }
 
@@ -416,5 +440,5 @@ StatusDropdown {
                 }
             }
         }
-    }    
+    }
 }
