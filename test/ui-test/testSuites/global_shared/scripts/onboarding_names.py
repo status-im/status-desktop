@@ -18,6 +18,7 @@ onboarding_DetailsView_NextButton = {"container": statusDesktop_mainWindow, "obj
 mainWindow_I_prefer_to_use_my_password_StatusBaseText = {"container": statusDesktop_mainWindow, "objectName": "touchIdIPreferToUseMyPasswordText", "type": "StatusBaseText"}
 mainWindow_Ok_got_it_StatusBaseText = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "allowNotificationsOnboardingOkButton", "visible": True}
 mainWindow_WelcomeScreen_User_Profile_Image = {"container": statusDesktop_mainWindow, "type": "StatusSmartIdenticon", "objectName": "welcomeScreenUserProfileImage"}
+mainWindow_WelcomeScreen_ChatKeyText = {"container": statusDesktop_mainWindow, "type": "StyledText", "objectName": "insertDetailsViewChatKeyTxt"}
 mainWindow_WelcomeScreen_Image_Crop_Workflow_Item= {"container": statusDesktop_mainWindow, "type": "Item", "objectName": "imageCropWorkflow"}
 mainWindow_WelcomeScreen_Image_Cropper_Accept_Button= {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "imageCropperAcceptButton"}
 
