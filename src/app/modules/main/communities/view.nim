@@ -12,6 +12,8 @@ import ./models/discord_categories_model
 import ./models/discord_category_item
 import ./models/discord_channels_model
 import ./models/discord_channel_item
+import ./models/discord_import_tasks_model
+import ./models/discord_import_errors_model
 
 QtObject:
   type
@@ -32,7 +34,15 @@ QtObject:
       discordOldestMessageTimestamp: int
       discordImportErrorsCount: int
       discordImportWarningsCount: int
+      discordImportProgress: int
+      discordImportInProgress: bool
+      discordImportCancelled: bool
+      discordImportProgressStopped: bool
+      discordImportTasksModel: DiscordImportTasksModel
+      discordImportTasksModelVariant: QVariant
       discordDataExtractionInProgress: bool
+      discordImportCommunityId: string
+      discordImportCommunityName: string
 
   proc delete*(self: View) =
     self.model.delete
@@ -46,6 +56,8 @@ QtObject:
     self.discordCategoriesModelVariant.delete
     self.discordChannelsModel.delete
     self.discordChannelsModelVariant.delete
+    self.discordImportTasksModel.delete
+    self.discordImportTasksModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -67,6 +79,12 @@ QtObject:
     result.discordDataExtractionInProgress = false 
     result.discordImportWarningsCount = 0
     result.discordImportErrorsCount = 0
+    result.discordImportProgress = 0
+    result.discordImportInProgress = false
+    result.discordImportCancelled = false
+    result.discordImportProgressStopped = false
+    result.discordImportTasksModel = newDiscordDiscordImportTasksModel()
+    result.discordImportTasksModelVariant = newQVariant(result.discordImportTasksModel)
     result.observedItem = newActiveSection()
 
   proc load*(self: View) =
@@ -118,6 +136,62 @@ QtObject:
   QtProperty[int] discordImportErrorsCount:
     read = getDiscordImportErrorsCount
     notify = discordImportErrorsCountChanged
+
+  proc discordImportProgressChanged*(self: View) {.signal.}
+
+  proc setDiscordImportProgress*(self: View, value: int) {.slot.} =
+    if (self.discordImportProgress == value): return
+    self.discordImportProgress = value
+    self.discordImportProgressChanged()
+
+  proc getDiscordImportProgress*(self: View): int {.slot.} =
+    return self.discordImportProgress
+
+  QtProperty[int] discordImportProgress:
+    read = getDiscordImportProgress
+    notify = discordImportProgressChanged
+
+  proc discordImportInProgressChanged*(self: View) {.signal.}
+
+  proc setDiscordImportInProgress*(self: View, value: bool) {.slot.} =
+    if (self.discordImportInProgress == value): return
+    self.discordImportInProgress = value
+    self.discordImportInProgressChanged()
+
+  proc getDiscordImportInProgress*(self: View): bool {.slot.} =
+    return self.discordImportInProgress
+
+  QtProperty[bool] discordImportInProgress:
+    read = getDiscordImportInProgress
+    notify = discordImportInProgressChanged
+
+  proc discordImportCancelledChanged*(self: View) {.signal.}
+
+  proc setDiscordImportCancelled*(self: View, value: bool) {.slot.} =
+    if (self.discordImportCancelled == value): return
+    self.discordImportCancelled = value
+    self.discordImportCancelledChanged()
+
+  proc getDiscordImportCancelled*(self: View): bool {.slot.} =
+    return self.discordImportCancelled
+
+  QtProperty[bool] discordImportCancelled:
+    read = getDiscordImportCancelled
+    notify = discordImportCancelledChanged
+
+  proc discordImportProgressStoppedChanged*(self: View) {.signal.}
+
+  proc setDiscordImportProgressStopped*(self: View, stopped: bool) {.slot.} =
+    if (self.discordImportProgressStopped == stopped): return
+    self.discordImportProgressStopped = stopped
+    self.discordImportProgressStoppedChanged()
+
+  proc getDiscordImportProgressStopped*(self: View): bool {.slot.} =
+    return self.discordImportProgressStopped
+
+  QtProperty[int] discordImportProgressStopped:
+    read = getDiscordImportProgressStopped
+    notify = discordImportProgressStoppedChanged
 
   proc addItem*(self: View, item: SectionItem) =
     self.model.addItem(item)
@@ -174,6 +248,15 @@ QtObject:
   QtProperty[QVariant] discordChannels:
     read = getDiscordChannelsModel
 
+  proc discordImportTasksModel*(self: View): DiscordImportTasksModel =
+    result = self.discordImportTasksModel
+
+  proc getDiscordImportTasksModel(self: View): QVariant {.slot.} =
+    return self.discordImportTasksModelVariant
+
+  QtProperty[QVariant] discordImportTasks:
+    read = getDiscordImportTasksModel
+
   proc observedItemChanged*(self:View) {.signal.}
 
   proc getObservedItem(self: View): QVariant {.slot.} =
@@ -204,6 +287,34 @@ QtObject:
     read = getDiscordDataExtractionInProgress
     notify = discordDataExtractionInProgressChanged
 
+  proc discordImportCommunityIdChanged*(self: View) {.signal.}
+
+  proc getDiscordImportCommunityId(self: View): string {.slot.} =
+    return self.discordImportCommunityId
+
+  proc setDiscordImportCommunityId*(self: View, id: string) {.slot.} =
+    if (self.discordImportCommunityId == id): return
+    self.discordImportCommunityId = id
+    self.discordImportCommunityIdChanged()
+
+  QtProperty[string] discordImportCommunityId:
+    read = getDiscordImportCommunityId
+    notify = discordImportCommunityIdChanged
+
+  proc discordImportCommunityNameChanged*(self: View) {.signal.}
+
+  proc getDiscordImportCommunityName(self: View): string {.slot.} =
+    return self.discordImportCommunityName
+
+  proc setDiscordImportCommunityName*(self: View, name: string) {.slot.} =
+    if (self.discordImportCommunityName == name): return
+    self.discordImportCommunityName = name
+    self.discordImportCommunityNameChanged()
+
+  QtProperty[string] discordImportCommunityName:
+    read = getDiscordImportCommunityName
+    notify = discordImportCommunityNameChanged
+
   proc joinCommunity*(self: View, communityId: string, ensName: string) {.slot.} =
     # Users always have to request to join a community but might 
     # get automatically accepted.
@@ -218,6 +329,48 @@ QtObject:
                         pinMessageAllMembersEnabled: bool, bannerJsonStr: string) {.slot.} =
     self.delegate.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
                                   imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, bannerJsonStr)
+
+  proc clearFileList*(self: View) {.slot.} =
+    self.discordFileListModel.clearItems()
+    self.setDiscordImportErrorsCount(0)
+    self.setDiscordImportWarningsCount(0)
+
+  proc clearDiscordCategoriesAndChannels*(self: View) {.slot.} =
+    self.discordCategoriesModel.clearItems()
+    self.discordChannelsModel.clearItems()
+
+  proc resetDiscordImport*(self: View, cancelled: bool) {.slot.} =
+    self.clearFileList()
+    self.clearDiscordCategoriesAndChannels()
+    self.discordImportTasksModel.clearItems()
+    self.setDiscordImportProgress(0)
+    self.setDiscordImportProgressStopped(false)
+    self.setDiscordImportErrorsCount(0)
+    self.setDiscordImportWarningsCount(0)
+    self.setDiscordImportCommunityId("")
+    self.setDiscordImportCommunityName("")
+    self.setDiscordImportInProgress(false)
+    self.setDiscordImportCancelled(cancelled)
+
+
+  proc requestImportDiscordCommunity*(self: View, name: string,
+                        description: string, introMessage: string, outroMessage: string,
+                        access: int, color: string, tags: string,
+                        imagePath: string,
+                        aX: int, aY: int, bX: int, bY: int,
+                        historyArchiveSupportEnabled: bool,
+                        pinMessageAllMembersEnabled: bool,
+                        fromTimestamp: int) {.slot.} =
+    let selectedItems = self.discordChannelsModel.getSelectedItems()
+    var filesToImport: seq[string] = @[]
+
+    for i in 0 ..< selectedItems.len:
+      filesToImport.add(selectedItems[i].getFilePath())
+
+    self.resetDiscordImport(false)
+    self.setDiscordImportInProgress(true)
+    self.delegate.requestImportDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags,
+                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp)
 
   proc deleteCommunityCategory*(self: View, communityId: string, categoryId: string): string {.slot.} =
     self.delegate.deleteCommunityCategory(communityId, categoryId)
@@ -288,14 +441,13 @@ QtObject:
     self.setDiscordImportErrorsCount(0)
     self.setDiscordImportWarningsCount(0)
 
-  proc clearFileList*(self: View) {.slot.} =
-    self.discordFileListModel.clearItems()
-    self.setDiscordImportErrorsCount(0)
-    self.setDiscordImportWarningsCount(0)
-
   proc requestExtractDiscordChannelsAndCategories*(self: View) {.slot.} =
     let filePaths = self.discordFileListModel.getSelectedFilePaths()
     self.delegate.requestExtractDiscordChannelsAndCategories(filePaths)
+
+  proc requestCancelDiscordCommunityImport*(self: View, id: string) {.slot.} =
+    self.delegate.requestCancelDiscordCommunityImport(id)
+    self.resetDiscordImport(true)
 
   proc toggleDiscordCategory*(self: View, id: string, selected: bool) {.slot.} =
     if selected:
@@ -316,6 +468,3 @@ QtObject:
       if self.discordChannelsModel.allChannelsByCategoryUnselected(item.getCategoryId()):
         self.discordCategoriesModel.unselectItem(item.getCategoryId())
 
-  proc clearDiscordCategoriesAndChannels*(self: View) {.slot.} =
-    self.discordCategoriesModel.clearItems()
-    self.discordChannelsModel.clearItems()

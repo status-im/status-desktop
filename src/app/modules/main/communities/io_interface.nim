@@ -34,6 +34,11 @@ method createCommunity*(self: AccessInterface, name: string, description, introM
                         historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool, bannerJsonStr: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method requestImportDiscordCommunity*(self: AccessInterface, name: string, description, introMessage, outroMessage: string, access: int,
+                        color: string, tags: string, imagePath: string, aX: int, aY: int, bX: int, bY: int,
+                        historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool, filesToImport: seq[string], fromTimestamp: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method deleteCommunityCategory*(self: AccessInterface, communityId: string, categoryId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -116,4 +121,10 @@ method requestExtractDiscordChannelsAndCategories*(self: AccessInterface, filesT
   raise newException(ValueError, "No implementation available")
 
 method discordCategoriesAndChannelsExtracted*(self: AccessInterface, categories: seq[DiscordCategoryDto], channels: seq[DiscordChannelDto], oldestMessageTimestamp: int, errors: Table[string, DiscordImportError], errorsCount: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method discordImportProgressUpdated*(self: AccessInterface, communityId: string, communityName: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method requestCancelDiscordCommunityImport*(self: AccessInterface, id: string) {.base.} =
   raise newException(ValueError, "No implementation available")

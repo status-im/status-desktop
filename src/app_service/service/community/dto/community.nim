@@ -96,6 +96,15 @@ type DiscordImportError* = object
   code*: int
   message*: string
 
+type DiscordImportTaskProgress* = object
+  `type`*: string
+  progress*: float
+  errors*: seq[DiscordImportError]
+  errorsCount*: int
+  warningsCount*: int
+  stopped*: bool
+  state*: string
+
 proc toCommunityAdminSettingsDto*(jsonObj: JsonNode): CommunityAdminSettingsDto =
   result = CommunityAdminSettingsDto()
   discard jsonObj.getProp("pinMessageAllMembersEnabled", result.pinMessageAllMembersEnabled)
@@ -117,6 +126,21 @@ proc toDiscordImportError*(jsonObj: JsonNode): DiscordImportError =
   result = DiscordImportError()
   discard jsonObj.getProp("code", result.code)
   discard jsonObj.getProp("message", result.message)
+
+proc toDiscordImportTaskProgress*(jsonObj: JsonNode): DiscordImportTaskProgress =
+  result = DiscordImportTaskProgress()
+  result.`type` = jsonObj{"type"}.getStr()
+  result.progress = jsonObj{"progress"}.getFloat()
+  result.stopped = jsonObj{"stopped"}.getBool()
+  result.errorsCount = jsonObj{"errorsCount"}.getInt()
+  result.warningsCount = jsonObj{"warningsCount"}.getInt()
+  result.state = jsonObj{"state"}.getStr()
+
+  var importErrorsObj: JsonNode
+  if(jsonObj.getProp("errors", importErrorsObj) and importErrorsObj.kind == JArray):
+    for error in importErrorsObj:
+      let importError = error.toDiscordImportError()
+      result.errors.add(importError)
 
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()

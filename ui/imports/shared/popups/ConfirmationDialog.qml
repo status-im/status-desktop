@@ -18,6 +18,7 @@ StatusModal {
     property var executeCancel
     property string confirmButtonObjectName: ""
     property string btnType: "warn"
+    property string cancelBtnType: "warn"
     property string confirmButtonLabel: qsTr("Confirm")
     property string rejectButtonLabel: qsTr("Reject")
     property string cancelButtonLabel: qsTr("Cancel")
@@ -81,6 +82,14 @@ StatusModal {
             id: cancelButton
             visible: showCancelButton
             text: confirmationDialog.cancelButtonLabel
+            type: {
+                switch (confirmationDialog.cancelBtnType) {
+                    case "warn":
+                        return StatusBaseButton.Type.Danger
+                    default:
+                        return StatusBaseButton.Type.Normal
+                }
+            }
             onClicked: {
                 if (executeCancel && typeof executeCancel === "function") {
                     executeCancel()
@@ -106,7 +115,7 @@ StatusModal {
                     case "warn":
                         return StatusBaseButton.Type.Danger
                     default:
-                        return StatusBaseButton.Type.Primary
+                        return StatusBaseButton.Type.Normal
                 }
             }
             text: confirmationDialog.confirmButtonLabel

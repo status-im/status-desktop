@@ -498,6 +498,57 @@ Item {
                     }
                 }
 
+
+                ModuleWarning {
+                    Layout.fillWidth: true
+                    readonly property int progress: communitiesPortalLayoutContainer.communitiesStore.discordImportProgress
+                    readonly property bool inProgress: progress > 0 && progress < 100
+                    readonly property bool finished: progress >= 100
+                    readonly property bool cancelled: communitiesPortalLayoutContainer.communitiesStore.discordImportCancelled
+                    readonly property bool stopped: communitiesPortalLayoutContainer.communitiesStore.discordImportProgressStopped
+                    readonly property int errors: communitiesPortalLayoutContainer.communitiesStore.discordImportErrorsCount
+                    readonly property int warnings: communitiesPortalLayoutContainer.communitiesStore.discordImportWarningsCount
+                    readonly property string communityId: communitiesPortalLayoutContainer.communitiesStore.discordImportCommunityId
+                    readonly property string communityName: communitiesPortalLayoutContainer.communitiesStore.discordImportCommunityName
+
+                    active: !cancelled && (inProgress || finished || stopped)
+                    type: errors ? ModuleWarning.Type.Danger : ModuleWarning.Type.Success
+                    text: {
+                        if (finished || stopped) {
+                            if (errors)
+                                return qsTr("The import of ‘%1’ from Discord to Status was stopped: <a href='#'>Critical issues found</a>").arg(communityName)
+
+                            let result = qsTr("‘%1’ was successfully imported from Discord to Status").arg(communityName) + "  <a href='#'>"
+                            if (warnings)
+                                result += qsTr("Details (%1)").arg(qsTr("%n issue(s)", "", warnings))
+                            else
+                                result += qsTr("Details")
+                            result += "</a>"
+                            return result
+                        }
+                        if (inProgress) {
+                            let result = qsTr("Importing ‘%1’ from Discord to Status").arg(communityName) + "  <a href='#'>"
+                            if (warnings)
+                                result += qsTr("Check progress (%1)").arg(qsTr("%n issue(s)", "", warnings))
+                            else
+                                result += qsTr("Check progress")
+                            result += "</a>"
+                            return result
+                        }
+                    }
+                    onLinkActivated: Global.openPopup(communitiesPortalLayoutContainer.discordImportProgressPopup)
+                    progressValue: progress
+                    closeBtnVisible: finished || stopped
+                    buttonText: finished && !errors ? qsTr("Visit your Community") : ""
+                    onClicked: function() {
+                        communitiesPortalLayoutContainer.communitiesStore.setActiveCommunity(communityId)
+                    }
+                    onCloseClicked: {
+                        hide();
+                    }
+                }
+
+
                 Component {
                     id: connectedBannerComponent
 

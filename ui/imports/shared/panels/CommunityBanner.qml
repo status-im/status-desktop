@@ -18,6 +18,8 @@ Rectangle {
     property alias text: bannerText.text
     property alias buttonText: bannerButton.text
     property alias icon: bannerIcon.asset
+    property string buttonTooltipText: ""
+    property bool buttonLoading: false
 
     implicitWidth: 272
     implicitHeight: 168
@@ -74,7 +76,17 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 16
         font.weight: Font.Medium
-        onClicked: root.buttonClicked()
+        onClicked: {
+            if (!root.buttonLoading) {
+                root.buttonClicked()
+            }
+        }
+        loading: root.buttonLoading
+
+        StatusQControls.StatusToolTip {
+            text: root.buttonTooltipText
+            visible: !!root.buttonTooltipText && bannerButton.loading && bannerButton.hovered
+        }
     }
 }
 

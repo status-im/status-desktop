@@ -1,6 +1,7 @@
-import json, strformat
+import json, strformat, strutils
 import ../../../app_service/common/types
 import ../../../app_service/service/contacts/dto/contacts
+import ../../../app_service/service/message/dto/message
 
 export types.ContentType
 import message_reaction_model, message_reaction_item, message_transaction_parameters_item
@@ -64,6 +65,7 @@ type
     mentionedUsersPks: seq[string]
     senderTrustStatus: TrustStatus
     senderEnsVerified: bool
+    messageAttachments: seq[string]
 
 proc initItem*(
     id,
@@ -90,7 +92,8 @@ proc initItem*(
     transactionParameters: TransactionParametersItem,
     mentionedUsersPks: seq[string],
     senderTrustStatus: TrustStatus,
-    senderEnsVerified: bool
+    senderEnsVerified: bool,
+    discordMessage: DiscordMessage
     ): Item =
   result = Item()
   result.id = id
@@ -124,6 +127,23 @@ proc initItem*(
   result.gapTo = 0
   result.senderTrustStatus = senderTrustStatus
   result.senderEnsVerified = senderEnsVerified
+  result.messageAttachments = @[]
+
+  if ContentType.DiscordMessage == contentType:
+    result.messageText = discordMessage.content
+    result.senderDisplayName = discordMessage.author.name
+    result.senderIcon = discordMessage.author.localUrl
+    result.timestamp = parseInt(discordMessage.timestamp)*1000
+
+    if result.senderIcon == "":
+      result.senderIcon = discordMessage.author.avatarUrl
+
+    if discordMessage.timestampEdited != "":
+      result.timestamp = parseInt(discordMessage.timestampEdited)*1000
+
+    for attachment in discordMessage.attachments:
+      if attachment.contentType.contains("image"):
+        result.messageAttachments.add(attachment.localUrl)
 
 proc `$`*(self: Item): string =
   result = fmt"""Item(
@@ -275,6 +295,9 @@ proc addReaction*(self: Item, emojiId: EmojiId, didIReactWithThisEmoji: bool, us
 
 proc removeReaction*(self: Item, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) =
   self.reactionsModel.removeReaction(emojiId, reactionId, didIRemoveThisReaction)
+
+proc messageAttachments*(self: Item): seq[string] {.inline.} =
+  self.messageAttachments
 
 proc links*(self: Item): seq[string] {.inline.} =
   self.links

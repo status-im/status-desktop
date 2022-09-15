@@ -194,7 +194,8 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
       m.transactionParameters.signature),
     m.mentionedUsersPks,
     contactDetails.details.trustStatus,
-    contactDetails.details.ensVerified
+    contactDetails.details.ensVerified,
+    m.discordMessage
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy
