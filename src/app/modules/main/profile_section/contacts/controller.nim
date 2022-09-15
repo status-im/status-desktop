@@ -65,6 +65,10 @@ proc init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.contactUpdated(args.contactId)
 
+  self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
+    let args = ContactsStatusUpdatedArgs(e)
+    self.delegate.contactsStatusUpdated(args.statusUpdates)
+
   self.events.on(SIGNAL_CONTACT_VERIFICATION_DECLINED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onVerificationRequestDeclined(args.contactId)
