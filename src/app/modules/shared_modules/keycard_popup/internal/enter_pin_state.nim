@@ -17,20 +17,19 @@ method getNextPrimaryState*(self: EnterPinState, controller: Controller): State 
       controller.enterKeycardPin(controller.getPin())
 
 method executeSecondaryCommand*(self: EnterPinState, controller: Controller) =
-  if self.flowType == FlowType.FactoryReset or
-    self.flowType == FlowType.SetupNewKeycard:
-      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.FactoryReset:
+      if controller.getPin().len == PINLengthForStatusApp:
+        controller.enterKeycardPin(controller.getPin())  
   if self.flowType == FlowType.Authentication:
     controller.setUsePinFromBiometrics(false)
     controller.tryToObtainDataFromKeychain()
 
 method executeTertiaryCommand*(self: EnterPinState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.FactoryReset:
-      if controller.getPin().len == PINLengthForStatusApp:
-        controller.enterKeycardPin(controller.getPin())
-  if self.flowType == FlowType.Authentication:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.Authentication:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: EnterPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =

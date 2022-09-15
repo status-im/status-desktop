@@ -130,13 +130,13 @@ Item {
                     root.sharedKeycardModule.setPin(pinInput)
                     if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication)
                         return
-                    root.sharedKeycardModule.currentState.doTertiaryAction()
+                    root.sharedKeycardModule.currentState.doSecondaryAction()
                 }
                 else if(root.state === Constants.keycardSharedState.repeatPin) {
                     let pinsMatch = root.sharedKeycardModule.checkRepeatedKeycardPinWhileTyping(pinInput)
                     if (pinsMatch) {
                         info.text = qsTr("It is very important that you do not lose this PIN")
-                        root.sharedKeycardModule.currentState.doTertiaryAction()
+                        root.sharedKeycardModule.currentState.doSecondaryAction()
                     } else {
                         info.text = qsTr("PINs don't match")
                         image.source = Style.png("keycard/plain-error")

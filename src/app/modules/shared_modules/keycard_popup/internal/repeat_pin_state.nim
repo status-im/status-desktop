@@ -13,14 +13,14 @@ method executeBackCommand*(self: RepeatPinState, controller: Controller) =
   controller.setPinMatch(false)
 
 method executeSecondaryCommand*(self: RepeatPinState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycard:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
-
-method executeTertiaryCommand*(self: RepeatPinState, controller: Controller) =
   if not controller.getPinMatch():
     return
   if self.flowType == FlowType.SetupNewKeycard:
-    controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())
+    controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())  
+
+method executeTertiaryCommand*(self: RepeatPinState, controller: Controller) =
+  if self.flowType == FlowType.SetupNewKeycard:
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
      
 method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =

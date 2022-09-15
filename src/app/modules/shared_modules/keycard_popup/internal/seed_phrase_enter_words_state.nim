@@ -14,7 +14,7 @@ method executePrimaryCommand*(self: SeedPhraseEnterWordsState, controller: Contr
   let mnemonic = controller.getMnemonic()
   controller.storeSeedPhraseToKeycard(mnemonic.split(" ").len, mnemonic)
 
-method executeSecondaryCommand*(self: SeedPhraseEnterWordsState, controller: Controller) =
+method executeTertiaryCommand*(self: SeedPhraseEnterWordsState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

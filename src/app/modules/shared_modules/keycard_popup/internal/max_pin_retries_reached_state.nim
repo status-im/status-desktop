@@ -17,11 +17,8 @@ method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Control
       debug "Run Unlock Keycard flow... (not developed yet)"
   return nil
 
-method executeSecondaryCommand*(self: MaxPinRetriesReachedState, controller: Controller) =
-  if self.flowType == FlowType.FactoryReset or
-    self.flowType == FlowType.SetupNewKeycard:
-      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
-
 method executeTertiaryCommand*(self: MaxPinRetriesReachedState, controller: Controller) =
-  if self.flowType == FlowType.Authentication:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.Authentication:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

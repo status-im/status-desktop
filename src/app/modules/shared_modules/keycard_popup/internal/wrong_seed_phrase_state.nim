@@ -23,7 +23,7 @@ method executePrimaryCommand*(self: WrongSeedPhraseState, controller: Controller
     else:
       controller.setKeycardData(getPredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
 
-method executeSecondaryCommand*(self: WrongSeedPhraseState, controller: Controller) =
+method executeTertiaryCommand*(self: WrongSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

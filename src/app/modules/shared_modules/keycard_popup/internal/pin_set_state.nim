@@ -16,6 +16,6 @@ method getNextPrimaryState*(self: PinSetState, controller: Controller): State =
       return createState(StateType.SeedPhraseDisplay, self.flowType, nil)
   return nil
 
-method executeSecondaryCommand*(self: PinSetState, controller: Controller) =
+method executeTertiaryCommand*(self: PinSetState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

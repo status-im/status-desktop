@@ -14,7 +14,7 @@ method getNextPrimaryState*(self: KeycardMetadataDisplayState, controller: Contr
       return createState(StateType.FactoryResetConfirmationDisplayMetadata, self.flowType, self)
   return nil
 
-method executeSecondaryCommand*(self: KeycardMetadataDisplayState, controller: Controller) =
+method executeTertiaryCommand*(self: KeycardMetadataDisplayState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

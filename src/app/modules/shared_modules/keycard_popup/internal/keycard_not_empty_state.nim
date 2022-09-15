@@ -13,7 +13,7 @@ method executePrimaryCommand*(self: KeycardNotEmptyState, controller: Controller
     controller.setKeycardData(getPredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
     controller.runGetMetadataFlow()
 
-method executeSecondaryCommand*(self: KeycardNotEmptyState, controller: Controller) =
+method executeTertiaryCommand*(self: KeycardNotEmptyState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

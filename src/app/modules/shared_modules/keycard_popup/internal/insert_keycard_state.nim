@@ -19,8 +19,10 @@ method executePrimaryCommand*(self: InsertKeycardState, controller: Controller) 
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method executeTertiaryCommand*(self: InsertKeycardState, controller: Controller) =
-  if self.flowType == FlowType.Authentication:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.Authentication:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: InsertKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
