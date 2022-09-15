@@ -276,7 +276,8 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
           balance: chainBalance,
           currencyBalance: chainBalance * prices[network.nativeCurrencySymbol],
           chainId: network.chainId,
-          address: "0x0000000000000000000000000000000000000000"
+          address: "0x0000000000000000000000000000000000000000",
+          enabled: network.enabled,
         )
         if network.enabled:
           enabledNetworkBalance.balance += balancesPerChain[network.chainId].balance
@@ -342,11 +343,17 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
       for token in tokens:
         let balanceForToken = tokenBalances{address}{token.addressAsString()}.getStr
         let chainBalanceForToken = parsefloat(hex2Balance(balanceForToken, token.decimals))
+        var enabled = false
+        for network in arg.networks:
+          if network.chainId == token.chainId:
+            enabled = true
+
         balancesPerChain[token.chainId] = BalanceDto(
           balance: chainBalanceForToken,
           currencyBalance: chainBalanceForToken * prices[token.symbol],
           chainId: token.chainId,
-          address: $token.address
+          address: $token.address,
+          enabled: enabled,
         )
         if isNetworkEnabledForChainId(arg.networks, token.chainId):
           visible = true

@@ -46,7 +46,7 @@ Item {
             objectName: "AssetView_TokenListItem_" + symbol
             width: parent.width
             title: name
-            subTitle: qsTr("%1 %2").arg(Utils.toLocaleString(enabledNetworkBalance, RootStore.locale, {"currency": true})).arg(symbol)
+            subTitle: `${enabledNetworkBalance} ${symbol}`
             asset.name: symbol ? Style.png("tokens/" + symbol) : ""
             asset.isImage: true
             components: [
