@@ -657,7 +657,6 @@ Item {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
-                        chatView.pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
                         chatView.emojiPopup: statusEmojiPopup
 
                         contactsStore: appMain.rootStore.contactStore
@@ -758,7 +757,6 @@ Item {
                                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                                     Layout.fillHeight: true
 
-                                    chatView.pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
                                     chatView.emojiPopup: statusEmojiPopup
 
                                     contactsStore: appMain.rootStore.contactStore
