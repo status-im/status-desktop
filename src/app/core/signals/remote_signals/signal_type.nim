@@ -39,9 +39,12 @@ type SignalType* {.pure.} = enum
   HistoryArchivesSeeding = "community.historyArchivesSeeding"
   HistoryArchivesUnseeded = "community.historyArchivesUnseeded"
   HistoryArchiveDownloaded = "community.historyArchiveDownloaded"
+  DownloadingHistoryArchivesFinished = "community.downloadingHistoryArchivesFinished"
   UpdateAvailable = "update.available"
   DiscordCategoriesAndChannelsExtracted = "community.discordCategoriesAndChannelsExtracted"
   StatusUpdatesTimedout = "status.updates.timedout"
+  DiscordCommunityImportFinished = "community.discordCommunityImportFinished"
+  DiscordCommunityImportProgress = "community.discordCommunityImportProgress"
   Unknown
 
 proc event*(self:SignalType):string =

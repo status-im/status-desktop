@@ -284,6 +284,7 @@ Item {
             editModeOn: model.editMode
             isEdited: model.isEdited
             linkUrls: model.links
+            messageAttachments: model.messageAttachments
             transactionParams: model.transactionParameters
             hasMention: model.mentionedUsersPks.split(" ").includes(root.rootStore.userProfileInst.pubKey)
 

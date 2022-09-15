@@ -97,7 +97,8 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     transactionParameters = newTransactionParametersItem("","","","","","",-1,""),
     mentionedUsersPks = @[],
     senderTrustStatus = TrustStatus.Unknown,
-    senderEnsVerified = false
+    senderEnsVerified = false,
+    DiscordMessage()
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -136,7 +137,8 @@ proc createChatIdentifierItem(self: Module): Item =
     transactionParameters = newTransactionParametersItem("","","","","","",-1,""),
     mentionedUsersPks = @[],
     senderTrustStatus = TrustStatus.Unknown,
-    senderEnsVerified = false
+    senderEnsVerified = false,
+    DiscordMessage()
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module): bool =
@@ -185,7 +187,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         sender.defaultDisplayName,
         sender.optionalName,
         sender.icon,
-        isCurrentUser,
+        (isCurrentUser and m.contentType.ContentType != ContentType.DiscordMessage),
         sender.details.added,
         m.outgoingStatus,
         renderedMessageText,
@@ -209,7 +211,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
           m.transactionParameters.signature),
         m.mentionedUsersPks(),
         sender.details.trustStatus,
-        sender.details.ensVerified
+        sender.details.ensVerified,
+        m.discordMessage
         )
 
       for r in reactions:
@@ -277,7 +280,7 @@ method messageAdded*(self: Module, message: MessageDto) =
     sender.defaultDisplayName,
     sender.optionalName,
     sender.icon,
-    isCurrentUser,
+    (isCurrentUser and message.contentType.ContentType != ContentType.DiscordMessage),
     sender.details.added,
     message.outgoingStatus,
     renderedMessageText,
@@ -301,7 +304,8 @@ method messageAdded*(self: Module, message: MessageDto) =
                     message.transactionParameters.signature),
     message.mentionedUsersPks,
     sender.details.trustStatus,
-    sender.details.ensVerified
+    sender.details.ensVerified,
+    message.discordMessage
   )
 
   self.view.model().insertItemBasedOnTimestamp(item)

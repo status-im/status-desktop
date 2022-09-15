@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.14
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
@@ -7,8 +7,9 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
-import "../"
-import "./"
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 Item {
     id: root
@@ -20,8 +21,10 @@ Item {
 
     property bool active: false
     property int type: ModuleWarning.Danger
+    property int progressValue: -1 // 0..100, -1 not visible
     property string text: ""
     property alias buttonText: button.text
+    property alias closeBtnVisible: closeImg.visible
 
     signal clicked()
     signal closeClicked()
@@ -48,6 +51,8 @@ Item {
     function close() {
         closeButtonMouseArea.clicked(null)
     }
+
+    signal linkActivated(string link)
 
     implicitHeight: root.active ? content.implicitHeight : 0
     visible: implicitHeight > 0
@@ -123,14 +128,24 @@ Item {
             id: layout
 
             spacing: 12
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.centerIn: parent
 
             StatusBaseText {
                 text: root.text
-                Layout.alignment: Qt.AlignVCenter
                 font.pixelSize: 13
+                font.weight: Font.Medium
+                anchors.verticalCenter: parent.verticalCenter
                 color: Theme.palette.indirectColor1
+                linkColor: color
+                onLinkActivated: root.linkActivated(link)
+                HoverHandler {
+                    id: handler1
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.NoButton
+                    cursorShape: handler1.hovered && parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                }
             }
 
             Button {
@@ -140,9 +155,9 @@ Item {
                 onClicked: {
                     root.clicked()
                 }
-                contentItem: Text {
+                contentItem: StatusBaseText {
                     text: button.text
-                    font.pixelSize: 12
+                    font.pixelSize: 13
                     font.weight: Font.Medium
                     font.family: Style.current.baseFont.name
                     horizontalAlignment: Text.AlignHCenter
@@ -160,6 +175,42 @@ Item {
                     acceptedButtons: Qt.NoButton
                     cursorShape: Qt.PointingHandCursor
                 }
+            }
+        }
+
+        StatusBaseText {
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: progressBar.left
+            anchors.rightMargin: Style.current.halfPadding
+            text: qsTr("%1%").arg(progressBar.value)
+            visible: progressBar.visible
+            font.pixelSize: 12
+            verticalAlignment: Text.AlignVCenter
+            color: Theme.palette.white
+        }
+
+        ProgressBar {
+            id: progressBar
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: closeImg.left
+            anchors.rightMargin: Style.current.bigPadding
+            from: 0
+            to: 100
+            visible: root.progressValue > -1
+            value: root.progressValue
+            background: Rectangle {
+                implicitWidth: 64
+                implicitHeight: 8
+                radius: 8
+                color: "transparent"
+                border.width: 1
+                border.color: Theme.palette.white
+            }
+            contentItem: Rectangle {
+                width: progressBar.width*progressBar.position
+                implicitHeight: 8
+                radius: 8
+                color: Theme.palette.white
             }
         }
 
@@ -185,5 +236,4 @@ Item {
             }
         }
     }
-
 }

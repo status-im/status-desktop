@@ -15,6 +15,7 @@ Item {
     property string displayName
     property string localName
     property bool amISender
+    property bool disabled
 
     signal clickMessage(bool isProfileClick)
 
@@ -24,15 +25,15 @@ Item {
         color: text.startsWith("@") || root.amISender || localName !== "" ? Style.current.blue : Style.current.secondaryText
         font.weight: Font.Medium
         font.pixelSize: Style.current.secondaryTextFontSize
-        font.underline: root.isHovered
+        font.underline: root.isHovered && !root.disabled
         readOnly: true
         wrapMode: Text.WordWrap
         selectByMouse: true
         MouseArea {
-            cursorShape: Qt.PointingHandCursor
+            cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
-            hoverEnabled: true
+            hoverEnabled: !root.disabled
             onEntered: {
                 root.isHovered = true
             }
@@ -40,7 +41,9 @@ Item {
                 root.isHovered = false
             }
             onClicked: {
-                root.clickMessage(true);
+                if (!root.disabled) {
+                    root.clickMessage(true);
+                }
             }
         }
     }

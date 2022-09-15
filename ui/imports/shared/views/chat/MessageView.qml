@@ -62,6 +62,7 @@ Loader {
     property string messagePinnedBy: ""
     property var reactionsModel: []
     property string linkUrls: ""
+    property string messageAttachments: ""
     property var transactionParams
 
     // External behavior changers
@@ -101,7 +102,7 @@ Loader {
     property double prevMsgTimestamp: prevMessageAsJsonObj ? prevMessageAsJsonObj.timestamp : 0
     property double nextMsgTimestamp: nextMessageAsJsonObj ? nextMessageAsJsonObj.timestamp : 0
 
-    property bool shouldRepeatHeader: ((messageTimestamp - prevMsgTimestamp) / 60 / 1000) > Constants.repeatHeaderInterval
+    property bool shouldRepeatHeader: ((messageTimestamp - prevMsgTimestamp) / 60 / 1000) > Constants.repeatHeaderInterval || isDiscordMessage
 
     property bool hasMention: false
     property bool stickersLoaded: false
@@ -111,11 +112,12 @@ Loader {
     property int stickerPack: -1
 
     property bool isEmoji: messageContentType === Constants.messageContentType.emojiType
-    property bool isImage: messageContentType === Constants.messageContentType.imageType
+    property bool isImage: messageContentType === Constants.messageContentType.imageType || (isDiscordMessage && messageImage != "")
     property bool isAudio: messageContentType === Constants.messageContentType.audioType
     property bool isStatusMessage: messageContentType === Constants.messageContentType.systemMessagePrivateGroupType
     property bool isSticker: messageContentType === Constants.messageContentType.stickerType
-    property bool isText: messageContentType === Constants.messageContentType.messageType || messageContentType === Constants.messageContentType.editType
+    property bool isDiscordMessage: messageContentType === Constants.messageContentType.discordMessageType
+    property bool isText: messageContentType === Constants.messageContentType.messageType || messageContentType === Constants.messageContentType.editType || isDiscordMessage
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
@@ -411,7 +413,7 @@ Loader {
             loadingImageText: qsTr("Loading image...")
             errorLoadingImageText: qsTr("Error loading the image")
             resendText: qsTr("Resend")
-            pinnedMsgInfoText: qsTr("Pinned by")
+            pinnedMsgInfoText: root.isDiscordMessage ? qsTr("Pinned") : qsTr("Pinned by")
             reactionIcons: [
                 Style.svg("emojiReactions/heart"),
                 Style.svg("emojiReactions/thumbsUp"),
@@ -427,7 +429,7 @@ Loader {
             isEdited: root.isEdited
             hasMention: root.hasMention
             isPinned: root.pinnedMessage
-            pinnedBy: root.pinnedMessage ? Utils.getContactDetailsAsJson(root.messagePinnedBy).displayName : ""
+            pinnedBy: root.pinnedMessage && !root.isDiscordMessage ? Utils.getContactDetailsAsJson(root.messagePinnedBy).displayName : ""
             hasExpired: root.isExpired
             reactionsModel: root.reactionsModel
 
@@ -457,7 +459,8 @@ Loader {
                     return Utils.setColorAlpha(Style.current.blue, 0.1);
                 return "transparent";
             }
-
+            profileClickable: !root.isDiscordMessage
+            messageAttachments: root.messageAttachments
 
             timestampString: Utils.formatShortTime(timestamp,
                                                    localAccountSensitiveSettings.is24hTimeFormat)
@@ -548,6 +551,7 @@ Loader {
 
             messageDetails: StatusMessageDetails {
                 contentType: delegate.contentType
+                messageOriginInfo: isDiscordMessage ? qsTr("Imported from discord") : ""
                 messageText: root.messageText
                 messageContent: {
                     switch (delegate.contentType)
@@ -556,6 +560,9 @@ Loader {
                         return root.sticker;
                     case StatusMessage.ContentType.Image:
                         return root.messageImage;
+                    }
+                    if (root.isDiscordMessage && root.messageImage != "") {
+                      return root.messageImage
                     }
                     return "";
                 }
@@ -571,9 +578,11 @@ Loader {
                     width: 40
                     height: 40
                     name: root.senderIcon || ""
+                    assetSettings.isImage: root.isDiscordMessage
                     pubkey: root.senderId
                     colorId: Utils.colorIdForPubkey(root.senderId)
                     colorHash: Utils.getColorHashAsJson(root.senderId)
+                    showRing: !root.isDiscordMessage
                 }
             }
 
@@ -602,6 +611,8 @@ Loader {
                     width: 20
                     height: 20
                     name:  delegate.replyMessage ? delegate.replyMessage.senderIcon : ""
+                    assetSettings.isImage: delegate.replyMessage && delegate.replyMessage.messageContentType == Constants.discordMessageType
+                    showRing: delegate.replyMessage && delegate.replyMessage.messageContentType != Constants.discordMessageType
                     pubkey: delegate.replySenderId
                     colorId: Utils.colorIdForPubkey(delegate.replySenderId)
                     colorHash: Utils.getColorHashAsJson(delegate.replySenderId)

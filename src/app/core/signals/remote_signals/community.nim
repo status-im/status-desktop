@@ -19,6 +19,18 @@ type DiscordCategoriesAndChannelsExtractedSignal* = ref object of Signal
   errors*: Table[string, DiscordImportError]
   errorsCount*: int
 
+type DiscordCommunityImportProgressSignal* = ref object of Signal
+  communityId*: string
+  communityName*: string
+  tasks*: seq[DiscordImportTaskProgress]
+  progress*: float
+  errorsCount*: int
+  warningsCount*: int
+  stopped*: bool
+
+type DiscordCommunityImportFinishedSignal* = ref object of Signal
+  communityId*: string
+
 proc fromEvent*(T: type CommunitySignal, event: JsonNode): CommunitySignal =
   result = CommunitySignal()
   result.signalType = SignalType.CommunityFound
@@ -45,6 +57,30 @@ proc fromEvent*(T: type DiscordCategoriesAndChannelsExtractedSignal, event: Json
       err.message = responseErr["message"].getStr()
       result.errors[key] = err
       result.errorsCount = result.errorsCount+1
+
+proc fromEvent*(T: type DiscordCommunityImportProgressSignal, event: JsonNode): DiscordCommunityImportProgressSignal =
+  result = DiscordCommunityImportProgressSignal()
+  result.signalType = SignalType.DiscordCommunityImportProgress
+  result.tasks = @[]
+
+  if event["event"]["importProgress"].kind == JObject:
+    let importProgressObj = event["event"]["importProgress"]
+
+    result.communityId = importProgressObj{"communityId"}.getStr()
+    result.communityName = importProgressObj{"communityName"}.getStr()
+    result.progress = importProgressObj{"progress"}.getFloat()
+    result.errorsCount = importProgressObj{"errorsCount"}.getInt()
+    result.warningsCount = importProgressObj{"warningsCount"}.getInt()
+    result.stopped = importProgressObj{"stopped"}.getBool()
+
+    if importProgressObj["tasks"].kind == JArray:
+      for task in importProgressObj["tasks"]:
+        result.tasks.add(task.toDiscordImportTaskProgress())
+
+proc fromEvent*(T: type DiscordCommunityImportFinishedSignal, event: JsonNode): DiscordCommunityImportFinishedSignal =
+  result = DiscordCommunityImportFinishedSignal()
+  result.signalType = SignalType.DiscordCommunityImportFinished
+  result.communityId = event["event"]{"communityId"}.getStr()
 
 proc createFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
   result = HistoryArchivesSignal()
@@ -83,3 +119,8 @@ proc historyArchivesUnseededFromEvent*(T: type HistoryArchivesSignal, event: Jso
 proc historyArchiveDownloadedFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
   result = HistoryArchivesSignal.createFromEvent(event)
   result.signalType = SignalType.HistoryArchiveDownloaded
+
+proc downloadingHistoryArchivesFinishedFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+  result = HistoryArchivesSignal()
+  result.communityId = event["event"]{"communityId"}.getStr()
+  result.signalType = SignalType.DownloadingHistoryArchivesFinished

@@ -32,6 +32,29 @@ type QuotedMessage* = object
   text*: string
   parsedText*: seq[ParsedText]
 
+type DiscordMessageAttachment* = object
+  id*: string
+  fileUrl*: string
+  fileName*: string
+  localUrl*: string
+  contentType*: string
+
+type DiscordMessageAuthor* = object
+  id*: string
+  name*: string
+  nickname*: string
+  avatarUrl*: string
+  localUrl*: string
+
+type DiscordMessage* = object
+  id*: string
+  `type`*: string
+  timestamp*: string
+  timestampEdited*: string
+  content*: string
+  author*: DiscordMessageAuthor
+  attachments*: seq[DiscordMessageAttachment]
+
 type Sticker* = object
   hash*: string
   url*: string
@@ -60,6 +83,7 @@ type MessageDto* = object
   seen*: bool
   outgoingStatus*: string
   quotedMessage*: QuotedMessage
+  discordMessage*: DiscordMessage
   rtl*: bool
   parsedText*: seq[ParsedText]
   lineCount*: int
@@ -90,6 +114,41 @@ proc toParsedText*(jsonObj: JsonNode): ParsedText =
   if(jsonObj.getProp("children", childrenArr) and childrenArr.kind == JArray):
     for childObj in childrenArr:
       result.children.add(toParsedText(childObj))
+
+proc toDiscordMessageAuthor*(jsonObj: JsonNode): DiscordMessageAuthor =
+  result = DiscordMessageAuthor()
+  discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("name", result.name)
+  discard jsonObj.getProp("nickname", result.nickname)
+  discard jsonObj.getProp("avatarUrl", result.avatarUrl)
+  discard jsonObj.getProp("localUrl", result.localUrl)
+
+
+proc toDiscordMessageAttachment*(jsonObj: JsonNOde): DiscordMessageAttachment =
+  result = DiscordMessageAttachment()
+  discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("url", result.fileUrl)
+  discard jsonObj.getProp("localUrl", result.localUrl)
+  discard jsonObj.getProp("fileName", result.fileName)
+  discard jsonObj.getProp("contentType", result.contentType)
+
+proc toDiscordMessage*(jsonObj: JsonNode): DiscordMessage =
+  result = DiscordMessage()
+  discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("type", result.type)
+  discard jsonObj.getProp("timestamp", result.timestamp)
+  discard jsonObj.getProp("timestampEdited", result.timestampEdited)
+  discard jsonObj.getProp("content", result.content)
+
+  var discordMessageAuthorObj: JsonNode
+  if(jsonObj.getProp("author", discordMessageAuthorObj)):
+    result.author = toDiscordMessageAuthor(discordMessageAuthorObj)
+
+  result.attachments = @[]
+  var attachmentsArr: JsonNode
+  if(jsonObj.getProp("attachments", attachmentsArr) and attachmentsArr.kind == JArray):
+    for attachment in attachmentsArr:
+      result.attachments.add(toDiscordMessageAttachment(attachment))
 
 proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   result = QuotedMessage()
@@ -150,6 +209,10 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   var quotedMessageObj: JsonNode
   if(jsonObj.getProp("quotedMessage", quotedMessageObj)):
     result.quotedMessage = toQuotedMessage(quotedMessageObj)
+
+  var discordMessageObj: JsonNode
+  if(jsonObj.getProp("discordMessage", discordMessageObj)):
+    result.discordMessage = toDiscordMessage(discordMessageObj)
 
   var stickerObj: JsonNode
   if(jsonObj.getProp("sticker", stickerObj)):

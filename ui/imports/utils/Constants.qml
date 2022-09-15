@@ -232,6 +232,7 @@ QtObject {
         readonly property int communityInviteType: 9
         readonly property int gapType: 10
         readonly property int editType: 11
+        readonly property int discordMessageType: 12
     }
 
     readonly property QtObject profilePicturesVisibility: QtObject {

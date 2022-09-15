@@ -41,6 +41,7 @@ type
     MentionedUsersPks
     SenderTrustStatus
     SenderEnsVerified
+    MessageAttachments
 
 QtObject:
   type
@@ -116,7 +117,8 @@ QtObject:
       ModelRole.TransactionParameters.int: "transactionParameters",
       ModelRole.MentionedUsersPks.int: "mentionedUsersPks",
       ModelRole.SenderTrustStatus.int: "senderTrustStatus",
-      ModelRole.SenderEnsVerified.int: "senderEnsVerified"
+      ModelRole.SenderEnsVerified.int: "senderEnsVerified",
+      ModelRole.MessageAttachments.int: "messageAttachments"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -211,6 +213,8 @@ QtObject:
       result = newQVariant(item.mentionedUsersPks.join(" "))
     of ModelRole.SenderEnsVerified:
       result = newQVariant(item.senderEnsVerified)
+    of ModelRole.MessageAttachments:
+      result = newQVariant(item.messageAttachments.join(" "))
 
   proc updateItemAtIndex(self: Model, index: int) =
     let ind = self.createIndex(index, 0, nil)

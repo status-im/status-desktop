@@ -18,6 +18,7 @@ Loader {
     property string image
     property bool showRing: true
     property bool interactive: true
+    property bool disabled: false
 
     property int colorId: Utils.colorIdForPubkey(pubkey)
     property var colorHash: Utils.getColorHashAsJson(pubkey)
@@ -44,10 +45,12 @@ Loader {
             active: root.interactive
 
             sourceComponent: MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
+                cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                hoverEnabled: !root.disabled
                 onClicked: {
-                    root.clicked()
+                    if (!root.disabled) {
+                        root.clicked()
+                    }
                 }
             }
         }

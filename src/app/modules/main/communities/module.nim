@@ -10,6 +10,10 @@ import ./models/discord_categories_model
 import ./models/discord_channel_item
 import ./models/discord_channels_model
 import ./models/discord_file_list_model
+import ./models/discord_import_task_item
+import ./models/discord_import_tasks_model
+import ./models/discord_import_error_item
+import ./models/discord_import_errors_model
 import ../../shared_models/section_item
 import ../../shared_models/[member_item, member_model, section_model]
 import ../../../global/global_singleton
@@ -288,3 +292,44 @@ method onImportCommunityErrorOccured*(self: Module, error: string) =
 method requestExtractDiscordChannelsAndCategories*(self: Module, filesToImport: seq[string]) =
   self.view.setDiscordDataExtractionInProgress(true)
   self.controller.requestExtractDiscordChannelsAndCategories(filesToImport)
+
+method requestImportDiscordCommunity*(self: Module, name: string, description, introMessage, outroMessage: string, access: int,
+                        color: string, tags: string, imagePath: string, aX: int, aY: int, bX: int, bY: int,
+                        historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool, filesToImport: seq[string], fromTimestamp: int) =
+  self.controller.requestImportDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp)
+
+method getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): DiscordImportTaskItem =
+  return initDiscordImportTaskItem(
+      t.`type`,
+      t.progress,
+      t.state,
+      t.errors,
+      t.stopped,
+      t.errorsCount,
+      t.warningsCount)
+
+method discordImportProgressUpdated*(self: Module, communityId: string, communityName: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool) =
+
+  var taskItems: seq[DiscordImportTaskItem] = @[]
+
+  for task in tasks:
+    if not self.view.discordImportTasksModel().hasItemByType(task.`type`):
+      self.view.discordImportTasksModel().addItem(self.getDiscordImportTaskItem(task))
+    else:
+      self.view.discordImportTasksModel().updateItem(task)
+
+  self.view.setDiscordImportCommunityId(communityId)
+  self.view.setDiscordImportCommunityName(communityName)
+  self.view.setDiscordImportErrorsCount(errorsCount)
+  self.view.setDiscordImportWarningsCount(warningsCount)
+  # For some reason, exposing the global `progress` as QtProperty[float]`
+  # doesn't translate well into QML.
+  # That's why we pass it as integer instead.
+  self.view.setDiscordImportProgress((progress*100).int)
+  self.view.setDiscordImportProgressStopped(stopped)
+  if stopped or progress.int >= 1:
+    self.view.setDiscordImportInProgress(false)
+
+method requestCancelDiscordCommunityImport*(self: Module, id: string) =
+  self.controller.requestCancelDiscordCommunityImport(id)
+

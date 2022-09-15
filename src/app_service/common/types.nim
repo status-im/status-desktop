@@ -14,6 +14,7 @@ type
     Community = 9
     Gap = 10
     Edit = 11
+    DiscordMessage = 12
 
 type
   StatusType* {.pure.} = enum
