@@ -158,6 +158,7 @@ Item {
 
         StyledText {
             id: chatKeyTxt
+            objectName: "insertDetailsViewChatKeyTxt"
             Layout.preferredHeight: 22
             color: Style.current.secondaryText
             text: qsTr("Chatkey:") + " " + Utils.getCompressedPk(root.pubKey)

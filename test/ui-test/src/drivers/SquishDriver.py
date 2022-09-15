@@ -165,13 +165,18 @@ def scroll_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))
     squish.mouseWheel(obj, 206, 35, 0, -1, squish.Qt.ControlModifier)
 
-def scroll_item_until_item_is_visible(itemToScrollObjName: str, itemToBeVisibleObjName: str, timeoutMs: int=_MAX_WAIT_OBJ_TIMEOUT * 2):
-    # get current time
+# execute do_fn until validation_fn returns True or timeout is reached
+def do_until_validation_with_timeout(do_fn, validation_fn, message: str, timeout_ms: int=_MAX_WAIT_OBJ_TIMEOUT * 2):
     start_time = time.time()
-    while(not is_loaded_visible_and_enabled(itemToBeVisibleObjName, 10)[0]):
-        if ((time.time() - start_time) * 1000) > timeoutMs:
-            raise Exception(f'Timeout scrolling and waiting for item "{itemToBeVisibleObjName}" to be visible')
-        scroll_obj_by_name(itemToScrollObjName)
+    while(not validation_fn()):
+        if ((time.time() - start_time) * 1000) > timeout_ms:
+            raise Exception("Timeout reached while validating: " + message)
+        do_fn()
+
+def scroll_item_until_item_is_visible(itemToScrollObjName: str, itemToBeVisibleObjName: str, timeout_ms: int=_MAX_WAIT_OBJ_TIMEOUT * 2):
+    is_item_visible_fn = lambda: is_loaded_visible_and_enabled(itemToBeVisibleObjName, 10)[0]
+    scroll_item_fn = lambda: scroll_obj_by_name(itemToScrollObjName)
+    do_until_validation_with_timeout(scroll_item_fn, is_item_visible_fn, f'Scrolling {itemToScrollObjName} until {itemToBeVisibleObjName} is visible', timeout_ms)
 
 def check_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))

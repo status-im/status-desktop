@@ -40,6 +40,7 @@ class SignUpComponents(Enum):
     PROFILE_IMAGE_CROP_WORKFLOW_ITEM: str = "mainWindow_WelcomeScreen_Image_Crop_Workflow_Item"
     PROFILE_IMAGE_CROPPER_ACCEPT_BUTTON: str = "mainWindow_WelcomeScreen_Image_Cropper_Accept_Button"
     WELCOME_SCREEN_USER_PROFILE_IMAGE: str = "mainWindow_WelcomeScreen_User_Profile_Image"
+    WELCOME_SCREEN_CHAT_KEY_TEXT: str = "mainWindow_WelcomeScreen_ChatKeyText"
     
 class SeedPhraseComponents(Enum):
     IMPORT_A_SEED_TEXT: str = "import_a_seed_phrase_StatusBaseText"
@@ -105,24 +106,41 @@ class StatusWelcomeScreen:
         self.input_confirmation_password(password)
 
         if sys.platform == "darwin":
-            click_obj_by_name(SignUpComponents.PASSWORD_PREFERENCE.value)
+            do_until_validation_with_timeout(
+                do_fn = lambda: click_obj_by_name(SignUpComponents.PASSWORD_PREFERENCE.value),
+                validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.PASSWORD_PREFERENCE.value, 50)[0],
+                message = 'Try clicking "I prefer to use password" until not visible and enabled (moved to the next screen)')
 
     def input_username(self, username: str):
         type(SignUpComponents.USERNAME_INPUT.value, username)
         click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
-                
+
+        # The next click will move too fast sometime
+        verify(is_loaded_visible_and_enabled(SignUpComponents.WELCOME_SCREEN_CHAT_KEY_TEXT.value, 10)[0], 'User Profile Chat Key is visible so the "next" press will jump to the right key')
+
         # There is another page with the same Next button
-        click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
+        do_until_validation_with_timeout(
+            do_fn = lambda: click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value),
+            validation_fn = lambda: is_loaded_visible_and_enabled(SignUpComponents.NEW_PSW_INPUT.value, 50)[0],
+            message = 'Try clicking "Next" until new password screen is visible')
 
     def input_password(self, password: str):
+        verify(is_loaded_visible_and_enabled(SignUpComponents.NEW_PSW_INPUT.value, 10)[0], 'New Password input is visible')
         type(SignUpComponents.NEW_PSW_INPUT.value, password)
         type(SignUpComponents.CONFIRM_PSW_INPUT.value, password)
-        click_obj_by_name(SignUpComponents.CREATE_PSW_BUTTON.value)
-        
+        do_until_validation_with_timeout(
+            do_fn = lambda: click_obj_by_name(SignUpComponents.CREATE_PSW_BUTTON.value),
+            validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.CREATE_PSW_BUTTON.value, 50)[0],
+            message = 'Try clicking "Create Password" until button not visible (moved to the next screen)')
+
     def input_confirmation_password(self, password: str):
+        verify(is_loaded_visible_and_enabled(SignUpComponents.CONFIRM_PSW_AGAIN_INPUT.value, 10)[0], 'Reconfirm password is visible')
         type(SignUpComponents.CONFIRM_PSW_AGAIN_INPUT.value, password)
-        click_obj_by_name(SignUpComponents.FINALIZE_PSW_BUTTON.value)
-        
+        do_until_validation_with_timeout(
+            do_fn = lambda: click_obj_by_name(SignUpComponents.FINALIZE_PSW_BUTTON.value),
+            validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.FINALIZE_PSW_BUTTON.value, 50)[0],
+            message = 'Try clicking "Finalize" until button not visible (moved to the next screen')
+
     def _agree_terms_and_conditions(self):
         if sys.platform == "darwin":
             click_obj_by_name(AgreementPopUp.OK_GOT_IT_BUTTON.value)
