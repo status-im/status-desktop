@@ -27,9 +27,10 @@ StatusListView {
         id: statusCommunityItem
         width: parent.width
         title: model.name
+        statusListItemTitle.font.pixelSize: 17
+        statusListItemTitle.font.bold: true
         subTitle: model.description
-        tertiaryTitle: qsTr(model.members.count === 1 ?"%1 member"
-                                                      :"%1 members").arg(model.members.count)
+        tertiaryTitle: qsTr("%n member(s)", "", model.members.count)
         asset.name: model.image
         asset.isImage: asset.name.includes("data")
         asset.isLetterIdenticon: !model.image
@@ -37,11 +38,7 @@ StatusListView {
         visible: model.joined
         height: visible ? implicitHeight: 0
 
-        sensor.hoverEnabled: false
-
-        onClicked: {
-            setActiveCommunityClicked(model.id)
-        }
+        onClicked: setActiveCommunityClicked(model.id)
 
         components: [
             StatusFlatButton {
@@ -49,7 +46,7 @@ StatusListView {
                 size: StatusBaseButton.Size.Small
                 type: StatusBaseButton.Type.Danger
                 borderColor: "transparent"
-                text: qsTr("Leave community")
+                text: qsTr("Leave Community")
                 onClicked: {
                     Global.openPopup(leaveCommunityPopup, {
                                          community: model.name,
@@ -57,19 +54,17 @@ StatusListView {
                                      })
                 }
             },
-            StatusFlatRoundButton {
-                type: StatusFlatRoundButton.Type.Secondary
-                width: 44
-                height: 44
-                icon.source: model.muted ? Style.svg("communities/notifications-muted")
-                                         : Style.svg("communities/notifications")
+            StatusFlatButton {
+                size: StatusBaseButton.Size.Tiny
+                leftPadding: 4
+                rightPadding: 0
+                icon.name: model.muted ? "notification-muted" : "notification"
                 onClicked: root.setCommunityMutedClicked(model.id, !model.muted)
             },
-
-            StatusFlatRoundButton {
-                type: StatusFlatRoundButton.Type.Secondary
-                width: 44
-                height: 44
+            StatusFlatButton {
+                size: StatusBaseButton.Size.Tiny
+                leftPadding: 4
+                rightPadding: 0
                 icon.name: "invite-users"
                 onClicked: root.inviteFriends(model)
             }
