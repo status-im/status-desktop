@@ -346,6 +346,7 @@ SettingsContentBase {
 
                 delegate: Component {
                     StatusListItem {
+                        objectName: "MessagingView_sitesListView_StatusListItem_" + model.title.replace(/ /g, "_").toLowerCase()
                         property alias whitelistSwitch: siteSwitch
                         width: parent.width
                         implicitHeight: 64

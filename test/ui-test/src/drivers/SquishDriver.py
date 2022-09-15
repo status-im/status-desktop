@@ -165,6 +165,13 @@ def scroll_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))
     squish.mouseWheel(obj, 206, 35, 0, -1, squish.Qt.ControlModifier)
 
+def scroll_item_until_item_is_visible(itemToScrollObjName: str, itemToBeVisibleObjName: str, timeoutMs: int=_MAX_WAIT_OBJ_TIMEOUT * 2):
+    # get current time
+    start_time = time.time()
+    while(not is_loaded_visible_and_enabled(itemToBeVisibleObjName, 10)[0]):
+        if ((time.time() - start_time) * 1000) > timeoutMs:
+            raise Exception(f'Timeout scrolling and waiting for item "{itemToBeVisibleObjName}" to be visible')
+        scroll_obj_by_name(itemToScrollObjName)
 
 def check_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))

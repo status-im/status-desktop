@@ -67,7 +67,11 @@ class ChatComponents(Enum):
     ENABLE_GIF_BUTTON = "gifPopup_enableGifButton"
     GIF_MOUSEAREA = "gifPopup_gifMouseArea"
     CHAT_INPUT_STICKER_BUTTON = "chat_Input_Stickers_Button"
-    
+
+    LINK_PREVIEW_UNFURLED_IMAGE = "chatView_unfurledImageComponent_linkImage"
+    LINK_PREVIEW_UNFURLED_LINK_IMAGE = "chatView_unfurledLinkComponent_linkImage"
+    LINK_PREVIEW_OPEN_SETTINGS = "chatView_LinksMessageView_enableBtn"
+
 class ChatStickerPopup(Enum):
     STICKERS_POPUP_GET_STICKERS_BUTTON = "chat_StickersPopup_GetStickers_Button"
     STICKERS_POPUP_MARKET_GRID_VIEW = "chat_StickersPopup_StickerMarket_GridView"
@@ -402,3 +406,20 @@ class StatusChatScreen:
                 click_obj(chat)
                 return
         verify(False, "Chat switched")
+
+    def _verify_image_unfurled_status_for_component(self, objectName: str, image_link: str, unfurled: bool):
+        if not unfurled:
+            verify_false(is_loaded_visible_and_enabled(objectName, 10)[0], "Image link preview component is not loaded")
+        else:
+            chat_image_loader = wait_and_get_obj(objectName)
+            # Didn't find a way to convert squish QUrls to string
+            verify(str(chat_image_loader.source.path) in image_link, "The url is most probably the one expected")
+
+    def verify_image_unfurled_status(self, image_link: str, unfurled: bool):
+        self._verify_image_unfurled_status_for_component(ChatComponents.LINK_PREVIEW_UNFURLED_IMAGE.value, image_link, unfurled)
+
+    def verify_link_image_unfurled_status(self, image_link: str, unfurled: bool):
+        self._verify_image_unfurled_status_for_component(ChatComponents.LINK_PREVIEW_UNFURLED_LINK_IMAGE.value, image_link, unfurled)
+
+    def open_settings_from_message(self):
+        click_obj_by_name(ChatComponents.LINK_PREVIEW_OPEN_SETTINGS.value)

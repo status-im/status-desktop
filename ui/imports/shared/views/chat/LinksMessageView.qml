@@ -223,6 +223,7 @@ Column {
             isCurrentUser: root.isCurrentUser
             StatusChatImageLoader {
                 id: linkImage
+                objectName: "LinksMessageView_unfurledImageComponent_linkImage"
                 anchors.centerIn: parent
                 container: root.container
                 source: linkData.thumbnailUrl
@@ -258,6 +259,7 @@ Column {
 
             StatusChatImageLoader {
                 id: linkImage
+                objectName: "LinksMessageView_unfurledLinkComponent_linkImage"
                 container: root.container
                 source: linkData.thumbnailUrl
                 visible: linkData.thumbnailUrl.length
@@ -380,6 +382,7 @@ Column {
 
             StatusFlatButton {
                 id: enableBtn
+                objectName: "LinksMessageView_enableBtn"
                 text: qsTr("Enable in Settings")
                 onClicked: {
                     Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging);

@@ -26,6 +26,9 @@ chatInput_Emoji_Button = {"container": statusDesktop_mainWindow, "objectName": "
 chatView_ChatToolbarMoreOptionsButton = {"container": statusDesktop_mainWindow, "objectName": "chatToolbarMoreOptionsButton", "type": "StatusFlatRoundButton", "visible": True}
 chatInput_Root = {"container": statusDesktop_mainWindow, "objectName": "statusChatInput", "type": "Rectangle", "visible": True}
 chatView_gifPopupButton = {"container": statusDesktop_mainWindow, "objectName": "gifPopupButton", "type": "StatusFlatRoundButton", "visible": True}
+chatView_unfurledImageComponent_linkImage = {"container": chatView_log, "objectName": "LinksMessageView_unfurledImageComponent_linkImage", "type": "StatusChatImageLoader",  "visible": True}
+chatView_unfurledLinkComponent_linkImage = {"container": chatView_log, "objectName": "LinksMessageView_unfurledLinkComponent_linkImage", "type": "StatusChatImageLoader", "visible": True}
+chatView_LinksMessageView_enableBtn = {"container": chatView_log, "objectName": "LinksMessageView_enableBtn", "type": "StatusFlatButton", "visible": True}
 
 # More options menu
 clearHistoryMenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "clearHistoryMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
