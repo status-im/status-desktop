@@ -121,7 +121,7 @@ StatusModal {
                         anchors.horizontalCenter: parent.horizontalCenter
                         title: model.name
                         subTitle: model.description
-                        tertiaryTitle: qsTr("%1 members").arg(model.members.count)
+                        tertiaryTitle: qsTr("%n member(s)", "", model.members.count)
                         statusListItemTitle.font.weight: Font.Bold
                         statusListItemTitle.font.pixelSize: 17
                         asset.name: model.image

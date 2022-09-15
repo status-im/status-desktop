@@ -26,7 +26,6 @@ SettingsContentBase {
     clip: true
 
     titleRowComponentLoader.sourceComponent: StatusButton {
-        size: StatusBaseButton.Size.Small
         text: qsTr("Import community")
         onClicked: {
             Global.openPopup(importCommunitiesPopupComponent)
@@ -43,13 +42,13 @@ SettingsContentBase {
             width: parent.width
             anchors.top: parent.top
             anchors.left: parent.left
+            spacing: Style.current.padding
 
             StatusBaseText {
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 color: Theme.palette.baseColor1
                 text: qsTr("Communities you've joined")
-                font.pixelSize: 15
             }
 
             CommunitiesListPanel {
