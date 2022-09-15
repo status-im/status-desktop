@@ -76,7 +76,19 @@ def step(context):
 def step(context):
     _statusChat.send_gif()
     _statusChat.verify_last_message_sent("tenor.gif")
-    
+
+@When("the user opens app settings screen from chat")
+def step(context):
+    _statusChat.open_settings_from_message()
+
+@Then("the image |any| is unfurled in the chat")
+def step(context: any, image_link: str):
+    _statusChat.verify_image_unfurled_status(image_link, True)
+
+@Then("the image |any| is not unfurled in the chat")
+def step(context: any, image_link: str):
+    _statusChat.verify_image_unfurled_status(image_link, False)
+
 @Then("the user selects emoji in the suggestion list")
 def step(contenxt):
     _statusChat.select_the_emoji_in_suggestion_list()

@@ -68,12 +68,28 @@ Feature: Status Desktop Chat
         Then the chat is cleared
 
     Scenario: User can send a gif
-         When the user opens app settings screen
-         And the user opens the messaging settings
-         And the user activates link preview
-         And the user opens the chat section
-         And user joins chat room automation-test
-         Then The user is able to send a gif message
+          When the user opens the chat section
+          And user joins chat room automation-test
+          Then The user is able to send a gif message
+          When the user opens app settings screen
+          And the user opens the messaging settings
+          Then tenor GIFs preview is enabled
+
+    Scenario Outline: User can activate image unfurling
+          When the user opens the chat section
+          And user joins chat room automation-test
+          And the user sends the chat message <image_url>
+          Then the image <image_url> is not unfurled in the chat
+          When the user opens app settings screen from chat
+          And the user opens the messaging settings
+          And the user activates link preview
+          And the user activates image unfurling
+          And the user opens the chat section
+          Then the image <image_url> is unfurled in the chat
+
+          Examples:
+               | image_url                                                                                      |
+               | https://github.com/status-im/status-desktop/raw/master/test/ui-test/fixtures/images/doggo.jpeg |
 
     Scenario: The user is able to use emoji suggestions
          When user joins chat room automation-test

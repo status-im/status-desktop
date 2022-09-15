@@ -13,6 +13,7 @@ from enum import Enum
 import random
 import time
 import string
+from wsgiref import validate
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from .StatusMainScreen import MainScreenComponents
@@ -48,8 +49,9 @@ class ENSScreen(Enum):
 class MessagingOptionScreen(Enum):
     ACTIVATE_OR_DEACTIVATE_LINK_PREVIEW: str = "displayMessageLinkPreviewItem"
     ACTIVATE_OR_DECTIVATE_IMAGE_UNFURLING: str = "imageUnfurlingItem"
+    TENOR_GIFS_PREVIEW_SWITCH_ITEM: str = "tenorGifsPreviewSwitchItem"
     SCROLLVIEW: str = "settingsContentBase_ScrollView"
- 
+
 
 class WalletSettingsScreen(Enum):
     GENERATED_ACCOUNTS: str = "settings_Wallet_MainView_GeneratedAccounts"
@@ -144,18 +146,26 @@ class SettingsScreen:
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
         verify_text_matching_insensitive(accounts.itemAtIndex(0).statusListItemSubTitle, address)
 
+    # Post condition: Messaging Settings is visible (@see StatusMainScreen.open_settings)
     def open_messaging_settings(self):
         click_obj_by_name(SidebarComponents.MESSAGING_ITEM.value)
-    
+
     def activate_link_preview(self):
         click_obj_by_name(SidebarComponents.MESSAGING_ITEM.value)
-        scroll_obj_by_name(MessagingOptionScreen.SCROLLVIEW.value)
-        scroll_obj_by_name(MessagingOptionScreen.SCROLLVIEW.value)        
-        scroll_obj_by_name(MessagingOptionScreen.SCROLLVIEW.value)
+        scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value, MessagingOptionScreen.ACTIVATE_OR_DEACTIVATE_LINK_PREVIEW.value)
         click_obj_by_name(MessagingOptionScreen.ACTIVATE_OR_DEACTIVATE_LINK_PREVIEW.value)
-        scroll_obj_by_name(MessagingOptionScreen.SCROLLVIEW.value)
+
+    # Post condition: Messaging Settings and Link Preview are visible (@see open_messaging_settings and activate_link_preview)
+    def activate_image_unfurling(self):
+        scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value, MessagingOptionScreen.ACTIVATE_OR_DECTIVATE_IMAGE_UNFURLING.value)
         click_obj_by_name(MessagingOptionScreen.ACTIVATE_OR_DECTIVATE_IMAGE_UNFURLING.value)
-        
+
+    # Post condition: Messaging Settings and Link Preview are visible (@see open_messaging_settings and activate_link_preview)
+    def check_tenor_gif_preview_is_enabled(self):
+        scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value, MessagingOptionScreen.TENOR_GIFS_PREVIEW_SWITCH_ITEM.value)
+        tenorSwitch = wait_and_get_obj(MessagingOptionScreen.TENOR_GIFS_PREVIEW_SWITCH_ITEM.value)
+        verify(tenorSwitch.enabled, "Tenor GIFs preview is enabled")
+
     def toggle_test_networks(self):
         click_obj_by_name(WalletSettingsScreen.NETWORKS_ITEM.value)
         click_obj_by_name(WalletSettingsScreen.TESTNET_TOGGLE.value)
