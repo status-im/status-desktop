@@ -266,8 +266,7 @@ Item {
                         StatusBaseText {
                             Layout.fillWidth: true
 
-                            // TODO add the plural support
-                            text: qsTr("%1 members").arg(d.invitedCommunity.nbMembers)
+                            text: qsTr("%n member(s)", "", d.invitedCommunity.nbMembers)
                             font.pixelSize: 13
                             font.weight: Font.Medium
                             color: Theme.palette.baseColor1
