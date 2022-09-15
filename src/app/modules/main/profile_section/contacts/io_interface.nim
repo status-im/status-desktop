@@ -1,5 +1,6 @@
 import NimQml
 import ../../../../../app_service/service/contacts/dto/contacts as contacts
+import ../../../../../app_service/service/contacts/dto/status_update
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -74,6 +75,9 @@ method contactTrustStatusChanged*(self: AccessInterface, publicKey: string, isUn
   raise newException(ValueError, "No implementation available")
 
 method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUpdateDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method markUntrustworthy*(self: AccessInterface, publicKey: string): void {.base.} =

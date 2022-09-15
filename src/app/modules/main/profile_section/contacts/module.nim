@@ -177,6 +177,11 @@ method contactRequestRejectionRemoved*(self: Module, publicKey: string) =
 method contactUpdated*(self: Module, publicKey: string) =
   self.removeIfExistsAndAddToAppropriateModel(publicKey)
 
+method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto]) =
+  for s in statusUpdates:
+    let status = toOnlineStatus(s.statusType)
+    self.view.myMutualContactsModel().setOnlineStatus(s.publicKey, status)
+
 method contactNicknameChanged*(self: Module, publicKey: string) =
   let (name, _, _) = self.controller.getContactNameAndImage(publicKey)
   self.view.myMutualContactsModel().updateName(publicKey, name)
