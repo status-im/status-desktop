@@ -22,6 +22,7 @@ StatusModal {
     signal accepted(string message)
 
     padding: 16
+    header.title: qsTr("Send Contact Request to %1").arg(userDisplayName)
 
     QtObject {
         id: d

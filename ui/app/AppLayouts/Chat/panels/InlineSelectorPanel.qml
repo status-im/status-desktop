@@ -29,6 +29,7 @@ Item {
 
     signal entryAccepted(var suggestionsDelegate)
     signal entryRemoved(var delegate)
+    signal textPasted(string text)
 
     implicitWidth: mainLayout.implicitWidth
     implicitHeight: mainLayout.implicitHeight
@@ -89,6 +90,11 @@ Item {
                                 verticalAlignment: Text.AlignVCenter
                                 font.pixelSize: 15
                                 color: Theme.palette.directColor1
+
+                                selectByMouse: true
+                                selectionColor: Theme.palette.primaryColor2
+                                selectedTextColor: color
+
                                 cursorDelegate: Rectangle {
                                     color: Theme.palette.primaryColor1
                                     implicitWidth: 2
@@ -103,6 +109,16 @@ Item {
                                 }
 
                                 Keys.onPressed: {
+                                    if (event.matches(StandardKey.Paste)) {
+                                        event.accepted = true
+                                        const previousText = text;
+                                        const previousSelectedText = selectedText;
+                                        paste()
+                                        if (previousText === "" || previousSelectedText.length === previousText.length)
+                                            root.textPasted(text)
+                                        return;
+                                    }
+
                                     if (suggestionsDialog.visible) {
                                         if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                                             root.entryAccepted(suggestionsListView.itemAtIndex(suggestionsListView.currentIndex))

@@ -124,7 +124,7 @@ StatusDialog {
         if (state === Constants.profilePopupStates.openNickname) {
             profileView.nicknamePopup.open();
         } else if (state === Constants.profilePopupStates.contactRequest) {
-            sendContactRequestModal.open()
+            d.openContactRequestPopup()
         } else if (state === Constants.profilePopupStates.blockUser) {
             blockUser();
         } else if (state === Constants.profilePopupStates.unblockUser) {
@@ -165,6 +165,15 @@ StatusDialog {
             })
         } catch (e) {
             console.error("Error getting or parsing verification data", e)
+        }
+    }
+
+    QtObject {
+        id: d
+
+        function openContactRequestPopup() {
+            let contactRequestPopup = Global.openContactRequestPopup(popup.userPublicKey)
+            contactRequestPopup.closed.connect(popup.close)
         }
     }
 
@@ -238,7 +247,7 @@ StatusDialog {
             StatusButton {
                 text: qsTr("Send Contact Request")
                 visible: !userIsBlocked && !isAddedContact
-                onClicked: sendContactRequestModal.open()
+                onClicked: d.openContactRequestPopup()
             }
 
             StatusButton {
@@ -449,21 +458,6 @@ StatusDialog {
                 popup.close()
             }
         }
-    }
-
-    // TODO: replace with StatusStackModal
-    SendContactRequestModal {
-        id: sendContactRequestModal
-        anchors.centerIn: parent
-        width: popup.width
-        visible: false
-        header.title: qsTr("Send Contact Request to %1").arg(userDisplayName)
-        userPublicKey: popup.userPublicKey
-        userDisplayName: popup.userDisplayName
-        userIcon: popup.userIcon
-        userIsEnsVerified: popup.userIsEnsVerified
-        onAccepted: popup.contactsStore.sendContactRequest(userPublicKey, message)
-        onClosed: popup.close()
     }
 
     Component {
