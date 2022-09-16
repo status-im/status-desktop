@@ -40,6 +40,7 @@ Loader {
         }
 
         contentItem: RowLayout {
+            spacing: 4
             StatusIcon {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.preferredWidth: 16
@@ -56,7 +57,6 @@ Loader {
             }
             StatusBaseText {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: -4
                 color: Theme.palette.directColor1
                 font.pixelSize: 13
                 font.weight: Font.Medium
