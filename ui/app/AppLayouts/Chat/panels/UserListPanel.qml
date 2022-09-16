@@ -81,13 +81,15 @@ Item {
             isUntrustworthy: model.isUntrustworthy
             isAdmin: model.isAdmin
             asset.name: {
-                if ((!model.isContact &&
-                    Global.privacyModuleInst.profilePicturesVisibility !==
-                    Constants.profilePicturesVisibility.everyone)) {
-                    return "";
-                }
-                //TODO check if icon is rendered correctly
-                return model.icon;
+                const isCurrentUser = model.pubKey === root.rootStore.getPubkey()
+                const visibility = Global.privacyModuleInst.profilePicturesVisibility
+
+                if (isCurrentUser
+                        || visibility === Constants.profilePicturesVisibility.everyone
+                        || (visibility === Constants.profilePicturesVisibility.contactsOnly && model.isContact))
+                    return model.icon
+
+                return ""
             }
             asset.isImage: (asset.name !== "")
             asset.isLetterIdenticon: (asset.name === "")
