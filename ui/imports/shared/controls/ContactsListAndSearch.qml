@@ -185,8 +185,10 @@ Item {
         ExistingContacts {
             id: existingContacts
 
+            rootStore: root.rootStore
             contactsStore: root.contactsStore
-            community: root.community
+            communityId: root.community.id
+
             visible: showContactList
             hideCommunityMembers: root.hideCommunityMembers
             showCheckbox: root.showCheckbox

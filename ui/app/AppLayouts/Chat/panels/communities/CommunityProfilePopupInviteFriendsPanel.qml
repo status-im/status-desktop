@@ -50,8 +50,10 @@ ColumnLayout {
     ExistingContacts {
         id: existingContacts
 
+        rootStore: root.rootStore
         contactsStore: root.contactsStore
-        community: root.community
+        communityId: root.community.id
+
         hideCommunityMembers: true
         showCheckbox: true
         filterText: filterInput.text

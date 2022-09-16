@@ -16,8 +16,9 @@ import AppLayouts.Chat.controls 1.0
 Item {
     id: root
 
+    property var rootStore
     property var contactsStore
-    property var community
+    property string communityId
 
     property string filterText: ""
     property bool expanded: true
@@ -54,8 +55,8 @@ Item {
             color: sensor.containsMouse ? Style.current.backgroundHover : Style.current.transparent
             userName: model.displayName
             asset.name: model.icon
-            asset.isImage: true
-            asset.imgIsIdenticon: false
+            asset.isImage: (asset.name !== "")
+            asset.isLetterIdenticon: (asset.name === "")
             asset.width: 40
             asset.height: 40
             asset.color: Utils.colorForColorId(model.colorId)
@@ -75,7 +76,7 @@ Item {
                     model.localNickname.toLowerCase().includes(root.filterText.toLowerCase()) ||
                     model.pubKey.toLowerCase().includes(root.filterText.toLowerCase())) &&
                     (!root.hideCommunityMembers ||
-                    !root.community.hasMember(model.pubKey));
+                    !root.rootStore.communityHasMember(model.pubKey, root.communityId));
             }
 
             onClicked: {
