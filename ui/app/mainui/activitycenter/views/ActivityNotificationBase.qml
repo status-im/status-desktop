@@ -21,10 +21,6 @@ Item {
 
     StatusFlatRoundButton {
         id: markReadBtn
-        width: 32
-        height: 32
-        icon.width: 24
-        icon.height: 24
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding

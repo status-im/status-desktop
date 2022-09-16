@@ -7,43 +7,10 @@ import StatusQ.Components 0.1
 
 import shared 1.0
 import utils 1.0
-import shared.panels.chat 1.0
 
-ActivityNotificationBase {
+ActivityNotificationMessage {
     id: root
 
-    markReadBtnVisible: false
-    height: 60
-
-    StatusSmartIdenticon {
-        id: identicon
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
-        anchors.verticalCenter: parent.verticalCenter
-        name: notification.author
-        asset.color: Theme.palette.miscColor5
-    }
-
-    RowLayout {
-        anchors.top: parent.top
-        anchors.left: identicon.right
-
-        StatusBaseText {
-            text: notification.name
-            font.pixelSize: 15
-            color: Style.current.primary
-        }
-
-        StatusBaseText {
-            text: Utils.getElidedPk(notification.author) + " \u2022"
-            font.pixelSize: 12
-            color: Style.current.secondaryText
-        }
-
-        ChatTimePanel {
-            font.pixelSize: 12
-            color: Style.current.secondaryText
-            timestamp: notification.timestamp
-        }
-    }
+    // TODO: mark as read ignores notification type
+    // markReadBtnVisible: false
 }

@@ -103,8 +103,6 @@ QtObject:
     self.threadpool.start(arg)
 
   proc getActivityCenterNotifications*(self: Service): seq[ActivityCenterNotificationDto] =
-    if(self.cursor == ""): return
-
     var cursorVal: JsonNode
 
     if self.cursor == "":
@@ -116,7 +114,6 @@ QtObject:
     let activityCenterNotificationsTuple = parseActivityCenterNotifications(callResult.result)
 
     self.cursor = activityCenterNotificationsTuple[0];
-
     result = activityCenterNotificationsTuple[1]
 
   proc markActivityCenterNotificationRead*(
@@ -155,12 +152,11 @@ QtObject:
   proc markAllActivityCenterNotificationsRead*(self: Service, initialLoad: bool = true):string  =
     try:
       discard backend.markAllActivityCenterNotificationsRead()
-      # This proc should accept ActivityCenterNotificationType in order to clear all notifications
-      # per type, that's why we have this part here. If we add all types to notificationsType that
-      # means that we need to clear all notifications for all types.
+
+      # Accroding specs: Clicking the "Mark all as read" MUST mark mentions and replies items as read in the selected category
       var types : seq[ActivityCenterNotificationType]
-      for t in ActivityCenterNotificationType:
-        types.add(t)
+      types.add(ActivityCenterNotificationType.Mention)
+      types.add(ActivityCenterNotificationType.Reply)
 
       self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_READ,
         MarkAsReadNotificationProperties(notificationTypes: types, isAll: true))
