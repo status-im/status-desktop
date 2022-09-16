@@ -112,6 +112,11 @@ QtObject {
                                               historyArchiveSupportEnabled, pinMessagesAllowedForMembers, bannerJsonStr);
     }
 
+    function communityHasMember(communityId, pubKey)
+    {
+        return communitiesModuleInst.isMemberOfCommunity(communityId, pubKey)
+    }
+
     function copyToClipboard(text) {
         globalUtils.copyToClipboard(text)
     }
