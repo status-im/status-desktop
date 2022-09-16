@@ -96,7 +96,7 @@ Button {
             emojiId: Emoji.iconId(root.asset.emoji, root.asset.emojiSize) || ""
         }
         StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             opacity: !loading
             font: root.font
             text: root.text

@@ -403,6 +403,11 @@ Column {
         asset.emoji: "🖼️️"
     }
 
+    StatusButton {
+        width: parent.width
+        text: "wide"
+    }
+
     RowLayout {
         spacing: 20
 
