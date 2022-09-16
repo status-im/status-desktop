@@ -41,7 +41,6 @@ Page {
                 Layout.leftMargin: Style.current.halfPadding
                 Layout.rightMargin: Style.current.halfPadding
                 rootStore: root.rootStore
-                enabled: root.rootStore.contactsModel.count > 0
 
                 function createChat() {
                     if (model.count === 0) {
@@ -78,7 +77,10 @@ Page {
                     Global.closeCreateChatView()
                 }
 
-                onVisibleChanged: if (visible) edit.forceActiveFocus()
+                onVisibleChanged: {
+                    if (visible)
+                        edit.forceActiveFocus()
+                }
             }
 
             StatusActivityCenterButton {
@@ -110,6 +112,7 @@ Page {
             StatusListView {
                 id: contactsList
 
+                Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 visible: membersSelector.suggestionsModel.count &&
@@ -117,6 +120,7 @@ Page {
                 implicitWidth: contentItem.childrenRect.width
                 model: membersSelector.suggestionsModel
                 delegate: ContactListItemDelegate {
+                    width: ListView.view.width
                     onClicked: membersSelector.entryAccepted(this)
                 }
             }

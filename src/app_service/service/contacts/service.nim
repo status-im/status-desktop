@@ -5,6 +5,7 @@ import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../common/types as common_types
+import ../../common/conversion as service_conversion
 
 import ../settings/service as settings_service
 import ../network/service as network_service
@@ -289,7 +290,16 @@ QtObject:
       return TrustStatus.Unknown
 
   proc getContactById*(self: Service, id: string): ContactsDto =
-    if(id == singletonInstance.userProfile.getPubKey()):
+
+    var pubkey = id
+
+    if len(pubkey) == 0:
+        return
+
+    if service_conversion.isCompressedPubKey(id):
+        pubkey = status_accounts.decompressPk(id).result
+
+    if(pubkey == singletonInstance.userProfile.getPubKey()):
       # If we try to get the contact details of ourselves, just return our own info
       return ContactsDto(
         id: singletonInstance.userProfile.getPubKey(),
@@ -309,25 +319,25 @@ QtObject:
 
     ## Returns contact details based on passed id (public key)
     ## If we don't have stored contact localy or in the db then we create it based on public key.
-    if(self.contacts.hasKey(id)):
-      return self.contacts[id]
+    if(self.contacts.hasKey(pubkey)):
+      return self.contacts[pubkey]
 
-    result = self.fetchContact(id)
+    result = self.fetchContact(pubkey)
     if result.id.len == 0:
-      if(not id.startsWith("0x")):
+      if(not pubkey.startsWith("0x")):
         debug "id is not in a hex format"
         return
 
       var num64: int64
-      let parsedChars = parseHex(id, num64)
+      let parsedChars = parseHex(pubkey, num64)
       if(parsedChars != PK_LENGTH_0X_INCLUDED):
         debug "id doesn't have expected lenght"
         return
 
-      let alias = self.generateAlias(id)
-      let trustStatus = self.getTrustStatus(id)
+      let alias = self.generateAlias(pubkey)
+      let trustStatus = self.getTrustStatus(pubkey)
       result = ContactsDto(
-        id: id,
+        id: pubkey,
         alias: alias,
         ensVerified: false,
         added: false,

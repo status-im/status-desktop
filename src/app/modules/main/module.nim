@@ -753,7 +753,7 @@ method getVerificationRequestFrom*[T](self: Module[T], publicKey: string): Verif
   self.controller.getVerificationRequestFrom(publicKey)
 
 method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
-  let contact =  self.controller.getContact(publicKey)
+  let contact = self.controller.getContact(publicKey)
   let (name, _, _) = self.controller.getContactNameAndImage(contact.id)
   let request = self.getVerificationRequestFrom(publicKey)
   let jsonObj = %* {

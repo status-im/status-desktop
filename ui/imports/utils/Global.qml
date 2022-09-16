@@ -3,7 +3,9 @@ pragma Singleton
 import QtQuick 2.13
 import AppLayouts.Chat.popups 1.0
 
-QtObject {
+import shared.popups 1.0
+
+Item {
     id: root
 
     property var applicationWindow
@@ -40,6 +42,16 @@ QtObject {
     signal displayToastMessage(string title, string subTitle, string icon, bool loading, int ephNotifType, string url)
     signal openEditDisplayNamePopup()
     signal openActivityCenterPopupRequested
+
+    function openContactRequestPopup(publicKey) {
+        const contactDetails = Utils.getContactDetailsAsJson(publicKey);
+        return openPopup(sendContactRequestPopupComponent, {
+            userPublicKey: publicKey,
+            userDisplayName: contactDetails.displayName,
+            userIcon: contactDetails.largeImage,
+            userIsEnsVerified: contactDetails.ensVerified,
+        })
+    }
 
     function openProfilePopup(publicKey, parentPopup, state = "") {
         openProfilePopupRequested(publicKey, parentPopup, state);
@@ -106,5 +118,14 @@ QtObject {
 
     function settingsHasLoaded() {
         settingsLoaded()
+    }
+
+    Component {
+        id: sendContactRequestPopupComponent
+        SendContactRequestModal {
+            anchors.centerIn: parent
+            onAccepted: appMain.rootStore.profileSectionStore.contactsStore.sendContactRequest(userPublicKey, message)
+            onClosed: destroy()
+        }
     }
 }
