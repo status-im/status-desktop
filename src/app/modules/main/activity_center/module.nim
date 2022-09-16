@@ -54,6 +54,7 @@ method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("activityCenterModule", self.viewVariant)
   self.controller.init()
   self.view.load()
+  self.fetchActivityCenterNotifications()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -138,7 +139,7 @@ method convertToItems*(
       )
     )
 
-method getActivityCenterNotifications*(self: Module): seq[notification_item.Item] =
+method fetchActivityCenterNotifications*(self: Module) =
   let activityCenterNotifications = self.controller.getActivityCenterNotifications()
   self.view.pushActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
 

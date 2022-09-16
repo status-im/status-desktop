@@ -36,7 +36,7 @@ proc `$`*(self: ActivityCenterNotificationDto): string =
     read: {$self.read},
     dismissed: {$self.dismissed},
     accepted: {$self.accepted},
-    message:{self.message}
+    message: {self.message}
     )"""
 
 proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotificationDto =

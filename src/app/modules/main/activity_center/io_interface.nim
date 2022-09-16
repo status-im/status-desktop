@@ -27,7 +27,7 @@ method unreadActivityCenterNotificationsCount*(self: AccessInterface): int {.bas
 method convertToItems*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]): seq[Item] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getActivityCenterNotifications*(self: AccessInterface): seq[Item] {.base.} =
+method fetchActivityCenterNotifications*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method markAllActivityCenterNotificationsRead*(self: AccessInterface): string {.base.} =

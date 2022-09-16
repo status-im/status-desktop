@@ -50,7 +50,7 @@ QtObject:
     self.model.updateUnreadCount(count)
 
   proc loadMoreNotifications(self: View) {.slot.} =
-    discard self.delegate.getActivityCenterNotifications()
+    self.delegate.fetchActivityCenterNotifications()
 
   proc markAllActivityCenterNotificationsRead(self: View): string {.slot.} =
     result = self.delegate.markAllActivityCenterNotificationsRead()

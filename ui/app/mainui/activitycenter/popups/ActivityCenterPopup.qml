@@ -20,6 +20,7 @@ import "../panels"
 Popup {
     id: root
 
+   // NOTE: temporary enum until we have different categories on UI and status-go sides
     enum ActivityCategory {
         All,
         Admin,
@@ -32,11 +33,11 @@ Popup {
         System
     }
     property int currentActivityCategory: ActivityCenterPopup.ActivityCategory.All
-    property bool hasMentions: false
-    property bool hasReplies: false
-//    property bool hasContactRequests: false
-
+    property int mentionsCount: 0
+    property int repliesCount: 0
+    property int contactRequestsCount: 0
     property bool hideReadNotifications: false
+
     property var store
     property var chatSectionModule
     property var messageContextMenu: MessageContextMenuView {
@@ -62,7 +63,6 @@ Popup {
     }
 
     onOpened: {
-        root.store.loadMoreNotifications()
         Global.popupOpened = true
     }
     onClosed: {
@@ -99,16 +99,15 @@ Popup {
     ActivityCenterPopupTopBarPanel {
         id: activityCenterTopBar
         width: parent.width
-        hasReplies: root.hasReplies
-        hasMentions: root.hasMentions
+        unreadNotificationsCount: root.unreadNotificationsCount
+        hasReplies: root.repliesCount > 0
+        hasMentions: root.mentionsCount > 0
+        hasContactRequests: root.contactRequestsCount > 0
         hideReadNotifications: root.hideReadNotifications
         currentActivityCategory: root.currentActivityCategory
-        onCategoryTriggered: {
-            root.currentActivityCategory = category;
-        }
-        onMarkAllReadClicked: {
-            errorText = root.store.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
-        }
+        onCategoryTriggered: root.currentActivityCategory = category
+        onMarkAllReadClicked: errorText = root.store.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
+        onShowHideReadNotifications: root.hideReadNotifications = hideReadNotifications
     }
 
     StatusListView {
@@ -122,7 +121,7 @@ Popup {
         model: SortFilterProxyModel {
             sourceModel: root.store.activityCenterList
 
-            filters: ExpressionFilter { expression: filterActivityCategories(model.notificationType) }
+            filters: ExpressionFilter { expression: filterActivityCategories(model.notificationType) && !(root.hideReadNotifications && model.read) }
         }
 
         delegate: DelegateChooser {
@@ -130,92 +129,37 @@ Popup {
 
             DelegateChoice {
                 roleValue: Constants.activityCenterNotificationTypeMention
-                ActivityNotificationMention { store: root.store; notification: model }
+
+                ActivityNotificationMention {
+                    store: root.store
+                    notification: model
+                    Component.onCompleted: root.mentionsCount++
+                    Component.onDestruction: root.mentionsCount--
+                }
             }
             DelegateChoice {
                 roleValue: Constants.activityCenterNotificationTypeReply
-                ActivityNotificationReply { store: root.store; notification: model }
+
+                ActivityNotificationReply {
+                    store: root.store
+                    notification: model
+                    Component.onCompleted: root.repliesCount++
+                    Component.onDestruction: root.repliesCount--
+                }
             }
             DelegateChoice {
                 roleValue: Constants.activityCenterNotificationTypeContactRequest
-                ActivityNotificationContactRequest { store: root.store; notification: model }
+
+                ActivityNotificationContactRequest {
+                    store: root.store
+                    notification: model
+                    Component.onCompleted: root.contactRequestsCount++
+                    Component.onDestruction: root.contactRequestsCount--
+                }
             }
         }
     }
 }
-
-//    // TODO: replace with StatusListView
-//     StatusScrollView {
-//         id: scrollView
-//         anchors.left: parent.left
-//         anchors.right: parent.right
-//         anchors.top: activityCenterTopBar.bottom
-//         anchors.topMargin: 13
-//         anchors.bottom: parent.bottom
-//         anchors.bottomMargin: Style.current.smallPadding
-//         width: parent.width
-
-//         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-
-//         Column {
-//             id: notificationsContainer
-//             width: scrollView.availableWidth
-//             spacing: 0
-
-//             Repeater {
-//                 model: notifDelegateList
-//             }
-
-//             DelegateModelGeneralized {
-//                 id: notifDelegateList
-
-//                 lessThan: [
-//                     function(left, right) { return left.timestamp > right.timestamp }
-//                 ]
-
-//                 model: root.store.activityCenterList
-
-//                 delegate: Item {
-//                     id: notificationDelegate
-//                     width: parent.availableWidth
-//                     height: notifLoader.active ? childrenRect.height : 0
-
-//                     property int idx: DelegateModel.itemsIndex
-
-//                     Component.onCompleted: {
-//                         switch (model.notificationType) {
-//                         case Constants.activityCenterNotificationTypeMention:
-//                             if (!hasMentions) {
-//                                 hasMentions = true
-//                             }
-//                             break
-
-//                         case Constants.activityCenterNotificationTypeReply:
-//                             if (!hasReplies) {
-//                                 hasReplies = true
-//                             }
-//                             break
-//                         }
-//                     }
-
-//                     Loader {
-//                         property int previousNotificationIndex: {
-//                             if (notificationDelegate.idx === 0) {
-//                                 return 0
-//                             }
-
-//                             // This is used in order to have access to the previous message and determine the timestamp
-//                             // we can't rely on the index because the sequence of messages is not ordered on the nim side
-//                             if (notificationDelegate.idx < notifDelegateList.items.count - 1) {
-//                                 return notifDelegateList.items.get(notificationDelegate.idx - 1).model.index
-//                             }
-//                             return -1;
-//                         }
-//                         readonly property string previousNotificationTimestamp: notificationDelegate.idx === 0 ? "" :
-//                                                        root.store.activityCenterList.getNotificationData(previousNotificationIndex, "timestamp")
-//                         onPreviousNotificationTimestampChanged: {
-//                             root.store.messageStore.prevMsgTimestamp = previousNotificationTimestamp;
-//                         }
 
 //                         id: notifLoader
 //                         anchors.top: parent.top
@@ -274,19 +218,3 @@ Popup {
 //                 }
 //             }
 
-//             Item {
-//                 visible: root.store.activityCenterModuleInst.hasMoreToShow
-//                 width: parent.width
-//                 height: visible ? showMoreBtn.height + showMoreBtn.anchors.topMargin : 0
-//                 StatusButton {
-//                     id: showMoreBtn
-//                     text: qsTr("Show more")
-//                     anchors.horizontalCenter: parent.horizontalCenter
-//                     anchors.top: parent.top
-//                     anchors.topMargin: Style.current.smallPadding
-//                     onClicked: root.store.activityCenterModuleInst.loadMoreNotifications()
-//                 }
-//             }
-//         }
-//     }
-// }
