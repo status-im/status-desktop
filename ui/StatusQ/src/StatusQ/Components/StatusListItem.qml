@@ -283,7 +283,6 @@ Rectangle {
             RowLayout {
                 id: statusListItemSubtitleTagsRow
                 anchors.top: statusListItemTitle.bottom
-                anchors.topMargin: 4
                 width: parent.width
                 spacing: 4
 
