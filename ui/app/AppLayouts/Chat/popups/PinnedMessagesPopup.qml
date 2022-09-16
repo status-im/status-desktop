@@ -102,7 +102,7 @@ StatusDialog {
 
                 MouseArea {
                     anchors.fill: parent
-                    enabled: !!popup.messageToPin
+                    enabled: !!root.messageToPin
                     cursorShape: Qt.PointingHandCursor
                     z: 55
                     onClicked: {
