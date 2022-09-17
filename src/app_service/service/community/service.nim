@@ -238,8 +238,8 @@ QtObject:
     result = @[]
     for chat in community.chats:
       if (chat.categoryId == categoryId):
-        let fullChatId = community.id & chat.id
-        var chatDetails = self.chatService.getChatById(fullChatId)
+        # TODO: chat.id already contains community.id here but it was not expected, this requires investigation
+        var chatDetails = self.chatService.getChatById(chat.id)
         result.add(chatDetails)
 
   proc handleCommunitiesSettingsUpdates(self: Service, communitiesSettings: seq[CommunitySettingsDto]) =
