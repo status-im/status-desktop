@@ -1084,8 +1084,8 @@ Item {
                     name: modelData ? modelData.name : ""
                     active: true
                 }
-                asset.width: image.width
-                asset.height: image.height
+                asset.width: 30
+                asset.height: 30
                 asset.color: modelData ? modelData.color : ""
                 asset.name: modelData ? modelData.icon : ""
                 asset.isImage: asset.name.includes("data")

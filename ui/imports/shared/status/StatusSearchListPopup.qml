@@ -55,12 +55,7 @@ Popup {
             leftPadding: 0
             rightPadding: 0
             placeholderText: root.searchBoxPlaceholder
-            input.asset: StatusAssetSettings {
-                width: 24
-                height: 24
-                name: "search"
-                color: Theme.palette.baseColor1
-            }
+            input.asset.name: "search"
 
             function goToNextAvailableIndex(up) {
                 var currentIndex = listView.currentIndex
