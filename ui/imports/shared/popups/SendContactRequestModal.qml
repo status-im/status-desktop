@@ -43,10 +43,9 @@ StatusModal {
             pubkey: root.userPublicKey
             icon: root.userIcon
 
-            displayNameVisible: false
-            pubkeyVisible: false
+            displayNameVisible: true
+            pubkeyVisible: true
             imageSize: ProfileHeader.ImageSize.Middle
-            editImageButtonVisible: false
         }
 
         StatusInput {
