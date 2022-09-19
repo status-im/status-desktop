@@ -91,6 +91,7 @@ proc createMemberItem(self: Module, memberId, requestId: string): MemberItem =
     colorId = contactDetails.colorId,
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(memberId).statusType),
     isContact = contactDetails.details.isContact,
+    isVerified = contactDetails.details.isContactVerified(),
     requestToJoinId = requestId)
 
 method getCommunityItem(self: Module, c: CommunityDto): SectionItem =

@@ -259,6 +259,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         colorId = contactDetails.colorId,
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(member.id).statusType),
         isContact = contactDetails.details.isContact,
+        isVerified = contactDetails.details.isContactVerified(),
         isAdmin = member.admin
         )),
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
@@ -282,7 +283,8 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         icon = contactDetails.icon,
         colorId = contactDetails.colorId,
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(bannedMemberId).statusType),
-        isContact = contactDetails.details.isContact
+        isContact = contactDetails.details.isContact,
+        isVerified = contactDetails.details.isContactVerified()
       )
     ),
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
@@ -297,6 +299,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         colorId = contactDetails.colorId,
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(requestDto.publicKey).statusType),
         isContact = contactDetails.details.isContact,
+        isVerified = contactDetails.details.isContactVerified(),
         requestToJoinId = requestDto.id
       )
     ) else: @[],
@@ -312,6 +315,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         colorId = contactDetails.colorId,
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(requestDto.publicKey).statusType),
         isContact = contactDetails.details.isContact,
+        isVerified = contactDetails.details.isContactVerified(),
         requestToJoinId = requestDto.id
       )
     ) else: @[]
@@ -826,6 +830,7 @@ method contactUpdated*[T](self: Module[T], publicKey: string) =
     contactDetails.details.alias,
     contactDetails.icon,
     isContact = contactDetails.details.isContact,
+    isVerified = contactDetails.details.isContactVerified(),
     isUntrustworthy = contactDetails.details.isContactUntrustworthy(),
     )
 
