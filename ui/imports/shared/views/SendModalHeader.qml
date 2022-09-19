@@ -38,14 +38,12 @@ StatusFloatingButtonsSelector {
         color: Theme.palette.baseColor3
         StatusButton {
             id: button
-            topPadding: 8
-            bottomPadding: 0
+            size: StatusBaseButton.Size.Tiny
             implicitHeight: 32
             leftPadding: 4
             text: name
             objectName: name
             asset.emoji: !!emoji ? emoji: ""
-            asset.emojiSize: StatusQUtils.Emoji.size.middle
             icon.name: !emoji ? "filled-account": ""
             normalColor: "transparent"
             hoverColor: Theme.palette.statusFloatingButtonHighlight
