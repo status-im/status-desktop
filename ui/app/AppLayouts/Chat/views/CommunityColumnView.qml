@@ -58,7 +58,7 @@ Item {
         asset.name: communityData.image
         asset.color: communityData.color
         asset.isImage: true
-        onClicked: root.infoButtonClicked()
+        onClicked: if (communityData.amISectionAdmin) { root.infoButtonClicked() }
         anchors.top: parent.top
         anchors.topMargin: Style.current.smallPadding
         anchors.left: parent.left
@@ -66,6 +66,7 @@ Item {
         anchors.right: (implicitWidth > parent.width - 50) ? adHocChatButton.left : undefined
         anchors.rightMargin: Style.current.halfPadding
         type: StatusChatInfoButton.Type.OneToOneChat
+        hoverEnabled: communityData.amISectionAdmin
     }
 
     StatusIconTabButton {
