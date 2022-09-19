@@ -12,6 +12,8 @@ import ../../../app/core/fleets/fleet_configuration
 import ../../common/[account_constants, network_constants, utils, string_utils]
 import ../../../constants as main_constants
 
+import ../settings/dto/settings as settings
+
 export dto_accounts
 export dto_generated_accounts
 
@@ -253,7 +255,9 @@ proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDt
         "statusType": 1,
         "clock": 0,
         "text": ""
-      }
+      },
+    "profile-pictures-show-to": settings.PROFILE_PICTURES_SHOW_TO_EVERYONE,
+    "profile-pictures-visibility": settings.PROFILE_PICTURES_VISIBILITY_EVERYONE
   }
 
 proc getAccountSettings(self: Service, accountId: string,
