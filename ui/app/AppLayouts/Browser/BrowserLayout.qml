@@ -29,6 +29,11 @@ StatusSectionLayout {
     property var globalStore
     property var sendTransactionModal
 
+    function openUrlInNewTab(url) {
+        var tab = _internal.addNewTab()
+        tab.item.url = _internal.determineRealURL(url)
+    }
+
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     QtObject {
         id: _internal
@@ -140,12 +145,6 @@ StatusSectionLayout {
         id: browserWindow
         anchors.fill: parent
         color: Style.current.inputBackground
-
-
-        function openUrlInNewTab(url) {
-            var tab = _internal.addNewTab()
-            tab.item.url = _internal.determineRealURL(url)
-        }
 
         WebProviderObj {
             id: provider
@@ -323,7 +322,7 @@ StatusSectionLayout {
         FavoriteMenu {
             id: favoriteMenu
             openInNewTab: function (url) {
-                browserWindow.openUrlInNewTab(url)
+                root.openUrlInNewTab(url)
             }
             onEditFavoriteTriggered: {
                 Global.openPopup(addFavoriteModal, {
@@ -614,7 +613,7 @@ StatusSectionLayout {
     Connections {
         target: browserSection
         onOpenUrl: {
-            browserWindow.openUrlInNewTab(url);
+            root.openUrlInNewTab(url);
         }
     }
 }
