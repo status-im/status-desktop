@@ -228,9 +228,10 @@ QtObject:
       alias: string,
       image: string,
       isContact: bool,
+      isVerified: bool,
       isUntrustworthy: bool) =
     self.item.updateMember(pubkey, name, ensName, localNickname, alias, image, isContact,
-      isUntrustworthy)
+      isVerified, isUntrustworthy)
 
   proc pendingRequestsToJoin(self: ActiveSection): QVariant {.slot.} =
     if (self.item.id == ""):

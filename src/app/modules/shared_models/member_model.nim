@@ -205,6 +205,7 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
+      isVerified: bool,
       isAdmin: bool,
       joined: bool,
       isUntrustworthy: bool,
@@ -219,6 +220,7 @@ QtObject:
     self.items[ind].alias = alias
     self.items[ind].icon = icon
     self.items[ind].isContact = isContact
+    self.items[ind].isVerified = isVerified
     self.items[ind].isAdmin = isAdmin
     self.items[ind].joined = joined
     self.items[ind].isUntrustworthy = isUntrustworthy
@@ -231,6 +233,7 @@ QtObject:
       ModelRole.Alias.int,
       ModelRole.Icon.int,
       ModelRole.IsContact.int,
+      ModelRole.IsVerified.int,
       ModelRole.IsAdmin.int,
       ModelRole.Joined.int,
       ModelRole.IsUntrustworthy.int,
@@ -245,6 +248,7 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
+      isVerified: bool,
       isUntrustworthy: bool,
       ) =
     let ind = self.findIndexForMember(pubKey)
@@ -257,6 +261,7 @@ QtObject:
     self.items[ind].alias = alias
     self.items[ind].icon = icon
     self.items[ind].isContact = isContact
+    self.items[ind].isVerified = isVerified
     self.items[ind].isUntrustworthy = isUntrustworthy
 
     let index = self.createIndex(ind, 0, nil)
@@ -267,6 +272,7 @@ QtObject:
       ModelRole.Alias.int,
       ModelRole.Icon.int,
       ModelRole.IsContact.int,
+      ModelRole.IsVerified.int,
       ModelRole.IsUntrustworthy.int,
     ])
 

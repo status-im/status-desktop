@@ -83,6 +83,7 @@ method onNewMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
       colorId = contactDetails.colorId,
       onlineStatus = status,
       isContact = contactDetails.details.isContact,
+      isVerified = contactDetails.details.isContactVerified(),
       isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,
       )
     )
@@ -111,6 +112,7 @@ method contactUpdated*(self: Module, publicKey: string) =
     alias = contactDetails.details.alias,
     icon = contactDetails.icon,
     isContact = contactDetails.details.isContact,
+    isVerified = contactDetails.details.isContactVerified(),
     isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,
   )
 
@@ -150,6 +152,7 @@ method addChatMember*(self: Module,  member: ChatMember) =
     colorId = contactDetails.colorId,
     onlineStatus = status,
     isContact = contactDetails.details.isContact,
+    isVerified = contactDetails.details.isContactVerified(),
     isAdmin = member.admin,
     joined = member.joined,
     isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy
@@ -197,6 +200,7 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
     alias = contactDetails.details.alias,
     icon = contactDetails.icon,
     isContact = contactDetails.details.isContact,
+    isVerified = contactDetails.details.isContactVerified(),
     isAdmin = admin,
     joined = joined,
     isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,

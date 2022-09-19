@@ -23,7 +23,7 @@ proc initMemberItem*(
   colorHash: string = "",
   onlineStatus: OnlineStatus = OnlineStatus.Inactive,
   isContact: bool = false,
-  isVerified: bool = false,
+  isVerified: bool,
   isUntrustworthy: bool = false,
   isBlocked: bool = false,
   contactRequest: ContactRequest = ContactRequest.None,

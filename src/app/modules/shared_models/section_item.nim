@@ -261,9 +261,10 @@ proc updateMember*(
     alias: string,
     image: string,
     isContact: bool,
+    isVerified: bool,
     isUntrustworthy: bool) =
   self.membersModel.updateItem(pubkey, name, ensName, nickname, alias, image, isContact,
-    isUntrustworthy)
+    isVerified, isUntrustworthy)
 
 proc bannedMembers*(self: SectionItem): member_model.Model {.inline.} =
   self.bannedMembersModel
