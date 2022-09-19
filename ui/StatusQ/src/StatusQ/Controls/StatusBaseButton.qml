@@ -42,6 +42,7 @@ Button {
         readonly property color textColor: root.enabled || root.loading ? root.textColor : root.disabledTextColor
     }
 
+    font.family: Theme.palette.baseFont.name
     font.weight: Font.Medium
     font.pixelSize: size === StatusBaseButton.Size.Large ? 15 : 13
 
