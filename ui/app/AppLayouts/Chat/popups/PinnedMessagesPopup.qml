@@ -15,6 +15,7 @@ StatusDialog {
 
     property var store
     property var messageStore
+    property var messagesModule
     property var pinnedMessagesModel //this doesn't belong to the messageStore, it is a part of the ChatContentStore, but we didn't introduce it yet.
     property string messageToPin
     property string messageToUnpin
@@ -149,6 +150,10 @@ StatusDialog {
 
             onOpenProfileClicked: {
                 Global.openProfilePopup(publicKey, null, state)
+            }
+
+            onJumpToMessage: {
+                root.messagesModule.jumpToMessage(messageId);
             }
         }
     }

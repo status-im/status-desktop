@@ -166,3 +166,6 @@ QtObject:
   proc refreshAMessageUserRespondedTo(self: View, msgId: string) {.signal.}
   proc emitRefreshAMessageUserRespondedToSignal*(self: View, msgId: string) =
     self.refreshAMessageUserRespondedTo(msgId)
+
+  proc jumpToMessage*(self: View, messageId: string) {.slot.} =
+    self.delegate.scrollToMessage(messageId)
