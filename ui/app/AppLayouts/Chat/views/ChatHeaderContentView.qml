@@ -259,10 +259,6 @@ RowLayout {
                 // In some moment in future this should be part of the backend logic.
                 // (once we add transaltion on the backend side)
                 switch (chatContentModule.chatDetails.type) {
-                case Constants.chatType.oneToOne:
-                    return (chatContentModule.isMyContact(chatContentModule.chatDetails.id) ?
-                                qsTr("Contact") :
-                                qsTr("Not a contact"))
                 case Constants.chatType.publicChat:
                     return qsTr("Public chat")
                 case Constants.chatType.privateGroupChat:
