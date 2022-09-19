@@ -12,6 +12,8 @@ import shared.views.chat 1.0
 ActivityNotificationBase {
     id: root
 
+    property var messageContextMenu
+
     signal activityCenterClose()
 
     height: Math.max(60, notificationMessage.height)
@@ -22,14 +24,17 @@ ActivityNotificationBase {
         anchors.left: parent.left
         anchors.right: parent.right
         z: -1
+
         rootStore: root.store
         messageStore: root.store.messageStore
+        messageContextMenu: root.messageContextMenu
+
         messageId: notification.id
         senderDisplayName: notification.message.senderDisplayName
         messageText: notification.message.messageText
         responseToMessageWithId: notification.message.responseToMessageWithId
         senderId: notification.message.senderId
-        senderLocalName: notification.message.senderLocalName
+        senderOptionalName: notification.message.senderOptionalName
         senderIcon: notification.message.senderIcon
         amISender: notification.message.amISender
         messageImage: notification.message.messageImage
