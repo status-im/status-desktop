@@ -237,8 +237,6 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("image", chatImage)
   if (result.chatType == ChatType.PrivateGroupChat and len(chatImage) > 0):
     result.icon = chatImage
-  else:
-    discard jsonObj.getProp("identicon", result.icon)
 
   var membersObj: JsonNode
   if(jsonObj.getProp("members", membersObj)):
