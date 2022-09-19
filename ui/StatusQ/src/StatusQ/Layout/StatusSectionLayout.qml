@@ -85,7 +85,7 @@ SplitView {
         This property holds the number of notifications to be displayed in the notifications
         button of the header component.
     */
-    property int notificationCount
+    property alias notificationCount: statusToolBar.notificationCount
     /*!
         \qmlproperty alias StatusAppLayout::headerContent
         This property holds a reference to the custom header content of
