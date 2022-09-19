@@ -33,7 +33,7 @@ Item {
                 {text: qsTr("1Y"), enabled: true}, {text: qsTr("ALL"), enabled: true}]
 
         property var simTimer: Timer {
-            running: true
+            running: root.visible
             interval: 3000
             repeat: true
             onTriggered: {
