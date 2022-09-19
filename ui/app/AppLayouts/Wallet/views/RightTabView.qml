@@ -100,7 +100,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 onGoBack: stack.currentIndex = 0
-                visible: (stack.currentTabIndex === 2)
+                visible: (stack.currentIndex === 2)
             }
             TransactionDetailView {
                 id: transactionDetailView
