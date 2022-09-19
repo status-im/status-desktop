@@ -62,6 +62,19 @@ Popup {
         }
     }
 
+    function calcNotificationType(notificationType, cnt) {
+        switch (notificationType) {
+        case Constants.activityCenterNotificationTypeMention:
+            root.mentionsCount += cnt
+        case Constants.activityCenterNotificationTypeReply:
+            root.repliesCount += cnt
+        case Constants.activityCenterNotificationTypeContactRequest:
+            root.contactRequestsCount += cnt
+        default:
+            break;
+        }
+    }
+
     onOpened: {
         Global.popupOpened = true
     }
@@ -69,17 +82,18 @@ Popup {
         Global.popupOpened = false
     }
 
+    x: Global.applicationWindow.width - root.width - Style.current.halfPadding
+    width: 560
+    padding: 0
+    dim: true
     modal: false
-
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     parent: Overlay.overlay
 
-    dim: true
     Overlay.modeless: MouseArea {
         onClicked: activityCenter.close()
     }
 
-    width: 560
     background: Rectangle {
         color: Style.current.background
         radius: Style.current.radius
@@ -93,8 +107,16 @@ Popup {
             color: Style.current.dropShadow
         }
     }
-    x: Global.applicationWindow.width - root.width - Style.current.halfPadding
-    padding: 0
+
+    Repeater {
+        id: notificationTypeCounter
+        model: root.store.activityCenterList
+
+        delegate: Item {
+            Component.onCompleted: calcNotificationType(model.notificationType, 1)
+            Component.onDestruction: calcNotificationType(model.notificationType, -1)
+        }
+    }
 
     ActivityCenterPopupTopBarPanel {
         id: activityCenterTopBar
@@ -121,7 +143,8 @@ Popup {
         model: SortFilterProxyModel {
             sourceModel: root.store.activityCenterList
 
-            filters: ExpressionFilter { expression: filterActivityCategories(model.notificationType) && !(root.hideReadNotifications && model.read) }
+            filters: ExpressionFilter { expression: filterActivityCategories(model.notificationType) &&
+                                                    !(root.hideReadNotifications && model.read) }
         }
 
         delegate: DelegateChooser {
@@ -133,8 +156,7 @@ Popup {
                 ActivityNotificationMention {
                     store: root.store
                     notification: model
-                    Component.onCompleted: root.mentionsCount++
-                    Component.onDestruction: root.mentionsCount--
+                    messageContextMenu: root.messageContextMenu
                 }
             }
             DelegateChoice {
@@ -143,8 +165,7 @@ Popup {
                 ActivityNotificationReply {
                     store: root.store
                     notification: model
-                    Component.onCompleted: root.repliesCount++
-                    Component.onDestruction: root.repliesCount--
+                    messageContextMenu: root.messageContextMenu
                 }
             }
             DelegateChoice {
@@ -153,68 +174,9 @@ Popup {
                 ActivityNotificationContactRequest {
                     store: root.store
                     notification: model
-                    Component.onCompleted: root.contactRequestsCount++
-                    Component.onDestruction: root.contactRequestsCount--
+                    messageContextMenu: root.messageContextMenu
                 }
             }
         }
     }
 }
-
-//                         id: notifLoader
-//                         anchors.top: parent.top
-//                         active: !!sourceComponent
-//                         width: parent.width
-//                         sourceComponent: {
-//                             switch (model.notificationType) {
-//                             case Constants.activityCenterNotificationTypeOneToOne:
-//                             case Constants.activityCenterNotificationTypeMention:
-//                             case Constants.activityCenterNotificationTypeReply: return messageNotificationComponent
-//                             case Constants.activityCenterNotificationTypeGroupRequest: return groupRequestNotificationComponent
-//                             default: return null
-//                             }
-//                         }
-//                         onLoaded: {
-//                             if (model.notificationType === Constants.activityCenterNotificationTypeReply ||
-//                                     model.notificationType === Constants.activityCenterNotificationTypeGroupRequest) {
-//                                 item.previousNotificationIndex = Qt.binding(() => notifLoader.previousNotificationIndex);
-//                                 item.previousNotificationTimestamp = Qt.binding(() => notifLoader.previousNotificationTimestamp);
-//                             }
-//                         }
-//                     }
-
-//                     Component {
-//                         id: messageNotificationComponent
-
-//                         ActivityCenterMessageComponentView {
-//                             id: activityCenterMessageView
-//                             store: root.store
-//                             acCurrentActivityCategory: root.currentActivityCategory
-//                             chatSectionModule: root.chatSectionModule
-//                             messageContextMenu: root.messageContextMenu
-//                             hideReadNotifications: root.hideReadNotifications
-//                             Connections {
-//                                 target: root
-//                                 onOpened: activityCenterMessageView.reevaluateItemBadge()
-//                             }
-//                             onActivityCenterClose: {
-//                                 root.close();
-//                             }
-//                             Component.onCompleted: {
-//                                 activityCenterMessageView.reevaluateItemBadge()
-//                             }
-//                         }
-//                     }
-
-//                     Component {
-//                         id: groupRequestNotificationComponent
-
-//                         ActivityCenterGroupRequest {
-//                             store: root.store
-//                             hideReadNotifications: root.hideReadNotifications
-//                             acCurrentActivityCategoryAll: root.currentActivityCategory === ActivityCenter.ActivityCategory.All
-//                         }
-//                     }
-//                 }
-//             }
-

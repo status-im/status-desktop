@@ -86,7 +86,7 @@ QtObject:
       if (receivedData.activityCenterNotifications.len > 0):
         self.events.emit(
           SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
-          ActivityCenterNotificationsArgs(activityCenterNotifications: receivedData.activityCenterNotifications.filter(n => n.notificationType != ActivityCenterNotificationType.ContactRequest))
+          ActivityCenterNotificationsArgs(activityCenterNotifications: receivedData.activityCenterNotifications)
         )
 
   proc hasMoreToShow*(self: Service): bool =
