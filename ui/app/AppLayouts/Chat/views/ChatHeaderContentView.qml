@@ -291,12 +291,13 @@ RowLayout {
 
             onPinnedMessagesCountClicked: {
                 if(!chatContentModule) {
-                    console.debug("error on open pinned messages - chat content module is not set")
+                    console.warn("error on open pinned messages - chat content module is not set")
                     return
                 }
                 Global.openPopup(Global.pinnedMessagesPopup, {
                                      store: rootStore,
                                      messageStore: root.rootStore.messageStore,
+                                     messagesModule: chatContentModule.messagesModule,
                                      pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
                                      messageToPin: ""
                                  })

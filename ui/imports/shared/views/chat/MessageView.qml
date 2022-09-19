@@ -744,6 +744,7 @@ Loader {
                             Global.openPopup(Global.pinnedMessagesPopup, {
                                                  store: root.rootStore,
                                                  messageStore: messageStore,
+                                                 messagesModule: chatContentModule.messagesModule,
                                                  pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
                                                  messageToPin: root.messageId
                                              });

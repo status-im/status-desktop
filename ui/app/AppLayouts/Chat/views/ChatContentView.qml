@@ -95,6 +95,7 @@ ColumnLayout {
             Global.openPopup(Global.pinnedMessagesPopup, {
                                  store: rootStore,
                                  messageStore: messageStore,
+                                 messagesModule: chatContentModule.messagesModule,
                                  pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
                                  messageToPin: messageId
                              })
