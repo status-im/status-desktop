@@ -8,6 +8,7 @@ import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
+import utils 1.0
 import shared.controls 1.0
 import shared 1.0
 
@@ -42,6 +43,8 @@ StatusModal {
                 pKeyInput.input.text =  pKeyInput.input.edit.focus ? root.privateKey : elidedPkey
             }
             input.rightComponent: StatusButton {
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.halfPadding
                 anchors.verticalCenter: parent.verticalCenter
                 borderColor: Theme.palette.primaryColor1
                 size: StatusBaseButton.Size.Tiny
