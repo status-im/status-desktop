@@ -234,5 +234,9 @@ rpc(keycardLocked, "accounts"):
 rpc(keycardUnlocked, "accounts"):
   keycardUid: string
 
+rpc(updateKeycardUID, "accounts"):
+  oldKeycardUID: string
+  newKeycardUID: string
+
 rpc(deleteKeycard, "accounts"):
   keycardUid: string
