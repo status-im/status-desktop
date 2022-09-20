@@ -127,8 +127,6 @@ ColumnLayout {
     StatusListItem {
         Layout.fillWidth: true
         visible: Qt.platform.os == "osx"
-        leftPadding: 0
-        rightPadding: 0
         title: qsTr("Biometric login and transaction authentication")
         asset.name: "touch-id"
         components: [ StatusSwitch {
