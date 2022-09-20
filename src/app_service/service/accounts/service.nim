@@ -348,8 +348,19 @@ proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) =
     let installationId = $genUUID()
 
     let alias = generateAliasFromPk(keycardData.whisperKey.publicKey)
+    
+    let openedAccounts = self.openedAccounts()
+    var displayName: string
+    for acc in openedAccounts:
+      if acc.keyUid == keycardData.keyUid:
+        displayName = acc.name
+        break
+    if displayName.len == 0:
+      displayName = self.getLoggedInAccount().name
+
     var accountDataJson = %* {
       "name": alias,
+      "display-name": displayName,
       "address": keycardData.masterKey.address,
       "key-uid": keycardData.keyUid
     }
@@ -529,9 +540,15 @@ proc loginAccountKeycard*(self: Service, keycardData: KeycardEvent): string =
   try:
     self.setKeyStoreDir(keycardData.keyUid)
 
-    let alias = generateAliasFromPk(keycardData.whisperKey.publicKey)
+    let openedAccounts = self.openedAccounts()
+    var accToBeLoggedIn: AccountDto
+    for acc in openedAccounts:
+      if acc.keyUid == keycardData.keyUid:
+        accToBeLoggedIn = acc
+        break
+
     var accountDataJson = %* {
-      "name": alias,
+      "name": accToBeLoggedIn.name,
       "address": keycardData.masterKey.address,
       "key-uid": keycardData.keyUid
     }
@@ -550,8 +567,7 @@ proc loginAccountKeycard*(self: Service, keycardData: KeycardEvent): string =
       if error == "":
         debug "Account logged in succesfully"
         # this should be fetched later from waku
-        self.loggedInAccount.name = alias
-        self.loggedInAccount.keyUid = keycardData.keyUid
+        self.loggedInAccount = accToBeLoggedIn
         self.loggedInAccount.keycardPairing = accountDataJson{"keycard-pairing"}.getStr
         return
   except Exception as e:
@@ -580,7 +596,9 @@ proc convertToKeycardAccount*(self: Service, keyUid: string, password: string): 
       "name": self.getLoggedInAccount().name,
       "key-uid": keyUid
     }
-    var settingsJson = %* { }
+    var settingsJson = %* {
+      "display-name": self.getLoggedInAccount().name
+    }
 
     self.addKeycardDetails(settingsJson, accountDataJson)
     
