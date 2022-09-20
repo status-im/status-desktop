@@ -535,6 +535,14 @@ QtObject:
       error "error: ", procName="setKeycardUnlocked", errName = e.name, errDesription = e.msg
     return false
 
+  proc updateKeycardUid*(self: Service, oldKeycardUid: string, newKeycardUid: string): bool =
+    try:
+      let response = backend.updateKeycardUID(oldKeycardUid, newKeycardUid)
+      return self.responseHasNoErrors("updateKeycardUid", response)
+    except Exception as e:
+      error "error: ", procName="updateKeycardUid", errName = e.name, errDesription = e.msg
+    return false
+
   proc deleteKeycard*(self: Service, keycardUid: string): bool =
     try:
       let response = backend.deleteKeycard(keycardUid)
