@@ -235,10 +235,10 @@ ColumnLayout {
                     }
 
                     if(root.rootStore.sendMessage(event,
-                                                             chatInput.textInput.text,
-                                                             chatInput.isReply? chatInput.replyMessageId : "",
-                                                             chatInput.fileUrls
-                                                             ))
+                                                  chatInput.getTextWithPublicKeys(),
+                                                  chatInput.isReply? chatInput.replyMessageId : "",
+                                                  chatInput.fileUrls
+                                                  ))
                     {
                         Global.sendMessageSound.stop();
                         Qt.callLater(Global.sendMessageSound.play);
