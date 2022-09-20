@@ -242,7 +242,7 @@ StatusSectionLayout {
             }
 
             onSendInvites: (pubKeys, inviteMessage) => {
-                const error = root.communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys), inviteMessage);
+                const error = root.chatCommunitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys), inviteMessage);
                 processInviteResult(error);
             }
         }
