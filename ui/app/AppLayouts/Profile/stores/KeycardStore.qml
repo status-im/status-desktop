@@ -9,4 +9,16 @@ QtObject {
     function runSetupKeycardPopup() {
         root.keycardModule.runSetupKeycardPopup()
     }
+
+    function runUnlockKeycardPopup() {
+        root.keycardModule.runUnlockKeycardPopup()
+    }
+
+    function runDisplayKeycardContentPopup() {
+        root.keycardModule.runDisplayKeycardContentPopup()
+    }
+
+    function runFactoryResetPopup() {
+        root.keycardModule.runFactoryResetPopup()
+    }
 }

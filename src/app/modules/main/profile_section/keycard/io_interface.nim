@@ -28,6 +28,15 @@ method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheC
 method runSetupKeycardPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method runUnlockKeycardPopup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method runDisplayKeycardContentPopup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method runFactoryResetPopup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi

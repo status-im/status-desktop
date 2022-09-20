@@ -95,11 +95,26 @@ method onSharedKeycarModuleFlowTerminated*(self: Module, lastStepInTheCurrentFlo
     self.keycardSharedModule.delete
     self.keycardSharedModule = nil
 
+method onDisplayKeycardSharedModuleFlow*(self: Module) =
+  self.view.emitDisplayKeycardSharedModuleFlow()
+
 method runSetupKeycardPopup*(self: Module) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycard)
 
-method onDisplayKeycardSharedModuleFlow*(self: Module) =
-  self.view.emitDisplayKeycardSharedModuleFlow()
+method runUnlockKeycardPopup*(self: Module) =
+  self.createSharedKeycardModule()
+  if self.keycardSharedModule.isNil:
+    return
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.UnlockKeycard)
+
+method runDisplayKeycardContentPopup*(self: Module) =
+  info "TODO: Run display keycard content..."
+
+method runFactoryResetPopup*(self: Module) =
+  self.createSharedKeycardModule()
+  if self.keycardSharedModule.isNil:
+    return
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.FactoryReset)

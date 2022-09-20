@@ -33,3 +33,12 @@ QtObject:
 
   proc runSetupKeycardPopup*(self: View) {.slot.} =
     self.delegate.runSetupKeycardPopup()
+
+  proc runUnlockKeycardPopup*(self: View) {.slot.} =
+    self.delegate.runUnlockKeycardPopup()
+
+  proc runDisplayKeycardContentPopup*(self: View) {.slot.} =
+    self.delegate.runDisplayKeycardContentPopup()
+
+  proc runFactoryResetPopup*(self: View) {.slot.} =
+    self.delegate.runFactoryResetPopup()
