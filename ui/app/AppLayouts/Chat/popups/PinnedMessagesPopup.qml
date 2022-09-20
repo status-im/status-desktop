@@ -136,24 +136,12 @@ StatusDialog {
                 root.close()
             }
 
-            onPinMessage: {
-                root.messageStore.pinMessage(messageId)
-            }
-
             onUnpinMessage: {
-                root.messageStore.unpinMessage(messageId)
-            }
-
-            onToggleReaction: {
-                root.messageStore.toggleReaction(messageId, emojiId)
-            }
-
-            onOpenProfileClicked: {
-                Global.openProfilePopup(publicKey, null, state)
+                root.messagesModule.unpinMessage(messageId)
             }
 
             onJumpToMessage: {
-                root.messagesModule.jumpToMessage(messageId);
+                root.messagesModule.jumpToMessage(messageId)
             }
         }
     }
