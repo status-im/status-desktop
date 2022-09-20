@@ -13,7 +13,7 @@ method getNextPrimaryState*(self: MaxPukRetriesReachedState, controller: Control
     self.flowType == FlowType.SetupNewKeycard:
       return createState(StateType.FactoryResetConfirmation, self.flowType, self)
   if self.flowType == FlowType.Authentication:
-      debug "Run Unlock Keycard flow... (not developed yet)"
+    controller.runSharedModuleFlow(FlowType.UnlockKeycard)
   if self.flowType == FlowType.UnlockKeycard:
     return createState(StateType.EnterSeedPhrase, self.flowType, self)
 
