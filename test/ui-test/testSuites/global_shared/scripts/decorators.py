@@ -13,6 +13,6 @@ def verify_screenshot(func, obj: Dict[str, Any] = mainWindow_RighPanel):
         step = context.userData["step_name"].lower().replace(" ", "_")
         filename = f"{step}_{'_'.join(args[1:])}"
         path = os.path.join(scenario, filename)
-        verifier.verify_or_create_screenshot(path, obj)
+#         verifier.verify_or_create_screenshot(path, obj)
      
     return inner

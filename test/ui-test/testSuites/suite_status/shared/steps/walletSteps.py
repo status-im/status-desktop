@@ -81,3 +81,7 @@ def step(context, name: str):
 @Then("the collectibles are listed for the |any|")
 def step(context, account_name: str):
     _walletScreen.verify_collectibles_exist(account_name)    
+    
+@Then("the transactions are listed for the added account")
+def step(context):
+    _walletScreen.verify_transactions_exist()

@@ -85,7 +85,11 @@ class CollectiblesView(Enum):
 class WalletTabBar(Enum):
     ASSET_TAB =  0
     COLLECTION_TAB =  1
-    ACTIVITY_TAB = 2    
+    ACTIVITY_TAB = 2   
+
+class TransactionsView(Enum):
+    TRANSACTIONS_LISTVIEW: str =  "mainWallet_Transactions_List" 
+    TRANSACTIONS_DETAIL_VIEW_HEADER: str =  "mainWallet_Transactions_Detail_View_Header"
 
 class StatusWalletScreen:
     
@@ -96,6 +100,7 @@ class StatusWalletScreen:
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
         
         click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
+
         click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
         time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_WATCH_ONLY.value)
@@ -341,3 +346,24 @@ class StatusWalletScreen:
             collectionsRepeater.itemAt(0).expanded = True
         collectiblesRepeater = get_obj(CollectiblesView.COLLECTIBLES_REPEATER.value)
         verify(collectiblesRepeater.count > 0, "Collectibles not retrieved for the account")
+                    
+    def verify_transactions_exist(self):
+        tabbar = get_obj(MainWalletScreen.RIGHT_SIDE_TABBAR.value)
+        click_obj(tabbar.itemAt(WalletTabBar.ACTIVITY_TAB.value))
+
+        transaction_list_view = get_obj(TransactionsView.TRANSACTIONS_LISTVIEW.value)
+        
+        squish.waitFor("transaction_list_view.count > 0", 60*1000)
+        verify(transaction_list_view.count > 1, "Transactions not retrieved for the account")
+        
+        transaction_item = transaction_list_view.itemAtIndex(1)
+        transaction_detail_header = get_obj(TransactionsView.TRANSACTIONS_DETAIL_VIEW_HEADER.value)
+        
+        click_obj(transaction_item)
+            
+        verify_equal(transaction_item.item.cryptoValue, transaction_detail_header.cryptoValue)
+        verify_equal(transaction_item.item.transferStatus, transaction_detail_header.transferStatus)
+        verify_equal(transaction_item.item.shortTimeStamp, transaction_detail_header.shortTimeStamp)
+        verify_equal(transaction_item.item.fiatValue, transaction_detail_header.fiatValue)
+        verify_equal(transaction_item.item.symbol, transaction_detail_header.symbol)
+
