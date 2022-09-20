@@ -22,7 +22,7 @@ RowLayout {
     property var rootStore
     property var chatContentModule: root.rootStore.currentChatContentModule()
     property var emojiPopup
-    property int padding: 8
+    property int padding: Style.current.halfPadding
 
     signal searchButtonClicked()
 
@@ -41,6 +41,7 @@ RowLayout {
         Layout.fillHeight: true
         Layout.alignment: Qt.AlignLeft
         Layout.leftMargin: padding
+        Layout.rightMargin: Style.current.padding
 
         sourceComponent: {
             if (d.selectingMembers) return membersSelector

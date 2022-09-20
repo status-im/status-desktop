@@ -36,7 +36,6 @@ MembersSelectorBase {
 
     delegate: StatusTagItem {
         readonly property string _pubKey: model.pubKey
-
         height: ListView.view.height
         text: model.displayName
 
