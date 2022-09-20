@@ -51,6 +51,7 @@ proc initKeyPairItem*(
 proc `$`*(self: KeyPairItem): string =
   result = fmt"""KeyPairItem[
     pubKey: {self.pubkey},
+    keyUid: {self.keyUid},
     name: {self.name},
     image: {self.image},
     icon: {self.icon},

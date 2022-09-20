@@ -10,8 +10,8 @@ proc delete*(self: KeycardNotEmptyState) =
 
 method executePrimaryCommand*(self: KeycardNotEmptyState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
-    controller.setKeycardData(getPredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
-    controller.runGetMetadataFlow()
+    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
+    controller.runGetMetadataFlow(resolveAddress = true)
 
 method executeTertiaryCommand*(self: KeycardNotEmptyState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:

@@ -19,6 +19,8 @@ method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Control
 
 method executeTertiaryCommand*(self: MaxPinRetriesReachedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
-    self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.Authentication:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.SetupNewKeycard:
+    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseUnlockLabelForLockedState, add = false))
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

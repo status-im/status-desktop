@@ -12,14 +12,14 @@ proc delete*(self: WrongBiometricsPasswordState) =
 
 method executePrimaryCommand*(self: WrongBiometricsPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
-    controller.setKeycardData("")
+    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongPassword, add = false))
     let password = controller.getPassword()
     self.success = controller.verifyPassword(password)
     if self.success:
       controller.tryToStoreDataToKeychain(password)
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
     else:
-      controller.setKeycardData("wrong-pass")
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongPassword, add = true))
 
 method executeTertiaryCommand*(self: WrongBiometricsPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:

@@ -165,6 +165,9 @@ QtObject:
   proc setPin*(self: View, value: string) {.slot.} =
     self.delegate.setPin(value)
 
+  proc setPuk*(self: View, value: string) {.slot.} =
+    self.delegate.setPuk(value)
+
   proc setPassword*(self: View, value: string) {.slot.} =
     self.delegate.setPassword(value)
 

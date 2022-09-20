@@ -369,19 +369,20 @@ proc loginAccountKeycard*(self: Controller) =
   if(error.len > 0):
     self.delegate.emitAccountLoginError(error)
 
+proc seedPhraseRefersToSelectedKeyPair*(self: Controller, seedPhrase: string): bool =
+  let selectedAccount = self.getSelectedLoginAccount()
+  let accFromSP = self.accountsService.createAccountFromMnemonic(seedPhrase)
+  return selectedAccount.keyUid == accFromSP.keyUid
+
 proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
   # in most cases we're running another flow after canceling the current one, 
   # this way we're giving to the keycard some time to cancel the current flow 
   sleep(200)
 
-proc runLoadAccountFlow*(self: Controller, factoryReset = false) =
+proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", puk = "", factoryReset = false) =
   self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled
-  self.keycardService.startLoadAccountFlow(factoryReset)
-
-proc runLoadAccountFlowWithSeedPhrase*(self: Controller, seedPhraseLength: int, seedPhrase: string, factoryReset = false) =
-  self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled
-  self.keycardService.startLoadAccountFlowWithSeedPhrase(seedPhraseLength, seedPhrase, factoryReset)
+  self.keycardService.startLoadAccountFlow(seedPhraseLength, seedPhrase, puk, factoryReset)
 
 proc runLoginFlow*(self: Controller) =
   self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled
@@ -391,9 +392,9 @@ proc startLoginFlowAutomatically*(self: Controller, pin: string) =
   self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled
   self.keycardService.startLoginFlowAutomatically(pin)
 
-proc runRecoverAccountFlow*(self: Controller) =
+proc runRecoverAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", puk = "", factoryReset = false) =
   self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled
-  self.keycardService.startRecoverAccountFlow()
+  self.keycardService.startRecoverAccountFlow(seedPhraseLength, seedPhrase, puk, factoryReset)
 
 proc resumeCurrentFlow*(self: Controller) =
   self.keycardService.resumeCurrentFlow()

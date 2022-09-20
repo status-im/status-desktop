@@ -17,7 +17,7 @@ method executePrimaryCommand*(self: EnterPasswordState, controller: Controller) 
     if self.success:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
     else:
-      controller.setKeycardData("wrong-pass")
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongPassword, add = true))
 
 method getNextPrimaryState*(self: EnterPasswordState, controller: Controller): State =
   if self.flowType == FlowType.Authentication:

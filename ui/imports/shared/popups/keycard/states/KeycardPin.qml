@@ -83,7 +83,8 @@ Item {
         anchors.bottomMargin: Style.current.halfPadding
         anchors.leftMargin: Style.current.xlPadding
         anchors.rightMargin: Style.current.xlPadding
-        spacing: Style.current.halfPadding
+        spacing: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
+                     Style.current.halfPadding : Style.current.padding
 
         KeycardImage {
             id: image
@@ -108,7 +109,6 @@ Item {
         StatusPinInput {
             id: pinInputField
             Layout.alignment: Qt.AlignHCenter
-            Layout.fillHeight: !info.visble && !message.visible? true : false
             validator: StatusIntValidator{bottom: 0; top: 999999;}
             pinLen: Constants.keycard.general.keycardPinLength
             enabled: root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.pinSet &&
@@ -148,7 +148,6 @@ Item {
         StatusBaseText {
             id: info
             Layout.alignment: Qt.AlignCenter
-            Layout.fillHeight: info.visble && !message.visible? true : false
             wrapMode: Text.WordWrap
             visible: text !== ""
         }
@@ -156,12 +155,12 @@ Item {
         StatusBaseText {
             id: message
             Layout.alignment: Qt.AlignCenter
-            Layout.fillHeight: message.visible? true : false
             wrapMode: Text.WordWrap
             visible: text !== ""
         }
 
         Loader {
+            id: loader
             Layout.preferredWidth: parent.width
             active: {
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
@@ -200,6 +199,13 @@ Item {
 
                 return undefined
             }
+        }
+
+        Item {
+            id: spacer
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            visible: !loader.active
         }
     }
 

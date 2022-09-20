@@ -35,6 +35,7 @@ type FlowType* {.pure.} = enum
   FactoryReset = "FactoryReset"
   SetupNewKeycard = "SetupNewKeycard"
   Authentication = "Authentication"
+  UnlockKeycard = "UnlockKeycard"
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -70,6 +71,9 @@ method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Pa
   raise newException(ValueError, "No implementation available")
 
 method setPin*(self: AccessInterface, value: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setPuk*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setPassword*(self: AccessInterface, value: string) {.base.} =

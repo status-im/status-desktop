@@ -16,7 +16,8 @@ method executeBackCommand*(self: PluginReaderState, controller: Controller) =
 method executeTertiaryCommand*(self: PluginReaderState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.Authentication:
+    self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.UnlockKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: PluginReaderState, keycardFlowType: string, keycardEvent: KeycardEvent, 

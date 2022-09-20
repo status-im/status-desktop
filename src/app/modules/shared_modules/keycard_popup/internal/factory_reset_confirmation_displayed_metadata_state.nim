@@ -12,7 +12,7 @@ method executePrimaryCommand*(self: FactoryResetConfirmationDisplayMetadataState
   if self.flowType == FlowType.FactoryReset:
     controller.runGetAppInfoFlow(factoryReset = true)
   elif self.flowType == FlowType.SetupNewKeycard:
-    controller.setKeycardData(getPredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
+    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
     controller.runGetAppInfoFlow(factoryReset = true)
     
 method executeTertiaryCommand*(self: FactoryResetConfirmationDisplayMetadataState, controller: Controller) =

@@ -13,11 +13,6 @@ method executeBackCommand*(self: RecognizedKeycardState, controller: Controller)
     if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
       controller.cancelCurrentFlow()
 
-method executeTertiaryCommand*(self: RecognizedKeycardState, controller: Controller) =
-  if self.flowType == FlowType.FactoryReset or
-    self.flowType == FlowType.SetupNewKeycard:
-      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
-
 method getNextSecondaryState*(self: RecognizedKeycardState, controller: Controller): State =
   if self.flowType == FlowType.FactoryReset:
     if controller.containsMetadata():
@@ -26,3 +21,11 @@ method getNextSecondaryState*(self: RecognizedKeycardState, controller: Controll
       return createState(StateType.FactoryResetConfirmation, self.flowType, nil)
   if self.flowType == FlowType.SetupNewKeycard:
     return createState(StateType.CreatePin, self.flowType, self.getBackState)
+  if self.flowType == FlowType.UnlockKeycard:
+    return createState(StateType.UnlockKeycardOptions, self.flowType, nil)
+
+method executeTertiaryCommand*(self: RecognizedKeycardState, controller: Controller) =
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.UnlockKeycard:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
