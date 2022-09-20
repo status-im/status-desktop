@@ -39,27 +39,28 @@ Feature: Status Language Settings
 	        | Arabic                  | العربية                 |
 	        #| Bengali                 | বাংলা                    |
 	        #| Chinese (China)         | 中文（中國）              |
-	        | Chinese (Taiwan)        | 中文（台灣）              |
+	        #| Chinese (Taiwan)        | 中文（台灣）              |
 	        #| Dutch                   | Nederlands              |
 	        #| French                  | Français                |
 	        #| German                  | Deutsch                 |
 	        #| Hindi                   | हिन्दी                     |
 	        #| Indonesian              | Bahasa Indonesia        |
 	        #| Italian                 | Italiano                |
-	        | Japanese                | 日本語                   |
+	        #| Japanese                | 日本語                   |
 	        #| Korean                  | 한국어                    |
 	        #| Malay                   | Bahasa Melayu           |
 	        #| Polish                  | Polski                  |
 	        #| Portuguese              | Português               |
-	        | Portuguese (Brazil) 	  | Português (Brasil)      |
+	        #| Portuguese (Brazil) 	  | Português (Brasil)      |
 	        #| Russian                 | Русский                 |
 	        #| Spanish                 | Español                 |
 	        #| Spanish (Latin America) | Español (Latinoamerica) |
 	        #| Spanish (Argentina)     | Español (Argentina)     |
 	        #| Tagalog                 | Tagalog                 |
-	        | Turkish                 | Türkçe                  |
+	        #| Turkish                 | Türkçe                  |
 
 	# Each language run takes 30 seconds, so only some of them are enabled until we can parallelize executions
+	@merge
 	Scenario Outline: The user is able to search and select a specific language and after a restart, the language is kept
 		When the user opens the language selector
 		And the user searches the language <native>
@@ -73,7 +74,7 @@ Feature: Status Language Settings
 		Then the application displays <native> as the selected language
 	Examples:
 	        | language                | native                  |
-	        | English                 | English                 |
+	        #| English                 | English                 |
 	        #| Arabic                  | العربية                 |
 	        #| Bengali                 | বাংলা                    |
 	        #| Chinese (China)         | 中文（中國）              |
@@ -87,12 +88,12 @@ Feature: Status Language Settings
 	        #| Japanese                | 日本語                   |
 	        #| Korean                  | 한국어                    |
 	        #| Malay                   | Bahasa Melayu           |
-	        | Polish                  | Polski                  |
+	        #| Polish                  | Polski                  |
 	        #| Portuguese              | Português               |
 	        #| Portuguese (Brazil) 	  | Português (Brasil)      |
 	        #| Russian                 | Русский                 |
 	        #| Spanish                 | Español                 |
 	        #| Spanish (Latin America) | Español (Latinoamerica) |
 	        #| Spanish (Argentina)     | Español (Argentina)     |
-	        | Tagalog                 | Tagalog                 |
+	        #| Tagalog                 | Tagalog                 |
 	        #| Turkish                 | Türkçe                  |

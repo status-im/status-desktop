@@ -74,11 +74,11 @@ pipeline {
     stage('Tests') {
       steps {
        script {
-          def goerli_rpc_port = 8577
+          def goerli_rpc_port = 855 + env.EXECUTOR_NUMBER
           def mnemonic = "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial"
           def goerli_db_path = "$WORKSPACE/test/ui-test/fixtures/ganache-dbs/goerli"
           docker.image('trufflesuite/ganache:v7.4.1').withRun(
-            "-p 127.0.0.1:8577:8545 -v ${goerli_db_path}:/goerli-db",
+            "-p 127.0.0.1:${goerli_rpc_port}:8545 -v ${goerli_db_path}:/goerli-db",
             "-e 10 -m='${mnemonic}' --chain.chainId 5 --database.dbPath /goerli-db"
           ) { c ->
             sh "docker logs ${c.id}"
@@ -96,7 +96,7 @@ pipeline {
                       2
 
                       --tags
-                      ~mayfail
+                      ~mayfail,~merge
                       
                       --config
                       addAUT

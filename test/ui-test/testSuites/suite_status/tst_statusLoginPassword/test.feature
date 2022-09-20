@@ -26,10 +26,9 @@ Feature: Status Desktop login
         Examples:
             | username 		   | password          |
             | Athletic_Prime   | TesTEr16843/!@00  |
-            | Nervous_Pesky    | TesTEr16843/!@11  |
-            | Granular_Diligent| TesTEr16843/!@22  |
 
 
+	@merge
     Scenario Outline: User tries to login with an invalid password
         Given A first time user lands on the status desktop and generates new key
         When user signs up with username <username> and password <password>

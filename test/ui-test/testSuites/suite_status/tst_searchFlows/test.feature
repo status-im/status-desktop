@@ -30,18 +30,21 @@ Feature: Search feature (ctrl+F)
         # Go back to the portal so that we see if the search really redirects
         When the user opens the community portal section
 
+	@merge @mayfail
     Scenario: User can search for a community channel
         When the user opens the search menu
         And the user searches for automation
         And the user clicks on the search result for channel automation-community
         Then the user lands on the channel named automation-community
 
+	@merge @mayfail
     Scenario: User can search for a public channel
         When the user opens the search menu
         And the user searches for automation
         And the user clicks on the search result for channel search-automation-test-2
         Then the chat title is search-automation-test-2
 
+ 	@mayfail
     Scenario: User can search for a message in a public channel
         When the user opens the chat section
         And user joins chat room search-automation-test-1
