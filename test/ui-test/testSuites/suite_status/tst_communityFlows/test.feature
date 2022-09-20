@@ -22,6 +22,7 @@ Feature: Status Desktop community
         When the user opens the community portal section
         Then the user lands on the community portal section
 
+	@merge
     Scenario Outline: User creates a community
         When the user creates a community named <community_name>, with description <community_description>, intro <community_intro> and outro <community_outro>
         Then the user lands on the community named <community_name>
@@ -31,6 +32,7 @@ Feature: Status Desktop community
             | testCommunity1    | Community tested 1      | My intro for the community | My community outro  |
 
 
+	@merge @mayfail
     Scenario Outline: Admin creates a community channel
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity
@@ -42,7 +44,7 @@ Feature: Status Desktop community
             | test-channel    | Community channel description tested 1      | bottom_menu      |
             | test-channel2   | Community channel description tested 2      | right_click_menu |
 
-
+ 	@mayfail
     Scenario Outline: Admin edits a community channel
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity
@@ -55,6 +57,7 @@ Feature: Status Desktop community
             | community_channel_name    | community_channel_description   | new_community_channel_name  |
             | test-channel    | Community channel description tested 1    | new-test-channel            |
 
+	@merge @mayfail
     Scenario: Admin deletes a community channel
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity
@@ -65,6 +68,7 @@ Feature: Status Desktop community
         Then the channel count is 1
 
 
+	@merge @mayfail
     Scenario Outline: Admin creates a community category
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity
@@ -89,6 +93,7 @@ Feature: Status Desktop community
         And the category named test-category is missing
 
 
+	@merge
     Scenario: Admin deletes a community category
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity
@@ -99,6 +104,7 @@ Feature: Status Desktop community
         Then the category named test-category is missing
 
 
+	@merge @mayfail
     Scenario Outline: Admin edits a community
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity
@@ -111,6 +117,7 @@ Feature: Status Desktop community
             | myCommunityNamedChanged  | Cool new description 123   | #ff0000             |
 
 
+	@merge
     Scenario: User leaves community
         When the user creates a community named testCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named testCommunity
@@ -120,6 +127,7 @@ Feature: Status Desktop community
         Then the count of communities in navbar is 0
 
 
+	@merge @mayfail
     Scenario Outline: User changes the emoji of a channel
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity

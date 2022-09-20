@@ -38,6 +38,7 @@ Feature: Status Desktop Group Chat
 
 	    # TODO: Add cleanup scenario. Leave, one by one, the chat
 
+	@mayfail @merge
 	Scenario: As an admin user I want to change group chat's name, color and image
 		When the user creates a group chat adding users
       	 | Athletic |
