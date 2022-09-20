@@ -31,22 +31,15 @@ Page {
 
     header: Item {
         implicitHeight: headerLayout.implicitHeight + headerLayout.anchors.topMargin + headerLayout.anchors.bottomMargin
-
         RowLayout {
             id: headerLayout
-            anchors {
-                fill: parent
-                topMargin: 8
-            }
-
+            anchors.fill: parent
             MembersSelectorView {
                 id: membersSelector
-
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.leftMargin: 16
-                Layout.rightMargin: 16
-
+                Layout.leftMargin: Style.current.halfPadding
+                Layout.rightMargin: Style.current.halfPadding
                 rootStore: root.rootStore
                 enabled: root.rootStore.contactsModel.count > 0
 
@@ -55,7 +48,6 @@ Page {
                         console.warn("Can't create chat with no members")
                         return
                     }
-
                     if (model.count === 1) {
                         const member = model.get(0)
                         const ensName = member.displayName.includes(".eth") ? member.displayName : ""
@@ -90,9 +82,7 @@ Page {
             }
 
             StatusActivityCenterButton {
-                Layout.preferredWidth: 32
-                Layout.preferredHeight: 32
-
+                Layout.alignment: Qt.AlignVCenter
                 unreadNotificationsCount: root.rootStore.unreadNotificationsCount
                 onClicked: Global.openActivityCenterPopup()
             }
@@ -103,17 +93,15 @@ Page {
         ColumnLayout {
             anchors {
                 fill: parent
-                topMargin: 32
-                bottomMargin: 12
-                leftMargin: 8
+                topMargin: Style.current.bigPadding
+                bottomMargin: Style.current.padding
+                leftMargin: Style.current.halfPadding
             }
 
             StatusBaseText {
                 Layout.alignment: Qt.AlignTop
-                Layout.leftMargin: 8
-
+                Layout.leftMargin: Style.current.halfPadding
                 visible: contactsList.visible
-
                 font.pixelSize: 15
                 text: qsTr("Contacts")
                 color: Theme.palette.baseColor1
@@ -126,9 +114,7 @@ Page {
 
                 visible: membersSelector.suggestionsModel.count &&
                          !(membersSelector.edit.text !== "")
-
                 implicitWidth: contentItem.childrenRect.width
-
                 model: membersSelector.suggestionsModel
                 delegate: ContactListItemDelegate {
                     onClicked: membersSelector.entryAccepted(this)
@@ -137,35 +123,28 @@ Page {
 
             StatusChatInput {
                 id: chatInput
-
                 Layout.alignment: Qt.AlignBottom
                 Layout.fillWidth: true
-
                 visible: membersSelector.model.count > 0
                 chatType: membersSelector.model.count === 1? Constants.chatType.oneToOne : Constants.chatType.privateGroupChat
-
                 emojiPopup: root.emojiPopup
                 recentStickers: root.rootStore.stickersModuleInst.recent
                 stickerPackList: root.rootStore.stickersModuleInst.stickerPacks
                 closeGifPopupAfterSelection: true
-
                 onSendTransactionCommandButtonClicked: {
                     root.rootStore.createChatStartSendTransactionProcess = true;
                     root.createChat();
                 }
-
                 onReceiveTransactionCommandButtonClicked: {
                     root.rootStore.createChatStartReceiveTransactionProcess = true;
                     root.createChat();
                 }
-
                 onStickerSelected: {
                     root.rootStore.createChatStickerHashId = hashId;
                     root.rootStore.createChatStickerPackId = packId;
                     root.rootStore.createChatStickerUrl = url;
                     root.createChat();
                 }
-
                 onSendMessage: {
                     root.rootStore.createChatFileUrls = chatInput.fileUrls;
                     root.rootStore.createChatInitMessage = chatInput.textInput.text;

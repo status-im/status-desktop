@@ -9,6 +9,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Popups.Dialog 0.1
 
+import utils 1.0
+
 Item {
     id: root
 
@@ -33,46 +35,34 @@ Item {
 
     RowLayout {
         id: mainLayout
-
-        spacing: 8
-
         anchors.fill: parent
+        spacing: Style.current.padding
 
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 44
+            Layout.alignment: Qt.AlignVCenter
+            Layout.leftMargin: Style.current.halfPadding
             color: Theme.palette.baseColor2
-            radius: 8
-
+            radius: Style.current.radius
             RowLayout {
-                anchors {
-                    fill: parent
-                    leftMargin: 16
-                    rightMargin: 16
-                    topMargin: 7
-                    bottomMargin: 7
-                }
-
+                anchors.fill: parent
+                spacing: Style.current.halfPadding
                 StatusBaseText {
                     id: label
-
+                    Layout.leftMargin: Style.current.padding
                     Layout.alignment: Qt.AlignVCenter
                     visible: text !== ""
                     font.pixelSize: 15
                     color: Theme.palette.baseColor1
                 }
-
                 Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-
                     StatusScrollView {
                         id: scrollView
-
                         anchors.fill: parent
-
                         padding: 0
-
                         onContentWidthChanged: {
                             if (scrollView.contentWidth > scrollView.width) {
                                 scrollView.contentX = scrollView.contentWidth - scrollView.width
@@ -83,36 +73,27 @@ Item {
 
                         RowLayout {
                             height: scrollView.height
-
-                            spacing: 8
-
                             StatusListView {
                                 id: listView
-
                                 Layout.fillWidth: true
-                                Layout.fillHeight: true
+                                Layout.preferredHeight: 30
                                 implicitWidth: contentWidth
-
                                 orientation: ListView.Horizontal
-                                spacing: 8
+                                spacing: Style.current.halfPadding
                             }
 
                             TextInput {
                                 id: edit
-
-                                Layout.fillHeight: true
                                 Layout.minimumWidth: 4
-
+                                Layout.fillHeight: true
                                 verticalAlignment: Text.AlignVCenter
                                 font.pixelSize: 15
                                 color: Theme.palette.directColor1
-
                                 cursorDelegate: Rectangle {
                                     color: Theme.palette.primaryColor1
                                     implicitWidth: 2
                                     radius: 1
                                     visible: edit.cursorVisible
-
                                     SequentialAnimation on visible {
                                         loops: Animation.Infinite
                                         running: edit.cursorVisible
@@ -163,8 +144,8 @@ Item {
 
                 StatusBaseText {
                     id: warningLabel
-
-                    Layout.alignment: Qt.AlignVCenter
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                    Layout.rightMargin: Style.current.padding
                     visible: text !== ""
                     font.pixelSize: 10
                     color: Theme.palette.dangerColor1
@@ -174,7 +155,6 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 propagateComposedEvents: true
-
                 onPressed: {
                     edit.forceActiveFocus()
                     mouse.accepted = false
@@ -183,30 +163,26 @@ Item {
         }
 
         StatusButton {
-            Layout.leftMargin: 10
+            Layout.alignment: Qt.AlignVCenter
             text: qsTr("Confirm")
-
             onClicked: root.confirmed()
         }
 
         StatusButton {
+            Layout.alignment: Qt.AlignVCenter
             text: qsTr("Reject")
             type: StatusBaseButton.Type.Danger
-
             onClicked: root.rejected()
         }
     }
 
     Popup {
         id: suggestionsDialog
-
-        visible: edit.text !== "" && root.suggestionsModel.count
-
         parent: edit
-        y: parent.height
-
-        padding: 8
-
+        x: (parent.contentWidth - Style.current.halfPadding)
+        y: (parent.height + Style.current.halfPadding)
+        visible: edit.text !== "" && root.suggestionsModel.count
+        padding: Style.current.halfPadding
         background: StatusDialogBackground {
             id: bg
             layer.enabled: true
@@ -223,11 +199,9 @@ Item {
 
         StatusListView {
             id: suggestionsListView
-
             anchors.fill: parent
             implicitWidth: contentItem.childrenRect.width
             implicitHeight: contentItem.childrenRect.height
-
             onVisibleChanged: currentIndex = 0
         }
     }
