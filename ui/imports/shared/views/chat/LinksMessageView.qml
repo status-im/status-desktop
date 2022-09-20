@@ -19,39 +19,26 @@ Column {
     property var store
     property var messageStore
     property var container
-    property string linkUrls: ""
+
+    property alias linksModel: linksRepeater.model
+    readonly property alias unfurledLinksCount: d.unfurledLinksCount
+
     property bool isCurrentUser: false
-    property bool isImageLink: false
 
     signal imageClicked(var image)
 
     spacing: Style.current.halfPadding
     height: childrenRect.height
 
-    onLinkUrlsChanged: {
-        root.prepareModel()
-    }
+    QtObject {
+        id: d
 
-    function prepareModel() {
-        linksModel.clear()
-        if (!root.linkUrls) {
-            return
-        }
-        root.linkUrls.split(" ").forEach(link => {
-            linksModel.append({link})
-        })
-    }
-
-    ListModel {
-        id: linksModel
-        Component.onCompleted: {
-            root.prepareModel()
-        }
+        property bool isImageLink: false
+        property int unfurledLinksCount: 0
     }
 
     Repeater {
         id: linksRepeater
-        model: linksModel // doesn't work with a JSON object model!
 
         delegate: Loader {
             id: linkMessageLoader
@@ -144,16 +131,12 @@ Column {
                 }
 
                 const whitelistHosts = Object.keys(localAccountSensitiveSettings.whitelistedUnfurlingSites)
-                const linkExists = whitelistHosts.some(function(hostname) {
-                    return linkHostname.endsWith(hostname)
-                })
+                const linkExists = whitelistHosts.some(hostname => linkHostname.endsWith(hostname))
 
-                const linkWhiteListed = linkExists && whitelistHosts.some(function(hostname) {
-                    return linkHostname.endsWith(hostname) && localAccountSensitiveSettings.whitelistedUnfurlingSites[hostname] === true
-                })
+                const linkWhiteListed = linkExists && whitelistHosts.some(hostname =>
+                    linkHostname.endsWith(hostname) && localAccountSensitiveSettings.whitelistedUnfurlingSites[hostname] === true)
 
-                const isImage = Utils.hasImageExtension(link)
-                if (!linkWhiteListed && linkExists && !RootStore.neverAskAboutUnfurlingAgain && !isImage) {
+                if (!linkWhiteListed && linkExists && !RootStore.neverAskAboutUnfurlingAgain && !model.isImage) {
                     return enableLinkComponent
                 }
 
@@ -182,19 +165,18 @@ Column {
                     }
 
                     linkFetchConnections.enabled = true
-
                     root.messageStore.getLinkPreviewData(link, linkMessageLoader.uuid)
                 }
 
-                if (isImage) {
+                if (model.isImage) {
                     if (RootStore.displayChatImages) {
                         linkData = {
                             thumbnailUrl: link
                         }
                         return unfurledImageComponent
                     }
-                    else if (!(RootStore.neverAskAboutUnfurlingAgain || (isImageLink && index > 0))) {
-                        isImageLink = true
+                    else if (!(RootStore.neverAskAboutUnfurlingAgain || (d.isImageLink && index > 0))) {
+                        d.isImageLink = true
                         return enableLinkComponent
                     }
                 }
@@ -232,6 +214,9 @@ Column {
                 onClicked: imageClicked(linkImage.imageAlias)
                 playing: root.messageStore.playAnimation
             }
+
+            Component.onCompleted: d.unfurledLinksCount++
+            Component.onDestruction: d.unfurledLinksCount--
         }
     }
 
@@ -312,6 +297,9 @@ Column {
                     Global.openLink(linkData.address)
                 }
             }
+
+            Component.onCompleted: d.unfurledLinksCount++
+            Component.onDestruction: d.unfurledLinksCount--
         }
     }
 
@@ -352,8 +340,8 @@ Column {
 
             StatusBaseText {
                 id: enableText
-                text: isImageLink ? qsTr("Enable automatic image unfurling") :
-                                    qsTr("Enable link previews in chat?")
+                text: d.isImageLink ? qsTr("Enable automatic image unfurling") :
+                                      qsTr("Enable link previews in chat?")
                 horizontalAlignment: Text.AlignHCenter
                 width: parent.width
                 wrapMode: Text.WordWrap
