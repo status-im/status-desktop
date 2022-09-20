@@ -14,6 +14,7 @@ Feature: Status Desktop Chat
     	 When user signs up with username tester123 and password TesTEr16843/!@00
     	 Then the user lands on the signed in app
 
+	@mayfail
     Scenario: User joins a public room and chats
 		 When user joins chat room test
 		 Then user is able to send chat message
@@ -23,12 +24,13 @@ Feature: Status Desktop Chat
 		 | I am from status   	 |
 		 | tell me how you do?   |
 
-
+	@mayfail @merge
     Scenario: User can reply to their own message
          When user joins chat room test
          Then the user is able to send a random chat message
          Then the user can reply to the message at index 0 with "This is a reply"
 
+	@mayfail @merge
     Scenario: User can edit a message
          When user joins chat room test
          Then user is able to send chat message
@@ -38,24 +40,25 @@ Feature: Status Desktop Chat
          Then the message (edited) is displayed in the last message
 
 
-    @mayfail
+    @mayfail @merge
     Scenario: User can reply to another user's message
          When user joins chat room test
          Then the user can reply to the message at index 0 with "This is a reply to another user"
 
-
+	@mayfail @merge
     Scenario: User joins a room and marks it as read
 		 When user joins chat room test
 		 Then the user can mark the channel test as read
          # TODO find a way to validate that it worked
 
-
+	@mayfail @merge
     Scenario: User can delete their own message
          When user joins chat room automation-test
          Then the user is able to send a random chat message
          Then the user can delete the message at index 0
          Then the last message is not the random message
 
+	@mayfail @merge
     Scenario: User can clear chat history
         When user joins chat room test
         Then user is able to send chat message
@@ -67,6 +70,7 @@ Feature: Status Desktop Chat
         When the user clears chat history
         Then the chat is cleared
 
+	@mayfail @merge
     Scenario: User can send a gif
           When the user opens the chat section
           And user joins chat room automation-test
@@ -75,6 +79,7 @@ Feature: Status Desktop Chat
           And the user opens the messaging settings
           Then tenor GIFs preview is enabled
 
+	@mayfail @merge
     Scenario Outline: User can activate image unfurling
           When the user opens the chat section
           And user joins chat room automation-test
@@ -91,6 +96,7 @@ Feature: Status Desktop Chat
                | image_url                                                                                      |
                | https://github.com/status-im/status-desktop/raw/master/test/ui-test/fixtures/images/doggo.jpeg |
 
+	@mayfail @merge
     Scenario: The user is able to use emoji suggestions
          When user joins chat room automation-test
          When the user types "hello :thumbs"
@@ -99,13 +105,13 @@ Feature: Status Desktop Chat
          Then the message 👍 is displayed in the last message
 
 
-    @mayfail
+    @mayfail @merge
     Scenario: User cannot delete another user's message
          When user joins chat room test
          Then the user cannot delete the last message
 
 
-    @mayfail
+    @mayfail @merge
 	Scenario Outline: The user can do a mention
 		When user joins chat room test
 		And the user inputs a mention to <displayName> with message <message>
@@ -115,7 +121,7 @@ Feature: Status Desktop Chat
 		| tester123   |  testing mention |
 
 
-    @mayfail
+    @mayfail @merge
 	Scenario Outline: The user can not do a mention to not existing users
 		When user joins chat room test
 		Then the user cannot input a mention to a not existing user <displayName>
@@ -124,6 +130,7 @@ Feature: Status Desktop Chat
 		| notExistingAccount |
 		| asdfgNoNo          |
 
+	@mayfail  @merge
     Scenario: User can send an emoji in a message
          When user joins chat room automation-test
          When user sends the emoji heart_eyes as a message
@@ -132,7 +139,8 @@ Feature: Status Desktop Chat
          Then the emoji 😎 is displayed in the last message
          And the message wow I'm so cool is displayed in the last message
 
-     Scenario: User sees chats sorted by most recent activity
+	@mayfail @merge
+    Scenario: User sees chats sorted by most recent activity
           When user joins chat room first-chat
           And user joins chat room second-chat
           And user joins chat room third-chat
@@ -147,13 +155,15 @@ Feature: Status Desktop Chat
           | third-chat  |
           | first-chat  |
 
-     Scenario: User can type message with emoji autoreplace
+	@mayfail @merge
+    Scenario: User can type message with emoji autoreplace
          When user joins chat room automation-test
          Then the user is able to send chat message "Hello :)"
          Then the message 🙂 is displayed in the last message
          And the message Hello is displayed in the last message
 
 
+	@mayfail @merge
     Scenario: User can send a sticker after installing a free pack
          When user joins chat room automation-test
          Then the user can install the sticker pack at position 4

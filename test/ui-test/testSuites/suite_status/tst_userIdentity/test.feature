@@ -7,6 +7,7 @@ Feature: User Identity
         When user signs up with username tester123 and password TesTEr16843/!@00
         Then the user lands on the signed in app
 
+	@mayfail
     Scenario: User sets display name, bio and social links
         When the user opens app settings screen
         And the user opens the profile settings
@@ -25,6 +26,7 @@ Feature: User Identity
         And the user's bio should be "Hello, I am super tester!"
         And the user's social links should be: "twitter_handle", personal site: "status.im", "customLink": "customUrl"
 
+	@merge
     Scenario: The user sets can change own display name in profile popup
         When the user opens own profile popup
         Then in profile popup the user's display name should be "tester123"

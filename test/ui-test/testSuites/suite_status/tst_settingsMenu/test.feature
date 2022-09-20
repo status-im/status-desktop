@@ -9,15 +9,18 @@ Feature: Status Desktop Settings Menu
         Then the user lands on the signed in app
         When the user opens app settings screen
 
+	@merge @mayfail
     Scenario: The user quits the app
         When the user clicks on Sign out and Quit
         Then the app is closed
 
+	@merge @mayfail
     Scenario: User can backup seed phrase
         When the user activates wallet and opens the wallet settings
         And the user backs up the wallet seed phrase
         Then the backup seed phrase indicator is not displayed
 
+	@merge
     Scenario: The user can switch his state to offline
     	When the users switches his state to offline
     	Then the user appears offline
@@ -25,6 +28,7 @@ Feature: Status Desktop Settings Menu
     	And the user tester123 logs in with password TesTEr16843/!@00
     	Then the user appears offline
 
+	@merge
     Scenario: The user can switch his state to online
         When the users switches his state to offline
     	And the user restarts the app
