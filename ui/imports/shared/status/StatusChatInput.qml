@@ -222,7 +222,7 @@ Rectangle {
 
     property var mentionsPos: []
 
-    function insertMention(aliasName, lastAtPosition, lastCursorPosition) {
+    function insertMention(aliasName, publicKey, lastAtPosition, lastCursorPosition) {
         let startInd = aliasName.indexOf("(");
         if (startInd > 0){
             aliasName = aliasName.substring(0, startInd-1)
@@ -239,7 +239,7 @@ Rectangle {
             // It reset to 0 for some reason, go back to the end
             messageInputField.cursorPosition = messageInputField.length
         }
-        mentionsPos.push({name: aliasName, leftIndex: lastAtPosition, rightIndex: (lastAtPosition+aliasName.length + 1)});
+        mentionsPos.push({name: aliasName, pubKey: publicKey, leftIndex: lastAtPosition, rightIndex: (lastAtPosition+aliasName.length + 1)});
     }
 
     function isUploadFilePressed(event) {
@@ -371,9 +371,10 @@ Rectangle {
             let aliasName = suggestionsBox.formattedPlainTextFilter;
             let lastCursorPosition = suggestionsBox.suggestionFilter.cursorPosition;
             let lastAtPosition = suggestionsBox.suggestionFilter.lastAtPosition;
-            if (aliasName.toLowerCase() === suggestionsBox.suggestionsModel.get(suggestionsBox.listView.currentIndex).name.toLowerCase()
+            let suggestionItem = suggestionsBox.suggestionsModel.get(suggestionsBox.listView.currentIndex);
+            if (aliasName.toLowerCase() === suggestionItem.name.toLowerCase()
                     && (event.key !== Qt.Key_Backspace) && (event.key !== Qt.Key_Delete)) {
-                insertMention(aliasName, lastAtPosition, lastCursorPosition);
+                insertMention(aliasName, suggestionItem.publicKey, lastAtPosition, lastCursorPosition);
             } else if (event.key === Qt.Key_Space) {
                 var plainTextToReplace = messageInputField.getText(lastAtPosition, lastCursorPosition);
                 messageInputField.remove(lastAtPosition, lastCursorPosition);
@@ -478,6 +479,36 @@ Rectangle {
         const found = oldFormattedText.match(/<!--StartFragment-->([\w\W\s]*)<!--EndFragment-->/m);
 
         return found[1]
+    }
+
+    function getTextWithPublicKeys() {
+        let result = messageInputField.getText(0, messageInputField.length)
+
+        if (mentionsPos.length > 0) {
+            let lastIndex = messageInputField.length
+            while (lastIndex > 0) {
+
+                let currentMax = -1
+                let maxIndex = -1
+
+                for (var i = 0; i < mentionsPos.length; i++) {
+                    if (mentionsPos[i].rightIndex < lastIndex && mentionsPos[i].rightIndex > currentMax) {
+                        currentMax = mentionsPos[i].rightIndex
+                        maxIndex = i
+                    }
+                }
+
+                lastIndex = 0
+                if (currentMax >= 0) {
+                    result = result.substring(0, mentionsPos[maxIndex].leftIndex + 1)
+                             + mentionsPos[maxIndex].pubKey
+                             + result.substring(mentionsPos[maxIndex].rightIndex, result.length)
+                    lastIndex = mentionsPos[maxIndex].leftIndex
+                }
+            }
+        }
+
+        return result
     }
 
     function setFormatInInput(formationFunction, startTag, endTag, formationChar, numFormationChars) {
@@ -861,7 +892,7 @@ Rectangle {
         onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
             messageInputField.forceActiveFocus();
             let name = item.name.replace("@", "")
-            insertMention(name, lastAtPosition, lastCursorPosition)
+            insertMention(name, item.publicKey, lastAtPosition, lastCursorPosition)
             suggestionsBox.suggestionsModel.clear()
         }
         onVisibleChanged: {
@@ -1153,7 +1184,7 @@ Rectangle {
                                             }
                                         })
                                     }
-                                    if (text === "") {
+                                    if (length === 0) {
                                         mentionsPos = [];
                                     }
                                 } else {
