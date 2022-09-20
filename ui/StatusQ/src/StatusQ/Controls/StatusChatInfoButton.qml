@@ -143,6 +143,7 @@ Button {
                 StatusSelectableText {
                     Layout.fillWidth: implicitWidth + separator.width + pinIcon.width + pinText.width > subtitleRow.width
                     text: root.subTitle
+                    visible: root.subTitle
                     color: Theme.palette.baseColor1
                     font.pixelSize: 12
                     onLinkActivated: root.linkActivated(link)
