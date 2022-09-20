@@ -11,7 +11,7 @@ import shared.status 1.0
 import "../controls"
 
 Rectangle {
-    id: wrapper
+    id: root
 
     property bool isCommunity: false
     property string name: "channelName"
@@ -20,7 +20,7 @@ Rectangle {
     property string communityName: ""
     property string communityColor: ""
     property string communityThumbnailImage: ""
-    property int repliedMessageId
+    property string repliedMessageId: ""
     property string repliedMessageContent: ""
     property int notificationType
     property string profileImage: ""
@@ -45,10 +45,13 @@ Rectangle {
         anchors.left: parent.left
         anchors.leftMargin: 4
         sourceComponent: {
-            switch (wrapper.notificationType) {
-            case Constants.activityCenterNotificationTypeMention: return wrapper.isCommunity? communityBadgeComponent : channelBadgeComponent
-            case Constants.activityCenterNotificationTypeReply: return replyComponent
-            default: return wrapper.isCommunity? communityBadgeComponent : channelBadgeComponent
+            switch (root.notificationType) {
+            case Constants.activityCenterNotificationTypeMention: 
+                return root.isCommunity ? communityBadgeComponent : channelBadgeComponent
+            case Constants.activityCenterNotificationTypeReply: 
+                return replyComponent
+            default: 
+                return root.isCommunity ? communityBadgeComponent : channelBadgeComponent
             }
         }
     }
@@ -59,7 +62,7 @@ Rectangle {
         ReplyComponent {
             width: childrenRect.width
             height: parent.height
-            repliedMessageContent: wrapper.repliedMessageContent
+            repliedMessageContent: root.repliedMessageContent
         }
     }
 
@@ -70,15 +73,15 @@ Rectangle {
             width: childrenRect.width
             height: parent.height
 
-            textColor: wrapper.textColor
-            image: wrapper.communityThumbnailImage
-            iconColor: wrapper.communityColor
-            communityName: wrapper.communityName
-            channelName: wrapper.channelName
-            name: wrapper.name
+            textColor: root.textColor
+            image: root.communityThumbnailImage
+            iconColor: root.communityColor
+            communityName: root.communityName
+            channelName: root.channelName
+            name: root.name
 
-            onCommunityNameClicked: wrapper.communityNameClicked()
-            onChannelNameClicked: wrapper.channelNameClicked()
+            onCommunityNameClicked: root.communityNameClicked()
+            onChannelNameClicked: root.channelNameClicked()
         }
     }
 
@@ -89,10 +92,10 @@ Rectangle {
             width: childrenRect.width
             height: parent.height
 
-            realChatType: wrapper.realChatType
-            textColor: wrapper.textColor
-            name: wrapper.name
-            profileImage: wrapper.profileImage
+            realChatType: root.realChatType
+            textColor: root.textColor
+            name: root.name
+            profileImage: root.profileImage
         }
     }
 }

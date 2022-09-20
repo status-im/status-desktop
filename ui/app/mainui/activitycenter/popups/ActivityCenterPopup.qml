@@ -66,10 +66,13 @@ Popup {
         switch (notificationType) {
         case Constants.activityCenterNotificationTypeMention:
             root.mentionsCount += cnt
+            break;
         case Constants.activityCenterNotificationTypeReply:
             root.repliesCount += cnt
+            break;
         case Constants.activityCenterNotificationTypeContactRequest:
             root.contactRequestsCount += cnt
+            break;
         default:
             break;
         }
@@ -157,6 +160,8 @@ Popup {
                     store: root.store
                     notification: model
                     messageContextMenu: root.messageContextMenu
+                    previousNotificationIndex: Math.max(0, index - 1)
+                    onActivityCenterClose: root.close()
                 }
             }
             DelegateChoice {
@@ -166,6 +171,8 @@ Popup {
                     store: root.store
                     notification: model
                     messageContextMenu: root.messageContextMenu
+                    previousNotificationIndex: Math.max(0, index - 1)
+                    onActivityCenterClose: root.close()
                 }
             }
             DelegateChoice {
@@ -175,6 +182,8 @@ Popup {
                     store: root.store
                     notification: model
                     messageContextMenu: root.messageContextMenu
+                    previousNotificationIndex: Math.max(0, index - 1)
+                    onActivityCenterClose: root.close()
                 }
             }
         }
