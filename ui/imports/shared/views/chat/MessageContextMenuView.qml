@@ -410,6 +410,9 @@ StatusPopupMenu {
         }
         icon.name: "pin"
         enabled: {
+            if (root.pinnedPopup)
+                return true
+
             if(root.isProfile || root.isEmoji || root.isRightClickOnImage)
                 return false
 
