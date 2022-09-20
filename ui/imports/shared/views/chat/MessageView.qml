@@ -234,6 +234,11 @@ Loader {
 
         readonly property int chatButtonSize: 32
 
+        readonly property bool isSingleImage: linkUrlsModel.count === 1 && linkUrlsModel.get(0).isImage
+                                              && `<p>${linkUrlsModel.get(0).link}</p>` === root.messageText
+
+        property int unfurledLinksCount: 0
+
         property string activeMessage
         readonly property bool isMessageActive: typeof activeMessage !== "undefined" && activeMessage === messageId
 
@@ -253,6 +258,20 @@ Loader {
                 return;
             }
         }
+    }
+
+    onLinkUrlsChanged: {
+        linkUrlsModel.clear()
+        if (!root.linkUrls) {
+            return
+        }
+        root.linkUrls.split(" ").forEach(link => {
+            linkUrlsModel.append({link, isImage: Utils.hasImageExtension(link)})
+        })
+    }
+
+    ListModel {
+        id: linkUrlsModel
     }
 
     Connections {
@@ -430,6 +449,7 @@ Loader {
                               root.placeholderMessage ||
                               root.activityCenterMessage ||
                               root.isInPinnedPopup
+            hideMessage: d.isSingleImage && d.unfurledLinksCount === 1
 
             overrideBackground: root.activityCenterMessage || root.placeholderMessage
             overrideBackgroundColor: {
@@ -631,7 +651,7 @@ Loader {
 
             linksComponent: Component {
                 LinksMessageView {
-                    linkUrls: root.linkUrls
+                    linksModel: linkUrlsModel
                     container: root
                     messageStore: root.messageStore
                     store: root.rootStore
@@ -639,6 +659,9 @@ Loader {
                     onImageClicked: {
                         root.imageClicked(image);
                     }
+
+                    Component.onCompleted: d.unfurledLinksCount = Qt.binding(() => unfurledLinksCount)
+                    Component.onDestruction: d.unfurledLinksCount = 0
                 }
             }
 
