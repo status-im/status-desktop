@@ -85,3 +85,7 @@ mainWallet_Collectibles_Repeater = {"container": statusDesktop_mainWindow, "obje
 sharedPopup_Popup_Content = {"container": statusDesktop_mainWindow, "objectName": "KeycardSharedPopupContent", "type": "Item"}
 sharedPopup_Password_Input = {"container": sharedPopup_Popup_Content, "objectName": "Password", "type": "TextField"}
 sharedPopup_Primary_Button = {"container": statusDesktop_mainWindow, "objectName": "PrimaryButton", "type": "StatusButton"}
+
+# Transactions view
+mainWallet_Transactions_List = {"container": statusDesktop_mainWindow, "objectName": "walletAccountTransactionList", "type": "StatusListView"}
+mainWallet_Transactions_Detail_View_Header = {"container": statusDesktop_mainWindow, "objectName": "transactionDetailHeader", "type": "TransactionDelegate"}

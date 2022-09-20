@@ -35,7 +35,7 @@ ColumnLayout {
         target: RootStore.history
         onLoadingTrxHistoryChanged: function(isLoading, address) {
             if (historyView.account.address.toLowerCase() === address.toLowerCase()) {
-                isLoading = isLoading
+                root.isLoading = isLoading
             }
         }
     }
@@ -67,6 +67,7 @@ ColumnLayout {
 
     StatusListView {
         id: transactionListRoot
+        objectName: "walletAccountTransactionList"
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: nonArchivalNodeError.visible || noTxs.visible ? Style.current.padding : 0
         Layout.bottomMargin:  Style.current.padding

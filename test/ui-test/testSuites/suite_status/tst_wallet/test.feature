@@ -11,9 +11,10 @@ Feature: Status Desktop Wallet
         When the user accepts the signing phrase
 
    @mayfail
-   Scenario Outline: User adds a watch only account
+   Scenario Outline: User adds a watch only account and is able to view transactions
        When the user adds watch only account with <account_name> and <address>
        Then the new account <account_name> is added
+       And the transactions are listed for the added account
 
        Examples:
          | account_name | address                                      |
@@ -94,4 +95,4 @@ Feature: Status Desktop Wallet
 
        Examples:
           | account_name | address                                      |
-          | YugaLabs          | 0xA858DDc0445d8131daC4d1DE01f834ffcbA52Ef1   |
+          | One          | 0x8397bc3c5a60a1883174f722403d63a8833312b7   |

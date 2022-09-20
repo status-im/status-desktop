@@ -69,6 +69,7 @@ Item {
             spacing: Style.current.bigPadding
 
             TransactionDelegate {
+                objectName: "transactionDetailHeader"
                 width: parent.width
 
                 modelData: transaction
