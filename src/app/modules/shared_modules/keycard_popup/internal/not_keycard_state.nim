@@ -11,5 +11,6 @@ proc delete*(self: NotKeycardState) =
 method executeTertiaryCommand*(self: NotKeycardState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.Authentication:
+    self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.UnlockKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

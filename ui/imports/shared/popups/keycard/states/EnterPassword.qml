@@ -42,8 +42,10 @@ Item {
     QtObject {
         id: d
 
+        readonly property bool wrongPassword: root.kcData & Constants.predefinedKeycardData.wrongPassword
+
         function updatePasswordValidation() {
-            root.passwordValid(password.text !== "" && root.kcData === "")
+            root.passwordValid(password.text !== "" && !d.wrongPassword)
         }
     }
 
@@ -152,7 +154,7 @@ Item {
             }
             PropertyChanges {
                 target: info
-                text: root.kcData !== ""? qsTr("Password incorrect") : ""
+                text: d.wrongPassword? qsTr("Password incorrect") : ""
                 color: Theme.palette.dangerColor1
             }
         },
@@ -177,7 +179,7 @@ Item {
             }
             PropertyChanges {
                 target: info
-                text: root.kcData !== ""? qsTr("Password incorrect") : ""
+                text: d.wrongPassword? qsTr("Password incorrect") : ""
                 color: Theme.palette.dangerColor1
             }
         },
@@ -202,7 +204,7 @@ Item {
             }
             PropertyChanges {
                 target: info
-                text: root.kcData !== ""? qsTr("Password incorrect") : ""
+                text: d.wrongPassword? qsTr("Password incorrect") : ""
                 color: Theme.palette.dangerColor1
             }
         }

@@ -50,7 +50,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
-      controller.setMetadataFromKeycard(keycardEvent.cardMetadata)
+      controller.setMetadataFromKeycard(keycardEvent.cardMetadata, updateKeyPair = true)
       return createState(StateType.PinVerified, self.flowType, nil)
   if self.flowType == FlowType.SetupNewKeycard:
     if keycardFlowType == ResponseTypeValueEnterPIN and 
@@ -59,13 +59,15 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
         controller.setKeycardData($keycardEvent.pinRetries)
         if keycardEvent.pinRetries > 0:
           return self
+        controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseUnlockLabelForLockedState, add = true))
         return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
     if keycardFlowType == ResponseTypeValueEnterPUK and 
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseUnlockLabelForLockedState, add = true))
           return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
-      controller.setMetadataFromKeycard(keycardEvent.cardMetadata)
+      controller.setMetadataFromKeycard(keycardEvent.cardMetadata, updateKeyPair = true)
       return createState(StateType.PinVerified, self.flowType, nil)
   if self.flowType == FlowType.Authentication:
     if keycardFlowType == ResponseTypeValueEnterPIN and 

@@ -16,7 +16,8 @@ method executeBackCommand*(self: ReadingKeycardState, controller: Controller) =
 method executeTertiaryCommand*(self: ReadingKeycardState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.Authentication:
+    self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.UnlockKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method getNextSecondaryState*(self: ReadingKeycardState, controller: Controller): State =

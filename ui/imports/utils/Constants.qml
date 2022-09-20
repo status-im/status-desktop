@@ -73,6 +73,9 @@ QtObject {
         readonly property int wronglyInsertedCard: 1
         readonly property int hideKeyPair: 2
         readonly property int wrongSeedPhrase: 4
+        readonly property int wrongPassword: 8
+        readonly property int offerPukForUnlock: 16
+        readonly property int useUnlockLabelForLockedState: 32
     }
 
     readonly property QtObject keycardSharedFlow: QtObject {
@@ -80,6 +83,7 @@ QtObject {
         readonly property string factoryReset: "FactoryReset"
         readonly property string setupNewKeycard: "SetupNewKeycard"
         readonly property string authentication: "Authentication"
+        readonly property string unlockKeycard: "UnlockKeycard"
     }
 
     readonly property QtObject keycardSharedState: QtObject {
@@ -94,8 +98,12 @@ QtObject {
         readonly property string pinVerified: "PinVerified"
         readonly property string enterPin: "EnterPin"
         readonly property string wrongPin: "WrongPin"
+        readonly property string enterPuk: "EnterPuk"
+        readonly property string wrongPuk: "WrongPuk"
         readonly property string wrongKeychainPin: "WrongKeychainPin"
         readonly property string maxPinRetriesReached: "MaxPinRetriesReached"
+        readonly property string maxPukRetriesReached: "MaxPukRetriesReached"
+        readonly property string maxPairingSlotsReached: "MaxPairingSlotsReached"
         readonly property string factoryResetConfirmation: "FactoryResetConfirmation"
         readonly property string factoryResetConfirmationDisplayMetadata: "FactoryResetConfirmationDisplayMetadata"
         readonly property string factoryResetSuccess: "FactoryResetSuccess"
@@ -103,8 +111,10 @@ QtObject {
         readonly property string keycardMetadataDisplay: "KeycardMetadataDisplay"
         readonly property string keycardEmpty: "KeycardEmpty"
         readonly property string keycardNotEmpty: "KeycardNotEmpty"
-        readonly property string keycardLocked: "KeycardLocked"
+        readonly property string keycardAlreadyUnlocked: "KeycardAlreadyUnlocked"
         readonly property string notKeycard: "NotKeycard"
+        readonly property string unlockKeycardOptions: "UnlockKeycardOptions"
+        readonly property string unlockKeycardSuccess: "UnlockKeycardSuccess"
         readonly property string wrongKeycard: "WrongKeycard"
         readonly property string recognizedKeycard: "RecognizedKeycard"
         readonly property string selectExistingKeyPair: "SelectExistingKeyPair"
@@ -367,6 +377,9 @@ QtObject {
         readonly property QtObject general: QtObject {
             readonly property int footerWrapperHeight: 125
             readonly property int keycardPinLength: 6
+            readonly property int keycardPukLength: 12
+            readonly property int keycardPukAdditionalSpacingOnEvery4Items: 4
+            readonly property int keycardPukAdditionalSpacing: 32
             readonly property int fontSize1: 22
             readonly property int fontSize2: 15
             readonly property int fontSize3: 12

@@ -15,12 +15,14 @@ method executeBackCommand*(self: RepeatPinState, controller: Controller) =
 method executeSecondaryCommand*(self: RepeatPinState, controller: Controller) =
   if not controller.getPinMatch():
     return
-  if self.flowType == FlowType.SetupNewKeycard:
-    controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())  
+  if self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.UnlockKeycard:
+      controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())  
 
 method executeTertiaryCommand*(self: RepeatPinState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycard:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.UnlockKeycard:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
      
 method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
@@ -31,5 +33,33 @@ method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, k
     if keycardFlowType == ResponseTypeValueEnterMnemonic and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorLoadingKeys:
-        controller.setKeycardUid(keycardEvent.instanceUID)
+        controller.setKeycardUidTheSelectedKeypairIsMigratedTo(keycardEvent.instanceUID)
         return createState(StateType.PinSet, self.flowType, nil)
+  if self.flowType == FlowType.UnlockKeycard:
+    if controller.getCurrentKeycardServiceFlow() == KCSFlowType.GetMetadata:
+      if keycardFlowType == ResponseTypeValueEnterPUK and 
+        keycardEvent.error.len > 0 and
+        keycardEvent.error == RequestParamPUK:
+          controller.setKeycardData($keycardEvent.pukRetries)
+          controller.setPukValid(false)
+          if keycardEvent.pukRetries > 0:
+            return createState(StateType.PinSet, self.flowType, nil)
+          return createState(StateType.MaxPukRetriesReached, self.flowType, nil)
+      if keycardFlowType == ResponseTypeValueKeycardFlowResult:
+        controller.setPukValid(true)
+        controller.updateKeycardUid(keycardEvent.instanceUID)
+        return createState(StateType.PinSet, self.flowType, nil)
+    if controller.getCurrentKeycardServiceFlow() == KCSFlowType.LoadAccount:
+      if keycardFlowType == ResponseTypeValueKeycardFlowResult:
+        if controller.getKeyUidWhichIsBeingUnlocking() != keycardEvent.keyUid:
+          error "load account keyUid and keyUid being unlocked do not match"
+          controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+          return
+        let md = controller.getMetadataFromKeycard()
+        let paths = md.walletAccounts.map(a => a.path)
+        controller.runStoreMetadataFlow(cardName = md.name, pin = controller.getPin(), walletPaths = paths)
+    if controller.getCurrentKeycardServiceFlow() == KCSFlowType.StoreMetadata:
+      if keycardFlowType == ResponseTypeValueKeycardFlowResult and
+        keycardEvent.instanceUID.len > 0:
+          controller.updateKeycardUid(keycardEvent.instanceUID)
+          return createState(StateType.PinSet, self.flowType, nil)

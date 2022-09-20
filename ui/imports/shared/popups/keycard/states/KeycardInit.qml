@@ -173,6 +173,8 @@ Item {
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
@@ -215,6 +217,8 @@ Item {
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
@@ -367,6 +371,31 @@ Item {
             }
         },
         State {
+            name: Constants.keycardSharedState.unlockKeycardOptions
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockKeycardOptions
+            PropertyChanges {
+                target: title
+                text: qsTr("Unlock this Keycard")
+                font.pixelSize: Constants.keycard.general.fontSize1
+                font.weight: Font.Bold
+                color: Theme.palette.directColor1
+            }
+            PropertyChanges {
+                target: image
+                pattern: "keycard/strong_error/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 18
+                endImgIndex: 29
+                duration: 1300
+                loops: -1
+            }
+            PropertyChanges {
+                target: message
+                text: ""
+            }
+        },
+        State {
             name: Constants.keycardSharedState.wrongKeycard
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard
             PropertyChanges {
@@ -384,35 +413,6 @@ Item {
             PropertyChanges {
                 target: message
                 text: qsTr("Keycard inserted does not match the Keycard below")
-                font.pixelSize: Constants.keycard.general.fontSize2
-                color: Theme.palette.dangerColor1
-            }
-        },
-        State {
-            name: Constants.keycardSharedState.maxPinRetriesReached
-            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached
-            PropertyChanges {
-                target: title
-                text: qsTr("Keycard locked")
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
-                color: Theme.palette.dangerColor1
-            }
-            PropertyChanges {
-                target: image
-                pattern: "keycard/strong_error/img-%1"
-                source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 18
-                endImgIndex: 29
-                duration: 1300
-                loops: -1
-            }
-            PropertyChanges {
-                target: message
-                text: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
-                          qsTr("You will need to unlock it before proceeding") :
-                          qsTr("Pin entered incorrectly too many times")
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.dangerColor1
             }
@@ -447,21 +447,18 @@ Item {
                 text: qsTr("Keycard is empty")
                 font.pixelSize: Constants.keycard.general.fontSize1
                 font.weight: Font.Bold
-                color: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
-                           Theme.palette.dangerColor1 : Theme.palette.directColor1
+                color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: image
-                source: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
-                            Style.png("keycard/plain-error") : Style.png("keycard/card-empty")
+                source: Style.png("keycard/card-empty")
                 pattern: ""
             }
             PropertyChanges {
                 target: message
                 text: qsTr("There is no key pair on this Keycard")
                 font.pixelSize: Constants.keycard.general.fontSize2
-                color: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
-                           Theme.palette.dangerColor1 : Theme.palette.directColor1
+                color: Theme.palette.directColor1
             }
         },
         State {
@@ -490,14 +487,18 @@ Item {
             }
         },
         State {
-            name: Constants.keycardSharedState.keycardLocked
-            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardLocked
+            name: "sharedLockedState"
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached
             PropertyChanges {
                 target: title
-                text: qsTr("Keycard locked and already stores keys")
+                text: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard?
+                          qsTr("Keycard locked and already stores keys") : qsTr("Keycard locked")
                 font.pixelSize: Constants.keycard.general.fontSize1
                 font.weight: Font.Bold
-                color: Theme.palette.directColor1
+                color: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard?
+                           Theme.palette.directColor1 : Theme.palette.dangerColor1
             }
             PropertyChanges {
                 target: image
@@ -511,9 +512,72 @@ Item {
             }
             PropertyChanges {
                 target: message
-                text: qsTr("The Keycard you have inserted is locked,\nyou will need to factory reset it before proceeding")
+                text: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard)
+                        return qsTr("The Keycard you have inserted is locked,\nyou will need to factory reset it before proceeding")
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication)
+                        return qsTr("You will need to unlock it before proceeding")
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached)
+                        return qsTr("Pin entered incorrectly too many times")
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached)
+                        return qsTr("Puk entered incorrectly too many times")
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached)
+                        return qsTr("Max pairing slots reached for the entered keycard")
+                    return ""
+                }
                 font.pixelSize: Constants.keycard.general.fontSize2
+                color: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard?
+                           Theme.palette.directColor1 : Theme.palette.dangerColor1
+            }
+        },
+        State {
+            name: Constants.keycardSharedState.keycardAlreadyUnlocked
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardAlreadyUnlocked
+            PropertyChanges {
+                target: title
+                text: qsTr("Your Keycard is already unlocked!")
+                font.pixelSize: Constants.keycard.general.fontSize1
+                font.weight: Font.Bold
                 color: Theme.palette.directColor1
+            }
+            PropertyChanges {
+                target: image
+                pattern: "keycard/success/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 0
+                endImgIndex: 29
+                duration: 1300
+                loops: 1
+            }
+            PropertyChanges {
+                target: message
+                text: ""
+            }
+        },
+        State {
+            name: Constants.keycardSharedState.unlockKeycardSuccess
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockKeycardSuccess
+            PropertyChanges {
+                target: title
+                text: qsTr("Unlock successful")
+                font.pixelSize: Constants.keycard.general.fontSize1
+                font.weight: Font.Bold
+                color: Theme.palette.directColor1
+            }
+            PropertyChanges {
+                target: image
+                pattern: "keycard/strong_success/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 0
+                endImgIndex: 20
+                duration: 1000
+                loops: 1
+            }
+            PropertyChanges {
+                target: message
+                text: ""
             }
         },
         State {

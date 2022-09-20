@@ -60,12 +60,6 @@ QtObject:
     lastReceivedKeycardData: tuple[flowType: string, flowEvent: KeycardEvent]
     setPayloadForCurrentFlow: JsonNode
 
-  #################################################
-  # Forward declaration section
-  proc startGetMetadataFlow*(self: Service)
-
-  #################################################
-
   proc setup(self: Service) =
     self.QObject.setup
 
@@ -164,23 +158,16 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc startLoadAccountFlow*(self: Service, factoryReset: bool) =
-    var payload = %* { }
-    if factoryReset:
-      payload[RequestParamFactoryReset] = %* factoryReset
-    self.currentFlow = KCSFlowType.LoadAccount
-    self.startFlow(payload)
-
-  proc startLoadAccountFlowWithSeedPhrase*(self: Service, seedPhraseLength: int, seedPhrase: string, factoryReset: bool) =
-    if seedPhrase.len == 0:
-      error "empty seed phrase provided"
-      return
+  proc startLoadAccountFlow*(self: Service, seedPhraseLength: int, seedPhrase: string, puk: string, factoryReset: bool) =
     var payload = %* {
-      RequestParamOverwrite: true,
-      RequestParamMnemonicLen: seedPhraseLength,
-      RequestParamNewPUK: self.generateRandomPUK(),
-      RequestParamMnemonic: seedPhrase
+      RequestParamOverwrite: true
     }
+    if seedPhrase.len > 0 and seedPhraseLength > 0:
+      payload[RequestParamMnemonic] = %* seedPhrase
+      payload[RequestParamMnemonicLen] = %* seedPhraseLength
+      payload[RequestParamNewPUK] = %* self.generateRandomPUK()
+    if puk.len > 0:
+      payload[RequestParamNewPUK] = %* puk
     if factoryReset:
       payload[RequestParamFactoryReset] = %* factoryReset
     self.currentFlow = KCSFlowType.LoadAccount
@@ -198,8 +185,18 @@ QtObject:
     self.currentFlow = KCSFlowType.Login
     self.startFlow(payload)
 
-  proc startRecoverAccountFlow*(self: Service) =
-    let payload = %* { }
+  proc startRecoverAccountFlow*(self: Service, seedPhraseLength: int, seedPhrase: string, puk: string, factoryReset: bool) =
+    var payload = %* {
+      RequestParamOverwrite: true
+    }
+    if seedPhrase.len > 0 and seedPhraseLength > 0:
+      payload[RequestParamMnemonic] = %* seedPhrase
+      payload[RequestParamMnemonicLen] = %* seedPhraseLength
+      payload[RequestParamNewPUK] = %* self.generateRandomPUK()
+    if puk.len > 0:
+      payload[RequestParamNewPUK] = %* puk
+    if factoryReset:
+      payload[RequestParamFactoryReset] = %* factoryReset
     self.currentFlow = KCSFlowType.RecoverAccount
     self.startFlow(payload)    
 
@@ -210,10 +207,10 @@ QtObject:
     self.currentFlow = KCSFlowType.GetAppInfo
     self.startFlow(payload)
 
-  proc startGetMetadataFlow*(self: Service) =
-    let payload = %* { 
-      RequestParamResolveAddr: true
-    }
+  proc startGetMetadataFlow*(self: Service, resolveAddress: bool) =
+    var payload = %* { }
+    if resolveAddress:
+      payload[RequestParamResolveAddr] = %* resolveAddress
     self.currentFlow = KCSFlowType.GetMetadata
     self.startFlow(payload)
 

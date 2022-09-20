@@ -17,6 +17,7 @@ const ErrorStoreMeta* = "storing-metadata"
 const ErrorNoData* = "no-data"
 const ErrorFreePairingSlots* = "free-pairing-slots"
 const ErrorPIN* = "pin"
+const ErrorPUKRetries* = "puk-retries"
 
 const RequestParamAppInfo* = "application-info"
 const RequestParamInstanceUID* = "instance-uid"

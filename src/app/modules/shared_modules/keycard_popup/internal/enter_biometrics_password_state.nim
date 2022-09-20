@@ -18,7 +18,7 @@ method executePrimaryCommand*(self: EnterBiometricsPasswordState, controller: Co
       controller.tryToStoreDataToKeychain(password)
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
     else:
-      controller.setKeycardData("wrong-pass")
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongPassword, add = true))
 
 method getNextPrimaryState*(self: EnterBiometricsPasswordState, controller: Controller): State =
   if self.flowType == FlowType.Authentication:
