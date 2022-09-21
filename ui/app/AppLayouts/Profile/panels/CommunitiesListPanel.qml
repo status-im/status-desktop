@@ -35,6 +35,8 @@ StatusListView {
         asset.isImage: asset.name.includes("data")
         asset.isLetterIdenticon: !model.image
         asset.bgColor: model.color || Theme.palette.primaryColor1
+        asset.width: 40
+        asset.height: 40
         visible: model.joined
         height: visible ? implicitHeight: 0
 
