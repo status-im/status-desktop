@@ -76,6 +76,7 @@ QtObject {
         readonly property int wrongPassword: 8
         readonly property int offerPukForUnlock: 16
         readonly property int useUnlockLabelForLockedState: 32
+        readonly property int useGeneralMessageForLockedState: 64
     }
 
     readonly property QtObject keycardSharedFlow: QtObject {
@@ -84,6 +85,7 @@ QtObject {
         readonly property string setupNewKeycard: "SetupNewKeycard"
         readonly property string authentication: "Authentication"
         readonly property string unlockKeycard: "UnlockKeycard"
+        readonly property string displayKeycardContent: "DisplayKeycardContent"
     }
 
     readonly property QtObject keycardSharedState: QtObject {

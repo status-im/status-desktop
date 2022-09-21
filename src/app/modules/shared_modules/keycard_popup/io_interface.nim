@@ -36,6 +36,7 @@ type FlowType* {.pure.} = enum
   SetupNewKeycard = "SetupNewKeycard"
   Authentication = "Authentication"
   UnlockKeycard = "UnlockKeycard"
+  DisplayKeycardContent = "DisplayKeycardContent"
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj

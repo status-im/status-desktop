@@ -15,11 +15,13 @@ method getNextPrimaryState*(self: WrongPinState, controller: Controller): State 
   if self.flowType == FlowType.Authentication:
     if controller.getPin().len == PINLengthForStatusApp:
       controller.enterKeycardPin(controller.getPin())
-  return nil
+  if self.flowType == FlowType.DisplayKeycardContent:
+    controller.runSharedModuleFlow(FlowType.FactoryReset)
 
 method executeSecondaryCommand*(self: WrongPinState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
-    self.flowType == FlowType.SetupNewKeycard:
+    self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.DisplayKeycardContent:
       if controller.getPin().len == PINLengthForStatusApp:
         controller.enterKeycardPin(controller.getPin())  
   if self.flowType == FlowType.Authentication:
@@ -29,7 +31,8 @@ method executeSecondaryCommand*(self: WrongPinState, controller: Controller) =
 method executeTertiaryCommand*(self: WrongPinState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.Authentication:
+    self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.DisplayKeycardContent:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
@@ -85,3 +88,18 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
       if keycardEvent.error.len == 0:
         controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
         return nil
+  if self.flowType == FlowType.DisplayKeycardContent:
+    if keycardFlowType == ResponseTypeValueEnterPIN and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorPIN:
+        controller.setKeycardData($keycardEvent.pinRetries)
+        if keycardEvent.pinRetries > 0:
+          return self
+        return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
+    if keycardFlowType == ResponseTypeValueEnterPUK and 
+      keycardEvent.error.len == 0:
+        if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+          return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult:
+      controller.setMetadataFromKeycard(keycardEvent.cardMetadata, updateKeyPair = true)
+      return createState(StateType.PinVerified, self.flowType, nil)
