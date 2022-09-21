@@ -70,11 +70,11 @@ StatusDialog {
                     messageContextMenu: msgContextMenu
 
                     messageId: model.id
-                    responseToMessageWithId: model.responseToMessageWithId
                     senderId: model.senderId
                     senderDisplayName: model.senderDisplayName
                     senderOptionalName: model.senderOptionalName
                     senderIsEnsVerified: model.senderEnsVerified
+                    senderIsAdded: model.senderIsAdded
                     senderIcon: model.senderIcon
                     amISender: model.amISender
                     messageText: model.messageText
@@ -84,7 +84,6 @@ StatusDialog {
                     messageContentType: model.contentType
                     pinnedMessage: model.pinned
                     messagePinnedBy: model.pinnedBy
-                    reactionsModel: model.reactions
                     senderTrustStatus: model.senderTrustStatus
                     linkUrls: model.links
                     transactionParams: model.transactionParameters
