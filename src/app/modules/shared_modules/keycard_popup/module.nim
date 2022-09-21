@@ -317,13 +317,13 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.initialized = true
     self.controller.init()
   if flowToRun == FlowType.FactoryReset:
-    let items = self.buildKeyPairsList(excludeAlreadyMigratedPairs = false)
-    self.view.createKeyPairModel(items)
+    self.view.createKeyPairStoredOnKeycard()
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
   if flowToRun == FlowType.SetupNewKeycard:
     let items = self.buildKeyPairsList(excludeAlreadyMigratedPairs = true)
+    self.view.createKeyPairStoredOnKeycard()
     self.view.createKeyPairModel(items)
     self.view.setCurrentState(newSelectExistingKeyPairState(flowToRun, nil))
     self.controller.readyToDisplayPopup()
@@ -343,6 +343,11 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.controller.readyToDisplayPopup()
     return
   if flowToRun == FlowType.UnlockKeycard:
+    self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
+    self.controller.runGetMetadataFlow(resolveAddress = true)
+    return
+  if flowToRun == FlowType.DisplayKeycardContent:
+    self.view.createKeyPairStoredOnKeycard()
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return

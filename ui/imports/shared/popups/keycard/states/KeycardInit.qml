@@ -182,6 +182,11 @@ Item {
                         return true
                     }
                 }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.displayKeycardContent) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        return true
+                    }
+                }
                 return false
             }
 
@@ -224,6 +229,14 @@ Item {
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard) {
                         return keyPairForAuthenticationComponent
+                    }
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.displayKeycardContent) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                            return knownKeyPairComponent
+                        }
+                        return unknownKeyPairCompontnt
                     }
                 }
 
@@ -513,10 +526,11 @@ Item {
             PropertyChanges {
                 target: message
                 text: {
-                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard)
-                        return qsTr("The Keycard you have inserted is locked,\nyou will need to factory reset it before proceeding")
-                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication)
+                    if (root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.useGeneralMessageForLockedState) {
+                        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard)
+                            return qsTr("The Keycard you have inserted is locked,\nyou will need to factory reset it before proceeding")
                         return qsTr("You will need to unlock it before proceeding")
+                    }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached)
                         return qsTr("Pin entered incorrectly too many times")
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached)

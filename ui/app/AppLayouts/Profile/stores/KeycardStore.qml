@@ -10,6 +10,18 @@ QtObject {
         root.keycardModule.runSetupKeycardPopup()
     }
 
+    function runGenerateSeedPhrasePopup() {
+        root.keycardModule.runGenerateSeedPhrasePopup()
+    }
+
+    function runImportOrRestoreViaSeedPhrasePopup() {
+        root.keycardModule.runImportOrRestoreViaSeedPhrasePopup()
+    }
+
+    function runImportFromKeycardToAppPopup() {
+        root.keycardModule.runImportFromKeycardToAppPopup()
+    }
+
     function runUnlockKeycardPopup() {
         root.keycardModule.runUnlockKeycardPopup()
     }

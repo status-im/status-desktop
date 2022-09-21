@@ -17,7 +17,8 @@ method executeTertiaryCommand*(self: InsertKeycardState, controller: Controller)
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.Authentication or
-    self.flowType == FlowType.UnlockKeycard:
+    self.flowType == FlowType.UnlockKeycard or
+    self.flowType == FlowType.DisplayKeycardContent:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: InsertKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
