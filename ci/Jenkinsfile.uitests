@@ -1,5 +1,8 @@
 library 'status-jenkins-lib@v1.5.1'
 
+/* Options section can't access functions in objects. */
+def isPRBuild = utils.isPRBuild()
+
 pipeline {
   agent { label 'linux' }
 
@@ -33,6 +36,10 @@ pipeline {
       categories: ['status-desktop-e2e-tests'],
       maxConcurrentPerNode: 1,
       maxConcurrentTotal: 1
+    )
+    /* Abort old PR builds. */
+    disableConcurrentBuilds(
+      abortPrevious: isPRBuild
     )
   }
 
