@@ -69,6 +69,7 @@ Rectangle {
     property color overrideBackgroundColor: "transparent"
     property bool overrideBackground: false
     property bool profileClickable: true
+    property bool hideMessage: false
 
     property alias previousMessageIndex: dateGroupLabel.previousMessageIndex
     property alias previousMessageTimestamp: dateGroupLabel.previousMessageTimestamp
@@ -264,6 +265,7 @@ Rectangle {
             }
 
             ColumnLayout {
+
                 spacing: 4
                 Layout.alignment: Qt.AlignTop
                 Layout.fillWidth: true
@@ -292,7 +294,7 @@ Rectangle {
                 }
                 Loader {
                     Layout.fillWidth: true
-                    active: !editMode && !!root.messageDetails.messageText
+                    active: !root.editMode && !!root.messageDetails.messageText && !root.hideMessage
                     visible: active
                     sourceComponent: StatusTextMessage {
                         objectName: "StatusMessage_textMessage"
