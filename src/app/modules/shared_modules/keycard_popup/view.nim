@@ -100,6 +100,12 @@ QtObject:
     read = getKeyPairModel
     notify = keyPairModelChanged
 
+  proc createKeyPairStoredOnKeycard*(self: View) =
+    if self.keyPairStoredOnKeycard.isNil:
+      self.keyPairStoredOnKeycard = newKeyPairSelectedItem()
+    if self.keyPairStoredOnKeycardVariant.isNil:
+      self.keyPairStoredOnKeycardVariant = newQVariant(self.keyPairStoredOnKeycard)
+
   proc createKeyPairModel*(self: View, items: seq[KeyPairItem]) =
     if self.keyPairModel.isNil:
       self.keyPairModel = newKeyPairModel()
@@ -109,10 +115,6 @@ QtObject:
       self.selectedKeyPairItem = newKeyPairSelectedItem()
     if self.selectedKeyPairItemVariant.isNil:
       self.selectedKeyPairItemVariant = newQVariant(self.selectedKeyPairItem)
-    if self.keyPairStoredOnKeycard.isNil:
-      self.keyPairStoredOnKeycard = newKeyPairSelectedItem()
-    if self.keyPairStoredOnKeycardVariant.isNil:
-      self.keyPairStoredOnKeycardVariant = newQVariant(self.keyPairStoredOnKeycard)
     self.keyPairModel.setItems(items)
     self.keyPairModelChanged()
 

@@ -12,13 +12,15 @@ method getNextPrimaryState*(self: MaxPairingSlotsReachedState, controller: Contr
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard:
       return createState(StateType.FactoryResetConfirmation, self.flowType, self)
-  if self.flowType == FlowType.Authentication:
-    controller.runSharedModuleFlow(FlowType.UnlockKeycard)
+  if self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.DisplayKeycardContent:
+      controller.runSharedModuleFlow(FlowType.UnlockKeycard)
   return nil
 
 method executeTertiaryCommand*(self: MaxPairingSlotsReachedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.Authentication or
-    self.flowType == FlowType.UnlockKeycard:
+    self.flowType == FlowType.UnlockKeycard or
+    self.flowType == FlowType.DisplayKeycardContent:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

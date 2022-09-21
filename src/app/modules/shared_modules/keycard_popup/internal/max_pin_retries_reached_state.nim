@@ -9,7 +9,8 @@ proc delete*(self: MaxPinRetriesReachedState) =
   self.State.delete
 
 method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Controller): State =
-  if self.flowType == FlowType.FactoryReset:
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.DisplayKeycardContent:
     controller.runSharedModuleFlow(FlowType.UnlockKeycard)
   if self.flowType == FlowType.SetupNewKeycard:
     let currValue = extractPredefinedKeycardDataToNumber(controller.getKeycardData())
@@ -23,7 +24,8 @@ method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Control
 
 method executeTertiaryCommand*(self: MaxPinRetriesReachedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
-    self.flowType == FlowType.Authentication:
+    self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.DisplayKeycardContent:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
   if self.flowType == FlowType.SetupNewKeycard:
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseUnlockLabelForLockedState, add = false))
