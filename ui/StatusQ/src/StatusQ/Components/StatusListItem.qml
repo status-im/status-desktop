@@ -326,8 +326,10 @@ Rectangle {
                     contentWidth: row.width
                     padding: 0
                     clip: true
+                    interactive: false
                     Row {
                         id: row
+                        spacing: 4
                         Repeater {
                             id: inlineTagModelRepeater
                             model: inlineTagModel
