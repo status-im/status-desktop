@@ -1,5 +1,8 @@
 library 'status-jenkins-lib@v1.5.6'
 
+/* Options section can't access functions in objects. */
+def isPRBuild = utils.isPRBuild()
+
 pipeline {
   agent { label 'windows' }
 
@@ -26,6 +29,10 @@ pipeline {
       daysToKeepStr: '30',
       artifactNumToKeepStr: '3',
     ))
+    /* Abort old PR builds. */
+    disableConcurrentBuilds(
+      abortPrevious: isPRBuild
+    )
   }
 
   environment {
