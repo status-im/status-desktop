@@ -104,6 +104,15 @@ method runSetupKeycardPopup*(self: Module) =
     return
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycard)
 
+method runGenerateSeedPhrasePopup*(self: Module) =
+  info "TODO: Generate a seed phrase..."
+
+method runImportOrRestoreViaSeedPhrasePopup*(self: Module) =
+  info "TODO: Import or restore via a seed phrase..."
+  
+method runImportFromKeycardToAppPopup*(self: Module) =
+  info "TODO: Import from Keycard to Status Desktop..."
+
 method runUnlockKeycardPopup*(self: Module) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
@@ -111,7 +120,10 @@ method runUnlockKeycardPopup*(self: Module) =
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.UnlockKeycard)
 
 method runDisplayKeycardContentPopup*(self: Module) =
-  info "TODO: Run display keycard content..."
+  self.createSharedKeycardModule()
+  if self.keycardSharedModule.isNil:
+    return
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.DisplayKeycardContent)
 
 method runFactoryResetPopup*(self: Module) =
   self.createSharedKeycardModule()

@@ -17,6 +17,7 @@ type PredefinedKeycardData* {.pure.} = enum
   WrongPassword = 8
   OfferPukForUnlock = 16
   UseUnlockLabelForLockedState = 32
+  UseGeneralMessageForLockedState = 64
 
 # Forward declaration
 proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State
@@ -194,7 +195,8 @@ proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycard
   ## Handling factory reset or authentication or unlock keycard flow
   if state.flowType == FlowType.FactoryReset or
     state.flowType == FlowType.Authentication or
-    state.flowType == FlowType.UnlockKeycard:
+    state.flowType == FlowType.UnlockKeycard or
+    state.flowType == FlowType.DisplayKeycardContent:
       if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
         keycardEvent.error.len > 0 and
         keycardEvent.error == ErrorConnection:
@@ -277,8 +279,10 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
         if keycardEvent.error == ErrorHasKeys:
           return createState(StateType.KeycardNotEmpty, state.flowType, nil)
         if keycardEvent.error == ErrorFreePairingSlots:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
           return createState(StateType.MaxPairingSlotsReached, state.flowType, nil)
         if keycardEvent.error == ErrorPUKRetries:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
           return createState(StateType.MaxPukRetriesReached, state.flowType, nil)
     if keycardFlowType == ResponseTypeValueEnterPIN:
       if controller.getCurrentKeycardServiceFlow() == KCSFlowType.GetMetadata:
@@ -287,6 +291,7 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
     if keycardFlowType == ResponseTypeValueEnterPUK and 
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
           return createState(StateType.MaxPinRetriesReached, state.flowType, nil)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.error.len > 0:
@@ -313,9 +318,11 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
         if keycardEvent.error == ErrorNoKeys:
           return createState(StateType.KeycardEmpty, state.flowType, nil)
         if keycardEvent.error == ErrorFreePairingSlots:
-            return createState(StateType.MaxPairingSlotsReached, state.flowType, nil)
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
+          return createState(StateType.MaxPairingSlotsReached, state.flowType, nil)
         if keycardEvent.error == ErrorPUKRetries:
-            return createState(StateType.MaxPukRetriesReached, state.flowType, nil)
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
+          return createState(StateType.MaxPukRetriesReached, state.flowType, nil)
     if keycardFlowType == ResponseTypeValueEnterPIN:
       if keycardEvent.keyUid == controller.getKeyUidWhichIsBeingAuthenticating():
         if controller.loggedInUserUsesBiometricLogin():
@@ -326,6 +333,7 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
                 if not controller.usePinFromBiometrics():
                   return createState(StateType.WrongKeychainPin, state.flowType, nil)
                 return createState(StateType.WrongPin, state.flowType, nil)
+              controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
               return createState(StateType.MaxPinRetriesReached, state.flowType, nil)
           return createState(StateType.BiometricsReadyToSign, state.flowType, nil)
         return createState(StateType.EnterPin, state.flowType, nil)
@@ -333,6 +341,7 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
     if keycardFlowType == ResponseTypeValueEnterPUK and 
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
           return createState(StateType.MaxPinRetriesReached, state.flowType, nil)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       if keycardEvent.error.len == 0:
@@ -364,3 +373,29 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
         keycardEvent.error.len > 0:
           if keycardEvent.error == ErrorNoKeys:
             return createState(StateType.KeycardEmpty, state.flowType, nil)
+
+  if state.flowType == FlowType.DisplayKeycardContent:
+    if keycardFlowType == ResponseTypeValueEnterPIN and
+      keycardEvent.error.len == 0:
+        return createState(StateType.RecognizedKeycard, state.flowType, nil)
+    if keycardFlowType == ResponseTypeValueEnterPUK and 
+      keycardEvent.error.len == 0:
+        if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
+          return createState(StateType.MaxPinRetriesReached, state.flowType, nil)
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0:
+        if keycardEvent.error == ErrorNotAKeycard:
+          return createState(StateType.NotKeycard, state.flowType, nil)
+        if keycardEvent.error == ErrorNoKeys:
+          return createState(StateType.KeycardEmpty, state.flowType, nil)
+        if keycardEvent.error == ErrorFreePairingSlots:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
+          return createState(StateType.MaxPairingSlotsReached, state.flowType, nil)
+        if keycardEvent.error == ErrorPUKRetries:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
+          return createState(StateType.MaxPukRetriesReached, state.flowType, nil)
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult or
+      keycardEvent.error.len > 0:
+        if keycardEvent.error == ErrorNoKeys:
+          return createState(StateType.KeycardEmpty, state.flowType, nil)

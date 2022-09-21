@@ -115,7 +115,7 @@ SettingsContentBase {
                 }
             ]
             onClicked: {
-                console.warn("TODO: Generate a seed phrase...")
+                root.keycardStore.runGenerateSeedPhrasePopup()
             }
         }
 
@@ -130,7 +130,7 @@ SettingsContentBase {
                 }
             ]
             onClicked: {
-                console.warn("TODO: Import or restore via a seed phrase...")
+                root.keycardStore.runImportOrRestoreViaSeedPhrasePopup()
             }
         }
 
@@ -145,7 +145,7 @@ SettingsContentBase {
                 }
             ]
             onClicked: {
-                console.warn("TODO: Import from Keycard to Status Desktop...")
+                root.keycardStore.runImportFromKeycardToAppPopup()
             }
         }
 
