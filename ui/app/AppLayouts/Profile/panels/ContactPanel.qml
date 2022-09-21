@@ -61,8 +61,8 @@ StatusListItem {
     asset.isImage: asset.name.includes("data")
     asset.isLetterIdenticon: root.iconSource.toString() === ""
     ringSettings {
-        ringSpecModel: Utils.getColorHashAsJson(root.publicKey)
-        ringPxSize: Math.max(icon.width / 24.0)
+        ringSpecModel: root.name.startsWith('@') ? undefined : Utils.getColorHashAsJson(root.publicKey)
+        ringPxSize: Math.max(asset.width / 24.0)
     }
 
     components: [
@@ -131,9 +131,8 @@ StatusListItem {
             icon.name: "more"
             icon.color: Theme.palette.directColor1
             onClicked: {
-                root.openContactContextMenu(root.publicKey, root.name, root.icon)
+                root.openContactContextMenu(root.publicKey, root.name, root.iconSource)
             }
         }
     ]
 }
-
