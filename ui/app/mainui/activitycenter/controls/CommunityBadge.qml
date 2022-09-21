@@ -9,7 +9,7 @@ import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
 
-Item {
+Badge {
     id: communityBadge
 
     property string image: ""
@@ -45,7 +45,7 @@ Item {
         anchors.left: communityIcon.visible ? communityIcon.right : parent.left
         anchors.leftMargin: 2
         anchors.verticalCenter: parent.verticalCenter
-        sourceComponent: communityBadge.useLetterIdenticon ? letterIdenticon :imageIcon
+        sourceComponent: communityBadge.useLetterIdenticon ? letterIdenticon : imageIcon
     }
 
     Component {

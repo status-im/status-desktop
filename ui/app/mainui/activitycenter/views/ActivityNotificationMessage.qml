@@ -9,8 +9,6 @@ import shared 1.0
 import utils 1.0
 import shared.views.chat 1.0
 
-import "../panels"
-
 ActivityNotificationBase {
     id: root
 
@@ -21,11 +19,11 @@ ActivityNotificationBase {
                                                                 "" : root.store.activityCenterList.getNotificationData(
                                                                         previousNotificationIndex, "timestamp")
 
-    property alias badgeVisible: badge.visible
+    property alias badge: badgeLoader.sourceComponent
 
     signal activityCenterClose()
 
-    height: Math.max(60, notificationMessage.height + (badge.visible ? badge.height : 0))
+    height: Math.max(60, notificationMessage.height + (badgeLoader.item ? badgeLoader.height : 0))
 
     MessageView {
         id: notificationMessage
@@ -77,24 +75,10 @@ ActivityNotificationBase {
         prevMsgTimestamp: root.previousNotificationTimestamp
     }
 
-    ActivityChannelBadgePanel {
-        id: badge
+    Loader { 
+        id: badgeLoader
         anchors.top: notificationMessage.bottom
         anchors.left: parent.left
         anchors.leftMargin: 61 // TODO find a way to align with the text of the message
-        isCommunity: notification.communityId !== ""
-        notificationType: notification.notificationType
-        profileImage: visible ? Global.getProfileImage(isCommunity ? notification.communityId : notification.chatId) : ""
-        repliedMessageContent: notification.repliedMessage.messageText
-        repliedMessageId: notification.message.responseToMessageWithId
-
-        onCommunityNameClicked: {
-            root.store.activityCenterModuleInst.switchTo(notification.sectionId, "", "")
-            root.activityCenterClose()
-        }
-        onChannelNameClicked: {
-            root.store.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, "")
-            root.activityCenterClose()
-        }
     }
 }

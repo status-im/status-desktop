@@ -12,4 +12,6 @@ import shared.panels.chat 1.0
 ActivityNotificationMessage {
     id: root
 
+//        repliedMessageContent: notification.repliedMessage.messageText
+//        repliedMessageId: notification.message.responseToMessageWithId
 }
