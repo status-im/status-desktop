@@ -42,12 +42,13 @@ Column {
     StyledText {
         id: channelName
         objectName: "channelIdentifierNameText"
+        width: parent.width
         wrapMode: Text.Wrap
         text: root.chatName
         font.weight: Font.Bold
         font.pixelSize: 22
         color: Style.current.textColor
-        anchors.horizontalCenter: parent.horizontalCenter
+        horizontalAlignment: Text.AlignHCenter
     }
 
     StatusBaseText {
