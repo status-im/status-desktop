@@ -74,22 +74,12 @@ pipeline {
       }
     }
 
-    // TODO: enable after generating the AppImage
-    // stage('Parallel Upload') {
-    //   parallel {
-    //     stage('Upload') {
-    //       steps { script {
-    //         env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_APPIMAGE)
-    //         jenkins.setBuildDesc(AppImage: env.PKG_URL)
-    //       } }
-    //     }
-    //     stage('Archive') {
-    //       steps { script {
-    //         archiveArtifacts("${env.STATUS_CLIENT_APPIMAGE}*")
-    //       } }
-    //     }
-    //   }
-    // }
+    stage('Upload') {
+      steps { script {
+        /* TODO: Enable after generating the AppImage. */
+        env.PKG_URL = "${currentBuild.absoluteUrl}/consoleText"
+      } }
+    }
   }
 
   post {
