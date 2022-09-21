@@ -81,11 +81,19 @@ SplitView {
     property bool showHeader: true
 
     /*!
-        \qmlproperty int StatusAppLayout::notificationCount
-        This property holds the number of notifications to be displayed in the notifications
-        button of the header component.
+        \qmlproperty alias StatusAppLayout::notificationCount
+        This property holds a reference to the notificationCount property of the
+        header component.
     */
     property alias notificationCount: statusToolBar.notificationCount
+
+    /*!
+        \qmlproperty alias StatusAppLayout::backButtonName
+        This property holds a reference to the backButtonName property of the
+        header component.
+    */
+    property alias backButtonName: statusToolBar.backButtonName
+
     /*!
         \qmlproperty alias StatusAppLayout::headerContent
         This property holds a reference to the custom header content of
@@ -98,6 +106,13 @@ SplitView {
         component.
     */
     property alias notificationButton: statusToolBar.notificationButton
+
+    /*!
+        \qmlsignal
+        This signal is emitted when the back button of the header component
+        is pressed.
+    */
+    signal backButtonClicked()
 
     /*!
         \qmlsignal
@@ -134,6 +149,9 @@ SplitView {
                 id: statusToolBar
                 width: visible ? parent.width : 0
                 visible: root.showHeader
+                onBackButtonClicked: {
+                    root.backButtonClicked();
+                }
                 onNotificationButtonClicked: {
                     root.notificationButtonClicked();
                 }

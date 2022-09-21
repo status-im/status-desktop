@@ -44,8 +44,6 @@ StatusSectionLayout {
                 spacing: 18
 
                 StatusBaseText {
-                    Layout.topMargin: d.layoutVMargin
-                    Layout.leftMargin: d.layoutHMargin
                     text: qsTr("Find community")
                     font.weight: Font.Bold
                     font.pixelSize: d.titlePixelSize

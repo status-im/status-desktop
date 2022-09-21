@@ -9,10 +9,12 @@ import StatusQ.Controls 0.1
 ToolBar {
     id: root
 
+    property string backButtonName: ""
     property int notificationCount: 0
     property Item headerContent
     property alias notificationButton: notificationButton
 
+    signal backButtonClicked()
     signal notificationButtonClicked()
 
     implicitWidth: visible ? 518 : 0
@@ -23,6 +25,18 @@ ToolBar {
     RowLayout {
         anchors.fill: parent
         spacing: 0
+        StatusFlatButton {
+            icon.name: "arrow-left"
+            icon.width: 20
+            icon.height: 20
+            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+            Layout.leftMargin: 12
+            visible: !!root.backButtonName
+            text: root.backButtonName
+            size: StatusBaseButton.Size.Large
+            onClicked: { root.backButtonClicked(); }
+        }
+
         Control {
             id: headerContentItem
             Layout.fillWidth: !!headerContent
