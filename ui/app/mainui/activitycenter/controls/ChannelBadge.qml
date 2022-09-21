@@ -11,8 +11,10 @@ import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-Item {
+Badge {
     id: channelBadge
+
+    signal channelNameClicked()
 
     property int realChatType: -1
     property string name: "channelName"

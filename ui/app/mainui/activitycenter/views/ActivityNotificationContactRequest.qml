@@ -11,7 +11,6 @@ import utils 1.0
 ActivityNotificationMessage {
     id: root
 
-    badgeVisible: false
     // TODO: mark as read ignores notification type
     // markReadBtnVisible: false
 }
