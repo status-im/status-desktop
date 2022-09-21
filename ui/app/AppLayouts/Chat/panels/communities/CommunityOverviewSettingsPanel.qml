@@ -39,6 +39,7 @@ StackLayout {
     signal inviteNewPeopleClicked
     signal airdropTokensClicked
     signal backUpClicked
+    signal transferOwnershipClicked
 
     clip: true
 
@@ -159,11 +160,23 @@ StackLayout {
 
     SettingsPageLayout {
         id: editCommunityPage
-
         previousPage: qsTr("Overview")
         title: qsTr("Edit Community")
         editable: true
-
+        headerComponents: [
+            StatusListItem {
+                implicitWidth: 229
+                implicitHeight: 38
+                leftPadding: 0
+                rightPadding: 0
+                title: qsTr("Transfer Owner Node")
+                asset.name: "exchange"
+                type: StatusListItem.Type.Secondary
+                onClicked: {
+                    root.transferOwnershipClicked();
+                }
+            }
+        ]
         content: CommunityEditSettingsPanel {
             name: root.name
             description: root.description

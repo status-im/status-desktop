@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
 
 /*!
       \qmltype StatusTextArea
@@ -94,18 +95,7 @@ TextArea {
         }
     }
 
-    cursorDelegate: Rectangle {
-        color: Theme.palette.primaryColor1
-        implicitWidth: 2
-        implicitHeight: 22
-        radius: 1
+    cursorDelegate: StatusCursorDelegate {
         visible: root.cursorVisible
-
-        SequentialAnimation on visible {
-            loops: Animation.Infinite
-            running: root.cursorVisible
-            PropertyAnimation { to: false; duration: 600 }
-            PropertyAnimation { to: true; duration: 600 }
-        }
     }
 }

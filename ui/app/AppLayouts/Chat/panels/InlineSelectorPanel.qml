@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Popups.Dialog 0.1
@@ -89,17 +90,8 @@ Item {
                                 verticalAlignment: Text.AlignVCenter
                                 font.pixelSize: 15
                                 color: Theme.palette.directColor1
-                                cursorDelegate: Rectangle {
-                                    color: Theme.palette.primaryColor1
-                                    implicitWidth: 2
-                                    radius: 1
+                                cursorDelegate: StatusCursorDelegate {
                                     visible: edit.cursorVisible
-                                    SequentialAnimation on visible {
-                                        loops: Animation.Infinite
-                                        running: edit.cursorVisible
-                                        PropertyAnimation { to: false; duration: 600; }
-                                        PropertyAnimation { to: true; duration: 600; }
-                                    }
                                 }
 
                                 Keys.onPressed: {

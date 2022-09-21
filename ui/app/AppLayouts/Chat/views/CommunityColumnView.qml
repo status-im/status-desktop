@@ -36,6 +36,7 @@ Item {
 
     signal infoButtonClicked
     signal manageButtonClicked
+    signal backupButtonClicked
 
     MouseArea {
         enabled: communityData.amISectionAdmin
@@ -437,12 +438,7 @@ Item {
                         BackUpCommuntyBannerPanel {
                             id: backupBanner
                             communityId: communityData.id
-                            onBackupButtonClicked: {
-                                Global.openPopup(transferOwnershipPopup, {
-                                    privateKey: communitySectionModule.exportCommunity(communityData.id),
-                                    store: root.store
-                                })
-                            }
+                            onBackupButtonClicked: { root.backupButtonClicked(); }
                         }
                 }
             } // Loader
@@ -536,21 +532,6 @@ Item {
         title: qsTr("Error deleting the category")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
-    }
-
-    Component {
-        id: transferOwnershipPopup
-        TransferOwnershipPopup {
-            anchors.centerIn: parent
-            onClosed: {
-                let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityBackUpBanners || []
-                if (hiddenBannerIds.includes(root.store.activeCommunity.id)) {
-                    return
-                }
-                hiddenBannerIds.push(root.store.activeCommunity.id)
-                localAccountSensitiveSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
-            }
-        }
     }
 
     Connections {

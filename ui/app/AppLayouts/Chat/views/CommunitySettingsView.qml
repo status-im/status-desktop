@@ -25,6 +25,7 @@ StatusSectionLayout {
 
     notificationCount: root.rootStore.unreadNotificationsCount
     onNotificationButtonClicked: Global.openActivityCenterPopup()
+    property var communityData: root.rootStore.mainModuleInst ? root.rootStore.mainModuleInst.activeSection || {} : {}
     // TODO: get this model from backend?
     property var settingsMenuModel: root.rootStore.communityPermissionsEnabled ? [{name: qsTr("Overview"), icon: "help"},
                                                                                  {name: qsTr("Members"), icon: "group-chat"},
@@ -56,6 +57,7 @@ StatusSectionLayout {
 
     signal backToCommunityClicked
     signal openLegacyPopupClicked // TODO: remove me when migration to new settings is done
+    signal backupButtonClicked
 
     leftPanel: ColumnLayout {
         anchors {
@@ -182,8 +184,11 @@ StatusSectionLayout {
                 }
 
                 onAirdropTokensClicked: { /* TODO in future */ }
-                onBackUpClicked: {
+                onBackUpClicked: { root.backupButtonClicked(); }
+                onTransferOwnershipClicked: {
                     Global.openPopup(transferOwnershipPopup, {
+                        store: root.rootStore,
+                        communityName: root.community.name,
                         privateKey: root.chatCommunitySectionModule.exportCommunity(root.communityId),
                     })
                 }
@@ -227,7 +232,14 @@ StatusSectionLayout {
         id: transferOwnershipPopup
         TransferOwnershipPopup {
             anchors.centerIn: parent
-            store: root.rootStore
+            onClosed: {
+                let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityBackUpBanners || []
+                if (hiddenBannerIds.includes(root.communityData.id)) {
+                    return
+                }
+                hiddenBannerIds.push(root.communityData.id)
+                localAccountSensitiveSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
+            }
         }
     }
 

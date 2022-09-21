@@ -384,19 +384,8 @@ Item {
                             }
                         }
 
-                        cursorDelegate: Rectangle {
-                            color: Theme.palette.primaryColor1
-                            implicitWidth: 2
-                            implicitHeight: 22
-                            radius: 1
+                        cursorDelegate: StatusCursorDelegate {
                             visible: edit.cursorVisible
-
-                            SequentialAnimation on visible {
-                                loops: Animation.Infinite
-                                running: edit.cursorVisible
-                                PropertyAnimation { to: false; duration: 600; }
-                                PropertyAnimation { to: true; duration: 600; }
-                            }
                         }
 
                         StatusBaseText {

@@ -37,6 +37,7 @@ StatusSectionLayout {
     signal communityManageButtonClicked()
     signal profileButtonClicked()
     signal openAppSearch()
+    signal backupButtonClicked()
     signal importCommunityClicked()
     signal createCommunityClicked()
 
@@ -160,6 +161,7 @@ StatusSectionLayout {
             membershipRequestPopup: root.membershipRequestPopup
             onInfoButtonClicked: root.communityInfoButtonClicked()
             onManageButtonClicked: root.communityManageButtonClicked()
+            onBackupButtonClicked: root.backupButtonClicked()
         }
     }
 

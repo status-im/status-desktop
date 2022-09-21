@@ -25,6 +25,7 @@ Rectangle {
     property real rightPadding: 16
     property bool highlighted: false
     property bool propagateTitleClicks: true
+    property bool elideText: true
     property int type: StatusListItem.Type.Primary
     property list<Item> components
     property var bottomModel: []
@@ -207,7 +208,8 @@ Rectangle {
                 text: statusListItem.title
                 font.pixelSize: 15
                 height: visible ? contentHeight : 0
-                elide: Text.ElideRight
+                elide: statusListItem.elideText ? Text.ElideRight : Text.ElideNone
+                wrapMode: statusListItem.elideText ? Text.NoWrap : Text.WordWrap
                 anchors.left: parent.left
                 anchors.top: bottomModel.length === 0 ? undefined:  parent.top
                 anchors.topMargin: bottomModel.length === 0 ? undefined : 20

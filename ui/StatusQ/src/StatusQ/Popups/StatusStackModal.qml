@@ -44,6 +44,8 @@ StatusModal {
         }
     }
 
+    signal backButtonPressed()
+
     Component.onCompleted: updateRightButtons()
     onCurrentIndexChanged: updateRightButtons()
     onReplaceItemChanged: updateRightButtons()
@@ -56,6 +58,7 @@ StatusModal {
         id: backButton
         visible: replaceItem || stackLayout.currentIndex > 0
         onClicked: {
+            root.backButtonPressed();
             if (replaceItem) {
               replaceItem = null;
             } else {

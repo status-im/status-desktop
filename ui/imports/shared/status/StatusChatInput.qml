@@ -1212,19 +1212,8 @@ Rectangle {
                                 lastClick = now
                             }
 
-                            cursorDelegate: Rectangle {
-                                color: Theme.palette.primaryColor1
-                                implicitWidth: 2
-                                implicitHeight: 22
-                                radius: 1
+                            cursorDelegate: StatusCursorDelegate {
                                 visible: messageInputField.cursorVisible
-
-                                SequentialAnimation on visible {
-                                    loops: Animation.Infinite
-                                    running: messageInputField.cursorVisible
-                                    PropertyAnimation { to: false; duration: 600; }
-                                    PropertyAnimation { to: true; duration: 600; }
-                                }
                             }
 
                             StatusSyntaxHighlighter {

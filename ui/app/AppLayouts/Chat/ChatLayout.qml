@@ -49,6 +49,12 @@ StackLayout {
         onCreateCommunityClicked: {
             root.createCommunityClicked();
         }
+        onBackupButtonClicked: {
+            Global.openPopup(backupCommunityPopup, {
+                store: root.rootStore,
+                privateKey: root.rootStore.chatCommunitySectionModule.exportCommunity(root.communityId),
+            })
+        }
     }
 
     Loader {
@@ -62,14 +68,27 @@ StackLayout {
             community: root.rootStore.mainModuleInst ? root.rootStore.mainModuleInst.activeSection
                                                        || {} : {}
 
-        onBackToCommunityClicked: root.currentIndex = 0
+            onBackToCommunityClicked: root.currentIndex = 0
 
-        // TODO: remove me when migration to new settings is done
-        onOpenLegacyPopupClicked: Global.openPopup(Global.communityProfilePopup, {
+            // TODO: remove me when migration to new settings is done
+            onOpenLegacyPopupClicked: Global.openPopup(Global.communityProfilePopup, {
                                                        "store": root.rootStore,
                                                        "community": community,
                                                        "communitySectionModule": chatCommunitySectionModule
                                                    })
+            onBackupButtonClicked: {
+                Global.openPopup(backupCommunityPopup, {
+                    store: root.rootStore,
+                    privateKey: root.rootStore.chatCommunitySectionModule.exportCommunity(root.communityId),
+                })
+            }
+        }
+    }
+
+    Component {
+        id: backupCommunityPopup
+        BackUpCommunityPopup {
+            anchors.centerIn: parent
         }
     }
 }

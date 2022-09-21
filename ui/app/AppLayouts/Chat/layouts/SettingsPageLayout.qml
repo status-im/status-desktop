@@ -17,6 +17,7 @@ Item {
     property Component content
 
     // optional
+    property list<Item> headerComponents
     property string previousPage
     property bool dirty: false
     property bool editable: false
@@ -37,6 +38,14 @@ Item {
 
     function notifyDirty() {
         settingsDirtyToastMessage.notifyDirty()
+    }
+
+    Component.onCompleted: {
+        if (headerComponents.length) {
+            for (let i in headerComponents) {
+                headerComponents[i].parent = titleRow;
+            }
+        }
     }
 
     implicitWidth: layout.implicitWidth
@@ -60,13 +69,20 @@ Item {
             onClicked: root.previousPageClicked()
         }
 
-        StatusBaseText {
+        RowLayout {
+            id: titleRow
+            Layout.fillWidth: true
+            height: 56
             Layout.leftMargin: 36
-
-            text: root.title
-            color: Theme.palette.directColor1
-            font.pixelSize: 26
-            font.bold: true
+            Layout.rightMargin: 24
+            visible: root.title !== ""
+            StatusBaseText {
+                Layout.fillWidth: true
+                text: root.title
+                color: Theme.palette.directColor1
+                font.pixelSize: 26
+                font.bold: true
+            }
         }
 
         Loader {
