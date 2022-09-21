@@ -86,7 +86,7 @@ Rectangle {
         id: closeButton
         objectName: "headerClosebutton"
         anchors.right: parent.right
-        anchors.rightMargin: 20
+        anchors.rightMargin: 16
         anchors.top: parent.top
         anchors.topMargin: 16
         width: 32
@@ -94,8 +94,8 @@ Rectangle {
         type: StatusFlatRoundButton.Type.Secondary
         icon.name: "close"
         icon.color: Theme.palette.directColor1
-        icon.width: 20
-        icon.height: 20
+        icon.width: 24
+        icon.height: 24
         visible: statusModalHeader.hasCloseButton
 
         onClicked: statusModalHeader.close()
