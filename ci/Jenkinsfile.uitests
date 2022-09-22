@@ -16,6 +16,7 @@ pipeline {
       name: 'VERBOSE',
       description: 'Level of verbosity based on nimbus-build-system setup.',
       choices: ['0', '1', '2']
+      
     )
   }
   
