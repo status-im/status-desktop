@@ -173,16 +173,15 @@ StatusDialog {
 
     header: StatusDialogHeader {
         id: dialogHeader
-
         headline.title: {
             if(showVerifyIdentitySection || showVerificationPendingSection){
-                return qsTr("Verify %1's Identity").arg(userIsEnsVerified ? userName : userDisplayName)
+                return qsTr("Verify %1's Identity").arg(userDisplayName)
             }
             return popup.isCurrentUser ? qsTr("My Profile") :
-                                         qsTr("%1's Profile").arg(userIsEnsVerified ? userName : userDisplayName)
+                                         qsTr("%1's Profile").arg(userDisplayName)
         }
 
-        headline.subtitle: popup.isCurrentUser ? "" : userIsEnsVerified ? userName : Utils.getElidedCompressedPk(userPublicKey)
+        headline.subtitle: popup.isCurrentUser ? "" : Utils.getElidedCompressedPk(userPublicKey)
 
         actions {
             customButtons: ObjectModel {
