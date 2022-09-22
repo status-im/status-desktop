@@ -10,6 +10,7 @@ import ../../../../app_service/service/activity_center/dto/[notification]
 import ../../../../app_service/service/contacts/dto/[contacts, status_update]
 import ../../../../app_service/service/devices/dto/[device]
 import ../../../../app_service/service/settings/dto/[settings]
+import ../../../../app_service/service/saved_address/[dto]
 
 type MessageSignal* = ref object of Signal
   bookmarks*: seq[BookmarkDto]
@@ -29,6 +30,7 @@ type MessageSignal* = ref object of Signal
   settings*: seq[SettingsFieldDto]
   clearedHistories*: seq[ClearedHistoryDto]
   verificationRequests*: seq[VerificationRequest]
+  savedAddresses*: seq[SavedAddressDto]
 
 type MessageDeliveredSignal* = ref object of Signal
   chatId*: string
@@ -117,6 +119,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if event["event"]{"verificationRequests"} != nil:
     for jsonVerificationRequest in event["event"]["verificationRequests"]:
       signal.verificationRequests.add(jsonVerificationRequest.toVerificationRequest())
+
+  if event["event"]{"savedAddresses"} != nil:
+    for jsonSavedAddress in event["event"]["savedAddresses"]:
+      signal.savedAddresses.add(jsonSavedAddress.toSavedAddressDto())
 
   result = signal
 

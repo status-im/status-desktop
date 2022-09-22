@@ -31,7 +31,7 @@ DerivedAddresses getDerivedAddressesForPath(const HashedPassword &password,
 SavedAddresses getSavedAddresses();
 
 /// \brief Add a new or update existing saved wallet address
-/// \see \c addSavedAddress
+/// \see wakuext_upsertSavedAddress RPC method
 /// \throws \c CallPrivateRpcError
 void saveAddress(const SavedAddress &address);
 

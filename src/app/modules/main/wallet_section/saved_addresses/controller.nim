@@ -2,7 +2,6 @@ import io_interface
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/saved_address/service as saved_address_service
 
-
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
