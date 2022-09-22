@@ -284,9 +284,6 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
   result["ClusterConfig"]["FilterNodes"] =  %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Waku)
   result["ClusterConfig"]["LightpushNodes"] =  %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Waku)
 
-  # TODO: commented since it's not necessary (we do the connections thru C bindings). Enable it thru an option once status-nodes are able to be configured in desktop
-  # result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
-  
   result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
 
 proc setLocalAccountSettingsFile(self: Service) =
@@ -508,6 +505,10 @@ proc login*(self: Service, account: AccountDto, password: string): string =
       "OutputMessageCSVEnabled": output_csv
     }
 
+    # Source the connection port from the environment for debugging or if default port not accessible
+    if existsEnv("STATUS_PORT"):
+      nodeCfg["ListenAddr"] = newJString("0.0.0.0:" & $getEnv("STATUS_PORT"))
+
     let response = status_account.login(account.name, account.keyUid, hashedPassword, thumbnailImage,
       largeImage, $nodeCfg)
     var error = "response doesn't contain \"error\""
@@ -536,7 +537,7 @@ proc loginAccountKeycard*(self: Service, keycardData: KeycardEvent): string =
     }
     var settingsJson: JsonNode
     self.addKeycardDetails(settingsJson, accountDataJson)
-    
+
     let hashedPassword = hashString(keycardData.keyUid) # using hashed keyUid as password
 
     let response = status_account.loginWithKeycard(keycardData.whisperKey.privateKey, 

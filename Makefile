@@ -607,7 +607,7 @@ run: $(RUN_TARGET)
 
 ICON_TOOL := node_modules/.bin/fileicon
 
-# Currently not in use: https://github.com/status-im/status-desktop/pull/1858
+# Will only work at password login. Keycard login doesn't forward the configuration
 # STATUS_PORT ?= 30306
 
 run-linux: nim_status_client
