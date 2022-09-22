@@ -82,9 +82,7 @@ SettingsPageLayout {
                     if (root.membersModel.count === 0) {
                         return qsTr("No members to search")
                     } else {
-                        return qsTr("Search %1's %2 member%3").arg(root.communityName)
-                                                              .arg(root.membersModel.count)
-                                                              .arg(root.membersModel.count > 1 ? "s" : "")
+                        return qsTr("Search %1's %n member(s)", "", root.membersModel.count).arg(root.communityName)
                     }
                 }
                 panelType: CommunityMembersTabPanel.TabType.AllMembers

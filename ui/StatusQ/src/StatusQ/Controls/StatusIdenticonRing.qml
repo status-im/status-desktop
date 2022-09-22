@@ -144,7 +144,9 @@ Item {
 
             Connections {
                 target: root.settings
-                onRingSpecModelChanged: requestPaint()
+                function onRingSpecModelChanged() {
+                    requestPaint()
+                }
             }
         }
     }

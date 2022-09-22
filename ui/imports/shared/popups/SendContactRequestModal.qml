@@ -17,6 +17,7 @@ StatusModal {
     property string userPublicKey: ""
     property string userDisplayName: ""
     property string userIcon: ""
+    property bool userIsEnsVerified
 
     signal accepted(string message)
 
@@ -42,6 +43,7 @@ StatusModal {
             displayName: root.userDisplayName
             pubkey: root.userPublicKey
             icon: root.userIcon
+            userIsEnsVerified: root.userIsEnsVerified
 
             displayNameVisible: true
             pubkeyVisible: true

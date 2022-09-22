@@ -195,6 +195,7 @@ StatusPopupMenu {
                                                                       : Constants.trustStatus.unknown
         isContact: root.isContact
         isCurrentUser: root.isMe
+        userIsEnsVerified: !!d.contactDetails && d.contactDetails.ensVerified
     }
 
     Item {

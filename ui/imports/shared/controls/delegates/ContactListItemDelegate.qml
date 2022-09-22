@@ -14,8 +14,9 @@ StatusMemberListItem {
     id: root
 
     readonly property string _pubKey: model.pubKey // expose uncompressed pubkey
+    readonly property bool hasEnsName: Utils.isEnsVerified(model.pubKey)
 
-    pubKey: Utils.getCompressedPk(model.pubKey)
+    pubKey: hasEnsName ? "" : Utils.getCompressedPk(model.pubKey)
     nickName: model.localNickname
     userName: model.displayName
     isVerified: model.isVerified
@@ -27,6 +28,6 @@ StatusMemberListItem {
     asset.isLetterIdenticon: (asset.name === "")
     status: model.onlineStatus
     statusListItemIcon.badge.border.color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
-    ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
+    ringSettings.ringSpecModel: hasEnsName ? undefined : Utils.getColorHashAsJson(model.pubKey, true)
     color: (sensor.containsMouse || highlighted) ? Theme.palette.baseColor2 : "transparent"
 }

@@ -42,7 +42,7 @@ Item {
 
         StatusInput {
             id: memberSearch
-            Layout.preferredWidth: 350
+            Layout.preferredWidth: 400
             Layout.leftMargin: 12
             maximumHeight: 36
             topPadding: 0
@@ -126,7 +126,7 @@ Item {
                 height: visible ? implicitHeight : 0
                 color: "transparent"
 
-                pubKey: Utils.getElidedCompressedPk(model.pubKey)
+                pubKey: model.ensName ? "" : Utils.getElidedCompressedPk(model.pubKey)
                 nickName: model.localNickname
                 userName: model.displayName
                 status: model.onlineStatus
@@ -136,7 +136,7 @@ Item {
                 asset.isLetterIdenticon: !model.icon
                 asset.width: 40
                 asset.height: 40
-                ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
+                ringSettings.ringSpecModel: !!model.ensName ? undefined : Utils.getColorHashAsJson(model.pubKey, true)
                 statusListItemIcon.badge.visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers)
 
                 onClicked: root.userProfileClicked(model.pubKey)

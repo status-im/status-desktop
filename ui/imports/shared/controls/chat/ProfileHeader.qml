@@ -26,6 +26,7 @@ Item {
     property int trustStatus
     property bool isContact: false
     property bool isCurrentUser
+    property bool userIsEnsVerified
 
     property int imageSize: ProfileHeader.ImageSize.Compact
     property bool displayNameVisible: true
@@ -80,6 +81,7 @@ Item {
                 interactive: false
                 imageWidth: d.getSize(36, 80, 160)
                 imageHeight: imageWidth
+                showRing: !root.userIsEnsVerified
             }
 
             StatusRoundButton {

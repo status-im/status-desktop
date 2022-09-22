@@ -23,6 +23,8 @@ Column {
 
     property Component popupMenu
 
+    property var isEnsVerified: function(pubKey) { return false }
+
     signal chatItemSelected(string categoryId, string id)
     signal chatItemUnmuted(string id)
     signal chatItemReordered(string id, int from, int to)
@@ -122,8 +124,8 @@ Column {
                     asset.color: !!model.color ? model.color : Theme.palette.userCustomizationColors[model.colorId]
                     asset.isImage: model.icon.includes("data")
                     asset.name: model.icon
-                    ringSettings.ringSpecModel: model.colorHash
-                    onlineStatus: model.onlineStatus
+                    ringSettings.ringSpecModel: type === StatusChatListItem.Type.OneToOneChat && root.isEnsVerified(chatId) ? undefined : model.colorHash
+                    onlineStatus: !!model.onlineStatus ? model.onlineStatus : StatusChatListItem.OnlineStatus.Inactive
 
                     sensor.cursorShape: dragSensor.cursorShape
 

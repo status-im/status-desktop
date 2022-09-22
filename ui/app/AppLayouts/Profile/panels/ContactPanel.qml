@@ -50,18 +50,27 @@ StatusListItem {
     signal rejectionRemoved(string publicKey)
     signal textClicked(string publicKey)
 
-    subTitle: Utils.getElidedCompressedPk(root.publicKey)
+    readonly property var d: Utils.getContactDetailsAsJson(root.publicKey)
+
+    subTitle: {
+        if (d.ensVerified) {
+            if (d.localNickname)
+                return '@' + Utils.removeStatusEns(d.name)
+            return ""
+        }
+        return Utils.getElidedCompressedPk(root.publicKey)
+    }
 
     asset.width: 40
     asset.height: 40
     asset.color: Utils.colorForPubkey(root.publicKey)
-    asset.letterSize: Math.max(4, root.asset.width / 2.4)
+    asset.letterSize: asset._twoLettersSize
     asset.charactersLen: 2
     asset.name: root.iconSource
     asset.isImage: asset.name.includes("data")
     asset.isLetterIdenticon: root.iconSource.toString() === ""
     ringSettings {
-        ringSpecModel: root.name.startsWith('@') ? undefined : Utils.getColorHashAsJson(root.publicKey)
+        ringSpecModel: Utils.getColorHashAsJson(root.publicKey)
         ringPxSize: Math.max(asset.width / 24.0)
     }
 

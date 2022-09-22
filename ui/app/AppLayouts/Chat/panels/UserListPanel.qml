@@ -10,8 +10,6 @@ import shared.panels 1.0
 import shared.status 1.0
 import utils 1.0
 
-import "../controls"
-
 import SortFilterProxyModel 0.2
 
 Item {
@@ -74,8 +72,8 @@ Item {
         delegate: StatusMemberListItem {
             width: ListView.view.width
             nickName: model.localNickname
-            userName: model.displayName !== "" ? model.displayName : model.alias
-            pubKey: Utils.getCompressedPk(model.pubKey)
+            userName: !!model.ensName ? "@" + Utils.removeStatusEns(model.ensName) : model.displayName !== "" ? model.displayName : model.alias
+            pubKey: !!model.ensName ? "" : Utils.getCompressedPk(model.pubKey)
             isContact: model.isContact
             isVerified: model.isVerified
             isUntrustworthy: model.isUntrustworthy
@@ -95,7 +93,7 @@ Item {
             asset.isLetterIdenticon: (asset.name === "")
             asset.color: Utils.colorForColorId(model.colorId)
             status: model.onlineStatus
-            ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey) // FIXME: use model.colorHash
+            ringSettings.ringSpecModel: !!model.ensName ? undefined : Utils.getColorHashAsJson(model.pubKey, true) // FIXME: use model.colorHash
             onClicked: {
                 if (mouse.button === Qt.RightButton) {
                     // Set parent, X & Y positions for the messageContextMenu

@@ -361,7 +361,7 @@ Item {
                 identicon.asset.height: height
                 identicon.asset.charactersLen: 2
                 identicon.asset.color: Utils.colorForPubkey(appMain.rootStore.userProfileInst.pubKey)
-                identicon.ringSettings.ringSpecModel: Utils.getColorHashAsJson(appMain.rootStore.userProfileInst.pubKey)
+                identicon.ringSettings.ringSpecModel: appMain.rootStore.userProfileInst.ensName ? undefined : Utils.getColorHashAsJson(appMain.rootStore.userProfileInst.pubKey, true)
 
                 badge.visible: true
                 badge.anchors {

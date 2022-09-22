@@ -87,7 +87,7 @@ StatusListItem {
         id: d
 
         // Subtitle composition:
-        function composeSubtitile() {
+        function composeSubtitle() {
             var compose = ""
             if(root.userName !== "" && root.nickName !== "")
                 compose = "(" + root.userName + ")"
@@ -104,21 +104,25 @@ StatusListItem {
 
         // Short keychat composition:
         function composeShortKeyChat(pubKey) {
+            if (!pubKey)
+                return ""
             return pubKey.substring(0, 5) + "..." + pubKey.substring(pubKey.length - 3)
         }
     }
 
     // root object settings:
-    title: (root.nickName === "") ? root.userName : root.nickName
+    title: root.nickName || root.userName
     statusListItemTitleIcons.sourceComponent: StatusContactVerificationIcons {
         isContact: root.isContact
         trustIndicator: {
-            if (root.isVerified) return StatusContactVerificationIcons.TrustedType.Verified
-            else if (root.isUntrustworthy) return StatusContactVerificationIcons.TrustedType.Untrustworthy
+            if (root.isVerified)
+                return StatusContactVerificationIcons.TrustedType.Verified
+            if (root.isUntrustworthy)
+                return StatusContactVerificationIcons.TrustedType.Untrustworthy
             return StatusContactVerificationIcons.TrustedType.None
         } 
     }
-    subTitle: d.composeSubtitile()
+    subTitle: d.composeSubtitle()
     statusListItemSubTitle.font.pixelSize: 10
     statusListItemIcon.badge.visible: true
     statusListItemIcon.badge.color: root.status === 1 ? Theme.palette.successColor1 : Theme.palette.baseColor1 // FIXME
@@ -130,6 +134,8 @@ StatusListItem {
     leftPadding: 8
     asset.width: 32
     asset.height: 32
+    asset.charactersLen: 2
+    asset.letterSize: asset._twoLettersSize
     statusListItemIcon.anchors.verticalCenter: sensor.verticalCenter
     statusListItemIcon.anchors.top: undefined
     statusListItemIcon.badge.border.width: 2

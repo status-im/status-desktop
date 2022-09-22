@@ -23,6 +23,7 @@ StatusPopupMenu {
         displayName: root.store.userProfileInst.name
         pubkey: root.store.userProfileInst.pubKey
         icon: root.store.userProfileInst.icon
+        userIsEnsVerified: !!root.store.userProfileInst.ensName
     }
 
     StatusMenuSeparator {
