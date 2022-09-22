@@ -1,7 +1,5 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
 
 import utils 1.0
 import shared.controls 1.0
@@ -45,7 +43,6 @@ StatusModal {
             StatusBaseText {
                 id: descriptionText
                 text: qsTr("Nicknames help you identify others in Status. Only you can see the nicknames you’ve added")
-                font.pixelSize: 15
                 wrapMode: Text.WordWrap
                 color: Theme.palette.baseColor1
                 width: parent.width

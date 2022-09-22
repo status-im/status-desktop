@@ -814,7 +814,7 @@ Item {
 
                     Connections {
                         target: mainModule
-                        onActiveSectionChanged: {
+                        function onActiveSectionChanged() {
                             Global.closeCreateChatView()
                         }
                     }
@@ -823,7 +823,7 @@ Item {
 
             Connections {
                 target: rootStore.mainModuleInst
-                onMailserverNotWorking: {
+                function onMailserverNotWorking() {
                     if (!appLayout.mailserverNotWorkingPopup) {
                         appLayout.mailserverNotWorkingPopup = Global.openPopup(mailserverNotWorkingPopupComponent);
                     }
