@@ -54,6 +54,9 @@ ColumnLayout {
 
     property bool stickersLoaded: false
 
+    // FIXME: this should be section data related only to that view, not the active one
+    readonly property var activeSectionData: rootStore.mainModuleInst ? rootStore.mainModuleInst.activeSection || {} : {}
+
     // NOTE: Used this property change as it is the current way used for displaying new channel/chat data of content view.
     // If in the future content is loaded dynamically, input focus should be activated when loaded / created content view.
     onHeightChanged: {
@@ -173,6 +176,8 @@ ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: Style.current.smallPadding
 
+                enabled: root.activeSectionData.joined
+
                 store: root.rootStore
                 usersStore: root.usersStore
 
@@ -188,6 +193,11 @@ ColumnLayout {
                 Binding on chatInputPlaceholder {
                     when: root.isBlocked
                     value: qsTr("This user has been blocked.")
+                }
+
+                Binding on chatInputPlaceholder {
+                    when: !root.activeSectionData.joined
+                    value: qsTr("You need to join this community to send messages")
                 }
 
                 onSendTransactionCommandButtonClicked: {

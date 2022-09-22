@@ -315,10 +315,8 @@ QtObject:
     read = getDiscordImportCommunityName
     notify = discordImportCommunityNameChanged
 
-  proc joinCommunity*(self: View, communityId: string, ensName: string) {.slot.} =
-    # Users always have to request to join a community but might 
-    # get automatically accepted.
-    self.delegate.requestToJoinCommunity(communityId, ensName)
+  proc spectateCommunity*(self: View, communityId: string, ensName: string) {.slot.} =
+    discard self.delegate.spectateCommunity(communityId)
 
   proc createCommunity*(self: View, name: string,
                         description: string, introMessage: string, outroMessage: string,

@@ -47,6 +47,7 @@ type CommunityDto* = object
   admin*: bool
   verified*: bool
   joined*: bool
+  spectated*: bool
   requestedAccessAt: int64
   name*: string
   description*: string
@@ -148,6 +149,7 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("admin", result.admin)
   discard jsonObj.getProp("verified", result.verified)
   discard jsonObj.getProp("joined", result.joined)
+  discard jsonObj.getProp("spectated", result.spectated)
   discard jsonObj.getProp("requestedAccessAt", result.requestedAccessAt)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("description", result.description)

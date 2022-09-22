@@ -26,7 +26,7 @@ method setCuratedCommunities*(self: AccessInterface, curatedCommunities: seq[Com
 method getCommunityItem*(self: AccessInterface, community: CommunityDto): SectionItem {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method joinCommunity*(self: AccessInterface, communityId: string): string {.base.} =
+method spectateCommunity*(self: AccessInterface, communityId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method createCommunity*(self: AccessInterface, name: string, description, introMessage, outroMessage: string, access: int,

@@ -28,8 +28,8 @@ proc getCuratedCommunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc getAllCommunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("communities".prefix)
 
-proc joinCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("joinCommunity".prefix, %*[communityId])
+proc spectateCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("spectateCommunity".prefix, %*[communityId])
 
 proc requestToJoinCommunity*(communityId: string, ensName: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("requestToJoinCommunity".prefix, %*[{

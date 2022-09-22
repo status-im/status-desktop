@@ -23,6 +23,7 @@ type
     Active
     Enabled
     Joined
+    Spectated
     IsMember
     CanJoin
     CanManageUsers
@@ -89,6 +90,7 @@ QtObject:
       ModelRole.Active.int:"active",
       ModelRole.Enabled.int:"enabled",
       ModelRole.Joined.int:"joined",
+      ModelRole.Spectated.int:"spectated",
       ModelRole.IsMember.int:"isMember",
       ModelRole.CanJoin.int:"canJoin",
       ModelRole.CanManageUsers.int:"canManageUsers",
@@ -148,6 +150,8 @@ QtObject:
       result = newQVariant(item.enabled)
     of ModelRole.Joined:
       result = newQVariant(item.joined)
+    of ModelRole.Spectated:
+      result = newQVariant(item.spectated)
     of ModelRole.IsMember:
       result = newQVariant(item.isMember)
     of ModelRole.CanJoin:
@@ -272,6 +276,7 @@ QtObject:
       ModelRole.IsMember.int,
       ModelRole.CanJoin.int,
       ModelRole.Joined.int,
+      ModelRole.Spectated.int,
       ModelRole.Muted.int, 
       ModelRole.MembersModel.int,
       ModelRole.PendingRequestsToJoinModel.int,
@@ -390,6 +395,7 @@ QtObject:
           "active": item.active,
           "enabled": item.enabled,
           "joined": item.joined,
+          "spectated": item.spectated,
           "canJoin": item.canJoin,
           "canManageUsers": item.canManageUsers,
           "canRequestAccess": item.canRequestAccess,

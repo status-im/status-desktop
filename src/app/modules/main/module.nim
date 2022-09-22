@@ -241,6 +241,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     enabled = true,
     if (isCommunity): communityDetails.joined else: true,
     if (isCommunity): communityDetails.canJoin else: true,
+    if (isCommunity): communityDetails.spectated else: false,
     c.canManageUsers,
     if (isCommunity): communityDetails.canRequestAccess else: true,
     if (isCommunity): communityDetails.isMember else: true,

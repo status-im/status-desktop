@@ -91,6 +91,7 @@ type
 
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
+const SIGNAL_COMMUNITY_SPECTATED* = "communitySpectated"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
 const SIGNAL_COMMUNITY_LEFT* = "communityLeft"
 const SIGNAL_COMMUNITY_CREATED* = "communityCreated"
@@ -281,22 +282,15 @@ QtObject:
     var community = communities[0]
 
     if(not self.allCommunities.hasKey(community.id)):
+      self.allCommunities[community.id] = community
       self.events.emit(SIGNAL_COMMUNITY_ADDED, CommunityArgs(community: community))
-    # add or update community
-    self.allCommunities[community.id] = community
+      return
 
     if(self.curatedCommunities.hasKey(community.id)):
       self.curatedCommunities[community.id].available = true
       self.curatedCommunities[community.id].community = community
 
-    if(not self.joinedCommunities.hasKey(community.id)):
-      if (community.joined and community.isMember):
-        self.joinedCommunities[community.id] = community
-        keepIf(self.myCommunityRequests, request => request.communityId != community.id)
-        self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
-      return
-
-    let prev_community = self.joinedCommunities[community.id]
+    let prev_community = self.allCommunities[community.id]
 
     # If there's settings without `id` it means the original
     # signal didn't include actual communitySettings, hence we
@@ -380,8 +374,17 @@ QtObject:
             let data = CommunityChatArgs(chat: updatedChat)
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
 
-    self.saveUpdatedJoinedCommunity(community)
+    self.allCommunities[community.id] = community
     self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
+
+    if(not self.joinedCommunities.hasKey(community.id)):
+      if (community.joined and community.isMember):
+        self.joinedCommunities[community.id] = community
+        self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
+        # remove my pending requests
+        keepIf(self.myCommunityRequests, request => request.communityId != community.id)
+    else:
+      self.saveUpdatedJoinedCommunity(community)
 
   proc init*(self: Service) =
     self.doConnect()
@@ -539,6 +542,11 @@ QtObject:
       return false
     return self.allCommunities[communityId].joined and self.allCommunities[communityId].isMember
 
+  proc isUserSpectatingCommunity*(self: Service, communityId: string): bool =
+    if(not self.allCommunities.contains(communityId)):
+      return false
+    return self.allCommunities[communityId].spectated
+
   proc userCanJoin*(self: Service, communityId: string): bool =
     if(not self.allCommunities.contains(communityId)):
       return false
@@ -555,39 +563,35 @@ QtObject:
 
     return true
 
-  proc joinCommunity*(self: Service, communityId: string): string =
+  proc spectateCommunity*(self: Service, communityId: string): string =
     result = ""
     try:
-      if (not self.userCanJoin(communityId) or self.isUserMemberOfCommunity(communityId)):
+      if (self.isUserSpectatingCommunity(communityId) or self.isUserMemberOfCommunity(communityId)):
         return
 
-      let response = status_go.joinCommunity(communityId)
+      let response = status_go.spectateCommunity(communityId)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error joining community: " & error.message)
 
       if response.result == nil or response.result.kind == JNull:
-        error "error: ", procName="joinCommunity", errDesription = "result is nil"
+        error "error: ", procName="spectateCommunity", errDesription = "result is nil"
         return
 
       if not response.result.hasKey("communities") or response.result["communities"].kind != JArray or response.result["communities"].len == 0:
-        error "error: ", procName="joinCommunity", errDesription = "no 'communities' key in response"
+        error "error: ", procName="spectateCommunity", errDesription = "no 'communities' key in response"
         return
 
       if not response.result.hasKey("communitiesSettings") or response.result["communitiesSettings"].kind != JArray or response.result["communitiesSettings"].len == 0:
-        error "error: ", procName="joinCommunity", errDesription = "no 'communitiesSettings' key in response"
+        error "error: ", procName="spectateCommunity", errDesription = "no 'communitiesSettings' key in response"
         return
-
-      if not self.processRequestsToJoinCommunity(response.result):
-        error "error: ", procName="joinCommunity", errDesription = "no 'requestsToJoinCommunity' key in response"
 
       var updatedCommunity = response.result["communities"][0].toCommunityDto()
       let communitySettings = response.result["communitiesSettings"][0].toCommunitySettingsDto()
 
       updatedCommunity.settings = communitySettings
       self.allCommunities[communityId] = updatedCommunity
-      self.joinedCommunities[communityId] = updatedCommunity
 
       for k, chat in updatedCommunity.chats:
         let fullChatId = communityId & chat.id
@@ -602,7 +606,7 @@ QtObject:
         self.chatService.updateOrAddChat(chatDto)
 
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
-      self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: updatedCommunity, fromUserAction: true))
+      self.events.emit(SIGNAL_COMMUNITY_SPECTATED, CommunityArgs(community: updatedCommunity, fromUserAction: true))
     except Exception as e:
       error "Error joining the community", msg = e.msg
       result = fmt"Error joining the community: {e.msg}"
@@ -671,6 +675,9 @@ QtObject:
       # remove this from the joinedCommunities list
       self.joinedCommunities.del(communityId)
       self.events.emit(SIGNAL_COMMUNITY_LEFT, CommunityIdArgs(communityId: communityId))
+
+      # remove related community requests
+      keepIf(self.myCommunityRequests, request => request.communityId != communityId)
 
     except Exception as e:
       error "Error leaving community", msg = e.msg, communityId
@@ -1220,7 +1227,7 @@ QtObject:
       var pubKeys: seq[string] = @[]
       for pubKey in pubKeysParsed:
         pubKeys.add(pubKey.getStr)
-      # We no longer send invites, but merely share the community so 
+      # We no longer send invites, but merely share the community so
       # users can request access (with automatic acception)
       let response = status_go.shareCommunityToUsers(communityId, pubKeys, inviteMessage)
       discard self.chatService.processMessageUpdateAfterSend(response)

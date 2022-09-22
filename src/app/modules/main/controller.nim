@@ -119,6 +119,21 @@ proc init*(self: Controller) =
       setActive = args.fromUserAction
     )
 
+  self.events.on(SIGNAL_COMMUNITY_SPECTATED) do(e:Args):
+    let args = CommunityArgs(e)
+    self.delegate.communityJoined(
+      args.community,
+      self.events,
+      self.settingsService,
+      self.contactsService,
+      self.chatService,
+      self.communityService,
+      self.messageService,
+      self.gifService,
+      self.mailserversService,
+      setActive = args.fromUserAction
+    )
+
   self.events.on(TOGGLE_SECTION) do(e:Args):
     let args = ToggleSectionArgs(e)
     self.delegate.toggleSection(args.sectionType)
