@@ -14,9 +14,6 @@ import "../controls"
 ActivityNotificationMessage {
     id: root
 
-    signal communityNameClicked()
-    signal channelNameClicked()
-
     badge: notification.message.communityId ? communityBadgeComponent : notification.chatId ? groupChatBadgeComponent : null
 
     Component {
@@ -25,16 +22,23 @@ ActivityNotificationMessage {
         CommunityBadge {
             id: communityBadge
 
-            property string communityId: notification.message.communityId
+            property var community: root.store.getCommunityDetailsAsJson(notification.message.communityId)
+            // TODO: here i need chanel
+            // property var channel: root.store.chatSectionModule.getItemAsJson(notification.chatId)
 
-            textColor: Utils.colorForPubkey(communityId)
-            // TODO: wrong result image: Global.getProfileImage(communityId)
-            // TODO: wrong result iconColor: Utils.colorForPubkey(communityId)
-            communityName: root.store.getSectionNameById(communityId)
-            // TODO: no info about channelName
+            communityName: community.name
+            communityImage: community.image
+            communityColor: community.color
 
-            onCommunityNameClicked: root.communityNameClicked()
-            onChannelNameClicked: root.channelNameClicked()
+            // channelName: channel.name
+
+            onCommunityNameClicked: {
+                root.store.setActiveCommunity(notification.message.communityId)
+            }
+            onChannelNameClicked: {
+                root.activityCenterClose()
+                root.store.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.id)
+            }
         }
     }
 

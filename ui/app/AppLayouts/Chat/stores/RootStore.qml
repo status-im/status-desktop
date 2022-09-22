@@ -371,7 +371,19 @@ QtObject {
     }
 
     function requestCommunityInfo(id) {
-        communitiesModuleInst.requestCommunityInfo(id)   
+        communitiesModuleInst.requestCommunityInfo(id)
+    }
+
+    function getCommunityDetailsAsJson(id) {
+        let jsonObj = communitiesModuleInst.getCommunityDetails(id)
+        try {
+            let obj = JSON.parse(jsonObj)
+            return obj
+        }
+        catch (e) {
+            console.debug("error parsing community by id: ", id, " error: ", e.message)
+            return {}
+        }
     }
 
     function getLinkTitleAndCb(link) {
