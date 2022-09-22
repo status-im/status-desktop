@@ -77,10 +77,11 @@ rpc(addEthereumChain, "wallet"):
 rpc(deleteEthereumChain, "wallet"):
   chainId: int
 
-rpc(addSavedAddress, "wallet"):
+rpc(upsertSavedAddress, "wakuext"):
   savedAddress: SavedAddress
 
-rpc(deleteSavedAddress, "wallet"):
+rpc(deleteSavedAddress, "wakuext"):
+  chainId: int
   address: string
 
 rpc(getSavedAddresses, "wallet"):

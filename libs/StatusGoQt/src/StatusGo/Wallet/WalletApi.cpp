@@ -54,7 +54,7 @@ void saveAddress(const SavedAddress &address)
     std::vector<json> params = { address };
     json inputJson = {
         {"jsonrpc", "2.0"},
-        {"method", "wallet_addSavedAddress"},
+        {"method", "wakuext_upsertSavedAddress"},
         {"params", params}
     };
 

@@ -4,6 +4,7 @@ import dto
 
 import ../../../app/core/eventemitter
 import ../../../backend/backend
+import ../../../app/core/[main]
 
 export dto
 
@@ -37,19 +38,25 @@ proc fetchAddresses(self: Service) =
   except Exception as e:
     error "error: ", procName="fetchAddress", errName = e.name, errDesription = e.msg
 
-proc init*(self: Service) =
-  self.fetchAddresses()
-
 proc updateAddresses(self: Service) =
   self.fetchAddresses()
   self.events.emit(SIGNAL_SAVED_ADDRESS_CHANGED, Args())
+
+proc init*(self: Service) =
+  # Subscribe to sync events and check for changes
+  self.events.on(SignalType.Message.event) do(e:Args):
+    var data = MessageSignal(e)
+    if(len(data.savedAddresses) > 0):
+      self.updateAddresses()
+
+  self.fetchAddresses()
 
 proc getSavedAddresses*(self: Service): seq[SavedAddressDto] =
   return self.savedAddresses
 
 proc createOrUpdateSavedAddress*(self: Service, name: string, address: string, favourite: bool): string =
   try:
-    discard backend.addSavedAddress(backend.SavedAddress(name: name, address: address, favourite: favourite))
+    discard backend.upsertSavedAddress(backend.SavedAddress(name: name, address: address, favourite: favourite))
     self.updateAddresses()
     return ""
   except Exception as e:
@@ -59,7 +66,7 @@ proc createOrUpdateSavedAddress*(self: Service, name: string, address: string, f
 
 proc deleteSavedAddress*(self: Service, address: string): string =
   try:
-    var response = backend.deleteSavedAddress(address)
+    var response = backend.deleteSavedAddress(0, address)
     if not response.error.isNil:
       raise newException(Exception, response.error.message)
 
