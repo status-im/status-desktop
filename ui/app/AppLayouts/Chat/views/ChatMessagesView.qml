@@ -51,19 +51,19 @@ Item {
     Connections {
         target: root.messageStore.messageModule
 
-        onMessageSuccessfullySent: {
+        function onMessageSuccessfullySent() {
             chatLogView.scrollToBottom(true)
         }
 
-        onSendingMessageFailed: {
-            sendingMsgFailedPopup.open();
+        function onSendingMessageFailed() {
+            sendingMsgFailedPopup.open()
         }
 
-        onScrollMessagesUp: {
+        function onScrollMessagesUp() {
             chatLogView.positionViewAtEnd()
         }
 
-        onScrollToMessage: {
+        function onScrollToMessage(messageIndex) {
             chatLogView.positionViewAtIndex(messageIndex, ListView.Center);
             chatLogView.itemAtIndex(messageIndex).startMessageFoundAnimation();
         }

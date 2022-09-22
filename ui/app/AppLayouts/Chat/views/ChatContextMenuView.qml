@@ -155,7 +155,7 @@ StatusPopupMenu {
 
     StatusMenuItem {
         objectName: "clearHistoryMenuItem"
-        text: qsTr("Clear history")
+        text: qsTr("Clear History")
         icon.name: "close-circle"
         onTriggered: {
             root.clearChatHistory(root.chatId)
@@ -225,12 +225,11 @@ StatusPopupMenu {
                 return qsTr("Leave group")
             }
             return root.chatType === Constants.chatType.oneToOne ?
-                        qsTr("Delete chat") :
-                        qsTr("Leave chat")
+                        qsTr("Delete Chat") :
+                        qsTr("Leave Chat")
         }
-        icon.name: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? "delete" : "arrow-right"
+        icon.name: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? "delete" : "arrow-left"
         icon.width: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? 18 : 14
-        iconRotation: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? 0 : 180
 
         type: StatusMenuItem.Type.Danger
         onTriggered: {

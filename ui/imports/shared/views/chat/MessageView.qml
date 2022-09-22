@@ -278,7 +278,7 @@ Loader {
     Connections {
         enabled: d.isMessageActive
         target: root.messageContextMenu
-        onClosed: {
+        function onClosed() {
             d.setMessageActive(root.messageId, false)
         }
     }

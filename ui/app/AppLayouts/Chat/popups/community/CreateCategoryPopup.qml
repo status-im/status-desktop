@@ -25,8 +25,6 @@ StatusModal {
     property bool isEdit: false
 
     readonly property int maxCategoryNameLength: 24
-    readonly property var categoryNameValidator: Utils.Validate.NoEmpty
-                                                 | Utils.Validate.TextLength
 
     onOpened: {
         if(isEdit){
@@ -138,7 +136,7 @@ StatusModal {
                         components: [
                             StatusCheckBox {
                                 id: channelItemCheckbox
-                                checked: root.isEdit ? model.categoryId == root.categoryId : false
+                                checked: root.isEdit ? model.categoryId === root.categoryId : false
                                 onCheckedChanged: {
                                     if(checked){
                                         var idx = root.channels.indexOf(model.itemId)

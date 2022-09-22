@@ -61,7 +61,7 @@ StatusPopupMenu {
     readonly property bool isContact: {
         return root.selectedUserPublicKey !== "" && !!contactDetails.isContact
     }
-    readonly property bool isBlockedContact: d.contactDetails && d.contactDetails.isBlocked
+    readonly property bool isBlockedContact: !!d.contactDetails && d.contactDetails.isBlocked
 
     readonly property int outgoingVerificationStatus: {
         if (root.selectedUserPublicKey === "" || root.isMe || !root.isContact) {

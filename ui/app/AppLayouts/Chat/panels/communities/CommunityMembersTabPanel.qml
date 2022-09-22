@@ -96,27 +96,19 @@ Item {
                     StatusButton {
                         visible: (root.panelType === CommunityMembersTabPanel.TabType.BannedMembers) && isHovered && canBeBanned
                         text: qsTr("Unban")
-                        type: StatusBaseButton.Type.Normal
-                        size: StatusBaseButton.Size.Large
                         onClicked: root.unbanUserClicked(model.pubKey)
-                        width: 95
-                        height: 44
                     },
 
                     StatusButton {
                         visible: (root.panelType === CommunityMembersTabPanel.TabType.PendingRequests ||
                                   root.panelType === CommunityMembersTabPanel.TabType.DeclinedRequests) && isHovered
                         text: qsTr("Accept")
-                        type: StatusBaseButton.Type.Normal
-                        size: StatusBaseButton.Size.Large
                         icon.name: "checkmark-circle"
                         icon.color: Theme.palette.successColor1
                         normalColor: Theme.palette.successColor2
                         hoverColor: Theme.palette.successColor3
                         textColor: Theme.palette.successColor1
                         onClicked: root.acceptRequestToJoin(model.requestToJoinId)
-                        width: 124
-                        height: 44
                     },
 
                     StatusButton {
@@ -126,8 +118,6 @@ Item {
                         icon.name: "close-circle"
                         icon.color: Style.current.danger
                         onClicked: root.declineRequestToJoin(model.requestToJoinId)
-                        width: 118
-                        height: 44
                     }
                 ]
 
