@@ -25,7 +25,6 @@ Item {
         id: d
 
         property var invitedCommunity
-        property bool invitationPending
 
         readonly property int margin: 12
 
@@ -48,7 +47,6 @@ Item {
 
         function reevaluate() {
             invitedCommunity = getCommunity()
-            invitationPending = root.store.isCommunityRequestPending(communityId)
         }
     }
 
@@ -74,15 +72,6 @@ Item {
         }
     }
 
-    Connections {
-        target: root.store.communitiesModuleInst
-        onCommunityAccessRequested: function (communityId) {
-            if (communityId === root.communityId) {
-                d.reevaluate()
-            }
-        }
-    }
-
     Loader {
         id: loader
 
@@ -97,65 +86,6 @@ Item {
             color: Style.current.background
             border.color: Style.current.border
             border.width: 1
-
-            states: [
-                State {
-                    name: "pending"
-                    when: d.invitationPending
-                    PropertyChanges {
-                        target: joinBtn
-                        text: qsTr("Pending")
-                        enabled: false
-                    }
-                },
-                State {
-                    name: "requiresEns"
-                    when: d.invitedCommunity.ensOnly && !userProfile.ensName
-                    PropertyChanges {
-                        target: joinBtn
-                        text: qsTr("Membership requires an ENS username")
-                        enabled: false
-                    }
-                },
-                State {
-                    name: "inviteOnly"
-                    when: d.invitedCommunity.access === Constants.communityChatInvitationOnlyAccess
-                    PropertyChanges {
-                        target: joinBtn
-                        text: qsTr("You need to be invited")
-                        enabled: false
-                    }
-                },
-                State {
-                    name: "joined"
-                    when: (d.invitedCommunity.joined && d.invitedCommunity.isMember) ||
-                          (d.invitedCommunity.access === Constants.communityChatPublicAccess &&
-                            d.invitedCommunity.joined)
-                    PropertyChanges {
-                        target: joinBtn
-                        text: qsTr("View")
-                    }
-                },
-                State {
-                    name: "requestToJoin"
-                    when: d.invitedCommunity.access === Constants.communityChatOnRequestAccess &&
-                          !d.invitedCommunity.joined
-                    PropertyChanges {
-                        target: joinBtn
-                        text: qsTr("Request Access")
-
-                    }
-                },
-                State {
-                    name: "unjoined"
-                    when: d.invitedCommunity.access === Constants.communityChatPublicAccess &&
-                          !d.invitedCommunity.joined
-                    PropertyChanges {
-                        target: joinBtn
-                        text: qsTr("Join")
-                    }
-                }
-            ]
 
             ColumnLayout {
                 id: columnLayout
@@ -280,81 +210,28 @@ Item {
                     color: Style.current.separator
                 }
 
-                Item {
+                StatusFlatButton {
+                    id: joinBtn
+
                     Layout.fillWidth: true
                     Layout.preferredHeight: 44
-                    clip: true
-                    StatusFlatButton {
-                        id: joinBtn
-                        width: parent.width
-                        height: (parent.height+Style.current.padding)
-                        anchors.top: parent.top
-                        anchors.topMargin: -Style.current.padding
-                        text: qsTr("Unsupported state")
-                        contentItem: Item {
-                            StatusBaseText {
-                                anchors.centerIn: parent
-                                anchors.verticalCenterOffset: Style.current.halfPadding
-                                font: joinBtn.font
-                                color: joinBtn.enabled ? joinBtn.textColor : joinBtn.disabledTextColor
-                                text: joinBtn.text
-                            }
-                        }
 
-                        onClicked: {
-                            if (rectangleBubble.state === "joined") {
-                                root.store.setActiveCommunity(communityId);
-                                return
-                            }
-                            if (rectangleBubble.state === "unjoined") {
-                                Global.openPopup(communityIntroDialog, { joinMethod: () => {
-                                                         let error = root.store.joinCommunity(communityId, userProfile.name)
-                                                         if (error) joiningError.showError(error)
-                                                     } });
-                            }
-                            else if (rectangleBubble.state === "requestToJoin") {
-                                Global.openPopup(communityIntroDialog, { joinMethod: () => {
-                                                         let error = root.store.requestToJoinCommunity(communityId, userProfile.name)
-                                                         if (error) joiningError.showError(error)
-                                                     } });
-                            }
-                        }
+                    text: qsTr("Go to Community")
 
-                        Component.onCompleted: {
-                            background.radius = Style.current.padding;
+                    onClicked: {
+                        if (d.invitedCommunity.joined || d.invitedCommunity.spectated) {
+                            root.store.setActiveCommunity(communityId)
+                        } else {
+                            root.store.spectateCommunity(communityId, userProfile.name)
                         }
+                    }
+
+                    Component.onCompleted: {
+                        // FIXME: extract StatusButtonBackground or expose radius property in StatusBaseButton
+                        background.radius = 16
                     }
                 }
             }
         }
-    }
-
-    Component {
-        id: communityIntroDialog
-
-        CommunityIntroDialog {
-            anchors.centerIn: parent
-
-            property var joinMethod: () => {}
-
-            name: d.invitedCommunity ? d.invitedCommunity.name : ""
-            introMessage: d.invitedCommunity ? d.invitedCommunity.introMessage : ""
-            imageSrc: d.invitedCommunity ? d.invitedCommunity.image : ""
-
-            onJoined: joinMethod()
-        }
-    }
-
-    MessageDialog {
-        id: joiningError
-
-        function showError(error) {
-            joiningError.text = error
-            joiningError.open()
-        }
-
-        title: qsTr("Error joining the community")
-        icon: StandardIcon.Critical
-        standardButtons: StandardButton.Ok
     }
 }

@@ -17,6 +17,7 @@ import shared.status 1.0
 import "../popups/community"
 import "../panels/communities"
 
+// FIXME: Rework me to use ColumnLayout instead of anchors!!
 Item {
     id: root
     objectName: "communityColumnView"
@@ -94,12 +95,53 @@ Item {
         }
     }
 
+    StatusButton {
+        id: joinCommunityButton
+
+        property bool invitationPending: root.store.isCommunityRequestPending(communityData.id)
+
+        anchors.top: communityHeader.bottom
+        anchors.topMargin: 8
+        anchors.bottomMargin: Style.current.halfPadding
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        visible: !communityData.joined
+        enabled: !invitationPending
+
+        text: {
+            if (invitationPending) return qsTr("Pending")
+            return root.communityData.access === Constants.communityChatOnRequestAccess ?
+                    qsTr("Request to join") : qsTr("Join Community")
+        }
+
+        onClicked: communityIntroDialog.open()
+
+        Connections {
+            target: root.store.communitiesModuleInst
+            onCommunityAccessRequested: function (communityId) {
+                if (communityId === communityData.id) {
+                    joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
+                }
+            }
+        }
+
+        CommunityIntroDialog {
+            id: communityIntroDialog
+
+            name: communityData.name
+            introMessage: communityData.introMessage
+            imageSrc: communityData.image
+
+            onJoined: root.store.requestToJoinCommunity(communityData.id, root.store.userProfileInst.name)
+        }
+    }
+
     Loader {
         id: membershipRequests
 
         property int nbRequests: root.communityData.pendingRequestsToJoin.count || 0
 
-        anchors.top: communityHeader.bottom
+        anchors.top: joinCommunityButton.visible ? joinCommunityButton.bottom : communityHeader.bottom
         anchors.topMargin: active ? 8 : 0
         anchors.horizontalCenter: parent.horizontalCenter
 

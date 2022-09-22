@@ -118,6 +118,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       enabled = true,
       c.joined,
       c.canJoin,
+      c.spectated,
       c.canManageUsers,
       c.canRequestAccess,
       c.isMember,
@@ -171,8 +172,8 @@ method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
 method communityAdded*(self: Module, community: CommunityDto) =
   self.view.addItem(self.getCommunityItem(community))
 
-method joinCommunity*(self: Module, communityId: string): string =
-  self.controller.joinCommunity(communityId)
+method spectateCommunity*(self: Module, communityId: string): string =
+  self.controller.spectateCommunity(communityId)
 
 method communityEdited*(self: Module, community: CommunityDto) =
   self.view.model().editItem(self.getCommunityItem(community))

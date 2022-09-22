@@ -35,6 +35,7 @@ type
     isMember: bool
     joined: bool
     canJoin: bool
+    spectated: bool
     canManageUsers: bool
     canRequestAccess: bool
     access: int
@@ -67,6 +68,7 @@ proc initItem*(
     enabled = true,
     joined = false,
     canJoin = false,
+    spectated = false,
     canManageUsers = false,
     canRequestAccess = false,
     isMember = false,
@@ -99,6 +101,7 @@ proc initItem*(
   result.enabled = enabled
   result.joined = joined
   result.canJoin = canJoin
+  result.spectated = spectated
   result.canManageUsers = canManageUsers
   result.canRequestAccess = canRequestAccess
   result.isMember = isMember
@@ -141,6 +144,7 @@ proc `$`*(self: SectionItem): string =
     enabled:{self.enabled},
     joined:{self.joined},
     canJoin:{self.canJoin},
+    spectated:{self.spectated},
     canManageUsers:{self.canManageUsers},
     canRequestAccess:{self.canRequestAccess},
     isMember:{self.isMember},
@@ -220,6 +224,9 @@ proc joined*(self: SectionItem): bool {.inline.} =
 
 proc canJoin*(self: SectionItem): bool {.inline.} =
   self.canJoin
+
+proc spectated*(self: SectionItem): bool {.inline.} =
+  self.spectated
 
 proc canRequestAccess*(self: SectionItem): bool {.inline.} =
   self.canRequestAccess

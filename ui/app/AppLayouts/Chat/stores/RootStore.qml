@@ -342,8 +342,8 @@ QtObject {
         chatCommunitySectionModule.reorderCommunityChat(categoryId, chatId, to)
     }
 
-    function joinCommunity(id, ensName) {
-        return communitiesModuleInst.joinCommunity(id, ensName)
+    function spectateCommunity(id, ensName) {
+        return communitiesModuleInst.spectateCommunity(id, ensName)
     }
 
     function requestToJoinCommunity(id, ensName) {
@@ -440,7 +440,7 @@ QtObject {
                 const userCanJoin = userCanJoin(communityId)
                 // TODO find what to do when you can't join
                 if (userCanJoin) {
-                    joinCommunity(communityId, userProfileInst.ensName)
+                    requestToJoinCommunity(communityId, userProfileInst.ensName)
                 }
             }
             return result
