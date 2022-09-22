@@ -234,6 +234,19 @@ QtObject:
   proc requestCommunityInfo*(self: View, communityId: string) {.slot.} =
     self.delegate.requestCommunityInfo(communityId)
 
+  proc getCommunityDetails*(self: View, communityId: string): string {.slot.} =
+    let communityItem = self.model.getItemById(communityId)
+    if (communityItem.id == ""):
+      return ""
+
+    # TODO: unify with observed community approach
+    let jsonObj = %* {
+      "name": communityItem.name,
+      "image": communityItem.image,
+      "color": communityItem.color,
+    }
+    return $jsonObj
+
   proc isUserMemberOfCommunity*(self: View, communityId: string): bool {.slot.} =
     self.delegate.isUserMemberOfCommunity(communityId)
 

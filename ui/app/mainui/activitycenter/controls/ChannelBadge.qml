@@ -12,7 +12,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 Badge {
-    id: channelBadge
+    id: root
 
     signal channelNameClicked()
 
@@ -41,7 +41,7 @@ Badge {
         asset.width: 16
         asset.height: 16
         asset.letterSize: 11
-        name: channelBadge.name
+        name: root.name
     }
 
     StyledText {

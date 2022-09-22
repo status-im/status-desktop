@@ -10,80 +10,45 @@ import shared.panels 1.0
 import shared.status 1.0
 
 Badge {
-    id: communityBadge
+    id: root
 
-    property string image: ""
-    property string iconColor: ""
-    property bool useLetterIdenticon: !image
-    property string communityName: ""
-    property string channelName: ""
-    property string communityId: ""
-    property string name: "channelName"
-    property color textColor
+    property string communityImage
+    property string communityName
+    property string communityColor
+
+    property string channelName
 
     signal communityNameClicked()
     signal channelNameClicked()
 
-    SVGImage {
-        id: communityIcon
-        width: 16
-        height: 16
-        source: Style.svg("communities")
+    StatusSmartIdenticon {
+        id: identicon
         anchors.left: parent.left
-        anchors.verticalCenter:parent.verticalCenter
-
-        ColorOverlay {
-            anchors.fill: parent
-            source: parent
-            color: textColor
-        }
-    }
-
-    Loader {
-        id: communityImageLoader
-        active: true
-        anchors.left: communityIcon.visible ? communityIcon.right : parent.left
-        anchors.leftMargin: 2
+        anchors.leftMargin: Style.current.smallPadding
         anchors.verticalCenter: parent.verticalCenter
-        sourceComponent: communityBadge.useLetterIdenticon ? letterIdenticon : imageIcon
-    }
-
-    Component {
-        id: imageIcon
-        RoundedImage {
-            source: communityBadge.image
-            noMouseArea: true
-            noHover: true
-            width: 16
-            height: 16
-        }
-    }
-
-    Component {
-        id: letterIdenticon
-        StatusLetterIdenticon {
-            width: 16
-            height: 16
-            letterSize: 12
-            name: communityBadge.communityName
-            color: communityBadge.iconColor
-        }
+        name: root.communityName
+        asset.width: 16
+        asset.height: 16
+        asset.color: root.communityColor
+        asset.letterSize: width / 2.4
+        asset.name: root.communityImage
+        asset.isImage: true
     }
 
     StyledTextEdit {
-        id: communityName
-        text: Utils.getLinkStyle(communityBadge.communityName, hoveredLink, textColor)
+        id: communityNameText
+        width: implicitWidth > 300 ? 300 : implicitWidth
         height: 18
+        anchors.left: identicon.right
+        anchors.leftMargin: 4
+        anchors.verticalCenter: parent.verticalCenter
+        text: Utils.getLinkStyle(root.communityName, hoveredLink, root.communityColor)
         readOnly: true
         textFormat: Text.RichText
-        width: implicitWidth > 300 ? 300 : implicitWidth
         clip: true
-        anchors.left: communityImageLoader.right
-        anchors.leftMargin: 4
-        color: textColor
+        color: root.communityColor
         font.pixelSize: 13
-        anchors.verticalCenter: parent.verticalCenter
-        onLinkActivated: communityNameClicked()
+        onLinkActivated: root.communityNameClicked()
     }
 
     SVGImage {
@@ -91,28 +56,29 @@ Badge {
         source: Style.svg("show-category")
         width: 16
         height: 16
-        anchors.left: communityName.right
+        visible: root.channelName.length
+        anchors.left: communityNameText.right
         anchors.verticalCenter: parent.verticalCenter
 
         ColorOverlay {
             anchors.fill: parent
             source: parent
-            color: textColor
+            color: root.communityColor
         }
     }
 
     StyledTextEdit {
-        id: channelName
-        text: Utils.getLinkStyle(communityBadge.channelName || name, hoveredLink, textColor)
+        id: channelNameText
+        width: implicitWidth > 300 ? 300 : implicitWidth
         height: 18
+        anchors.left: caretImage.right
+        anchors.verticalCenter: parent.verticalCenter
+        text: Utils.getLinkStyle(root.channelName || name, hoveredLink, root.channelColor)
         readOnly: true
         textFormat: Text.RichText
-        width: implicitWidth > 300 ? 300 : implicitWidth
         clip: true
-        anchors.left: caretImage.right
-        color: textColor
+        color: root.communityColor
         font.pixelSize: 13
-        anchors.verticalCenter: parent.verticalCenter
-        onLinkActivated: channelNameClicked()
+        onLinkActivated: root.channelNameClicked()
     }
 }
