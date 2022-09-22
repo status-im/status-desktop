@@ -388,7 +388,7 @@ QtObject:
     try:
       let response = eth.suggestedRoutes(account, amount, token, disabledChainIDs)
       return SuggestedRoutes(
-        networks: Json.decode($response.result{"networks"}, seq[NetworkDto])
+        networks: Json.decode($response.result{"networks"}, seq[NetworkDto], allowUnknownFields = true)
       )
     except Exception as e:
       error "Error getting suggested routes", msg = e.msg

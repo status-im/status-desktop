@@ -116,9 +116,10 @@ pipeline {
                     squishPackageName: 'squish-6.7.2-qt514x-linux64',
                     testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
                   ])
-                  if ( res != "SUCCESS" ) {
-                    throw new Exception("squish test didn't end with success")
+                  if ( res == "SUCCESS" || res == "UNSTABLE" ) {
+                    return 
                   }
+                  throw new Exception("squish test didn't end with success")
                 }
               }
             }
