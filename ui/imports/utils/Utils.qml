@@ -562,6 +562,12 @@ QtObject {
         }
     }
 
+    function isEnsVerified(publicKey) {
+        if (!publicKey)
+            return false
+        return getContactDetailsAsJson(publicKey).ensVerified
+    }
+
     function getEmojiHashAsJson(publicKey) {
         if (publicKey === "") {
             return ""
@@ -570,10 +576,11 @@ QtObject {
         return JSON.parse(jsonObj)
     }
 
-    function getColorHashAsJson(publicKey) {
-        if (publicKey === "") {
-            return ""
-        }
+    function getColorHashAsJson(publicKey, force=false) {
+        if (publicKey === "")
+            return
+        if (!force && isEnsVerified(publicKey))
+            return
         let jsonObj = globalUtils.getColorHashAsJson(publicKey)
         return JSON.parse(jsonObj)
     }

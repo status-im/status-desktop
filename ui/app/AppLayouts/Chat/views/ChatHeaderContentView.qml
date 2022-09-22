@@ -252,7 +252,19 @@ RowLayout {
 
         StatusChatInfoButton {
             objectName: "chatInfoBtnInHeader"
-            title: chatContentModule? chatContentModule.chatDetails.name : ""
+            title: {
+                const module = root.rootStore.currentChatContentModule()
+                if(!module)
+                    return ""
+
+                if (module.chatDetails.type === Constants.chatType.oneToOne) {
+                    const d = Utils.getContactDetailsAsJson(module.chatDetails.id)
+                    if (!!d.displayName)
+                        return d.displayName
+                }
+                return module.chatDetails.name
+            }
+
             subTitle: {
                 if(!chatContentModule)
                     return ""

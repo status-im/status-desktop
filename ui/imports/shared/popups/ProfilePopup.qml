@@ -462,6 +462,7 @@ StatusDialog {
         userPublicKey: popup.userPublicKey
         userDisplayName: popup.userDisplayName
         userIcon: popup.userIcon
+        userIsEnsVerified: popup.userIsEnsVerified
         onAccepted: popup.contactsStore.sendContactRequest(userPublicKey, message)
         onClosed: popup.close()
     }

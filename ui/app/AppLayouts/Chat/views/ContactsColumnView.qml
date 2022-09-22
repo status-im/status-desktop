@@ -158,6 +158,7 @@ Item {
                 }
 
                 highlightItem: !root.store.openCreateChat
+                isEnsVerified: function(pubKey) { return Utils.isEnsVerified(pubKey) }
                 onChatItemSelected: {
                     Global.closeCreateChatView()
                     root.chatSectionModule.setActiveItem(id, "")

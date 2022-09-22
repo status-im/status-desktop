@@ -212,7 +212,6 @@ Loader {
     //        }
     //    }
 
-    height: implicitHeight
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
     sourceComponent: {
@@ -562,7 +561,7 @@ Loader {
                 }
 
                 amISender: root.amISender
-                sender.id: root.senderId
+                sender.id: root.senderIsEnsVerified ? "" :  Utils.getCompressedPk(root.senderId)
                 sender.displayName: root.senderDisplayName
                 sender.secondaryName: root.senderOptionalName
                 sender.isEnsVerified: root.senderIsEnsVerified

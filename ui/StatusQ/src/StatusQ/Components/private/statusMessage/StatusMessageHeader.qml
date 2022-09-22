@@ -35,16 +35,13 @@ Item {
     RowLayout {
         id: layout
         spacing: 4
-        TextEdit {
+        StatusBaseText {
             id: primaryDisplayName
-            Layout.alignment: Qt.AlignBottom
-            font.family: Theme.palette.baseFont.name
+            verticalAlignment: Text.AlignVCenter
+            Layout.bottomMargin: 2 // offset for the underline to stay vertically centered
             font.weight: Font.Medium
-            font.pixelSize: 15
             font.underline: mouseArea.containsMouse
-            readOnly: true
             wrapMode: Text.WordWrap
-            selectByMouse: true
             color: Theme.palette.primaryColor1
             text: root.amISender ? qsTr("You") : root.sender.displayName
             MouseArea {
@@ -61,53 +58,55 @@ Item {
         }       
         StatusBaseText {
             id: messageOriginInfo
-            Layout.alignment: Qt.AlignVCenter
-            visible: root.messageOriginInfo !== ""
+            verticalAlignment: Text.AlignVCenter
+            visible: text
             color: Theme.palette.baseColor1
             font.pixelSize: 10
             text: root.messageOriginInfo
         }
         StatusContactVerificationIcons {
+            id: verificationIcons
             visible: !root.amISender
             isContact: root.isContact
             trustIndicator: root.trustIndicator
         }
         StatusBaseText {
             id: secondaryDisplayName
-            Layout.alignment: Qt.AlignVCenter
+            verticalAlignment: Text.AlignVCenter
             visible: !root.amISender && !!root.sender.secondaryName
             color: Theme.palette.baseColor1
             font.pixelSize: 10
             text: `(${root.sender.secondaryName})`
         }
         StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            visible: secondaryDisplayName.visible
+            verticalAlignment: Text.AlignVCenter
+            visible: secondaryDisplayName.visible && tertiaryDetailText.visible
             font.pixelSize: 10
             color: Theme.palette.baseColor1
             text: "•"
         }
         StatusBaseText {
             id: tertiaryDetailText
-            visible: !root.amISender && root.messageOriginInfo === ""
-            Layout.alignment: Qt.AlignVCenter
+            verticalAlignment: Text.AlignVCenter
+            visible: !root.amISender && root.messageOriginInfo === "" && text
             font.pixelSize: 10
             elide: Text.ElideMiddle
             color: Theme.palette.baseColor1
-            text: Utils.elideText(tertiaryDetail, 5, 3)
+            text: root.tertiaryDetail ? Utils.elideText(root.tertiaryDetail, 5, 3) : ""
         }
         StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            visible: tertiaryDetailText.visible
+            verticalAlignment: Text.AlignVCenter
+            visible: verificationIcons.width <= 0 || secondaryDisplayName.visible || root.amISender || tertiaryDetailText.visible
             font.pixelSize: 10
             color: Theme.palette.baseColor1
             text: "•"
         }
         StatusTimeStampLabel {
+            verticalAlignment: Text.AlignVCenter
             id: timestampText
         }
         StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
+            verticalAlignment: Text.AlignVCenter
             color: Theme.palette.dangerColor1
             font.pixelSize: 12
             text: root.resendText

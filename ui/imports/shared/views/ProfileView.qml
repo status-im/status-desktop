@@ -173,6 +173,7 @@ Rectangle {
             isContact: root.isContact
             store: root.profileStore
             isCurrentUser: root.isCurrentUser
+            userIsEnsVerified: root.userIsEnsVerified
 
             displayNameVisible: false
             displayNamePlusIconsVisible: true
