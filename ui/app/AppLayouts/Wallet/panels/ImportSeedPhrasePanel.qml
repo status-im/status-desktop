@@ -120,6 +120,9 @@ StatusGridView {
             for (let i = 0; i < words.length; i++) {
                 try {
                     grid.itemAtIndex(i).setWord(words[i])
+                    if (words[i].length === 3) {
+                        grid.addWord(i + 1, words[i])
+                    }
                 } catch (e) {
                     // Getting items outside of the current view might not work
                 }
