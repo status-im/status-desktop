@@ -45,3 +45,6 @@ method getDerivedAddressForPrivateKey*(self: AccessInterface, privateKey: string
 # inheritance, which is not well supported in Nim.
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method validSeedPhrase*(self: AccessInterface, value: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

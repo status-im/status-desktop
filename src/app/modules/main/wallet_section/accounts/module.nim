@@ -5,6 +5,7 @@ import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../../app_service/service/accounts/service as accounts_service
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
 import ./compact_item as compact_item
@@ -24,12 +25,13 @@ proc newModule*(
   delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   walletAccountService: wallet_account_service.Service,
+  accountsService: accounts_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
   result.view = newView(result)
-  result.controller = controller.newController(result, walletAccountService)
+  result.controller = controller.newController(result, events, walletAccountService, accountsService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -168,6 +170,5 @@ method getDerivedAddressListForMnemonic*(self: Module, mnemonic: string, path: s
 method getDerivedAddressForPrivateKey*(self: Module, privateKey: string) =
   self.controller.getDerivedAddressForPrivateKey(privateKey)
 
-
-
-
+method validSeedPhrase*(self: Module, value: string): bool =
+  return self.controller.validSeedPhrase(value)
