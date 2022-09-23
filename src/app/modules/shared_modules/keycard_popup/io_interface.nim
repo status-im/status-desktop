@@ -8,13 +8,33 @@ const SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED* = "sharedKeycarModuleFlowTer
 const SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER* = "sharedKeycarModuleAuthenticateUser"
 const SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED* = "sharedKeycarModuleUserAuthenticated"
 
+## Authentication in the app is a global thing and may be used from any part of the app. How to achieve that... it's enough just to send 
+## `SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER` signal with properly set `SharedKeycarModuleAuthenticationArgs` and props there:
+## -- `uniqueIdentifier` - some unique string, for the readability usually name of the module which needs authentication, 
+## -- in case of non keycard user (regular) user that's enough, 
+## -- in case of keycard user we want to authenticate it with a card that his profile is migrated to, that means apart of `uniqueIdentifier` 
+## we need to set `keyUid` as well, 
+## -- in case we want to sign a transaction for a certain wallet's account, then apart of `uniqueIdentifier` and `keyUid`of a key pair that 
+## account belongs to, we need to set and `bip44Path` and `txHash`
+## 
+## `SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER` will be handled in the `mainModule` (shared keycard popup module will be run) and as a 
+## result, when authentication gets done `SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED` signal with properly set `SharedKeycarModuleArgs` 
+## and props there will be emitted:
+## -- `uniqueIdentifier` - will be the same as one used for running authentication process
+## -- in case of success of a regular user authentication `password` will be sent, otherwise it will be empty
+## -- in case of success of a keycard user authentication `keyUid` will be sent, otherwise it will be empty
+## -- in case of success of a signing a transaction `keyUid`, `txR` and `txS` will be sent, otherwise it will be empty
+##
+## TLDR: when you need to authenticate user, from the module where it's needed you have to send `SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER`
+## signal to run authentication process and connect to `SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED` signal to get the results of it.
+ 
 type
   SharedKeycarModuleBaseArgs* = ref object of Args
     uniqueIdentifier*: string
 
 type
   SharedKeycarModuleArgs* = ref object of SharedKeycarModuleBaseArgs
-    data*: string
+    password*: string
     keyUid*: string
     txR*: string
     txS*: string

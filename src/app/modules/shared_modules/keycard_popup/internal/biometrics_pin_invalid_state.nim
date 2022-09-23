@@ -15,6 +15,7 @@ method executePrimaryCommand*(self: BiometricsPinInvalidState, controller: Contr
 method executeSecondaryCommand*(self: BiometricsPinInvalidState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setUsePinFromBiometrics(true)
+    controller.setOfferToStoreUpdatedPinToKeychain(true)
 
 method getNextSecondaryState*(self: BiometricsPinInvalidState, controller: Controller): State =
   if self.flowType == FlowType.Authentication:

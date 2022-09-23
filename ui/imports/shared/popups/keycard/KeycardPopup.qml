@@ -439,10 +439,11 @@ StatusModal {
                                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
                                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
                                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
-                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
                                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
                                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty)
                             return qsTr("Use PIN")
+                        if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid)
+                            return qsTr("Update PIN")
                     }
                 }
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.unlockKeycard) {

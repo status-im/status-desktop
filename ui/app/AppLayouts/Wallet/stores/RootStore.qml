@@ -222,4 +222,16 @@ QtObject {
     function getNextSelectableDerivedAddressIndex() {
         return walletSectionAccounts.getNextSelectableDerivedAddressIndex()
     }
+
+    function authenticateUser() {
+        walletSectionAccounts.authenticateUser()
+    }
+
+    function loggedInUserUsesBiometricLogin() {
+        return walletSectionAccounts.loggedInUserUsesBiometricLogin()
+    }
+
+    function isProfileKeyPairMigrated() {
+        return walletSectionAccounts.isProfileKeyPairMigrated()
+    }
 }
