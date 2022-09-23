@@ -245,6 +245,7 @@ Item {
     */
     function reset() {
         statusBaseInput.valid = false
+        statusBaseInput.dirty = false
         statusBaseInput.pristine = true
         statusBaseInput.text = ""
         root.errorMessage = ""
