@@ -7,7 +7,6 @@ import StatusQ.Components 0.1
 
 import shared 1.0
 import utils 1.0
-import shared.panels.chat 1.0
 
 import "../controls"
 

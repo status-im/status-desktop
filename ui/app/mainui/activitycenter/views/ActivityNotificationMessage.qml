@@ -29,7 +29,6 @@ ActivityNotificationBase {
         messageId: notification.id
         senderDisplayName: notification.message.senderDisplayName
         messageText: notification.message.messageText
-        responseToMessageWithId: notification.message.responseToMessageWithId
         senderId: notification.message.senderId
         senderOptionalName: notification.message.senderOptionalName
         senderIcon: notification.message.senderIcon

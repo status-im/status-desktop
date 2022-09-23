@@ -381,7 +381,7 @@ QtObject {
             return obj
         }
         catch (e) {
-            console.debug("error parsing community by id: ", id, " error: ", e.message)
+            console.warn("error parsing community by id: ", id, " error: ", e.message)
             return {}
         }
     }
