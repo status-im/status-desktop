@@ -11,7 +11,7 @@ StatusModal {
     id: confirmationDialog
     anchors.centerIn: parent
 
-    property Popup parentPopup
+    property var parentPopup
     property var value
     property var executeConfirm
     property var executeReject
