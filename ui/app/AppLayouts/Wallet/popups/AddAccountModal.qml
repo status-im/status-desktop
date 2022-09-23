@@ -24,22 +24,12 @@ StatusModal {
 
     property int minPswLen: 10
     readonly property int marginBetweenInputs: 38
-    readonly property alias passwordValidationError: d.passwordValidationError
-
     property var emojiPopup: null
 
     header.title: qsTr("Generate an account")
     closePolicy: Popup.CloseOnEscape
 
     signal afterAddAccount()
-
-    Timer {
-        id: waitTimer
-
-        interval: 1000
-        running: false
-        onTriggered: d.getDerivedAddressList()
-    }
 
     Connections {
         target: emojiPopup
@@ -51,16 +41,15 @@ StatusModal {
     }
 
     Connections {
-        target: RootStore
-        enabled: root.opened
-
-        function onDerivedAddressesListChanged() {
-            d.isPasswordCorrect = RootStore.derivedAddressesError.length === 0
+        target: walletSectionAccounts
+        onUserAuthenticaionSuccess: {
+            validationError.text = ""
+            d.password = password
+            d.getDerivedAddressList()
         }
-
-        function onDerivedAddressesErrorChanged() {
-            if(Utils.isInvalidPasswordMessage(RootStore.derivedAddressesError))
-                d.passwordValidationError = qsTr("Password must be at least %n character(s) long", "", root.minPswLen);
+        onUserAuthentiactionFail: {
+            d.password = ""
+            validationError.text = qsTr("An authentication failed")
         }
     }
 
@@ -70,30 +59,24 @@ StatusModal {
         readonly property int numOfItems: 100
         readonly property int pageNumber: 1
 
-        property string passwordValidationError: ""
-        property bool isPasswordCorrect: false
+        property string password: ""
+        property int selectedAccountType: SelectGeneratedAccount.AddAccountType.GenerateNew
+        readonly property bool authenticationNeeded: d.selectedAccountType !== SelectGeneratedAccount.AddAccountType.WatchOnly &&
+                                                     d.password === ""
+
+
+
 
         function getDerivedAddressList() {
-            if(advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase
+            if(d.selectedAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase
                     && !!advancedSelection.expandableItem.path
                     && !!advancedSelection.expandableItem.mnemonicText) {
                 RootStore.getDerivedAddressListForMnemonic(advancedSelection.expandableItem.mnemonicText,
                                                            advancedSelection.expandableItem.path, numOfItems, pageNumber)
             } else if(!!advancedSelection.expandableItem.path && !!advancedSelection.expandableItem.derivedFromAddress
-                      && (passwordInput.text.length > 0)) {
-                RootStore.getDerivedAddressList(passwordInput.text, advancedSelection.expandableItem.derivedFromAddress,
+                      && (d.password.length > 0)) {
+                RootStore.getDerivedAddressList(d.password, advancedSelection.expandableItem.derivedFromAddress,
                                                 advancedSelection.expandableItem.path, numOfItems, pageNumber)
-            }
-        }
-
-        function showPasswordError(errMessage) {
-            if (errMessage) {
-                if (Utils.isInvalidPasswordMessage(errMessage)) {
-                    d.passwordValidationError = qsTr("Wrong password")
-                    scroll.contentY = -scroll.padding
-                } else {
-                    console.warn(`Unhandled error case. Status-go message: ${errMessage}`)
-                }
             }
         }
 
@@ -107,19 +90,19 @@ StatusModal {
 
             let errMessage = ""
 
-            switch(advancedSelection.expandableItem.addAccountType) {
+            switch(d.selectedAccountType) {
             case SelectGeneratedAccount.AddAccountType.GenerateNew:
-                errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor,
+                errMessage = RootStore.generateNewAccount(d.password, accountNameInput.text, colorSelectionGrid.selectedColor,
                                                           accountNameInput.input.asset.emoji, advancedSelection.expandableItem.completePath,
                                                           advancedSelection.expandableItem.derivedFromAddress)
                 break
             case SelectGeneratedAccount.AddAccountType.ImportSeedPhrase:
-                errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, passwordInput.text,
+                errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, d.password,
                                                            accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.asset.emoji,
                                                            advancedSelection.expandableItem.completePath)
                 break
             case SelectGeneratedAccount.AddAccountType.ImportPrivateKey:
-                errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text,
+                errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, d.password,
                                                                  accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.asset.emoji)
                 break
             case SelectGeneratedAccount.AddAccountType.WatchOnly:
@@ -131,10 +114,20 @@ StatusModal {
             nextButton.loading = false
 
             if (errMessage) {
-                d.showPasswordError(errMessage)
+                console.warn(`Unhandled error case. Status-go message: ${errMessage}`)
             } else {
                 root.afterAddAccount()
                 root.close()
+            }
+        }
+
+        function nextButtonClicked() {
+            if (d.authenticationNeeded) {
+                d.password = ""
+                RootStore.authenticateUser()
+            }
+            else {
+                d.generateNewAccount()
             }
         }
     }
@@ -142,12 +135,12 @@ StatusModal {
     onOpened: {
         accountNameInput.input.asset.emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
         colorSelectionGrid.selectedColorIndex = Math.floor(Math.random() * colorSelectionGrid.model.length)
-        passwordInput.forceActiveFocus(Qt.MouseFocusReason)
+        accountNameInput.input.edit.forceActiveFocus()
     }
 
     onClosed: {
-        d.passwordValidationError = ""
-        passwordInput.text = ""
+        d.password = ""
+        validationError.text = ""
         accountNameInput.reset()
         advancedSelection.expanded = false
         advancedSelection.reset()
@@ -169,34 +162,15 @@ StatusModal {
             spacing: Style.current.halfPadding
             topPadding: 20
 
-            // To-Do Password hidden option not supported in StatusQ StatusInput
-            Item {
+            StatusBaseText {
+                id: validationError
+                visible: text !== ""
                 width: parent.width
-                height: passwordInput.height
-                visible: advancedSelection.expandableItem.addAccountType !== SelectGeneratedAccount.AddAccountType.WatchOnly
-                Input {
-                    id: passwordInput
-                    anchors.fill: parent
-
-                    placeholderText: qsTr("Enter your password...")
-                    label: qsTr("Password")
-                    textField.echoMode: TextInput.Password
-                    validationError: d.passwordValidationError
-                    textField.objectName: "accountModalPassword"
-                    inputLabel.font.pixelSize: 15
-                    inputLabel.font.weight: Font.Normal
-                    onTextChanged: {
-                        d.isPasswordCorrect = false
-                        d.passwordValidationError = ""
-                        waitTimer.restart()
-                    }
-                    onKeyPressed: {
-                        if(event.key === Qt.Key_Tab) {
-                            accountNameInput.input.edit.forceActiveFocus(Qt.MouseFocusReason)
-                            event.accepted = true
-                        }
-                    }
-                }
+                height: 16
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 12
+                color: Style.current.danger
+                wrapMode: TextEdit.Wrap
             }
 
             StatusInput {
@@ -206,6 +180,7 @@ StatusModal {
                 input.isIconSelectable: true
                 input.asset.color: colorSelectionGrid.selectedColor ? colorSelectionGrid.selectedColor : Theme.palette.directColor1
                 input.leftPadding: Style.current.padding
+                enabled: !d.authenticationNeeded
                 onIconClicked: {
                     root.emojiPopup.open()
                     root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
@@ -231,6 +206,7 @@ StatusModal {
             StatusColorSelectorGrid {
                 id: colorSelectionGrid
                 anchors.horizontalCenter: parent.horizontalCenter
+                enabled: !d.authenticationNeeded
                 titleText: qsTr("color").toUpperCase()
             }
 
@@ -262,7 +238,15 @@ StatusModal {
                             return
                         }
                     }
-                    Component.onCompleted: advancedSelection.isValid = Qt.binding(() => isValid)
+
+                    onAddAccountTypeChanged: {
+                        d.selectedAccountType = addAccountType
+                    }
+
+                    Component.onCompleted: {
+                        d.selectedAccountType = addAccountType
+                        advancedSelection.isValid = Qt.binding(() => isValid)
+                    }
                 }
             }
         }
@@ -272,21 +256,42 @@ StatusModal {
         StatusButton {
             id: nextButton
 
-            text: loading ? qsTr("Loading...") : qsTr("Add account")
+            text: {
+                if (d.authenticationNeeded) {
+                    return qsTr("Authenticate")
+                }
+                if (loading) {
+                    return qsTr("Loading...")
+                }
+                return qsTr("Add account")
+            }
+
 
             enabled: {
+                if (d.authenticationNeeded) {
+                    return true
+                }
                 if (loading) {
                     return false
                 }
+                return accountNameInput.text !== "" && advancedSelection.isValid
+            }
 
-                return (advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly || d.isPasswordCorrect)
-                        && accountNameInput.text !== "" && advancedSelection.isValid
+            icon.name: {
+                if (d.authenticationNeeded) {
+                    if (RootStore.loggedInUserUsesBiometricLogin())
+                        return "touch-id"
+                    if (RootStore.isProfileKeyPairMigrated())
+                        return "keycard"
+                    return "password"
+                }
+                return ""
             }
 
             highlighted: focus
 
-            Keys.onReturnPressed: d.generateNewAccount()
-            onClicked : d.generateNewAccount()
+            Keys.onReturnPressed: d.nextButtonClicked()
+            onClicked : d.nextButtonClicked()
         }
     ]
 }

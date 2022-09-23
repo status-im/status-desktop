@@ -98,6 +98,8 @@ method resolveKeycardNextState*(self: EnterPinState, keycardFlowType: string, ke
           return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       if keycardEvent.error.len == 0:
+        if controller.offerToStoreUpdatedPinToKeychain():
+          controller.tryToStoreDataToKeychain(controller.getPin())
         controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
         return nil
   if self.flowType == FlowType.DisplayKeycardContent:

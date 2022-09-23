@@ -826,7 +826,9 @@ Item {
             }
             PropertyChanges {
                 target: message
-                text: ""
+                text: qsTr("The PIN length doesn't match Keycard's PIN length")
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.baseColor1
             }
         }
     ]

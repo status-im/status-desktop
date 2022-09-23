@@ -590,8 +590,6 @@ proc verifyAccountPassword*(self: Service, account: string, password: string): b
 
 proc convertToKeycardAccount*(self: Service, keyUid: string, password: string): bool = 
   try:
-    self.setKeyStoreDir(keyUid)
-
     var accountDataJson = %* {
       "name": self.getLoggedInAccount().name,
       "key-uid": keyUid
