@@ -212,6 +212,7 @@ Loader {
     //        }
     //    }
 
+    height: implicitHeight
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
     sourceComponent: {

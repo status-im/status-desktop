@@ -12,5 +12,5 @@ ActivityNotificationMessage {
     id: root
 
     // TODO: mark as read ignores notification type
-    // markReadBtnVisible: false
+    actionComponent: null
 }

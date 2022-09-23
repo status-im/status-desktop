@@ -14,7 +14,7 @@ import "../controls"
 ActivityNotificationMessage {
     id: root
 
-    badge: notification.message.communityId ? communityBadgeComponent : notification.chatId ? groupChatBadgeComponent : null
+    badgeComponent: notification.message.communityId ? communityBadgeComponent : notification.chatId ? groupChatBadgeComponent : null
 
     Component {
         id: communityBadgeComponent
