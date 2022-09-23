@@ -7,11 +7,16 @@ import StatusQ.Components 0.1
 
 import shared 1.0
 import utils 1.0
-import shared.panels.chat 1.0
+
+import "../controls"
 
 ActivityNotificationMessage {
     id: root
 
+    badgeComponent: ReplyBadge {
+        repliedMessageContent: notification.repliedMessage.messageText
+        onReplyClicked: root.store.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.id)
+    }
 //        repliedMessageContent: notification.repliedMessage.messageText
 //        repliedMessageId: notification.message.responseToMessageWithId
 }

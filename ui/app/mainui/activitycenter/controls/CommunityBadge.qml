@@ -21,9 +21,19 @@ Badge {
     signal communityNameClicked()
     signal channelNameClicked()
 
+    SVGImage {
+        id: communityIcon
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.smallPadding
+        anchors.verticalCenter:parent.verticalCenter
+        width: 16
+        height: 16
+        source: Style.svg("communities")
+    }
+
     StatusSmartIdenticon {
         id: identicon
-        anchors.left: parent.left
+        anchors.left: communityIcon.right
         anchors.leftMargin: Style.current.smallPadding
         anchors.verticalCenter: parent.verticalCenter
         name: root.communityName
