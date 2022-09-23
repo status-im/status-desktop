@@ -2,6 +2,7 @@ import QtQuick 2.14
 
 import utils 1.0
 import shared.panels 1.0
+import StatusQ.Core.Theme 0.1
 
 Rectangle {
     id: root
@@ -15,7 +16,7 @@ Rectangle {
     gradient: Gradient {
         orientation: Gradient.Horizontal
         GradientStop { position: mirrored ? 0.0 : 1.0; color: "transparent" }
-        GradientStop { position: 0.5; color: "white" }
+        GradientStop { position: 0.5; color: Theme.palette.statusAppLayout.backgroundColor }
     }
 
     SVGImage {
