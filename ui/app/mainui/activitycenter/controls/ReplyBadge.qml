@@ -45,7 +45,6 @@ Badge {
         readOnly: true
         textFormat: Text.RichText
         clip: true
-        color: root.communityColor
         font.pixelSize: 13
     }
 }

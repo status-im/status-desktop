@@ -1,10 +1,9 @@
-import QtQuick 2.13
-
-import utils 1.0
-import StatusQ.Core.Utils 0.1 as StatusQUtils
+import QtQuick 2.14
 
 QtObject {
     id: root
+
+    property bool hideReadNotifications: false
 
     // TODO: move AC-related stuff from chat here
 }

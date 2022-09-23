@@ -17,6 +17,4 @@ ActivityNotificationMessage {
         repliedMessageContent: notification.repliedMessage.messageText
         onReplyClicked: root.store.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.id)
     }
-//        repliedMessageContent: notification.repliedMessage.messageText
-//        repliedMessageId: notification.message.responseToMessageWithId
 }
