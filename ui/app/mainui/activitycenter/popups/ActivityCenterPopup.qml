@@ -36,9 +36,9 @@ Popup {
     property int mentionsCount: 0
     property int repliesCount: 0
     property int contactRequestsCount: 0
-    property bool hideReadNotifications: false
 
     property var store
+    property var acStore
     property var chatSectionModule
     property var messageContextMenu: MessageContextMenuView {
         store: root.store
@@ -128,11 +128,11 @@ Popup {
         hasReplies: root.repliesCount > 0
         hasMentions: root.mentionsCount > 0
         hasContactRequests: root.contactRequestsCount > 0
-        hideReadNotifications: root.hideReadNotifications
+        hideReadNotifications: acStore.hideReadNotifications
         currentActivityCategory: root.currentActivityCategory
         onCategoryTriggered: root.currentActivityCategory = category
         onMarkAllReadClicked: errorText = root.store.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
-        onShowHideReadNotifications: root.hideReadNotifications = hideReadNotifications
+        onShowHideReadNotifications: acStore.hideReadNotifications = hideReadNotifications
     }
 
     StatusListView {
@@ -147,7 +147,7 @@ Popup {
             sourceModel: root.store.activityCenterList
 
             filters: ExpressionFilter { expression: filterActivityCategories(model.notificationType) &&
-                                                    !(root.hideReadNotifications && model.read) }
+                                                    !(acStore.hideReadNotifications && model.read) }
         }
 
         delegate: DelegateChooser {
