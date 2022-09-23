@@ -6,6 +6,7 @@ import StatusQ.Controls 0.1
 
 import utils 1.0
 import shared.stores 1.0
+import shared.controls 1.0
 
 import "../stores"
 
@@ -51,7 +52,7 @@ StatusGridView {
         property int seedPhraseInputHeight: 48
         property var mnemonicInput: []
         property string errorString:  ""
-        readonly property var seedPhraseWordsOptions: ([12, 18, 24])
+        readonly property var seedPhraseWordsOptions: [12, 18, 24]
 
         function getSeedPhraseString() {
             var seedPhrase = ""
@@ -82,6 +83,10 @@ StatusGridView {
                          menmonicInputTemp[i].seed,
                          true)
         }
+    }
+
+    Timer {
+        id: timer
     }
 
 
