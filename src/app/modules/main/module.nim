@@ -167,7 +167,7 @@ proc newModule*[T](
   result.walletSectionModule = wallet_section_module.newModule(
     result, events, tokenService,
     transactionService, collectible_service, walletAccountService,
-    settingsService, savedAddressService, networkService,
+    settingsService, savedAddressService, networkService, accountsService
   )
   result.browserSectionModule = browser_section_module.newModule(
     result, events, bookmarkService, settingsService, networkService,

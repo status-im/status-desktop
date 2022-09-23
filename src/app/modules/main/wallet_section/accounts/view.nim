@@ -275,3 +275,5 @@ QtObject:
   proc getNextSelectableDerivedAddressIndex*(self: View): int {.slot.} =
     return self.derivedAddresses.getNextSelectableDerivedAddressIndex()
 
+  proc validSeedPhrase*(self: View, value: string): bool {.slot.} =
+    return self.delegate.validSeedPhrase(value)

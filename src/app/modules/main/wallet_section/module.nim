@@ -21,6 +21,7 @@ import ../../../../app_service/service/wallet_account/service as wallet_account_
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/saved_address/service as saved_address_service
 import ../../../../app_service/service/network/service as network_service
+import ../../../../app_service/service/accounts/service as accounts_service
 
 import io_interface
 export io_interface
@@ -40,6 +41,7 @@ type
     transactionsModule: transactions_module.AccessInterface
     savedAddressesModule: saved_addresses_module.AccessInterface
     buySellCryptoModule: buy_sell_crypto_module.AccessInterface
+    accountsService: accounts_service.Service
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -51,6 +53,7 @@ proc newModule*(
   settingsService: settings_service.Service,
   savedAddressService: saved_address_service.Service,
   networkService: network_service.Service,
+  accountsService: accounts_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -59,7 +62,7 @@ proc newModule*(
   result.controller = newController(result, settingsService, walletAccountService, networkService)
   result.view = newView(result)
 
-  result.accountsModule = accounts_module.newModule(result, events, walletAccountService)
+  result.accountsModule = accounts_module.newModule(result, events, walletAccountService, accountsService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService)
   result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)

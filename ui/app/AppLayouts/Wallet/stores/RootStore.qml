@@ -215,8 +215,8 @@ QtObject {
         walletSectionAccounts.resetDerivedAddressModel()
     }
 
-    function validMnemonic(mnemonic) {
-        return startupModule.validMnemonic(mnemonic)
+    function validSeedPhrase(mnemonic) {
+        return walletSectionAccounts.validSeedPhrase(mnemonic)
     }
 
     function getNextSelectableDerivedAddressIndex() {
