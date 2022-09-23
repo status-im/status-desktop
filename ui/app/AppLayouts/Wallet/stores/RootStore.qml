@@ -148,7 +148,7 @@ QtObject {
     }
 
     function checkRecentHistory() {
-        walletSection.checkRecentHistory()
+        walletSectionTransactions.checkRecentHistory()
     }
 
      function fetchCollectionCollectiblesList(slug) {
