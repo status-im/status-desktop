@@ -37,7 +37,7 @@ StatusGridView {
         if (!Utils.isMnemonic(mnemonicString)) {
             _internal.errorString = qsTr("Invalid seed phrase")
         } else {
-            if (!RootStore.validMnemonic(mnemonicString)) {
+            if (!RootStore.validSeedPhrase(mnemonicString)) {
                 _internal.errorString = qsTr("Invalid seed phrase") + '. ' +
                     qsTr("This seed phrase doesn't match our supported dictionary. Check for misspelled words.")
             }

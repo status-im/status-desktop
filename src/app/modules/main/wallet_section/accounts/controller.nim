@@ -1,18 +1,23 @@
 import io_interface
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../../app_service/service/accounts/service as accounts_service
 
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     walletAccountService: wallet_account_service.Service
+    accountsService: accounts_service.Service
 
 proc newController*(
   delegate: io_interface.AccessInterface,
   walletAccountService: wallet_account_service.Service
+  walletAccountService: wallet_account_service.Service,
+  accountsService: accounts_service.Service
 ): Controller =
   result = Controller()
   result.delegate = delegate
   result.walletAccountService = walletAccountService
+  result.accountsService = accountsService
 
 proc delete*(self: Controller) =
   discard
@@ -47,4 +52,7 @@ method getDerivedAddressListForMnemonic*(self: Controller, mnemonic: string, pat
 method getDerivedAddressForPrivateKey*(self: Controller, privateKey: string) =
   self.walletAccountService.getDerivedAddressForPrivateKey(privateKey)
 
+proc validSeedPhrase*(self: Controller, seedPhrase: string): bool =
+  let err = self.accountsService.validateMnemonic(seedPhrase)
+  return err.len == 0
 
