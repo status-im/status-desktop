@@ -157,6 +157,7 @@ Popup {
                 roleValue: Constants.activityCenterNotificationTypeMention
 
                 ActivityNotificationMention {
+                    width: listView.availableWidth
                     store: root.store
                     notification: model
                     messageContextMenu: root.messageContextMenu
@@ -168,6 +169,7 @@ Popup {
                 roleValue: Constants.activityCenterNotificationTypeReply
 
                 ActivityNotificationReply {
+                    width: listView.availableWidth
                     store: root.store
                     notification: model
                     messageContextMenu: root.messageContextMenu
@@ -179,6 +181,7 @@ Popup {
                 roleValue: Constants.activityCenterNotificationTypeContactRequest
 
                 ActivityNotificationContactRequest {
+                    width: listView.availableWidth
                     store: root.store
                     notification: model
                     messageContextMenu: root.messageContextMenu

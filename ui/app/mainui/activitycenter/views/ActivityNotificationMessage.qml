@@ -19,19 +19,9 @@ ActivityNotificationBase {
                                                                 "" : root.store.activityCenterList.getNotificationData(
                                                                         previousNotificationIndex, "timestamp")
 
-    property alias badge: badgeLoader.sourceComponent
-
     signal activityCenterClose()
 
-    height: Math.max(60, notificationMessage.height + (badgeLoader.item ? badgeLoader.height : 0))
-
-    MessageView {
-        id: notificationMessage
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        z: -1
-
+    bodyComponent: MessageView {
         rootStore: root.store
         messageStore: root.store.messageStore
         messageContextMenu: root.messageContextMenu
@@ -73,12 +63,5 @@ ActivityNotificationBase {
         }
         prevMessageIndex: root.previousNotificationIndex
         prevMsgTimestamp: root.previousNotificationTimestamp
-    }
-
-    Loader { 
-        id: badgeLoader
-        anchors.top: notificationMessage.bottom
-        anchors.left: parent.left
-        anchors.leftMargin: 61 // TODO find a way to align with the text of the message
     }
 }
