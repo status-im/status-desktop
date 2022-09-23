@@ -172,3 +172,22 @@ method getDerivedAddressForPrivateKey*(self: Module, privateKey: string) =
 
 method validSeedPhrase*(self: Module, value: string): bool =
   return self.controller.validSeedPhrase(value)
+
+method loggedInUserUsesBiometricLogin*(self: Module): bool =
+  return self.controller.loggedInUserUsesBiometricLogin()
+    
+method isProfileKeyPairMigrated*(self: Module): bool =
+  return self.controller.getLoggedInAccount().keycardPairing.len > 0
+
+method authenticateUser*(self: Module) =
+  if self.isProfileKeyPairMigrated():
+    let keyUid = singletonInstance.userProfile.getKeyUid()
+    self.controller.authenticateUser(keyUid)
+  else:
+    self.controller.authenticateUser()
+
+method onUserAuthenticated*(self: Module, password: string) =
+  if password.len > 0:
+    self.view.userAuthenticaionSuccess(password)
+  else:
+    self.view.userAuthentiactionFail()

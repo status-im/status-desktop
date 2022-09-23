@@ -244,11 +244,11 @@ Item {
         This function resets the text input validation and text.
     */
     function reset() {
+        statusBaseInput.text = ""
+        root.errorMessage = ""
         statusBaseInput.valid = false
         statusBaseInput.dirty = false
         statusBaseInput.pristine = true
-        statusBaseInput.text = ""
-        root.errorMessage = ""
     }
 
     property string _previousText: text

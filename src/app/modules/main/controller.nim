@@ -240,8 +240,11 @@ proc init*(self: Controller) =
       self.authenticateUserFlowRequestedBy.len == 0:
         return
     self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
+    var password = args.password
+    if password.len == 0 and args.keyUid.len > 0:
+      password = args.keyUid
     let data = SharedKeycarModuleArgs(uniqueIdentifier: self.authenticateUserFlowRequestedBy,
-      data: args.data,
+      password: password,
       keyUid: args.keyUid,
       txR: args.txR,
       txS: args.txS,

@@ -44,6 +44,7 @@ type
     tmpKeyUidWhichIsBeingAuthenticating: string
     tmpKeyUidWhichIsBeingUnlocking: string
     tmpUsePinFromBiometrics: bool
+    tmpOfferToStoreUpdatedPinToKeychain: bool
     tmpKeycardUid: string
 
 proc newController*(delegate: io_interface.AccessInterface,
@@ -125,7 +126,7 @@ proc init*(self: Controller) =
     if args.uniqueIdentifier != self.uniqueIdentifier:
       return
     self.connectKeycardReponseSignal()
-    self.delegate.onUserAuthenticated(args.data)
+    self.delegate.onUserAuthenticated(args.password)
   self.connectionIds.add(handlerId)
 
 proc getKeycardData*(self: Controller): string =
@@ -169,6 +170,12 @@ proc setPinMatch*(self: Controller, value: bool) =
 
 proc getPinMatch*(self: Controller): bool =
   return self.tmpPinMatch
+
+proc setOfferToStoreUpdatedPinToKeychain*(self: Controller, value: bool) =
+  self.tmpOfferToStoreUpdatedPinToKeychain = value
+
+proc offerToStoreUpdatedPinToKeychain*(self: Controller): bool =
+  return self.tmpOfferToStoreUpdatedPinToKeychain
 
 proc setPassword*(self: Controller, value: string) =
   self.tmpPassword = value
@@ -307,7 +314,7 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
   var data = SharedKeycarModuleFlowTerminatedArgs(uniqueIdentifier: self.uniqueIdentifier,
     lastStepInTheCurrentFlow: lastStepInTheCurrentFlow)
   if lastStepInTheCurrentFlow:
-    data.data = self.tmpPassword
+    data.password = self.tmpPassword
     data.keyUid = flowEvent.keyUid
     data.txR = flowEvent.txSignature.r
     data.txS = flowEvent.txSignature.s
