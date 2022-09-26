@@ -76,7 +76,7 @@ Item {
                     model.localNickname.toLowerCase().includes(root.filterText.toLowerCase()) ||
                     model.pubKey.toLowerCase().includes(root.filterText.toLowerCase())) &&
                     (!root.hideCommunityMembers ||
-                    !root.rootStore.communityHasMember(model.pubKey, root.communityId));
+                    !root.rootStore.communityHasMember(root.communityId, model.pubKey));
             }
 
             onClicked: {
