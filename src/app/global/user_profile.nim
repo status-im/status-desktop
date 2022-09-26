@@ -2,8 +2,11 @@ import NimQml
 
 import ../../app_service/common/utils
 
+import local_account_settings
+
 QtObject:
   type UserProfile* = ref object of QObject
+    localAccountSettings: LocalAccountSettings
     # fields which cannot change
     username: string
     keyUid: string
@@ -24,9 +27,10 @@ QtObject:
   proc delete*(self: UserProfile) =
     self.QObject.delete
 
-  proc newUserProfile*(): UserProfile =
+  proc newUserProfile*(localAccountSettings: LocalAccountSettings): UserProfile =
     new(result, delete)
     result.setup
+    result.localAccountSettings = localAccountSettings
 
   proc setFixedData*(self: UserProfile, username: string, keyUid: string, pubKey: string, isKeycardUser: bool) =
     self.username = username
@@ -49,6 +53,14 @@ QtObject:
     self.isKeycardUser
   QtProperty[bool] isKeycardUser:
     read = getIsKeycardUser
+
+  proc getUsingBiometricLogin*(self: UserProfile): bool {.slot.} =
+    if(not defined(macosx)):
+      return false
+    return self.localAccountSettings.getStoreToKeychainValue() == LS_VALUE_STORE
+  QtProperty[bool] usingBiometricLogin:
+    read = getUsingBiometricLogin
+
 
   proc nameChanged*(self: UserProfile) {.signal.}
 

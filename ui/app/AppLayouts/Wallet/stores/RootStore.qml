@@ -228,7 +228,7 @@ QtObject {
     }
 
     function loggedInUserUsesBiometricLogin() {
-        return walletSectionAccounts.loggedInUserUsesBiometricLogin()
+        return userProfile.usingBiometricLogin
     }
 
     function loggedInUserIsKeycardUser() {

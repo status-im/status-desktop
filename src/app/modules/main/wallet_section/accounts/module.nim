@@ -173,9 +173,6 @@ method getDerivedAddressForPrivateKey*(self: Module, privateKey: string) =
 method validSeedPhrase*(self: Module, value: string): bool =
   return self.controller.validSeedPhrase(value)
 
-method loggedInUserUsesBiometricLogin*(self: Module): bool =
-  return self.controller.loggedInUserUsesBiometricLogin()
-    
 method authenticateUser*(self: Module) =
   if singletonInstance.userProfile.getIsKeycardUser():
     let keyUid = singletonInstance.userProfile.getKeyUid()

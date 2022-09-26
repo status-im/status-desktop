@@ -102,9 +102,6 @@ method getSeedPhrase*[T](self: Module[T]): string =
 method validSeedPhrase*[T](self: Module[T], value: string): bool =
   return self.controller.validSeedPhrase(value)
 
-method loggedInUserUsesBiometricLogin*[T](self: Module[T]): bool =
-  return self.controller.loggedInUserUsesBiometricLogin()
-
 method migratingProfileKeyPair*[T](self: Module[T]): bool =
   return self.controller.getSelectedKeyPairIsProfile()
 
@@ -332,7 +329,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
       self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
       self.controller.runSignFlow(keyUid, bip44Path, txHash)
       return
-    if self.controller.loggedInUserUsesBiometricLogin():
+    if singletonInstance.userProfile.getUsingBiometricLogin():
       self.controller.tryToObtainDataFromKeychain()
       return
     self.view.setCurrentState(newEnterPasswordState(flowToRun, nil))

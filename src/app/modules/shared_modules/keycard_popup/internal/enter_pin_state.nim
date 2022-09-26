@@ -85,7 +85,7 @@ method resolveKeycardNextState*(self: EnterPinState, keycardFlowType: string, ke
       keycardEvent.error == ErrorPIN:
       controller.setKeycardData($keycardEvent.pinRetries)
       if keycardEvent.pinRetries > 0:
-        if controller.loggedInUserUsesBiometricLogin() and not controller.usePinFromBiometrics():
+        if singletonInstance.userProfile.getUsingBiometricLogin() and not controller.usePinFromBiometrics():
           return createState(StateType.WrongKeychainPin, self.flowType, nil)
         return createState(StateType.WrongPin, self.flowType, nil)
       return createState(StateType.MaxPinRetriesReached, self.flowType, nil)

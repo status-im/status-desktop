@@ -188,9 +188,6 @@ QtObject:
   proc validSeedPhrase*(self: View, value: string): bool {.slot.} =
     return self.delegate.validSeedPhrase(value)
   
-  proc loggedInUserUsesBiometricLogin*(self: View): bool {.slot.} =
-    return self.delegate.loggedInUserUsesBiometricLogin()
-
   proc migratingProfileKeyPair*(self: View): bool {.slot.} =
     return self.delegate.migratingProfileKeyPair()
 
