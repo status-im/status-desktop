@@ -16,7 +16,7 @@ method executePrimaryCommand*(self: LoginPluginState, controller: Controller) =
       controller.enterKeycardPin(controller.getPin())
 
 method getNextPrimaryState*(self: LoginPluginState, controller: Controller): State =
-  if controller.keychainErrorOccurred():
+  if controller.keychainErrorOccurred() or controller.getPin().len != PINLengthForStatusApp:
     return createState(StateType.LoginKeycardEnterPin, self.flowType, nil)
 
 method getNextSecondaryState*(self: LoginPluginState, controller: Controller): State =

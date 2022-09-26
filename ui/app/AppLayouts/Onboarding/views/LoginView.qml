@@ -35,6 +35,7 @@ Item {
     }
 
     onStateChanged: {
+        d.loading = false
         pinInputField.statesInitialization()
         pinInputField.forceFocus()
     }
@@ -424,7 +425,6 @@ Item {
         StatusButton {
             id: button
             Layout.alignment: Qt.AlignHCenter
-            focus: true
             onClicked: {
                 root.startupStore.doPrimaryAction()
             }
