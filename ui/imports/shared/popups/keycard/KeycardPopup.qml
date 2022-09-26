@@ -423,7 +423,7 @@ StatusModal {
             height: Constants.keycard.general.footerButtonsHeight
             text: {
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
-                    if (root.sharedKeycardModule.loggedInUserUsesBiometricLogin()) {
+                    if (userProfile.usingBiometricLogin) {
                         if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPassword ||
                                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPassword)
                             return qsTr("Use biometrics instead")
@@ -462,7 +462,7 @@ StatusModal {
                     }
                 }
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
-                    if (root.sharedKeycardModule.loggedInUserUsesBiometricLogin() &&
+                    if (userProfile.usingBiometricLogin &&
                             (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
                              root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
                              root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
@@ -704,18 +704,18 @@ StatusModal {
             }
             icon.name: {
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
-                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseEnterWords ||
-                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterSeedPhrase) {
-                            if (root.sharedKeycardModule.loggedInUserUsesBiometricLogin())
-                                return "touch-id"
-                            if (userProfile.isKeycardUser())
-                                return "keycard"
-                            return "password"
+                    if (root.sharedKeycardModule.migratingProfileKeyPair() &&
+                            (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseEnterWords ||
+                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterSeedPhrase)) {
+                        if (userProfile.usingBiometricLogin)
+                            return "touch-id"
                         if (userProfile.isKeycardUser)
+                            return "keycard"
+                        return "password"
                     }
                 }
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
-                    if (root.sharedKeycardModule.loggedInUserUsesBiometricLogin()) {
+                    if (userProfile.usingBiometricLogin) {
                         if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
                                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
                                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||

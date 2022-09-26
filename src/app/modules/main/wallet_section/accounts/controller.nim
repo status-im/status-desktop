@@ -69,14 +69,6 @@ proc validSeedPhrase*(self: Controller, seedPhrase: string): bool =
   let err = self.accountsService.validateMnemonic(seedPhrase)
   return err.len == 0
 
-proc loggedInUserUsesBiometricLogin*(self: Controller): bool =
-  if(not defined(macosx)):
-    return false
-  let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-  if (value != LS_VALUE_STORE):
-    return false
-  return true
-
 proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_ACCOUNTS_MODULE_IDENTIFIER,
     keyUid: keyUid)

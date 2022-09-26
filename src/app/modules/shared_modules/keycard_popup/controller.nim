@@ -412,16 +412,8 @@ proc getMnemonicWordAtIndex*(self: Controller, index: int): string =
     return
   return self.privacyService.getMnemonicWordAtIndex(index)
 
-proc loggedInUserUsesBiometricLogin*(self: Controller): bool =
-  if(not defined(macosx)):
-    return false
-  let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-  if (value != LS_VALUE_STORE):
-    return false
-  return true
-
 proc tryToObtainDataFromKeychain*(self: Controller) =
-  if(not self.loggedInUserUsesBiometricLogin()):
+  if(not singletonInstance.userProfile.getUsingBiometricLogin()):
     return
   let loggedInAccount = self.getLoggedInAccount()
   self.keychainService.tryToObtainData(loggedInAccount.name)

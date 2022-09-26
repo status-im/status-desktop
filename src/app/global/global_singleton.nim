@@ -48,7 +48,7 @@ proc localAppSettings*(self: GlobalSingleton): LocalAppSettings =
 proc userProfile*(self: GlobalSingleton): UserProfile =
   var userProfile {.global.}: UserProfile
   if (userProfile.isNil):
-    userProfile = newUserProfile()
+    userProfile = newUserProfile(singletonInstance.localAccountSettings)
   return userProfile
 
 proc utils*(self: GlobalSingleton): Utils =

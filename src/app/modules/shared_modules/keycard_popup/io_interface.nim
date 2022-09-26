@@ -121,9 +121,6 @@ method setSelectedKeyPair*(self: AccessInterface, item: KeyPairItem) {.base.} =
 method setKeyPairStoredOnKeycard*(self: AccessInterface, cardMetadata: CardMetadata) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method loggedInUserUsesBiometricLogin*(self: AccessInterface): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method migratingProfileKeyPair*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 

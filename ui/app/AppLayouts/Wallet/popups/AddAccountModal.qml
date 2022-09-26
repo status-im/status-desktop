@@ -63,6 +63,7 @@ StatusModal {
         property int selectedAccountType: SelectGeneratedAccount.AddAccountType.GenerateNew
         readonly property bool authenticationNeeded: d.selectedAccountType !== SelectGeneratedAccount.AddAccountType.WatchOnly &&
                                                      d.password === ""
+        property string addAccountIcon: ""
 
 
 
@@ -133,6 +134,14 @@ StatusModal {
     }
 
     onOpened: {
+        d.addAccountIcon = "password"
+        if (RootStore.loggedInUserUsesBiometricLogin()) {
+            d.addAccountIcon = "touch-id"
+        }
+        else if (RootStore.loggedInUserIsKeycardUser()) {
+            d.addAccountIcon =  "keycard"
+        }
+
         accountNameInput.input.asset.emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
         colorSelectionGrid.selectedColorIndex = Math.floor(Math.random() * colorSelectionGrid.model.length)
         accountNameInput.input.edit.forceActiveFocus()
@@ -277,17 +286,7 @@ StatusModal {
                 return accountNameInput.text !== "" && advancedSelection.isValid
             }
 
-            icon.name: {
-                if (d.authenticationNeeded) {
-                    if (RootStore.loggedInUserUsesBiometricLogin())
-                        return "touch-id"
-                    if (RootStore.loggedInUserIsKeycardUser())
-                        return "keycard"
-                    return "password"
-                }
-                return ""
-            }
-
+            icon.name: d.authenticationNeeded? d.addAccountIcon : ""
             highlighted: focus
 
             Keys.onReturnPressed: d.nextButtonClicked()

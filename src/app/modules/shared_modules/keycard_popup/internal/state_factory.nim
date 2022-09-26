@@ -1,9 +1,10 @@
 import parseutils, sequtils, sugar, chronicles
+import ../../../../global/global_singleton
 import ../../../../../app_service/service/keycard/constants
-import ../controller
 from ../../../../../app_service/service/keycard/service import KCSFlowType
 from ../../../../../app_service/service/keycard/service import PINLengthForStatusApp
 from ../../../../../app_service/service/keycard/service import PUKLengthForStatusApp
+import ../controller
 import state
 
 logScope:
@@ -325,7 +326,7 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
           return createState(StateType.MaxPukRetriesReached, state.flowType, nil)
     if keycardFlowType == ResponseTypeValueEnterPIN:
       if keycardEvent.keyUid == controller.getKeyUidWhichIsBeingAuthenticating():
-        if controller.loggedInUserUsesBiometricLogin():
+        if singletonInstance.userProfile.getUsingBiometricLogin():
           if keycardEvent.error.len > 0 and
             keycardEvent.error == ErrorPIN:
               controller.setKeycardData($keycardEvent.pinRetries)
