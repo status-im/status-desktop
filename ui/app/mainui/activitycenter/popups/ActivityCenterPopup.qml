@@ -148,6 +148,13 @@ Popup {
 
             filters: ExpressionFilter { expression: filterActivityCategories(model.notificationType) &&
                                                     !(acStore.hideReadNotifications && model.read) }
+
+            sorters: [
+                RoleSorter {
+                    roleName: "timestamp"
+                    sortOrder: Qt.DescendingOrder
+                }
+            ]
         }
 
         delegate: DelegateChooser {
@@ -161,7 +168,7 @@ Popup {
                     store: root.store
                     notification: model
                     messageContextMenu: root.messageContextMenu
-                    previousNotificationIndex: Math.max(0, index - 1)
+                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                     onActivityCenterClose: root.close()
                 }
             }
@@ -173,7 +180,7 @@ Popup {
                     store: root.store
                     notification: model
                     messageContextMenu: root.messageContextMenu
-                    previousNotificationIndex: Math.max(0, index - 1)
+                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                     onActivityCenterClose: root.close()
                 }
             }
@@ -185,7 +192,7 @@ Popup {
                     store: root.store
                     notification: model
                     messageContextMenu: root.messageContextMenu
-                    previousNotificationIndex: Math.max(0, index - 1)
+                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                     onActivityCenterClose: root.close()
                 }
             }
