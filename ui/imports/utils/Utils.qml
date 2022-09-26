@@ -400,19 +400,19 @@ QtObject {
       function validatePINs(item, firstPINField, repeatPINField) {
         switch (item) {
             case "first":
-                if (firstPINField.text === "") {
+                if (firstPINField.pinInput === "") {
                     return [false, qsTr("You need to enter a PIN")];
-                } else if (!/^\d+$/.test(firstPINField.text)) {
+                } else if (!/^\d+$/.test(firstPINField.pinInput)) {
                     return [false, qsTr("The PIN must contain only digits")];
-                } else if (firstPINField.text.length != 6) {
-                    return [false, qsTr("The PIN must be exactly 6 digits")];
+                } else if (firstPINField.pinInput.length != Constants.keycard.general.keycardPinLength) {
+                    return [false, qsTr("The PIN must be exactly %1 digits").arg(Constants.keycard.general.keycardPinLength)];
                 }
                 return [true, ""];
 
             case "repeat":
-                if (repeatPINField.text === "") {
+                if (repeatPINField.pinInput === "") {
                     return [false, qsTr("You need to repeat your PIN")];
-                } else if (repeatPINField.text !== firstPINField.text) {
+                } else if (repeatPINField.pinInput !== firstPINField.pinInput) {
                     return [false, qsTr("PIN don't match")];
                 }
                 return [true, ""];

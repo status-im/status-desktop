@@ -28,6 +28,7 @@ SettingsContentBase {
     titleRowComponentLoader.sourceComponent: StatusButton {
         text: qsTr("Change Password")
         onClicked: changePasswordModal.open()
+        enabled: !userProfile.isKeycardUser
     }
 
     dirty: settingsView.dirty
