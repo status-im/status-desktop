@@ -271,8 +271,8 @@ proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardF
         controller.setKeycardEvent(keycardEvent)
         controller.loginAccountKeycard()
         return nil
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
-      keycardEvent.error.len == 0:
+    if keycardFlowType == ResponseTypeValueEnterPIN:
+      if keycardEvent.error.len == 0:
         if not controller.keyUidMatch(keycardEvent.keyUid):
           return createState(StateType.LoginKeycardWrongKeycard, state.flowType, nil)
         let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
@@ -280,6 +280,12 @@ proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardF
           controller.tryToObtainDataFromKeychain()
           return nil
         return createState(StateType.LoginKeycardEnterPin, state.flowType, nil)
+      if keycardEvent.error.len > 0:
+        if keycardEvent.error == RequestParamPIN:
+          controller.setKeycardData($keycardEvent.pinRetries)
+          if keycardEvent.pinRetries > 0:
+            return createState(StateType.LoginKeycardWrongPin, state.flowType, nil)
+          return createState(StateType.LoginKeycardMaxPinRetriesReached, state.flowType, nil)
     if keycardFlowType == ResponseTypeValueEnterPUK and 
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:

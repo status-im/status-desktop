@@ -16,7 +16,7 @@ method executePrimaryCommand*(self: LoginKeycardWrongKeycardState, controller: C
       controller.enterKeycardPin(controller.getPin())
 
 method getNextPrimaryState*(self: LoginKeycardWrongKeycardState, controller: Controller): State =
-  if controller.keychainErrorOccurred():
+  if controller.keychainErrorOccurred() or controller.getPin().len != PINLengthForStatusApp:
     return createState(StateType.LoginKeycardEnterPin, self.flowType, nil)
 
 method getNextSecondaryState*(self: LoginKeycardWrongKeycardState, controller: Controller): State =
