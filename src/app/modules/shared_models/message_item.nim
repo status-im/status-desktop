@@ -209,6 +209,9 @@ proc `senderEnsVerified=`*(self: Item, value: bool) {.inline.} =
 proc outgoingStatus*(self: Item): string {.inline.} =
   self.outgoingStatus
 
+proc `outgoingStatus=`*(self: Item, value: string) {.inline.} =
+  self.outgoingStatus = value
+
 proc messageText*(self: Item): string {.inline.} =
   self.messageText
 

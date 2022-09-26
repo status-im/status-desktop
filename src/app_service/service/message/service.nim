@@ -48,7 +48,9 @@ const SIGNAL_MESSAGE_REACTION_ADDED* = "messageReactionAdded"
 const SIGNAL_MESSAGE_REACTION_REMOVED* = "messageReactionRemoved"
 const SIGNAL_MESSAGE_REACTION_FROM_OTHERS* = "messageReactionFromOthers"
 const SIGNAL_MESSAGE_DELETION* = "messageDeleted"
+const SIGNAL_MESSAGE_DELIVERED* = "messageDelivered"
 const SIGNAL_MESSAGE_EDITED* = "messageEdited"
+const SIGNAL_ENVELOPE_SENT* = "envelopeSent"
 const SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED* = "messageLinkPreviewDataLoaded"
 const SIGNAL_MENTIONED_IN_EDITED_MESSAGE* = "mentionedInEditedMessage"
 const SIGNAL_RELOAD_MESSAGES* = "reloadMessages"
@@ -91,6 +93,13 @@ type
   MessageDeletedArgs* =  ref object of Args
     chatId*: string
     messageId*: string
+
+  MessageDeliveredArgs* = ref object of Args
+    chatId*: string
+    messageId*: string
+
+  EnvelopeSentArgs* = ref object of Args
+    messagesIds*: seq[string]
 
   MessageEditedArgs* = ref object of Args
     chatId*: string
@@ -261,6 +270,16 @@ QtObject:
     self.events.emit(SIGNAL_RELOAD_MESSAGES, ReloadMessagesArgs(communityId: communityId))
 
   proc init*(self: Service) =
+    self.events.on(SignalType.MessageDelivered.event) do(e: Args):
+      let receivedData = MessageDeliveredSignal(e)
+      let data = MessageDeliveredArgs(chatId: receivedData.chatId, messageId: receivedData.messageId)
+      self.events.emit(SIGNAL_MESSAGE_DELIVERED, data)
+
+    self.events.on(SignalType.EnvelopeSent.event) do(e: Args):
+      let receivedData = EnvelopeSentSignal(e)
+      let data = EnvelopeSentArgs(messagesIds: receivedData.messageIds)
+      self.events.emit(SIGNAL_ENVELOPE_SENT, data)
+
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
 

@@ -17,6 +17,10 @@ const PARSED_TEXT_CHILD_TYPE_STATUS_TAG* = "status-tag"
 const PARSED_TEXT_CHILD_TYPE_DEL* = "del"
 const PARSED_TEXT_CHILD_TYPE_LINK* = "link"
 
+const PARSED_TEXT_OUTGOING_STATUS_SENDING*   = "sending"
+const PARSED_TEXT_OUTGOING_STATUS_SENT*      = "sent"
+const PARSED_TEXT_OUTGOING_STATUS_DELIVERED* = "delivered"
+
 type ParsedText* = object
   `type`*: string
   literal*: string

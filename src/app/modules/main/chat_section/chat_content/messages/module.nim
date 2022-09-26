@@ -268,6 +268,7 @@ method messageAdded*(self: Module, message: MessageDto) =
   let index = self.view.model().findIndexForMessageId(message.replace)
   if(index != -1):
     self.view.model().removeItem(message.replace)
+
   var item = initItem(
     message.id,
     message.communityId,
@@ -311,6 +312,13 @@ method onSendingMessageSuccess*(self: Module, message: MessageDto) =
 
 method onSendingMessageError*(self: Module) =
   self.view.emitSendingMessageErrorSignal()
+
+method onEnvelopeSent*(self: Module, messagesIds: seq[string]) =
+  for messageId in messagesIds:
+    self.view.model().itemSent(messageId)
+
+method onMessageDelivered*(self: Module, messageId: string) =
+  self.view.model().itemDelivered(messageId)
 
 method loadMoreMessages*(self: Module) =
   self.controller.loadMoreMessages()
