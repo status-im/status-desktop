@@ -57,6 +57,3 @@ method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
 
 method loggedInUserUsesBiometricLogin*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
-    
-method isProfileKeyPairMigrated*(self: AccessInterface): bool {.base.} =
-  raise newException(ValueError, "No implementation available")

@@ -286,6 +286,3 @@ QtObject:
 
   proc loggedInUserUsesBiometricLogin*(self: View): bool {.slot.} =
     return self.delegate.loggedInUserUsesBiometricLogin()
-    
-  proc isProfileKeyPairMigrated*(self: View): bool {.slot.} =
-    return self.delegate.isProfileKeyPairMigrated()

@@ -708,9 +708,10 @@ StatusModal {
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterSeedPhrase) {
                             if (root.sharedKeycardModule.loggedInUserUsesBiometricLogin())
                                 return "touch-id"
-                            if (root.sharedKeycardModule.isProfileKeyPairMigrated())
+                            if (userProfile.isKeycardUser())
                                 return "keycard"
                             return "password"
+                        if (userProfile.isKeycardUser)
                     }
                 }
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
