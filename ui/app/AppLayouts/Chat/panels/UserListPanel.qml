@@ -39,10 +39,7 @@ Item {
         text: root.label
     }
 
-    StatusListView {
-        id: userListView
-        objectName: "userListPanel"
-
+    Item {
         anchors {
             top: titleText.bottom
             topMargin: Style.current.padding
@@ -51,61 +48,74 @@ Item {
             right: parent.right
             rightMargin: Style.current.halfPadding
             bottom: parent.bottom
-            bottomMargin: Style.current.bigPadding
         }
 
-        model: SortFilterProxyModel {
-            sourceModel: usersModule.model
-            sorters: [
-                RoleSorter {
-                    roleName: "onlineStatus"
-                    sortOrder: Qt.DescendingOrder
-                },
-                StringSorter {
-                    roleName: "displayName"
-                    caseSensitivity: Qt.CaseInsensitive
-                }
-            ]
-        }
-        section.property: "onlineStatus"
-        section.delegate: (root.width > 58) ? sectionDelegateComponent : null
-        delegate: StatusMemberListItem {
-            width: ListView.view.width
-            nickName: model.localNickname
-            userName: !!model.ensName ? "@" + Utils.removeStatusEns(model.ensName) : model.displayName !== "" ? model.displayName : model.alias
-            pubKey: !!model.ensName ? "" : Utils.getCompressedPk(model.pubKey)
-            isContact: model.isContact
-            isVerified: model.isVerified
-            isUntrustworthy: model.isUntrustworthy
-            isAdmin: model.isAdmin
-            asset.name: {
-                const isCurrentUser = model.pubKey === root.rootStore.getPubkey()
-                const visibility = Global.privacyModuleInst.profilePicturesVisibility
+        clip: true
 
-                if (isCurrentUser
-                        || visibility === Constants.profilePicturesVisibility.everyone
-                        || (visibility === Constants.profilePicturesVisibility.contactsOnly && model.isContact))
-                    return model.icon
+        StatusListView {
+            id: userListView
+            objectName: "userListPanel"
 
-                return ""
+            clip: false
+
+            anchors.fill: parent
+            anchors.bottomMargin: Style.current.bigPadding
+            displayMarginEnd: anchors.bottomMargin
+
+            model: SortFilterProxyModel {
+                sourceModel: usersModule.model
+
+                sorters: [
+                    RoleSorter {
+                        roleName: "onlineStatus"
+                        sortOrder: Qt.DescendingOrder
+                    },
+                    StringSorter {
+                        roleName: "displayName"
+                        caseSensitivity: Qt.CaseInsensitive
+                    }
+                ]
             }
-            asset.isImage: (asset.name !== "")
-            asset.isLetterIdenticon: (asset.name === "")
-            asset.color: Utils.colorForColorId(model.colorId)
-            status: model.onlineStatus
-            ringSettings.ringSpecModel: !!model.ensName ? undefined : Utils.getColorHashAsJson(model.pubKey, true) // FIXME: use model.colorHash
-            onClicked: {
-                if (mouse.button === Qt.RightButton) {
-                    // Set parent, X & Y positions for the messageContextMenu
-                    messageContextMenu.parent = this
-                    messageContextMenu.isProfile = true
-                    messageContextMenu.myPublicKey = userProfile.pubKey
-                    messageContextMenu.selectedUserPublicKey = model.pubKey
-                    messageContextMenu.selectedUserDisplayName = model.displayName
-                    messageContextMenu.selectedUserIcon = model.icon
-                    messageContextMenu.popup(4, 4)
-                } else if (mouse.button === Qt.LeftButton && !!messageContextMenu) {
-                    Global.openProfilePopup(model.pubKey);
+            section.property: "onlineStatus"
+            section.delegate: (root.width > 58) ? sectionDelegateComponent : null
+            delegate: StatusMemberListItem {
+                width: ListView.view.width
+                nickName: model.localNickname
+                userName: !!model.ensName ? "@" + Utils.removeStatusEns(model.ensName) : model.displayName !== "" ? model.displayName : model.alias
+                pubKey: !!model.ensName ? "" : Utils.getCompressedPk(model.pubKey)
+                isContact: model.isContact
+                isVerified: model.isVerified
+                isUntrustworthy: model.isUntrustworthy
+                isAdmin: model.isAdmin
+                asset.name: {
+                    const isCurrentUser = model.pubKey === root.rootStore.getPubkey()
+                    const visibility = Global.privacyModuleInst.profilePicturesVisibility
+
+                    if (isCurrentUser
+                            || visibility === Constants.profilePicturesVisibility.everyone
+                            || (visibility === Constants.profilePicturesVisibility.contactsOnly && model.isContact))
+                        return model.icon
+
+                    return ""
+                }
+                asset.isImage: (asset.name !== "")
+                asset.isLetterIdenticon: (asset.name === "")
+                asset.color: Utils.colorForColorId(model.colorId)
+                status: model.onlineStatus
+                ringSettings.ringSpecModel: !!model.ensName ? undefined : Utils.getColorHashAsJson(model.pubKey, true) // FIXME: use model.colorHash
+                onClicked: {
+                    if (mouse.button === Qt.RightButton) {
+                        // Set parent, X & Y positions for the messageContextMenu
+                        messageContextMenu.parent = this
+                        messageContextMenu.isProfile = true
+                        messageContextMenu.myPublicKey = userProfile.pubKey
+                        messageContextMenu.selectedUserPublicKey = model.pubKey
+                        messageContextMenu.selectedUserDisplayName = model.displayName
+                        messageContextMenu.selectedUserIcon = model.icon
+                        messageContextMenu.popup(4, 4)
+                    } else if (mouse.button === Qt.LeftButton && !!messageContextMenu) {
+                        Global.openProfilePopup(model.pubKey);
+                    }
                 }
             }
         }
