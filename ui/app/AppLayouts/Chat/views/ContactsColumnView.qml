@@ -44,6 +44,7 @@ Item {
         anchors {
             fill: parent
             margins: Style.current.padding
+            bottomMargin: 0
         }
         spacing: Style.current.padding
 
@@ -139,102 +140,111 @@ Item {
             onClicked: Global.openPopup(contactRequestsPopup)
         }
 
-        // chat list
-        StatusScrollView {
-            id: scroll
+        Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            StatusChatList {
-                id: channelList
-                objectName: "ContactsColumnView_chatList"
-                width: scroll.availableWidth
-                model: SortFilterProxyModel {
-                    sourceModel: root.chatSectionModule.model
-                    sorters: RoleSorter {
-                        roleName: "lastMessageTimestamp"
-                        sortOrder: Qt.DescendingOrder
+            clip: true
+
+            // chat list
+            StatusScrollView {
+                id: scroll
+
+                clip: false
+                anchors.fill: parent
+                anchors.bottomMargin: Style.current.padding
+
+                StatusChatList {
+                    id: channelList
+                    objectName: "ContactsColumnView_chatList"
+                    width: scroll.availableWidth
+                    model: SortFilterProxyModel {
+                        sourceModel: root.chatSectionModule.model
+                        sorters: RoleSorter {
+                            roleName: "lastMessageTimestamp"
+                            sortOrder: Qt.DescendingOrder
+                        }
                     }
-                }
 
-                highlightItem: !root.store.openCreateChat
-                isEnsVerified: function(pubKey) { return Utils.isEnsVerified(pubKey) }
-                onChatItemSelected: {
-                    Global.closeCreateChatView()
-                    root.chatSectionModule.setActiveItem(id, "")
-                }
-                onChatItemUnmuted: root.chatSectionModule.unmuteChat(id)
+                    highlightItem: !root.store.openCreateChat
+                    isEnsVerified: function(pubKey) { return Utils.isEnsVerified(pubKey) }
+                    onChatItemSelected: {
+                        Global.closeCreateChatView()
+                        root.chatSectionModule.setActiveItem(id, "")
+                    }
+                    onChatItemUnmuted: root.chatSectionModule.unmuteChat(id)
 
-                popupMenu: ChatContextMenuView {
-                    id: chatContextMenuView
-                    emojiPopup: root.emojiPopup
+                    popupMenu: ChatContextMenuView {
+                        id: chatContextMenuView
+                        emojiPopup: root.emojiPopup
 
-                    openHandler: function (id) {
-                        let jsonObj = root.chatSectionModule.getItemAsJson(id)
-                        let obj = JSON.parse(jsonObj)
-                        if (obj.error) {
-                            console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
-                            close()
-                            return
+                        openHandler: function (id) {
+                            let jsonObj = root.chatSectionModule.getItemAsJson(id)
+                            let obj = JSON.parse(jsonObj)
+                            if (obj.error) {
+                                console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
+                                close()
+                                return
+                            }
+
+                            currentFleet = root.chatSectionModule.getCurrentFleet()
+                            isCommunityChat = root.chatSectionModule.isCommunity()
+                            amIChatAdmin = obj.amIChatAdmin
+                            chatId = obj.itemId
+                            chatName = obj.name
+                            chatDescription = obj.description
+                            chatEmoji = obj.emoji
+                            chatColor = obj.color
+                            chatIcon = obj.icon
+                            chatType = obj.type
+                            chatMuted = obj.muted
                         }
 
-                        currentFleet = root.chatSectionModule.getCurrentFleet()
-                        isCommunityChat = root.chatSectionModule.isCommunity()
-                        amIChatAdmin = obj.amIChatAdmin
-                        chatId = obj.itemId
-                        chatName = obj.name
-                        chatDescription = obj.description
-                        chatEmoji = obj.emoji
-                        chatColor = obj.color
-                        chatIcon = obj.icon
-                        chatType = obj.type
-                        chatMuted = obj.muted
-                    }
+                        onMuteChat: {
+                            root.chatSectionModule.muteChat(chatId)
+                        }
 
-                    onMuteChat: {
-                        root.chatSectionModule.muteChat(chatId)
-                    }
+                        onUnmuteChat: {
+                            root.chatSectionModule.unmuteChat(chatId)
+                        }
 
-                    onUnmuteChat: {
-                        root.chatSectionModule.unmuteChat(chatId)
-                    }
+                        onMarkAllMessagesRead: {
+                            root.chatSectionModule.markAllMessagesRead(chatId)
+                        }
 
-                    onMarkAllMessagesRead: {
-                        root.chatSectionModule.markAllMessagesRead(chatId)
-                    }
+                        onClearChatHistory: {
+                            root.chatSectionModule.clearChatHistory(chatId)
+                        }
 
-                    onClearChatHistory: {
-                        root.chatSectionModule.clearChatHistory(chatId)
-                    }
+                        onRequestAllHistoricMessages: {
+                            // Not Refactored Yet - Check in the `master` branch if this is applicable here.
+                        }
 
-                    onRequestAllHistoricMessages: {
-                        // Not Refactored Yet - Check in the `master` branch if this is applicable here.
-                    }
+                        onLeaveChat: {
+                            root.chatSectionModule.leaveChat(chatId)
+                        }
 
-                    onLeaveChat: {
-                        root.chatSectionModule.leaveChat(chatId)
-                    }
+                        onDeleteCommunityChat: {
+                            // Not Refactored Yet
+                        }
 
-                    onDeleteCommunityChat: {
-                        // Not Refactored Yet
-                    }
-
-                    onDownloadMessages: {
-                        root.chatSectionModule.downloadMessages(chatId, file)
-                    }
-                    onDisplayProfilePopup: {
-                        Global.openProfilePopup(publicKey)
-                    }
-                    onLeaveGroup: {
-                        chatSectionModule.leaveChat("", chatId, true);
-                    }
-                    onUpdateGroupChatDetails: {
-                        chatSectionModule.updateGroupChatDetails(
-                            chatId,
-                            groupName,
-                            groupColor,
-                            groupImage
-                        )
+                        onDownloadMessages: {
+                            root.chatSectionModule.downloadMessages(chatId, file)
+                        }
+                        onDisplayProfilePopup: {
+                            Global.openProfilePopup(publicKey)
+                        }
+                        onLeaveGroup: {
+                            chatSectionModule.leaveChat("", chatId, true);
+                        }
+                        onUpdateGroupChatDetails: {
+                            chatSectionModule.updateGroupChatDetails(
+                                chatId,
+                                groupName,
+                                groupColor,
+                                groupImage
+                            )
+                        }
                     }
                 }
             }
