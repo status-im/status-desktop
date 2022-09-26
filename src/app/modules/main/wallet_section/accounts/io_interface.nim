@@ -54,6 +54,3 @@ method authenticateUser*(self: AccessInterface) {.base.} =
 
 method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-method loggedInUserUsesBiometricLogin*(self: AccessInterface): bool {.base.} =
-  raise newException(ValueError, "No implementation available")

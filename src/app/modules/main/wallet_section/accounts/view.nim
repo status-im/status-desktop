@@ -283,6 +283,3 @@ QtObject:
 
   proc authenticateUser*(self: View) {.slot.} =
     self.delegate.authenticateUser()
-
-  proc loggedInUserUsesBiometricLogin*(self: View): bool {.slot.} =
-    return self.delegate.loggedInUserUsesBiometricLogin()
