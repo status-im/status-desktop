@@ -2,6 +2,7 @@
 
 type SignalType* {.pure.} = enum
   Message = "messages.new"
+  MessageDelivered = "message.delivered"
   Wallet = "wallet"
   NodeReady = "node.ready"
   NodeCrashed = "node.crashed"

@@ -53,6 +53,12 @@ method onSendingMessageSuccess*(self: AccessInterface, message: MessageDto) {.ba
 method onSendingMessageError*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onEnvelopeSent*(self: AccessInterface, messagesIds: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onMessageDelivered*(self: AccessInterface, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method updateContactDetails*(self: AccessInterface, contactId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

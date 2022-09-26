@@ -2,6 +2,8 @@ import NimQml, Tables, json, strutils, strformat
 
 import message_item, message_reaction_item, message_transaction_parameters_item
 
+import ../../../app_service/service/message/dto/message# as message_dto
+
 type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
@@ -351,6 +353,20 @@ QtObject:
       return
 
     return self.items[ind]
+
+  proc setOutgoingStatus(self: Model, messageId: string, status: string) =
+    let ind = self.findIndexForMessageId(messageId)
+    if(ind == -1):
+      return
+    self.items[ind].outgoingStatus = status
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[ModelRole.OutgoingStatus.int])
+
+  proc itemSent*(self: Model, messageId: string) =
+    self.setOutgoingStatus(messageId, PARSED_TEXT_OUTGOING_STATUS_SENT)
+
+  proc itemDelivered*(self: Model, messageId: string) =
+    self.setOutgoingStatus(messageId, PARSED_TEXT_OUTGOING_STATUS_DELIVERED)
 
   proc addReaction*(self: Model, messageId: string, emojiId: EmojiId, didIReactWithThisEmoji: bool,
     userPublicKey: string, userDisplayName: string, reactionId: string) =

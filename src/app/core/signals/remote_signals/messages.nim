@@ -30,6 +30,16 @@ type MessageSignal* = ref object of Signal
   clearedHistories*: seq[ClearedHistoryDto]
   verificationRequests*: seq[VerificationRequest]
 
+type MessageDeliveredSignal* = ref object of Signal
+  chatId*: string
+  messageId*: string
+
+proc fromEvent*(T: type MessageDeliveredSignal, event: JsonNode): MessageDeliveredSignal =
+  result = MessageDeliveredSignal()
+  result.signalType = SignalType.MessageDelivered
+  result.chatId = event["event"]["chatID"].getStr
+  result.messageId = event["event"]["messageID"].getStr
+
 proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   var signal:MessageSignal = MessageSignal()
   signal.messages = @[]

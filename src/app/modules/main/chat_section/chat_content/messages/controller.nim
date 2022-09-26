@@ -77,6 +77,16 @@ proc init*(self: Controller) =
       return
     self.delegate.onSendingMessageError()
 
+  self.events.on(SIGNAL_ENVELOPE_SENT) do(e:Args):
+    let args = EnvelopeSentArgs(e)
+    self.delegate.onEnvelopeSent(args.messagesIds)
+
+  self.events.on(SIGNAL_MESSAGE_DELIVERED) do(e:Args):
+    let args = MessageDeliveredArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onMessageDelivered(args.messageId)
+
   self.events.on(SIGNAL_MESSAGE_PINNED) do(e:Args):
     let args = MessagePinUnpinArgs(e)
     if(self.chatId != args.chatId):
