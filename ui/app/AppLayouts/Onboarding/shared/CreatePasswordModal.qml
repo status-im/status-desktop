@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3
 
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 
 import utils 1.0
 import shared 1.0
@@ -28,66 +29,122 @@ ModalPopup {
     height: 500
 
     onOpened: {
-        firstPasswordField.text = "";
-        firstPasswordField.forceActiveFocus(Qt.MouseFocusReason)
-    }
-
-    Input {
-        id: firstPasswordField
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.rightMargin: 56
-        anchors.leftMargin: 56
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.xlPadding
-        placeholderText: qsTr("Current password...")
-        textField.echoMode: TextInput.Password
-        onTextChanged: {
-            [firstPasswordFieldValid, passwordValidationError] =
-                Utils.validatePasswords("first", firstPasswordField, repeatPasswordField);
-            [repeatPasswordFieldValid, repeatPasswordValidationError] =
-                Utils.validatePasswords("repeat", firstPasswordField, repeatPasswordField);
+        if (userProfile.isKeycardUser) {
+            firstPinInputField.statesInitialization()
+            firstPinInputField.forceFocus()
+        }
+        else {
+            firstPasswordField.text = "";
+            firstPasswordField.forceActiveFocus(Qt.MouseFocusReason)
         }
     }
 
-    Input {
-        id: repeatPasswordField
-        enabled: firstPasswordFieldValid
-        anchors.rightMargin: 0
-        anchors.leftMargin: 0
-        anchors.right: firstPasswordField.right
-        anchors.left: firstPasswordField.left
-        anchors.top: firstPasswordField.bottom
-        anchors.topMargin: Style.current.xlPadding
-        placeholderText: qsTr("Confirm password…")
-        textField.echoMode: TextInput.Password
-        Keys.onReturnPressed: function(event) {
-            if (submitBtn.enabled) {
-                submitBtn.clicked(event)
+    Column {
+        anchors.fill: parent
+        leftPadding: d.padding
+        rightPadding: d.padding
+        topPadding: Style.current.xlPadding
+        bottomPadding: Style.current.xlPadding
+        spacing: Style.current.xlPadding
+
+        QtObject {
+            id: d
+
+            readonly property int padding: 56
+            readonly property int fontSize: 15
+        }
+
+        Input {
+            id: firstPasswordField
+            width: parent.width - 2 * d.padding
+            visible: !userProfile.isKeycardUser
+            placeholderText: qsTr("Current password...")
+            textField.echoMode: TextInput.Password
+            onTextChanged: {
+                [firstPasswordFieldValid, passwordValidationError] =
+                                                                   Utils.validatePasswords("first", firstPasswordField, repeatPasswordField);
+                [repeatPasswordFieldValid, repeatPasswordValidationError] =
+                                                                          Utils.validatePasswords("repeat", firstPasswordField, repeatPasswordField);
             }
         }
-        onTextChanged: {
-            [repeatPasswordFieldValid, repeatPasswordValidationError] =
-                Utils.validatePasswords("repeat", firstPasswordField, repeatPasswordField);
-        }
-    }
 
-    StyledText {
-        id: validationError
-        text: {
-            if (passwordValidationError !== "") return passwordValidationError;
-            if (repeatPasswordValidationError !== "") return repeatPasswordValidationError;
-            return "";
+        Input {
+            id: repeatPasswordField
+            visible: !userProfile.isKeycardUser
+            width: parent.width - 2 * d.padding
+            enabled: firstPasswordFieldValid
+            placeholderText: qsTr("Confirm password…")
+            textField.echoMode: TextInput.Password
+            Keys.onReturnPressed: function(event) {
+                if (submitBtn.enabled) {
+                    submitBtn.clicked(event)
+                }
+            }
+            onTextChanged: {
+                [repeatPasswordFieldValid, repeatPasswordValidationError] =
+                                                                          Utils.validatePasswords("repeat", firstPasswordField, repeatPasswordField);
+            }
         }
-        anchors.top: repeatPasswordField.bottom
-        anchors.topMargin: 20
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.xlPadding
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.xlPadding
-        horizontalAlignment: Text.AlignHCenter
-        color: Style.current.danger
-        font.pixelSize: 11
+
+        StyledText {
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: userProfile.isKeycardUser
+            text: qsTr("Enter new PIN")
+            font.pixelSize: d.fontSize
+        }
+
+        StatusPinInput {
+            id: firstPinInputField
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: userProfile.isKeycardUser
+            validator: StatusIntValidator{bottom: 0; top: 999999;}
+            pinLen: Constants.keycard.general.keycardPinLength
+
+            onPinInputChanged: {
+                if (pinInput.length == Constants.keycard.general.keycardPinLength) {
+                    repeatPinInputField.statesInitialization()
+                    repeatPinInputField.forceFocus()
+                }
+
+                [firstPasswordFieldValid, passwordValidationError] =
+                                                                   Utils.validatePINs("first", firstPinInputField, repeatPinInputField);
+                [repeatPasswordFieldValid, repeatPasswordValidationError] =
+                                                                          Utils.validatePINs("repeat", firstPinInputField, repeatPinInputField);
+            }
+        }
+
+        StyledText {
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: userProfile.isKeycardUser
+            text: qsTr("Repeat PIN")
+            font.pixelSize: d.fontSize
+        }
+
+        StatusPinInput {
+            id: repeatPinInputField
+            anchors.horizontalCenter: parent.horizontalCenter
+            visible: userProfile.isKeycardUser
+            validator: StatusIntValidator{bottom: 0; top: 999999;}
+            pinLen: Constants.keycard.general.keycardPinLength
+
+            onPinInputChanged: {
+                [repeatPasswordFieldValid, repeatPasswordValidationError] =
+                                                                          Utils.validatePINs("repeat", firstPinInputField, repeatPinInputField);
+            }
+        }
+
+
+        StyledText {
+            id: validationError
+            text: {
+                if (passwordValidationError !== "") return passwordValidationError;
+                if (repeatPasswordValidationError !== "") return repeatPasswordValidationError;
+                return "";
+            }
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: Style.current.danger
+            font.pixelSize: 11
+        }
     }
 
     footer: Item {
@@ -101,7 +158,7 @@ ModalPopup {
             anchors.right: parent.right
             state: loading ? "pending" : "default"
 
-            text: qsTr("Store password")
+            text: userProfile.isKeycardUser? qsTr("Store PIN") : qsTr("Store password")
 
             enabled: firstPasswordFieldValid && repeatPasswordFieldValid && !loading
 
@@ -128,14 +185,20 @@ ModalPopup {
             }
 
             onClicked: {
-                // validate the entered password
-                var validatePassword = privacyStore.validatePassword(repeatPasswordField.text)
-                if(!validatePassword) {
-                    firstPasswordFieldValid = false
-                    passwordValidationError = qsTr("Incorrect password")
+                if (!userProfile.isKeycardUser) {
+                    // validate the entered password
+                    var validatePassword = privacyStore.validatePassword(repeatPasswordField.text)
+                    if(!validatePassword) {
+                        firstPasswordFieldValid = false
+                        passwordValidationError = qsTr("Incorrect password")
+                    }
+                    else {
+                        popup.offerToStorePassword(repeatPasswordField.text, true)
+                        popup.close()
+                    }
                 }
                 else {
-                    popup.offerToStorePassword(repeatPasswordField.text, true)
+                    popup.offerToStorePassword(repeatPinInputField.pinInput, true)
                     popup.close()
                 }
             }
