@@ -89,7 +89,9 @@ StatusPopupMenu {
         if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
             return false
         }
-        return root.outgoingVerificationStatus !== Constants.verificationStatus.unverified
+        return root.outgoingVerificationStatus !== Constants.verificationStatus.unverified &&
+                root.outgoingVerificationStatus !== Constants.verificationStatus.verified &&
+                root.outgoingVerificationStatus !== Constants.verificationStatus.trusted
     }
     readonly property bool isTrusted: {
         if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
@@ -264,7 +266,8 @@ StatusPopupMenu {
         text: qsTr("Verify Identity")
         icon.name: "checkmark-circle"
         enabled: root.isProfile && !root.isMe && root.isContact
-                                && !root.isBlockedContact && !root.isVerificationRequestSent
+                                && !root.isBlockedContact
+                                && root.outgoingVerificationStatus === Constants.verificationStatus.unverified
                                 && !root.hasReceivedVerificationRequestFrom
         onTriggered: {
             root.openProfileClicked(root.selectedUserPublicKey,
