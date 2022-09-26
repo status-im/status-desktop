@@ -231,7 +231,7 @@ QtObject {
         return walletSectionAccounts.loggedInUserUsesBiometricLogin()
     }
 
-    function isProfileKeyPairMigrated() {
-        return walletSectionAccounts.isProfileKeyPairMigrated()
+    function loggedInUserIsKeycardUser() {
+        return userProfile.isKeycardUser
     }
 }

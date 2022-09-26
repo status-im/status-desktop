@@ -8,6 +8,7 @@ QtObject:
     username: string
     keyUid: string
     pubKey: string
+    isKeycardUser: bool
     # fields which may change during runtime
     ensName: string
     displayName: string
@@ -27,23 +28,27 @@ QtObject:
     new(result, delete)
     result.setup
 
-  proc setFixedData*(self: UserProfile, username: string, keyUid: string, pubKey: string) =
+  proc setFixedData*(self: UserProfile, username: string, keyUid: string, pubKey: string, isKeycardUser: bool) =
     self.username = username
     self.keyUid = keyUid
     self.pubKey = pubKey
+    self.isKeycardUser = isKeycardUser
 
   proc getKeyUid*(self: UserProfile): string {.slot.} =
     self.keyUid
-
   QtProperty[string] keyUid:
     read = getKeyUid
 
 
   proc getPubKey*(self: UserProfile): string {.slot.} =
     self.pubKey
-
   QtProperty[string] pubKey:
     read = getPubKey
+
+  proc getIsKeycardUser*(self: UserProfile): bool {.slot.} =
+    self.isKeycardUser
+  QtProperty[bool] isKeycardUser:
+    read = getIsKeycardUser
 
   proc nameChanged*(self: UserProfile) {.signal.}
 

@@ -281,7 +281,7 @@ StatusModal {
                 if (d.authenticationNeeded) {
                     if (RootStore.loggedInUserUsesBiometricLogin())
                         return "touch-id"
-                    if (RootStore.isProfileKeyPairMigrated())
+                    if (RootStore.loggedInUserIsKeycardUser())
                         return "keycard"
                     return "password"
                 }

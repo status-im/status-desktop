@@ -194,8 +194,5 @@ QtObject:
   proc migratingProfileKeyPair*(self: View): bool {.slot.} =
     return self.delegate.migratingProfileKeyPair()
 
-  proc isProfileKeyPairMigrated*(self: View): bool {.slot.} =
-    return self.delegate.isProfileKeyPairMigrated()
-
   proc getSigningPhrase*(self: View): string {.slot.} =
     return self.delegate.getSigningPhrase()
