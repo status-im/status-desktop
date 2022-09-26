@@ -108,9 +108,6 @@ method loggedInUserUsesBiometricLogin*[T](self: Module[T]): bool =
 method migratingProfileKeyPair*[T](self: Module[T]): bool =
   return self.controller.getSelectedKeyPairIsProfile()
 
-method isProfileKeyPairMigrated*[T](self: Module[T]): bool =
-  return self.controller.getLoggedInAccount().keycardPairing.len > 0
-
 method getSigningPhrase*[T](self: Module[T]): string =
   return self.controller.getSigningPhrase()
 

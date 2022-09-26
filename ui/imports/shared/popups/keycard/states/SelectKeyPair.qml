@@ -59,7 +59,7 @@ Item {
         }
 
         StatusBaseText {
-            visible: !root.sharedKeycardModule.isProfileKeyPairMigrated()
+            visible: !userProfile.isKeycardUser
             Layout.preferredWidth: parent.width - 2 * Style.current.padding
             Layout.leftMargin: Style.current.padding
             Layout.alignment: Qt.AlignLeft
@@ -70,7 +70,7 @@ Item {
         }
 
         KeyPairList {
-            visible: !root.sharedKeycardModule.isProfileKeyPairMigrated()
+            visible: !userProfile.isKeycardUser
             Layout.fillWidth: true
             Layout.preferredHeight: 100
             Layout.fillHeight: visible && root.sharedKeycardModule.keyPairModel.count === 1
@@ -88,8 +88,8 @@ Item {
         }
 
         StatusBaseText {
-            visible: root.sharedKeycardModule.isProfileKeyPairMigrated() && root.sharedKeycardModule.keyPairModel.count > 0 ||
-                     !root.sharedKeycardModule.isProfileKeyPairMigrated() && root.sharedKeycardModule.keyPairModel.count > 1
+            visible: userProfile.isKeycardUser && root.sharedKeycardModule.keyPairModel.count > 0 ||
+                     !userProfile.isKeycardUser && root.sharedKeycardModule.keyPairModel.count > 1
             Layout.preferredWidth: parent.width - 2 * Style.current.padding
             Layout.leftMargin: Style.current.padding
             Layout.alignment: Qt.AlignLeft
@@ -100,8 +100,8 @@ Item {
         }
 
         KeyPairList {
-            visible: root.sharedKeycardModule.isProfileKeyPairMigrated() && root.sharedKeycardModule.keyPairModel.count > 0 ||
-                     !root.sharedKeycardModule.isProfileKeyPairMigrated() && root.sharedKeycardModule.keyPairModel.count > 1
+            visible: userProfile.isKeycardUser && root.sharedKeycardModule.keyPairModel.count > 0 ||
+                     !userProfile.isKeycardUser && root.sharedKeycardModule.keyPairModel.count > 1
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignLeft

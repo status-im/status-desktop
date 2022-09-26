@@ -77,9 +77,6 @@ proc loggedInUserUsesBiometricLogin*(self: Controller): bool =
     return false
   return true
 
-proc getLoggedInAccount*(self: Controller): AccountDto =
-  return self.accountsService.getLoggedInAccount()
-
 proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_ACCOUNTS_MODULE_IDENTIFIER,
     keyUid: keyUid)

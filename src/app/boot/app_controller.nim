@@ -390,7 +390,7 @@ proc buildAndRegisterUserProfile(self: AppController) =
     info "login account name and display name stored in settings differ"
     displayName = loggedInAccount.name
 
-  singletonInstance.userProfile.setFixedData(alias, loggedInAccount.keyUid, pubKey)
+  singletonInstance.userProfile.setFixedData(alias, loggedInAccount.keyUid, pubKey, loggedInAccount.keycardPairing.len > 0)
   singletonInstance.userProfile.setDisplayName(displayName)
   singletonInstance.userProfile.setPreferredName(preferredName)
   singletonInstance.userProfile.setEnsName(firstEnsName)

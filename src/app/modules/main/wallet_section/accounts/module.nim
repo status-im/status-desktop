@@ -176,11 +176,8 @@ method validSeedPhrase*(self: Module, value: string): bool =
 method loggedInUserUsesBiometricLogin*(self: Module): bool =
   return self.controller.loggedInUserUsesBiometricLogin()
     
-method isProfileKeyPairMigrated*(self: Module): bool =
-  return self.controller.getLoggedInAccount().keycardPairing.len > 0
-
 method authenticateUser*(self: Module) =
-  if self.isProfileKeyPairMigrated():
+  if singletonInstance.userProfile.getIsKeycardUser():
     let keyUid = singletonInstance.userProfile.getKeyUid()
     self.controller.authenticateUser(keyUid)
   else:

@@ -127,9 +127,6 @@ method loggedInUserUsesBiometricLogin*(self: AccessInterface): bool {.base.} =
 method migratingProfileKeyPair*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isProfileKeyPairMigrated*(self: AccessInterface): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getSigningPhrase*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
