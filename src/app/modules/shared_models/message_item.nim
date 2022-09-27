@@ -55,6 +55,7 @@ type
     localTimestamp: int64
     contentType: ContentType
     messageType: int
+    contactRequestState: int
     reactionsModel: MessageReactionModel
     pinned: bool
     pinnedBy: string
@@ -86,6 +87,7 @@ proc initItem*(
     localTimestamp: int64, # local timestamp obtained when a message is being sent, with 1ms accuracy
     contentType: ContentType,
     messageType: int,
+    contactRequestState: int,
     sticker: string,
     stickerPack: int,
     links: seq[string],
@@ -114,6 +116,7 @@ proc initItem*(
   result.localTimestamp = localTimestamp
   result.contentType = contentType
   result.messageType = messageType
+  result.contactRequestState = contactRequestState
   result.pinned = false
   result.reactionsModel = newMessageReactionModel()
   result.sticker = sticker
@@ -163,6 +166,7 @@ proc `$`*(self: Item): string =
     localTimestamp:{$self.localTimestamp}
     contentType:{$self.contentType.int},
     messageType:{$self.messageType},
+    contactRequestState:{$self.contactRequestState},
     pinned:{$self.pinned},
     pinnedBy:{$self.pinnedBy},
     messageReactions: [{$self.reactionsModel}],
@@ -268,6 +272,9 @@ proc contentType*(self: Item): ContentType {.inline.} =
 proc messageType*(self: Item): int {.inline.} =
   self.messageType
 
+proc contactRequestState*(self: Item): int {.inline.} =
+  self.contactRequestState
+
 proc pinned*(self: Item): bool {.inline.} =
   self.pinned
 
@@ -338,6 +345,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "localTimestamp": self.localTimestamp,
     "contentType": self.contentType.int,
     "messageType": self.messageType,
+    "contactRequestState": self.contactRequestState,
     "pinned": self.pinned,
     "pinnedBy": self.pinnedBy,
     "editMode": self.editMode,

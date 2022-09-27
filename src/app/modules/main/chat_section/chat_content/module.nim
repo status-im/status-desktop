@@ -181,6 +181,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     localTimestamp = m.timestamp,
     m.contentType.ContentType,
     m.messageType,
+    m.contactRequestState,
     m.sticker.url,
     m.sticker.pack,
     m.links,
