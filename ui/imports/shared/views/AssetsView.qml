@@ -86,6 +86,7 @@ Item {
                 }
             ]
             onClicked: {
+                RootStore.getHistoricalDataForToken(symbol, RootStore.currencyStore.currentCurrency)
                 d.selectedAssetIndex = index
                 assetClicked(model)
             }

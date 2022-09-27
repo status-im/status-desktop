@@ -43,6 +43,8 @@ QtObject {
     property var tokens: walletSectionAllTokens.all
     property var accounts: walletSectionAccounts.model
 
+    property var marketValueStore: TokenMarketValuesStore{}
+
     function getNetworkColor(chainId) {
         return networksModule.all.getChainColor(chainId)
     }
@@ -198,5 +200,9 @@ QtObject {
 
     function getGasEthValue(gweiValue, gasLimit) {
         return profileSectionModule.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
+    }
+
+    function getHistoricalDataForToken(symbol, currency) {
+        walletSectionAllTokens.getHistoricalDataForToken(symbol,currency)
     }
 }
