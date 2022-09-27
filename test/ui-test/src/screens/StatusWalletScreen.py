@@ -69,8 +69,14 @@ class AddAccountPopup(Enum):
     TYPE_PRIVATE_KEY: str = "mainWallet_Add_Account_Popup_Type_Private_Key"
     ADDRESS_INPUT: str = "mainWallet_Add_Account_Popup_Watch_Only_Address"
     PRIVATE_KEY_INPUT: str = "mainWallet_Add_Account_Popup_Private_Key"
+    AUTHENTICATE_BUTTON: str = "mainWallet_Authenticate_Popup_Footer_Add_Account"
     ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account_Popup_Footer_Add_Account"
     SEED_PHRASE_INPUT_TEMPLATE: str = "mainWindow_Add_Account_Popup_Seed_Phrase_"
+    
+class SharedPopup(Enum):
+    POPUP_CONTENT: str = "sharedPopup_Popup_Content"
+    PASSWORD_INPUT: str = "sharedPopup_Password_Input"
+    PRIMARY_BUTTON: str = "sharedPopup_Primary_Button"
     
 class CollectiblesView(Enum):
     COLLECTIONS_REPEATER: str =  "mainWallet_Collections_Repeater"  
@@ -89,12 +95,11 @@ class StatusWalletScreen:
     def add_watch_only_account(self, account_name: str, address: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
         
-        type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-
         click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
         click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
         time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_WATCH_ONLY.value)
+        type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
         
         type(AddAccountPopup.ADDRESS_INPUT.value, address)
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
@@ -102,13 +107,16 @@ class StatusWalletScreen:
     def import_private_key(self, account_name: str, password: str, private_key: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
         
-        type(AddAccountPopup.PASSWORD_INPUT.value, password)
-        type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-
+        click_obj_by_name(AddAccountPopup.AUTHENTICATE_BUTTON.value)
+        
+        wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
+        click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
+        
         click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
         click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
         time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_PRIVATE_KEY.value)
+        type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
         
         type(AddAccountPopup.PRIVATE_KEY_INPUT.value, private_key)
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
@@ -116,14 +124,17 @@ class StatusWalletScreen:
     def import_seed_phrase(self, account_name: str, password: str, mnemonic: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
         
-        type(AddAccountPopup.PASSWORD_INPUT.value, password)
-        type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
+        click_obj_by_name(AddAccountPopup.AUTHENTICATE_BUTTON.value)
+        
+        wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
+        click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
         
         click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
         click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
         time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_SEED_PHRASE.value)
-        
+        type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
+                
         words = mnemonic.split()
         scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
         time.sleep(1)
@@ -147,10 +158,12 @@ class StatusWalletScreen:
     def generate_new_account(self, account_name: str, password: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
         
-        type(AddAccountPopup.PASSWORD_INPUT.value, password)
+        click_obj_by_name(AddAccountPopup.AUTHENTICATE_BUTTON.value)
+        
+        wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
+        click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
+        
         type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-
-        time.sleep(2)
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
          
     def verify_account_name_is_present(self, account_name: str):
