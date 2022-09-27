@@ -278,7 +278,7 @@ Rectangle {
         StatusBaseText {
             id: confirmLbl
             visible: showIdentityVerified
-            text: qsTr("You have confirmed %1's identity. From now on this verification emblem will always be displayed alongside %1's nickname.").arg(userIsEnsVerified ? userEnsName : userDisplayName)
+            text: qsTr("You have confirmed %1's identity. From now on this verification emblem will always be displayed alongside %1's nickname.").arg(userDisplayName)
             font.pixelSize: Style.current.additionalTextSize
             horizontalAlignment : Text.AlignHCenter
             Layout.alignment: Qt.AlignHCenter
@@ -290,7 +290,7 @@ Rectangle {
         StatusBaseText {
             id: confirmUntrustworthyLbl
             visible: showIdentityVerifiedUntrustworthy
-            text: qsTr("You have marked %1 as Untrustworthy. From now on this Untrustworthy emblem will always be displayed alongside %1's nickname.").arg(userIsEnsVerified ? userEnsName : userDisplayName)
+            text: qsTr("You have marked %1 as Untrustworthy. From now on this Untrustworthy emblem will always be displayed alongside %1's nickname.").arg(userDisplayName)
             font.pixelSize: Style.current.additionalTextSize
             horizontalAlignment : Text.AlignHCenter
             Layout.alignment: Qt.AlignHCenter
@@ -362,7 +362,7 @@ Rectangle {
             input.multiline: true
             minimumHeight: 152
             maximumHeight: 152
-            placeholderText: qsTr("Ask a question that only the real %1 will be able to answer e.g. a question about a shared experience, or ask Mark to enter a code or phrase you have sent to them via a different communication channel (phone, post, etc...).").arg(userIsEnsVerified ? userEnsName : userDisplayName)
+            placeholderText: qsTr("Ask a question that only the real %1 will be able to answer e.g. a question about a shared experience, or ask %1 to enter a code or phrase you have sent to them via a different communication channel (phone, post, etc...).").arg(userDisplayName)
         }
 
         MessageView {
