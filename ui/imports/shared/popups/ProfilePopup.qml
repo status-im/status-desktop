@@ -140,13 +140,13 @@ StatusDialog {
     }
 
     function blockUser() {
-        profileView.blockContactConfirmationDialog.contactName = userName;
+        profileView.blockContactConfirmationDialog.contactName = userDisplayName;
         profileView.blockContactConfirmationDialog.contactAddress = userPublicKey;
         profileView.blockContactConfirmationDialog.open();
     }
 
     function unblockUser() {
-        profileView.unblockContactConfirmationDialog.contactName = userName;
+        profileView.unblockContactConfirmationDialog.contactName = userDisplayName;
         profileView.unblockContactConfirmationDialog.contactAddress = userPublicKey;
         profileView.unblockContactConfirmationDialog.open();
     }
