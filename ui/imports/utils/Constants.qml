@@ -446,6 +446,11 @@ QtObject {
     readonly property int activityCenterNotificationTypeReply: 4
     readonly property int activityCenterNotificationTypeContactRequest: 5
 
+    readonly property int contactRequestStateNone: 0
+    readonly property int contactRequestStatePending: 1
+    readonly property int contactRequestStateAccepted: 2
+    readonly property int contactRequestStateDismissed: 3
+
     readonly property int maxNbDaysToFetch: 30
     readonly property int fetchRangeLast24Hours: 86400
     readonly property int fetchRangeLast2Days: 172800

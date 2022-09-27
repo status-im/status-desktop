@@ -108,6 +108,10 @@ QtObject:
   QtProperty[int] messageType:
     read = messageType
 
+  proc contactRequestState*(self: MessageItem): int {.slot.} = result = ?.self.messageItem.contactRequestState
+  QtProperty[int] contactRequestState:
+    read = contactRequestState
+
   # TODO find a way to pass reactions since they are not basic types (might need to be a Model)
   # proc reactions*(self: MessageItem): int {.slot.} = result = ?.self.messageItem.reactions
   # QtProperty[int] reactions:

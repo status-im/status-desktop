@@ -195,10 +195,8 @@ QtObject:
       self.setNewData(activityCenterNotifications)
     else:
       for activityCenterNotification in activityCenterNotifications:
-        var found = false
         for notif in self.activityCenterNotifications:
           if activityCenterNotification.id == notif.id:
-            found = true
+            self.removeNotifications(@[notif.id])
             break
-        if found: continue
         self.addActivityNotificationItemToList(activityCenterNotification, false)

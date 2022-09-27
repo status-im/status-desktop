@@ -54,7 +54,6 @@ method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("activityCenterModule", self.viewVariant)
   self.controller.init()
   self.view.load()
-  self.fetchActivityCenterNotifications()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -90,6 +89,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     localTimestamp = message.timestamp,
     ContentType(message.contentType),
     message.messageType,
+    message.contactRequestState,
     message.sticker.url,
     message.sticker.pack,
     message.links,

@@ -16,15 +16,14 @@ Item {
 
     property alias bodyComponent: bodyLoader.sourceComponent
     property alias badgeComponent: badgeLoader.sourceComponent
-    property alias actionComponent: actionLoader.sourceComponent
-    property alias action: actionLoader
+    property alias ctaComponent: ctaLoader.sourceComponent
 
     height: Math.max(50, bodyLoader.height + (badgeLoader.item ? badgeLoader.height : 0))
 
     Loader {
         id: bodyLoader
         anchors.top: parent.top
-        anchors.right: actionLoader.left
+        anchors.right: ctaLoader.left
         anchors.left: parent.left
     }
 
@@ -36,8 +35,8 @@ Item {
     }
 
     Loader {
-        id: actionLoader
-        anchors.verticalCenter: parent.verticalCenter
+        id: ctaLoader
+        anchors.bottom: bodyLoader.bottom
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
 

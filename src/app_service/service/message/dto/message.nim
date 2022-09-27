@@ -100,6 +100,7 @@ type MessageDto* = object
   timestamp*: int64
   contentType*: int
   messageType*: int
+  contactRequestState*: int
   links*: seq[string]
   editedAt*: int
   transactionParameters*: TransactionParameters
@@ -203,6 +204,7 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   discard jsonObj.getProp("timestamp", result.timestamp)
   discard jsonObj.getProp("contentType", result.contentType)
   discard jsonObj.getProp("messageType", result.messageType)
+  discard jsonObj.getProp("contactRequestState", result.contactRequestState)
   discard jsonObj.getProp("image", result.image)
   discard jsonObj.getProp("editedAt", result.editedAt)
 

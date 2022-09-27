@@ -80,7 +80,7 @@ QtObject:
   proc init*(self: Service) =
     self.asyncActivityNotificationLoad()
     self.events.on(SignalType.Message.event) do(e: Args):
-      var receivedData = MessageSignal(e)
+      let receivedData = MessageSignal(e)
 
       # Handling activityCenterNotifications updates
       if (receivedData.activityCenterNotifications.len > 0):
@@ -172,9 +172,8 @@ QtObject:
 
       self.cursor = activityCenterNotificationsTuple[0]
 
-      # Filter contact request notification til we have the UI working
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
-        ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1].filter(n => n.notificationType != ActivityCenterNotificationType.ContactRequest)))
+        ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
 
   proc acceptActivityCenterNotifications*(self: Service, notificationIds: seq[string]): string =
     try:

@@ -9,12 +9,13 @@ import utils 1.0
 import shared.controls.chat.menuItems 1.0
 
 Row {
+    id: root
+
     signal acceptClicked()
     signal declineClicked()
     signal blockClicked()
     signal profileClicked()
 
-    id: root
     height: acceptBtn.height
     spacing: Style.current.halfPadding
 
