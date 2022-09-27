@@ -36,6 +36,7 @@ type
   DosStatusOSNotification = DosQObject
   DosQSettings = DosQObject
   DosStatusKeychainManager = DosQObject
+  DosQTimer = DosQObject
   
   DosParameterDefinition = object
     name: cstring
@@ -369,6 +370,26 @@ proc dos_qsettings_set_value(vptr: DosQSettings, key: cstring,
 proc dos_qsettings_remove(vptr: DosQSettings, key: cstring)
   {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qsettings_delete(vptr: DosQSettings) 
+  {.cdecl, dynlib: dynLibName, importc.}
+
+# QTimer
+proc dos_qtimer_create(): DosQTimer
+  {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qtimer_delete(vptr: DosQTimer)
+  {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qtimer_set_interval(vptr: DosQTimer, interval: int)
+  {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qtimer_interval(vptr: DosQTimer): int
+  {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qtimer_start(vptr: DosQTimer)
+  {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qtimer_stop(vptr: DosQTimer)
+  {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qtimer_set_single_shot(vptr: DosQTimer, singleShot: bool)
+  {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qtimer_is_single_shot(vptr: DosQTimer): bool
+  {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qtimer_is_active(vptr: DosQTimer): bool
   {.cdecl, dynlib: dynLibName, importc.}
 
 # DosStatusKeychainManager
