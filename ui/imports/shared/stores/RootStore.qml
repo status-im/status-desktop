@@ -179,7 +179,6 @@ QtObject {
 
     function findTokenSymbolByAddress(address) {
         return  walletSectionAllTokens.findTokenSymbolByAddress(address)
-
     }
 
     function getNameForSavedWalletAddress(address) {

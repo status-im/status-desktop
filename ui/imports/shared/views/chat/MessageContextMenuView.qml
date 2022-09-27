@@ -106,7 +106,7 @@ StatusPopupMenu {
 
     property var emojiReactionsReactedByUser: []
 
-    signal openProfileClicked(string publicKey, string state)
+    signal openProfileClicked(string publicKey)
     signal pinMessage(string messageId)
     signal unpinMessage(string messageId)
     signal pinnedMessagesLimitReached(string messageId)
@@ -238,7 +238,7 @@ StatusPopupMenu {
         id: viewProfileAction
         enabled: root.isProfile && !root.pinnedPopup
         onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey, "")
+            root.openProfileClicked(root.selectedUserPublicKey)
             root.close()
         }
     }
@@ -256,8 +256,7 @@ StatusPopupMenu {
         enabled: root.isProfile && !root.isMe && !root.isContact
                                 && !root.isBlockedContact && !root.hasPendingContactRequest
         onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey,
-                Constants.profilePopupStates.contactRequest)
+            Global.openContactRequestPopup(root.selectedUserPublicKey)
             root.close()
         }
     }
@@ -270,8 +269,7 @@ StatusPopupMenu {
                                 && root.outgoingVerificationStatus === Constants.verificationStatus.unverified
                                 && !root.hasReceivedVerificationRequestFrom
         onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey,
-                Constants.profilePopupStates.verifyIdentity)
+            Global.openSendIDRequestPopup(root.selectedUserPublicKey)
             root.close()
         }
     }
@@ -288,11 +286,9 @@ StatusPopupMenu {
                                     || root.isVerificationRequestSent)
         onTriggered: {
             if (hasReceivedVerificationRequestFrom) {
-                root.openProfileClicked(root.selectedUserPublicKey,
-                    Constants.profilePopupStates.respondToPendingRequest)
+                Global.openIncomingIDRequestPopup(root.selectedUserPublicKey)
             } else if (root.isVerificationRequestSent) {
-                root.openProfileClicked(root.selectedUserPublicKey,
-                    Constants.profilePopupStates.showVerificationPendingSection)
+                Global.openOutgoingIDRequestPopup(root.selectedUserPublicKey)
             }
 
             root.close()
@@ -304,8 +300,8 @@ StatusPopupMenu {
         icon.name: "edit_pencil"
         enabled: root.isProfile && !root.isMe
         onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey,
-                Constants.profilePopupStates.openNickname)
+            Global.openNicknamePopupRequested(root.selectedUserPublicKey, d.contactDetails.localNickname,
+                                              "%1 (%2)".arg(root.selectedUserDisplayName).arg(Utils.getElidedCompressedPk(root.selectedUserPublicKey)))
             root.close()
         }
     }
@@ -314,7 +310,7 @@ StatusPopupMenu {
         text: qsTr("Unblock User")
         icon.name: "remove-circle"
         enabled: root.isProfile && !root.isMe && root.isBlockedContact
-        onTriggered: root.store.contactsStore.unblockContact(root.selectedUserPublicKey)
+        onTriggered: Global.unblockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
     }
 
     StatusMenuSeparator {
@@ -344,7 +340,7 @@ StatusPopupMenu {
         icon.name: "cancel"
         type: StatusMenuItem.Type.Danger
         enabled: root.isProfile && !root.isMe && !root.isBlockedContact
-        onTriggered: root.store.contactsStore.blockContact(root.selectedUserPublicKey)
+        onTriggered: Global.blockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
     }
 
     StatusMenuItem {

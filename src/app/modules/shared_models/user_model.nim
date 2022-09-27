@@ -229,6 +229,7 @@ QtObject:
     self.items[ind].ensName = ensName
     self.items[ind].localNickname = localNickname
     self.items[ind].alias = alias
+    self.items[ind].icon = icon
     self.items[ind].isUntrustworthy = isUntrustworthy
 
     let index = self.createIndex(ind, 0, nil)

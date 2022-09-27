@@ -185,9 +185,6 @@ StatusPopupMenu {
                 Global.openPopup(deleteChatConfirmationDialogComponent)
                 close()
             }
-            onClosed: {
-                destroy()
-            }
         }
     }
 

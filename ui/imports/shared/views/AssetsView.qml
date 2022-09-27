@@ -44,7 +44,7 @@ Item {
         delegate: StatusListItem {
             readonly property string balance: enabledNetworkBalance // Needed for the tests
             objectName: "AssetView_TokenListItem_" + symbol
-            width: parent.width
+            width: ListView.view.width
             title: name
             subTitle: `${enabledNetworkBalance} ${symbol}`
             asset.name: symbol ? Style.png("tokens/" + symbol) : ""

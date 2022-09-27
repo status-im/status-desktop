@@ -1,5 +1,4 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQml.Models 2.14
 
 ListModel {
     ListElement {
@@ -24,9 +23,3 @@ ListModel {
         thumbnail: "QmZdTTRiMvupRUWq6ctVbuPfEmc8Js53TmBKyjSYNHmGdi"
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/

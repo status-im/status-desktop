@@ -19,9 +19,12 @@ StatusModal {
     property string userIcon: ""
     property bool userIsEnsVerified
 
+    property string challengeText: qsTr("Say who you are / why you want to become a contact...")
+    property string buttonText: qsTr("Send Contact Request")
+
     signal accepted(string message)
 
-    padding: 16
+    padding: Style.current.padding
     header.title: qsTr("Send Contact Request to %1").arg(userDisplayName)
 
     QtObject {
@@ -31,6 +34,10 @@ StatusModal {
         readonly property int minMsgLength: 1
         readonly property int msgHeight: 152
         readonly property int contentSpacing: 5
+    }
+
+    onAboutToShow: {
+        messageInput.input.edit.forceActiveFocus()
     }
 
     ColumnLayout {
@@ -55,7 +62,7 @@ StatusModal {
             id: messageInput
             charLimit: d.maxMsgLength
 
-            placeholderText: qsTr("Say who you are / why you want to become a contact...")
+            placeholderText: root.challengeText
             input.multiline: true
             minimumHeight: d.msgHeight
             maximumHeight: d.msgHeight
@@ -71,7 +78,7 @@ StatusModal {
 
     rightButtons: StatusButton {
         enabled: messageInput.valid
-        text: qsTr("Send Contact Request")
+        text: root.buttonText
         onClicked: {
             root.accepted(Utils.escapeHtml(messageInput.text));
             root.close();

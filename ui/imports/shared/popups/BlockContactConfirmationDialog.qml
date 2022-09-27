@@ -15,7 +15,6 @@ ModalPopup {
     height: 237
     width: 400
 
-    property Popup parentPopup
     property string contactAddress: ""
     property string contactName: ""
 

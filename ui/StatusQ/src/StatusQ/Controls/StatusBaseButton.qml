@@ -70,6 +70,7 @@ Button {
 
     icon.height: 24
     icon.width: 24
+    icon.color: d.textColor
 
     background: Rectangle {
         radius: root.radius
@@ -90,7 +91,7 @@ Button {
             rotation: root.asset.rotation
             opacity: !loading && root.icon.name !== ""
             visible: root.icon.name !== ""
-            color: d.textColor
+            color: root.icon.color
         }
         StatusEmoji {
             Layout.preferredWidth: visible ? root.icon.width : 0

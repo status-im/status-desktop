@@ -27,8 +27,6 @@ SettingsContentBase {
 
     headerComponents: [
         StatusButton {
-            implicitHeight: 38
-            size: StatusBaseButton.Size.Normal
             text: qsTr("Send contact request to chat key")
             onClicked: {
                 sendContactRequest.open()
@@ -54,8 +52,8 @@ SettingsContentBase {
             store: ({contactsStore: root.contactsStore})
             isProfile: true
 
-            onOpenProfileClicked: function (pubkey, state) {
-                Global.openProfilePopup(pubkey, null, state)
+            onOpenProfileClicked: function (pubkey) {
+                Global.openProfilePopup(pubkey, null)
             }
 
             onCreateOneToOneChat: function (communityId, chatId, ensName) {
@@ -196,6 +194,10 @@ SettingsContentBase {
                     contactsModel: root.contactsStore.receivedContactRequestsModel
                     panelUsage: Constants.contactsPanelUsage.receivedContactRequest
 
+                    onSendMessageActionTriggered: {
+                        root.contactsStore.joinPrivateChat(publicKey)
+                    }
+
                     onContactRequestAccepted: {
                         root.contactsStore.acceptContactRequest(publicKey)
                     }
@@ -205,20 +207,7 @@ SettingsContentBase {
                     }
 
                     onShowVerificationRequest: {
-                        try {
-                            let request = root.contactsStore.getVerificationDetailsFromAsJson(publicKey)
-                            Global.openPopup(contactVerificationRequestPopupComponent, {
-                                                 senderPublicKey: request.from,
-                                                 senderDisplayName: request.displayName,
-                                                 senderIcon: request.icon,
-                                                 challengeText: request.challenge,
-                                                 responseText: request.response,
-                                                 messageTimestamp: request.requestedAt,
-                                                 responseTimestamp: request.repliedAt
-                                             })
-                        } catch (e) {
-                            console.error("Error getting or parsing verification data", e)
-                        }
+                        Global.openIncomingIDRequestPopup(publicKey)
                     }
                 }
 
@@ -308,41 +297,6 @@ SettingsContentBase {
             StatusLoadingIndicator {
                 width: 12
                 height: 12
-            }
-        }
-
-        // TODO: Make BlockContactConfirmationDialog a dynamic component on a future refactor
-        BlockContactConfirmationDialog {
-            id: blockContactConfirmationDialog
-            onBlockButtonClicked: {
-                root.contactsStore.blockContact(blockContactConfirmationDialog.contactAddress)
-                blockContactConfirmationDialog.close()
-            }
-        }
-
-
-        // TODO: Make ConfirmationDialog a dynamic component on a future refactor
-        ConfirmationDialog {
-            id: removeContactConfirmationDialog
-            header.title: qsTr("Remove contact")
-            confirmationText: qsTr("Are you sure you want to remove this contact?")
-            onConfirmButtonClicked: {
-                if (Utils.getContactDetailsAsJson(removeContactConfirmationDialog.value).isAdded) {
-                    root.contactsStore.removeContact(removeContactConfirmationDialog.value);
-                }
-                removeContactConfirmationDialog.close()
-            }
-        }
-
-        Component {
-            id: contactVerificationRequestPopupComponent
-            ContactVerificationRequestPopup {
-                onResponseSent: {
-                    root.contactsStore.acceptVerificationRequest(senderPublicKey, response)
-                }
-                onVerificationRefused: {
-                    root.contactsStore.declineVerificationRequest(senderPublicKey)
-                }
             }
         }
 

@@ -55,7 +55,7 @@ Rectangle {
     Connections {
         enabled: !!mainModule
         target: enabled ? mainModule : undefined
-        onOnlineStatusChanged: {
+        function onOnlineStatusChanged(connected) {
             if (connected && root.state !== "ready" &&
                 root.visible &&
                 root.source &&

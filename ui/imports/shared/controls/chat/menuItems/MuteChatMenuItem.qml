@@ -5,6 +5,6 @@ import StatusQ.Popups 0.1
 StatusMenuItem {
     property bool muted: false
 
-    text: !muted ? qsTr("Mute chat") : qsTr("Unmute chat")
+    text: muted ? qsTr("Unmute Chat") : qsTr("Mute Chat")
     icon.name: "notification"
 }

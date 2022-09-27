@@ -108,7 +108,7 @@ ColumnLayout {
         }
 
         onOpenProfileClicked: {
-            Global.openProfilePopup(publicKey, null, state)
+            Global.openProfilePopup(publicKey, null)
         }
 
         onDeleteMessage: {

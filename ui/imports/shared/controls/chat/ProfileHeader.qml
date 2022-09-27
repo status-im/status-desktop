@@ -140,24 +140,11 @@ Item {
                 }
             }
 
-            Loader {
-                sourceComponent: SVGImage {
-                    height: compact ? 10 : 16
-                    width: compact ? 10 : 16
-                    source: Style.svg("contact")
-                }
-                active: isContact && !root.isCurrentUser
-                visible: active
-            }
-
-            Loader {
-                sourceComponent: VerificationLabel {
-                    trustStatus: root.trustStatus
-                    height: compact ? 10 : 16
-                    width: compact ? 10 : 16
-                }
-                active: root.trustStatus !== Constants.trustStatus.unknown && !root.isCurrentUser
-                visible: active
+            StatusContactVerificationIcons {
+                Layout.alignment: Qt.AlignVCenter
+                visible: !root.isCurrentUser
+                isContact: root.isContact
+                trustIndicator: root.trustStatus
             }
 
             Loader {

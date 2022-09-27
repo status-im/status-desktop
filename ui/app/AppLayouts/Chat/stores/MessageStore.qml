@@ -1,7 +1,5 @@
-import QtQuick 2.13
+import QtQuick 2.14
 import utils 1.0
-
-import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 QtObject {
     id: root
@@ -172,7 +170,7 @@ QtObject {
 
     function interpretMessage(msg) {
         if (msg.startsWith("/shrug")) {
-            return  msg.replace("/shrug", "") + " ¯\\\\\\_(ツ)\\_/¯"
+            return msg.replace("/shrug", "") + " ¯\\\\\\_(ツ)\\_/¯"
         }
         if (msg.startsWith("/tableflip")) {
             return msg.replace("/tableflip", "") + " (╯°□°）╯︵ ┻━┻"

@@ -10,6 +10,8 @@ import StatusQ.Core.Theme 0.1
 Dialog {
     id: root
 
+    property string subtitle
+
     anchors.centerIn: Overlay.overlay
 
     padding: 16
@@ -25,8 +27,9 @@ Dialog {
     background: StatusDialogBackground {}
 
     header: StatusDialogHeader {
-        visible: root.title
+        visible: root.title || root.subtitle
         headline.title: root.title
+        headline.subtitle: root.subtitle
         actions.closeButton.onClicked: root.close()
     }
 

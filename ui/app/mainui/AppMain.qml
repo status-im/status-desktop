@@ -84,13 +84,19 @@ Item {
                 })
             return downloadPage
         }
+
         onOpenProfilePopupRequested: {
-            var popup = profilePopupComponent.createObject(appMain);
-            if (parentPopup) {
-                popup.parentPopup = parentPopup;
-            }
-            popup.openPopup(publicKey, state);
-            Global.profilePopupOpened = true;
+            Global.openPopup(profilePopupComponent, {publicKey: publicKey, parentPopup: parentPopup})
+            Global.profilePopupOpened = true
+        }
+        onOpenNicknamePopupRequested: {
+            Global.openPopup(nicknamePopupComponent, {publicKey: publicKey, nickname: nickname, "header.subTitle": subtitle})
+        }
+        onBlockContactRequested: {
+            Global.openPopup(blockContactConfirmationComponent, {contactName: contactName, contactAddress: publicKey})
+        }
+        onUnblockContactRequested: {
+            Global.openPopup(unblockContactConfirmationComponent, {contactName: contactName, contactAddress: publicKey})
         }
 
         onOpenActivityCenterPopupRequested: {
@@ -106,28 +112,30 @@ Item {
         onDisplayToastMessage: {
             appMain.rootStore.mainModuleInst.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url);
         }
-        onOpenEditDisplayNamePopup: {
-            var popup = displayNamePopupComponent.createObject(appMain)
-            popup.open()
-        }
+        onOpenEditDisplayNamePopup: Global.openPopup(displayNamePopupComponent)
     }
 
     function changeAppSectionBySectionId(sectionId) {
         mainModule.setActiveSectionById(sectionId)
     }
 
-    property Component backupSeedModalComponent: BackupSeedModal {
-        id: backupSeedModal
-        anchors.centerIn: parent
-        privacyStore: appMain.rootStore.profileSectionStore.privacyStore
-        onClosed: destroy()
+    Component {
+        id: backupSeedModalComponent
+        BackupSeedModal {
+            anchors.centerIn: parent
+            privacyStore: appMain.rootStore.profileSectionStore.privacyStore
+            onClosed: destroy()
+        }
     }
 
-    property Component displayNamePopupComponent: DisplayNamePopup {
-        anchors.centerIn: parent
-        profileStore: appMain.rootStore.profileSectionStore.profileStore
-        onClosed: {
-            destroy()
+    Component {
+        id: displayNamePopupComponent
+        DisplayNamePopup {
+            anchors.centerIn: parent
+            profileStore: appMain.rootStore.profileSectionStore.profileStore
+            onClosed: {
+                destroy()
+            }
         }
     }
 
@@ -164,21 +172,24 @@ Item {
         }
     }
 
-    property Component profilePopupComponent: ProfilePopup {
-        id: profilePopup
-        anchors.centerIn: parent
-        profileStore: appMain.rootStore.profileSectionStore.profileStore
-        contactsStore: appMain.rootStore.profileSectionStore.contactsStore
-        onClosed: {
-            if  (profilePopup.parentPopup) {
-                profilePopup.parentPopup.close();
+    Component {
+        id: profilePopupComponent
+        ProfileDialog {
+            id: profilePopup
+            profileStore: appMain.rootStore.profileSectionStore.profileStore
+            contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+            onClosed: {
+                if (profilePopup.parentPopup) {
+                    profilePopup.parentPopup.close()
+                }
+                Global.profilePopupOpened = false
+                destroy()
             }
-            Global.profilePopupOpened = false;
-            destroy();
         }
     }
 
-    property Component changeProfilePicComponent: Component {
+    Component {
+        id: changeProfilePicComponent
         ImageCropWorkflow {
             title: qsTr("Profile Picture")
             acceptButtonText: qsTr("Make this my Profile Pic")
@@ -636,7 +647,6 @@ Item {
                         }
                     }
                 }
-
             }
 
             Item {
@@ -711,8 +721,6 @@ Item {
 
                     ChatLayout {
                         id: chatLayoutContainer
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
 
                         chatView.emojiPopup: statusEmojiPopup
 
@@ -955,6 +963,44 @@ Item {
             }
         }
 
+        Component {
+            id: nicknamePopupComponent
+            NicknamePopup {
+                onEditDone: {
+                    if (nickname !== newNickname) {
+                        appMain.rootStore.contactStore.changeContactNickname(publicKey, newNickname)
+                        Global.nickNameChanged(publicKey, newNickname)
+                    }
+                    close()
+                }
+                onClosed: destroy()
+            }
+        }
+
+        Component {
+            id: unblockContactConfirmationComponent
+            UnblockContactConfirmationDialog {
+                onUnblockButtonClicked: {
+                    appMain.rootStore.contactStore.unblockContact(contactAddress)
+                    Global.contactUnblocked(contactAddress)
+                    close()
+                }
+                onClosed: destroy()
+            }
+        }
+
+        Component {
+            id: blockContactConfirmationComponent
+            BlockContactConfirmationDialog {
+                onBlockButtonClicked: {
+                    appMain.rootStore.contactStore.blockContact(contactAddress)
+                    Global.contactBlocked(contactAddress)
+                    close()
+                }
+                onClosed: destroy()
+            }
+        }
+
         // Add SendModal here as it is used by the Wallet as well as the Browser
         Loader {
             id: sendModal
@@ -1183,8 +1229,8 @@ Item {
         } catch (e) {
             console.error('Could not parse the whitelist for sites', e)
         }
+        Global.privacyModuleInst = appMain.rootStore.profileSectionStore.privacyStore.privacyModule
         Global.settingsHasLoaded();
-        Global.errorSound = errorSound;
     }
 
     Loader {

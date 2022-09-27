@@ -200,7 +200,7 @@ SettingsContentBase {
 
             Connections {
                 target: Global
-                onSettingsLoaded: {
+                function onSettingsLoaded() {
                     generalColumn.populatePreviewableSites()
                 }
             }

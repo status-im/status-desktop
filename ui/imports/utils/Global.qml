@@ -38,7 +38,16 @@ Item {
     signal openCreateChatView()
     signal closeCreateChatView()
 
-    signal openProfilePopupRequested(string publicKey, var parentPopup, string state)
+    signal openProfilePopupRequested(string publicKey, var parentPopup)
+
+    signal openNicknamePopupRequested(string publicKey, string nickname, string subtitle)
+    signal nickNameChanged(string publicKey, string nickname)
+
+    signal blockContactRequested(string publicKey, string contactName)
+    signal contactBlocked(string publicKey)
+    signal unblockContactRequested(string publicKey, string contactName)
+    signal contactUnblocked(string publicKey)
+
     signal openChangeProfilePicPopup()
     signal displayToastMessage(string title, string subTitle, string icon, bool loading, int ephNotifType, string url)
     signal openEditDisplayNamePopup()
@@ -50,7 +59,7 @@ Item {
             userPublicKey: publicKey,
             userDisplayName: contactDetails.displayName,
             userIcon: contactDetails.largeImage,
-            userIsEnsVerified: contactDetails.ensVerified,
+            userIsEnsVerified: contactDetails.ensVerified
         })
     }
 
@@ -61,8 +70,56 @@ Item {
                          })
     }
 
-    function openProfilePopup(publicKey, parentPopup, state = "") {
-        openProfilePopupRequested(publicKey, parentPopup, state);
+    function openSendIDRequestPopup(publicKey) {
+        const contactDetails = Utils.getContactDetailsAsJson(publicKey);
+        return openPopup(sendIDRequestPopupComponent, {
+            userPublicKey: publicKey,
+            userDisplayName: contactDetails.displayName,
+            userIcon: contactDetails.largeImage,
+            userIsEnsVerified: contactDetails.ensVerified,
+            "header.title": qsTr("Verify %1's Identity").arg(contactDetails.displayName),
+            challengeText: qsTr("Ask a question that only the real %1 will be able to answer e.g. a question about a shared experience, or ask %1 to enter a code or phrase you have sent to them via a different communication channel (phone, post, etc...).").arg(contactDetails.displayName),
+            buttonText: qsTr("Send verification request")
+        })
+    }
+
+    function openIncomingIDRequestPopup(publicKey) {
+        try {
+            const request = appMain.rootStore.profileSectionStore.contactsStore.getVerificationDetailsFromAsJson(publicKey)
+            return openPopup(contactVerificationRequestPopupComponent, {
+                                 senderPublicKey: request.from,
+                                 senderDisplayName: request.displayName,
+                                 senderIcon: request.icon,
+                                 challengeText: request.challenge,
+                                 responseText: request.response,
+                                 messageTimestamp: request.requestedAt,
+                                 responseTimestamp: request.repliedAt
+                             })
+        } catch (e) {
+            console.error("Error getting or parsing verification data", e)
+        }
+    }
+
+    function openOutgoingIDRequestPopup(publicKey) {
+        try {
+            const verificationDetails = appMain.rootStore.profileSectionStore.contactsStore.getSentVerificationDetailsAsJson(publicKey)
+            return openPopup(contactOutgoingVerificationRequestPopupComponent, {
+                                 userPublicKey: publicKey,
+                                 verificationStatus: verificationDetails.requestStatus,
+                                 verificationChallenge: verificationDetails.challenge,
+                                 verificationResponse: verificationDetails.response,
+                                 verificationResponseDisplayName: verificationDetails.displayName,
+                                 verificationResponseIcon: verificationDetails.icon,
+                                 verificationRequestedAt: verificationDetails.requestedAt,
+                                 verificationRepliedAt: verificationDetails.repliedAt
+                             })
+        } catch (e) {
+            console.error("Error getting or parsing verification data", e)
+        }
+    }
+
+    function openProfilePopup(publicKey, parentPopup) {
+        openProfilePopupRequested(publicKey, parentPopup)
     }
 
     function openActivityCenterPopup() {
@@ -145,9 +202,45 @@ Item {
             anchors.centerIn: parent
             rootStore: appMain.rootStore
             contactsStore: appMain.rootStore.contactStore
-            onClosed: {
-                destroy()
+            onClosed: destroy()
+        }
+    }
+
+    Component {
+        id: sendIDRequestPopupComponent
+        SendContactRequestModal {
+            anchors.centerIn: parent
+            onAccepted: appMain.rootStore.profileSectionStore.contactsStore.sendVerificationRequest(userPublicKey, message)
+            onClosed: destroy()
+        }
+    }
+
+    Component {
+        id: contactVerificationRequestPopupComponent
+        ContactVerificationRequestPopup {
+            onResponseSent: {
+                appMain.rootStore.profileSectionStore.contactsStore.acceptVerificationRequest(senderPublicKey, response)
             }
+            onVerificationRefused: {
+                appMain.rootStore.profileSectionStore.contactsStore.declineVerificationRequest(senderPublicKey)
+            }
+            onClosed: destroy()
+        }
+    }
+
+    Component {
+        id: contactOutgoingVerificationRequestPopupComponent
+        OutgoingContactVerificationRequestPopup {
+            onVerificationRequestCanceled: {
+                appMain.rootStore.profileSectionStore.contactsStore.cancelVerificationRequest(userPublicKey)
+            }
+            onUntrustworthyVerified: {
+                appMain.rootStore.profileSectionStore.contactsStore.verifiedUntrustworthy(userPublicKey)
+            }
+            onTrustedVerified: {
+                appMain.rootStore.profileSectionStore.contactsStore.verifiedTrusted(userPublicKey)
+            }
+            onClosed: destroy()
         }
     }
 }

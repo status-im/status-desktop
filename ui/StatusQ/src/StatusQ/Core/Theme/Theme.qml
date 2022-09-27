@@ -14,7 +14,7 @@ QtObject {
         FontSizeXXL
     }
 
-    property QtObject palette: StatusLightTheme {}
+    property ThemePalette palette: StatusLightTheme {}
 
     property int primaryTextFontSize: 15
     property int secondaryTextFontSize: 14

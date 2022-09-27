@@ -181,7 +181,6 @@ ColumnLayout {
                 visible: communitiesRepeater.count == 0
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 15
                 color: Theme.palette.directColor1
                 text: qsTr("You haven't joined any communities yet")
             }
@@ -204,7 +203,6 @@ ColumnLayout {
                 visible: accountsRepeater.count == 0
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 15
                 color: Theme.palette.directColor1
                 text: qsTr("You don't have any wallet accounts yet")
             }
@@ -233,5 +231,4 @@ ColumnLayout {
             }
         }
     }
-
 }

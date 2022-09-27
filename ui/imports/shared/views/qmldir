@@ -7,7 +7,7 @@ TransactionPreview 1.0 TransactionPreview.qml
 TransactionSigner 1.0 TransactionSigner.qml
 TransactionStackView 1.0 TransactionStackView.qml
 PasswordView 1.0 PasswordView.qml
-ProfileView 1.0 ProfileView.qml
+ProfileDialogView 1.0 ProfileDialogView.qml
 AssetsView 1.0 AssetsView.qml
 HistoryView 1.0 HistoryView.qml
 AssetsDetailView 1.0 AssetsDetailView.qml

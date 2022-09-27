@@ -760,6 +760,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     requestStatus = self.getVerificationRequestFrom(publicKey).status.int
   let jsonObj = %* {
     "displayName": name,
+    "optionalName": self.controller.getContactDetails(contact.id).optionalName, # original display name, if renamed
     "displayIcon": contact.image.thumbnail,
     "publicKey": contact.id,
     "name": contact.name,

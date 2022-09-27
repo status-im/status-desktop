@@ -18,15 +18,18 @@ StatusModal {
     anchors.centerIn: parent
 
     header.title: qsTr("Nickname")
+    header.subTitleElide: Text.ElideMiddle
 
-    property alias nickname: nicknameInput.text
+    /*required*/ property string publicKey
+    property string nickname
+
     readonly property int nicknameLength: nicknameInput.text.length
     readonly property int maxNicknameLength: 32
 
     signal editDone(string newNickname)
 
     onOpened: {
-        nicknameInput.forceActiveFocus(Qt.MouseFocusReason);
+        nicknameInput.input.edit.forceActiveFocus()
     }
 
     contentItem: Item {
@@ -51,9 +54,9 @@ StatusModal {
             StatusInput {
                 id: nicknameInput
                 placeholderText: qsTr("Nickname")
-
+                input.clearable: true
                 width: parent.width
-
+                text: popup.nickname
                 charLimit: maxNicknameLength
                 validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
                 validators: [

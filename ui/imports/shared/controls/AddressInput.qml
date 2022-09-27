@@ -15,7 +15,7 @@ Item {
     property string ensAsyncValidationError: qsTr("ENS Username not found")
     property alias input: contactFieldAndList.chatKey
     property string selectedAddress
-    property var isValid: false
+    property bool isValid: false
     property alias isPending: contactFieldAndList.loading
     property bool isResolvedAddress: false
     property int parentWidth

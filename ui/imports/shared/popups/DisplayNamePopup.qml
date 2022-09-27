@@ -47,6 +47,6 @@ StatusModal {
         }
     ]
 
-    onOpened: { displayNameInput.input.forceActiveFocus(Qt.MouseFocusReason) }
+    onOpened: { displayNameInput.input.edit.forceActiveFocus() }
 }
 

@@ -23,7 +23,6 @@ StatusDialog {
 
     signal updateGroupChatDetails(string groupName, string groupColor, string groupImage)
 
-    anchors.centerIn: parent
     title: qsTr("Edit group name and image")
     width: 480
     height: 610
@@ -34,7 +33,7 @@ StatusDialog {
     }
 
     onOpened: {
-        groupName.forceActiveFocus(Qt.MouseFocusReason)
+        groupName.input.edit.forceActiveFocus()
         groupName.text = root.activeGroupName.substring(0, d.nameCharLimit)
 
         colorSelectionGrid.selectedColor = activeGroupColor

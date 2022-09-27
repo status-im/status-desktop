@@ -37,9 +37,7 @@ ModalPopup {
                 Global.openProfilePopup(model.pubKey)
             }
             onBlockContactActionTriggered: {
-                blockContactConfirmationDialog.contactName = model.displayName
-                blockContactConfirmationDialog.contactAddress = model.pubKey
-                blockContactConfirmationDialog.open()
+                Global.blockContactRequested(model.pubKey, model.displayName)
             }
             onAcceptClicked: {
                 popup.store.acceptContactRequest(model.pubKey)
@@ -53,14 +51,6 @@ ModalPopup {
     footer: Item {
         width: parent.width
         height: children[0].height
-
-        BlockContactConfirmationDialog {
-            id: blockContactConfirmationDialog
-            onBlockButtonClicked: {
-                popup.store.blockContact(blockContactConfirmationDialog.contactAddress)
-                blockContactConfirmationDialog.close()
-            }
-        }
 
         ConfirmationDialog {
             id: declineAllDialog

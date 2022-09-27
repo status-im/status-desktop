@@ -2,8 +2,6 @@ import QtQuick 2.13
 
 import StatusQ.Controls 0.1
 
-import shared.stores 1.0
-
 import utils 1.0
 
 StatusRoundButton {
@@ -32,16 +30,6 @@ StatusRoundButton {
         id: toolTip
         text: qsTr("Copied!")
         orientation: tooltipUnder ? StatusToolTip.Orientation.Bottom: StatusToolTip.Orientation.Top
-    }
-
-    Timer {
-        id: hideTimer
-        interval: 2000
-        running: toolTip.visible
-        onTriggered: {
-            toolTip.visible = false;
-        }
+        timeout: 2000
     }
 }
-
-

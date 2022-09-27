@@ -34,7 +34,7 @@ StatusModal {
             root.channels = []
             root.store.prepareEditCategoryModel(categoryId);
         }
-        root.contentItem.categoryName.input.forceActiveFocus(Qt.MouseFocusReason)
+        root.contentItem.categoryName.input.edit.forceActiveFocus()
     }
     onClosed: destroy()
 
@@ -42,9 +42,7 @@ StatusModal {
         return contentItem.categoryName.valid
     }
 
-    header.title: isEdit ?
-            qsTr("Edit category") :
-            qsTr("New category")
+    header.title: isEdit ? qsTr("Edit category") : qsTr("New category")
 
     contentItem: Column {
         property alias categoryName: nameInput
@@ -59,6 +57,7 @@ StatusModal {
             anchors.leftMargin: 16
 
             input.edit.objectName: "createOrEditCommunityCategoryNameInput"
+            input.clearable: true
             label: qsTr("Category title")
             charLimit: maxCategoryNameLength
             placeholderText: qsTr("Name the category")
@@ -123,6 +122,8 @@ StatusModal {
                         anchors.horizontalCenter: parent.horizontalCenter
                         height: visible ? implicitHeight : 0
                         title: "#" + model.name
+                        asset.width: 30
+                        asset.height: 30
                         asset.emoji: model.emoji
                         asset.color: model.color
                         asset.imgIsIdenticon: false
