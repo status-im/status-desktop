@@ -41,7 +41,6 @@ StatusSectionLayout {
     property var community
     property var chatCommunitySectionModule
     property bool hasAddedContacts: false
-    property Component membershipRequestPopup
 
     readonly property string filteredSelectedTags: {
         if (!community || !community.tags)

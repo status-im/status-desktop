@@ -21,6 +21,7 @@ StatusScrollView {
     default property alias content: column.children
 
     implicitHeight: 520
+    clip: false
 
     ColumnLayout {
         id: column

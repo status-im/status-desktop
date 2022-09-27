@@ -338,6 +338,8 @@ StatusStackModal {
 
             readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid
 
+            clip: false
+
             ColumnLayout {
                 id: generalViewLayout
                 width: generalView.availableWidth

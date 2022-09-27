@@ -64,6 +64,7 @@ StatusScrollView {
 
     padding: 0
     contentWidth: column.width
+    clip: false
 
     QtObject {
         id: d

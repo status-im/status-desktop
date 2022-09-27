@@ -13,6 +13,8 @@ import StatusQ.Popups 0.1
 import utils 1.0
 import shared.popups 1.0
 
+import SortFilterProxyModel 0.2
+
 StatusModal {
     id: root
 
@@ -71,56 +73,54 @@ StatusModal {
             bottomPadding: 8
         }
 
-        StatusScrollView {
-            id: scrollView
-
+        Item {
             width: root.width
-            height: Math.min(content.height, 300)
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            property ScrollBar vScrollBar: ScrollBar.vertical
-
-            contentHeight: content.height
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-
-            function scrollBackUp() {
-                vScrollBar.setPosition(0)
-            }
+            height: Math.min(communityChannelList.contentHeight, 300)
 
             Item {
-                id: content
-                width: parent.width
-                height: channelsLabel.height + communityChannelList.height
-
-                Item {
-                    id: channelsLabel
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width - 32
-                    height: 34
-                    StatusBaseText {
-                        text: qsTr("Channels")
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 4
-                        font.pixelSize: 15
-                        color: Theme.palette.baseColor1
-                    }
-                }
+                anchors.fill: parent
+                anchors.margins: -8
+                clip: true
 
                 StatusListView {
                     id: communityChannelList
                     objectName: "createOrEditCommunityCategoryChannelList"
 
-                    anchors.top: channelsLabel.bottom
-                    height: childrenRect.height
-                    width: parent.width
-                    model: isEdit ? root.store.chatCommunitySectionModule.editCategoryChannelsModel : root.store.chatCommunitySectionModule.model
-                    interactive: false
+                    anchors.fill: parent
+                    anchors.margins: -parent.anchors.margins
+                    displayMarginBeginning: anchors.margins
+                    displayMarginEnd: anchors.margins
+                    clip: false
+
+                    model: SortFilterProxyModel {
+                        sourceModel: root.isEdit ? root.store.chatCommunitySectionModule.editCategoryChannelsModel
+                                                 : root.store.chatCommunitySectionModule.model
+                        // filter out categories
+                        filters: ValueFilter {
+                            roleName: "type"
+                            value: Constants.chatType.unknown
+                            inverted: true
+                        }
+                    }
+
+                    header: Item {
+                        id: channelsLabel
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width - 32
+                        height: 34
+                        StatusBaseText {
+                            text: qsTr("Channels")
+                            anchors.bottom: parent.bottom
+                            anchors.bottomMargin: 4
+                            font.pixelSize: 15
+                            color: Theme.palette.baseColor1
+                        }
+                    }
 
                     delegate: StatusListItem {
                         readonly property bool checked: channelItemCheckbox.checked
                         objectName: model.name
                         anchors.horizontalCenter: parent.horizontalCenter
-                        visible: model.type != Constants.chatType.unknown
                         height: visible ? implicitHeight : 0
                         title: "#" + model.name
                         asset.emoji: model.emoji

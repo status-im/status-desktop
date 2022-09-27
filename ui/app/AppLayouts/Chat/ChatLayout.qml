@@ -55,7 +55,6 @@ StackLayout {
         active: root.rootStore.chatCommunitySectionModule.isCommunity()
 
         sourceComponent: CommunitySettingsView {
-            membershipRequestPopup: membershipRequestPopupComponent
             rootStore: root.rootStore
             hasAddedContacts: root.contactsStore.myContactsModel.count > 0
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule

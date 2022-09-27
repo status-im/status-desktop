@@ -85,25 +85,45 @@ StatusModal {
             clip: true
         }
 
-        StatusAnimatedStack {
-            id: stackLayout
+        Item {
+            anchors.left: parent.left
+            anchors.right: parent.right
             anchors.top: subHeaderLoader.bottom
-            anchors.topMargin: subHeaderLoader.item && subHeaderLoader.item.visible ? root.subHeaderPadding : 0
             anchors.bottom: parent.bottom
-            width: root.availableWidth
-            visible: !replaceItem
-            clip: true
-        }
 
-        Loader {
-            id: replaceLoader
-            anchors.fill: parent
-            visible: item
             clip: true
-            onItemChanged: {
-                root.rightButtons = item ? item.rightButtons : [ nextButton, finishButton ]
-                if (!item && root.itemsCount == 0) {
-                    root.close();
+
+            anchors.bottomMargin: -root.padding
+            anchors.leftMargin: -root.leftPadding
+            anchors.rightMargin: -root.rightPadding
+            anchors.topMargin: subHeaderLoader.item && subHeaderLoader.item.visible ? 0 : -root.padding
+
+            StatusAnimatedStack {
+                id: stackLayout
+
+                anchors.fill: parent
+
+                anchors.bottomMargin: root.padding
+                anchors.leftMargin: root.leftPadding
+                anchors.rightMargin: root.rightPadding
+                anchors.topMargin: (subHeaderLoader.item && subHeaderLoader.item.visible ? root.subHeaderPadding : root.padding)
+
+                visible: !replaceItem
+                clip: false
+            }
+
+
+            Loader {
+                id: replaceLoader
+                anchors.fill: parent
+                anchors.margins: root.padding
+                visible: item
+                clip: false
+                onItemChanged: {
+                    root.rightButtons = item ? item.rightButtons : [ nextButton, finishButton ]
+                    if (!item && root.itemsCount == 0) {
+                        root.close();
+                    }
                 }
             }
         }
