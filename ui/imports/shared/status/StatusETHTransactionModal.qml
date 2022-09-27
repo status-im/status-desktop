@@ -57,7 +57,7 @@ ModalPopup {
             root.close();
         } catch (e) {
             console.error('Error sending the transaction', e)
-            sendingError.text = "Error sending the transaction: " + e.message;
+            sendingError.text = qsTr("Error sending the transaction: %1").arg(e.message);
             return sendingError.open()
         }
     }

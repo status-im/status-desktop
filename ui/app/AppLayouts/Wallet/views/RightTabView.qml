@@ -52,7 +52,6 @@ Item {
             }
 
             ColumnLayout {
-                anchors.fill: parent
                 WalletHeader {
                     Layout.fillWidth: true
                     locale: RootStore.locale

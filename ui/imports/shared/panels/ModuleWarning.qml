@@ -8,9 +8,6 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-
 Item {
     id: root
 
@@ -29,7 +26,7 @@ Item {
     signal clicked()
     signal closeClicked()
     signal showStarted()
-    signal showFinihsed()
+    signal showFinished()
     signal hideStarted()
     signal hideFinished()
 
@@ -73,7 +70,7 @@ Item {
             root.showStarted()
         }
         onFinished: {
-            root.showFinihsed()
+            root.showFinished()
         }
     }
 
@@ -134,7 +131,6 @@ Item {
                 text: root.text
                 font.pixelSize: 13
                 font.weight: Font.Medium
-                anchors.verticalCenter: parent.verticalCenter
                 color: Theme.palette.indirectColor1
                 linkColor: color
                 onLinkActivated: root.linkActivated(link)

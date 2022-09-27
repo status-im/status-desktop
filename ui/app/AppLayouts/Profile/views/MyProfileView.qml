@@ -24,6 +24,7 @@ SettingsContentBase {
     property WalletStore walletStore
     property ProfileStore profileStore
     property PrivacyStore privacyStore
+    property ContactsStore contactsStore
 
     titleRowComponentLoader.sourceComponent: StatusButton {
         objectName: "profileSettingsChangePasswordButton"
@@ -35,8 +36,14 @@ SettingsContentBase {
     dirty: settingsView.dirty
     saveChangesButtonEnabled: settingsView.valid
 
-    onResetChangesClicked: settingsView.reset()
-    onSaveChangesClicked: settingsView.save()
+    onResetChangesClicked: {
+        settingsView.reset()
+        profilePreview.reload()
+    }
+    onSaveChangesClicked: {
+        settingsView.save()
+        profilePreview.reload()
+    }
 
     ColumnLayout {
         id: layout
@@ -73,6 +80,7 @@ SettingsContentBase {
                 id: profilePreview
                 Layout.fillWidth: true
                 profileStore: root.profileStore
+                contactsStore: root.contactsStore
             }
         }
 

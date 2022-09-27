@@ -10,10 +10,10 @@ Item {
     height: root.visible ? implicitHeight : 0
     anchors.topMargin: Style.current.padding
     Rectangle {
-          id: separator
-          width: parent.width
-          height: 1
-          color: root.color
-          anchors.verticalCenter: parent.verticalCenter
+        id: separator
+        width: parent.width
+        height: 1
+        color: root.color
+        anchors.verticalCenter: parent.verticalCenter
     }
 }

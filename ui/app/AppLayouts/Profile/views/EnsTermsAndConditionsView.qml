@@ -64,7 +64,7 @@ Item {
                     gasPrice,
                     tipLimit,
                     overallLimit,
-                    password, 
+                    password,
                     eip1559Enabled,
                 )
             }

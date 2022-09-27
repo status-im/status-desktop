@@ -1,6 +1,5 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Dialogs 1.3
 
 import utils 1.0
 
@@ -37,9 +36,6 @@ StatusModal {
     onOpened: {
         verificationResponse.input.edit.forceActiveFocus(Qt.MouseFocusReason)
     }
-    onClosed: {
-        root.destroy();
-    }
 
     contentItem: Item {
         anchors.left: parent.left
@@ -69,6 +65,7 @@ StatusModal {
             messageTimestamp: root.messageTimestamp
             senderId: root.senderPublicKey
             senderDisplayName: root.senderDisplayName
+            senderIsEnsVerified: Utils.isEnsVerified(root.senderPublicKey)
             senderIcon: root.senderIcon
             messageText: root.challengeText
             messageContentType: Constants.messageContentType.messageType
@@ -100,7 +97,8 @@ StatusModal {
             shouldRepeatHeader: true
             messageTimestamp: root.responseTimestamp
             senderId: userProfile.pubKey
-            senderDisplayName: userProfile.name
+            senderDisplayName: userProfile.displayName
+            senderIsEnsVerified: !!userProfile.ensName
             senderIcon: userProfile.icon
             messageText: root.responseText
             messageContentType: Constants.messageContentType.messageType
@@ -115,9 +113,9 @@ StatusModal {
             wrapMode: Text.WordWrap
             anchors.top: responseMessage.bottom
             anchors.topMargin: 58
-            text: qsTr("You're answer has been sent to %1.").arg(root.senderDisplayName)
+            text: qsTr("Your answer has been sent to %1.").arg(root.senderDisplayName)
             font.pixelSize: 13
-            horizontalAlignment:  Text.AlignHCenter
+            horizontalAlignment: Text.AlignHCenter
         }
     }
 

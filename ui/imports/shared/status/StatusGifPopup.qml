@@ -63,8 +63,6 @@ Popup {
         searchBox.input.edit.forceActiveFocus()
         if (RootStore.isTenorWarningAccepted) {
             RootStore.getTrendingsGifs()
-        } else {
-            confirmationPopupLoader.active = true
         }
     }
 
@@ -202,7 +200,7 @@ Popup {
         sourceComponent: ConfirmationPopup {
             visible: true
         }
-        active: false
+        active: !RootStore.isTenorWarningAccepted
     }
 
     Component {

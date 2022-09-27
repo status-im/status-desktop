@@ -77,7 +77,7 @@ StatusModal {
                 validators: [
                     StatusRegularExpressionValidator {
                         regularExpression: /^#(?:[0-9a-fA-F]{3}){1,2}$/
-                        errorMessage: qsTr("This is not a valid color")
+                        errorMessage: qsTr("This is not a valid colour")
                     }
                 ]
                 validationMode: StatusInput.ValidationMode.Always
@@ -115,7 +115,7 @@ StatusModal {
             }
 
             StatusBaseText {
-                text: qsTr("Standart colours")
+                text: qsTr("Standard colours")
                 font.pixelSize: 15
             }
 

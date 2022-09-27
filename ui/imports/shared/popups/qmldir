@@ -4,6 +4,7 @@ SettingsDirtyToastMessage 1.0 SettingsDirtyToastMessage.qml
 ConfirmationDialog 1.0 ConfirmationDialog.qml
 CommunityIntroDialog 1.0 CommunityIntroDialog.qml
 ContactVerificationRequestPopup 1.0 ContactVerificationRequestPopup.qml
+OutgoingContactVerificationRequestPopup 1.0 OutgoingContactVerificationRequestPopup.qml
 DownloadModal 1.0 DownloadModal.qml
 DownloadPage 1.0 DownloadPage.qml
 InviteFriendsPopup 1.0 InviteFriendsPopup.qml
@@ -17,7 +18,7 @@ UnblockContactConfirmationDialog 1.0 UnblockContactConfirmationDialog.qml
 UserStatusContextMenu 1.0 UserStatusContextMenu.qml
 SignTransactionModal 1.0 SignTransactionModal.qml
 SelectAccountModal 1.0 SelectAccountModal.qml
-ProfilePopup 1.0 ProfilePopup.qml
+ProfileDialog 1.0 ProfileDialog.qml
 ImageCropWorkflow 1.0 ImageCropWorkflow.qml
 ImportCommunityPopup 1.0 ImportCommunityPopup.qml
 DisplayNamePopup 1.0 DisplayNamePopup.qml

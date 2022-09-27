@@ -58,7 +58,7 @@ SettingsContentBase {
                 StatusListItem {
                     property string lowerCaseSearchString: searchBox.text.toLowerCase()
 
-                    width: parent.width
+                    width: ListView.view.width
                     height: visible ? implicitHeight : 0
                     visible: lowerCaseSearchString === "" ||
                              model.itemId.toLowerCase().includes(lowerCaseSearchString) ||

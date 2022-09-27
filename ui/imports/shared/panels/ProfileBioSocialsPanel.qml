@@ -1,4 +1,5 @@
 import QtQuick 2.14
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 import QtQml.Models 2.14
 
@@ -10,16 +11,13 @@ import "../controls"
 
 import SortFilterProxyModel 0.2
 
-Item {
+Control {
     id: root
 
     property string bio
     property string userSocialLinksJson
 
     onUserSocialLinksJsonChanged: d.buildSocialLinksModel()
-
-    implicitWidth: layout.implicitWidth
-    implicitHeight: layout.implicitHeight
 
     QtObject {
         id: d
@@ -83,11 +81,7 @@ Item {
         ]
     }
 
-    ColumnLayout {
-        id: layout
-
-        anchors.fill: parent
-
+    contentItem: ColumnLayout {
         spacing: 20
 
         StatusBaseText {
@@ -95,15 +89,15 @@ Item {
             visible: text !== ""
             text: root.bio
             wrapMode: Text.Wrap
+            font.weight: Font.Medium
+            lineHeight: 1.2
         }
 
-        Flow {
+        StatusCenteredFlow {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.leftMargin: 10
-            Layout.rightMargin: 10
 
-            spacing: 16
+            spacing: Style.current.halfPadding
             visible: repeater.count > 0
 
             Repeater {

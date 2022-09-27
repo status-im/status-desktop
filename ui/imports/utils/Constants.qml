@@ -280,16 +280,6 @@ QtObject {
         readonly property int blockedContacts: 6
     }
 
-    readonly property QtObject profilePopupStates: QtObject {
-        readonly property string openNickname: "openNickname"
-        readonly property string contactRequest: "contactRequest"
-        readonly property string blockUser: "blockUser"
-        readonly property string unblockUser: "unblockUser"
-        readonly property string verifyIdentity: "verifyIdentity"
-        readonly property string showVerificationPendingSection: "showVerificationPendingSection"
-        readonly property string respondToPendingRequest: "respondToPendingRequest"
-    }
-
     readonly property QtObject validators: QtObject {
         readonly property list<StatusValidator> displayName: [
             StatusMinLengthValidator {
@@ -567,7 +557,7 @@ QtObject {
     readonly property int maxNumberOfPins: 3
 
     readonly property var acceptedImageExtensions: [".png", ".jpg", ".jpeg", ".svg", ".gif"]
-    readonly property var acceptedDragNDropImageExtensions: [".png", ".jpg", ".jpeg", ".heif", "tif", ".tiff"]
+    readonly property var acceptedDragNDropImageExtensions: [".png", ".jpg", ".jpeg", ".heif", ".tif", ".tiff"]
 
     readonly property string mentionSpanTag: `<span style="background-color: ${Style.current.mentionBgColor};"><a style="color:${Style.current.mentionColor};text-decoration:none" href='http://'>`
 

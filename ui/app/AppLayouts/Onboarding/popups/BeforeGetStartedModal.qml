@@ -14,7 +14,6 @@ StatusDialog {
     id: root
 
     width: 480
-    anchors.centerIn: parent
     closePolicy: Popup.NoAutoClose
 
     header: StatusDialogHeader {

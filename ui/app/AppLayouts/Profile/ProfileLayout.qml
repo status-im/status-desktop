@@ -38,10 +38,6 @@ StatusSectionLayout {
         }
     }
 
-    Component.onCompleted: {
-        Global.privacyModuleInst = store.privacyStore.privacyModule
-    }
-
     QtObject {
         id: d
 
@@ -106,6 +102,7 @@ StatusSectionLayout {
                 walletStore: root.store.walletStore
                 profileStore: root.store.profileStore
                 privacyStore: root.store.privacyStore
+                contactsStore: root.store.contactsStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth
             }

@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.14
 import QtGraphicalEffects 1.14
 
 import shared.views 1.0 as SharedViews
@@ -7,6 +7,7 @@ import StatusQ.Core.Theme 0.1
 
 Item {
     property alias profileStore: profilePreview.profileStore
+    property alias contactsStore: profilePreview.contactsStore
 
     implicitHeight: profilePreview.implicitHeight 
                         + profilePreview.anchors.topMargin 
@@ -16,10 +17,15 @@ Item {
                         + profilePreview.anchors.leftMargin 
                         + profilePreview.anchors.rightMargin
 
-    SharedViews.ProfileView {
+    function reload() {
+        profilePreview.reload()
+    }
+
+    SharedViews.ProfileDialogView {
         id: profilePreview
         anchors.fill: parent
         anchors.margins: 24
+        readOnly: true
     }
 
     DropShadow {

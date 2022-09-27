@@ -44,6 +44,7 @@ Item {
 
         onItemClicked: {
             appSearch.store.setSearchLocation(firstLevelItemValue, secondLevelItemValue)
+            searchPopup.forceActiveFocus()
             if(searchPopup.searchText !== "")
                 searchMessages(searchPopup.searchText)
         }

@@ -57,10 +57,14 @@ Item {
 
     onCenteredChanged: flow.onPositioningComplete()
 
+    implicitHeight: flow.implicitHeight
+
     Flow {
         id: flow
 
-        anchors.fill: parent
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
 
         onPositioningComplete: {
             if (!root.centered || children.length === 0)

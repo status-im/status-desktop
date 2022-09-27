@@ -580,7 +580,7 @@ QtObject {
 
     function isEnsVerified(publicKey, getVerificationRequest=true) {
         if (!publicKey)
-          return false
+            return false
         return getContactDetailsAsJson(publicKey, getVerificationRequest).ensVerified
     }
 

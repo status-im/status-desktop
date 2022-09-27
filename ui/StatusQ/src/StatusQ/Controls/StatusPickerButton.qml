@@ -14,7 +14,7 @@ Button {
     property var type: StatusPickerButton.Type.Next
 
     /*!
-       \qmlproperty StatusAssetSettings StatusPickerButton::image
+       \qmlproperty StatusAssetSettings StatusPickerButton::asset
        This property holds the image settings information.
     */
     property StatusAssetSettings asset: StatusAssetSettings {

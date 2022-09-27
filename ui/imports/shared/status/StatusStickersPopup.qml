@@ -45,7 +45,7 @@ Popup {
     }
     Connections {
         target: mainModule
-        onOnlineStatusChanged: {
+        function onOnlineStatusChanged() {
             root.close()
         }
     }

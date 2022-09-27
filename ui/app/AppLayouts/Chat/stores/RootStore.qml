@@ -401,9 +401,9 @@ QtObject {
         if (index > -1) {
             const pk = link.substring(index + 3)
             result.title = qsTr("Start a 1-on-1 chat with %1")
-                            .arg(isChatKey(pk) ? globalUtils.generateAlias(pk) : ("@" + removeStatusEns(pk)))
+                            .arg(Utils.isChatKey(pk) ? globalUtils.generateAlias(pk) : ("@" + Utils.removeStatusEns(pk)))
             result.callback = function () {
-                if (isChatKey(pk)) {
+                if (Utils.isChatKey(pk)) {
                     chatCommunitySectionModule.createOneToOneChat("", pk, "")
                 } else {
                 // Not Refactored Yet

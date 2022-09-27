@@ -173,26 +173,12 @@ StatusSectionLayout {
         }
     }
 
-    ConfirmationDialog {
-        id: removeContactConfirmationDialog
-        header.title: qsTr("Remove contact")
-        confirmationText: qsTr("Are you sure you want to remove this contact?")
-        onConfirmButtonClicked: {
-            let pk = chatColumn.contactToRemove
-            if (Utils.getContactDetailsAsJson(pk).isAdded) {
-                root.contactsStore.removeContact(pk)
-            }
-            removeContactConfirmationDialog.parentPopup.close();
-            removeContactConfirmationDialog.close();
-        }
-    }
-
     MessageContextMenuView {
         id: quickActionMessageOptionsMenu
         store: root.rootStore
 
         onOpenProfileClicked: {
-            Global.openProfilePopup(publicKey, null, state)
+            Global.openProfilePopup(publicKey, null)
         }
         onCreateOneToOneChat: {
             Global.changeAppSectionBySectionType(Constants.appSection.chat)

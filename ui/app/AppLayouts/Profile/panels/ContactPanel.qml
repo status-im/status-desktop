@@ -70,7 +70,7 @@ StatusListItem {
     asset.isImage: asset.name.includes("data")
     asset.isLetterIdenticon: root.iconSource.toString() === ""
     ringSettings {
-        ringSpecModel: Utils.getColorHashAsJson(root.publicKey)
+        ringSpecModel: d.ensVerified ? undefined : Utils.getColorHashAsJson(root.publicKey, true)
         ringPxSize: Math.max(asset.width / 24.0)
     }
 

@@ -1,8 +1,4 @@
-import QtQuick 2.3
-import QtQuick.Controls 2.3
-import QtQuick.Controls 2.12 as QQC2
-import QtQuick.Layouts 1.3
-import Qt.labs.platform 1.1
+import QtQml.Models 2.14
 
 ListModel {
     ListElement {
@@ -58,9 +54,3 @@ ListModel {
         url: "QmY4QULmzFQ2AAbEuMvnd3Nd7qD8eWtyxiLD9CAf3kFZWU"
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/

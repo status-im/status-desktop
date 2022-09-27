@@ -81,7 +81,7 @@ StatusModal {
             }
 
             StatusBaseText {
-                text: qsTr("%1 members").arg(nbMembers)
+                text: qsTr("%n member(s)", "", nbMembers)
                 font.pixelSize: 15
                 font.weight: Font.Medium
                 color: Theme.palette.directColor1

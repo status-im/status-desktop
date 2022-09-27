@@ -10,25 +10,15 @@ import shared.controls.chat.menuItems 1.0
 
 Row {
     id: root
+    height: declineBtn.height
+    spacing: Style.current.halfPadding
+
+    property alias menuButton: menuButton
 
     signal acceptClicked()
     signal declineClicked()
     signal blockClicked()
     signal profileClicked()
-
-    height: acceptBtn.height
-    spacing: Style.current.halfPadding
-
-    StatusFlatRoundButton  {
-        id: acceptBtn
-        width: 32
-        height: 32
-        anchors.verticalCenter: parent.verticalCenter
-        icon.name: "checkmark-circle"
-        icon.color: Style.current.success
-        backgroundHoverColor: Utils.setColorAlpha(Style.current.success, 0.1)
-        onClicked: root.acceptClicked()
-    }
 
     StatusFlatRoundButton {
         id: declineBtn
@@ -41,6 +31,16 @@ Row {
         onClicked: root.declineClicked()
     }
 
+    StatusFlatRoundButton  {
+        id: acceptBtn
+        width: 32
+        height: 32
+        anchors.verticalCenter: parent.verticalCenter
+        icon.name: "checkmark-circle"
+        icon.color: Style.current.success
+        backgroundHoverColor: Utils.setColorAlpha(Style.current.success, 0.1)
+        onClicked: root.acceptClicked()
+    }
 
     StatusFlatRoundButton {
         id: menuButton
