@@ -92,6 +92,9 @@ typedef void DosQObject;
 /// A pointer to a QSettings
 typedef void DosQSettings;
 
+/// A pointer to a QTimer
+typedef void DosQTimer;
+
 /// A pointer to a QQuickImageProvider
 typedef void DosQQuickImageProvider;
 
