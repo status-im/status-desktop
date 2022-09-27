@@ -37,7 +37,7 @@ StatusSectionLayout {
     //                        {name: qsTr("Token sales"), icon: "token-sale"},
     //                        {name: qsTr("Subscriptions"), icon: "subscription"},
 
-    property var rootStore    
+    property var rootStore
     property var community
     property var chatCommunitySectionModule
     property bool hasAddedContacts: false
@@ -57,69 +57,82 @@ StatusSectionLayout {
     signal backToCommunityClicked
     signal openLegacyPopupClicked // TODO: remove me when migration to new settings is done
 
-    leftPanel: ColumnLayout {
-        anchors {
-            fill: parent
-            margins: 8
-            topMargin: 16
-            bottomMargin: 16
-        }
+    leftPanel: Item {
+        anchors.fill: parent
 
-        spacing: 16
+        ColumnLayout {
+            anchors {
+                top: parent.top
+                bottom: footer.top
+                topMargin: 16
+                bottomMargin: 16
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: parent.width - 16
+            spacing: 16
+            clip: true
 
-        StatusNavigationPanelHeadline {
-            Layout.alignment: Qt.AlignHCenter
-            text: qsTr("Settings")
-        }
+            StatusNavigationPanelHeadline {
+                Layout.alignment: Qt.AlignHCenter
+                text: qsTr("Settings")
+            }
 
-        StatusListView {
-            id: listView
+            StatusListView {
+                id: listView
 
-            Layout.fillWidth: true
-            implicitHeight: contentItem.childrenRect.height
-
-            model: root.settingsMenuModel
-            delegate: StatusNavigationListItem {
-                width: listView.width
-                title: modelData.name
-                asset.name: modelData.icon
-                selected: d.currentIndex === index
-                onClicked: d.currentIndex = index
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                model: root.settingsMenuModel
+                delegate: StatusNavigationListItem {
+                    width: listView.width
+                    title: modelData.name
+                    asset.name: modelData.icon
+                    selected: d.currentIndex === index
+                    onClicked: d.currentIndex = index
+                }
             }
         }
 
-        Item {
-            Layout.fillHeight: true
-        }
+        // TODO: remove me when migration to new settings is done. Only keep back button and anchor to it.
+        ColumnLayout {
+            id: footer
 
-        // TODO: remove me when migration to new settings is done
-        StatusBaseText {
-            Layout.alignment: Qt.AlignHCenter
-            text: qsTr("Open legacy popup (to be removed)")
-            color: Theme.palette.baseColor1
-            font.pixelSize: 10
-            font.underline: true
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.openLegacyPopupClicked()
+            anchors {
+                bottom: parent.bottom
+                bottomMargin: 16
             }
-        }
+            width: parent.width
+            spacing: 16
 
-        StatusBaseText {
-            objectName: "communitySettingsBackToCommunityButton"
-            Layout.alignment: Qt.AlignHCenter
-            text: "<- " + qsTr("Back to community")
-            color: Theme.palette.baseColor1
-            font.pixelSize: 15
-            font.underline: true
+            // TODO: remove me when migration to new settings is done
+            StatusBaseText {
+                Layout.alignment: Qt.AlignHCenter
+                text: qsTr("Open legacy popup (to be removed)")
+                color: Theme.palette.baseColor1
+                font.pixelSize: 10
+                font.underline: true
 
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.backToCommunityClicked()
-                hoverEnabled: true
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.openLegacyPopupClicked()
+                }
+            }
+
+            StatusBaseText {
+                objectName: "communitySettingsBackToCommunityButton"
+                Layout.alignment: Qt.AlignHCenter
+                text: "<- " + qsTr("Back to community")
+                color: Theme.palette.baseColor1
+                font.pixelSize: 15
+                font.underline: true
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.backToCommunityClicked()
+                    hoverEnabled: true
+                }
             }
         }
     }
