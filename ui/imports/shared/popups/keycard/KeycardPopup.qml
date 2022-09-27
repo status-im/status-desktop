@@ -81,6 +81,8 @@ StatusModal {
     }
 
     contentItem: Item {
+        objectName: "KeycardSharedPopupContent"
+
         Loader {
             id: loader
             anchors.fill: parent
@@ -485,6 +487,7 @@ StatusModal {
         },
         StatusButton {
             id: primaryButton
+            objectName: "PrimaryButton"
             height: Constants.keycard.general.footerButtonsHeight
             text: {
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {

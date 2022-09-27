@@ -160,6 +160,7 @@ Rectangle {
 
         MouseArea {
             id: sensor
+            objectName: "ExpandableItem"
             anchors.fill: parent
             onClicked: {
                 if(expandable) {
