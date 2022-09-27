@@ -37,6 +37,7 @@ StatusScrollView {
     }
 
     padding: 0
+    clip: false
 
     ColumnLayout {
         id: column

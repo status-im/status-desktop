@@ -96,12 +96,20 @@ StatusStackModal {
         }
     }
 
+    // split subHeaderPadding into clip and non-clip parts
+    subHeaderPadding: 8
+    readonly property int nonClipSubHeaderPadding: 8
+
     subHeaderItem: SubheaderTabBar {
         // Count without Acknowledgements
         steps: root.itemsCount - 1
         currentIndex: root.currentIndex - 1
         visible: root.currentIndex > 0
-        height: visible ? implicitHeight : 0
+        height: visible ? implicitHeight + nonClipSubHeaderPadding - spacing : 0
+
+        Item {
+            Layout.fillHeight: true
+        }
     }
 
     stackItems: [
