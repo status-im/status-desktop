@@ -23,7 +23,6 @@ Item {
     property var transaction
     property var sendModal
 
-    signal goBack()
 
     QtObject {
         id: d
@@ -38,23 +37,9 @@ Item {
         }
     }
 
-    StatusFlatButton {
-        id: backButton
-        anchors.top: parent.top
-        anchors.left: parent.left
-        Layout.alignment: Qt.AlignTop
-        anchors.topMargin: -Style.current.xlPadding
-        anchors.leftMargin: -Style.current.xlPadding
-        icon.name: "arrow-left"
-        icon.width: 20
-        icon.height: 20
-        text: qsTr("Activity")
-        size: StatusBaseButton.Size.Large
-        onClicked: root.goBack()
-    }
 
     StatusScrollView {
-        anchors.top: backButton.bottom
+        anchors.top: parent.top
         anchors.left: parent.left
 
         width: parent.width

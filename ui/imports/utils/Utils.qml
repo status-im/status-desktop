@@ -295,6 +295,22 @@ QtObject {
         return qsTr("%1D").arg(diffDay)
     }
 
+    function getDayMonth(value, isDDMMYYDateFormat) {
+        const formatDDMMYY = "d MMMM"
+        const formatMMDDYY = "MMMM d"
+        const currentFormat = isDDMMYYDateFormat ? formatDDMMYY : formatMMDDYY
+        var timeStamp =  checkTimestamp(value, "formatLongDate") ? Qt.formatDate(new Date(value), currentFormat) :
+                         Qt.formatDate(new Date(), currentFormat)
+        return formatShortDateStr(timeStamp)
+    }
+
+    function getMonthYear(value) {
+        const formatDDMMYY = "MMMM yyyy"
+        var timeStamp =  checkTimestamp(value, "formatLongDate") ? Qt.formatDate(new Date(value), formatDDMMYY) :
+                         Qt.formatDate(new Date(), formatDDMMYY)
+        return formatShortDateStr(timeStamp)
+    }
+
     function formatShortDate(value, isDDMMYYDateFormat) {
         const formatDDMMYY = "d MMMM yyyy"
         const formatMMDDYY = "MMMM d yyyy"

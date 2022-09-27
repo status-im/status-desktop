@@ -21,6 +21,7 @@ include async_tasks
 # Signals which may be emitted by this service:
 const SIGNAL_TOKEN_DETAILS_LOADED* = "tokenDetailsLoaded"
 const SIGNAL_TOKEN_LIST_RELOADED* = "tokenListReloaded"
+const SIGNAL_TOKEN_HISTORICAL_DATA_LOADED* = "tokenHistoricalDataLoaded"
 
 type
   TokenDetailsLoadedArgs* = ref object of Args
@@ -37,6 +38,10 @@ type
 type
   VisibilityToggled* = ref object of Args
     token*: TokenDto
+
+type
+  TokenHistoricalDataArgs* = ref object of Args
+    result*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -190,5 +195,26 @@ QtObject:
       slot: "tokenDetailsResolved",
       chainIds: chainIds,
       address: address
+    )
+    self.threadpool.start(arg)
+
+  proc tokenHistorticalDataResolved*(self: Service, response: string) {.slot.} =
+    let responseObj = response.parseJson
+    if (responseObj.kind != JObject):
+      info "prepared tokens are not a json object"
+      return
+
+    self.events.emit(SIGNAL_TOKEN_HISTORICAL_DATA_LOADED, TokenHistoricalDataArgs(
+      result: response
+    ))
+
+  proc getHistoricalDataForToken*(self: Service, symbol: string, currency: string, range: int) =
+    let arg = GetTokenHistoricalDataTaskArg(
+      tptr: cast[ByteAddress](getTokenHistoricalDataTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "tokenHistorticalDataResolved",
+      symbol: symbol,
+      currency: currency,
+      range: range
     )
     self.threadpool.start(arg)

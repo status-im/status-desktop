@@ -6,6 +6,12 @@ import
   web3/ethtypes, json_serialization
 from web3/conversions import `$`
 
+const WEEKLY_TIME_RANGE* = 0
+const MONTHLY_TIME_RANGE* = 1
+const HALF_YEARLY_TIME_RANGE* = 2
+const YEARLY_TIME_RANGE* = 3
+const ALL_TIME_RANGE* = 4
+
 type
   TokenDto* = ref object of RootObj
     name*: string

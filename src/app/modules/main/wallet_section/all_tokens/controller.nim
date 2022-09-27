@@ -36,6 +36,10 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
     self.delegate.refreshTokens()
 
+  self.events.on(SIGNAL_TOKEN_HISTORICAL_DATA_LOADED) do(e:Args):
+    let args = TokenHistoricalDataArgs(e)
+    self.delegate.tokenHistoricalDataResolved(args.result)
+
 proc getTokens*(self: Controller): seq[token_service.TokenDto] =
   proc compare(x, y: token_service.TokenDto): int =
     if x.name < y.name:
@@ -65,3 +69,7 @@ proc getTokenDetails*(self: Controller, address: string) =
 
 method findTokenSymbolByAddress*(self: Controller, address: string): string =
   return self.walletAccountService.findTokenSymbolByAddress(address)
+
+method getHistoricalDataForToken*(self: Controller, symbol: string, currency: string, range: int) =
+  self.tokenService.getHistoricalDataForToken(symbol, currency, range)
+

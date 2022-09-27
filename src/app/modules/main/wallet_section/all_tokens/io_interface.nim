@@ -32,6 +32,12 @@ method tokenDetailsWereResolved*(self: AccessInterface, tokenDetails: string) {.
 method findTokenSymbolByAddress*(self: AccessInterface, address: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getHistoricalDataForToken*(self: AccessInterface, symbol: string, currency: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method tokenHistoricalDataResolved*(self: AccessInterface, tokenDetails: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi
 # inheritance, which is not well supported in Nim.

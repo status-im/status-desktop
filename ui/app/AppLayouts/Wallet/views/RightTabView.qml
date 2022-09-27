@@ -24,6 +24,22 @@ Item {
         stack.currentIndex = 0;
     }
 
+    QtObject {
+        id: d
+        function getBackButtonText(index) {
+            switch(index) {
+                case 1:
+                return qsTr("Assets")
+                case 2:
+                return qsTr("Assets")
+                case 3:
+                return qsTr("Activity")
+                default:
+                return ""
+            }
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
 
@@ -32,7 +48,7 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height - footer.height
             onCurrentIndexChanged: {
-                RootStore.backButtonName = ((currentIndex === 1) || (currentIndex === 2)) ? qsTr("Assets") : "";
+                RootStore.backButtonName = d.getBackButtonText(currentIndex)
             }
 
             ColumnLayout {
@@ -112,7 +128,7 @@ Item {
                 Layout.fillHeight: true
                 sendModal: root.sendModal
                 contactsStore: root.contactsStore
-                onGoBack: stack.currentIndex = 0
+                visible: (stack.currentIndex === 3)
             }
         }
 

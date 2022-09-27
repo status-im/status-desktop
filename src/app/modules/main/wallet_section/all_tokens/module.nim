@@ -7,6 +7,7 @@ import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/token/service as token_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../../app_service/service/token/dto
 
 export io_interface
 
@@ -91,3 +92,13 @@ method tokenDetailsWereResolved*(self: Module, tokenDetails: string) =
 
 method findTokenSymbolByAddress*(self: Module, address: string): string =
   return self.controller.findTokenSymbolByAddress(address)
+
+method getHistoricalDataForToken*(self: Module, symbol: string, currency: string) =
+  self.controller.getHistoricalDataForToken(symbol, currency, WEEKLY_TIME_RANGE)
+  self.controller.getHistoricalDataForToken(symbol, currency, MONTHLY_TIME_RANGE)
+  self.controller.getHistoricalDataForToken(symbol, currency, HALF_YEARLY_TIME_RANGE)
+  self.controller.getHistoricalDataForToken(symbol, currency, YEARLY_TIME_RANGE)
+  self.controller.getHistoricalDataForToken(symbol, currency, ALL_TIME_RANGE)
+
+method tokenHistoricalDataResolved*(self: Module, tokenDetails: string) =
+  self.view.tokenHistoricalDataReady(tokenDetails)

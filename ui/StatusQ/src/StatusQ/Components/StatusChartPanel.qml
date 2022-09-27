@@ -85,6 +85,12 @@ Page {
     property string selectedTimeRange: timeRangeTabBar.currentItem.text
 
     /*!
+        \qmlproperty string StatusChartPanel::defaultTimeRangeIndexShown
+        This property holds the index of the time range tabbar to be shown by default
+    */
+    property int defaultTimeRangeIndexShown: 0
+
+    /*!
         \qmlsignal
         This signal is emitted when a header tab bar is clicked.
     */
@@ -108,6 +114,7 @@ Page {
                                                              enabled: timeRangeModel[i].enabled });
                 timeRangeTabBar.addItem(timeTab);
             }
+            timeRangeTabBar.currentIndex = defaultTimeRangeIndexShown
         }
         if (!!graphsModel) {
             for (var j = 0; j < graphsModel.length; j++) {
