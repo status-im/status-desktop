@@ -79,7 +79,7 @@ Item {
                 pubkey: root.pubkey
                 image: root.icon
                 interactive: false
-                imageWidth: d.getSize(36, 80, 160)
+                imageWidth: d.getSize(36, 64, 160)
                 imageHeight: imageWidth
                 showRing: !root.userIsEnsVerified
             }
@@ -109,18 +109,15 @@ Item {
 
         StyledText {
             Layout.fillWidth: true
-
             visible: root.displayNameVisible
-
             text: root.displayName
-
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
             maximumLineCount: 3
             wrapMode: Text.Wrap
             font {
-                weight: Font.Medium
-                pixelSize: Style.current.primaryTextFontSize
+                bold: true
+                pixelSize: 17
             }
         }
 
@@ -171,11 +168,9 @@ Item {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             visible: root.pubkeyVisible
-
             text: Utils.getElidedCompressedPk(pubkey)
-
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: Style.current.asideTextFontSize
+            font.pixelSize: 13
             color: Style.current.secondaryText
         }
 
