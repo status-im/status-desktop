@@ -377,6 +377,9 @@ Column {
                 }
                 width: parent.width
                 anchors.top: sep1.bottom
+                Component.onCompleted: {
+                    background.radius = 0;
+                }
             }
 
             Separator {
@@ -385,13 +388,33 @@ Column {
                 anchors.topMargin: 0
             }
 
-            StatusFlatButton {
-                text: qsTr("Don't ask me again")
-                onClicked: {
-                    RootStore.setNeverAskAboutUnfurlingAgain(true);
-                }
+            Item {
                 width: parent.width
+                height: 44
                 anchors.top: sep2.bottom
+                clip: true
+                StatusFlatButton {
+                    id: dontAskBtn
+                    width: parent.width
+                    height: (parent.height+Style.current.padding)
+                    anchors.top: parent.top
+                    anchors.topMargin: -Style.current.padding
+                    contentItem: Item {
+                        StatusBaseText {
+                            anchors.centerIn: parent
+                            anchors.verticalCenterOffset: Style.current.halfPadding
+                            font: dontAskBtn.font
+                            color: dontAskBtn.enabled ? dontAskBtn.textColor : dontAskBtn.disabledTextColor
+                            text: qsTr("Don't ask me again")
+                        }
+                    }
+                    onClicked: {
+                        RootStore.setNeverAskAboutUnfurlingAgain(true);
+                    }
+                    Component.onCompleted: {
+                        background.radius = Style.current.padding;
+                    }
+                }
             }
         }
     }
