@@ -280,6 +280,17 @@ QtObject:
       ModelRole.BannedMembersModel.int
       ])
 
+  proc getNthEnabledItem*(self: SectionModel, nth: int): SectionItem =
+    if nth >= 0 and nth < self.items.len:
+      var counter = 0
+      for i in 0 ..< self.items.len:
+        if self.items[i].enabled:
+          if counter == nth:
+            return self.items[i]
+          else:
+            counter = counter + 1
+    return SectionItem()
+
   proc getItemById*(self: SectionModel, id: string): SectionItem =
     for it in self.items:
       if(it.id == id):

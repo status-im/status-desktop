@@ -575,7 +575,6 @@ method setActiveSection*[T](self: Module[T], item: SectionItem) =
   if(item.isEmpty()):
     echo "section is empty and cannot be made as active one"
     return
-
   self.controller.setActiveSection(item.id)
 
 proc notifySubModulesAboutChange[T](self: Module[T], sectionId: string) =

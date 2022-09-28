@@ -69,6 +69,12 @@ QtObject {
         }
     }
 
+    function setNthEnabledSectionActive(nthSection) {
+        if(!root.mainModuleInst)
+            return
+        mainModuleInst.setNthEnabledSectionActive(nthSection)
+    }
+
     function getProfileImage(pubkey, isCurrentUser, useLargeImage) {
         if (isCurrentUser || (isCurrentUser === undefined && pubkey === userProfile.pubKey)) {
             return userProfile.icon;
