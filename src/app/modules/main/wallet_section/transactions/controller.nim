@@ -3,9 +3,12 @@ import io_interface
 import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 import ../../../../core/[main]
 import ../../../../core/tasks/[qt, threadpool]
+
+const UNIQUE_WALLET_SECTION_TRANSACTION_MODULE_IDENTIFIER* = "WalletSection-TransactionModule"
 
 type
   Controller* = ref object of RootObj
@@ -69,6 +72,12 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
     self.delegate.transactionWasSent(TransactionSentArgs(e).result)
 
+  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
+    let args = SharedKeycarModuleArgs(e)
+    if args.uniqueIdentifier != UNIQUE_WALLET_SECTION_TRANSACTION_MODULE_IDENTIFIER:
+      return
+    self.delegate.onUserAuthenticated(args.password)
+
 proc checkPendingTransactions*(self: Controller) =
   self.transactionService.checkPendingTransactions()
 
@@ -84,6 +93,9 @@ proc getWalletAccount*(self: Controller, accountIndex: int): WalletAccountDto =
 proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
   self.walletAccountService.getAccountByAddress(address)
 
+proc getMigratedKeyPairByKeyUid*(self: Controller, keyUid: string): seq[KeyPairDto] =
+  return self.walletAccountService.getMigratedKeyPairByKeyUid(keyUid)
+
 proc loadTransactions*(self: Controller, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
   self.transactionService.loadTransactions(address, toBlock, limit, loadMore)
 
@@ -95,9 +107,8 @@ proc estimateGas*(self: Controller, from_addr: string, to: string, assetSymbol: 
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol: string,
     value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,maxFeePerGas: string,
-    password: string, chainId: string, uuid: string, eip1559Enabled: bool,
-): bool =
-  result = self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, gas,
+    password: string, chainId: string, uuid: string, eip1559Enabled: bool) =
+  discard self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, gas,
     gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, chainId, uuid, eip1559Enabled)
 
 proc suggestedFees*(self: Controller, chainId: int): string = 
@@ -119,3 +130,11 @@ proc getEstimatedTime*(self: Controller, chainId: int, maxFeePerGas: string): Es
 
 proc getLastTxBlockNumber*(self: Controller): string =
   return self.transactionService.getLastTxBlockNumber(self.networkService.getNetworkForBrowser().chainId)
+
+
+proc authenticateUser*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
+  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_TRANSACTION_MODULE_IDENTIFIER,
+    keyUid: keyUid,
+    bip44Path: bip44Path,
+    txHash: txHash)
+  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
