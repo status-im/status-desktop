@@ -518,7 +518,16 @@ proc login*(self: Service, account: AccountDto, password: string): string =
 
     # Source the connection port from the environment for debugging or if default port not accessible
     if existsEnv("STATUS_PORT"):
-      nodeCfg["ListenAddr"] = newJString("0.0.0.0:" & $getEnv("STATUS_PORT"))
+      let wV1Port = $getEnv("STATUS_PORT")
+      # Waku V1 config
+      nodeCfg["ListenAddr"] = newJString("0.0.0.0:" & wV1Port)
+    if existsEnv("WAKUV2_PORT"):
+      let wV2Port = parseInt($getEnv("WAKUV2_PORT"))
+      # Waku V2 config
+      nodeCfg.add("WakuV2Config", %* {
+        "Port": wV2Port,
+        "UDPPort": wV2Port,
+      })
 
     let response = status_account.login(account.name, account.keyUid, hashedPassword, thumbnailImage,
       largeImage, $nodeCfg)

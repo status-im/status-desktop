@@ -609,6 +609,7 @@ ICON_TOOL := node_modules/.bin/fileicon
 
 # Will only work at password login. Keycard login doesn't forward the configuration
 # STATUS_PORT ?= 30306
+# WAKUV2_PORT ?= 30307
 
 run-linux: nim_status_client
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
