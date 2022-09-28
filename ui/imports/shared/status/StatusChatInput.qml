@@ -151,6 +151,15 @@ Rectangle {
             }
         }
 
+        function sortMentions() {
+            if (mentionsPos.length < 2) {
+                return
+            }
+            mentionsPos = mentionsPos.sort(function(a, b){
+                return a.leftIndex - b.leftIndex
+            })
+        }
+
         function updateMentionsPositions() {
             if (mentionsPos.length == 0) {
                 return
@@ -167,10 +176,15 @@ Rectangle {
                 return
             }
 
+            let lastRightIndex = -1
             for (var k = 0; k < mentionsPos.length; k++) {
-                const aliasIndex = unformattedText.indexOf(mentionsPos[k].name)
+                const aliasIndex = unformattedText.indexOf(mentionsPos[k].name, lastRightIndex)
+                if (aliasIndex === -1) {
+                    continue
+                }
+                lastRightIndex = aliasIndex + mentionsPos[k].name.length
 
-                if ((aliasIndex !== -1) && (aliasIndex - 1 !== mentionsPos[k].leftIndex)) {
+                if (aliasIndex - 1 !== mentionsPos[k].leftIndex) {
                     mentionsPos[k].leftIndex = aliasIndex - 1
                     mentionsPos[k].rightIndex = aliasIndex + mentionsPos[k].name.length
                 }
@@ -240,6 +254,7 @@ Rectangle {
             messageInputField.cursorPosition = messageInputField.length
         }
         mentionsPos.push({name: aliasName, pubKey: publicKey, leftIndex: lastAtPosition, rightIndex: (lastAtPosition+aliasName.length + 1)});
+        d.sortMentions()
     }
 
     function isUploadFilePressed(event) {
@@ -482,29 +497,15 @@ Rectangle {
     }
 
     function getTextWithPublicKeys() {
-        let result = messageInputField.getText(0, messageInputField.length)
+        let result = messageInputField.text
 
         if (mentionsPos.length > 0) {
-            let lastIndex = messageInputField.length
-            while (lastIndex > 0) {
-
-                let currentMax = -1
-                let maxIndex = -1
-
-                for (var i = 0; i < mentionsPos.length; i++) {
-                    if (mentionsPos[i].rightIndex < lastIndex && mentionsPos[i].rightIndex > currentMax) {
-                        currentMax = mentionsPos[i].rightIndex
-                        maxIndex = i
-                    }
-                }
-
-                lastIndex = 0
-                if (currentMax >= 0) {
-                    result = result.substring(0, mentionsPos[maxIndex].leftIndex + 1)
-                             + mentionsPos[maxIndex].pubKey
-                             + result.substring(mentionsPos[maxIndex].rightIndex, result.length)
-                    lastIndex = mentionsPos[maxIndex].leftIndex
-                }
+            for (var k = 0; k < mentionsPos.length; k++) {
+                let leftIndex = result.indexOf(mentionsPos[k].name)
+                let rightIndex = leftIndex + mentionsPos[k].name.length
+                result = result.substring(0, leftIndex)
+                         + mentionsPos[k].pubKey
+                         + result.substring(rightIndex, result.length)
             }
         }
 
@@ -608,6 +609,7 @@ Rectangle {
                                 rightIndex: (result.index + d.copyTextStart + name.length)
                             }
                             mentionsPos.push(mention)
+                            d.sortMentions()
                         }
                     }
                 }
@@ -1120,6 +1122,7 @@ Rectangle {
                                                 && (event.key === Qt.Key_Delete)) {
                                             messageInputField.remove(mentionsPos[i].rightIndex, mentionsPos[i].leftIndex)
                                             mentionsPos.pop(i)
+                                            d.sortMentions()
                                         }
                                     }
                                 }
@@ -1150,6 +1153,7 @@ Rectangle {
                                             } else if ((keyEvent.key === Qt.Key_Backspace) || (keyEvent.key === Qt.Key_Delete)) {
                                                 messageInputField.remove(mentionsPos[i].rightIndex, mentionsPos[i].leftIndex);
                                                 mentionsPos.pop(i);
+                                                d.sortMentions()
                                             }
                                         } else if (((messageInputField.cursorPosition > mentionsPos[i].leftIndex) &&
                                                     (messageInputField.cursorPosition  < mentionsPos[i].rightIndex)) &&
