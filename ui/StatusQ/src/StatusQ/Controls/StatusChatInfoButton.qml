@@ -74,7 +74,7 @@ Button {
             RowLayout {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeading | Qt.AlignBottom
-                spacing: root.spacing
+                spacing: 1
 
                 StatusIcon {
                     visible: root.type !== StatusChatInfoButton.Type.OneToOneChat
