@@ -116,11 +116,11 @@ QtObject:
   proc transactionWasSent*(self: View,txResult: string) {.slot} =
     self.transactionSent(txResult)
 
-  proc transfer*(self: View, from_addr: string, to_addr: string, tokenSymbol: string,
-      value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,
-      maxFeePerGas: string, password: string, chainId: string, uuid: string, eip1559Enabled: bool): bool {.slot.} =
-    result = self.delegate.transfer(from_addr, to_addr, tokenSymbol, value, gas, gasPrice,
-      maxPriorityFeePerGas, maxFeePerGas, password, chainId, uuid, eip1559Enabled)
+  proc authenticateAndTransfer*(self: View, from_addr: string, to_addr: string, tokenSymbol: string,
+    value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,
+    maxFeePerGas: string, chainId: string, uuid: string, eip1559Enabled: bool) {.slot.} =
+      self.delegate.authenticateAndTransfer(from_addr, to_addr, tokenSymbol, value, gas, gasPrice,
+        maxPriorityFeePerGas, maxFeePerGas, chainId, uuid, eip1559Enabled)
 
   proc suggestedFees*(self: View, chainId: int): string {.slot.} =
     return self.delegate.suggestedFees(chainId)

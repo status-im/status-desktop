@@ -10,12 +10,27 @@ import ../../../../../app_service/service/network/service as network_service
 
 export io_interface
 
+# Shouldn't be public ever, user only within this module.
+type TmpSendTransactionDetails = object
+  fromAddr: string
+  toAddr: string
+  tokenSymbol: string
+  value: string 
+  gas: string 
+  gasPrice: string 
+  maxPriorityFeePerGas: string
+  maxFeePerGas: string
+  chainId: string
+  uuid: string
+  eip1559Enabled: bool
+
 type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
     controller: Controller
     moduleLoaded: bool
+    tmpSendTransactionDetails: TmpSendTransactionDetails
 
 # Forward declarations
 method checkRecentHistory*(self: Module)
@@ -90,11 +105,55 @@ method estimateGas*(self: Module, from_addr: string, to: string, assetSymbol: st
 method setIsNonArchivalNode*(self: Module, isNonArchivalNode: bool) =
   self.view.setIsNonArchivalNode(isNonArchivalNode)
 
-method transfer*(self: Module, from_addr: string, to_addr: string, tokenSymbol: string,
+method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string, tokenSymbol: string,
     value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,
-    maxFeePerGas: string, password: string, chainId: string, uuid: string, eip1559Enabled: bool): bool =
-  result = self.controller.transfer(from_addr, to_addr, tokenSymbol, value, gas, gasPrice,
-    maxPriorityFeePerGas, maxFeePerGas, password, chainId, uuid, eip1559Enabled)
+    maxFeePerGas: string, chainId: string, uuid: string, eip1559Enabled: bool) =
+
+  self.tmpSendTransactionDetails.fromAddr = from_addr
+  self.tmpSendTransactionDetails.toAddr = to_addr
+  self.tmpSendTransactionDetails.tokenSymbol = tokenSymbol
+  self.tmpSendTransactionDetails.value = value
+  self.tmpSendTransactionDetails.gas = gas
+  self.tmpSendTransactionDetails.gasPrice = gasPrice
+  self.tmpSendTransactionDetails.maxPriorityFeePerGas = maxPriorityFeePerGas
+  self.tmpSendTransactionDetails.maxFeePerGas = maxFeePerGas
+  self.tmpSendTransactionDetails.chainId = chainId
+  self.tmpSendTransactionDetails.uuid = uuid
+  self.tmpSendTransactionDetails.eip1559Enabled = eip1559Enabled
+
+  if singletonInstance.userProfile.getIsKeycardUser():
+    let keyUid = singletonInstance.userProfile.getKeyUid()
+    self.controller.authenticateUser(keyUid)
+  else:
+    self.controller.authenticateUser()
+
+  ##################################
+  ## Do Not Delete
+  ## 
+  ## Once we start with signing a transactions we shold check if the address we want to send a transaction from is migrated
+  ## or not. In case it's not we should just authenticate logged in user, otherwise we should use one of the keycards that
+  ## address (key pair) is migrated to and sign the transaction using it.
+  ## 
+  ## The code bellow is an example how we can achieve that in future, when we start with signing transactions.
+  ## 
+  ## let acc = self.controller.getAccountByAddress(from_addr)
+  ## if acc.isNil:
+  ##   echo "error: selected account to send a transaction from is not known"
+  ##   return
+  ## let keyPair = self.controller.getMigratedKeyPairByKeyUid(acc.keyUid)
+  ## if keyPair.len == 0:
+  ##   self.controller.authenticateUser()
+  ## else:
+  ##   self.controller.authenticateUser(acc.keyUid, acc.path)
+  ## 
+  ##################################
+
+method onUserAuthenticated*(self: Module, password: string) =
+  self.controller.transfer(self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr, 
+    self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.gas, 
+    self.tmpSendTransactionDetails.gasPrice, self.tmpSendTransactionDetails.maxPriorityFeePerGas, 
+    self.tmpSendTransactionDetails.maxFeePerGas, password, self.tmpSendTransactionDetails.chainId, self.tmpSendTransactionDetails.uuid, 
+    self.tmpSendTransactionDetails.eip1559Enabled)
 
 method transactionWasSent*(self: Module, result: string) =
   self.view.transactionWasSent(result)

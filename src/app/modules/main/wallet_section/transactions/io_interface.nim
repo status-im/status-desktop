@@ -43,10 +43,13 @@ method setIsNonArchivalNode*(self: AccessInterface, isNonArchivalNode: bool) {.b
 method estimateGas*(self: AccessInterface, from_addr: string, to: string, assetSymbol: string, value: string, data: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method transfer*(self: AccessInterface, from_addr: string, to_addr: string,
+method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method authenticateAndTransfer*(self: AccessInterface, from_addr: string, to_addr: string,
     tokenSymbol: string, value: string, gas: string, gasPrice: string,
-    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string,
-    chainId: string, uuid: string, eip1559Enabled: bool): bool {.base.} =
+    maxPriorityFeePerGas: string, maxFeePerGas: string, chainId: string, uuid: string, 
+    eip1559Enabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method transactionWasSent*(self: AccessInterface, result: string) {.base.} =

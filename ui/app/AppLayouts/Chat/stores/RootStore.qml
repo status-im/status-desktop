@@ -563,9 +563,9 @@ QtObject {
     }
 
     function transfer(from, to, address, tokenSymbol, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, chainId, uuid, eip1559Enabled) {
-        return walletSectionTransactions.transfer(
+        return walletSectionTransactions.authenticateAndTransfer(
             from, to, address, tokenSymbol, amount, gasLimit,
-            gasPrice, tipLimit, overallLimit, password, chainId, uuid,
+            gasPrice, tipLimit, overallLimit, chainId, uuid,
             eip1559Enabled
         );
     }

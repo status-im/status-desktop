@@ -38,9 +38,8 @@ StatusDialog {
 
     function sendTransaction() {
         let recipientAddress = Utils.isValidAddress(popup.addressText) ? popup.addressText : d.resolvedENSAddress
-        let success = false
         d.isPending = true
-        success = popup.store.transfer(
+        popup.store.authenticateAndTransfer(
                     popup.selectedAccount.address,
                     recipientAddress,
                     assetSelector.selectedAsset.symbol,
@@ -49,7 +48,6 @@ StatusDialog {
                     gasSelector.suggestedFees.eip1559Enabled ? "" : gasSelector.selectedGasPrice,
                     gasSelector.selectedTipLimit,
                     gasSelector.selectedOverallLimit,
-                    transactionSigner.enteredPassword,
                     networkSelector.selectedNetwork.chainId,
                     d.uuid,
                     gasSelector.suggestedFees.eip1559Enabled,
@@ -73,8 +71,7 @@ StatusDialog {
     })
 
     enum StackGroup {
-        SendDetailsGroup = 0,
-        AuthenticationGroup = 1
+        SendDetailsGroup = 0
     }
 
     QtObject {
@@ -484,19 +481,6 @@ StatusDialog {
                 }
             }
         }
-
-        Column{
-            id: group2
-            Layout.preferredWidth: parent.width
-            TransactionSigner {
-                id: transactionSigner
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.topMargin: Style.current.smallPadding
-                anchors.margins: 32
-                signingPhrase: popup.store.signingPhrase
-            }
-        }
     }
 
     footer: SendModalFooter {
@@ -506,10 +490,6 @@ StatusDialog {
         isLastGroup: d.isLastGroup
         visible: d.isReady && !isNaN(parseFloat(amountToSendInput.text)) && gasValidator.isValid
         onNextButtonClicked: {
-            if (isLastGroup) {
-                return popup.sendTransaction()
-            }
-
             if(gasSelector.suggestedFees.eip1559Enabled && gasSelector.advancedMode){
                 if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
                     Global.openPopup(transactionSettingsConfirmationPopupComponent, {
@@ -523,13 +503,18 @@ StatusDialog {
                                          showPriceLimitWarning: gasSelector.showPriceLimitWarning,
                                          showTipLimitWarning: gasSelector.showTipLimitWarning,
                                          onConfirm: function(){
-                                             stack.currentIndex = SendModal.StackGroup.AuthenticationGroup
+                                             if (isLastGroup) {
+                                                 return popup.sendTransaction()
+                                             }
                                          }
                                      })
                     return
                 }
             }
-            stack.currentIndex = SendModal.StackGroup.AuthenticationGroup
+
+            if (isLastGroup) {
+                return popup.sendTransaction()
+            }
         }
     }
 
@@ -547,10 +532,6 @@ StatusDialog {
                 if (response.uuid !== d.uuid) return
 
                 if (!response.success) {
-                    if (Utils.isInvalidPasswordMessage(response.result)){
-                        transactionSigner.validationError = qsTr("Wrong password")
-                        return
-                    }
                     sendingError.text = response.result
                     return sendingError.open()
                 }

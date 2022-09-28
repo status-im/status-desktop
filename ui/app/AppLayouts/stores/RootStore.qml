@@ -137,11 +137,10 @@ QtObject {
         return profileSectionStore.ensUsernamesStore.getGasEthValue(gweiValue, gasLimit)
     }
 
-
-    function transfer(from, to, tokenSymbol, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, chainId, uuid, eip1559Enabled) {
-        return walletSectionTransactions.transfer(
+    function authenticateAndTransfer(from, to, tokenSymbol, amount, gasLimit, gasPrice, tipLimit, overallLimit, chainId, uuid, eip1559Enabled) {
+        walletSectionTransactions.authenticateAndTransfer(
             from, to, tokenSymbol, amount, gasLimit,
-            gasPrice, tipLimit, overallLimit, password, chainId, uuid,
+            gasPrice, tipLimit, overallLimit, chainId, uuid,
             eip1559Enabled
         );
     }
