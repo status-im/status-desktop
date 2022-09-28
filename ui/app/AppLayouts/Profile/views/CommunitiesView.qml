@@ -68,11 +68,8 @@ SettingsContentBase {
                 }
 
                 onInviteFriends: {
-                    Global.openPopup(inviteFriendsToCommunityPopup, {
-                                         community: communityData,
-                                         hasAddedContacts: root.contactStore.myContactsModel.count > 0,
-                                         communitySectionModule: root.profileSectionStore.communitiesProfileModule
-                                     })
+                    Global.openInviteFriendsToCommunityPopup(communityData,
+                                                             root.profileSectionStore.communitiesProfileModule)
                 }
             }
 
@@ -84,21 +81,6 @@ SettingsContentBase {
         store: root.profileSectionStore
         onClosed: {
             destroy()
-        }
-    }
-
-    property Component inviteFriendsToCommunityPopup: InviteFriendsToCommunityPopup {
-        anchors.centerIn: parent
-        rootStore: root.rootStore
-        contactsStore: root.contactStore
-        onClosed: () => {
-            destroy();
-        }
-
-        onSendInvites: {
-            const error = root.profileSectionStore.communitiesProfileModule.inviteUsersToCommunity(
-                                community.id, JSON.stringify(pubKeys), inviteMessage);
-            processInviteResult(error);
         }
     }
 

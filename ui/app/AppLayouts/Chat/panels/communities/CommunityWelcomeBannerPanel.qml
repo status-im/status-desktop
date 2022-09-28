@@ -87,11 +87,10 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: welcomeText.bottom
         anchors.topMargin: Style.current.padding
-        onClicked: Global.openPopup(Global.inviteFriendsToCommunityPopup, {
-            community: root.activeCommunity,
-            hasAddedContacts: root.hasAddedContacts,
-            communitySectionModule: root.communitySectionModule
-        })
+        onClicked: {
+            Global.openInviteFriendsToCommunityPopup(root.activeCommunity,
+                                                     root.communitySectionModule)
+        }
     }
 
     StatusFlatButton {

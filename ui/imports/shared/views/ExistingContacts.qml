@@ -67,16 +67,24 @@ Item {
 
             visible: {
                 if (contactCheckbox.checked)
-                    return true;
+                    return true
 
-                return model.isContact && !model.isBlocked && (root.filterText === "" ||
-                    root.matchesAlias(model.alias.toLowerCase(), root.filterText.toLowerCase()) ||
-                    model.displayName.toLowerCase().includes(root.filterText.toLowerCase()) ||
-                    model.ensName.toLowerCase().includes(root.filterText.toLowerCase()) ||
-                    model.localNickname.toLowerCase().includes(root.filterText.toLowerCase()) ||
-                    model.pubKey.toLowerCase().includes(root.filterText.toLowerCase())) &&
-                    (!root.hideCommunityMembers ||
-                    !root.rootStore.communityHasMember(root.communityId, model.pubKey));
+                if (!model.isContact || model.isBlocked)
+                    return false
+
+                const filter = root.filterText.toLowerCase()
+                const filterAccepted = root.filterText === ""
+                                     || root.matchesAlias(model.alias.toLowerCase(), filter)
+                                     || model.displayName.toLowerCase().includes(filter)
+                                     || model.ensName.toLowerCase().includes(filter)
+                                     || model.localNickname.toLowerCase().includes(filter)
+                                     || model.pubKey.toLowerCase().includes(filter)
+
+                if (!filterAccepted)
+                    return false
+
+                return !root.hideCommunityMembers ||
+                       !root.rootStore.communityHasMember(root.communityId, model.pubKey)
             }
 
             onClicked: {

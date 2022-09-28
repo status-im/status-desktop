@@ -320,11 +320,10 @@ Item {
                         text: qsTr("Invite People")
                         icon.name: "share-ios"
                         enabled: model.canManageUsers
-                        onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
-                            community: model,
-                            hasAddedContacts: appMain.rootStore.hasAddedContacts,
-                            communitySectionModule: communityContextMenu.chatCommunitySectionModule
-                        })
+                        onTriggered: {
+                            Global.openInviteFriendsToCommunityPopup(model,
+                                                                     communityContextMenu.chatCommunitySectionModule)
+                        }
                     }
 
                     StatusMenuItem {
@@ -858,23 +857,6 @@ Item {
         }
 
         Component {
-            id: inviteFriendsToCommunityPopup
-            InviteFriendsToCommunityPopup {
-                anchors.centerIn: parent
-                rootStore: appMain.rootStore
-                contactsStore: appMain.rootStore.contactStore
-                onClosed: () => {
-                    destroy();
-                }
-
-                onSendInvites: (pubKeys, inviteMessage) => {
-                    const error = communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys), inviteMessage);
-                    processInviteResult(error);
-                }
-            }
-        }
-
-        Component {
             id: communityProfilePopup
 
             CommunityProfilePopup {
@@ -1183,7 +1165,6 @@ Item {
         Global.appMain = this;
         Global.pinnedMessagesPopup = pinnedMessagesPopupComponent;
         Global.communityProfilePopup = communityProfilePopup;
-        Global.inviteFriendsToCommunityPopup = inviteFriendsToCommunityPopup;
         const whitelist = appMain.rootStore.messagingStore.getLinkPreviewWhitelist()
         try {
             const whiteListedSites = JSON.parse(whitelist)
