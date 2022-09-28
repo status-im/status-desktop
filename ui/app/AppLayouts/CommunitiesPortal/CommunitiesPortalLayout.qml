@@ -1,5 +1,4 @@
 import QtQuick 2.13
-import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
 import StatusQ.Core 0.1
@@ -11,12 +10,16 @@ import StatusQ.Popups.Dialog 0.1
 import StatusQ.Layout 0.1
 
 import utils 1.0
+import shared.controls 1.0
 import shared.popups 1.0
 import shared.panels 1.0
+
+import SortFilterProxyModel 0.2
 
 import "controls"
 import "stores"
 import "popups"
+import "views"
 
 StatusSectionLayout {
     id: root
@@ -30,165 +33,133 @@ StatusSectionLayout {
     notificationCount: root.communitiesStore.unreadNotificationsCount
     onNotificationButtonClicked: Global.openActivityCenterPopup()
 
+    onVisibleChanged: {
+        if(visible)
+            searcher.input.edit.forceActiveFocus()
+    }
+
     QtObject {
         id: d
 
-        property string searchText: ""
-        property int layoutVMargin: 70
-        property int layoutHMargin: 64
-        property int titlePixelSize: 28
-        property int subtitlePixelSize: 17
+        // values from the design
+        readonly property int layoutTopMargin: 10
+        readonly property int layoutBottomMargin: 249
+        readonly property int layoutHMargin: 64
+        readonly property int layoutWidth: 1037
+        readonly property int titlePixelSize: 28
+        readonly property int preventShadowClipMargin: 40
+
+        readonly property bool searchMode: searcher.text.length > 0
 
         function navigateToCommunity(communityId) {
             root.communitiesStore.setActiveCommunity(communityId)
         }
     }
 
+    SortFilterProxyModel {
+        id: searchModel
+
+        sourceModel: root.communitiesStore.curatedCommunitiesModel
+
+        filters: ExpressionFilter {
+            enabled: d.searchMode
+            expression: {
+                searcher.text
+                return name.toLowerCase().includes(searcher.text.toLowerCase())
+            }
+        }
+    }
+
     centerPanel: Item {
-        implicitWidth: parent.width
-        implicitHeight: parent.height
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
+        width: d.layoutWidth
+
+        anchors.topMargin: d.layoutTopMargin
         anchors.leftMargin: d.layoutHMargin
-        clip: true
 
-        StatusScrollView {
-            contentHeight: column.height + d.layoutVMargin
-            contentWidth: root.contentPrefferedWidth - d.layoutHMargin
+        ColumnLayout {
+            id: column
 
-            ColumnLayout {
-                id: column
-                width: parent.availableWidth
-                height: childrenRect.height
-                spacing: 18
+            anchors.fill: parent
+            spacing: 18
 
-                StatusBaseText {
-                    text: qsTr("Find community")
-                    font.weight: Font.Bold
-                    font.pixelSize: d.titlePixelSize
-                    color: Theme.palette.directColor1
+            StatusBaseText {
+                text: qsTr("Find community")
+                font.weight: Font.Bold
+                font.pixelSize: d.titlePixelSize
+                color: Theme.palette.directColor1
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 38
+                spacing: Style.current.bigPadding
+
+                SearchBox {
+                    id: searcher
+                    implicitWidth: 327
+                    Layout.alignment: Qt.AlignVCenter
+                    topPadding: 0
+                    bottomPadding: 0
+                    minimumHeight: 36
+                    maximumHeight: 36
                 }
 
-                RowLayout {
-                    Layout.fillWidth: true
+                // Just a row filler to fit design
+                Item { Layout.fillWidth: true }
+
+                StatusButton {
+                    id: importBtn
                     Layout.preferredHeight: 38
-                    spacing: Style.current.bigPadding
+                    text: qsTr("Import using key")
+                    verticalPadding: 0
+                    onClicked: Global.openPopup(importCommunitiesPopupComponent)
+                }
 
-                    StatusInput {
-                        id: searcher
-                        implicitWidth: 327
-                        Layout.alignment: Qt.AlignVCenter
-                        enabled: false // Out of scope
-                        placeholderText: qsTr("Search")
-                        input.asset.name: "search"
-                        leftPadding: 0
-                        rightPadding: 0
-                        topPadding: 0
-                        bottomPadding: 0
-                        minimumHeight: 36
-                        maximumHeight: 36
-                        text: d.searchText
-                        onTextChanged: {
-                            console.warn("TODO: Community Cards searcher algorithm.")
-                            // 1. Filter Community Cards by title, description or tags category.
-                            // 2. Once some filter is applyed, update main tags row only showing the tags that are part of the categories of the filtered Community Cards.
-                        }
-                    }
-
-                    // Just a row filler to fit design
-                    Item { Layout.fillWidth: true }
-
-                    StatusButton {
-                        id: importBtn
-                        Layout.fillHeight: true
-                        text: qsTr("Import using key")
-                        verticalPadding: 0
-                        onClicked: Global.openPopup(importCommunitiesPopupComponent)
-                    }
-
-                    StatusButton {
-                        id: createBtn
-                        objectName: "createCommunityButton"
-                        Layout.fillHeight: true
-                        verticalPadding: 0
-                        text: qsTr("Create New Community")
-                        onClicked: {
-                            if (localAccountSensitiveSettings.isDiscordImportToolEnabled) {
-                              Global.openPopup(chooseCommunityCreationTypePopupComponent)
-                            } else {
-                              Global.openPopup(createCommunitiesPopupComponent)
-                            }
+                StatusButton {
+                    id: createBtn
+                    objectName: "createCommunityButton"
+                    Layout.preferredHeight: 38
+                    verticalPadding: 0
+                    text: qsTr("Create New Community")
+                    onClicked: {
+                        if (localAccountSensitiveSettings.isDiscordImportToolEnabled) {
+                            Global.openPopup(chooseCommunityCreationTypePopupComponent)
+                        } else {
+                            Global.openPopup(createCommunitiesPopupComponent)
                         }
                     }
                 }
+            }
 
-                CommunityTagsRow {
-                    tags: root.communitiesStore.communityTags
-                    Layout.fillWidth: true
-                }
+            CommunityTagsRow {
+                tags: root.communitiesStore.communityTags
+                Layout.fillWidth: true
+            }
 
-                StatusBaseText {
-                    Layout.topMargin: 20
-                    text: qsTr("Featured")
-                    font.weight: Font.Bold
-                    font.pixelSize: d.subtitlePixelSize
-                    color: Theme.palette.directColor1
-                }
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.leftMargin: -d.preventShadowClipMargin
+                Layout.rightMargin: -d.preventShadowClipMargin
 
-                GridLayout {
-                    id: featuredGrid
-                    columns: 3
-                    columnSpacing: Style.current.padding
-                    rowSpacing: Style.current.padding
+                clip: true
 
-                    Repeater {
-                        model: root.communitiesStore.curatedCommunitiesModel
-                        delegate: StatusCommunityCard {
-                            visible: model.featured
-                            locale: communitiesStore.locale
-                            communityId: model.id
-                            loaded: model.available
-                            logo: model.icon
-                            name: model.name
-                            description: model.description
-                            members: model.members
-                            popularity: model.popularity
-                            // <out of scope> categories:  model.categories
+                CommunitiesGridView {
+                    anchors.fill: parent
+                    anchors.rightMargin: d.preventShadowClipMargin
+                    anchors.leftMargin: d.preventShadowClipMargin
 
-                            onClicked: { d.navigateToCommunity(communityId) }
-                        }
-                    }
-                }
+                    padding: 0
+                    bottomPadding: d.layoutBottomMargin
 
-                StatusBaseText {
-                    Layout.topMargin: 20
-                    text: qsTr("Popular")
-                    font.weight: Font.Bold
-                    font.pixelSize: d.subtitlePixelSize
-                    color: Theme.palette.directColor1
-                }
+                    locale: communitiesStore.locale
+                    model: searchModel
+                    searchLayout: d.searchMode
 
-                GridLayout {
-                    columns: 3
-                    columnSpacing: Style.current.padding
-                    rowSpacing: Style.current.padding
-
-                    Repeater {
-                        model: root.communitiesStore.curatedCommunitiesModel
-                        delegate: StatusCommunityCard {
-                            visible: !model.featured
-                            locale: communitiesStore.locale
-                            communityId: model.id
-                            loaded: model.available
-                            logo: model.icon
-                            name: model.name
-                            description: model.description
-                            members: model.members
-                            popularity: model.popularity
-                            // <out of scope> categories:  model.categories
-
-                            onClicked: { d.navigateToCommunity(communityId) }
-                        }
-                    }
+                    onCardClicked: d.navigateToCommunity(communityId)
                 }
             }
         }
