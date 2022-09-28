@@ -280,36 +280,49 @@ Item {
                     color: Style.current.separator
                 }
 
-                StatusFlatButton {
-                    id: joinBtn
-
+                Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 44
-
-                    text: qsTr("Unsupported state")
-
-                    onClicked: {
-                        if (rectangleBubble.state === "joined") {
-                            root.store.setActiveCommunity(communityId);
-                            return
+                    clip: true
+                    StatusFlatButton {
+                        id: joinBtn
+                        width: parent.width
+                        height: (parent.height+Style.current.padding)
+                        anchors.top: parent.top
+                        anchors.topMargin: -Style.current.padding
+                        text: qsTr("Unsupported state")
+                        contentItem: Item {
+                            StatusBaseText {
+                                anchors.centerIn: parent
+                                anchors.verticalCenterOffset: Style.current.halfPadding
+                                font: joinBtn.font
+                                color: joinBtn.enabled ? joinBtn.textColor : joinBtn.disabledTextColor
+                                text: joinBtn.text
+                            }
                         }
-                        if (rectangleBubble.state === "unjoined") {
-                            Global.openPopup(communityIntroDialog, { joinMethod: () => {
-                                                        let error = root.store.joinCommunity(communityId, userProfile.name)
-                                                        if (error) joiningError.showError(error)
-                                                    } });
-                        }
-                        else if (rectangleBubble.state === "requestToJoin") {
-                            Global.openPopup(communityIntroDialog, { joinMethod: () => {
-                                                        let error = root.store.requestToJoinCommunity(communityId, userProfile.name)
-                                                        if (error) joiningError.showError(error)
-                                                    } });
-                        }
-                    }
 
-                    Component.onCompleted: {
-                        // FIXME: extract StatusButtonBackground or expose radius property in StatusBaseButton
-                        background.radius = 16
+                        onClicked: {
+                            if (rectangleBubble.state === "joined") {
+                                root.store.setActiveCommunity(communityId);
+                                return
+                            }
+                            if (rectangleBubble.state === "unjoined") {
+                                Global.openPopup(communityIntroDialog, { joinMethod: () => {
+                                                         let error = root.store.joinCommunity(communityId, userProfile.name)
+                                                         if (error) joiningError.showError(error)
+                                                     } });
+                            }
+                            else if (rectangleBubble.state === "requestToJoin") {
+                                Global.openPopup(communityIntroDialog, { joinMethod: () => {
+                                                         let error = root.store.requestToJoinCommunity(communityId, userProfile.name)
+                                                         if (error) joiningError.showError(error)
+                                                     } });
+                            }
+                        }
+
+                        Component.onCompleted: {
+                            background.radius = Style.current.padding;
+                        }
                     }
                 }
             }
