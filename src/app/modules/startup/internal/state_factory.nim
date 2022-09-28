@@ -24,14 +24,17 @@ include keycard_enter_pin_state
 include keycard_enter_puk_state 
 include keycard_enter_seed_phrase_words_state 
 include keycard_insert_keycard_state
+include keycard_inserted_keycard_state
 include keycard_locked_state 
 include keycard_max_pairing_slots_reached_state 
 include keycard_max_pin_retries_reached_state
 include keycard_max_puk_retries_reached_state 
 include keycard_not_empty_state 
+include keycard_not_keycard_state 
 include keycard_pin_set_state 
 include keycard_plugin_reader_state 
 include keycard_reading_keycard_state
+include keycard_recognized_keycard_state
 include keycard_recover_state
 include keycard_repeat_pin_state 
 include keycard_wrong_pin_state 
@@ -85,8 +88,12 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newKeycardPluginReaderState(flowType, backState)
   if stateToBeCreated == StateType.KeycardInsertKeycard:
     return newKeycardInsertKeycardState(flowType, backState)
+  if stateToBeCreated == StateType.KeycardInsertedKeycard:
+    return newKeycardInsertedKeycardState(flowType, backState)
   if stateToBeCreated == StateType.KeycardReadingKeycard:
     return newKeycardReadingKeycardState(flowType, backState)
+  if stateToBeCreated == StateType.KeycardRecognizedKeycard:
+    return newKeycardRecognizedKeycardState(flowType, backState)
   if stateToBeCreated == StateType.KeycardCreatePin:
     return newKeycardCreatePinState(flowType, backState)
   if stateToBeCreated == StateType.KeycardRepeatPin:
@@ -107,6 +114,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newKeycardEnterSeedPhraseWordsState(flowType, backState)
   if stateToBeCreated == StateType.KeycardNotEmpty:
     return newKeycardNotEmptyState(flowType, backState)
+  if stateToBeCreated == StateType.KeycardNotKeycard:
+    return newKeycardNotKeycardState(flowType, backState)
   if stateToBeCreated == StateType.KeycardEmpty:
     return newKeycardEmptyState(flowType, backState)
   if stateToBeCreated == StateType.KeycardLocked:
@@ -160,7 +169,7 @@ proc ensureReaderAndCardPresenceOnboarding*(state: State, keycardFlowType: strin
       return createState(StateType.KeycardInsertKeycard, state.flowType, state.getBackState)
   if keycardFlowType == ResponseTypeValueCardInserted:
     controller.setKeycardData("")
-    return createState(StateType.KeycardReadingKeycard, state.flowType, state.getBackState)
+    return createState(StateType.KeycardInsertedKeycard, state.flowType, state.getBackState)
 
 proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
   if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
@@ -189,15 +198,24 @@ proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, key
     if keycardFlowType == ResponseTypeValueEnterNewPIN and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorRequireInit:
-        return createState(StateType.KeycardCreatePin, state.flowType, state.getBackState)
+        return createState(StateType.KeycardRecognizedKeycard, state.flowType, state.getBackState)
     if keycardFlowType == ResponseTypeValueEnterPIN and 
       keycardEvent.error.len == 0:
         return createState(StateType.KeycardNotEmpty, state.flowType, state.getBackState)
+    if keycardFlowType == ResponseTypeValueEnterPUK and 
+      keycardEvent.error.len == 0:
+      if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+        return createState(StateType.KeycardLocked, state.flowType, state.getBackState)
     if keycardFlowType == ResponseTypeValueSwapCard and 
-      keycardEvent.error.len > 0 and
-      (keycardEvent.error == ErrorHasKeys or 
-      keycardEvent.error == RequestParamPUKRetries):
-        return createState(StateType.KeycardNotEmpty, state.flowType, state.getBackState)
+      keycardEvent.error.len > 0:
+        if keycardEvent.error == ErrorNotAKeycard:
+          return createState(StateType.KeycardNotKeycard, state.flowType, state.getBackState)
+        if keycardEvent.error == RequestParamFreeSlots:
+          return createState(StateType.KeycardLocked, state.flowType, state.getBackState)
+        if keycardEvent.error == RequestParamPUKRetries:
+          return createState(StateType.KeycardLocked, state.flowType, state.getBackState)
+        if keycardEvent.error == ErrorHasKeys:
+          return createState(StateType.KeycardNotEmpty, state.flowType, state.getBackState)
     if keycardFlowType == ResponseTypeValueEnterMnemonic and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorLoadingKeys:

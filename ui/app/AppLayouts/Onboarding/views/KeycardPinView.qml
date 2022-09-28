@@ -7,6 +7,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
+import shared.popups.keycard.helpers 1.0
+
 import utils 1.0
 
 import "../stores"
@@ -45,18 +47,14 @@ Item {
 
     ColumnLayout {
         anchors.centerIn: parent
+        height: Constants.keycard.general.onboardingHeight
         spacing: Style.current.padding
 
-        Image {
+        KeycardImage {
+            id: image
             Layout.alignment: Qt.AlignHCenter
-            Layout.preferredHeight: sourceSize.height
-            Layout.preferredWidth: sourceSize.width
-            fillMode: Image.PreserveAspectFit
-            antialiasing: true
-            source: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardPinSet?
-                        Style.svg("keycard/card-success3@2x") :
-                        Style.svg("keycard/card3@2x")
-            mipmap: true
+            Layout.preferredHeight: Constants.keycard.general.imageHeight
+            Layout.preferredWidth: Constants.keycard.general.imageWidth
         }
 
         StatusBaseText {
@@ -75,6 +73,9 @@ Item {
             enabled: root.startupStore.currentStartupState.stateType !== Constants.startupState.keycardPinSet
 
             onPinInputChanged: {
+                if (root.state !== Constants.startupState.keycardWrongPin) {
+                    image.source = Style.png("keycard/enter-pin-%1".arg(pinInput.length))
+                }
                 if(pinInput.length == 0)
                     return
                 if(root.state === Constants.startupState.keycardCreatePin ||
@@ -90,6 +91,7 @@ Item {
                         root.startupStore.doPrimaryAction()
                     } else {
                         info.text = qsTr("PINs don't match")
+                        image.source = Style.png("keycard/plain-error")
                     }
                 }
             }
@@ -108,12 +110,22 @@ Item {
             font.pixelSize: Constants.keycard.general.fontSize3
             wrapMode: Text.WordWrap
         }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
     }
 
     states: [
         State {
             name: Constants.startupState.keycardCreatePin
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardCreatePin
+            PropertyChanges {
+                target: image
+                source: Style.png("keycard/enter-pin-0")
+                pattern: ""
+            }
             PropertyChanges {
                 target: title
                 text: qsTr("Create new Keycard PIN")
@@ -130,6 +142,11 @@ Item {
         State {
             name: Constants.startupState.keycardRepeatPin
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardRepeatPin
+            PropertyChanges {
+                target: image
+                source: Style.png("keycard/enter-pin-0")
+                pattern: ""
+            }
             PropertyChanges {
                 target: title
                 text: qsTr("Repeat Keycard PIN")
@@ -148,6 +165,16 @@ Item {
             name: Constants.startupState.keycardPinSet
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardPinSet
             PropertyChanges {
+                target: image
+                pattern: "keycard/strong_success/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 0
+                endImgIndex: 20
+                duration: 1300
+                loops: 1
+            }
+            PropertyChanges {
                 target: title
                 text: qsTr("Keycard PIN set")
             }
@@ -164,6 +191,11 @@ Item {
             name: Constants.startupState.keycardEnterPin
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardEnterPin
             PropertyChanges {
+                target: image
+                source: Style.png("keycard/card-empty")
+                pattern: ""
+            }
+            PropertyChanges {
                 target: title
                 text: qsTr("Enter Keycard PIN")
             }
@@ -179,6 +211,11 @@ Item {
         State {
             name: Constants.startupState.keycardWrongPin
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardWrongPin
+            PropertyChanges {
+                target: image
+                source: Style.png("keycard/plain-error")
+                pattern: ""
+            }
             PropertyChanges {
                 target: title
                 text: qsTr("Enter Keycard PIN")

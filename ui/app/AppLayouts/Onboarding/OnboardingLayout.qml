@@ -79,7 +79,9 @@ OnboardingBasePage {
             }
             if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardPluginReader ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.keycardInsertKeycard ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardReadingKeycard)
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardInsertedKeycard ||
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardReadingKeycard ||
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardRecognizedKeycard)
             {
                 return keycardInitViewComponent
             }
@@ -100,6 +102,7 @@ OnboardingBasePage {
                 return seedphraseWordsInputViewComponent
             }
             if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardNotEmpty ||
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardNotKeycard ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.keycardEmpty ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.keycardLocked ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.keycardRecover ||

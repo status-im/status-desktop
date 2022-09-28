@@ -13,11 +13,13 @@ proc delete*(self: KeycardCreatePinState) =
 method executeBackCommand*(self: KeycardCreatePinState, controller: Controller) =
   controller.setPin("")
   controller.setPinMatch(false)
+  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
+    controller.cancelCurrentFlow()
 
 method getNextPrimaryState*(self: KeycardCreatePinState, controller: Controller): State =
   if not self.pinValid:
     return nil
-  return createState(StateType.KeycardRepeatPin, self.flowType, self.getBackState)
+  return createState(StateType.KeycardRepeatPin, self.flowType, self)
 
 method executePrimaryCommand*(self: KeycardCreatePinState, controller: Controller) =
   self.pinValid = controller.getPin().len == PINLengthForStatusApp

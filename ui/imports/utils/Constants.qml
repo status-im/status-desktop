@@ -39,7 +39,9 @@ QtObject {
         readonly property string biometrics: "Biometrics"
         readonly property string keycardPluginReader: "KeycardPluginReader"
         readonly property string keycardInsertKeycard: "KeycardInsertKeycard"
+        readonly property string keycardInsertedKeycard: "KeycardInsertedKeycard"
         readonly property string keycardReadingKeycard: "KeycardReadingKeycard"
+        readonly property string keycardRecognizedKeycard: "KeycardRecognizedKeycard"
         readonly property string keycardCreatePin: "KeycardCreatePin"
         readonly property string keycardRepeatPin: "KeycardRepeatPin"
         readonly property string keycardPinSet: "KeycardPinSet"
@@ -50,6 +52,7 @@ QtObject {
         readonly property string keycardDisplaySeedPhrase: "KeycardDisplaySeedPhrase"
         readonly property string keycardEnterSeedPhraseWords: "KeycardEnterSeedPhraseWords"
         readonly property string keycardNotEmpty: "KeycardNotEmpty"
+        readonly property string keycardNotKeycard: "KeycardNotKeycard"
         readonly property string keycardEmpty: "KeycardEmpty"
         readonly property string keycardLocked: "KeycardLocked"
         readonly property string keycardRecover: "KeycardRecover"
@@ -382,7 +385,13 @@ QtObject {
     readonly property QtObject keycard: QtObject {
 
         readonly property QtObject general: QtObject {
-            readonly property int footerWrapperHeight: 125
+            readonly property int onboardingHeight: 460
+            readonly property int imageWidth: 240
+            readonly property int imageHeight: 240
+            readonly property int seedPhraseWidth: 816
+            readonly property int seedPhraseHeight: 228
+            readonly property int enterSeedPhraseWordsWidth: 868
+            readonly property int enterSeedPhraseWordsHeight: 60
             readonly property int keycardPinLength: 6
             readonly property int keycardPukLength: 12
             readonly property int keycardPukAdditionalSpacingOnEvery4Items: 4
@@ -397,8 +406,6 @@ QtObject {
             readonly property int buttonFontSize: 15
             readonly property int pukCellWidth: 50
             readonly property int pukCellHeight: 60
-            readonly property int sharedFlowImageWidth: 240
-            readonly property int sharedFlowImageHeight: 240
             readonly property int popupWidth: 640
             readonly property int popupHeight: 640
             readonly property int popupBiggerHeight: 766
