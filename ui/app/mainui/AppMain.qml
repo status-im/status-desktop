@@ -1027,20 +1027,59 @@ Item {
 
         Action {
             shortcut: "Ctrl+1"
-            onTriggered: Global.changeAppSectionBySectionType(Constants.appSection.chat)
+            onTriggered: {
+                Global.setNthEnabledSectionActive(0)
+            }
         }
         Action {
             shortcut: "Ctrl+2"
-            onTriggered: Global.changeAppSectionBySectionType(Constants.appSection.browser)
+            onTriggered: {
+                Global.setNthEnabledSectionActive(1)
+            }
         }
         Action {
             shortcut: "Ctrl+3"
-            onTriggered: Global.changeAppSectionBySectionType(Constants.appSection.wallet)
+            onTriggered: {
+                Global.setNthEnabledSectionActive(2)
+            }
         }
         Action {
-            shortcut: "Ctrl+4, Ctrl+,"
-            onTriggered: Global.changeAppSectionBySectionType(Constants.appSection.profile)
+            shortcut: "Ctrl+4"
+            onTriggered: {
+                Global.setNthEnabledSectionActive(3)
+            }
         }
+        Action {
+            shortcut: "Ctrl+5"
+            onTriggered: {
+                Global.setNthEnabledSectionActive(4)
+            }
+        }
+        Action {
+            shortcut: "Ctrl+6"
+            onTriggered: {
+                Global.setNthEnabledSectionActive(5)
+            }
+        }
+        Action {
+            shortcut: "Ctrl+7"
+            onTriggered: {
+                Global.setNthEnabledSectionActive(6)
+            }
+        }
+        Action {
+            shortcut: "Ctrl+8"
+            onTriggered: {
+                Global.setNthEnabledSectionActive(7)
+            }
+        }
+        Action {
+            shortcut: "Ctrl+9"
+            onTriggered: {
+                Global.setNthEnabledSectionActive(8)
+            }
+        }
+
         Action {
             shortcut: "Ctrl+K"
             onTriggered: {

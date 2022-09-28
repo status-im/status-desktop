@@ -145,6 +145,10 @@ QtObject:
     self.activeSection.setActiveSectionData(item)
     self.activeSectionChanged()
 
+  proc setNthEnabledSectionActive*(self: View, nth: int) {.slot.} =
+    let item = self.model.getNthEnabledItem(nth)
+    self.delegate.setActiveSection(item)
+
   proc setActiveSectionById*(self: View, sectionId: string) {.slot.} =
     let item = self.model.getItemById(sectionId)
     self.delegate.setActiveSection(item)
