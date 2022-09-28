@@ -53,6 +53,13 @@ Item {
         })
     }
 
+    function openInviteFriendsToCommunityPopup(community, communitySectionModule) {
+        return openPopup(inviteFriendsToCommunityPopup, {
+                             community,
+                             communitySectionModule
+                         })
+    }
+
     function openProfilePopup(publicKey, parentPopup, state = "") {
         openProfilePopupRequested(publicKey, parentPopup, state);
     }
@@ -128,10 +135,24 @@ Item {
 
     Component {
         id: sendContactRequestPopupComponent
+
         SendContactRequestModal {
             anchors.centerIn: parent
             onAccepted: appMain.rootStore.profileSectionStore.contactsStore.sendContactRequest(userPublicKey, message)
             onClosed: destroy()
+        }
+    }
+
+    Component {
+        id: inviteFriendsToCommunityPopup
+
+        InviteFriendsToCommunityPopup {
+            anchors.centerIn: parent
+            rootStore: appMain.rootStore
+            contactsStore: appMain.rootStore.contactStore
+            onClosed: {
+                destroy()
+            }
         }
     }
 }

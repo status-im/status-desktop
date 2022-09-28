@@ -193,10 +193,8 @@ StatusSectionLayout {
                 }
 
                 onInviteNewPeopleClicked: {
-                    Global.openPopup(inviteFriendsToCommunityPopup, {
-                                         community: root.community,
-                                         hasAddedContacts: root.hasAddedContacts
-                                     })
+                    Global.openInviteFriendsToCommunityPopup(root.community,
+                                                             root.chatCommunitySectionModule)
                 }
 
                 onAirdropTokensClicked: { /* TODO in future */ }
@@ -250,23 +248,6 @@ StatusSectionLayout {
         TransferOwnershipPopup {
             anchors.centerIn: parent
             store: root.rootStore
-        }
-    }
-
-    Component {
-        id: inviteFriendsToCommunityPopup
-        InviteFriendsToCommunityPopup {
-            anchors.centerIn: parent
-            rootStore: root.rootStore
-            contactsStore: root.rootStore.contactsStore
-            onClosed: () => {
-                destroy();
-            }
-
-            onSendInvites: (pubKeys, inviteMessage) => {
-                const error = root.chatCommunitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys), inviteMessage);
-                processInviteResult(error);
-            }
         }
     }
 }

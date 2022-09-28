@@ -147,11 +147,10 @@ Item {
             text: qsTr("Invite people")
             icon.name: "share-ios"
             enabled: communityData.canManageUsers && adminPopupMenu.showInviteButton
-            onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
-                                            community: communityData,
-                                            hasAddedContacts: root.hasAddedContacts,
-                                            communitySectionModule: root.communitySectionModule
-                                        })
+            onTriggered: {
+                Global.openInviteFriendsToCommunityPopup(root.communityData,
+                                                         root.communitySectionModule)
+            }
         }
     }
 
@@ -223,11 +222,10 @@ Item {
                     text: qsTr("Invite people")
                     icon.name: "share-ios"
                     enabled: communityData.canManageUsers
-                    onTriggered: Global.openPopup(Global.inviteFriendsToCommunityPopup, {
-                        community: communityData,
-                        hasAddedContacts: root.hasAddedContacts,
-                        communitySectionModule: root.communitySectionModule
-                    })
+                    onTriggered: {
+                        Global.openInviteFriendsToCommunityPopup(root.communityData,
+                                                                 root.communitySectionModule)
+                    }
                 }
             }
 

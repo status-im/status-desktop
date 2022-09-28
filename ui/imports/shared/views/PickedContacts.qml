@@ -54,8 +54,9 @@ Item {
             status: model.onlineStatus
             userName: model.displayName
             asset.name: model.icon
-            asset.isImage: (asset.name !== "")
-            asset.isLetterIdenticon: (asset.name === "")
+            asset.isImage: asset.name !== ""
+            asset.isLetterIdenticon: asset.name === ""
+            asset.imgIsIdenticon: false
             asset.width: 40
             asset.height: 40
             color: "transparent"

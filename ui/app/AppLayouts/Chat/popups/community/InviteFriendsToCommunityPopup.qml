@@ -24,15 +24,22 @@ StatusStackModal {
     property string validationError: ""
     property string successMessage: ""
 
-    signal sendInvites(var pubKeys, string inviteMessage)
+    QtObject {
+        id: d
 
-    function processInviteResult(error) {
-        if (error) {
-            console.error('Error inviting', error);
-            root.validationError = error;
-        } else {
-            root.validationError = "";
-            root.successMessage = qsTr("Invite successfully sent");
+        function sendInvites(pubKeys, inviteMessage) {
+            const error = root.communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys), inviteMessage);
+            d.processInviteResult(error);
+        }
+
+        function processInviteResult(error) {
+            if (error) {
+                console.error('Error inviting', error);
+                root.validationError = error;
+            } else {
+                root.validationError = "";
+                root.successMessage = qsTr("Invite successfully sent");
+            }
         }
     }
 
@@ -44,7 +51,7 @@ StatusStackModal {
 
     stackTitle: qsTr("Invite Contacts to %1").arg(community.name)
     width: 640
-    height: 700
+    implicitHeight: 700
     leftPadding: 0
     rightPadding: 0
 
@@ -60,7 +67,7 @@ StatusStackModal {
         enabled: root.pubKeys.length > 0
         text: qsTr("Send Invites")
         onClicked: {
-            root.sendInvites(root.pubKeys, root.inviteMessage);
+            d.sendInvites(root.pubKeys, root.inviteMessage);
             root.close();
         }
     }
