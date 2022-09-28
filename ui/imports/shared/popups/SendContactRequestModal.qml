@@ -24,7 +24,9 @@ StatusModal {
 
     signal accepted(string message)
 
-    padding: Style.current.padding
+    width: 480
+    height: 548
+
     header.title: qsTr("Send Contact Request to %1").arg(userDisplayName)
 
     QtObject {
@@ -33,7 +35,7 @@ StatusModal {
         readonly property int maxMsgLength: 280
         readonly property int minMsgLength: 1
         readonly property int msgHeight: 152
-        readonly property int contentSpacing: 5
+        readonly property int contentSpacing: Style.current.halfPadding
     }
 
     onAboutToShow: {
@@ -43,6 +45,9 @@ StatusModal {
     ColumnLayout {
         id: content
         anchors.fill: parent
+        anchors.topMargin: Style.current.bigPadding
+        anchors.leftMargin: Style.current.padding
+        anchors.rightMargin: Style.current.padding
         spacing: d.contentSpacing
 
         ProfileHeader {
@@ -60,20 +65,20 @@ StatusModal {
 
         StatusInput {
             id: messageInput
+            Layout.fillWidth: true
             charLimit: d.maxMsgLength
-
             placeholderText: root.challengeText
             input.multiline: true
             minimumHeight: d.msgHeight
             maximumHeight: d.msgHeight
             input.verticalAlignment: TextEdit.AlignTop
-
             validators: StatusMinLengthValidator {
                 minLength: d.minMsgLength
                 errorMessage: Utils.getErrorMessage(messageInput.errors, qsTr("who are you"))
             }
-            Layout.fillWidth: true
         }
+
+        Item { Layout.fillHeight: true }
     }
 
     rightButtons: StatusButton {
