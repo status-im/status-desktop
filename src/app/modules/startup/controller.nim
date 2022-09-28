@@ -374,6 +374,9 @@ proc seedPhraseRefersToSelectedKeyPair*(self: Controller, seedPhrase: string): b
   let accFromSP = self.accountsService.createAccountFromMnemonic(seedPhrase)
   return selectedAccount.keyUid == accFromSP.keyUid
 
+proc getLastReceivedKeycardData*(self: Controller): tuple[flowType: string, flowEvent: KeycardEvent] =
+  return self.keycardService.getLastReceivedKeycardData()
+
 proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
   # in most cases we're running another flow after canceling the current one, 
