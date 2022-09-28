@@ -161,6 +161,16 @@ StatusSectionLayout {
 
                     onCardClicked: d.navigateToCommunity(communityId)
                 }
+
+                StatusBaseText {
+                    anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.topMargin: parent.height / 3.1
+                    visible: d.searchMode && searchModel.count === 0
+                    text: qsTr("No communities found")
+                    color: Theme.palette.baseColor1
+                    font.pixelSize: 15
+                }
             }
         }
     }
