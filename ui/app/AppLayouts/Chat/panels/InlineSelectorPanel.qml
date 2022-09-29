@@ -179,6 +179,7 @@ Item {
         }
 
         StatusButton {
+            objectName: "inlineSelectorConfirmButton"
             Layout.alignment: Qt.AlignVCenter
             enabled: (listView.count > 0)
             text: qsTr("Confirm")
