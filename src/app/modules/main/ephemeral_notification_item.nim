@@ -8,6 +8,7 @@ type
 type
   Item* = object
     id: int64
+    timestamp: string
     title: string
     durationInMs: int
     subTitle: string
@@ -28,6 +29,7 @@ proc initItem*(id: int64,
     details: NotificationDetails): Item =
   result = Item()
   result.id = id
+  result.timestamp = $id
   result.durationInMs = durationInMs
   result.title = title
   result.subTitle = subTitle
@@ -39,6 +41,9 @@ proc initItem*(id: int64,
 
 proc id*(self: Item): int64 =
   self.id
+
+proc timestamp*(self: Item): string =
+  self.timestamp
 
 proc title*(self: Item): string =
   self.title
