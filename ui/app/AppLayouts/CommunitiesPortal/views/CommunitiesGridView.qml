@@ -58,6 +58,7 @@ StatusScrollView {
             communityId: model.communityId
             loaded: model.available
             logo: model.icon
+            banner: model.banner
             name: model.name
             description: model.description
             members: model.members
