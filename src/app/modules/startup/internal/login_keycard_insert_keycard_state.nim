@@ -35,9 +35,9 @@ method resolveKeycardNextState*(self: LoginKeycardInsertKeycardState, keycardFlo
   if keycardFlowType == ResponseTypeValueInsertCard and 
     keycardEvent.error.len > 0 and
     keycardEvent.error == ErrorConnection:
-      controller.setKeycardData(ResponseTypeValueInsertCard)
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = true))
       return nil
   if keycardFlowType == ResponseTypeValueCardInserted:
-    controller.setKeycardData("")
+    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = false))
     return createState(StateType.LoginKeycardReadingKeycard, self.flowType, nil)
   return nil

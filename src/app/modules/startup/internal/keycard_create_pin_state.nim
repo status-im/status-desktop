@@ -14,7 +14,8 @@ method executeBackCommand*(self: KeycardCreatePinState, controller: Controller) 
   controller.setPin("")
   controller.setPinMatch(false)
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
-    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard or
+    self.flowType == FlowType.FirstRunOldUserKeycardImport:
       controller.cancelCurrentFlow()
 
 method getNextPrimaryState*(self: KeycardCreatePinState, controller: Controller): State =

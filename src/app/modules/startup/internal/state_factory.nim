@@ -6,6 +6,9 @@ from ../../../../app_service/service/keycard/service import PINLengthForStatusAp
 from ../../../../app_service/service/keycard/service import PUKLengthForStatusApp
 import state
 
+from ../../shared_modules/keycard_popup/internal/state_factory import PredefinedKeycardData
+from ../../shared_modules/keycard_popup/internal/state_factory import updatePredefinedKeycardData
+
 logScope:
   topics = "startup-module-state-factory"
 
@@ -37,6 +40,7 @@ include keycard_reading_keycard_state
 include keycard_recognized_keycard_state
 include keycard_recover_state
 include keycard_repeat_pin_state 
+include keycard_wrong_keycard_state 
 include keycard_wrong_pin_state 
 include keycard_wrong_puk_state 
 include notification_state 
@@ -106,6 +110,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newKeycardWrongPinState(flowType, backState)
   if stateToBeCreated == StateType.KeycardEnterPuk:
     return newKeycardEnterPukState(flowType, backState)
+  if stateToBeCreated == StateType.KeycardWrongKeycard:
+    return newKeycardWrongKeycardState(flowType, backState)
   if stateToBeCreated == StateType.KeycardWrongPuk:
     return newKeycardWrongPukState(flowType, backState)
   if stateToBeCreated == StateType.KeycardDisplaySeedPhrase:
@@ -168,7 +174,7 @@ proc ensureReaderAndCardPresenceOnboarding*(state: State, keycardFlowType: strin
         return nil
       return createState(StateType.KeycardInsertKeycard, state.flowType, state.getBackState)
   if keycardFlowType == ResponseTypeValueCardInserted:
-    controller.setKeycardData("")
+    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = false))
     return createState(StateType.KeycardInsertedKeycard, state.flowType, state.getBackState)
 
 proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
@@ -186,7 +192,7 @@ proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, ke
         return nil
       return createState(StateType.LoginKeycardInsertKeycard, state.flowType, state.getBackState)
   if keycardFlowType == ResponseTypeValueCardInserted:
-    controller.setKeycardData("")
+    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = false))
     return createState(StateType.LoginKeycardReadingKeycard, state.flowType, state.getBackState)
 
 proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
@@ -252,9 +258,11 @@ proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, key
         return createState(StateType.KeycardPinSet, state.flowType, state.getBackState)
   
   if state.flowType == FlowType.FirstRunOldUserKeycardImport:
+    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.MaxPUKReached, add = false))
+    controller.setKeyUid(keycardEvent.keyUid)
     if keycardFlowType == ResponseTypeValueEnterPIN and 
       keycardEvent.error.len == 0:
-        return createState(StateType.KeycardEnterPin, state.flowType, state.getBackState)
+        return createState(StateType.KeycardRecognizedKeycard, state.flowType, state.getBackState)
     if keycardFlowType == ResponseTypeValueEnterPUK and 
       keycardEvent.error.len == 0:
       if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
@@ -262,10 +270,11 @@ proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, key
     if keycardFlowType == ResponseTypeValueSwapCard and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorNoKeys:
-        return createState(StateType.KeycardEmpty, state.flowType, state.getBackState)
+        return createState(StateType.KeycardEmpty, state.flowType, nil)
     if keycardFlowType == ResponseTypeValueSwapCard and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPUKRetries:
+        controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.MaxPUKReached, add = true))
         return createState(StateType.KeycardMaxPukRetriesReached, state.flowType, state.getBackState)
     if keycardFlowType == ResponseTypeValueSwapCard and 
       keycardEvent.error.len > 0 and
@@ -274,7 +283,7 @@ proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, key
     if keycardFlowType == ResponseTypeValueEnterNewPIN and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorRequireInit:
-        return createState(StateType.KeycardCreatePin, state.flowType, state.getBackState)
+        return createState(StateType.KeycardCreatePin, state.flowType, nil)
   
   if state.flowType == FlowType.AppLogin:
     if keycardFlowType == ResponseTypeValueSwapCard and 

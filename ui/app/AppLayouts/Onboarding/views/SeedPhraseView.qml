@@ -42,7 +42,7 @@ Item {
     ColumnLayout {
         anchors.centerIn: parent
         height: Constants.keycard.general.onboardingHeight
-        spacing: Style.current.padding
+        spacing: Style.current.bigPadding
 
         StatusBaseText {
             id: title

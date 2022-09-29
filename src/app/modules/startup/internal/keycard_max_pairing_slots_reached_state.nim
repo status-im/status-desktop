@@ -8,14 +8,6 @@ proc newKeycardMaxPairingSlotsReachedState*(flowType: FlowType, backState: State
 proc delete*(self: KeycardMaxPairingSlotsReachedState) =
   self.State.delete
 
-method executePrimaryCommand*(self: KeycardMaxPairingSlotsReachedState, controller: Controller) =
+method getNextPrimaryState*(self: KeycardMaxPairingSlotsReachedState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.runFactoryResetPopup()
-
-method executeSecondaryCommand*(self: KeycardMaxPairingSlotsReachedState, controller: Controller) =
-  if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.runRecoverAccountFlow()
-
-method resolveKeycardNextState*(self: KeycardMaxPairingSlotsReachedState, keycardFlowType: string, keycardEvent: KeycardEvent, 
-  controller: Controller): State =
-  return ensureReaderAndCardPresenceAndResolveNextOnboardingState(self, keycardFlowType, keycardEvent, controller)
+    return createState(StateType.KeycardRecover, self.flowType(), self)

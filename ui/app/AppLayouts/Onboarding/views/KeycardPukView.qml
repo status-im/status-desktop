@@ -49,120 +49,114 @@ Item {
         }
     }
 
-    Item {
-        anchors.top: parent.top
-        anchors.bottom: footerWrapper.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+    ColumnLayout {
+        anchors.centerIn: parent
+        height: Constants.keycard.general.onboardingHeight
+        spacing: Style.current.bigPadding
 
-        ColumnLayout {
-            anchors.centerIn: parent
-            spacing: Style.current.padding
+        StatusBaseText {
+            id: title
+            Layout.alignment: Qt.AlignHCenter
+            font.pixelSize: Constants.keycard.general.fontSize1
+            font.weight: Font.Bold
+            color: Theme.palette.directColor1
+            text: qsTr("Enter PUK code to recover Keycard")
+        }
 
-            StatusBaseText {
-                id: title
-                Layout.alignment: Qt.AlignHCenter
-                font.pixelSize: Constants.keycard.general.fontSize1
-                font.weight: Font.Bold
-                color: Theme.palette.directColor1
-                text: qsTr("Enter PUK code to recover Keycard")
-            }
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
 
-            RowLayout {
-                id: rowLayout
-                Layout.alignment: Qt.AlignHCenter
-                spacing: d.rowSpacing
+        RowLayout {
+            id: rowLayout
+            Layout.alignment: Qt.AlignHCenter
+            spacing: d.rowSpacing
 
-                Component.onCompleted: {
-                    for (var i = 0; i < children.length - 1; ++i) {
-                        if(children[i] && children[i].input && children[i+1] && children[i+1].input){
-                            children[i].input.tabNavItem = children[i+1].input.edit
-                        }
-                    }
-                    if(children.length > 0){
-                        children[0].input.edit.forceActiveFocus()
+            Component.onCompleted: {
+                for (var i = 0; i < children.length - 1; ++i) {
+                    if(children[i] && children[i].input && children[i+1] && children[i+1].input){
+                        children[i].input.tabNavItem = children[i+1].input.edit
                     }
                 }
-
-                Repeater {
-                    model: d.pukLength
-                    delegate: StatusInput {
-                        Layout.preferredWidth: Constants.keycard.general.pukCellWidth
-                        Layout.preferredHeight: Constants.keycard.general.pukCellHeight
-                        input.acceptReturn: true
-                        validators: [
-                            StatusRegularExpressionValidator {
-                                regularExpression: /[0-9]/
-                                errorMessage: ""
-                            },
-                            StatusMinLengthValidator {
-                                minLength: 1
-                                errorMessage: ""
-                            }
-                        ]
-
-                        onTextChanged: {
-                            text = text.trim()
-                            if(text.length >= 1) {
-                                text = text.charAt(0);
-                            }
-                            if(Utils.isDigit(text)) {
-                                let nextInd = index+1
-                                if(nextInd <= rowLayout.children.length - 1 &&
-                                        rowLayout.children[nextInd] &&
-                                        rowLayout.children[nextInd].input){
-                                    rowLayout.children[nextInd].input.edit.forceActiveFocus()
-                                }
-                            }
-                            else                            {
-                                text = ""
-                            }
-                            d.pukArray[index] = text
-                            d.updateValidity()
-                        }
-
-                        onKeyPressed: {
-                            if(input.edit.keyEvent === Qt.Key_Backspace){
-                                if (text == ""){
-                                    let prevInd = index-1
-                                    if(prevInd >= 0){
-                                        rowLayout.children[prevInd].input.edit.forceActiveFocus()
-                                    }
-                                }
-                            }
-                            else if (input.edit.keyEvent === Qt.Key_Return ||
-                                     input.edit.keyEvent === Qt.Key_Enter) {
-                                if(d.allEntriesValid) {
-                                    event.accepted = true
-                                    d.submitPuk()
-                                }
-                            }
-                        }
-                    }
+                if(children.length > 0){
+                    children[0].input.edit.forceActiveFocus()
                 }
             }
 
-            StatusBaseText {
-                id: info
-                Layout.alignment: Qt.AlignHCenter
-                font.pixelSize: Constants.keycard.general.fontSize3
-                color: Theme.palette.dangerColor1
-                horizontalAlignment: Qt.AlignHCenter
+            Repeater {
+                model: d.pukLength
+                delegate: StatusInput {
+                    Layout.preferredWidth: Constants.keycard.general.pukCellWidth
+                    Layout.preferredHeight: Constants.keycard.general.pukCellHeight
+                    input.acceptReturn: true
+                    validators: [
+                        StatusRegularExpressionValidator {
+                            regularExpression: /[0-9]/
+                            errorMessage: ""
+                        },
+                        StatusMinLengthValidator {
+                            minLength: 1
+                            errorMessage: ""
+                        }
+                    ]
+
+                    onTextChanged: {
+                        text = text.trim()
+                        if(text.length >= 1) {
+                            text = text.charAt(0);
+                        }
+                        if(Utils.isDigit(text)) {
+                            let nextInd = index+1
+                            if(nextInd <= rowLayout.children.length - 1 &&
+                                    rowLayout.children[nextInd] &&
+                                    rowLayout.children[nextInd].input){
+                                rowLayout.children[nextInd].input.edit.forceActiveFocus()
+                            }
+                        }
+                        else                            {
+                            text = ""
+                        }
+                        d.pukArray[index] = text
+                        d.updateValidity()
+                    }
+
+                    onKeyPressed: {
+                        if(input.edit.keyEvent === Qt.Key_Backspace){
+                            if (text == ""){
+                                let prevInd = index-1
+                                if(prevInd >= 0){
+                                    rowLayout.children[prevInd].input.edit.forceActiveFocus()
+                                }
+                            }
+                        }
+                        else if (input.edit.keyEvent === Qt.Key_Return ||
+                                 input.edit.keyEvent === Qt.Key_Enter) {
+                            if(d.allEntriesValid) {
+                                event.accepted = true
+                                d.submitPuk()
+                            }
+                        }
+                    }
+                }
             }
         }
-    }
 
-    Item {
-        id: footerWrapper
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: Constants.keycard.general.footerWrapperHeight
+        StatusBaseText {
+            id: info
+            Layout.alignment: Qt.AlignHCenter
+            font.pixelSize: Constants.keycard.general.fontSize3
+            color: Theme.palette.dangerColor1
+            horizontalAlignment: Qt.AlignHCenter
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
 
         StatusButton {
-            anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
-            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.alignment: Qt.AlignHCenter
             enabled: d.allEntriesValid
             text: qsTr("Recover Keycard")
             onClicked: {

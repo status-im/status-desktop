@@ -20,7 +20,7 @@ Item {
     ColumnLayout {
         anchors.centerIn: parent
         height: Constants.keycard.general.onboardingHeight
-        spacing: Style.current.padding
+        spacing: Style.current.bigPadding
 
         KeycardImage {
             id: image
@@ -37,7 +37,9 @@ Item {
 
         StatusBaseText {
             id: info
+            visible: text.length > 0
             Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
         }
 
@@ -74,6 +76,7 @@ Item {
 
         StatusBaseText {
             id: message
+            visible: text.length > 0
             Layout.alignment: Qt.AlignHCenter
             wrapMode: Text.WordWrap
         }
@@ -131,12 +134,14 @@ Item {
             }
             PropertyChanges {
                 target: title
-                text: ""
+                text: qsTr("Keycard is empty")
+                color: Theme.palette.directColor1
+                font.pixelSize: Constants.keycard.general.fontSize1
             }
             PropertyChanges {
                 target: info
-                text: qsTr("The keycard is empty")
-                color: Theme.palette.dangerColor1
+                text: qsTr("There is no key pair on this Keycard")
+                color: Theme.palette.directColor1
                 font.pixelSize: Constants.keycard.general.fontSize2
             }
             PropertyChanges {
@@ -232,8 +237,11 @@ Item {
             }
         },
         State {
-            name: Constants.startupState.keycardMaxPairingSlotsReached
-            when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPairingSlotsReached
+            name: "lockedState"
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPinRetriesReached ||
+                  root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPukRetriesReached ||
+                  root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPairingSlotsReached
+
             PropertyChanges {
                 target: image
                 pattern: "keycard/strong_error/img-%1"
@@ -252,91 +260,23 @@ Item {
             }
             PropertyChanges {
                 target: info
-                text: qsTr("Max pairing slots reached for this keycard")
+                text: {
+                    let t = qsTr("You will need to unlock it before proceeding")
+                    if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPinRetriesReached)
+                        t += qsTr("\nMax PIN retries reached for this keycard")
+                    if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPukRetriesReached)
+                        t += qsTr("\nMax PUK retries reached for this keycard")
+                    if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPairingSlotsReached)
+                        t += qsTr("\nMax pairing slots reached for this keycard")
+                    return t
+                }
                 color: Theme.palette.dangerColor1
                 font.pixelSize: Constants.keycard.general.fontSize2
             }
             PropertyChanges {
                 target: button
-                text: qsTr("Factory reset")
+                text: qsTr("Unlock Keycard")
                 type: StatusBaseButton.Type.Normal
-            }
-            PropertyChanges {
-                target: link
-                text: qsTr("Insert another Keycard")
-                color: Theme.palette.primaryColor1
-            }
-            PropertyChanges {
-                target: message
-                text: ""
-            }
-        },
-        State {
-            name: Constants.startupState.keycardMaxPukRetriesReached
-            when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPukRetriesReached
-            PropertyChanges {
-                target: image
-                pattern: "keycard/strong_error/img-%1"
-                source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 18
-                endImgIndex: 29
-                duration: 1300
-                loops: -1
-            }
-            PropertyChanges {
-                target: title
-                text: qsTr("Keycard locked")
-                color: Theme.palette.dangerColor1
-                font.pixelSize: Constants.keycard.general.fontSize1
-            }
-            PropertyChanges {
-                target: info
-                text: qsTr("Max PUK retries reached for this keycard")
-                color: Theme.palette.dangerColor1
-                font.pixelSize: Constants.keycard.general.fontSize2
-            }
-            PropertyChanges {
-                target: button
-                text: qsTr("Factory reset")
-                type: StatusBaseButton.Type.Normal
-            }
-            PropertyChanges {
-                target: link
-                text: qsTr("Insert another Keycard")
-                color: Theme.palette.primaryColor1
-            }
-            PropertyChanges {
-                target: message
-                text: ""
-            }
-        },
-        State {
-            name: Constants.startupState.keycardMaxPinRetriesReached
-            when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPinRetriesReached
-            PropertyChanges {
-                target: image
-                pattern: "keycard/strong_error/img-%1"
-                source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 18
-                endImgIndex: 29
-                duration: 1300
-                loops: -1
-            }
-            PropertyChanges {
-                target: title
-                text: ""
-            }
-            PropertyChanges {
-                target: info
-                text: qsTr("Keycard locked")
-                color: Theme.palette.dangerColor1
-            }
-            PropertyChanges {
-                target: button
-                text: qsTr("Recover your Keycard")
-                type: StatusBaseButton.Type.Danger
             }
             PropertyChanges {
                 target: link
@@ -362,7 +302,7 @@ Item {
             }
             PropertyChanges {
                 target: title
-                text: qsTr("Recover your Keycard")
+                text: qsTr("Unlock this Keycard")
                 color: Theme.palette.directColor1
                 font.pixelSize: Constants.keycard.general.fontSize1
             }
@@ -372,17 +312,58 @@ Item {
             }
             PropertyChanges {
                 target: button
-                text: qsTr("Recover with seed phrase")
-                type: StatusBaseButton.Type.Danger
+                text: qsTr("Unlock using seed phrase")
+                type: StatusBaseButton.Type.Normal
             }
             PropertyChanges {
                 target: link
-                text: qsTr("Recover with PUK")
-                color: Theme.palette.dangerColor1
+                text: qsTr("Unlock using PUK")
+                enabled: !(root.startupStore.startupModuleInst.keycardData & Constants.predefinedKeycardData.maxPUKReached)
+                color: !enabled? Theme.palette.baseColor1 : Theme.palette.primaryColor1
             }
             PropertyChanges {
                 target: message
                 text: ""
+            }
+        },
+        State {
+            name: Constants.startupState.keycardWrongKeycard
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardWrongKeycard
+            PropertyChanges {
+                target: image
+                pattern: "keycard/strong_error/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 18
+                endImgIndex: 29
+                duration: 1300
+                loops: -1
+            }
+            PropertyChanges {
+                target: title
+                text: qsTr("Wrong Keycard inserted")
+                color: Theme.palette.dangerColor1
+                font.pixelSize: Constants.keycard.general.fontSize1
+            }
+            PropertyChanges {
+                target: info
+                text: qsTr("The card inserted is not linked to your profile.")
+                color: Theme.palette.dangerColor1
+                font.pixelSize: Constants.keycard.general.fontSize2
+            }
+            PropertyChanges {
+                target: button
+                text: ""
+            }
+            PropertyChanges {
+                target: link
+                text: ""
+            }
+            PropertyChanges {
+                target: message
+                text: qsTr("Remove Keycard and try again")
+                color: Theme.palette.baseColor1
+                font.pixelSize: Constants.keycard.general.fontSize3
             }
         }
     ]

@@ -1,13 +1,9 @@
 type
-  KeycardLockedState* = ref object of State
+  KeycardNotKeycardState* = ref object of State
 
-proc newKeycardLockedState*(flowType: FlowType, backState: State): KeycardLockedState =
-  result = KeycardLockedState()
-  result.setup(flowType, StateType.KeycardLocked, backState)
+proc newKeycardNotKeycardState*(flowType: FlowType, backState: State): KeycardNotKeycardState =
+  result = KeycardNotKeycardState()
+  result.setup(flowType, StateType.KeycardNotKeycard, backState)
 
-proc delete*(self: KeycardLockedState) =
+proc delete*(self: KeycardNotKeycardState) =
   self.State.delete
-
-method executePrimaryCommand*(self: KeycardLockedState, controller: Controller) =
-  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    controller.runFactoryResetPopup()

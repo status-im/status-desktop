@@ -42,6 +42,7 @@ QtObject {
         readonly property string keycardInsertedKeycard: "KeycardInsertedKeycard"
         readonly property string keycardReadingKeycard: "KeycardReadingKeycard"
         readonly property string keycardRecognizedKeycard: "KeycardRecognizedKeycard"
+        readonly property string keycardWrongKeycard: "KeycardWrongKeycard"
         readonly property string keycardCreatePin: "KeycardCreatePin"
         readonly property string keycardRepeatPin: "KeycardRepeatPin"
         readonly property string keycardPinSet: "KeycardPinSet"
@@ -80,6 +81,7 @@ QtObject {
         readonly property int offerPukForUnlock: 16
         readonly property int useUnlockLabelForLockedState: 32
         readonly property int useGeneralMessageForLockedState: 64
+        readonly property int maxPUKReached: 128
     }
 
     readonly property QtObject keycardSharedFlow: QtObject {

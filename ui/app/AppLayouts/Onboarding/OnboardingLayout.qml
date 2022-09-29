@@ -104,6 +104,7 @@ OnboardingBasePage {
             if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardNotEmpty ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.keycardNotKeycard ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.keycardEmpty ||
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardWrongKeycard ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.keycardLocked ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.keycardRecover ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPairingSlotsReached ||
