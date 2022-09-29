@@ -21,7 +21,7 @@ InlineSelectorPanel {
     property var rootStore
 
     readonly property int membersLimit: 20 // see: https://github.com/status-im/status-mobile/issues/13066
-    property bool limitReached: model.count >= membersLimit
+    property bool limitReached: (model.count === (membersLimit-1))
 
     label.text: qsTr("To:")
     warningLabel.text: qsTr("%1 USER LIMIT REACHED").arg(membersLimit)

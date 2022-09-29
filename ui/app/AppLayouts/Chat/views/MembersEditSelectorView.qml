@@ -23,6 +23,7 @@ MembersSelectorBase {
     property var sectionModule
     property var chatContentModule
 
+    confirmBtnEnabled: true
     onConfirmed: {
         d.updateGroupMembers()
         d.resetTemporaryModel()
@@ -31,7 +32,7 @@ MembersSelectorBase {
     onRejected: {
         d.resetTemporaryModel()
     }
-
+    limitReached: (model.count === membersLimit)
     onEntryAccepted: {
         if (!root.limitReached) {
             d.appendTemporaryModel(suggestionsDelegate._pubKey, suggestionsDelegate.userName)

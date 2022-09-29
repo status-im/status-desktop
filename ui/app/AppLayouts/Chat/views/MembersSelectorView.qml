@@ -14,17 +14,15 @@ import SortFilterProxyModel 0.2
 MembersSelectorBase {
     id: root
 
-    limitReached: model.count >= membersLimit - 1 // -1 because creator is not on the list of members when creating chat
-
     function cleanup() {
-        root.edit.clear()
-        d.selectedMembers.clear()
+        root.edit.clear();
+        d.selectedMembers.clear();
     }
 
     onEntryAccepted: {
         if (root.limitReached)
             return
-        if (d.addMember(suggestionsDelegate._pubKey, suggestionsDelegate.userName))
+        if (d.addMember(suggestionsDelegate._pubKey, suggestionsDelegate.userName, suggestionsDelegate.isAdmin))
             root.edit.clear()
     }
 
@@ -44,7 +42,8 @@ MembersSelectorBase {
         readonly property string _pubKey: model.pubKey
         height: ListView.view.height
         text: model.displayName
-
+        isReadonly: model.isAdmin
+        icon: model.isAdmin ? "crown" : ""
         onClicked: root.entryRemoved(this)
     }
 
@@ -59,7 +58,7 @@ MembersSelectorBase {
             root.rootStore.contactsStore.resolveENS(value)
         }
 
-        function addMember(pubKey, displayName) {
+        function addMember(pubKey, displayName, isAdmin) {
             for (let i = 0; i < d.selectedMembers.count; ++i) {
                 if (d.selectedMembers.get(i).pubKey === pubKey)
                     return false
@@ -67,7 +66,8 @@ MembersSelectorBase {
 
             d.selectedMembers.append({
                                          "pubKey": pubKey,
-                                         "displayName": displayName
+                                         "displayName": displayName,
+                                         "isAdmin": isAdmin
                                      })
             return true
         }
