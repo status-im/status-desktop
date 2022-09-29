@@ -542,7 +542,7 @@ Item {
                         readonly property string version: appMain.rootStore.latestVersion
                         readonly property bool updateAvailable: appMain.rootStore.newVersionAvailable
 
-                        objectName: "updateAppInfoBanner"
+                        objectName: "appVersionUpdateBanner"
                         Layout.fillWidth: true
                         type: ModuleWarning.Success
                         text: updateAvailable ? qsTr("A new version of Status (%1) is available").arg(version)

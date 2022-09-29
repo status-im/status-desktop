@@ -29,7 +29,7 @@ class MainScreenComponents(Enum):
     COMMUNITY_NAVBAR_BUTTONS = "navBarListView_All_Community_Buttons"
     SECURE_SEEDPHRASE_BANNER = "secureSeedPhrase_Banner"
     CONNECTION_INFO_BANNER = "connectionInfo_Banner"
-    UPDATE_APP_BANNER = "updateAppInfo_Banner"
+    UPDATE_APP_BANNER = "appVersionUpdate_Banner"
     TESTNET_INFO_BANNER = "testnetInfo_Banner"    
     PROFILE_NAVBAR_BUTTON = "mainWindow_ProfileNavBarButton"
     USERSTATUSMENU_ALWAYS_ACTIVE_ACTION = "userContextmenu_AlwaysActiveButton"

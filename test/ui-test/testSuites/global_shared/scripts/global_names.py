@@ -6,7 +6,7 @@ chatView_log = {"container": statusDesktop_mainWindow, "objectName": "chatLogVie
 chatMessageListView_msgDelegate_MessageView = {"container": chatView_log, "objectName": "chatMessageViewDelegate", "index": 1, "type": "MessageView", "visible": True}
 secureSeedPhrase_Banner = {"container": statusDesktop_mainWindow, "objectName": "secureYourSeedPhraseBanner", "type": "ModuleWarning"}
 connectionInfo_Banner = {"container": statusDesktop_mainWindow, "objectName": "connectionInfoBanner", "type": "ModuleWarning"}
-updateAppInfo_Banner = {"container": statusDesktop_mainWindow, "objectName": "updateAppInfoBanner", "type": "ModuleWarning"}
+appVersionUpdate_Banner = {"container": statusDesktop_mainWindow, "objectName": "appVersionUpdateBanner", "type": "ModuleWarning"}
 testnetInfo_Banner = {"container": statusDesktop_mainWindow, "objectName": "testnetBanner", "type": "ModuleWarning"}
 statusDesktop_mainWindow_AppMain_EmojiPopup_SearchTextInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "StatusEmojiPopup_searchBox", "type": "TextEdit", "visible": True}
 mainWindow_ScrollView = {"container": statusDesktop_mainWindow, "type": "StatusScrollView", "unnamed": 1, "visible": True}
@@ -33,6 +33,11 @@ chatList_Repeater = {"container": statusDesktop_mainWindow, "objectName": "chatL
 chatList = {"container": statusDesktop_mainWindow, "objectName": "ContactsColumnView_chatList", "type": "StatusChatList"}
 mainWindow_startChat = {"checkable": True, "container": statusDesktop_mainWindow, "objectName": "startChatButton", "type": "StatusIconTabButton"}
 join_public_chat_StatusMenuItemDelegate = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "text": "Join public chat", "type": "StatusMenuItemDelegate", "unnamed": 1, "visible": True}
+chatView_messageInput = {"container": statusDesktop_mainWindow, "objectName": "messageInputField", "type": "TextArea", "visible": True}
+chatView_StatusChatInfoButton = {"container": statusDesktop_mainWindow, "objectName": "chatInfoBtnInHeader", "type": "StatusChatInfoButton", "visible": True}
+chatInfoButton_Pin_Text = {"container": chatView_StatusChatInfoButton, "objectName": "StatusChatInfo_pinText", "type": "StatusBaseText", "visible": True}
+joinPublicChat_input = {"container": statusDesktop_mainWindow_overlay, "objectName": "joinPublicChannelInput", "type": "TextEdit", "visible": True}
+startChat_Btn = {"container": statusDesktop_mainWindow_overlay, "objectName": "startChatButton", "type": "StatusButton"}
 
 # My Profile Popup
 ProfileHeader_userImage = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileHeader_userImage", "type": "UserImage", "visible": True}

@@ -16,6 +16,12 @@
 from common.Common import *
 import time
 
+from screens.StatusMainScreen import StatusMainScreen
+from screens.StatusChatScreen import StatusChatScreen
+
+_statusMain = StatusMainScreen()
+_statusChat = StatusChatScreen()
+
 @Given("the user starts the application with a specific data folder |any|")
 def step(context, data_folder_path):
     waitFor(lambda: currentApplicationContext().detach(), 500)
@@ -38,6 +44,11 @@ def step(context, text, obj):
 @When("user clicks on the following ui-component |any|")
 def step(context, obj):
     click_on_an_object(obj)
+
+@When("user joins chat room |any|")
+def step(context, room):
+    _statusMain.join_chat_room(room)
+    _statusChat.verify_chat_title(room)
 
 
 @Then("the following ui-component |any| is not enabled")
