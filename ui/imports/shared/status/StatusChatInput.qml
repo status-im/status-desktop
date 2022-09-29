@@ -126,6 +126,7 @@ Rectangle {
         //mentions helper properties
         property string copiedTextPlain: ""
         property string copiedTextFormatted: ""
+        property var copiedMentionsPos: []
         property int copyTextStart: 0
 
         // set to true when pasted text comes from this component (was copied within this component)
@@ -145,6 +146,21 @@ Rectangle {
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                     x: control.width - emojiPopup.width - Style.current.halfPadding
                     y: -emojiPopup.height
+                }
+            }
+        }
+
+        function copyMentions(start, end) {
+            copiedMentionsPos = []
+            for (let k = 0; k < mentionsPos.length; k++) {
+                if (mentionsPos[k].leftIndex >= start && mentionsPos[k].rightIndex <= end) {
+                    const mention = {
+                        name: mentionsPos[k].name,
+                        pubKey: mentionsPos[k].pubKey,
+                        leftIndex: mentionsPos[k].leftIndex - start,
+                        rightIndex: mentionsPos[k].rightIndex - start
+                    }
+                    copiedMentionsPos.push(mention)
                 }
             }
         }
@@ -340,16 +356,17 @@ Rectangle {
             }
         }
 
-        if ((event.key === Qt.Key_C) && (event.modifiers & Qt.ControlModifier)) {
+        if (event.matches(StandardKey.Copy) || event.matches(StandardKey.Cut)) {
             if (messageInputField.selectedText !== "") {
                 d.copiedTextPlain = messageInputField.getText(
                             messageInputField.selectionStart, messageInputField.selectionEnd)
                 d.copiedTextFormatted = messageInputField.getFormattedText(
                             messageInputField.selectionStart, messageInputField.selectionEnd)
+                d.copyMentions(messageInputField.selectionStart, messageInputField.selectionEnd)
             }
         }
 
-        if ((event.key === Qt.Key_V) && (event.modifiers & Qt.ControlModifier)) {
+        if (event.matches(StandardKey.Paste)) {
             messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
 
             // cursor position must be stored in a helper property because setting readonly to true causes change
@@ -362,6 +379,7 @@ Rectangle {
             } else {
                 d.copiedTextPlain = ""
                 d.copiedTextFormatted = ""
+                d.copiedMentionsPos = []
             }
         }
 
@@ -555,15 +573,6 @@ Rectangle {
         }
     }
 
-    Instantiator {
-        id: dummyContactList
-        model: control.usersStore ? control.usersStore.usersModel : []
-        delegate: QtObject {
-            property string contactName: model.displayName
-        }
-    }
-
-
     function onRelease(event) {
         if (event.key === Qt.Key_Backspace && textFormatMenu.opened) {
             textFormatMenu.close()
@@ -593,22 +602,22 @@ Rectangle {
         if (d.internalPaste) {
             if (d.copiedTextPlain.includes("@")) {
                 d.copiedTextFormatted = d.copiedTextFormatted.replace(/underline/g, "none").replace(/span style="/g, "span style=\" text-decoration:none;")
-                for (let j = 0; j < dummyContactList.count; j++) {
-                    const name = dummyContactList.objectAt(j).contactName
 
-                    if (d.copiedTextPlain.indexOf(name) > -1) {
-                        const subStr = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-                        const regex = new RegExp(subStr, 'gi')
-                        let result = null
-                        while ((result = regex.exec(d.copiedTextPlain))) {
-                            const mention = {
-                                name: name,
-                                leftIndex: (result.index + d.copyTextStart - 1),
-                                rightIndex: (result.index + d.copyTextStart + name.length)
-                            }
-                            mentionsPos.push(mention)
-                            d.sortMentions()
+                let lastFoundIndex = -1
+                for (let j = 0; j < d.copiedMentionsPos.length; j++) {
+                    const name = d.copiedMentionsPos[j].name
+                    const indexOfName = d.copiedTextPlain.indexOf(name, lastFoundIndex)
+                    lastFoundIndex += name.length
+
+                    if (indexOfName === d.copiedMentionsPos[j].leftIndex + 1) {
+                        const mention = {
+                            name: name,
+                            pubKey: d.copiedMentionsPos[j].pubKey,
+                            leftIndex: (d.copiedMentionsPos[j].leftIndex + d.copyTextStart - 1),
+                            rightIndex: (d.copiedMentionsPos[j].leftIndex + d.copyTextStart + name.length)
                         }
+                        mentionsPos.push(mention)
+                        d.sortMentions()
                     }
                 }
             }
@@ -617,7 +626,7 @@ Rectangle {
             insertInTextInput(d.copyTextStart, d.copiedTextFormatted)
             messageInputField.cursorPosition = d.copyTextStart + messageInputField.length - prevLength
             d.internalPaste = false
-        } else if ((event.key === Qt.Key_V) && (event.modifiers & Qt.ControlModifier)) {
+        } else if (event.matches(StandardKey.Paste)) {
             insertInTextInput(d.copyTextStart, QClipboardProxy.text)
             messageInputField.cursorPosition = d.copyTextStart + QClipboardProxy.text.length
         }
