@@ -27,12 +27,16 @@ class MainScreenComponents(Enum):
     CHAT_LIST = "chatList"
     MARK_AS_READ_BUTTON = "mark_as_Read_StatusMenuItemDelegate"
     COMMUNITY_NAVBAR_BUTTONS = "navBarListView_All_Community_Buttons"
-    MODULE_WARNING_BANNER = "moduleWarning_Banner"
+    SECURE_SEEDPHRASE_BANNER = "secureSeedPhrase_Banner"
+    CONNECTION_INFO_BANNER = "connectionInfo_Banner"
+    UPDATE_APP_BANNER = "updateAppInfo_Banner"
+    TESTNET_INFO_BANNER = "testnetInfo_Banner"    
     PROFILE_NAVBAR_BUTTON = "mainWindow_ProfileNavBarButton"
     USERSTATUSMENU_ALWAYS_ACTIVE_ACTION = "userContextmenu_AlwaysActiveButton"
     USERSTATUSMENU_INACTIVE_ACTION = "userContextmenu_InActiveButton"
     USERSTATUSMENU_AUTOMATIC_ACTION = "userContextmenu_AutomaticButton"
     USERSTATUSMENU_OPEN_PROFILE_POPUP = "userContextMenu_ViewMyProfileAction"
+    SPLASH_SCREEN = "splashScreen"
 
 class ProfilePopup(Enum):
     USER_IMAGE = "ProfileHeader_userImage"
@@ -53,20 +57,42 @@ class StatusMainScreen:
 
     def __init__(self):
         verify_screen(MainScreenComponents.PUBLIC_CHAT_ICON.value)
+        
+    # Main screen is ready to interact with it (Splash screen animation not present and no banners on top of the screen)
+    def is_ready(self):
+        self.wait_for_splash_animation_ends()
+        self.close_banners()
+        
+    def wait_for_splash_animation_ends(self, timeoutMSec: int = 5000):
+        start = time.time()
+        [loaded, obj] = is_loaded_visible_and_enabled(MainScreenComponents.SPLASH_SCREEN.value)
+        while loaded and (start + timeoutMSec / 1000 > time.time()):
+            log("Splash screen animation present!")
+            [loaded, obj] = is_loaded_visible_and_enabled(MainScreenComponents.SPLASH_SCREEN.value)            
+            sleep_test(0.5)
+        verify_equal(loaded, False, "Checking splash screen animation has ended.")
+    
+    # It closes all existing banner and waits them to disappear
+    def close_banners(self):
+        self.wait_for_banner_to_disappear(MainScreenComponents.CONNECTION_INFO_BANNER.value)
+        self.wait_for_banner_to_disappear(MainScreenComponents.UPDATE_APP_BANNER.value)
+        self.wait_for_banner_to_disappear(MainScreenComponents.SECURE_SEEDPHRASE_BANNER.value)
 
     # Close banner and wait to disappear otherwise the click might land badly
-    @staticmethod
-    def wait_for_banner_to_disappear(timeoutMSec: int = 3000):
+    def wait_for_banner_to_disappear(self, banner_type: str, timeoutMSec: int = 3000):
         start = time.time()
         while(start + timeoutMSec / 1000 > time.time()):
             try:
-                obj = wait_and_get_obj(MainScreenComponents.MODULE_WARNING_BANNER.value, 100)
+                obj = get_obj(banner_type)
                 if not obj.visible:
+                    log("Banner object not visible")
                     return
                 obj.close()
+                log("Closed banner: " + banner_type)
             except:
+                log("Banner object not found")
                 return
-            sleep_test(0.1)
+            sleep_test(0.5)
         verify_failure(f"Banner is still visible after {timeoutMSec}ms")
 
     def join_chat_room(self, room: str):

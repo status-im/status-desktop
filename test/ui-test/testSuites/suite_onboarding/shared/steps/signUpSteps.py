@@ -27,20 +27,16 @@ def step(context, username, password):
 
 @When("the user inputs username |any|")
 def step(context, username):
-    _welcomeScreen.input_username(username)
-
-
-@Then("the user lands on the signed in app")
-def step(context): 
-    _mainScreen
-    time.sleep(2)
-    
+    _welcomeScreen.input_username(username) 
     
 @When("The user inputs the seed phrase |any|")
 def step(context, seed_phrase):
     _welcomeScreen.input_seed_phrase(seed_phrase)
 
-    
+@Then("the user lands on the signed in app")
+def step(context):
+    _mainScreen.is_ready()  
+      
 @Then("the invalid seed text is visible")
 def step(context):
     _welcomeScreen.seed_phrase_visible()

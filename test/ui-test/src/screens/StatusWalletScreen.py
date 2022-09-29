@@ -244,8 +244,6 @@ class StatusWalletScreen:
         click_obj(obj)
 
     def edit_saved_address(self, name: str, new_name: str):
-        StatusMainScreen.wait_for_banner_to_disappear()
-
         self._find_saved_address_and_open_menu(name)
 
         click_obj_by_name(SavedAddressesScreen.EDIT.value)
@@ -253,16 +251,12 @@ class StatusWalletScreen:
         click_obj_by_name(AddSavedAddressPopup.ADD_BUTTON.value)
 
     def delete_saved_address(self, name: str):
-        StatusMainScreen.wait_for_banner_to_disappear()
-
         self._find_saved_address_and_open_menu(name)
 
         click_obj_by_name(SavedAddressesScreen.DELETE.value)
         click_obj_by_name(SavedAddressesScreen.CONFIRM_DELETE.value)
 
     def toggle_favourite_for_saved_address(self, name: str):
-        StatusMainScreen.wait_for_banner_to_disappear()
-
         # Find the saved address and click favourite to toggle
         item = self._get_saved_address_delegate_item(name)
         favouriteButton = get_child_item_with_object_name(item, SavedAddressesScreen.DELEGATE_FAVOURITE_BUTTON_OBJECT_NAME.value)

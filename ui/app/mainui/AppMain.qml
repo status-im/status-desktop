@@ -437,6 +437,7 @@ Item {
 
                 ModuleWarning {
                     id: testnetBanner
+                    objectName: "testnetBanner"
                     Layout.fillWidth: true
                     text: qsTr("Testnet mode is enabled. All balances, transactions and dApp interactions will be on testnets.")
                     buttonText: qsTr("Turn off")
@@ -481,6 +482,7 @@ Item {
 
                 ModuleWarning {
                     id: secureYourSeedPhrase
+                    objectName: "secureYourSeedPhraseBanner"
                     Layout.fillWidth: true
                     active: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner
                               && !appMain.rootStore.profileSectionStore.profileStore.privacyStore.mnemonicBackedUp
@@ -503,6 +505,7 @@ Item {
                     ModuleWarning {
                         readonly property bool isConnected: bannersLayout.isConnected
 
+                        objectName: "connectionInfoBanner"
                         Layout.fillWidth: true
                         text: isConnected ? qsTr("Connected") : qsTr("Disconnected")
                         type: isConnected ? ModuleWarning.Success : ModuleWarning.Danger
@@ -539,6 +542,7 @@ Item {
                         readonly property string version: appMain.rootStore.latestVersion
                         readonly property bool updateAvailable: appMain.rootStore.newVersionAvailable
 
+                        objectName: "updateAppInfoBanner"
                         Layout.fillWidth: true
                         type: ModuleWarning.Success
                         text: updateAvailable ? qsTr("A new version of Status (%1) is available").arg(version)

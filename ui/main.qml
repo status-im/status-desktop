@@ -287,6 +287,7 @@ StatusWindow {
     Component {
         id: appLoadingAnimation
         SplashScreen {
+            objectName: "splashScreen"
         }
     }
 

@@ -115,7 +115,6 @@ class SettingsScreen:
         verify_screen(SidebarComponents.ADVANCED_OPTION.value)
     
     def open_wallet_settings(self):
-        StatusMainScreen.wait_for_banner_to_disappear()
         click_obj_by_name(SidebarComponents.WALLET_OPTION.value)
 
     def activate_wallet_option(self):
@@ -241,7 +240,6 @@ class SettingsScreen:
         click_obj_by_name(SidebarComponents.COMMUNITIES_OPTION.value)
 
     def leave_community(self):
-        StatusMainScreen.wait_for_banner_to_disappear()
         # In our case we have only one visible community and only one button
         click_obj_by_name(CommunitiesSettingsScreen.LEAVE_COMMUNITY_BUTTONS.value)
         click_obj_by_name(CommunitiesSettingsScreen.LEAVE_COMMUNITY_POPUP_LEAVE_BUTTON.value)
