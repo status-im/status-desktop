@@ -1199,7 +1199,7 @@ Item {
             linkUrl: model.url
             duration: model.durationInMs
             onClicked: {
-                appMain.rootStore.mainModuleInst.ephemeralNotificationClicked(model.id)
+                appMain.rootStore.mainModuleInst.ephemeralNotificationClicked(model.timestamp)
                 this.open = false
             }
             onLinkActivated: {
@@ -1207,7 +1207,7 @@ Item {
             }
 
             onClose: {
-                appMain.rootStore.mainModuleInst.removeEphemeralNotification(model.id)
+                appMain.rootStore.mainModuleInst.removeEphemeralNotification(model.timestamp)
             }
         }
     }

@@ -4,6 +4,7 @@ import ephemeral_notification_item
 type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
+    Timestamp
     DurationInMs
     Title
     SubTitle
@@ -33,6 +34,7 @@ QtObject:
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Id.int:"id",
+      ModelRole.Timestamp.int:"timestamp",
       ModelRole.DurationInMs.int:"durationInMs",
       ModelRole.Title.int:"title",
       ModelRole.SubTitle.int:"subTitle",
@@ -53,6 +55,8 @@ QtObject:
     case enumRole:
       of ModelRole.Id:
         result = newQVariant(item.id)
+      of ModelRole.Timestamp:
+        result = newQVariant(item.timestamp)
       of ModelRole.DurationInMs:
         result = newQVariant(item.durationInMs)
       of ModelRole.Title:
