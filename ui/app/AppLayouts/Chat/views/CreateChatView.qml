@@ -70,6 +70,7 @@ Page {
 
                     cleanup()
                     chatInput.textInput.clear()
+                    Global.closeCreateChatView();
                 }
 
                 onRejected: {
@@ -80,6 +81,18 @@ Page {
                 onVisibleChanged: {
                     if (visible)
                         edit.forceActiveFocus()
+                }
+
+                onEnterKeyPressed: {
+                    entryAccepted(contactsList.itemAtIndex(contactsList.currentIndex));
+                }
+
+                onUpKeyPressed: {
+                    contactsList.decrementCurrentIndex();
+                }
+
+                onDownKeyPressed: {
+                    contactsList.incrementCurrentIndex();
                 }
             }
 
@@ -115,13 +128,13 @@ Page {
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-
                 visible: membersSelector.suggestionsModel.count &&
                          !(membersSelector.edit.text !== "")
                 implicitWidth: contentItem.childrenRect.width
                 model: membersSelector.suggestionsModel
                 delegate: ContactListItemDelegate {
                     width: ListView.view.width
+                    highlighted: ListView.isCurrentItem
                     onClicked: membersSelector.entryAccepted(this)
                 }
             }
@@ -138,22 +151,26 @@ Page {
                 closeGifPopupAfterSelection: true
                 onSendTransactionCommandButtonClicked: {
                     root.rootStore.createChatStartSendTransactionProcess = true;
-                    root.createChat();
+                    membersSelector.createChat();
                 }
                 onReceiveTransactionCommandButtonClicked: {
                     root.rootStore.createChatStartReceiveTransactionProcess = true;
-                    root.createChat();
+                    membersSelector.createChat();
                 }
                 onStickerSelected: {
                     root.rootStore.createChatStickerHashId = hashId;
                     root.rootStore.createChatStickerPackId = packId;
                     root.rootStore.createChatStickerUrl = url;
-                    root.createChat();
+                    membersSelector.createChat();
                 }
                 onSendMessage: {
-                    root.rootStore.createChatFileUrls = chatInput.fileUrls;
-                    root.rootStore.createChatInitMessage = chatInput.textInput.text;
-                    root.createChat();
+                    root.rootStore.createChatInitMessage = chatInput.textInput.text
+                    root.rootStore.createChatFileUrls = chatInput.fileUrls
+                    membersSelector.createChat()
+
+                    membersSelector.cleanup()
+                    chatInput.textInput.clear()
+                    Global.closeCreateChatView();
                 }
             }
         }
