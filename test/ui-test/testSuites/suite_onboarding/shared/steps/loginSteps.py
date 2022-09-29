@@ -1,11 +1,6 @@
 from screens.StatusLoginScreen import StatusLoginScreen
 
 _loginScreen = StatusLoginScreen()
-
-
-@When("the user logs in with password |any|")
-def step(context, password):
-    _loginScreen.login(password)
     
 @When("the user |any| logs in with password |any|")
 def step(context, username, password):

@@ -14,7 +14,6 @@ Feature: Status Desktop Chat
     	 When user signs up with username tester123 and password TesTEr16843/!@00
     	 Then the user lands on the signed in app
 
-	@mayfail
     Scenario: User joins a public room and chats
 		 When user joins chat room test
 		 Then user is able to send chat message
@@ -24,13 +23,13 @@ Feature: Status Desktop Chat
 		 | I am from status   	 |
 		 | tell me how you do?   |
 
-	@mayfail @merge
+	@merge
     Scenario: User can reply to their own message
          When user joins chat room test
          Then the user is able to send a random chat message
          Then the user can reply to the message at index 0 with "This is a reply"
 
-	@mayfail @merge
+	@merge
     Scenario: User can edit a message
          When user joins chat room test
          Then user is able to send chat message
@@ -51,14 +50,14 @@ Feature: Status Desktop Chat
 		 Then the user can mark the channel test as read
          # TODO find a way to validate that it worked
 
-	@mayfail @merge
+	@merge
     Scenario: User can delete their own message
          When user joins chat room automation-test
          Then the user is able to send a random chat message
          Then the user can delete the message at index 0
          Then the last message is not the random message
 
-	@mayfail @merge
+	@merge
     Scenario: User can clear chat history
         When user joins chat room test
         Then user is able to send chat message
@@ -139,7 +138,7 @@ Feature: Status Desktop Chat
          Then the emoji 😎 is displayed in the last message
          And the message wow I'm so cool is displayed in the last message
 
-	@mayfail @merge
+	@merge
     Scenario: User sees chats sorted by most recent activity
           When user joins chat room first-chat
           And user joins chat room second-chat
@@ -163,7 +162,7 @@ Feature: Status Desktop Chat
          And the message Hello is displayed in the last message
 
 
-	@mayfail @merge
+	@merge
     Scenario: User can send a sticker after installing a free pack
          When user joins chat room automation-test
          Then the user can install the sticker pack at position 4

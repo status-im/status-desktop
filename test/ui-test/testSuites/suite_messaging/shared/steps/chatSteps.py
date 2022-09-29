@@ -14,11 +14,6 @@ _statusCreateChatView = StatusCreateChatScreen()
 @When("the user opens the chat section")
 def step(context):
     _statusMain.open_chat_section()
-
-@When("user joins chat room |any|")
-def step(context, room):
-    _statusMain.join_chat_room(room)
-    _statusChat.verify_chat_title(room)
     
 @When("the user creates a group chat adding users")
 def step(context):
