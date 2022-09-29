@@ -186,6 +186,9 @@ Rectangle {
             anchors.fill: parent
             radius: d.bannerRadius
             color: root.loaded ? root.communityColor : d.loadingColor2
+
+            // hide when image is loaded to avoid glitches on the edge
+            visible: image.status !== Image.Ready
         }
         Image {
             id: image
@@ -194,7 +197,7 @@ Rectangle {
             anchors.centerIn: parent
             fillMode: Image.PreserveAspectFit
             smooth: true
-            visible: !root.loaded || !root.banner
+            visible: false
         }
         OpacityMask {
             anchors.fill: image
