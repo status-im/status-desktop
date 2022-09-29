@@ -62,7 +62,6 @@ Item {
                 width: visible ? implicitWidth : 0
                 text: modelData.text
                 anchors.verticalCenter: parent.verticalCenter
-                height: 32
                 size: StatusBaseButton.Size.Small
                 highlighted: modelData.category == root.currentActivityCategory
                 onClicked: root.categoryTriggered(modelData.category)
@@ -89,6 +88,7 @@ Item {
 
             StatusToolTip {
                 visible: hideReadNotificationsBtn.hovered
+                offset: hideReadNotificationsBtn.width
                 text: root.hideReadNotifications ? qsTr("Show read notifications") : qsTr("Hide read notifications")
             }
         }
