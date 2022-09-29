@@ -12,7 +12,6 @@ import "./"
 
 Item {
     id: root
-    objectName: "moduleWarningBanner"
 
     enum Type {
         Danger,

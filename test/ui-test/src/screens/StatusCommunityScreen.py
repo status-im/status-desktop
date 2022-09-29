@@ -119,8 +119,6 @@ class StatusCommunityScreen:
         return result
 
     def _open_edit_channel_popup(self):
-        StatusMainScreen.wait_for_banner_to_disappear()
-
         click_obj_by_name(CommunityScreenComponents.CHAT_MORE_OPTIONS_BUTTON.value)
         click_obj_by_name(CommunityScreenComponents.EDIT_CHANNEL_MENU_ITEM.value)
 
@@ -252,8 +250,6 @@ class StatusCommunityScreen:
         click_obj_by_name(CommunitySettingsComponents.BACK_TO_COMMUNITY_BUTTON.value)
 
     def delete_current_community_channel(self):
-        StatusMainScreen.wait_for_banner_to_disappear()
-
         click_obj_by_name(CommunityScreenComponents.CHAT_MORE_OPTIONS_BUTTON.value)
         click_obj_by_name(CommunityScreenComponents.DELETE_CHANNEL_MENU_ITEM.value)
         click_obj_by_name(CommunityScreenComponents.DELETE_CHANNEL_CONFIRMATION_DIALOG_DELETE_BUTTON.value)

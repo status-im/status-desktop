@@ -4,12 +4,16 @@ statusDesktop_mainWindow_overlay = {"container": statusDesktop_mainWindow, "type
 mainWindow_navBarListView_ListView = {"container": statusDesktop_mainWindow, "objectName": "statusMainNavBarListView", "type": "ListView", "visible": True}
 chatView_log = {"container": statusDesktop_mainWindow, "objectName": "chatLogView", "type": "StatusListView", "visible": True}
 chatMessageListView_msgDelegate_MessageView = {"container": chatView_log, "objectName": "chatMessageViewDelegate", "index": 1, "type": "MessageView", "visible": True}
-moduleWarning_Banner = {"container": statusDesktop_mainWindow, "objectName": "moduleWarningBanner", "type": "ModuleWarning", "visible": True}
+secureSeedPhrase_Banner = {"container": statusDesktop_mainWindow, "objectName": "secureYourSeedPhraseBanner", "type": "ModuleWarning"}
+connectionInfo_Banner = {"container": statusDesktop_mainWindow, "objectName": "connectionInfoBanner", "type": "ModuleWarning"}
+updateAppInfo_Banner = {"container": statusDesktop_mainWindow, "objectName": "updateAppInfoBanner", "type": "ModuleWarning"}
+testnetInfo_Banner = {"container": statusDesktop_mainWindow, "objectName": "testnetBanner", "type": "ModuleWarning"}
 statusDesktop_mainWindow_AppMain_EmojiPopup_SearchTextInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "StatusEmojiPopup_searchBox", "type": "TextEdit", "visible": True}
 mainWindow_ScrollView = {"container": statusDesktop_mainWindow, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 mainWindow_ScrollView_2 = {"container": statusDesktop_mainWindow, "occurrence": 2, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 mainWindow_ProfileNavBarButton = {"container": statusDesktop_mainWindow, "objectName": "statusProfileNavBarTabButton", "type": "StatusNavBarTabButton", "visible": True}
 settings_navbar_settings_icon_StatusIcon = {"container": mainWindow_navBarListView_ListView, "objectName": "settings-icon", "type": "StatusIcon", "visible": True}
+splashScreen = {"container": statusDesktop_mainWindow, "objectName": "splashScreen", "type": "SplashScreen"}
 
 # main right panel
 mainWindow_RighPanel= {"container": statusDesktop_mainWindow, "type": "ColumnLayout", "objectName": "mainRightView", "visible": True}
