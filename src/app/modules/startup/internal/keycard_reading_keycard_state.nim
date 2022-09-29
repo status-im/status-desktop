@@ -9,8 +9,9 @@ proc delete*(self: KeycardReadingKeycardState) =
   self.State.delete
 
 method executeBackCommand*(self: KeycardReadingKeycardState, controller: Controller) =
-  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    controller.cancelCurrentFlow()
+  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
+    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+      controller.cancelCurrentFlow()
 
 method getNextPrimaryState*(self: KeycardReadingKeycardState, controller: Controller): State =
   let (flowType, flowEvent) = controller.getLastReceivedKeycardData()
