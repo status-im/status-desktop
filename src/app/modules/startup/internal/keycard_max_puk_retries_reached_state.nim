@@ -8,14 +8,6 @@ proc newKeycardMaxPukRetriesReachedState*(flowType: FlowType, backState: State):
 proc delete*(self: KeycardMaxPukRetriesReachedState) =
   self.State.delete
 
-method executePrimaryCommand*(self: KeycardMaxPukRetriesReachedState, controller: Controller) =
+method getNextPrimaryState*(self: KeycardMaxPukRetriesReachedState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.runFactoryResetPopup()
-
-method executeSecondaryCommand*(self: KeycardMaxPukRetriesReachedState, controller: Controller) =
-  if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.runRecoverAccountFlow()
-
-method resolveKeycardNextState*(self: KeycardMaxPukRetriesReachedState, keycardFlowType: string, keycardEvent: KeycardEvent, 
-  controller: Controller): State =
-  return ensureReaderAndCardPresenceAndResolveNextOnboardingState(self, keycardFlowType, keycardEvent, controller)
+    return createState(StateType.KeycardRecover, self.flowType(), self)

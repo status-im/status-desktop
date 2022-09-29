@@ -32,6 +32,7 @@ type StateType* {.pure.} = enum
   KeycardInsertedKeycard = "KeycardInsertedKeycard"
   KeycardReadingKeycard = "KeycardReadingKeycard"
   KeycardRecognizedKeycard = "KeycardRecognizedKeycard"
+  KeycardWrongKeycard = "KeycardWrongKeycard"
   KeycardCreatePin = "KeycardCreatePin"
   KeycardRepeatPin = "KeycardRepeatPin"
   KeycardPinSet = "KeycardPinSet"

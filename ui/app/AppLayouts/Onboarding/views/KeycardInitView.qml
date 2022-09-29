@@ -29,7 +29,7 @@ Item {
     ColumnLayout {
         anchors.centerIn: parent
         height: Constants.keycard.general.onboardingHeight
-        spacing: Style.current.padding
+        spacing: Style.current.bigPadding
 
         KeycardImage {
             id: image
@@ -123,7 +123,7 @@ Item {
             }
             PropertyChanges {
                 target: info
-                visible: root.startupStore.startupModuleInst.keycardData !== ""
+                visible: root.startupStore.startupModuleInst.keycardData & Constants.predefinedKeycardData.wronglyInsertedCard
                 text: qsTr("Check the card, it might be wrongly inserted")
                 font.pixelSize: Constants.keycard.general.fontSize3
                 color: Theme.palette.baseColor1

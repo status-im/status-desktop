@@ -295,6 +295,9 @@ method checkRepeatedKeycardPinWhileTyping*[T](self: Module[T], pin: string): boo
 method getSeedPhrase*[T](self: Module[T]): string =
   return self.controller.getSeedPhrase()
 
+method getKeycardData*[T](self: Module[T]): string =
+  return self.view.getKeycardData()
+
 method setKeycardData*[T](self: Module[T], value: string) =
   self.view.setKeycardData(value)
 

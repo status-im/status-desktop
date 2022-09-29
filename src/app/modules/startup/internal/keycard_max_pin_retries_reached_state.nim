@@ -9,4 +9,5 @@ proc delete*(self: KeycardMaxPinRetriesReachedState) =
   self.State.delete
 
 method getNextPrimaryState*(self: KeycardMaxPinRetriesReachedState, controller: Controller): State =
-  return createState(StateType.KeycardRecover, self.flowType(), self.getBackState)
+  if self.flowType == FlowType.FirstRunOldUserKeycardImport:
+    return createState(StateType.KeycardRecover, self.flowType(), self)

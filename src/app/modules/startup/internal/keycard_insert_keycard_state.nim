@@ -10,7 +10,8 @@ proc delete*(self: KeycardInsertKeycardState) =
 
 method executeBackCommand*(self: KeycardInsertKeycardState, controller: Controller) =
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
-    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard or
+    self.flowType == FlowType.FirstRunOldUserKeycardImport:
       controller.cancelCurrentFlow()
 
 method resolveKeycardNextState*(self: KeycardInsertKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
@@ -21,9 +22,9 @@ method resolveKeycardNextState*(self: KeycardInsertKeycardState, keycardFlowType
   if keycardFlowType == ResponseTypeValueInsertCard and 
     keycardEvent.error.len > 0 and
     keycardEvent.error == ErrorConnection:
-      controller.setKeycardData(ResponseTypeValueInsertCard)
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = true))
       return nil
   if keycardFlowType == ResponseTypeValueCardInserted:
-    controller.setKeycardData("")
+    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = false))
     return createState(StateType.KeycardInsertedKeycard, self.flowType, self.getBackState)
   return nil

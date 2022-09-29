@@ -33,6 +33,7 @@ method resolveKeycardNextState*(self: KeycardWrongPukState, keycardFlowType: str
     if keycardFlowType == ResponseTypeValueSwapCard and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPUKRetries:
+        controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.MaxPUKReached, add = true))
         return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       controller.setKeycardEvent(keycardEvent)

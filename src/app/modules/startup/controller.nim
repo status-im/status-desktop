@@ -209,6 +209,12 @@ proc getSeedPhraseLength*(self: Controller): int =
 proc setKeyUid*(self: Controller, value: string) =
   self.tmpKeyUid = value
 
+proc getKeyUid*(self: Controller): string =
+  self.tmpKeyUid
+
+proc getKeycardData*(self: Controller): string =
+  return self.delegate.getKeycardData()
+
 proc setKeycardData*(self: Controller, value: string) =
   self.delegate.setKeycardData(value)
 
@@ -267,7 +273,7 @@ proc validMnemonic*(self: Controller, mnemonic: string): bool =
     return true
   return false
 
-proc importMnemonic*(self: Controller): bool =
+proc importMnemonic(self: Controller): bool =
   let error = self.accountsService.importMnemonic(self.tmpSeedPhrase)
   if(error.len == 0):
     self.delegate.importAccountSuccess()
@@ -368,6 +374,10 @@ proc loginAccountKeycard*(self: Controller) =
   let error = self.accountsService.loginAccountKeycard(self.tmpKeycardEvent)
   if(error.len > 0):
     self.delegate.emitAccountLoginError(error)
+
+proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =
+  let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)
+  return acc.keyUid
 
 proc seedPhraseRefersToSelectedKeyPair*(self: Controller, seedPhrase: string): bool =
   let selectedAccount = self.getSelectedLoginAccount()

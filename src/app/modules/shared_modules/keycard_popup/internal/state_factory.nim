@@ -19,6 +19,7 @@ type PredefinedKeycardData* {.pure.} = enum
   OfferPukForUnlock = 16
   UseUnlockLabelForLockedState = 32
   UseGeneralMessageForLockedState = 64
+  MaxPUKReached = 128
 
 # Forward declaration
 proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State

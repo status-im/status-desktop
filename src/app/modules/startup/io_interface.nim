@@ -118,6 +118,9 @@ method checkRepeatedKeycardPinWhileTyping*(self: AccessInterface, pin: string): 
 method getSeedPhrase*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getKeycardData*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setKeycardData*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
