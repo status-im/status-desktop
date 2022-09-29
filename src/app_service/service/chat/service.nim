@@ -230,8 +230,8 @@ QtObject:
       error "no chats or messages in the parsed response"
       return
 
-    for msg in messages:
-      self.events.emit(SIGNAL_SENDING_SUCCESS, MessageSendingSuccess(message: msg, chat: chats[0]))
+    for i, msg in messages:
+      self.events.emit(SIGNAL_SENDING_SUCCESS, MessageSendingSuccess(message: msg, chat: chats[i]))
 
   proc processUpdateForTransaction*(self: Service, messageId: string, response: RpcResponse[JsonNode]) =
     var (chats, messages) = self.processMessageUpdateAfterSend(response)
