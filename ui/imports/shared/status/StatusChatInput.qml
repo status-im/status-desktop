@@ -374,7 +374,9 @@ Rectangle {
             d.copyTextStart = messageInputField.cursorPosition
             messageInputField.readOnly = true
 
-            if (d.copiedTextPlain === QClipboardProxy.text) {
+            const clipboardText = globalUtils.plainText(QClipboardProxy.text)
+            const copiedText = globalUtils.plainText(d.copiedTextPlain)
+            if (copiedText === clipboardText) {
                 d.internalPaste = true
             } else {
                 d.copiedTextPlain = ""
