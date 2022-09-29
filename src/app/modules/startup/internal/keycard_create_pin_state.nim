@@ -13,8 +13,9 @@ proc delete*(self: KeycardCreatePinState) =
 method executeBackCommand*(self: KeycardCreatePinState, controller: Controller) =
   controller.setPin("")
   controller.setPinMatch(false)
-  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    controller.cancelCurrentFlow()
+  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
+    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+      controller.cancelCurrentFlow()
 
 method getNextPrimaryState*(self: KeycardCreatePinState, controller: Controller): State =
   if not self.pinValid:

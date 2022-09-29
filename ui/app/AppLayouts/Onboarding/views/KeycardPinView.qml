@@ -133,6 +133,7 @@ Item {
             PropertyChanges {
                 target: info
                 text: qsTr("It is very important that you do not lose this PIN")
+                color: Theme.palette.dangerColor1
             }
             PropertyChanges {
                 target: message

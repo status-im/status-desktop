@@ -9,8 +9,9 @@ proc delete*(self: KeycardInsertKeycardState) =
   self.State.delete
 
 method executeBackCommand*(self: KeycardInsertKeycardState, controller: Controller) =
-  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    controller.cancelCurrentFlow()
+  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
+    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+      controller.cancelCurrentFlow()
 
 method resolveKeycardNextState*(self: KeycardInsertKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =

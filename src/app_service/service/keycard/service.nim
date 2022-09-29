@@ -159,9 +159,7 @@ QtObject:
     self.threadpool.start(arg)
 
   proc startLoadAccountFlow*(self: Service, seedPhraseLength: int, seedPhrase: string, puk: string, factoryReset: bool) =
-    var payload = %* {
-      RequestParamOverwrite: true
-    }
+    var payload = %* { }
     if seedPhrase.len > 0 and seedPhraseLength > 0:
       payload[RequestParamMnemonic] = %* seedPhrase
       payload[RequestParamMnemonicLen] = %* seedPhraseLength

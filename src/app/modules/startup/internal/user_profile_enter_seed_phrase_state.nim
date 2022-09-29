@@ -31,7 +31,7 @@ method executePrimaryCommand*(self: UserProfileEnterSeedPhraseState, controller:
     self.successfulImport = controller.importMnemonic()
     if self.successfulImport:
       if self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
-        controller.runLoadAccountFlow(controller.getSeedPhraseLength(), controller.getSeedPhrase(), puk = "", factoryReset = true)
+        controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
       elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
         controller.runLoadAccountFlow(controller.getSeedPhraseLength(), controller.getSeedPhrase(), puk = "", factoryReset = true)
 

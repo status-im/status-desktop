@@ -230,15 +230,22 @@ proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, key
     if keycardFlowType == ResponseTypeValueEnterNewPIN and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorRequireInit:
-        return createState(StateType.KeycardCreatePin, state.flowType, state.getBackState)
+        if state.stateType == StateType.UserProfileEnterSeedPhrase:
+          return createState(StateType.KeycardCreatePin, state.flowType, state.getBackState)
+        return createState(StateType.KeycardRecognizedKeycard, state.flowType, state.getBackState)
     if keycardFlowType == ResponseTypeValueEnterPIN and 
       keycardEvent.error.len == 0:
         return createState(StateType.KeycardNotEmpty, state.flowType, state.getBackState)
     if keycardFlowType == ResponseTypeValueSwapCard and 
-      keycardEvent.error.len > 0 and
-      (keycardEvent.error == ErrorHasKeys or 
-      keycardEvent.error == RequestParamPUKRetries):
-        return createState(StateType.KeycardNotEmpty, state.flowType, state.getBackState)
+      keycardEvent.error.len > 0:
+        if keycardEvent.error == ErrorNotAKeycard:
+          return createState(StateType.KeycardNotKeycard, state.flowType, state.getBackState)
+        if keycardEvent.error == RequestParamFreeSlots:
+          return createState(StateType.KeycardLocked, state.flowType, state.getBackState)
+        if keycardEvent.error == RequestParamPUKRetries:
+          return createState(StateType.KeycardLocked, state.flowType, state.getBackState)
+        if keycardEvent.error == ErrorHasKeys:
+          return createState(StateType.KeycardNotEmpty, state.flowType, state.getBackState)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.keyUid.len > 0:
         controller.setKeyUid(keycardEvent.keyUid)
