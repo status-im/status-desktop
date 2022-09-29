@@ -111,6 +111,7 @@ Page {
 
             StatusListView {
                 id: contactsList
+                objectName: "createChatContactsList"
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true

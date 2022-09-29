@@ -54,8 +54,8 @@ joinPublicChat_input = {"container": statusDesktop_mainWindow_overlay, "objectNa
 chat_name_PlaceholderText = {"container": statusDesktop_mainWindow_overlay, "text": "chat-name", "type": "PlaceholderText", "unnamed": 1, "visible": True}
 
 # Create chat view:
-createChatView_contactsList = {"container": statusDesktop_mainWindow, "objectName": "tagSelectorUserList", "type": "ListView"}
-createChatView_confirmBtn = {"container": statusDesktop_mainWindow, "objectName": "createChatConfirmButton", "type": "StatusButton"}
+createChatView_contactsList = {"container": statusDesktop_mainWindow, "objectName": "createChatContactsList", "type": "StatusListView"}
+createChatView_confirmBtn = {"container": statusDesktop_mainWindow, "objectName": "inlineSelectorConfirmButton", "type": "StatusButton"}
 
 # Members panel:
 chatView_chatMembers_ListView = {"container": statusDesktop_mainWindow, "objectName": "userListPanel", "type": "ListView"}
