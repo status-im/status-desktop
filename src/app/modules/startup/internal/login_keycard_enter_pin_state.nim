@@ -10,18 +10,19 @@ proc delete*(self: LoginKeycardEnterPinState) =
 
 method executePrimaryCommand*(self: LoginKeycardEnterPinState, controller: Controller) =
   if self.flowType == FlowType.AppLogin:
-    if not controller.isSelectedLoginAccountKeycardAccount():
-      controller.login()
-    elif controller.getPin().len == PINLengthForStatusApp:
-      controller.enterKeycardPin(controller.getPin())
-
-method getNextSecondaryState*(self: LoginKeycardEnterPinState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
+    if controller.isSelectedLoginAccountKeycardAccount() and
+      controller.getPin().len == PINLengthForStatusApp:
+        controller.enterKeycardPin(controller.getPin())
 
 method getNextTertiaryState*(self: LoginKeycardEnterPinState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
+
+method getNextQuaternaryState*(self: LoginKeycardEnterPinState, controller: Controller): State =
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
 
 method resolveKeycardNextState*(self: LoginKeycardEnterPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
@@ -32,8 +33,7 @@ method resolveKeycardNextState*(self: LoginKeycardEnterPinState, keycardFlowType
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.error.len == 0:
         controller.setKeycardEvent(keycardEvent)
-        controller.loginAccountKeycard()
-        return nil
+        return createState(StateType.LoginKeycardPinVerified, self.flowType, nil)
     if keycardFlowType == ResponseTypeValueEnterPIN and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPIN:

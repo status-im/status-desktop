@@ -8,24 +8,15 @@ proc newLoginKeycardInsertKeycardState*(flowType: FlowType, backState: State): L
 proc delete*(self: LoginKeycardInsertKeycardState) =
   self.State.delete
 
-method executePrimaryCommand*(self: LoginKeycardInsertKeycardState, controller: Controller) =
-  if self.flowType == FlowType.AppLogin:
-    if not controller.isSelectedLoginAccountKeycardAccount():
-      controller.login()
-    elif not controller.keychainErrorOccurred() and controller.getPin().len == PINLengthForStatusApp:
-      controller.enterKeycardPin(controller.getPin())
-
-method getNextPrimaryState*(self: LoginKeycardInsertKeycardState, controller: Controller): State =
-  if controller.keychainErrorOccurred() or controller.getPin().len != PINLengthForStatusApp:
-    return createState(StateType.LoginKeycardEnterPin, self.flowType, nil)
-
-method getNextSecondaryState*(self: LoginKeycardInsertKeycardState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
-
 method getNextTertiaryState*(self: LoginKeycardInsertKeycardState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
+
+method getNextQuaternaryState*(self: LoginKeycardInsertKeycardState, controller: Controller): State =
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
 
 method resolveKeycardNextState*(self: LoginKeycardInsertKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
@@ -39,5 +30,5 @@ method resolveKeycardNextState*(self: LoginKeycardInsertKeycardState, keycardFlo
       return nil
   if keycardFlowType == ResponseTypeValueCardInserted:
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = false))
-    return createState(StateType.LoginKeycardReadingKeycard, self.flowType, nil)
+    return createState(StateType.LoginKeycardInsertedKeycard, self.flowType, nil)
   return nil

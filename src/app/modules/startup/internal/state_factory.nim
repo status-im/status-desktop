@@ -56,12 +56,17 @@ include welcome_state
 include login_state
 include login_plugin_state
 include login_keycard_insert_keycard_state
+include login_keycard_inserted_keycard_state
 include login_keycard_reading_keycard_state
+include login_keycard_recognized_keycard_state
 include login_keycard_enter_pin_state 
+include login_keycard_enter_password_state 
+include login_keycard_pin_verified_state 
 include login_keycard_wrong_keycard
 include login_keycard_wrong_pin_state
 include login_keycard_max_pin_retries_reached_state
 include login_keycard_max_puk_retries_reached_state
+include login_keycard_max_pairing_slots_reached_state
 include login_keycard_empty_state
 include login_not_keycard_state
 
@@ -140,10 +145,18 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newLoginPluginState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardInsertKeycard:
     return newLoginKeycardInsertKeycardState(flowType, backState)
+  if stateToBeCreated == StateType.LoginKeycardInsertedKeycard:
+    return newLoginKeycardInsertedKeycardState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardReadingKeycard:
     return newLoginKeycardReadingKeycardState(flowType, backState)
+  if stateToBeCreated == StateType.LoginKeycardRecognizedKeycard:
+    return newLoginKeycardRecognizedKeycardState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardEnterPin:
     return newLoginKeycardEnterPinState(flowType, backState)
+  if stateToBeCreated == StateType.LoginKeycardEnterPassword:
+    return newLoginKeycardEnterPasswordState(flowType, backState)
+  if stateToBeCreated == StateType.LoginKeycardPinVerified:
+    return newLoginKeycardPinVerifiedState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardWrongKeycard:
     return newLoginKeycardWrongKeycardState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardWrongPin:
@@ -152,6 +165,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newLoginKeycardMaxPinRetriesReachedState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardMaxPukRetriesReached:
     return newLoginKeycardMaxPukRetriesReachedState(flowType, backState)
+  if stateToBeCreated == StateType.LoginKeycardMaxPairingSlotsReached:
+    return newLoginKeycardMaxPairingSlotsReachedState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardEmpty:
     return newLoginKeycardEmptyState(flowType, backState)
   if stateToBeCreated == StateType.LoginNotKeycard:
@@ -193,7 +208,7 @@ proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, ke
       return createState(StateType.LoginKeycardInsertKeycard, state.flowType, state.getBackState)
   if keycardFlowType == ResponseTypeValueCardInserted:
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = false))
-    return createState(StateType.LoginKeycardReadingKeycard, state.flowType, state.getBackState)
+    return createState(StateType.LoginKeycardInsertedKeycard, state.flowType, state.getBackState)
 
 proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
   let ensureState = ensureReaderAndCardPresenceOnboarding(state, keycardFlowType, keycardEvent, controller)
@@ -303,17 +318,12 @@ proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardF
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.error.len == 0:
         controller.setKeycardEvent(keycardEvent)
-        controller.loginAccountKeycard()
-        return nil
+        return createState(StateType.LoginKeycardPinVerified, state.flowType, nil)
     if keycardFlowType == ResponseTypeValueEnterPIN:
       if keycardEvent.error.len == 0:
         if not controller.keyUidMatch(keycardEvent.keyUid):
           return createState(StateType.LoginKeycardWrongKeycard, state.flowType, nil)
-        let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-        if value == LS_VALUE_STORE:
-          controller.tryToObtainDataFromKeychain()
-          return nil
-        return createState(StateType.LoginKeycardEnterPin, state.flowType, nil)
+        return createState(StateType.LoginKeycardRecognizedKeycard, state.flowType, nil)
       if keycardEvent.error.len > 0:
         if keycardEvent.error == RequestParamPIN:
           controller.setKeycardData($keycardEvent.pinRetries)
@@ -332,3 +342,5 @@ proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardF
           return createState(StateType.LoginNotKeycard, state.flowType, nil)
         if keycardEvent.error == RequestParamPUKRetries:
           return createState(StateType.LoginKeycardMaxPukRetriesReached, state.flowType, nil)
+        if keycardEvent.error == RequestParamFreeSlots:
+          return createState(StateType.LoginKeycardMaxPairingSlotsReached, state.flowType, nil)

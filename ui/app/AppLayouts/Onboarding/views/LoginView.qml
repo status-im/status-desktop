@@ -11,6 +11,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
+import shared.popups.keycard.helpers 1.0
+
 import SortFilterProxyModel 0.2
 
 import shared.panels 1.0
@@ -36,8 +38,23 @@ Item {
 
     onStateChanged: {
         d.loading = false
-        pinInputField.statesInitialization()
-        pinInputField.forceFocus()
+        if(state === Constants.startupState.loginKeycardPinVerified) {
+            pinInputField.setPin("123456") // we are free to set fake pin in this case
+            pinInputField.enabled = false
+        } else {
+            pinInputField.statesInitialization()
+            pinInputField.forceFocus()
+        }
+    }
+
+    Timer {
+        id: timer
+        interval: 1000
+        running: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardRecognizedKeycard ||
+                 root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardPinVerified
+        onTriggered: {
+            root.startupStore.doPrimaryAction()
+        }
     }
 
     QtObject {
@@ -46,14 +63,6 @@ Item {
 
         readonly property string stateLoginRegularUser: "regularUserLogin"
         readonly property string stateLoginKeycardUser: "keycardUserLogin"
-
-        property int index: 0
-        property variant images : [
-            Style.svg("keycard/card0@2x"),
-            Style.svg("keycard/card1@2x"),
-            Style.svg("keycard/card2@2x"),
-            Style.svg("keycard/card3@2x")
-        ]
 
         property int remainingAttempts: parseInt(root.startupStore.startupModuleInst.keycardData, 10)
         onRemainingAttemptsChanged: {
@@ -91,30 +100,19 @@ Item {
         }
     }
 
-    Timer {
-        interval: 400
-        running: root.state === d.stateLoginKeycardUser ||
-                 root.state === Constants.startupState.loginKeycardInsertKeycard ||
-                 root.state === Constants.startupState.loginKeycardReadingKeycard
-        repeat: true
-        onTriggered: {
-            d.index++
-            image.source = d.images[d.index % d.images.length]
-        }
-    }
-
     Connections{
         target: root.startupStore.startupModuleInst
 
         onObtainingPasswordError: {
-            if (root.startupStore.selectedLoginAccount.keycardCreatedAccount) {
-                root.startupStore.doPrimaryAction() // in this case, switch to enter pin state
-            }
-
             if (errorType === Constants.keychain.errorType.authentication) {
                 // We are notifying user only about keychain errors.
                 return
             }
+
+            image.source = Style.png("keycard/biometrics-fail")
+            info.icon = ""
+            info.color = Theme.palette.dangerColor1
+            info.text = qsTr("Fingerprint not recognized")
 
             obtainingPasswordErrorNotification.confirmationText = errorDescription
             obtainingPasswordErrorNotification.open()
@@ -164,14 +162,21 @@ Item {
 
     ColumnLayout {
         anchors.centerIn: parent
+        height: Constants.keycard.general.loginHeight
         spacing: Style.current.bigPadding
 
-        Image {
+        KeycardImage {
             id: image
             Layout.alignment: Qt.AlignHCenter
-            fillMode: Image.PreserveAspectFit
-            antialiasing: true
-            mipmap: true
+            Layout.preferredHeight: Constants.keycard.general.imageHeight
+            Layout.preferredWidth: Constants.keycard.general.imageWidth
+
+            onAnimationCompleted: {
+                if (root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardInsertedKeycard ||
+                        root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardReadingKeycard) {
+                    root.startupStore.doPrimaryAction()
+                }
+            }
         }
 
         StatusBaseText {
@@ -184,10 +189,12 @@ Item {
 
         Item {
             id: userInfo
-            height: userImage.height
-            width: 318
+            Layout.preferredHeight: userImage.height
+            Layout.preferredWidth: 318
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Style.current.xlPadding
+            enabled: root.startupStore.currentStartupState.stateType !== Constants.startupState.loginKeycardReadingKeycard &&
+                     root.startupStore.currentStartupState.stateType !== Constants.startupState.loginKeycardRecognizedKeycard &&
+                     root.startupStore.currentStartupState.stateType !== Constants.startupState.loginKeycardPinVerified
 
             UserImage {
                 id: userImage
@@ -304,7 +311,7 @@ Item {
                         asset.name: "add"
                         onClicked: {
                             accountsPopup.close()
-                            root.startupStore.doSecondaryAction()
+                            root.startupStore.doTertiaryAction()
                         }
                     }
 
@@ -313,7 +320,7 @@ Item {
                         asset.name: "wallet"
                         onClicked: {
                             accountsPopup.close()
-                            root.startupStore.doTertiaryAction()
+                            root.startupStore.doQuaternaryAction()
                         }
                     }
                 }
@@ -383,7 +390,10 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             spacing: Style.current.padding
 
+            property alias text: pinText.text
+
             StatusBaseText {
+                id: pinText
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: Constants.keycard.general.fontSize2
                 wrapMode: Text.WordWrap
@@ -398,6 +408,11 @@ Item {
                 enabled: !d.loading
 
                 onPinInputChanged: {
+                    if (root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardPinVerified)
+                        return
+                    if (root.state !== Constants.startupState.loginKeycardWrongPin) {
+                        image.source = Style.png("keycard/enter-pin-%1".arg(pinInput.length))
+                    }
                     if(pinInput.length == 0)
                         return
                     root.startupStore.setPin(pinInput)
@@ -406,12 +421,34 @@ Item {
             }
         }
 
-        StatusBaseText {
+        Row {
             id: info
-            Layout.alignment: Qt.AlignHCenter
-            horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: Constants.keycard.general.fontSize3
-            wrapMode: Text.WordWrap
+            Layout.alignment: Qt.AlignCenter
+            spacing: Style.current.halfPadding
+
+            property alias text: infoTxt.text
+            property alias font: infoTxt.font
+            property alias color: infoTxt.color
+            property alias icon: infoIcon.icon
+
+            StatusIcon {
+                id: infoIcon
+                visible: icon !== ""
+                width: Style.current.padding
+                height: Style.current.padding
+                color: Theme.palette.baseColor1
+            }
+            StatusLoadingIndicator {
+                id: loading
+                visible: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardReadingKeycard
+            }
+            StatusBaseText {
+                id: infoTxt
+                Layout.alignment: Qt.AlignHCenter
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: Constants.keycard.general.fontSize3
+                wrapMode: Text.WordWrap
+            }
         }
 
         StatusBaseText {
@@ -446,29 +483,42 @@ Item {
                     parent.font.underline = false
                 }
                 onClicked: {
-                    root.startupStore.doPrimaryAction()
+                    root.startupStore.doSecondaryAction()
                 }
             }
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
     }
 
     states: [
         State {
             name: d.stateLoginRegularUser
-            when: !root.startupStore.selectedLoginAccount.keycardCreatedAccount
+            when: !root.startupStore.selectedLoginAccount.keycardCreatedAccount &&
+                  root.startupStore.currentStartupState.stateType === Constants.startupState.login
             PropertyChanges {
                 target: image
-                source: Style.png("status-logo")
-                Layout.preferredHeight: 128
-                Layout.preferredWidth: 128
+                source: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store?
+                            Style.png("keycard/biometrics-success") : Style.png("status-logo")
+                pattern: ""
+                Layout.preferredHeight: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store?
+                                            Constants.keycard.general.imageHeight :
+                                            Constants.keycard.general.loginStatusLogoHeight
+                Layout.preferredWidth: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store?
+                                           Constants.keycard.general.imageWidth :
+                                           Constants.keycard.general.loginStatusLogoWidth
             }
             PropertyChanges {
                 target: title
-                text: qsTr("Welcome back")
+                text: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store? "" : qsTr("Welcome back")
+                visible: localAccountSettings.storeToKeychainValue !== Constants.keychain.storedValue.store
             }
             PropertyChanges {
                 target: passwordSection
-                visible: true
+                visible: localAccountSettings.storeToKeychainValue !== Constants.keychain.storedValue.store
             }
             PropertyChanges {
                 target: pinSection
@@ -476,8 +526,12 @@ Item {
             }
             PropertyChanges {
                 target: info
-                text: ""
-                visible: false
+                text: qsTr("Waiting for TouchID...")
+                visible: true
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.baseColor1
+                height: Constants.keycard.general.loginInfoHeight1
+                icon: "touch-id"
             }
             PropertyChanges {
                 target: message
@@ -491,8 +545,8 @@ Item {
             }
             PropertyChanges {
                 target: link
-                text: ""
-                visible: false
+                text: qsTr("Use password instead")
+                visible: true
             }
         },
         State {
@@ -501,9 +555,8 @@ Item {
                   root.startupStore.currentStartupState.stateType === Constants.startupState.login
             PropertyChanges {
                 target: image
-                source: Style.svg("keycard/card3@2x")
-                Layout.preferredHeight: sourceSize.height
-                Layout.preferredWidth: sourceSize.width
+                source: Style.png("keycard/biometrics-success")
+                pattern: ""
             }
             PropertyChanges {
                 target: title
@@ -520,7 +573,12 @@ Item {
             }
             PropertyChanges {
                 target: info
-                visible: false
+                text: qsTr("Waiting for TouchID...")
+                visible: true
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.baseColor1
+                height: Constants.keycard.general.loginInfoHeight1
+                icon: "touch-id"
             }
             PropertyChanges {
                 target: message
@@ -534,8 +592,8 @@ Item {
             }
             PropertyChanges {
                 target: link
-                text: ""
-                visible: false
+                text: qsTr("Use PIN instead")
+                visible: true
             }
         },
         State {
@@ -544,9 +602,8 @@ Item {
                   root.startupStore.currentStartupState.stateType === Constants.startupState.loginPlugin
             PropertyChanges {
                 target: image
-                source: Style.svg("keycard/card3@2x")
-                Layout.preferredHeight: sourceSize.height
-                Layout.preferredWidth: sourceSize.width
+                source: Style.png("keycard/empty-reader")
+                pattern: ""
             }
             PropertyChanges {
                 target: title
@@ -567,6 +624,8 @@ Item {
                 visible: true
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
+                height: Constants.keycard.general.loginInfoHeight1
+                icon: ""
             }
             PropertyChanges {
                 target: message
@@ -589,9 +648,13 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardInsertKeycard
             PropertyChanges {
                 target: image
-                source: Style.svg("keycard/card3@2x")
-                Layout.preferredHeight: sourceSize.height
-                Layout.preferredWidth: sourceSize.width
+                pattern: "keycard/card_insert/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 0
+                endImgIndex: 16
+                duration: 1000
+                loops: 1
             }
             PropertyChanges {
                 target: title
@@ -612,6 +675,8 @@ Item {
                 visible: true
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
+                height: Constants.keycard.general.loginInfoHeight1
+                icon: ""
             }
             PropertyChanges {
                 target: message
@@ -632,13 +697,68 @@ Item {
             }
         },
         State {
+            name: Constants.startupState.loginKeycardInsertedKeycard
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardInsertedKeycard
+            PropertyChanges {
+                target: image
+                pattern: "keycard/card_inserted/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 0
+                endImgIndex: 29
+                duration: 1000
+                loops: 1
+            }
+            PropertyChanges {
+                target: title
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: passwordSection
+                visible: false
+            }
+            PropertyChanges {
+                target: pinSection
+                visible: false
+            }
+            PropertyChanges {
+                target: info
+                text: qsTr("Keycard inserted...")
+                visible: true
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.baseColor1
+                height: Constants.keycard.general.loginInfoHeight1
+                icon: ""
+            }
+            PropertyChanges {
+                target: message
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: button
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: link
+                text: ""
+                visible: false
+            }
+        },
+        State {
             name: Constants.startupState.loginKeycardReadingKeycard
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardReadingKeycard
             PropertyChanges {
                 target: image
-                source: Style.svg("keycard/card3@2x")
-                Layout.preferredHeight: sourceSize.height
-                Layout.preferredWidth: sourceSize.width
+                pattern: "keycard/warning/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 0
+                endImgIndex: 55
+                duration: 3000
+                loops: 1
             }
             PropertyChanges {
                 target: title
@@ -659,6 +779,103 @@ Item {
                 visible: true
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
+                height: Constants.keycard.general.loginInfoHeight1
+                icon: ""
+            }
+            PropertyChanges {
+                target: message
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: button
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: link
+                text: ""
+                visible: false
+            }
+        },
+        State {
+            name: Constants.startupState.loginKeycardRecognizedKeycard
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardRecognizedKeycard
+            PropertyChanges {
+                target: image
+                pattern: "keycard/success/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 0
+                endImgIndex: 29
+                duration: 1300
+                loops: 1
+            }
+            PropertyChanges {
+                target: title
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: passwordSection
+                visible: false
+            }
+            PropertyChanges {
+                target: pinSection
+                visible: false
+            }
+            PropertyChanges {
+                target: info
+                text: qsTr("Keycard recognized")
+                visible: true
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.baseColor1
+                height: Constants.keycard.general.loginInfoHeight1
+                icon: "checkmark"
+            }
+            PropertyChanges {
+                target: message
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: button
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: link
+                text: ""
+                visible: false
+            }
+        },
+        State {
+            name: Constants.startupState.loginKeycardEnterPassword
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEnterPassword
+            PropertyChanges {
+                target: image
+                source: Style.png("status-logo")
+                pattern: ""
+                Layout.preferredHeight: Constants.keycard.general.loginStatusLogoHeight
+                Layout.preferredWidth: Constants.keycard.general.loginStatusLogoWidth
+            }
+            PropertyChanges {
+                target: title
+                text: qsTr("Welcome back")
+                visible: true
+            }
+            PropertyChanges {
+                target: passwordSection
+                visible: true
+            }
+            PropertyChanges {
+                target: pinSection
+                visible: false
+            }
+            PropertyChanges {
+                target: info
+                text: ""
+                visible: true
             }
             PropertyChanges {
                 target: message
@@ -681,9 +898,8 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEnterPin
             PropertyChanges {
                 target: image
-                source: Style.svg("keycard/card3@2x")
-                Layout.preferredHeight: sourceSize.height
-                Layout.preferredWidth: sourceSize.width
+                source: Style.png("keycard/card-empty")
+                pattern: ""
             }
             PropertyChanges {
                 target: title
@@ -697,13 +913,59 @@ Item {
             PropertyChanges {
                 target: pinSection
                 visible: true
+                text: qsTr("Enter Keycard PIN")
             }
             PropertyChanges {
                 target: info
                 text: ""
                 visible: false
-                font.pixelSize: Constants.keycard.general.fontSize2
-                color: Theme.palette.baseColor1
+            }
+            PropertyChanges {
+                target: message
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: button
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: link
+                text: ""
+                visible: false
+            }
+        },
+        State {
+            name: Constants.startupState.loginKeycardPinVerified
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardPinVerified
+            PropertyChanges {
+                target: image
+                pattern: "keycard/strong_success/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 0
+                endImgIndex: 20
+                duration: 1300
+                loops: 1
+            }
+            PropertyChanges {
+                target: title
+                text: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: passwordSection
+                visible: false
+            }
+            PropertyChanges {
+                target: pinSection
+                visible: true
+                text: qsTr("PIN Verified")
+            }
+            PropertyChanges {
+                target: info
+                visible: false
             }
             PropertyChanges {
                 target: message
@@ -726,9 +988,13 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardWrongKeycard
             PropertyChanges {
                 target: image
-                source: Style.svg("keycard/card-wrong3@2x")
-                Layout.preferredHeight: sourceSize.height
-                Layout.preferredWidth: sourceSize.width
+                pattern: "keycard/strong_error/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 18
+                endImgIndex: 29
+                duration: 1300
+                loops: -1
             }
             PropertyChanges {
                 target: title
@@ -749,10 +1015,12 @@ Item {
                 visible: true
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.dangerColor1
+                height: Constants.keycard.general.loginInfoHeight2
+                icon: ""
             }
             PropertyChanges {
                 target: message
-                text: qsTr("Insert another Keycard")
+                text: qsTr("Insert proper Keycard")
                 visible: true
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
@@ -773,9 +1041,8 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardWrongPin
             PropertyChanges {
                 target: image
-                source: Style.svg("keycard/card-wrong3@2x")
-                Layout.preferredHeight: sourceSize.height
-                Layout.preferredWidth: sourceSize.width
+                source: Style.png("keycard/plain-error")
+                pattern: ""
             }
             PropertyChanges {
                 target: title
@@ -789,6 +1056,7 @@ Item {
             PropertyChanges {
                 target: pinSection
                 visible: true
+                text: qsTr("Enter Keycard PIN")
             }
             PropertyChanges {
                 target: info
@@ -796,6 +1064,8 @@ Item {
                 visible: true
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.dangerColor1
+                height: Constants.keycard.general.loginInfoHeight1
+                icon: ""
             }
             PropertyChanges {
                 target: message
@@ -819,12 +1089,18 @@ Item {
         },
         State {
             name: Constants.startupState.loginKeycardMaxPinRetriesReached
-            when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPinRetriesReached
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPinRetriesReached ||
+                  root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPukRetriesReached ||
+                  root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPairingSlotsReached
             PropertyChanges {
                 target: image
-                source: Style.svg("keycard/card-error3@2x")
-                Layout.preferredHeight: sourceSize.height
-                Layout.preferredWidth: sourceSize.width
+                pattern: "keycard/strong_error/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 18
+                endImgIndex: 29
+                duration: 1300
+                loops: -1
             }
             PropertyChanges {
                 target: title
@@ -845,6 +1121,8 @@ Item {
                 visible: true
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.dangerColor1
+                height: Constants.keycard.general.loginInfoHeight1
+                icon: ""
             }
             PropertyChanges {
                 target: message
@@ -853,52 +1131,7 @@ Item {
             }
             PropertyChanges {
                 target: button
-                text: qsTr("Recover your Keycard")
-                visible: true
-            }
-            PropertyChanges {
-                target: link
-                text: ""
-                visible: false
-            }
-        },
-        State {
-            name: Constants.startupState.loginKeycardMaxPukRetriesReached
-            when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPukRetriesReached
-            PropertyChanges {
-                target: image
-                source: Style.svg("keycard/card-error3@2x")
-                Layout.preferredHeight: sourceSize.height
-                Layout.preferredWidth: sourceSize.width
-            }
-            PropertyChanges {
-                target: title
-                text: ""
-                visible: false
-            }
-            PropertyChanges {
-                target: passwordSection
-                visible: false
-            }
-            PropertyChanges {
-                target: pinSection
-                visible: false
-            }
-            PropertyChanges {
-                target: info
-                text: qsTr("Keycard locked")
-                visible: true
-                font.pixelSize: Constants.keycard.general.fontSize2
-                color: Theme.palette.dangerColor1
-            }
-            PropertyChanges {
-                target: message
-                text: ""
-                visible: false
-            }
-            PropertyChanges {
-                target: button
-                text: qsTr("Recover with seed phrase")
+                text: qsTr("Unlock Keycard")
                 visible: true
             }
             PropertyChanges {
@@ -912,9 +1145,8 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEmpty
             PropertyChanges {
                 target: image
-                source: Style.svg("keycard/card-wrong3@2x")
-                Layout.preferredHeight: sourceSize.height
-                Layout.preferredWidth: sourceSize.width
+                source: Style.png("keycard/card-empty")
+                pattern: ""
             }
             PropertyChanges {
                 target: title
@@ -931,10 +1163,12 @@ Item {
             }
             PropertyChanges {
                 target: info
-                text: qsTr("The card inserted is empty")
+                text: qsTr("The card inserted is empty (has no profile linked).")
                 visible: true
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.dangerColor1
+                height: Constants.keycard.general.loginInfoHeight1
+                icon: ""
             }
             PropertyChanges {
                 target: message
@@ -957,9 +1191,13 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginNotKeycard
             PropertyChanges {
                 target: image
-                source: Style.svg("keycard/card-wrong3@2x")
-                Layout.preferredHeight: sourceSize.height
-                Layout.preferredWidth: sourceSize.width
+                pattern: "keycard/strong_error/img-%1"
+                source: ""
+                startImgIndexForTheFirstLoop: 0
+                startImgIndexForOtherLoops: 18
+                endImgIndex: 29
+                duration: 1300
+                loops: -1
             }
             PropertyChanges {
                 target: title
@@ -980,6 +1218,8 @@ Item {
                 visible: true
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.dangerColor1
+                height: Constants.keycard.general.loginInfoHeight1
+                icon: ""
             }
             PropertyChanges {
                 target: message

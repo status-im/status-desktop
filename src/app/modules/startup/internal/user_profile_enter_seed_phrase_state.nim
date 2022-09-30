@@ -33,14 +33,18 @@ method executePrimaryCommand*(self: UserProfileEnterSeedPhraseState, controller:
     if self.successfulImport:
       controller.runLoadAccountFlow(controller.getSeedPhraseLength(), controller.getSeedPhrase(), puk = "", factoryReset = true)
   else:
-    self.successfulImport = controller.validMnemonic(controller.getSeedPhrase())
-    if self.successfulImport:
-      if self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
-        controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
-      if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-        self.correctKeycard = controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getKeyUid()
-        if self.correctKeycard:
-          controller.runLoadAccountFlow(controller.getSeedPhraseLength(), controller.getSeedPhrase(), puk = "", factoryReset = true)
+    if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
+      self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
+      self.successfulImport = controller.importMnemonic()
+    else:
+      self.successfulImport = controller.validMnemonic(controller.getSeedPhrase())
+      if self.successfulImport:
+        if self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+          controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
+        if self.flowType == FlowType.FirstRunOldUserKeycardImport:
+          self.correctKeycard = controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getKeyUid()
+          if self.correctKeycard:
+            controller.runLoadAccountFlow(controller.getSeedPhraseLength(), controller.getSeedPhrase(), puk = "", factoryReset = true)
 
 method resolveKeycardNextState*(self: UserProfileEnterSeedPhraseState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =

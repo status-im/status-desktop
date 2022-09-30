@@ -13,15 +13,18 @@ method executeBackCommand*(self: LoginKeycardMaxPinRetriesReachedState, controll
     controller.runLoginFlow()
 
 method getNextPrimaryState*(self: LoginKeycardMaxPinRetriesReachedState, controller: Controller): State =
-  return createState(StateType.KeycardRecover, self.flowType, self)
-
-method getNextSecondaryState*(self: LoginKeycardMaxPinRetriesReachedState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
+  if self.flowType == FlowType.AppLogin:
+    return createState(StateType.KeycardRecover, self.flowType, self)
 
 method getNextTertiaryState*(self: LoginKeycardMaxPinRetriesReachedState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
+
+method getNextQuaternaryState*(self: LoginKeycardMaxPinRetriesReachedState, controller: Controller): State =
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
 
 method resolveKeycardNextState*(self: LoginKeycardMaxPinRetriesReachedState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =

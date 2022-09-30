@@ -10,25 +10,12 @@ proc newLoginKeycardReadingKeycardState*(flowType: FlowType, backState: State): 
 proc delete*(self: LoginKeycardReadingKeycardState) =
   self.State.delete
 
-method executePrimaryCommand*(self: LoginKeycardReadingKeycardState, controller: Controller) =
-  if self.flowType == FlowType.AppLogin:
-    if not controller.isSelectedLoginAccountKeycardAccount():
-      controller.login()
-    elif not controller.keychainErrorOccurred() and controller.getPin().len == PINLengthForStatusApp:
-      controller.enterKeycardPin(controller.getPin())
-
 method getNextPrimaryState*(self: LoginKeycardReadingKeycardState, controller: Controller): State =
-  if controller.keychainErrorOccurred() or controller.getPin().len != PINLengthForStatusApp:
-    return createState(StateType.LoginKeycardEnterPin, self.flowType, nil)
-
-method getNextSecondaryState*(self: LoginKeycardReadingKeycardState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
-
-method getNextTertiaryState*(self: LoginKeycardReadingKeycardState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
+  let (flowType, flowEvent) = controller.getLastReceivedKeycardData()
+  # this is used in case a keycard is not inserted in the moment when flow is run (we're animating an insertion)
+  return ensureReaderAndCardPresenceAndResolveNextLoginState(self, flowType, flowEvent, controller)
 
 method resolveKeycardNextState*(self: LoginKeycardReadingKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
+  # this is used in case a keycard is inserted and we jump to the first meaningful screen
   return ensureReaderAndCardPresenceAndResolveNextLoginState(self, keycardFlowType, keycardEvent, controller)
