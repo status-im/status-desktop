@@ -250,6 +250,7 @@ Item {
             id: msgDelegate
 
             width: ListView.view.width
+            height: implicitHeight
 
             objectName: "chatMessageViewDelegate"
             rootStore: root.rootStore
