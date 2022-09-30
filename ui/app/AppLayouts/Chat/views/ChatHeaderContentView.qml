@@ -10,6 +10,7 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import utils 1.0
 
 import "../panels"
+import "../stores"
 
 RowLayout {
     id: root
@@ -33,6 +34,12 @@ RowLayout {
         readonly property string stateMembersSelectorContent: "selectingMembers"
 
         readonly property bool selectingMembers: root.state == stateMembersSelectorContent
+    }
+
+    MessageStore {
+        id: messageStore
+        messageModule: chatContentModule ? chatContentModule.messagesModule : null
+        chatSectionModule: root.rootStore.chatCommunitySectionModule
     }
 
     Loader {
@@ -216,7 +223,7 @@ RowLayout {
                     root.state = d.stateMembersSelectorContent
                 }
                 onFetchMoreMessages: {
-                    root.rootStore.messageStore.requestMoreMessages();
+                    messageStore.requestMoreMessages();
                 }
                 onLeaveGroup: {
                     chatContentModule.leaveChat();
@@ -300,8 +307,7 @@ RowLayout {
                 }
                 Global.openPopup(Global.pinnedMessagesPopup, {
                                      store: rootStore,
-                                     messageStore: root.rootStore.messageStore,
-                                     messagesModule: chatContentModule.messagesModule,
+                                     messageStore: messageStore,
                                      pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
                                      messageToPin: ""
                                  })

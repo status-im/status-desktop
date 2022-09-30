@@ -15,7 +15,6 @@ StatusDialog {
 
     property var store
     property var messageStore
-    property var messagesModule
     property var pinnedMessagesModel //this doesn't belong to the messageStore, it is a part of the ChatContentStore, but we didn't introduce it yet.
     property string messageToPin
     property string messageToUnpin
@@ -70,12 +69,14 @@ StatusDialog {
                     messageContextMenu: msgContextMenu
 
                     messageId: model.id
+                    responseToMessageWithId: model.responseToMessageWithId
                     senderId: model.senderId
                     senderDisplayName: model.senderDisplayName
                     senderOptionalName: model.senderOptionalName
                     senderIsEnsVerified: model.senderEnsVerified
                     senderIsAdded: model.senderIsAdded
                     senderIcon: model.senderIcon
+                    senderTrustStatus: model.senderTrustStatus
                     amISender: model.amISender
                     messageText: model.messageText
                     messageImage: model.messageImage
@@ -84,7 +85,6 @@ StatusDialog {
                     messageContentType: model.contentType
                     pinnedMessage: model.pinned
                     messagePinnedBy: model.pinnedBy
-                    senderTrustStatus: model.senderTrustStatus
                     linkUrls: model.links
                     transactionParams: model.transactionParameters
 
@@ -136,11 +136,11 @@ StatusDialog {
             }
 
             onUnpinMessage: {
-                root.messagesModule.unpinMessage(messageId)
+                root.messageStore.unpinMessage(messageId)
             }
 
             onJumpToMessage: {
-                root.messagesModule.jumpToMessage(messageId)
+                root.messageStore.messagesModule.jumpToMessage(messageId)
             }
         }
     }
