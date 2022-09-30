@@ -140,6 +140,7 @@ StatusComboBox {
                 Layout.fillWidth: true
                 delegate: StatusBaseText {
                     text: model.shortName
+                    font.weight: Font.Light
                     color: Theme.palette.directColor3
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -153,6 +154,7 @@ StatusComboBox {
                 Layout.fillHeight: true
                 delegate: StatusBaseText {
                     text: model.weekNumber
+                    font.weight: Font.Light
                     color: Theme.palette.directColor3
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -169,6 +171,7 @@ StatusComboBox {
                     readonly property bool selected: d.selectedDate.getFullYear() === model.year &&
                                                      d.selectedDate.getMonth() === model.month &&
                                                      d.selectedDate.getDate() === model.day
+                    horizontalPadding: 4
                     opacity: model.month === grid.month ? 1 : 0.5
                     text: model.day
                     textColor: selected ? Theme.palette.primaryColor1 : Theme.palette.directColor1
