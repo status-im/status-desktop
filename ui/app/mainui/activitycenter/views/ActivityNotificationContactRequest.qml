@@ -16,14 +16,18 @@ ActivityNotificationMessage {
 
     ctaComponent: ContactRequestCta {
         readonly property string senderId: notification.message.senderId
+        readonly property var contactDetails: Utils.getContactDetailsAsJson(senderId)
 
         pending: notification.message.contactRequestState == Constants.contactRequestStatePending
         accepted: notification.message.contactRequestState == Constants.contactRequestStateAccepted
         dismissed: notification.message.contactRequestState == Constants.contactRequestStateDismissed
-        blocked: root.store.contactsStore.isBlockedContact(senderId)
+        blocked: contactDetails.isBlocked
         onAcceptClicked: root.store.contactsStore.acceptContactRequest(senderId)
         onDeclineClicked: root.store.contactsStore.dismissContactRequest(senderId)
         onProfileClicked: Global.openProfilePopup(senderId)
-        onBlockClicked: root.store.contactsStore.blockContact(senderId)
+        onBlockClicked: {
+            root.store.contactsStore.dismissContactRequest(senderId)
+            root.store.contactsStore.blockContact(senderId)
+        }
     }
 }

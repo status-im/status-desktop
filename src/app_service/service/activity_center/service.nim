@@ -7,8 +7,6 @@ import ../../../app/core/tasks/[qt, threadpool]
 import web3/ethtypes, web3/conversions, stew/byteutils, nimcrypto, json_serialization, chronicles
 import json, tables, json_serialization
 
-import ../chat/service as chat_service
-
 import ../../../backend/backend
 import ../../../backend/response_type
 import ./dto/notification
@@ -57,7 +55,6 @@ QtObject:
   type Service* = ref object of QObject
     threadpool: ThreadPool
     events: EventEmitter
-    chatService: chat_service.Service
     cursor*: string
 
   # Forward declaration
@@ -68,14 +65,12 @@ QtObject:
 
   proc newService*(
       events: EventEmitter,
-      threadpool: ThreadPool,
-      chatService: chat_service.Service
+      threadpool: ThreadPool
       ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
-    result.chatService = chatService
 
   proc init*(self: Service) =
     self.asyncActivityNotificationLoad()
@@ -87,6 +82,18 @@ QtObject:
         self.events.emit(
           SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
           ActivityCenterNotificationsArgs(activityCenterNotifications: receivedData.activityCenterNotifications)
+        )
+
+  proc parseACNotificationResponse*(self: Service, response: RpcResponse[JsonNode]) =
+    var activityCenterNotifications: seq[ActivityCenterNotificationDto] = @[]
+    if response.result{"activityCenterNotifications"} != nil:
+      for jsonMsg in response.result["activityCenterNotifications"]:
+        activityCenterNotifications.add(jsonMsg.toActivityCenterNotificationDto)
+
+      if (activityCenterNotifications.len > 0):
+        self.events.emit(
+          SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
+          ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications)
         )
 
   proc hasMoreToShow*(self: Service): bool =
@@ -177,11 +184,7 @@ QtObject:
 
   proc acceptActivityCenterNotifications*(self: Service, notificationIds: seq[string]): string =
     try:
-      let response = backend.acceptActivityCenterNotifications(notificationIds)
-
-      let (chats, messages) = self.chatService.parseChatResponse(response)
-      self.events.emit(chat_service.SIGNAL_CHAT_UPDATE,
-        ChatUpdateArgs(messages: messages, chats: chats))
+      discard backend.acceptActivityCenterNotifications(notificationIds)
 
     except Exception as e:
       error "Error marking as accepted", msg = e.msg
