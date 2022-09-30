@@ -8,17 +8,22 @@ proc newLoginKeycardEmptyState*(flowType: FlowType, backState: State): LoginKeyc
 proc delete*(self: LoginKeycardEmptyState) =
   self.State.delete
 
-method executePrimaryCommand*(self: LoginKeycardEmptyState, controller: Controller) =
-  if self.flowType == FlowType.AppLogin:
-    controller.runLoadAccountFlow(seedPhraseLength = 0, seedPhrase = "", puk = "", factoryReset = true)
-
 method getNextSecondaryState*(self: LoginKeycardEmptyState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    let newState = createState(StateType.WelcomeNewStatusUser, self.flowType, self)
+    newState.executeSecondaryCommand(controller)
+    return newState
 
 method getNextTertiaryState*(self: LoginKeycardEmptyState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
+
+method getNextQuaternaryState*(self: LoginKeycardEmptyState, controller: Controller): State =
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
 
 method resolveKeycardNextState*(self: LoginKeycardEmptyState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =

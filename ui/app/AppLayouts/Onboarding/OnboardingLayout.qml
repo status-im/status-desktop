@@ -66,12 +66,17 @@ OnboardingBasePage {
             if (root.startupStore.currentStartupState.stateType === Constants.startupState.login ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginPlugin ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardInsertKeycard ||
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardInsertedKeycard ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardReadingKeycard ||
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardRecognizedKeycard ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEnterPin ||
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEnterPassword ||
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardPinVerified ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardWrongKeycard ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardWrongPin ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPinRetriesReached ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPukRetriesReached ||
+                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPairingSlotsReached ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEmpty ||
                     root.startupStore.currentStartupState.stateType === Constants.startupState.loginNotKeycard)
             {

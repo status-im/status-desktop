@@ -460,6 +460,7 @@ proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) =
       subaccountDataJson, 
       settingsJson, 
       nodeConfigJson)
+    self.setLocalAccountSettingsFile()
   except Exception as e:
     error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
 

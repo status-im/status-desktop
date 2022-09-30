@@ -36,6 +36,7 @@ type
     profileService: profile_service.Service
     keycardService: keycard_service.Service
     connectionIds: seq[UUID]
+    keychainConnectionIds: seq[UUID]
     tmpProfileImageDetails: ProfileImageDetails
     tmpDisplayName: string
     tmpPassword: string
@@ -70,14 +71,32 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.keycardService = keycardService
   result.tmpPinMatch = false
   result.tmpSeedPhraseLength = 0
-  result.tmpKeychainErrorOccurred = true
+  result.tmpKeychainErrorOccurred = false
   result.tmpRecoverUsingSeedPhraseWhileLogin = false
   result.tmpSelectedLoginAccountIsKeycardAccount = false
 
 # Forward declaration
 proc cleanTmpData*(self: Controller)
 
+proc disconnectKeychain*(self: Controller) =
+  for id in self.keychainConnectionIds:
+    self.events.disconnect(id)
+  self.keychainConnectionIds = @[]
+
+proc connectKeychain*(self: Controller) =
+  var handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e:Args):
+    let args = KeyChainServiceArg(e)
+    self.delegate.emitObtainingPasswordSuccess(args.data)
+  self.keychainConnectionIds.add(handlerId)
+
+  handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
+    let args = KeyChainServiceArg(e)
+    self.tmpKeychainErrorOccurred = true
+    self.delegate.emitObtainingPasswordError(args.errDescription, args.errType)
+  self.keychainConnectionIds.add(handlerId)
+
 proc disconnect*(self: Controller) =
+  self.disconnectKeychain()
   for id in self.connectionIds:
     self.events.disconnect(id)
 
@@ -85,6 +104,8 @@ proc delete*(self: Controller) =
   self.disconnect()
 
 proc init*(self: Controller) =
+  self.connectKeychain()
+
   var handlerId = self.events.onWithUUID(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     self.delegate.onNodeLogin(signal.event.error)
@@ -101,17 +122,6 @@ proc init*(self: Controller) =
     self.events.emit("nodeReady", Args())
   self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e:Args):
-    let args = KeyChainServiceArg(e)
-    self.delegate.emitObtainingPasswordSuccess(args.data)
-  self.connectionIds.add(handlerId)
-
-  handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
-    let args = KeyChainServiceArg(e)
-    self.tmpKeychainErrorOccurred = true
-    self.delegate.emitObtainingPasswordError(args.errDescription, args.errType)
-  self.connectionIds.add(handlerId)
-  
   handlerId = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
     let args = KeycardArgs(e)
     self.delegate.onKeycardResponse(args.flowType, args.flowEvent)
@@ -234,7 +244,7 @@ proc cleanTmpData*(self: Controller) =
   self.tmpSelectedLoginAccountKeyUid = ""
   self.tmpSelectedLoginAccountIsKeycardAccount = false
   self.tmpProfileImageDetails = ProfileImageDetails()
-  self.tmpKeychainErrorOccurred = true
+  self.tmpKeychainErrorOccurred = false
   self.setDisplayName("")
   self.setPassword("")
   self.setDefaultWalletEmoji("")
@@ -273,7 +283,7 @@ proc validMnemonic*(self: Controller, mnemonic: string): bool =
     return true
   return false
 
-proc importMnemonic(self: Controller): bool =
+proc importMnemonic*(self: Controller): bool =
   let error = self.accountsService.importMnemonic(self.tmpSeedPhrase)
   if(error.len == 0):
     self.delegate.importAccountSuccess()

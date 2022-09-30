@@ -12,22 +12,19 @@ proc delete*(self: LoginKeycardWrongPinState) =
 
 method executePrimaryCommand*(self: LoginKeycardWrongPinState, controller: Controller) =
   if self.flowType == FlowType.AppLogin:
-    if not controller.isSelectedLoginAccountKeycardAccount():
-      controller.login()
-    elif not controller.keychainErrorOccurred() and controller.getPin().len == PINLengthForStatusApp:
-      controller.enterKeycardPin(controller.getPin())
-
-method getNextPrimaryState*(self: LoginKeycardWrongPinState, controller: Controller): State =
-  if controller.keychainErrorOccurred() or controller.getPin().len != PINLengthForStatusApp:
-    return createState(StateType.LoginKeycardEnterPin, self.flowType, nil)
-
-method getNextSecondaryState*(self: LoginKeycardWrongPinState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
+    if controller.isSelectedLoginAccountKeycardAccount() and
+      controller.getPin().len == PINLengthForStatusApp:
+        controller.enterKeycardPin(controller.getPin())
 
 method getNextTertiaryState*(self: LoginKeycardWrongPinState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
+
+method getNextQuaternaryState*(self: LoginKeycardWrongPinState, controller: Controller): State =
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
   
 method resolveKeycardNextState*(self: LoginKeycardWrongPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
@@ -50,5 +47,4 @@ method resolveKeycardNextState*(self: LoginKeycardWrongPinState, keycardFlowType
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.error.len == 0:
         controller.setKeycardEvent(keycardEvent)
-        controller.loginAccountKeycard()
-        return nil
+        return createState(StateType.LoginKeycardPinVerified, self.flowType, nil)

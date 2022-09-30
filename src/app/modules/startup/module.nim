@@ -251,14 +251,21 @@ method importAccountSuccess*[T](self: Module[T]) =
   self.view.importAccountSuccess()
 
 method setSelectedLoginAccount*[T](self: Module[T], item: login_acc_item.Item) =
+  self.controller.disconnectKeychain()
   self.controller.cancelCurrentFlow()
   self.controller.setSelectedLoginAccount(item.getKeyUid(), item.getKeycardCreatedAccount())
-  self.view.setCurrentStartupState(newLoginState(FlowType.AppLogin, nil))
   if item.getKeycardCreatedAccount():
+    self.view.setCurrentStartupState(newLoginState(FlowType.AppLogin, nil))
     self.controller.runLoginFlow()
-  else:  
-    self.controller.tryToObtainDataFromKeychain()
+  else:
+    let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
+    if value == LS_VALUE_STORE:
+      self.view.setCurrentStartupState(newLoginState(FlowType.AppLogin, nil))
+      self.controller.tryToObtainDataFromKeychain()
+    else:
+      self.view.setCurrentStartupState(newLoginKeycardEnterPasswordState(FlowType.AppLogin, nil))
   self.view.setSelectedLoginAccount(item)
+  self.controller.connectKeychain()
 
 method emitAccountLoginError*[T](self: Module[T], error: string) =
   self.view.emitAccountLoginError(error)

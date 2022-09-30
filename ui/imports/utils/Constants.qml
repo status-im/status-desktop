@@ -63,12 +63,17 @@ QtObject {
         readonly property string login: "Login"
         readonly property string loginPlugin: "LoginPlugin"
         readonly property string loginKeycardInsertKeycard: "LoginKeycardInsertKeycard"
+        readonly property string loginKeycardInsertedKeycard: "LoginKeycardInsertedKeycard"
         readonly property string loginKeycardReadingKeycard: "LoginKeycardReadingKeycard"
+        readonly property string loginKeycardRecognizedKeycard: "LoginKeycardRecognizedKeycard"
         readonly property string loginKeycardEnterPin: "LoginKeycardEnterPin"
+        readonly property string loginKeycardEnterPassword: "LoginKeycardEnterPassword"
+        readonly property string loginKeycardPinVerified: "LoginKeycardPinVerified"
         readonly property string loginKeycardWrongKeycard: "LoginKeycardWrongKeycard"
         readonly property string loginKeycardWrongPin: "LoginKeycardWrongPin"
         readonly property string loginKeycardMaxPinRetriesReached: "LoginKeycardMaxPinRetriesReached"
         readonly property string loginKeycardMaxPukRetriesReached: "LoginKeycardMaxPukRetriesReached"
+        readonly property string loginKeycardMaxPairingSlotsReached: "LoginKeycardMaxPairingSlotsReached"
         readonly property string loginKeycardEmpty: "LoginKeycardEmpty"
         readonly property string loginNotKeycard: "LoginNotKeycard"
     }
@@ -388,6 +393,7 @@ QtObject {
 
         readonly property QtObject general: QtObject {
             readonly property int onboardingHeight: 460
+            readonly property int loginHeight: 460
             readonly property int imageWidth: 240
             readonly property int imageHeight: 240
             readonly property int seedPhraseWidth: 816
@@ -414,6 +420,10 @@ QtObject {
             readonly property int titleHeight: 44
             readonly property int messageHeight: 48
             readonly property int footerButtonsHeight: 44
+            readonly property int loginInfoHeight1: 24
+            readonly property int loginInfoHeight2: 44
+            readonly property int loginStatusLogoWidth: 128
+            readonly property int loginStatusLogoHeight: 128
         }
 
         readonly property QtObject keyPairType: QtObject {

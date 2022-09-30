@@ -10,22 +10,29 @@ proc delete*(self: LoginState) =
 
 method executePrimaryCommand*(self: LoginState, controller: Controller) =
   if self.flowType == FlowType.AppLogin:
+    if controller.keychainErrorOccurred():
+      return
     if not controller.isSelectedLoginAccountKeycardAccount():
       controller.login()
-    elif not controller.keychainErrorOccurred() and controller.getPin().len == PINLengthForStatusApp:
+    elif controller.getPin().len == PINLengthForStatusApp:
       controller.enterKeycardPin(controller.getPin())
 
-method getNextPrimaryState*(self: LoginState, controller: Controller): State =
-  if controller.keychainErrorOccurred() or controller.getPin().len != PINLengthForStatusApp:
-    return createState(StateType.LoginKeycardEnterPin, self.flowType, nil)
-
 method getNextSecondaryState*(self: LoginState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
+  if self.flowType == FlowType.AppLogin:
+    if not controller.isSelectedLoginAccountKeycardAccount():
+      return createState(StateType.LoginKeycardEnterPassword, self.flowType, nil)
+    else:
+      return createState(StateType.LoginKeycardEnterPin, self.flowType, nil)
 
 method getNextTertiaryState*(self: LoginState, controller: Controller): State =
-  controller.cancelCurrentFlow()
-  return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
+
+method getNextQuaternaryState*(self: LoginState, controller: Controller): State =
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
 
 method resolveKeycardNextState*(self: LoginState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
