@@ -120,6 +120,14 @@ method getNextSecondaryState*(self: State, controller: Controller): State {.inli
 method getNextTertiaryState*(self: State, controller: Controller): State {.inline base.} =
   return nil
 
+## Returns next state instance in case the "quaternary" action is triggered
+method getNextQuaternaryState*(self: State, controller: Controller): State {.inline base.} =
+  return nil
+
+## Returns next state instance in case the "quinary" action is triggered
+method getNextQuinaryState*(self: State, controller: Controller): State {.inline base.} =
+  return nil
+
 ## This method is executed in case "back" button is clicked
 method executeBackCommand*(self: State, controller: Controller) {.inline base.} =
   discard
@@ -134,6 +142,14 @@ method executeSecondaryCommand*(self: State, controller: Controller) {.inline ba
 
 ## This method is executed in case "tertiary" action is triggered
 method executeTertiaryCommand*(self: State, controller: Controller) {.inline base.} =
+  discard
+
+## This method is executed in case "quaternary" action is triggered
+method executeQuaternaryCommand*(self: State, controller: Controller) {.inline base.} =
+  discard
+
+## This method is executed in case "quinary" action is triggered
+method executeQuinaryCommand*(self: State, controller: Controller) {.inline base.} =
   discard
 
 ## This method is used for handling aync responses for keycard related states

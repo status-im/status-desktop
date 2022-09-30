@@ -176,6 +176,32 @@ method onTertiaryActionClicked*[T](self: Module[T]) =
   self.view.setCurrentStartupState(nextState)
   debug "tertiary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
 
+method onQuaternaryActionClicked*[T](self: Module[T]) =
+  let currStateObj = self.view.currentStartupStateObj()
+  if currStateObj.isNil:
+    error "cannot resolve current state"
+    return
+  debug "quaternary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  currStateObj.executeQuaternaryCommand(self.controller)
+  let nextState = currStateObj.getNextQuaternaryState(self.controller)
+  if nextState.isNil:
+    return
+  self.view.setCurrentStartupState(nextState)
+  debug "quaternary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+
+method onQuinaryActionClicked*[T](self: Module[T]) =
+  let currStateObj = self.view.currentStartupStateObj()
+  if currStateObj.isNil:
+    error "cannot resolve current state"
+    return
+  debug "quinary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  currStateObj.executeQuinaryCommand(self.controller)
+  let nextState = currStateObj.getNextQuinaryState(self.controller)
+  if nextState.isNil:
+    return
+  self.view.setCurrentStartupState(nextState)
+  debug "quinary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+
 method getImportedAccount*[T](self: Module[T]): GeneratedAccountDto =
   return self.controller.getImportedAccount()
 

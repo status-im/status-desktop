@@ -59,6 +59,8 @@ QtObject:
     signalConnect(result.currentStartupState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
     signalConnect(result.currentStartupState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
     signalConnect(result.currentStartupState, "tertiaryActionClicked()", result, "onTertiaryActionClicked()", 2)
+    signalConnect(result.currentStartupState, "quaternaryActionClicked()", result, "onQuaternaryActionClicked()", 2)
+    signalConnect(result.currentStartupState, "quinaryActionClicked()", result, "onQuinaryActionClicked()", 2)
 
   proc currentStartupStateObj*(self: View): State =
     return self.currentStartupState.getStateObj()
@@ -86,6 +88,12 @@ QtObject:
   
   proc onTertiaryActionClicked*(self: View) {.slot.} =
     self.delegate.onTertiaryActionClicked()
+
+  proc onQuaternaryActionClicked*(self: View) {.slot.} =
+    self.delegate.onQuaternaryActionClicked()
+
+  proc onQuinaryActionClicked*(self: View) {.slot.} =
+    self.delegate.onQuinaryActionClicked()
 
   proc startUpUIRaised*(self: View) {.signal.}
 

@@ -23,6 +23,14 @@ QtObject {
         root.currentStartupState.doTertiaryAction()
     }
 
+    function doQuaternaryAction() {
+        root.currentStartupState.doQuaternaryAction()
+    }
+
+    function doQuinaryAction() {
+        root.currentStartupState.doQuinaryAction()
+    }
+
     function showBeforeGetStartedPopup() {
         return root.startupModuleInst.showBeforeGetStartedPopup()
     }
