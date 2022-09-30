@@ -28,6 +28,7 @@ Item {
         fillMode: Image.PreserveAspectFit
         source: imageContainer.source
         playing: imageContainer.isAnimated && imageContainer.playing
+        mipmap: true
 
         layer.enabled: true
         layer.effect: OpacityMask {
