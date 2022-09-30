@@ -7,6 +7,7 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ../../common/types as common_types
 import ../../common/conversion as service_conversion
 
+import ../activity_center/service as activity_center_service
 import ../settings/service as settings_service
 import ../network/service as network_service
 import ../visual_identity/service as procs_from_visual_identity_service
@@ -83,6 +84,7 @@ QtObject:
     threadpool: ThreadPool
     networkService: network_service.Service
     settingsService: settings_service.Service
+    activityCenterService: activity_center_service.Service
     contacts: Table[string, ContactsDto] # [contact_id, ContactsDto]
     contactsStatus: Table[string, StatusUpdateDto] # [contact_id, StatusUpdateDto]
     receivedIdentityRequests: Table[string, VerificationRequest] # [from_id, VerificationRequest]
@@ -106,7 +108,8 @@ QtObject:
       events: EventEmitter,
       threadpool: ThreadPool,
       networkService: network_service.Service,
-      settingsService: settings_service.Service
+      settingsService: settings_service.Service,
+      activityCenterService: activity_center_service.Service,
       ): Service =
     new(result, delete)
     result.QObject.setup
@@ -114,6 +117,7 @@ QtObject:
     result.events = events
     result.networkService = networkService
     result.settingsService = settingsService
+    result.activityCenterService = activityCenterService
     result.threadpool = threadpool
     result.contacts = initTable[string, ContactsDto]()
     result.contactsStatus = initTable[string, StatusUpdateDto]()
@@ -415,6 +419,7 @@ QtObject:
       contact.removed = false
       self.saveContact(contact)
       self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
+      self.activityCenterService.parseACNotificationResponse(response)
 
     except Exception as e:
       error "an error occurred while accepting contact request", msg=e.msg
@@ -431,6 +436,7 @@ QtObject:
       contact.removed = true
       self.saveContact(contact)
       self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
+      self.activityCenterService.parseACNotificationResponse(response)
     except Exception as e:
       error "an error occurred while dismissing contact request", msg=e.msg
 

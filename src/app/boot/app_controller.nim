@@ -129,6 +129,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
 
   # Services
   result.generalService = general_service.newService()
+  result.activityCenterService = activity_center_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.keycardService = keycard_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
   result.settingsService)
@@ -136,13 +137,12 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
   result.networkService = network_service.newService(statusFoundation.events, result.settingsService)
   result.contactsService = contacts_service.newService(
-    statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService
+    statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, 
+    result.activityCenterService
   )
   result.chatService = chat_service.newService(statusFoundation.events, result.contactsService)
   result.communityService = community_service.newService(statusFoundation.events,
     statusFoundation.threadpool, result.chatService)
-  result.activityCenterService = activity_center_service.newService(statusFoundation.events,
-  statusFoundation.threadpool, result.chatService)
   result.tokenService = token_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.networkService
   )
