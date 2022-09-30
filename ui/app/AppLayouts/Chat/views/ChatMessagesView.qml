@@ -279,13 +279,13 @@ Item {
             senderIsEnsVerified: model.senderEnsVerified
             senderIcon: model.senderIcon
             senderIsAdded: model.senderIsAdded
+            senderTrustStatus: model.senderTrustStatus
             amISender: model.amISender
             messageText: model.messageText
             messageImage: model.messageImage
             messageTimestamp: model.timestamp
             messageOutgoingStatus: model.outgoingStatus
             messageContentType: model.contentType
-            senderTrustStatus: model.senderTrustStatus
             pinnedMessage: model.pinned
             messagePinnedBy: model.pinnedBy
             reactionsModel: model.reactions

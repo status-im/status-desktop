@@ -30,17 +30,21 @@ QtObject {
     }
 
     function getMessageByIdAsJson (id) {
-        if(!messageModule)
+        if (!messageModule) {
+            console.warn("getMessageByIdAsJson: Failed to parse message, because messageModule is not set")
             return false
+        }
 
-        let jsonObj = messageModule.getMessageByIdAsJson(id)
-        if(jsonObj === "")
-            return
+        const jsonObj = messageModule.getMessageByIdAsJson(id)
+        if (jsonObj === "") {
+            console.warn("getMessageByIdAsJson: Failed to get message, returned json is empty")
+            return undefined
+        }
 
-        let obj = JSON.parse(jsonObj)
+        const obj = JSON.parse(jsonObj)
         if (obj.error) {
             // This log is available only in debug mode, if it's annoying we can remove it
-            console.debug("error parsing message for index: ", id, " error: ", obj.error)
+            console.debug("getMessageByIdAsJson: Failed to parse message for index: ", id, " error: ", obj.error)
             return false
         }
 
