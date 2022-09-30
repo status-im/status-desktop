@@ -1,3 +1,4 @@
+from screens.StatusMainScreen import StatusMainScreen
 from screens.StatusWalletScreen import StatusWalletScreen
 from scripts.decorators import verify_screenshot
 from common.Common import str_to_bool
