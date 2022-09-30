@@ -40,6 +40,12 @@ method onSecondaryActionClicked*(self: AccessInterface) {.base.} =
 method onTertiaryActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onQuaternaryActionClicked*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onQuinaryActionClicked*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method startUpUIRaised*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
