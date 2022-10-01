@@ -88,7 +88,7 @@ Item {
 
             StatusToolTip {
                 visible: hideReadNotificationsBtn.hovered
-                offset: hideReadNotificationsBtn.width
+                offset: width / 4
                 text: root.hideReadNotifications ? qsTr("Show read notifications") : qsTr("Hide read notifications")
             }
         }

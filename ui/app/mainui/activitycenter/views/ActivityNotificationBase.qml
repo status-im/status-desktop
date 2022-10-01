@@ -30,7 +30,7 @@ Item {
 
     Loader {
         id: badgeLoader
-        anchors.top: bodyLoader.bottom
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.leftMargin: 61 // TODO find a way to align with the text of the message
     }

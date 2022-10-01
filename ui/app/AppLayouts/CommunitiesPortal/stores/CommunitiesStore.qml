@@ -21,6 +21,8 @@ QtObject {
     property var advancedModule: profileSectionModule.advancedModule
     property bool isCommunityHistoryArchiveSupportEnabled: advancedModule? advancedModule.isCommunityHistoryArchiveSupportEnabled : false
 
+    property var activityCenterModuleInst: activityCenterModule
+    property var activityCenterList: activityCenterModuleInst.activityNotificationsModel
     property int unreadNotificationsCount: activityCenterList.unreadCount
     // TODO: Could the backend provide directly 2 filtered models??
     //property var featuredCommunitiesModel: root.communitiesModuleInst.curatedFeaturedCommunities
