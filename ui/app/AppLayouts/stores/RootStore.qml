@@ -14,6 +14,10 @@ QtObject {
     property var communitiesModuleInst: communitiesModule
     property var observedCommunity: communitiesModuleInst.observedCommunity
 
+    property var activityCenterModuleInst: activityCenterModule
+    property var activityCenterList: activityCenterModuleInst.activityNotificationsModel
+    property int unreadNotificationsCount: activityCenterList.unreadCount
+
     property bool newVersionAvailable: false
     property string latestVersion
     property string downloadURL

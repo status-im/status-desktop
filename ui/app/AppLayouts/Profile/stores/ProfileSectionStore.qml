@@ -5,7 +5,11 @@ import AppLayouts.Chat.stores 1.0
 
 QtObject {
     id: root
+
     property string backButtonName
+
+    property var activityCenterModuleInst: activityCenterModule
+    property var activityCenterList: activityCenterModuleInst.activityNotificationsModel
     property int unreadNotificationsCount: activityCenterList.unreadCount
 
     property var aboutModuleInst: aboutModule

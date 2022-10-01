@@ -26,6 +26,7 @@ import "stores"
 
 StatusSectionLayout {
     id: root
+
     property var globalStore
     property var sendTransactionModal
 
@@ -34,7 +35,9 @@ StatusSectionLayout {
         tab.item.url = _internal.determineRealURL(url)
     }
 
+    notificationCount: root.globalStore.unreadNotificationsCount
     onNotificationButtonClicked: Global.openActivityCenterPopup()
+
     QtObject {
         id: _internal
 
