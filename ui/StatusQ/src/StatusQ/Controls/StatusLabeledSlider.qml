@@ -10,14 +10,25 @@ StatusSlider {
     id: root
 
     property var model: []
+    property string textRole: ""
+    property string valueRole: ""
+
     property int fontSize: 12
     property int labelMargin: 2
+
+    readonly property string currentText: Array.isArray(root.model)
+                                          ? root.model[value]
+                                          : root.model.get(value)[root.textRole]
+
+    readonly property var currentValue: Array.isArray(root.model)
+                                        ? root.model[value]
+                                        : root.model.get(value)[root.valueRole]
 
     fillColor: bgColor
     handleColor: Theme.palette.primaryColor1
     handleSize: 14
     from: 0
-    to: model.length - 1
+    to: (Array.isArray(model) ? model.length : model.count) - 1
     stepSize: 1
     snapMode: Slider.SnapAlways
 
@@ -45,7 +56,11 @@ StatusSlider {
                     horizontalAlignment: Qt.AlignHCenter
                     color: Theme.palette.baseColor1
                     font.pixelSize: root.fontSize
-                    text: modelData
+
+                    text: root.textRole ? (Array.isArray(root.model)
+                                              ? modelData[root.textRole]
+                                              : model[root.textRole])
+                                           : modelData
                 }
             }
         }

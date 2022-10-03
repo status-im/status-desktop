@@ -52,13 +52,13 @@ Loader {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.leftMargin: -4
                 color: Theme.palette.directColor1
-                font.pixelSize: 13
+                font.pixelSize: Theme.secondaryTextFontSize
                 text: pinnedMsgInfoText
             }
             StatusBaseText {
                 Layout.alignment: Qt.AlignVCenter
                 color: Theme.palette.directColor1
-                font.pixelSize: 13
+                font.pixelSize: Theme.secondaryTextFontSize
                 font.weight: Font.Medium
                 text: pinnedBy
             }

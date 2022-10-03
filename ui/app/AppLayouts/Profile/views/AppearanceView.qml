@@ -30,6 +30,7 @@ SettingsContentBase {
 
     function updateFontSize(fontSize) {
         Style.changeFontSize(fontSize)
+        Theme.updateFontSize(fontSize)
     }
 
     Component.onCompleted: {
@@ -94,12 +95,25 @@ SettingsContentBase {
             anchors.top: sectionHeadlineFontSize.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
-            model: [ qsTr("XS"), qsTr("S"), qsTr("M"), qsTr("L"), qsTr("XL"), qsTr("XXL") ]
+
+            textRole: "name"
+            valueRole: "value"
+            model: ListModel {
+                ListElement { name: qsTr("XS"); value: Theme.FontSizeXS }
+                ListElement { name: qsTr("S"); value: Theme.FontSizeS }
+                ListElement { name: qsTr("M"); value: Theme.FontSizeM }
+                ListElement { name: qsTr("L"); value: Theme.FontSizeL }
+                ListElement { name: qsTr("XL"); value: Theme.FontSizeXL }
+                ListElement { name: qsTr("XXL"); value: Theme.FontSizeXXL }
+            }
+
             value: localAccountSensitiveSettings.fontSize
-            onValueChanged: {
-                if (localAccountSensitiveSettings.fontSize !== value) {
-                    localAccountSensitiveSettings.fontSize = value
-                    appearanceView.updateFontSize(value)
+
+            onCurrentValueChanged: {
+                const fontSize = currentValue
+                if (localAccountSensitiveSettings.fontSize !== fontSize) {
+                    localAccountSensitiveSettings.fontSize = fontSize
+                    appearanceView.updateFontSize(fontSize)
                 }
             }
         }
