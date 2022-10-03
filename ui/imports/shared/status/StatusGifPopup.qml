@@ -58,7 +58,7 @@ Popup {
         }
     }
 
-    onOpened: {
+    onAboutToShow: {
         searchBox.text = ""
         searchBox.input.edit.forceActiveFocus()
         if (RootStore.isTenorWarningAccepted) {
@@ -85,7 +85,7 @@ Popup {
             spacing: 0
 
             Item {
-                property int headerMargin: 8
+                readonly property int headerMargin: 8
 
                 id: gifHeader
                 Layout.fillWidth: true
@@ -101,9 +101,9 @@ Popup {
                     anchors.topMargin: gifHeader.headerMargin
                     anchors.left: parent.left
                     anchors.leftMargin: gifHeader.headerMargin
-                    Keys.onReleased: {
+                    input.edit.onTextChanged: {
                         if (searchBox.text === "") {
-                            toggleCategory(previousCategory)
+                            toggleCategory(GifPopupDefinitions.Category.Trending)
                             return
                         }
                         if (root.currentCategory !== GifPopupDefinitions.Category.Search) {
@@ -209,7 +209,6 @@ Popup {
         id: gifItemsComponent
 
         StatusScrollView {
-            property ScrollBar vScrollBar: ScrollBar.vertical
             topPadding: Style.current.smallPadding
             leftPadding: Style.current.smallPadding
             rightPadding: Style.current.smallPadding
