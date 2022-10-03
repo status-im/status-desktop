@@ -88,7 +88,7 @@ Item {
                 textField.color: Theme.palette.baseColor1
                 textField.height: 18
                 clip: true
-                visible: !!replyDetails.messageText
+                visible: !!replyDetails.messageText && replyDetails.contentType !== StatusMessage.ContentType.Sticker
                 allowShowMore: false
             }
             StatusImageMessage {
@@ -96,7 +96,7 @@ Item {
                 Layout.preferredHeight: imageAlias.paintedHeight
                 imageWidth: 56
                 source: replyDetails.contentType === StatusMessage.ContentType.Image ? replyDetails.messageContent : ""
-//                visible: replyDetails.contentType === StatusMessage.ContentType.Image
+                visible: source
                 shapeType: StatusImageMessage.ShapeType.ROUNDED
             }
             Item {
