@@ -72,9 +72,12 @@ ColumnLayout {
             root.pubKeys = pubKeysCopy
         }
         Layout.fillWidth: true
-        Layout.fillHeight: true
         Layout.leftMargin: Style.current.halfPadding
         Layout.rightMargin: Style.current.halfPadding
+    }
+
+    Item {
+        Layout.fillHeight: true
     }
 
     StatusModalDivider {
