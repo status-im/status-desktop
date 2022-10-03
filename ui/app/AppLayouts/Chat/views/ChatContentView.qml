@@ -167,19 +167,6 @@ ColumnLayout {
                                     + chatInput.anchors.topMargin
                                     + chatInput.anchors.bottomMargin
 
-            Loader {
-                id: loadingMessagesIndicator
-                active: root.rootStore.loadingHistoryMessagesInProgress
-                visible: root.rootStore.loadingHistoryMessagesInProgress
-                sourceComponent: LoadingAnimation { }
-                anchors {
-                    right: parent.right
-                    bottom: chatInput.top
-                    rightMargin: Style.current.padding
-                    bottomMargin: Style.current.padding
-                }
-            }
-
             StatusChatInput {
                 id: chatInput
 

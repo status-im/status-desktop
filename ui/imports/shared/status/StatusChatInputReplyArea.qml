@@ -1,11 +1,11 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.13
 
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 Rectangle {
@@ -108,18 +108,13 @@ Rectangle {
         anchors.topMargin: 4
         anchors.right: parent.right
         anchors.rightMargin: 4
-        contentItem: SVGImage {
+        contentItem: StatusIcon {
             id: iconImg
             source: Style.svg("close")
+            color: Style.current.textColor
+            sourceSize: Qt.size(width, height)
             width: closeBtn.width
             height: closeBtn.height
-
-            ColorOverlay {
-                anchors.fill: iconImg
-                source: iconImg
-                color: Style.current.textColor
-                antialiasing: true
-            }
         }
         background: Rectangle {
             color: "transparent"

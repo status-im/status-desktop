@@ -213,21 +213,15 @@ Item {
                 anchors.leftMargin: Style.current.halfPadding
             }
 
-            SVGImage {
+            StatusIcon {
                 id: arrowImage
                 width: 24
                 height: 24
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: nbMessages.right
-                source: Style.svg("leave_chat")
+                icon: "arrow-down"
                 anchors.leftMargin: nbMessages.visible ? scrollDownButton.buttonPadding : 0
-                rotation: -90
-
-                ColorOverlay {
-                    anchors.fill: parent
-                    source: parent
-                    color: Style.current.pillButtonTextColor
-                }
+                color: Style.current.pillButtonTextColor
             }
 
             MouseArea {
