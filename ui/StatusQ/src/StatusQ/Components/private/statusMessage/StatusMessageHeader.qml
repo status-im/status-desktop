@@ -41,6 +41,7 @@ Item {
             Layout.bottomMargin: 2 // offset for the underline to stay vertically centered
             font.weight: Font.Medium
             font.underline: mouseArea.containsMouse
+            font.pixelSize: Theme.primaryTextFontSize
             wrapMode: Text.WordWrap
             color: Theme.palette.primaryColor1
             text: root.amISender ? qsTr("You") : root.sender.displayName
@@ -61,7 +62,7 @@ Item {
             verticalAlignment: Text.AlignVCenter
             visible: text
             color: Theme.palette.baseColor1
-            font.pixelSize: 10
+            font.pixelSize: Theme.asideTextFontSize
             text: root.messageOriginInfo
         }
         StatusContactVerificationIcons {
@@ -75,13 +76,13 @@ Item {
             verticalAlignment: Text.AlignVCenter
             visible: !root.amISender && !!root.sender.secondaryName
             color: Theme.palette.baseColor1
-            font.pixelSize: 10
+            font.pixelSize: Theme.asideTextFontSize
             text: `(${root.sender.secondaryName})`
         }
         StatusBaseText {
             verticalAlignment: Text.AlignVCenter
             visible: secondaryDisplayName.visible && tertiaryDetailText.visible
-            font.pixelSize: 10
+            font.pixelSize: Theme.asideTextFontSize
             color: Theme.palette.baseColor1
             text: "•"
         }
@@ -89,7 +90,7 @@ Item {
             id: tertiaryDetailText
             verticalAlignment: Text.AlignVCenter
             visible: !root.amISender && root.messageOriginInfo === "" && text
-            font.pixelSize: 10
+            font.pixelSize: Theme.asideTextFontSize
             elide: Text.ElideMiddle
             color: Theme.palette.baseColor1
             text: root.tertiaryDetail ? Utils.elideText(root.tertiaryDetail, 5, 3) : ""
@@ -97,7 +98,7 @@ Item {
         StatusBaseText {
             verticalAlignment: Text.AlignVCenter
             visible: verificationIcons.width <= 0 || secondaryDisplayName.visible || root.amISender || tertiaryDetailText.visible
-            font.pixelSize: 10
+            font.pixelSize: Theme.asideTextFontSize
             color: Theme.palette.baseColor1
             text: "•"
         }
@@ -108,7 +109,7 @@ Item {
         StatusBaseText {
             verticalAlignment: Text.AlignVCenter
             color: Theme.palette.dangerColor1
-            font.pixelSize: 12
+            font.pixelSize: Theme.tertiaryTextFontSize
             text: root.resendText
             visible: showResendButton && !!timestampText.text
             MouseArea {

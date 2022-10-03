@@ -74,7 +74,7 @@ Item {
                     color: Theme.palette.baseColor1
                     selectionColor: Theme.palette.primaryColor3
                     selectedTextColor: Theme.palette.directColor1
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.secondaryTextFontSize
                     font.weight: Font.Medium
                     selectByMouse: true
                     readOnly: true
@@ -84,7 +84,7 @@ Item {
             StatusTextMessage {
                 Layout.fillWidth: true
                 textField.text: replyDetails.messageText
-                textField.font.pixelSize: 13
+                textField.font.pixelSize: Theme.secondaryTextFontSize
                 textField.color: Theme.palette.baseColor1
                 textField.height: 18
                 clip: true

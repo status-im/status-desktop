@@ -38,7 +38,7 @@ Item {
         selectionColor: Theme.palette.primaryColor3
         color: Theme.palette.directColor1
         font.family: Theme.palette.baseFont.name
-        font.pixelSize: 15
+        font.pixelSize: Theme.primaryTextFontSize
         textFormat: Text.RichText
         wrapMode: Text.Wrap
         readOnly: true
