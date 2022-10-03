@@ -28,6 +28,7 @@ StatusModal {
 
         property int minChatKeyLength: 4 // ens or chat key
         property string realChatKey: ""
+        property string resolvedPubKey: ""
         property string elidedChatKey: realChatKey.length > 32?
                                            realChatKey.substring(0, 15) + "..." + realChatKey.substring(realChatKey.length - 16) :
                                            realChatKey
@@ -40,6 +41,23 @@ StatusModal {
         property var lookupContact: Backpressure.debounce(root, 400, function (value) {
             root.contactsStore.resolveENS(value)
         })
+
+        function textChanged(text) {
+            d.resolvedPubKey = ""
+            d.realChatKey = text
+
+            if(d.realChatKey === "") {
+                d.showPasteButton = true
+                d.showChatKeyValidationIndicator = false
+            }
+
+            if (text.length < d.minChatKeyLength) {
+                d.validChatKey = false
+                return
+            }
+
+            Qt.callLater(d.lookupContact, text);
+        }
     }
 
     Connections {
@@ -49,7 +67,8 @@ StatusModal {
                 d.showPasteButton = false
                 d.showChatKeyValidationIndicator = true
             }
-            d.validChatKey = resolvedPubKey !== ""
+            d.resolvedPubKey = resolvedPubKey
+            d.validChatKey = (resolvedPubKey !== "")
         }
     }
 
@@ -77,6 +96,7 @@ StatusModal {
             onClicked: {
                 d.realChatKey = root.contactsStore.getFromClipboard()
                 d.showPasteButton = false
+                d.textChanged(d.realChatKey)
             }
         }
     }
@@ -105,19 +125,7 @@ StatusModal {
                 input.onTextChanged: {
                     if(input.edit.focus)
                     {
-                        d.realChatKey = text
-
-                        if(d.realChatKey === "") {
-                            d.showPasteButton = true
-                            d.showChatKeyValidationIndicator = false
-                        }
-
-                        if (text.length < d.minChatKeyLength) {
-                            d.validChatKey = false
-                            return
-                        }
-
-                        Qt.callLater(d.lookupContact, text);
+                        d.textChanged(text)
                     }
                 }
             }
@@ -146,7 +154,7 @@ StatusModal {
             enabled: d.validChatKey && messageInput.valid
             text: qsTr("Send Contact Request")
             onClicked: {
-                root.contactsStore.sendContactRequest(d.realChatKey, messageInput.text)
+                root.contactsStore.sendContactRequest(d.resolvedPubKey, messageInput.text)
                 root.close()
             }
         }
