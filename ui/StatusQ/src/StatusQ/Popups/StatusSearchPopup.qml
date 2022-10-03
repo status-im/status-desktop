@@ -283,6 +283,8 @@ StatusModal {
                         asset.charactersLen: model.isUserIcon ? 2 : 1
                         titleAsideText: root.formatTimestampFn(model.time)
                         asset.name: model.image
+                        asset.width: 40
+                        asset.height: 40
                         asset.isImage: !!model.image
                         badge.primaryText: model.badgePrimaryText
                         badge.secondaryText: model.badgeSecondaryText
