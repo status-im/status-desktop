@@ -64,18 +64,6 @@ StatusPopupMenu {
         visible: root.chatType === Constants.chatType.oneToOne || root.chatType === Constants.chatType.privateGroupChat
     }
 
-    Action {
-        enabled: root.currentFleet === Constants.waku_prod   ||
-                 root.currentFleet === Constants.waku_test   ||
-                 root.currentFleet === Constants.status_test ||
-                 root.currentFleet === Constants.status_prod
-
-        text: qsTr("Test WakuV2 - requestAllHistoricMessages")
-        onTriggered: {
-            root.requestAllHistoricMessages(root.chatId)
-        }
-    }
-
     StatusMenuItem {
         objectName: "editNameAndImageMenuItem"
         text: qsTr("Edit name and image")
