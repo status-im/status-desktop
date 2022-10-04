@@ -111,7 +111,7 @@ MenuItem {
         sourceComponent: {
             let subMenuItemIcon = statusPopupMenu.subMenuItemIcons && statusPopupMenu.subMenuItemIcons[parent.subMenuIndex]
             
-            if ((parent.subMenu && subMenuItemIcon && subMenuItemIcon.source) || 
+            if ((parent.subMenu && subMenuItemIcon && statusPopupMenu.subMenuItemIcons[parent.subMenuIndex].source) ||
                 statusPopupMenuItem.action.assetSettings && !!statusPopupMenuItem.action.assetSettings.name.toString()
                 && statusPopupMenuItem.action.assetSettings.isImage) {
                 return statusRoundImageCmp
