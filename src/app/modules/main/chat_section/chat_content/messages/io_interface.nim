@@ -56,6 +56,9 @@ method onSendingMessageError*(self: AccessInterface) {.base.} =
 method onEnvelopeSent*(self: AccessInterface, messagesIds: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onEnvelopeExpired*(self: AccessInterface, messagesIds: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onMessageDelivered*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

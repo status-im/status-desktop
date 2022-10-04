@@ -325,6 +325,10 @@ method onEnvelopeSent*(self: Module, messagesIds: seq[string]) =
   for messageId in messagesIds:
     self.view.model().itemSent(messageId)
 
+method onEnvelopeExpired*(self: Module, messagesIds: seq[string]) =
+  for messageId in messagesIds:
+    self.view.model().itemExpired(messageId)
+
 method onMessageDelivered*(self: Module, messageId: string) =
   self.view.model().itemDelivered(messageId)
 

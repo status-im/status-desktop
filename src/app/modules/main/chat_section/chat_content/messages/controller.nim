@@ -81,6 +81,10 @@ proc init*(self: Controller) =
     let args = EnvelopeSentArgs(e)
     self.delegate.onEnvelopeSent(args.messagesIds)
 
+  self.events.on(SIGNAL_ENVELOPE_EXPIRED) do(e:Args):
+    let args = EnvelopeExpiredArgs(e)
+    self.delegate.onEnvelopeExpired(args.messagesIds)
+
   self.events.on(SIGNAL_MESSAGE_DELIVERED) do(e:Args):
     let args = MessageDeliveredArgs(e)
     if(self.chatId != args.chatId):

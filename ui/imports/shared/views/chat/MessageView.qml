@@ -108,7 +108,8 @@ Loader {
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
-    readonly property bool isExpired: (messageOutgoingStatus === "sending" && (Math.floor(messageTimestamp) + 180000) < Date.now())
+    readonly property bool isExpired: (messageOutgoingStatus === "sending" && (Math.floor(messageTimestamp) + 180000) < Date.now()) || messageOutgoingStatus === "expired"
+    property int statusAgeEpoch: 0
 
     signal imageClicked(var image)
 
