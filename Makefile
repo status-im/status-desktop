@@ -9,6 +9,11 @@ SHELL := bash # the shell used internally by Make
 
 # used inside the included makefiles
 BUILD_SYSTEM_DIR := vendor/nimbus-build-system
+# Exclude nested Nim packages.
+EXCLUDED_NIM_PACKAGES := vendor/nim-task-runner/vendor/nim-bearssl \
+						 vendor/nim-task-runner/vendor/nim-chronos \
+						 vendor/nim-task-runner/vendor/nim-stew \
+						 vendor/nim-task-runner/vendor/nimbus-build-system
 
 # we don't want an error here, so we can handle things later, in the ".DEFAULT" target
 -include $(BUILD_SYSTEM_DIR)/makefiles/variables.mk
