@@ -389,6 +389,9 @@ QtObject:
   proc itemDelivered*(self: Model, messageId: string) =
     self.setOutgoingStatus(messageId, PARSED_TEXT_OUTGOING_STATUS_DELIVERED)
 
+  proc itemExpired*(self: Model, messageId: string) =
+    self.setOutgoingStatus(messageId, PARSED_TEXT_OUTGOING_STATUS_EXPIRED)
+
   proc addReaction*(self: Model, messageId: string, emojiId: EmojiId, didIReactWithThisEmoji: bool,
     userPublicKey: string, userDisplayName: string, reactionId: string) =
     let ind = self.findIndexForMessageId(messageId)

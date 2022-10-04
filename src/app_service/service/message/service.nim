@@ -51,6 +51,7 @@ const SIGNAL_MESSAGE_DELETION* = "messageDeleted"
 const SIGNAL_MESSAGE_DELIVERED* = "messageDelivered"
 const SIGNAL_MESSAGE_EDITED* = "messageEdited"
 const SIGNAL_ENVELOPE_SENT* = "envelopeSent"
+const SIGNAL_ENVELOPE_EXPIRED* = "envelopeExpired"
 const SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED* = "messageLinkPreviewDataLoaded"
 const SIGNAL_MENTIONED_IN_EDITED_MESSAGE* = "mentionedInEditedMessage"
 const SIGNAL_RELOAD_MESSAGES* = "reloadMessages"
@@ -99,6 +100,9 @@ type
     messageId*: string
 
   EnvelopeSentArgs* = ref object of Args
+    messagesIds*: seq[string]
+
+  EnvelopeExpiredArgs* = ref object of Args
     messagesIds*: seq[string]
 
   MessageEditedArgs* = ref object of Args
@@ -279,6 +283,12 @@ QtObject:
       let receivedData = EnvelopeSentSignal(e)
       let data = EnvelopeSentArgs(messagesIds: receivedData.messageIds)
       self.events.emit(SIGNAL_ENVELOPE_SENT, data)
+
+    self.events.on(SignalType.EnvelopeExpired.event) do(e: Args):
+      let receivedData = EnvelopeExpiredSignal(e)
+      let data = EnvelopeExpiredArgs(messagesIds: receivedData.messageIds)
+      self.events.emit(SIGNAL_ENVELOPE_EXPIRED, data)
+
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
