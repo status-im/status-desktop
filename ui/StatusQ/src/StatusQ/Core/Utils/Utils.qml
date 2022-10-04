@@ -218,6 +218,10 @@ QtObject {
                 `${msg}`
     }
 
+    function convertToSingleLine(text) {
+        return text.replace(/<br\s*\/>/gm, " ")
+    }
+
     function delegateModelSort(srcGroup, dstGroup, lessThan) {
         const insertPosition = (lessThan, item) => {
             let lower = 0
