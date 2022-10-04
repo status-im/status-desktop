@@ -22,9 +22,6 @@
 [submodule "vendor/nimage"]
 	path = vendor/nimage
 	url = https://github.com/Ethosa/nimage/
-[submodule "vendor/bearssl"]
-	path = vendor/bearssl
-	url = https://github.com/status-im/nim-bearssl
 [submodule "vendor/nim-confutils"]
 	path = vendor/nim-confutils
 	url = https://github.com/status-im/nim-confutils.git
