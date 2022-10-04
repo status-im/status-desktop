@@ -138,7 +138,8 @@ QtObject:
       # Handling community updates
       if (receivedData.communities.len > 0):
         for community in receivedData.communities:
-          self.updateOrAddChannelGroup(community.toChannelGroupDto())
+          if (community.joined):
+            self.updateOrAddChannelGroup(community.toChannelGroupDto())
   
   proc sortPersonnalChatAsFirst[T, D](x, y: (T, D)): int =
     if (x[1].channelGroupType == Personal): return -1
