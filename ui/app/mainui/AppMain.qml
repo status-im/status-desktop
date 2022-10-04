@@ -602,7 +602,8 @@ Item {
                     id: connectedBannerComponent
 
                     ModuleWarning {
-                        readonly property bool isConnected: bannersLayout.isConnected
+                        id: connectedBanner
+                        property bool isConnected: true
 
                         objectName: "connectionInfoBanner"
                         Layout.fillWidth: true
@@ -617,7 +618,7 @@ Item {
                         }
 
                         Component.onCompleted: {
-                            updateState()
+                            connectedBanner.isConnected = Qt.binding(() => bannersLayout.isConnected);
                         }
                         onIsConnectedChanged: {
                             updateState();
