@@ -539,9 +539,6 @@ ColumnLayout {
         isAdmin: true
         asset.isLetterIdenticon: true
         isUntrustworthy: true
-        Component.onCompleted: {
-            print(asset.name, asset.isImage, asset.isLetterIdenticon)
-        }
     }
 
     StatusBaseText {

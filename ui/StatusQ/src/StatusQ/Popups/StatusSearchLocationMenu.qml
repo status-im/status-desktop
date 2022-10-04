@@ -5,6 +5,7 @@ import QtQuick.Controls 2.14
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 StatusPopupMenu {
     id: root
@@ -103,8 +104,10 @@ StatusPopupMenu {
                         value: model.value
                         text: model.text
                         assetSettings.isImage: !!model.imageSource
-                        assetSettings.name: !!model.imageSource ? model.imageSource : model.iconName
+                        assetSettings.name: !!StatusQUtils.Emoji.iconSource(model.imageSource) ?
+                                            StatusQUtils.Emoji.iconSource(model.imageSource) : model.imageSource
                         assetSettings.color: model.isUserIcon ? Theme.palette.userCustomizationColors[model.colorId] : model.iconColor
+                        assetSettings.bgColor: model.iconColor
                         assetSettings.charactersLen: model.isUserIcon ? 2 : 1
                         ringSettings.ringSpecModel: model.colorHash
                         onTriggered: {
