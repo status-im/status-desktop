@@ -18,7 +18,7 @@ export stickers_dto
 # Default values:
 const DEFAULT_CURRENCY* = "usd"
 const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
-const DEFAULT_FLEET* = $Fleet.Prod
+const DEFAULT_FLEET* = $Fleet.StatusProd
 
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 const SIGNAL_SETTING_PROFILE_PICTURES_SHOW_TO_CHANGED* = "profilePicturesShowToChanged"
