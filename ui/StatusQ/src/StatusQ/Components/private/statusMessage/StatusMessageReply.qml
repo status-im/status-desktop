@@ -15,6 +15,7 @@ Item {
     property bool profileClickable: true
 
     signal replyProfileClicked(var sender, var mouse)
+    signal linkActivated(string link)
 
     implicitHeight: layout.implicitHeight
     implicitWidth: layout.implicitWidth
@@ -83,12 +84,16 @@ Item {
             }
             StatusTextMessage {
                 Layout.fillWidth: true
-                textField.text: replyDetails.messageText
                 textField.font.pixelSize: Theme.secondaryTextFontSize
                 textField.color: Theme.palette.baseColor1
+                convertToSingleLine: true
                 clip: true
                 visible: !!replyDetails.messageText && replyDetails.contentType !== StatusMessage.ContentType.Sticker
                 allowShowMore: false
+                messageDetails: root.replyDetails
+                onLinkActivated: {
+                    root.linkActivated(link);
+                }
             }
             StatusImageMessage {
                 Layout.fillWidth: true

@@ -221,6 +221,9 @@ Rectangle {
                 profileClickable: root.profileClickable
                 onReplyProfileClicked: root.replyProfileClicked(sender, mouse)
                 audioMessageInfoText: root.audioMessageInfoText
+                onLinkActivated: {
+                    root.linkActivated(link);
+                }
             }
         }
 
@@ -286,25 +289,8 @@ Rectangle {
                     visible: active
                     sourceComponent: StatusTextMessage {
                         objectName: "StatusMessage_textMessage"
-                        textField.text: {
-                            if (root.messageDetails.contentType === StatusMessage.ContentType.Sticker)
-                                return "";
-
-                            const formattedMessage = Utils.linkifyAndXSS(root.messageDetails.messageText);
-
-                            if (root.messageDetails.contentType === StatusMessage.ContentType.Emoji)
-                                return Emoji.parse(formattedMessage, Emoji.size.middle, Emoji.format.png);
-
-                            if (root.isEdited) {
-                                const index = formattedMessage.endsWith("code>") ? formattedMessage.length : formattedMessage.length - 4;
-                                const editedMessage = formattedMessage.slice(0, index)
-                                                    + ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
-                                                    + formattedMessage.slice(index);
-                                return Utils.getMessageWithStyle(Emoji.parse(editedMessage), textField.hoveredLink)
-                            }
-
-                            return Utils.getMessageWithStyle(Emoji.parse(formattedMessage), textField.hoveredLink)
-                        }
+                        messageDetails: root.messageDetails
+                        isEdited: root.isEdited
                         onLinkActivated: {
                             root.linkActivated(link);
                         }
