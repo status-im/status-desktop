@@ -99,7 +99,7 @@ StatusModal {
             isMessage: true
             shouldRepeatHeader: true
             messageTimestamp: root.responseTimestamp
-            senderId: root.senderPublicKey
+            senderId: userProfile.pubKey
             senderDisplayName: userProfile.name
             senderIcon: userProfile.icon
             messageText: root.responseText
