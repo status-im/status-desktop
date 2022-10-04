@@ -268,7 +268,8 @@ proc getAccountSettings(self: Service, accountId: string,
       return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId, displayName)
 
 proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
-  let fleet = Fleet.Prod
+  let fleet = Fleet.StatusProd
+  let dnsDiscoveryURL = @["enrtree://AOGECG2SPND25EEFMAJ5WF3KSGJNSGV356DSTL2YVLLZWIV6SAYBM@prod.nodes.status.im"]
 
   result = NODE_CONFIG.copy()
   result["ClusterConfig"]["Fleet"] = newJString($fleet)
@@ -276,19 +277,28 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
   result["ClusterConfig"]["TrustedMailServers"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Mailservers)
   result["ClusterConfig"]["StaticNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Whisper)
   result["ClusterConfig"]["RendezvousNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Rendezvous)
-  result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* (@[]) # TODO: set default status.prod enr
   result["NetworkId"] = NETWORKS[0]{"chainId"}
   result["DataDir"] = "ethereum".newJString()
   result["UpstreamConfig"]["Enabled"] = true.newJBool()
   result["UpstreamConfig"]["URL"] = NETWORKS[0]{"rpcUrl"}
   result["ShhextConfig"]["InstallationID"] = newJString(installationId)
+  result["NoDiscovery"] = true.newJBool()
+  result["Rendezvous"] = false.newJBool()
 
   # TODO: fleet.status.im should have different sections depending on the node type
   #       or maybe it's not necessary because a node has the identify protocol
-  result["ClusterConfig"]["RelayNodes"] =  %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Waku)
-  result["ClusterConfig"]["StoreNodes"] =  %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Waku)
-  result["ClusterConfig"]["FilterNodes"] =  %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Waku)
-  result["ClusterConfig"]["LightpushNodes"] =  %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Waku)
+  result["ClusterConfig"]["RelayNodes"] =  %* dnsDiscoveryURL
+  result["ClusterConfig"]["StoreNodes"] =  %* dnsDiscoveryURL
+  result["ClusterConfig"]["FilterNodes"] =  %* dnsDiscoveryURL
+  result["ClusterConfig"]["LightpushNodes"] =  %* dnsDiscoveryURL
+  result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* dnsDiscoveryURL
+
+  result["WakuV2Config"]["EnableDiscV5"] = true.newJBool()
+  result["WakuV2Config"]["DiscoveryLimit"] = 20.newJInt()
+  result["WakuV2Config"]["Rendezvous"] = true.newJBool()
+  result["WakuV2Config"]["Enabled"] = true.newJBool()
+
+  result["WakuConfig"]["Enabled"] = false.newJBool()
 
   if TEST_PEER_ENR != "":
     result["ClusterConfig"]["BootNodes"] = %* @[TEST_PEER_ENR]
