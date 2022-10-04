@@ -41,7 +41,7 @@ Loader {
                 border.color: Theme.palette.directColor7
                 color: root.asset.imgIsIdenticon ?
                            Theme.palette.statusRoundedImage.backgroundColor :
-                           "transparent"
+                           root.asset.bgColor
             }
             Loader {
                 anchors.centerIn: parent

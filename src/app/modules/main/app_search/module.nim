@@ -81,6 +81,7 @@ proc buildLocationMenuForChannelGroup(self: Module, channelGroup: ChannelGroupDt
   for chatDto in channelGroup.chats:
     var chatName = chatDto.name
     var chatImage = chatDto.icon
+    var chatEmoji = chatDto.emoji
     var colorHash: ColorHashDto = @[]
     var colorId: int = 0
     let isOneToOneChat = chatDto.chatType == ChatType.OneToOne
@@ -91,7 +92,7 @@ proc buildLocationMenuForChannelGroup(self: Module, channelGroup: ChannelGroupDt
     let subItem = location_menu_sub_item.initSubItem(
       chatDto.id,
       chatName,
-      chatImage,
+      if (chatImage != ""): chatImage else: chatEmoji,
       "",
       chatDto.color,
       isOneToOneChat,
