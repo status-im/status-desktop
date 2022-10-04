@@ -187,7 +187,6 @@ QtObject:
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
-
       # Handling community updates
       if (receivedData.communities.len > 0):
         # Channel added removed is notified in the chats param
@@ -305,7 +304,6 @@ QtObject:
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto]) =
     var community = communities[0]
-
     if(not self.allCommunities.hasKey(community.id)):
       self.allCommunities[community.id] = community
       self.events.emit(SIGNAL_COMMUNITY_ADDED, CommunityArgs(community: community))
@@ -391,7 +389,7 @@ QtObject:
         # but something is different
         for prev_chat in prev_community.chats:
           # Handle position changes
-          if(chat.id == prev_chat.id and chat.position != prev_chat.position):
+          if(chat.id == prev_chat.id and (chat.position != prev_chat.position or chat.categoryId != prev_chat.categoryId)):
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
             chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
 
@@ -913,9 +911,14 @@ QtObject:
       if(not response.result.getProp("chats", chatsJArr)):
         raise newException(RpcException, fmt"createCommunityChannel; there is no `chats` key in the response for community id: {communityId}")
 
+      let chatsForCategory = self.getChats(communityId, categoryId)
+      let maxPosition = if chatsForCategory.len > 0: chatsForCategory[^1].position else: -1
+
       for chatObj in chatsJArr:
         var chatDto = chatObj.toChatDto(communityId)
+        chatDto.position = maxPosition + 1
         self.chatService.updateOrAddChat(chatDto)
+        self.joinedCommunities[communityId].chats.add(chatDto)
         let data = CommunityChatArgs(chat: chatDto)
         self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
     except Exception as e:
@@ -1004,7 +1007,6 @@ QtObject:
   proc deleteCommunityChat*(self: Service, communityId: string, chatId: string) =
     try:
       let response = status_go.deleteCommunityChat(communityId, chatId)
-
       if not response.error.isNil:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error deleting community chat: " & error.message)
@@ -1012,8 +1014,7 @@ QtObject:
       if response.result.isNil or response.result.kind == JNull:
         error "response is invalid", procName="deleteCommunityChat"
 
-      var shortChatId = chatId.replace(communityId, "")
-      let idx = findIndexById(shortChatId, self.joinedCommunities[communityId].chats)
+      let idx = findIndexById(chatId, self.joinedCommunities[communityId].chats)
       if (idx != -1):
         self.joinedCommunities[communityId].chats.delete(idx)
 
