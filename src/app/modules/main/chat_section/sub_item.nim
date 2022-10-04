@@ -57,5 +57,6 @@ proc toJsonNode*(self: SubItem): JsonNode =
     "muted": self.muted,
     "blocked": self.blocked,
     "active": self.active,
-    "position": self.position
+    "position": self.position,
+    "categoryId": ""
   }

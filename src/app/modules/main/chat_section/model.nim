@@ -173,8 +173,15 @@ QtObject:
       idx.inc
     return -1
 
-  proc removeItemById*(self: Model, id: string) =
-    let idx = self.getItemIdxById(id)
+  proc getItemIdxByCategory*(self: Model, category: string): int =
+    var idx = 0
+    for it in self.items:
+      if(it.categoryId == category):
+        return idx
+      idx.inc
+    return -1
+
+  proc removeItemByIndex(self: Model, idx: int) =
     if idx == -1:
       return
 
@@ -186,6 +193,23 @@ QtObject:
     self.endRemoveRows()
 
     self.countChanged()
+
+  proc removeItemById*(self: Model, id: string) =
+    let idx = self.getItemIdxById(id)
+    if idx != -1:
+      self.removeItemByIndex(idx)
+
+  proc removeItemOrSubitemById*(self: Model, id: string) =
+    let idx = self.getItemIdxById(id)
+    if idx != -1:
+      self.removeItemByIndex(idx)
+      return
+    else:
+      for it in self.items:
+        let subItemIndex = it.subItems.getItemIdxById(id)
+        if subItemIndex != -1:
+          it.subItems.removeItemById(id)
+          return
 
   proc getItemAtIndex*(self: Model, index: int): Item =
     if(index < 0 or index >= self.items.len):
@@ -203,6 +227,17 @@ QtObject:
     for it in self.items:
       if(it.id == id):
         return it
+
+  proc getCategoryAndPosition*(self: Model, id: string): (string, int) =
+    let item = self.getItemById(id)
+    if (not item.isNil):
+      return ("", item.position)
+    else:
+      for it in self.items:
+        let item = it.subItems.getItemById(id)
+        if(not item.isNil):
+          return (it.categoryId, item.position)
+    return ("", -1)
 
   proc getSubItemById*(self: Model, id: string): SubItem =
     for it in self.items:
@@ -233,6 +268,14 @@ QtObject:
       let jsonObj = it.subItems.getItemByIdAsJson(id, found)
       if(found):
         return jsonObj
+
+  proc getItemOrSubItemByIdAsBase*(self: Model, id: string): BaseItem =
+    for it in self.items:
+      if(it.id == id):
+        return BaseItem(it)
+      let subItem = it.subItems.getItemById(id)
+      if (not subItem.isNil):
+        return BaseItem(subItem)
 
   proc muteUnmuteItemOrSubItemById*(self: Model, id: string, mute: bool) =
     for i in 0 ..< self.items.len:
@@ -353,24 +396,64 @@ QtObject:
       result.hasNotifications = result.hasNotifications or self.items[i].BaseItem.hasUnreadMessages
       result.notificationsCount = result.notificationsCount + self.items[i].BaseItem.notificationsCount
 
+  proc reorderModel*(self: Model, id: string, position: int) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    if(self.items[index].BaseItem.position == position):
+      return
+    self.items[index].BaseItem.position = position
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Position.int])
+
   proc reorderSubModel(self: Model, chatId: string, position: int) =
     for it in self.items:
       if(it.subItems.getCount() > 0):
         it.subItems.reorder(chatId, position)
 
-  proc reorder*(self: Model, chatOrCategoryId: string, position: int) =
-    let index = self.getItemIdxById(chatOrCategoryId)
-    if(index == -1):
-      self.reorderSubModel(chatOrCategoryId, position)
+  proc moveItemFromTo(self: Model, chatId: string, oldCategoryId: string, oldPosition: int, newCategoryId: string, newPosition: int) =
+    if (oldCategoryId == newCategoryId):
+      # move position only
+      if (oldCategoryId == ""):
+        self.reorderModel(chatId, newPosition)
+      else:
+        self.reorderSubModel(chatId, newPosition)
+    else:
+      # move between categories
+      let baseItemToMove = self.getItemOrSubItemByIdAsBase(chatId)
+      var oldCategoryItem = self.getItemById(oldCategoryId)
+
+      if not oldCategoryItem.isNil:
+        oldCategoryItem.subItems().removeItemById(chatId)
+      else:
+        self.removeItemById(chatId)
+
+      if newCategoryId != "":
+        let channelItem = initSubItem(baseItemToMove.id, newCategoryId, baseItemToMove.name, baseItemToMove.icon,
+          baseItemToMove.color, baseItemToMove.emoji, baseItemToMove.description, baseItemToMove.type,
+          baseItemToMove.amIChatAdmin, baseItemToMove.lastMessageTimestamp, baseItemToMove.hasUnreadMessages,
+          baseItemToMove.notificationsCount, baseItemToMove.muted, baseItemToMove.blocked,
+          baseItemToMove.active, newPosition)
+        let newCategoryItem = self.getItemById(newCategoryId)
+        newCategoryItem.appendSubItem(channelItem)
+      else:
+        let channelItem = initItem(baseItemToMove.id, baseItemToMove.name, baseItemToMove.icon,
+          baseItemToMove.color, baseItemToMove.emoji, baseItemToMove.description, baseItemToMove.type, baseItemToMove.amIChatAdmin,
+          baseItemToMove.lastMessageTimestamp, baseItemToMove.hasUnreadMessages, baseItemToMove.notificationsCount,
+          baseItemToMove.muted, baseItemToMove.blocked, baseItemToMove.active, newPosition, categoryId="")
+        self.appendItem(channelItem)
+
+
+  proc reorder*(self: Model, chatOrCategoryId: string, position: int, newCategoryIdForChat: string) =
+    let indexOfCategoryItem = self.getItemIdxByCategory(chatOrCategoryId) # chats have empty categoryId
+    if(indexOfCategoryItem == -1):
+      # reorder chat
+      let (currentCat, currentPos) = self.getCategoryAndPosition(chatOrCategoryId)
+      if (currentPos != -1):
+        self.moveItemFromTo(chatOrCategoryId, currentCat, currentPos, newCategoryIdForChat, position)
       return
-
-    if(self.items[index].BaseItem.position == position):
-      return
-
-    self.items[index].BaseItem.position = position
-
-    let modelIndex = self.createIndex(index, 0, nil)
-    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Position.int])
+    # reorder categories
+    self.reorderModel(chatOrCategoryId, position)
 
   proc clearItems*(self: Model) =
     self.beginResetModel()

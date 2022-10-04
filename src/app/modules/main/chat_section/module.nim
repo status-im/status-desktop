@@ -433,7 +433,7 @@ method addNewChat*(
   if chatDto.categoryId.len == 0:
     let item = initItem(chatDto.id, chatName, chatImage, chatDto.color, chatDto.emoji,
       chatDto.description, chatDto.chatType.int, amIChatAdmin, chatDto.timestamp.int, hasNotification, notificationsCount,
-      chatDto.muted, blocked=false, active=false, position = 0, chatDto.categoryId, colorId, colorHash, chatDto.highlight,
+      chatDto.muted, blocked=false, active=false, chatDto.position, chatDto.categoryId, colorId, colorHash, chatDto.highlight,
       onlineStatus = onlineStatus)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
                       communityService, messageService, gifService, mailserversService)
@@ -480,7 +480,6 @@ method doesTopLevelChatExist*(self: Module, chatId: string): bool =
 method removeCommunityChat*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
     return
-
   self.controller.removeCommunityChat(chatId)
 
 method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto]) =
@@ -537,8 +536,8 @@ method setFirstChannelAsActive*(self: Module) =
     let subItem = item.subItems.getItemAtIndex(0)
     self.setActiveItemSubItem(item.id, subItem.id)
 
-method onReorderChatOrCategory*(self: Module, chatOrCatId: string, position: int) =
-  self.view.chatsModel().reorder(chatOrCatId, position)
+method onReorderChatOrCategory*(self: Module, chatOrCatId: string, position: int, newCategoryIdForChat: string) =
+  self.view.chatsModel().reorder(chatOrCatId, position, newCategoryIdForChat)
 
 method onCategoryNameChanged*(self: Module, category: Category) =
   self.view.chatsModel().renameItem(category.id, category.name)
@@ -572,7 +571,7 @@ method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDt
 method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
     return
-  self.view.chatsModel().removeItemById(chatId)
+  self.view.chatsModel().removeItemOrSubitemById(chatId)
   self.removeSubmodule(chatId)
 
   self.setFirstChannelAsActive()

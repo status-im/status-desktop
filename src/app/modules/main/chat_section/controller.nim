@@ -159,7 +159,7 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_COMMUNITY_CATEGORY_REORDERED) do(e:Args):
       let args = CommunityChatOrderArgs(e)
       if (args.communityId == self.sectionId):
-        self.delegate.onReorderChatOrCategory(args.categoryId, args.position)
+        self.delegate.onReorderChatOrCategory(args.categoryId, args.position, args.categoryId)
 
     self.events.on(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED) do(e:Args):
       let args = CommunityCategoryArgs(e)
@@ -169,7 +169,7 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_REORDERED) do(e:Args):
       let args = CommunityChatOrderArgs(e)
       if (args.communityId == self.sectionId):
-        self.delegate.onReorderChatOrCategory(args.chatId, args.position)
+        self.delegate.onReorderChatOrCategory(args.chatId, args.position, args.categoryId)
 
     self.events.on(SIGNAL_RELOAD_MESSAGES) do(e: Args):
       let args = ReloadMessagesArgs(e)
