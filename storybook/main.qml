@@ -34,6 +34,12 @@ ApplicationWindow {
             Column {
                 id: navigation
                 spacing: 0
+
+                StatusNavigationListItem {
+                    title: "CommunitiesPortalLayout"
+                    selected: viewLoader.source.toString().includes(title)
+                    onClicked: mainPageView.page(title);
+                }
             }
         }
 

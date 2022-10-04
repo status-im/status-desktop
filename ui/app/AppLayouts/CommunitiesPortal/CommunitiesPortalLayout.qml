@@ -16,8 +16,9 @@ import shared.panels 1.0
 
 import SortFilterProxyModel 0.2
 
+import AppLayouts.CommunitiesPortal.stores 1.0
+
 import "controls"
-import "stores"
 import "popups"
 import "views"
 
