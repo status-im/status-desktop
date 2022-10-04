@@ -251,11 +251,6 @@ Item {
 
             width: ListView.view.width
 
-            Binding on height {
-                delayed: true
-                value: msgDelegate.implicitHeight
-            }
-
             objectName: "chatMessageViewDelegate"
             rootStore: root.rootStore
             messageStore: root.messageStore
