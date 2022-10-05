@@ -182,6 +182,6 @@ method authenticateUser*(self: Module) =
 
 method onUserAuthenticated*(self: Module, password: string) =
   if password.len > 0:
-    self.view.userAuthenticaionSuccess(password)
+    self.view.userAuthenticationSuccess(password)
   else:
     self.view.userAuthentiactionFail()

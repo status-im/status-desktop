@@ -42,7 +42,7 @@ StatusModal {
 
     Connections {
         target: walletSectionAccounts
-        onUserAuthenticaionSuccess: {
+        onUserAuthenticationSuccess: {
             validationError.text = ""
             d.password = password
             d.getDerivedAddressList()
@@ -189,7 +189,6 @@ StatusModal {
                 input.isIconSelectable: true
                 input.asset.color: colorSelectionGrid.selectedColor ? colorSelectionGrid.selectedColor : Theme.palette.directColor1
                 input.leftPadding: Style.current.padding
-                enabled: !d.authenticationNeeded
                 onIconClicked: {
                     root.emojiPopup.open()
                     root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
@@ -215,7 +214,6 @@ StatusModal {
             StatusColorSelectorGrid {
                 id: colorSelectionGrid
                 anchors.horizontalCenter: parent.horizontalCenter
-                enabled: !d.authenticationNeeded
                 titleText: qsTr("color").toUpperCase()
             }
 
