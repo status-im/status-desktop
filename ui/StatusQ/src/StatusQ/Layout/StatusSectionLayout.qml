@@ -128,8 +128,8 @@ SplitView {
     }
 
     Control {
-        SplitView.minimumWidth: (!!leftPanel) ? 300 : 0
-        SplitView.preferredWidth: (!!leftPanel) ? 300 : 0
+        SplitView.minimumWidth: (!!leftPanel) ? 304 : 0
+        SplitView.preferredWidth: (!!leftPanel) ? 304 : 0
         SplitView.fillHeight: (!!leftPanel)
         background: Rectangle {
             color: Theme.palette.baseColor4
