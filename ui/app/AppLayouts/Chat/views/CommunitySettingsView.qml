@@ -60,13 +60,14 @@ StatusSectionLayout {
         centerPanelContentLoader.item.children[d.currentIndex].updateState();
     }
 
-    leftPanel: ColumnLayout {
+    leftPanel: Item {
         anchors.fill: parent
 
         ColumnLayout {
             anchors {
                 top: parent.top
                 bottom: footer.top
+                topMargin: 16
                 bottomMargin: 16
                 horizontalCenter: parent.horizontalCenter
             }
@@ -145,7 +146,6 @@ StatusSectionLayout {
         //anchors.margins: 32
         anchors {
             leftMargin: 28
-            rightMargin: 16
             bottomMargin: 16
         }
         active: root.community
