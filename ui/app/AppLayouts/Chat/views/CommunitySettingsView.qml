@@ -26,10 +26,10 @@ StatusSectionLayout {
     notificationCount: root.rootStore.unreadNotificationsCount
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     // TODO: get this model from backend?
-    property var settingsMenuModel: root.rootStore.communityPermissionsEnabled ? [{name: qsTr("Overview"), icon: "help"},
+    property var settingsMenuModel: root.rootStore.communityPermissionsEnabled ? [{name: qsTr("Overview"), icon: "show"},
                                                                                  {name: qsTr("Members"), icon: "group-chat"},
                                                                                  {name: qsTr("Permissions"), icon: "objects"}] :
-                                                                                   [{name: qsTr("Overview"), icon: "help"},
+                                                                                   [{name: qsTr("Overview"), icon: "show"},
                                                                                  {name: qsTr("Members"), icon: "group-chat"}]
     // TODO: Next community settings options:
     //                        {name: qsTr("Tokens"), icon: "token"},
@@ -67,17 +67,27 @@ StatusSectionLayout {
             anchors {
                 top: parent.top
                 bottom: footer.top
-                topMargin: 16
-                bottomMargin: 16
+                bottomMargin: 12
+                topMargin: Style.current.smallPadding
                 horizontalCenter: parent.horizontalCenter
             }
-            width: parent.width - 16
-            spacing: 16
+            width: parent.width
+            spacing: 32
             clip: true
 
-            StatusNavigationPanelHeadline {
-                Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Settings")
+            StatusChatInfoButton {
+                id: communityHeader
+
+                title: community.name
+                subTitle: qsTr("%n member(s)", "", community.members.count)
+                asset.name: community.image
+                asset.color: community.color
+                asset.isImage: true
+                Layout.fillWidth: true
+                Layout.leftMargin: Style.current.halfPadding
+                Layout.rightMargin: Style.current.halfPadding
+                type: StatusChatInfoButton.Type.OneToOneChat
+                hoverEnabled: false
             }
 
             StatusListView {
@@ -85,11 +95,15 @@ StatusSectionLayout {
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.leftMargin: Style.current.padding
+                Layout.rightMargin: Style.current.padding
                 model: root.settingsMenuModel
                 delegate: StatusNavigationListItem {
                     width: listView.width
                     title: modelData.name
                     asset.name: modelData.icon
+                    asset.height: 24
+                    asset.width: 24
                     selected: d.currentIndex === index
                     onClicked: d.currentIndex = index
                 }

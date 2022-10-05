@@ -54,7 +54,7 @@ Item {
         id: communityHeader
         objectName: "communityHeaderButton"
         title: communityData.name
-        subTitle: qsTr("%n Member(s)", "", communityData.members.count)
+        subTitle: qsTr("%n member(s)", "", communityData.members.count)
         asset.name: communityData.image
         asset.color: communityData.color
         asset.isImage: true
