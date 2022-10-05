@@ -36,7 +36,7 @@ Item {
 
     Loader {
         id: ctaLoader
-        anchors.bottom: bodyLoader.bottom
+        anchors.verticalCenter: bodyLoader.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
 

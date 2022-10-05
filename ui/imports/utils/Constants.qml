@@ -519,6 +519,9 @@ QtObject {
     readonly property int activityCenterNotificationTypeMention: 3
     readonly property int activityCenterNotificationTypeReply: 4
     readonly property int activityCenterNotificationTypeContactRequest: 5
+    readonly property int activityCenterNotificationTypeCommunityInvitation: 6
+    readonly property int activityCenterNotificationTypeCommunityRequest: 7
+    readonly property int activityCenterNotificationTypeCommunityMembershipRequest: 8
 
     readonly property int contactRequestStateNone: 0
     readonly property int contactRequestStatePending: 1

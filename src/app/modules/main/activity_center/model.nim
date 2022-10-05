@@ -5,6 +5,7 @@ type
   NotifRoles {.pure.} = enum
     Id = UserRole + 1
     ChatId
+    CommunityId
     SectionId
     Name
     NotificationType
@@ -72,6 +73,7 @@ QtObject:
     case communityItemRole:
       of NotifRoles.Id: result = newQVariant(acitivityNotificationItem.id)
       of NotifRoles.ChatId: result = newQVariant(acitivityNotificationItem.chatId)
+      of NotifRoles.CommunityId: result = newQVariant(acitivityNotificationItem.communityId)
       of NotifRoles.SectionId: result = newQVariant(acitivityNotificationItem.sectionId)
       of NotifRoles.Name: result = newQVariant(acitivityNotificationItem.name)
       of NotifRoles.Author: result = newQVariant(acitivityNotificationItem.author)
@@ -90,6 +92,7 @@ QtObject:
     case data:
     of "id": result = notif.id
     of "chatId": result = notif.chatId
+    of "communityId": result = notif.communityId
     of "sectionId": result = notif.sectionId
     of "name": result = notif.name
     of "author": result = notif.author
@@ -104,6 +107,7 @@ QtObject:
     {
       NotifRoles.Id.int:"id",
       NotifRoles.ChatId.int:"chatId",
+      NotifRoles.CommunityId.int:"communityId",
       NotifRoles.SectionId.int: "sectionId",
       NotifRoles.Name.int: "name",
       NotifRoles.Author.int: "author",
