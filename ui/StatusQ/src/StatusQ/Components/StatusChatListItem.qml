@@ -94,8 +94,8 @@ Rectangle {
             badge {
                 visible: type === StatusChatListItem.Type.OneToOneChat
                 color: onlineStatus === StatusChatListItem.OnlineStatus.Online ? Theme.palette.successColor1 : Theme.palette.baseColor1
-                border.width: 1
-                border.color: root.color
+                border.width: 2
+                border.color: hoverHander.hovered ? Theme.palette.statusBadge.hoverBorderColor : root.color
                 implicitHeight: 9
                 implicitWidth: 9
             }
