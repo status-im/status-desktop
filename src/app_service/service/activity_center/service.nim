@@ -142,7 +142,7 @@ QtObject:
       if response.result.kind != JNull:
         return response.result.getInt
     except Exception as e:
-      error "Error getting unread acitvity center unread count", msg = e.msg
+      error "Error getting unread activity center unread count", msg = e.msg
 
   proc markActivityCenterNotificationUnread*(
       self: Service,

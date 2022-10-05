@@ -127,6 +127,7 @@ method convertToItems*(
       return notification_item.initItem(
         n.id,
         n.chatId,
+        n.communityId,
         sectionId,
         n.name,
         n.author,

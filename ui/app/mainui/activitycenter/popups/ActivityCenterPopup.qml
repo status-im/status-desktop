@@ -33,9 +33,11 @@ Popup {
         System
     }
     property int currentActivityCategory: ActivityCenterPopup.ActivityCategory.All
+    property int adminCount: 0
     property int mentionsCount: 0
     property int repliesCount: 0
     property int contactRequestsCount: 0
+    property int membershipCount: 0
 
     property var store
     property var acStore
@@ -51,12 +53,18 @@ Popup {
         switch (root.currentActivityCategory) {
         case ActivityCenterPopup.ActivityCategory.All:
             return true
+        case ActivityCenterPopup.ActivityCategory.Admin:
+            return notificationType === Constants.activityCenterNotificationTypeCommunityMembershipRequest
         case ActivityCenterPopup.ActivityCategory.Mentions:
             return notificationType === Constants.activityCenterNotificationTypeMention
         case ActivityCenterPopup.ActivityCategory.Replies:
             return notificationType === Constants.activityCenterNotificationTypeReply
         case ActivityCenterPopup.ActivityCategory.ContactRequests:
             return notificationType === Constants.activityCenterNotificationTypeContactRequest
+        case ActivityCenterPopup.ActivityCategory.Membership:
+            return notificationType === Constants.activityCenterNotificationTypeCommunityInvitation ||
+                   notificationType === Constants.activityCenterNotificationTypeCommunityMembershipRequest ||
+                   notificationType === Constants.activityCenterNotificationTypeCommunityRequest
         default:
             return false
         }
@@ -65,13 +73,24 @@ Popup {
     function calcNotificationType(notificationType, cnt) {
         switch (notificationType) {
         case Constants.activityCenterNotificationTypeMention:
-            root.mentionsCount += cnt
+            root.mentionsCount += cnt;
             break;
         case Constants.activityCenterNotificationTypeReply:
-            root.repliesCount += cnt
+            root.repliesCount += cnt;
             break;
         case Constants.activityCenterNotificationTypeContactRequest:
-            root.contactRequestsCount += cnt
+            root.contactRequestsCount += cnt;
+            break;
+        case Constants.activityCenterNotificationTypeCommunityInvitation:
+            root.membershipCount += cnt;
+            break;
+        case Constants.activityCenterNotificationTypeCommunityMembershipRequest:
+        // NOTE: not a typo, membership requests are shown in both categories
+            root.membershipCount += cnt;
+            root.adminCount += cnt;
+            break;
+        case Constants.activityCenterNotificationTypeCommunityRequest:
+            root.membershipCount += cnt;
             break;
         default:
             break;
@@ -125,9 +144,11 @@ Popup {
         id: activityCenterTopBar
         width: parent.width
         unreadNotificationsCount: root.unreadNotificationsCount
+        hasAdmin: root.adminCount > 0
         hasReplies: root.repliesCount > 0
         hasMentions: root.mentionsCount > 0
         hasContactRequests: root.contactRequestsCount > 0
+        hasMembership: root.membershipCount > 0
         hideReadNotifications: acStore.hideReadNotifications
         currentActivityCategory: root.currentActivityCategory
         onCategoryTriggered: root.currentActivityCategory = category
@@ -188,6 +209,42 @@ Popup {
                 roleValue: Constants.activityCenterNotificationTypeContactRequest
 
                 ActivityNotificationContactRequest {
+                    width: listView.availableWidth
+                    store: root.store
+                    notification: model
+                    messageContextMenu: root.messageContextMenu
+                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
+                    onActivityCenterClose: root.close()
+                }
+            }
+            DelegateChoice {
+                roleValue: Constants.activityCenterNotificationTypeCommunityInvitation
+
+                ActivityNotificationCommunityInvitation {
+                    width: listView.availableWidth
+                    store: root.store
+                    notification: model
+                    messageContextMenu: root.messageContextMenu
+                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
+                    onActivityCenterClose: root.close()
+                }
+            }
+            DelegateChoice {
+                roleValue: Constants.activityCenterNotificationTypeCommunityMembershipRequest
+
+                ActivityNotificationCommunityMembershipRequest {
+                    width: listView.availableWidth
+                    store: root.store
+                    notification: model
+                    messageContextMenu: root.messageContextMenu
+                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
+                    onActivityCenterClose: root.close()
+                }
+            }
+            DelegateChoice {
+                roleValue: Constants.activityCenterNotificationTypeCommunityRequest
+
+                ActivityNotificationCommunityRequest {
                     width: listView.availableWidth
                     store: root.store
                     notification: model

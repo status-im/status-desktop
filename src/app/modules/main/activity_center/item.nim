@@ -4,6 +4,7 @@ import ../../shared_models/message_item_qobject
 type Item* = ref object
   id: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
   chatId: string
+  communityId: string
   sectionId: string
   name: string
   author: string
@@ -18,6 +19,7 @@ type Item* = ref object
 proc initItem*(
   id: string,
   chatId: string,
+  communityId: string,
   sectionId: string,
   name: string,
   author: string,
@@ -32,6 +34,7 @@ proc initItem*(
   result = Item()
   result.id = id
   result.chatId = chatId
+  result.communityId = communityId
   result.sectionId = sectionId
   result.name = name
   result.author = author
@@ -48,6 +51,7 @@ proc `$`*(self: Item): string =
     id: {self.id},
     name: {$self.name},
     chatId: {$self.chatId},
+    communityId: {$self.communityId},
     sectionId: {$self.sectionId},
     author: {$self.author},
     notificationType: {$self.notificationType},
@@ -70,6 +74,9 @@ proc author*(self: Item): string =
 
 proc chatId*(self: Item): string =
   return self.chatId
+
+proc communityId*(self: Item): string =
+  return self.communityId
 
 proc sectionId*(self: Item): string =
   return self.sectionId

@@ -14,9 +14,11 @@ import "../popups"
 Item {
     id: root
 
+    property bool hasAdmin: false
     property bool hasMentions: false
     property bool hasReplies: false
     property bool hasContactRequests: false
+    property bool hasMembership: false
 
     property bool hideReadNotifications: false
     property int unreadNotificationsCount: 0
@@ -42,13 +44,13 @@ Item {
             id: listView
             // NOTE: some entries are hidden until implimentation
             model: [ { text: qsTr("All"), category: ActivityCenterPopup.ActivityCategory.All, visible: true, enabled: true },
-                     { text: qsTr("Admin"), category: ActivityCenterPopup.ActivityCategory.Admin, visible: false, enabled: true },
+                     { text: qsTr("Admin"), category: ActivityCenterPopup.ActivityCategory.Admin, visible: true, enabled: root.hasAdmin },
                      { text: qsTr("Mentions"), category: ActivityCenterPopup.ActivityCategory.Mentions, visible: true, enabled: root.hasMentions },
                      { text: qsTr("Replies"), category: ActivityCenterPopup.ActivityCategory.Replies, visible: true, enabled: root.hasReplies },
                      { text: qsTr("Contact requests"), category: ActivityCenterPopup.ActivityCategory.ContactRequests, visible: true, enabled: root.hasContactRequests },
                      { text: qsTr("Identity verification"), category: ActivityCenterPopup.ActivityCategory.IdentityVerification, visible: false, enabled: true },
                      { text: qsTr("Transactions"), category: ActivityCenterPopup.ActivityCategory.Transactions, visible: false, enabled: true },
-                     { text: qsTr("Membership"), category: ActivityCenterPopup.ActivityCategory.Membership, visible: false, enabled: true },
+                     { text: qsTr("Membership"), category: ActivityCenterPopup.ActivityCategory.Membership, visible: true, enabled: root.hasMembership },
                      { text: qsTr("System"), category: ActivityCenterPopup.ActivityCategory.System, visible: false, enabled: true } ]
             orientation: StatusListView.Horizontal
             spacing: 0
