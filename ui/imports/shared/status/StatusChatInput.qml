@@ -1012,6 +1012,60 @@ Rectangle {
             color: isEdit ? Theme.palette.statusChatInput.secondaryBackgroundColor : Style.current.inputBackground
             radius: 20
 
+            StatusTextFormatMenu {
+                id: textFormatMenu
+
+                StatusChatInputTextFormationAction {
+                    wrapper: "**"
+                    icon.name: "bold"
+                    text: qsTr("Bold")
+                    selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
+                    onActionTriggered: checked ?
+                                           unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                           wrapSelection(wrapper)
+                }
+                StatusChatInputTextFormationAction {
+                    wrapper: "*"
+                    icon.name: "italic"
+                    text: qsTr("Italic")
+                    selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
+                    checked: (surroundedBy("*") && !surroundedBy("**")) || surroundedBy("***")
+                    onActionTriggered: checked ?
+                                           unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                           wrapSelection(wrapper)
+                }
+                StatusChatInputTextFormationAction {
+                    wrapper: "~~"
+                    icon.name: "strikethrough"
+                    text: qsTr("Strikethrough")
+                    selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
+                    onActionTriggered: checked ?
+                                           unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                           wrapSelection(wrapper)
+                }
+                StatusChatInputTextFormationAction {
+                    wrapper: "`"
+                    icon.name: "code"
+                    text: qsTr("Code")
+                    selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
+                    onActionTriggered: checked ?
+                                           unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                           wrapSelection(wrapper)
+                }
+                StatusChatInputTextFormationAction {
+                    wrapper: "> "
+                    icon.name: "quote"
+                    text: qsTr("Quote")
+                    checked: messageInputField.selectedText && isSelectedLinePrefixedBy(messageInputField.selectionStart, wrapper)
+
+                    onActionTriggered: checked
+                                       ? unprefixSelectedLine(wrapper)
+                                       : prefixSelectedLine(wrapper)
+                }
+                onClosed: {
+                    messageInputField.deselect();
+                }
+            }
             ColumnLayout {
                 id: validators
                 anchors.bottom: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Top ? parent.top : undefined
@@ -1237,60 +1291,6 @@ Rectangle {
                                 acceptedButtons: Qt.NoButton
                                 enabled: parent.hoveredLink
                                 cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.IBeamCursor
-                            }
-                            StatusTextFormatMenu {
-                                id: textFormatMenu
-
-                                StatusChatInputTextFormationAction {
-                                    wrapper: "**"
-                                    icon.name: "bold"
-                                    text: qsTr("Bold")
-                                    selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
-                                    onActionTriggered: checked ?
-                                                           unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
-                                                           wrapSelection(wrapper)
-                                }
-                                StatusChatInputTextFormationAction {
-                                    wrapper: "*"
-                                    icon.name: "italic"
-                                    text: qsTr("Italic")
-                                    selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
-                                    checked: (surroundedBy("*") && !surroundedBy("**")) || surroundedBy("***")
-                                    onActionTriggered: checked ?
-                                                           unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
-                                                           wrapSelection(wrapper)
-                                }
-                                StatusChatInputTextFormationAction {
-                                    wrapper: "~~"
-                                    icon.name: "strikethrough"
-                                    text: qsTr("Strikethrough")
-                                    selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
-                                    onActionTriggered: checked ?
-                                                           unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
-                                                           wrapSelection(wrapper)
-                                }
-                                StatusChatInputTextFormationAction {
-                                    wrapper: "`"
-                                    icon.name: "code"
-                                    text: qsTr("Code")
-                                    selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
-                                    onActionTriggered: checked ?
-                                                           unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
-                                                           wrapSelection(wrapper)
-                                }
-                                StatusChatInputTextFormationAction {
-                                    wrapper: "> "
-                                    icon.name: "quote"
-                                    text: qsTr("Quote")
-                                    checked: messageInputField.selectedText && isSelectedLinePrefixedBy(messageInputField.selectionStart, wrapper)
-
-                                    onActionTriggered: checked
-                                                       ? unprefixSelectedLine(wrapper)
-                                                       : prefixSelectedLine(wrapper)
-                                }
-                                onClosed: {
-                                    messageInputField.deselect();
-                                }
                             }
                         }
 
