@@ -86,7 +86,6 @@ Item {
                 textField.text: replyDetails.messageText
                 textField.font.pixelSize: Theme.secondaryTextFontSize
                 textField.color: Theme.palette.baseColor1
-                textField.height: 18
                 clip: true
                 visible: !!replyDetails.messageText && replyDetails.contentType !== StatusMessage.ContentType.Sticker
                 allowShowMore: false
