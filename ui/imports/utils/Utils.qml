@@ -528,8 +528,8 @@ QtObject {
         return qsTr("> 5 mins")
     }
 
-    function getContactDetailsAsJson(publicKey) {
-        let jsonObj = mainModule.getContactDetailsAsJson(publicKey)
+    function getContactDetailsAsJson(publicKey, getVerificationRequest=true) {
+        let jsonObj = mainModule.getContactDetailsAsJson(publicKey, getVerificationRequest)
         try {
             let obj = JSON.parse(jsonObj)
             return obj
@@ -562,10 +562,10 @@ QtObject {
         }
     }
 
-    function isEnsVerified(publicKey) {
+    function isEnsVerified(publicKey, getVerificationRequest=true) {
         if (!publicKey)
-            return false
-        return getContactDetailsAsJson(publicKey).ensVerified
+          return false
+        return getContactDetailsAsJson(publicKey, getVerificationRequest).ensVerified
     }
 
     function getEmojiHashAsJson(publicKey) {
@@ -576,10 +576,10 @@ QtObject {
         return JSON.parse(jsonObj)
     }
 
-    function getColorHashAsJson(publicKey, force=false) {
+    function getColorHashAsJson(publicKey, force=false, getVerificationRequest=true) {
         if (publicKey === "")
             return
-        if (!force && isEnsVerified(publicKey))
+        if (!force && isEnsVerified(publicKey, getVerificationRequest))
             return
         let jsonObj = globalUtils.getColorHashAsJson(publicKey)
         return JSON.parse(jsonObj)

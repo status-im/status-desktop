@@ -189,8 +189,8 @@ QtObject:
   QtProperty[QVariant] appSearchModule:
     read = getAppSearchModule
 
-  proc getContactDetailsAsJson(self: View, publicKey: string): string {.slot.} =
-    return self.delegate.getContactDetailsAsJson(publicKey)
+  proc getContactDetailsAsJson(self: View, publicKey: string, getVerificationRequest: bool): string {.slot.} =
+    return self.delegate.getContactDetailsAsJson(publicKey, getVerificationRequest)
 
   proc resolveENS*(self: View, ensName: string, uuid: string) {.slot.} =
     self.delegate.resolveENS(ensName, uuid)

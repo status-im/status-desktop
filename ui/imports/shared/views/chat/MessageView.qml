@@ -581,7 +581,7 @@ Loader {
                     assetSettings.isImage: root.isDiscordMessage
                     pubkey: root.senderId
                     colorId: Utils.colorIdForPubkey(root.senderId)
-                    colorHash: Utils.getColorHashAsJson(root.senderId)
+                    colorHash: Utils.getColorHashAsJson(root.senderId, false, !root.isDiscordMessage)
                     showRing: !root.isDiscordMessage
                 }
             }
@@ -615,7 +615,7 @@ Loader {
                     showRing: delegate.replyMessage && delegate.replyMessage.messageContentType != Constants.discordMessageType
                     pubkey: delegate.replySenderId
                     colorId: Utils.colorIdForPubkey(delegate.replySenderId)
-                    colorHash: Utils.getColorHashAsJson(delegate.replySenderId)
+                    colorHash: Utils.getColorHashAsJson(delegate.replySenderId, false, !root.isDiscordMessage)
                 }
             }
 
