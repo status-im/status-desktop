@@ -32,5 +32,13 @@ RadioButton {
             border.color: StatusColors.colors['grey3']
         }
     }
+
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        onPressed: mouse.accepted = false
+    }
 }
 

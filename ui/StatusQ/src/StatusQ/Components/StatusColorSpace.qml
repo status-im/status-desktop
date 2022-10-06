@@ -92,23 +92,26 @@ Item {
         MouseArea {
             id: hueArea
 
-            property bool pressedOnGauge: false
+            property bool hoverOnGauge: false
 
             anchors.fill: parent
+            hoverEnabled: true
             preventStealing: true
-            onPressed: {
-                // Check we clicked on gauge
+            cursorShape: hoverOnGauge ? Qt.PointingHandCursor : Qt.ArrowCursor
+            onPositionChanged: {
+                // Check we hovering gauge
                 let dist = Math.sqrt(Math.pow(width / 2 - mouseX, 2) +
                                      Math.pow(height / 2 - mouseY, 2));
                 let radius = Math.min(width, height) / 2;
-                if (dist < radius - thickness || dist > radius)
-                    return;
+                hoverOnGauge = !(dist < radius - thickness || dist > radius);
 
-                pressedOnGauge = true;
-                pickRootColor();
+                if (hoverOnGauge && pressed)
+                    pickRootColor();
             }
-            onReleased: pressedOnGauge = false
-            onPositionChanged: if (pressedOnGauge) pickRootColor()
+            onPressed: {
+                if (hoverOnGauge)
+                    pickRootColor();
+            }
 
             function pickRootColor() {
                 // Update both colors
@@ -151,13 +154,15 @@ Item {
             MouseArea {
                 id: satValArea
                 anchors.fill: parent
+                hoverEnabled: true
                 preventStealing: true
+                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onPressed: {
                     d.pickingSatVal = true;
                     pickColor();
                 }
                 onReleased: d.pickingSatVal = false
-                onPositionChanged: pickColor()
+                onPositionChanged: if (pressed) pickColor()
 
                 function pickColor() {
                     root.color = pickColorFromSatValRect(mouseX, mouseY);
