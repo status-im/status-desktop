@@ -37,14 +37,6 @@ proc init*(self: Controller) =
     var args = OperationSuccessArgs(e)
     self.delegate.onPasswordChanged(args.success, args.errorMsg)
 
-  self.events.on(SIGNAL_SETTING_PROFILE_PICTURES_SHOW_TO_CHANGED) do(e: Args):
-    var args = SettingProfilePictureArgs(e)
-    self.delegate.emitProfilePicturesShowToChanged(args.value)
-
-  self.events.on(SIGNAL_SETTING_PROFILE_PICTURES_VISIBILITY_CHANGED) do(e: Args):
-    var args = SettingProfilePictureArgs(e)
-    self.delegate.emitProfilePicturesVisibilityChanged(args.value)
-
 proc isMnemonicBackedUp*(self: Controller): bool =
   return self.privacyService.isMnemonicBackedUp()
 
@@ -71,18 +63,6 @@ proc setMessagesFromContactsOnly*(self: Controller, value: bool): bool =
 
 proc validatePassword*(self: Controller, password: string): bool =
   return self.privacyService.validatePassword(password)
-
-proc getProfilePicturesShowTo*(self: Controller): int =
-  self.settingsService.getProfilePicturesShowTo()
-
-proc setProfilePicturesShowTo*(self: Controller, value: int): bool =
-  self.settingsService.saveProfilePicturesShowTo(value)
-
-proc getProfilePicturesVisibility*(self: Controller): int =
-  self.settingsService.getProfilePicturesVisibility()
-
-proc setProfilePicturesVisibility*(self: Controller, value: int): bool =
-  self.settingsService.saveProfilePicturesVisibility(value)
 
 method getPasswordStrengthScore*(self: Controller, password, userName: string): int = 
   return self.generalService.getPasswordStrengthScore(password, userName)

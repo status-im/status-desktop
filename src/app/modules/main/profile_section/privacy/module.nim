@@ -83,25 +83,5 @@ method setMessagesFromContactsOnly*(self: Module, value: bool) =
 method validatePassword*(self: Module, password: string): bool =
   self.controller.validatePassword(password)
 
-method getProfilePicturesShowTo*(self: Module): int =
-  self.controller.getProfilePicturesShowTo()
-
-method setProfilePicturesShowTo*(self: Module, value: int) =
-  if (self.controller.setProfilePicturesShowTo(value)):
-    self.view.profilePicturesShowToChanged()
-
-method emitProfilePicturesShowToChanged*(self: Module, value: int) =
-  self.view.profilePicturesShowToChanged()
-
-method emitProfilePicturesVisibilityChanged*(self: Module, value: int) =
-  self.view.profilePicturesVisibilityChanged()
-
-method getProfilePicturesVisibility*(self: Module): int =
-  self.controller.getProfilePicturesVisibility()
-
-method setProfilePicturesVisibility*(self: Module, value: int) =
-  if (self.controller.setProfilePicturesVisibility(value)):
-    self.view.profilePicturesVisibilityChanged()
-
 method getPasswordStrengthScore*(self: Module, password: string): int =
   return self.controller.getPasswordStrengthScore(password, singletonInstance.userProfile.getUsername())

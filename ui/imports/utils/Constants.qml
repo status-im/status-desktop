@@ -249,18 +249,6 @@ QtObject {
         readonly property int responseToMessageWithId: 262 // ModelRole.ResponseToMessageWithId
     }
 
-    readonly property QtObject profilePicturesVisibility: QtObject {
-        readonly property int contactsOnly: 1
-        readonly property int everyone: 2
-        readonly property int noOne: 3
-    }
-
-    readonly property QtObject profilePicturesShowTo: QtObject {
-        readonly property int contactsOnly: 1
-        readonly property int everyone: 2
-        readonly property int noOne: 3
-    }
-
     readonly property QtObject trustStatus: QtObject {
         readonly property int unknown: 0
         readonly property int trusted: 1

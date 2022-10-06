@@ -7,9 +7,6 @@ QtObject {
     property var privacyModule
     property var syncModule
 
-    property int profilePicturesVisibility: privacyModule.profilePicturesVisibility
-    property int profilePicturesShowTo: privacyModule.profilePicturesShowTo
-
     property var mailservers: syncModule.model
 
     property bool useMailservers: syncModule.useMailservers
@@ -43,13 +40,5 @@ QtObject {
 
     function getLinkPreviewWhitelist() {
         return root.privacyModule.getLinkPreviewWhitelist()
-    }
-
-    function setProfilePicturesVisibility(value) {
-        return root.privacyModule.setProfilePicturesVisibility(value)
-    }
-
-    function setProfilePicturesShowTo(value) {
-        return root.privacyModule.setProfilePicturesShowTo(value)
     }
 }

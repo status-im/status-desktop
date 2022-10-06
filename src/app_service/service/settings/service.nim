@@ -21,8 +21,6 @@ const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
 const DEFAULT_FLEET* = $Fleet.StatusProd
 
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
-const SIGNAL_SETTING_PROFILE_PICTURES_SHOW_TO_CHANGED* = "profilePicturesShowToChanged"
-const SIGNAL_SETTING_PROFILE_PICTURES_VISIBILITY_CHANGED* = "profilePicturesVisibilityChanged"
 
 logScope:
   topics = "settings-service"
@@ -66,15 +64,6 @@ QtObject:
 
       if receivedData.settings.len > 0:
         for settingsField in receivedData.settings:
-
-          if settingsField.name == KEY_PROFILE_PICTURES_SHOW_TO:
-            self.settings.profilePicturesShowTo = settingsfield.value.parseInt
-            self.events.emit(SIGNAL_SETTING_PROFILE_PICTURES_SHOW_TO_CHANGED, SettingProfilePictureArgs(value: self.settings.profilePicturesShowTo))
-
-          if settingsField.name == KEY_PROFILE_PICTURES_VISIBILITY:
-            self.settings.profilePicturesVisibility = settingsfield.value.parseInt
-            self.events.emit(SIGNAL_SETTING_PROFILE_PICTURES_VISIBILITY_CHANGED, SettingProfilePictureArgs(value: self.settings.profilePicturesVisibility))
-
           if settingsField.name == KEY_CURRENCY:
             self.settings.currency = settingsField.value
 
@@ -285,24 +274,6 @@ QtObject:
 
   proc getAppearance*(self: Service): int =
     self.settings.appearance
-
-  proc saveProfilePicturesShowTo*(self: Service, value: int): bool =
-    if(self.saveSetting(KEY_PROFILE_PICTURES_SHOW_TO, value)):
-      self.settings.profilePicturesShowTo = value
-      return true
-    return false
-
-  proc getProfilePicturesShowTo*(self: Service): int =
-    self.settings.profilePicturesShowTo
-
-  proc saveProfilePicturesVisibility*(self: Service, value: int): bool =
-    if(self.saveSetting(KEY_PROFILE_PICTURES_VISIBILITY, value)):
-      self.settings.profilePicturesVisibility = value
-      return true
-    return false
-
-  proc getProfilePicturesVisibility*(self: Service): int =
-    self.settings.profilePicturesVisibility
 
   proc saveUseMailservers*(self: Service, value: bool): bool =
     if(self.saveSetting(KEY_USE_MAILSERVERS, value)):

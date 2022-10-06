@@ -47,14 +47,6 @@ Loader {
     property bool amISender: false
     property bool senderIsAdded: false
     property int senderTrustStatus: Constants.trustStatus.unknown
-    readonly property string senderIconToShow: {
-        if ((!senderIsAdded &&
-             Global.privacyModuleInst.profilePicturesVisibility !==
-             Constants.profilePicturesVisibility.everyone)) {
-            return ""
-        }
-        return senderIcon
-    }
     property string messageText: ""
     property string messageImage: ""
     property double messageTimestamp: 0 // We use double, because QML's int is too small
@@ -158,7 +150,7 @@ Loader {
 
         messageContextMenu.selectedUserPublicKey = root.senderId
         messageContextMenu.selectedUserDisplayName = root.senderDisplayName
-        messageContextMenu.selectedUserIcon = root.senderIconToShow
+        messageContextMenu.selectedUserIcon = root.senderIcon
 
         messageContextMenu.imageSource = imageSource
 
@@ -336,7 +328,7 @@ Loader {
                      root.messageStore.getChatIcon() !== "") {
                     return root.messageStore.getChatIcon()
                 }
-                return root.senderIconToShow
+                return root.senderIcon
             }
         }
     }
