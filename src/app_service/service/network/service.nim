@@ -116,6 +116,6 @@ proc getNetworkForChat*(self: Service): NetworkDto =
 
 proc getNetworkForCollectibles*(self: Service): NetworkDto =
   if self.settingsService.areTestNetworksEnabled():
-    return self.getNetwork(Rinkeby)
+    return self.getNetwork(Goerli)
 
   return self.getNetwork(Mainnet)
