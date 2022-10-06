@@ -10,6 +10,7 @@ Item {
 
     property var applicationWindow
     property var appMain
+    property var dragArea
     property bool popupOpened: false
     property int settingsSubsection: Constants.settingsSubsection.profile
 
