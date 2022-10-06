@@ -56,24 +56,5 @@ method setMessagesFromContactsOnly*(self: AccessInterface, value: bool) {.base.}
 method validatePassword*(self: AccessInterface, password: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getProfilePicturesShowTo*(self: AccessInterface): int {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method setProfilePicturesShowTo*(self: AccessInterface, value: int) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getProfilePicturesVisibility*(self: AccessInterface): int {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method setProfilePicturesVisibility*(self: AccessInterface, value: int) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getPasswordStrengthScore*(self: AccessInterface, password: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
-
-method emitProfilePicturesShowToChanged*(self: AccessInterface, value: int) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method emitProfilePicturesVisibilityChanged*(self: AccessInterface, value: int) {.base.} =
-  raise newException(ValueError, "No implementation available")
-

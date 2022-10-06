@@ -101,12 +101,6 @@ Item {
         }
 
         let contactDetails = Utils.getContactDetailsAsJson(pubkey)
-        
-        if (root.privacyModuleInst.profilePicturesVisibility !==
-            Constants.profilePicturesVisibility.everyone && !contactDetails.isAdded) {
-            return;
-        }
-
         return contactDetails.displayIcon
     }
 

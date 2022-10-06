@@ -87,17 +87,7 @@ Item {
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy
                 isAdmin: model.isAdmin
-                asset.name: {
-                    const isCurrentUser = model.pubKey === root.rootStore.getPubkey()
-                    const visibility = Global.privacyModuleInst.profilePicturesVisibility
-
-                    if (isCurrentUser
-                            || visibility === Constants.profilePicturesVisibility.everyone
-                            || (visibility === Constants.profilePicturesVisibility.contactsOnly && model.isContact))
-                        return model.icon
-
-                    return ""
-                }
+                asset.name: model.icon
                 asset.isImage: (asset.name !== "")
                 asset.isLetterIdenticon: (asset.name === "")
                 asset.color: Utils.colorForColorId(model.colorId)

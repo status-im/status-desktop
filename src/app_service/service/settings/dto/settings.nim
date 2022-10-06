@@ -26,8 +26,6 @@ const KEY_SIGNING_PHRASE* = "signing-phrase"
 const KEY_DEFAULT_SYNC_PERIOD* = "default-sync-period"
 const KEY_SEND_PUSH_NOTIFICATIONS* = "send-push-notifications?"
 const KEY_APPEARANCE* = "appearance"
-const KEY_PROFILE_PICTURES_SHOW_TO* = "profile-pictures-show-to"
-const KEY_PROFILE_PICTURES_VISIBILITY* = "profile-pictures-visibility"
 const KEY_USE_MAILSERVERS* = "use-mailservers?"
 const KEY_WALLET_ROOT_ADDRESS* = "wallet-root-address"
 const KEY_SEND_STATUS_UPDATES* = "send-status-updates?"
@@ -115,8 +113,6 @@ type
     defaultSyncPeriod*: int
     sendPushNotifications*: bool
     appearance*: int
-    profilePicturesShowTo*: int
-    profilePicturesVisibility*: int
     useMailservers*: bool
     walletRootAddress*: string
     sendStatusUpdates*: bool
@@ -151,12 +147,7 @@ proc toCurrentUserStatus*(jsonObj: JsonNode): CurrentUserStatus =
 proc toSettingsFieldDto*(jsonObj: JsonNode): SettingsFieldDto =
   var field = SettingsFieldDto()
   field.name = jsonObj["name"].getStr()
-
-  case field.name:
-    of KEY_PROFILE_PICTURES_SHOW_TO, KEY_PROFILE_PICTURES_VISIBILITY:
-      field.value = jsonObj["value"].getInt().intToStr
-    else:
-      field.value = jsonObj["value"].getStr()
+  field.value = jsonObj["value"].getStr()
   result = field
 
 proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
@@ -181,8 +172,6 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_DEFAULT_SYNC_PERIOD, result.defaultSyncPeriod)
   discard jsonObj.getProp(KEY_SEND_PUSH_NOTIFICATIONS, result.sendPushNotifications)
   discard jsonObj.getProp(KEY_APPEARANCE, result.appearance)
-  discard jsonObj.getProp(KEY_PROFILE_PICTURES_SHOW_TO, result.profilePicturesShowTo)
-  discard jsonObj.getProp(KEY_PROFILE_PICTURES_VISIBILITY, result.profilePicturesVisibility)
   discard jsonObj.getProp(KEY_USE_MAILSERVERS, result.useMailservers)
   discard jsonObj.getProp(KEY_WALLET_ROOT_ADDRESS, result.walletRootAddress)
   discard jsonObj.getProp(KEY_SEND_STATUS_UPDATES, result.sendStatusUpdates)

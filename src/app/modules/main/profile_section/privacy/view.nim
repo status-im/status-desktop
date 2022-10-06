@@ -61,25 +61,5 @@ QtObject:
   proc validatePassword*(self: View, password: string): bool {.slot.} =
     self.delegate.validatePassword(password)
 
-  proc profilePicturesShowToChanged*(self: View) {.signal.}
-  proc getProfilePicturesShowTo*(self: View): int {.slot.} =
-    return self.delegate.getProfilePicturesShowTo()
-  QtProperty[int] profilePicturesShowTo:
-    read = getProfilePicturesShowTo
-    notify = profilePicturesShowToChanged
-
-  proc setProfilePicturesShowTo*(self: View, value: int) {.slot.} =
-    self.delegate.setProfilePicturesShowTo(value)
-
-  proc profilePicturesVisibilityChanged*(self: View) {.signal.}
-  proc getProfilePicturesVisibility*(self: View): int {.slot.} =
-    return self.delegate.getProfilePicturesVisibility()
-  QtProperty[int] profilePicturesVisibility:
-    read = getProfilePicturesVisibility
-    notify = profilePicturesVisibilityChanged
-
-  proc setProfilePicturesVisibility*(self: View, value: int) {.slot.} =
-    self.delegate.setProfilePicturesVisibility(value)
-
   proc getPasswordStrengthScore*(self: View, password: string): int {.slot.} =
     return self.delegate.getPasswordStrengthScore(password)
