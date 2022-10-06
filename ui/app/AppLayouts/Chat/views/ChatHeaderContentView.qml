@@ -12,9 +12,8 @@ import utils 1.0
 import "../panels"
 import "../stores"
 
-RowLayout {
+Item {
     id: root
-    spacing: padding / 2
 
     property alias menuButton: menuButton
     property alias membersButton: membersButton
@@ -44,17 +43,29 @@ RowLayout {
 
     Loader {
         id: loader
-        Layout.fillWidth: d.selectingMembers
-        Layout.fillHeight: true
-        sourceComponent: {
-            if (d.selectingMembers) return membersSelector
-            return statusChatInfoButton
-        }
+
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: d.selectingMembers ? parent.right : undefined
+
+        sourceComponent: d.selectingMembers ? membersSelector : statusChatInfoButton
+    }
+
+    Rectangle {
+        anchors.fill: actionButtons
+        visible: actionButtons.visible
+        opacity: 0.8
+        color: Style.current.background
     }
 
     RowLayout {
         id: actionButtons
-        Layout.alignment: Qt.AlignRight
+
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+
         spacing: 8
         visible: !d.selectingMembers
 
