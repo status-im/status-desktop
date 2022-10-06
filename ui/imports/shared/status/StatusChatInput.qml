@@ -827,7 +827,7 @@ Rectangle {
 
     Connections {
         enabled: control.isActiveChannel
-        target: Global.appMain.dragAndDrop
+        target: Global.dragArea
         ignoreUnknownSignals: true
         onDroppedOnValidScreen: (drop) => {
                                     let validImages = validateImages(drop.urls)

@@ -38,6 +38,7 @@ import AppLayouts.Browser.stores 1.0 as BrowserStores
 import AppLayouts.stores 1.0
 
 import "popups"
+import "panels"
 import "activitycenter/popups"
 import "activitycenter/stores" as AC
 
@@ -46,7 +47,6 @@ Item {
     anchors.fill: parent
 
     property alias appLayout: appLayout
-    property alias dragAndDrop: dragTarget
     property RootStore rootStore: RootStore {}
     property AC.RootStore acStore: AC.RootStore {}
     // set from main.qml
@@ -954,85 +954,6 @@ Item {
             }
         }
 
-        DropArea {
-            id: dragTarget
-
-            signal droppedOnValidScreen(var drop)
-            property alias droppedUrls: rptDraggedPreviews.model
-            property var chatCommunitySectionModule: chatLayoutContainer.rootStore.chatCommunitySectionModule
-            property int activeChatType: chatCommunitySectionModule && chatCommunitySectionModule.activeItem.type
-            property bool enabled: !drag.source && !!loader.item && !!loader.item.appLayout
-                                && (
-                                    // in chat view
-                                    (mainModule.activeSection.sectionType === Constants.appSection.chat &&
-                                    (
-                                        // in a one-to-one chat
-                                        activeChatType === Constants.chatType.oneToOne ||
-                                        // in a private group chat
-                                        activeChatType === Constants.chatType.privateGroupChat
-                                        )
-                                    ) ||
-                                    // In community section
-                                    mainModule.activeSection.sectionType === Constants.appSection.community
-                                    )
-
-            width: appMain.width
-            height: appMain.height
-
-            function cleanup() {
-                rptDraggedPreviews.model = []
-            }
-
-            onDropped: (drop) => {
-                        if (enabled) {
-                            droppedOnValidScreen(drop)
-                        } else {
-                            drop.accepted = false
-                        }
-                        cleanup()
-                    }
-            onEntered: {
-                if (!enabled || !!drag.source) {
-                    drag.accepted = false
-                    return
-                }
-
-                // needed because drag.urls is not a normal js array
-                rptDraggedPreviews.model = drag.urls.filter(img => Utils.hasDragNDropImageExtension(img))
-            }
-            onPositionChanged: {
-                rptDraggedPreviews.x = drag.x
-                rptDraggedPreviews.y = drag.y
-            }
-            onExited: cleanup()
-            Loader {
-                active: dragTarget.enabled && dragTarget.containsDrag
-                width: active ? parent.width : 0
-                height: active ? parent.height : 0
-                sourceComponent: Rectangle {
-                    id: dropRectangle
-                    color: Style.current.background
-                    opacity: 0.8
-                }
-            }
-           
-            Repeater {
-                id: rptDraggedPreviews
-
-                Image {
-                    source: modelData
-                    width: 80
-                    height: 80
-                    sourceSize.width: 160
-                    sourceSize.height: 160
-                    fillMode: Image.PreserveAspectFit
-                    x: index * 10 + rptDraggedPreviews.x
-                    y: index * 10 + rptDraggedPreviews.y
-                    z: 1
-                }
-            }
-        }
-
         // Add SendModal here as it is used by the Wallet as well as the Browser
         Loader {
             id: sendModal
@@ -1275,5 +1196,23 @@ Item {
         onLoaded: {
             keycardPopup.item.open()
         }
+    }
+
+    DropAreaPanel {
+        width: appMain.width
+        height: appMain.height
+        activeChatType: chatCommunitySectionModule && chatCommunitySectionModule.activeItem.type
+        enabled: !drag.source && (
+                                // in chat view
+                                (mainModule.activeSection.sectionType === Constants.appSection.chat &&
+                                (
+                                    // in a one-to-one chat
+                                    activeChatType === Constants.chatType.oneToOne ||
+                                    // in a private group chat
+                                    activeChatType === Constants.chatType.privateGroupChat
+                                    )
+                                ) ||
+                                // In community section
+                                mainModule.activeSection.sectionType === Constants.appSection.community)
     }
 }
