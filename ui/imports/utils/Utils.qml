@@ -619,6 +619,13 @@ QtObject {
         return StatusQUtils.Utils.elideText(publicKey, 5, 3)
     }
 
+    function getElidedCommunityPK(publicKey) {
+        if (publicKey === "") {
+            return ""
+        }
+        return StatusQUtils.Utils.elideText(publicKey, 16)
+    }
+
     function getElidedCompressedPk(publicKey) {
         if (publicKey === "") {
             return ""
