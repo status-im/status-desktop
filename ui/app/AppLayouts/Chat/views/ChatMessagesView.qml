@@ -263,6 +263,7 @@ Item {
             messageId: model.id
             communityId: model.communityId
             responseToMessageWithId: model.responseToMessageWithId
+            responseToExistingMessage: model.responseToExistingMessage
             senderId: model.senderId
             senderDisplayName: model.senderDisplayName
             senderOptionalName: model.senderOptionalName

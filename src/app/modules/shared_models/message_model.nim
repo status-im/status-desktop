@@ -12,6 +12,7 @@ type
     NextMsgIndex
     CommunityId
     ResponseToMessageWithId
+    ResponseToExistingMessage
     SenderId
     SenderDisplayName
     SenderOptionalName
@@ -82,6 +83,12 @@ QtObject:
   method rowCount(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
+  proc doesMessageExist(self: Model, messageId: string): bool =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == messageId):
+        return true
+    return false
+
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Id.int:"id",
@@ -90,6 +97,7 @@ QtObject:
       ModelRole.NextMsgIndex.int:"nextMsgIndex",
       ModelRole.CommunityId.int:"communityId",
       ModelRole.ResponseToMessageWithId.int:"responseToMessageWithId",
+      ModelRole.ResponseToExistingMessage.int:"responseToExistingMessage",
       ModelRole.SenderId.int:"senderId",
       ModelRole.SenderDisplayName.int:"senderDisplayName",
       ModelRole.SenderOptionalName.int:"senderOptionalName",
@@ -148,6 +156,8 @@ QtObject:
       result = newQVariant(item.communityId)
     of ModelRole.ResponseToMessageWithId:
       result = newQVariant(item.responseToMessageWithId)
+    of ModelRole.ResponseToExistingMessage:
+      result = newQVariant(self.doesMessageExist(item.responseToMessageWithId))
     of ModelRole.SenderId:
       result = newQVariant(item.senderId)
     of ModelRole.SenderDisplayName:
@@ -332,6 +342,12 @@ QtObject:
       self.updateItemAtIndex(position + 1)
     self.countChanged()
 
+  proc updateMessagesWithResponseTo(self: Model, messageId: string) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].responseToMessageWithId == messageId):
+        let ind = self.createIndex(i, 0, nil)
+        self.dataChanged(ind, ind, @[ModelRole.ResponseToExistingMessage.int])
+
   proc removeItem*(self: Model, messageId: string) =
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
@@ -350,6 +366,7 @@ QtObject:
       self.updateItemAtIndex(ind + 1)
 
     self.countChanged()
+    self.updateMessagesWithResponseTo(messageId)
 
   proc getItemWithMessageId*(self: Model, messageId: string): Item =
     let ind = self.findIndexForMessageId(messageId)
