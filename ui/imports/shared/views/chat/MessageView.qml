@@ -37,6 +37,8 @@ Loader {
     property string messageId: ""
     property string communityId: ""
     property string responseToMessageWithId: ""
+    property bool responseToExistingMessage: false
+
     property string senderId: ""
     property string senderDisplayName: ""
     property string senderOptionalName: ""
@@ -394,7 +396,7 @@ Loader {
 
             readonly property int contentType: convertContentType(root.messageContentType)
             readonly property bool isReply: root.responseTo !== ""
-            readonly property var replyMessage: root.messageStore && isReply ? root.messageStore.getMessageByIdAsJson(root.responseTo) : null
+            readonly property var replyMessage: root.messageStore && isReply && root.responseToExistingMessage ? root.messageStore.getMessageByIdAsJson(root.responseTo) : null
             readonly property string replySenderId: replyMessage ? replyMessage.senderId : ""
 
             function editCompletedHandler(newMessageText) {
@@ -590,7 +592,9 @@ Loader {
             }
 
             replyDetails: StatusMessageDetails {
-                messageText:  delegate.replyMessage ? delegate.replyMessage.messageText : ""
+                messageText:  delegate.replyMessage ? delegate.replyMessage.messageText
+                                                      //: There is should be a message for reply which source message was deleted
+                                                    : qsTr("&lt;deleted&gt;")
                 contentType: delegate.replyMessage ? delegate.convertContentType(delegate.replyMessage.contentType) : 0
                 messageContent: {
                     if (!delegate.replyMessage)
