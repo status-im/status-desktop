@@ -751,10 +751,12 @@ method communityEdited*[T](
 method getVerificationRequestFrom*[T](self: Module[T], publicKey: string): VerificationRequest =
   self.controller.getVerificationRequestFrom(publicKey)
 
-method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
+method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerificationRequest: bool): string =
   let contact = self.controller.getContact(publicKey)
   let (name, _, _) = self.controller.getContactNameAndImage(contact.id)
-  let request = self.getVerificationRequestFrom(publicKey)
+  var requestStatus = 0
+  if getVerificationRequest:
+    requestStatus = self.getVerificationRequestFrom(publicKey).status.int
   let jsonObj = %* {
     "displayName": name,
     "displayIcon": contact.image.thumbnail,
@@ -776,7 +778,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
     "trustStatus": contact.trustStatus.int,
     # TODO rename verificationStatus to outgoingVerificationStatus
     "verificationStatus": contact.verificationStatus.int,
-    "incomingVerificationStatus": request.status.int,
+    "incomingVerificationStatus": requestStatus,
     "hasAddedUs": contact.hasAddedUs,
     "socialLinks": $contact.socialLinks.toJsonNode(),
     "bio": contact.bio
