@@ -31,7 +31,7 @@ StatusModal {
 
             Layout.fillWidth: true
 
-            readonly property string elidedPkey: Utils.elideText(root.privateKey, 16)
+            readonly property string elidedPkey: Utils.getElidedCommunityPK(root.privateKey)
 
             leftPadding: 0
             rightPadding: 0
