@@ -10,7 +10,7 @@ Item {
         width: 128
         height: 128
         anchors.centerIn: parent
-        source: Style.gif("status_splash_128_" + (Style.current.name))
+        source: Style.gif("status_splash_" + Style.current.name)
     }
 
     // NOTE: keep it if we will decide to switch on lottie
