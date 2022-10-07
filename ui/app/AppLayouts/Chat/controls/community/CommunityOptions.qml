@@ -14,6 +14,9 @@ ColumnLayout {
     property alias archiveSupportEnabled: archiveSupportToggle.checked
     property alias requestToJoinEnabled: requestToJoinToggle.checked
     property alias pinMessagesEnabled: pinMessagesToggle.checked
+    property alias encrypted: encryptedToggle.checked
+
+    property bool encryptReadOnly: false
 
     spacing: 0
 
@@ -72,6 +75,26 @@ ColumnLayout {
 
         StatusCheckBox {
             id: pinMessagesToggle
+        }
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        Layout.preferredHeight: d.optionHeight
+        visible: requestToJoinToggle.checked
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            text: qsTr("Encrypted")
+            TapHandler {
+                enabled: !encryptReadOnly
+                onTapped: encryptedToggle.toggle()
+            }
+        }
+
+        StatusCheckBox {
+            id: encryptedToggle
+            enabled: !encryptReadOnly
         }
     }
 }

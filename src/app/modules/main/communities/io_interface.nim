@@ -34,12 +34,14 @@ method spectateCommunity*(self: AccessInterface, communityId: string): string {.
 
 method createCommunity*(self: AccessInterface, name: string, description, introMessage, outroMessage: string, access: int,
                         color: string, tags: string, imagePath: string, aX: int, aY: int, bX: int, bY: int,
-                        historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool, bannerJsonStr: string) {.base.} =
+                        historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool, bannerJsonStr: string,
+                        encrypted: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method requestImportDiscordCommunity*(self: AccessInterface, name: string, description, introMessage, outroMessage: string, access: int,
                         color: string, tags: string, imagePath: string, aX: int, aY: int, bX: int, bY: int,
-                        historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool, filesToImport: seq[string], fromTimestamp: int) {.base.} =
+                        historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool, filesToImport: seq[string],
+                        fromTimestamp: int, encrypted: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method deleteCommunityCategory*(self: AccessInterface, communityId: string, categoryId: string) {.base.} =

@@ -492,7 +492,8 @@ StatusStackModal {
                 options: {
                     historyArchiveSupportEnabled: options.archiveSupportEnabled,
                     checkedMembership: options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
-                    pinMessagesAllowedForMembers: options.pinMessagesEnabled
+                    pinMessagesAllowedForMembers: options.pinMessagesEnabled,
+                    encrypted: options.requestToJoinEnabled && options.encrypted // Only communities with memberships can be encrypted
                 },
                 bannerJsonStr: JSON.stringify({imagePath: String(bannerPicker.source).replace("file://", ""), cropRect: bannerPicker.cropRect})
             }
