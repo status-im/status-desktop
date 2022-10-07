@@ -120,6 +120,9 @@ QtObject:
   proc setActiveItem*(self: View, itemId: string, subItemId: string = "") {.slot.} =
     self.delegate.setActiveItemSubItem(itemId, subItemId)
 
+  proc switchToChannel*(self: View, channelName: string) {.slot.} =
+    self.delegate.switchToChannel(channelName)
+
   proc activeItem*(self: View): ActiveItem =
     result = self.activeItem
 

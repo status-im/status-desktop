@@ -458,6 +458,18 @@ method addNewChat*(
     if setChatAsActive:
       self.setActiveItemSubItem(categoryItem.id, channelItem.id)
 
+method switchToChannel*(self: Module, channelName: string) =
+  if(not self.controller.isCommunity()):
+    return
+  let chats = self.controller.getAllChats(self.controller.getMySectionId())
+  for c in chats:
+    if c.name == channelName:
+      if c.categoryId == "":
+        self.setActiveItemSubItem(c.id, "")
+      else:
+        self.setActiveItemSubItem(c.categoryId, c.id)
+      return
+
 method doesCatOrChatExist*(self: Module, id: string): bool =
   return self.view.chatsModel().isItemWithIdAdded(id) or
     not self.view.chatsModel().getSubItemById(id).isNil
