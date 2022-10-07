@@ -240,6 +240,18 @@ Item {
         //            }
         //        }
 
+        Connections {
+            target: chatLogView.model
+            onDataChanged: {
+                if (roles.indexOf(Constants.messageModelRoles.responseToMessageWithId) !== -1) {
+                    let item = chatLogView.itemAtIndex(topLeft.row)
+                    if (item) {
+                        item.updateReplyInfo()
+                    }
+                }
+            }
+        }
+
         delegate: MessageView {
             id: msgDelegate
 

@@ -430,7 +430,13 @@ QtObject:
     if(index < 0 or index >= self.items.len):
       return
     self.items[index].toJsonNode()
-
+  
+  proc updateContactInReplies(self: Model, messageId: string) =
+    for i in 0 ..< self.items.len:
+      if (self.items[i].responseToMessageWithId == messageId):
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[ModelRole.ResponseToMessageWithId.int])
+        
   iterator modelContactUpdateIterator*(self: Model, contactId: string): Item =
     for i in 0 ..< self.items.len:
       yield self.items[i]
@@ -451,6 +457,7 @@ QtObject:
       if(roles.len > 0):
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, roles)
+        self.updateContactInReplies(self.items[i].id)
 
   proc setEditModeOn*(self: Model, messageId: string)  =
     let ind = self.findIndexForMessageId(messageId)
