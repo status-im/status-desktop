@@ -168,16 +168,19 @@ SettingsContentBase {
 
                 onItemPickerChanged: {
                     if(selected && root.languageStore.currentLanguage !== key) {
+                        // IMPORTANT: Workaround to temporary resolve the crash we have when language is changed (`startupModule` is null and some qml bindings are still calling this dead pointer) so, change language will not retranslate
+                        // and instead, also on mac and win, the app will quit to apply the new language
                         // TEMPORARY: It should be removed as it is only used in Linux OS but it must be investigated how to change language in execution time, as well, in Linux (will be addressed in another task)
-                        if (Qt.platform.os === Constants.linux) {
+                        //if (Qt.platform.os === Constants.linux) {
                             root.changeLanguage(key)
                             linuxConfirmationDialog.active = true
                             linuxConfirmationDialog.item.newLocale = key
                             linuxConfirmationDialog.item.open()
-                        }
-                        else {
-                            root.changeLanguage(key)
-                        }
+                        // }
+
+                        //else {
+                        //    root.changeLanguage(key)
+                        //}
                     }
                 }
             }
