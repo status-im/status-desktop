@@ -23,7 +23,7 @@ ColumnLayout {
 
     property var pubKeys: ([])
 
-    spacing: Style.current.bigPadding
+    spacing: 0
 
     StyledText {
         id: headline
@@ -37,14 +37,16 @@ ColumnLayout {
     StatusInput {
         id: filterInput
         placeholderText: qsTr("Search contacts")
-        input.asset.name: "search"
-        input.clearable: true
-        Layout.fillWidth: true
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.padding
         maximumHeight: 36
         topPadding: 0
         bottomPadding: 0
+        input.asset.name: "search"
+        input.clearable: true
+        Layout.fillWidth: true
+        Layout.topMargin: Style.current.bigPadding
+        Layout.bottomMargin: Style.current.padding
+        Layout.leftMargin: Style.current.padding
+        Layout.rightMargin: Style.current.padding
     }
 
     ExistingContacts {
@@ -72,12 +74,9 @@ ColumnLayout {
             root.pubKeys = pubKeysCopy
         }
         Layout.fillWidth: true
+        Layout.fillHeight: true
         Layout.leftMargin: Style.current.halfPadding
         Layout.rightMargin: Style.current.halfPadding
-    }
-
-    Item {
-        Layout.fillHeight: true
     }
 
     StatusModalDivider {
