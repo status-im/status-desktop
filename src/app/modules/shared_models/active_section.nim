@@ -170,6 +170,12 @@ QtObject:
   QtProperty[bool] pinMessageAllMembersEnabled:
     read = pinMessageAllMembersEnabled
 
+  proc encrypted(self: ActiveSection): bool {.slot.} =
+    return self.item.encrypted
+
+  QtProperty[bool] encrypted:
+    read = encrypted
+
   proc members(self: ActiveSection): QVariant {.slot.} =
     if (self.item.id == ""):
       # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app

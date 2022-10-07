@@ -48,6 +48,7 @@ type
     bannedMembersModel: member_model.Model
     pendingMemberRequestsModel: member_model.Model
     declinedMemberRequestsModel: member_model.Model
+    encrypted: bool
 
 proc initItem*(
     id: string,
@@ -82,6 +83,7 @@ proc initItem*(
     bannedMembers: seq[MemberItem] = @[],
     pendingMemberRequests: seq[MemberItem] = @[],
     declinedMemberRequests: seq[MemberItem] = @[],
+    encrypted: bool = false,
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -120,6 +122,7 @@ proc initItem*(
   result.pendingMemberRequestsModel.setItems(pendingMemberRequests)
   result.declinedMemberRequestsModel = newModel()
   result.declinedMemberRequestsModel.setItems(declinedMemberRequests)
+  result.encrypted = encrypted
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -157,6 +160,7 @@ proc `$`*(self: SectionItem): string =
     bannedMembers:{self.bannedMembersModel},
     pendingMemberRequests:{self.pendingMemberRequestsModel},
     declinedMemberRequests:{self.declinedMemberRequestsModel},
+    encrypted:{self.encrypted},
     ]"""
 
 proc id*(self: SectionItem): string {.inline.} =
@@ -290,3 +294,6 @@ proc historyArchiveSupportEnabled*(self: SectionItem): bool {.inline.} =
 
 proc pinMessageAllMembersEnabled*(self: SectionItem): bool {.inline.} =
   self.pinMessageAllMembersEnabled
+
+proc encrypted*(self: SectionItem): bool {.inline.} =
+  self.encrypted

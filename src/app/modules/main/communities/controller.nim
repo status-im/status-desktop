@@ -102,7 +102,8 @@ proc createCommunity*(
     aX: int, aY: int, bX: int, bY: int,
     historyArchiveSupportEnabled: bool,
     pinMessageAllMembersEnabled: bool,
-    bannerJsonStr: string) =
+    bannerJsonStr: string,
+    encrypted: bool) =
   self.communityService.createCommunity(
     name,
     description,
@@ -115,7 +116,8 @@ proc createCommunity*(
     aX, aY, bX, bY,
     historyArchiveSupportEnabled,
     pinMessageAllMembersEnabled,
-    bannerJsonStr)
+    bannerJsonStr,
+    encrypted)
 
 proc requestImportDiscordCommunity*(
     self: Controller,
@@ -131,7 +133,8 @@ proc requestImportDiscordCommunity*(
     historyArchiveSupportEnabled: bool,
     pinMessageAllMembersEnabled: bool,
     filesToImport: seq[string],
-    fromTimestamp: int) =
+    fromTimestamp: int,
+    encrypted: bool) =
   self.communityService.requestImportDiscordCommunity(
     name,
     description,
@@ -145,7 +148,8 @@ proc requestImportDiscordCommunity*(
     historyArchiveSupportEnabled,
     pinMessageAllMembersEnabled,
     filesToImport,
-    fromTimestamp)
+    fromTimestamp,
+    encrypted)
 
 proc reorderCommunityChat*(
     self: Controller,

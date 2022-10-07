@@ -134,6 +134,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
         result = self.createMemberItem(requestDto.publicKey, requestDto.id)),
       declinedMemberRequests = c.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
         result = self.createMemberItem(requestDto.publicKey, requestDto.id)),
+      encrypted = c.encrypted,
     )
 
 method getCuratedCommunityItem(self: Module, c: CuratedCommunity): CuratedCommunityItem =
@@ -232,9 +233,11 @@ method createCommunity*(self: Module, name: string,
                         aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool,
                         pinMessageAllMembersEnabled: bool,
-                        bannerJsonStr: string) =
+                        bannerJsonStr: string,
+                        encrypted: bool) =
   self.controller.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
-                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, bannerJsonStr)
+                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, 
+                                  bannerJsonStr, encrypted)
 
 method deleteCommunityCategory*(self: Module, communityId: string, categoryId: string) =
   self.controller.deleteCommunityCategory(communityId, categoryId)
@@ -304,8 +307,9 @@ method requestExtractDiscordChannelsAndCategories*(self: Module, filesToImport: 
 
 method requestImportDiscordCommunity*(self: Module, name: string, description, introMessage, outroMessage: string, access: int,
                         color: string, tags: string, imagePath: string, aX: int, aY: int, bX: int, bY: int,
-                        historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool, filesToImport: seq[string], fromTimestamp: int) =
-  self.controller.requestImportDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp)
+                        historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool, filesToImport: seq[string], 
+                        fromTimestamp: int, encrypted: bool) =
+  self.controller.requestImportDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp, encrypted)
 
 method getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): DiscordImportTaskItem =
   return initDiscordImportTaskItem(
