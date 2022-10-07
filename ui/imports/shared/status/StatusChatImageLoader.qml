@@ -6,6 +6,8 @@ import shared.panels 1.0
 import utils 1.0
 
 Item {
+    id: root
+
     property int verticalPadding: 0
     property int imageWidth: 350
     property bool isCurrentUser: false
@@ -13,22 +15,58 @@ Item {
     property bool isActiveChannel: false
     property bool playing: Global.applicationWindow.active && isChatActive
     property bool isAnimated: !!source && source.toString().endsWith('.gif')
-    signal clicked(var image, var mouse)
     property var container
     property alias imageAlias: imageMessage
     property bool allCornersRounded: false
+    property bool isOnline: true // TODO: mark as required when migrating to 5.15 or above
 
-    id: imageContainer
+    signal clicked(var image, var mouse)
+
     width: loadingImageLoader.active ? loadingImageLoader.width : imageMessage.width
     height: loadingImageLoader.active ? loadingImageLoader.height : imageMessage.paintedHeight
+
+    onIsOnlineChanged: {
+        if (!isOnline)
+            return
+
+        if (imageMessage.status === Image.Error) {
+            imageMessage.reloadImage()
+        }
+    }
+
+    Timer {
+        id: retryTimer
+
+        readonly property int initialInterval: 10 * 1000 // 10s
+
+        onTriggered: {
+            if (imageMessage.status === Image.Error && root.isOnline) {
+                imageMessage.reloadImage()
+                interval *= 2
+                restart()
+            }
+        }
+    }
 
     AnimatedImage {
         id: imageMessage
         width: sourceSize.width > imageWidth ? imageWidth : sourceSize.width
         fillMode: Image.PreserveAspectFit
-        source: imageContainer.source
-        playing: imageContainer.isAnimated && imageContainer.playing
+        source: root.source
+        playing: root.isAnimated && root.playing
         mipmap: true
+
+        onStatusChanged: {
+            if (imageMessage.status === Image.Error && !retryTimer.running) {
+                retryTimer.interval = retryTimer.initialInterval
+                retryTimer.start()
+            }
+        }
+
+        function reloadImage() {
+            imageMessage.source = ""
+            imageMessage.source = Qt.binding(() => root.source)
+        }
 
         layer.enabled: true
         layer.effect: OpacityMask {
@@ -50,7 +88,7 @@ Item {
                     width: 32
                     height: 32
                     radius: 4
-                    visible: !imageContainer.isCurrentUser && !allCornersRounded
+                    visible: !root.isCurrentUser && !allCornersRounded
                 }
                 Rectangle {
                     anchors.bottom: parent.bottom
@@ -58,7 +96,7 @@ Item {
                     width: 32
                     height: 32
                     radius: 4
-                    visible: imageContainer.isCurrentUser && !allCornersRounded
+                    visible: root.isCurrentUser && !allCornersRounded
                 }
             }
         }
@@ -68,7 +106,7 @@ Item {
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
             onClicked: {
-                imageContainer.clicked(imageMessage, mouse)
+                root.clicked(imageMessage, mouse)
             }
         }
     }

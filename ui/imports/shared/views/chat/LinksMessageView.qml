@@ -16,6 +16,7 @@ import shared.controls.chat 1.0
 
 Column {
     id: root
+
     property var store
     property var messageStore
     property var container
@@ -47,6 +48,8 @@ Column {
             property int linkWidth: linksRepeater.width
             readonly property string uuid: Utils.uuid()
 
+            property bool loadingFailed: false
+
             active: true
 
             Connections {
@@ -76,6 +79,7 @@ Column {
                         response = JSON.parse(previewData)
                     } catch (e) {
                         console.error(previewData, e)
+                        linkMessageLoader.loadingFailed = true
                         return
                     }
                     if (response.uuid !== linkMessageLoader.uuid) return
@@ -83,10 +87,12 @@ Column {
 
                     if (!response.success) {
                         console.error("could not get preview data")
-                        return undefined
+                        linkMessageLoader.loadingFailed = true
+                        return
                     }
 
                     linkData = response.result
+                    linkMessageLoader.loadingFailed = false
 
                     linkMessageLoader.height = undefined // Reset height so it's not 0
                     if (linkData.contentType.startsWith("image/")) {
@@ -117,6 +123,20 @@ Column {
 
                         return linkMessageLoader.sourceComponent = unfurledLinkComponent
                     }
+                }
+            }
+
+            Connections {
+                target: root.store.mainModuleInst
+                enabled: linkMessageLoader.loadingFailed
+
+                function onIsOnlineChanged() {
+                    if (!root.store.mainModuleInst.isOnline)
+                        return
+
+                    linkMessageLoader.fetched = false
+                    linkMessageLoader.sourceComponent = undefined
+                    linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
                 }
             }
 
@@ -203,6 +223,7 @@ Column {
             width: linkImage.width
             height: linkImage.height
             isCurrentUser: root.isCurrentUser
+
             StatusChatImageLoader {
                 id: linkImage
                 objectName: "LinksMessageView_unfurledImageComponent_linkImage"
@@ -213,6 +234,7 @@ Column {
                 isCurrentUser: root.isCurrentUser
                 onClicked: imageClicked(linkImage.imageAlias)
                 playing: root.messageStore.playAnimation
+                isOnline: root.store.mainModuleInst.isOnline
             }
 
             Component.onCompleted: d.unfurledLinksCount++
@@ -254,6 +276,7 @@ Column {
                 anchors.top: parent.top
                 anchors.topMargin: 1
                 playing: root.messageStore.playAnimation
+                isOnline: root.store.mainModuleInst.isOnline
             }
 
             StatusBaseText {
