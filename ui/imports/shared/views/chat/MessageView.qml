@@ -233,6 +233,18 @@ Loader {
         }
     }
 
+    function updateReplyInfo() {
+        switch(messageContentType) {
+        case Constants.messageContentType.chatIdentifier:
+        case Constants.messageContentType.fetchMoreMessagesButton:
+        case Constants.messageContentType.systemMessagePrivateGroupType:
+        case Constants.messageContentType.gapType:
+            return
+        default:
+            item.replyMessage = item.getReplyMessage()
+        }
+    }
+
     QtObject {
         id: d
 
@@ -396,8 +408,14 @@ Loader {
 
             readonly property int contentType: convertContentType(root.messageContentType)
             readonly property bool isReply: root.responseTo !== ""
-            readonly property var replyMessage: root.messageStore && isReply && root.responseToExistingMessage ? root.messageStore.getMessageByIdAsJson(root.responseTo) : null
+
+            property var replyMessage: getReplyMessage()
+
             readonly property string replySenderId: replyMessage ? replyMessage.senderId : ""
+
+            function getReplyMessage() {
+                return root.messageStore && isReply && root.responseToExistingMessage ? root.messageStore.getMessageByIdAsJson(root.responseTo) : null
+            }
 
             function editCompletedHandler(newMessageText) {
                 const message = root.rootStore.plainText(StatusQUtils.Emoji.deparse(newMessageText))

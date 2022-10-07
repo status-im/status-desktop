@@ -235,6 +235,10 @@ QtObject {
         readonly property int discordMessageType: 12
     }
 
+    readonly property QtObject messageModelRoles: QtObject {
+        readonly property int responseToMessageWithId: 262 // ModelRole.ResponseToMessageWithId
+    }
+
     readonly property QtObject profilePicturesVisibility: QtObject {
         readonly property int contactsOnly: 1
         readonly property int everyone: 2
