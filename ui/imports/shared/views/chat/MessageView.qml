@@ -490,6 +490,9 @@ Loader {
                     const pubkey = link.replace("//", "");
                     Global.openProfilePopup(pubkey)
                     return;
+                } else if (link.startsWith('#')) {
+                    rootStore.chatCommunitySectionModule.switchToChannel(link.replace("#", ""))
+                    return;
                 }
 
                 Global.openLink(link)

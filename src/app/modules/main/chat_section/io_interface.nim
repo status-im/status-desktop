@@ -316,3 +316,6 @@ method updateLastMessageTimestamp*(self: AccessInterface, chatId: string, lastMe
 
 method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUpdateDto]) =
   raise newException(ValueError, "No implementation available")
+
+method switchToChannel*(self: AccessInterface, channelName: string) =
+  raise newException(ValueError, "No implementation available")
