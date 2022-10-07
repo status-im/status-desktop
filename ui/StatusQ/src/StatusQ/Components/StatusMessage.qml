@@ -61,7 +61,6 @@ Rectangle {
     property double timestamp: 0
     property var reactionsModel: []
 
-    readonly property bool dateGroupVisible: dateGroupLabel.visible
     property bool showHeader: true
     property bool isActiveMessage: false
     property bool disableHover: false
@@ -70,9 +69,6 @@ Rectangle {
     property bool overrideBackground: false
     property bool profileClickable: true
     property bool hideMessage: false
-
-    property alias previousMessageIndex: dateGroupLabel.previousMessageIndex
-    property alias previousMessageTimestamp: dateGroupLabel.previousMessageTimestamp
 
     property StatusMessageDetails messageDetails: StatusMessageDetails {}
     property StatusMessageDetails replyDetails: StatusMessageDetails {}
@@ -215,14 +211,6 @@ Rectangle {
         anchors.fill: parent
         anchors.topMargin: 8
         anchors.bottomMargin: 8
-
-        StatusDateGroupLabel {
-            id: dateGroupLabel
-            Layout.fillWidth: true
-            Layout.topMargin: 20
-            messageTimestamp: root.timestamp
-            visible: text !== ""
-        }
 
         Loader {
             Layout.fillWidth: true
