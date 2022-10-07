@@ -26,7 +26,7 @@ proc delete*(self: Service) =
 proc newService*(events: EventEmitter): Service =
   result = Service()
   result.events = events
-  result.shouldRetranslate = not defined(linux)
+  result.shouldRetranslate = false #not defined(linux)
 
 proc obtainLanguages(dir: string): seq[string] =
   let localeRe = re".*qml_(.*).qm"
