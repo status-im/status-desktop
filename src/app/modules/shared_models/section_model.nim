@@ -36,6 +36,7 @@ type
     HistoryArchiveSupportEnabled
     PinMessageAllMembersEnabled
     BannedMembersModel
+    Encrypted
 
 QtObject:
   type
@@ -103,6 +104,7 @@ QtObject:
       ModelRole.HistoryArchiveSupportEnabled.int:"historyArchiveSupportEnabled",
       ModelRole.PinMessageAllMembersEnabled.int:"pinMessageAllMembersEnabled",
       ModelRole.BannedMembersModel.int:"bannedMembers",
+      ModelRole.Encrypted.int:"encrypted",
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -176,6 +178,8 @@ QtObject:
       result = newQVariant(item.pinMessageAllMembersEnabled)
     of ModelRole.BannedMembersModel:
       result = newQVariant(item.bannedMembers)
+    of ModelRole.Encrypted:
+      result = newQVariant(item.encrypted)
 
   proc isItemExist(self: SectionModel, id: string): bool =
     for it in self.items:
@@ -282,7 +286,8 @@ QtObject:
       ModelRole.PendingRequestsToJoinModel.int,
       ModelRole.HistoryArchiveSupportEnabled.int,
       ModelRole.PinMessageAllMembersEnabled.int,
-      ModelRole.BannedMembersModel.int
+      ModelRole.BannedMembersModel.int,
+      ModelRole.Encrypted.int,
       ])
 
   proc getNthEnabledItem*(self: SectionModel, nth: int): SectionItem =
@@ -402,6 +407,7 @@ QtObject:
           "isMember": item.isMember,
           "access": item.access,
           "ensOnly": item.ensOnly,
-          "nbMembers": item.members.getCount()
+          "nbMembers": item.members.getCount(),
+          "encrypted": item.encrypted,
         }
         return $jsonObj

@@ -61,7 +61,8 @@ proc createCommunity*(
     aX: int, aY: int, bX: int, bY: int,
     historyArchiveSupportEnabled: bool,
     pinMessageAllMembersEnabled: bool,
-    bannerJsonStr: string
+    bannerJsonStr: string,
+    encrypted: bool
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   let bannerImage = newCroppedImage(bannerJsonStr)
   result = callPrivateRPC("createCommunity".prefix, %*[{
@@ -81,7 +82,8 @@ proc createCommunity*(
       "imageBy": bY,
       "historyArchiveSupportEnabled": historyArchiveSupportEnabled,
       "pinMessageAllMembersEnabled": pinMessageAllMembersEnabled,
-      "banner": bannerImage
+      "banner": bannerImage,
+      "encrypted": encrypted
     }])
 
 proc editCommunity*(
@@ -136,7 +138,8 @@ proc requestImportDiscordCommunity*(
     historyArchiveSupportEnabled: bool,
     pinMessageAllMembersEnabled: bool,
     filesToImport: seq[string],
-    fromTimestamp: int
+    fromTimestamp: int,
+    encrypted: bool,
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("requestImportDiscordCommunity".prefix, %*[{
       # TODO this will need to be renamed membership (small m)
@@ -156,7 +159,8 @@ proc requestImportDiscordCommunity*(
       "historyArchiveSupportEnabled": historyArchiveSupportEnabled,
       "pinMessageAllMembersEnabled": pinMessageAllMembersEnabled,
       "from": fromTimestamp,
-      "filesToImport": filesToImport
+      "filesToImport": filesToImport,
+      "encrypted": encrypted,
     }])
 
 proc requestCancelDiscordCommunityImport*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =

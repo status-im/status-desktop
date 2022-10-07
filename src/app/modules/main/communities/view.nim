@@ -327,9 +327,11 @@ QtObject:
                         imagePath: string,
                         aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool,
-                        pinMessageAllMembersEnabled: bool, bannerJsonStr: string) {.slot.} =
+                        pinMessageAllMembersEnabled: bool, bannerJsonStr: string,
+                        encrypted: bool) {.slot.} =
     self.delegate.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
-                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, bannerJsonStr)
+                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, 
+                                  bannerJsonStr, encrypted)
 
   proc clearFileList*(self: View) {.slot.} =
     self.discordFileListModel.clearItems()
@@ -361,7 +363,7 @@ QtObject:
                         aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool,
                         pinMessageAllMembersEnabled: bool,
-                        fromTimestamp: int) {.slot.} =
+                        fromTimestamp: int, encrypted: bool) {.slot.} =
     let selectedItems = self.discordChannelsModel.getSelectedItems()
     var filesToImport: seq[string] = @[]
 
@@ -371,7 +373,8 @@ QtObject:
     self.resetDiscordImport(false)
     self.setDiscordImportInProgress(true)
     self.delegate.requestImportDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags,
-                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp)
+                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled,
+                                  filesToImport, fromTimestamp, encrypted)
 
   proc deleteCommunityCategory*(self: View, communityId: string, categoryId: string): string {.slot.} =
     self.delegate.deleteCommunityCategory(communityId, categoryId)

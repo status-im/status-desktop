@@ -29,6 +29,7 @@ StackLayout {
     property bool archiveSupportEnabled
     property bool requestToJoinEnabled
     property bool pinMessagesEnabled
+    property bool encrypted
 
     property bool archiveSupportOptionVisible: false
     property bool editable: false
@@ -186,6 +187,8 @@ StackLayout {
                 archiveSupportEnabled: root.archiveSupportEnabled
                 requestToJoinEnabled: root.requestToJoinEnabled
                 pinMessagesEnabled: root.pinMessagesEnabled
+                encrypted: root.encrypted
+                encryptReadOnly: true
             }
 
             bottomReservedSpace: editCommunityPage.settingsDirtyToastMessageImplicitSize
