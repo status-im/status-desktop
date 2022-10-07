@@ -27,6 +27,7 @@ Item {
         property var invitedCommunity
 
         readonly property int margin: 12
+        readonly property int radius: 16
 
         function getCommunity() {
             try {
@@ -81,16 +82,16 @@ Item {
             id: rectangleBubble
 
             width: 270
-            height: columnLayout.implicitHeight
-            radius: 16
+            height: columnLayout.implicitHeight + border.width * 2
+            radius: d.radius
             color: Style.current.background
             border.color: Style.current.border
             border.width: 1
 
             ColumnLayout {
                 id: columnLayout
-
-                width: parent.width
+                anchors.fill: parent
+                anchors.margins: 1
 
                 spacing: 0
 
@@ -217,6 +218,7 @@ Item {
                     Layout.preferredHeight: 44
 
                     text: qsTr("Go to Community")
+                    radius: d.radius - 1 // We do -1, otherwise there's a gap between border and button
 
                     onClicked: {
                         if (d.invitedCommunity.joined || d.invitedCommunity.spectated) {
@@ -224,11 +226,6 @@ Item {
                         } else {
                             root.store.spectateCommunity(communityId, userProfile.name)
                         }
-                    }
-
-                    Component.onCompleted: {
-                        // FIXME: extract StatusButtonBackground or expose radius property in StatusBaseButton
-                        background.radius = 16
                     }
                 }
             }
