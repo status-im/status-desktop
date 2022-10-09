@@ -265,7 +265,7 @@ QtObject:
       password: string,
       chainId: string,
       uuid: string,
-      eip1559Enabled: bool,
+      eip1559Enabled: bool
   ): bool {.slot.} =
     try:
       eth_utils.validateTransactionInput(from_addr, to_addr, assetAddress = "", value, gas,
