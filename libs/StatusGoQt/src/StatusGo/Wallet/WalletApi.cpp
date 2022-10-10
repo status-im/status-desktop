@@ -46,7 +46,7 @@ SavedAddresses getSavedAddresses()
     checkPrivateRpcCallResultAndReportError(resultJson);
 
     const auto &data = resultJson.get<CallPrivateRpcResponse>().result;
-    return data.is_null() ? nlohmann::json() : data;
+    return data.is_null() ? json::array() : data;
 }
 
 void saveAddress(const SavedAddress &address)
@@ -77,7 +77,7 @@ NetworkConfigurations getEthereumChains(bool onlyEnabled)
     checkPrivateRpcCallResultAndReportError(resultJson);
 
     const auto &data = resultJson.get<CallPrivateRpcResponse>().result;
-    return data.is_null() ? nlohmann::json() : data;
+    return data.is_null() ? json::array() : data;
 }
 
 Tokens getTokens(const ChainID &chainId)
@@ -94,7 +94,7 @@ Tokens getTokens(const ChainID &chainId)
     checkPrivateRpcCallResultAndReportError(resultJson);
 
     const auto &data = resultJson.get<CallPrivateRpcResponse>().result;
-    return data.is_null() ? nlohmann::json() : data;
+    return data.is_null() ? json::array() : data;
 }
 
 TokenBalances getTokensBalancesForChainIDs(const std::vector<ChainID> &chainIds,

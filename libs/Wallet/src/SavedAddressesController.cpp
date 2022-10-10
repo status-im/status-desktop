@@ -18,12 +18,13 @@ QAbstractListModel *SavedAddressesController::savedAddresses() const
     return m_savedAddresses.get();
 }
 
+// TODO: extend with favourite and chain ID
 void SavedAddressesController::saveAddress(const QString &address, const QString &name)
 {
     try
     {
         StatusGo::Wallet::saveAddress(StatusGo::Wallet::SavedAddress(
-            { StatusGo::Accounts::EOAddress(address), name }));
+            { StatusGo::Accounts::EOAddress(address), name, false, StatusGo::Wallet::ChainID(0) }));
     }
     catch(const StatusGo::CallPrivateRpcError& rpcError)
     {
