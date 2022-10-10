@@ -151,6 +151,7 @@ Item {
                 id: scroll
 
                 clip: false
+                padding: 0
                 anchors.fill: parent
                 anchors.bottomMargin: Style.current.padding
 
