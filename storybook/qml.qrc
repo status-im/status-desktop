@@ -3,5 +3,7 @@
         <file>main.qml</file>
         <file>pages/CommunitiesPortalLayoutPage.qml</file>
         <file>pages/CommunitiesPortalDummyModel.qml</file>
+        <file>pages/CommunitiesPortalModelEditor.qml</file>
+        <file>pages/ImageSelectPopup.qml</file>
     </qresource>
 </RCC>
