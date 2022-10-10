@@ -3,55 +3,70 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
+import StatusQ.Popups.Dialog 0.1
+
 import AppLayouts.CommunitiesPortal 1.0
 import AppLayouts.CommunitiesPortal.stores 1.0
 
 import SortFilterProxyModel 0.2
 
-ColumnLayout{
+SplitView {
     anchors.fill: parent
 
-    CommunitiesPortalLayout {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+    ColumnLayout {
+        SplitView.fillWidth: true
 
-        communitiesStore: CommunitiesStore {
-            readonly property string locale: ""
-            readonly property int unreadNotificationsCount: 42
-            readonly property string communityTags:
-                JSON.stringify({"Activism":"✊","Art":"🎨","Blockchain":"🔗","Books & blogs":"📚","Career":"💼"})
-            readonly property var curatedCommunitiesModel: SortFilterProxyModel {
+        CommunitiesPortalLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-                sourceModel: CommunitiesPortalDummyModel {}
+            communitiesStore: CommunitiesStore {
+                readonly property string locale: ""
+                readonly property int unreadNotificationsCount: 42
+                readonly property string communityTags:
+                    JSON.stringify({"Activism":"✊","Art":"🎨","Blockchain":"🔗","Books & blogs":"📚","Career":"💼"})
+                readonly property var curatedCommunitiesModel: SortFilterProxyModel {
 
-                filters: IndexFilter {
-                    inverted: true
-                    minimumIndex: Math.floor(slider.value)
+                    sourceModel: CommunitiesPortalDummyModel { id: mockedModel }
+
+                    filters: IndexFilter {
+                        inverted: true
+                        minimumIndex: Math.floor(slider.value)
+                    }
+                }
+            }
+        }
+
+        StatusDialogDivider {
+            Layout.fillWidth: true
+        }
+
+        Pane {
+            Row {
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "number of communities:"
+                }
+
+                Slider {
+                    id: slider
+                    value: 9
+                    from: 0
+                    to: 9
                 }
             }
         }
     }
 
-    Rectangle {
-        color: 'gray'
-        Layout.preferredHeight: 1
-        Layout.fillWidth: true
-    }
+    Control {
+        SplitView.minimumWidth: 300
+        SplitView.preferredWidth: 300
 
-    Pane {
-        Row {
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "number of communities:"
-            }
+        font.pixelSize: 13
 
-            Slider {
-                id: slider
-                value: 9
-                from: 0
-                to: 9
-            }
+        CommunitiesPortalModelEditor {
+            anchors.fill: parent
+            model: mockedModel
         }
     }
 }
-
