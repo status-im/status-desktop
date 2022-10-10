@@ -9,14 +9,13 @@ namespace Status::ApplicationCore {
 
 namespace fs = std::filesystem;
 
+/// Contains necessary data for each created account hence this will be the same path for all accounts
 class UserConfiguration: public QObject
 {
     Q_OBJECT
     QML_ELEMENT
 
-    // Not sure why `qmlUserDataFolder` is writable??? We should not change it from the qml side.
-    // Even from the backend side this will be set only on the app start, and it will contain
-    // necessary data for each created account, so even we're switching accounts, this will be the same path.
+    /// @note userFolder is writable in order to allow changing it in tests until a proper abstraction is in place
     Q_PROPERTY(QString userDataFolder READ qmlUserDataFolder WRITE setUserDataFolder NOTIFY userDataFolderChanged)
 
 public:
@@ -31,6 +30,7 @@ signals:
 
 private:
     void generateReleaseConfiguration();
+    bool parseFromCommandLineAndReturnTrueIfSet();
 
     fs::path m_userDataFolder;
 };

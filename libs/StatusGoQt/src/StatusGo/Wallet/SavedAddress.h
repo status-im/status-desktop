@@ -20,10 +20,12 @@ struct SavedAddress
 {
     Accounts::EOAddress address;
     QString name;
+    bool favourite;
+    ChainID chainId;
 };
 
 using SavedAddresses = std::vector<SavedAddress>;
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SavedAddress, address, name);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SavedAddress, address, name, favourite, chainId);
 
 }

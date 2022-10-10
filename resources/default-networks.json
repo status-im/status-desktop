@@ -27,7 +27,7 @@
     "nativeCurrencyDecimals": 18,
     "isTest": true,
     "layer": 1,
-    "enabled": true
+    "enabled": false
   },
   {
     "chainId": 4,
@@ -57,7 +57,7 @@
     "nativeCurrencyDecimals": 18,
     "isTest": true,
     "layer": 1,
-    "enabled": false
+    "enabled": true
   },
   {
     "chainId": 10,

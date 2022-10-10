@@ -34,6 +34,7 @@ Item {
             Layout.fillHeight: true
 
             sections: appSections.sections
+            currentIndex: 1
         }
 
         ColumnLayout {
@@ -59,6 +60,7 @@ Item {
                     delegate: Loader {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        active: navBar.currentIndex === index
 
                         sourceComponent: modelData.content
                     }

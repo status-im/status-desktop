@@ -2,6 +2,8 @@
 
 #include "Helpers/conversions.h"
 
+#include <QCommandLineParser>
+
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -40,8 +42,25 @@ void UserConfiguration::setUserDataFolder(const QString &newUserDataFolder)
 
 void UserConfiguration::generateReleaseConfiguration()
 {
-    m_userDataFolder = toPath(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation))/statusFolder/dataSubfolder;
+    if(!parseFromCommandLineAndReturnTrueIfSet())
+        m_userDataFolder = toPath(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation))/statusFolder/dataSubfolder;
     emit userDataFolderChanged();
+}
+
+bool UserConfiguration::parseFromCommandLineAndReturnTrueIfSet()
+{
+    QCommandLineParser parser;
+    parser.addHelpOption();
+    parser.addVersionOption();
+    parser.addPositionalArgument("dataDir", "Data folder");
+    parser.process(*QCoreApplication::instance());
+    auto args = parser.positionalArguments();
+    if (args.size() > 0) {
+        m_userDataFolder = toPath(args[0]);
+        emit userDataFolderChanged();
+        return true;
+    }
+    return false;
 }
 
 }
