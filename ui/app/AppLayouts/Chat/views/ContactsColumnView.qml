@@ -44,6 +44,7 @@ Item {
         anchors {
             fill: parent
             margins: Style.current.padding
+            topMargin: Style.current.smallPadding
             bottomMargin: 0
         }
         spacing: Style.current.padding

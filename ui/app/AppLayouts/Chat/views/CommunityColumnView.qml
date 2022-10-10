@@ -74,9 +74,10 @@ Item {
         id: adHocChatButton
         icon.name: "edit"
         objectName: "startChatButton"
+        icon.color: Theme.palette.directColor1
         anchors.verticalCenter: communityHeader.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: 14
+        anchors.rightMargin: Style.current.padding
         checked: root.store.openCreateChat
         highlighted: root.store.openCreateChat
         onClicked: {
