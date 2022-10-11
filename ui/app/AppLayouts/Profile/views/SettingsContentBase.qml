@@ -55,7 +55,9 @@ Item {
 
     RowLayout {
         id: titleRow
-        width: visible ? root.contentWidth : 0
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        width: visible ? root.contentWidth - Style.current.padding : 0
         height: visible ? d.titleRowHeight : 0
         visible: root.sectionTitle !== ""
 
