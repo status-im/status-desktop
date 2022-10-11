@@ -414,11 +414,11 @@ StatusPopupMenu {
         }
         icon.name: "pin"
         enabled: {
-            if (root.pinnedPopup)
-                return true
-
             if(root.isProfile || root.isEmoji || root.isRightClickOnImage)
                 return false
+
+            if (root.pinnedPopup)
+                return true
 
             switch (root.chatType) {
             case Constants.chatType.publicChat:
@@ -473,7 +473,7 @@ StatusPopupMenu {
 
     StatusMenuItem {
         id: jumpToAction
-        enabled: root.pinnedPopup
+        enabled: root.pinnedPopup && !root.isProfile
         text: qsTr("Jump to")
         onTriggered: {
             root.jumpToMessage(root.messageId)
