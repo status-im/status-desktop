@@ -19,7 +19,6 @@ ApplicationWindow {
         id: mainPageView
 
         anchors.fill: parent
-
         showHeader: false
 
         function page(name, fillPage) {

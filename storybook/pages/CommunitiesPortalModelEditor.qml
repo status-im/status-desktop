@@ -2,19 +2,13 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
+import Storybook 1.0
+
 ListView {
     id: root
 
     spacing: 25
     ScrollBar.vertical: ScrollBar { }
-
-    function singleShotConnection(prop, handler) {
-        const internalHandler = (...args) => {
-            handler(...args)
-            prop.disconnect(internalHandler)
-        }
-        prop.connect(internalHandler)
-    }
 
     ImageSelectPopup {
         id: iconSelector
@@ -29,14 +23,7 @@ ListView {
         }
 
         Component.onCompleted: {
-            const model = root.model
-            const icons = []
-            for (let i = 0; i < model.count; i++) {
-                icons.push(model.get(i).icon)
-            }
-
-            const onlyUnique = (value, index, self) => self.indexOf(value) === index
-            const uniqueIcons = icons.filter(onlyUnique)
+            const uniqueIcons = StorybookUtils.getUniqueValuesFromModel(root.model, "icon")
             uniqueIcons.map(image => iconsModel.append( { image }))
         }
     }
@@ -54,14 +41,7 @@ ListView {
         }
 
         Component.onCompleted: {
-            const model = root.model
-            const banners = []
-            for (let i = 0; i < model.count; i++) {
-                banners.push(model.get(i).banner)
-            }
-
-            const onlyUnique = (value, index, self) => self.indexOf(value) === index
-            const uniqueBanners = banners.filter(onlyUnique)
+            const uniqueBanners = StorybookUtils.getUniqueValuesFromModel(root.model, "banner")
             uniqueBanners.map(image => bannersModel.append( { image }))
         }
     }
@@ -99,17 +79,17 @@ ListView {
                 CheckBox {
                     text: "featured"
                     checked: model.featured
-                    onCheckedChanged: model.featured = checked
+                    onToggled: model.featured = checked
                 }
                 CheckBox {
                     text: "available"
                     checked: model.available
-                    onCheckedChanged: model.available = checked
+                    onToggled: model.available = checked
                 }
                 CheckBox {
                     text: "loaded"
                     checked: model.loaded
-                    onCheckedChanged: model.loaded = checked
+                    onToggled: model.loaded = checked
                 }
             }
 
@@ -133,7 +113,7 @@ ListView {
                         anchors.fill: parent
                         onClicked: {
                             iconSelector.open()
-                            singleShotConnection(iconSelector.selected, icon => {
+                            StorybookUtils.singleShotConnection(iconSelector.selected, icon => {
                                 model.icon = icon
                                 iconSelector.close()
                             })
@@ -157,7 +137,7 @@ ListView {
                         anchors.fill: parent
                         onClicked: {
                             bannerSelector.open()
-                            singleShotConnection(bannerSelector.selected, banner => {
+                            StorybookUtils.singleShotConnection(bannerSelector.selected, banner => {
                                 model.banner = banner
                                 bannerSelector.close()
                             })
