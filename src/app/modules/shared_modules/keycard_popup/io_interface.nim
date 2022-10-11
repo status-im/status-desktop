@@ -91,6 +91,9 @@ method onKeycardResponse*(self: AccessInterface, keycardFlowType: string, keycar
 method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Path = "", txHash = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setUidOfAKeycardWhichNeedToBeUnlocked*(self: AccessInterface, value: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setPin*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -4,7 +4,7 @@ include  ../../common/json_utils
 
 type KeyPairDto* = object
   keycardUid*: string
-  keypairName*: string
+  keycardName*: string
   keycardLocked*: bool  
   accountsAddresses*: seq[string]
   keyUid*: string
@@ -12,7 +12,7 @@ type KeyPairDto* = object
 proc toKeyPairDto*(jsonObj: JsonNode): KeyPairDto =
   result = KeyPairDto()
   discard jsonObj.getProp("keycard-uid", result.keycardUid)
-  discard jsonObj.getProp("keypair-name", result.keypairName)
+  discard jsonObj.getProp("keycard-name", result.keycardName)
   discard jsonObj.getProp("keycard-locked", result.keycardLocked)
   discard jsonObj.getProp("key-uid", result.keyUid)
   

@@ -66,6 +66,9 @@ method getKeycardData*[T](self: Module[T]): string =
 method setKeycardData*[T](self: Module[T], value: string) =
   self.view.setKeycardData(value)
 
+method setUidOfAKeycardWhichNeedToBeUnlocked*[T](self: Module[T], value: string) =
+  self.controller.setUidOfAKeycardWhichNeedToBeUnlocked(value)
+
 method setPin*[T](self: Module[T], value: string) =
   self.controller.setPin(value)
 
@@ -349,7 +352,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
 method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =
   var paths: seq[string]
   var keyPairDto = KeyPairDto(keycardUid: "", # will be set during migration
-    keypairName: item.name,
+    keycardName: item.name,
     keycardLocked: item.locked,
     keyUid: item.keyUid)
   for a in item.accountsAsArr():

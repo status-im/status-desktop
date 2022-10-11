@@ -32,6 +32,9 @@ StatusSectionLayout {
         case 4:
             walletView.resetStack();
             break;
+        case Constants.settingsSubsection.keycard:
+            keycardView.handleBackAction();
+            break;
         }
     }
 
@@ -87,7 +90,11 @@ StatusSectionLayout {
                 }
                 if (currentIndex === 1) {
                     root.store.backButtonName = root.store.getNameForSubsection(Constants.settingsSubsection.messaging);
-                } else {
+                }
+                else if (currentIndex === Constants.settingsSubsection.keycard) {
+                    keycardView.handleBackAction();
+                }
+                else {
                     root.store.backButtonName = "";
                 }
             }
@@ -226,11 +233,14 @@ StatusSectionLayout {
             }
 
             KeycardView {
+                id: keycardView
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
+                profileSectionStore: root.store
                 keycardStore: root.store.keycardStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.keycard)
+                mainSectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.keycard)
                 contentWidth: d.contentWidth
             }
         }

@@ -33,6 +33,10 @@ const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* = "walletAccount/networkEna
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY* = "walletAccount/derivedAddressesReady"
 const SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT* = "walletAccount/tokensRebuilt"
 
+const SIGNAL_KEYCARD_LOCKED* = "keycardLocked"
+const SIGNAL_KEYCARD_UNLOCKED* = "keycardUnlocked"
+const SIGNAL_KEYCARD_UID_UPDATED* = "keycardUidUpdated"
+
 var
   balanceCache {.threadvar.}: Table[string, float64]
 
@@ -80,6 +84,10 @@ type DerivedAddressesArgs* = ref object of Args
 
 type TokensPerAccountArgs* = ref object of Args
   accountsTokens*: OrderedTable[string, seq[WalletTokenDto]] # [wallet address, list of tokens]
+
+type KeycardActivityArgs* = ref object of Args
+  keycardUid*: string
+  keycardNewUid*: string
 
 const CheckBalanceSlotExecuteIntervalInSeconds = 15 * 60 # 15 mins
 const CheckBalanceTimerIntervalInMilliseconds = 5000 # 5 sec
@@ -487,7 +495,7 @@ QtObject:
     try:
       let response = backend.addMigratedKeyPair(
         keyPair.keycardUid,
-        keyPair.keyPairName,
+        keyPair.keycardName,
         keyPair.keyUid,
         keyPair.accountsAddresses)
       return self.responseHasNoErrors("addMigratedKeyPair", response)
@@ -522,7 +530,9 @@ QtObject:
   proc setKeycardLocked*(self: Service, keycardUid: string): bool =
     try:
       let response = backend.keycardLocked(keycardUid)
-      return self.responseHasNoErrors("setKeycardLocked", response)
+      result = self.responseHasNoErrors("setKeycardLocked", response)
+      if result:
+        self.events.emit(SIGNAL_KEYCARD_LOCKED, KeycardActivityArgs(keycardUid: keycardUid))
     except Exception as e:
       error "error: ", procName="setKeycardLocked", errName = e.name, errDesription = e.msg
     return false
@@ -530,7 +540,9 @@ QtObject:
   proc setKeycardUnlocked*(self: Service, keycardUid: string): bool =
     try:
       let response = backend.keycardUnlocked(keycardUid)
-      return self.responseHasNoErrors("setKeycardUnlocked", response)
+      result = self.responseHasNoErrors("setKeycardUnlocked", response)
+      if result:
+        self.events.emit(SIGNAL_KEYCARD_UNLOCKED, KeycardActivityArgs(keycardUid: keycardUid))
     except Exception as e:
       error "error: ", procName="setKeycardUnlocked", errName = e.name, errDesription = e.msg
     return false
@@ -538,7 +550,9 @@ QtObject:
   proc updateKeycardUid*(self: Service, oldKeycardUid: string, newKeycardUid: string): bool =
     try:
       let response = backend.updateKeycardUID(oldKeycardUid, newKeycardUid)
-      return self.responseHasNoErrors("updateKeycardUid", response)
+      result = self.responseHasNoErrors("updateKeycardUid", response)
+      if result:
+        self.events.emit(SIGNAL_KEYCARD_UID_UPDATED, KeycardActivityArgs(keycardUid: oldKeycardUid, keycardNewUid: newKeycardUid))
     except Exception as e:
       error "error: ", procName="updateKeycardUid", errName = e.name, errDesription = e.msg
     return false

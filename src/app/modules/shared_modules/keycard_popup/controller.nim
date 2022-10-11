@@ -31,6 +31,7 @@ type
     connectionKeycardResponse: UUID
     tmpKeycardContainsMetadata: bool
     tmpCardMetadata: CardMetadata
+    tmpKeycardUidForUnlocking: string
     tmpPin: string
     tmpPinMatch: bool
     tmpPuk: string
@@ -140,6 +141,12 @@ proc containsMetadata*(self: Controller): bool =
 
 proc setContainsMetadata*(self: Controller, value: bool) =
   self.tmpKeycardContainsMetadata = value
+
+proc setUidOfAKeycardWhichNeedToBeUnlocked*(self: Controller, value: string) =
+  self.tmpKeycardUidForUnlocking = value
+
+proc getUidOfAKeycardWhichNeedToBeUnlocked*(self: Controller): string =
+  return self.tmpKeycardUidForUnlocking
 
 proc setPin*(self: Controller, value: string) =
   self.tmpPin = value

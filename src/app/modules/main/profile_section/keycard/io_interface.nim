@@ -37,13 +37,43 @@ method runImportOrRestoreViaSeedPhrasePopup*(self: AccessInterface) {.base.} =
 method runImportFromKeycardToAppPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runUnlockKeycardPopup*(self: AccessInterface) {.base.} =
+method runUnlockKeycardPopupForKeycardWithUid*(self: AccessInterface, keycardUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runDisplayKeycardContentPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runFactoryResetPopup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method runRenameKeycardPopup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method runChangePinPopup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method runCreateBackupCopyOfAKeycardPopup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method runCreatePukPopup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method runCreateNewPairingCodePopup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onLoggedInUserImageChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardLocked*(self: AccessInterface, keycardUid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardUnlocked*(self: AccessInterface, keycardUid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardUidUpdated*(self: AccessInterface, keycardUid: string, keycardNewUid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getKeycardDetailsAsJson*(self: AccessInterface, keycardUid: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 

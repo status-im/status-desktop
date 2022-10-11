@@ -24,9 +24,15 @@ method executeTertiaryCommand*(self: ReadingKeycardState, controller: Controller
 method getNextSecondaryState*(self: ReadingKeycardState, controller: Controller): State =
   let (flowType, flowEvent) = controller.getLastReceivedKeycardData()
   # this is used in case a keycard is not inserted in the moment when flow is run (we're animating an insertion)
-  return ensureReaderAndCardPresenceAndResolveNextState(self, flowType, flowEvent, controller)
+  return self.resolveKeycardNextState(flowType, flowEvent, controller)
 
 method resolveKeycardNextState*(self: ReadingKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
+  if self.flowType == FlowType.UnlockKeycard:
+    let ensureKeycardPresenceState = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
+    if ensureKeycardPresenceState.isNil: # means the keycard is inserted
+      let kcUid = controller.getUidOfAKeycardWhichNeedToBeUnlocked()
+      if kcUid.len > 0 and kcUid != keycardEvent.instanceUID:
+        return createState(StateType.WrongKeycard, self.flowType, nil)
   # this is used in case a keycard is inserted and we jump to the first meaningful screen
   return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
