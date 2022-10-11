@@ -140,7 +140,7 @@ StatusDialog {
             }
 
             onJumpToMessage: {
-                root.messageStore.messagesModule.jumpToMessage(messageId)
+                root.messageStore.messageModule.jumpToMessage(messageId)
             }
         }
     }
