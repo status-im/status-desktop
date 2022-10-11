@@ -28,7 +28,26 @@ type
     derivedFrom: string
     pairType: KeyPairType
     accounts: seq[WalletAccountDetails]
-    
+
+proc setup*(self: KeyPairItem,
+    pubKey: string,
+    keyUid: string,
+    locked: bool,
+    name: string,
+    image: string,
+    icon: string,
+    pairType: KeyPairType,
+    derivedFrom: string
+    ) =
+  self.pubKey = pubKey
+  self.keyUid = keyUid
+  self.locked = locked
+  self.name = name
+  self.image = image
+  self.icon = icon
+  self.pairType = pairType
+  self.derivedFrom = derivedFrom
+
 proc initKeyPairItem*(
     pubKey = "",
     keyUid = "",
@@ -40,19 +59,14 @@ proc initKeyPairItem*(
     derivedFrom = ""
     ): KeyPairItem =
   result = KeyPairItem()
-  result.pubKey = pubKey
-  result.keyUid = keyUid
-  result.name = name
-  result.image = image
-  result.icon = icon
-  result.pairType = pairType
-  result.derivedFrom = derivedFrom
+  result.setup(pubKey, keyUid, locked, name, image, icon, pairType, derivedFrom)
 
 proc `$`*(self: KeyPairItem): string =
   result = fmt"""KeyPairItem[
     pubKey: {self.pubkey},
     keyUid: {self.keyUid},
     name: {self.name},
+    locked: {self.locked},
     image: {self.image},
     icon: {self.icon},
     pairType: {$self.pairType},

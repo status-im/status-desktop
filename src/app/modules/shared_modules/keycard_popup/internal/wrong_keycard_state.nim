@@ -8,6 +8,11 @@ proc newWrongKeycardState*(flowType: FlowType, backState: State): WrongKeycardSt
 proc delete*(self: WrongKeycardState) =
   self.State.delete
 
+method executePrimaryCommand*(self: WrongKeycardState, controller: Controller) =
+  if self.flowType == FlowType.UnlockKeycard:
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+
 method executeTertiaryCommand*(self: WrongKeycardState, controller: Controller) =
-  if self.flowType == FlowType.Authentication:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.Authentication or
+    self.flowType == FlowType.UnlockKeycard:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

@@ -1,25 +1,21 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
 
 import utils 1.0
-import shared.panels 1.0
-import shared.controls 1.0
-import shared.status 1.0
 import shared.popups.keycard 1.0
 
 import "../stores"
+import "./keycard"
 
 SettingsContentBase {
     id: root
 
+    property ProfileSectionStore profileSectionStore
     property KeycardStore keycardStore
+    property string mainSectionTitle: ""
 
     titleRowComponentLoader.sourceComponent: StatusButton {
         text: qsTr("Get Keycard")
@@ -28,9 +24,44 @@ SettingsContentBase {
         }
     }
 
-    ColumnLayout {
-        id: contentColumn
-        spacing: Constants.settingsSection.itemSpacing
+    function handleBackAction() {
+        if (stackLayout.currentIndex === d.detailsViewIndex) {
+            root.profileSectionStore.backButtonName = ""
+            root.sectionTitle = root.mainSectionTitle
+            stackLayout.currentIndex = d.mainViewIndex
+        }
+    }
+
+    StackLayout {
+        id: stackLayout
+
+        currentIndex: d.mainViewIndex
+
+        QtObject {
+            id: d
+            readonly property int mainViewIndex: 0
+            readonly property int detailsViewIndex: 1
+
+            property string observedKeycardUid: ""
+        }
+
+        MainView {
+            Layout.preferredWidth: root.contentWidth
+            keycardStore: root.keycardStore
+
+            onDisplayKeycardDetails: {
+                d.observedKeycardUid = keycardUid
+                root.profileSectionStore.backButtonName = root.mainSectionTitle
+                root.sectionTitle = keycardName
+                stackLayout.currentIndex = d.detailsViewIndex
+            }
+        }
+
+        DetailsView {
+            Layout.preferredWidth: root.contentWidth
+            keycardStore: root.keycardStore
+            keycardUid: d.observedKeycardUid
+        }
 
         Connections {
             target: root.keycardStore.keycardModule
@@ -40,6 +71,12 @@ SettingsContentBase {
             }
             onDestroyKeycardSharedModuleFlow: {
                 keycardPopup.active = false
+            }
+
+            onKeycardUidChanged: {
+                if (d.observedKeycardUid === oldKcUid) {
+                    d.observedKeycardUid = newKcUid
+                }
             }
         }
 
@@ -52,137 +89,6 @@ SettingsContentBase {
 
             onLoaded: {
                 keycardPopup.item.open()
-            }
-        }
-
-        Image {
-            Layout.alignment: Qt.AlignCenter
-            Layout.preferredHeight: sourceSize.height
-            Layout.preferredWidth: sourceSize.width
-            fillMode: Image.PreserveAspectFit
-            antialiasing: true
-            source: Style.png("keycard/security-keycard@2x")
-            mipmap: true
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Style.current.halfPadding
-        }
-
-        StyledText {
-            Layout.alignment: Qt.AlignCenter
-            font.pixelSize: Constants.settingsSection.importantInfoFontSize
-            color: Style.current.directColor1
-            text: qsTr("Secure your funds. Keep your profile safe.")
-        }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Style.current.halfPadding
-        }
-
-        StatusListItem {
-            Layout.preferredWidth: root.contentWidth
-            title: qsTr("Setup a new Keycard with an existing account")
-            components: [
-                StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
-                    color: Theme.palette.baseColor1
-                }
-            ]
-            onClicked: {
-                root.keycardStore.runSetupKeycardPopup()
-            }
-        }
-
-        StatusSectionHeadline {
-            Layout.preferredWidth: root.contentWidth
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-            text: qsTr("Create, import or restore a Keycard account")
-        }
-
-        StatusListItem {
-            Layout.preferredWidth: root.contentWidth
-            title: qsTr("Generate a seed phrase")
-            components: [
-                StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
-                    color: Theme.palette.baseColor1
-                }
-            ]
-            onClicked: {
-                root.keycardStore.runGenerateSeedPhrasePopup()
-            }
-        }
-
-        StatusListItem {
-            Layout.preferredWidth: root.contentWidth
-            title: qsTr("Import or restore via a seed phrase")
-            components: [
-                StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
-                    color: Theme.palette.baseColor1
-                }
-            ]
-            onClicked: {
-                root.keycardStore.runImportOrRestoreViaSeedPhrasePopup()
-            }
-        }
-
-        StatusListItem {
-            Layout.preferredWidth: root.contentWidth
-            title: qsTr("Import from Keycard to Status Desktop")
-            components: [
-                StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
-                    color: Theme.palette.baseColor1
-                }
-            ]
-            onClicked: {
-                root.keycardStore.runImportFromKeycardToAppPopup()
-            }
-        }
-
-        StatusSectionHeadline {
-            Layout.preferredWidth: root.contentWidth
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-            text: qsTr("Other")
-        }
-
-        StatusListItem {
-            Layout.preferredWidth: root.contentWidth
-            title: qsTr("Check what’s on a Keycard")
-            components: [
-                StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
-                    color: Theme.palette.baseColor1
-                }
-            ]
-            onClicked: {
-                root.keycardStore.runDisplayKeycardContentPopup()
-            }
-        }
-
-        StatusListItem {
-            Layout.preferredWidth: root.contentWidth
-            title: qsTr("Factory reset a Keycard")
-            components: [
-                StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
-                    color: Theme.palette.baseColor1
-                }
-            ]
-            onClicked: {
-                root.keycardStore.runFactoryResetPopup()
             }
         }
     }

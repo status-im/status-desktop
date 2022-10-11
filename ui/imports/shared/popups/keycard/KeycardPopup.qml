@@ -608,6 +608,7 @@ StatusModal {
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.unlockKeycard) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardAlreadyUnlocked ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockKeycardSuccess)
                         return qsTr("Done")
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockKeycardOptions)

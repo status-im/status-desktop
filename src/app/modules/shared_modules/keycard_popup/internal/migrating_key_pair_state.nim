@@ -26,7 +26,7 @@ proc doMigration(self: MigratingKeyPairState, controller: Controller) =
       self.migrationSuccess = self.migrationSuccess and controller.convertSelectedKeyPairToKeycardAccount(password)
     if not self.migrationSuccess:
       return
-    controller.runStoreMetadataFlow(selectedKeyPairDto.keypairName, controller.getPin(), 
+    controller.runStoreMetadataFlow(selectedKeyPairDto.keycardName, controller.getPin(), 
       controller.getSelectedKeyPairWalletPaths())
 
 method executePrimaryCommand*(self: MigratingKeyPairState, controller: Controller) =

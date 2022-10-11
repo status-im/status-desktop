@@ -425,7 +425,15 @@ Item {
             }
             PropertyChanges {
                 target: message
-                text: qsTr("Keycard inserted does not match the Keycard below")
+                text: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+                        return qsTr("Keycard inserted does not match the Keycard below")
+                    }
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.unlockKeycard) {
+                        return qsTr("Keycard inserted does not match the Keycard you're trying to unlock")
+                    }
+                    return ""
+                }
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.dangerColor1
             }

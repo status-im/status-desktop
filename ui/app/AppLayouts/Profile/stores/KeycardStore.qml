@@ -22,8 +22,8 @@ QtObject {
         root.keycardModule.runImportFromKeycardToAppPopup()
     }
 
-    function runUnlockKeycardPopup() {
-        root.keycardModule.runUnlockKeycardPopup()
+    function runUnlockKeycardPopupForKeycardWithUid(keycardUid) {
+        root.keycardModule.runUnlockKeycardPopupForKeycardWithUid(keycardUid)
     }
 
     function runDisplayKeycardContentPopup() {
@@ -32,5 +32,48 @@ QtObject {
 
     function runFactoryResetPopup() {
         root.keycardModule.runFactoryResetPopup()
+    }
+
+    function runRenameKeycardPopup() {
+        root.keycardModule.runRenameKeycardPopup()
+    }
+
+    function runChangePinPopup() {
+        root.keycardModule.runChangePinPopup()
+    }
+
+    function runCreateBackupCopyOfAKeycardPopup() {
+        root.keycardModule.runCreateBackupCopyOfAKeycardPopup()
+    }
+
+    function runCreatePukPopup() {
+        root.keycardModule.runCreatePukPopup()
+    }
+
+    function runCreateNewPairingCodePopup() {
+        root.keycardModule.runCreateNewPairingCodePopup()
+    }
+
+    function getKeycardDetailsAsJson(keycardUid) {
+        let jsonObj = root.keycardModule.getKeycardDetailsAsJson(keycardUid)
+        try {
+            let obj = JSON.parse(jsonObj)
+            return obj
+        }
+        catch (e) {
+            console.debug("error parsing keycard details for keycard uid: ", keycardUid, " error: ", e.message)
+            return {
+                keycardUid: keycardUid,
+                pubKey: "",
+                keyUid: "",
+                locked: false,
+                name: "",
+                image: "",
+                icon: "",
+                pairType: Constants.keycard.keyPairType.unknown,
+                derivedFrom: "",
+                accounts: [],
+            }
+        }
     }
 }
