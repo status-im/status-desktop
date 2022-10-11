@@ -4,6 +4,11 @@
         <file>pages/CommunitiesPortalLayoutPage.qml</file>
         <file>pages/CommunitiesPortalDummyModel.qml</file>
         <file>pages/CommunitiesPortalModelEditor.qml</file>
-        <file>pages/ImageSelectPopup.qml</file>
+        <file>Storybook/LogsView.qml</file>
+        <file>Storybook/qmldir</file>
+        <file>Storybook/LogsAndControlsPanel.qml</file>
+        <file>Storybook/ImageSelectPopup.qml</file>
+        <file>Storybook/StorybookUtils.qml</file>
+        <file>Storybook/Logs.qml</file>
     </qresource>
 </RCC>
