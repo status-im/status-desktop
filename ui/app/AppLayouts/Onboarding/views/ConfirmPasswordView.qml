@@ -49,104 +49,90 @@ Item {
         function forcePasswordInputFocus() { confPswInput.forceActiveFocus(Qt.MouseFocusReason) }
     }
 
-    Column {
+    ColumnLayout {
         id: view
-        spacing: 4 * Style.current.padding
-        width: 416
+        spacing: Style.current.bigPadding
+        height: 460
         anchors.centerIn: parent
 
         StatusBaseText {
-            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.alignment: Qt.AlignHCenter
             text: qsTr("Have you written down your password?")
             font.pixelSize: 22
             font.bold: true
             color: Theme.palette.directColor1
         }
 
-        Column {
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: Style.current.padding
+        ColumnLayout {
+            Layout.alignment: Qt.AlignHCenter
+            spacing: 4
 
             StatusBaseText {
-                anchors.horizontalCenter: parent.horizontalCenter
+                Layout.alignment: Qt.AlignHCenter
                 text: qsTr("You will never be able to recover your password if you lose it.")
                 font.pixelSize: 15
                 color: Theme.palette.dangerColor1
             }
 
             StatusBaseText {
-                anchors.horizontalCenter: parent.horizontalCenter
+                Layout.alignment: Qt.AlignHCenter
                 text: qsTr("If you need to, write it using pen and paper and keep in a safe place.")
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
             }
 
             StatusBaseText {
-                anchors.horizontalCenter: parent.horizontalCenter
+                Layout.alignment: Qt.AlignHCenter
                 text: qsTr("If you lose your password you will lose access to your Status profile.")
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
             }
         }
 
-        Column {
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: Style.current.padding
-            width: parent.width
+        StatusPasswordInput {
+            id: confPswInput
 
-            // TODO replace with StatusInput as soon as it supports password
-            Input {
-                id: confPswInput
+            property bool showPassword: false
 
-                property bool showPassword: false
+            objectName: "confirmAgainPasswordInput"
+            Layout.preferredWidth: 416
+            Layout.alignment: Qt.AlignHCenter
+            enabled: !submitBtn.loading
+            placeholderText: qsTr("Confirm your password (again)")
+            echoMode: showPassword ? TextInput.Normal : TextInput.Password
+            validator: RegExpValidator { regExp: /^[!-~]{0,64}$/ } // That incudes NOT extended ASCII printable characters less space and a maximum of 64 characters allowed
+            rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
+            onTextChanged: { errorTxt.text = "" }
+            Keys.onReturnPressed: { if(submitBtn.enabled) d.submit()}
 
-                width: parent.width
-                enabled: !submitBtn.loading
-                placeholderText: qsTr("Confirm your password (again)")
-                textField.echoMode: showPassword ? TextInput.Normal : TextInput.Password
-                textField.validator: RegExpValidator { regExp: /^[!-~]{0,64}$/ } // That incudes NOT extended ASCII printable characters less space and a maximum of 64 characters allowed
-                keepHeight: true
-                textField.rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
-                onTextChanged: { errorTxt.text = "" }
-                Keys.onReturnPressed: { if(submitBtn.enabled) d.submit()}
+            StatusFlatRoundButton {
+                id: showHideCurrentIcon
+                visible: confPswInput.text !== ""
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 16
+                width: 24
+                height: 24
+                icon.name: confPswInput.showPassword ? "hide" : "show"
+                icon.color: Theme.palette.baseColor1
 
-                StatusFlatRoundButton {
-                    id: showHideCurrentIcon
-                    visible: confPswInput.text !== ""
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.right: parent.right
-                    anchors.rightMargin: 16
-                    width: 24
-                    height: 24
-                    icon.name: confPswInput.showPassword ? "hide" : "show"
-                    icon.color: Theme.palette.baseColor1
-
-                    onClicked: confPswInput.showPassword = !confPswInput.showPassword
-                }
-            }
-
-            StatusBaseText {
-                id: errorTxt
-                anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: 12
-                color: Theme.palette.dangerColor1
-                onTextChanged: {
-                    if(text === "") filler.visible = true
-                    else filler.visible = false
-                }
+                onClicked: confPswInput.showPassword = !confPswInput.showPassword
             }
         }
 
-        // Just a column filler to fit the design
-        Item {
-            height: Style.current.padding
-            width: parent.width
+        StatusBaseText {
+            id: errorTxt
+            Layout.alignment: Qt.AlignHCenter
+            Layout.fillHeight: true
+            Layout.topMargin: -Style.current.halfPadding
+            font.pixelSize: 12
+            color: Theme.palette.dangerColor1
         }
 
         StatusButton {
             id: submitBtn
             objectName: "confirmPswSubmitBtn"
-            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.alignment: Qt.AlignHCenter
             text: qsTr("Finalise Status Password Creation")
             enabled: !submitBtn.loading && (confPswInput.text === root.password)
 

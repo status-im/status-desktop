@@ -7,7 +7,7 @@ Feature: Status Desktop Group Chat
     Given the user starts the application with a specific data folder ../../../fixtures/group_chat
     When the user tester123 logs in with password TesTEr16843/!@00
     Then the user lands on the signed in app
-    
+
 	@mayfail
  	Scenario: As an admin user I want to create a group chat with my contacts and the invited users can send messages
 

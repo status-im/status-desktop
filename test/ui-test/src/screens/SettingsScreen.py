@@ -81,9 +81,9 @@ class ProfileSettingsScreen(Enum):
     CHANGE_PASSWORD_BUTTON: str = "change_password_button"
 
 class ChangePasswordMenu(Enum):
-    CHANGE_PASSWORD_CURRENT_PASSWORD_INPUT: str = "change_password_menu_current_password_text_field"
-    CHANGE_PASSWORD_NEW_PASSWORD_INPUT: str = "change_password_menu_new_password_text_field"
-    CHANGE_PASSWORD_NEW_PASSWORD_CONFIRM_INPUT: str = "change_password_menu_new_password_confirm_text_field"
+    CHANGE_PASSWORD_CURRENT_PASSWORD_INPUT: str = "change_password_menu_current_password"
+    CHANGE_PASSWORD_NEW_PASSWORD_INPUT: str = "change_password_menu_new_password"
+    CHANGE_PASSWORD_NEW_PASSWORD_CONFIRM_INPUT: str = "change_password_menu_new_password_confirm"
     CHANGE_PASSWORD_SUBMIT_BUTTON: str = "change_password_menu_submit_button"
     CHANGE_PASSWORD_SUCCESS_MENU_SIGN_OUT_QUIT_BUTTON: str = "change_password_success_menu_sign_out_quit_button"
 

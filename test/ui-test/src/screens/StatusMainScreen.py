@@ -63,7 +63,7 @@ class StatusMainScreen:
         self.wait_for_splash_animation_ends()
         self.close_banners()
         
-    def wait_for_splash_animation_ends(self, timeoutMSec: int = 5000):
+    def wait_for_splash_animation_ends(self, timeoutMSec: int = 10000):
         start = time.time()
         [loaded, obj] = is_loaded_visible_and_enabled(MainScreenComponents.SPLASH_SCREEN.value)
         while loaded and (start + timeoutMSec / 1000 > time.time()):

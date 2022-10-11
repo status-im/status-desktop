@@ -82,6 +82,7 @@ Feature: Status Desktop community
             | test-channel-2            | test-category-2             | right_click_menu |
 
 
+	@mayfail
     Scenario: Admin edits a community category
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity

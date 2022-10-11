@@ -36,20 +36,25 @@ Item {
         function forcePasswordInputFocus() { view.forceNewPswInputFocus() }
     }
 
-    Column {
-        spacing: 4 * Style.current.padding
+    ColumnLayout {
+        spacing: Style.current.bigPadding
         anchors.centerIn: parent
+        width: 416
+        height: 460
         z: view.zFront
         PasswordView {
             id: view
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             passwordStrengthScoreFunction: root.startupStore.getPasswordStrengthScore
+            highSizeIntro: true
             onReturnPressed: { if(view.ready) d.submit() }
         }
         StatusButton {
             id: submitBtn
             objectName: "onboardingCreatePasswordButton"
             z: d.zFront
-            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.alignment: Qt.AlignHCenter
             text: qsTr("Create password")
             enabled: view.ready
             onClicked: { d.submit() }
