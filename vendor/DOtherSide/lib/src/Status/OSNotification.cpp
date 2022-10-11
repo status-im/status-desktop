@@ -14,6 +14,12 @@ static const UINT NOTIFYICONID = 0;
 static std::pair<HWND, OSNotification *> HWND_INSTANCE_PAIR;
 #endif
 
+#ifdef Q_OS_LINUX
+#include <QProcess>
+#include <QStandardPaths>
+#include <QDebug>
+#endif
+
 using namespace Status;
 
 OSNotification::OSNotification(QObject *parent)
@@ -158,6 +164,20 @@ void OSNotification::showNotification(const QString& title,
 
 #elif defined Q_OS_MACOS
     showNotificationMacOs(title, message, identifier);
+#elif defined Q_OS_LINUX
+    static QString notifyExe = QStandardPaths::findExecutable(QStringLiteral("notify-send"));
+    if (notifyExe.isEmpty()) {
+        qWarning() << "'notify-send' not found; OS notifications will not work";
+        return;
+    }
+
+    QStringList args; // spec https://specifications.freedesktop.org/notification-spec/notification-spec-latest.html
+    args << QStringLiteral("-a") << QStringLiteral("nim-status"); // appname; w/o .desktop extension
+    args << QStringLiteral("-c") << QStringLiteral("im"); // category; generic "im" category
+    args << title; // summary
+    args << message; // body
+
+    QProcess::execute(notifyExe, args);
 #endif
 }
 
