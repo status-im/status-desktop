@@ -11,7 +11,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
-Column {
+ColumnLayout {
     id: root
 
     property bool ready: newPswInput.text.length >= root.minPswLen && newPswInput.text === confirmPswInput.text && errorTxt.text === ""
@@ -22,6 +22,7 @@ Column {
     property string introText: qsTr("Create a password to unlock Status on this device & sign transactions.")
     property string recoverText: qsTr("You will not be able to recover this password if it is lost.")
     property string strengthenText: qsTr("Minimum %1 characters. To strengthen your password consider including:").arg(minPswLen)
+    property bool highSizeIntro: false
 
     property var passwordStrengthScoreFunction: function () {}
 
@@ -52,12 +53,12 @@ Column {
     }
 
     function checkPasswordMatches(onlyIfConfirmPasswordHasFocus = true) {
-        if (confirmPswInput.textField.text.length === 0) {
+        if (confirmPswInput.text.length === 0) {
             errorTxt.text = ""
             return
         }
 
-        if (onlyIfConfirmPasswordHasFocus && !confirmPswInput.textField.focus) {
+        if (onlyIfConfirmPasswordHasFocus && !confirmPswInput.focus) {
             return
         }
 
@@ -132,14 +133,13 @@ Column {
         function isTooShort() { return newPswInput.text.length < root.minPswLen }
     }
 
-    spacing: 3 * Style.current.padding / 2
+    spacing: Style.current.bigPadding
     z: root.zFront
-    width: 416
 
     // View visual content:
     StatusBaseText {
         id: title
-        anchors.horizontalCenter: parent.horizontalCenter
+        Layout.alignment: Qt.AlignHCenter
         visible: root.titleVisible
         text: root.title
         font.pixelSize: 22
@@ -147,39 +147,29 @@ Column {
         color: Theme.palette.directColor1
     }
 
-    Column {
-        StatusBaseText {
-            id: introTxt
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: root.introText
-            font.pixelSize: 12
-            color: Theme.palette.baseColor1
-        }
-
-        StatusBaseText {
-            id: recoverTxt
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: root.recoverText
-            font.pixelSize: 12
-            color: Theme.palette.dangerColor1
-        }
+    StatusBaseText {
+        id: introTxtField
+        Layout.fillWidth: true
+        text: "%1 <font color=\"%2\">%3</font>".arg(root.introText).arg(Theme.palette.dangerColor1).arg(root.recoverText)
+        font.pixelSize: root.highSizeIntro ? 15 : 12
+        color: Theme.palette.baseColor1
+        wrapMode: Text.WordWrap
+        horizontalAlignment: TextEdit.AlignHCenter
     }
 
-    // TODO replace with StatusInput as soon as it supports password
-    Input {
+    StatusPasswordInput {
         id: currentPswInput
-        textField.objectName: "passwordViewCurrentPasswordTextField"
+        objectName: "passwordViewCurrentPassword"
 
         property bool showPassword
 
         z: root.zFront
         visible: !root.createNewPsw
-        width: parent.width
+        Layout.fillWidth: true
         placeholderText: qsTr("Current password")
-        textField.echoMode: showPassword ? TextInput.Normal : TextInput.Password
-        textField.validator: d.validator
-        keepHeight: true
-        textField.rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
+        echoMode: showPassword ? TextInput.Normal : TextInput.Password
+        validator: d.validator
+        rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
         Keys.onReturnPressed: { root.returnPressed() }
 
         StatusFlatRoundButton {
@@ -197,24 +187,22 @@ Column {
         }
     }
 
-    Column {
+    ColumnLayout {
         spacing: Style.current.padding / 2
         z: root.zFront
-        width: parent.width
+        Layout.fillWidth: true
 
-        // TODO replace with StatusInput as soon as it supports password
-        Input {
+        StatusPasswordInput {
             id: newPswInput
-            textField.objectName: "passwordViewNewPasswordTextField"
+            objectName: "passwordViewNewPassword"
 
             property bool showPassword
 
-            width: parent.width
+            Layout.fillWidth: true
             placeholderText: qsTr("New password")
-            textField.echoMode: showPassword ? TextInput.Normal : TextInput.Password
-            textField.validator: d.validator
-            keepHeight: true
-            textField.rightPadding: showHideNewIcon.width + showHideNewIcon.anchors.rightMargin + Style.current.padding / 2
+            echoMode: showPassword ? TextInput.Normal : TextInput.Password
+            validator: d.validator
+            rightPadding: showHideNewIcon.width + showHideNewIcon.anchors.rightMargin + Style.current.padding / 2
 
             onTextChanged: {
                 // Update password checkers
@@ -225,7 +213,7 @@ Column {
 
                 // Update strength indicator:
                 strengthInditactor.strength = d.convertStrength(root.passwordStrengthScoreFunction(newPswInput.text))
-                if (textField.text.length === confirmPswInput.text.length) {
+                if (text.length === confirmPswInput.text.length) {
                     root.checkPasswordMatches(false)
                 }
             }
@@ -248,8 +236,7 @@ Column {
 
         StatusPasswordStrengthIndicator {
             id: strengthInditactor
-            width: parent.width
-            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.fillWidth: true
             value: Math.min(root.minPswLen, newPswInput.text.length)
             from: 0
             to: root.minPswLen
@@ -263,15 +250,18 @@ Column {
 
     StatusBaseText {
         id: strengthenTxt
-        anchors.horizontalCenter: parent.horizontalCenter
+        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignHCenter
+        wrapMode: Text.WordWrap
         text: root.strengthenText
         font.pixelSize: 12
         color: Theme.palette.baseColor1
+        clip: true
     }
 
-    Row {
+    RowLayout {
         spacing: Style.current.padding
-        anchors.horizontalCenter: parent.horizontalCenter
+        Layout.alignment: Qt.AlignHCenter
 
         StatusBaseText {
             id: lowerCaseTxt
@@ -302,31 +292,29 @@ Column {
         }
     }
 
-    // TODO replace with StatusInput as soon as it supports password
-    Input {
+    StatusPasswordInput {
         id: confirmPswInput
-        textField.objectName: "passwordViewNewPasswordConfirmTextField"
+        objectName: "passwordViewNewPasswordConfirm"
 
         property bool showPassword
 
         z: root.zFront
-        width: parent.width
+        Layout.fillWidth: true
         placeholderText: qsTr("Confirm password")
-        textField.echoMode: showPassword ? TextInput.Normal : TextInput.Password
-        textField.validator: d.validator
-        keepHeight: true
-        textField.rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Style.current.padding / 2
+        echoMode: showPassword ? TextInput.Normal : TextInput.Password
+        validator: d.validator
+        rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Style.current.padding / 2
 
         onTextChanged: {
             d.passwordValidation();
-            if(textField.text.length === newPswInput.text.length) {
+            if(text.length === newPswInput.text.length) {
                 root.checkPasswordMatches()
             }
         }
 
-        textField.onFocusChanged: {
+        onFocusChanged: {
             // When clicking into the confirmation input, validate if new password:
-            if(textField.focus) {
+            if(focus) {
                 d.passwordValidation()
             }
             // When leaving the confirmation input because of the button or other input component is focused, check if password matches
@@ -353,20 +341,9 @@ Column {
 
     StatusBaseText {
         id: errorTxt
-        anchors.horizontalCenter: parent.horizontalCenter
+        Layout.alignment: Qt.AlignHCenter
+        Layout.fillHeight: true
         font.pixelSize: 12
         color: Theme.palette.dangerColor1
-        onTextChanged: {
-            if(text === "") filler.visible = true
-            else filler.visible = false
-        }
-    }
-
-    // Just a column filler to keep the component height althought errorTxt.text is ""
-    Item {
-        id: filler
-        width: root.width
-        visible: true
-        height: errorTxt.height
     }
 }

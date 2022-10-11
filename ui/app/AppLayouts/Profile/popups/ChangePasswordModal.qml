@@ -68,8 +68,13 @@ StatusModal {
 
     PasswordView {
         id: view
-        anchors.topMargin: Style.current.padding
-        anchors.centerIn: parent
+        anchors {
+            fill: parent
+            topMargin: Style.current.padding
+            bottomMargin: Style.current.padding
+            leftMargin: Style.current.xlPadding
+            rightMargin: Style.current.xlPadding
+        }
         passwordStrengthScoreFunction: RootStore.getPasswordStrengthScore
         titleVisible: false
         introText: qsTr("Change password used to unlock Status on this device & sign transactions.")

@@ -129,9 +129,9 @@ userContextmenu_InActiveButton= {"container": statusDesktop_mainWindow_overlay, 
 userContextmenu_AutomaticButton= {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuAutomaticAction", "type": "StatusMenuItemDelegate", "visible": True}
 
 # Change Password Menu 
-change_password_menu_current_password_text_field = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewCurrentPasswordTextField", "type": "StyledTextField", "visible": True}
-change_password_menu_new_password_text_field = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewNewPasswordTextField", "type": "StyledTextField", "visible": True}
-change_password_menu_new_password_confirm_text_field = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewNewPasswordConfirmTextField", "type": "StyledTextField", "visible": True}
+change_password_menu_current_password = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewCurrentPassword", "type": "StatusPasswordInput", "visible": True}
+change_password_menu_new_password = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewNewPassword", "type": "StatusPasswordInput", "visible": True}
+change_password_menu_new_password_confirm = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
 change_password_menu_submit_button = {"container": statusDesktop_mainWindow_overlay, "objectName": "changePasswordModalSubmitButton", "type": "StatusButton", "visible": True}
 change_password_success_menu_sign_out_quit_button = {"container": statusDesktop_mainWindow_overlay, "objectName": "changePasswordSuccessModalSignOutAndQuitButton", "type": "StatusButton", "visible": True}
 
