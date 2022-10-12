@@ -149,10 +149,11 @@ Item {
                 //TODO remove when sync code is implemented
                 opacity: 0.0
             }
-            PropertyChanges {
-                target: keycardLink
-                text: qsTr("Login with Keycard")
-            }
+            // TODO: Functionality is not completed. Missing saving of keystore files which blocks wallet account creation. @see #7867
+            // PropertyChanges {
+            //     target: keycardLink
+            //     text: qsTr("Login with Keycard")
+            // }
             PropertyChanges {
                 target: seedLink
                 text: qsTr("Enter a seed phrase")
