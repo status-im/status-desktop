@@ -16,7 +16,7 @@ StatusScrollView {
     property var model
     property bool searchLayout: false
 
-    signal cardClicked(string communityId)
+    signal cardClicked(communityId: string, joined: bool)
 
     clip: false
 
@@ -65,7 +65,7 @@ StatusScrollView {
             popularity: model.popularity
             // <out of scope> categories:  model.categories
 
-            onClicked: root.cardClicked(communityId)
+            onClicked: root.cardClicked(communityId, model.joined)
         }
     }
 

@@ -90,6 +90,10 @@ QtObject {
         mainModule.setActiveSectionById(communityId);
     }
 
+    function spectateCommunity(communityId: string) {
+        communitiesModuleInst.spectateCommunity(communityId, userProfile.name)
+    }
+
     function setFileListItems(filePaths) {
         root.communitiesModuleInst.setFileListItems(filePaths)
     }

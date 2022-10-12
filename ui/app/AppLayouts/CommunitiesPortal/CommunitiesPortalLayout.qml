@@ -53,8 +53,12 @@ StatusSectionLayout {
 
         readonly property bool searchMode: searcher.text.length > 0
 
-        function navigateToCommunity(communityId) {
-            root.communitiesStore.setActiveCommunity(communityId)
+        function navigateToCommunity(communityId: string, joined: bool) {
+            if (joined) {
+                root.communitiesStore.setActiveCommunity(communityId)
+            } else {
+                root.communitiesStore.spectateCommunity(communityId)
+            }
         }
     }
 
@@ -161,7 +165,7 @@ StatusSectionLayout {
                     model: searchModel
                     searchLayout: d.searchMode
 
-                    onCardClicked: d.navigateToCommunity(communityId)
+                    onCardClicked: d.navigateToCommunity(communityId, joined)
                 }
 
                 StatusBaseText {
