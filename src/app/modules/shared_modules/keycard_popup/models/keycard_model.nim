@@ -120,6 +120,13 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, @[ModelRole.Locked.int])
 
+  proc setName*(self: KeycardModel, keycardUid: string, name: string) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].keycardUid == keycardUid):
+        self.items[i].setName(name)
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[ModelRole.Name.int])
+
   proc setKeycardUid*(self: KeycardModel, keycardUid: string, keycardNewUid: string) =
     for i in 0 ..< self.items.len:
       if(self.items[i].keycardUid == keycardUid):

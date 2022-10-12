@@ -14,9 +14,12 @@ method getNextPrimaryState*(self: KeycardMetadataDisplayState, controller: Contr
       return createState(StateType.FactoryResetConfirmationDisplayMetadata, self.flowType, self)
   if self.flowType == FlowType.DisplayKeycardContent:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+  if self.flowType == FlowType.RenameKeycard:
+    return createState(StateType.EnterKeycardName, self.flowType, nil)
 
 method executeTertiaryCommand*(self: KeycardMetadataDisplayState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.DisplayKeycardContent:
+    self.flowType == FlowType.DisplayKeycardContent or
+    self.flowType == FlowType.RenameKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

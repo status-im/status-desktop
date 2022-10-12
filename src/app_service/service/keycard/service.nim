@@ -28,6 +28,7 @@ const DefaultBIP44Path = "m/0"
 
 const PINLengthForStatusApp* = 6
 const PUKLengthForStatusApp* = 12
+const CardNameLength* = 20
 
 const SupportedMnemonicLength12* = 12
 const SupportedMnemonicLength18* = 18
@@ -211,9 +212,12 @@ QtObject:
     self.startFlow(payload)
 
   proc startStoreMetadataFlow*(self: Service, cardName: string, pin: string, walletPaths: seq[string]) =
+    var name = cardName
+    if cardName.len > CardNameLength:
+      name = cardName[0 .. CardNameLength - 1]
     let payload = %* { 
       RequestParamPIN: pin,
-      RequestParamCardName: cardName,
+      RequestParamCardName: name,
       RequestParamWalletPaths: walletPaths
     }
     self.currentFlow = KCSFlowType.StoreMetadata

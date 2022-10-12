@@ -36,6 +36,7 @@ const SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT* = "walletAccount/tokensRebuilt"
 const SIGNAL_KEYCARD_LOCKED* = "keycardLocked"
 const SIGNAL_KEYCARD_UNLOCKED* = "keycardUnlocked"
 const SIGNAL_KEYCARD_UID_UPDATED* = "keycardUidUpdated"
+const SIGNAL_KEYCARD_NAME_CHANGED* = "keycardNameChanged"
 
 var
   balanceCache {.threadvar.}: Table[string, float64]
@@ -88,6 +89,7 @@ type TokensPerAccountArgs* = ref object of Args
 type KeycardActivityArgs* = ref object of Args
   keycardUid*: string
   keycardNewUid*: string
+  keycardNewName*: string
 
 const CheckBalanceSlotExecuteIntervalInSeconds = 15 * 60 # 15 mins
 const CheckBalanceTimerIntervalInMilliseconds = 5000 # 5 sec
@@ -522,10 +524,11 @@ QtObject:
   proc setKeycardName*(self: Service, keycardUid: string, name: string): bool =
     try:
       let response = backend.setKeycardName(keycardUid, name)
-      return self.responseHasNoErrors("setKeycardName", response)
+      result = self.responseHasNoErrors("setKeycardName", response)
+      if result:
+        self.events.emit(SIGNAL_KEYCARD_NAME_CHANGED, KeycardActivityArgs(keycardUid: keycardUid, keycardNewName: name))
     except Exception as e:
       error "error: ", procName="setKeycardName", errName = e.name, errDesription = e.msg
-    return false
 
   proc setKeycardLocked*(self: Service, keycardUid: string): bool =
     try:
@@ -535,7 +538,6 @@ QtObject:
         self.events.emit(SIGNAL_KEYCARD_LOCKED, KeycardActivityArgs(keycardUid: keycardUid))
     except Exception as e:
       error "error: ", procName="setKeycardLocked", errName = e.name, errDesription = e.msg
-    return false
 
   proc setKeycardUnlocked*(self: Service, keycardUid: string): bool =
     try:
@@ -545,7 +547,6 @@ QtObject:
         self.events.emit(SIGNAL_KEYCARD_UNLOCKED, KeycardActivityArgs(keycardUid: keycardUid))
     except Exception as e:
       error "error: ", procName="setKeycardUnlocked", errName = e.name, errDesription = e.msg
-    return false
 
   proc updateKeycardUid*(self: Service, oldKeycardUid: string, newKeycardUid: string): bool =
     try:
@@ -555,7 +556,6 @@ QtObject:
         self.events.emit(SIGNAL_KEYCARD_UID_UPDATED, KeycardActivityArgs(keycardUid: oldKeycardUid, keycardNewUid: newKeycardUid))
     except Exception as e:
       error "error: ", procName="updateKeycardUid", errName = e.name, errDesription = e.msg
-    return false
 
   proc deleteKeycard*(self: Service, keycardUid: string): bool =
     try:

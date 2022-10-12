@@ -52,6 +52,10 @@ type StateType* {.pure.} = enum
   EnterBiometricsPassword = "EnterBiometricsPassword"
   WrongBiometricsPassword = "WrongBiometricsPassword"
   BiometricsReadyToSign = "BiometricsReadyToSign"
+  EnterKeycardName = "EnterKeycardName"
+  RenamingKeycard = "RenamingKeycard"
+  KeycardRenameSuccess = "KeycardRenameSuccess"
+  KeycardRenameFailure = "KeycardRenameFailure"
 
 
 ## This is the base class for all state we may have in onboarding/login flow.

@@ -15,6 +15,7 @@ QtObject:
   proc keyPairSelectedItemChanged*(self: KeyPairSelectedItem) {.signal.}
   proc keyPairSelectedItemLockedChanged*(self: KeyPairSelectedItem) {.signal.}
   proc keyPairSelectedItemIconChanged*(self: KeyPairSelectedItem) {.signal.}
+  proc keyPairSelectedItemNameChanged*(self: KeyPairSelectedItem) {.signal.}
 
   proc setItem*(self: KeyPairSelectedItem, item: KeyPairItem) =
     self.item = item
@@ -56,6 +57,11 @@ QtObject:
   QtProperty[string] name:
     read = getName
     notify = keyPairSelectedItemChanged
+  proc updateName*(self: KeyPairSelectedItem, name: string) =
+    if self.item.isNil:
+      return
+    self.item.setName(name)
+    self.keyPairSelectedItemNameChanged()
 
   proc getImage*(self: KeyPairSelectedItem): string {.slot.} =
     if(self.item.isNil):

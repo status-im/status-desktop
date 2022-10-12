@@ -12,12 +12,14 @@ method executePrimaryCommand*(self: KeycardEmptyState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or
-    self.flowType == FlowType.DisplayKeycardContent:
+    self.flowType == FlowType.DisplayKeycardContent or
+    self.flowType == FlowType.RenameKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method executeTertiaryCommand*(self: KeycardEmptyState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or
-    self.flowType == FlowType.DisplayKeycardContent:
+    self.flowType == FlowType.DisplayKeycardContent or
+    self.flowType == FlowType.RenameKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

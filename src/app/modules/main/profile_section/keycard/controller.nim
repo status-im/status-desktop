@@ -55,6 +55,10 @@ proc init*(self: Controller) =
     let args = KeycardActivityArgs(e)
     self.delegate.onKeycardUnlocked(args.keycardUid)
 
+  self.events.on(SIGNAL_KEYCARD_NAME_CHANGED) do(e: Args):
+    let args = KeycardActivityArgs(e)
+    self.delegate.onKeycardNameChanged(args.keycardUid, args.keycardNewName)
+
   self.events.on(SIGNAL_KEYCARD_UID_UPDATED) do(e: Args):
     let args = KeycardActivityArgs(e)
     self.delegate.onKeycardUidUpdated(args.keycardUid, args.keycardNewUid)

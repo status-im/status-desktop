@@ -23,9 +23,11 @@ ColumnLayout {
     QtObject {
         id: d
         property bool collapsed: true
+        property string keyUid: ""
 
         function resetKeycardDetails() {
             let kcItem = root.keycardStore.getKeycardDetailsAsJson(root.keycardUid)
+            d.keyUid = kcItem.keyUid
             keycardDetails.keycardName = kcItem.name
             keycardDetails.keycardLocked = kcItem.locked
             keycardDetails.keyPairType = kcItem.pairType
@@ -83,7 +85,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runRenameKeycardPopup()
+            root.keycardStore.runRenameKeycardPopup(root.keycardUid, d.keyUid)
         }
     }
 

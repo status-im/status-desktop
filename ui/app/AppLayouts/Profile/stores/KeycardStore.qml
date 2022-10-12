@@ -34,8 +34,8 @@ QtObject {
         root.keycardModule.runFactoryResetPopup()
     }
 
-    function runRenameKeycardPopup() {
-        root.keycardModule.runRenameKeycardPopup()
+    function runRenameKeycardPopup(keycardUid, keyUid) {
+        root.keycardModule.runRenameKeycardPopup(keycardUid, keyUid)
     }
 
     function runChangePinPopup() {

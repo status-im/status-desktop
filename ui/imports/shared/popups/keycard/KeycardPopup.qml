@@ -58,6 +58,9 @@ StatusModal {
         if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.displayKeycardContent) {
             return qsTr("Check what’s on a Keycard")
         }
+        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard) {
+            return qsTr("Rename Keycard")
+        }
         return ""
     }
 
@@ -67,6 +70,7 @@ StatusModal {
         property bool seedPhraseRevealed: false
         readonly property bool disablePopupClose: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
                                                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                                                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard ||
                                                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
                                                   (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess &&
                                                    root.sharedKeycardModule.migratingProfileKeyPair())
@@ -94,6 +98,9 @@ StatusModal {
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameSuccess ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameFailure ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetSuccess ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmptyMetadata ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
@@ -157,6 +164,9 @@ StatusModal {
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongBiometricsPassword ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPassword) {
                     return passwordComponent
+                }
+                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterKeycardName) {
+                    return enterNameComponent
                 }
 
                 return undefined
@@ -294,6 +304,21 @@ StatusModal {
                 }
             }
         }
+
+        Component {
+            id: enterNameComponent
+            EnterName {
+                sharedKeycardModule: root.sharedKeycardModule
+
+                Component.onCompleted: {
+                    d.primaryButtonEnabled = false
+                }
+
+                onValidation: {
+                    d.primaryButtonEnabled = result
+                }
+            }
+        }
     }
 
     leftButtons: [
@@ -402,13 +427,30 @@ StatusModal {
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached)
                         return qsTr("Cancel")
                 }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinVerified ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached)
+                        return qsTr("Cancel")
+                }
 
                 return ""
             }
             visible: text !== ""
             enabled: {
                 if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair) {
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard) {
                     if (d.disablePopupClose) {
                         return false
                     }
@@ -458,7 +500,8 @@ StatusModal {
             visible: text !== ""
             enabled: {
                 if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair) {
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard) {
                     if (d.disablePopupClose) {
                         return false
                     }
@@ -629,6 +672,7 @@ StatusModal {
                 }
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.displayKeycardContent) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmptyMetadata ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
                         return qsTr("Done")
                     }
@@ -644,12 +688,36 @@ StatusModal {
                         return qsTr("Unlock Keycard")
                     }
                 }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmptyMetadata ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameFailure ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard)
+                        return qsTr("Done")
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin) {
+                        return qsTr("I don’t know the PIN")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinVerified ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        return qsTr("Next")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached) {
+                        return qsTr("Unlock Keycard")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterKeycardName) {
+                        return qsTr("Rename this Keycard")
+                    }
+                }
                 return ""
             }
             visible: text !== ""
             enabled: {
                 if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair) {
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard) {
                     if (d.disablePopupClose) {
                         return false
                     }
@@ -703,6 +771,10 @@ StatusModal {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.repeatPin)
                         return false
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterKeycardName)
+                        return d.primaryButtonEnabled
                 }
                 return true
             }

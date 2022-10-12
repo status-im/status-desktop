@@ -57,6 +57,7 @@ type FlowType* {.pure.} = enum
   Authentication = "Authentication"
   UnlockKeycard = "UnlockKeycard"
   DisplayKeycardContent = "DisplayKeycardContent"
+  RenameKeycard = "RenameKeycard"
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -91,7 +92,7 @@ method onKeycardResponse*(self: AccessInterface, keycardFlowType: string, keycar
 method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Path = "", txHash = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setUidOfAKeycardWhichNeedToBeUnlocked*(self: AccessInterface, value: string) {.base.} =
+method setUidOfAKeycardWhichNeedToBeProcessed*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setPin*(self: AccessInterface, value: string) {.base.} =
@@ -101,6 +102,9 @@ method setPuk*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setPassword*(self: AccessInterface, value: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setKeycarName*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkRepeatedKeycardPinWhileTyping*(self: AccessInterface, pin: string): bool {.base.} =
@@ -122,6 +126,9 @@ method setSelectedKeyPair*(self: AccessInterface, item: KeyPairItem) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setKeyPairStoredOnKeycard*(self: AccessInterface, cardMetadata: CardMetadata) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setNamePropForKeyPairStoredOnKeycard*(self: AccessInterface, name: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method migratingProfileKeyPair*(self: AccessInterface): bool {.base.} =

@@ -64,8 +64,8 @@ QtObject:
   proc runFactoryResetPopup*(self: View) {.slot.} =
     self.delegate.runFactoryResetPopup()
 
-  proc runRenameKeycardPopup*(self: View) {.slot.} =
-    self.delegate.runRenameKeycardPopup()
+  proc runRenameKeycardPopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
+    self.delegate.runRenameKeycardPopup(keycardUid, keyUid)
 
   proc runChangePinPopup*(self: View) {.slot.} =
     self.delegate.runChangePinPopup()

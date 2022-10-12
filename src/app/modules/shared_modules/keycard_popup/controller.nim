@@ -31,12 +31,13 @@ type
     connectionKeycardResponse: UUID
     tmpKeycardContainsMetadata: bool
     tmpCardMetadata: CardMetadata
-    tmpKeycardUidForUnlocking: string
+    tmpKeycardUidForProcessing: string
     tmpPin: string
     tmpPinMatch: bool
     tmpPuk: string
     tmpValidPuk: bool
     tmpPassword: string
+    tmpKeycardName: string
     tmpSelectedKeyPairIsProfile: bool
     tmpSelectedKeyPairDto: KeyPairDto
     tmpSelectedKeyPairWalletPaths: seq[string]
@@ -142,11 +143,11 @@ proc containsMetadata*(self: Controller): bool =
 proc setContainsMetadata*(self: Controller, value: bool) =
   self.tmpKeycardContainsMetadata = value
 
-proc setUidOfAKeycardWhichNeedToBeUnlocked*(self: Controller, value: string) =
-  self.tmpKeycardUidForUnlocking = value
+proc setUidOfAKeycardWhichNeedToBeProcessed*(self: Controller, value: string) =
+  self.tmpKeycardUidForProcessing = value
 
-proc getUidOfAKeycardWhichNeedToBeUnlocked*(self: Controller): string =
-  return self.tmpKeycardUidForUnlocking
+proc getUidOfAKeycardWhichNeedToBeProcessed*(self: Controller): string =
+  return self.tmpKeycardUidForProcessing
 
 proc setPin*(self: Controller, value: string) =
   self.tmpPin = value
@@ -189,6 +190,12 @@ proc setPassword*(self: Controller, value: string) =
 
 proc getPassword*(self: Controller): string =
   return self.tmpPassword
+
+proc setKeycarName*(self: Controller, value: string) =
+  self.tmpKeycardName = value
+
+proc getKeycarName*(self: Controller): string =
+  return self.tmpKeycardName
 
 proc getKeyUidWhichIsBeingAuthenticating*(self: Controller): string =
   self.tmpKeyUidWhichIsBeingAuthenticating
@@ -272,6 +279,9 @@ proc setMetadataFromKeycard*(self: Controller, cardMetadata: CardMetadata, updat
   self.tmpCardMetadata = cardMetadata
   if updateKeyPair:
     self.delegate.setKeyPairStoredOnKeycard(cardMetadata)
+
+proc setNamePropForKeyPairStoredOnKeycard*(self: Controller, name: string) =
+  self.delegate.setNamePropForKeyPairStoredOnKeycard(name)
 
 proc runSharedModuleFlow*(self: Controller, flowToRun: FlowType) =
   self.delegate.runFlow(flowToRun)
@@ -369,6 +379,14 @@ proc setCurrentKeycardStateToUnlocked*(self: Controller, keycardUid: string) =
     return
   if not self.walletAccountService.setKeycardUnlocked(keycardUid):
     info "updating keycard unlocked state failed", keycardUid=keycardUid
+
+proc setKeycardName*(self: Controller, keycardUid: string, keycardName: string): bool =
+  if not serviceApplicable(self.walletAccountService):
+    return false
+  if not self.walletAccountService.setKeycardName(keycardUid, keycardName):
+    info "updating keycard name failed", keycardUid=keycardUid
+    return false
+  return true
 
 proc updateKeycardUid*(self: Controller, keycardUid: string) =
   if not serviceApplicable(self.walletAccountService):
