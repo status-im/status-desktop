@@ -506,6 +506,8 @@ QtObject:
       ModelRole.MentionedUsersPks.int
       ])
 
+    self.updateContactInReplies(messageId)
+
   proc clear*(self: Model) =
     self.beginResetModel()
     self.items = @[]
