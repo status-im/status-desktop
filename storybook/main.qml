@@ -31,8 +31,16 @@ ApplicationWindow {
             anchors.topMargin: 48
 
             Column {
-                id: navigation
                 spacing: 0
+
+                CheckBox {
+                    text: "Load asynchronously"
+                    checked: storeSettings.loadAsynchronously
+
+                    onToggled: storeSettings.loadAsynchronously = checked
+                }
+
+                Item { width: 1; height: 30 }
 
                 StatusNavigationListItem {
                     title: "CommunitiesPortalLayout"
@@ -43,20 +51,37 @@ ApplicationWindow {
         }
 
         centerPanel: Item {
-            id: centerPanel
             anchors.fill: parent
 
             Loader {
                 id: viewLoader
+
                 anchors.fill: parent
                 clip: true
+
                 source: storeSettings.selected
+                asynchronous: storeSettings.loadAsynchronously
+                visible: status === Loader.Ready
+
+                // force reload when `asynchronous` changes
+                onAsynchronousChanged: {
+                    const tmp = storeSettings.selected
+                    storeSettings.selected = ""
+                    storeSettings.selected = tmp
+                }
+            }
+
+            BusyIndicator {
+                anchors.centerIn: parent
+                visible: viewLoader.status === Loader.Loading
             }
         }
     }
 
     Settings {
         id: storeSettings
+
         property string selected: ""
+        property bool loadAsynchronously: false
     }
 }
