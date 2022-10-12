@@ -34,6 +34,7 @@ QtObject:
   type UrlsManager* = ref object of QObject
     events: EventEmitter
     protocolUriOnStart: string
+    loggedIn: bool
 
   proc setup(self: UrlsManager, urlSchemeEvent: StatusEvent,
       singleInstance: SingleInstance) =
@@ -52,6 +53,7 @@ QtObject:
     result.setup(urlSchemeEvent, singleInstance)
     result.events = events
     result.protocolUriOnStart = protocolUriOnStart
+    result.loggedIn = false
 
   proc prepareGroupChatDetails(self: UrlsManager, urlQuery: string,
        data: var StatusUrlArgs) =
@@ -64,6 +66,10 @@ QtObject:
       info "wrong url format for group chat"
 
   proc onUrlActivated*(self: UrlsManager, urlRaw: string) {.slot.} =
+    if not self.loggedIn:
+      self.protocolUriOnStart = urlRaw
+      return
+
     var data = StatusUrlArgs()
     let url = urlRaw.multiReplace((" ", ""))
       .multiReplace(("\r\n", ""))
@@ -143,6 +149,7 @@ QtObject:
     self.events.emit(SIGNAL_STATUS_URL_REQUESTED, data)
 
   proc userLoggedIn*(self: UrlsManager) =
+    self.loggedIn = true
     if self.protocolUriOnStart != "":
       self.onUrlActivated(self.protocolUriOnStart)
       self.protocolUriOnStart = ""
