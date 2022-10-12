@@ -20,8 +20,8 @@ import shared.controls 1.0
 import shared.controls.chat 1.0
 import "../panels"
 import "../popups"
-import "../stores"
 
+import AppLayouts.Onboarding.stores 1.0
 
 import utils 1.0
 

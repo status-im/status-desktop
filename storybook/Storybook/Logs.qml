@@ -15,13 +15,19 @@ QtObject {
         function createLog(name, argumentNames, args) {
             let log = (new Date()).toLocaleTimeString(Qt.locale(), "h:mm:ss") + ": " + name
 
-            if (args.length === 0)
+            if (!args || args.length === 0)
                 return log
 
             log += ": ["
 
             for (let i = 0; i < args.length; i++) {
-                log += argumentNames[i] + ": " + JSON.stringify(args[i])
+
+                const argName = argumentNames[i]
+
+                if (!!argName)
+                    log +=argName + ": "
+
+                log += JSON.stringify(args[i])
 
                 if (i !== args.length - 1)
                     log += ", "

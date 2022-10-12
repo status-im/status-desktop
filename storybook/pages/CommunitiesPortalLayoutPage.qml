@@ -20,48 +20,43 @@ SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
 
-        ColumnLayout {
+        CommunitiesPortalLayout {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
-            CommunitiesPortalLayout {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+            communitiesStore: CommunitiesStore {
+                readonly property string locale: ""
+                readonly property int unreadNotificationsCount: 42
+                readonly property string communityTags:
+                    JSON.stringify({"Activism":"✊","Art":"🎨","Blockchain":"🔗","Books & blogs":"📚","Career":"💼"})
+                readonly property var curatedCommunitiesModel: SortFilterProxyModel {
 
-                communitiesStore: CommunitiesStore {
-                    readonly property string locale: ""
-                    readonly property int unreadNotificationsCount: 42
-                    readonly property string communityTags:
-                        JSON.stringify({"Activism":"✊","Art":"🎨","Blockchain":"🔗","Books & blogs":"📚","Career":"💼"})
-                    readonly property var curatedCommunitiesModel: SortFilterProxyModel {
+                    sourceModel: CommunitiesPortalDummyModel { id: mockedModel }
 
-                        sourceModel: CommunitiesPortalDummyModel { id: mockedModel }
-
-                        filters: IndexFilter {
-                            inverted: true
-                            minimumIndex: Math.floor(slider.value)
-                        }
-                    }
-
-                    function setActiveCommunity() {
-                        logs.logEvent("CommunitiesStore::setActiveCommunity", ["communityId"], arguments)
+                    filters: IndexFilter {
+                        inverted: true
+                        minimumIndex: Math.floor(slider.value)
                     }
                 }
 
-                // TODO: onCompleted handler and localAccountSensitiveSettings are here to allow opening
-                // "Import Community" and "Create New Community" popups. However those popups shouldn't
-                // be tightly coupled with `CommunitiesPortalLayout` so it should be refactored in the next step.
-                // Pressing buttons "Import using key" and "Create new community" should only request for opening
-                // dialogs, and in Storybook it should be logged in the same way as calls to stores.
-                // Mentioned popups should have their own pages in the Storybook.
-                Component.onCompleted: {
-                    Global.appMain = this
+                function setActiveCommunity() {
+                    logs.logEvent("CommunitiesStore::setActiveCommunity", ["communityId"], arguments)
                 }
+            }
 
-                QtObject {
-                    id: localAccountSensitiveSettings
-                    readonly property bool isDiscordImportToolEnabled: false
-                }
+            // TODO: onCompleted handler and localAccountSensitiveSettings are here to allow opening
+            // "Import Community" and "Create New Community" popups. However those popups shouldn't
+            // be tightly coupled with `CommunitiesPortalLayout` so it should be refactored in the next step.
+            // Pressing buttons "Import using key" and "Create new community" should only request for opening
+            // dialogs, and in Storybook it should be logged in the same way as calls to stores.
+            // Mentioned popups should have their own pages in the Storybook.
+            Component.onCompleted: {
+                Global.appMain = this
+            }
+
+            QtObject {
+                id: localAccountSensitiveSettings
+                readonly property bool isDiscordImportToolEnabled: false
             }
         }
 
