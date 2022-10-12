@@ -603,7 +603,7 @@ Rectangle {
 
         if (d.internalPaste) {
             if (d.copiedTextPlain.includes("@")) {
-                d.copiedTextFormatted = d.copiedTextFormatted.replace(/underline/g, "none").replace(/span style="/g, "span style=\" text-decoration:none;")
+                d.copiedTextFormatted = d.copiedTextFormatted.replace(/span style="/g, "span style=\" text-decoration:none;")
 
                 let lastFoundIndex = -1
                 for (let j = 0; j < d.copiedMentionsPos.length; j++) {
