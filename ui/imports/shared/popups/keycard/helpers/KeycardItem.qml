@@ -26,7 +26,7 @@ StatusListItem {
     color: root.keycardLocked? Theme.palette.dangerColor3 : Style.current.grey
     title: root.keycardName
     statusListItemTitleAside.textFormat: Text.RichText
-    statusListItemTitleAside.visible: true
+    statusListItemTitleAside.visible: !!statusListItemTitleAside.text
     statusListItemTitleAside.text: {
         let t = ""
         if (root.keyPairType === Constants.keycard.keyPairType.profile) {
@@ -45,11 +45,12 @@ StatusListItem {
         name: root.keyPairImage? root.keyPairImage : root.keyPairIcon
         isImage: !!root.keyPairImage
         color: root.keyPairType === Constants.keycard.keyPairType.profile?
-                   Utils.colorForPubkey(d.myPublicKey) : Theme.palette.primaryColor1
+                   Utils.colorForPubkey(d.myPublicKey) :
+                   root.keycardLocked? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
         letterSize: Math.max(4, asset.width / 2.4)
         charactersLen: 2
         isLetterIdenticon: !root.keyPairIcon && !asset.name.toString()
-        bgColor: root.keycardLocked? Theme.palette.dangerColor2 : Theme.palette.primaryColor3
+        bgColor: root.keycardLocked? Theme.palette.dangerColor3 : Theme.palette.primaryColor3
     }
 
     ringSettings {

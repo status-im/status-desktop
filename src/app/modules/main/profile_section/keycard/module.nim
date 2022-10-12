@@ -123,7 +123,7 @@ method runUnlockKeycardPopupForKeycardWithUid*(self: Module, keycardUid: string)
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeUnlocked(keycardUid)
+  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.UnlockKeycard)
 
 method runDisplayKeycardContentPopup*(self: Module) =
@@ -138,8 +138,12 @@ method runFactoryResetPopup*(self: Module) =
     return
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.FactoryReset)
 
-method runRenameKeycardPopup*(self: Module) =
-  info "TODO: Rename Keycard..."
+method runRenameKeycardPopup*(self: Module, keycardUid: string, keyUid: string) =
+  self.createSharedKeycardModule()
+  if self.keycardSharedModule.isNil:
+    return
+  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.RenameKeycard, keyUid)
 
 method runChangePinPopup*(self: Module) =
   info "TODO: Change PIN for a Keycard..."
@@ -187,10 +191,10 @@ proc buildKeycardList(self: Module) =
         item.setImage(singletonInstance.userProfile.getIcon())
       if ka.walletType == WalletTypeSeed:
         item.setPairType(KeyPairType.SeedImport)
-        item.setIcon("wallet")
+        item.setIcon("keycard")
       if ka.walletType == WalletTypeKey:
         item.setPairType(KeyPairType.PrivateKeyImport)
-        item.setIcon("wallet")
+        item.setIcon("keycard")
       item.addAccount(ka.name, ka.path, ka.address, ka.emoji, ka.color, icon = "", balance = 0.0)
     items.add(item)
   self.view.setKeycardItems(items)
@@ -205,6 +209,10 @@ method onKeycardLocked*(self: Module, keycardUid: string) =
 
 method onKeycardUnlocked*(self: Module, keycardUid: string) =
   self.view.keycardModel().setLocked(keycardUid, false)
+  self.view.emitKeycardDetailsChangedSignal(keycardUid)
+
+method onKeycardNameChanged*(self: Module, keycardUid: string, keycardNewName: string) =
+  self.view.keycardModel().setName(keycardUid, keycardNewName)
   self.view.emitKeycardDetailsChangedSignal(keycardUid)
 
 method onKeycardUidUpdated*(self: Module, keycardUid: string, keycardNewUid: string) = 

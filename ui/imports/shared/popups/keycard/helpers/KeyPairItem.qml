@@ -27,10 +27,21 @@ StatusListItem {
 
     signal keyPairSelected()
 
-    color: Style.current.grey
+    color: root.keyPairCardLocked? Theme.palette.dangerColor3 : Style.current.grey
     title: root.keyPairName
-    titleAsideText: root.keyPairType === Constants.keycard.keyPairType.profile?
-                        Utils.getElidedCompressedPk(d.myPublicKey) : ""
+    statusListItemTitleAside.textFormat: Text.RichText
+    statusListItemTitleAside.visible: !!statusListItemTitleAside.text
+    statusListItemTitleAside.text: {
+        let t = ""
+        if (root.keyPairType === Constants.keycard.keyPairType.profile) {
+            t = Utils.getElidedCompressedPk(d.myPublicKey)
+        }
+        if (root.keyPairCardLocked) {
+            let label = qsTr("Keycard Locked")
+            t += `<font color="${Theme.palette.dangerColor1}" size="5">${label}</font>`
+        }
+        return t
+    }
 
     asset {
         width: root.keyPairIcon? 24 : 40

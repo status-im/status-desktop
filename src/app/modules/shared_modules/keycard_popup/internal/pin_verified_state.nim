@@ -11,12 +11,14 @@ proc delete*(self: PinVerifiedState) =
 method getNextPrimaryState*(self: PinVerifiedState, controller: Controller): State =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.DisplayKeycardContent:
+    self.flowType == FlowType.DisplayKeycardContent or
+    self.flowType == FlowType.RenameKeycard:
       return createState(StateType.KeycardMetadataDisplay, self.flowType, nil)
   return nil
 
 method executeTertiaryCommand*(self: PinVerifiedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.DisplayKeycardContent:
+    self.flowType == FlowType.DisplayKeycardContent or
+    self.flowType == FlowType.RenameKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

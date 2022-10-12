@@ -18,6 +18,8 @@ QtObject:
       keyPairStoredOnKeycardVariant: QVariant
       keyPairForAuthentication: KeyPairSelectedItem
       keyPairForAuthenticationVariant: QVariant
+      keyPairForProcessing: KeyPairSelectedItem
+      keyPairForProcessingVariant: QVariant
       keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
 
   proc delete*(self: View) =
@@ -39,6 +41,10 @@ QtObject:
       self.keyPairForAuthentication.delete
     if not self.keyPairForAuthenticationVariant.isNil:
       self.keyPairForAuthenticationVariant.delete
+    if not self.keyPairForProcessing.isNil:
+      self.keyPairForProcessing.delete
+    if not self.keyPairForProcessingVariant.isNil:
+      self.keyPairForProcessingVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -144,6 +150,10 @@ QtObject:
     read = getKeyPairStoredOnKeycard
   proc setKeyPairStoredOnKeycard*(self: View, item: KeyPairItem) =
     self.keyPairStoredOnKeycard.setItem(item)
+  proc setNamePropForKeyPairStoredOnKeycard*(self: View, name: string) =
+    if self.keyPairStoredOnKeycard.isNil:
+      return
+    self.keyPairStoredOnKeycard.updateName(name)
 
   proc createKeyPairForAuthentication*(self: View) =
     if self.keyPairForAuthentication.isNil:
@@ -164,6 +174,21 @@ QtObject:
       return
     self.keyPairForAuthentication.updateLockedState(locked)
 
+  proc createKeyPairForProcessing*(self: View) =
+    if self.keyPairForProcessing.isNil:
+      self.keyPairForProcessing = newKeyPairSelectedItem()
+    if self.keyPairForProcessingVariant.isNil:
+      self.keyPairForProcessingVariant = newQVariant(self.keyPairForProcessing)
+
+  proc getKeyPairForProcessing*(self: View): QVariant {.slot.} =
+    if self.keyPairForProcessingVariant.isNil:
+      return newQVariant()
+    return self.keyPairForProcessingVariant
+  QtProperty[QVariant] keyPairForProcessing:
+    read = getKeyPairForProcessing
+  proc setKeyPairForProcessing*(self: View, item: KeyPairItem) =
+    self.keyPairForProcessing.setItem(item)
+
   proc setPin*(self: View, value: string) {.slot.} =
     self.delegate.setPin(value)
 
@@ -172,6 +197,9 @@ QtObject:
 
   proc setPassword*(self: View, value: string) {.slot.} =
     self.delegate.setPassword(value)
+
+  proc setKeycarName*(self: View, value: string) {.slot.} =
+    self.delegate.setKeycarName(value)
 
   proc checkRepeatedKeycardPinWhileTyping*(self: View, pin: string): bool {.slot.} =
     return self.delegate.checkRepeatedKeycardPinWhileTyping(pin)

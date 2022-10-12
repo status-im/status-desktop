@@ -66,8 +66,8 @@ method getKeycardData*[T](self: Module[T]): string =
 method setKeycardData*[T](self: Module[T], value: string) =
   self.view.setKeycardData(value)
 
-method setUidOfAKeycardWhichNeedToBeUnlocked*[T](self: Module[T], value: string) =
-  self.controller.setUidOfAKeycardWhichNeedToBeUnlocked(value)
+method setUidOfAKeycardWhichNeedToBeProcessed*[T](self: Module[T], value: string) =
+  self.controller.setUidOfAKeycardWhichNeedToBeProcessed(value)
 
 method setPin*[T](self: Module[T], value: string) =
   self.controller.setPin(value)
@@ -77,6 +77,9 @@ method setPuk*[T](self: Module[T], value: string) =
 
 method setPassword*[T](self: Module[T], value: string) =
   self.controller.setPassword(value)
+
+method setKeycarName*[T](self: Module[T], value: string) =
+  self.controller.setKeycarName(value)
 
 method checkRepeatedKeycardPinWhileTyping*[T](self: Module[T], pin: string): bool =
   self.controller.setPinMatch(false)
@@ -295,12 +298,30 @@ proc prepareKeyPairItemForAuthentication[T](self: Module[T], keyUid: string) =
       item = it
       break
   if item.name.len == 0:
-    error "sm_cannot find keypair among known keypairs for the given keyUid", keyUid=keyUid
+    error "sm_cannot find keypair among known keypairs for the given keyUid for authentication", keyUid=keyUid
   item.setPubKey("")
   item.setImage("")
   item.setIcon("keycard")
   item.setPairType(KeyPairType.Unknown)
   self.view.setKeyPairForAuthentication(item)
+
+proc prepareKeyPairForProcessing[T](self: Module[T], keyUid: string) =
+  var item = initKeyPairItem()
+  self.view.createKeyPairForProcessing()
+  let items = self.buildKeyPairsList(excludeAlreadyMigratedPairs = false)
+  for it in items:
+    if it.keyUid == keyUid:
+      item = it
+      break
+  if item.name.len == 0:
+    error "sm_cannot find keypair among known keypairs for the given keyUid for processing", keyUid=keyUid
+  let keyPairs = self.controller.getMigratedKeyPairByKeyUid(keyUid)
+  if keyPairs.len == 0:
+    error "sm_cannot find keypair among migrated keypairs for the given keyUid for processing", keyUid=keyUid
+  else:
+    item.setLocked(keyPairs[0].keycardLocked)
+  item.setIcon("keycard")
+  self.view.setKeyPairForProcessing(item)
 
 method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path = "", txHash = "") =
   ## In case of `Authentication` if we're signing a transaction we need to provide a key uid of a keypair that an account 
@@ -347,6 +368,12 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.view.createKeyPairStoredOnKeycard()
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true)
+    return
+  if flowToRun == FlowType.RenameKeycard:
+    self.prepareKeyPairForProcessing(keyUid)
+    self.view.createKeyPairStoredOnKeycard()
+    self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
+    self.controller.runGetMetadataFlow(resolveAddress = true) # we're firstly displaying the keycard content
     return
 
 method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =
@@ -398,6 +425,9 @@ method setKeyPairStoredOnKeycard*[T](self: Module[T], cardMetadata: CardMetadata
     item.addAccount(name = "", wa.path, wa.address, emoji = "", color = self.generateRandomColor(), icon = "wallet", balance)
   self.view.setKeyPairStoredOnKeycardIsKnown(knownKeyPair)
   self.view.setKeyPairStoredOnKeycard(item)
+
+method setNamePropForKeyPairStoredOnKeycard*[T](self: Module[T], name: string) =
+  self.view.setNamePropForKeyPairStoredOnKeycard(name)
   
 method onUserAuthenticated*[T](self: Module[T], password: string) =
   let currStateObj = self.view.currentStateObj()

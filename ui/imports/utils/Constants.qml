@@ -96,6 +96,7 @@ QtObject {
         readonly property string authentication: "Authentication"
         readonly property string unlockKeycard: "UnlockKeycard"
         readonly property string displayKeycardContent: "DisplayKeycardContent"
+        readonly property string renameKeycard: "RenameKeycard"
     }
 
     readonly property QtObject keycardSharedState: QtObject {
@@ -145,6 +146,10 @@ QtObject {
         readonly property string biometricsReadyToSign: "BiometricsReadyToSign"
         readonly property string enterBiometricsPassword: "EnterBiometricsPassword"
         readonly property string wrongBiometricsPassword: "WrongBiometricsPassword"
+        readonly property string enterKeycardName: "EnterKeycardName"
+        readonly property string renamingKeycard: "RenamingKeycard"
+        readonly property string keycardRenameSuccess: "KeycardRenameSuccess"
+        readonly property string keycardRenameFailure: "KeycardRenameFailure"
     }
 
     readonly property QtObject keychain: QtObject {
@@ -390,6 +395,8 @@ QtObject {
             readonly property int enterSeedPhraseWordsHeight: 60
             readonly property int keycardPinLength: 6
             readonly property int keycardPukLength: 12
+            readonly property int keycardNameLength: 20
+            readonly property int keycardNameInputWidth: 448
             readonly property int keycardPukAdditionalSpacingOnEvery4Items: 4
             readonly property int keycardPukAdditionalSpacing: 32
             readonly property int fontSize1: 22

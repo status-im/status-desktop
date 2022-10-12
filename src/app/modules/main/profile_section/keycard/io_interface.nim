@@ -46,7 +46,7 @@ method runDisplayKeycardContentPopup*(self: AccessInterface) {.base.} =
 method runFactoryResetPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runRenameKeycardPopup*(self: AccessInterface) {.base.} =
+method runRenameKeycardPopup*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runChangePinPopup*(self: AccessInterface) {.base.} =
@@ -68,6 +68,9 @@ method onKeycardLocked*(self: AccessInterface, keycardUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onKeycardUnlocked*(self: AccessInterface, keycardUid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardNameChanged*(self: AccessInterface, keycardUid: string, keycardNewName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onKeycardUidUpdated*(self: AccessInterface, keycardUid: string, keycardNewUid: string) {.base.} =

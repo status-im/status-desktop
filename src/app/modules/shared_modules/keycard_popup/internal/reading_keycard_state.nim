@@ -14,12 +14,7 @@ method executeBackCommand*(self: ReadingKeycardState, controller: Controller) =
       controller.cancelCurrentFlow()
 
 method executeTertiaryCommand*(self: ReadingKeycardState, controller: Controller) =
-  if self.flowType == FlowType.FactoryReset or
-    self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.Authentication or
-    self.flowType == FlowType.UnlockKeycard or
-    self.flowType == FlowType.DisplayKeycardContent:
-      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  error "reading state must not be canceled"
 
 method getNextSecondaryState*(self: ReadingKeycardState, controller: Controller): State =
   let (flowType, flowEvent) = controller.getLastReceivedKeycardData()
@@ -28,11 +23,19 @@ method getNextSecondaryState*(self: ReadingKeycardState, controller: Controller)
 
 method resolveKeycardNextState*(self: ReadingKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
-  if self.flowType == FlowType.UnlockKeycard:
-    let ensureKeycardPresenceState = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
-    if ensureKeycardPresenceState.isNil: # means the keycard is inserted
-      let kcUid = controller.getUidOfAKeycardWhichNeedToBeUnlocked()
-      if kcUid.len > 0 and kcUid != keycardEvent.instanceUID:
-        return createState(StateType.WrongKeycard, self.flowType, nil)
+  if self.flowType == FlowType.UnlockKeycard or
+    self.flowType == FlowType.RenameKeycard:
+      # this part is only for the flows which are card specific (the card we're running a flow for is known in advance)
+      let ensureKeycardPresenceState = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
+      if ensureKeycardPresenceState.isNil: # means the keycard is inserted
+        let nextState = ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
+        if not nextState.isNil and 
+          (nextState.stateType == StateType.KeycardEmpty or
+          nextState.stateType == StateType.NotKeycard or
+          nextState.stateType == StateType.KeycardEmptyMetadata):
+            return nextState
+        let kcUid = controller.getUidOfAKeycardWhichNeedToBeProcessed()
+        if kcUid.len > 0 and kcUid != keycardEvent.instanceUID:
+          return createState(StateType.WrongKeycard, self.flowType, nil)
   # this is used in case a keycard is inserted and we jump to the first meaningful screen
   return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
