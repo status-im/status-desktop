@@ -293,6 +293,7 @@ Item {
                 name: model.icon.length > 0? "" : model.name
                 icon.name: model.icon
                 icon.source: model.image
+                identicon.asset.color: (hovered || identicon.highlighted || checked) ? model.color : icon.color
                 tooltip.text: model.name
                 checked: model.active
                 badge.value: model.notificationsCount
