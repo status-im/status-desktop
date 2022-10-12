@@ -47,6 +47,12 @@ ApplicationWindow {
                     selected: viewLoader.source.toString().includes(title)
                     onClicked: mainPageView.page(title);
                 }
+
+                StatusNavigationListItem {
+                    title: "LoginView"
+                    selected: viewLoader.source.toString().includes(title)
+                    onClicked: mainPageView.page(title);
+                }
             }
         }
 
