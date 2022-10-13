@@ -128,15 +128,14 @@ SettingsContentBase {
                                    model.color
                         charactersLen: model.type === Constants.settingsSection.exemptions.oneToOneChat? 2 : 1
                         isLetterIdenticon: !model.image || model.image === ""
-                        height: isImage ? 40 : 20
-                        width: isImage ? 40 : 20
+                        height: 40
+                        width: 40
                     }
 
                     components: [
                         StatusIcon {
                             visible: model.customized
-                            icon: "chevron-down"
-                            rotation: 270
+                            icon: "next"
                             color: Theme.palette.baseColor1
                             MouseArea {
                                 anchors.fill: parent
@@ -149,7 +148,6 @@ SettingsContentBase {
                         StatusIcon {
                             visible: !model.customized
                             icon: "add"
-                            rotation: 270
                             color: Theme.palette.primaryColor1
                             MouseArea {
                                 anchors.fill: parent
@@ -184,13 +182,11 @@ SettingsContentBase {
                                 lineHeight: Constants.settingsSection.infoLineHeight
                                 lineHeightMode: Text.FixedHeight
                                 color: Theme.palette.primaryColor1
-
                             }
 
                             StatusBaseText {
                                 Layout.preferredWidth: parent.width
-                                text: qsTr("To receive Status notifications, make sure you've enabled them in" +
-                                           " your computer's settings under <b>System Preferences > Notifications</b>")
+                                text: qsTr("To receive Status notifications, make sure you've enabled them in your computer's settings under <b>System Preferences > Notifications</b>")
                                 font.pixelSize: Constants.settingsSection.infoFontSize
                                 lineHeight: Constants.settingsSection.infoLineHeight
                                 lineHeightMode: Text.FixedHeight
