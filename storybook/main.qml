@@ -97,6 +97,12 @@ ApplicationWindow {
 
                     onPageSelected: root.currentPage = page
                 }
+
+                StatusNavigationListItem {
+                    title: "AboutView"
+                    selected: viewLoader.source.toString().includes(title)
+                    onClicked: mainPageView.page(title);
+                }
             }
         }
 
