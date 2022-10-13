@@ -98,14 +98,24 @@ Item {
     */
     signal editClicked()
 
-    function setWord(word) {
-        seedWordInput.input.edit.text = word
+    function setWord(seedWord) {
+        let seedWordTrimmed = seedWord.trim()
+        seedWordInput.input.edit.text = seedWordTrimmed
+        seedWordInput.input.edit.cursorPosition = seedWordInput.text.length
+        seedSuggestionsList.model = 0
+        root.doneInsertingWord(seedWordTrimmed)
     }
 
     onActiveFocusChanged: {
         if (root.activeFocus) {
             seedWordInput.input.edit.forceActiveFocus();
         }
+    }
+
+    QtObject {
+        id: d
+
+        property bool isInputValidWord: false
     }
 
     StatusInput {
@@ -121,12 +131,15 @@ Item {
         }
         input.acceptReturn: true
         onTextChanged: {
+            d.isInputValidWord = false
             filteredList.clear();
             let textToCheck = text.trim()
             if (textToCheck !== "") {
                 for (var i = 0; i < inputList.count; i++) {
                     if (inputList.get(i).seedWord.startsWith(textToCheck)) {
                         filteredList.insert(filteredList.count, {"seedWord": inputList.get(i).seedWord});
+                        if(inputList.get(i).seedWord === textToCheck)
+                            d.isInputValidWord = true
                     }
                 }
                 seedSuggestionsList.model = filteredList;
@@ -144,7 +157,7 @@ Item {
         onKeyPressed: {
             if (input.edit.keyEvent === Qt.Key_Tab || input.edit.keyEvent === Qt.Key_Return || input.edit.keyEvent === Qt.Key_Enter) {
                 if (!!text && seedSuggestionsList.count > 0) {
-                    seedSuggestionsList.completeWordFill(filteredList.get(seedSuggestionsList.currentIndex).seedWord)
+                    root.setWord(filteredList.get(seedSuggestionsList.currentIndex).seedWord)
                     event.accepted = true
                     return
                 }
@@ -159,6 +172,17 @@ Item {
         }
         onEditClicked: {
             root.editClicked();
+        }
+        // Consider word inserted if input looses focus while a valid word is present ("user" clicks outside)
+        Connections {
+            target: seedWordInput.input.edit
+            onActiveFocusChanged: {
+                if (!seedWordInput.input.edit.activeFocus && d.isInputValidWord) {
+                    // There are so many side effects regarding focus and doneInsertingWord that we need to reset this flag not to be processed again.
+                    d.isInputValidWord = false
+                    root.doneInsertingWord(root.text.trim())
+                }
+            }
         }
     }
 
@@ -201,14 +225,6 @@ Item {
                 seedSuggestionsList.currentIndex = 0
             }
 
-            function completeWordFill(seedWord) {
-                let seedWordTrimmed = seedWord.trim();
-                root.setWord(seedWordTrimmed);
-                seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
-                seedSuggestionsList.model = 0;
-                root.doneInsertingWord(seedWordTrimmed);
-            }
-
             clip: true
             ScrollBar.vertical: ScrollBar { }
             delegate: Item {
@@ -238,7 +254,7 @@ Item {
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
-                        seedSuggestionsList.completeWordFill(seedWord)
+                        root.setWord(seedWord)
                     }
                 }
             }
