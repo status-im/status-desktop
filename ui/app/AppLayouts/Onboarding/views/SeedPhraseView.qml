@@ -59,7 +59,7 @@ Item {
             font.pixelSize: Constants.keycard.general.fontSize2
             color: Theme.palette.dangerColor1
             horizontalAlignment: Qt.AlignHCenter
-            text: qsTr("You will need this to recover your Keycard if you loose\nyour PIN of if the wrong PIN is entered five times in a row.")
+            text: qsTr("You will need this to recover your Keycard if you lose\nyour PIN or if the wrong PIN is entered five times in a row.")
         }
 
         GridLayout {
