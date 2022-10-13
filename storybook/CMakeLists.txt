@@ -17,18 +17,11 @@ find_package(
 
 file(GLOB_RECURSE QML_FILES "stubs/*.qml" "Storybook/*.qml" "../ui/StatusQ/*.qml" "../ui/app/*.qml")
 file(GLOB_RECURSE JS_FILES "../ui/StatusQ/*.js" "../ui/app/*.js")
-file(GLOB_RECURSE HEADERS *.h)
-if(APPLE)
-  file(GLOB_RECURSE SOURCES *.cpp *.mm)
-else()
-  file(GLOB_RECURSE SOURCES *.cpp)
-endif()
 
 add_executable(
   ${PROJECT_NAME}
+  main.cpp
   qml.qrc
-  ${HEADERS}
-  ${SOURCES}
   ${QML_FILES}
   ${JS_FILES}
 )
