@@ -43,6 +43,24 @@ ActivityNotificationBase {
         prevMessageIndex: root.previousNotificationIndex
         prevMsgTimestamp: root.previousNotificationTimestamp
         onImageClicked: Global.openImagePopup(image, root.messageContextMenu)
+        messageClickHandler: (sender,
+                        point,
+                        isProfileClick,
+                        isSticker = false,
+                        isImage = false,
+                        image = null,
+                        isEmoji = false,
+                        ideEmojiPicker = false,
+                        isReply = false,
+                        isRightClickOnImage = false,
+                        imageSource = "") => {
+            if (isProfileClick) {
+                return Global.openProfilePopup(notification.author)
+            }
+
+            root.activityCenterClose()
+            root.store.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.id)
+        }
 
         CommunityBadge {
             readonly property var community: root.store.getCommunityDetailsAsJson(notification.communityId)
@@ -55,21 +73,21 @@ ActivityNotificationBase {
             communityImage: community.image
             communityColor: community.color
 
-            onCommunityNameClicked: {
-                root.store.setActiveCommunity(notification.message.communityId)
-            }
-            onChannelNameClicked: {
-                root.activityCenterClose()
-                root.store.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.id)
-            }
+            onCommunityNameClicked: root.store.setActiveCommunity(notification.communityId)
         }
     }
 
     ctaComponent: MembershipCta {
-        pending: true
-        accepted: false
-        declined: false
-        // onAcceptRequestToJoinCommunity: communitySectionModule.acceptRequestToJoinCommunity(id)
-        // onDeclineRequestToJoinCommunity: communitySectionModule.declineRequestToJoinCommunity(id)
+        pending: notification.membershipStatus === Constants.activityCenterMembershipStatusPending
+        accepted: notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted
+        declined: notification.membershipStatus === Constants.activityCenterMembershipStatusDeclined
+        onAcceptRequestToJoinCommunity: {
+            root.store.setActiveCommunity(message.communityId)
+            root.store.acceptRequestToJoinCommunity(notification.id)
+        }
+        onDeclineRequestToJoinCommunity: {
+            root.store.setActiveCommunity(message.communityId)
+            root.store.declineRequestToJoinCommunity(notification.id)
+        }
     }
 }

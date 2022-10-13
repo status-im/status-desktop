@@ -35,7 +35,7 @@ Item {
         color: {
             if (root.accepted) {
                 return Theme.palette.successColor1
-            } else if (root.dismissed) {
+            } else if (root.declined) {
                 return Theme.palette.dangerColor1
             }
             return Theme.palette.directColor1

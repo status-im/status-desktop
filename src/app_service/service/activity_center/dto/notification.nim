@@ -18,10 +18,17 @@ type ActivityCenterNotificationType* {.pure.}= enum
   CommunityMembershipRequest = 8
   CommunityKicked = 9
 
+type ActivityCenterMembershipStatus* {.pure.}= enum
+  Idle = 0,
+  Pending = 1,
+  Accepted = 2,
+  Declined = 3
+
 type ActivityCenterNotificationDto* = ref object of RootObj
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
   chatId*: string
   communityId*: string
+  membershipStatus*: ActivityCenterMembershipStatus
   name*: string
   author*: string
   notificationType*: ActivityCenterNotificationType
@@ -36,6 +43,7 @@ proc `$`*(self: ActivityCenterNotificationDto): string =
     id: {$self.id},
     chatId: {self.chatId},
     communityId: {self.communityId},
+    membershipStatus: {self.membershipStatus},
     author: {self.author},
     notificationType: {$self.notificationType.int},
     timestamp: {self.timestamp},
@@ -50,6 +58,14 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("chatId", result.chatId)
   discard jsonObj.getProp("communityId", result.communityId)
+
+  result.membershipStatus = ActivityCenterMembershipStatus.Idle
+  var membershipStatusInt: int
+  if (jsonObj.getProp("membershipStatus", membershipStatusInt) and
+    (membershipStatusInt >= ord(low(ActivityCenterMembershipStatus)) or
+    membershipStatusInt <= ord(high(ActivityCenterMembershipStatus)))):
+      result.membershipStatus = ActivityCenterMembershipStatus(membershipStatusInt)
+
   discard jsonObj.getProp("author", result.author)
 
   result.notificationType = ActivityCenterNotificationType.Unknown

@@ -47,7 +47,8 @@ Item {
     AcceptRejectOptionsButtonsPanel {
         id: buttons
         visible: pending
-        anchors.centerIn: parent
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
         onAcceptClicked: root.acceptClicked()
         onDeclineClicked: root.declineClicked()
         onProfileClicked: root.profileClicked()

@@ -7,28 +7,71 @@ import StatusQ.Components 0.1
 
 import shared 1.0
 import shared.panels 1.0
+import shared.controls 1.0
 import utils 1.0
 
 import "../controls"
 
-ActivityNotificationMessage {
+ActivityNotificationBase {
     id: root
 
-    badgeComponent: CommunityBadge {
-        id: communityBadge
+    bodyComponent: RowLayout {
+        readonly property var community: root.store.getCommunityDetailsAsJson(notification.communityId)
 
-        property var community: root.store.getCommunityDetailsAsJson(notification.message.communityId)
-
-        communityName: community.name
-        communityImage: community.image
-        communityColor: community.color
-
-        onCommunityNameClicked: {
-            root.store.setActiveCommunity(notification.message.communityId)
+        StatusSmartIdenticon {
+            id: identicon
+            name: community.name
+            asset.width: 40
+            asset.height: 40
+            asset.color: community.color
+            asset.letterSize: width / 2.4
+            asset.name: community.image
+            asset.isImage: true
         }
-        onChannelNameClicked: {
-            root.activityCenterClose()
-            root.store.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.id)
+
+        StyledText {
+            text: qsTr("Request to join")
+            font.weight: Font.Medium
+            font.pixelSize: 13
+            Layout.alignment: Qt.AlignVCenter
+        }
+
+        CommunityBadge {
+            communityName: community.name
+            communityImage: community.image
+            communityColor: community.color
+            onCommunityNameClicked: root.store.setActiveCommunity(notification.communityId)
+            Layout.alignment: Qt.AlignVCenter
+        }
+
+        StyledText {
+            text: {
+                if (notification.membershipStatus === Constants.activityCenterMembershipStatusPending)
+                    return qsTr("pending")
+                if (notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted)
+                    return qsTr("accepted")
+                if (notification.membershipStatus === Constants.activityCenterMembershipStatusDeclined)
+                    return qsTr("declined")
+                return ""
+            }
+            font.weight: Font.Medium
+            font.pixelSize: 13
+            Layout.alignment: Qt.AlignVCenter
+        }
+    }
+
+    ctaComponent: notification.membershipStatus === Constants.activityCenterMembershipStatusPending ? visitComponent : null
+
+    Component {
+        id: visitComponent
+
+        StyledTextEdit {
+            text: Utils.getLinkStyle(qsTr("Visit Community"), hoveredLink, Style.current.blue)
+            readOnly: true
+            textFormat: Text.RichText
+            color: Style.current.blue
+            font.pixelSize: 13
+            onLinkActivated: root.store.setActiveCommunity(notification.communityId)
         }
     }
 }

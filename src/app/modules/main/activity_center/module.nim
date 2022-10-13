@@ -128,6 +128,7 @@ method convertToItems*(
         n.id,
         n.chatId,
         n.communityId,
+        n.membershipStatus.int,
         sectionId,
         n.name,
         n.author,

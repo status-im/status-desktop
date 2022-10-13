@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 Rectangle {
     id: root
 
+    z: 100 // NOTE: workaround for message overlay
     height: visible ? 24 : 0
     width: childrenRect.width + Style.current.smallPadding * 2
     radius: height / 2
