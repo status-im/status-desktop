@@ -12,5 +12,6 @@
         <file>pages/CommunitiesPortalLayoutPage.qml</file>
         <file>pages/CommunitiesPortalModelEditor.qml</file>
         <file>pages/LoginViewPage.qml</file>
+        <file>pages/AboutViewPage.qml</file>
     </qresource>
 </RCC>

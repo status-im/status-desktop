@@ -214,11 +214,26 @@ StatusSectionLayout {
             AboutView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-
-                store: root.store
-                globalStore: root.globalStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.about)
                 contentWidth: d.contentWidth
+
+                store: QtObject {
+                    function checkForUpdates() {
+                        return root.store.checkForUpdates()
+                    }
+
+                    function getCurrentVersion() {
+                        return root.store.getCurrentVersion()
+                    }
+
+                    function getReleaseNotes() {
+                        console.log("TODO: getReleaseNotes")
+                    }
+
+                    function openLink(url) {
+                        Global.openLink(url)
+                 }
+                }
             }
 
             CommunitiesView {

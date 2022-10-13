@@ -7,7 +7,6 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
-
 import utils 1.0
 import shared 1.0
 import shared.status 1.0
@@ -16,7 +15,6 @@ SettingsContentBase {
     id: root
 
     property var store
-    property var globalStore
 
     titleRowComponentLoader.sourceComponent: StatusButton {
         size: StatusBaseButton.Size.Small
@@ -65,6 +63,9 @@ SettingsContentBase {
                 size: StatusBaseButton.Size.Small
                 icon.name: "info"
                 text: qsTr("Release Notes")
+                onClicked: {
+                    root.store.getReleaseNotes()
+                }
             }
         } // Column
 
@@ -99,7 +100,7 @@ SettingsContentBase {
                 text: qsTr("Status Desktop")
                 icon.width: 0
                 onClicked: {
-                    Global.openLink("https://github.com/status-im/status-desktop")
+                    root.store.openLink("https://github.com/status-im/status-desktop")
                 }
             }
 
@@ -110,7 +111,7 @@ SettingsContentBase {
                 text: qsTr("Status Go")
                 icon.width: 0
                 onClicked: {
-                    Global.openLink("https://github.com/status-im/status-go")
+                    root.store.openLink("https://github.com/status-im/status-go")
                 }
             }
 
@@ -121,7 +122,7 @@ SettingsContentBase {
                 text: qsTr("StatusQ")
                 icon.width: 0
                 onClicked: {
-                    Global.openLink("https://github.com/status-im/statusq")
+                    root.store.openLink("https://github.com/status-im/statusq")
                 }
             }
 
@@ -132,7 +133,7 @@ SettingsContentBase {
                 text: qsTr("go-waku")
                 icon.width: 0
                 onClicked: {
-                    Global.openLink("https://github.com/status-im/go-waku")
+                    root.store.openLink("https://github.com/status-im/go-waku")
                 }
             }
         }
@@ -154,6 +155,9 @@ SettingsContentBase {
                 rightPadding: Style.current.padding
                 text: qsTr("Terms of Use")
                 icon.width: 0
+                onClicked: {
+                    root.store.openLink("https://status.im/terms-of-use/")
+                }
             }
 
             StatusFlatButton {
@@ -163,7 +167,7 @@ SettingsContentBase {
                 text: qsTr("Privacy Policy")
                 icon.width: 0
                 onClicked: {
-                    Global.openLink("https://status.im/privacy-policy/")
+                    root.store.openLink("https://status.im/privacy-policy/")
                 }
             }
 
@@ -173,6 +177,9 @@ SettingsContentBase {
                 rightPadding: Style.current.padding
                 text: qsTr("Software License")
                 icon.width: 0
+                onClicked: {
+                    root.store.openLink("https://github.com/status-im/status-desktop/blob/master/LICENSE.md")
+                }
             }
         } // Column
     }
