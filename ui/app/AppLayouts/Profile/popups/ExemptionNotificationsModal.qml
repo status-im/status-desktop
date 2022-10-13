@@ -35,15 +35,13 @@ StatusModal {
 //                   Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(root.item.itemId)] :
 //                   root.item.color
         // until then the following is used
-        bgColor: root.item.type === Constants.settingsSection.exemptions.oneToOneChat?
-                 Utils.colorForPubkey(root.item.itemId) :
-                 root.item.color
+        bgColor: d.isOneToOneChat ? Utils.colorForPubkey(root.item.itemId) : root.item.color
         name: root.item.image
         isImage: !!root.item.image
-        charactersLen: root.item.type === Constants.settingsSection.exemptions.oneToOneChat? 2 : 1
+        charactersLen: d.isOneToOneChat ? 2 : 1
         isLetterIdenticon: root.item.image === ""
-        height: isLetterIdenticon ? 40 : 20
-        width: isLetterIdenticon ? 40 : 20
+        height: 40
+        width: 40
     }
 
     QtObject {
@@ -67,7 +65,6 @@ StatusModal {
         StatusListItem {
             width: parent.width
             title: qsTr("Mute all messages")
-            enabled: false
             components: [
                 StatusSwitch {
                     id: muteAllMessagesSwitch
@@ -89,7 +86,6 @@ StatusModal {
         StatusListItem {
             width: parent.width
             title: qsTr("Personal @ Mentions")
-            enabled: false
             visible: !d.isOneToOneChat
             components: [
                 NotificationSelect {
@@ -104,7 +100,6 @@ StatusModal {
         StatusListItem {
             width: parent.width
             title: qsTr("Global @ Mentions")
-            enabled: false
             visible: !d.isOneToOneChat
             components: [
                 NotificationSelect {
@@ -119,7 +114,6 @@ StatusModal {
         StatusListItem {
             width: parent.width
             title: qsTr("Other Messages")
-            enabled: false
             visible: !d.isOneToOneChat
             components: [
                 NotificationSelect {
