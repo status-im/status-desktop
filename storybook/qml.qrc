@@ -13,5 +13,6 @@
         <file>pages/CommunitiesPortalModelEditor.qml</file>
         <file>pages/LoginViewPage.qml</file>
         <file>pages/AboutViewPage.qml</file>
+        <file>pages/LanguageCurrencySettingsPage.qml</file>
     </qresource>
 </RCC>

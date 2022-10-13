@@ -30,6 +30,9 @@ ApplicationWindow {
         ListElement {
              title: "AboutView"
         }
+        ListElement {
+            title: "LanguageCurrencySettings"
+        }
     }
 
     SplitView {
@@ -74,18 +77,6 @@ ApplicationWindow {
                     model: pagesModel
 
                     onPageSelected: root.currentPage = page
-                }
-
-                StatusNavigationListItem {
-                    title: "AboutView"
-                    selected: viewLoader.source.toString().includes(title)
-                    onClicked: mainPageView.page(title);
-                }
-
-                StatusNavigationListItem {
-                    title: "AboutView"
-                    selected: viewLoader.source.toString().includes(title)
-                    onClicked: mainPageView.page(title);
                 }
             }
         }
