@@ -31,6 +31,7 @@ StatusGridView {
                 grid.itemAtIndex(i).textEdit.reset()
             }
         }
+        grid.isValid = false
     }
 
     function validate() {
@@ -118,14 +119,9 @@ StatusGridView {
         timer.setTimeout(function(){
             _internal.mnemonicInput = []
             for (let i = 0; i < words.length; i++) {
-                try {
-                    grid.itemAtIndex(i).setWord(words[i])
-                    if (words[i].length === 3) {
-                        grid.addWord(i + 1, words[i])
-                    }
-                } catch (e) {
-                    // Getting items outside of the current view might not work
-                }
+                const item = grid.itemAtIndex(i)
+                if (item && item.leftComponentText)
+                    item.setWord(words[i])
             }
         }, timeout);
         
@@ -220,7 +216,7 @@ StatusGridView {
                 var wordIndex = _internal.mnemonicInput.findIndex(x => x.pos === leftComponentText);
                 if (wordIndex > -1) {
                     _internal.mnemonicInput.splice(wordIndex , 1);
-                    grid.isValid = _internal.mnemonicInput.length ===  grid.model
+                    grid.isValid = _internal.mnemonicInput.length === grid.model
                 }
             }
 
