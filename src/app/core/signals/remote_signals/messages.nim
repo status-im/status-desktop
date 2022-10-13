@@ -120,7 +120,7 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
     for jsonVerificationRequest in event["event"]["verificationRequests"]:
       signal.verificationRequests.add(jsonVerificationRequest.toVerificationRequest())
 
-  if event["event"]{"savedAddresses"} != nil:
+  if event["event"]{"savedAddresses"} != nil and event["event"]{"savedAddresses"}.kind != JNull:
     for jsonSavedAddress in event["event"]["savedAddresses"]:
       signal.savedAddresses.add(jsonSavedAddress.toSavedAddressDto())
 
