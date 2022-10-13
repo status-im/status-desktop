@@ -65,6 +65,7 @@ Pane {
             outgoingVerificationStatus !== Constants.verificationStatus.verified &&
             outgoingVerificationStatus !== Constants.verificationStatus.trusted
         readonly property bool isVerificationRequestReceived: d.isCurrentUser ? false : root.contactsStore.hasReceivedVerificationRequestFrom(root.publicKey)
+        readonly property bool isVerificationDeclined: incomingVerificationStatus === Constants.verificationStatus.declined
 
         readonly property bool isTrusted: outgoingVerificationStatus === Constants.verificationStatus.trusted ||
                                           incomingVerificationStatus === Constants.verificationStatus.trusted
@@ -401,9 +402,13 @@ Pane {
                     StatusMenuItem {
                         text: qsTr("Verify Identity")
                         icon.name: "checkmark-circle"
-                        enabled: d.isContact && !d.isBlocked &&
-                                 d.outgoingVerificationStatus === Constants.verificationStatus.unverified &&
-                                 !d.isVerificationRequestReceived
+                        enabled: {
+                            if (d.isVerificationRequestReceived)
+                                return d.isVerificationDeclined
+                            return d.isContact && !d.isBlocked &&
+                                   d.outgoingVerificationStatus === Constants.verificationStatus.unverified
+                        }
+
                         onTriggered: {
                             moreMenu.close()
                             Global.openSendIDRequestPopup(root.publicKey,
@@ -413,7 +418,14 @@ Pane {
                     StatusMenuItem {
                         text: qsTr("ID Request Pending...")
                         icon.name: "checkmark-circle"
-                        enabled: d.isContact && !d.isBlocked && !d.isTrusted && d.isVerificationRequestSent
+                        enabled: {
+                            if (!d.isContact || d.isBlocked || d.isTrusted)
+                                return false
+                            if (d.isVerificationRequestReceived)
+                                return !isVerificationDeclined
+                            return d.isVerificationRequestSent
+                        }
+
                         onTriggered: {
                             moreMenu.close()
                             Global.openOutgoingIDRequestPopup(root.publicKey,

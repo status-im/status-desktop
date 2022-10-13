@@ -120,8 +120,9 @@ StatusModal {
     }
 
     rightButtons: [
-        StatusButton {
+        StatusFlatButton {
             visible: !root.responseText
+            type: StatusBaseButton.Type.Danger
             text: qsTr("Refuse Verification")
             onClicked: {
                 root.verificationRefused(root.senderPublicKey)
