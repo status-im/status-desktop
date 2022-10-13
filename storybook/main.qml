@@ -27,6 +27,9 @@ ApplicationWindow {
         ListElement {
              title: "LoginView"
         }
+        ListElement {
+             title: "AboutView"
+        }
     }
 
     SplitView {
