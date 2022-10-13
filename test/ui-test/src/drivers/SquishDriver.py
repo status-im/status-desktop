@@ -30,6 +30,9 @@ _MIN_WAIT_OBJ_TIMEOUT = 500
 
 _SEARCH_IMAGES_PATH = "../shared/searchImages/"
 
+def start_application(app_name: str):
+    squish.startApplication(app_name)
+
 # Waits for the given object is loaded, visible and enabled.
 # It returns a tuple: True in case it is found. Otherwise, false. And the object itself.
 def is_loaded_visible_and_enabled(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):

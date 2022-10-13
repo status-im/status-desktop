@@ -106,6 +106,9 @@ class StatusChatScreen:
         verify_screen(ChatComponents.MESSAGE_INPUT.value)
         verify_screen(ChatComponents.TOOLBAR_INFO_BUTTON.value)
     
+    #####################################
+    ### Screen get states:
+    #####################################
     def chat_loaded(self):
         verify(is_displayed(ChatComponents.LAST_MESSAGE.value), "Checking chat is loaded by looking if last message is displayed.")
 
@@ -113,16 +116,18 @@ class StatusChatScreen:
         obj = wait_and_get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))
         return obj
 
-    # Screen actions region:
-    def type_message_in_chat_input(self, message: str):
+    #####################################
+    ### Screen actions region:
+    #####################################
+    def type_message(self, message: str):
         type(ChatComponents.MESSAGE_INPUT.value, message)
 
-    def press_enter_in_chat_input(self):
+    def press_enter(self):
         press_enter(ChatComponents.MESSAGE_INPUT.value)
 
     def send_message(self, message: str):
-        self.type_message_in_chat_input(message)
-        self.press_enter_in_chat_input()
+        self.type_message(message)
+        self.press_enter()
         
     def clear_history(self):
         click_obj_by_name(ChatComponents.MORE_OPTIONS_BUTTON.value)
@@ -166,12 +171,7 @@ class StatusChatScreen:
         workflow = parentObject.cropWorkflow
         workflow.cropImage(groupChatUrl)
         click_obj_by_name(GroupChatEditPopup.GROUP_CHAT_CROPPER_ACCEPT_BUTTON.value)
-
-    # Verifications region:      
-    def verify_last_message_is_not_loaded(self):
-        [loaded, _] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
-        verify_false(loaded, "Success: No message was found")
-          
+        
     def send_gif(self):
         click_obj_by_name(ChatComponents.GIF_POPUP_BUTTON.value)
         click_obj_by_name(ChatComponents.ENABLE_GIF_BUTTON.value)
@@ -180,8 +180,140 @@ class StatusChatScreen:
         
     def select_the_emoji_in_suggestion_list(self):
         click_obj_by_name(Emoji.EMOJI_SUGGESTIONS_FIRST_ELEMENT.value)   
+        
+    def reply_to_message_at_index(self, index: int, message: str):
+        message_object_to_reply_to = self.get_message_at_index(index)
+        verify(not is_null(message_object_to_reply_to), "Message to reply to is loaded")
+        move_mouse_over_object(message_object_to_reply_to)
+        click_obj_by_name(ChatComponents.REPLY_TO_MESSAGE_BUTTON.value)
+        self.send_message(message)
+    
+    def edit_message_at_index(self, index: int, message: str):
+        message_object_to_edit = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))
+        hover_obj(message_object_to_edit)
+        click_obj_by_name(ChatComponents.EDIT_MESSAGE_BUTTON.value)
+        wait_for_object_and_type(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, "<Ctrl+a>")
+        type(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, message)
+        press_enter(ChatComponents.EDIT_MESSAGE_TEXTAREA.value)
+        
+    def switch_to_chat(self, chatName: str):
+        chat_lists = get_obj(ChatComponents.CHAT_LIST.value)
+        verify(chat_lists.count > 0, "At least one chat exists")
+        for i in range(chat_lists.count):
+            chat = chat_lists.itemAt(i)
+            chat_list_items = getChildrenWithObjectName(chat, "chatItem")
+            verify(len(chat_list_items) > 0, "StatusChatListItem exists")
+            if str(chat_list_items[0].name) == chatName:
+                click_obj(chat)
+                return
+        verify(False, "Chat switched")
+        
+    # TODO: Find ADMIN
+    def find_member_in_panel(self, member: str):
+        found = False
+        [is_loaded, membersList] = is_loaded_visible_and_enabled(ChatComponents.MEMBERS_LISTVIEW.value)
+        if is_loaded:
+            for index in range(membersList.count):
+                user = membersList.itemAtIndex(index)
+                if(user.userName == member):
+                    found = True
+                    break
+        return found
 
-    # Verifications region:        
+    def delete_message_at_index(self, index: int):
+        message_object_to_delete = self.get_message_at_index(index)
+        move_mouse_over_object(message_object_to_delete)
+        click_obj_by_name(ChatComponents.DELETE_MESSAGE_BUTTON.value)
+        click_obj_by_name(ChatComponents.CONFIRM_DELETE_MESSAGE_BUTTON.value)
+
+    def cannot_delete_last_message(self):
+        [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE.value)
+        if not loaded:
+            verify_failure("No message found")
+            return 
+        hover_obj(last_message_obj)
+        object_not_enabled(ChatComponents.DELETE_MESSAGE_BUTTON.value)       
+        
+    def send_message_with_mention(self, displayName: str, message: str):
+        self.do_mention(displayName)
+        self.send_message(message)
+    
+    def cannot_do_mention(self, displayName: str):    
+        self.type_message(_MENTION_SYMBOL + displayName)
+        displayed = is_displayed(ChatComponents.SUGGESTIONS_BOX.value)
+        self.press_enter()
+        verify(displayed == False , "Checking suggestion box is not displayed when trying to mention a non existing user.")
+        
+    def do_mention(self, displayName: str):
+        self.type_message(_MENTION_SYMBOL + displayName)
+        displayed = is_displayed(ChatComponents.SUGGESTIONS_BOX.value)
+        verify(displayed, "Checking suggestion box displayed when trying to do a mention")       
+        [loaded, suggestions_list] = is_loaded_visible_and_enabled(ChatComponents.SUGGESTIONS_LIST.value)
+        verify(suggestions_list.count > 0, "Checking if suggestion list is greater than 0")
+        found = False
+        if loaded:            
+            for index in range(suggestions_list.count):
+                user_mention = suggestions_list.itemAtIndex(index)
+                if user_mention.objectName == displayName:
+                    found = True
+                    click_obj(user_mention)
+                    break
+        verify(found, "Checking if the following display name is in the mention's list: " + displayName)
+                     
+    def install_sticker_pack(self, pack_index: str):
+        click_obj_by_name(ChatComponents.CHAT_INPUT_STICKER_BUTTON.value)
+        click_obj_by_name(ChatStickerPopup.STICKERS_POPUP_GET_STICKERS_BUTTON.value)
+        
+        # Wait for grid view to be loaded
+        loaded, grid_view = is_loaded_visible_and_enabled(ChatStickerPopup.STICKERS_POPUP_MARKET_GRID_VIEW.value)
+        if (not loaded):
+            verify_failure("Sticker market grid view is not loaded")
+          
+        # Wait for the items in the GridView to be loaded
+        verify(is_displayed(ChatStickerPopup.STICKERS_POPUP_MARKET_GRID_VIEW_DELEGATE_ITEM_1.value), "Sticker item 0 is not displayed")
+
+        scroll_list_view_at_index(grid_view, int(pack_index))
+
+        sticker_pack = grid_view.itemAtIndex(int(pack_index))
+        click_obj(sticker_pack)
+        
+        # Install and close
+        click_obj_by_name(ChatStickerPopup.STICKERS_POPUP_MARKET_INSTALL_BUTTON.value)
+        click_obj_by_name(ChatStickerPopup.MODAL_CLOSE_BUTTON.value)
+        
+        verify(sticker_pack.installed == True, "The sticker pack at position " + str(pack_index) + " was not installed")
+        
+        #Close sticker popup
+        click_obj_by_name(ChatComponents.CHAT_INPUT_STICKER_BUTTON.value)
+        
+    def send_sticker(self, sticker_index: int):
+        click_obj_by_name(ChatComponents.CHAT_INPUT_STICKER_BUTTON.value)
+        
+        loaded, sticker_list_grid = is_loaded_visible_and_enabled(ChatStickerPopup.STICKER_LIST_GRID.value)
+        
+        if (not loaded):
+            verify_failure("Sticker list grid view is not loaded")
+
+        sticker = sticker_list_grid.itemAtIndex(int(sticker_index))
+        click_obj(sticker)
+        
+    def send_emoji(self, emoji_short_name: str, message: str):
+        if (message != ""):
+            self.type_message(message)
+        
+        click_obj_by_name(ChatComponents.CHAT_INPUT_EMOJI_BUTTON.value)
+        emojiAttr = copy.deepcopy(getattr(names, ChatComponents.EMOJI_POPUP_EMOJI_PLACEHOLDER.value))
+        emojiAttr["objectName"] = emojiAttr["objectName"].replace("%NAME%", emoji_short_name)
+        click_obj_by_attr(emojiAttr)       
+        self.press_enter()
+
+    #####################################
+    ### Verifications region:
+    #####################################
+    def verify_last_message_is_not_loaded(self):
+        [loaded, _] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
+        verify_false(loaded, "Success: No message was found")
+                
     def verify_last_message_sent(self, message: str):
         # Get the message text
         # We don't search for StatusTextMessage_chatText directly, because there're 2 instances of it in a reply message
@@ -265,127 +397,10 @@ class StatusChatScreen:
     def verify_chat_created_message_is_displayed_in_history(self, createdTxt: str):
         chat_createChat_text_obj = self.get_message_at_index(ChatMessagesHistory.CHAT_CREATED_TEXT.value)        
         verify_text_contains(str(chat_createChat_text_obj.messageText), createdTxt)
-        
-    def reply_to_message_at_index(self, index: int, message: str):
-        message_object_to_reply_to = self.get_message_at_index(index)
-        verify(not is_null(message_object_to_reply_to), "Message to reply to is loaded")
-        move_mouse_over_object(message_object_to_reply_to)
-        click_obj_by_name(ChatComponents.REPLY_TO_MESSAGE_BUTTON.value)
-        self.send_message(message)
-    
-    def edit_message_at_index(self, index: int, message: str):
-        message_object_to_edit = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))
-        hover_obj(message_object_to_edit)
-        click_obj_by_name(ChatComponents.EDIT_MESSAGE_BUTTON.value)
-        wait_for_object_and_type(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, "<Ctrl+a>")
-        type(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, message)
-        press_enter(ChatComponents.EDIT_MESSAGE_TEXTAREA.value)
-    
-    # TODO: Find ADMIN
-    def find_member_in_panel(self, member: str):
-        found = False
-        [is_loaded, membersList] = is_loaded_visible_and_enabled(ChatComponents.MEMBERS_LISTVIEW.value)
-        if is_loaded:
-            for index in range(membersList.count):
-                user = membersList.itemAtIndex(index)
-                if(user.userName == member):
-                    found = True
-                    break
-        return found
 
-    def delete_message_at_index(self, index: int):
-        message_object_to_delete = self.get_message_at_index(index)
-        move_mouse_over_object(message_object_to_delete)
-        click_obj_by_name(ChatComponents.DELETE_MESSAGE_BUTTON.value)
-        click_obj_by_name(ChatComponents.CONFIRM_DELETE_MESSAGE_BUTTON.value)
-
-    def cannot_delete_last_message(self):
-        [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE.value)
-        if not loaded:
-            verify_failure("No message found")
-            return 
-        hover_obj(last_message_obj)
-        object_not_enabled(ChatComponents.DELETE_MESSAGE_BUTTON.value)
-        
-        
-    def send_message_with_mention(self, displayName: str, message: str):
-        self.do_mention(displayName)
-        self.send_message(message)
-    
-    def cannot_do_mention(self, displayName: str):    
-        self.chat_loaded()
-        self.type_message_in_chat_input(_MENTION_SYMBOL + displayName)
-        displayed = is_displayed(ChatComponents.SUGGESTIONS_BOX.value)
-        verify(displayed == False , "Checking suggestion box is not displayed when trying to mention a non existing user.")
-        
-    def do_mention(self, displayName: str):
-        self.chat_loaded()
-        self.type_message_in_chat_input(_MENTION_SYMBOL + displayName)
-        displayed = is_displayed(ChatComponents.SUGGESTIONS_BOX.value)
-        verify(displayed, "Checking suggestion box displayed when trying to do a mention")       
-        [loaded, suggestions_list] = is_loaded_visible_and_enabled(ChatComponents.SUGGESTIONS_LIST.value)
-        verify(suggestions_list.count > 0, "Checking if suggestion list is greater than 0")
-        found = False
-        if loaded:            
-            for index in range(suggestions_list.count):
-                user_mention = suggestions_list.itemAtIndex(index)
-                if user_mention.objectName == displayName:
-                    found = True
-                    click_obj(user_mention)
-                    break
-        verify(found, "Checking if the following display name is in the mention's list: " + displayName)
-              
-        
-    def install_sticker_pack(self, pack_index: str):
-        click_obj_by_name(ChatComponents.CHAT_INPUT_STICKER_BUTTON.value)
-        click_obj_by_name(ChatStickerPopup.STICKERS_POPUP_GET_STICKERS_BUTTON.value)
-        
-        # Wait for grid view to be loaded
-        loaded, grid_view = is_loaded_visible_and_enabled(ChatStickerPopup.STICKERS_POPUP_MARKET_GRID_VIEW.value)
-        if (not loaded):
-            verify_failure("Sticker market grid view is not loaded")
-          
-        # Wait for the items in the GridView to be loaded
-        verify(is_displayed(ChatStickerPopup.STICKERS_POPUP_MARKET_GRID_VIEW_DELEGATE_ITEM_1.value), "Sticker item 0 is not displayed")
-
-        scroll_list_view_at_index(grid_view, int(pack_index))
-
-        sticker_pack = grid_view.itemAtIndex(int(pack_index))
-        click_obj(sticker_pack)
-        
-        # Install and close
-        click_obj_by_name(ChatStickerPopup.STICKERS_POPUP_MARKET_INSTALL_BUTTON.value)
-        click_obj_by_name(ChatStickerPopup.MODAL_CLOSE_BUTTON.value)
-        
-        verify(sticker_pack.installed == True, "The sticker pack at position " + str(pack_index) + " was not installed")
-        
-        #Close sticker popup
-        click_obj_by_name(ChatComponents.CHAT_INPUT_STICKER_BUTTON.value)
-        
-    def send_sticker(self, sticker_index: int):
-        click_obj_by_name(ChatComponents.CHAT_INPUT_STICKER_BUTTON.value)
-        
-        loaded, sticker_list_grid = is_loaded_visible_and_enabled(ChatStickerPopup.STICKER_LIST_GRID.value)
-        
-        if (not loaded):
-            verify_failure("Sticker list grid view is not loaded")
-
-        sticker = sticker_list_grid.itemAtIndex(int(sticker_index))
-        click_obj(sticker)
-        
+    def verify_last_message_is_sticker(self):
         last_message_obj = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(0)
         verify_values_equal(str(last_message_obj.messageContentType), str(MessageContentType.STICKER.value), "The last message is not a sticker")
-
-
-    def send_emoji(self, emoji_short_name: str, message: str):
-        if (message != ""):
-            self.type_message_in_chat_input(message)
-        
-        click_obj_by_name(ChatComponents.CHAT_INPUT_EMOJI_BUTTON.value)
-        emojiAttr = copy.deepcopy(getattr(names, ChatComponents.EMOJI_POPUP_EMOJI_PLACEHOLDER.value))
-        emojiAttr["objectName"] = emojiAttr["objectName"].replace("%NAME%", emoji_short_name)
-        click_obj_by_attr(emojiAttr)       
-        self.press_enter_in_chat_input()
 
     def verify_chat_order(self, index: int, chatName: str):
         chat_lists = get_obj(ChatComponents.CHAT_LIST.value)
@@ -394,18 +409,6 @@ class StatusChatScreen:
         chat_list_items = getChildrenWithObjectName(chat, "chatItem")
         verify(len(chat_list_items) > 0, "StatusChatListItem exists")
         verify(str(chat_list_items[0].name) == chatName, "Chat in order")
-
-    def switch_to_chat(self, chatName: str):
-        chat_lists = get_obj(ChatComponents.CHAT_LIST.value)
-        verify(chat_lists.count > 0, "At least one chat exists")
-        for i in range(chat_lists.count):
-            chat = chat_lists.itemAt(i)
-            chat_list_items = getChildrenWithObjectName(chat, "chatItem")
-            verify(len(chat_list_items) > 0, "StatusChatListItem exists")
-            if str(chat_list_items[0].name) == chatName:
-                click_obj(chat)
-                return
-        verify(False, "Chat switched")
 
     def _verify_image_unfurled_status_for_component(self, objectName: str, image_link: str, unfurled: bool):
         if not unfurled:
@@ -420,6 +423,3 @@ class StatusChatScreen:
 
     def verify_link_image_unfurled_status(self, image_link: str, unfurled: bool):
         self._verify_image_unfurled_status_for_component(ChatComponents.LINK_PREVIEW_UNFURLED_LINK_IMAGE.value, image_link, unfurled)
-
-    def open_settings_from_message(self):
-        click_obj_by_name(ChatComponents.LINK_PREVIEW_OPEN_SETTINGS.value)

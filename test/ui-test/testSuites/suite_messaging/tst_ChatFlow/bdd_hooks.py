@@ -6,14 +6,25 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
 
 from steps.startupSteps import *
 
-@OnScenarioStart
-def hook(context):
-    context_init(context)
+# Global properties for the specific feature
+_user = "tester123"
+_password = "TesTEr16843/!@00"
+_chat_room = "test"
 
-@OnScenarioEnd
+@OnFeatureStart
+def hook(context):
+    context_init(context)  
+    signs_up_process_steps(context, _user, _password)
+    when_the_user_joins_chat_room(_chat_room)
+
+@OnFeatureEnd
 def hook(context):
     currentApplicationContext().detach()
     snooze(_app_closure_timeout)
+    
+@OnScenarioStart
+def hook(context):
+    when_the_user_opens_the_chat_section()
 
 @OnStepEnd
 def hook(context):
