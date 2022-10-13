@@ -8,9 +8,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QGuiApplication app(argc, argv);
-    app.setOrganizationName("Status");
-    app.setOrganizationDomain("status.im");
-    app.setApplicationName("Status Desktop Storybook");
+    QGuiApplication::setOrganizationName("Status");
+    QGuiApplication::setOrganizationDomain("status.im");
+    QGuiApplication::setApplicationName("Status Desktop Storybook");
 
     QQmlApplicationEngine engine;
 
@@ -28,5 +28,5 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     engine.load(url);
 
-    return app.exec();
+    return QGuiApplication::exec();
 }
