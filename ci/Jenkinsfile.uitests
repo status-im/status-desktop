@@ -114,6 +114,9 @@ pipeline {
                       
                       --tags
                       ~merge
+
+                      --tags
+                      ~relyon-mailserver
                       
                       --config
                       addAUT

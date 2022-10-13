@@ -7,10 +7,29 @@ _statusMain = StatusMainScreen()
 _settingsScreen = SettingsScreen()
 _languageScreen = StatusLanguageScreen()
 
+#########################
+### PRECONDITIONS region:
+#########################
+
+@Given("the user opens app settings screen")
+def step(context: any):
+    the_user_opens_app_settings_screen()
+    
+@Given("the user opens the messaging settings")
+def step(context: any):
+    the_user_opens_the_messaging_settings()
+    
+@Given("tenor GIFs preview is enabled")
+def step(context: any):
+    _settingsScreen.check_tenor_gif_preview_is_enabled()
+    
+#########################
+### ACTIONS region:
+#########################
 
 @When("the user opens app settings screen")
 def step(context: any):
-    _statusMain.open_settings()
+    the_user_opens_app_settings_screen()
 
 @When("the user opens the wallet settings")
 def step(context: any):
@@ -18,7 +37,7 @@ def step(context: any):
     
 @When("the user opens the messaging settings")
 def step(context: any):
-    _settingsScreen.open_messaging_settings()
+    the_user_opens_the_messaging_settings()
 
 @When("the user activates link preview")
 def step(context: any):
@@ -27,11 +46,7 @@ def step(context: any):
 @When("the user activates image unfurling")
 def step(context: any):
     _settingsScreen.activate_image_unfurling()
-
-@Then("tenor GIFs preview is enabled")
-def step(context: any):
-    _settingsScreen.check_tenor_gif_preview_is_enabled()
-
+    
 @When("the user activates wallet and opens the wallet settings")
 def step(context: any):
     _settingsScreen.activate_open_wallet_settings()
@@ -80,27 +95,11 @@ def step(context, native):
 def step(context, native):
     _languageScreen.search_language(native)
     
-@Then("the address |any| is displayed in the wallet")
-def step(context: any, address: str):
-    _settingsScreen.verify_address(address)
-
-@Then("the account |any| is not in the list of accounts")
-def step(context: any, account_name):
-    _settingsScreen.verify_no_account(account_name) 
-
-@Then("the new account with name |any| and color |any| is updated")
-def step(context, new_name: str, new_color: str):
-    _settingsScreen.verify_editedAccount(new_name, new_color)
-
 @When("the user clicks on Sign out and Quit")
 def step(context: any):
     ctx = currentApplicationContext()
     _settingsScreen.sign_out_and_quit_the_app(ctx.pid)
     
-@Then("the app is closed")
-def step(context: any):
-    _settingsScreen.verify_the_app_is_closed()
-
 @When("the user opens the communities settings")
 def step(context: any):
     _settingsScreen.open_communities_section()
@@ -116,14 +115,66 @@ def step(context: any):
 @When("the user sets display name to \"|any|\"")
 def step(context, display_name):
     _settingsScreen.set_display_name(display_name)
+    
+@When("the user backs up the wallet seed phrase")
+def step(context):
+    _settingsScreen.check_backup_seed_phrase_workflow()
+    
+@When("the user sets display links to twitter: \"|any|\", personal site: \"|any|\", \"|any|\": \"|any|\"")
+def step(context, twitter, personal_site, custom_link_name, custom_link):
+    _settingsScreen.set_social_links(twitter, personal_site, custom_link_name, custom_link)
+    
+@When("the user sets bio to \"|any|\"")
+def step(context, bio):
+    _settingsScreen.set_bio(bio)
+    
+@When("the users switches state to offline")
+def step(context: any):
+    _statusMain.set_user_state_offline()
+        
+@When("the users switches state to online")
+def step(context: any):
+    _statusMain.set_user_state_online()
+    
+@When("the users switches state to automatic")
+def step(context: any):
+    _statusMain.set_user_state_to_automatic()
+    
+@When("the user opens own profile popup")
+def step(context: any):
+    _statusMain.open_own_profile_popup()
+    
+@When("in profile popup the user sets display name to \"|any|\"")
+def step(context, display_name):
+    _statusMain.set_profile_popup_display_name(display_name)
+
+@When("the user changes the password from |any| to |any|")
+def step(context: any, oldPassword: str, newPassword: str):
+    _settingsScreen.change_user_password(oldPassword, newPassword)
+
+#########################
+### VERIFICATIONS region:
+#########################
+    
+@Then("the address |any| is displayed in the wallet")
+def step(context: any, address: str):
+    _settingsScreen.verify_address(address)
+
+@Then("the account |any| is not in the list of accounts")
+def step(context: any, account_name):
+    _settingsScreen.verify_no_account(account_name) 
+
+@Then("the new account with name |any| and color |any| is updated")
+def step(context, new_name: str, new_color: str):
+    _settingsScreen.verify_editedAccount(new_name, new_color)
+    
+@Then("the app is closed")
+def step(context: any):
+    _settingsScreen.verify_the_app_is_closed()
 
 @Then("the user's display name should be \"|any|\"")
 def step(context, display_name):
     _settingsScreen.verify_display_name(display_name)
-
-@When("the user sets bio to \"|any|\"")
-def step(context, bio):
-    _settingsScreen.set_bio(bio)
 
 @Then("the user's bio should be empty")
 def step(context):
@@ -132,10 +183,6 @@ def step(context):
 @Then("the user's bio should be \"|any|\"")
 def step(context, bio):
     _settingsScreen.verify_bio(bio)
-
-@When("the user sets display links to twitter: \"|any|\", personal site: \"|any|\", \"|any|\": \"|any|\"")
-def step(context, twitter, personal_site, custom_link_name, custom_link):
-    _settingsScreen.set_social_links(twitter, personal_site, custom_link_name, custom_link)
 
 @Then("the user's social links should be empty")
 def step(context):
@@ -150,26 +197,10 @@ def step(context, native):
     _languageScreen.verify_current_language(native)
     # TODO: Verify some texts have been changed in the application (not done now bc translations are inconsistent 
     # and not all expected languages have the same texts translated
-
-@When("the user backs up the wallet seed phrase")
-def step(context):
-    _settingsScreen.check_backup_seed_phrase_workflow()
-
+    
 @Then("the backup seed phrase indicator is not displayed")
 def step(context):
     _settingsScreen.verify_seed_phrase_indicator_not_visible()
-
-@When("the users switches state to offline")
-def step(context: any):
-    _statusMain.set_user_state_offline()
-        
-@When("the users switches state to online")
-def step(context: any):
-    _statusMain.set_user_state_online()
-            
-@When("the users switches state to automatic")
-def step(context: any):
-    _statusMain.set_user_state_to_automatic()
     
 @Then("the user appears offline")
 def step(context: any):
@@ -183,18 +214,16 @@ def step(context: any):
 def step(context: any):
     _statusMain.user_is_set_to_automatic()   
 
-@When("the user opens own profile popup")
-def step(context: any):
-    _statusMain.open_own_profile_popup()
-
 @Then("in profile popup the user's display name should be \"|any|\"")
 def step(context, display_name):
     _statusMain.verify_profile_popup_display_name(display_name)
-
-@When("in profile popup the user sets display name to \"|any|\"")
-def step(context, display_name):
-    _statusMain.set_profile_popup_display_name(display_name)
-
-@When("the user changes the password from |any| to |any|")
-def step(context: any, oldPassword: str, newPassword: str):
-    _settingsScreen.change_user_password(oldPassword, newPassword)
+    
+###########################################################################
+### COMMON methods used in different steps given/when/then region:
+########################################################################### 
+    
+def the_user_opens_app_settings_screen():
+    _statusMain.open_settings()
+    
+def the_user_opens_the_messaging_settings():
+    _settingsScreen.open_messaging_settings()

@@ -1,169 +1,175 @@
-# This is a sample .feature file
-# Squish feature files use the Gherkin language for describing features, a short example
-# is given below. You can find a more extensive introduction to the Gherkin format at
-# https://cucumber.io/docs/gherkin/reference/
-Feature: Status Desktop Chat
+Feature: Status Desktop Chat Basic Flows
 
-	# TODO The complete feature / all scenarios have a chance to fail since they rely on the mailserver (at least, to verify a chat is loaded, something in the history needs to be displayed).
-    As a user I want to join a room and chat and do basic interactions.
+	As a user I want to join the public chat room "test" and do basic interactions.
 
-    The following scenarios cover basic chat flows.
+    The following scenarios cover basic chat flows on "test" public channel.
 
-    Background:
-         Given A first time user lands on the status desktop and generates new key
-    	 When user signs up with username tester123 and password TesTEr16843/!@00
-    	 Then the user lands on the signed in app
+    The feature start sequence is the following (setup on its own `bdd_hooks`):
+    ** given A first time user lands on the status desktop and generates new key
+    ** when user signs up with username "tester123" and password "TesTEr16843/!@00"
+    ** and the user lands on the signed in app
+    ** and user joins chat room "test"
 
-    Scenario: User joins a public room and chats
-		 When user joins chat room test
-		 Then user is able to send chat message
+	[Cleanup] Also each scenario starts with:
+	** when the user opens the chat section
+	# TODO: Add scenario end -> clear chat input.
+
+    Scenario Outline: The user can chat in a public room
+	     When the user sends a chat message <message>
+		 Then the last chat message contains <message>
+		 Examples:
 		 | message  			 |
 		 | Hello    			 |
 		 | How are you    		 |
 		 | I am from status   	 |
 		 | tell me how you do?   |
 
-	@merge
-    Scenario: User can reply to their own message
-         When user joins chat room test
-         Then the user is able to send a random chat message
-         Then the user can reply to the message at index 0 with "This is a reply"
+    # TODO: Scenario: The user can reply to their OWN message
+    @mayfail
+    # TODO: It works standalone but when it runs as part of the sequence, the action of reply is not done always. The popup option does not appear.
+    Scenario Outline: The user can reply to the last message
+         Given the user sends a chat message <message>
+         When the user replies to the message at index 0 with <reply>
+         # TODO: Check the last message is really a reply, now just checking the last message is the expected one but could not be a reply. The popup option does not appear.
+         Then the chat message <reply> is displayed as a reply
+         Examples:
+		 | message			   | reply			 |
+		 | random chat message | This is a reply |
 
-	@merge
-    Scenario: User can edit a message
-         When user joins chat room test
-         Then user is able to send chat message
-         | message               |
-         | Edit me                 |
-         When the user edits the message at index 0 and changes it to "Edited by me"
-         Then the message (edited) is displayed in the last message
+	@mayfail
+	# TODO: It works standalone but when it runs as part of the sequence, the action of edit is not done always. The popup option does not appear.
+    Scenario Outline: The user can edit a message
+         Given the user sends a chat message <message>
+         When the user edits the message at index 0 and changes it to <edited>
+         # TODO: Check last message is an edited one, now just checking the last message is the expected one but could not be an edited one.
+         Then the chat message <edited> is displayed as an edited one
+         Examples:
+		 | message | edited		  |
+		 | Edit me | Edited by me |
 
+    @relyon-mailserver
+    Scenario Outline: The user can reply to another message
+         When the user replies to the message at index 0 with <reply>
+         Then the chat message <reply> is displayed as a reply
+         Examples:
+		 | reply		   |
+		 | This is a reply |
 
-    @mayfail @merge
-    Scenario: User can reply to another user's message
-         When user joins chat room test
-         Then the user can reply to the message at index 0 with "This is a reply to another user"
+# TODO: This scenario should be extracted to a different feature file bc it doesn't accomplish the background steps since it needs to change/specify the chat room
+#    Scenario Outline: The user joins a room and marks it as read
+#         When the user joins chat room test
+#		 And the user marks the channel <channel> as read
+#         # TODO find a way to validate that it worked
+#         Examples:
+#		 | channel |
+#		 | test    |
 
-	@mayfail @merge
-    Scenario: User joins a room and marks it as read
-		 When user joins chat room test
-		 Then the user can mark the channel test as read
-         # TODO find a way to validate that it worked
+	@mayfail
+	# TODO: It works standalone but when it runs as part of the sequence, the action of delete is not done always. The popup option does not appear.
+    Scenario Outline: The user can delete his/her own message
+         Given the user sends a chat message <message>
+         When the user deletes the message at index 0
+         Then the last message displayed is not <message>
+         Examples:
+		 | message			   |
+		 | random chat message |
 
-	@merge
-    Scenario: User can delete their own message
-         When user joins chat room automation-test
-         Then the user is able to send a random chat message
-         Then the user can delete the message at index 0
-         Then the last message is not the random message
-
-	@merge
-    Scenario: User can clear chat history
-        When user joins chat room test
-        Then user is able to send chat message
-        | message             |
-        | Hello               |
-        | How are you         |
-        | I am from status    |
-        | tell me how you do? |
+    Scenario: The user can clear chat history
+        Given the user sends a chat message Hi hi
+        And the user sends a chat message testing chat
+        And the user sends a chat message history
         When the user clears chat history
         Then the chat is cleared
 
-	@mayfail @merge
-    Scenario: User can send a gif
-          When the user opens the chat section
-          And user joins chat room automation-test
-          Then The user is able to send a gif message
-          When the user opens app settings screen
-          And the user opens the messaging settings
-          Then tenor GIFs preview is enabled
+	@mayfail
+	# TODO: Verification of gif sent fails. And also `tenor GIFs preview is enabled` step doesn't work. Review it.
+    Scenario: The user can send a GIF
+        Given the user opens app settings screen
+        And the user opens the messaging settings
+        And tenor GIFs preview is enabled
+        When the user sends a GIF message
+        Then the GIF message is displayed
 
-	@mayfail @merge
-    Scenario Outline: User can activate image unfurling
-          When the user opens the chat section
-          And user joins chat room automation-test
-          And the user sends the chat message <image_url>
-          Then the image <image_url> is not unfurled in the chat
-          When the user opens app settings screen from chat
-          And the user opens the messaging settings
-          And the user activates link preview
-          And the user activates image unfurling
-          And the user opens the chat section
-          Then the image <image_url> is unfurled in the chat
+    @mayfail
+	# TODO: It works standalone but when it runs as part of the sequence, the action of activates link preview doesn't work.
+    Scenario Outline: The user can activate image unfurling
+        Given the user sends a chat message <image_url>
+		And the image <image_url> is not unfurled in the chat
+		When the user opens app settings screen
+		And the user opens the messaging settings
+		And the user activates link preview
+		And the user activates image unfurling
+		And the user opens the chat section
+		Then the image <image_url> is unfurled in the chat
+        Examples:
+           | image_url                                                                                      |
+           | https://github.com/status-im/status-desktop/raw/master/test/ui-test/fixtures/images/doggo.jpeg |
 
-          Examples:
-               | image_url                                                                                      |
-               | https://github.com/status-im/status-desktop/raw/master/test/ui-test/fixtures/images/doggo.jpeg |
+    Scenario Outline: The user is able to use emoji suggestions
+        Given the user types <message>
+		And the user selects the emoji in the suggestion's list
+		When the user presses enter
+		Then the last chat message contains <emoji>
+		Examples:
+           | message	   | emoji |
+           | hello :thumbs | 👍    |
 
-	@mayfail @merge
-    Scenario: The user is able to use emoji suggestions
-         When user joins chat room automation-test
-         When the user types "hello :thumbs"
-	    Then the user selects emoji in the suggestion list
-         When the user pressed enter
-         Then the message 👍 is displayed in the last message
-
-
-    @mayfail @merge
-    Scenario: User cannot delete another user's message
-         When user joins chat room test
+    @relyon-mailserver
+    Scenario: The user cannot delete another user's message
          Then the user cannot delete the last message
 
-
-    @mayfail @merge
+   @relyon-mailserver
 	Scenario Outline: The user can do a mention
-		When user joins chat room test
-		And the user inputs a mention to <displayName> with message <message>
+		When the user inputs a mention to <displayName> with message <message>
 		Then the <displayName> mention with message <message> have been sent
-	Examples:
+		Examples:
 		| displayName | message          |
 		| tester123   |  testing mention |
 
-
-    @mayfail @merge
-	Scenario Outline: The user can not do a mention to not existing users
-		When user joins chat room test
+    @relyon-mailserver
+	Scenario Outline: The user can not do a mention to a not existing users
 		Then the user cannot input a mention to a not existing user <displayName>
-	Examples:
+		Examples:
 		| displayName        |
 		| notExistingAccount |
 		| asdfgNoNo          |
 
-	@mayfail  @merge
-    Scenario: User can send an emoji in a message
-         When user joins chat room automation-test
-         When user sends the emoji heart_eyes as a message
-         Then the emoji 😍 is displayed in the last message
-         When user sends the emoji sunglasses with message wow I'm so cool
-         Then the emoji 😎 is displayed in the last message
-         And the message wow I'm so cool is displayed in the last message
+    Scenario: The user can send an emoji as a message
+    	When the user sends the emoji heart_eyes as a message
+   		Then the last chat message contains 😍
 
-	@merge
-    Scenario: User sees chats sorted by most recent activity
-          When user joins chat room first-chat
-          And user joins chat room second-chat
-          And user joins chat room third-chat
-          Then user chats are sorted accordingly
-          | third-chat  |
-          | second-chat |
-          | first-chat  |
-          When user switches to second-chat chat
-          Then the user is able to send a random chat message
-          And user chats are sorted accordingly
-          | second-chat |
-          | third-chat  |
-          | first-chat  |
+	Scenario Outline: The user can send an emoji in a message
+    	When the user sends the emoji sunglasses with message <message>
+   		Then the last chat message contains 😎
+    	And the last chat message contains <message>
+    	Examples:
+         | message          |
+		 | wow I'm so cool  |
 
-	@mayfail @merge
-    Scenario: User can type message with emoji autoreplace
-         When user joins chat room automation-test
-         Then the user is able to send chat message "Hello :)"
-         Then the message 🙂 is displayed in the last message
-         And the message Hello is displayed in the last message
+# TODO: This scenario should be extracted to a different feature file bc it doesn't accomplish the background steps since it needs to change/specify the chat room
+#	@merge
+#    Scenario: The user sees chats sorted by most recent activity
+#          When the user joins chat room first-chat
+#          And the user joins chat room second-chat
+#          And the user joins chat room third-chat
+#          Then the user chats are sorted accordingly
+#          | third-chat  |
+#          | second-chat |
+#          | first-chat  |
+#          When the user switches to second-chat chat
+#          And the user sends a random chat message
+#		   Then the random chat message is displayed
+#          And the user chats are sorted accordingly
+#          | second-chat |
+#          | third-chat  |
+#          | first-chat  |
 
+    Scenario: The user can type message with emoji autoreplace
+    	When the user sends a chat message Hello :)
+    	Then the last chat message contains 🙂
+    	And the last chat message contains Hello
 
-	@merge
-    Scenario: User can send a sticker after installing a free pack
-         When user joins chat room automation-test
-         Then the user can install the sticker pack at position 4
-         Then the user can send the sticker at position 2 in the list
+    Scenario: The user can send a sticker after installing a free pack
+         Given the user installs the sticker pack at position 4
+         When the user sends the sticker at position 2 in the list
+         Then the last chat message is a sticker
