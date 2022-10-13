@@ -23,3 +23,4 @@ QtObject {
         root.languageModule.setIs24hTimeFormat(is24hTimeFormat)
     }
 }
+

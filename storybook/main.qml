@@ -106,12 +106,6 @@ ApplicationWindow {
                     selected: viewLoader.source.toString().includes(title)
                     onClicked: mainPageView.page(title);
                 }
-
-                StatusNavigationListItem {
-                    title: "AboutView"
-                    selected: viewLoader.source.toString().includes(title)
-                    onClicked: mainPageView.page(title);
-                }
             }
         }
 
