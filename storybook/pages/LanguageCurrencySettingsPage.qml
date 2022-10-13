@@ -62,7 +62,11 @@ SplitView {
                     ListElement {
                         key: "usd"
                         shortName: "USD"
+<<<<<<< HEAD
                         name: "US Dollars"
+=======
+                        name: qsTr("US Dollars")
+>>>>>>> a7db0746a (chore(@storybook): add language & currency settings view to storybook)
                         symbol: "$"
                         category: ""
                         imageSource: "../../../../imports/shared/assets/twemoji/svg/1f1fa-1f1f8.svg"
@@ -72,7 +76,11 @@ SplitView {
                     ListElement {
                         key: "gbp"
                         shortName: "GBP"
+<<<<<<< HEAD
                         name: "British Pound"
+=======
+                        name: qsTr("British Pound")
+>>>>>>> a7db0746a (chore(@storybook): add language & currency settings view to storybook)
                         symbol: "£"
                         category: ""
                         imageSource: "../../../../imports/shared/assets/twemoji/svg/1f1ec-1f1e7.svg"
