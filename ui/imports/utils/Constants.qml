@@ -523,6 +523,10 @@ QtObject {
     readonly property int activityCenterNotificationTypeCommunityRequest: 7
     readonly property int activityCenterNotificationTypeCommunityMembershipRequest: 8
 
+    readonly property int activityCenterMembershipStatusPending: 1
+    readonly property int activityCenterMembershipStatusAccepted: 2
+    readonly property int activityCenterMembershipStatusDeclined: 3
+
     readonly property int contactRequestStateNone: 0
     readonly property int contactRequestStatePending: 1
     readonly property int contactRequestStateAccepted: 2

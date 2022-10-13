@@ -5,6 +5,7 @@ type Item* = ref object
   id: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
   chatId: string
   communityId: string
+  membershipStatus: int
   sectionId: string
   name: string
   author: string
@@ -20,6 +21,7 @@ proc initItem*(
   id: string,
   chatId: string,
   communityId: string,
+  membershipStatus: int,
   sectionId: string,
   name: string,
   author: string,
@@ -35,6 +37,7 @@ proc initItem*(
   result.id = id
   result.chatId = chatId
   result.communityId = communityId
+  result.membershipStatus = membershipStatus
   result.sectionId = sectionId
   result.name = name
   result.author = author
@@ -52,6 +55,7 @@ proc `$`*(self: Item): string =
     name: {$self.name},
     chatId: {$self.chatId},
     communityId: {$self.communityId},
+    membershipStatus: {$self.membershipStatus},
     sectionId: {$self.sectionId},
     author: {$self.author},
     notificationType: {$self.notificationType},
@@ -77,6 +81,9 @@ proc chatId*(self: Item): string =
 
 proc communityId*(self: Item): string =
   return self.communityId
+
+proc membershipStatus*(self: Item): int =
+  return self.membershipStatus
 
 proc sectionId*(self: Item): string =
   return self.sectionId

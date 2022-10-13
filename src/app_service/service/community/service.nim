@@ -2,6 +2,7 @@ import NimQml, Tables, json, sequtils, std/algorithm, strformat, strutils, chron
 
 import ./dto/community as community_dto
 
+import ../activity_center/service as activity_center_service
 import ../chat/service as chat_service
 
 import ../../../app/global/global_singleton
@@ -126,6 +127,7 @@ QtObject:
       threadpool: ThreadPool
       events: EventEmitter
       chatService: chat_service.Service
+      activityCenterService: activity_center_service.Service
       communityTags: string # JSON string contraining tags map
       joinedCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
       curatedCommunities: Table[string, CuratedCommunity] # [community_id, CuratedCommunity]
@@ -150,13 +152,15 @@ QtObject:
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
-      chatService: chat_service.Service
+      chatService: chat_service.Service,
+      activityCenterService: activity_center_service.Service
       ): Service =
     result = Service()
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
     result.chatService = chatService
+    result.activityCenterService = activityCenterService
     result.communityTags = newString(0)
     result.joinedCommunities = initTable[string, CommunityDto]()
     result.curatedCommunities = initTable[string, CuratedCommunity]()
@@ -1209,7 +1213,8 @@ QtObject:
 
   proc acceptRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
-      discard status_go.acceptRequestToJoinCommunity(requestId)
+      let response = status_go.acceptRequestToJoinCommunity(requestId)
+      self.activityCenterService.parseACNotificationResponse(response)
 
       let newMemberPubkey = self.removeMembershipRequestFromCommunityAndGetMemberPubkey(communityId, requestId)
 
@@ -1223,7 +1228,8 @@ QtObject:
 
   proc declineRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
-      discard status_go.declineRequestToJoinCommunity(requestId)
+      let response = status_go.declineRequestToJoinCommunity(requestId)
+      self.activityCenterService.parseACNotificationResponse(response)
 
       self.moveRequestToDeclined(communityId, requestId)
 

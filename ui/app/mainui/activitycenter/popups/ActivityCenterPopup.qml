@@ -248,9 +248,6 @@ Popup {
                     width: listView.availableWidth
                     store: root.store
                     notification: model
-                    messageContextMenu: root.messageContextMenu
-                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
-                    onActivityCenterClose: root.close()
                 }
             }
         }
