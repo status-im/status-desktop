@@ -352,3 +352,6 @@ method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurr
     if lastStepInTheCurrentFlow:
       self.controller.cleanTmpData()
       self.view.setCurrentStartupState(newWelcomeState(FlowType.General, nil))
+
+method storeKeyPairForNewKeycardUser*[T](self: Module[T]) =
+  self.delegate.storeKeyPairForNewKeycardUser()

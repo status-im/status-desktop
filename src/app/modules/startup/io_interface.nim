@@ -133,8 +133,12 @@ method setKeycardData*(self: AccessInterface, value: string) {.base.} =
 method runFactoryResetPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method storeKeyPairForNewKeycardUser*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c
     c.startupDidLoad()
     c.userLoggedIn()
+    c.storeKeyPairForNewKeycardUser()

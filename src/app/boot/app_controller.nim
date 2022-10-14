@@ -1,4 +1,4 @@
-import NimQml, chronicles
+import NimQml, sequtils, sugar, chronicles
 
 import ../../app_service/service/general/service as general_service
 import ../../app_service/service/keychain/service as keychain_service
@@ -30,6 +30,7 @@ import ../../app_service/service/devices/service as devices_service
 import ../../app_service/service/mailservers/service as mailservers_service
 import ../../app_service/service/gif/service as gif_service
 import ../../app_service/service/ens/service as ens_service
+import ../../app_service/common/account_constants
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -44,6 +45,7 @@ logScope:
 
 type
   AppController* = ref object of RootObj
+    storeKeyPair: bool
     statusFoundation: StatusFoundation
     notificationsManager*: NotificationsManager
 
@@ -101,6 +103,7 @@ proc buildAndRegisterUserProfile(self: AppController)
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
 proc userLoggedIn*(self: AppController)
+proc storeKeyPairForNewKeycardUser*(self: AppController)
 
 # Main Module Delegate Interface
 proc mainDidLoad*(self: AppController)
@@ -113,6 +116,7 @@ proc connect(self: AppController) =
 
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
+  result.storeKeyPair = false
   result.statusFoundation = statusFoundation
   
   # Preparing settings service to be exposed later as global QObject
@@ -400,3 +404,25 @@ proc buildAndRegisterUserProfile(self: AppController) =
   singletonInstance.userProfile.setCurrentUserStatus(currentUserStatus.statusType.int)
 
   singletonInstance.engine.setRootContextProperty("userProfile", self.userProfileVariant)
+
+  if self.storeKeyPair and singletonInstance.userProfile.getIsKeycardUser():
+    let allAccounts = self.walletAccountService.fetchAccounts()
+    let defaultWalletAccounts = allAccounts.filter(a => 
+      a.walletType == WalletTypeDefaultStatusAccount and 
+      a.path == account_constants.PATH_DEFAULT_WALLET and
+      not a.isChat and 
+      a.isWallet
+    )
+    if defaultWalletAccounts.len == 0:
+      error "default wallet account was not generated"
+      return
+    let defaultWalletAddress = defaultWalletAccounts[0].address
+    let keyPair = KeyPairDto(keycardUid: self.keycardService.getLastReceivedKeycardData().flowEvent.instanceUID,
+      keycardName: displayName,
+      keycardLocked: false,
+      accountsAddresses: @[defaultWalletAddress],
+      keyUid: loggedInAccount.keyUid)
+    discard self.walletAccountService.addMigratedKeyPair(keyPair)
+
+proc storeKeyPairForNewKeycardUser*(self: AppController) = 
+  self.storeKeyPair = true

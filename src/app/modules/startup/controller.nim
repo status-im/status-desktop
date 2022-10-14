@@ -10,6 +10,7 @@ import ../../../app_service/service/accounts/service as accounts_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/profile/service as profile_service
 import ../../../app_service/service/keycard/service as keycard_service
+import ../../../app_service/common/account_constants
 
 import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
@@ -77,6 +78,7 @@ proc newController*(delegate: io_interface.AccessInterface,
 
 # Forward declaration
 proc cleanTmpData*(self: Controller)
+proc storeMetadataForNewKeycardUser(self: Controller)
 
 proc disconnectKeychain*(self: Controller) =
   for id in self.keychainConnectionIds:
@@ -319,6 +321,8 @@ proc storeImportedAccountAndLogin*(self: Controller, storeToKeychain: bool) =
 proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool) =
   if self.importMnemonic():
     let accountId = self.getImportedAccount().id
+    self.delegate.storeKeyPairForNewKeycardUser()
+    self.storeMetadataForNewKeycardUser()
     self.setupAccount(accountId, storeToKeychain, keycardUsage = true)
   else:
     error "an error ocurred while importing mnemonic"
@@ -419,6 +423,10 @@ proc runRecoverAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase =
   self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled
   self.keycardService.startRecoverAccountFlow(seedPhraseLength, seedPhrase, puk, factoryReset)
 
+proc runStoreMetadataFlow*(self: Controller, cardName: string, pin: string, walletPaths: seq[string]) =
+  self.cancelCurrentFlow()
+  self.keycardService.startStoreMetadataFlow(cardName, pin, walletPaths)
+
 proc resumeCurrentFlow*(self: Controller) =
   self.keycardService.resumeCurrentFlow()
 
@@ -451,3 +459,8 @@ proc buildSeedPhrasesFromIndexes*(self: Controller, seedPhraseIndexes: seq[int])
 
 proc generateRandomPUK*(self: Controller): string =
   return self.keycardService.generateRandomPUK()
+
+proc storeMetadataForNewKeycardUser(self: Controller) =
+  ## Stores metadata, default Status account only, to the keycard for a newly created keycard user.
+  let paths = @[account_constants.PATH_DEFAULT_WALLET]
+  self.runStoreMetadataFlow(self.getDisplayName(), self.getPin(), paths)

@@ -23,7 +23,7 @@ StatusListItem {
 
     signal keycardSelected()
 
-    color: root.keycardLocked? Theme.palette.dangerColor3 : Style.current.grey
+    color: root.keycardLocked? Theme.palette.dangerColor3 : Theme.palette.baseColor2
     title: root.keycardName
     statusListItemTitleAside.textFormat: Text.RichText
     statusListItemTitleAside.visible: !!statusListItemTitleAside.text
@@ -34,7 +34,7 @@ StatusListItem {
         }
         if (root.keycardLocked) {
             let label = qsTr("Keycard Locked")
-            t += `<font color="${Theme.palette.dangerColor1}" size="5">${label}</font>`
+            t += ` <font color="${Theme.palette.dangerColor1}" size="5">${label}</font>`
         }
         return t
     }
