@@ -20,7 +20,7 @@ SettingsContentBase {
     titleRowComponentLoader.sourceComponent: StatusButton {
         text: qsTr("Get Keycard")
         onClicked: {
-            console.warn("TODO: Go to purchase page...")
+            Global.openLink(Constants.keycard.general.purchasePage)
         }
     }
 
