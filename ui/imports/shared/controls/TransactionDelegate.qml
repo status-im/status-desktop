@@ -37,7 +37,7 @@ StatusListItem {
     inlineTagDelegate: InformationTag {
         tagPrimaryLabel.text: networkName
         tagPrimaryLabel.color: networkColor
-        image.source: Style.svg("tiny/%1".arg(networkIcon))
+        image.source: !!networkIcon ? Style.svg("tiny/%1".arg(networkIcon)) : ""
         background: Rectangle {
             id: controlBackground
             implicitWidth: 51
