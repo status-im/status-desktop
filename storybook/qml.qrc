@@ -14,5 +14,6 @@
         <file>pages/LoginViewPage.qml</file>
         <file>pages/AboutViewPage.qml</file>
         <file>pages/LanguageCurrencySettingsPage.qml</file>
+        <file>pages/AppearanceViewPage.qml</file>
     </qresource>
 </RCC>
