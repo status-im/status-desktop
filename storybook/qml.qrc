@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Storybook/ImageSelectPopup.qml</file>
+        <file>Storybook/Logs.qml</file>
+        <file>Storybook/LogsAndControlsPanel.qml</file>
+        <file>Storybook/LogsView.qml</file>
+        <file>Storybook/PagesList.qml</file>
+        <file>Storybook/StorybookUtils.qml</file>
+        <file>Storybook/qmldir</file>
+        <file>main.qml</file>
+        <file>pages/CommunitiesPortalDummyModel.qml</file>
+        <file>pages/CommunitiesPortalLayoutPage.qml</file>
+        <file>pages/CommunitiesPortalModelEditor.qml</file>
+        <file>pages/LoginViewPage.qml</file>
+        <file>pages/AboutViewPage.qml</file>
+        <file>pages/LanguageCurrencySettingsPage.qml</file>
+        <file>pages/AppearanceViewPage.qml</file>
+    </qresource>
+</RCC>
