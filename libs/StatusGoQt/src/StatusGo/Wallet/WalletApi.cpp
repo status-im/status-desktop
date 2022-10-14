@@ -83,8 +83,8 @@ Tokens getTokens(const ChainID& chainId)
 }
 
 TokenBalances getTokensBalancesForChainIDs(const std::vector<ChainID>& chainIds,
-                                           const std::vector<Accounts::EOAddress> accounts,
-                                           const std::vector<Accounts::EOAddress> tokens)
+                                           const std::vector<Accounts::EOAddress>& accounts,
+                                           const std::vector<Accounts::EOAddress>& tokens)
 {
     std::vector<json> params = {chainIds, accounts, tokens};
     json inputJson = {{"jsonrpc", "2.0"}, {"method", "wallet_getTokensBalancesForChainIDs"}, {"params", params}};
@@ -106,6 +106,28 @@ TokenBalances getTokensBalancesForChainIDs(const std::vector<ChainID>& chainIds,
         resultData.emplace(QString::fromStdString(keyIt.first), std::move(val));
     }
     return resultData;
+}
+
+std::vector<TokenBalanceHistory>
+getBalanceHistoryOnChain(Accounts::EOAddress account, const std::chrono::seconds& secondsToNow, int sampleCount)
+{
+    std::vector<json> params = {account, secondsToNow.count(), sampleCount};
+    json inputJson = {{"jsonrpc", "2.0"}, {"method", "wallet_getBalanceHistoryOnChain"}, {"params", params}};
+
+    auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
+    const auto resultJson = json::parse(result);
+    checkPrivateRpcCallResultAndReportError(resultJson);
+
+    return resultJson.get<CallPrivateRpcResponse>().result;
+}
+
+void checkRecentHistory(const std::vector<Accounts::EOAddress>& accounts)
+{
+    std::vector<json> params = {accounts};
+    json inputJson = {{"jsonrpc", "2.0"}, {"method", "wallet_checkRecentHistory"}, {"params", params}};
+    auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
+    const auto resultJson = json::parse(result);
+    checkPrivateRpcCallResultAndReportError(resultJson);
 }
 
 } // namespace Status::StatusGo::Wallet

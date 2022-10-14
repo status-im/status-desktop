@@ -58,12 +58,19 @@ public:
 
     Status::Onboarding::OnboardingController* onboardingController() const;
 
+    /// Temporary test folder that is deleted when class instance goes out of scope
     const std::filesystem::path& fusedTestFolder() const;
+    const std::filesystem::path& testDataDir() const;
+
+    QCoreApplication* app()
+    {
+        return m_app.get();
+    };
 
 private:
     std::unique_ptr<AutoCleanTempTestDir> m_fusedTestFolder;
     std::unique_ptr<QCoreApplication> m_app;
-    std::filesystem::path m_testFolderPath;
+    std::filesystem::path m_dataDirPath;
     std::shared_ptr<Status::Onboarding::OnboardingController> m_onboarding;
     std::function<bool()> m_checkIfShouldContinue;
 

@@ -93,9 +93,9 @@ TEST(OnboardingModule, TestCreateAndLoginAccountEndToEnd)
     auto remainingIterations = maxWaitTime / iterationSleepTime;
     while(remainingIterations-- > 0 && accountLoggedInCount == 0)
     {
-        std::this_thread::sleep_for(iterationSleepTime);
-
         QCoreApplication::sendPostedEvents();
+
+        std::this_thread::sleep_for(iterationSleepTime);
     }
 
     EXPECT_EQ(accountLoggedInCount, 1);
@@ -115,20 +115,12 @@ TEST(OnboardingModule, TestLoginEndToEnd)
     QObject::connect(StatusGo::SignalsManager::instance(),
                      &StatusGo::SignalsManager::nodeLogin,
                      [&createAndLogin](const QString& error) {
-                         if(error.isEmpty())
-                         {
-                             if(createAndLogin)
-                             {
-                                 createAndLogin = false;
-                             }
-                             else
-                                 createAndLogin = true;
-                         }
+                         if(error.isEmpty()) createAndLogin = !createAndLogin;
                      });
 
     constexpr auto accountName = "TestLoginAccountName";
     ScopedTestAccount testAccount(test_info_->name(), accountName);
-    testAccount.processMessages(1000, [createAndLogin]() { return !createAndLogin; });
+    testAccount.processMessages(1000, [&createAndLogin]() { return !createAndLogin; });
     ASSERT_TRUE(createAndLogin);
 
     testAccount.logOut();
@@ -138,7 +130,7 @@ TEST(OnboardingModule, TestLoginEndToEnd)
 
     // Setup accounts
     auto accountsService = std::make_shared<Onboarding::AccountsService>();
-    auto result = accountsService->init(testAccount.fusedTestFolder());
+    auto result = accountsService->init(testAccount.testDataDir());
     ASSERT_TRUE(result);
 
     auto onboarding = std::make_shared<Onboarding::OnboardingController>(accountsService);
@@ -156,8 +148,8 @@ TEST(OnboardingModule, TestLoginEndToEnd)
     QObject::connect(onboarding.get(),
                      &Onboarding::OnboardingController::accountLoginError,
                      [&accountLoggedInError](const QString& error) {
-                         accountLoggedInError = true;
                          qDebug() << "Failed logging in in test" << test_info_->name() << "with error:" << error;
+                         accountLoggedInError = true;
                      });
 
     auto ourAccountRes =
@@ -165,11 +157,11 @@ TEST(OnboardingModule, TestLoginEndToEnd)
     auto errorString = accountsService->login(*ourAccountRes, testAccount.password());
     ASSERT_EQ(errorString.length(), 0);
 
-    testAccount.processMessages(1000, [accountLoggedInCount, accountLoggedInError]() {
+    testAccount.processMessages(1000, [&accountLoggedInCount, &accountLoggedInError]() {
         return accountLoggedInCount == 0 && !accountLoggedInError;
     });
-    ASSERT_EQ(accountLoggedInCount, 1);
     ASSERT_EQ(accountLoggedInError, 0);
+    ASSERT_EQ(accountLoggedInCount, 1);
 }
 
 TEST(OnboardingModule, TestLoginEndToEnd_WrongPassword)
@@ -180,7 +172,7 @@ TEST(OnboardingModule, TestLoginEndToEnd_WrongPassword)
     testAccount.logOut();
 
     auto accountsService = std::make_shared<Onboarding::AccountsService>();
-    auto result = accountsService->init(testAccount.fusedTestFolder());
+    auto result = accountsService->init(testAccount.testDataDir());
     ASSERT_TRUE(result);
     auto onboarding = std::make_shared<Onboarding::OnboardingController>(accountsService);
     auto accounts = accountsService->openAndListAccounts();
@@ -205,7 +197,7 @@ TEST(OnboardingModule, TestLoginEndToEnd_WrongPassword)
     auto errorString = accountsService->login(*ourAccountRes, testAccount.password() + "extra");
     ASSERT_EQ(errorString.length(), 0);
 
-    testAccount.processMessages(1000, [accountLoggedInCount, accountLoggedInError]() {
+    testAccount.processMessages(1000, [&accountLoggedInCount, &accountLoggedInError]() {
         return accountLoggedInCount == 0 && !accountLoggedInError;
     });
     ASSERT_EQ(accountLoggedInError, 1);

@@ -114,6 +114,8 @@ target_sources(${PROJECT_NAME}
 
         src/StatusGo/SignalsManager.h
         src/StatusGo/SignalsManager.cpp
+        src/StatusGo/StatusGoEvent.h
+        src/StatusGo/StatusGoEvent.cpp
 
         src/StatusGo/Settings/SettingsAPI.h
         src/StatusGo/Settings/SettingsAPI.cpp
@@ -129,4 +131,7 @@ target_sources(${PROJECT_NAME}
         src/StatusGo/Wallet/wallet_types.h
         src/StatusGo/Wallet/WalletApi.h
         src/StatusGo/Wallet/WalletApi.cpp
+
+        src/StatusGo/Wallet/Transfer/Event.h
+        src/StatusGo/Wallet/Transfer/Event.cpp
 )
