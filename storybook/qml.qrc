@@ -4,6 +4,7 @@
         <file>Storybook/Logs.qml</file>
         <file>Storybook/LogsAndControlsPanel.qml</file>
         <file>Storybook/LogsView.qml</file>
+        <file>Storybook/PagesList.qml</file>
         <file>Storybook/StorybookUtils.qml</file>
         <file>Storybook/qmldir</file>
         <file>main.qml</file>

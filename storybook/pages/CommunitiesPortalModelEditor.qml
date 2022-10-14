@@ -8,7 +8,7 @@ ListView {
     id: root
 
     spacing: 25
-    ScrollBar.vertical: ScrollBar { }
+    ScrollBar.vertical: ScrollBar { x: root.width }
 
     ImageSelectPopup {
         id: iconSelector
@@ -46,152 +46,141 @@ ListView {
         }
     }
 
-    delegate: Rectangle {
-        width: parent.width
-        height: column.implicitHeight
+    delegate: ColumnLayout {
+        width: ListView.view.width
 
-        ColumnLayout {
-            id: column
+        Label {
+            Layout.fillWidth: true
+            text: "community id: " + model.communityId
+            font.weight: Font.Bold
+        }
 
-            width: parent.width
-            spacing: 2
+        TextField {
+            Layout.fillWidth: true
+            text: model.name
+            onTextChanged: model.name = text
+        }
 
+        TextField {
+            Layout.fillWidth: true
+            text: model.description
+            onTextChanged: model.description = text
+        }
+
+        Flow {
+            Layout.fillWidth: true
+
+            CheckBox {
+                text: "featured"
+                checked: model.featured
+                onToggled: model.featured = checked
+            }
+            CheckBox {
+                text: "available"
+                checked: model.available
+                onToggled: model.available = checked
+            }
+            CheckBox {
+                text: "loaded"
+                checked: model.loaded
+                onToggled: model.loaded = checked
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 50
+
+            Rectangle {
+                border.color: 'gray'
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                Image {
+                    anchors.fill: parent
+                    anchors.margins: 1
+                    fillMode: Image.PreserveAspectFit
+                    source: model.icon
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        iconSelector.open()
+                        StorybookUtils.singleShotConnection(iconSelector.selected, icon => {
+                            model.icon = icon
+                            iconSelector.close()
+                        })
+                    }
+                }
+            }
+
+            Rectangle {
+                border.color: 'gray'
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                Image {
+                    anchors.fill: parent
+                    anchors.margins: 1
+                    fillMode: Image.PreserveAspectFit
+                    source: model.banner
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        bannerSelector.open()
+                        StorybookUtils.singleShotConnection(bannerSelector.selected, banner => {
+                            model.banner = banner
+                            bannerSelector.close()
+                        })
+                    }
+                }
+            }
+        }
+
+        TextField {
+            Layout.fillWidth: true
+            maximumLength: 1024 * 1024 * 1024
+            text: model.icon
+            onTextChanged: model.icon = text
+        }
+
+        TextField {
+            Layout.fillWidth: true
+            maximumLength: 1024 * 1024 * 1024
+            text: model.banner
+            onTextChanged: model.banner = text
+        }
+
+        Row {
             Label {
-                text: "community id: " + model.communityId
-                font.weight: Font.Bold
+                anchors.verticalCenter: parent.verticalCenter
+                text: "members:\t"
             }
 
-            TextField {
-                Layout.fillWidth: true
-                text: model.name
-                onTextChanged: model.name = text
+            SpinBox {
+                editable: true
+                height: 30
+                from: 0; to: 10 * 1000 * 1000
+                value:  model.members
+                onValueChanged: model.members = value
+            }
+        }
+
+        Row {
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "popularity:\t"
             }
 
-            TextField {
-                Layout.fillWidth: true
-                text: model.description
-                onTextChanged: model.description = text
-            }
-
-            Flow {
-                Layout.fillWidth: true
-
-                CheckBox {
-                    text: "featured"
-                    checked: model.featured
-                    onToggled: model.featured = checked
-                }
-                CheckBox {
-                    text: "available"
-                    checked: model.available
-                    onToggled: model.available = checked
-                }
-                CheckBox {
-                    text: "loaded"
-                    checked: model.loaded
-                    onToggled: model.loaded = checked
-                }
-            }
-
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 50
-
-                Rectangle {
-                    border.color: 'gray'
-                    Layout.preferredWidth: root.width / 2
-                    Layout.fillHeight: true
-
-                    Image {
-                        anchors.fill: parent
-                        anchors.margins: 1
-                        fillMode: Image.PreserveAspectFit
-                        source: model.icon
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            iconSelector.open()
-                            StorybookUtils.singleShotConnection(iconSelector.selected, icon => {
-                                model.icon = icon
-                                iconSelector.close()
-                            })
-                        }
-                    }
-                }
-
-                Rectangle {
-                    border.color: 'gray'
-                    Layout.preferredWidth: root.width / 2
-                    Layout.fillHeight: true
-
-                    Image {
-                        anchors.fill: parent
-                        anchors.margins: 1
-                        fillMode: Image.PreserveAspectFit
-                        source: model.banner
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            bannerSelector.open()
-                            StorybookUtils.singleShotConnection(bannerSelector.selected, banner => {
-                                model.banner = banner
-                                bannerSelector.close()
-                            })
-                        }
-                    }
-                }
-            }
-
-            TextField {
-                Layout.fillWidth: true
-                maximumLength: 1024 * 1024 * 1024
-                text: model.icon
-                onTextChanged: model.icon = text
-            }
-
-            TextField {
-                Layout.fillWidth: true
-                maximumLength: 1024 * 1024 * 1024
-                text: model.banner
-                onTextChanged: model.banner = text
-            }
-
-            Row {
-                spacing: 4
-
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "members:\t"
-                }
-
-                SpinBox {
-                    editable: true
-                    height: 30
-                    from: 0; to: 10 * 1000 * 1000
-                    value:  model.members
-                    onValueChanged: model.members = value
-                }
-            }
-
-            Row {
-                spacing: 4
-
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "popularity:\t"
-                }
-
-                SpinBox {
-                    editable: true
-                    height: 30
-                    from: 0; to: 10 * 1000 * 1000
-                    value:  model.popularity
-                    onValueChanged: model.popularity = value
-                }
+            SpinBox {
+                editable: true
+                height: 30
+                from: 0; to: 10 * 1000 * 1000
+                value:  model.popularity
+                onValueChanged: model.popularity = value
             }
         }
     }
