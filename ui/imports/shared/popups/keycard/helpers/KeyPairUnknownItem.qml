@@ -22,7 +22,7 @@ Rectangle {
     property string keyPairDerivedFrom: ""
     property string keyPairAccounts: ""
 
-    color: Style.current.grey
+    color: Theme.palette.baseColor2
     radius: Style.current.halfPadding
     implicitWidth: 448
     implicitHeight: 198
