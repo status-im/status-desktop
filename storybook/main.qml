@@ -47,6 +47,9 @@ ApplicationWindow {
         ListElement {
             title: "LanguageCurrencySettings"
         }
+        ListElement {
+            title: "AppearanceView"
+        }
     }
 
     SplitView {
