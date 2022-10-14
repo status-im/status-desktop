@@ -385,6 +385,7 @@ QtObject {
     readonly property QtObject keycard: QtObject {
 
         readonly property QtObject general: QtObject {
+            readonly property string purchasePage: "https://get.keycard.tech"
             readonly property int onboardingHeight: 460
             readonly property int loginHeight: 460
             readonly property int imageWidth: 240
