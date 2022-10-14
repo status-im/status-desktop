@@ -1,8 +1,5 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-
-import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.CommunitiesPortal 1.0
 import AppLayouts.CommunitiesPortal.stores 1.0
@@ -69,7 +66,7 @@ SplitView {
             logsView.logText: logs.logText
 
             Row {
-                Text {
+                Label {
                     anchors.verticalCenter: parent.verticalCenter
                     text: "number of communities:"
                 }
@@ -84,11 +81,9 @@ SplitView {
         }
     }
 
-    Control {
+    Pane {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
-
-        font.pixelSize: 13
 
         CommunitiesPortalModelEditor {
             anchors.fill: parent

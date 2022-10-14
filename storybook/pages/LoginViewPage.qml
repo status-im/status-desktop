@@ -1,6 +1,5 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
 
 import AppLayouts.Onboarding.views 1.0
 import AppLayouts.Onboarding.stores 1.0
@@ -99,8 +98,6 @@ SplitView {
     Control {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
-
-        font.pixelSize: 13
 
         // model editor will go here
     }

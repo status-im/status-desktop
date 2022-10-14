@@ -1,63 +1,82 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-
-import StatusQ.Core 0.1
-import StatusQ.Components 0.1
-import StatusQ.Layout 0.1
+import QtQuick.Layouts 1.14
 
 import Qt.labs.settings 1.0
 
+import StatusQ.Core.Theme 0.1
+import Storybook 1.0
 
 ApplicationWindow {
-    id: rootWindow
+    id: root
 
     width: 1450
     height: 840
     visible: true
 
-    StatusSectionLayout {
-        id: mainPageView
+    property string currentPage
 
-        anchors.fill: parent
-        showHeader: false
+    font.pixelSize: 13
 
-        function page(name, fillPage) {
-            viewLoader.source = Qt.resolvedUrl("./pages/" + name + "Page.qml");
-            storeSettings.selected = viewLoader.source
+    ListModel {
+        id: pagesModel
+
+        ListElement {
+             title: "CommunitiesPortalLayout"
         }
+        ListElement {
+             title: "LoginView"
+        }
+    }
 
-        leftPanel: StatusScrollView {
-            anchors.fill: parent
-            anchors.topMargin: 48
+    SplitView {
+        anchors.fill: parent
 
-            Column {
-                spacing: 0
+        ColumnLayout {
+            SplitView.preferredWidth: 240
 
-                CheckBox {
-                    text: "Load asynchronously"
-                    checked: storeSettings.loadAsynchronously
+            CheckBox {
+                id: loadAsyncCheckBox
 
-                    onToggled: storeSettings.loadAsynchronously = checked
+                Layout.fillWidth: true
+
+                text: "Load asynchronously"
+            }
+
+            CheckBox {
+                id: darkModeCheckBox
+
+                Layout.fillWidth: true
+
+                text: "Dark mode"
+
+                StatusLightTheme { id: lightTheme }
+                StatusDarkTheme { id: darkTheme }
+
+                Binding {
+                    target: Theme
+                    property: "palette"
+                    value: darkModeCheckBox.checked ? darkTheme : lightTheme
                 }
+            }
 
-                Item { width: 1; height: 30 }
+            Pane {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-                StatusNavigationListItem {
-                    title: "CommunitiesPortalLayout"
-                    selected: viewLoader.source.toString().includes(title)
-                    onClicked: mainPageView.page(title);
-                }
+                PagesList {
+                    anchors.fill: parent
 
-                StatusNavigationListItem {
-                    title: "LoginView"
-                    selected: viewLoader.source.toString().includes(title)
-                    onClicked: mainPageView.page(title);
+                    currentPage: root.currentPage
+                    model: pagesModel
+
+                    onPageSelected: root.currentPage = page
                 }
             }
         }
 
-        centerPanel: Item {
-            anchors.fill: parent
+        Item {
+            SplitView.fillWidth: true
 
             Loader {
                 id: viewLoader
@@ -65,15 +84,14 @@ ApplicationWindow {
                 anchors.fill: parent
                 clip: true
 
-                source: storeSettings.selected
-                asynchronous: storeSettings.loadAsynchronously
+                source: Qt.resolvedUrl(`./pages/${root.currentPage}Page.qml`)
+                asynchronous: loadAsyncCheckBox.checked
                 visible: status === Loader.Ready
 
                 // force reload when `asynchronous` changes
                 onAsynchronousChanged: {
-                    const tmp = storeSettings.selected
-                    storeSettings.selected = ""
-                    storeSettings.selected = tmp
+                    active = false
+                    active = true
                 }
             }
 
@@ -85,9 +103,8 @@ ApplicationWindow {
     }
 
     Settings {
-        id: storeSettings
-
-        property string selected: ""
-        property bool loadAsynchronously: false
+        property alias currentPage: root.currentPage
+        property alias loadAsynchronously: loadAsyncCheckBox.checked
+        property alias darkMode: darkModeCheckBox.checked
     }
 }
