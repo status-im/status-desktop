@@ -18,14 +18,13 @@ namespace Status::Testing {
 TEST(MessagingApi, TestStartMessaging)
 {
     bool nodeReady = false;
-    QObject::connect(StatusGo::SignalsManager::instance(), &StatusGo::SignalsManager::nodeReady, [&nodeReady](const QString& error) {
-        if(error.isEmpty()) {
-            if(nodeReady) {
-                nodeReady = false;
-            } else
-                nodeReady = true;
-        }
-    });
+    QObject::connect(
+        StatusGo::SignalsManager::instance(), &StatusGo::SignalsManager::nodeReady, [&nodeReady](const QString& error) {
+            if(error.isEmpty())
+            {
+                nodeReady = !nodeReady;
+            }
+        });
 
     ScopedTestAccount testAccount(test_info_->name());
 

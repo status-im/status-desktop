@@ -11,7 +11,11 @@
 
 #include "Types.h"
 
+#include <nlohmann/json.hpp>
+
 #include <vector>
+
+#include <QDateTime>
 
 namespace Accounts = Status::StatusGo::Accounts;
 
@@ -52,9 +56,31 @@ NetworkConfigurations getEthereumChains(bool onlyEnabled);
 Tokens getTokens(const ChainID& chainId);
 
 using TokenBalances = std::map<Accounts::EOAddress, std::map<Accounts::EOAddress, BigInt>>;
-/// \note status-go's @api.go -> <xx>@<xx>.go
+/// \note status-go's API -> GetTokensBalancesForChainIDs<@api.go
 /// \throws \c CallPrivateRpcError
 TokenBalances getTokensBalancesForChainIDs(const std::vector<ChainID>& chainIds,
-                                           const std::vector<Accounts::EOAddress> accounts,
-                                           const std::vector<Accounts::EOAddress> tokens);
+                                           const std::vector<Accounts::EOAddress>& accounts,
+                                           const std::vector<Accounts::EOAddress>& tokens);
+
+struct TokenBalanceHistory
+{
+    BigInt value;
+    QDateTime time;
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TokenBalanceHistory, value, time)
+
+/// \warning it relies on the stored transaction data fetched by calling \c checkRecentHistory
+/// \todo reconsider \c checkRecentHistory dependency
+///
+/// \see checkRecentHistory
+/// \note status-go's API -> GetBalanceHistoryOnChain@api.go
+/// \throws \c CallPrivateRpcError
+std::vector<TokenBalanceHistory>
+getBalanceHistoryOnChain(Accounts::EOAddress account, const std::chrono::seconds& secondsToNow, int sampleCount);
+
+/// \note status-go's API -> CheckRecentHistory@api.go
+/// \throws \c CallPrivateRpcError
+void checkRecentHistory(const std::vector<Accounts::EOAddress>& accounts);
+
 } // namespace Status::StatusGo::Wallet

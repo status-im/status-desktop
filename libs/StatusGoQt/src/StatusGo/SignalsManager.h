@@ -1,6 +1,9 @@
 #pragma once
 
 #include <QObject>
+#include <QThreadPool>
+
+#include <nlohmann/json.hpp>
 
 namespace Status::StatusGo
 {
@@ -18,13 +21,35 @@ enum SignalType
     DiscoveryStopped,
     DiscoverySummary,
 
+    MailserverStarted,
     MailserverChanged,
     MailserverAvailable,
 
     HistoryRequestStarted,
     HistoryRequestBatchProcessed,
-    HistoryRequestCompleted
+    HistoryRequestCompleted,
+
+    WalletEvent
 };
+
+class EventData final : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit EventData(nlohmann::json eventInfo, bool error);
+
+    const nlohmann::json& eventInfo() const
+    {
+        return m_eventInfo;
+    };
+
+private:
+    nlohmann::json m_eventInfo;
+    bool m_hasError;
+};
+
+using EventDataQPtr = QSharedPointer<Status::StatusGo::EventData>;
 
 /*!
     \todo refactor into a message broker helper to be used by specific service APIs to deliver signals
@@ -38,9 +63,10 @@ class SignalsManager final : public QObject
 public:
     static SignalsManager* instance();
 
-    void processSignal(const QString& ev);
+    void processSignal(const char* statusSignalData);
 
 signals:
+    // TODO: move all signals to deliver EventData, distributing this way data processing to the consumer
     void nodeReady(const QString& error);
     void nodeStarted(const QString& error);
     void nodeStopped(const QString& error);
@@ -51,12 +77,15 @@ signals:
     void discoveryStopped(const QString& error);
     void discoverySummary(size_t nodeCount, const QString& error);
 
+    void mailserverStarted(const QString& error);
     void mailserverChanged(const QString& error);
     void mailserverAvailable(const QString& error);
 
     void historyRequestStarted(const QString& error);
     void historyRequestBatchProcessed(const QString& error);
     void historyRequestCompleted(const QString& error);
+
+    void wallet(QSharedPointer<Status::StatusGo::EventData> eventData);
 
 private:
     explicit SignalsManager();
@@ -65,7 +94,10 @@ private:
 private:
     static std::map<std::string, SignalType> signalMap;
     static void signalCallback(const char* data);
-    void decode(const QJsonObject& signalEvent);
+
+    void dispatch(const std::string& type, nlohmann::json signalEvent, const QString& signalError);
+
+    QThreadPool m_threadPool;
 };
 
 } // namespace Status::StatusGo

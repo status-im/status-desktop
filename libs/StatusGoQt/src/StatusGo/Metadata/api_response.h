@@ -159,7 +159,8 @@ class CallPrivateRpcError : public std::runtime_error
 {
 public:
     CallPrivateRpcError(const CallPrivateRpcErrorResponse error)
-        : std::runtime_error("CallPrivateRPC@status-go failed")
+        : std::runtime_error("CallPrivateRPC@status-go failed - [" + std::to_string(error.error.code) +
+                             "]: " + error.error.message)
         , m_error(std::move(error))
     { }
 

@@ -35,12 +35,12 @@ ScopedTestAccount::ScopedTestAccount(const std::string& tempTestSubfolderName,
     char* args[] = {appName.data()};
     m_app = std::make_unique<QCoreApplication>(argc, reinterpret_cast<char**>(args));
 
-    m_testFolderPath = m_fusedTestFolder->tempFolder() / Constants::statusGoDataDirName;
-    fs::create_directory(m_testFolderPath);
+    m_dataDirPath = m_fusedTestFolder->tempFolder() / Constants::statusGoDataDirName;
+    fs::create_directory(m_dataDirPath);
 
     // Setup accounts
     auto accountsService = std::make_shared<Onboarding::AccountsService>();
-    auto result = accountsService->init(m_testFolderPath);
+    auto result = accountsService->init(m_dataDirPath);
     if(!result)
     {
         throw std::runtime_error("ScopedTestAccount - Failed to create temporary test account");
@@ -59,12 +59,14 @@ ScopedTestAccount::ScopedTestAccount(const std::string& tempTestSubfolderName,
     }
 
     int accountLoggedInCount = 0;
-    QObject::connect(m_onboarding.get(), &Onboarding::OnboardingController::accountLoggedIn, [&accountLoggedInCount]() {
-        accountLoggedInCount++;
-    });
+    QObject::connect(m_onboarding.get(),
+                     &Onboarding::OnboardingController::accountLoggedIn,
+                     m_app.get(),
+                     [&accountLoggedInCount]() { accountLoggedInCount++; });
     bool accountLoggedInError = false;
     QObject::connect(m_onboarding.get(),
                      &Onboarding::OnboardingController::accountLoginError,
+                     m_app.get(),
                      [&accountLoggedInError]() { accountLoggedInError = true; });
 
     // Create Accounts
@@ -99,13 +101,14 @@ ScopedTestAccount::ScopedTestAccount(const std::string& tempTestSubfolderName,
 
     processMessages(2000, [accountLoggedInCount]() { return accountLoggedInCount == 0; });
 
-    if(accountLoggedInCount != 1)
-    {
-        throw std::runtime_error("ScopedTestAccount - missing confirmation of account creation");
-    }
     if(accountLoggedInError)
     {
         throw std::runtime_error("ScopedTestAccount - account loggedin error");
+    }
+
+    if(accountLoggedInCount != 1)
+    {
+        throw std::runtime_error("ScopedTestAccount - missing confirmation of account creation");
     }
 }
 
@@ -123,10 +126,12 @@ void ScopedTestAccount::processMessages(size_t maxWaitTimeMillis, std::function<
     auto remainingIterations = maxWaitTime / iterationSleepTime;
     while(remainingIterations-- > 0 && shouldWaitUntilTimeout())
     {
-        std::this_thread::sleep_for(iterationSleepTime);
-
         QCoreApplication::sendPostedEvents();
+
+        std::this_thread::sleep_for(iterationSleepTime);
     }
+    // Provide chance to exit slot processing after we set the condition that might trigger shouldWaitUntilTimeout to false
+    std::this_thread::sleep_for(iterationSleepTime);
 }
 
 void ScopedTestAccount::logOut()
@@ -171,7 +176,12 @@ Onboarding::OnboardingController* ScopedTestAccount::onboardingController() cons
 
 const std::filesystem::path& ScopedTestAccount::fusedTestFolder() const
 {
-    return m_testFolderPath;
+    return m_fusedTestFolder->tempFolder();
+}
+
+const std::filesystem::path& ScopedTestAccount::testDataDir() const
+{
+    return m_dataDirPath;
 }
 
 } // namespace Status::Testing

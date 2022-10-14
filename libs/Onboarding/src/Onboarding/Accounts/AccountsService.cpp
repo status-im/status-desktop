@@ -10,6 +10,8 @@
 
 #include <optional>
 
+#include <QtGlobal>
+
 std::optional<QString> getDataFromFile(const fs::path& path)
 {
     QFile jsonFile{Status::toQString(path)};
@@ -363,7 +365,9 @@ QJsonObject AccountsService::getDefaultNodeConfig(const QString& installationId)
     {
         auto templateNodeConfigJsonStr = getDataFromFile(":/Status/StaticConfig/node-config.json").value();
         auto fleetJson = getDataFromFile(":/Status/StaticConfig/fleets.json").value();
-        auto infuraKey = getDataFromFile(":/Status/StaticConfig/infura_key").value();
+        auto envInfuraKey = qEnvironmentVariable("INFURA_TOKEN");
+        auto infuraKey =
+            envInfuraKey.isEmpty() ? getDataFromFile(":/Status/StaticConfig/infura_key").value() : envInfuraKey;
 
         auto templateDefaultNetworksJson = getDataFromFile(":/Status/StaticConfig/default-networks.json").value();
         QString defaultNetworksContent = templateDefaultNetworksJson.replace("%INFURA_TOKEN_RESOLVED%", infuraKey);

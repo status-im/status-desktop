@@ -4,6 +4,7 @@
 
 #include <QByteArray>
 #include <QColor>
+#include <QDateTime>
 #include <QString>
 #include <QUrl>
 
@@ -97,7 +98,24 @@ struct adl_serializer<std::optional<T>>
 
     static void from_json(const json& j, std::optional<T>& opt)
     {
-        opt.emplace(j.get<T>());
+        if(j.is_null())
+            opt = std::nullopt;
+        else
+            opt.emplace(j.get<T>());
+    }
+};
+
+template <>
+struct adl_serializer<QDateTime>
+{
+    static void to_json(json& j, const QDateTime& dt)
+    {
+        j = dt.toSecsSinceEpoch();
+    }
+
+    static void from_json(const json& j, QDateTime& dt)
+    {
+        dt = QDateTime::fromSecsSinceEpoch(j.get<qint64>());
     }
 };
 
