@@ -15,5 +15,7 @@
         <file>pages/AboutViewPage.qml</file>
         <file>pages/LanguageCurrencySettingsPage.qml</file>
         <file>pages/AppearanceViewPage.qml</file>
+        <file>pages/ExemptionComponentPage.qml</file>
+        <file>pages/ExemptionsComponent/ExemptionsComponentData.qml</file>
     </qresource>
 </RCC>
