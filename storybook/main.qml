@@ -47,6 +47,12 @@ ApplicationWindow {
         ListElement {
             title: "LanguageCurrencySettings"
         }
+        ListElement {
+            title: "AppearanceView"
+        }
+        ListElement {
+             title: "ExemptionComponent"
+        }
     }
 
     SplitView {
