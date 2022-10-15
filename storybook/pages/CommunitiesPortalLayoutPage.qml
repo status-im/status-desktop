@@ -25,7 +25,11 @@ SplitView {
                 readonly property string locale: ""
                 readonly property int unreadNotificationsCount: 42
                 readonly property string communityTags:
-                    JSON.stringify({"Activism":"✊","Art":"🎨","Blockchain":"🔗","Books & blogs":"📚","Career":"💼"})
+                    JSON.stringify({"Activism":"✊","Art":"🎨","Blockchain":"🔗","Books & blogs":"📚","Career":"💼","Collaboration":"🤝","Commerce":"🛒","Culture":"🎎","DAO":"🚀","DIY":"🔨","DeFi":"📈",
+                                    "Design":"🧩","Education":"🎒","Entertainment":"🍿","Environment":"🌿","Ethereum":"Ξ","Event":"🗓","Fantasy":"🧙‍♂️","Fashion":"🧦","Food":"🌶","Gaming":"🎮","Global":"🌍",
+                                    "Health":"🧠","Hobby":"📐","Innovation":"🧪","Language":"📜","Lifestyle":"✨","Local":"📍","Love":"❤️","Markets":"💎","Movies & TV":"🎞","Music":"🎶","NFT":"🖼","NSFW":"🍆",
+                                    "News":"🗞","Non-profit":"🙏","Org":"🏢","Pets":"🐶","Play":"🎲","Podcast":"🎙️","Politics":"🗳️","Privacy":"👻","Product":"🍱","Psyche":"🍁","Security":"🔒","Social":"☕",
+                                    "Software dev":"👩‍💻","Sports":"⚽️","Tech":"📱","Travel":"🗺","Vehicles":"🚕","Web3":"🌐"})
                 readonly property var curatedCommunitiesModel: SortFilterProxyModel {
 
                     sourceModel: CommunitiesPortalDummyModel { id: mockedModel }

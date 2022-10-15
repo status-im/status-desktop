@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 
@@ -54,6 +55,13 @@ StatusScrollView {
         id: communityCardDelegate
 
         StatusCommunityCard {
+            readonly property string tags: model.tags
+
+            JSONListModel {
+                id: tagsJson
+                json: tags
+            }
+
             locale: root.locale
             communityId: model.communityId
             loaded: model.available
@@ -63,7 +71,7 @@ StatusScrollView {
             description: model.description
             members: model.members
             popularity: model.popularity
-            // <out of scope> categories:  model.categories
+            categories: tagsJson.model
 
             onClicked: root.cardClicked(communityId)
         }
