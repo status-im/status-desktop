@@ -1,2 +1,4 @@
 LanguageStore 1.0 LanguageStore.qml
 AppearanceStore 1.0 AppearanceStore.qml
+ProfileStore 1.0 ProfileStore.qml
+NotificationsStore 1.0 NotificationsStore.qml
