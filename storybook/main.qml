@@ -50,6 +50,9 @@ ApplicationWindow {
         ListElement {
             title: "AppearanceView"
         }
+        ListElement {
+             title: "ExemptionComponent"
+        }
     }
 
     SplitView {
