@@ -4,3 +4,4 @@ EmojiJSON 1.0 emojiList.js
 XSS 1.0 xss.js
 singleton Utils 0.1 Utils.qml
 singleton Emoji 0.1 Emoji.qml
+JSONListModel 0.1 JSONListModel.qml
