@@ -39,6 +39,9 @@ ApplicationWindow {
         ListElement {
              title: "ExemptionComponent"
         }
+        ListElement {
+             title: "NotificationSounds"
+        }
     }
 
     SplitView {

@@ -3,6 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Controls.Universal 2.12
 import QtQuick.Layouts 1.13
 
+import SortFilterProxyModel 0.2
+
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
@@ -55,6 +57,31 @@ StatusSectionLayout {
         readonly property int contentWidth: 560
     }
 
+    function getColorForUser(model) {
+        return (model.type === Constants.settingsSection.exemptions.oneToOneChat? Utils.colorForPubkey(model.itemId) : model.color)
+    }
+
+    function getRingForUser(model) {
+        return (model.type === Constants.settingsSection.exemptions.oneToOneChat? Utils.getColorHashAsJson(model.itemId) : undefined)
+    }
+
+    // note: this sanitizes the data expected by the Exemption component
+    // this will be moved to a layer above later as the qml is refactored
+    // it uses helpers defined as local functions due to an issue accessing imports
+    SortFilterProxyModel {
+        id: exemptionsModel
+        sourceModel: root.store.notificationsStore.exemptionsModel
+        proxyRoles: [
+            ExpressionRole {
+                name: "color"
+                expression: root.getColorForUser(model)
+            },
+            ExpressionRole {
+                name: "ring"
+                expression: root.getRingForUser(model)
+            }
+        ]
+    }
     leftPanel: LeftTabView {
         id: leftTab
         store: root.store
@@ -222,6 +249,9 @@ StatusSectionLayout {
                 devicesStore: root.store.devicesStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.notifications)
                 contentWidth: d.contentWidth
+
+                hasMultipleDevices: root.store.devicesStore.devicesModel.count > 0
+                exemptionsModel: exemptionsModel
             }
 
             DevicesView {
