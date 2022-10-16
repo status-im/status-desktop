@@ -2,8 +2,6 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
-import SortFilterProxyModel 0.2
-
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
@@ -23,16 +21,10 @@ import "../popups"
 
 SettingsContentBase {
     id: root
+    property bool hasMultipleDevices: true
     property NotificationsStore notificationsStore
     property DevicesStore devicesStore
-
-    function getColorForUser(model) {
-        return (model.type === Constants.settingsSection.exemptions.oneToOneChat? Utils.colorForPubkey(model.itemId) : model.color)
-    }
-
-    function getRingForUser(model) {
-        return (model.type === Constants.settingsSection.exemptions.oneToOneChat? Utils.getColorHashAsJson(model.itemId) : undefined)
-    }
+    property var exemptionsModel
 
     ColumnLayout {
         id: contentColumn
@@ -90,7 +82,7 @@ SettingsContentBase {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                visible: root.devicesStore.devicesModel.count > 0
+                visible: hasMultipleDevices
 
                 StatusBaseText {
                     Layout.fillWidth: true
@@ -124,11 +116,12 @@ SettingsContentBase {
             components: [
                 StatusSwitch {
                     id: allowNotifSwitch
-                    checked: appSettings.notifSettingAllowNotifications
+                    checked: notificationsStore.notifSettingAllowNotifications
                     onClicked: {
-                        appSettings.notifSettingAllowNotifications = !appSettings.notifSettingAllowNotifications
+                        notificationsStore.setNotifSettingAllowNotifications(!notificationsStore.notifSettingAllowNotifications)
                     }
                 }
+ 
             ]
             onClicked: {
                 allowNotifSwitch.clicked()
@@ -148,10 +141,10 @@ SettingsContentBase {
             title: qsTr("1:1 Chats")
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingOneToOneChats
-                    onSendAlertsClicked: appSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.turnOffValue
+                    selected: notificationsStore.notifSettingOneToOneChats
+                    onSendAlertsClicked: notificationsStore.setNotifSettingOneToOneChats(Constants.settingsSection.notifications.sendAlertsValue)
+                    onDeliverQuietlyClicked: notificationsStore.setNotifSettingOneToOneChats(Constants.settingsSection.notifications.deliverQuietlyValue)
+                    onTurnOffClicked: notificationsStore.setNotifSettingOneToOneChats(Constants.settingsSection.notifications.turnOffValue)
                 }
             ]
         }
@@ -161,10 +154,10 @@ SettingsContentBase {
             title: qsTr("Group Chats")
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingGroupChats
-                    onSendAlertsClicked: appSettings.notifSettingGroupChats = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingGroupChats = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingGroupChats = Constants.settingsSection.notifications.turnOffValue
+                    selected: notificationsStore.notifSettingGroupChats
+                    onSendAlertsClicked: notificationsStore.setNotifSettingGroupChats(Constants.settingsSection.notifications.sendAlertsValue)
+                    onDeliverQuietlyClicked: notificationsStore.setNotifSettingGroupChats(Constants.settingsSection.notifications.deliverQuietlyValue)
+                    onTurnOffClicked: notificationsStore.setNotifSettingGroupChats(Constants.settingsSection.notifications.turnOffValue)
                 }
             ]
         }
@@ -175,10 +168,10 @@ SettingsContentBase {
             tertiaryTitle: qsTr("Messages containing @%1").arg(userProfile.name)
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingPersonalMentions
-                    onSendAlertsClicked: appSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.turnOffValue
+                    selected: notificationsStore.notifSettingPersonalMentions
+                    onSendAlertsClicked: notificationsStore.setNotifSettingPersonalMentions(Constants.settingsSection.notifications.sendAlertsValue)
+                    onDeliverQuietlyClicked: notificationsStore.setNotifSettingPersonalMentions(Constants.settingsSection.notifications.deliverQuietlyValue)
+                    onTurnOffClicked: notificationsStore.setNotifSettingPersonalMentions(Constants.settingsSection.notifications.turnOffValue)
                 }
             ]
         }
@@ -189,10 +182,10 @@ SettingsContentBase {
             tertiaryTitle: qsTr("Messages containing @here and @channel")
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingGlobalMentions
-                    onSendAlertsClicked: appSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.turnOffValue
+                    selected: notificationsStore.notifSettingGlobalMentions
+                    onSendAlertsClicked: notificationsStore.setNotifSettingGlobalMentions(Constants.settingsSection.notifications.sendAlertsValue)
+                    onDeliverQuietlyClicked: notificationsStore.setNotifSettingGlobalMentions(Constants.settingsSection.notifications.deliverQuietlyValue)
+                    onTurnOffClicked: notificationsStore.setNotifSettingGlobalMentions(Constants.settingsSection.notifications.turnOffValue)
                 }
             ]
         }
@@ -202,10 +195,10 @@ SettingsContentBase {
             title: qsTr("All Messages")
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingAllMessages
-                    onSendAlertsClicked: appSettings.notifSettingAllMessages = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingAllMessages = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingAllMessages = Constants.settingsSection.notifications.turnOffValue
+                    selected: notificationsStore.notifSettingAllMessages
+                    onSendAlertsClicked: notificationsStore.setNotifSettingAllMessages(Constants.settingsSection.notifications.sendAlertsValue)
+                    onDeliverQuietlyClicked: notificationsStore.setNotifSettingAllMessages(Constants.settingsSection.notifications.deliverQuietlyValue)
+                    onTurnOffClicked: notificationsStore.setNotifSettingAllMessages(Constants.settingsSection.notifications.turnOffValue)
                 }
             ]
         }
@@ -223,10 +216,10 @@ SettingsContentBase {
             title: qsTr("Contact Requests")
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingContactRequests
-                    onSendAlertsClicked: appSettings.notifSettingContactRequests = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingContactRequests = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingContactRequests = Constants.settingsSection.notifications.turnOffValue
+                    selected: notificationsStore.notifSettingContactRequests
+                    onSendAlertsClicked: notificationsStore.setNotifSettingContactRequests(Constants.settingsSection.notifications.sendAlertsValue)
+                    onDeliverQuietlyClicked: notificationsStore.setNotifSettingContactRequests(Constants.settingsSection.notifications.deliverQuietlyValue)
+                    onTurnOffClicked: notificationsStore.setNotifSettingContactRequests(Constants.settingsSection.notifications.turnOffValue)
                 }
             ]
         }
@@ -236,10 +229,10 @@ SettingsContentBase {
             title: qsTr("Identity Verification Requests")
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingIdentityVerificationRequests
-                    onSendAlertsClicked: appSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.turnOffValue
+                    selected: notificationsStore.notifSettingIdentityVerificationRequests
+                    onSendAlertsClicked: notificationsStore.setNotifSettingIdentityVerificationRequests(Constants.settingsSection.notifications.sendAlertsValue)
+                    onDeliverQuietlyClicked: notificationsStore.setNotifSettingIdentityVerificationRequests(Constants.settingsSection.notifications.deliverQuietlyValue)
+                    onTurnOffClicked: notificationsStore.setNotifSettingIdentityVerificationRequests(Constants.settingsSection.notifications.turnOffValue)
                 }
             ]
         }
@@ -265,10 +258,10 @@ SettingsContentBase {
             notificationTitle: "Vitalik Buterin"
             notificationMessage: qsTr("Hi there! So EIP-1559 will defini...")
             buttonGroup: messageSetting
-            checked: appSettings.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewNameAndMessage
+            checked: notificationsStore.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewNameAndMessage
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.notificationMessagePreview = Constants.settingsSection.notificationsBubble.previewNameAndMessage
+                    notificationsStore.setNotificationMessagePreview(Constants.settingsSection.notificationsBubble.previewNameAndMessage)
                 }
             }
         }
@@ -280,10 +273,10 @@ SettingsContentBase {
             notificationTitle: "Vitalik Buterin"
             notificationMessage: qsTr("You have a new message")
             buttonGroup: messageSetting
-            checked: appSettings.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewNameOnly
+            checked: notificationsStore.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewNameOnly
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.notificationMessagePreview = Constants.settingsSection.notificationsBubble.previewNameOnly
+                    notificationsStore.setNotificationMessagePreview(Constants.settingsSection.notificationsBubble.previewNameOnly)
                 }
             }
         }
@@ -295,10 +288,10 @@ SettingsContentBase {
             notificationTitle: "Status"
             notificationMessage: qsTr("You have a new message")
             buttonGroup: messageSetting
-            checked: appSettings.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewAnonymous
+            checked: notificationsStore.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewAnonymous
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.notificationMessagePreview = Constants.settingsSection.notificationsBubble.previewAnonymous
+                    notificationsStore.setNotificationMessagePreview(Constants.settingsSection.notificationsBubble.previewAnonymous)
                 }
             }
         }
@@ -309,9 +302,9 @@ SettingsContentBase {
             components: [
                 StatusSwitch {
                     id: soundSwitch
-                    checked: appSettings.notificationSoundsEnabled
+                    checked: notificationsStore.notificationSoundsEnabled
                     onClicked: {
-                        appSettings.notificationSoundsEnabled = !appSettings.notificationSoundsEnabled
+                        notificationsStore.setNotificationSoundsEnabled(!notificationsStore.notificationSoundsEnabled)
                     }
                 }
             ]
@@ -345,11 +338,11 @@ SettingsContentBase {
                 stepSize: 1
 
                 onValueChanged: {
-                    appSettings.volume = value
+                    notificationsStore.setVolume(value)
                 }
 
                 Component.onCompleted: {
-                    value = appSettings.volume
+                    value = notificationsStore.volume
                 }
             }
 
@@ -389,30 +382,13 @@ SettingsContentBase {
             Layout.preferredHeight: Style.current.bigPadding
         }
 
-        // note: this sanitizes the data expected by the Exemption component
-        // this will be moved to a layer above later as the qml is refactored
-        // it uses helpers defined as local functions due to an issue accessing imports
-        SortFilterProxyModel {
-            id: fixedExemptionsModel
-            sourceModel: root.notificationsStore.exemptionsModel
-            proxyRoles: [
-                ExpressionRole {
-                    name: "color"
-                    expression: root.getColorForUser(model)
-                },
-                ExpressionRole {
-                    name: "ring"
-                    expression: root.getRingForUser(model)
-                }
-            ]
-        }
-
         ExemptionView {
             Layout.preferredWidth: root.contentWidth
             Layout.preferredHeight: 400
             contentWidth: root.contentWidth
-            exemptionsModel: fixedExemptionsModel
+            exemptionsModel: root.exemptionsModel
             notificationsStore: root.notificationsStore
         }
+
     }
 }

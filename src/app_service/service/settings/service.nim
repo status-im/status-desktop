@@ -448,7 +448,7 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "saving allow notification setting error: ", errDesription
-      
+
   QtProperty[bool] notifSettingAllowNotifications:
     read = getNotifSettingAllowNotifications
     write = setNotifSettingAllowNotifications
