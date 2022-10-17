@@ -50,7 +50,7 @@ method runFactoryResetPopup*(self: AccessInterface) {.base.} =
 method runRenameKeycardPopup*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runChangePinPopup*(self: AccessInterface) {.base.} =
+method runChangePinPopup*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runCreateBackupCopyOfAKeycardPopup*(self: AccessInterface) {.base.} =

@@ -14,7 +14,8 @@ method getNextPrimaryState*(self: MaxPukRetriesReachedState, controller: Control
       return createState(StateType.FactoryResetConfirmation, self.flowType, self)
   if self.flowType == FlowType.Authentication or
     self.flowType == FlowType.DisplayKeycardContent or
-    self.flowType == FlowType.RenameKeycard: 
+    self.flowType == FlowType.RenameKeycard or
+    self.flowType == FlowType.ChangeKeycardPin:
       controller.runSharedModuleFlow(FlowType.UnlockKeycard)
   if self.flowType == FlowType.UnlockKeycard:
     return createState(StateType.EnterSeedPhrase, self.flowType, self)
@@ -25,5 +26,6 @@ method executeTertiaryCommand*(self: MaxPukRetriesReachedState, controller: Cont
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
-    self.flowType == FlowType.RenameKeycard:
+    self.flowType == FlowType.RenameKeycard or
+    self.flowType == FlowType.ChangeKeycardPin:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

@@ -145,8 +145,12 @@ method runRenameKeycardPopup*(self: Module, keycardUid: string, keyUid: string) 
   self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.RenameKeycard, keyUid)
 
-method runChangePinPopup*(self: Module) =
-  info "TODO: Change PIN for a Keycard..."
+method runChangePinPopup*(self: Module, keycardUid: string, keyUid: string) =
+  self.createSharedKeycardModule()
+  if self.keycardSharedModule.isNil:
+    return
+  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangeKeycardPin, keyUid)
 
 method runCreateBackupCopyOfAKeycardPopup*(self: Module) =
   info "TODO: Create a Backup Copy of a Keycard..."
