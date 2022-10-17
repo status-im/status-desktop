@@ -30,8 +30,7 @@ Item {
     }
 
     onStateChanged: {
-        if(state === Constants.keycardSharedState.pinSet ||
-                state === Constants.keycardSharedState.pinVerified) {
+        if(d.useFakePin) {
             pinInputField.setPin("123456") // we are free to set fake pin in this case
         } else {
             pinInputField.statesInitialization()
@@ -39,15 +38,14 @@ Item {
         }
     }
 
-    Component.onCompleted: timer.start()
-
-    Timer {
-        id: timer
-        interval: 1000
-        onTriggered: {
-            pinInputField.statesInitialization()
-            pinInputField.forceFocus()
-        }
+    QtObject {
+        id: d
+        readonly property bool useFakePin: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinSet ||
+                                           root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinVerified ||
+                                           root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPinSuccess ||
+                                           root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPinFailure
+        readonly property string message1: qsTr("It is very important that you do not lose this PIN")
+        readonly property string message2: qsTr("Don’t lose your PIN! If you do, you may lose\naccess to your funds.")
     }
 
     Component {
@@ -111,31 +109,32 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             validator: StatusIntValidator{bottom: 0; top: 999999;}
             pinLen: Constants.keycard.general.keycardPinLength
-            enabled: root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.pinSet &&
-                     root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.pinVerified
-
+            enabled: !d.useFakePin
             onPinInputChanged: {
                 root.pinUpdated(pinInput)
-                if (root.state !== Constants.keycardSharedState.wrongPin ||
-                        root.state === Constants.keycardSharedState.wrongKeychainPin) {
+                if (root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.wrongPin ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin) {
                     image.source = Style.png("keycard/enter-pin-%1".arg(pinInput.length))
                 }
                 if(pinInput.length == 0) {
                     return
                 }
-                if(root.state === Constants.keycardSharedState.createPin ||
-                        root.state === Constants.keycardSharedState.enterPin ||
-                        root.state === Constants.keycardSharedState.wrongPin ||
-                        root.state === Constants.keycardSharedState.wrongKeychainPin) {
+                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPin ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin) {
                     root.sharedKeycardModule.setPin(pinInput)
                     if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication)
                         return
                     root.sharedKeycardModule.currentState.doSecondaryAction()
                 }
-                else if(root.state === Constants.keycardSharedState.repeatPin) {
+                else if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.repeatPin) {
                     let pinsMatch = root.sharedKeycardModule.checkRepeatedKeycardPinWhileTyping(pinInput)
                     if (pinsMatch) {
-                        info.text = qsTr("It is very important that you do not lose this PIN")
+                        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin)
+                            info.text = d.message2
+                        else
+                            info.text = d.message1
                         root.sharedKeycardModule.currentState.doSecondaryAction()
                     } else {
                         info.text = qsTr("PINs don't match")
@@ -148,6 +147,7 @@ Item {
         StatusBaseText {
             id: info
             Layout.alignment: Qt.AlignCenter
+            horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             visible: text !== ""
         }
@@ -155,6 +155,7 @@ Item {
         StatusBaseText {
             id: message
             Layout.alignment: Qt.AlignCenter
+            horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             visible: text !== ""
         }
@@ -220,7 +221,12 @@ Item {
             }
             PropertyChanges {
                 target: title
-                text: qsTr("Enter this Keycard’s PIN")
+                text: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin) {
+                        return qsTr("Enter the Keycard PIN")
+                    }
+                    return qsTr("Enter this Keycard’s PIN")
+                }
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }
@@ -315,7 +321,12 @@ Item {
             }
             PropertyChanges {
                 target: title
-                text: qsTr("Choose a Keycard PIN")
+                text: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin) {
+                        return qsTr("Enter new Keycard PIN")
+                    }
+                    return qsTr("Choose a Keycard PIN")
+                }
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }
@@ -325,7 +336,12 @@ Item {
             }
             PropertyChanges {
                 target: info
-                text: qsTr("It is very important that you do not lose this PIN")
+                text: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin) {
+                        return d.message2
+                    }
+                    return d.message1
+                }
                 color: Theme.palette.dangerColor1
                 font.pixelSize: Constants.keycard.general.fontSize3
             }
@@ -344,7 +360,12 @@ Item {
             }
             PropertyChanges {
                 target: title
-                text: qsTr("Repeat Keycard PIN")
+                text: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin) {
+                        return qsTr("Repeat new Keycard PIN")
+                    }
+                    return qsTr("Repeat Keycard PIN")
+                }
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }
@@ -354,7 +375,12 @@ Item {
             }
             PropertyChanges {
                 target: info
-                text: qsTr("It is very important that you do not lose this PIN")
+                text: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin) {
+                        return
+                    }
+                    return d.message1
+                }
                 color: Theme.palette.dangerColor1
                 font.pixelSize: Constants.keycard.general.fontSize3
             }
@@ -364,8 +390,10 @@ Item {
             }
         },
         State {
-            name: Constants.keycardSharedState.pinSet
-            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinSet
+            name: "success-state"
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinSet ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinVerified ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPinSuccess
             PropertyChanges {
                 target: image
                 pattern: "keycard/strong_success/img-%1"
@@ -378,7 +406,18 @@ Item {
             }
             PropertyChanges {
                 target: title
-                text: qsTr("Keycard PIN set")
+                text: {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinSet) {
+                        return qsTr("Keycard PIN set")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinVerified) {
+                        return qsTr("Keycard PIN verified!")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPinSuccess) {
+                        return qsTr("PIN successfully changed")
+                    }
+                    return ""
+                }
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }
@@ -396,21 +435,26 @@ Item {
             }
         },
         State {
-            name: Constants.keycardSharedState.pinVerified
-            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinVerified
+            name: "error-state"
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPinFailure
             PropertyChanges {
                 target: image
-                pattern: "keycard/strong_success/img-%1"
+                pattern: "keycard/strong_error/img-%1"
                 source: ""
                 startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 20
+                startImgIndexForOtherLoops: 18
+                endImgIndex: 29
                 duration: 1300
                 loops: 1
             }
             PropertyChanges {
                 target: title
-                text: qsTr("Keycard PIN verified!")
+                text: {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPinFailure) {
+                        return qsTr("Changing PIN failed")
+                    }
+                    return ""
+                }
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }

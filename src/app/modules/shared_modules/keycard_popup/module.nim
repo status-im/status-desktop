@@ -320,7 +320,8 @@ proc prepareKeyPairForProcessing[T](self: Module[T], keyUid: string) =
     error "sm_cannot find keypair among migrated keypairs for the given keyUid for processing", keyUid=keyUid
   else:
     item.setLocked(keyPairs[0].keycardLocked)
-  item.setIcon("keycard")
+  if item.pairType != KeyPairType.Profile:
+    item.setIcon("keycard")
   self.view.setKeyPairForProcessing(item)
 
 method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path = "", txHash = "") =
@@ -374,6 +375,11 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.view.createKeyPairStoredOnKeycard()
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true) # we're firstly displaying the keycard content
+    return
+  if flowToRun == FlowType.ChangeKeycardPin:
+    self.prepareKeyPairForProcessing(keyUid)
+    self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
+    self.controller.runChangePinFlow()
     return
 
 method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =

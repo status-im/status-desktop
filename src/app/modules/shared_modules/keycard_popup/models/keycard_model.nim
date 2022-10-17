@@ -44,6 +44,12 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
+  proc addItem*(self: KeycardModel, item: KeycardItem) =
+    self.beginInsertRows(newQModelIndex(), self.items.len, self.items.len)
+    self.items.add(item)
+    self.endInsertRows()
+    self.countChanged()
+
   proc `$`*(self: KeycardModel): string =
     for i in 0 ..< self.items.len:
       result &= fmt"""KeycardModel:

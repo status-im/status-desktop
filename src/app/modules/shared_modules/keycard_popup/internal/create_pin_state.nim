@@ -17,11 +17,13 @@ method executeBackCommand*(self: CreatePinState, controller: Controller) =
 
 method executeTertiaryCommand*(self: CreatePinState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.UnlockKeycard:
+    self.flowType == FlowType.UnlockKeycard or
+    self.flowType == FlowType.ChangeKeycardPin:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method getNextSecondaryState*(self: CreatePinState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.UnlockKeycard:
+    self.flowType == FlowType.UnlockKeycard or
+    self.flowType == FlowType.ChangeKeycardPin:
       if controller.getPin().len == PINLengthForStatusApp:
         return createState(StateType.RepeatPin, self.flowType, self)

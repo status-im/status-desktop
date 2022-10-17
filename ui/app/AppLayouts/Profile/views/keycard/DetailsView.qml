@@ -99,7 +99,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runChangePinPopup()
+            root.keycardStore.runChangePinPopup(root.keycardUid, d.keyUid)
         }
     }
 
