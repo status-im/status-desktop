@@ -17,11 +17,18 @@ method executeSecondaryCommand*(self: RepeatPinState, controller: Controller) =
     return
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.UnlockKeycard:
-      controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())  
+      controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())
+
+method getNextSecondaryState*(self: RepeatPinState, controller: Controller): State =
+  if not controller.getPinMatch():
+    return
+  if self.flowType == FlowType.ChangeKeycardPin:
+    return createState(StateType.ChangingKeycardPin, self.flowType, nil)
 
 method executeTertiaryCommand*(self: RepeatPinState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.UnlockKeycard:
+    self.flowType == FlowType.UnlockKeycard or
+    self.flowType == FlowType.ChangeKeycardPin:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
      
 method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
@@ -62,4 +69,4 @@ method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, k
       if keycardFlowType == ResponseTypeValueKeycardFlowResult and
         keycardEvent.instanceUID.len > 0:
           controller.updateKeycardUid(keycardEvent.instanceUID)
-          return createState(StateType.PinSet, self.flowType, nil)
+          return createState(StateType.PinSet, self.flowType, nil)    

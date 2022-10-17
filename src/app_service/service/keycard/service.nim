@@ -222,6 +222,11 @@ QtObject:
     self.currentFlow = KCSFlowType.GetMetadata
     self.startFlow(payload)
 
+  proc startChangePinFlow*(self: Service) =
+    var payload = %* { }
+    self.currentFlow = KCSFlowType.ChangePIN
+    self.startFlow(payload)
+
   proc startStoreMetadataFlow*(self: Service, cardName: string, pin: string, walletPaths: seq[string]) =
     var name = cardName
     if cardName.len > CardNameLength:

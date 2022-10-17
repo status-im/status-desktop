@@ -38,8 +38,8 @@ QtObject {
         root.keycardModule.runRenameKeycardPopup(keycardUid, keyUid)
     }
 
-    function runChangePinPopup() {
-        root.keycardModule.runChangePinPopup()
+    function runChangePinPopup(keycardUid, keyUid) {
+        root.keycardModule.runChangePinPopup(keycardUid, keyUid)
     }
 
     function runCreateBackupCopyOfAKeycardPopup() {

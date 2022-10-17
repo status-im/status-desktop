@@ -24,7 +24,8 @@ method getNextSecondaryState*(self: ReadingKeycardState, controller: Controller)
 method resolveKeycardNextState*(self: ReadingKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
   if self.flowType == FlowType.UnlockKeycard or
-    self.flowType == FlowType.RenameKeycard:
+    self.flowType == FlowType.RenameKeycard or
+    self.flowType == FlowType.ChangeKeycardPin:
       # this part is only for the flows which are card specific (the card we're running a flow for is known in advance)
       let ensureKeycardPresenceState = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
       if ensureKeycardPresenceState.isNil: # means the keycard is inserted

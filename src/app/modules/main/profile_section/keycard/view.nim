@@ -67,8 +67,8 @@ QtObject:
   proc runRenameKeycardPopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
     self.delegate.runRenameKeycardPopup(keycardUid, keyUid)
 
-  proc runChangePinPopup*(self: View) {.slot.} =
-    self.delegate.runChangePinPopup()
+  proc runChangePinPopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
+    self.delegate.runChangePinPopup(keycardUid, keyUid)
 
   proc runCreateBackupCopyOfAKeycardPopup*(self: View) {.slot.} =
     self.delegate.runCreateBackupCopyOfAKeycardPopup()

@@ -300,6 +300,10 @@ proc runGetMetadataFlow*(self: Controller, resolveAddress = false) =
   self.cancelCurrentFlow()
   self.keycardService.startGetMetadataFlow(resolveAddress)
 
+proc runChangePinFlow*(self: Controller) =
+  self.cancelCurrentFlow()
+  self.keycardService.startChangePinFlow()
+
 proc runStoreMetadataFlow*(self: Controller, cardName: string, pin: string, walletPaths: seq[string]) =
   self.cancelCurrentFlow()
   self.keycardService.startStoreMetadataFlow(cardName, pin, walletPaths)
