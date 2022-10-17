@@ -11,6 +11,9 @@ QtObject {
     }
 
     function getUniqueValuesFromModel(model, prop) {
+        if (!model)
+            return []
+
         const values = []
         for (let i = 0; i < model.count; i++)
             values.push(model.get(i)[prop])

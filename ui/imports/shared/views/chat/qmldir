@@ -1,10 +1,11 @@
+AcceptTransactionView 1.0 AcceptTransactionView.qml
 ChannelIdentifierView 1.0 ChannelIdentifierView.qml
 ChatTextView 1.0 ChatTextView.qml
-MessageView 1.0 MessageView.qml
-TransactionBubbleView 1.0 TransactionBubbleView.qml
-LinksMessageView 1.0 LinksMessageView.qml
-InvitationBubbleView 1.0 InvitationBubbleView.qml
-NormalMessageView 1.0 NormalMessageView.qml
 CompactMessageView 1.0 CompactMessageView.qml
+InvitationBubbleView 1.0 InvitationBubbleView.qml
+LinksMessageView 1.0 LinksMessageView.qml
 MessageContextMenuView 1.0 MessageContextMenuView.qml
+MessageView 1.0 MessageView.qml
+NormalMessageView 1.0 NormalMessageView.qml
 ProfileHeaderContextMenuView 1.0 ProfileHeaderContextMenuView.qml
+TransactionBubbleView 1.0 TransactionBubbleView.qml
