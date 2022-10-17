@@ -33,6 +33,7 @@ const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* = "walletAccount/networkEna
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY* = "walletAccount/derivedAddressesReady"
 const SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT* = "walletAccount/tokensRebuilt"
 
+const SIGNAL_NEW_KEYCARD_SET* = "newKeycardSet"
 const SIGNAL_KEYCARD_LOCKED* = "keycardLocked"
 const SIGNAL_KEYCARD_UNLOCKED* = "keycardUnlocked"
 const SIGNAL_KEYCARD_UID_UPDATED* = "keycardUidUpdated"
@@ -90,6 +91,7 @@ type KeycardActivityArgs* = ref object of Args
   keycardUid*: string
   keycardNewUid*: string
   keycardNewName*: string
+  keyPair*: KeyPairDto
 
 const CheckBalanceSlotExecuteIntervalInSeconds = 15 * 60 # 15 mins
 const CheckBalanceTimerIntervalInMilliseconds = 5000 # 5 sec
@@ -500,10 +502,11 @@ QtObject:
         keyPair.keycardName,
         keyPair.keyUid,
         keyPair.accountsAddresses)
-      return self.responseHasNoErrors("addMigratedKeyPair", response)
+      result = self.responseHasNoErrors("addMigratedKeyPair", response)
+      if result:
+        self.events.emit(SIGNAL_NEW_KEYCARD_SET, KeycardActivityArgs(keyPair: keyPair))
     except Exception as e:
       error "error: ", procName="addMigratedKeyPair", errName = e.name, errDesription = e.msg
-    return false
 
   proc getAllMigratedKeyPairs*(self: Service): seq[KeyPairDto] = 
     try:

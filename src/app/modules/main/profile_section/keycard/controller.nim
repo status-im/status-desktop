@@ -47,6 +47,10 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
     self.delegate.onLoggedInUserImageChanged()
 
+  self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
+    let args = KeycardActivityArgs(e)
+    self.delegate.onNewKeycardSet(args.keyPair)
+
   self.events.on(SIGNAL_KEYCARD_LOCKED) do(e: Args):
     let args = KeycardActivityArgs(e)
     self.delegate.onKeycardLocked(args.keycardUid)
