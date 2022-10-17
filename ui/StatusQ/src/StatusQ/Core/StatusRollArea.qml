@@ -43,7 +43,7 @@ Item {
         height: parent.height
         visible: roll.contentX + roll.width < roll.contentWidth
         gradientColor: root.arrowsGradientColor
-        mirrored: true
+        navigateForward: true
 
         onClicked: roll.flick(-roll.width, 0)
     }
