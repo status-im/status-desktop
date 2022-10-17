@@ -59,6 +59,7 @@ type FlowType* {.pure.} = enum
   DisplayKeycardContent = "DisplayKeycardContent"
   RenameKeycard = "RenameKeycard"
   ChangeKeycardPin = "ChangeKeycardPin"
+  ChangeKeycardPuk = "ChangeKeycardPuk"
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -109,6 +110,9 @@ method setKeycarName*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkRepeatedKeycardPinWhileTyping*(self: AccessInterface, pin: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method checkRepeatedKeycardPukWhileTyping*(self: AccessInterface, puk: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getMnemonic*(self: AccessInterface): string {.base.} =

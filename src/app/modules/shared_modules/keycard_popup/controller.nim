@@ -35,6 +35,7 @@ type
     tmpPin: string
     tmpPinMatch: bool
     tmpPuk: string
+    tmpPukMatch: bool
     tmpValidPuk: bool
     tmpPassword: string
     tmpKeycardName: string
@@ -166,6 +167,12 @@ proc setPukValid*(self: Controller, value: bool) =
 
 proc getValidPuk*(self: Controller): bool =
   return self.tmpValidPuk
+
+proc setPukMatch*(self: Controller, value: bool) =
+  self.tmpPukMatch = value
+
+proc getPukMatch*(self: Controller): bool =
+  return self.tmpPukMatch
 
 proc setUsePinFromBiometrics*(self: Controller, value: bool) =
   self.tmpUsePinFromBiometrics = value
@@ -304,6 +311,10 @@ proc runChangePinFlow*(self: Controller) =
   self.cancelCurrentFlow()
   self.keycardService.startChangePinFlow()
 
+proc runChangePukFlow*(self: Controller) =
+  self.cancelCurrentFlow()
+  self.keycardService.startChangePukFlow()
+
 proc runStoreMetadataFlow*(self: Controller, cardName: string, pin: string, walletPaths: seq[string]) =
   self.cancelCurrentFlow()
   self.keycardService.startStoreMetadataFlow(cardName, pin, walletPaths)
@@ -414,6 +425,9 @@ proc enterKeycardPuk*(self: Controller, puk: string) =
 
 proc storePinToKeycard*(self: Controller, pin: string, puk: string) =
   self.keycardService.storePin(pin, puk)
+
+proc storePukToKeycard*(self: Controller, puk: string) =
+  self.keycardService.storePuk(puk)
 
 proc storeSeedPhraseToKeycard*(self: Controller, seedPhraseLength: int, seedPhrase: string) =
   self.keycardService.storeSeedPhrase(seedPhraseLength, seedPhrase)

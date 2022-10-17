@@ -15,5 +15,6 @@ method executeTertiaryCommand*(self: NotKeycardState, controller: Controller) =
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
-    self.flowType == FlowType.ChangeKeycardPin:
+    self.flowType == FlowType.ChangeKeycardPin or
+    self.flowType == FlowType.ChangeKeycardPuk:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

@@ -15,9 +15,10 @@ method executeBackCommand*(self: RepeatPinState, controller: Controller) =
 method executeSecondaryCommand*(self: RepeatPinState, controller: Controller) =
   if not controller.getPinMatch():
     return
-  if self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.UnlockKeycard:
-      controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())
+  if self.flowType == FlowType.SetupNewKeycard:
+    controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())
+  if self.flowType == FlowType.UnlockKeycard:
+    controller.storePinToKeycard(controller.getPin(), "")      
 
 method getNextSecondaryState*(self: RepeatPinState, controller: Controller): State =
   if not controller.getPinMatch():

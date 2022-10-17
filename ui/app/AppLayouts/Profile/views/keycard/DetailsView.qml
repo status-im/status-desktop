@@ -164,7 +164,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runCreatePukPopup()
+            root.keycardStore.runCreatePukPopup(root.keycardUid, d.keyUid)
         }
     }
 

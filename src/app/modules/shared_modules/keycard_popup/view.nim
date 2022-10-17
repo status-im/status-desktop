@@ -204,6 +204,9 @@ QtObject:
   proc checkRepeatedKeycardPinWhileTyping*(self: View, pin: string): bool {.slot.} =
     return self.delegate.checkRepeatedKeycardPinWhileTyping(pin)
 
+  proc checkRepeatedKeycardPukWhileTyping*(self: View, puk: string): bool {.slot.} =
+    return self.delegate.checkRepeatedKeycardPukWhileTyping(puk)
+
   proc getMnemonic*(self: View): string {.slot.} =
     return self.delegate.getMnemonic()
 

@@ -15,13 +15,15 @@ method getNextPrimaryState*(self: PinVerifiedState, controller: Controller): Sta
     self.flowType == FlowType.RenameKeycard:
       return createState(StateType.KeycardMetadataDisplay, self.flowType, nil)
   if self.flowType == FlowType.ChangeKeycardPin:
-      return createState(StateType.CreatePin, self.flowType, nil)
-  return nil
+    return createState(StateType.CreatePin, self.flowType, nil)
+  if self.flowType == FlowType.ChangeKeycardPuk:
+    return createState(StateType.CreatePuk, self.flowType, nil)
 
 method executeTertiaryCommand*(self: PinVerifiedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
-    self.flowType == FlowType.ChangeKeycardPin:
+    self.flowType == FlowType.ChangeKeycardPin or
+    self.flowType == FlowType.ChangeKeycardPuk:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
