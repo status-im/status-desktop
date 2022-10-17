@@ -92,9 +92,7 @@ type
     networksModule: networks_module.AccessInterface
     keycardSharedModule: keycard_shared_module.AccessInterface
     moduleLoaded: bool
-    statusUrlGroupName: string
-    statusUrlGroupMembers: seq[string] # used only for creating group chat from the status url
-    statusUrlGroupMembersCount: int
+    statusUrlCommunityToSpectate: string
 
 # Forward declaration
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
@@ -791,6 +789,11 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
   }
   return $jsonObj
 
+method communityDataImported*[T](self: Module[T], community: CommunityDto) =
+  if community.id == self.statusUrlCommunityToSpectate:
+    self.statusUrlCommunityToSpectate = ""
+    discard self.communitiesModule.spectateCommunity(community.id)
+
 method resolveENS*[T](self: Module[T], ensName: string, uuid: string, reason: string = "") =
   if ensName.len == 0:
     echo "error: cannot do a lookup for empty ens name"
@@ -806,19 +809,6 @@ method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid
     let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
     self.setActiveSection(item)
     self.view.emitDisplayUserProfileSignal(publicKey)
-  elif(reason == STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.OpenOrCreatePrivateChat):
-    let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
-    self.setActiveSection(item)
-    self.getChatSectionModule().switchToOrCreateOneToOneChat(publicKey)
-  elif(reason == STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.OpenOrCreateGroupChat):
-    self.statusUrlGroupMembers.add(publicKey)
-    if(self.statusUrlGroupMembers.len == self.statusUrlGroupMembersCount):
-      let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
-      self.setActiveSection(item)
-      self.getChatSectionModule().createGroupChat(self.statusUrlGroupName, self.statusUrlGroupMembers)
-      self.statusUrlGroupName = ""
-      self.statusUrlGroupMembers = @[]
-      self.statusUrlGroupMembersCount = 0
   else:
     self.view.emitResolvedENSSignal(publicKey, address, uuid)
 
@@ -912,56 +902,47 @@ method ephemeralNotificationClicked*[T](self: Module[T], id: int64) =
 method onMyRequestAdded*[T](self: Module[T]) =
     self.displayEphemeralNotification("Your Request has been submitted", "" , "checkmark-circle", false, EphemeralNotificationType.Success.int, "")
 
+proc getCommunityIdFromFullChatId(fullChatId: string): string =
+  const communityIdLength = 68
+  return fullChatId.substr(0, communityIdLength-1)
 
 method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, chatId: string, 
-  url: string, userId: string, groupName: string, listOfUserIds: seq[string]) =
+  url: string, userId: string) =
   
-  if(action == StatusUrlAction.OpenLinkInBrowser and singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()):
-    let item = self.view.model().getItemById(conf.BROWSER_SECTION_ICON)
-    self.setActiveSection(item)
-    self.browserSectionModule.openUrl(url)
-
-  elif(action == StatusUrlAction.DisplayUserProfile):
+  if(action == StatusUrlAction.DisplayUserProfile):
     self.resolveENS(userId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile)
-
-  elif(action == StatusUrlAction.OpenOrCreatePrivateChat):
-    self.resolveENS(chatId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.OpenOrCreatePrivateChat)
-
-  elif(action == StatusUrlAction.OpenOrJoinPublicChat):
-    let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
-    self.setActiveSection(item)
-    self.getChatSectionModule().createPublicChat(chatId)
-
-  elif(action == StatusUrlAction.OpenOrCreateGroupChat):
-    self.statusUrlGroupName = groupName
-    # if there are more than 20 members added to the url, we add only first 19
-    self.statusUrlGroupMembersCount = if listOfUserIds.len <= MAX_MEMBERS_IN_GROUP_CHAT_WITHOUT_ADMIN: listOfUserIds.len else: MAX_MEMBERS_IN_GROUP_CHAT_WITHOUT_ADMIN
-    var i = 0
-    for id in listOfUserIds:
-      if(i >= MAX_MEMBERS_IN_GROUP_CHAT_WITHOUT_ADMIN):
-        break
-      i.inc
-      self.resolveENS(id, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.OpenOrCreateGroupChat)
-  
-  elif(action == StatusUrlAction.RequestToJoinCommunity):
-    let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
-    self.setActiveSection(item)
-    self.communitiesModule.requestToJoinCommunity(communityId, singletonInstance.userProfile.getName())
 
   elif(action == StatusUrlAction.OpenCommunity):
     let item = self.view.model().getItemById(communityId)
-    self.setActiveSection(item)
+    if item.isEmpty():
+      # request community info and then spectate
+      self.statusUrlCommunityToSpectate = communityId
+      self.communitiesModule.requestCommunityInfo(communityId)
+    else:
+      self.setActiveSection(item)
 
   elif(action == StatusUrlAction.OpenCommunityChannel):
+    var found = false
     for cId, cModule in self.channelGroupModules.pairs:
       if(cId == singletonInstance.userProfile.getPubKey()):
         continue
       if(cModule.doesCatOrChatExist(chatId)):
         let item = self.view.model().getItemById(cId)
         self.setActiveSection(item)
-
         cModule.makeChatWithIdActive(chatId)
+        found = true
         break
+    if not found:
+      let communityIdToSpectate = getCommunityIdFromFullChatId(chatId)
+      # request community info and then spectate
+      self.statusUrlCommunityToSpectate = communityIdToSpectate
+      self.communitiesModule.requestCommunityInfo(communityIdToSpectate)
+
+  # enable after MVP
+  #else(action == StatusUrlAction.OpenLinkInBrowser and singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()):
+  #  let item = self.view.model().getItemById(conf.BROWSER_SECTION_ICON)
+  #  self.setActiveSection(item)
+  #  self.browserSectionModule.openUrl(url)
 
 method getKeycardSharedModule*[T](self: Module[T]): QVariant =
   return self.keycardSharedModule.getModuleAsVariant()
