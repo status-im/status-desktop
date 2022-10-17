@@ -10,6 +10,7 @@ Rectangle {
     property string emoji
     property string name
     property bool removable: false
+    property bool highlighted: false
 
     signal clicked()
 
@@ -18,7 +19,7 @@ Rectangle {
     radius: height / 2
     border.color: Theme.palette.baseColor2
     border.width: 1
-    color: mouseArea.containsMouse ? Theme.palette.primaryColor2 : "transparent"
+    color: root.highlighted || mouseArea.containsMouse ? Theme.palette.primaryColor2 : "transparent"
 
     MouseArea {
         id: mouseArea

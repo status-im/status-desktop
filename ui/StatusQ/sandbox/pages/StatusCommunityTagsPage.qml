@@ -68,7 +68,7 @@ Item {
 
         StatusCommunityTags {
             model: tagsModel
-            showOnlySelected: true
+            mode: StatusCommunityTags.ShowSelectedOnly
             onClicked: {
                 cntSelectedTags--;
                 item.selected = false;
