@@ -12,5 +12,6 @@ StatusIdenticonRingSettings 0.1 StatusIdenticonRingSettings.qml
 StatusListView 0.1 StatusListView.qml
 StatusModalHeaderSettings 0.1 StatusModalHeaderSettings.qml
 StatusProfileImageSettings 0.1 StatusProfileImageSettings.qml
+StatusRollArea 0.1 StatusRollArea.qml
 StatusScrollView 0.1 StatusScrollView.qml
 StatusTooltipSettings 0.1 StatusTooltipSettings.qml
