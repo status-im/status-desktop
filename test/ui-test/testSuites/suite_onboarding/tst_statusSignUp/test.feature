@@ -126,9 +126,9 @@ Feature: Status Desktop Sign Up
     Then the user lands on the signed in app
     Examples:
     	| seed | address |
-    	| truth gold urban vital rose market legal release border gospel leave fame | 0x8672E2f1a7b28cda8bcaBb53B52c686ccB7735c3 |
-		| lemon card easy goose keen divide cabbage daughter glide glad sense dice promote present august obey stay cheese | 0xdd06a08d469dd61Cb2E5ECE30f5D16019eBe0fc9 |
-		| provide between target maze travel enroll edge churn random sight grass lion diet sugar cable fiction reflect reason gaze camp tone maximum task unlock | 0xCb59031d11D233112CB57DFd667fE1FF6Cd7b6Da |
+        | truth gold urban vital rose market legal release border gospel leave fame | 0x8672E2f1a7b28cda8bcaBb53B52c686ccB7735c3 |
+        | lemon card easy goose keen divide cabbage daughter glide glad sense dice promote present august obey stay cheese | 0xdd06a08d469dd61Cb2E5ECE30f5D16019eBe0fc9 |
+        | provide between target maze travel enroll edge churn random sight grass lion diet sugar cable fiction reflect reason gaze camp tone maximum task unlock | 0xCb59031d11D233112CB57DFd667fE1FF6Cd7b6Da |
 
   @merge
   Scenario: User signs up with wrong imported seed phrase

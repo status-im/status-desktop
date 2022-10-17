@@ -57,21 +57,23 @@ class StatusMainScreen:
 
     def __init__(self):
         verify_screen(MainScreenComponents.PUBLIC_CHAT_ICON.value)
-        
+
     # Main screen is ready to interact with it (Splash screen animation not present and no banners on top of the screen)
     def is_ready(self):
         self.wait_for_splash_animation_ends()
         self.close_banners()
-        
+
+    # On MacOS with Apple silicon that runs under Rosetta translation layer the login and time until
+    # the splash screen is ready takes approximately 5 seconds and this check fails, hence the 10 seconds timeout.
     def wait_for_splash_animation_ends(self, timeoutMSec: int = 10000):
         start = time.time()
-        [loaded, obj] = is_loaded_visible_and_enabled(MainScreenComponents.SPLASH_SCREEN.value)
+        [loaded, _] = is_loaded_visible_and_enabled(MainScreenComponents.SPLASH_SCREEN.value)
         while loaded and (start + timeoutMSec / 1000 > time.time()):
             log("Splash screen animation present!")
-            [loaded, obj] = is_loaded_visible_and_enabled(MainScreenComponents.SPLASH_SCREEN.value)            
+            [loaded, _] = is_loaded_visible_and_enabled(MainScreenComponents.SPLASH_SCREEN.value)
             sleep_test(0.5)
         verify_equal(loaded, False, "Checking splash screen animation has ended.")
-    
+
     # It closes all existing banner and waits them to disappear
     def close_banners(self):
         self.wait_for_banner_to_disappear(MainScreenComponents.CONNECTION_INFO_BANNER.value)

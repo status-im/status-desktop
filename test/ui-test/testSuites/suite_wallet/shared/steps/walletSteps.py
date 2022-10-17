@@ -27,9 +27,13 @@ def step(context, account_name, password):
 def step(context, account_name, password, private_key):
     _walletScreen.import_private_key(account_name, password, private_key)  
     
+@When("the user imports a seed phrase using clipboard and |any| and |any| and |any|")
+def step(context, account_name, password, mnemonic):
+    _walletScreen.import_seed_phrase(account_name, password, mnemonic, True)
+
 @When("the user imports a seed phrase with |any| and |any| and |any|")
 def step(context, account_name, password, mnemonic):
-    _walletScreen.import_seed_phrase(account_name, password, mnemonic)  
+    _walletScreen.import_seed_phrase(account_name, password, mnemonic, False)
 
 @When("the user sends a transaction to himself from account |any| of |any| |any| on |any| with password |any|")
 def step(context, account_name, amount, token, chain_name, password):

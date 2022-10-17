@@ -126,7 +126,7 @@ class StatusWalletScreen:
         type(AddAccountPopup.PRIVATE_KEY_INPUT.value, private_key)
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
     
-    def import_seed_phrase(self, account_name: str, password: str, mnemonic: str):
+    def import_seed_phrase(self, account_name: str, password: str, mnemonic: str, with_paste: bool = False):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
         
         click_obj_by_name(AddAccountPopup.AUTHENTICATE_BUTTON.value)
@@ -139,18 +139,11 @@ class StatusWalletScreen:
         time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_SEED_PHRASE.value)
         type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-                
+
         words = mnemonic.split()
-        scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(1)
+        scroll_item_until_item_is_visible(AddAccountPopup.SCROLL_BAR.value, AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value + str(len(words)))
 
-        scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(1)
-
-        scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(1)
-
-        input_seed_phrase(AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value, words)
+        input_seed_phrase(AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value, mnemonic, with_paste)
         time.sleep(1)
         
         visible, _ = is_loaded_visible_and_enabled(MainWalletScreen.MAILSERVER_DIALOG.value, 500)

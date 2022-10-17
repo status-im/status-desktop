@@ -86,7 +86,7 @@ class StatusWelcomeScreen:
 
     def input_seed_phrase(self, seed_phrase: str):
         words = seed_phrase.split()
-        
+
         if len(words) == 12:
             click_obj_by_name(SeedPhraseComponents.TWELVE_WORDS_BUTTON.value)
         elif len(words) == 18:
@@ -96,7 +96,7 @@ class StatusWelcomeScreen:
         else:
             test.fail("Wrong amount of seed words", len(words))
 
-        input_seed_phrase(SeedPhraseComponents.SEEDS_WORDS_TEXTFIELD_template.value, words)
+        input_seed_phrase(SeedPhraseComponents.SEEDS_WORDS_TEXTFIELD_template.value, seed_phrase)
 
     def input_username_and_password_and_finalize_sign_up(self, username: str, password: str):
         self.input_username(username)

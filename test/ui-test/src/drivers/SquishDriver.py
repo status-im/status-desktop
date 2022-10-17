@@ -356,3 +356,13 @@ def get_child_item_with_object_name(item, objectName: str):
 
 def sleep_test(seconds: float):
     squish.snooze(seconds)
+
+def copy_to_clipboard(text: str):
+    squish.setClipboardText(text)
+
+def execute_paste_sequence():
+    ctx = squish.currentApplicationContext()
+    if ctx.osName == "Darwin":
+        native_type("<Command+v>")
+    else:
+        native_type("<Ctrl+v>")
