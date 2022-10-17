@@ -28,10 +28,6 @@ type
   StatusUrlAction* {.pure.} = enum
     OpenLinkInBrowser = 0
     DisplayUserProfile,
-    OpenOrCreatePrivateChat,
-    OpenOrJoinPublicChat,
-    OpenOrCreateGroupChat,
-    RequestToJoinCommunity,
     OpenCommunity,
     OpenCommunityChannel
 
@@ -42,7 +38,5 @@ type
     chatId*: string
     url*: string
     userId*: string # can be public key or ens name
-    groupName*: string
-    listOfUserIds*: seq[string] # used for creating group chat
 
 const SIGNAL_STATUS_URL_REQUESTED* = "statusUrlRequested"

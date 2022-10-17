@@ -189,6 +189,9 @@ method getAppSearchModule*(self: AccessInterface): QVariant {.base.} =
 method getContactDetailsAsJson*(self: AccessInterface, publicKey: string, getVerificationRequest: bool): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method communityDataImported*(self: AccessInterface, community: CommunityDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method resolveENS*(self: AccessInterface, ensName: string, uuid: string, reason: string = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -202,7 +205,7 @@ method isConnected*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onStatusUrlRequested*(self: AccessInterface, action: StatusUrlAction, communityId: string, chatId: string, 
-  url: string, userId: string, groupName: string, listOfUserIds: seq[string]) {.base.} =
+  url: string, userId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getVerificationRequestFrom*(self: AccessInterface, publicKey: string): VerificationRequest {.base.} =

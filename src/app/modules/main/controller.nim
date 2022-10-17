@@ -170,6 +170,10 @@ proc init*(self: Controller) =
       setActive = false
     )
 
+  self.events.on(SIGNAL_COMMUNITY_DATA_IMPORTED) do(e:Args):
+    let args = CommunityArgs(e)
+    self.delegate.communityDataImported(args.community)
+
   self.events.on(SIGNAL_COMMUNITY_LEFT) do(e:Args):
     let args = CommunityIdArgs(e)
     self.delegate.communityLeft(args.communityId)
@@ -220,8 +224,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_STATUS_URL_REQUESTED) do(e: Args):
     var args = StatusUrlArgs(e)
-    self.delegate.onStatusUrlRequested(args.action, args.communityId, args.chatId, args.url, args.userId, 
-      args.groupName, args.listOfUserIds)
+    self.delegate.onStatusUrlRequested(args.action, args.communityId, args.chatId, args.url, args.userId)
 
   self.events.on(SIGNAL_OS_NOTIFICATION_CLICKED) do(e: Args):
     var args = ClickedNotificationArgs(e)
