@@ -30,17 +30,19 @@ StatusListView {
         statusListItemTitle.font.pixelSize: 17
         statusListItemTitle.font.bold: true
         subTitle: model.description
-        tertiaryTitle: qsTr("%n member(s)", "", model.members.count)
+        tertiaryTitle: qsTr("%n member(s)", "", (model.members_count || model.members.count))
         asset.name: model.image
         asset.isImage: asset.name.includes("data")
         asset.isLetterIdenticon: !model.image
         asset.bgColor: model.color || Theme.palette.primaryColor1
         asset.width: 40
         asset.height: 40
+        // TODO: this model is including ALL communities and using the joined flag to set visibility
+        // this shouldn't be done this way, instead the list should come already filtered from the backend
         visible: model.joined
         height: visible ? implicitHeight: 0
 
-        onClicked: setActiveCommunityClicked(model.id)
+        onClicked: setActiveCommunityClicked(model.model_id || model.id)
 
         components: [
             StatusFlatButton {
@@ -52,7 +54,7 @@ StatusListView {
                 onClicked: {
                     Global.openPopup(leaveCommunityPopup, {
                                          community: model.name,
-                                         communityId: model.id
+                                         communityId: (model.model_id || model.id)
                                      })
                 }
             },
@@ -61,7 +63,7 @@ StatusListView {
                 leftPadding: 4
                 rightPadding: 0
                 icon.name: model.muted ? "notification-muted" : "notification"
-                onClicked: root.setCommunityMutedClicked(model.id, !model.muted)
+                onClicked: root.setCommunityMutedClicked(model.model_id || model.id, !model.muted)
             },
             StatusFlatButton {
                 size: StatusBaseButton.Size.Tiny
