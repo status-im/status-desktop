@@ -64,13 +64,28 @@ Item {
 
             onPinInputChanged: {
                 root.pukUpdated(pinInput)
+                if (root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.enterPuk &&
+                        root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.wrongPuk) {
+                    image.source = Style.png("keycard/card-inserted")
+                }
                 if(pinInput.length == 0) {
                     return
                 }
-                if(root.state === Constants.keycardSharedState.enterPuk ||
-                        root.state === Constants.keycardSharedState.wrongPuk) {
+                if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPuk ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPuk ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPuk) {
                     root.sharedKeycardModule.setPuk(pinInput)
                     root.sharedKeycardModule.currentState.doSecondaryAction()
+                }
+                else if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.repeatPuk) {
+                    let pukMatch = root.sharedKeycardModule.checkRepeatedKeycardPukWhileTyping(pinInput)
+                    if (pukMatch) {
+                        info.text = ""
+                        root.sharedKeycardModule.currentState.doSecondaryAction()
+                    } else {
+                        info.text = qsTr("The PUK doesn’t match")
+                        image.source = Style.png("keycard/plain-error")
+                    }
                 }
             }
         }
@@ -147,6 +162,54 @@ Item {
                            Theme.palette.dangerColor1 :
                            Theme.palette.baseColor1
                 font.pixelSize: Constants.keycard.general.fontSize3
+            }
+        },
+        State {
+            name: Constants.keycardSharedState.createPuk
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPuk
+            PropertyChanges {
+                target: image
+                source: Style.png("keycard/card-inserted")
+                pattern: ""
+            }
+            PropertyChanges {
+                target: title
+                text: qsTr("Choose a Keycard PUK")
+                font.pixelSize: Constants.keycard.general.fontSize1
+                color: Theme.palette.directColor1
+            }
+            PropertyChanges {
+                target: info
+                text: ""
+            }
+            PropertyChanges {
+                target: message
+                text: ""
+            }
+        },
+        State {
+            name: Constants.keycardSharedState.repeatPuk
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.repeatPuk
+            PropertyChanges {
+                target: image
+                source: Style.png("keycard/card-inserted")
+                pattern: ""
+            }
+            PropertyChanges {
+                target: title
+                text: qsTr("Repeat your Keycard PUK")
+                font.pixelSize: Constants.keycard.general.fontSize1
+                color: Theme.palette.directColor1
+            }
+            PropertyChanges {
+                target: info
+                text: ""
+                color: Theme.palette.dangerColor1
+                font.pixelSize: Constants.keycard.general.fontSize3
+            }
+            PropertyChanges {
+                target: message
+                text: ""
             }
         }
     ]

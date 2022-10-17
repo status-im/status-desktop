@@ -98,6 +98,7 @@ QtObject {
         readonly property string displayKeycardContent: "DisplayKeycardContent"
         readonly property string renameKeycard: "RenameKeycard"
         readonly property string changeKeycardPin: "ChangeKeycardPin"
+        readonly property string changeKeycardPuk: "ChangeKeycardPuk"
     }
 
     readonly property QtObject keycardSharedState: QtObject {
@@ -154,6 +155,11 @@ QtObject {
         readonly property string changingKeycardPin: "ChangingKeycardPin"
         readonly property string changingKeycardPinSuccess: "ChangingKeycardPinSuccess"
         readonly property string changingKeycardPinFailure: "ChangingKeycardPinFailure"
+        readonly property string createPuk: "CreatePuk"
+        readonly property string repeatPuk: "RepeatPuk"
+        readonly property string changingKeycardPuk: "ChangingKeycardPuk"
+        readonly property string changingKeycardPukSuccess: "ChangingKeycardPukSuccess"
+        readonly property string changingKeycardPukFailure: "ChangingKeycardPukFailure"
     }
 
     readonly property QtObject keychain: QtObject {

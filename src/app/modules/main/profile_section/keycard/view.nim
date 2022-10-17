@@ -73,8 +73,8 @@ QtObject:
   proc runCreateBackupCopyOfAKeycardPopup*(self: View) {.slot.} =
     self.delegate.runCreateBackupCopyOfAKeycardPopup()
 
-  proc runCreatePukPopup*(self: View) {.slot.} =
-    self.delegate.runCreatePukPopup()
+  proc runCreatePukPopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
+    self.delegate.runCreatePukPopup(keycardUid, keyUid)
 
   proc runCreateNewPairingCodePopup*(self: View) {.slot.} =
     self.delegate.runCreateNewPairingCodePopup()

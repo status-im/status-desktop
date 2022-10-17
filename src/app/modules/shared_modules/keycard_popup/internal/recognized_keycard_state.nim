@@ -23,12 +23,11 @@ method getNextSecondaryState*(self: RecognizedKeycardState, controller: Controll
     return createState(StateType.CreatePin, self.flowType, self.getBackState)
   if self.flowType == FlowType.UnlockKeycard:
     return createState(StateType.UnlockKeycardOptions, self.flowType, nil)
-  if self.flowType == FlowType.DisplayKeycardContent:
-    return createState(StateType.EnterPin, self.flowType, nil)
-  if self.flowType == FlowType.RenameKeycard:
-    return createState(StateType.EnterPin, self.flowType, nil)
-  if self.flowType == FlowType.ChangeKeycardPin:
-    return createState(StateType.EnterPin, self.flowType, nil)
+  if self.flowType == FlowType.DisplayKeycardContent or
+    self.flowType == FlowType.RenameKeycard or
+    self.flowType == FlowType.ChangeKeycardPin or
+    self.flowType == FlowType.ChangeKeycardPuk:
+      return createState(StateType.EnterPin, self.flowType, nil)
 
 method executeTertiaryCommand*(self: RecognizedKeycardState, controller: Controller) =
   error "recognized state must not be canceled"

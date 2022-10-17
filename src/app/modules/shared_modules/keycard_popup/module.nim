@@ -96,6 +96,21 @@ method checkRepeatedKeycardPinWhileTyping*[T](self: Module[T], pin: string): boo
     self.controller.setPinMatch(match)
     return match
 
+method checkRepeatedKeycardPukWhileTyping*[T](self: Module[T], puk: string): bool =
+  self.controller.setPukMatch(false)
+  let storedPuk = self.controller.getPuk()
+  if puk.len > storedPuk.len:
+    return false
+  elif puk.len < storedPuk.len:
+    for i in 0 ..< puk.len:
+      if puk[i] != storedPuk[i]:
+        return false
+    return true
+  else: 
+    let match = puk == storedPuk
+    self.controller.setPukMatch(match)
+    return match
+
 method getMnemonic*[T](self: Module[T]): string =
   return self.controller.getMnemonic()
 
@@ -380,6 +395,11 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.prepareKeyPairForProcessing(keyUid)
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runChangePinFlow()
+    return
+  if flowToRun == FlowType.ChangeKeycardPuk:
+    self.prepareKeyPairForProcessing(keyUid)
+    self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
+    self.controller.runChangePukFlow()
     return
 
 method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =
