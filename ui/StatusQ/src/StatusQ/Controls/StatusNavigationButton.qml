@@ -1,46 +1,43 @@
 import QtQuick 2.14
+import QtQuick.Controls 2.14
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-Rectangle {
+Button {
     id: root
 
-    property bool mirrored: false
     property color gradientColor: Theme.palette.statusAppLayout.backgroundColor
-
-    signal clicked()
+    property bool navigateForward: false
 
     width: height * 2
+    padding: 0
+    hoverEnabled: true
 
-    gradient: Gradient {
-        orientation: Gradient.Horizontal
-        GradientStop { position: mirrored ? 0.0 : 1.0; color: "transparent" }
-        GradientStop { position: 0.5; color: root.gradientColor }
+    background: Rectangle {
+        gradient: Gradient {
+            orientation: Gradient.Horizontal
+            GradientStop { position: navigateForward ? 0.0 : 1.0; color: "transparent" }
+            GradientStop { position: 0.5; color: root.gradientColor }
+        }
     }
 
-    // TODO: use SVGImage (move SVGImage to StatusQ)
-    Image {
-        source: mirrored ? d.iconSrc("arrow-next") : d.iconSrc("arrow-previous")
-        anchors.right: mirrored ? parent.right : undefined
-        anchors.left: mirrored ? undefined : parent.left
-        width: parent.height
-        height: width
-        sourceSize: Qt.size(width, height)
-    }
+    contentItem: Item {
+        StatusIcon {
+            icon: navigateForward ? "next" : "previous"
+            anchors.right: navigateForward ? parent.right : undefined
+            anchors.left: navigateForward ? undefined : parent.left
+            width: parent.height
+            height: width
+            color: Theme.palette.primaryColor1
+        }
 
-    MouseArea {
-        anchors.fill: parent
-        preventStealing: true
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: root.clicked()
-    }
 
-    QtObject {
-        id: d
-
-        function iconSrc(icon) {
-            return "../../assets/img/icons/" + icon + ".svg";
+        // otherwise there is no pointing hand cursor when button is hovered
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+            cursorShape: Qt.PointingHandCursor
         }
     }
 }
