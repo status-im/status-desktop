@@ -255,10 +255,11 @@ StatusSectionLayout {
             DevicesView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-
-                devicesStore: root.store.devicesStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.devicesSettings)
                 contentWidth: d.contentWidth
+
+                devicesList: root.store.devicesStore.devicesModel
+                devicesStore: root.store.devicesStore
             }
 
             BrowserView {
