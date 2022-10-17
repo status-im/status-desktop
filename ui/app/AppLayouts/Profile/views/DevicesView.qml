@@ -17,6 +17,7 @@ import "../stores"
 SettingsContentBase {
     id: root
 
+    property var devicesList
     property DevicesStore devicesStore
 
     property bool isSyncing: false
@@ -200,12 +201,12 @@ SettingsContentBase {
                         anchors.left: deviceItemLbl.right
                         anchors.leftMargin: Style.current.padding
                         anchors.top: deviceItemLbl.top
-                        onClicked: root.devicesStore.enableDevice(model.installationId, devicePairedSwitch)
+                        onClicked: root.devicesStore.enableDevice(model.installationId, checked)
                     }
                 }
-                model: root.devicesStore.devicesModel
+                model: root.devicesList
             }
-            
+
             StatusButton {
                 id: syncAllBtn
                 anchors.top: listView.bottom
