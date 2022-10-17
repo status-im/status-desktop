@@ -10,7 +10,7 @@
 # *****************************************************************************/
 Feature: Password strength validation including UI pixel-perfect validation
 
-    @merge
+    @merge @mayfail
     Scenario Outline: As a user I want to see the strength of the password
 
 		Given A first time user lands on the status desktop and generates new key
