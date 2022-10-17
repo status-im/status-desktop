@@ -19,9 +19,8 @@ import "../../Chat/popups/community"
 SettingsContentBase {
     id: root
 
-    property var profileSectionStore
-    property var rootStore
-    property var contactStore
+    property var communitiesList
+    property var store
 
     clip: true
 
@@ -53,35 +52,32 @@ SettingsContentBase {
 
             CommunitiesListPanel {
                 width: parent.width
-                model: root.profileSectionStore.communitiesList
+                model: root.communitiesList
 
                 onLeaveCommunityClicked: {
-                    root.profileSectionStore.communitiesProfileModule.leaveCommunity(communityId)
+                    root.store.leaveCommunity(communityId)
                 }
 
                 onSetCommunityMutedClicked: {
-                    root.profileSectionStore.communitiesProfileModule.setCommunityMuted(communityId, muted)
+                    root.store.setCommunityMuted(communityId, muted)
                 }
 
                 onSetActiveCommunityClicked: {
-                    rootStore.setActiveCommunity(communityId)
+                    root.store.setActiveCommunity(communityId)
                 }
 
                 onInviteFriends: {
-                    Global.openInviteFriendsToCommunityPopup(communityData,
-                                                             root.profileSectionStore.communitiesProfileModule)
+                    Global.openInviteFriendsToCommunityPopup(communityData, root.store)
                 }
             }
-
         } // Column
     } // Item
 
     property Component importCommunitiesPopupComponent: ImportCommunityPopup {
         anchors.centerIn: parent
-        store: root.profileSectionStore
+        store: root.store
         onClosed: {
             destroy()
         }
     }
-
 } // ScrollView
