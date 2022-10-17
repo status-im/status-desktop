@@ -17,17 +17,20 @@ Item {
     implicitHeight: visible ? tabBar.height + stackLayout.height + 2* Style.current.xlPadding : 0
 
     property var store
-    property var suggestedRoutes
-    property var selectedNetwork
     property var selectedAccount
     property var selectedAsset
-    property var assets
     property double amountToSend: 0
     property double requiredGasInEth: 0
-    property bool errorMode: customNetworkRoutingPage.errorMode
+    property var bestRoutes
+    property bool isLoading: false
+    property bool advancedOrCustomMode: (tabBar.currentIndex === 1) || (tabBar.currentIndex === 2)
+    property bool errorMode: (tabBar.currentIndex === 1) ?
+                                 advancedNetworkRoutingPage.errorMode :
+                                 (tabBar.currentIndex === 2) ?
+                                     customNetworkRoutingPage.errorMode: false
+    property bool interactive: true
 
-    signal networkChanged(int chainId)
-    signal reCalculateSuggestedRoute(var disabledChainIds)
+    signal reCalculateSuggestedRoute()
 
     QtObject {
         id: d
@@ -46,9 +49,10 @@ Item {
         StatusSwitchTabButton {
             text: qsTr("Advanced")
         }
-        StatusSwitchTabButton {
-            text: qsTr("Custom")
-        }
+        // To-do Implementaion is not ready yet
+//        StatusSwitchTabButton {
+//            text: qsTr("Custom")
+//        }
     }
 
     StackLayout {
@@ -71,12 +75,11 @@ Item {
                 anchors.left: parent.left
                 anchors.margins: Style.current.padding
                 width: stackLayout.width  - Style.current.bigPadding
-                selectedNetwork: root.selectedNetwork
-                suggestedRoutes: root.suggestedRoutes
+                bestRoutes: root.bestRoutes
                 amountToSend: root.amountToSend
-                onNetworkChanged:  {
-                    root.selectedNetwork = network
-                    root.networkChanged(network.chainId)
+                isLoading: root.isLoading
+                weiToEth: function(wei) {
+                return "%1 %2".arg(LocaleUtils.numberToLocaleString(parseFloat(store.getWei2Eth(wei)))).arg(selectedAsset.symbol)
                 }
             }
         }
@@ -91,14 +94,17 @@ Item {
                 anchors.left: parent.left
                 anchors.margins: Style.current.padding
                 store: root.store
-                assets: root.assets
-                selectedNetwork: root.selectedNetwork
                 selectedAccount: root.selectedAccount
                 amountToSend: root.amountToSend
                 requiredGasInEth: root.requiredGasInEth
                 selectedAsset: root.selectedAsset
-                suggestedRoutes: root.suggestedRoutes
-                onReCalculateSuggestedRoute: root.reCalculateSuggestedRoute(disabledChainIds)
+                onReCalculateSuggestedRoute: root.reCalculateSuggestedRoute()
+                bestRoutes: root.bestRoutes
+                isLoading: root.isLoading
+                interactive: root.interactive
+                weiToEth: function(wei) {
+                    return parseFloat(store.getWei2Eth(wei))
+                }
             }
         }
 
@@ -113,14 +119,17 @@ Item {
                 anchors.margins: Style.current.padding
                 customMode: true
                 store: root.store
-                assets: root.assets
-                selectedNetwork: root.selectedNetwork
                 selectedAccount: root.selectedAccount
                 amountToSend: root.amountToSend
                 requiredGasInEth: root.requiredGasInEth
                 selectedAsset: root.selectedAsset
-                suggestedRoutes: root.suggestedRoutes
-                onReCalculateSuggestedRoute: root.reCalculateSuggestedRoute(disabledChainIds)
+                onReCalculateSuggestedRoute: root.reCalculateSuggestedRoute()
+                bestRoutes: root.bestRoutes
+                isLoading: root.isLoading
+                interactive: root.interactive
+                weiToEth: function(wei) {
+                    return parseFloat(store.getWei2Eth(wei))
+                }
             }
         }
     }

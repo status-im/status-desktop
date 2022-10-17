@@ -79,30 +79,6 @@ QtObject {
 
     property var allNetworks: networksModule.all
 
-    property var disabledChainIds: []
-
-    function addRemoveDisabledChain(suggestedRoutes, chainID, isDisbaled) {
-        if(isDisbaled) {
-            disabledChainIds.push(chainID)
-        }
-        else {
-            for(var i = 0; i < disabledChainIds.length;i++) {
-                if(disabledChainIds[i] === chainID) {
-                    disabledChainIds.splice(i, 1)
-                }
-            }
-        }
-    }
-
-    function checkIfDisabledByUser(chainID) {
-        for(var i = 0; i < disabledChainIds.length;i++) {
-            if(disabledChainIds[i] === chainID) {
-                return true
-            }
-        }
-        return false
-    }
-
     function getEtherscanLink() {
         return profileSectionModule.ensUsernamesModule.getEtherscanLink()
     }
@@ -135,19 +111,11 @@ QtObject {
     function estimateGas(from_addr, to, assetSymbol, value, chainId, data) {
         return walletSectionTransactions.estimateGas(from_addr, to, assetSymbol, value, chainId, data)
     }
-    function getFiatValue(balance, cryptoSymbo, fiatSymbol) {
-        return profileSectionStore.ensUsernamesStore.getFiatValue(balance, cryptoSymbo, fiatSymbol)
+    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
+        return profileSectionStore.ensUsernamesStore.getFiatValue(balance, cryptoSymbol, fiatSymbol)
     }
     function getGasEthValue(gweiValue, gasLimit) {
         return profileSectionStore.ensUsernamesStore.getGasEthValue(gweiValue, gasLimit)
-    }
-
-    function authenticateAndTransfer(from, to, tokenSymbol, amount, gasLimit, gasPrice, tipLimit, overallLimit, chainId, uuid, eip1559Enabled) {
-        walletSectionTransactions.authenticateAndTransfer(
-            from, to, tokenSymbol, amount, gasLimit,
-            gasPrice, tipLimit, overallLimit, chainId, uuid,
-            eip1559Enabled
-        );
     }
 
     function suggestedFees(chainId) {
@@ -164,10 +132,6 @@ QtObject {
 
     function getChainIdForBrowser() {
         return walletSectionTransactions.getChainIdForBrowser()
-    }
-
-    function suggestedRoutes(account, amount, token, disabledChainIds) {
-        return JSON.parse(walletSectionTransactions.suggestedRoutes(account, amount, token, disabledChainIds)).networks
     }
 
     function hex2Eth(value) {

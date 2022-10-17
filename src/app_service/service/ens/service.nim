@@ -324,7 +324,7 @@ QtObject:
       self.pendingEnsUsernames.excl(ensUsername)
 
       result = $(%* { "result": hash, "success": true })
-    except RpcException as e:
+    except Exception as e:
       error "error occurred", procName="release", msg = e.msg
       result = $(%* { "result": e.msg, "success": false })
 

@@ -35,3 +35,9 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 
 method updateNetwork*(self: AccessInterface, network: NetworkDto) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method authenticateToPostMessage*(self: AccessInterface,  payloadMethod: string, requestType: string, message: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

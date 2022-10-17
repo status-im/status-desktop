@@ -109,6 +109,26 @@ QtObject:
     of ModelRole.Balance:
       result = newQVariant(item.getBalance())
 
+  proc rowData(self: Model, index: int, column: string): string {.slot.} =
+    if (index >= self.items.len):
+      return
+    let item = self.items[index]
+    case column:
+      of "chainId": result = $item.getChainId()
+      of "nativeCurrencyDecimals": result = $item.getNativeCurrencyDecimals()
+      of "layer": result = $item.getLayer()
+      of "chainName": result = $item.getChainName()
+      of "rpcURL": result = $item.getRpcURL()
+      of "blockExplorerURL": result = $item.getBlockExplorerURL()
+      of "nativeCurrencyName": result = $item.getNativeCurrencyName()
+      of "nativeCurrencySymbol": result = $item.getNativeCurrencySymbol()
+      of "isTest": result = $item.getIsTest()
+      of "isEnabled": result = $item.getIsEnabled()
+      of "iconUrl": result = $item.getIconURL()
+      of "chainColor": result = $item.getChainColor()
+      of "shortName": result = $item.getShortName()
+      of "balance": result = $item.getBalance()
+
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
     self.items = items
@@ -143,4 +163,16 @@ QtObject:
     for item in self.items:
       if(item.getShortName() == toLowerAscii(shortName)):
         return item.getChainName()
+    return ""   
+
+  proc getNetworkColor*(self: Model, shortName: string): string {.slot.} =
+    for item in self.items:
+      if(item.getShortName() == toLowerAscii(shortName)):
+        return item.getChainColor()
     return ""
+
+  proc getNetworkChainId*(self: Model, shortName: string): int {.slot.} =
+    for item in self.items:
+      if(item.getShortName() == toLowerAscii(shortName)):
+        return item.getChainId()
+    return 0

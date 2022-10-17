@@ -45,7 +45,7 @@ proc getPendingOutboundTransactionsByAddress*(chainIds: seq[int], address: strin
 proc fetchCryptoServices*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = core.callPrivateRPC("wallet_getCryptoOnRamps", %* [])
   
-proc createMultiTransaction*(multiTransaction: MultiTransactionDto, data: Table[string, seq[TransactionDataDto]], password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc createMultiTransaction*(multiTransaction: MultiTransactionDto, data: seq[TransactionBridgeDto], password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   var hashed_password = "0x" & $keccak_256.digest(password)
   let payload = %* [multiTransaction, data, hashed_password]
   result = core.callPrivateRPC("wallet_createMultiTransaction", payload)

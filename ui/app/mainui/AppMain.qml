@@ -818,7 +818,7 @@ Item {
                             store: appMain.rootStore
                             contactsStore: appMain.rootStore.profileSectionStore.contactsStore
                             emojiPopup: statusEmojiPopup
-                            sendModal: sendModal
+                            sendModalPopup: sendModal
                         }
                     }
 
@@ -1045,8 +1045,6 @@ Item {
             }
             property var selectedAccount
             sourceComponent: SendModal {
-                store: appMain.rootStore
-                contactsStore: appMain.rootStore.profileSectionStore.contactsStore
                 onClosed: {
                     sendModal.closed()
                 }

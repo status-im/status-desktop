@@ -365,12 +365,9 @@ Item {
         id: cmpSendTransactionWithEns
         SendModal {
             id: sendTransactionWithEns
-            store: root.rootStore
-            contactsStore: root.contactsStore
             onClosed: {
                 destroy()
             }
-            launchedFromChat: true
             preSelectedRecipient: {
                 parentModule.prepareChatContentModuleForChatId(activeChatId)
                 let chatContentModule = parentModule.getChatContentModule()

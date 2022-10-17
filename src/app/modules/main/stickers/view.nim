@@ -61,18 +61,8 @@ QtObject:
 
   proc gasEstimateReturned*(self: View, estimate: int, uuid: string) {.signal.}
 
-  proc buy*(self: View, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string {.slot.} =
-    let responseTuple = self.delegate.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
-    let response = responseTuple.response
-    let success = responseTuple.success
-    if success:
-      self.stickerPacks.updateStickerPackInList(packId, false, true)
-      self.transactionWasSent(response)
-
-    result = $(%*{
-      "success": success,
-      "result": response
-    })
+  proc authenticateAndBuy*(self: View, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.slot.} =
+    self.delegate.authenticateAndBuy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
 
   proc stickerPacksLoaded*(self: View) {.signal.}
 

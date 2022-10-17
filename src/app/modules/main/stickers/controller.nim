@@ -10,7 +10,9 @@ import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/eth/utils as eth_utils
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
+const UNIQUE_BUY_STICKER_TRANSACTION_MODULE_IDENTIFIER* = "StickersSection-TransactionModule"
 
 type
   Controller* = ref object of RootObj
@@ -92,6 +94,12 @@ proc init*(self: Controller) =
     let args = StickerTransactionArgs(e)
     self.delegate.stickerTransactionReverted(args.transactionType, args.packID, args.transactionHash, args.revertReason)
 
+  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
+    let args = SharedKeycarModuleArgs(e)
+    if args.uniqueIdentifier != UNIQUE_BUY_STICKER_TRANSACTION_MODULE_IDENTIFIER:
+      return
+    self.delegate.onUserAuthenticated(args.password)
+
 proc buy*(self: Controller, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): tuple[response: string, success: bool] =
   self.stickerService.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
@@ -157,3 +165,10 @@ proc getStatusToken*(self: Controller): string =
     "address": token.addressAsString()
   }
   return $jsonObj
+
+proc authenticateUser*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
+  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_BUY_STICKER_TRANSACTION_MODULE_IDENTIFIER,
+    keyUid: keyUid,
+    bip44Path: bip44Path,
+    txHash: txHash)
+  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)

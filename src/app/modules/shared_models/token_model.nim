@@ -24,6 +24,7 @@ type
     ChangePct24hour
     Change24hour
     CurrencyPrice
+    Decimals
 
 QtObject:
   type
@@ -79,6 +80,7 @@ QtObject:
       ModelRole.ChangePct24hour.int:"changePct24hour",
       ModelRole.Change24hour.int:"change24hour",
       ModelRole.CurrencyPrice.int:"currencyPrice",
+      ModelRole.Decimals.int:"decimals",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -132,6 +134,8 @@ QtObject:
       result = newQVariant(item.getChange24hour())
     of ModelRole.CurrencyPrice:
       result = newQVariant(item.getCurrencyPrice())
+    of ModelRole.Decimals:
+      result = newQVariant(item.getDecimals())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -157,6 +161,7 @@ QtObject:
       of "changePct24hour": result = $item.getChangePct24hour()
       of "change24hour": result = $item.getChange24hour()
       of "currencyPrice": result = $item.getCurrencyPrice()
+      of "decimals": result = $item.getDecimals()
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
@@ -172,16 +177,30 @@ QtObject:
 
     return false
 
-  proc hasGas*(self: Model, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.slot.} =
+  proc hasGas*(self: Model, chainId: int, nativeGasSymbol: string, requiredGas: float): bool =
     for item in self.items:
-        if(item.getSymbol() != nativeGasSymbol):
-            continue
+      if(item.getSymbol() != nativeGasSymbol):
+        continue
 
-        for balance in item.getBalances().items:
-            if (balance.chainId != chainId):
-                continue
+      for balance in item.getBalances().items:
+        if (balance.chainId != chainId):
+          continue
 
-            if(balance.balance >= requiredGas):
-                return true
+        if(balance.balance >= requiredGas):
+          return true
 
     return false
+
+  proc getTokenBalanceOnChain*(self: Model, chainId: int, tokenSymbol: string): string =
+    var tokenBalance: float64 = 0.0
+    for item in self.items:
+      if(item.getSymbol() != tokenSymbol):
+        continue
+
+      for balance in item.getBalances().items:
+        if (balance.chainId != chainId):
+          continue
+
+        tokenBalance = balance.balance
+
+    return $tokenBalance

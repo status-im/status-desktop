@@ -11,27 +11,10 @@ import utils 1.0
 StatusRadioButton {
     id: gasRectangle
 
-    property string primaryText: qsTr("Low")
-    property string gasLimit
-    property string defaultCurrency: "USD"
-    property double price: 1
-    property var getGasEthValue: function () {}
-    property var getFiatValue: function () {}
-
-    function formatDec(num, dec){
-       return Math.round((num + Number.EPSILON) * Math.pow(10, dec)) / Math.pow(10, dec)
-    }
-
-    QtObject {
-        id: d
-        property double fiatValue: getFiatValue(ethValue, "ETH", defaultCurrency)
-        property double ethValue: {
-            if (!gasLimit) {
-                return 0
-            }
-            return formatDec(parseFloat(getGasEthValue(gasRectangle.price, gasLimit)), 6)
-        }
-    }
+    property string primaryText
+    property string timeText
+    property string totalGasFiatValue
+    property double totalGasEthValue
 
     width: contentItem.implicitWidth
 
@@ -64,15 +47,17 @@ StatusRadioButton {
             }
             StatusBaseText {
                 id: secondaryLabel
+                Layout.maximumWidth: card.width - Style.current.smallPadding
                 font.pixelSize: 13
                 font.weight: Font.Medium
-                text: d.ethValue + " ETH"
+                text: gasRectangle.totalGasFiatValue
                 color: Theme.palette.primaryColor1
+                elide: Text.ElideRight
             }
             StatusBaseText {
                 id: tertiaryText
                 font.pixelSize: 10
-                text: d.fiatValue + " " + gasRectangle.defaultCurrency.toUpperCase()
+                text: gasRectangle.timeText
                 color: Theme.palette.directColor5
             }
         }

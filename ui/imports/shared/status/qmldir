@@ -12,7 +12,6 @@ StatusChatInputTextFormationAction 1.0 StatusChatInputTextFormationAction.qml
 StatusEmojiPopup 1.0 StatusEmojiPopup.qml
 StatusEmojiSection 1.0 StatusEmojiSection.qml
 StatusEmojiSuggestionPopup 1.0 StatusEmojiSuggestionPopup.qml
-StatusETHTransactionModal 1.0 StatusETHTransactionModal.qml
 StatusExpandableAddress 1.0 StatusExpandableAddress.qml
 StatusGifPopup 1.0 StatusGifPopup.qml
 StatusImageModal 1.0 StatusImageModal.qml
@@ -23,7 +22,6 @@ StatusSearchListPopup 1.0 StatusSearchListPopup.qml
 StatusSectionDescItem 1.0 StatusSectionDescItem.qml
 StatusSectionHeadline 1.0 StatusSectionHeadline.qml
 StatusSettingsLineButton 1.0 StatusSettingsLineButton.qml
-StatusSNTTransactionModal 1.0 StatusSNTTransactionModal.qml
 StatusSticker 1.0 StatusSticker.qml
 StatusStickerButton 1.0 StatusStickerButton.qml
 StatusStickerList 1.0 StatusStickerList.qml

@@ -117,30 +117,42 @@ QtObject:
     self.transactionSent(txResult)
 
   proc authenticateAndTransfer*(self: View, from_addr: string, to_addr: string, tokenSymbol: string,
-    value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,
-    maxFeePerGas: string, chainId: string, uuid: string, eip1559Enabled: bool) {.slot.} =
-      self.delegate.authenticateAndTransfer(from_addr, to_addr, tokenSymbol, value, gas, gasPrice,
-        maxPriorityFeePerGas, maxFeePerGas, chainId, uuid, eip1559Enabled)
+    value: string, uuid: string, priority: int, selectedRoutes: string) {.slot.} =
+      self.delegate.authenticateAndTransfer(from_addr, to_addr, tokenSymbol, value, uuid, priority, selectedRoutes)
 
   proc suggestedFees*(self: View, chainId: int): string {.slot.} =
     return self.delegate.suggestedFees(chainId)
 
-  proc suggestedRoutes*(self: View, account: string, amount: string, token: string, disabledChainIDs: string): string {.slot.} =
-    var parsedAmount = 0.0
-    var seqDisabledChainIds = seq[uint64] : @[]
+  proc suggestedRoutes*(self: View, account: string, amount: string, token: string, disabledFromChainIDs: string, disabledToChainIDs: string, preferredChainIDs: string, priority: int, sendType: int): string {.slot.} =
+    var parsedAmount = stint.u256("0")
+    var seqPreferredChainIDs = seq[uint64] : @[]
+    var seqDisabledFromChainIDs = seq[uint64] : @[]
+    var seqDisabledToChainIDs = seq[uint64] : @[]
 
     try:
-      for chainID in disabledChainIDs.split(','):
-        seqDisabledChainIds.add(parseUInt(chainID))
+      for chainID in disabledFromChainIDs.split(','):
+        seqDisabledFromChainIDs.add(parseUInt(chainID))
     except:
       discard
 
     try:
-      parsedAmount = parsefloat(amount)
+      for chainID in disabledToChainIDs.split(','):
+        seqDisabledToChainIDs.add(parseUInt(chainID))
     except:
       discard
 
-    return self.delegate.suggestedRoutes(account, parsedAmount, token, seqDisabledChainIds)
+    try:
+      for chainID in preferredChainIDs.split(','):
+        seqPreferredChainIDs.add(parseUInt(chainID))
+    except:
+      discard
+
+    try:
+      parsedAmount = fromHex(Stuint[256], amount)
+    except Exception as e:
+      discard
+
+    return self.delegate.suggestedRoutes(account, parsedAmount, token, seqDisabledFromChainIDs, seqDisabledToChainIDs, seqPreferredChainIDs, priority, sendType)
   
   proc getChainIdForChat*(self: View): int {.slot.} =
     return self.delegate.getChainIdForChat()
@@ -153,3 +165,5 @@ QtObject:
 
   proc getLastTxBlockNumber*(self: View): string {.slot.} =
     return self.delegate.getLastTxBlockNumber()
+
+  proc suggestedRoutesReady*(self: View, suggestedRoutes: string) {.signal.}

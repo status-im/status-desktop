@@ -125,14 +125,14 @@ Item {
                 // TODO: move this out of StatusQ, this involves dependency on BE code
                 // WARNING: Wrong ComboBox value processing. Check `StatusAccountSelector` for more info.
                 root.userSelectedToken = symbol
-                root.selectedAsset = {name: name, symbol: symbol, totalBalance: totalBalance, totalCurrencyBalance: totalCurrencyBalance, balances: balances}
+                root.selectedAsset = {name: name, symbol: symbol, totalBalance: totalBalance, totalCurrencyBalance: totalCurrencyBalance, balances: balances, decimals: decimals}
             }
 
             // TODO: move this out of StatusQ, this involves dependency on BE code
             // WARNING: Wrong ComboBox value processing. Check `StatusAccountSelector` for more info.
             Component.onCompleted: {
                 if ((userSelectedToken === "" && index === 0) || symbol === userSelectedToken)
-                    root.selectedAsset = { name: name, symbol: symbol, totalBalance: totalBalance, totalCurrencyBalance: totalCurrencyBalance, balances: balances}
+                    root.selectedAsset = { name: name, symbol: symbol, totalBalance: totalBalance, totalCurrencyBalance: totalCurrencyBalance, balances: balances, decimals: decimals}
             }
 
             contentItem: RowLayout {

@@ -11,6 +11,7 @@ import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
 import shared.controls 1.0
+import shared.popups 1.0
 
 Item {
     id: root
@@ -57,35 +58,72 @@ Item {
 
     Component {
         id: transactionDialogComponent
-        StatusETHTransactionModal {
-            ensUsernamesStore: root.ensUsernamesStore
-            contactsStore: root.contactsStore
-            chainId: root.ensUsernamesStore.getChainIdForEns()
-            title: qsTr("Connect username with your pubkey")
-            onClosed: {
-                destroy()
+        SendModal {
+            id: releaseEnsModal
+            modalHeader: qsTr("Connect username with your pubkey")
+            interactive: false
+            sendType: Constants.SendType.ENSSetPubKey
+            preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
+            preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
+            preSelectedAsset: {
+                let assetsList = releaseEnsModal.store.currentAccount.assets
+                for(var i=0; i< assetsList.count;i++) {
+                    if("ETH" === assetsList.rowData(i, "symbol"))
+                        return {
+                            name: assetsList.rowData(i, "name"),
+                            symbol: assetsList.rowData(i, "symbol"),
+                            totalBalance: assetsList.rowData(i, "totalBalance"),
+                            totalCurrencyBalance: assetsList.rowData(i, "totalCurrencyBalance"),
+                            balances: assetsList.rowData(i, "balances"),
+                            decimals: assetsList.rowData(i, "decimals")
+                        }
+                }
+                return {}
             }
-            estimateGasFunction: function(selectedAccount) {
-                if (ensUsername.text === "" || !selectedAccount) return 80000;
-                return root.ensUsernamesStore.setPubKeyGasEstimate(ensUsername.text + (isStatus ? ".stateofus.eth" : "" ), selectedAccount.address)
+            sendTransaction: function() {
+                if(bestRoutes.length === 1) {
+                    let path = bestRoutes[0]
+                    let eip1559Enabled = path.gasFees.eip1559Enabled
+                    root.ensUsernamesStore.authenticateAndSetPubKey(
+                                ensUsername.text + (isStatus ? ".stateofus.eth" : "" ),
+                                selectedAccount.address,
+                                path.gasAmount,
+                                eip1559Enabled ? "" : path.gasFees.gasPrice,
+                                "",
+                                "",
+                                eip1559Enabled,
+                                )
+                }
             }
-            onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password, eip1559Enabled) {
-                return root.ensUsernamesStore.setPubKey(ensUsername.text + (isStatus ? ".stateofus.eth" : "" ),
-                                                        selectedAddress,
-                                                        gasLimit,
-                                                        gasPrice,
-                                                        "",
-                                                        "",
-                                                        password,
-                                                        eip1559Enabled)
+            Connections {
+                target: root.ensUsernamesStore.ensUsernamesModule
+                onTransactionWasSent: {
+                    try {
+                        let response = JSON.parse(txResult)
+                        if (!response.success) {
+                            if (Utils.isInvalidPasswordMessage(response.result)) {
+                                releaseEnsModal.setSendTxError()
+                                return
+                            }
+                            releaseEnsModal.sendingError.text = response.result
+                            return releaseEnsModal.sendingError.open()
+                        }
+                        usernameUpdated(ensUsername.text);
+                        let url = `${releaseEnsModal.store.getEtherscanLink()}/${response.result}`;
+                        Global.displayToastMessage(qsTr("Transaction pending..."),
+                                                   qsTr("View on etherscan"),
+                                                   "",
+                                                   true,
+                                                   Constants.ephemeralNotificationType.normal,
+                                                   url)
+                    } catch (e) {
+                        console.error('Error parsing the response', e)
+                    }
+                    releaseEnsModal.close()
+                }
             }
-            onSuccess: function(){
-                usernameUpdated(ensUsername.text);
-            }
-
-            width: 475
-            height: 500
         }
+
     }
 
     Item {

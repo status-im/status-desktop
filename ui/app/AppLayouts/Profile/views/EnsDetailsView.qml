@@ -9,6 +9,7 @@ import StatusQ.Components 0.1
 
 import utils 1.0
 import shared.status 1.0
+import shared.popups 1.0
 
 Item {
     id: root
@@ -103,35 +104,73 @@ Item {
 
     Component {
         id: transactionDialogComponent
-        StatusETHTransactionModal {
-            ensUsernamesStore: root.ensUsernamesStore
-            contactsStore: root.contactsStore
-            ensUsername: root.username
-            chainId: root.ensUsernamesStore.getChainIdForEns()
-            title: qsTr("Release your username")
-            onClosed: {
-                destroy()
+        SendModal {
+            id: releaseEnsModal
+            modalHeader: qsTr("Release your username")
+            interactive: false
+            sendType: Constants.SendType.ENSRelease
+            preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
+            preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
+            preSelectedAsset: {
+                let assetsList = releaseEnsModal.store.currentAccount.assets
+                for(var i=0; i< assetsList.count;i++) {
+                    if("ETH" === assetsList.rowData(i, "symbol"))
+                        return {
+                            name: assetsList.rowData(i, "name"),
+                            symbol: assetsList.rowData(i, "symbol"),
+                            totalBalance: assetsList.rowData(i, "totalBalance"),
+                            totalCurrencyBalance: assetsList.rowData(i, "totalCurrencyBalance"),
+                            balances: assetsList.rowData(i, "balances"),
+                            decimals: assetsList.rowData(i, "decimals")
+                        }
+                }
+                return {}
             }
-            estimateGasFunction: function(selectedAccount) {
-                if (username === "" || !selectedAccount) return 100000;
-                return root.ensUsernamesStore.releaseEnsEstimate(username, selectedAccount.address)
+            sendTransaction: function() {
+                if(bestRoutes.length === 1) {
+                    let path = bestRoutes[0]
+                    let eip1559Enabled = path.gasFees.eip1559Enabled
+                    let maxFeePerGas = (selectedPriority === 0) ? path.gasFees.maxFeePerGasL:
+                                       (selectedPriority === 1) ? path.gasFees.maxFeePerGasM:
+                                                                  path.gasFees.maxFeePerGasH
+                    root.ensUsernamesStore.authenticateAndReleaseEns(
+                                root.username,
+                                selectedAccount.address,
+                                path.gasAmount,
+                                eip1559Enabled ? "" : path.gasFees.gasPrice,
+                                eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",
+                                eip1559Enabled ? maxFeePerGas: path.gasFees.gasPrice,
+                                eip1559Enabled,
+                                )
+                }
             }
-            onSendTransaction: function(userAddress, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled){
-                return root.ensUsernamesStore.releaseEns(username,
-                                                        userAddress,
-                                                        gasLimit,
-                                                        gasPrice,
-                                                        tipLimit,
-                                                        overallLimit,
-                                                        password, 
-                                                        eip1559Enabled)
+            Connections {
+                target: root.ensUsernamesStore.ensUsernamesModule
+                onTransactionWasSent: {
+                    try {
+                        let response = JSON.parse(txResult)
+                        if (!response.success) {
+                            if (Utils.isInvalidPasswordMessage(response.result)) {
+                                releaseEnsModal.setSendTxError()
+                                return
+                            }
+                            releaseEnsModal.sendingError.text = response.result
+                            return releaseEnsModal.sendingError.open()
+                        }
+                        usernameReleased(username);
+                        let url = `${releaseEnsModal.store.getEtherscanLink()}/${response.result}`;
+                        Global.displayToastMessage(qsTr("Transaction pending..."),
+                                                   qsTr("View on etherscan"),
+                                                   "",
+                                                   true,
+                                                   Constants.ephemeralNotificationType.normal,
+                                                   url)
+                    } catch (e) {
+                        console.error('Error parsing the response', e)
+                    }
+                    releaseEnsModal.close()
+                }
             }
-            onSuccess: function(){
-               usernameReleased(username);
-            }
-
-            width: 475
-            height: 500
         }
     }
 

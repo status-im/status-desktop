@@ -47,7 +47,8 @@ Popup {
             text: qsTr("Send transaction")
             icon.color: Style.current.purple
             icon.name: "send"
-            onClicked: root.sendTransactionCommandButtonClicked()
+            // this flow doesnt work, commenting it out till it is worked on
+//            onClicked: root.sendTransactionCommandButtonClicked()
         }
 
 
@@ -56,7 +57,8 @@ Popup {
             icon.color: Style.current.orange
             icon.name: "send"
             icon.rotation: 180
-            onClicked: root.receiveTransactionCommandButtonClicked()
+            // this flow doesnt work, commenting it out till it is worked on
+//            onClicked: root.receiveTransactionCommandButtonClicked()
         }
     }
 }

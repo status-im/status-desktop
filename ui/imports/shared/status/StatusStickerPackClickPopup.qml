@@ -62,33 +62,70 @@ ModalPopup {
         packId: stickerPackDetailsPopup.packId
         Component {
             id: stickerPackPurchaseModal
-            StatusSNTTransactionModal {
-                store: stickerPackDetailsPopup.store
-                stickersStore: stickerPackDetailsPopup.store.stickersStore
-                contactsStore: stickerPackDetailsPopup.store.contactsStore
-                contractAddress: root.store.stickersStore.getStickersMarketAddress()
-                assetPrice: price
-                chainId: root.store.stickersStore.getChainIdForStickers()
-                estimateGasFunction: function(selectedAccount, uuid) {
-                    if (packId < 0  || !selectedAccount || !price) return 325000
-                        return stickerPackDetailsPopup.store.stickersStore.estimate(packId, selectedAccount.address, price, uuid)
+            SendModal {
+                id: buyStickersPackModal
+                interactive: false
+                sendType: Constants.SendType.StickersBuy
+                preSelectedRecipient: stickerPackDetailsPopup.store.stickersStore.getStickersMarketAddress()
+                preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
+                preSelectedAsset: {
+                    let assetsList = buyStickersPackModal.store.currentAccount.assets
+                    for(var i=0; i< assetsList.count;i++) {
+                        let symbol = JSON.parse(stickerPackDetailsPopup.store.stickersStore.getStatusToken()).symbol
+                        if(symbol === assetsList.rowData(i, "symbol"))
+                            return {
+                                name: assetsList.rowData(i, "name"),
+                                symbol: assetsList.rowData(i, "symbol"),
+                                totalBalance: assetsList.rowData(i, "totalBalance"),
+                                totalCurrencyBalance: assetsList.rowData(i, "totalCurrencyBalance"),
+                                balances: assetsList.rowData(i, "balances"),
+                                decimals: assetsList.rowData(i, "decimals")
+                            }
+                    }
+                    return {}
                 }
-                onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled) {
-                    return root.store.stickersStore.buy(packId,
-                                                       selectedAddress,
-                                                       gasLimit,
-                                                       gasPrice,
-                                                       tipLimit,
-                                                       overallLimit,
-                                                       password, 
-                                                       eip1559Enabled)
+                sendTransaction: function() {
+                    if(bestRoutes.length === 1) {
+                        let path = bestRoutes[0]
+                        let eip1559Enabled = path.gasFees.eip1559Enabled
+                        let maxFeePerGas = (selectedPriority === 0) ? path.gasFees.maxFeePerGasL:
+                                                                      (selectedPriority === 1) ? path.gasFees.maxFeePerGasM:
+                                                                                                 path.gasFees.maxFeePerGasH
+                        stickerPackDetailsPopup.store.stickersStore.authenticateAndBuy(packId,
+                                                                                       selectedAccount.address,
+                                                                                       path.gasAmount,
+                                                                                       eip1559Enabled ? "" : path.gasFees.gasPrice,
+                                                                                       eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",
+                                                                                       eip1559Enabled ? maxFeePerGas : path.gasFees.gasPrice,
+                                                                                       eip1559Enabled)
+                    }
                 }
-                onClosed: {
-                    destroy()
+                Connections {
+                    target: stickerPackDetailsPopup.store.stickersStore.stickersModule
+                    onTransactionWasSent: {
+                        try {
+                            let response = JSON.parse(txResult)
+                            if (!response.success) {
+                                if (Utils.isInvalidPasswordMessage(response.result)) {
+                                    buyStickersPackModal.setSendTxError()
+                                    return
+                                }
+                                buyStickersPackModal.sendingError.text = response.result
+                                return buyStickersPackModal.sendingError.open()
+                            }
+                            let url = `${buyStickersPackModal.store.getEtherscanLink()}/${response.result}`;
+                            Global.displayToastMessage(qsTr("Transaction pending..."),
+                                                       qsTr("View on etherscan"),
+                                                       "",
+                                                       true,
+                                                       Constants.ephemeralNotificationType.normal,
+                                                       url)
+                            buyStickersPackModal.close()
+                        } catch (e) {
+                            console.error('Error parsing the response', e)
+                        }
+                    }
                 }
-                asyncGasEstimateTarget: stickerPackDetailsPopup.store.stickersStore.stickersModule
-                width: stickerPackDetailsPopup.width
-                height: stickerPackDetailsPopup.height
             }
         }
     }

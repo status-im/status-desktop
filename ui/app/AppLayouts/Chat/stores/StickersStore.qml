@@ -38,10 +38,10 @@ QtObject {
         return stickersModule.getCurrentCurrency()
     }
 
-    function getFiatValue(balance, cryptoSymbo, fiatSymbol) {
+    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
         if(!root.stickersModule)
             return ""
-        return stickersModule.getFiatValue(balance, cryptoSymbo, fiatSymbol)
+        return stickersModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
     }
 
     function getGasEthValue(gweiValue, gasLimit) {
@@ -62,10 +62,10 @@ QtObject {
         return stickersModule.estimate(packId, selectedAccount, price, uuid)
     }
 
-    function buy(packId, address, price, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled) {
+    function authenticateAndBuy(packId, address, price, gasLimit, gasPrice, tipLimit, overallLimit, eip1559Enabled) {
         if(!root.stickersModule)
             return ""
-        return stickersModule.buy(packId, address, price, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled)
+        return stickersModule.authenticateAndBuy(packId, address, price, gasLimit, gasPrice, tipLimit, overallLimit, eip1559Enabled)
     }
 
     function getChainIdForStickers() {
