@@ -308,11 +308,31 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                profileSectionStore: root.store
-                rootStore: root.globalStore
-                contactStore: root.store.contactsStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
                 contentWidth: d.contentWidth
+
+                communitiesList: root.store.communitiesList
+                store: QtObject {
+                    function setActiveCommunity(communityId) {
+                        root.globalStore.setActiveCommunity(communityId)
+                    }
+
+                    function importCommunity(communityKey) {
+                        root.store.importCommunity(communityKey);
+                    }
+
+                    function leaveCommunity(communityKey) {
+                        root.store.communitiesProfileModule.leaveCommunity(communityId)
+                    }
+
+                    function setCommunityMuted(communityId, muted) {
+                        root.store.communitiesProfileModule.setCommunityMuted(communityId, muted)
+                    }
+
+                    function inviteUsersToCommunity(keys, inviteMessage) {
+                         root.store.communitiesProfileModule.inviteUsersToCommunity(keys, inviteMessage)
+                    }
+                }
             }
 
             KeycardView {
