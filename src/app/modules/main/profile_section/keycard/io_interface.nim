@@ -1,4 +1,5 @@
 import NimQml
+from ../../../../../app_service/service/wallet_account/service import KeyPairDto
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -62,6 +63,9 @@ method runCreateNewPairingCodePopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onLoggedInUserImageChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onNewKeycardSet*(self: AccessInterface, keyPair: KeyPairDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onKeycardLocked*(self: AccessInterface, keycardUid: string) {.base.} =

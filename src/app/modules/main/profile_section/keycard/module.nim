@@ -157,51 +157,67 @@ method runCreatePukPopup*(self: Module) =
 method runCreateNewPairingCodePopup*(self: Module) =
   info "TODO: Create New Pairing Code for a Keycard..."
 
-proc buildKeycardList(self: Module) =
+proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPair: KeyPairDto): KeycardItem =
   let findAccountByAccountAddress = proc(accounts: seq[WalletAccountDto], address: string): WalletAccountDto =
     for i in 0 ..< accounts.len:
       if(accounts[i].address == address):
         return accounts[i]
     return nil
 
-  let accounts = self.controller.getWalletAccounts()
+  var knownAccounts: seq[WalletAccountDto]
+  for accAddr in keyPair.accountsAddresses:
+    let account = findAccountByAccountAddress(walletAccounts, accAddr)
+    if account.isNil:
+      ## we should never be here cause we need to remove deleted accounts from the `keypairs` table and sync
+      ## that state accross different app instances
+      continue
+    knownAccounts.add(account)
+  if knownAccounts.len == 0:
+    return nil
+  var item = initKeycardItem(keycardUid = keyPair.keycardUid,
+    pubKey = knownAccounts[0].publicKey,
+    keyUid = keyPair.keyUid,
+    locked = keyPair.keycardLocked,
+    name = keyPair.keycardName,
+    derivedFrom = knownAccounts[0].derivedfrom)
+  for ka in knownAccounts:
+    var icon = ""
+    if ka.walletType == WalletTypeDefaultStatusAccount:
+      item.setPairType(KeyPairType.Profile)
+      item.setPubKey(singletonInstance.userProfile.getPubKey())
+      item.setImage(singletonInstance.userProfile.getIcon())
+      icon = "wallet"
+    if ka.walletType == WalletTypeSeed:
+      item.setPairType(KeyPairType.SeedImport)
+      item.setIcon("keycard")
+    if ka.walletType == WalletTypeKey:
+      item.setPairType(KeyPairType.PrivateKeyImport)
+      item.setIcon("keycard")
+    item.addAccount(ka.name, ka.path, ka.address, ka.emoji, ka.color, icon = icon, balance = 0.0)
+  return item
+
+proc buildKeycardList(self: Module) =
+  let walletAccounts = self.controller.getWalletAccounts()
   var items: seq[KeycardItem]
   let migratedKeyPairs = self.controller.getAllMigratedKeyPairs()
   for kp in migratedKeyPairs:
-    var knownAccounts: seq[WalletAccountDto]
-    for accAddr in kp.accountsAddresses:
-      let account = findAccountByAccountAddress(accounts, accAddr)
-      if account.isNil:
-        ## we should never be here cause we need to remove deleted accounts from the `keypairs` table and sync
-        ## that state accross different app instances
-        continue
-      knownAccounts.add(account)
-    if knownAccounts.len == 0:
+    let item = self.buildKeycardItem(walletAccounts, kp)
+    if item.isNil:
       continue
-    var item = initKeycardItem(keycardUid = kp.keycardUid,
-      pubKey = knownAccounts[0].publicKey,
-      keyUid = kp.keyUid,
-      locked = kp.keycardLocked,
-      name = kp.keycardName,
-      derivedFrom = knownAccounts[0].derivedfrom)
-    for ka in knownAccounts:
-      if ka.walletType == WalletTypeDefaultStatusAccount:
-        item.setPairType(KeyPairType.Profile)
-        item.setPubKey(singletonInstance.userProfile.getPubKey())
-        item.setImage(singletonInstance.userProfile.getIcon())
-      if ka.walletType == WalletTypeSeed:
-        item.setPairType(KeyPairType.SeedImport)
-        item.setIcon("keycard")
-      if ka.walletType == WalletTypeKey:
-        item.setPairType(KeyPairType.PrivateKeyImport)
-        item.setIcon("keycard")
-      item.addAccount(ka.name, ka.path, ka.address, ka.emoji, ka.color, icon = "", balance = 0.0)
     items.add(item)
   self.view.setKeycardItems(items)
 
 method onLoggedInUserImageChanged*(self: Module) =
   self.view.keycardModel().setImage(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
   self.view.emitKeycardProfileChangedSignal()
+
+method onNewKeycardSet*(self: Module, keyPair: KeyPairDto) =
+  let walletAccounts = self.controller.getWalletAccounts()
+  let item = self.buildKeycardItem(walletAccounts, keyPair)
+  if item.isNil:
+    error "cannot build keycard item for key pair", keyUid=keyPair.keyUid
+    return
+  self.view.keycardModel().addItem(item)
 
 method onKeycardLocked*(self: Module, keycardUid: string) =
   self.view.keycardModel().setLocked(keycardUid, true)
