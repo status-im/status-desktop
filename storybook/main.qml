@@ -42,6 +42,9 @@ ApplicationWindow {
         ListElement {
              title: "NotificationSounds"
         }
+        ListElement {
+             title: "CommunitiesSection"
+        }
     }
 
     SplitView {
