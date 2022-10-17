@@ -5,12 +5,9 @@ import utils 1.0
 import shared.panels 1.0
 
 import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
-import StatusQ.Controls 0.1
 
-Item {
+StatusRollArea {
     id: root
 
     property string tags
@@ -30,35 +27,8 @@ Item {
         property ListModel tagsModel: ListModel {}
     }
 
-    implicitHeight: tagsFlow.height
-    clip: true
-
-    StatusScrollView {
-        id: scroll
-        anchors.fill: parent
-        padding: 0
-        contentWidth: tagsFlow.width
-
-        StatusScrollBar.horizontal.policy: StatusScrollBar.AlwaysOff
-
-        StatusCommunityTags {
-            id: tagsFlow
-            model: d.tagsModel
-        }
-    }
-
-    CommunityTagsRowButton {
-        anchors.left: parent.left
-        height: parent.height
-        visible: scroll.contentX > 0
-        onClicked: scroll.flick(scroll.width, 0)
-    }
-
-    CommunityTagsRowButton {
-        anchors.right: parent.right
-        height: parent.height
-        visible: scroll.contentX + scroll.width < scroll.contentWidth
-        mirrored: true
-        onClicked: scroll.flick(-scroll.width, 0)
+    content: StatusCommunityTags {
+        id: tagsFlow
+        model: d.tagsModel
     }
 }

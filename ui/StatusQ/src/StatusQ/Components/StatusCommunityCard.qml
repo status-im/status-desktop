@@ -347,33 +347,40 @@ Rectangle {
                     }
                 }
             }
-            // TODO: Replace by `StatusListItemTagRow` - To be done!
-            Row {
-                visible: root.categories.count > 0
+
+            StatusRollArea {
                 Layout.alignment: Qt.AlignVCenter
                 Layout.fillWidth: true
-                spacing: 8
-                clip: true
 
-                Repeater {
-                    model: root.categories
-                    delegate: StatusListItemTag {
-                        border.color: Theme.palette.baseColor2
-                        color: "transparent"
-                        height: 24
-                        radius: 20
-                        closeButtonVisible: false
-                        asset.emoji: model.emoji
-                        asset.width: 24
-                        asset.height: 24
-                        asset.color: "transparent"
-                        asset.isLetterIdenticon: true
-                        title: model.name
-                        titleText.font.pixelSize: 13
-                        titleText.color: d.fontColor
+                visible: root.categories.count > 0
+                arrowsGradientColor: d.cardColor
+
+                // TODO: Replace by `StatusListItemTagRow` - To be done!
+                content: Row {
+                    spacing: 8
+                    clip: true
+
+                    Repeater {
+                        model: root.categories
+                        delegate: StatusListItemTag {
+                            border.color: Theme.palette.baseColor2
+                            color: "transparent"
+                            height: 24
+                            radius: 20
+                            closeButtonVisible: false
+                            asset.emoji: model.emoji
+                            asset.width: 24
+                            asset.height: 24
+                            asset.color: "transparent"
+                            asset.isLetterIdenticon: true
+                            title: model.name
+                            titleText.font.pixelSize: 13
+                            titleText.color: d.fontColor
+                        }
                     }
                 }
             }
+
         }
     } // End of content card
 
