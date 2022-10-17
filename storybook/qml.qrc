@@ -19,5 +19,6 @@
         <file>pages/ExemptionsComponent/ExemptionsComponentData.qml</file>
         <file>pages/ExemptionsComponent/ExemptionsComponentControls.qml</file>
         <file>pages/NotificationSoundsPage.qml</file>
+        <file>pages/CommunitiesSectionPage.qml</file>
     </qresource>
 </RCC>
