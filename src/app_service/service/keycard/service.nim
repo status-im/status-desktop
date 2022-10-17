@@ -60,6 +60,7 @@ QtObject:
     currentFlow: KCSFlowType
     lastReceivedKeycardData: tuple[flowType: string, flowEvent: KeycardEvent]
     setPayloadForCurrentFlow: JsonNode
+    doLogging: bool
 
   proc setup(self: Service) =
     self.QObject.setup
@@ -75,11 +76,16 @@ QtObject:
     result.threadpool = threadpool
     result.closingApp = false
     result.currentFlow = KCSFlowType.NoFlow
+    result.doLogging = false
+    if not defined(production):
+      result.doLogging = true
 
   proc init*(self: Service) =
-    debug "init keycard using ", pairingsJson=status_const.KEYCARDPAIRINGDATAFILE
+    if self.doLogging:
+      debug "init keycard using ", pairingsJson=status_const.KEYCARDPAIRINGDATAFILE
     let initResp = keycard_go.keycardInitFlow(status_const.KEYCARDPAIRINGDATAFILE)
-    debug "initialization response: ", initResp
+    if self.doLogging:
+      debug "initialization response: ", initResp
 
   proc processSignal(self: Service, signal: string) =
     var jsonSignal: JsonNode
@@ -89,7 +95,8 @@ QtObject:
       error "Invalid signal received", data = signal
       return
 
-    debug "keycard_signal", response=signal
+    if self.doLogging:
+      debug "keycard_signal", response=signal
 
     var typeObj, eventObj: JsonNode
     if(not jsonSignal.getProp(ResponseKeyType, typeObj) or 
@@ -125,17 +132,20 @@ QtObject:
   proc startFlow(self: Service, payload: JsonNode) =
     self.updateLocalPayloadForCurrentFlow(payload, cleanBefore = true)
     let response = keycard_go.keycardStartFlow(self.currentFlow.int, $payload)
-    debug "keycardStartFlow", currentFlow=self.currentFlow.int, payload=payload, response=response
+    if self.doLogging:
+      debug "keycardStartFlow", currentFlow=self.currentFlow.int, payload=payload, response=response
 
   proc resumeFlow(self: Service, payload: JsonNode) =
     self.updateLocalPayloadForCurrentFlow(payload)
     let response = keycard_go.keycardResumeFlow($payload)
-    debug "keycardResumeFlow", currentFlow=self.currentFlow.int, payload=payload, response=response
+    if self.doLogging:
+      debug "keycardResumeFlow", currentFlow=self.currentFlow.int, payload=payload, response=response
 
   proc cancelCurrentFlow*(self: Service) =
     let response = keycard_go.keycardCancelFlow()
     self.currentFlow = KCSFlowType.NoFlow
-    debug "keycardCancelFlow", currentFlow=self.currentFlow.int, response=response
+    if self.doLogging:
+      debug "keycardCancelFlow", currentFlow=self.currentFlow.int, response=response
 
   proc generateRandomPUK*(self: Service): string =
     for i in 0 ..< PUKLengthForStatusApp:
@@ -144,7 +154,8 @@ QtObject:
   proc onTimeout(self: Service, response: string) {.slot.} =
     if(self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
       return
-    debug "onTimeout, about to start flow: ", currentFlow=self.currentFlow
+    if self.doLogging:
+      debug "onTimeout, about to start flow: ", currentFlow=self.currentFlow
     self.startFlow(self.setPayloadForCurrentFlow)
 
   proc runTimer(self: Service) =
