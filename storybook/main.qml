@@ -59,6 +59,9 @@ ApplicationWindow {
         ListElement {
              title: "CommunitiesSection"
         }
+        ListElement {
+             title: "DevicesSection"
+        }
     }
 
     SplitView {
