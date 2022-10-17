@@ -46,8 +46,8 @@ QtObject {
         root.keycardModule.runCreateBackupCopyOfAKeycardPopup()
     }
 
-    function runCreatePukPopup() {
-        root.keycardModule.runCreatePukPopup()
+    function runCreatePukPopup(keycardUid, keyUid) {
+        root.keycardModule.runCreatePukPopup(keycardUid, keyUid)
     }
 
     function runCreateNewPairingCodePopup() {

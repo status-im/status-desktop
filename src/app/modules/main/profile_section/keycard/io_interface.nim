@@ -56,7 +56,7 @@ method runChangePinPopup*(self: AccessInterface, keycardUid: string, keyUid: str
 method runCreateBackupCopyOfAKeycardPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runCreatePukPopup*(self: AccessInterface) {.base.} =
+method runCreatePukPopup*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runCreateNewPairingCodePopup*(self: AccessInterface) {.base.} =

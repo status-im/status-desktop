@@ -12,7 +12,8 @@ method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Control
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
-    self.flowType == FlowType.ChangeKeycardPin:
+    self.flowType == FlowType.ChangeKeycardPin or
+    self.flowType == FlowType.ChangeKeycardPuk:
       controller.runSharedModuleFlow(FlowType.UnlockKeycard)
   if self.flowType == FlowType.SetupNewKeycard:
     let currValue = extractPredefinedKeycardDataToNumber(controller.getKeycardData())
@@ -29,7 +30,8 @@ method executeTertiaryCommand*(self: MaxPinRetriesReachedState, controller: Cont
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
-    self.flowType == FlowType.ChangeKeycardPin:
+    self.flowType == FlowType.ChangeKeycardPin or
+    self.flowType == FlowType.ChangeKeycardPuk:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
   if self.flowType == FlowType.SetupNewKeycard:
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseUnlockLabelForLockedState, add = false))

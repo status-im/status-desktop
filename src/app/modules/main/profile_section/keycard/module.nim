@@ -155,8 +155,12 @@ method runChangePinPopup*(self: Module, keycardUid: string, keyUid: string) =
 method runCreateBackupCopyOfAKeycardPopup*(self: Module) =
   info "TODO: Create a Backup Copy of a Keycard..."
 
-method runCreatePukPopup*(self: Module) =
-  info "TODO: Create PUK for a Keycard..."
+method runCreatePukPopup*(self: Module, keycardUid: string, keyUid: string) =
+  self.createSharedKeycardModule()
+  if self.keycardSharedModule.isNil:
+    return
+  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangeKeycardPuk, keyUid)  
 
 method runCreateNewPairingCodePopup*(self: Module) =
   info "TODO: Create New Pairing Code for a Keycard..."

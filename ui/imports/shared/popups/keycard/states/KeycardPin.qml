@@ -112,8 +112,8 @@ Item {
             enabled: !d.useFakePin
             onPinInputChanged: {
                 root.pinUpdated(pinInput)
-                if (root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.wrongPin ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin) {
+                if (root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.wrongPin &&
+                        root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.wrongKeychainPin) {
                     image.source = Style.png("keycard/enter-pin-%1".arg(pinInput.length))
                 }
                 if(pinInput.length == 0) {
@@ -377,7 +377,7 @@ Item {
                 target: info
                 text: {
                     if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin) {
-                        return
+                        return d.message2
                     }
                     return d.message1
                 }

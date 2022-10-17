@@ -227,6 +227,11 @@ QtObject:
     self.currentFlow = KCSFlowType.ChangePIN
     self.startFlow(payload)
 
+  proc startChangePukFlow*(self: Service) =
+    var payload = %* { }
+    self.currentFlow = KCSFlowType.ChangePUK
+    self.startFlow(payload)
+
   proc startStoreMetadataFlow*(self: Service, cardName: string, pin: string, walletPaths: seq[string]) =
     var name = cardName
     if cardName.len > CardNameLength:
@@ -271,6 +276,17 @@ QtObject:
       return
     var payload = %* {
       RequestParamPIN: pin
+    }
+    self.resumeFlow(payload)
+
+  proc storePuk*(self: Service, puk: string) =
+    if puk.len == 0:
+      error "empty puk provided"
+      return
+    var payload = %* {
+      RequestParamOverwrite: true,
+      RequestParamPUK: puk,
+      RequestParamNewPUK: puk
     }
     self.resumeFlow(payload)
 

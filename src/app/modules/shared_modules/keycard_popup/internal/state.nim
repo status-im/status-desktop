@@ -59,6 +59,11 @@ type StateType* {.pure.} = enum
   ChangingKeycardPin = "ChangingKeycardPin"
   ChangingKeycardPinSuccess = "ChangingKeycardPinSuccess"
   ChangingKeycardPinFailure = "ChangingKeycardPinFailure"
+  CreatePuk = "CreatePuk"
+  RepeatPuk = "RepeatPuk"
+  ChangingKeycardPuk = "ChangingKeycardPuk"
+  ChangingKeycardPukSuccess = "ChangingKeycardPukSuccess"
+  ChangingKeycardPukFailure = "ChangingKeycardPukFailure"
 
 
 ## This is the base class for all state we may have in onboarding/login flow.
