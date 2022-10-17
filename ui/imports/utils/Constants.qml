@@ -430,14 +430,6 @@ QtObject {
         readonly property int success: 1
     }
 
-    readonly property QtObject transactionEstimatedTime: QtObject {
-        readonly property int unknown: 0
-        readonly property int lessThanOneMin: 1
-        readonly property int lessThanThreeMins: 2
-        readonly property int lessThanFiveMins: 3
-        readonly property int moreThanFiveMins: 4
-    }
-
     readonly property QtObject translationsState: QtObject {
         readonly property int alpha: 0
         readonly property int beta: 1
@@ -668,5 +660,13 @@ QtObject {
     enum TransactionStatus {
         Failure = 0,
         Success = 1
+    }
+
+    enum SendType {
+        Transfer,
+        ENSRegister,
+        ENSRelease,
+        ENSSetPubKey,
+        StickersBuy
     }
 }

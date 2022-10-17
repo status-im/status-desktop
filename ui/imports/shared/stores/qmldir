@@ -1,2 +1,4 @@
 singleton RootStore 1.0 RootStore.qml
+CurrenciesStore 1.0 CurrenciesStore.qml
+TransactionStore 1.0 TransactionStore.qml
 BIP39_en 1.0 BIP39_en.qml

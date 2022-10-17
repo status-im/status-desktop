@@ -71,9 +71,9 @@ QtObject:
   proc setPubKeyGasEstimate*(self: View, ensUsername: string, address: string): int {.slot.} =
     return self.delegate.setPubKeyGasEstimate(ensUsername, address)
 
-  proc setPubKey*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string,
-    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string {.slot.} =
-    return self.delegate.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
+  proc authenticateAndSetPubKey*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string,
+    maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.slot.} =
+    self.delegate.authenticateAndSetPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
 
   proc getEtherscanLink*(self: View): string {.slot.} =
     return self.etherscanLink
@@ -94,9 +94,9 @@ QtObject:
   proc releaseEnsEstimate*(self: View, ensUsername: string, address: string): int {.slot.} =
     return self.delegate.releaseEnsEstimate(ensUsername, address)
 
-  proc releaseEns*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string,
-    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string {.slot.} =
-    return self.delegate.release(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
+  proc authenticateAndReleaseEns*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string,
+    maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.slot.} =
+    self.delegate.authenticateAndReleaseEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
 
   proc connectOwnedUsername*(self: View, ensUsername: string, isStatus: bool) {.slot.} =
     self.delegate.connectOwnedUsername(ensUsername, isStatus)
@@ -107,9 +107,9 @@ QtObject:
   proc registerEnsGasEstimate*(self: View, ensUsername: string, address: string): int {.slot.} =
     return self.delegate.registerEnsGasEstimate(ensUsername, address)
 
-  proc registerEns*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string,
-    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string {.slot.} =
-    return self.delegate.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
+  proc authenticateAndRegisterEns*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string,
+    maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.slot.} =
+    self.delegate.authenticateAndRegisterEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
 
   proc getSNTBalance*(self: View): string {.slot.} =
     return self.delegate.getSNTBalance()

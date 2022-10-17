@@ -2,6 +2,7 @@ import NimQml
 import io_interface
 import view
 import controller
+import std/json
 import ../../../../core/eventemitter
 
 import ../io_interface as delegate_interface
@@ -11,6 +12,12 @@ import ../../../../../app_service/service/provider/service as provider_service
 import ../../../../global/global_singleton
 export io_interface
 
+# Shouldn't be public ever, user only within this module.
+type TmpSendTransactionDetails = object
+  payloadMethod: string
+  requestType: string
+  message: string
+
 type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
@@ -18,6 +25,7 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
     controller: Controller
+    tmpSendTransactionDetails: TmpSendTransactionDetails
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -72,3 +80,24 @@ method ensResourceURL*(self: Module, ens: string, url: string): (string, string,
 method updateNetwork*(self: Module, network: NetworkDto) =
   self.view.chainId = network.chainId
   self.view.chainName = network.chainName
+
+method authenticateToPostMessage*(self: Module, payloadMethod: string, requestType: string, message: string) {.slot.} =
+  self.tmpSendTransactionDetails.payloadMethod = payloadMethod
+  self.tmpSendTransactionDetails.requestType = requestType
+  self.tmpSendTransactionDetails.message = message
+
+  if singletonInstance.userProfile.getIsKeycardUser():
+    let keyUid = singletonInstance.userProfile.getKeyUid()
+    self.controller.authenticateUser(keyUid)
+  else:
+    self.controller.authenticateUser()
+
+method onUserAuthenticated*(self: Module, password: string) =
+  let jsonNode = parseJson(self.tmpSendTransactionDetails.message)
+
+  if jsonNode.kind == JObject and jsonNode.contains("payload"):
+    jsonNode["payload"]["password"] = %* password
+    self.tmpSendTransactionDetails.message = $jsonNode
+    self.postMessage(self.tmpSendTransactionDetails.payloadMethod,
+                   self.tmpSendTransactionDetails.requestType,
+                   self.tmpSendTransactionDetails.message)

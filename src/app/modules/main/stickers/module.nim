@@ -11,6 +11,17 @@ import ../../../../app_service/service/wallet_account/service as wallet_account_
 
 export io_interface
 
+# Shouldn't be public ever, user only within this module.
+type TmpBuyStickersTransactionDetails = object
+  packId: string
+  address: string
+  gas: string
+  gasPrice: string
+  maxPriorityFeePerGas: string
+  maxFeePerGas: string
+  eip1559Enabled: bool
+
+
 type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
@@ -18,6 +29,7 @@ type
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
+    tmpBuyStickersTransactionDetails: TmpBuyStickersTransactionDetails
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -52,8 +64,58 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.stickersDidLoad()
 
-method buy*(self: Module, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): tuple[response: string, success: bool] =
-  return self.controller.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
+method authenticateAndBuy*(self: Module, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) =
+  self.tmpBuyStickersTransactionDetails.packId = packId
+  self.tmpBuyStickersTransactionDetails.address = address
+  self.tmpBuyStickersTransactionDetails.gas = gas
+  self.tmpBuyStickersTransactionDetails.gasPrice = gasPrice
+  self.tmpBuyStickersTransactionDetails.maxPriorityFeePerGas = maxPriorityFeePerGas
+  self.tmpBuyStickersTransactionDetails.maxFeePerGas = maxFeePerGas
+  self.tmpBuyStickersTransactionDetails.eip1559Enabled = eip1559Enabled
+
+  if singletonInstance.userProfile.getIsKeycardUser():
+    let keyUid = singletonInstance.userProfile.getKeyUid()
+    self.controller.authenticateUser(keyUid)
+  else:
+    self.controller.authenticateUser()
+
+  ##################################
+  ## Do Not Delete
+  ##
+  ## Once we start with signing a transactions we shold check if the address we want to send a transaction from is migrated
+  ## or not. In case it's not we should just authenticate logged in user, otherwise we should use one of the keycards that
+  ## address (key pair) is migrated to and sign the transaction using it.
+  ##
+  ## The code bellow is an example how we can achieve that in future, when we start with signing transactions.
+  ##
+  ## let acc = self.controller.getAccountByAddress(from_addr)
+  ## if acc.isNil:
+  ##   echo "error: selected account to send a transaction from is not known"
+  ##   return
+  ## let keyPair = self.controller.getMigratedKeyPairByKeyUid(acc.keyUid)
+  ## if keyPair.len == 0:
+  ##   self.controller.authenticateUser()
+  ## else:
+  ##   self.controller.authenticateUser(acc.keyUid, acc.path)
+  ##
+  ##################################
+
+method onUserAuthenticated*(self: Module, password: string) =
+  let responseTuple = self.controller.buy(
+    self.tmpBuyStickersTransactionDetails.packId,
+    self.tmpBuyStickersTransactionDetails.address,
+    self.tmpBuyStickersTransactionDetails.gas,
+    self.tmpBuyStickersTransactionDetails.gasPrice,
+    self.tmpBuyStickersTransactionDetails.maxPriorityFeePerGas,
+    self.tmpBuyStickersTransactionDetails.maxFeePerGas,
+    password,
+    self.tmpBuyStickersTransactionDetails.eip1559Enabled
+  )
+  let response = responseTuple.response
+  let success = responseTuple.success
+  if success:
+    self.view.stickerPacks.updateStickerPackInList(self.tmpBuyStickersTransactionDetails.packId, false, true)
+  self.view.transactionWasSent($(%*{"success": success, "result": response}))
 
 method getInstalledStickerPacks*(self: Module): Table[string, StickerPackDto] =
   self.controller.getInstalledStickerPacks()

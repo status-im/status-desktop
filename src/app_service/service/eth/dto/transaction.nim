@@ -12,8 +12,16 @@ type
     maxFeePerGas*: Option[Uint256]
     value*: Option[Uint256]          # (optional) integer of the value sent with this transaction.
     data*: string                # the compiled code of a contract OR the hash of the invoked proc signature and encoded parameters. For details see Ethereum Contract ABI.
+    input*: string
     nonce*: Option[Nonce]        # (optional) integer of a nonce. This allows to overwrite your own pending transactions that use the same nonce
     txType*: string
+
+    chainID*: Option[int]     # (optional) chainID in case of a bridge hop transaction
+    symbol*: Option[string]      # (optional) symbol in case of a bridge hop transaction
+    recipient*: Option[Address]  # (optional) recipient in case of a bridge hop transaction
+    amount*: Option[UInt256]         # (optional) amount in case of a bridge hop transaction
+    amountOutMin*: Option[UInt256]   # (optional) amountOutMin in case of a bridge hop transaction
+    bonderFee*: Option[string]      # (optional) bonderFee in case of a bridge hop transaction
 
 proc `%`*(x: TransactionDataDto): JsonNode =
   result = newJobject()
@@ -32,5 +40,31 @@ proc `%`*(x: TransactionDataDto): JsonNode =
   if x.value.isSome:
     result["value"] = %("0x" & x.value.unsafeGet.toHex)
   result["data"] = %x.data
+  result["input"] = %x.input
   if x.nonce.isSome:
     result["nonce"] = %x.nonce.unsafeGet
+  if x.chainID.isSome:
+    result["chainId"] = %x.chainID.unsafeGet
+  if x.symbol.isSome:
+    result["symbol"] = %x.symbol.unsafeGet
+  if x.recipient.isSome:
+    result["recipient"] = %x.recipient.unsafeGet
+  if x.amount.isSome:
+    result["amount"] = %x.amount.unsafeGet
+  if x.amountOutMin.isSome:
+    result["amountOutMin"] = %x.amountOutMin.unsafeGet
+  if x.bonderFee.isSome:
+    result["bonderFee"] = %x.bonderFee.unsafeGet
+
+type TransactionBridgeDto* = object
+  bridgeName*: string
+  chainID*: int
+  simpleTx*: TransactionDataDto
+  hopTx*: TransactionDataDto
+
+proc `%`*(x: TransactionBridgeDto): JsonNode =
+  result = newJobject()
+  result["bridgeName"] = %x.bridgeName
+  result["chainID"] = %x.chainID
+  result["simpleTx"] = %x.simpleTx
+  result["hopTx"] = %x.hopTx

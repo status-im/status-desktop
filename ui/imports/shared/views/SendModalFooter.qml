@@ -13,16 +13,11 @@ import StatusQ.Core.Theme 0.1
 Rectangle {
     id: footer
 
-    property string maxFiatFees: ""
-    property int estimatedTxTimeFlag: Constants.transactionEstimatedTime.unknown
+    property string maxFiatFees: "..."
+    property alias selectedTimeEstimate: estimatedTime.text
     property bool pending: true
-    property bool isLastGroup: false
 
     signal nextButtonClicked()
-
-    onEstimatedTxTimeFlagChanged: {
-        estimatedTime.text = Utils.getLabelForEstimatedTxTime(estimatedTxTimeFlag)
-    }
 
     width: parent.width
     height: 82
@@ -85,7 +80,6 @@ Rectangle {
             }
 
             StatusFlatButton {
-                icon.name: isLastGroup ? "" : "password"
                 text: qsTr("Send")
                 objectName: "sendModalFooterSendButton"
                 size: StatusBaseButton.Size.Large

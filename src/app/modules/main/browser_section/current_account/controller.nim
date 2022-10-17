@@ -25,3 +25,6 @@ proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_serv
 
 proc getIndex*(self: Controller, address: string): int =
   return self.walletAccountService.getIndex(address)
+
+method findTokenSymbolByAddress*(self: Controller, address: string): string =
+  return self.walletAccountService.findTokenSymbolByAddress(address)

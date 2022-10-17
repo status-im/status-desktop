@@ -4,6 +4,7 @@ import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model
 
+import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 import ../../../../../app_service/common/conversion as service_conversion
 import ../../../../../app_service/service/settings/service as settings_service
@@ -19,6 +20,19 @@ logScope:
 
 include ../../../../../app_service/common/json_utils
 
+# Shouldn't be public ever, user only within this module.
+type TmpSendEnsTransactionDetails = object
+  ensUsername: string
+  address: string
+  gas: string
+  gasPrice: string
+  maxPriorityFeePerGas: string
+  maxFeePerGas: string
+  eip1559Enabled: bool
+  isRegistration: bool
+  isRelease: bool
+  isSetPubKey: bool
+
 type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
@@ -26,6 +40,7 @@ type
     viewVariant: QVariant
     controller: Controller
     moduleLoaded: bool
+    tmpSendEnsTransactionDetails: TmpSendEnsTransactionDetails
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface, events: EventEmitter,
@@ -90,9 +105,36 @@ method onDetailsForEnsUsername*(self: Module, ensUsername: string, address: stri
 method setPubKeyGasEstimate*(self: Module, ensUsername: string, address: string): int =
   return self.controller.setPubKeyGasEstimate(ensUsername, address)
 
-method setPubKey*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
-  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
-  let response = self.controller.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
+method authenticateAndSetPubKey*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
+  maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) =
+  self.tmpSendEnsTransactionDetails.ensUsername = ensUsername
+  self.tmpSendEnsTransactionDetails.address = address
+  self.tmpSendEnsTransactionDetails.gas = gas
+  self.tmpSendEnsTransactionDetails.gasPrice = gasPrice
+  self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas = maxPriorityFeePerGas
+  self.tmpSendEnsTransactionDetails.maxFeePerGas = maxFeePerGas
+  self.tmpSendEnsTransactionDetails.eip1559Enabled = eip1559Enabled
+  self.tmpSendEnsTransactionDetails.isRegistration = false
+  self.tmpSendEnsTransactionDetails.isRelease = false
+  self.tmpSendEnsTransactionDetails.isSetPubKey = true
+
+  if singletonInstance.userProfile.getIsKeycardUser():
+    let keyUid = singletonInstance.userProfile.getKeyUid()
+    self.controller.authenticateUser(keyUid)
+  else:
+    self.controller.authenticateUser()
+
+method setPubKey*(self: Module, password: string) =
+  let response = self.controller.setPubKey(
+    self.tmpSendEnsTransactionDetails.ensUsername,
+    self.tmpSendEnsTransactionDetails.address,
+    self.tmpSendEnsTransactionDetails.gas,
+    self.tmpSendEnsTransactionDetails.gasPrice,
+    self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas,
+    self.tmpSendEnsTransactionDetails.maxFeePerGas,
+    password,
+    self.tmpSendEnsTransactionDetails.eip1559Enabled
+  )
   if(response.len == 0):
     info "expected response is empty", methodName="setPubKey"
     return
@@ -103,23 +145,48 @@ method setPubKey*(self: Module, ensUsername: string, address: string, gas: strin
     return
 
   var success: bool
-  if(not responseObj.getProp("success", success) or not success):
+  if(not responseObj.getProp("success", success)):
     info "remote call is not executed with success", methodName="setPubKey"
-    return response
   
   var respResult: string
   if(responseObj.getProp("result", respResult)):
-    self.view.model().addItem(Item(ensUsername: ensUsername, isPending: true))
-    self.view.emitTransactionWasSentSignal(respResult)
-
-  return response
+    self.view.model().addItem(Item(ensUsername: self.tmpSendEnsTransactionDetails.ensUsername, isPending: true))
+    self.view.emitTransactionWasSentSignal(response)
 
 method releaseEnsEstimate*(self: Module, ensUsername: string, address: string): int =
   return self.controller.releaseEnsEstimate(ensUsername, address)
 
-method release*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
-  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
-  let response = self.controller.release(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
+method authenticateAndReleaseEns*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
+  maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) =
+  self.tmpSendEnsTransactionDetails.ensUsername = ensUsername
+  self.tmpSendEnsTransactionDetails.address = address
+  self.tmpSendEnsTransactionDetails.gas = gas
+  self.tmpSendEnsTransactionDetails.gasPrice = gasPrice
+  self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas = maxPriorityFeePerGas
+  self.tmpSendEnsTransactionDetails.maxFeePerGas = maxFeePerGas
+  self.tmpSendEnsTransactionDetails.eip1559Enabled = eip1559Enabled
+  self.tmpSendEnsTransactionDetails.isRegistration = false
+  self.tmpSendEnsTransactionDetails.isRelease = true
+  self.tmpSendEnsTransactionDetails.isSetPubKey = false
+
+  if singletonInstance.userProfile.getIsKeycardUser():
+    let keyUid = singletonInstance.userProfile.getKeyUid()
+    self.controller.authenticateUser(keyUid)
+  else:
+    self.controller.authenticateUser()
+
+method releaseEns*(self: Module, password: string) =
+  let response = self.controller.release(
+    self.tmpSendEnsTransactionDetails.ensUsername,
+    self.tmpSendEnsTransactionDetails.address,
+    self.tmpSendEnsTransactionDetails.gas,
+    self.tmpSendEnsTransactionDetails.gasPrice,
+    self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas,
+    self.tmpSendEnsTransactionDetails.maxFeePerGas,
+    password,
+    self.tmpSendEnsTransactionDetails.eip1559Enabled
+  )
+
   if(response.len == 0):
     info "expected response is empty", methodName="release"
     return
@@ -130,17 +197,15 @@ method release*(self: Module, ensUsername: string, address: string, gas: string,
     return
 
   var success: bool
-  if(not responseObj.getProp("success", success) or not success):
+  if(not responseObj.getProp("success", success)):
     info "remote call is not executed with success", methodName="release"
     return
 
   var result: string
   if(responseObj.getProp("result", result)):
     self.controller.setPreferredName("")
-    self.view.model().removeItemByEnsUsername(ensUsername)
-    self.view.emitTransactionWasSentSignal(result)
-
-  return response
+    self.view.model().removeItemByEnsUsername(self.tmpSendEnsTransactionDetails.ensUsername)
+    self.view.emitTransactionWasSentSignal(response)
 
 proc formatUsername(self: Module, ensUsername: string, isStatus: bool): string =
   result = ensUsername
@@ -178,10 +243,58 @@ method getEnsRegisteredAddress*(self: Module): string =
 method registerEnsGasEstimate*(self: Module, ensUsername: string, address: string): int =
   return self.controller.registerEnsGasEstimate(ensUsername, address)
 
-method registerEns*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
-  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
-  let response = self.controller.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
-  
+method authenticateAndRegisterEns*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
+  maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) =
+  self.tmpSendEnsTransactionDetails.ensUsername = ensUsername
+  self.tmpSendEnsTransactionDetails.address = address
+  self.tmpSendEnsTransactionDetails.gas = gas
+  self.tmpSendEnsTransactionDetails.gasPrice = gasPrice
+  self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas = maxPriorityFeePerGas
+  self.tmpSendEnsTransactionDetails.maxFeePerGas = maxFeePerGas
+  self.tmpSendEnsTransactionDetails.eip1559Enabled = eip1559Enabled
+  self.tmpSendEnsTransactionDetails.isRegistration = true
+  self.tmpSendEnsTransactionDetails.isRelease = false
+  self.tmpSendEnsTransactionDetails.isSetPubKey = false
+
+  if singletonInstance.userProfile.getIsKeycardUser():
+    let keyUid = singletonInstance.userProfile.getKeyUid()
+    self.controller.authenticateUser(keyUid)
+  else:
+    self.controller.authenticateUser()
+
+  ##################################
+  ## Do Not Delete
+  ##
+  ## Once we start with signing a transactions we shold check if the address we want to send a transaction from is migrated
+  ## or not. In case it's not we should just authenticate logged in user, otherwise we should use one of the keycards that
+  ## address (key pair) is migrated to and sign the transaction using it.
+  ##
+  ## The code bellow is an example how we can achieve that in future, when we start with signing transactions.
+  ##
+  ## let acc = self.controller.getAccountByAddress(from_addr)
+  ## if acc.isNil:
+  ##   echo "error: selected account to send a transaction from is not known"
+  ##   return
+  ## let keyPair = self.controller.getMigratedKeyPairByKeyUid(acc.keyUid)
+  ## if keyPair.len == 0:
+  ##   self.controller.authenticateUser()
+  ## else:
+  ##   self.controller.authenticateUser(acc.keyUid, acc.path)
+  ##
+  ##################################
+
+method registerEns(self: Module, password: string) =
+  let response = self.controller.registerEns(
+    self.tmpSendEnsTransactionDetails.ensUsername,
+    self.tmpSendEnsTransactionDetails.address,
+    self.tmpSendEnsTransactionDetails.gas,
+    self.tmpSendEnsTransactionDetails.gasPrice,
+    self.tmpSendEnsTransactionDetails.maxPriorityFeePerGas,
+    self.tmpSendEnsTransactionDetails.maxFeePerGas,
+    password,
+    self.tmpSendEnsTransactionDetails.eip1559Enabled
+  )
+
   let responseObj = response.parseJson
   if (responseObj.kind != JObject):
     info "expected response is not a json object", methodName="registerEns"
@@ -189,10 +302,8 @@ method registerEns*(self: Module, ensUsername: string, address: string, gas: str
 
   var respResult: string
   if(responseObj.getProp("result", respResult) and responseObj{"success"}.getBool == true):
-    self.view.model().addItem(Item(ensUsername: self.formatUsername(ensUsername, true), isPending: true))
-    self.view.emitTransactionWasSentSignal(respResult)
-
-  return response
+    self.view.model().addItem(Item(ensUsername: self.formatUsername(self.tmpSendEnsTransactionDetails.ensUsername, true), isPending: true))
+  self.view.emitTransactionWasSentSignal(response)
 
 method getSNTBalance*(self: Module): string =
   return self.controller.getSNTBalance()
@@ -203,13 +314,19 @@ method getWalletDefaultAddress*(self: Module): string =
 method getCurrentCurrency*(self: Module): string =
   return self.controller.getCurrentCurrency()
 
-method getFiatValue*(self: Module, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string =
+method getFiatValue*(self: Module, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string =  
+  var floatCryptoBalance: float = 0
+  try:
+    floatCryptoBalance = parseFloat(cryptoBalance)
+  except ValueError:
+    return "0.00"
+
   if (cryptoBalance == "" or cryptoSymbol == "" or fiatSymbol == ""):
     return "0.00"
 
   let price = self.controller.getPrice(cryptoSymbol, fiatSymbol)
-  let value = parseFloat(cryptoBalance) * price
-  return fmt"{value:.2f}"
+  let value = floatCryptoBalance * price
+  return fmt"{value}"
 
 method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): string {.slot.} =
   var gasLimitInt:int
@@ -240,3 +357,12 @@ method getChainIdForEns*(self: Module): int =
 
 method setPrefferedEnsUsername*(self: Module, ensUsername: string) =
   self.controller.setPreferredName(ensUsername)
+
+method onUserAuthenticated*(self: Module, password: string) =
+  if self.tmpSendEnsTransactionDetails.isRegistration:
+    self.registerEns(password)
+  elif self.tmpSendEnsTransactionDetails.isRelease:
+    self.releaseEns(password)
+  elif self.tmpSendEnsTransactionDetails.isSetPubKey:
+    self.setPubKey(password)
+

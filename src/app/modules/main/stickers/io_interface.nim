@@ -19,7 +19,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method buy*(self: AccessInterface, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): tuple[response: string, success: bool] {.base.} =
+method authenticateAndBuy*(self: AccessInterface, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool){.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getInstalledStickerPacks*(self: AccessInterface): Table[string, StickerPackDto] {.base.} =
@@ -94,4 +94,7 @@ method stickerTransactionConfirmed*(self: AccessInterface, trxType: string, pack
 
 method stickerTransactionReverted*(self: AccessInterface, trxType: string, packID: string, transactionHash: string,
   revertReason: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")

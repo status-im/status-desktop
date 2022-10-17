@@ -32,6 +32,7 @@ include ../../common/json_utils
 # Signals which may be emitted by this service:
 const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
 const SIGNAL_TRANSACTION_SENT* = "transactionSent"
+const SIGNAL_SUGGESTED_ROUTES_READY* = "suggestedRoutesReady"
 
 type
   EstimatedTime* {.pure.} = enum
@@ -59,18 +60,9 @@ type
   TransactionSentArgs* = ref object of Args
     result*: string
 
-type SuggestedFees = object
-  gasPrice: float
-  baseFee: float
-  maxPriorityFeePerGas: float
-  maxFeePerGasL: float 
-  maxFeePerGasM: float
-  maxFeePerGasH: float
-  eip1559Enabled: bool
-
-# Initial version of suggested routes is a list of network where the tx is possible
-type SuggestedRoutes = object
-  networks: seq[NetworkDto]
+type
+  SuggestedRoutesArgs* = ref object of Args
+    suggestedRoutes*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -253,145 +245,131 @@ QtObject:
       error "Error estimating gas", msg = e.msg
       return $(%* { "result": "-1", "success": false, "error": { "message": e.msg } })    
 
-  proc transferEth(
-      self: Service,
-      from_addr: string,
-      to_addr: string,
-      value: string,
-      gas: string,
-      gasPrice: string,
-      maxPriorityFeePerGas: string,
-      maxFeePerGas: string,
-      password: string,
-      chainId: string,
-      uuid: string,
-      eip1559Enabled: bool,
-  ): bool {.slot.} =
-    try:
-      eth_utils.validateTransactionInput(from_addr, to_addr, assetAddress = "", value, gas,
-        gasPrice, data = "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, uuid)
-
-      var tx = ens_utils.buildTransaction(parseAddress(from_addr), eth2Wei(parseFloat(value), 18),
-          gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
-      tx.to = parseAddress(to_addr).some
-      
-      let response = transactions.createMultiTransaction(
-        MultiTransactionDto(
-          fromAddress: from_addr,
-          toAddress: to_addr,
-          fromAsset: "ETH",
-          toAsset: "ETH",
-          fromAmount:  "0x" & tx.value.unsafeGet.toHex,
-          multiTxtype: MultiTransactionType.MultiTransactionSend,
-        ), 
-        {chainId: @[tx]}.toTable,
-        password,
-      )
-      let output = %* { "result": response.result{"hashes"}{chainId}[0].getStr,  "success": %(response.error.isNil), "uuid": %uuid }
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
-    except Exception as e:
-      error "Error sending eth transfer transaction", msg = e.msg
-      return false
-    return true
-
-  proc transferTokens*(
+  proc transfer*(
     self: Service,
     from_addr: string,
     to_addr: string,
     tokenSymbol: string,
     value: string,
-    gas: string,
-    gasPrice: string,
-    maxPriorityFeePerGas: string,
-    maxFeePerGas: string,
-    password: string,
-    chainId: string,
     uuid: string,
-    eip1559Enabled: bool,
-  ): bool =
-    # TODO move this to another thread
+    priority: int,
+    selectedRoutes: string,
+    password: string,
+  ) =
     try:
-      let network = self.networkService.getNetwork(parseInt(chainId))
-      let token = self.tokenService.findTokenBySymbol(network, tokenSymbol)
+      let selRoutes = parseJson(selectedRoutes)
+      let routes = selRoutes.getElems().map(x => x.convertToTransactionPathDto())
 
-      eth_utils.validateTransactionInput(from_addr, to_addr, token.addressAsString(), value, gas,
-        gasPrice, data = "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, uuid)
-      
-      var tx = ens_utils.buildTokenTransaction(parseAddress(from_addr), token.address,
-        gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
+      var paths: seq[TransactionBridgeDto] = @[]
+      var isEthTx = false
+      var chainID = 0
+      var amountToSend: UInt256
+      var toAddress: Address
+      var data = ""
 
-      let weiValue = conversion.eth2Wei(parseFloat(value), token.decimals)
-      let transfer = Transfer(
-        to: parseAddress(to_addr),
-        value: weiValue,
-      )
+      if(routes.len > 0):
+        chainID = routes[0].fromNetwork.chainID
+      let network = self.networkService.getNetwork(chainID)
+      if network.nativeCurrencySymbol == tokenSymbol:
+        isEthTx = true
 
-      tx.data = ERC20_procS.toTable["transfer"].encodeAbi(transfer)
+      if(isEthTx):
+        amountToSend = conversion.eth2Wei(parseFloat(value), 18)
+        toAddress = parseAddress(to_addr)
+      else:
+        let token = self.tokenService.findTokenBySymbol(network, tokenSymbol)
+        amountToSend = conversion.eth2Wei(parseFloat(value), token.decimals)
+        toAddress = token.address
+        let transfer = Transfer(
+          to: parseAddress(to_addr),
+          value: amountToSend,
+        )
+        data = ERC20_procS.toTable["transfer"].encodeAbi(transfer)
+
+      for route in routes:
+        var simpleTx = TransactionDataDto()
+        var hopTx = TransactionDataDto()
+        var txData = TransactionDataDto()
+        var maxFees: float = 0
+        var gasFees: string = ""
+
+        case(priority):
+        of 0: maxFees = route.gasFees.maxFeePerGasL
+        of 1: maxFees = route.gasFees.maxFeePerGasM
+        of 2: maxFees = route.gasFees.maxFeePerGasH
+        else: maxFees = 0
+
+        if( not route.gasFees.eip1559Enabled):
+          gasFees = $route.gasFees.gasPrice
+
+        if(isEthTx) :
+          txData = ens_utils.buildTransaction(parseAddress(from_addr), eth2Wei(parseFloat(value), 18),
+  $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $maxFees)
+          txData.to = parseAddress(to_addr).some
+        else:
+          txData = ens_utils.buildTokenTransaction(parseAddress(from_addr), toAddress,
+  $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $maxFees)
+          txData.data = data
+
+        var path = TransactionBridgeDto(bridgeName: route.bridgeName, chainID: route.fromNetwork.chainId)
+        if(route.bridgeName == "Simple"):
+          path.simpleTx = txData
+        else:
+          hopTx = txData
+          hopTx.chainID =  route.toNetwork.chainId.some
+          hopTx.symbol = tokenSymbol.some
+          hopTx.recipient = parseAddress(to_addr).some
+          hopTx.amount = route.amountIn.some
+          hopTx.bonderFee = route.bonderFees.some
+          path.hopTx = hopTx
+
+        paths.add(path)
+
       let response = transactions.createMultiTransaction(
         MultiTransactionDto(
           fromAddress: from_addr,
           toAddress: to_addr,
           fromAsset: tokenSymbol,
           toAsset: tokenSymbol,
-          fromAmount:  "0x" & weiValue.toHex,
+          fromAmount:  "0x" & amountToSend.toHex,
           multiTxtype: MultiTransactionType.MultiTransactionSend,
-        ), 
-        {chainId: @[tx]}.toTable,
+        ),
+        paths,
         password,
       )
-      let txHash = response.result.getStr
-      let output = %* { "result": response.result{"hashes"}{chainId}[0].getStr, "success":true, "uuid": %uuid }
+      let output = %* {"result": response.result{"hashes"}, "success":true, "uuid": %uuid }
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
     except Exception as e:
       error "Error sending token transfer transaction", msg = e.msg
-      return false
-    return true
+      let err =  fmt"Error sending token transfer transaction: {e.msg}"
+      let output = %* {"success":false, "uuid": %uuid, "error":fmt"Error sending token transfer transaction: {e.msg}"}
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
 
-  proc transfer*(
-    self: Service,
-    from_addr: string,
-    to_addr: string,
-    assetSymbol: string,
-    value: string,
-    gas: string,
-    gasPrice: string,
-    maxPriorityFeePerGas: string,
-    maxFeePerGas: string,
-    password: string,
-    chainId: string,
-    uuid: string,
-    eip1559Enabled: bool,
-  ): bool =
-    let network = self.networkService.getNetwork(parseInt(chainId))
-
-    if network.nativeCurrencySymbol == assetSymbol:
-      return self.transferEth(from_addr, to_addr, value, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, chainId, uuid, eip1559Enabled)
-
-    return self.transferTokens(from_addr, to_addr, assetSymbol, value, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, chainId, uuid, eip1559Enabled)
-
-  proc suggestedFees*(self: Service, chainId: int): SuggestedFees =
+  proc suggestedFees*(self: Service, chainId: int): SuggestedFeesDto =
     try:
       let response = eth.suggestedFees(chainId).result
-      return SuggestedFees(
-        gasPrice: parseFloat(response{"gasPrice"}.getStr),
-        baseFee: parseFloat(response{"baseFee"}.getStr),
-        maxPriorityFeePerGas: parseFloat(response{"maxPriorityFeePerGas"}.getStr),
-        maxFeePerGasL: parseFloat(response{"maxFeePerGasLow"}.getStr),
-        maxFeePerGasM: parseFloat(response{"maxFeePerGasMedium"}.getStr),
-        maxFeePerGasH: parseFloat(response{"maxFeePerGasHigh"}.getStr),
-        eip1559Enabled: response{"eip1559Enabled"}.getbool,
-      )
+      return response.toSuggestedFeesDto()
     except Exception as e:
       error "Error getting suggested fees", msg = e.msg
 
-  proc suggestedRoutes*(self: Service, account: string, amount: float64, token: string, disabledChainIDs: seq[uint64]): SuggestedRoutes =
-    try:
-      let response = eth.suggestedRoutes(account, amount, token, disabledChainIDs)
-      return SuggestedRoutes(
-        networks: Json.decode($response.result{"networks"}, seq[NetworkDto], allowUnknownFields = true)
-      )
-    except Exception as e:
-      error "Error getting suggested routes", msg = e.msg
+  proc suggestedRoutesReady*(self: Service, suggestedRoutes: string) {.slot.} =
+    self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedRoutes))
+
+  proc suggestedRoutes*(self: Service, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], priority: int, sendType: int): SuggestedRoutesDto =
+    let arg = GetSuggestedRoutesTaskArg(
+      tptr: cast[ByteAddress](getSuggestedRoutesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "suggestedRoutesReady",
+      account: account,
+      amount: amount,
+      token: token,
+      disabledFromChainIDs: disabledFromChainIDs,
+      disabledToChainIDs: disabledToChainIDs,
+      preferredChainIDs: preferredChainIDs,
+      priority: priority,
+      sendType: sendType
+    )
+    self.threadpool.start(arg)
 
   proc fetchCryptoServices*(self: Service): seq[CryptoRampDto] =
     try:

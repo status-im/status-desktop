@@ -19,7 +19,7 @@ Item {
     property var store
     property var contactsStore
     property var emojiPopup: null
-    property var sendModal
+    property var sendModalPopup
 
     function showSigningPhrasePopup(){
         if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
@@ -46,7 +46,7 @@ Item {
             anchors.left: parent ? parent.left: undefined
             anchors.right: parent ? parent.right: undefined
             contactsStore: root.contactsStore
-            sendModal: root.sendModal
+            sendModal: root.sendModalPopup
         }
     }
 
@@ -55,7 +55,7 @@ Item {
         RightTabView {
             store: root.store
             contactsStore: root.contactsStore
-            sendModal: root.sendModal
+            sendModal: root.sendModalPopup
         }
     }
 

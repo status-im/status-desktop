@@ -13,13 +13,12 @@ import StatusQ.Core.Theme 0.1
 import "../controls"
 
 RowLayout {
-    id: networksSimpleRoutingView
+    id: root
 
-    property var selectedNetwork
-    property var suggestedRoutes
+    property var bestRoutes
     property double amountToSend: 0
-
-    signal networkChanged(var network)
+    property bool isLoading: false
+    property var weiToEth: function(wei) {}
 
     spacing: 10
 
@@ -30,7 +29,7 @@ RowLayout {
     }
     ColumnLayout {
         Layout.alignment: Qt.AlignTop
-        Layout.preferredWidth: networksSimpleRoutingView.width
+        Layout.preferredWidth: root.width
         StatusBaseText {
             Layout.maximumWidth: 410
             font.pixelSize: 15
@@ -43,16 +42,16 @@ RowLayout {
             Layout.maximumWidth: 410
             font.pixelSize: 15
             color: Theme.palette.baseColor1
-            text: qsTr("Choose a network to use for the transaction")
+            text: qsTr("The networks where the receipient will receive tokens. Amounts calculated automatically for the lowest cost.")
             wrapMode: Text.WordWrap
         }
         BalanceExceeded {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Style.current.bigPadding
-            visible: !transferPossible
-            transferPossible: networksSimpleRoutingView.suggestedRoutes ? networksSimpleRoutingView.suggestedRoutes.length > 0 : false
-            amountToSend: networksSimpleRoutingView.amountToSend
+            transferPossible: root.bestRoutes !== undefined ? root.bestRoutes.length > 0 : true
+            amountToSend: root.amountToSend
+            isLoading: root.isLoading
         }
         ScrollView {
             Layout.fillWidth: true
@@ -63,30 +62,28 @@ RowLayout {
             ScrollBar.vertical.policy: ScrollBar.AlwaysOff
             ScrollBar.horizontal.policy: ScrollBar.AsNeeded
             clip: true
-            visible: networksSimpleRoutingView.suggestedRoutes ? networksSimpleRoutingView.suggestedRoutes.length > 0 : false
+            visible: !root.isLoading ? root.bestRoutes !== undefined ? root.bestRoutes.length > 0 : true : false
             Row {
                 id: row
                 spacing: Style.current.padding
                 Repeater {
                     id: repeater
                     objectName: "networksList"
-                    model: networksSimpleRoutingView.suggestedRoutes
+                    model: root.bestRoutes
                     StatusListItem {
                         id: item
-                        objectName: modelData.chainName
+                        objectName: modelData.toNetwork.chainName
                         leftPadding: 5
                         rightPadding: 5
-                        implicitWidth: 126
-                        title: modelData.chainName
-                        subTitle: ""
+                        implicitWidth: 150
+                        title: modelData.toNetwork.chainName
+                        subTitle: root.weiToEth(modelData.amountIn)
+                        statusListItemSubTitle.color: Theme.palette.primaryColor1
                         asset.width: 32
                         asset.height: 32
-                        asset.name: Style.png("networks/" + modelData.chainName.toLowerCase())
+                        asset.name: Style.svg("tiny/" + modelData.toNetwork.iconUrl)
                         asset.isImage: true
                         color: "transparent"
-                        border.color: Style.current.primary
-                        border.width: networksSimpleRoutingView.selectedNetwork !== undefined ? networksSimpleRoutingView.selectedNetwork.chainId === modelData.chainId ? 1 : 0 : 0
-                        onClicked: networksSimpleRoutingView.networkChanged(modelData)
                     }
                 }
             }

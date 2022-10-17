@@ -11,54 +11,51 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 Item {
-    id: networkCardsComponent
+    id: root
 
-    property var assets
     property var store
-    property string locale: ""
-    property var selectedAsset
-    property var suggestedRoutes
-    property bool customMode: false
-    property var selectedNetwork
+    property var bestRoutes
     property var selectedAccount
+    property var selectedAsset
     property var allNetworks
+    property bool customMode: false
     property double amountToSend: 0
     property double requiredGasInEth: 0
-    property bool errorMode: (d.customAmountToSend > amountToSend) ||
-                             (d.customAmountToSend < amountToSend) ||
-                             (d.customAmountToReceive > amountToSend) ||
-                             (d.customAmountToReceive < amountToSend)
+    property bool errorMode: {
+        if(customMode) {
+            return (d.customAmountToSend > amountToSend) || (d.customAmountToSend < amountToSend) ||
+                    (d.customAmountToReceive > amountToSend) || (d.customAmountToReceive < amountToSend)
+        }
+        else {
+            return  !d.thereIsApossibleRoute
+        }
+    }
+    property bool interactive: true
+    property var weiToEth: function(wei) {}
 
-    signal reCalculateSuggestedRoute(var disabled)
+    signal reCalculateSuggestedRoute()
 
     QtObject {
         id: d
-        property var selectedFromNetwork
-        property var selectedToNetwork
         property double customAmountToSend: 0
         property double customAmountToReceive: 0
+        property bool thereIsApossibleRoute: false
 
-        function getBalance(chainID) {
-            for(var i=0; i< selectedAsset.balances.count; i++) {
-                if(selectedAsset.balances.rowData(i, "chainId") === chainID.toString()) {
-                    return selectedAsset.balances.rowData(i, "balance")
-                }
+        function resetAllSetValues() {
+            for(var i = 0; i<fromNetworksRepeater.count; i++) {
+                fromNetworksRepeater.itemAt(i).amountToSend = 0
+                toNetworksRepeater.itemAt(i).amountToReceive = 0
             }
-        }
-
-        onSelectedFromNetworkChanged: {
-            canvas.clear()
-            canvas.requestPaint()
-        }
-
-        onSelectedToNetworkChanged: {
-            canvas.clear()
-            canvas.requestPaint()
         }
     }
 
     width: 410
-    height: networkCardsLayout.height
+    height: visible ? networkCardsLayout.height : 0
+
+    onBestRoutesChanged: {
+        canvas.clear()
+        canvas.requestPaint()
+    }
 
     RowLayout {
         id: networkCardsLayout
@@ -73,44 +70,35 @@ Item {
                 text: qsTr("Your Balances").toUpperCase()
             }
             Repeater {
-                model: networkCardsComponent.allNetworks
+                id: fromNetworksRepeater
+                model: root.allNetworks
                 StatusCard {
                     id: fromNetwork
-                    property var tokenBalanceOnChain: Utils.toLocaleString(parseFloat(d.getBalance(model.chainId)).toFixed(4), locale, {"currency": true})
-                    property var hasGas: assets.hasGas(model.chainId, model.nativeCurrencySymbol, requiredGasInEth + parseFloat(amountToSend))
+                    objectName: model.chainId
+                    property double amountToSend: 0
+                    property string tokenBalanceOnChain: selectedAccount && selectedAccount!== undefined && selectedAsset!== undefined ? selectedAccount.getTokenBalanceOnChain(model.chainId, selectedAsset.symbol) : ""
+                    property var hasGas: selectedAccount.hasGas(model.chainId, model.nativeCurrencySymbol, requiredGasInEth)
                     primaryText: model.chainName
-                    secondaryText: (parseFloat(tokenBalanceOnChain) === 0 && amountToSend !== 0) ?
-                                   qsTr("No Balance") : !hasGas ? qsTr("No Gas") :
-                                   (selectedNetwork && selectedNetwork.chainName === model.chainName) ?
-                                   amountToSend: 0
-                    tertiaryText: qsTr("BALANCE: ") + tokenBalanceOnChain
-                    state: tokenBalanceOnChain === 0 || !hasGas ? "unavailable" : networkCardsComponent.errorMode ? "error" : "default"
-                    cardIcon.source: Style.png(model.iconUrl)
+                    secondaryText: (parseFloat(tokenBalanceOnChain) === 0 && root.amountToSend !== 0) ?
+                                       qsTr("No Balance") : !hasGas ? qsTr("No Gas") : LocaleUtils.numberToLocaleString(fromNetwork.amountToSend)
+                    tertiaryText: qsTr("BALANCE: ") + LocaleUtils.numberToLocaleString(parseFloat(tokenBalanceOnChain))
+                    state: tokenBalanceOnChain === 0 || !hasGas ? "unavailable" : root.errorMode ? "error" : "default"
+                    cardIcon.source: Style.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
-                    advancedMode: networkCardsComponent.customMode
-                    advancedInputText: (selectedNetwork && selectedNetwork.chainName === model.chainName) ? amountToSend: 0
-                    Component.onCompleted: {
-                        disabled = store.checkIfDisabledByUser(model.chainId)
-                        if(selectedNetwork && selectedNetwork.chainName === model.chainName)
-                            d.selectedFromNetwork = this
-                    }
-                    Connections {
-                        target: networkCardsComponent
-                        onSelectedNetworkChanged: {
-                            if(selectedNetwork.chainName === model.chainName) {
-                                d.selectedFromNetwork = fromNetwork
-                            }
-                        }
-                    }
+                    advancedMode: root.customMode
+                    advancedInputText: LocaleUtils.numberToLocaleString(fromNetwork.amountToSend)
+                    disabled: store.disabledChainIdsFromList.includes(model.chainId)
+                    clickable: root.interactive
                     onClicked: {
-                        store.addRemoveDisabledChain(suggestedRoutes, model.chainId, disabled)
-                        reCalculateSuggestedRoute(store.disabledChainIds)
+                        store.addRemoveDisabledFromChain(model.chainId, disabled)
+                        root.reCalculateSuggestedRoute()
                     }
-                    onAdvancedInputTextChanged: {
-                        if(selectedNetwork && selectedNetwork.chainName === model.chainName) {
-                            d.customAmountToSend = isNaN(parseFloat(advancedInputText)) ? 0 : parseFloat(advancedInputText)
-                        }
-                    }
+                    // To-do needed for custom view
+//                    onAdvancedInputTextChanged: {
+//                        if(selectedNetwork && selectedNetwork.chainName === model.chainName) {
+//                            d.customAmountToSend = isNaN(parseFloat(advancedInputText)) ? 0 : parseFloat(advancedInputText)
+//                        }
+//                    }
                 }
             }
         }
@@ -127,39 +115,33 @@ Item {
                 elide: Text.ElideMiddle
             }
             Repeater {
-                model: networkCardsComponent.allNetworks
+                id: toNetworksRepeater
+                model: root.allNetworks
                 StatusCard {
                     id: toCard
+                    objectName: model.chainId
+                    property double amountToReceive: 0
                     primaryText: model.chainName
-                    secondaryText: (selectedNetwork && selectedNetwork.chainName === model.chainName) ? amountToSend: 0
+                    secondaryText: LocaleUtils.numberToLocaleString(amountToReceive)
                     tertiaryText: ""
                     // To-do preferred in not something that is supported yet
-                    state: networkCardsComponent.errorMode ? "error" : "default"
+                    state: root.errorMode ? "error" : "default"
                     // opacity: preferred ? 1 : 0
-                    cardIcon.source: Style.png(model.iconUrl)
+                    cardIcon.source: Style.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
-                    advancedMode: networkCardsComponent.customMode
-                    advancedInputText: (selectedNetwork && selectedNetwork.chainName === model.chainName) ? amountToSend: 0
-                    Component.onCompleted: {
-                        disabled = store.checkIfDisabledByUser(model.chainId)
-                        if(selectedNetwork && selectedNetwork.chainName === model.chainName)
-                            d.selectedToNetwork = this
-                    }
-                    Connections {
-                        target: networkCardsComponent
-                        onSelectedNetworkChanged: {
-                            if(selectedNetwork && selectedNetwork.chainName === model.chainName)
-                                d.selectedToNetwork = toCard
-                        }
-                    }
+                    advancedMode: root.customMode
+                    advancedInputText: LocaleUtils.numberToLocaleString(amountToReceive)
+                    disabled: store.disabledChainIdsToList.includes(model.chainId)
+                    clickable: root.interactive
                     onClicked: {
-                        store.addRemoveDisabledChain(suggestedRoutes, model.chainId, disabled)
-                        reCalculateSuggestedRoute(store.disabledChainIds)
+                        store.addRemoveDisabledToChain(model.chainId, disabled)
+                        root.reCalculateSuggestedRoute()
                     }
-                    onAdvancedInputTextChanged: {
-                        if(selectedNetwork && selectedNetwork.chainName === model.chainName)
-                            d.customAmountToReceive = isNaN(parseFloat(advancedInputText)) ? 0 : parseFloat(advancedInputText)
-                    }
+                    // To-do needed for custom view
+//                    onAdvancedInputTextChanged: {
+//                        if(selectedNetwork && selectedNetwork.chainName === model.chainName)
+//                            d.customAmountToReceive = isNaN(parseFloat(advancedInputText)) ? 0 : parseFloat(advancedInputText)
+//                    }
                 }
             }
         }
@@ -174,21 +156,47 @@ Item {
 
         function clear() {
             if(available) {
-            var ctx = getContext("2d");
-            if(ctx)
-                ctx.reset()
+                var ctx = getContext("2d");
+                if(ctx)
+                    ctx.reset()
             }
         }
 
         onPaint: {
-            if(d.selectedFromNetwork && d.selectedToNetwork) {
-                // Get the canvas context
-                var ctx = getContext("2d");
-                StatusQUtils.Utils.drawArrow(ctx, d.selectedFromNetwork.x + d.selectedFromNetwork.width,
-                                             d.selectedFromNetwork.y + d.selectedFromNetwork.height/2,
-                                             toNetworksLayout.x + d.selectedToNetwork.x,
-                                             d.selectedToNetwork.y + d.selectedToNetwork.height/2,
-                                             '#627EEA')
+            d.resetAllSetValues()
+            d.thereIsApossibleRoute = false
+
+            if(bestRoutes === undefined)
+                return
+
+            // Get the canvas context
+            var ctx = getContext("2d");
+            for(var i = 0; i< bestRoutes.length; i++) {
+                var fromN, toN = null
+                for(var j = 0; j<fromNetworksRepeater.count; j++) {
+                    if(bestRoutes[i].fromNetwork.chainId === parseInt(fromNetworksRepeater.itemAt(j).objectName) &&
+                            !store.disabledChainIdsFromList.includes(bestRoutes[i].fromNetwork.chainId)) {
+                        fromN = fromNetworksRepeater.itemAt(j)
+                    }
+                }
+                for(var k = 0; k<toNetworksRepeater.count; k++) {
+                    if(bestRoutes[i].toNetwork.chainId === parseInt(toNetworksRepeater.itemAt(k).objectName) &&
+                            !store.disabledChainIdsToList.includes(bestRoutes[i].toNetwork.chainId)) {
+                        toN = toNetworksRepeater.itemAt(k)
+                    }
+                }
+                if(toN !== null && fromN !== null) {
+                    let amountToSend = weiToEth(bestRoutes[i].amountIn)
+                    let amountToReceive = weiToEth(bestRoutes[i].amountOut)
+                    fromN.amountToSend = amountToSend
+                    toN.amountToReceive += amountToReceive
+                    d.thereIsApossibleRoute = true
+                    StatusQUtils.Utils.drawArrow(ctx, fromN.x + fromN.width,
+                                                 fromN.y + fromN.height/2,
+                                                 toNetworksLayout.x + toN.x,
+                                                 toN.y + toN.height/2,
+                                                 '#627EEA')
+                }
             }
         }
     }

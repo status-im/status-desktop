@@ -59,12 +59,10 @@ StatusSectionLayout {
             }
         }
 
-        // TODO we'll need a new dialog at one point because this one is not using the same call, but it's good for now
-        property Component sendTransactionModalComponent: SignTransactionModal {
+        property Component sendTransactionModalComponent: SendModal {
             anchors.centerIn: parent
-            store: root.globalStore
-            contactsStore: root.globalStore.profileSectionStore.contactsStore
-            chainId: root.globalStore.getChainIdForBrowser()
+            selectedAccount: WalletStore.dappBrowserAccount
+            preSelectedAsset: _internal.getEthAsset()
         }
 
         property Component signMessageModalComponent: SignMessageModal {}
@@ -142,6 +140,22 @@ StatusSectionLayout {
             findBar.reset();
             browserHeader.addressBar.text = Web3ProviderStore.obtainAddress(currentWebView.url)
         }
+
+        function getEthAsset() {
+            let assetsList = WalletStore.dappBrowserAccount.assets
+            for(var i=0; i< assetsList.count;i++) {
+                if("ETH" === assetsList.rowData(i, "symbol"))
+                    return {
+                        name: assetsList.rowData(i, "name"),
+                        symbol: assetsList.rowData(i, "symbol"),
+                        totalBalance: assetsList.rowData(i, "totalBalance"),
+                        totalCurrencyBalance: assetsList.rowData(i, "totalCurrencyBalance"),
+                        balances: assetsList.rowData(i, "balances"),
+                        decimals: assetsList.rowData(i, "decimals")
+                    }
+            }
+            return {}
+        }
     }
 
     centerPanel: Rectangle {
@@ -156,26 +170,8 @@ StatusSectionLayout {
             }
             createSendTransactionModalComponent: function(request) {
                 return _internal.sendTransactionModalComponent.createObject(root, {
-                                                                                trxData: request.payload.params[0].data || "",
-                                                                                selectedAccount: {
-                                                                                    name: WalletStore.dappBrowserAccount.name,
-                                                                                    address: request.payload.params[0].from,
-                                                                                    iconColor: WalletStore.dappBrowserAccount.color,
-                                                                                    assets: WalletStore.dappBrowserAccount.assets
-                                                                                },
-                                                                                selectedRecipient: {
-                                                                                    address: request.payload.params[0].to,
-                                                                                    identicon: "",
-                                                                                    name: RootStore.activeChannelName,
-                                                                                    type: RecipientSelector.Type.Address
-                                                                                },
-                                                                                selectedAsset: {
-                                                                                    name: "ETH",
-                                                                                    symbol: "ETH",
-                                                                                    address: Constants.zeroAddress
-                                                                                },
-                                                                                selectedFiatAmount: "42", // TODO calculate that
-                                                                                selectedAmount: RootStore.getWei2Eth(request.payload.params[0].value, 18)
+                                                                                preSelectedRecipient: request.payload.params[0].to,
+                                                                                preDefinedAmountToSend: LocaleUtils.numberToLocaleString(RootStore.getWei2Eth(request.payload.params[0].value, 18)),
                                                                             })
             }
             createSignMessageModalComponent: function(request) {

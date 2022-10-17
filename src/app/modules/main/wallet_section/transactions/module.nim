@@ -15,14 +15,10 @@ type TmpSendTransactionDetails = object
   fromAddr: string
   toAddr: string
   tokenSymbol: string
-  value: string 
-  gas: string 
-  gasPrice: string 
-  maxPriorityFeePerGas: string
-  maxFeePerGas: string
-  chainId: string
+  value: string
   uuid: string
-  eip1559Enabled: bool
+  priority: int
+  selectedRoutes: string
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -105,21 +101,16 @@ method estimateGas*(self: Module, from_addr: string, to: string, assetSymbol: st
 method setIsNonArchivalNode*(self: Module, isNonArchivalNode: bool) =
   self.view.setIsNonArchivalNode(isNonArchivalNode)
 
-method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string, tokenSymbol: string,
-    value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,
-    maxFeePerGas: string, chainId: string, uuid: string, eip1559Enabled: bool) =
-
+method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string,
+    tokenSymbol: string, value: string, uuid: string,
+    priority: int, selectedRoutes: string) =
   self.tmpSendTransactionDetails.fromAddr = from_addr
   self.tmpSendTransactionDetails.toAddr = to_addr
   self.tmpSendTransactionDetails.tokenSymbol = tokenSymbol
   self.tmpSendTransactionDetails.value = value
-  self.tmpSendTransactionDetails.gas = gas
-  self.tmpSendTransactionDetails.gasPrice = gasPrice
-  self.tmpSendTransactionDetails.maxPriorityFeePerGas = maxPriorityFeePerGas
-  self.tmpSendTransactionDetails.maxFeePerGas = maxFeePerGas
-  self.tmpSendTransactionDetails.chainId = chainId
   self.tmpSendTransactionDetails.uuid = uuid
-  self.tmpSendTransactionDetails.eip1559Enabled = eip1559Enabled
+  self.tmpSendTransactionDetails.priority = priority
+  self.tmpSendTransactionDetails.selectedRoutes = selectedRoutes
 
   if singletonInstance.userProfile.getIsKeycardUser():
     let keyUid = singletonInstance.userProfile.getKeyUid()
@@ -149,11 +140,9 @@ method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string
   ##################################
 
 method onUserAuthenticated*(self: Module, password: string) =
-  self.controller.transfer(self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr, 
-    self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.gas, 
-    self.tmpSendTransactionDetails.gasPrice, self.tmpSendTransactionDetails.maxPriorityFeePerGas, 
-    self.tmpSendTransactionDetails.maxFeePerGas, password, self.tmpSendTransactionDetails.chainId, self.tmpSendTransactionDetails.uuid, 
-    self.tmpSendTransactionDetails.eip1559Enabled)
+  self.controller.transfer(self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
+    self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid,
+    self.tmpSendTransactionDetails.priority, self.tmpSendTransactionDetails.selectedRoutes, password)
 
 method transactionWasSent*(self: Module, result: string) =
   self.view.transactionWasSent(result)
@@ -161,8 +150,8 @@ method transactionWasSent*(self: Module, result: string) =
 method suggestedFees*(self: Module, chainId: int): string = 
   return self.controller.suggestedFees(chainId)
 
-method suggestedRoutes*(self: Module, account: string, amount: float64, token: string, disabledChainIDs: seq[uint64]): string =
-  return self.controller.suggestedRoutes(account, amount, token, disabledChainIDs)
+method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], priority: int, sendType: int): string =
+  return self.controller.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, priority, sendType)
 
 method getChainIdForChat*(self: Module): int =
   return self.controller.getChainIdForChat()
@@ -175,3 +164,6 @@ method getEstimatedTime*(self: Module, chainId: int, maxFeePerGas: string): int 
 
 method getLastTxBlockNumber*(self: Module): string =
     return self.controller.getLastTxBlockNumber()
+
+method suggestedRoutesReady*(self: Module, suggestedRoutes: string) =
+  self.view.suggestedRoutesReady(suggestedRoutes)

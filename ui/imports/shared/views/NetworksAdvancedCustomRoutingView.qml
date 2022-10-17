@@ -12,25 +12,21 @@ import StatusQ.Core.Theme 0.1
 import "../controls"
 
 ColumnLayout {
-    id: networksAdvancedCustomView
+    id: root
 
     property var store
-    property var assets
-    property var selectedNetwork: ""
     property var selectedAccount
     property double amountToSend: 0
     property double requiredGasInEth: 0
     property bool customMode: false
     property var selectedAsset
-    property var suggestedRoutes
+    property var bestRoutes
+    property bool isLoading: false
     property bool errorMode: networksLoader.item ? networksLoader.item.errorMode : false
+    property var weiToEth: function(wei) {}
+    property bool interactive: true
 
-    signal reCalculateSuggestedRoute(var disabledChainIds)
-
-    onSelectedNetworkChanged:  {
-            networksLoader.active = false
-            networksLoader.active = true
-    }
+    signal reCalculateSuggestedRoute()
 
     RowLayout {
         spacing: 10
@@ -69,24 +65,32 @@ ColumnLayout {
                 text: qsTr("The networks where the receipient will receive tokens. Amounts calculated automatically for the lowest cost.")
                 wrapMode: Text.WordWrap
             }
+            BalanceExceeded {
+                id: balanceExceeded
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
+                Layout.topMargin: Style.current.bigPadding
+                transferPossible: root.store.disabledChainIdsToList.length > 0 || root.store.disabledChainIdsFromList.length > 0 ? true : root.bestRoutes ? root.bestRoutes.length > 0 : false
+                amountToSend: root.amountToSend
+                isLoading: root.isLoading
+            }
             Loader {
                 id: networksLoader
                 Layout.topMargin: Style.current.padding
-                active: false
+                active: !balanceExceeded.visible
                 visible: active
                 sourceComponent: NetworkCardsComponent {
-                    store: networksAdvancedCustomView.store
-                    selectedNetwork: networksAdvancedCustomView.selectedNetwork
-                    selectedAccount: networksAdvancedCustomView.selectedAccount
-                    allNetworks: networksAdvancedCustomView.store.allNetworks
-                    amountToSend: networksAdvancedCustomView.amountToSend
-                    customMode: networksAdvancedCustomView.customMode
-                    requiredGasInEth: networksAdvancedCustomView.requiredGasInEth
-                    assets: networksAdvancedCustomView.assets
-                    selectedAsset: networksAdvancedCustomView.selectedAsset
-                    locale: networksAdvancedCustomView.store.locale
-                    suggestedRoutes: networksAdvancedCustomView.suggestedRoutes
-                    onReCalculateSuggestedRoute: networksAdvancedCustomView.reCalculateSuggestedRoute(disabled)
+                    store: root.store
+                    selectedAccount: root.selectedAccount
+                    allNetworks: root.store.allNetworks
+                    amountToSend: root.amountToSend
+                    customMode: root.customMode
+                    requiredGasInEth: root.requiredGasInEth
+                    selectedAsset: root.selectedAsset
+                    onReCalculateSuggestedRoute: root.reCalculateSuggestedRoute()
+                    bestRoutes: root.bestRoutes
+                    weiToEth: root.weiToEth
+                    interactive: root.interactive
                 }
             }
         }

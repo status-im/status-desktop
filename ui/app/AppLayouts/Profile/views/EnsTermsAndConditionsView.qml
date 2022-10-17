@@ -44,35 +44,71 @@ Item {
         function closed() {
             this.active = false // kill an opened instance
         }
-        sourceComponent: StatusSNTTransactionModal {
-            store: root.ensUsernamesStore
-            contactsStore: root.contactsStore
-            stickersStore: root.stickersStore
-            asyncGasEstimateTarget: root.stickersStore.stickersModule
-            assetPrice: "10"
-            chainId: root.ensUsernamesStore.getChainIdForEns()
-            contractAddress: root.ensUsernamesStore.getEnsRegisteredAddress()
-            estimateGasFunction: function(selectedAccount, uuid) {
-                if (username === "" || !selectedAccount) return 380000;
-                return root.ensUsernamesStore.registerEnsGasEstimate(username, selectedAccount.address)
+        sourceComponent: SendModal {
+            id: buyEnsModal
+            interactive: false
+            sendType: Constants.SendType.ENSRegister
+            preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
+            preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10)
+            preSelectedAsset: {
+                let assetsList = buyEnsModal.store.currentAccount.assets
+                for(var i=0; i< assetsList.count;i++) {
+                    let symbol = JSON.parse(root.stickersStore.getStatusToken()).symbol
+                    if(symbol === assetsList.rowData(i, "symbol"))
+                        return {
+                            name: assetsList.rowData(i, "name"),
+                            symbol: assetsList.rowData(i, "symbol"),
+                            totalBalance: assetsList.rowData(i, "totalBalance"),
+                            totalCurrencyBalance: assetsList.rowData(i, "totalCurrencyBalance"),
+                            balances: assetsList.rowData(i, "balances"),
+                            decimals: assetsList.rowData(i, "decimals")
+                        }
+                }
+                return {}
             }
-            onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled) {
-                return root.ensUsernamesStore.registerEns(
-                    username,
-                    selectedAddress,
-                    gasLimit,
-                    gasPrice,
-                    tipLimit,
-                    overallLimit,
-                    password,
-                    eip1559Enabled,
-                )
+            sendTransaction: function() {
+                if(bestRoutes.length === 1) {
+                    let path = bestRoutes[0]
+                    let eip1559Enabled = path.gasFees.eip1559Enabled
+                    let maxFeePerGas = (selectedPriority === 0) ? path.gasFees.maxFeePerGasL:
+                                       (selectedPriority === 1) ? path.gasFees.maxFeePerGasM:
+                                                                  path.gasFees.maxFeePerGasH
+                    root.ensUsernamesStore.authenticateAndRegisterEns(
+                                username,
+                                selectedAccount.address,
+                                path.gasAmount,
+                                eip1559Enabled ? "" : path.gasFees.gasPrice,
+                                eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",
+                                eip1559Enabled ? maxFeePerGas: path.gasFees.gasPrice,
+                                eip1559Enabled,
+                                )
+                }
             }
-            onSuccess: function(){
-                usernameRegistered(username);
-            }
-            onClosed: {
-                transactionDialog.closed()
+            Connections {
+                target: root.ensUsernamesStore.ensUsernamesModule
+                onTransactionWasSent: {
+                    try {
+                        let response = JSON.parse(txResult)
+                        if (!response.success) {
+                            if (Utils.isInvalidPasswordMessage(response.result)) {
+                                buyEnsModal.setSendTxError()
+                                return
+                            }
+                            buyEnsModal.sendingError.text = response.result
+                            return buyEnsModal.sendingError.open()
+                        }
+                        usernameRegistered(username)
+                        let url = `${buyEnsModal.store.getEtherscanLink()}/${response.result}`;
+                        Global.displayToastMessage(qsTr("Transaction pending..."),
+                                                   qsTr("View on etherscan"),
+                                                   "",
+                                                   true,
+                                                   Constants.ephemeralNotificationType.normal,
+                                                   url)
+                    } catch (e) {
+                        console.error('Error parsing the response', e)
+                    }
+                }
             }
         }
     }

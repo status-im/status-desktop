@@ -1,5 +1,6 @@
-import json, strutils, stint, json_serialization
+import json, strutils, stint, json_serialization, strformat
 include  ../../common/json_utils
+import ../network/dto
 
 type
   PendingTransactionTypeDto* {.pure.} = enum
@@ -99,3 +100,109 @@ proc cmpTransactions*(x, y: TransactionDto): int =
   if result == 0:
     result = cmp(x.nonce, y.nonce)
 
+type
+  SuggestedFeesDto* = ref object
+    gasPrice*: float
+    baseFee*: float
+    maxPriorityFeePerGas*: float
+    maxFeePerGasL*: float
+    maxFeePerGasM*: float
+    maxFeePerGasH*: float
+    eip1559Enabled*: bool
+
+proc toSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
+  result = SuggestedFeesDto()
+  result.gasPrice = parseFloat(jsonObj["gasPrice"].getStr)
+  result.baseFee = parseFloat(jsonObj["baseFee"].getStr)
+  result.maxPriorityFeePerGas = parseFloat(jsonObj{"maxPriorityFeePerGas"}.getStr)
+  result.maxFeePerGasL = parseFloat(jsonObj{"maxFeePerGasLow"}.getStr)
+  result.maxFeePerGasM = parseFloat(jsonObj{"maxFeePerGasMedium"}.getStr)
+  result.maxFeePerGasH = parseFloat(jsonObj{"maxFeePerGasHigh"}.getStr)
+  result.eip1559Enabled = jsonObj{"eip1559Enabled"}.getbool
+
+proc `$`*(self: SuggestedFeesDto): string =
+  return fmt"""SuggestedFees(
+    gasPrice:{self.gasPrice},
+    baseFee:{self.baseFee},
+    maxPriorityFeePerGas:{self.maxPriorityFeePerGas},
+    maxFeePerGasL:{self.maxFeePerGasL},
+    maxFeePerGasM:{self.maxFeePerGasM},
+    maxFeePerGasH:{self.maxFeePerGasH},
+    eip1559Enabled:{self.eip1559Enabled}
+  )"""
+
+type
+  TransactionPathDto* = ref object
+    bridgeName*: string
+    fromNetwork*: NetworkDto
+    toNetwork*: NetworkDto
+    maxAmountIn* : UInt256
+    amountIn*: UInt256
+    amountOut*: UInt256
+    gasAmount*: uint64
+    gasFees*: SuggestedFeesDto
+    tokenFees*: float
+    bonderFees*: string
+    cost*: float
+    preferred*: bool
+    estimatedTime*: int
+
+proc `$`*(self: TransactionPathDto): string =
+  return fmt"""TransactionPath(
+    bridgeName:{self.bridgeName},
+    fromNetwork:{self.fromNetwork},
+    toNetwork:{self.toNetwork},
+    maxAmountIn:{self.maxAmountIn},
+    amountIn:{self.amountIn},
+    amountOut:{self.amountOut},
+    gasAmount:{self.gasAmount},
+    tokenFees:{self.tokenFees},
+    bonderFees:{self.bonderFees},
+    cost:{self.cost},
+    preferred:{self.preferred},
+    estimatedTime:{self.estimatedTime}
+  )"""
+
+proc toTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
+  result = TransactionPathDto()
+  discard jsonObj.getProp("BridgeName", result.bridgeName)
+  result.fromNetwork = Json.decode($jsonObj["From"], NetworkDto, allowUnknownFields = true)
+  result.toNetwork = Json.decode($jsonObj["To"], NetworkDto, allowUnknownFields = true)
+  result.gasFees = jsonObj["GasFees"].toSuggestedFeesDto()
+  result.cost = parseFloat(jsonObj{"Cost"}.getStr)
+  result.tokenFees = parseFloat(jsonObj{"TokenFees"}.getStr)
+  result.bonderFees = jsonObj{"BonderFees"}.getStr
+  result.maxAmountIn = stint.fromHex(UInt256, jsonObj{"MaxAmountIn"}.getStr)
+  result.amountIn = stint.fromHex(UInt256, jsonObj{"AmountIn"}.getStr)
+  result.amountOut = stint.fromHex(UInt256, jsonObj{"AmountOut"}.getStr)
+  result.estimatedTime = jsonObj{"EstimatedTime"}.getInt
+  discard jsonObj.getProp("GasAmount", result.gasAmount)
+  discard jsonObj.getProp("Preferred", result.preferred)
+
+proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
+  result = TransactionPathDto()
+  discard jsonObj.getProp("bridgeName", result.bridgeName)
+  result.fromNetwork = Json.decode($jsonObj["fromNetwork"], NetworkDto, allowUnknownFields = true)
+  result.toNetwork = Json.decode($jsonObj["toNetwork"], NetworkDto, allowUnknownFields = true)
+  result.gasFees = Json.decode($jsonObj["gasFees"], SuggestedFeesDto, allowUnknownFields = true)
+  discard jsonObj.getProp("cost", result.cost)
+  discard jsonObj.getProp("tokenFees", result.tokenFees)
+  discard jsonObj.getProp("bonderFees", result.bonderFees)
+  result.maxAmountIn = stint.u256(jsonObj{"maxAmountIn"}.getStr)
+  result.amountIn = stint.u256(jsonObj{"amountIn"}.getStr)
+  result.amountOut = stint.u256(jsonObj{"amountOut"}.getStr)
+  result.estimatedTime = jsonObj{"estimatedTime"}.getInt
+  discard jsonObj.getProp("gasAmount", result.gasAmount)
+  discard jsonObj.getProp("preferred", result.preferred)
+
+type
+  Fees* = ref object
+    totalFeesInEth*: float
+    totalTokenFees*: float
+    totalTime*: int
+
+type
+  SuggestedRoutesDto* = ref object
+    best*: seq[TransactionPathDto]
+    candidates*: seq[TransactionPathDto]
+    gasTimeEstimates*: seq[Fees]

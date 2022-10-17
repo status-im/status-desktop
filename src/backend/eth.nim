@@ -1,4 +1,4 @@
-import json
+import json, stint
 import ./core, ./response_type
 
 export response_type
@@ -28,6 +28,6 @@ proc suggestedFees*(chainId: int): RpcResponse[JsonNode] {.raises: [Exception].}
   let payload = %* [chainId]
   return core.callPrivateRPC("wallet_getSuggestedFees", payload)
 
-proc suggestedRoutes*(account: string, amount: float64, token: string, disabledChainIDs: seq[uint64]): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [account, amount, token, disabledChainIDs]
+proc suggestedRoutes*(account: string, amount: string, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], priority: int, sendType: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [sendType, account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, priority]
   return core.callPrivateRPC("wallet_getSuggestedRoutes", payload)

@@ -85,3 +85,7 @@ QtObject:
         newHost = base
 
     result = url_replaceHostAndAddPath(url, newHost, http_scheme, "")
+
+  proc authenticateToPostMessage*(self: View, payloadMethod: string, requestType: string, message: string) {.slot.} =
+    self.delegate.authenticateToPostMessage(payloadMethod, requestType, message)
+

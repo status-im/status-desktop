@@ -62,6 +62,7 @@ proc setAssets(self: Module, tokens: seq[WalletTokenDto]) =
       t.changePct24hour,
       t.change24hour,
       t.currencyPrice,
+      t.decimals,
     )
     items.add(item)
     
@@ -104,3 +105,6 @@ proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[Wall
   if not accountsTokens.contains(walletAccount.address):
     return
   self.setAssets(accountsTokens[walletAccount.address])
+
+method findTokenSymbolByAddress*(self: Module, address: string): string =
+  return self.controller.findTokenSymbolByAddress(address)

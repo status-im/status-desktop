@@ -91,22 +91,27 @@ QtObject {
                    request.payload.method === "eth_sendTransaction") {
             var acc = WalletStore.dappBrowserAccount
             const value = RootStore.getWei2Eth(request.payload.params[0].value, 18);
-            const sendDialog = createSendTransactionModalComponent(request)
+            const sendDialog = createSendTransactionModalComponent(request, requestType)
 
-            sendDialog.sendTransaction = function (selectedGasLimit, selectedGasPrice, selectedTipLimit, selectedOverallLimit, enteredPassword) {
-                let trx = request.payload.params[0]
-                // TODO: use bignumber instead of floats
-                trx.value = RootStore.getEth2Hex(parseFloat(value))
-                trx.gas = "0x" + parseInt(selectedGasLimit, 10).toString(16)
-                trx.maxPriorityFeePerGas = RootStore.getGwei2Hex(parseFloat(selectedTipLimit))
-                trx.maxFeePerGas = RootStore.getGwei2Hex(parseFloat(selectedOverallLimit))
+            sendDialog.sendTransaction = function () {
+                if(sendDialog.bestRoutes.length === 1) {
+                    let path = sendDialog.bestRoutes[0]
+                    let eip1559Enabled = path.gasFees.eip1559Enabled
+                    let maxFeePerGas = (sendDialog.selectedPriority === 0) ? path.gasFees.maxFeePerGasL:
+                                                                             (sendDialog.selectedPriority === 1) ? path.gasFees.maxFeePerGasM:
+                                                                                                                   path.gasFees.maxFeePerGasH
+                    let trx = request.payload.params[0]
+                    // TODO: use bignumber instead of floats
+                    trx.value = RootStore.getEth2Hex(parseFloat(value))
+                    trx.gas = "0x" + parseInt(path.gasAmount, 10).toString(16)
+                    trx.maxPriorityFeePerGas = RootStore.getGwei2Hex(parseFloat(eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "0"))
+                    trx.maxFeePerGas = RootStore.getGwei2Hex(parseFloat(eip1559Enabled ? maxFeePerGas : path.gasFees.gasPrice))
 
-                request.payload.password = enteredPassword
-                request.payload.params[0] = trx
+                    request.payload.params[0] = trx
 
-                Web3ProviderStore.web3ProviderInst.postMessage(request.payload.method, requestType, JSON.stringify(request))
-                sendDialog.close()
-                sendDialog.destroy()
+                    Web3ProviderStore.web3ProviderInst.authenticateToPostMessage(request.payload.method, requestType, JSON.stringify(request))
+                    sendDialog.close()
+                }
             }
 
             sendDialog.open();

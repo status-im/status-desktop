@@ -224,3 +224,9 @@ QtObject:
 
   proc findTokenSymbolByAddress*(self: View, address: string): string {.slot.} =
     return self.delegate.findTokenSymbolByAddress(address)
+
+  proc hasGas*(self: View, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.slot.} =
+    return self.assets.hasGas(chainId, nativeGasSymbol, requiredGas)
+
+  proc getTokenBalanceOnChain*(self: View, chainId: int, tokenSymbol: string): string {.slot.} =
+    return self.assets.getTokenBalanceOnChain(chainId, tokenSymbol)

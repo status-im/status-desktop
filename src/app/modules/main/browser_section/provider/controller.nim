@@ -6,6 +6,9 @@ import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/provider/service as provider_service
 import ../../../../../app_service/service/wallet_account/service
+import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
+
+const UNIQUE_BROWSER_SECTION_TRANSACTION_MODULE_IDENTIFIER* = "BrowserSection-TransactionModule"
 
 type
   Controller* = ref object of RootObj
@@ -43,6 +46,12 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.delegate.updateNetwork(self.getNetwork())
 
+  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
+    let args = SharedKeycarModuleArgs(e)
+    if args.uniqueIdentifier != UNIQUE_BROWSER_SECTION_TRANSACTION_MODULE_IDENTIFIER:
+      return
+    self.delegate.onUserAuthenticated(args.password)
+
 proc getDappsAddress*(self: Controller): string =
   return self.settingsService.getDappsAddress()
 
@@ -55,3 +64,10 @@ proc postMessage*(self: Controller, payloadMethod: string, requestType: string, 
 
 proc ensResourceURL*(self: Controller, ens: string, url: string): (string, string, string, string, bool) =
   return self.providerService.ensResourceURL(ens, url)
+
+proc authenticateUser*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
+  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_BROWSER_SECTION_TRANSACTION_MODULE_IDENTIFIER,
+    keyUid: keyUid,
+    bip44Path: bip44Path,
+    txHash: txHash)
+  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)

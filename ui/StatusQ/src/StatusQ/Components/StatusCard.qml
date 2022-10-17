@@ -178,6 +178,8 @@ Rectangle {
                 id: basicInput
                 StatusBaseText {
                     id: secondaryLabel
+                    Layout.maximumWidth: root.width - 12
+                    elide: Text.ElideRight
                     font.pixelSize: 13
                     font.weight: Font.Medium
                 }
@@ -246,6 +248,8 @@ Rectangle {
             }
             StatusBaseText {
                 id: tertiaryText
+                Layout.maximumWidth: root.width - 12
+                elide: Text.ElideRight
                 font.pixelSize: 10
             }
         }

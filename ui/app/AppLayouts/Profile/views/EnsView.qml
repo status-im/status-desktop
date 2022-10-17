@@ -322,15 +322,6 @@ Item {
 
     Connections {
         target: ensView.ensUsernamesStore.ensUsernamesModule
-        onTransactionWasSent: {
-            let url = `${ensView.ensUsernamesStore.getEtherscanLink()}/${txResult}`;
-            Global.displayToastMessage(qsTr("Transaction pending..."),
-                                       qsTr("View on etherscan"),
-                                       "",
-                                       true,
-                                       Constants.ephemeralNotificationType.normal,
-                                       url);
-        }
         onTransactionCompleted: {
             let title = ""
             switch(trxType){

@@ -2,6 +2,7 @@ import QtQuick 2.13
 
 import utils 1.0
 import StatusQ.Core.Utils 0.1 as StatusQUtils
+import shared.stores 1.0
 
 QtObject {
     id: root
@@ -138,10 +139,6 @@ QtObject {
 
     property var userProfileInst: userProfile
 
-    property var accounts: walletSectionAccounts.model
-    property var currentAccount: walletSectionCurrent
-
-    property string currentCurrency: walletSection.currentCurrency
     property string signingPhrase: walletSection.signingPhrase
 
     property string channelEmoji: chatCommunitySectionModule && chatCommunitySectionModule.emoji ? chatCommunitySectionModule.emoji : ""
@@ -475,38 +472,46 @@ QtObject {
         return userProfile.getPubKey()
     }
 
+    // Needed for TX in chat for stickers and via contact
+
+    property var accounts: walletSectionAccounts.model
+    property var currentAccount: walletSectionCurrent
+    property string currentCurrency: walletSection.currentCurrency
+    property CurrenciesStore currencyStore: CurrenciesStore { }
     property var allNetworks: networksModule.all
+    property var savedAddressesModel: walletSectionSavedAddresses.model
 
-    property var disabledChainIds: []
+    property var disabledChainIdsFromList: []
+    property var disabledChainIdsToList: []
 
-    function addRemoveDisabledChain(suggestedRoutes, chainID, isDisbaled) {
-        if(isDisbaled) {
-            for(var i = 0; i < suggestedRoutes.length;i++) {
-                if(suggestedRoutes[i].chainId === chainID) {
-                    disabledChainIds.push(suggestedRoutes[i].chainId)
-                }
-            }
+    function addRemoveDisabledFromChain(chainID, isDisabled) {
+        if(isDisabled) {
+            disabledChainIdsFromList.push(chainID)
         }
         else {
-            for(var i = 0; i < disabledChainIds.length;i++) {
-                if(disabledChainIds[i] === chainID) {
-                    disabledChainIds.splice(i, 1)
+            for(var i = 0; i < disabledChainIdsFromList.length;i++) {
+                if(disabledChainIdsFromList[i] === chainID) {
+                    disabledChainIdsFromList.splice(i, 1)
                 }
             }
         }
     }
 
-    function checkIfDisabledByUser(chainID) {
-        for(var i = 0; i < disabledChainIds.length;i++) {
-            if(disabledChainIds[i] === chainID) {
-                return true
+    function addRemoveDisabledToChain(chainID, isDisabled) {
+        if(isDisabled) {
+            disabledChainIdsToList.push(chainID)
+        }
+        else {
+            for(var i = 0; i < disabledChainIdsToList.length;i++) {
+                if(disabledChainIdsToList[i] === chainID) {
+                    disabledChainIdsToList.splice(i, 1)
+                }
             }
         }
-        return false
     }
 
-    function getFiatValue(balance, cryptoSymbo, fiatSymbol) {
-        return profileSectionModule.ensUsernamesModule.getFiatValue(balance, cryptoSymbo, fiatSymbol)
+    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
+        return profileSectionModule.ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
     }
 
     function acceptRequestTransaction(transactionHash, messageId, signature) {
@@ -533,12 +538,8 @@ QtObject {
         return walletSectionTransactions.estimateGas(from_addr, to, assetSymbol, value === "" ? "0.00" : value, chainId, data)
     }
 
-    function transfer(from, to, address, tokenSymbol, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, chainId, uuid, eip1559Enabled) {
-        return walletSectionTransactions.authenticateAndTransfer(
-            from, to, address, tokenSymbol, amount, gasLimit,
-            gasPrice, tipLimit, overallLimit, chainId, uuid,
-            eip1559Enabled
-        );
+    function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid,  priority, selectedRoutes) {
+        walletSectionTransactions.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, priority, selectedRoutes)
     }
 
     function getAccountNameByAddress(address) {
@@ -558,7 +559,34 @@ QtObject {
         return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
     }
 
-    function suggestedRoutes(account, amount, token, disabledChainIds) {
-        return JSON.parse(walletSectionTransactions.suggestedRoutes(account, amount, token, disabledChainIds)).networks
+    function suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, priority, sendType) {
+        walletSectionTransactions.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, priority, sendType)
+    }
+
+    function resolveENS(value) {
+        mainModuleInst.resolveENS(value, "")
+    }
+
+    function getWei2Eth(wei) {
+        return globalUtils.wei2Eth(wei,18)
+    }
+
+    function getEth2Wei(eth) {
+         return globalUtils.eth2Wei(eth, 18)
+    }
+
+    function switchAccount(newIndex) {
+        if(Constants.isCppApp)
+            walletSectionAccounts.switchAccount(newIndex)
+        else
+            walletSection.switchAccount(newIndex)
+    }
+
+    function getEtherscanLink() {
+        return profileSectionModule.ensUsernamesModule.getEtherscanLink()
+    }
+
+    function hex2Eth(value) {
+        return globalUtils.hex2Eth(value)
     }
 }

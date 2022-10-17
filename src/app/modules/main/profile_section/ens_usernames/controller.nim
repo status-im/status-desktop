@@ -8,9 +8,12 @@ import ../../../../../app_service/service/ens/service as ens_service
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/token/dto
+import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 logScope:
   topics = "profile-section-ens-usernames-module-controller"
+
+const UNIQUE_ENS_SECTION_TRANSACTION_MODULE_IDENTIFIER* = "EnsSection-TransactionModule"
 
 type
   Controller* = ref object of RootObj
@@ -53,6 +56,12 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_ENS_TRANSACTION_REVERTED) do(e:Args):
     let args = EnsTransactionArgs(e)
     self.delegate.ensTransactionReverted(args.transactionType, args.ensUsername, args.transactionHash, args.revertReason)
+
+  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
+    let args = SharedKeycarModuleArgs(e)
+    if args.uniqueIdentifier != UNIQUE_ENS_SECTION_TRANSACTION_MODULE_IDENTIFIER:
+      return
+    self.delegate.onUserAuthenticated(args.password)
 
 proc checkEnsUsernameAvailability*(self: Controller, desiredEnsUsername: string, statusDomain: bool) =
   self.ensService.checkEnsUsernameAvailability(desiredEnsUsername, statusDomain)
@@ -130,3 +139,10 @@ proc getStatusToken*(self: Controller): string =
 
 proc getNetwork*(self: Controller): NetworkDto =
   return self.networkService.getNetworkForEns()
+
+proc authenticateUser*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
+  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_ENS_SECTION_TRANSACTION_MODULE_IDENTIFIER,
+    keyUid: keyUid,
+    bip44Path: bip44Path,
+    txHash: txHash)
+  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
