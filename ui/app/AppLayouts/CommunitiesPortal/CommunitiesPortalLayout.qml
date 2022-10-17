@@ -59,17 +59,32 @@ StatusSectionLayout {
     }
 
     SortFilterProxyModel {
-        id: searchModel
+        id: filteredCommunitiesModel
+
+        function selectedTagsPredicate(selectedTagsNames, tagsJSON) {
+            const tags = JSON.parse(tagsJSON)
+            for (const i in tags) {
+                selectedTagsNames = selectedTagsNames.filter(name => name !== tags[i].name)
+            }
+            return selectedTagsNames.length === 0
+        }
 
         sourceModel: root.communitiesStore.curatedCommunitiesModel
 
-        filters: ExpressionFilter {
-            enabled: d.searchMode
-            expression: {
-                searcher.text
-                return name.toLowerCase().includes(searcher.text.toLowerCase())
+        filters: [
+            ExpressionFilter {
+                enabled: d.searchMode
+                expression: {
+                    searcher.text
+                    return name.toLowerCase().includes(searcher.text.toLowerCase())
+                }
+            },
+            ExpressionFilter {
+                expression: {
+                    return filteredCommunitiesModel.selectedTagsPredicate(communityTags.selectedTagsNames, model.tags)
+                }
             }
-        }
+        ]
     }
 
     centerPanel: Item {
@@ -137,8 +152,10 @@ StatusSectionLayout {
             }
 
             CommunityTagsRow {
-                tags: root.communitiesStore.communityTags
+                id: communityTags
                 Layout.fillWidth: true
+
+                tags: root.communitiesStore.communityTags
             }
 
             Item {
@@ -158,7 +175,7 @@ StatusSectionLayout {
                     bottomPadding: d.layoutBottomMargin
 
                     locale: communitiesStore.locale
-                    model: searchModel
+                    model: filteredCommunitiesModel
                     searchLayout: d.searchMode
 
                     onCardClicked: d.navigateToCommunity(communityId)
@@ -168,7 +185,7 @@ StatusSectionLayout {
                     anchors.top: parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.topMargin: parent.height / 3.1
-                    visible: d.searchMode && searchModel.count === 0
+                    visible: d.searchMode && filteredCommunitiesModel.count === 0
                     text: qsTr("No communities found")
                     color: Theme.palette.baseColor1
                     font.pixelSize: 15
@@ -223,7 +240,7 @@ StatusSectionLayout {
                 CommunityBanner {
                     property bool importInProgress: root.communitiesStore.discordImportInProgress && !root.communitiesStore.discordImportCancelled
                     text: importInProgress ?
-                        qsTr("'%1' import in progress...").arg(root.communitiesStore.discordImportCommunityName) : 
+                        qsTr("'%1' import in progress...").arg(root.communitiesStore.discordImportCommunityName) :
                         qsTr("Import existing Discord community into Status")
                     buttonText: qsTr("Import existing")
                     icon.name: "download"

@@ -3,14 +3,22 @@ import QtQuick 2.14
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
+import SortFilterProxyModel 0.2
+
 Item {
     id: root
 
     property string filterString
-    property bool showOnlySelected: false
     property bool active: true
 
-    property alias model: repeater.model
+    enum Mode {
+        ShowUnselectedOnly,
+        ShowSelectedOnly,
+        Highlight
+    }
+    property int mode: StatusCommunityTags.ShowUnselectedOnly
+
+    property var model
     property alias contentWidth: flow.width
 
     readonly property int itemsWidth: {
@@ -35,14 +43,39 @@ Item {
         Repeater {
             id: repeater
 
+            model: SortFilterProxyModel {
+                id: filterModel
+
+                sourceModel: root.model
+
+                function selectionPredicate(selected) {
+                    return root.mode === StatusCommunityTags.ShowSelectedOnly ? selected : !selected
+                }
+
+                filters: [
+                    ExpressionFilter {
+                        enabled: root.filterString !== ""
+                        expression: {
+                            root.filterString
+                            return model.name.toUpperCase().indexOf(root.filterString.toUpperCase()) !== -1
+                        }
+                    },
+                    ExpressionFilter {
+                        enabled: root.mode !== StatusCommunityTags.Highlight
+                        expression: {
+                            root.mode
+                            return filterModel.selectionPredicate(model.selected)
+                        }
+                    }
+                ]
+            }
+
             delegate: StatusCommunityTag {
                 emoji: model.emoji
                 name: model.name
-                visible: (root.showOnlySelected ? model.selected : !model.selected) &&
-                         (filterString == 0 || name.toUpperCase().indexOf(filterString.toUpperCase()) !== -1)
-                width: visible ? implicitWidth : -flow.spacing
-                height: visible ? implicitHeight : 0
-                removable: root.showOnlySelected && root.active
+                removable: root.mode === StatusCommunityTags.ShowSelectedOnly && root.active
+                highlighted: root.mode === StatusCommunityTags.Highlight && model.selected
+
                 onClicked: root.clicked(model)
             }
         }
