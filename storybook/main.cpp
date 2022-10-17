@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     engine.addImportPath(SRC_DIR + QStringLiteral("/../ui/app"));
     engine.addImportPath(SRC_DIR + QStringLiteral("/../ui/imports"));
     engine.addImportPath(SRC_DIR + QStringLiteral("/stubs"));
+    engine.addImportPath(SRC_DIR + QStringLiteral("/mocks"));
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

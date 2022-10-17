@@ -20,7 +20,7 @@ find_package(
   COMPONENTS Core Quick QuickControls2
   REQUIRED)
 
-file(GLOB_RECURSE QML_FILES "stubs/*.qml" "Storybook/*.qml" "../ui/StatusQ/*.qml" "../ui/app/*.qml")
+file(GLOB_RECURSE QML_FILES "stubs/*.qml" "mocks/*.qml" "Storybook/*.qml" "../ui/StatusQ/*.qml" "../ui/app/*.qml")
 file(GLOB_RECURSE JS_FILES "../ui/StatusQ/*.js" "../ui/app/*.js")
 
 add_executable(
