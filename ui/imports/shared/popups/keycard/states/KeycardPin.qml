@@ -396,13 +396,13 @@ Item {
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPinSuccess
             PropertyChanges {
                 target: image
-                pattern: "keycard/strong_success/img-%1"
+                pattern: Constants.keycardAnimations.strongSuccess.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 20
-                duration: 1300
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongSuccess.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongSuccess.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongSuccess.endImgIndex
+                duration: Constants.keycardAnimations.strongSuccess.duration
+                loops: Constants.keycardAnimations.strongSuccess.loops
             }
             PropertyChanges {
                 target: title
@@ -439,13 +439,13 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPinFailure
             PropertyChanges {
                 target: image
-                pattern: "keycard/strong_error/img-%1"
+                pattern: Constants.keycardAnimations.strongError.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 18
-                endImgIndex: 29
-                duration: 1300
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
+                duration: Constants.keycardAnimations.strongError.duration
+                loops: Constants.keycardAnimations.strongError.loops
             }
             PropertyChanges {
                 target: title

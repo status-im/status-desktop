@@ -113,13 +113,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/card_insert/img-%1"
+                pattern: Constants.keycardAnimations.cardInsert.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 16
-                duration: 1000
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.cardInsert.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.cardInsert.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.cardInsert.endImgIndex
+                duration: Constants.keycardAnimations.cardInsert.duration
+                loops: Constants.keycardAnimations.cardInsert.loops
             }
             PropertyChanges {
                 target: info
@@ -141,13 +141,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/card_inserted/img-%1"
+                pattern: Constants.keycardAnimations.cardInserted.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 29
-                duration: 1000
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.cardInserted.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.cardInserted.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.cardInserted.endImgIndex
+                duration: Constants.keycardAnimations.cardInserted.duration
+                loops: Constants.keycardAnimations.cardInserted.loops
             }
             PropertyChanges {
                 target: info
@@ -166,13 +166,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/warning/img-%1"
+                pattern: Constants.keycardAnimations.warning.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 55
-                duration: 3000
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.warning.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.warning.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.warning.endImgIndex
+                duration: Constants.keycardAnimations.warning.duration
+                loops: Constants.keycardAnimations.warning.loops
             }
             PropertyChanges {
                 target: info
@@ -191,13 +191,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/success/img-%1"
+                pattern: Constants.keycardAnimations.success.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 29
-                duration: 1300
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.success.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.success.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.success.endImgIndex
+                duration: Constants.keycardAnimations.success.duration
+                loops: Constants.keycardAnimations.success.loops
             }
             PropertyChanges {
                 target: info
