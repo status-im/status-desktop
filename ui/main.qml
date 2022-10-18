@@ -272,6 +272,7 @@ StatusWindow {
     Loader {
         id: loader
         anchors.fill: parent
+        asynchronous: true
         opacity: active ? 1.0 : 0.0
         visible: (opacity > 0.0001)
         Behavior on opacity { NumberAnimation { duration: 120 }}

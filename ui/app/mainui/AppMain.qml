@@ -44,7 +44,6 @@ import "activitycenter/stores" as AC
 
 Item {
     id: appMain
-    anchors.fill: parent
 
     property alias appLayout: appLayout
     property RootStore rootStore: RootStore {}
@@ -64,11 +63,21 @@ Item {
         onDestroyKeycardSharedModuleFlow: {
             keycardPopup.active = false
         }
+
+        function onMailserverNotWorking() {
+            Global.openPopup(mailserverNotWorkingPopupComponent)
+        }
+
+        function onActiveSectionChanged() {
+            createChatView.opened = false
+        }
     }
 
     Connections {
         target: Global
         onOpenLinkInBrowser: {
+            if (!browserLayoutContainer.active)
+                browserLayoutContainer.active = true;
             browserLayoutContainer.item.openUrlInNewTab(link);
         }
         onOpenChooseBrowserPopup: {
@@ -83,6 +92,20 @@ Item {
                     newVersion: version
                 })
             return downloadPage
+        }
+
+        onOpenImagePopup: {
+            var popup = imagePopupComponent.createObject(appMain)
+            popup.contextMenu = contextMenu
+            popup.openPopup(image)
+        }
+
+        onOpenCreateChatView: {
+            createChatView.opened = true
+        }
+
+        onCloseCreateChatView: {
+            createChatView.opened = false
         }
 
         onOpenProfilePopupRequested: {
@@ -116,7 +139,7 @@ Item {
     }
 
     function changeAppSectionBySectionId(sectionId) {
-        mainModule.setActiveSectionById(sectionId)
+        appMain.rootStore.mainModuleInst.setActiveSectionById(sectionId)
     }
 
     Component {
@@ -148,27 +171,24 @@ Item {
         }
     }
 
-    StatusImageModal {
-        id: imagePopup
-        onClicked: {
-            if (mouse.button === Qt.LeftButton) {
-                imagePopup.close()
-            } else if(mouse.button === Qt.RightButton) {
-                contextMenu.imageSource = imagePopup.imageSource
-                contextMenu.hideEmojiPicker = true
-                contextMenu.isRightClickOnImage = true
-                contextMenu.parent = imagePopup.contentItem
-                contextMenu.setXPosition = function() { return mouse.x + Style.current.smallPadding }
-                contextMenu.setYPosition = function() { return mouse.y - Style.current.smallPadding }
-                contextMenu.show()
+    Component {
+        id: imagePopupComponent
+        StatusImageModal {
+            id: imagePopup
+            onClicked: {
+                if (mouse.button === Qt.LeftButton) {
+                    imagePopup.close()
+                } else if(mouse.button === Qt.RightButton) {
+                    contextMenu.imageSource = imagePopup.imageSource
+                    contextMenu.hideEmojiPicker = true
+                    contextMenu.isRightClickOnImage = true
+                    contextMenu.parent = imagePopup.contentItem
+                    contextMenu.setXPosition = function() { return mouse.x + Style.current.smallPadding }
+                    contextMenu.setYPosition = function() { return mouse.y - Style.current.smallPadding }
+                    contextMenu.show()
+                }
             }
-        }
-        Connections {
-            target: Global
-            onOpenImagePopup: {
-                imagePopup.contextMenu = contextMenu
-                imagePopup.openPopup(image)
-            }
+            onClosed: destroy()
         }
     }
 
@@ -230,9 +250,26 @@ Item {
         }
     }
 
-    AppSearch {
+    Loader {
         id: appSearch
-        store: appMain.rootStore.appSearchStore
+        active: false
+        asynchronous: true
+
+        function openSearchPopup() {
+            if (!active)
+                active = true
+            item.openSearchPopup()
+        }
+
+        function closeSearchPopup() {
+            if (item)
+                item.closeSearchPopup()
+            active = false
+        }
+
+        sourceComponent: AppSearch {
+            store: appMain.rootStore.appSearchStore
+        }
     }
 
     StatusEmojiPopup {
@@ -249,10 +286,10 @@ Item {
         leftPanel: StatusAppNavBar {
             communityTypeRole: "sectionType"
             communityTypeValue: Constants.appSection.community
-            sectionModel: mainModule.sectionsModel
+            sectionModel: appMain.rootStore.mainModuleInst.sectionsModel
 
             Component.onCompleted: {
-                mainModule.sectionsModel.sectionVisibilityUpdated.connect(function(){
+                appMain.rootStore.mainModuleInst.sectionsModel.sectionVisibilityUpdated.connect(function(){
                     triggerUpdate()
                 })
             }
@@ -323,8 +360,8 @@ Item {
                     openHandler: function () {
                         // // we cannot return QVariant if we pass another parameter in a function call
                         // // that's why we're using it this way
-                        mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
-                        communityContextMenu.chatCommunitySectionModule = mainModule.getCommunitySectionModule()
+                        appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
+                        communityContextMenu.chatCommunitySectionModule = appMain.rootStore.mainModuleInst.getCommunitySectionModule()
 
                     }
 
@@ -418,7 +455,7 @@ Item {
 
                 property var updateBanner: null
                 property var connectedBanner: null
-                readonly property bool isConnected: mainModule.isOnline
+                readonly property bool isConnected: appMain.rootStore.mainModuleInst.isOnline
 
                 function processUpdateAvailable() {
                     if (!updateBanner)
@@ -658,60 +695,66 @@ Item {
                     anchors.fill: parent
 
                     currentIndex: {
-                        if(mainModule.activeSection.sectionType === Constants.appSection.chat) {
+                        const activeSectionType = appMain.rootStore.mainModuleInst.activeSection.sectionType
+
+                        if (activeSectionType === Constants.appSection.chat)
                             return Constants.appViewStackIndex.chat
-                        }
-                        else if(mainModule.activeSection.sectionType === Constants.appSection.community) {
+                        if (activeSectionType === Constants.appSection.community) {
 
                             for(let i = this.children.length - 1; i >=0; i--)
                             {
-                                var obj = this.children[i];
-                                if(obj && obj.sectionId && obj.sectionId == mainModule.activeSection.id)
+                                var obj = this.children[i]
+                                if (obj && obj.sectionId && obj.sectionId === appMain.rootStore.mainModuleInst.activeSection.id)
                                 {
+                                    obj.active = true
                                     return i
                                 }
                             }
 
                             // Should never be here, correct index must be returned from the for loop above
-                            console.error("Wrong section type: ", mainModule.activeSection.sectionType,
-                                        " or section id: ", mainModule.activeSection.id)
+                            console.error("Wrong section type: ", appMain.rootStore.mainModuleInst.activeSection.sectionType,
+                                        " or section id: ", appMain.rootStore.mainModuleInst.activeSection.id)
                             return Constants.appViewStackIndex.community
                         }
-                        else if(mainModule.activeSection.sectionType === Constants.appSection.communitiesPortal) {
+                        if (activeSectionType === Constants.appSection.communitiesPortal)
                             return Constants.appViewStackIndex.communitiesPortal
-                        }
-                        else if(mainModule.activeSection.sectionType === Constants.appSection.wallet) {
+                        if (activeSectionType === Constants.appSection.wallet)
                             return Constants.appViewStackIndex.wallet
-                        }
-                        else if(mainModule.activeSection.sectionType === Constants.appSection.browser) {
+                        if (activeSectionType === Constants.appSection.browser)
                             return Constants.appViewStackIndex.browser
-                        }
-                        else if(mainModule.activeSection.sectionType === Constants.appSection.profile) {
+                        if (activeSectionType === Constants.appSection.profile)
                             return Constants.appViewStackIndex.profile
-                        }
-                        else if(mainModule.activeSection.sectionType === Constants.appSection.node) {
+                        if (activeSectionType === Constants.appSection.node)
                             return Constants.appViewStackIndex.node
-                        }
 
                         // We should never end up here
-                        console.error("Unknown section type")
+                        console.error("AppMain: Unknown section type")
                     }
 
                     onCurrentIndexChanged: {
-                        var obj = this.children[currentIndex];
-                        if(!obj)
+                        var obj = this.children[currentIndex]
+                        if (!obj)
                             return
 
-                        if (obj.onActivated && typeof obj.onActivated === "function") {
-                            this.children[currentIndex].onActivated()
-                        }
-
-                        if(obj === browserLayoutContainer && browserLayoutContainer.active == false){
+                        if (obj === browserLayoutContainer && browserLayoutContainer.active == false) {
                             browserLayoutContainer.active = true;
                         }
 
-                        if(obj === walletLayoutContainer){
-                            walletLayoutContainer.showSigningPhrasePopup();
+                        if (obj === walletLayoutContainer && !walletLayoutContainer.active) {
+                            walletLayoutContainer.active = true
+                            walletLayoutContainer.item.showSigningPhrasePopup()
+                        }
+
+                        if (obj === profileLayoutContainer && !profileLayoutContainer.active) {
+                            profileLayoutContainer.active = true
+                        }
+
+                        if (obj === nodeLayoutContainer && !nodeLayoutContainer.active) {
+                            nodeLayoutContainer.active = true
+                        }
+
+                        if (obj.onActivated && typeof obj.onActivated === "function") {
+                            this.children[currentIndex].onActivated()
                         }
                     }
 
@@ -745,41 +788,35 @@ Item {
                         }
 
                         Component.onCompleted: {
-                            rootStore.chatCommunitySectionModule = mainModule.getChatSectionModule()
+                            rootStore.chatCommunitySectionModule = appMain.rootStore.mainModuleInst.getChatSectionModule()
                         }
                     }
 
                     CommunitiesPortalLayout {
                         id: communitiesPortalLayoutContainer
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
                         contentPrefferedWidth: appView.width
                     }
 
-                    WalletLayout {
+                    Loader {
                         id: walletLayoutContainer
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        store: appMain.rootStore
-                        contactsStore: appMain.rootStore.profileSectionStore.contactsStore
-                        emojiPopup: statusEmojiPopup
-                        sendModal: sendModal
-                    }
-
-                    Component {
-                        id: browserLayoutComponent
-                        BrowserLayout {
-                            globalStore: appMain.rootStore
-                            sendTransactionModal: sendModal
+                        active: false
+                        asynchronous: true
+                        sourceComponent: WalletLayout {
+                            store: appMain.rootStore
+                            contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+                            emojiPopup: statusEmojiPopup
+                            sendModal: sendModal
                         }
                     }
 
                     Loader {
                         id: browserLayoutContainer
-                        sourceComponent: browserLayoutComponent
                         active: false
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
+                        asynchronous: true
+                        sourceComponent: BrowserLayout {
+                            globalStore: appMain.rootStore
+                            sendTransactionModal: sendModal
+                        }
                         // Loaders do not have access to the context, so props need to be set
                         // Adding a "_" to avoid a binding loop
                         // Not Refactored Yet
@@ -788,59 +825,65 @@ Item {
                         //                property var _walletModel: walletModel
                         // Not Refactored Yet
                         //                property var _utilsModel: utilsModel
-                        property var _web3Provider: BrowserStores.Web3ProviderStore.web3ProviderInst
+                        //  property var _web3Provider: BrowserStores.Web3ProviderStore.web3ProviderInst
                     }
 
-                    ProfileLayout {
+                    Loader {
                         id: profileLayoutContainer
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-
-                        store: appMain.rootStore.profileSectionStore
-                        globalStore: appMain.rootStore
-                        systemPalette: appMain.sysPalette
-                        emojiPopup: statusEmojiPopup
+                        active: false
+                        asynchronous: true
+                        sourceComponent: ProfileLayout {
+                            store: appMain.rootStore.profileSectionStore
+                            globalStore: appMain.rootStore
+                            systemPalette: appMain.sysPalette
+                            emojiPopup: statusEmojiPopup
+                        }
                     }
 
-                    NodeLayout {
+                    Loader {
                         id: nodeLayoutContainer
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
+                        active: false
+                        asynchronous: true
+                        sourceComponent: NodeLayout {}
                     }
 
                     Repeater {
-                        model: mainModule.sectionsModel
+                        model: appMain.rootStore.mainModuleInst.sectionsModel
 
                         delegate: DelegateChooser {
-                            id: delegateChooser
                             role: "sectionType"
                             DelegateChoice {
                                 roleValue: Constants.appSection.community
-                                delegate: ChatLayout {
+
+                                delegate: Loader {
                                     property string sectionId: model.id
+                                    active: false
+                                    asynchronous: true
                                     Layout.fillWidth: true
                                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                                     Layout.fillHeight: true
 
-                                    chatView.emojiPopup: statusEmojiPopup
+                                    sourceComponent: ChatLayout {
+                                        chatView.emojiPopup: statusEmojiPopup
 
-                                    contactsStore: appMain.rootStore.contactStore
-                                    rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
-                                    rootStore.openCreateChat: createChatView.opened
+                                        contactsStore: appMain.rootStore.contactStore
+                                        rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                                        rootStore.openCreateChat: createChatView.opened
 
-                                    chatView.onProfileButtonClicked: {
-                                        Global.changeAppSectionBySectionType(Constants.appSection.profile);
-                                    }
+                                        chatView.onProfileButtonClicked: {
+                                            Global.changeAppSectionBySectionType(Constants.appSection.profile);
+                                        }
 
-                                    chatView.onOpenAppSearch: {
-                                        appSearch.openSearchPopup()
-                                    }
+                                        chatView.onOpenAppSearch: {
+                                            appSearch.openSearchPopup()
+                                        }
 
-                                    Component.onCompleted: {
-                                        // we cannot return QVariant if we pass another parameter in a function call
-                                        // that's why we're using it this way
-                                        mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
-                                        rootStore.chatCommunitySectionModule = mainModule.getCommunitySectionModule()
+                                        Component.onCompleted: {
+                                            // we cannot return QVariant if we pass another parameter in a function call
+                                            // that's why we're using it this way
+                                            appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
+                                            rootStore.chatCommunitySectionModule = appMain.rootStore.mainModuleInst.getCommunitySectionModule()
+                                        }
                                     }
                                 }
                             }
@@ -848,60 +891,32 @@ Item {
                     }
                 }
 
-                CreateChatView {
+                Loader {
                     id: createChatView
 
                     property bool opened: false
+                    active: opened
 
-                    rootStore: chatLayoutContainer.rootStore
-                    emojiPopup: statusEmojiPopup
+                    asynchronous: true
                     anchors.top: parent.top
                     anchors.topMargin: 8
                     anchors.rightMargin: 8
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
                     width: parent.width - chatLayoutContainer.chatView.leftPanel.width - anchors.rightMargin - anchors.leftMargin
-                    visible: createChatView.opened
 
-                    Connections {
-                        target: Global
-
-                        function onOpenCreateChatView() {
-                            createChatView.opened = true
-                        }
-
-                        function onCloseCreateChatView() {
-                            createChatView.opened = false
-                        }
-                    }
-
-                    Connections {
-                        target: mainModule
-                        function onActiveSectionChanged() {
-                            Global.closeCreateChatView()
-                        }
+                    sourceComponent: CreateChatView {
+                        rootStore: chatLayoutContainer.rootStore
+                        emojiPopup: statusEmojiPopup
                     }
                 }
             }
-
-            Connections {
-                target: rootStore.mainModuleInst
-                function onMailserverNotWorking() {
-                    if (!appLayout.mailserverNotWorkingPopup) {
-                        appLayout.mailserverNotWorkingPopup = Global.openPopup(mailserverNotWorkingPopupComponent);
-                    }
-                }
-            }
-
         } // ColumnLayout
-        property var mailserverNotWorkingPopup: null
 
         Component {
             id: mailserverNotWorkingPopupComponent
-
             MailserverConnectionDialog {
                 onClosed: {
-                    appLayout.mailserverNotWorkingPopup = null
                     destroy()
                 }
             }
@@ -1089,10 +1104,14 @@ Item {
             shortcut: "Ctrl+K"
             onTriggered: {
                 // FIXME the focus is no longer on the AppMain when the popup is opened, so this does not work to close
-                if (channelPicker.opened) {
-                    channelPicker.close()
+                if (!channelPickerLoader.active)
+                    channelPickerLoader.active = true
+
+                if (channelPickerLoader.item.opened) {
+                    channelPickerLoader.item.close()
+                    channelPickerLoader.active = false
                 } else {
-                    channelPicker.open()
+                    channelPickerLoader.item.open()
                 }
             }
         }
@@ -1100,7 +1119,7 @@ Item {
             shortcut: "Ctrl+F"
             onTriggered: {
                 // FIXME the focus is no longer on the AppMain when the popup is opened, so this does not work to close
-                if (appSearch.opened) {
+                if (appSearch.active) {
                     appSearch.closeSearchPopup()
                 } else {
                     appSearch.openSearchPopup()
@@ -1108,40 +1127,40 @@ Item {
             }
         }
 
-        StatusSearchListPopup {
-            id: channelPicker
+        Loader {
+            id: channelPickerLoader
+            active: false
+            asynchronous: true
+            sourceComponent: StatusSearchListPopup {
+                searchBoxPlaceholder: qsTr("Where do you want to go?")
+                model: rootStore.chatSearchModel
+                delegate: StatusListItem {
+                    property var modelData
+                    property bool isCurrentItem: true
+                    function filterAccepts(searchText) {
+                        return title.includes(searchText)
+                    }
 
-            x: parent.width / 2 - width / 2
-            y: parent.height / 2 - height / 2
-
-            searchBoxPlaceholder: qsTr("Where do you want to go?")
-            model: rootStore.chatSearchModel
-            delegate: StatusListItem {
-                property var modelData
-                property bool isCurrentItem: true
-                function filterAccepts(searchText) {
-                    return title.includes(searchText)
+                    title: modelData ? modelData.name : ""
+                    label: modelData? modelData.sectionName : ""
+                    highlighted: isCurrentItem
+                    sensor.hoverEnabled: false
+                    statusListItemIcon {
+                        name: modelData ? modelData.name : ""
+                        active: true
+                    }
+                    asset.width: 30
+                    asset.height: 30
+                    asset.color: modelData ? modelData.color : ""
+                    asset.name: modelData ? modelData.icon : ""
+                    asset.isImage: asset.name.includes("data")
                 }
 
-                title: modelData ? modelData.name : ""
-                label: modelData? modelData.sectionName : ""
-                highlighted: isCurrentItem
-                sensor.hoverEnabled: false
-                statusListItemIcon {
-                    name: modelData ? modelData.name : ""
-                    active: true
+                onAboutToShow: rootStore.rebuildChatSearchModel()
+                onSelected: {
+                    rootStore.setActiveSectionChat(modelData.sectionId, modelData.chatId)
+                    close()
                 }
-                asset.width: 30
-                asset.height: 30
-                asset.color: modelData ? modelData.color : ""
-                asset.name: modelData ? modelData.icon : ""
-                asset.isImage: asset.name.includes("data")
-            }
-
-            onAboutToShow: rootStore.rebuildChatSearchModel()
-            onSelected: {
-                rootStore.setActiveSectionChat(modelData.sectionId, modelData.chatId)
-                close()
             }
         }
     }
@@ -1230,14 +1249,14 @@ Item {
             console.error('Could not parse the whitelist for sites', e)
         }
         Global.privacyModuleInst = appMain.rootStore.profileSectionStore.privacyStore.privacyModule
-        Global.settingsHasLoaded();
+        Global.settingsLoaded()
     }
 
     Loader {
         id: keycardPopup
         active: false
         sourceComponent: KeycardPopup {
-            sharedKeycardModule: rootStore.mainModuleInst.keycardSharedModule
+            sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModule
         }
 
         onLoaded: {
@@ -1251,7 +1270,7 @@ Item {
         activeChatType: chatCommunitySectionModule && chatCommunitySectionModule.activeItem.type
         enabled: !drag.source && (
                                 // in chat view
-                                (mainModule.activeSection.sectionType === Constants.appSection.chat &&
+                                (appMain.rootStore.mainModuleInst.activeSection.sectionType === Constants.appSection.chat &&
                                 (
                                     // in a one-to-one chat
                                     activeChatType === Constants.chatType.oneToOne ||
@@ -1260,6 +1279,6 @@ Item {
                                     )
                                 ) ||
                                 // In community section
-                                mainModule.activeSection.sectionType === Constants.appSection.community)
+                                appMain.rootStore.mainModuleInst.activeSection.sectionType === Constants.appSection.community)
     }
 }

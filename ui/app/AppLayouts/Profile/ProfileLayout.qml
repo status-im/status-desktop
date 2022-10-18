@@ -23,13 +23,14 @@ StatusSectionLayout {
 
     backButtonName: root.store.backButtonName
     notificationCount: root.store.unreadNotificationsCount
+
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     onBackButtonClicked: {
         switch (profileContainer.currentIndex) {
-        case 1:
+        case Constants.settingsSubsection.contacts:
             Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging)
             break;
-        case 4:
+        case Constants.settingsSubsection.wallet:
             walletView.resetStack();
             break;
         case Constants.settingsSubsection.keycard:

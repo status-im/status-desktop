@@ -13,6 +13,8 @@ import utils 1.0
 Popup {
     id: root
 
+    anchors.centerIn: Overlay.overlay
+
     width: 400
     height: 300
 
