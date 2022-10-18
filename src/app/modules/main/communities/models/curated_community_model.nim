@@ -8,10 +8,12 @@ type
     Name
     Description
     Icon
+    Banner
     Featured
     Members
     Popularity
     Color
+    Tags
 
 QtObject:
   type CuratedCommunityModel* = ref object of QAbstractListModel
@@ -52,10 +54,12 @@ QtObject:
       ModelRole.Available.int:"available",
       ModelRole.Description.int:"description",
       ModelRole.Icon.int:"icon",
+      ModelRole.Banner.int:"banner",
       ModelRole.Featured.int:"featured",
       ModelRole.Members.int:"members",
       ModelRole.Color.int:"color",
-      ModelRole.Popularity.int:"popularity"
+      ModelRole.Popularity.int:"popularity",
+      ModelRole.Tags.int:"tags"
     }.toTable
 
   method data(self: CuratedCommunityModel, index: QModelIndex, role: int): QVariant =
@@ -76,6 +80,8 @@ QtObject:
         result = newQVariant(item.isAvailable())
       of ModelRole.Icon:
         result = newQVariant(item.getIcon())
+      of ModelRole.Banner:
+        result = newQVariant(item.getBanner())
       of ModelRole.Members:
         result = newQVariant(item.getMembers())
       of ModelRole.Color:
@@ -83,6 +89,8 @@ QtObject:
       of ModelRole.Popularity:
         # TODO: replace this with a real value
         result = newQVariant(index.row)
+      of ModelRole.Tags:
+        result = newQVariant(item.getTags())
       of ModelRole.Featured:
         # TODO: replace this with a real value
         var featured = false
@@ -121,10 +129,12 @@ QtObject:
                                        ModelRole.Available.int,
                                        ModelRole.Description.int,
                                        ModelRole.Icon.int,
+                                       ModelRole.Banner.int,
                                        ModelRole.Featured.int,
                                        ModelRole.Members.int,
                                        ModelRole.Color.int,
-                                       ModelRole.Popularity.int])
+                                       ModelRole.Popularity.int,
+                                       ModelRole.Tags.int])
     else:
       let parentModelIndex = newQModelIndex()
       defer: parentModelIndex.delete
@@ -132,4 +142,3 @@ QtObject:
       self.items.add(item)
       self.endInsertRows()
       self.countChanged()
-    

@@ -7,6 +7,7 @@ type
     description: string
     available: bool
     icon: string
+    banner: string
     color: string
     tags: string
     members: int
@@ -17,6 +18,7 @@ proc initCuratedCommunityItem*(
   description: string,
   available: bool,
   icon: string,
+  banner: string,
   color: string,
   tags: string,
   members: int
@@ -26,6 +28,7 @@ proc initCuratedCommunityItem*(
   result.description = description
   result.available = available
   result.icon = icon
+  result.banner = banner
   result.color = color
   result.tags  = tags
   result.members = members
@@ -55,6 +58,9 @@ proc isAvailable*(self: CuratedCommunityItem): bool =
 
 proc getIcon*(self: CuratedCommunityItem): string =
   return self.icon
+
+proc getBanner*(self: CuratedCommunityItem): string =
+  return self.banner
 
 proc getMembers*(self: CuratedCommunityItem): int =
   return self.members
