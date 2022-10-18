@@ -192,7 +192,7 @@ Rectangle {
             color: root.loaded ? root.communityColor : d.loadingColor2
 
             // hide when image is loaded to avoid glitches on the edge
-            visible: image.status !== Image.Ready
+            visible: !root.loaded || image.status !== Image.Ready
         }
 
         Image {
@@ -209,6 +209,7 @@ Rectangle {
         OpacityMask {
             anchors.fill: image
 
+            visible: root.loaded
             source: image
             maskSource: mask
         }
