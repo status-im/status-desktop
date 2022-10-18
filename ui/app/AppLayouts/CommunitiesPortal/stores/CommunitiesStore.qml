@@ -6,9 +6,7 @@ QtObject {
 
     property var communitiesModuleInst: communitiesModule
 
-    // TODO: should be replaced with root.communitiesModuleInst.curatedCommunities
-    // when backend is ready
-    readonly property var curatedCommunitiesModel: CommunitiesPortalDummyModel {}
+    readonly property var curatedCommunitiesModel: root.communitiesModuleInst.curatedCommunities
 
     property var discordFileList: root.communitiesModuleInst.discordFileList
     property var discordCategoriesModel: root.communitiesModuleInst.discordCategories
