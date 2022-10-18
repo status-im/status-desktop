@@ -23,5 +23,6 @@
         <file>pages/DevicesSectionPage.qml</file>
         <file>pages/EnsViewPage.qml</file>
         <file>pages/KeycardSectionPage.qml</file>
+        <file>pages/AdvancedSettingsPage.qml</file>
     </qresource>
 </RCC>

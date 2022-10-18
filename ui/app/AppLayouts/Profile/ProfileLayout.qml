@@ -276,8 +276,13 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 advancedStore: root.store.advancedStore
+                accountSettings: localAccountSensitiveSettings
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.advanced)
                 contentWidth: d.contentWidth
+
+                onOpenApplicationLogs: {
+                    Qt.openUrlExternally(root.store.advancedStore.logDir())
+                }
             }
 
             AboutView {
