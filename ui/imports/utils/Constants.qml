@@ -99,6 +99,7 @@ QtObject {
         readonly property string renameKeycard: "RenameKeycard"
         readonly property string changeKeycardPin: "ChangeKeycardPin"
         readonly property string changeKeycardPuk: "ChangeKeycardPuk"
+        readonly property string changePairingCode: "ChangePairingCode"
     }
 
     readonly property QtObject keycardSharedState: QtObject {
@@ -160,6 +161,10 @@ QtObject {
         readonly property string changingKeycardPuk: "ChangingKeycardPuk"
         readonly property string changingKeycardPukSuccess: "ChangingKeycardPukSuccess"
         readonly property string changingKeycardPukFailure: "ChangingKeycardPukFailure"
+        readonly property string createPairingCode: "CreatePairingCode"
+        readonly property string changingKeycardPairingCode: "ChangingKeycardPairingCode"
+        readonly property string changingKeycardPairingCodeSuccess: "ChangingKeycardPairingCodeSuccess"
+        readonly property string changingKeycardPairingCodeFailure: "ChangingKeycardPairingCodeFailure"
     }
 
     readonly property QtObject keycardAnimations: QtObject {
@@ -455,6 +460,7 @@ QtObject {
             readonly property int keycardPukLength: 12
             readonly property int keycardNameLength: 20
             readonly property int keycardNameInputWidth: 448
+            readonly property int keycardPairingCodeInputWidth: 512
             readonly property int keycardPukAdditionalSpacingOnEvery4Items: 4
             readonly property int keycardPukAdditionalSpacing: 32
             readonly property int fontSize1: 22

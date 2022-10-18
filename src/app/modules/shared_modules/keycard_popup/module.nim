@@ -81,6 +81,9 @@ method setPassword*[T](self: Module[T], value: string) =
 method setKeycarName*[T](self: Module[T], value: string) =
   self.controller.setKeycarName(value)
 
+method setPairingCode*[T](self: Module[T], value: string) =
+  self.controller.setPairingCode(value)
+
 method checkRepeatedKeycardPinWhileTyping*[T](self: Module[T], pin: string): bool =
   self.controller.setPinMatch(false)
   let storedPin = self.controller.getPin()
@@ -400,6 +403,11 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.prepareKeyPairForProcessing(keyUid)
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runChangePukFlow()
+    return
+  if flowToRun == FlowType.ChangePairingCode:
+    self.prepareKeyPairForProcessing(keyUid)
+    self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
+    self.controller.runChangePairingFlow()
     return
 
 method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =

@@ -16,7 +16,8 @@ method getNextPrimaryState*(self: MaxPairingSlotsReachedState, controller: Contr
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
-    self.flowType == FlowType.ChangeKeycardPuk:
+    self.flowType == FlowType.ChangeKeycardPuk or
+    self.flowType == FlowType.ChangePairingCode:
       controller.runSharedModuleFlow(FlowType.UnlockKeycard)
   return nil
 
@@ -28,5 +29,6 @@ method executeTertiaryCommand*(self: MaxPairingSlotsReachedState, controller: Co
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
-    self.flowType == FlowType.ChangeKeycardPuk:
+    self.flowType == FlowType.ChangeKeycardPuk or
+    self.flowType == FlowType.ChangePairingCode:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

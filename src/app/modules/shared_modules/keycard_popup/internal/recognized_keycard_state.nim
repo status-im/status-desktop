@@ -26,7 +26,8 @@ method getNextSecondaryState*(self: RecognizedKeycardState, controller: Controll
   if self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
-    self.flowType == FlowType.ChangeKeycardPuk:
+    self.flowType == FlowType.ChangeKeycardPuk or
+    self.flowType == FlowType.ChangePairingCode:
       return createState(StateType.EnterPin, self.flowType, nil)
 
 method executeTertiaryCommand*(self: RecognizedKeycardState, controller: Controller) =

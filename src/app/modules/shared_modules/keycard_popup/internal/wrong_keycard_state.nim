@@ -12,7 +12,8 @@ method executePrimaryCommand*(self: WrongKeycardState, controller: Controller) =
   if self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
-    self.flowType == FlowType.ChangeKeycardPuk:
+    self.flowType == FlowType.ChangeKeycardPuk or
+    self.flowType == FlowType.ChangePairingCode:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
 method executeTertiaryCommand*(self: WrongKeycardState, controller: Controller) =
@@ -20,5 +21,6 @@ method executeTertiaryCommand*(self: WrongKeycardState, controller: Controller) 
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
-    self.flowType == FlowType.ChangeKeycardPuk:
+    self.flowType == FlowType.ChangeKeycardPuk or
+    self.flowType == FlowType.ChangePairingCode:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

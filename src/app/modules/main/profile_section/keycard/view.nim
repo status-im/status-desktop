@@ -76,8 +76,8 @@ QtObject:
   proc runCreatePukPopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
     self.delegate.runCreatePukPopup(keycardUid, keyUid)
 
-  proc runCreateNewPairingCodePopup*(self: View) {.slot.} =
-    self.delegate.runCreateNewPairingCodePopup()
+  proc runCreateNewPairingCodePopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
+    self.delegate.runCreateNewPairingCodePopup(keycardUid, keyUid)
 
   proc keycardModel*(self: View): KeycardModel =
     return self.keycardModel
