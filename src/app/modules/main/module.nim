@@ -578,6 +578,10 @@ method setActiveSection*[T](self: Module[T], item: SectionItem) =
     return
   self.controller.setActiveSection(item.id)
 
+method setActiveSectionById*[T](self: Module[T], id: string) =
+    let item = self.view.model().getItemById(id)
+    self.setActiveSection(item)
+
 proc notifySubModulesAboutChange[T](self: Module[T], sectionId: string) =
   for cModule in self.channelGroupModules.values:
     cModule.onActiveSectionChange(sectionId)

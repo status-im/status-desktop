@@ -88,6 +88,10 @@ QtObject {
         mainModule.setActiveSectionById(communityId);
     }
 
+    function navigateToCommunity(communityId) {
+        root.communitiesModuleInst.navigateToCommunity(communityId)
+    }
+
     function setFileListItems(filePaths) {
         root.communitiesModuleInst.setFileListItems(filePaths)
     }

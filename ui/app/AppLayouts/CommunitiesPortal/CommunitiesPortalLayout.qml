@@ -52,10 +52,6 @@ StatusSectionLayout {
         readonly property int preventShadowClipMargin: 40
 
         readonly property bool searchMode: searcher.text.length > 0
-
-        function navigateToCommunity(communityId) {
-            root.communitiesStore.setActiveCommunity(communityId)
-        }
     }
 
     SortFilterProxyModel {
@@ -178,7 +174,7 @@ StatusSectionLayout {
                     model: filteredCommunitiesModel
                     searchLayout: d.searchMode
 
-                    onCardClicked: d.navigateToCommunity(communityId)
+                    onCardClicked: root.communitiesStore.navigateToCommunity(communityId)
                 }
 
                 StatusBaseText {
