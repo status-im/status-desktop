@@ -19,6 +19,7 @@ SOURCES += $$files("$$PWD/*.js", true)
 
 # Other *.ts files will be provided by Lokalise platform
 TRANSLATIONS += \
+    i18n/qml_base.ts \
     i18n/qml_en.ts \
 
 OTHER_FILES += $$files("$$PWD/*.qml", true)
