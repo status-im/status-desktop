@@ -1,8 +1,9 @@
 import xml.etree.ElementTree as ET
 import subprocess
+import os
 
-# 1) Runs lupdate ../../ui/nim-status-client.pro -target-language en
-# 2) Fixups qml_en.ts: ensure each source has translation, otherwise Lokalise can't figure out base words
+# 1) Runs lupdate on ../../ui/nim-status-client.pro
+# 2) Fixups qml_base.ts: ensure each source has translation, otherwise Lokalise can't figure out base words
 #
 # usage: `python update-en-ts.py`
 
@@ -23,9 +24,15 @@ def fixupTranslations(enTsFile: str):
 
 
 if __name__ == "__main__":
-    p = subprocess.run(['lupdate', '../../ui/nim-status-client.pro', '-target-language', 'en'],
+    # full base TS file (has to come first as we're targetting the same language)
+    basefile = "../../ui/i18n/qml_base.ts"
+    p = subprocess.run(['lupdate', '../../ui/nim-status-client.pro', '-source-language', 'en', '-no-obsolete', '-target-language', 'en_GB', '-ts', basefile],
                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=True, text=True)
-
     print(p.stdout)
+    fixupTranslations(basefile)
 
-    fixupTranslations('../../ui/i18n/qml_en.ts')
+    # EN "translation" file, plurals only
+    enfile = "../../ui/i18n/qml_en.ts"
+    p = subprocess.run(['lupdate', '../../ui/nim-status-client.pro', '-source-language', 'en', '-pluralonly', '-target-language', 'en_GB', '-ts', enfile],
+                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=True, text=True)
+    print(p.stdout)
