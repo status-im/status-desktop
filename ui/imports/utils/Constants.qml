@@ -522,6 +522,7 @@ QtObject {
     readonly property int activityCenterNotificationTypeCommunityInvitation: 6
     readonly property int activityCenterNotificationTypeCommunityRequest: 7
     readonly property int activityCenterNotificationTypeCommunityMembershipRequest: 8
+    readonly property int activityCenterNotificationTypeCommunityKicked: 9
 
     readonly property int activityCenterMembershipStatusPending: 1
     readonly property int activityCenterMembershipStatusAccepted: 2

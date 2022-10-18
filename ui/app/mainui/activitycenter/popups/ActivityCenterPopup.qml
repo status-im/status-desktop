@@ -64,7 +64,8 @@ Popup {
         case ActivityCenterPopup.ActivityCategory.Membership:
             return notificationType === Constants.activityCenterNotificationTypeCommunityInvitation ||
                    notificationType === Constants.activityCenterNotificationTypeCommunityMembershipRequest ||
-                   notificationType === Constants.activityCenterNotificationTypeCommunityRequest
+                   notificationType === Constants.activityCenterNotificationTypeCommunityRequest ||
+                   notificationType === Constants.activityCenterNotificationTypeCommunityKicked
         default:
             return false
         }
@@ -90,6 +91,9 @@ Popup {
             root.adminCount += cnt;
             break;
         case Constants.activityCenterNotificationTypeCommunityRequest:
+            root.membershipCount += cnt;
+            break;
+        case Constants.ActivityCenterNotificationTypeCommunityKicked:
             root.membershipCount += cnt;
             break;
         default:
@@ -245,6 +249,15 @@ Popup {
                 roleValue: Constants.activityCenterNotificationTypeCommunityRequest
 
                 ActivityNotificationCommunityRequest {
+                    width: listView.availableWidth
+                    store: root.store
+                    notification: model
+                }
+            }
+            DelegateChoice {
+                roleValue: Constants.activityCenterNotificationTypeCommunityKicked
+
+                ActivityNotificationCommunityKicked {
                     width: listView.availableWidth
                     store: root.store
                     notification: model
