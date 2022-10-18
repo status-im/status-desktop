@@ -160,10 +160,14 @@ method runCreatePukPopup*(self: Module, keycardUid: string, keyUid: string) =
   if self.keycardSharedModule.isNil:
     return
   self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangeKeycardPuk, keyUid)  
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangeKeycardPuk, keyUid)
 
-method runCreateNewPairingCodePopup*(self: Module) =
-  info "TODO: Create New Pairing Code for a Keycard..."
+method runCreateNewPairingCodePopup*(self: Module, keycardUid: string, keyUid: string) =
+  self.createSharedKeycardModule()
+  if self.keycardSharedModule.isNil:
+    return
+  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangePairingCode, keyUid)
 
 proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPair: KeyPairDto): KeycardItem =
   let findAccountByAccountAddress = proc(accounts: seq[WalletAccountDto], address: string): WalletAccountDto =

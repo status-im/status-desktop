@@ -50,8 +50,8 @@ QtObject {
         root.keycardModule.runCreatePukPopup(keycardUid, keyUid)
     }
 
-    function runCreateNewPairingCodePopup() {
-        root.keycardModule.runCreateNewPairingCodePopup()
+    function runCreateNewPairingCodePopup(keycardUid, keyUid) {
+        root.keycardModule.runCreateNewPairingCodePopup(keycardUid, keyUid)
     }
 
     function getKeycardDetailsAsJson(keycardUid) {
