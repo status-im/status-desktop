@@ -3,3 +3,4 @@ AppearanceStore 1.0 AppearanceStore.qml
 ProfileStore 1.0 ProfileStore.qml
 NotificationsStore 1.0 NotificationsStore.qml
 DevicesStore 1.0 DevicesStore.qml
+EnsUsernamesStore 1.0 EnsUsernamesStore.qml
