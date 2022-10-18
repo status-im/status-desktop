@@ -65,6 +65,9 @@ ApplicationWindow {
         ListElement {
              title: "EnsView"
         }
+        ListElement {
+             title: "KeycardSection"
+        }
     }
 
     SplitView {
