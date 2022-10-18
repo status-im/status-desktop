@@ -48,6 +48,9 @@ ApplicationWindow {
         ListElement {
              title: "DevicesSection"
         }
+        ListElement {
+             title: "EnsView"
+        }
     }
 
     SplitView {
