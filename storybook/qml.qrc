@@ -22,5 +22,6 @@
         <file>pages/CommunitiesSectionPage.qml</file>
         <file>pages/DevicesSectionPage.qml</file>
         <file>pages/EnsViewPage.qml</file>
+        <file>pages/KeycardSectionPage.qml</file>
     </qresource>
 </RCC>
