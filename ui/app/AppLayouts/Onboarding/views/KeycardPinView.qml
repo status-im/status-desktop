@@ -167,13 +167,13 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardPinSet
             PropertyChanges {
                 target: image
-                pattern: "keycard/strong_success/img-%1"
+                pattern: Constants.keycardAnimations.strongSuccess.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 20
-                duration: 1300
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongSuccess.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongSuccess.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongSuccess.endImgIndex
+                duration: Constants.keycardAnimations.strongSuccess.duration
+                loops: Constants.keycardAnimations.strongSuccess.loops
             }
             PropertyChanges {
                 target: title

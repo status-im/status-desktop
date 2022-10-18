@@ -380,13 +380,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/card_insert/img-%1"
+                pattern: Constants.keycardAnimations.cardInsert.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 16
-                duration: 1000
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.cardInsert.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.cardInsert.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.cardInsert.endImgIndex
+                duration: Constants.keycardAnimations.cardInsert.duration
+                loops: Constants.keycardAnimations.cardInsert.loops
             }
             PropertyChanges {
                 target: message
@@ -409,13 +409,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/card_inserted/img-%1"
+                pattern: Constants.keycardAnimations.cardInserted.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 29
-                duration: 1000
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.cardInserted.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.cardInserted.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.cardInserted.endImgIndex
+                duration: Constants.keycardAnimations.cardInserted.duration
+                loops: Constants.keycardAnimations.cardInserted.loops
             }
             PropertyChanges {
                 target: message
@@ -455,13 +455,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/warning/img-%1"
+                pattern: Constants.keycardAnimations.warning.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 55
-                duration: 3000
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.warning.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.warning.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.warning.endImgIndex
+                duration: Constants.keycardAnimations.warning.duration
+                loops: Constants.keycardAnimations.warning.loops
             }
             PropertyChanges {
                 target: message
@@ -481,17 +481,19 @@ Item {
             PropertyChanges {
                 target: image
                 pattern: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
-                             "" : "keycard/strong_error/img-%1"
+                             "" : Constants.keycardAnimations.strongError.pattern
                 source: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
                             Style.png("keycard/plain-error") : ""
-                startImgIndexForTheFirstLoop: 0
+                startImgIndexForTheFirstLoop: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
+                                                  0 : Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
                 startImgIndexForOtherLoops: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
-                                                0 : 18
+                                                0 : Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
                 endImgIndex: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
-                                 0 : 29
+                                 0 : Constants.keycardAnimations.strongError.endImgIndex
                 duration: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
-                              0 : 1300
-                loops: -1
+                              0 : Constants.keycardAnimations.strongError.duration
+                loops: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication?
+                           -1 : Constants.keycardAnimations.strongError.loops
             }
             PropertyChanges {
                 target: message
@@ -512,13 +514,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/strong_error/img-%1"
+                pattern: Constants.keycardAnimations.strongError.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 18
-                endImgIndex: 29
-                duration: 1300
-                loops: -1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
+                duration: Constants.keycardAnimations.strongError.duration
+                loops: Constants.keycardAnimations.strongError.loops
             }
             PropertyChanges {
                 target: message
@@ -643,13 +645,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/strong_error/img-%1"
+                pattern: Constants.keycardAnimations.strongError.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 18
-                endImgIndex: 29
-                duration: 1300
-                loops: -1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
+                duration: Constants.keycardAnimations.strongError.duration
+                loops: Constants.keycardAnimations.strongError.loops
             }
             PropertyChanges {
                 target: message
@@ -684,13 +686,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/success/img-%1"
+                pattern: Constants.keycardAnimations.success.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 29
-                duration: 1300
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.success.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.success.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.success.endImgIndex
+                duration: Constants.keycardAnimations.success.duration
+                loops: Constants.keycardAnimations.success.loops
             }
             PropertyChanges {
                 target: message
@@ -709,13 +711,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/success/img-%1"
+                pattern: Constants.keycardAnimations.success.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 29
-                duration: 1300
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.success.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.success.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.success.endImgIndex
+                duration: Constants.keycardAnimations.success.duration
+                loops: Constants.keycardAnimations.success.loops
             }
             PropertyChanges {
                 target: message
@@ -757,13 +759,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/strong_success/img-%1"
+                pattern: Constants.keycardAnimations.strongSuccess.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 20
-                duration: 1300
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongSuccess.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongSuccess.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongSuccess.endImgIndex
+                duration: Constants.keycardAnimations.strongSuccess.duration
+                loops: Constants.keycardAnimations.strongSuccess.loops
             }
             PropertyChanges {
                 target: message
@@ -807,13 +809,13 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: "keycard/strong_error/img-%1"
+                pattern: Constants.keycardAnimations.strongError.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 18
-                endImgIndex: 29
-                duration: 1300
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
+                duration: Constants.keycardAnimations.strongError.duration
+                loops: Constants.keycardAnimations.strongError.loops
             }
             PropertyChanges {
                 target: message
