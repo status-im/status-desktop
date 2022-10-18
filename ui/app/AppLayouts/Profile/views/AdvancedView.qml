@@ -20,6 +20,8 @@ SettingsContentBase {
     id: root
 
     property AdvancedStore advancedStore
+    property var accountSettings
+    signal openApplicationLogs()
 
     Item {
         id: advancedContainer
@@ -47,9 +49,9 @@ SettingsContentBase {
                 anchors.rightMargin: 0
                 text: qsTr("Minimize on close")
                 isSwitch: true
-                switchChecked: !localAccountSensitiveSettings.quitOnClose
+                switchChecked: !accountSettings.quitOnClose
                 onClicked: function (checked) {
-                    localAccountSensitiveSettings.quitOnClose = !checked
+                    accountSettings.quitOnClose = !checked
                 }
             }
 
@@ -69,9 +71,7 @@ SettingsContentBase {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
-                    onClicked: {
-                        Qt.openUrlExternally(root.advancedStore.logDir())
-                    }
+                    onClicked: { openApplicationLogs() }
                 }
             }
 
@@ -103,9 +103,9 @@ SettingsContentBase {
                 text: qsTr("Wallet")
                 objectName: "WalletSettingsLineButton"
                 isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isWalletEnabled
+                switchChecked: accountSettings.isWalletEnabled
                 onClicked: {
-                    if (!localAccountSensitiveSettings.isWalletEnabled) {
+                    if (!accountSettings.isWalletEnabled) {
                         confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.wallet
                         confirmationPopup.open()
                     } else {
@@ -120,9 +120,9 @@ SettingsContentBase {
                 anchors.rightMargin: 0
                 text: qsTr("Dapp Browser")
                 isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isBrowserEnabled
+                switchChecked: accountSettings.isBrowserEnabled
                 onClicked: {
-                    if (!localAccountSensitiveSettings.isBrowserEnabled) {
+                    if (!accountSettings.isBrowserEnabled) {
                         confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.browser
                         confirmationPopup.open()
                     } else {
@@ -153,9 +153,9 @@ SettingsContentBase {
                 anchors.rightMargin: 0
                 text: qsTr("Node Management")
                 isSwitch: true
-                switchChecked: localAccountSensitiveSettings.nodeManagementEnabled
+                switchChecked: accountSettings.nodeManagementEnabled
                 onClicked: {
-                    if (!localAccountSensitiveSettings.nodeManagementEnabled) {
+                    if (!accountSettings.nodeManagementEnabled) {
                         confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.nodeManagement
                         confirmationPopup.open()
                     } else {
@@ -170,9 +170,9 @@ SettingsContentBase {
                 anchors.rightMargin: 0
                 text: qsTr("Community Permissions Settings")
                 isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isCommunityPermissionsEnabled
+                switchChecked: accountSettings.isCommunityPermissionsEnabled
                 onClicked: {
-                    if (!localAccountSensitiveSettings.isCommunityPermissionsEnabled) {
+                    if (!accountSettings.isCommunityPermissionsEnabled) {
                         confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.communityPermissions
                         confirmationPopup.open()
                     } else {
@@ -187,9 +187,9 @@ SettingsContentBase {
                 text: qsTr("Discord Import Tool")
                 objectName: "DiscordImportToolSettingsLineButton"
                 isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isDiscordImportToolEnabled
+                switchChecked: accountSettings.isDiscordImportToolEnabled
                 onClicked: {
-                    if (!localAccountSensitiveSettings.isDiscordImportToolEnabled) {
+                    if (!accountSettings.isDiscordImportToolEnabled) {
                         confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.discordImportTool
                         confirmationPopup.open()
                     } else {
@@ -377,7 +377,7 @@ SettingsContentBase {
                 anchors.rightMargin: 0
                 text: qsTr("Full developer mode")
                 isEnabled: {
-                    return !localAccountSensitiveSettings.downloadChannelMessagesEnabled ||
+                    return !accountSettings.downloadChannelMessagesEnabled ||
                         !root.advancedStore.isTelemetryEnabled ||
                         !root.advancedStore.isDebugEnabled ||
                         !root.advancedStore.isAutoMessageEnabled
@@ -397,9 +397,9 @@ SettingsContentBase {
                 anchors.rightMargin: 0
                 text: qsTr("Download messages")
                 isSwitch: true
-                switchChecked: localAccountSensitiveSettings.downloadChannelMessagesEnabled
+                switchChecked: accountSettings.downloadChannelMessagesEnabled
                 onClicked: {
-                    localAccountSensitiveSettings.downloadChannelMessagesEnabled = !localAccountSensitiveSettings.downloadChannelMessagesEnabled
+                    accountSettings.downloadChannelMessagesEnabled = !accountSettings.downloadChannelMessagesEnabled
                 }
             }
 
@@ -454,7 +454,7 @@ SettingsContentBase {
                 showCancelButton: true
                 confirmationText: qsTr("Are you sure you want to enable all the develoer features? The app will be restarted.")
                 onConfirmButtonClicked: {
-                    localAccountSensitiveSettings.downloadChannelMessagesEnabled = true
+                    accountSettings.downloadChannelMessagesEnabled = true
                     Qt.callLater(root.advancedStore.enableDeveloperFeatures)
                     close()
                 }
