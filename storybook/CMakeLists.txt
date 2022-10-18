@@ -20,14 +20,15 @@ find_package(
   COMPONENTS Core Quick QuickControls2
   REQUIRED)
 
-file(GLOB_RECURSE QML_FILES "stubs/*.qml" "mocks/*.qml" "Storybook/*.qml" "../ui/StatusQ/*.qml" "../ui/app/*.qml")
+file(GLOB_RECURSE QML_FILES "stubs/*.qml" "mocks/*.qml" "pages/*.qml" "src/*.qml" "src/qmldir" "../ui/StatusQ/*.qml" "../ui/app/*.qml")
 file(GLOB_RECURSE JS_FILES "../ui/StatusQ/*.js" "../ui/app/*.js")
 
 add_executable(
   ${PROJECT_NAME}
   main.cpp
-  qml.qrc
-  ${QML_FILES}
+  cachecleaner.cpp cachecleaner.h
+  directorieswatcher.cpp directorieswatcher.h
+  ${QML_FILES} main.qml
   ${JS_FILES}
 )
 
@@ -37,7 +38,7 @@ target_link_libraries(
   ${PROJECT_NAME} PRIVATE Qt5::Core Qt5::Quick Qt5::QuickControls2
                           SortFilterProxyModel)
 
-set(QML_IMPORT_PATH ${CMAKE_SOURCE_DIR} CACHE STRING "" FORCE)
+set(QML_IMPORT_PATH "${CMAKE_SOURCE_DIR}/src" CACHE STRING "" FORCE)
 
 if (APPLE)
   find_library(AppKit AppKit)
