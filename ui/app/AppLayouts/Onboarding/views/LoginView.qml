@@ -648,13 +648,13 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardInsertKeycard
             PropertyChanges {
                 target: image
-                pattern: "keycard/card_insert/img-%1"
+                pattern: Constants.keycardAnimations.cardInsert.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 16
-                duration: 1000
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.cardInsert.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.cardInsert.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.cardInsert.endImgIndex
+                duration: Constants.keycardAnimations.cardInsert.duration
+                loops: Constants.keycardAnimations.cardInsert.loops
             }
             PropertyChanges {
                 target: title
@@ -701,13 +701,13 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardInsertedKeycard
             PropertyChanges {
                 target: image
-                pattern: "keycard/card_inserted/img-%1"
+                pattern: Constants.keycardAnimations.cardInserted.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 29
-                duration: 1000
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.cardInserted.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.cardInserted.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.cardInserted.endImgIndex
+                duration: Constants.keycardAnimations.cardInserted.duration
+                loops: Constants.keycardAnimations.cardInserted.loops
             }
             PropertyChanges {
                 target: title
@@ -752,13 +752,13 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardReadingKeycard
             PropertyChanges {
                 target: image
-                pattern: "keycard/warning/img-%1"
+                pattern: Constants.keycardAnimations.warning.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 55
-                duration: 3000
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.warning.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.warning.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.warning.endImgIndex
+                duration: Constants.keycardAnimations.warning.duration
+                loops: Constants.keycardAnimations.warning.loops
             }
             PropertyChanges {
                 target: title
@@ -803,13 +803,13 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardRecognizedKeycard
             PropertyChanges {
                 target: image
-                pattern: "keycard/success/img-%1"
+                pattern: Constants.keycardAnimations.success.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 29
-                duration: 1300
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.success.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.success.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.success.endImgIndex
+                duration: Constants.keycardAnimations.success.duration
+                loops: Constants.keycardAnimations.success.loops
             }
             PropertyChanges {
                 target: title
@@ -941,13 +941,13 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardPinVerified
             PropertyChanges {
                 target: image
-                pattern: "keycard/strong_success/img-%1"
+                pattern: Constants.keycardAnimations.strongSuccess.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 0
-                endImgIndex: 20
-                duration: 1300
-                loops: 1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongSuccess.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongSuccess.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongSuccess.endImgIndex
+                duration: Constants.keycardAnimations.strongSuccess.duration
+                loops: Constants.keycardAnimations.strongSuccess.loops
             }
             PropertyChanges {
                 target: title
@@ -988,13 +988,13 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardWrongKeycard
             PropertyChanges {
                 target: image
-                pattern: "keycard/strong_error/img-%1"
+                pattern: Constants.keycardAnimations.strongError.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 18
-                endImgIndex: 29
-                duration: 1300
-                loops: -1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
+                duration: Constants.keycardAnimations.strongError.duration
+                loops: Constants.keycardAnimations.strongError.loops
             }
             PropertyChanges {
                 target: title
@@ -1094,13 +1094,13 @@ Item {
                   root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPairingSlotsReached
             PropertyChanges {
                 target: image
-                pattern: "keycard/strong_error/img-%1"
+                pattern: Constants.keycardAnimations.strongError.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 18
-                endImgIndex: 29
-                duration: 1300
-                loops: -1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
+                duration: Constants.keycardAnimations.strongError.duration
+                loops: Constants.keycardAnimations.strongError.loops
             }
             PropertyChanges {
                 target: title
@@ -1191,13 +1191,13 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginNotKeycard
             PropertyChanges {
                 target: image
-                pattern: "keycard/strong_error/img-%1"
+                pattern: Constants.keycardAnimations.strongError.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: 0
-                startImgIndexForOtherLoops: 18
-                endImgIndex: 29
-                duration: 1300
-                loops: -1
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
+                duration: Constants.keycardAnimations.strongError.duration
+                loops: Constants.keycardAnimations.strongError.loops
             }
             PropertyChanges {
                 target: title
