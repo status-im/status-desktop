@@ -31,7 +31,7 @@ ActivityNotificationBase {
         }
 
         StatusBaseText {
-            text: qsTr("Request to join")
+            text: qsTr("You were kicked from")
             font.pixelSize: 15
             Layout.alignment: Qt.AlignVCenter
         }
@@ -44,35 +44,8 @@ ActivityNotificationBase {
             Layout.alignment: Qt.AlignVCenter
         }
 
-        StatusBaseText {
-            text: {
-                if (notification.membershipStatus === Constants.activityCenterMembershipStatusPending)
-                    return qsTr("pending")
-                if (notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted)
-                    return qsTr("accepted")
-                if (notification.membershipStatus === Constants.activityCenterMembershipStatusDeclined)
-                    return qsTr("declined")
-                return ""
-            }
-            font.pixelSize: 15
-            color: Style.current.secondaryText
-            Layout.alignment: Qt.AlignVCenter
+        Item {
             Layout.fillWidth: true
-        }
-    }
-
-    ctaComponent: notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted ? visitComponent : null
-
-    Component {
-        id: visitComponent
-
-        StyledTextEdit {
-            text: Utils.getLinkStyle(qsTr("Visit Community"), hoveredLink, Style.current.blue)
-            readOnly: true
-            textFormat: Text.RichText
-            color: Style.current.blue
-            font.pixelSize: 13
-            onLinkActivated: root.store.setActiveCommunity(notification.communityId)
         }
     }
 }
