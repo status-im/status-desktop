@@ -22,7 +22,6 @@ Item {
     signal continueClicked(string output, string username)
     signal usernameUpdated(username: string);
 
-
     property string validationMessage: ""
     property bool valid: false
     property bool isStatus: true
@@ -172,6 +171,7 @@ Item {
                     }
                 }
             }
+
         }
 
         StatusQControls.StatusRoundButton {
@@ -274,4 +274,3 @@ Item {
         }
     }
 }
-
