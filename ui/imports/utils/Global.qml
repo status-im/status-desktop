@@ -19,7 +19,6 @@ Item {
     property var toastMessage
     property var pinnedMessagesPopup
     property var communityProfilePopup
-    property var inviteFriendsToCommunityPopup
     property bool profilePopupOpened: false
 
     property bool activityCenterPopupOpened: false
@@ -31,7 +30,6 @@ Item {
     signal openImagePopup(var image, var contextMenu)
     signal openLinkInBrowser(string link)
     signal openChooseBrowserPopup(string link)
-    signal openPopupRequested(var popupComponent, var params)
     signal openDownloadModalRequested(bool available, string version, string url)
     signal settingsLoaded()
     signal openBackUpSeedPopup()
@@ -179,10 +177,6 @@ Item {
     function playErrorSound() {
         if(errorSound)
             errorSound.play();
-    }
-
-    function settingsHasLoaded() {
-        settingsLoaded()
     }
 
     Component {
