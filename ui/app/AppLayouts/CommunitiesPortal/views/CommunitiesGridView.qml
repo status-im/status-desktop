@@ -63,10 +63,11 @@ StatusScrollView {
             }
 
             locale: root.locale
-            communityId: model.communityId
+            communityId: model.id
             loaded: model.available
             logo: model.icon
             banner: model.banner
+            communityColor: model.color
             name: model.name
             description: model.description
             members: model.members

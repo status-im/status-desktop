@@ -124,7 +124,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.isMember,
       c.permissions.access,
       c.permissions.ensOnly,
-      c.muted, 
+      c.muted,
       c.members.map(proc(member: Member): MemberItem =
         result = self.createMemberItem(member.id, "")),
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled,
@@ -143,6 +143,7 @@ method getCuratedCommunityItem(self: Module, c: CuratedCommunity): CuratedCommun
       c.community.description,
       c.available,
       c.community.images.thumbnail,
+      c.community.images.banner,
       c.community.color,
       c.community.tags,
       len(c.community.members))
