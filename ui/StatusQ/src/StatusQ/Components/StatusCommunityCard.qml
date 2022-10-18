@@ -178,29 +178,37 @@ Rectangle {
     // Community banner:
     Item {
         id: banner
+
         anchors.top: parent.top
-        width: d.cardWidth
+        width: parent.width
         height: d.bannerHeigth
+
         Rectangle {
             id: mask
+
             anchors.fill: parent
+
             radius: d.bannerRadius
             color: root.loaded ? root.communityColor : d.loadingColor2
 
             // hide when image is loaded to avoid glitches on the edge
             visible: image.status !== Image.Ready
         }
+
         Image {
             id: image
-            source: root.banner
+
             anchors.fill: parent
-            anchors.centerIn: parent
-            fillMode: Image.PreserveAspectFit
+
+            source: root.banner
+            fillMode: Image.PreserveAspectCrop
             smooth: true
             visible: false
         }
+
         OpacityMask {
             anchors.fill: image
+
             source: image
             maskSource: mask
         }
