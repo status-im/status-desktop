@@ -54,6 +54,9 @@ ApplicationWindow {
         ListElement {
              title: "KeycardSection"
         }
+        ListElement {
+             title: "AdvancedSettings"
+        }
     }
 
     SplitView {
