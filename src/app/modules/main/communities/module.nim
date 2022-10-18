@@ -176,6 +176,13 @@ method communityAdded*(self: Module, community: CommunityDto) =
 method spectateCommunity*(self: Module, communityId: string): string =
   self.controller.spectateCommunity(communityId)
 
+method navigateToCommunity*(self: Module, communityId: string) =
+  let community = self.view.model().getItemById(communityId)
+  if community.isEmpty() or not (community.spectated() or community.joined()):
+    discard self.controller.spectateCommunity(communityId)
+  else:
+    self.delegate.setActiveSectionById(communityId)
+
 method communityEdited*(self: Module, community: CommunityDto) =
   self.view.model().editItem(self.getCommunityItem(community))
   self.view.communityChanged(community.id)

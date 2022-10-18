@@ -76,7 +76,7 @@ QtObject:
     result.discordChannelsModel = newDiscordChannelsModel()
     result.discordChannelsModelVariant = newQVariant(result.discordChannelsModel)
     result.discordOldestMessageTimestamp = 0
-    result.discordDataExtractionInProgress = false 
+    result.discordDataExtractionInProgress = false
     result.discordImportWarningsCount = 0
     result.discordImportErrorsCount = 0
     result.discordImportProgress = 0
@@ -315,7 +315,10 @@ QtObject:
     read = getDiscordImportCommunityName
     notify = discordImportCommunityNameChanged
 
-  proc spectateCommunity*(self: View, communityId: string, ensName: string) {.slot.} =
+  proc navigateToCommunity*(self: View, communityId: string) {.slot.} =
+    self.delegate.navigateToCommunity(communityId)
+
+  proc spectateCommunity*(self: View, communityId: string) {.slot.} =
     discard self.delegate.spectateCommunity(communityId)
 
   proc createCommunity*(self: View, name: string,

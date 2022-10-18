@@ -40,8 +40,8 @@ SplitView {
                     }
                 }
 
-                function setActiveCommunity() {
-                    logs.logEvent("CommunitiesStore::setActiveCommunity", ["communityId"], arguments)
+                function navigateToCommunity() {
+                    logs.logEvent("CommunitiesStore::navigateToCommunity", ["communityId"], arguments)
                 }
             }
 

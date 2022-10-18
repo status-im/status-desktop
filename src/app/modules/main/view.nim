@@ -150,8 +150,7 @@ QtObject:
     self.delegate.setActiveSection(item)
 
   proc setActiveSectionById*(self: View, sectionId: string) {.slot.} =
-    let item = self.model.getItemById(sectionId)
-    self.delegate.setActiveSection(item)
+    self.delegate.setActiveSectionById(sectionId)
 
   proc setActiveSectionBySectionType*(self: View, sectionType: int) {.slot.} =
     ## This will try to set a section with passed sectionType to active one, in case of communities the first community
