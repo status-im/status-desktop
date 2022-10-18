@@ -162,6 +162,63 @@ QtObject {
         readonly property string changingKeycardPukFailure: "ChangingKeycardPukFailure"
     }
 
+    readonly property QtObject keycardAnimations: QtObject {
+
+        readonly property QtObject cardInsert: QtObject {
+            readonly property string pattern: "keycard/card_insert/img-%1"
+            readonly property int startImgIndexForTheFirstLoop: 0
+            readonly property int startImgIndexForOtherLoops: 0
+            readonly property int endImgIndex: 16
+            readonly property int duration: 1000
+            readonly property int loops: 1
+        }
+
+        readonly property QtObject cardInserted: QtObject {
+            readonly property string pattern: "keycard/card_inserted/img-%1"
+            readonly property int startImgIndexForTheFirstLoop: 0
+            readonly property int startImgIndexForOtherLoops: 0
+            readonly property int endImgIndex: 29
+            readonly property int duration: 1000
+            readonly property int loops: 1
+        }
+
+        readonly property QtObject warning: QtObject {
+            readonly property string pattern: "keycard/warning/img-%1"
+            readonly property int startImgIndexForTheFirstLoop: 0
+            readonly property int startImgIndexForOtherLoops: 0
+            readonly property int endImgIndex: 55
+            readonly property int duration: 3000
+            readonly property int loops: 1
+        }
+
+        readonly property QtObject strongError: QtObject {
+            readonly property string pattern: "keycard/strong_error/img-%1"
+            readonly property int startImgIndexForTheFirstLoop: 0
+            readonly property int startImgIndexForOtherLoops: 18
+            readonly property int endImgIndex: 29
+            readonly property int duration: 1300
+            readonly property int loops: -1
+        }
+
+        readonly property QtObject success: QtObject {
+            readonly property string pattern: "keycard/success/img-%1"
+            readonly property int startImgIndexForTheFirstLoop: 0
+            readonly property int startImgIndexForOtherLoops: 0
+            readonly property int endImgIndex: 29
+            readonly property int duration: 1300
+            readonly property int loops: 1
+        }
+
+        readonly property QtObject strongSuccess: QtObject {
+            readonly property string pattern: "keycard/strong_success/img-%1"
+            readonly property int startImgIndexForTheFirstLoop: 0
+            readonly property int startImgIndexForOtherLoops: 0
+            readonly property int endImgIndex: 20
+            readonly property int duration: 1300
+            readonly property int loops: 1
+        }
+    }
+
     readonly property QtObject keychain: QtObject {
         readonly property QtObject errorType: QtObject {
             readonly property string authentication: "authentication"
