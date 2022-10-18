@@ -34,6 +34,8 @@ include biometrics_pin_invalid_state
 include biometrics_ready_to_sign_state
 include changing_keycard_pin_state
 include changing_keycard_puk_state
+include changing_keycard_pairing_code_state
+include create_pairing_code_state
 include create_pin_state
 include create_puk_state
 include enter_biometrics_password_state
@@ -48,6 +50,8 @@ include factory_reset_success_state
 include insert_keycard_state
 include key_pair_migrate_failure_state
 include key_pair_migrate_success_state
+include keycard_change_pairing_code_failure_state
+include keycard_change_pairing_code_success_state
 include keycard_change_pin_failure_state
 include keycard_change_pin_success_state
 include keycard_change_puk_failure_state
@@ -120,10 +124,14 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newBiometricsPinInvalidState(flowType, backState)
   if stateToBeCreated == StateType.BiometricsReadyToSign:
     return newBiometricsReadyToSignState(flowType, backState)
+  if stateToBeCreated == StateType.ChangingKeycardPairingCode:
+    return newChangingKeycardPairingCodeState(flowType, backState)
   if stateToBeCreated == StateType.ChangingKeycardPin:
     return newChangingKeycardPinState(flowType, backState)
   if stateToBeCreated == StateType.ChangingKeycardPuk:
     return newChangingKeycardPukState(flowType, backState)
+  if stateToBeCreated == StateType.CreatePairingCode:
+    return newCreatePairingCodeState(flowType, backState)
   if stateToBeCreated == StateType.CreatePin:
     return newCreatePinState(flowType, backState)
   if stateToBeCreated == StateType.CreatePuk:
@@ -152,6 +160,10 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newKeyPairMigrateFailureState(flowType, backState)
   if stateToBeCreated == StateType.KeyPairMigrateSuccess:
     return newKeyPairMigrateSuccessState(flowType, backState)
+  if stateToBeCreated == StateType.ChangingKeycardPairingCodeFailure:
+    return newChangingKeycardPairingCodeFailureState(flowType, backState)
+  if stateToBeCreated == StateType.ChangingKeycardPairingCodeSuccess:
+    return newChangingKeycardPairingCodeSuccessState(flowType, backState)
   if stateToBeCreated == StateType.ChangingKeycardPinFailure:
     return newChangingKeycardPinFailureState(flowType, backState)
   if stateToBeCreated == StateType.ChangingKeycardPinSuccess:
@@ -237,7 +249,8 @@ proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycard
     state.flowType == FlowType.DisplayKeycardContent or
     state.flowType == FlowType.RenameKeycard or
     state.flowType == FlowType.ChangeKeycardPin or
-    state.flowType == FlowType.ChangeKeycardPuk:
+    state.flowType == FlowType.ChangeKeycardPuk or
+    state.flowType == FlowType.ChangePairingCode:
       if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
         keycardEvent.error.len > 0 and
         keycardEvent.error == ErrorConnection:
@@ -532,3 +545,34 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
       if keycardEvent.error.len == 0:
         return createState(StateType.ChangingKeycardPukSuccess, state.flowType, nil)
       return createState(StateType.ChangingKeycardPukFailure, state.flowType, nil)
+  
+  if state.flowType == FlowType.ChangePairingCode:
+    if keycardFlowType == ResponseTypeValueEnterPIN and
+      keycardEvent.error.len == 0:
+        return createState(StateType.RecognizedKeycard, state.flowType, nil)
+    if keycardFlowType == ResponseTypeValueEnterPUK and 
+      keycardEvent.error.len == 0:
+        if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
+          return createState(StateType.MaxPinRetriesReached, state.flowType, nil)
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0:
+        if keycardEvent.error == ErrorNotAKeycard:
+          return createState(StateType.NotKeycard, state.flowType, nil)
+        if keycardEvent.error == ErrorNoKeys:
+          return createState(StateType.KeycardEmpty, state.flowType, nil)
+        if keycardEvent.error == ErrorFreePairingSlots:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
+          return createState(StateType.MaxPairingSlotsReached, state.flowType, nil)
+        if keycardEvent.error == ErrorPUKRetries:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseGeneralMessageForLockedState, add = true))
+          return createState(StateType.MaxPukRetriesReached, state.flowType, nil)
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult:
+      if keycardEvent.error.len > 0:
+        if keycardEvent.error == ErrorNoKeys:
+          return createState(StateType.KeycardEmpty, state.flowType, nil)
+        if keycardEvent.error == ErrorNoData:
+          return createState(StateType.KeycardEmptyMetadata, state.flowType, nil)
+      if keycardEvent.error.len == 0:
+        return createState(StateType.ChangingKeycardPairingCodeSuccess, state.flowType, nil)
+      return createState(StateType.ChangingKeycardPairingCodeFailure, state.flowType, nil)

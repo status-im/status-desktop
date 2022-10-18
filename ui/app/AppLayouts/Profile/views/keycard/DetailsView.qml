@@ -179,7 +179,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runCreateNewPairingCodePopup()
+            root.keycardStore.runCreateNewPairingCodePopup(root.keycardUid, d.keyUid)
         }
     }
 }

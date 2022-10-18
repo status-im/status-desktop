@@ -232,6 +232,11 @@ QtObject:
     self.currentFlow = KCSFlowType.ChangePUK
     self.startFlow(payload)
 
+  proc startChangePairingFlow*(self: Service) =
+    var payload = %* { }
+    self.currentFlow = KCSFlowType.ChangePairing
+    self.startFlow(payload)
+
   proc startStoreMetadataFlow*(self: Service, cardName: string, pin: string, walletPaths: seq[string]) =
     var name = cardName
     if cardName.len > CardNameLength:
@@ -296,6 +301,17 @@ QtObject:
       return
     var payload = %* {
       RequestParamPUK: puk
+    }
+    self.resumeFlow(payload)
+
+  proc storePairingCode*(self: Service, pairingCode: string) =
+    if pairingCode.len == 0:
+      error "empty pairing code provided"
+      return
+    var payload = %* {
+      RequestParamOverwrite: true,
+      RequestParamPairingPass: pairingCode,
+      RequestParamNewPairingPass: pairingCode
     }
     self.resumeFlow(payload)
 

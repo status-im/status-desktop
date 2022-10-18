@@ -201,6 +201,9 @@ QtObject:
   proc setKeycarName*(self: View, value: string) {.slot.} =
     self.delegate.setKeycarName(value)
 
+  proc setPairingCode*(self: View, value: string) {.slot.} =
+    self.delegate.setPairingCode(value)
+
   proc checkRepeatedKeycardPinWhileTyping*(self: View, pin: string): bool {.slot.} =
     return self.delegate.checkRepeatedKeycardPinWhileTyping(pin)
 

@@ -39,6 +39,7 @@ type
     tmpValidPuk: bool
     tmpPassword: string
     tmpKeycardName: string
+    tmpPairingCode: string
     tmpSelectedKeyPairIsProfile: bool
     tmpSelectedKeyPairDto: KeyPairDto
     tmpSelectedKeyPairWalletPaths: seq[string]
@@ -204,6 +205,12 @@ proc setKeycarName*(self: Controller, value: string) =
 proc getKeycarName*(self: Controller): string =
   return self.tmpKeycardName
 
+proc setPairingCode*(self: Controller, value: string) =
+  self.tmpPairingCode = value
+
+proc getPairingCode*(self: Controller): string =
+  return self.tmpPairingCode
+
 proc getKeyUidWhichIsBeingAuthenticating*(self: Controller): string =
   self.tmpKeyUidWhichIsBeingAuthenticating
 
@@ -314,6 +321,10 @@ proc runChangePinFlow*(self: Controller) =
 proc runChangePukFlow*(self: Controller) =
   self.cancelCurrentFlow()
   self.keycardService.startChangePukFlow()
+
+proc runChangePairingFlow*(self: Controller) =
+  self.cancelCurrentFlow()
+  self.keycardService.startChangePairingFlow()
 
 proc runStoreMetadataFlow*(self: Controller, cardName: string, pin: string, walletPaths: seq[string]) =
   self.cancelCurrentFlow()
@@ -428,6 +439,9 @@ proc storePinToKeycard*(self: Controller, pin: string, puk: string) =
 
 proc storePukToKeycard*(self: Controller, puk: string) =
   self.keycardService.storePuk(puk)
+
+proc storePairingCodeToKeycard*(self: Controller, pairingCode: string) =
+  self.keycardService.storePairingCode(pairingCode)
 
 proc storeSeedPhraseToKeycard*(self: Controller, seedPhraseLength: int, seedPhrase: string) =
   self.keycardService.storeSeedPhrase(seedPhraseLength, seedPhrase)
