@@ -18,6 +18,8 @@ method getNextPrimaryState*(self: PinVerifiedState, controller: Controller): Sta
     return createState(StateType.CreatePin, self.flowType, nil)
   if self.flowType == FlowType.ChangeKeycardPuk:
     return createState(StateType.CreatePuk, self.flowType, nil)
+  if self.flowType == FlowType.ChangePairingCode:
+    return createState(StateType.CreatePairingCode, self.flowType, nil)
 
 method executeTertiaryCommand*(self: PinVerifiedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
@@ -25,5 +27,6 @@ method executeTertiaryCommand*(self: PinVerifiedState, controller: Controller) =
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
-    self.flowType == FlowType.ChangeKeycardPuk:
+    self.flowType == FlowType.ChangeKeycardPuk or
+    self.flowType == FlowType.ChangePairingCode:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

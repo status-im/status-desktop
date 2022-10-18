@@ -15,7 +15,8 @@ method executePrimaryCommand*(self: KeycardEmptyState, controller: Controller) =
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
-    self.flowType == FlowType.ChangeKeycardPuk:
+    self.flowType == FlowType.ChangeKeycardPuk or
+    self.flowType == FlowType.ChangePairingCode:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method executeTertiaryCommand*(self: KeycardEmptyState, controller: Controller) =
@@ -25,5 +26,6 @@ method executeTertiaryCommand*(self: KeycardEmptyState, controller: Controller) 
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
-    self.flowType == FlowType.ChangeKeycardPuk:
+    self.flowType == FlowType.ChangeKeycardPuk or
+    self.flowType == FlowType.ChangePairingCode:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

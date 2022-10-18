@@ -26,7 +26,8 @@ method resolveKeycardNextState*(self: ReadingKeycardState, keycardFlowType: stri
   if self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
-    self.flowType == FlowType.ChangeKeycardPuk:
+    self.flowType == FlowType.ChangeKeycardPuk or
+    self.flowType == FlowType.ChangePairingCode:
       # this part is only for the flows which are card specific (the card we're running a flow for is known in advance)
       let ensureKeycardPresenceState = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
       if ensureKeycardPresenceState.isNil: # means the keycard is inserted

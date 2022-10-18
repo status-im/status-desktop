@@ -60,6 +60,7 @@ type FlowType* {.pure.} = enum
   RenameKeycard = "RenameKeycard"
   ChangeKeycardPin = "ChangeKeycardPin"
   ChangeKeycardPuk = "ChangeKeycardPuk"
+  ChangePairingCode = "ChangePairingCode"
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -107,6 +108,9 @@ method setPassword*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setKeycarName*(self: AccessInterface, value: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setPairingCode*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkRepeatedKeycardPinWhileTyping*(self: AccessInterface, pin: string): bool {.base.} =
