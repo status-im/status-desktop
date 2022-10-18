@@ -18,6 +18,13 @@ ApplicationWindow {
 
     font.pixelSize: 13
 
+    HotReloader {
+        loader: viewLoader
+        enabled: hotReloadingCheckBox.checked
+
+        onReloaded: reloadingAnimation.restart()
+    }
+
     ListModel {
         id: pagesModel
 
@@ -63,6 +70,31 @@ ApplicationWindow {
                 }
             }
 
+            CheckBox {
+                id: hotReloadingCheckBox
+
+                Layout.fillWidth: true
+
+                text: "Hot reloading"
+
+                Rectangle {
+                    anchors.fill: parent
+                    border.color: "red"
+                    border.width: 2
+                    opacity: 0
+
+                    OpacityAnimator on opacity {
+                        id: reloadingAnimation
+
+                        running: false
+                        from: 1
+                        to: 0
+                        duration: 500
+                        easing.type: Easing.InQuad
+                    }
+                }
+            }
+
             Pane {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -87,7 +119,7 @@ ApplicationWindow {
                 anchors.fill: parent
                 clip: true
 
-                source: Qt.resolvedUrl(`./pages/${root.currentPage}Page.qml`)
+                source: `pages/${root.currentPage}Page.qml`
                 asynchronous: loadAsyncCheckBox.checked
                 visible: status === Loader.Ready
 
@@ -109,5 +141,6 @@ ApplicationWindow {
         property alias currentPage: root.currentPage
         property alias loadAsynchronously: loadAsyncCheckBox.checked
         property alias darkMode: darkModeCheckBox.checked
+        property alias hotReloading: hotReloadingCheckBox.checked
     }
 }
