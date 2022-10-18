@@ -5,3 +5,4 @@ NotificationsView 1.0 NotificationsView.qml
 CommunitiesView 1.0 CommunitiesView.qml
 DevicesView 1.0 DevicesView.qml
 EnsView 1.0 EnsView.qml
+KeycardView 1.0 KeycardView.qml
