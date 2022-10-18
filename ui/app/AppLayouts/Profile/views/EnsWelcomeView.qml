@@ -288,4 +288,3 @@ Item {
         onClicked: startBtnClicked()
     }
 }
-
