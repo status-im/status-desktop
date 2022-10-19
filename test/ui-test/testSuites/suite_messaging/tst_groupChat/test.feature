@@ -47,27 +47,3 @@ Feature: Status Desktop Group Chat
 		 | Admin user message sent | Invited user 1 message sent!! | Invited user 2 message sent!! | Athletic&Nervous |
 
 	    # TODO: Add cleanup scenario. Leave, one by one, the chat
-
-	Scenario: As an admin user I want to change group chat's name, color and image
-		When the user creates a group chat adding users
-      	 | Athletic |
-       	 | Nervous  |
-       	Then the group chat is created
-
-		Given the user opens the edit group chat popup
-		And the user changes the group name to "Fat&Lazy"
-		When the user saves changes
-		Then the chat title is "Fat&Lazy"
-
-		Given the user opens the edit group chat popup
-		And the user changes the group color to "#7CDA00"
-		When the user saves changes
-		Then the chat color is "#7CDA00"
-
-		Given the user opens the edit group chat popup
-		And the user changes the group image
-		When the user saves changes
-		Then the chat image is changed
-
-		When the user leaves current chat
-		Then the chat "Fat&Lazy" does not exist
