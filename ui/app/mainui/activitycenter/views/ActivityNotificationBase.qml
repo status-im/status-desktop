@@ -17,12 +17,27 @@ Item {
     property alias bodyComponent: bodyLoader.sourceComponent
     property alias badgeComponent: badgeLoader.sourceComponent
     property alias ctaComponent: ctaLoader.sourceComponent
+    property alias previousNotificationIndex: dateGroupLabel.previousMessageIndex
 
-    height: Math.max(50, bodyLoader.height + (badgeLoader.item ? badgeLoader.height : 0))
+    height: Math.max(50, bodyLoader.height +
+                         (dateGroupLabel.visible ? dateGroupLabel.height : 0) +
+                         (badgeLoader.item ? badgeLoader.height : 0))
+
+    StatusDateGroupLabel {
+        id: dateGroupLabel
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.left: parent.left
+        messageTimestamp: notification.timestamp
+        previousMessageTimestamp: root.previousNotificationIndex == 0 ? "" :
+                                        root.store.activityCenterList.getNotificationData(previousNotificationIndex,
+                                                                                          "timestamp")
+        visible: text !== ""
+    }
 
     Loader {
         id: bodyLoader
-        anchors.top: parent.top
+        anchors.top: dateGroupLabel.visible ? dateGroupLabel.bottom : parent.top
         anchors.right: ctaLoader.left
         anchors.left: parent.left
     }
