@@ -770,11 +770,11 @@ method onChatRenamed*(self: Module, chatId: string, newName: string) =
 method onGroupChatDetailsUpdated*(self: Module, chatId, newName, newColor, newImage: string) =
   self.view.chatsModel().updateNameColorIcon(chatId, newName, newColor, newImage)
 
-method acceptRequestToJoinCommunity*(self: Module, requestId: string) =
-  self.controller.acceptRequestToJoinCommunity(requestId)
+method acceptRequestToJoinCommunity*(self: Module, requestId: string, communityId: string) =
+  self.controller.acceptRequestToJoinCommunity(requestId, communityId)
 
-method declineRequestToJoinCommunity*(self: Module, requestId: string) =
-  self.controller.declineRequestToJoinCommunity(requestId)
+method declineRequestToJoinCommunity*(self: Module, requestId: string, communityId: string) =
+  self.controller.declineRequestToJoinCommunity(requestId, communityId)
 
 method createCommunityChannel*(self: Module, name, description, emoji, color, categoryId: string) =
   self.controller.createCommunityChannel(name, description, emoji, color, categoryId)

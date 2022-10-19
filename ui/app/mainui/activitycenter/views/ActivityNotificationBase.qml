@@ -19,7 +19,7 @@ Item {
     property alias ctaComponent: ctaLoader.sourceComponent
     property alias previousNotificationIndex: dateGroupLabel.previousMessageIndex
 
-    height: Math.max(50, bodyLoader.height +
+    height: Math.max(60, bodyLoader.height +
                          (dateGroupLabel.visible ? dateGroupLabel.height : 0) +
                          (badgeLoader.item ? badgeLoader.height : 0))
 

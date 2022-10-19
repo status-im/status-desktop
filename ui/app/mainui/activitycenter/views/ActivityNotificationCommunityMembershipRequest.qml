@@ -74,13 +74,7 @@ ActivityNotificationBase {
         pending: notification.membershipStatus === Constants.activityCenterMembershipStatusPending
         accepted: notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted
         declined: notification.membershipStatus === Constants.activityCenterMembershipStatusDeclined
-        onAcceptRequestToJoinCommunity: {
-            root.store.setActiveCommunity(message.communityId)
-            root.store.acceptRequestToJoinCommunity(notification.id)
-        }
-        onDeclineRequestToJoinCommunity: {
-            root.store.setActiveCommunity(message.communityId)
-            root.store.declineRequestToJoinCommunity(notification.id)
-        }
+        onAcceptRequestToJoinCommunity: root.store.acceptRequestToJoinCommunity(notification.id, notification.communityId)
+        onDeclineRequestToJoinCommunity: root.store.declineRequestToJoinCommunity(notification.id, notification.communityId)
     }
 }

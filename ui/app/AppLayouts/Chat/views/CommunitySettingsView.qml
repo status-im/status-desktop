@@ -234,8 +234,8 @@ StatusSectionLayout {
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
                 onBanUserClicked: root.rootStore.banUserFromCommunity(id)
                 onUnbanUserClicked: root.rootStore.unbanUserFromCommunity(id)
-                onAcceptRequestToJoin: root.rootStore.acceptRequestToJoinCommunity(id)
-                onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id)
+                onAcceptRequestToJoin: root.rootStore.acceptRequestToJoinCommunity(id, root.communityId)
+                onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id, root.communityId)
             }
 
             CommunityPermissionsSettingsPanel {

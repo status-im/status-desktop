@@ -247,10 +247,10 @@ method initListOfMyContacts*(self: AccessInterface, pubKeys: string) {.base.}  =
 method clearListOfMyContacts*(self: AccessInterface) {.base.}  =
   raise newException(ValueError, "No implementation available")
 
-method acceptRequestToJoinCommunity*(self: AccessInterface, requestId: string) {.base.} =
+method acceptRequestToJoinCommunity*(self: AccessInterface, requestId: string, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method declineRequestToJoinCommunity*(self: AccessInterface, requestId: string) {.base.} =
+method declineRequestToJoinCommunity*(self: AccessInterface, requestId: string, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method createCommunityChannel*(self: AccessInterface, name: string, description: string,
