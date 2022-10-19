@@ -1,7 +1,5 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QQmlContext>
-#include <QQmlEngine>
 
 #include <cachecleaner.h>
 #include <directorieswatcher.h>
@@ -18,7 +16,7 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    QStringList additionalImportPaths {
+    const QStringList additionalImportPaths {
         SRC_DIR + QStringLiteral("/../ui/StatusQ/src"),
         SRC_DIR + QStringLiteral("/../ui/app"),
         SRC_DIR + QStringLiteral("/../ui/imports"),

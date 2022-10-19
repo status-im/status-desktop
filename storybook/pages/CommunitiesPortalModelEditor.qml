@@ -51,7 +51,7 @@ ListView {
 
         Label {
             Layout.fillWidth: true
-            text: "community id: " + model.communityId
+            text: "community id: " + model.id
             font.weight: Font.Bold
         }
 

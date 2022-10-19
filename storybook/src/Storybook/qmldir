@@ -1,7 +1,12 @@
+CompilationErrorsBox 1.0 CompilationErrorsBox.qml
+HotComponentFromSource 1.0 HotComponentFromSource.qml
+HotLoader 1.0 HotLoader.qml
 HotReloader 1.0 HotReloader.qml
+HotReloaderControls 1.0 HotReloaderControls.qml
 ImageSelectPopup 1.0 ImageSelectPopup.qml
 Logs 1.0 Logs.qml
 LogsAndControlsPanel 1.0 LogsAndControlsPanel.qml
 LogsView 1.0 LogsView.qml
 PagesList 1.0 PagesList.qml
+SourceCodeBox 1.0 SourceCodeBox.qml
 singleton StorybookUtils 1.0 StorybookUtils.qml
