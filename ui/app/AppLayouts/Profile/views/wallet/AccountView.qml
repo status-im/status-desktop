@@ -1,6 +1,5 @@
 import QtQuick 2.13
 
-
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
@@ -18,8 +17,10 @@ import "../../popups"
 Item {
     id: root
     signal goBack
+    signal copyToClipboard(string address)
 
     property WalletStore walletStore
+    property var currentAccount
     property var emojiPopup
 
     Column {
@@ -42,11 +43,11 @@ Item {
                 asset: StatusAssetSettings {
                     width: isLetterIdenticon ? 40 : 20
                     height: isLetterIdenticon ? 40 : 20
-                    color: walletStore.currentAccount.color
-                    emoji: walletStore.currentAccount.emoji
-                    name: !walletStore.currentAccount.emoji ? "filled-account": ""
+                    color: currentAccount.color
+                    emoji: currentAccount.emoji
+                    name: !currentAccount.emoji ? "filled-account": ""
                     letterSize: 14
-                    isLetterIdenticon: !!walletStore.currentAccount.emoji
+                    isLetterIdenticon: !!currentAccount.emoji
                     bgWidth: 40
                     bgHeight: 40
                     bgColor: Theme.palette.primaryColor3
@@ -59,7 +60,7 @@ Item {
                     StatusBaseText {
                         objectName: "walletAccountViewAccountName"
                         id: accountName
-                        text: walletStore.currentAccount.name
+                        text: currentAccount.name
                         font.weight: Font.Bold
                         font.pixelSize: 28
                         color: Theme.palette.directColor1
@@ -76,13 +77,13 @@ Item {
                     }
                 }
                 StatusAddressPanel {
-                    address: walletStore.currentAccount.address
+                    address: currentAccount.address
 
                     font.weight: Font.Normal
 
                     showFrame: false
 
-                    onDoCopy: (address) => globalUtils.copyToClipboard(address)
+                    onDoCopy: (address) => root.copyToClipboard(address)
                 }
             }
         }
@@ -98,7 +99,7 @@ Item {
                 maxWidth: parent.width
                 primaryText: qsTr("Type")
                 secondaryText: {
-                    const walletType = walletStore.currentAccount.walletType
+                    const walletType = currentAccount.walletType
                     if (walletType === "watch") {
                         return qsTr("Watch-Only Account")
                     } else if (walletType === "generated" || walletType === "") {
@@ -118,15 +119,15 @@ Item {
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Derivation Path")
-                secondaryText: walletStore.currentAccount.path
-                visible: walletStore.currentAccount.path
+                secondaryText: currentAccount.path
+                visible: currentAccount.path
             }
 
             InformationTile {
                 maxWidth: parent.width
-                visible: walletStore.currentAccount.relatedAccounts.count > 0
+                visible: currentAccount.relatedAccounts.count > 0
                 primaryText: qsTr("Related Accounts")
-                tagsModel: walletStore.currentAccount.relatedAccounts
+                tagsModel: currentAccount.relatedAccounts
                 tagsDelegate: StatusListItemTag {
                     color: model.color
                     height: 24
@@ -144,20 +145,20 @@ Item {
 
         StatusButton {
             objectName: "deleteAccountButton"
-            visible: walletStore.currentAccount.walletType !== ""
+            visible: currentAccount.walletType !== ""
             text: qsTr("Remove from your profile")
             type: StatusBaseButton.Type.Danger
 
             ConfirmationDialog {
                 id: confirmationPopup
                 confirmButtonObjectName: "confirmDeleteAccountButton"
-                header.title: qsTr("Confirm %1 Removal").arg(walletStore.currentAccount.name)
+                header.title: qsTr("Confirm %1 Removal").arg(currentAccount.name)
                 confirmationText: qsTr("You will not be able to restore viewing access to this account in the future unless you enter this account’s address again.")
                 confirmButtonLabel: qsTr("Remove Account")
                 onConfirmButtonClicked: {
                     confirmationPopup.close();
                     root.goBack();
-                    root.walletStore.deleteAccount(walletStore.currentAccount.address);
+                    root.walletStore.deleteAccount(currentAccount.address);
                 }
 
             }

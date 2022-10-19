@@ -179,6 +179,8 @@ StatusSectionLayout {
                 emojiPopup: root.emojiPopup
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.wallet)
                 contentWidth: d.contentWidth
+
+                onCopyToClipboard: globalUtils.copyToClipboard(address)
             }
 
             AppearanceView {

@@ -12,11 +12,13 @@ import "../../stores"
 Column {
     id: root
 
-    property WalletStore walletStore
+    property var dappList: ListModel {}
+    signal disconnect(string dappName)
+    signal disconnectAddress(string dappName, string address)
 
     Repeater {
         id: permissionsList
-        model: walletStore.dappList
+        model: root.dappList
         delegate: Item {
             width: parent.width
             height: listItem.height + spacer.height
@@ -39,9 +41,7 @@ Column {
                         text: model.accounts.count > 1 ? qsTr("Disconnect All") : qsTr("Disconnect")
                         size: StatusBaseButton.Size.Small
                         type: StatusBaseButton.Type.Danger
-                        onClicked: {
-                            walletStore.disconnect(model.name)
-                        }
+                        onClicked: root.disconnect(model.name)
                     }
                 ]
                 bottomModel: model.accounts
@@ -56,10 +56,7 @@ Column {
                     asset.letterSize: 14
                     asset.isLetterIdenticon: !!model.emoji
                     asset.bgColor: Theme.palette.indirectColor1
-                    onClicked: {
-                        const dappName = walletStore.dappList.rowData(outerIndex, 'name')
-                        walletStore.disconnectAddress(dappName, model.address)
-                    }
+                    onClicked: root.disconnectAddress(model.name, model.address)
                 }
             }
 

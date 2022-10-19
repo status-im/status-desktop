@@ -71,6 +71,18 @@ ApplicationWindow {
         ListElement {
              title: "AdvancedSettings"
         }
+        ListElement {
+             title: "WalletSettings"
+        }
+        ListElement {
+             title: "WalletSettingsAccount"
+        }
+        ListElement {
+             title: "WalletSettingsNetworks"
+        }
+        ListElement {
+             title: "WalletSettingsDappPermissions"
+        }
     }
 
     SplitView {

@@ -140,12 +140,15 @@ SettingsContentBase {
 
             PermissionsListView {
                 id: permissionListView
-                walletStore: root.store.walletStore
                 visible: root.store.walletStore.dappList.count > 0
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.leftMargin: Style.current.padding
                 anchors.rightMargin: Style.current.padding
+
+                dappList: root.store.walletStore.dappList
+                onDisconnect: root.store.walletStore.disconnect(dappName)
+                onDisconnectAddress: root.store.walletStore.disconnectAddress(dappName, address)
             }
         } // Column
     } // Item

@@ -13,7 +13,9 @@ import "../../controls"
 Item {
     id: root
 
-    property WalletStore walletStore
+    property var dappList: ListModel {}
+    signal disconnect(string dappName)
+    signal disconnectAddress(string dappName, string address)
 
     Column {
         id: column
@@ -24,7 +26,10 @@ Item {
         PermissionsListView {
             id: permissionsList
             width: parent.width
-            walletStore: root.walletStore
+
+            dappList: root.dappList
+            onDisconnect: root.disconnect(dappName)
+            onDisconnectAddress: root.disconnectAddress(dappName, address)
         }
     }
 }

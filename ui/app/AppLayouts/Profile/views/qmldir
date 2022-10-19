@@ -7,3 +7,7 @@ DevicesView 1.0 DevicesView.qml
 EnsView 1.0 EnsView.qml
 KeycardView 1.0 KeycardView.qml
 AdvancedView 1.0 AdvancedView.qml
+WalletView 1.0 WalletView.qml
+AccountView 1.0 wallet/AccountView.qml
+NetworksView 1.0 wallet/NetworksView.qml
+DappPermissionsView 1.0 wallet/DappPermissionsView.qml

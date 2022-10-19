@@ -13,7 +13,8 @@ Item {
     id: root
     signal goBack
 
-    property WalletStore walletStore
+    property var layer1Networks
+    property var layer2Networks
 
     Column {
         id: column
@@ -23,7 +24,7 @@ Item {
 
         Repeater {
             id: layer1List
-            model: walletStore.layer1Networks
+            model: layer1Networks
             delegate: WalletNetworkDelegate {
                 network: model
             }
@@ -39,7 +40,7 @@ Item {
 
         Repeater {
             id: layer2List
-            model: walletStore.layer2Networks
+            model: layer2Networks
             delegate: WalletNetworkDelegate {
                 network: model
             }

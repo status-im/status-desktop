@@ -120,7 +120,6 @@ StatusModal {
                 if (!accountNameInput.valid) {
                      return
                  }
-
                 const error = walletStore.updateCurrentAccount(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor, accountNameInput.input.asset.emoji);
 
                 if (error) {

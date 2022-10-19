@@ -23,6 +23,8 @@ SettingsContentBase {
     property var rootStore
     property var walletStore
 
+    signal copyToClipboard(string address)
+
     readonly property int mainViewIndex: 0;
     readonly property int networksViewIndex: 1;
     readonly property int accountViewIndex: 2;
@@ -81,7 +83,8 @@ SettingsContentBase {
         }
 
         NetworksView {
-            walletStore: root.walletStore
+            layer1Networks: root.walletStore.layer1Networks
+            layer2Networks: root.walletStore.layer2Networks
 
             onGoBack: {
                 stackContainer.currentIndex = mainViewIndex
@@ -89,16 +92,20 @@ SettingsContentBase {
         }
 
         AccountView {
+            currentAccount: root.walletStore.currentAccount
             walletStore: root.walletStore
             emojiPopup: root.emojiPopup
 
             onGoBack: {
                 stackContainer.currentIndex = mainViewIndex
             }
+            onCopyToClipboard: root.copyToClipboard(address)
         }
 
         DappPermissionsView {
-            walletStore: root.walletStore
+            dappList: root.walletStore.dappList
+            onDisconnect: root.walletStore.disconnect(dappName)
+            onDisconnectAddress: root.walletStore.disconnectAddress(dappName, address)
         }
 
         Component {
