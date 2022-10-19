@@ -13,11 +13,6 @@ ActivityNotificationBase {
     id: root
 
     property var messageContextMenu
-    property int previousNotificationIndex
-
-    readonly property string previousNotificationTimestamp: previousNotificationIndex == 0 ?
-                                                                "" : root.store.activityCenterList.getNotificationData(
-                                                                        previousNotificationIndex, "timestamp")
 
     signal activityCenterClose()
 
@@ -59,7 +54,5 @@ ActivityNotificationBase {
             root.activityCenterClose()
             root.store.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.id)
         }
-        prevMessageIndex: root.previousNotificationIndex
-        prevMsgTimestamp: root.previousNotificationTimestamp
     }
 }

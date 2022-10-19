@@ -17,11 +17,6 @@ ActivityNotificationBase {
     id: root
 
     property var messageContextMenu
-    property int previousNotificationIndex
-
-    readonly property string previousNotificationTimestamp: previousNotificationIndex == 0 ?
-                                                                "" : root.store.activityCenterList.getNotificationData(
-                                                                        previousNotificationIndex, "timestamp")
 
     signal activityCenterClose()
 
@@ -36,12 +31,10 @@ ActivityNotificationBase {
         senderId: notification.author
         senderIcon: contactDetails.displayIcon
         senderDisplayName: contactDetails.name
-
+        messageContextMenu: root.messageContextMenu
         activityCenterMessage: true
         activityCenterMessageRead: false
         scrollToBottom: null
-        prevMessageIndex: root.previousNotificationIndex
-        prevMsgTimestamp: root.previousNotificationTimestamp
         onImageClicked: Global.openImagePopup(image, root.messageContextMenu)
         messageClickHandler: (sender,
                         point,

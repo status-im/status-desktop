@@ -252,6 +252,7 @@ Popup {
                     width: listView.availableWidth
                     store: root.store
                     notification: model
+                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                 }
             }
             DelegateChoice {
@@ -261,6 +262,7 @@ Popup {
                     width: listView.availableWidth
                     store: root.store
                     notification: model
+                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                 }
             }
         }
