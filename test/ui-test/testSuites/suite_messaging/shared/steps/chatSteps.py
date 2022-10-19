@@ -13,15 +13,15 @@ _statusCreateChatView = StatusCreateChatScreen()
 ### PRECONDITIONS region:
 #########################
 
-@Given("the user sends a chat message |any|")
+@Given("the user sends a chat message \"|any|\"")
 def step(context, message):
     the_user_sends_a_chat_message(message)
     
-@Given("the image |any| is not unfurled in the chat")
+@Given("the image \"|any|\" is not unfurled in the chat")
 def step(context: any, image_link: str):
     _statusChat.verify_image_unfurled_status(image_link, False)
        
-@Given("the user types |any|") 
+@Given("the user types \"|any|\"") 
 def step(context, message): 
     _statusChat.type_message(message)
     
@@ -41,7 +41,7 @@ def step(context):
 def step(context):
     the_group_chat_is_created()
     
-@Given("the user clicks on |any| chat")
+@Given("the user clicks on \"|any|\" chat")
 def step(context, chatName):
     _statusMain.open_chat(chatName)
     
@@ -49,11 +49,11 @@ def step(context, chatName):
 def step(context):
     _statusChat.open_group_chat_edit_popup()
     
-@Given("the user changes the group name to |any|")
+@Given("the user changes the group name to \"|any|\"")
 def step(context, groupName):
     _statusChat.group_chat_edit_name(groupName)
     
-@Given("the user changes the group color to |any|")
+@Given("the user changes the group color to \"|any|\"")
 def step(context, groupColor):
     _statusChat.group_chat_edit_color(groupColor)
 
@@ -77,19 +77,19 @@ def step(context):
 def step(context):
     when_the_user_opens_the_chat_section()
 
-@When("the user sends a chat message |any|")
+@When("the user sends a chat message \"|any|\"")
 def step(context, message):
     the_user_sends_a_chat_message(message)
     
-@When("the user replies to the message at index |any| with |any|")
+@When("the user replies to the message at index |any| with \"|any|\"")
 def step(context, message_index, message):
     _statusChat.reply_to_message_at_index(message_index, message)
     
-@When("the user edits the message at index |any| and changes it to |any|" )
+@When("the user edits the message at index |any| and changes it to \"|any|\"" )
 def step(context, message_index, message):
     _statusChat.edit_message_at_index(message_index, message)
     
-@When("the user marks the channel |any| as read")
+@When("the user marks the channel \"|any|\" as read")
 def step(context, channel):
     _statusMain.mark_as_read(channel)
     
@@ -110,15 +110,15 @@ def step(context):
 def step(context):
     _statusChat.press_enter()
 
-@When("the user inputs a mention to |any| with message |any|")
+@When("the user inputs a mention to \"|any|\" with message \"|any|\"")
 def step(context,displayName,message):
     _statusChat.send_message_with_mention(displayName, message)
     
-@When("the user sends the emoji |any| as a message")
+@When("the user sends the emoji \"|any|\" as a message")
 def step(context, emoji_short_name):
     _statusChat.send_emoji(emoji_short_name, "")
 
-@When("the user sends the emoji |any| with message |any|")
+@When("the user sends the emoji \"|any|\" with message \"|any|\"")
 def step(context, emoji_short_name, message):
     _statusChat.send_emoji(emoji_short_name, message)
 
@@ -134,7 +134,7 @@ def step(context):
     _statusChat.send_message(message)
     context.userData["randomMessage"] = message
 
-@When("the user switches to |any| chat")
+@When("the user switches to \"|any|\" chat")
 def step(context, chatName):
     _statusChat.switch_to_chat(chatName)
     
@@ -154,21 +154,21 @@ def step(context):
 ### VERIFICATIONS region:
 #########################
 
-@Then("the last chat message contains |any|")
+@Then("the last chat message contains \"|any|\"")
 def step(context, message):
     _statusChat.verify_last_message_sent(message)
     
-@Then("the chat message |any| is displayed as a reply")
+@Then("the chat message \"|any|\" is displayed as a reply")
 def step(context, message):
     # TODO: Check the last message is really a reply.
     _statusChat.verify_last_message_sent(message) 
     
-@Then("the chat message |any| is displayed as an edited one")
+@Then("the chat message \"|any|\" is displayed as an edited one")
 def step(context, message):
     # TODO: Check last message is an edited one.
     _statusChat.verify_last_message_sent(message)  
          
-@Then("the last message displayed is not |any|")
+@Then("the last message displayed is not \"|any|\"")
 def step(context, message):
     _statusChat.verify_last_message_sent_is_not(message)
     
@@ -178,7 +178,6 @@ def step(context):
     
 @Then("the GIF message is displayed")
 def step(context):
-    # TODO: It should be a specific verification call instead of adding here a string (Screen layer responsibility)
     _statusChat.verify_last_message_sent("tenor.gif")
     
 @Then("the image |any| is unfurled in the chat")
@@ -189,11 +188,11 @@ def step(context: any, image_link: str):
 def step(context):
     _statusChat.cannot_delete_last_message()   
 
-@Then("the |any| mention with message |any| have been sent")
+@Then("the \"|any|\" mention with message \"|any|\" have been sent")
 def step(context,displayName,message):
     _statusChat.verify_last_message_sent_contains_mention(displayName, message)
     
-@Then("the user cannot input a mention to a not existing user |any|")
+@Then("the user cannot input a mention to a not existing user \"|any|\"")
 def step(context, displayName):
     _statusChat.cannot_do_mention(displayName)
   
@@ -217,11 +216,11 @@ def step(context):
 def step(context):
     the_group_chat_is_created()
     
-@Then("the chat title is |any|")
+@Then("the chat title is \"|any|\"")
 def step(context, title):
     _statusChat.verify_chat_title(title)
 
-@Then("the chat color is |any|")
+@Then("the chat color is \"|any|\"")
 def step(context, color):
     _statusChat.verify_chat_color(color)
 
@@ -229,7 +228,7 @@ def step(context, color):
 def step(context):
     _statusChat.verify_chat_image(context.userData["fixtures_root"])
 
-@Then("the chat |any| does not exist")
+@Then("the chat \"|any|\" does not exist")
 def step(context, chatName):
     _statusMain.verify_chat_does_not_exist(chatName)
     

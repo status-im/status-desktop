@@ -27,7 +27,7 @@ _statusChat = StatusChatScreen()
 ### PRECONDITIONS region:
 #########################
 
-@Given("the user starts the application with a specific data folder |any|")
+@Given("the user starts the application with a specific data folder \"|any|\"")
 def step(context, data_folder_path):
     clear_directory(context.userData["status_data_folder_path"])
     copy_directory(data_folder_path, context.userData["status_data_folder_path"])
@@ -53,7 +53,7 @@ def step(context, text, obj):
 def step(context, obj):
     click_on_an_object(obj)
 
-@When("the user joins chat room |any|")
+@When("the user joins chat room \"|any|\"")
 def step(context, room):
     when_the_user_joins_chat_room(room)
 

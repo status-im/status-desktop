@@ -6,7 +6,7 @@ Feature: Status Desktop Transaction
 		Given A first time user lands on the status desktop and navigates to import seed phrase
 		When The user inputs the seed phrase pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial
 		And user clicks on the following ui-component seedPhraseView_Submit_Button
-		When user signs up with username tester123 and password qqqqqqqqqq
+		When user signs up with username "tester123" and password "qqqqqqqqqq"
 		Then the user lands on the signed in app
 		When the user opens app settings screen
 		And the user activates wallet and opens the wallet settings

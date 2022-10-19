@@ -5,7 +5,7 @@ _loginScreen = StatusLoginScreen()
 #########################
 ### PRECONDITIONS region:
 ######################### 
-@Given("the user |any| logs in with password |any|")
+@Given("the user \"|any|\" logs in with password \"|any|\"")
 def step(context, username, password):
     the_user_any_logs_in_with_password(username, password)
 
@@ -13,7 +13,7 @@ def step(context, username, password):
 ### ACTIONS region:
 #########################
    
-@When("the user |any| logs in with password |any|")
+@When("the user \"|any|\" logs in with password \"|any|\"")
 def step(context, username, password):
     the_user_any_logs_in_with_password(username, password)
 

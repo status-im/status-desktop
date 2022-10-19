@@ -16,7 +16,7 @@ Feature: Status Desktop community messages
 
     Background:
         Given A first time user lands on the status desktop and generates new key
-        When user signs up with username tester123 and password TesTEr16843/!@00
+        When user signs up with username "tester123" and password "TesTEr16843/!@00"
         Then the user lands on the signed in app
         When the user opens the community portal section
         Then the user lands on the community portal section
@@ -44,10 +44,10 @@ Feature: Status Desktop community messages
     Scenario: User pins and unpins messages
         # This one wont work until #6554 is fixed
         # And the amount of pinned messages is 0
-        When the user sends the chat message Message 1
+        When the user sends the chat message "Message 1"
         And the user pins the message at index 0
         Then the amount of pinned messages is 1
-        Then user is able to send chat message
+        Then the user is able to send chat message
          | message               |
          | Hello                 |
          | How are you           |

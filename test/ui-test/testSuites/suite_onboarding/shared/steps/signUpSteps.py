@@ -25,7 +25,7 @@ def step(context):
 ### ACTIONS region:
 #########################
 
-@When("user signs up with username |any| and password |any|")
+@When("user signs up with username \"|any|\" and password \"|any|\"")
 def step(context, username, password):
     when_the_user_signs_up(username, password)
 
