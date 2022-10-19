@@ -7,7 +7,8 @@
 
 #include <QtQmlIntegration>
 
-namespace Status::Wallet {
+namespace Status::Wallet
+{
 
 /// Controlls asset for an account using hardcoded network and token lists
 ///
@@ -15,7 +16,7 @@ namespace Status::Wallet {
 /// \todo impliement \c AccountsBalanceService to fetch and cache realtime balance (or better implement this in status-go)
 /// \todo implement native token fetching
 /// \todo double responsibility, split functionality in asset management and balance
-class AccountAssetsController: public QObject
+class AccountAssetsController : public QObject
 {
     Q_OBJECT
     QML_ELEMENT

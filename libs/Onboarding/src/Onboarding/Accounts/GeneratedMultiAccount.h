@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Common/Constants.h"
-#include "Common/SigningPhrases.h"
 #include "Common/Json.h"
+#include "Common/SigningPhrases.h"
 
 #include <QtCore>
 
@@ -27,7 +27,7 @@ struct DerivedAccountDetails
             result.publicKey = Json::getMandatoryProp(jsonObj, "publicKey")->toString();
             result.address = Json::getMandatoryProp(jsonObj, "address")->toString();
         }
-        catch (std::exception e)
+        catch(std::exception e)
         {
             qWarning() << QString("Mapping DerivedAccountDetails failed: %1").arg(e.what());
         }
@@ -47,7 +47,7 @@ struct DerivedAccounts
     {
         auto result = DerivedAccounts();
 
-        for(const auto &derivationPath : jsonObj.keys())
+        for(const auto& derivationPath : jsonObj.keys())
         {
             auto derivedObj = jsonObj.value(derivationPath).toObject();
             if(derivationPath == Constants::General::PathWhisper.get())
@@ -76,17 +76,19 @@ struct StoredMultiAccount
 {
     QString publicKey;
     QString address;
-
 };
 
 static StoredMultiAccount toStoredMultiAccount(const QJsonObject& jsonObj)
 {
     auto result = StoredMultiAccount();
 
-    try {
+    try
+    {
         result.address = Json::getMandatoryProp(jsonObj, "address")->toString();
         result.publicKey = Json::getMandatoryProp(jsonObj, "publicKey")->toString();
-    } catch (std::exception e) {
+    }
+    catch(std::exception e)
+    {
         qWarning() << QString("Mapping StoredMultiAccount failed: %1").arg(e.what());
     }
 
@@ -128,7 +130,7 @@ struct GeneratedMultiAccount
                 result.derivedAccounts = DerivedAccounts::toDerivedAccounts(derivedObj);
             }
         }
-        catch (std::exception e)
+        catch(std::exception e)
         {
             qWarning() << QString("Mapping GeneratedMultiAccount failed: %1").arg(e.what());
         }
@@ -137,4 +139,4 @@ struct GeneratedMultiAccount
     }
 };
 
-}
+} // namespace Status::Onboarding

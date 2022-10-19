@@ -14,24 +14,24 @@ namespace Accounts = Status::StatusGo::Accounts;
 
 using json = nlohmann::json;
 
-namespace Status::StatusGo::Wallet {
+namespace Status::StatusGo::Wallet
+{
 
 /// \note equivalent of status-go's Token@token.go
 /// \see \c getDerivedAddressesForPath
 struct Token
 {
     Accounts::EOAddress address;
-	QString name;
-	QString symbol;
-	QColor color;
-	unsigned int decimals;
-	ChainID  chainId;
+    QString name;
+    QString symbol;
+    QColor color;
+    unsigned int decimals;
+    ChainID chainId;
 };
 
 using TokenPtr = std::shared_ptr<Token>;
 using Tokens = std::vector<Token>;
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Token, address, name,symbol,
-	                               color, decimals, chainId);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Token, address, name, symbol, color, decimals, chainId);
 
-}
+} // namespace Status::StatusGo::Wallet

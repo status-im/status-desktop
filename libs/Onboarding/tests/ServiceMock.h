@@ -18,7 +18,7 @@ namespace Status::Testing
 class AccountsServiceMock final : public Onboarding::AccountsServiceInterface
 {
 public:
-    virtual ~AccountsServiceMock() override {};
+    virtual ~AccountsServiceMock() override{};
 
     MOCK_METHOD(bool, init, (const fs::path&), (override));
     MOCK_METHOD(std::vector<Onboarding::MultiAccount>, openAndListAccounts, (), (override));
@@ -34,4 +34,4 @@ public:
     MOCK_METHOD(void, deleteMultiAccount, (const Onboarding::MultiAccount&), (override));
 };
 
-}
+} // namespace Status::Testing

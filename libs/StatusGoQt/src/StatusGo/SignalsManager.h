@@ -2,7 +2,8 @@
 
 #include <QObject>
 
-namespace Status::StatusGo {
+namespace Status::StatusGo
+{
 
 enum SignalType
 {
@@ -35,7 +36,6 @@ class SignalsManager final : public QObject
     Q_OBJECT
 
 public:
-
     static SignalsManager* instance();
 
     void processSignal(const QString& ev);
@@ -57,6 +57,7 @@ signals:
     void historyRequestStarted(const QString& error);
     void historyRequestBatchProcessed(const QString& error);
     void historyRequestCompleted(const QString& error);
+
 private:
     explicit SignalsManager();
     ~SignalsManager();
@@ -67,4 +68,4 @@ private:
     void decode(const QJsonObject& signalEvent);
 };
 
-}
+} // namespace Status::StatusGo

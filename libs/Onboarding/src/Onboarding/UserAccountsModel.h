@@ -4,7 +4,8 @@
 
 #include <QAbstractListModel>
 
-namespace Status::Onboarding {
+namespace Status::Onboarding
+{
 
 /// \todo Replace it with \c QObjectVectorModel
 class UserAccountsModel : public QAbstractListModel
@@ -14,12 +15,13 @@ class UserAccountsModel : public QAbstractListModel
     QML_ELEMENT
     QML_UNCREATABLE("Created by OnboardingController")
 
-    enum ModelRole {
+    enum ModelRole
+    {
         Name = Qt::UserRole + 1,
         Account
     };
-public:
 
+public:
     explicit UserAccountsModel(const std::vector<std::shared_ptr<UserAccount>> accounts, QObject* parent = nullptr);
     ~UserAccountsModel();
     QHash<int, QByteArray> roleNames() const override;
@@ -30,4 +32,4 @@ private:
     const std::vector<std::shared_ptr<UserAccount>> m_accounts;
 };
 
-}
+} // namespace Status::Onboarding

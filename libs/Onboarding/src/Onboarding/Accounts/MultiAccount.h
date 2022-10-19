@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Common/Constants.h"
-#include "Common/SigningPhrases.h"
 #include "Common/Json.h"
+#include "Common/SigningPhrases.h"
 
 #include <StatusGo/Accounts/accounts_types.h>
 
@@ -39,11 +39,11 @@ struct MultiAccount
         {
             result.name = Json::getMandatoryProp(jsonObj, "name")->toString();
             auto timestampIt = Json::getProp(jsonObj, "timestamp");
-            if(timestampIt != jsonObj.constEnd()) {
+            if(timestampIt != jsonObj.constEnd())
+            {
                 bool ok = false;
                 auto t = timestampIt->toString().toLong(&ok);
-                if(ok)
-                    result.timestamp = t;
+                if(ok) result.timestamp = t;
             }
             result.keycardPairing = Json::getMandatoryProp(jsonObj, "keycard-pairing")->toString();
             result.keyUid = Json::getMandatoryProp(jsonObj, "key-uid")->toString();
@@ -51,7 +51,7 @@ struct MultiAccount
 
             /// TODO: investigate unhandled `photo-path` value
         }
-        catch (std::exception e)
+        catch(std::exception e)
         {
             qWarning() << QString("Mapping MultiAccount failed: %1").arg(e.what());
         }
@@ -60,4 +60,4 @@ struct MultiAccount
     }
 };
 
-}
+} // namespace Status::Onboarding

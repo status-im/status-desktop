@@ -2,25 +2,19 @@
 
 #include <QObject>
 
-namespace Status::Onboarding {
-
+namespace Status::Onboarding
+{
 
 UserAccountsModel::UserAccountsModel(const std::vector<std::shared_ptr<UserAccount>> accounts, QObject* parent)
     : QAbstractListModel(parent)
     , m_accounts(std::move(accounts))
-{
-}
+{ }
 
-UserAccountsModel::~UserAccountsModel()
-{
-}
+UserAccountsModel::~UserAccountsModel() { }
 
 QHash<int, QByteArray> UserAccountsModel::roleNames() const
 {
-    static QHash<int, QByteArray> roles{
-        {Name, "name"},
-        {Account, "account"}
-    };
+    static QHash<int, QByteArray> roles{{Name, "name"}, {Account, "account"}};
     return roles;
 }
 
@@ -32,14 +26,14 @@ int UserAccountsModel::rowCount(const QModelIndex& parent) const
 
 QVariant UserAccountsModel::data(const QModelIndex& index, int role) const
 {
-    if(!QAbstractItemModel::checkIndex(index))
-        return QVariant();
+    if(!QAbstractItemModel::checkIndex(index)) return QVariant();
 
-    switch(static_cast<ModelRole>(role)) {
-        case Name: return QVariant::fromValue(m_accounts[index.row()].get()->name());
-        case Account: return QVariant::fromValue<QObject*>(m_accounts[index.row()].get());
-        default: return QVariant();
+    switch(static_cast<ModelRole>(role))
+    {
+    case Name: return QVariant::fromValue(m_accounts[index.row()].get()->name());
+    case Account: return QVariant::fromValue<QObject*>(m_accounts[index.row()].get());
+    default: return QVariant();
     }
 }
 
-}
+} // namespace Status::Onboarding

@@ -6,7 +6,8 @@
 
 using namespace std::string_literals;
 
-namespace Status::StatusGo {
+namespace Status::StatusGo
+{
 
 std::map<std::string, SignalType> SignalsManager::signalMap;
 
@@ -22,29 +23,25 @@ SignalsManager::SignalsManager()
 {
     SetSignalEventCallback((void*)&SignalsManager::signalCallback);
 
-    signalMap = {
-        {"node.ready"s, SignalType::NodeReady},
-        {"node.started"s, SignalType::NodeStarted},
-        {"node.stopped"s, SignalType::NodeStopped},
-        {"node.login"s, SignalType::NodeLogin},
-        {"node.crashed"s, SignalType::NodeCrashed},
+    signalMap = {{"node.ready"s, SignalType::NodeReady},
+                 {"node.started"s, SignalType::NodeStarted},
+                 {"node.stopped"s, SignalType::NodeStopped},
+                 {"node.login"s, SignalType::NodeLogin},
+                 {"node.crashed"s, SignalType::NodeCrashed},
 
-        {"discovery.started"s, SignalType::DiscoveryStarted},
-        {"discovery.stopped"s, SignalType::DiscoveryStopped},
-        {"discovery.summary"s, SignalType::DiscoverySummary},
+                 {"discovery.started"s, SignalType::DiscoveryStarted},
+                 {"discovery.stopped"s, SignalType::DiscoveryStopped},
+                 {"discovery.summary"s, SignalType::DiscoverySummary},
 
-        {"mailserver.changed"s, SignalType::MailserverChanged},
-        {"mailserver.available"s, SignalType::MailserverAvailable},
+                 {"mailserver.changed"s, SignalType::MailserverChanged},
+                 {"mailserver.available"s, SignalType::MailserverAvailable},
 
-        {"history.request.started"s, SignalType::HistoryRequestStarted},
-        {"history.request.batch.processed"s, SignalType::HistoryRequestBatchProcessed},
-        {"history.request.completed"s, SignalType::HistoryRequestCompleted}
-    };
+                 {"history.request.started"s, SignalType::HistoryRequestStarted},
+                 {"history.request.batch.processed"s, SignalType::HistoryRequestBatchProcessed},
+                 {"history.request.completed"s, SignalType::HistoryRequestCompleted}};
 }
 
-SignalsManager::~SignalsManager()
-{
-}
+SignalsManager::~SignalsManager() { }
 
 void SignalsManager::processSignal(const QString& statusSignal)
 {
@@ -82,46 +79,22 @@ void SignalsManager::decode(const QJsonObject& signalEvent)
     switch(signalType)
     {
     // TODO: create extractor functions like in nim
-    case NodeLogin:
-        emit nodeLogin(signalError);
-        break;
-    case NodeReady:
-        emit nodeReady(signalError);
-        break;
-    case NodeStarted:
-        emit nodeStarted(signalError);
-        break;
-    case NodeStopped:
-        emit nodeStopped(signalError);
-        break;
+    case NodeLogin: emit nodeLogin(signalError); break;
+    case NodeReady: emit nodeReady(signalError); break;
+    case NodeStarted: emit nodeStarted(signalError); break;
+    case NodeStopped: emit nodeStopped(signalError); break;
     case NodeCrashed:
         qWarning() << "node.crashed, error: " << signalError;
         emit nodeCrashed(signalError);
         break;
-    case DiscoveryStarted:
-        emit discoveryStarted(signalError);
-        break;
-    case DiscoveryStopped:
-        emit discoveryStopped(signalError);
-        break;
-    case DiscoverySummary:
-        emit discoverySummary(signalEvent["event"].toArray().count(), signalError);
-        break;
-    case MailserverChanged:
-        emit mailserverChanged(signalError);
-        break;
-    case MailserverAvailable:
-        emit mailserverAvailable(signalError);
-        break;
-    case HistoryRequestStarted:
-        emit historyRequestStarted(signalError);
-        break;
-    case HistoryRequestBatchProcessed:
-        emit historyRequestBatchProcessed(signalError);
-        break;
-    case HistoryRequestCompleted:
-        emit historyRequestCompleted(signalError);
-        break;
+    case DiscoveryStarted: emit discoveryStarted(signalError); break;
+    case DiscoveryStopped: emit discoveryStopped(signalError); break;
+    case DiscoverySummary: emit discoverySummary(signalEvent["event"].toArray().count(), signalError); break;
+    case MailserverChanged: emit mailserverChanged(signalError); break;
+    case MailserverAvailable: emit mailserverAvailable(signalError); break;
+    case HistoryRequestStarted: emit historyRequestStarted(signalError); break;
+    case HistoryRequestBatchProcessed: emit historyRequestBatchProcessed(signalError); break;
+    case HistoryRequestCompleted: emit historyRequestCompleted(signalError); break;
     case Unknown: assert(false); break;
     }
 }
@@ -130,9 +103,8 @@ void SignalsManager::signalCallback(const char* data)
 {
     // TODO: overkill, use some kind of message broker
     auto dataStrPtr = std::make_shared<QString>(data);
-    QFuture<void> future = QtConcurrent::run([dataStrPtr](){
-        SignalsManager::instance()->processSignal(*dataStrPtr);
-    });
+    QFuture<void> future =
+        QtConcurrent::run([dataStrPtr]() { SignalsManager::instance()->processSignal(*dataStrPtr); });
 }
 
-}
+} // namespace Status::StatusGo

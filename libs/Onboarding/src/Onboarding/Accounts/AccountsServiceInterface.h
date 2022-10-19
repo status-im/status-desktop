@@ -1,7 +1,7 @@
 #pragma once
 
-#include "MultiAccount.h"
 #include "GeneratedMultiAccount.h"
+#include "MultiAccount.h"
 
 #include <filesystem>
 
@@ -13,7 +13,6 @@ namespace Status::Onboarding
 class AccountsServiceInterface
 {
 public:
-
     virtual ~AccountsServiceInterface() = default;
 
     /// Generates and cache addresses accessible by \c generatedAccounts
@@ -26,7 +25,8 @@ public:
     [[nodiscard]] virtual const std::vector<GeneratedMultiAccount>& generatedAccounts() const = 0;
 
     /// Configure an generated account. \a accountID must be sourced from \c generatedAccounts
-    virtual bool setupAccountAndLogin(const QString& accountID, const QString& password, const QString& displayName) = 0;
+    virtual bool
+    setupAccountAndLogin(const QString& accountID, const QString& password, const QString& displayName) = 0;
 
     /// Account that is currently logged-in
     [[nodiscard]] virtual const MultiAccount& getLoggedInAccount() const = 0;
@@ -37,7 +37,7 @@ public:
     [[nodiscard]] virtual bool isFirstTimeAccountLogin() const = 0;
 
     /// Set and initializes the keystore directory. \see StatusGo::General::initKeystore
-    virtual bool setKeyStoreDir(const QString &key) = 0;
+    virtual bool setKeyStoreDir(const QString& key) = 0;
 
     virtual QString login(MultiAccount account, const QString& password) = 0;
 
@@ -45,9 +45,9 @@ public:
 
     virtual QString generateAlias(const QString& publicKey) = 0;
 
-    virtual void deleteMultiAccount(const MultiAccount &account) = 0;
+    virtual void deleteMultiAccount(const MultiAccount& account) = 0;
 };
 
 using AccountsServiceInterfacePtr = std::shared_ptr<AccountsServiceInterface>;
 
-}
+} // namespace Status::Onboarding

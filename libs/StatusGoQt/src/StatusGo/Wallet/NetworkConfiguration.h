@@ -12,7 +12,8 @@
 using json = nlohmann::json;
 
 /// \note not sure if this is the best namespace, ok for now
-namespace Status::StatusGo::Wallet {
+namespace Status::StatusGo::Wallet
+{
 
 /// \note equivalent of status-go's Network@config.go (params package)
 struct NetworkConfiguration
@@ -34,9 +35,19 @@ struct NetworkConfiguration
 
 using NetworkConfigurations = std::vector<NetworkConfiguration>;
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NetworkConfiguration, chainId, chainName, rpcUrl, blockExplorerUrl,
-                                   iconUrl, nativeCurrencyName, nativeCurrencySymbol,
-                                   nativeCurrencyDecimals, isTest, layer, enabled, chainColor,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NetworkConfiguration,
+                                   chainId,
+                                   chainName,
+                                   rpcUrl,
+                                   blockExplorerUrl,
+                                   iconUrl,
+                                   nativeCurrencyName,
+                                   nativeCurrencySymbol,
+                                   nativeCurrencyDecimals,
+                                   isTest,
+                                   layer,
+                                   enabled,
+                                   chainColor,
                                    shortName);
 
-}
+} // namespace Status::StatusGo::Wallet

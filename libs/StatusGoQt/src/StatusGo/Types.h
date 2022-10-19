@@ -30,18 +30,20 @@ struct RpcResponse
     int id;
     RpcError error;
 
-    explicit
-    RpcResponse(T result, QString version = RpcError::UnknownVersion, int id = RpcError::UnknownId,
-                RpcError error = RpcError())
+    explicit RpcResponse(T result,
+                         QString version = RpcError::UnknownVersion,
+                         int id = RpcError::UnknownId,
+                         RpcError error = RpcError())
         : result(std::move(result))
         , jsonRpcVersion(std::move(version))
         , id(id)
         , error(std::move(error))
     { }
 
-    bool containsError() const {
+    bool containsError() const
+    {
         return !error.message.isEmpty() || error.code != RpcError::NoError;
     }
 };
 
-}
+} // namespace Status::StatusGo

@@ -7,11 +7,7 @@ namespace Status::StatusGo::Messenger
 
 bool startMessenger()
 {
-    QJsonObject payload{
-        {"jsonrpc", "2.0"},
-        {"method", "wakuext_startMessenger"},
-        {"params", QJsonArray()}
-    };
+    QJsonObject payload{{"jsonrpc", "2.0"}, {"method", "wakuext_startMessenger"}, {"params", QJsonArray()}};
 
     auto callResult = Utils::callPrivateRpc<QJsonObject>(Utils::jsonToByteArray(payload));
     if(callResult.containsError())
@@ -19,4 +15,4 @@ bool startMessenger()
     return !callResult.containsError();
 }
 
-}
+} // namespace Status::StatusGo::Messenger

@@ -4,9 +4,7 @@
 #define STATUS_EXPAND(x) x
 
 // 2 arguments macro selector.
-#define STATUS_MACRO_SELECTOR_2_ARGS(_1, _2, selected, ...) \
-selected
+#define STATUS_MACRO_SELECTOR_2_ARGS(_1, _2, selected, ...) selected
 
 // 3 arguments macro selector.
-#define STATUS_MACRO_SELECTOR_3_ARGS(_1, _2, _3, selected, ...) \
-selected
+#define STATUS_MACRO_SELECTOR_3_ARGS(_1, _2, _3, selected, ...) selected

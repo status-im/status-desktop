@@ -17,7 +17,8 @@ namespace Onboarding = Status::Onboarding;
 
 namespace fs = std::filesystem;
 
-namespace Status::Testing {
+namespace Status::Testing
+{
 
 class LoginTest : public ::testing::Test
 {
@@ -27,20 +28,24 @@ protected:
     std::unique_ptr<Onboarding::AccountsService> m_accountsService;
     std::unique_ptr<Testing::AutoCleanTempTestDir> m_fusedTestFolder;
 
-    static void SetUpTestSuite() {
+    static void SetUpTestSuite()
+    {
         m_accountsServiceMock = std::make_shared<AccountsServiceMock>();
     }
-    static void TearDownTestSuite() {
+    static void TearDownTestSuite()
+    {
         m_accountsServiceMock.reset();
     }
 
-    void SetUp() override {
+    void SetUp() override
+    {
         m_fusedTestFolder = std::make_unique<Testing::AutoCleanTempTestDir>("LoginTest");
         m_accountsService = std::make_unique<Onboarding::AccountsService>();
         m_accountsService->init(m_fusedTestFolder->tempFolder() / Constants::statusGoDataDirName);
     }
 
-    void TearDown() override {
+    void TearDown() override
+    {
         m_fusedTestFolder.release();
         m_accountsService.release();
     }
@@ -54,4 +59,4 @@ TEST_F(LoginTest, DISABLED_TestLoginController)
     auto controller = Helpers::makeSharedQObject<Onboarding::OnboardingController>(m_accountsServiceMock);
 }
 
-} // namespace
+} // namespace Status::Testing

@@ -7,16 +7,15 @@
 const int NUMBER_OF_ADDRESSES_TO_GENERATE = 5;
 const int MNEMONIC_PHRASE_LENGTH = 12;
 
-namespace Status::StatusGo::Accounts {
+namespace Status::StatusGo::Accounts
+{
 
 RpcResponse<QJsonArray> generateAddresses(const std::vector<Accounts::DerivationPath>& paths)
 {
-    QJsonObject payload{
-        {"n", NUMBER_OF_ADDRESSES_TO_GENERATE},
-        {"mnemonicPhraseLength", MNEMONIC_PHRASE_LENGTH},
-        {"bip32Passphrase", ""},
-        {"paths", Utils::toJsonArray(paths)}
-    };
+    QJsonObject payload{{"n", NUMBER_OF_ADDRESSES_TO_GENERATE},
+                        {"mnemonicPhraseLength", MNEMONIC_PHRASE_LENGTH},
+                        {"bip32Passphrase", ""},
+                        {"paths", Utils::toJsonArray(paths)}};
 
     try
     {
@@ -30,13 +29,13 @@ RpcResponse<QJsonArray> generateAddresses(const std::vector<Accounts::Derivation
 
         return Utils::buildPrivateRPCResponse(jsonResult);
     }
-    catch (std::exception& e)
+    catch(std::exception& e)
     {
         auto response = RpcResponse<QJsonArray>(QJsonArray());
         response.error.message = QObject::tr("an error generating address occurred, msg: %1").arg(e.what());
         return response;
     }
-    catch (...)
+    catch(...)
     {
         auto response = RpcResponse<QJsonArray>(QJsonArray());
         response.error.message = QObject::tr("an error generating address occurred");
@@ -56,7 +55,7 @@ RpcResponse<QString> generateAlias(const QString& publicKey)
 
         return Utils::buildPrivateRPCResponse(alias);
     }
-    catch (...)
+    catch(...)
     {
         auto response = RpcResponse<QString>(QString());
         response.error.message = QObject::tr("an error generating alias occurred");
@@ -64,13 +63,11 @@ RpcResponse<QString> generateAlias(const QString& publicKey)
     }
 }
 
-RpcResponse<QJsonObject> storeDerivedAccounts(const QString& id, const HashedPassword& password, const std::vector<Accounts::DerivationPath>& paths)
+RpcResponse<QJsonObject> storeDerivedAccounts(const QString& id,
+                                              const HashedPassword& password,
+                                              const std::vector<Accounts::DerivationPath>& paths)
 {
-    QJsonObject payload{
-        {"accountID", id},
-        {"paths", Utils::toJsonArray(paths)},
-        {"password", password.get()}
-    };
+    QJsonObject payload{{"accountID", id}, {"paths", Utils::toJsonArray(paths)}, {"password", password.get()}};
 
     try
     {
@@ -86,13 +83,13 @@ RpcResponse<QJsonObject> storeDerivedAccounts(const QString& id, const HashedPas
         rpcResponse.error = Utils::getRPCErrorInJson(jsonResult).value_or(RpcError());
         return rpcResponse;
     }
-    catch (std::exception& e)
+    catch(std::exception& e)
     {
         auto response = RpcResponse<QJsonObject>(QJsonObject());
         response.error.message = QObject::tr("an error storing derived accounts occurred, msg: %1").arg(e.what());
         return response;
     }
-    catch (...)
+    catch(...)
     {
         auto response = RpcResponse<QJsonObject>(QJsonObject());
         response.error.message = QObject::tr("an error storing derived accounts occurred");
@@ -102,10 +99,7 @@ RpcResponse<QJsonObject> storeDerivedAccounts(const QString& id, const HashedPas
 
 RpcResponse<QJsonObject> storeAccount(const QString& id, const HashedPassword& password)
 {
-    QJsonObject payload{
-        {"accountID", id},
-        {"password", password.get()}
-    };
+    QJsonObject payload{{"accountID", id}, {"password", password.get()}};
 
     try
     {
@@ -121,13 +115,13 @@ RpcResponse<QJsonObject> storeAccount(const QString& id, const HashedPassword& p
         rpcResponse.error = Utils::getRPCErrorInJson(jsonResult).value_or(RpcError());
         return rpcResponse;
     }
-    catch (std::exception& e)
+    catch(std::exception& e)
     {
         auto response = RpcResponse<QJsonObject>(QJsonObject());
         response.error.message = QObject::tr("an error storing account occurred, msg: %1").arg(e.what());
         return response;
     }
-    catch (...)
+    catch(...)
     {
         auto response = RpcResponse<QJsonObject>(QJsonObject());
         response.error.message = QObject::tr("an error storing account occurred");
@@ -135,8 +129,10 @@ RpcResponse<QJsonObject> storeAccount(const QString& id, const HashedPassword& p
     }
 }
 
-bool saveAccountAndLogin(const HashedPassword& password, const QJsonObject& account,
-                         const QJsonArray& subaccounts, const QJsonObject& settings,
+bool saveAccountAndLogin(const HashedPassword& password,
+                         const QJsonObject& account,
+                         const QJsonArray& subaccounts,
+                         const QJsonObject& settings,
                          const QJsonObject& nodeConfig)
 {
     try
@@ -154,9 +150,13 @@ bool saveAccountAndLogin(const HashedPassword& password, const QJsonObject& acco
         }
 
         return !Utils::getRPCErrorInJson(jsonResult).has_value();
-    } catch (std::exception& e) {
+    }
+    catch(std::exception& e)
+    {
         qWarning() << QString("an error saving account and login occurred, msg: %1").arg(e.what());
-    } catch (...) {
+    }
+    catch(...)
+    {
         qWarning() << "an error saving account and login occurred";
     }
     return false;
@@ -167,24 +167,24 @@ RpcResponse<QJsonArray> openAccounts(const char* dataDirPath)
     try
     {
         auto result = QString(OpenAccounts(const_cast<char*>(dataDirPath)));
-        if(result == "null")
-            return RpcResponse<QJsonArray>(QJsonArray());
+        if(result == "null") return RpcResponse<QJsonArray>(QJsonArray());
 
         QJsonArray jsonResult;
-        if(!Utils::checkReceivedResponse(result, jsonResult)) {
+        if(!Utils::checkReceivedResponse(result, jsonResult))
+        {
             throw std::domain_error("parsing response failed");
         }
 
         return Utils::buildPrivateRPCResponse(jsonResult);
     }
-    catch (std::exception& e)
+    catch(std::exception& e)
     {
         auto response = RpcResponse<QJsonArray>(QJsonArray());
         // TODO: don't translate exception messages. Exceptions are for developers and should never reach users
         response.error.message = QObject::tr("an error opening accounts occurred, msg: %1").arg(e.what());
         return response;
     }
-    catch (...)
+    catch(...)
     {
         auto response = RpcResponse<QJsonArray>(QJsonArray());
         response.error.message = QObject::tr("an error opening accounts occurred");
@@ -192,14 +192,13 @@ RpcResponse<QJsonArray> openAccounts(const char* dataDirPath)
     }
 }
 
-RpcResponse<QJsonObject> login(const QString& name, const QString& keyUid, const HashedPassword& password,
-                               const QString& thumbnail, const QString& large)
+RpcResponse<QJsonObject> login(const QString& name,
+                               const QString& keyUid,
+                               const HashedPassword& password,
+                               const QString& thumbnail,
+                               const QString& large)
 {
-    QJsonObject payload{
-        {"name", name},
-        {"key-uid", keyUid},
-        {"identityImage", QJsonValue()}
-    };
+    QJsonObject payload{{"name", name}, {"key-uid", keyUid}, {"identityImage", QJsonValue()}};
 
     if(!thumbnail.isEmpty() && !large.isEmpty())
     {
@@ -219,13 +218,13 @@ RpcResponse<QJsonObject> login(const QString& name, const QString& keyUid, const
 
         return Utils::buildPrivateRPCResponse(jsonResult);
     }
-    catch (std::exception& e)
+    catch(std::exception& e)
     {
         auto response = RpcResponse<QJsonObject>(QJsonObject());
         response.error.message = QObject::tr("an error logining in account occurred, msg: %1").arg(e.what());
         return response;
     }
-    catch (...)
+    catch(...)
     {
         auto response = RpcResponse<QJsonObject>(QJsonObject());
         response.error.message = QObject::tr("an error logining in account occurred");
@@ -233,8 +232,12 @@ RpcResponse<QJsonObject> login(const QString& name, const QString& keyUid, const
     }
 }
 
-RpcResponse<QJsonObject> loginWithConfig(const QString& name, const QString& keyUid, const HashedPassword& password,
-                                         const QString& thumbnail, const QString& large, const QJsonObject& nodeConfig)
+RpcResponse<QJsonObject> loginWithConfig(const QString& name,
+                                         const QString& keyUid,
+                                         const HashedPassword& password,
+                                         const QString& thumbnail,
+                                         const QString& large,
+                                         const QJsonObject& nodeConfig)
 {
     QJsonObject payload{
         {"name", name},
@@ -261,13 +264,13 @@ RpcResponse<QJsonObject> loginWithConfig(const QString& name, const QString& key
 
         return Utils::buildPrivateRPCResponse(jsonResult);
     }
-    catch (std::exception& e)
+    catch(std::exception& e)
     {
         auto response = RpcResponse<QJsonObject>(QJsonObject());
         response.error.message = QObject::tr("an error logining in account occurred, msg: %1").arg(e.what());
         return response;
     }
-    catch (...)
+    catch(...)
     {
         auto response = RpcResponse<QJsonObject>(QJsonObject());
         response.error.message = QObject::tr("an error logining in account occurred");
@@ -291,13 +294,13 @@ RpcResponse<QJsonObject> logout()
         rpcResponse.error = Utils::getRPCErrorInJson(jsonResult).value_or(RpcError());
         return rpcResponse;
     }
-    catch (std::exception& e)
+    catch(std::exception& e)
     {
         auto response = RpcResponse<QJsonObject>(QJsonObject());
         response.error.message = QObject::tr("an error logging out account occurred, msg: %1").arg(e.what());
         return response;
     }
-    catch (...)
+    catch(...)
     {
         auto response = RpcResponse<QJsonObject>(QJsonObject());
         response.error.message = QObject::tr("an error logging out account occurred");
@@ -305,4 +308,4 @@ RpcResponse<QJsonObject> logout()
     }
 }
 
-}
+} // namespace Status::StatusGo::Accounts

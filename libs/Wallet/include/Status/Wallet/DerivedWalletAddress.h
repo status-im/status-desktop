@@ -6,7 +6,8 @@
 
 namespace WalletGo = Status::StatusGo::Wallet;
 
-namespace Status::Wallet {
+namespace Status::Wallet
+{
 
 class DerivedWalletAddress : public QObject
 {
@@ -18,11 +19,14 @@ class DerivedWalletAddress : public QObject
     Q_PROPERTY(bool alreadyCreated READ alreadyCreated CONSTANT)
 
 public:
-    explicit DerivedWalletAddress(WalletGo::DerivedAddress address, QObject *parent = nullptr);
+    explicit DerivedWalletAddress(WalletGo::DerivedAddress address, QObject* parent = nullptr);
 
     QString address() const;
 
-    const WalletGo::DerivedAddress &data() const { return m_derivedAddress; };
+    const WalletGo::DerivedAddress& data() const
+    {
+        return m_derivedAddress;
+    };
 
     bool alreadyCreated() const;
 
@@ -32,4 +36,4 @@ private:
 
 using DerivedWalletAddressPtr = std::shared_ptr<DerivedWalletAddress>;
 
-}
+} // namespace Status::Wallet

@@ -1,12 +1,12 @@
 #include "DerivedWalletAddress.h"
 
-namespace Status::Wallet {
+namespace Status::Wallet
+{
 
-DerivedWalletAddress::DerivedWalletAddress(WalletGo::DerivedAddress address, QObject *parent)
+DerivedWalletAddress::DerivedWalletAddress(WalletGo::DerivedAddress address, QObject* parent)
     : QObject{parent}
     , m_derivedAddress{std::move(address)}
-{
-}
+{ }
 
 QString DerivedWalletAddress::address() const
 {
@@ -18,4 +18,4 @@ bool DerivedWalletAddress::alreadyCreated() const
     return m_derivedAddress.alreadyCreated;
 }
 
-}
+} // namespace Status::Wallet

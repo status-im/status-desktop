@@ -1,29 +1,30 @@
 #pragma once
 
-#include "Types.h"
 #include "Accounts/accounts_types.h"
+#include "Types.h"
 
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
 
 namespace Status::StatusGo::Utils
 {
 
-namespace Param {
-    static constexpr auto Id{"id"};
-    static constexpr auto JsonRpc{"jsonrpc"};
-    static constexpr auto Result{"result"};
-    static constexpr auto Error{"error"};
-    static constexpr auto ErrorMessage{"message"};
-    static constexpr auto ErrorCode{"code"};
-}
+namespace Param
+{
+static constexpr auto Id{"id"};
+static constexpr auto JsonRpc{"jsonrpc"};
+static constexpr auto Result{"result"};
+static constexpr auto Error{"error"};
+static constexpr auto ErrorMessage{"message"};
+static constexpr auto ErrorCode{"code"};
+} // namespace Param
 
-template<class T>
+template <class T>
 QByteArray jsonToByteArray(const T& json)
 {
-    static_assert(std::is_same_v<T, QJsonObject> ||
-            std::is_same_v<T, QJsonArray>, "Wrong Json type. Supported: Object, Array");
+    static_assert(std::is_same_v<T, QJsonObject> || std::is_same_v<T, QJsonArray>,
+                  "Wrong Json type. Supported: Object, Array");
     return QJsonDocument(json).toJson(QJsonDocument::Compact);
 }
 
@@ -32,20 +33,19 @@ QJsonArray toJsonArray(const std::vector<Accounts::DerivationPath>& value);
 /// Check if json contains a standard status-go error and
 std::optional<RpcError> getRPCErrorInJson(const QJsonObject& json);
 
-template<class T>
+template <class T>
 bool checkReceivedResponse(const QString& response, T& json)
 {
     QJsonParseError error;
     auto jsonDocument = QJsonDocument::fromJson(response.toUtf8(), &error);
-    if (error.error != QJsonParseError::NoError)
-        return false;
+    if(error.error != QJsonParseError::NoError) return false;
 
-    if constexpr (std::is_same_v<T, QJsonObject>)
+    if constexpr(std::is_same_v<T, QJsonObject>)
     {
         json = jsonDocument.object();
         return true;
     }
-    else if constexpr (std::is_same_v<T, QJsonArray>)
+    else if constexpr(std::is_same_v<T, QJsonArray>)
     {
         json = jsonDocument.array();
         return true;
@@ -55,25 +55,24 @@ bool checkReceivedResponse(const QString& response, T& json)
 }
 
 // TODO: Clarify scope. The assumption done here are valid only for status-go::CallPrivateRPC API.
-template<class T>
+template <class T>
 RpcResponse<T> buildPrivateRPCResponse(const T& json)
 {
     auto response = RpcResponse<T>(T());
 
-    if constexpr (std::is_same_v<T, QJsonObject>)
+    if constexpr(std::is_same_v<T, QJsonObject>)
     {
-    if (!json[Param::Id].isNull() && !json[Param::Id].isUndefined())
-        response.id = json[Param::Id].toInt();
+        if(!json[Param::Id].isNull() && !json[Param::Id].isUndefined()) response.id = json[Param::Id].toInt();
 
-    if (!json[Param::JsonRpc].isNull() && !json[Param::JsonRpc].isUndefined())
-        response.jsonRpcVersion = json[Param::JsonRpc].toString();
+        if(!json[Param::JsonRpc].isNull() && !json[Param::JsonRpc].isUndefined())
+            response.jsonRpcVersion = json[Param::JsonRpc].toString();
 
-    response.error = getRPCErrorInJson(json).value_or(RpcError());
+        response.error = getRPCErrorInJson(json).value_or(RpcError());
 
-    if (!json[Param::Result].isNull() && !json[Param::Result].isUndefined())
-        response.result = json[Param::Result].toObject();
+        if(!json[Param::Result].isNull() && !json[Param::Result].isUndefined())
+            response.result = json[Param::Result].toObject();
     }
-    else if constexpr (std::is_same_v<T, QJsonArray>)
+    else if constexpr(std::is_same_v<T, QJsonArray>)
     {
         response.result = json;
     }
@@ -83,7 +82,7 @@ RpcResponse<T> buildPrivateRPCResponse(const T& json)
 
 const char* statusGoCallPrivateRPC(const char* inputJSON);
 
-template<class T>
+template <class T>
 RpcResponse<T> callPrivateRpc(const QByteArray& payload)
 {
     try
@@ -98,13 +97,13 @@ RpcResponse<T> callPrivateRpc(const QByteArray& payload)
 
         return Utils::buildPrivateRPCResponse(jsonResult);
     }
-    catch (std::exception& e)
+    catch(std::exception& e)
     {
         auto response = RpcResponse<T>(T());
         response.error.message = QObject::tr("an error executing rpc call occurred, msg: %1").arg(e.what());
         return response;
     }
-    catch (...)
+    catch(...)
     {
         auto response = RpcResponse<T>(T());
         response.error.message = QObject::tr("an error executing rpc call");
@@ -112,6 +111,6 @@ RpcResponse<T> callPrivateRpc(const QByteArray& payload)
     }
 }
 
-HashedPassword hashPassword(const QString &str);
+HashedPassword hashPassword(const QString& str);
 
-}
+} // namespace Status::StatusGo::Utils

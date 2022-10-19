@@ -9,7 +9,8 @@
 
 namespace fs = std::filesystem;
 
-namespace Status::Onboarding {
+namespace Status::Onboarding
+{
 
 class AccountsService;
 
@@ -31,16 +32,16 @@ class OnboardingModule : public QObject, public QQmlParserStatus
     Q_PROPERTY(QString userDataPath READ userDataPath WRITE setUserDataPath NOTIFY userDataPathChanged REQUIRED)
 
 public:
-    explicit OnboardingModule(const fs::path& userDataPath, QObject *parent = nullptr);
-    explicit OnboardingModule(QObject *parent = nullptr);
+    explicit OnboardingModule(const fs::path& userDataPath, QObject* parent = nullptr);
+    explicit OnboardingModule(QObject* parent = nullptr);
 
     OnboardingController* controller() const;
 
     const QString userDataPath() const;
-    void setUserDataPath(const QString &newUserDataPath);
+    void setUserDataPath(const QString& newUserDataPath);
 
     /// QML inteface
-    void classBegin() override {};
+    void classBegin() override{};
     void componentComplete() override;
 
 signals:
@@ -48,9 +49,8 @@ signals:
     void userDataPathChanged();
 
 private:
-
     /// Throws exceptions
-    void initWithUserDataPath(const fs::path &path);
+    void initWithUserDataPath(const fs::path& path);
 
     // TODO: plain object after refactoring shared_ptr requirement for now
     std::shared_ptr<AccountsService> m_accountsService;
@@ -59,4 +59,4 @@ private:
     fs::path m_userDataPath;
 };
 
-}
+} // namespace Status::Onboarding

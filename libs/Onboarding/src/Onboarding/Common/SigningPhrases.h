@@ -5,7 +5,7 @@
 namespace Status::Constants
 {
 
-constexpr std::array SigningPhrases {
+constexpr std::array SigningPhrases{
     "area", "army", "atom", "aunt", "babe", "baby", "back", "bail", "bait", "bake", "ball", "band", "bank", "barn",
     "base", "bass", "bath", "bead", "beak", "beam", "bean", "bear", "beat", "beef", "beer", "beet", "bell", "belt",
     "bend", "bike", "bill", "bird", "bite", "blow", "blue", "boar", "boat", "body", "bolt", "bomb", "bone", "book",
@@ -50,7 +50,6 @@ constexpr std::array SigningPhrases {
     "veal", "veil", "vein", "vest", "vibe", "view", "vise", "wait", "wake", "walk", "wall", "wash", "wasp", "wave",
     "wear", "weed", "week", "well", "west", "whip", "wife", "will", "wind", "wine", "wing", "wire", "wish", "wolf",
     "wood", "wool", "word", "work", "worm", "wrap", "wren", "yard", "yarn", "yawl", "year", "yoga", "yoke", "yurt",
-    "zinc", "zone"
-};
+    "zinc", "zone"};
 
 }

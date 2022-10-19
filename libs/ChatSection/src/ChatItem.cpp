@@ -5,8 +5,7 @@ using namespace Status::ChatSection;
 ChatItem::ChatItem(StatusGo::Chats::ChatDto rawData)
     : QObject(nullptr)
     , m_data(std::move(rawData))
-{
-}
+{ }
 
 QString ChatItem::id() const
 {
@@ -20,8 +19,7 @@ QString ChatItem::name() const
 
 void ChatItem::setName(const QString& value)
 {
-    if (m_data.name == value)
-        return;
+    if(m_data.name == value) return;
     m_data.name = value;
     emit nameChanged();
 }
@@ -33,8 +31,7 @@ QString ChatItem::description() const
 
 void ChatItem::setDescription(const QString& value)
 {
-    if (m_data.description == value)
-        return;
+    if(m_data.description == value) return;
     m_data.description = value;
     emit descriptionChanged();
 }
@@ -46,8 +43,7 @@ QColor ChatItem::color() const
 
 void ChatItem::setColor(const QColor& value)
 {
-    if (m_data.color == value)
-        return;
+    if(m_data.color == value) return;
     m_data.color = value;
     emit colorChanged();
 }
@@ -59,8 +55,7 @@ bool ChatItem::muted() const
 
 void ChatItem::setMuted(bool value)
 {
-    if (m_data.muted == value)
-        return;
+    if(m_data.muted == value) return;
     m_data.muted = value;
     emit mutedChanged();
 }
@@ -72,8 +67,7 @@ bool ChatItem::active() const
 
 void ChatItem::setActive(bool value)
 {
-    if (m_data.active == value)
-        return;
+    if(m_data.active == value) return;
     m_data.active = value;
     emit activeChanged();
 }

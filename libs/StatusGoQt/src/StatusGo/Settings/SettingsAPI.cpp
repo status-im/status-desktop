@@ -1,7 +1,7 @@
 #include "SettingsAPI.h"
 
-#include "Utils.h"
 #include "Metadata/api_response.h"
+#include "Utils.h"
 
 #include <libstatus.h>
 
@@ -13,11 +13,7 @@ using namespace Status::StatusGo;
 
 Settings::SettingsDto Settings::getSettings()
 {
-    json inputJson = {
-        {"jsonrpc", "2.0"},
-        {"method", "settings_getSettings"},
-        {"params", json::array()}
-    };
+    json inputJson = {{"jsonrpc", "2.0"}, {"method", "settings_getSettings"}, {"params", json::array()}};
 
     auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
     const auto resultJson = json::parse(result);

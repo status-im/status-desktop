@@ -8,14 +8,15 @@
 
 #include "BuildConfiguration.h"
 
-namespace Status::Helpers {
+namespace Status::Helpers
+{
 
 void logFormatter(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
     // TODO: Refactor it into development-tools app
     //if(isDebugBuild()) {
-        std::cout << msg.toLocal8Bit().data() << std::endl;
-        return;
+    std::cout << msg.toLocal8Bit().data() << std::endl;
+    return;
     //}
 
     QByteArray localMsg = msg.toLocal8Bit();
@@ -37,7 +38,12 @@ void logFormatter(QtMsgType type, const QMessageLogContext& context, const QStri
     case QtFatalMsg: log = "\033[0;31m!!! \033[0m%s \033[1m%s \033[0;33mfile=\033[94m%s:%u %s\n"; break;
     }
     fprintf(type == QtCriticalMsg || type == QtFatalMsg ? stderr : stdout,
-            log, timestamp.constData(), localMsg.constData(), file, context.line, function.constData());
+            log,
+            timestamp.constData(),
+            localMsg.constData(),
+            file,
+            context.line,
+            function.constData());
 }
 
-}   // namespace
+} // namespace Status::Helpers

@@ -44,7 +44,7 @@ public:
     [[nodiscard]] bool isFirstTimeAccountLogin() const override;
 
     /// \see ServiceInterface
-    bool setKeyStoreDir(const QString &key) override;
+    bool setKeyStoreDir(const QString& key) override;
 
     /// \todo login@src/app_service/service/accounts/service.nim adds custom configuration for defaults
     ///       to account for legacy user DBs. See if this is required to replicate or add proper migration logic
@@ -54,18 +54,21 @@ public:
 
     QString generateAlias(const QString& publicKey) override;
 
-    void deleteMultiAccount(const MultiAccount &account) override;
+    void deleteMultiAccount(const MultiAccount& account) override;
 
 private:
     QJsonObject prepareAccountJsonObject(const GeneratedMultiAccount& account, const QString& displayName) const;
 
-    DerivedAccounts storeDerivedAccounts(const QString& accountId, const StatusGo::HashedPassword& password,
+    DerivedAccounts storeDerivedAccounts(const QString& accountId,
+                                         const StatusGo::HashedPassword& password,
                                          const std::vector<Accounts::DerivationPath>& paths);
     StoredMultiAccount storeAccount(const QString& accountId, const StatusGo::HashedPassword& password);
 
-    MultiAccount saveAccountAndLogin(const StatusGo::HashedPassword& password, const QJsonObject& account,
-                                   const QJsonArray& subaccounts, const QJsonObject& settings,
-                                   const QJsonObject& config);
+    MultiAccount saveAccountAndLogin(const StatusGo::HashedPassword& password,
+                                     const QJsonObject& account,
+                                     const QJsonArray& subaccounts,
+                                     const QJsonObject& settings,
+                                     const QJsonObject& config);
 
     QJsonObject getAccountDataForAccountId(const QString& accountId, const QString& displayName) const;
 
@@ -79,7 +82,8 @@ private:
                                                  const QString& installationId,
                                                  const QString& displayName) const;
 
-    QJsonObject getAccountSettings(const QString& accountId, const QString& installationId, const QString& displayName) const;
+    QJsonObject
+    getAccountSettings(const QString& accountId, const QString& installationId, const QString& displayName) const;
 
     QJsonObject getDefaultNodeConfig(const QString& installationId) const;
 
@@ -97,4 +101,4 @@ private:
     static constexpr auto m_keyStoreDirName = "keystore";
 };
 
-}
+} // namespace Status::Onboarding

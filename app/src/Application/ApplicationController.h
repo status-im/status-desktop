@@ -1,7 +1,7 @@
 #pragma once
 
-#include "DbSettingsObj.h"
 #include "DataProvider.h"
+#include "DbSettingsObj.h"
 
 #include <QObject>
 #include <QtQml/qqmlregistration.h>
@@ -9,7 +9,8 @@
 // TODO: investigate. This line breaks qobject_cast in OnboardingController::login
 //#include <Onboarding/UserAccount.h>
 
-namespace Status::Application {
+namespace Status::Application
+{
 
 /**
  * @brief Responsible for providing general information and utility components
@@ -23,12 +24,12 @@ class ApplicationController : public QObject
     Q_PROPERTY(QObject* dbSettings READ dbSettings CONSTANT)
 
 public:
-    explicit ApplicationController(QObject *parent = nullptr);
+    explicit ApplicationController(QObject* parent = nullptr);
 
     Q_INVOKABLE void initOnLogin();
 
-    QObject *statusAccount() const;
-    void setStatusAccount(QObject *newStatusAccount);
+    QObject* statusAccount() const;
+    void setStatusAccount(QObject* newStatusAccount);
 
     QObject* dbSettings() const;
 
@@ -41,4 +42,4 @@ private:
     std::shared_ptr<DbSettingsObj> m_dbSettings;
 };
 
-}
+} // namespace Status::Application
