@@ -19,6 +19,16 @@ StatusStackModal {
 
     property var privacyStore
 
+    onCurrentIndexChanged: {
+        //StatusAnimatedStack doesn't handle well items' visibility,
+        //keeping this solution for now until #8024 is fixed
+        if (currentIndex === 2) {
+            confirmFirstWord.forceInputFocus();
+        } else if (currentIndex === 3) {
+            confirmSecondWord.forceInputFocus();
+        }
+    }
+
     QtObject {
         id: d
 

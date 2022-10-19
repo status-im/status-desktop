@@ -20,6 +20,10 @@ StatusScrollView {
 
     default property alias content: column.children
 
+    function forceInputFocus() {
+        inputText.input.edit.forceActiveFocus();
+    }
+
     implicitHeight: 520
     clip: false
 
