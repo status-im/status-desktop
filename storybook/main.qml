@@ -57,6 +57,9 @@ ApplicationWindow {
         ListElement {
              title: "AdvancedSettings"
         }
+        ListElement {
+             title: "ProfileView"
+        }
     }
 
     SplitView {

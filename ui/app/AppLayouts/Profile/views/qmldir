@@ -7,3 +7,4 @@ DevicesView 1.0 DevicesView.qml
 EnsView 1.0 EnsView.qml
 KeycardView 1.0 KeycardView.qml
 AdvancedView 1.0 AdvancedView.qml
+MyProfileView 1.0 MyProfileView.qml

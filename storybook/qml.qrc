@@ -24,5 +24,6 @@
         <file>pages/EnsViewPage.qml</file>
         <file>pages/KeycardSectionPage.qml</file>
         <file>pages/AdvancedSettingsPage.qml</file>
+        <file>pages/ProfileViewPage.qml</file>
     </qresource>
 </RCC>
