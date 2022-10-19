@@ -19,10 +19,11 @@ ApplicationWindow {
     font.pixelSize: 13
 
     HotReloader {
-        loader: viewLoader
-        enabled: hotReloadingCheckBox.checked
+        id: reloader
 
-        onReloaded: reloadingAnimation.restart()
+        loader: viewLoader
+        enabled: hotReloaderControls.enabled
+        onReloaded: hotReloaderControls.notifyReload()
     }
 
     ListModel {
@@ -30,6 +31,9 @@ ApplicationWindow {
 
         ListElement {
              title: "CommunitiesPortalLayout"
+        }
+        ListElement {
+             title: "StatusCommunityCard"
         }
         ListElement {
              title: "LoginView"
@@ -70,29 +74,12 @@ ApplicationWindow {
                 }
             }
 
-            CheckBox {
-                id: hotReloadingCheckBox
+            HotReloaderControls {
+                id: hotReloaderControls
 
                 Layout.fillWidth: true
 
-                text: "Hot reloading"
-
-                Rectangle {
-                    anchors.fill: parent
-                    border.color: "red"
-                    border.width: 2
-                    opacity: 0
-
-                    OpacityAnimator on opacity {
-                        id: reloadingAnimation
-
-                        running: false
-                        from: 1
-                        to: 0
-                        duration: 500
-                        easing.type: Easing.InQuad
-                    }
-                }
+                onForceReloadClicked: reloader.forceReload()
             }
 
             Pane {
@@ -134,6 +121,12 @@ ApplicationWindow {
                 anchors.centerIn: parent
                 visible: viewLoader.status === Loader.Loading
             }
+
+            Label {
+                anchors.centerIn: parent
+                visible: viewLoader.status === Loader.Error
+                text: "Loading page failed"
+            }
         }
     }
 
@@ -141,6 +134,6 @@ ApplicationWindow {
         property alias currentPage: root.currentPage
         property alias loadAsynchronously: loadAsyncCheckBox.checked
         property alias darkMode: darkModeCheckBox.checked
-        property alias hotReloading: hotReloadingCheckBox.checked
+        property alias hotReloading: hotReloaderControls.enabled
     }
 }
