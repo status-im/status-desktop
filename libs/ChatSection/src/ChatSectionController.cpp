@@ -5,15 +5,15 @@ using namespace Status::ChatSection;
 ChatSectionController::ChatSectionController()
     : QObject(nullptr)
     , m_dataProvider(std::make_unique<ChatDataProvider>())
-{
-}
+{ }
 
 void ChatSectionController::init(const QString& sectionId)
 {
     auto chatSectionData = m_dataProvider->getSectionData(sectionId);
     assert(chatSectionData.chats.size() > 0);
     std::vector<ChatItemPtr> model;
-    for (auto c : chatSectionData.chats) {
+    for(auto c : chatSectionData.chats)
+    {
         model.push_back(std::make_shared<ChatItem>(std::move(c)));
     }
     m_chats = std::make_shared<ChatsModel>(std::move(model), "chat");
@@ -34,8 +34,7 @@ ChatItem* ChatSectionController::currentChat() const
 void ChatSectionController::setCurrentChatIndex(int index)
 {
     auto chat = index >= 0 && index < m_chats->size() ? m_chats->get(index) : ChatItemPtr();
-    if (m_currentChat == chat)
-        return;
+    if(m_currentChat == chat) return;
 
     m_currentChat = chat;
     emit currentChatChanged();

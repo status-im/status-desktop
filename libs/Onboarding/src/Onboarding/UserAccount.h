@@ -13,7 +13,7 @@ class MultiAccount;
  * @see OnboardingController
  * @see UserAccountsModel
  */
-class UserAccount: public QObject
+class UserAccount : public QObject
 {
     Q_OBJECT
     QML_ELEMENT
@@ -23,7 +23,7 @@ class UserAccount: public QObject
 public:
     explicit UserAccount(std::unique_ptr<MultiAccount> data);
 
-    const QString &name() const;
+    const QString& name() const;
 
     const MultiAccount& accountData() const;
     void updateAccountData(const MultiAccount& newData);
@@ -35,4 +35,4 @@ private:
     std::unique_ptr<MultiAccount> m_data;
 };
 
-}
+} // namespace Status::Onboarding

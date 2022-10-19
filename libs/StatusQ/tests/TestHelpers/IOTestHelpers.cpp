@@ -4,7 +4,8 @@
 
 namespace fs = std::filesystem;
 
-namespace Status::Testing {
+namespace Status::Testing
+{
 
 fs::path createTestFolder(const std::string& testName)
 {
@@ -12,14 +13,13 @@ fs::path createTestFolder(const std::string& testName)
     auto tm = *std::localtime(&t);
     std::ostringstream timeOss;
     timeOss << std::put_time(&tm, "%d-%m-%Y_%H-%M-%S");
-    return fs::path(testing::TempDir())/"StatusTests"/(testName + "-" + timeOss.str());
+    return fs::path(testing::TempDir()) / "StatusTests" / (testName + "-" + timeOss.str());
 }
 
-AutoCleanTempTestDir::AutoCleanTempTestDir(const std::string &testName, bool createDir)
+AutoCleanTempTestDir::AutoCleanTempTestDir(const std::string& testName, bool createDir)
     : m_testFolder(createTestFolder(testName))
 {
-    if(createDir)
-        fs::create_directories(m_testFolder);
+    if(createDir) fs::create_directories(m_testFolder);
 }
 
 AutoCleanTempTestDir::~AutoCleanTempTestDir()
@@ -33,4 +33,4 @@ const std::filesystem::path& AutoCleanTempTestDir::tempFolder()
     return m_testFolder;
 }
 
-}
+} // namespace Status::Testing

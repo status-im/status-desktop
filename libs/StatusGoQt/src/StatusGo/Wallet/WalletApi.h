@@ -6,8 +6,8 @@
 
 #include "DerivedAddress.h"
 #include "NetworkConfiguration.h"
-#include "Token.h"
 #include "SavedAddress.h"
+#include "Token.h"
 
 #include "Types.h"
 
@@ -20,10 +20,11 @@ namespace Status::StatusGo::Wallet
 /// \brief Retrieve a list of derived account addresses
 /// \see \c generateAccountWithDerivedPath
 /// \throws \c CallPrivateRpcError
-DerivedAddresses getDerivedAddressesForPath(const HashedPassword &password,
-                                            const Accounts::EOAddress &derivedFrom,
-                                            const Accounts::DerivationPath &path,
-                                            int pageSize, int pageNumber);
+DerivedAddresses getDerivedAddressesForPath(const HashedPassword& password,
+                                            const Accounts::EOAddress& derivedFrom,
+                                            const Accounts::DerivationPath& path,
+                                            int pageSize,
+                                            int pageNumber);
 
 /// \brief Retrieve a list of saved wallet addresses
 /// \see \c getSavedAddresses
@@ -33,7 +34,7 @@ SavedAddresses getSavedAddresses();
 /// \brief Add a new or update existing saved wallet address
 /// \see wakuext_upsertSavedAddress RPC method
 /// \throws \c CallPrivateRpcError
-void saveAddress(const SavedAddress &address);
+void saveAddress(const SavedAddress& address);
 
 /// \note status-go's GetEthereumChains@api.go which calls
 ///       NetworkManager@client.go -> network.Manager.get()
@@ -46,15 +47,14 @@ NetworkConfigurations getEthereumChains(bool onlyEnabled);
 /// \throws \c CallPrivateRpcError for general RPC call failure
 NetworkConfigurations getEthereumChains(bool onlyEnabled);
 
-
 /// \note status-go's GetTokens@api.go -> TokenManager.getTokens@token.go
 /// \throws \c CallPrivateRpcError with
-Tokens getTokens(const ChainID &chainId);
+Tokens getTokens(const ChainID& chainId);
 
 using TokenBalances = std::map<Accounts::EOAddress, std::map<Accounts::EOAddress, BigInt>>;
 /// \note status-go's @api.go -> <xx>@<xx>.go
 /// \throws \c CallPrivateRpcError
-TokenBalances getTokensBalancesForChainIDs(const std::vector<ChainID> &chainIds,
+TokenBalances getTokensBalancesForChainIDs(const std::vector<ChainID>& chainIds,
                                            const std::vector<Accounts::EOAddress> accounts,
                                            const std::vector<Accounts::EOAddress> tokens);
-} // namespaces
+} // namespace Status::StatusGo::Wallet

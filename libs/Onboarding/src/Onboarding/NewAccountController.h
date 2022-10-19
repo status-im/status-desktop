@@ -20,7 +20,7 @@ class ServiceInterface;
  *
  *  \todo shared functionality should be moved to Common library (e.g. Name/Picture Validation)
  */
-class NewAccountController: public QObject
+class NewAccountController : public QObject
 {
     Q_OBJECT
 
@@ -28,10 +28,12 @@ class NewAccountController: public QObject
     QML_UNCREATABLE("Created and owned externally")
 
     Q_PROPERTY(QString password READ password WRITE setPassword NOTIFY passwordChanged)
-    Q_PROPERTY(QString confirmationPassword READ confirmationPassword WRITE setConfirmationPassword NOTIFY confirmationPasswordChanged)
+    Q_PROPERTY(QString confirmationPassword READ confirmationPassword WRITE setConfirmationPassword NOTIFY
+                   confirmationPasswordChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(bool passwordIsValid READ passwordIsValid NOTIFY passwordIsValidChanged)
-    Q_PROPERTY(bool confirmationPasswordIsValid READ confirmationPasswordIsValid NOTIFY confirmationPasswordIsValidChanged)
+    Q_PROPERTY(
+        bool confirmationPasswordIsValid READ confirmationPasswordIsValid NOTIFY confirmationPasswordIsValidChanged)
     Q_PROPERTY(bool nameIsValid READ nameIsValid NOTIFY nameIsValidChanged)
 
 public:
@@ -39,14 +41,14 @@ public:
 
     Q_INVOKABLE void createAccount();
 
-    const QString &password() const;
-    void setPassword(const QString &newPassword);
+    const QString& password() const;
+    void setPassword(const QString& newPassword);
 
-    const QString &confirmationPassword() const;
-    void setConfirmationPassword(const QString &newConfirmationPassword);
+    const QString& confirmationPassword() const;
+    void setConfirmationPassword(const QString& newConfirmationPassword);
 
-    const QString &name() const;
-    void setName(const QString &newName);
+    const QString& name() const;
+    void setName(const QString& newName);
 
     bool passwordIsValid() const;
     bool confirmationPasswordIsValid() const;

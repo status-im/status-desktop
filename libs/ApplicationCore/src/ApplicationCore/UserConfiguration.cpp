@@ -8,14 +8,16 @@
 
 namespace fs = std::filesystem;
 
-namespace Status::ApplicationCore {
+namespace Status::ApplicationCore
+{
 
-namespace {
-    constexpr auto statusFolder = "Status";
-    constexpr auto dataSubfolder = "data";
-}
+namespace
+{
+constexpr auto statusFolder = "Status";
+constexpr auto dataSubfolder = "data";
+} // namespace
 
-UserConfiguration::UserConfiguration(QObject *parent)
+UserConfiguration::UserConfiguration(QObject* parent)
     : QObject{parent}
 {
     generateReleaseConfiguration();
@@ -26,16 +28,15 @@ const QString UserConfiguration::qmlUserDataFolder() const
     return toQString(m_userDataFolder.string());
 }
 
-const fs::path &UserConfiguration::userDataFolder() const
+const fs::path& UserConfiguration::userDataFolder() const
 {
     return m_userDataFolder;
 }
 
-void UserConfiguration::setUserDataFolder(const QString &newUserDataFolder)
+void UserConfiguration::setUserDataFolder(const QString& newUserDataFolder)
 {
     auto newVal = Status::toPath(newUserDataFolder);
-    if (m_userDataFolder.compare(newVal) == 0)
-        return;
+    if(m_userDataFolder.compare(newVal) == 0) return;
     m_userDataFolder = newVal;
     emit userDataFolderChanged();
 }
@@ -43,7 +44,8 @@ void UserConfiguration::setUserDataFolder(const QString &newUserDataFolder)
 void UserConfiguration::generateReleaseConfiguration()
 {
     if(!parseFromCommandLineAndReturnTrueIfSet())
-        m_userDataFolder = toPath(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation))/statusFolder/dataSubfolder;
+        m_userDataFolder =
+            toPath(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation)) / statusFolder / dataSubfolder;
     emit userDataFolderChanged();
 }
 
@@ -55,7 +57,8 @@ bool UserConfiguration::parseFromCommandLineAndReturnTrueIfSet()
     parser.addPositionalArgument("dataDir", "Data folder");
     parser.process(*QCoreApplication::instance());
     auto args = parser.positionalArguments();
-    if (args.size() > 0) {
+    if(args.size() > 0)
+    {
         m_userDataFolder = toPath(args[0]);
         emit userDataFolderChanged();
         return true;
@@ -63,4 +66,4 @@ bool UserConfiguration::parseFromCommandLineAndReturnTrueIfSet()
     return false;
 }
 
-}
+} // namespace Status::ApplicationCore

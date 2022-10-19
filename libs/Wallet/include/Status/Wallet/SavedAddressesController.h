@@ -15,7 +15,7 @@ class SavedAddressesController : public QObject
     QML_ELEMENT
     QML_UNCREATABLE("C++ only")
 
-    Q_PROPERTY(QAbstractListModel *savedAddresses READ savedAddresses CONSTANT)
+    Q_PROPERTY(QAbstractListModel* savedAddresses READ savedAddresses CONSTANT)
 
 public:
     enum Error
@@ -26,11 +26,11 @@ public:
     };
     Q_ENUM(Error)
 
-    explicit SavedAddressesController(QObject *parent = nullptr);
+    explicit SavedAddressesController(QObject* parent = nullptr);
 
-    QAbstractListModel *savedAddresses() const;
+    QAbstractListModel* savedAddresses() const;
 
-    Q_INVOKABLE void saveAddress(const QString &address, const QString &name);
+    Q_INVOKABLE void saveAddress(const QString& address, const QString& name);
     Q_INVOKABLE void refresh();
 
 signals:

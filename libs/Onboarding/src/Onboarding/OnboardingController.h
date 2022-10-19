@@ -22,8 +22,7 @@ class NewAccountController;
  * \todo don't use DTOs in controllers, use QObjects directly
  * \todo make dependency on SignalManager explicit. Now it is hidden.
  */
-class OnboardingController final : public QObject
-        , public std::enable_shared_from_this<OnboardingController>
+class OnboardingController final : public QObject, public std::enable_shared_from_this<OnboardingController>
 {
     Q_OBJECT
 
@@ -44,11 +43,11 @@ public:
     /// TODO: \a user should be of type \c UserAccount but this doesn't work with Qt6 CMake API. Investigate and fix later on
     Q_INVOKABLE void login(QObject* user, const QString& password);
 
-    UserAccountsModel *accounts() const;
+    UserAccountsModel* accounts() const;
 
-    Q_INVOKABLE Status::Onboarding::NewAccountController *initNewAccountController();
+    Q_INVOKABLE Status::Onboarding::NewAccountController* initNewAccountController();
     Q_INVOKABLE void terminateNewAccountController();
-    NewAccountController *newAccountController() const;
+    NewAccountController* newAccountController() const;
     std::shared_ptr<AccountsServiceInterface> accountsService() const;
 
 signals:
@@ -72,4 +71,4 @@ private:
     std::unique_ptr<NewAccountController> m_newAccountController;
 };
 
-}
+} // namespace Status::Onboarding

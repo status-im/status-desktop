@@ -13,13 +13,14 @@ RpcResponse<QJsonObject> initKeystore(const char* keystoreDir)
     {
         auto result = InitKeystore(const_cast<char*>(keystoreDir));
         QJsonObject jsonResult;
-        if(!Utils::checkReceivedResponse(result, jsonResult)) {
+        if(!Utils::checkReceivedResponse(result, jsonResult))
+        {
             throw std::domain_error("parsing response failed");
         }
 
         return Utils::buildPrivateRPCResponse(jsonResult);
     }
-    catch (std::exception& e)
+    catch(std::exception& e)
     {
         // TODO: either use optional/smartpointers or exceptions instead of plain objects
         auto response = RpcResponse<QJsonObject>(QJsonObject());
@@ -27,7 +28,7 @@ RpcResponse<QJsonObject> initKeystore(const char* keystoreDir)
         response.error.message = QObject::tr("an error opening accounts occurred, msg: %1").arg(e.what());
         return response;
     }
-    catch (...)
+    catch(...)
     {
         auto response = RpcResponse<QJsonObject>(QJsonObject());
         response.error.message = QObject::tr("an error opening accounts occurred");
@@ -35,4 +36,4 @@ RpcResponse<QJsonObject> initKeystore(const char* keystoreDir)
     }
 }
 
-}
+} // namespace Status::StatusGo::General

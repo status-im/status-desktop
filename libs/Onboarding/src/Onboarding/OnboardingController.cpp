@@ -8,7 +8,8 @@
 
 #include <Helpers/helpers.h>
 
-namespace Status::Onboarding {
+namespace Status::Onboarding
+{
 
 namespace StatusGo = Status::StatusGo;
 
@@ -16,15 +17,20 @@ OnboardingController::OnboardingController(AccountsServiceInterfacePtr accountsS
     : QObject(nullptr)
     , m_accountsService(std::move(accountsService))
 {
-    {   // Init accounts
+    { // Init accounts
         std::vector<std::shared_ptr<UserAccount>> accounts;
-        for(auto &account : getOpenedAccounts()) {
-            accounts.push_back(Helpers::makeSharedQObject<UserAccount>(std::make_unique<MultiAccount>(std::move(account))));
+        for(auto& account : getOpenedAccounts())
+        {
+            accounts.push_back(
+                Helpers::makeSharedQObject<UserAccount>(std::make_unique<MultiAccount>(std::move(account))));
         }
         m_accounts = Helpers::makeSharedQObject<UserAccountsModel>(std::move(accounts));
     }
 
-    connect(StatusGo::SignalsManager::instance(), &StatusGo::SignalsManager::nodeLogin, this, &OnboardingController::onLogin);
+    connect(StatusGo::SignalsManager::instance(),
+            &StatusGo::SignalsManager::nodeLogin,
+            this,
+            &OnboardingController::onLogin);
 }
 
 OnboardingController::~OnboardingController()
@@ -50,16 +56,15 @@ void OnboardingController::login(QObject* user, const QString& password)
     auto account = qobject_cast<UserAccount*>(user);
     assert(account != nullptr);
     auto error = m_accountsService->login(account->accountData(), password);
-    if(!error.isEmpty())
-        emit accountLoginError(error);
+    if(!error.isEmpty()) emit accountLoginError(error);
 }
 
-UserAccountsModel *OnboardingController::accounts() const
+UserAccountsModel* OnboardingController::accounts() const
 {
     return m_accounts.get();
 }
 
-NewAccountController *OnboardingController::initNewAccountController()
+NewAccountController* OnboardingController::initNewAccountController()
 {
     m_newAccountController = std::make_unique<NewAccountController>(m_accountsService);
     emit newAccountControllerChanged();
@@ -72,7 +77,7 @@ void OnboardingController::terminateNewAccountController()
     emit newAccountControllerChanged();
 }
 
-NewAccountController *OnboardingController::newAccountController() const
+NewAccountController* OnboardingController::newAccountController() const
 {
     return m_newAccountController.get();
 }
@@ -82,4 +87,4 @@ AccountsServiceInterfacePtr OnboardingController::accountsService() const
     return m_accountsService;
 }
 
-}
+} // namespace Status::Onboarding

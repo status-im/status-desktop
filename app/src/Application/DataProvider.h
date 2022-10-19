@@ -1,17 +1,18 @@
 #pragma once
 
-#include <StatusGo/SettingsAPI>
 #include <QtCore/QtCore>
+#include <StatusGo/SettingsAPI>
 
-namespace Status::Application {
+namespace Status::Application
+{
 
-    class DataProvider: public QObject
-    {
-        Q_OBJECT
+class DataProvider : public QObject
+{
+    Q_OBJECT
 
-    public:
-        DataProvider();
+public:
+    DataProvider();
 
-        StatusGo::Settings::SettingsDto getSettings() const;
-    };
-}
+    StatusGo::Settings::SettingsDto getSettings() const;
+};
+} // namespace Status::Application

@@ -4,7 +4,8 @@
 
 #include <QtQmlIntegration>
 
-namespace Status::Wallet {
+namespace Status::Wallet
+{
 
 class SavedAddress : public QObject
 {
@@ -16,8 +17,7 @@ class SavedAddress : public QObject
     Q_PROPERTY(QString name READ name CONSTANT)
 
 public:
-    SavedAddress(const QString &address = QString(), const QString &name = QString(),
-                 QObject *parent = nullptr);
+    SavedAddress(const QString& address = QString(), const QString& name = QString(), QObject* parent = nullptr);
 
     const QString& address() const;
     const QString& name() const;
@@ -28,4 +28,4 @@ private:
 };
 
 using SavedAddressPtr = std::shared_ptr<SavedAddress>;
-}
+} // namespace Status::Wallet

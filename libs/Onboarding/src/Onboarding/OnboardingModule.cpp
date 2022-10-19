@@ -10,20 +10,20 @@ namespace AppCore = Status::ApplicationCore;
 
 namespace fs = std::filesystem;
 
-namespace Status::Onboarding {
+namespace Status::Onboarding
+{
 
-OnboardingModule::OnboardingModule(const fs::path& userDataPath, QObject *parent)
+OnboardingModule::OnboardingModule(const fs::path& userDataPath, QObject* parent)
     : OnboardingModule{parent}
 {
     m_userDataPath = userDataPath;
     initWithUserDataPath(m_userDataPath);
 }
 
-OnboardingModule::OnboardingModule(QObject *parent)
+OnboardingModule::OnboardingModule(QObject* parent)
     : QObject{parent}
     , m_accountsService(std::make_shared<AccountsService>())
-{
-}
+{ }
 
 OnboardingController* OnboardingModule::controller() const
 {
@@ -32,20 +32,21 @@ OnboardingController* OnboardingModule::controller() const
 
 void OnboardingModule::componentComplete()
 {
-    try {
+    try
+    {
         initWithUserDataPath(m_userDataPath);
-    } catch(const std::exception &e) {
+    }
+    catch(const std::exception& e)
+    {
         qCritical() << "OnboardingModule: failed to initialize";
     }
 }
 
-void OnboardingModule::initWithUserDataPath(const fs::path &path)
+void OnboardingModule::initWithUserDataPath(const fs::path& path)
 {
     auto result = m_accountsService->init(path);
-    if(!result)
-        throw std::runtime_error(std::string("Failed to initialize OnboadingService") + path.string());
-    m_controller = Helpers::makeSharedQObject<OnboardingController>(
-                m_accountsService);
+    if(!result) throw std::runtime_error(std::string("Failed to initialize OnboadingService") + path.string());
+    m_controller = Helpers::makeSharedQObject<OnboardingController>(m_accountsService);
     emit controllerChanged();
 }
 
@@ -54,13 +55,12 @@ const QString OnboardingModule::userDataPath() const
     return QString::fromStdString(m_userDataPath.string());
 }
 
-void OnboardingModule::setUserDataPath(const QString &newUserDataPath)
+void OnboardingModule::setUserDataPath(const QString& newUserDataPath)
 {
     auto newVal = newUserDataPath.toStdString();
-    if (m_userDataPath.compare(newVal) == 0)
-        return;
+    if(m_userDataPath.compare(newVal) == 0) return;
     m_userDataPath = newVal;
     emit userDataPathChanged();
 }
 
-}
+} // namespace Status::Onboarding

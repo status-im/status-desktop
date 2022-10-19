@@ -20,7 +20,7 @@ public:
     {
         const auto it = getProp(object, field);
 
-        if (it == object.constEnd())
+        if(it == object.constEnd())
         {
             throw std::logic_error(QString("No field `%1`").arg(field).toStdString());
         }
@@ -29,4 +29,4 @@ public:
     }
 };
 
-}
+} // namespace Status

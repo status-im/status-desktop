@@ -1,7 +1,7 @@
 #pragma once
 
-#include "wallet_types.h"
 #include "Accounts/accounts_types.h"
+#include "wallet_types.h"
 
 #include <Helpers/conversions.h>
 
@@ -11,7 +11,8 @@
 
 namespace Accounts = Status::StatusGo::Accounts;
 
-namespace Status::StatusGo::Wallet {
+namespace Status::StatusGo::Wallet
+{
 
 /// \brief Define a saved wallet address as returned by the corresponding API
 /// \note equivalent of status-go's SavedAddress@api.go
@@ -28,4 +29,4 @@ using SavedAddresses = std::vector<SavedAddress>;
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SavedAddress, address, name, favourite, chainId);
 
-}
+} // namespace Status::StatusGo::Wallet

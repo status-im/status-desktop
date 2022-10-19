@@ -14,7 +14,8 @@ namespace Accounts = Status::StatusGo::Accounts;
 
 using json = nlohmann::json;
 
-namespace Status::StatusGo::Wallet {
+namespace Status::StatusGo::Wallet
+{
 
 /// \brief Define a derived address as returned by the corresponding API
 /// \note equivalent of status-go's DerivedAddress@api.go
@@ -31,4 +32,4 @@ using DerivedAddresses = std::vector<DerivedAddress>;
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(DerivedAddress, address, path, hasActivity, alreadyCreated);
 
-}
+} // namespace Status::StatusGo::Wallet

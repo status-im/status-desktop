@@ -6,22 +6,24 @@ namespace StatusGo = Status::StatusGo;
 
 ChatDataProvider::ChatDataProvider()
     : QObject(nullptr)
-{
-}
+{ }
 
 StatusGo::Chats::ChannelGroupDto ChatDataProvider::getSectionData(const QString& sectionId) const
 {
-    try {
+    try
+    {
         auto result = StatusGo::Chats::getChats();
-        for(auto chGroup : result.allChannelGroups) {
-            if (chGroup.id == sectionId)
-                return chGroup;
+        for(auto chGroup : result.allChannelGroups)
+        {
+            if(chGroup.id == sectionId) return chGroup;
         }
     }
-    catch (std::exception& e) {
+    catch(std::exception& e)
+    {
         qWarning() << "ChatDataProvider::getSectionData, error: " << e.what();
     }
-    catch (...) {
+    catch(...)
+    {
         qWarning() << "ChatDataProvider::getSectionData, unknown error";
     }
     return StatusGo::Chats::ChannelGroupDto{};

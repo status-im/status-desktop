@@ -6,7 +6,8 @@
 #include <memory>
 #include <mutex>
 
-namespace Status::Testing {
+namespace Status::Testing
+{
 
 ///
 /// \brief Monitor output for tests and declaratively control message handler availability
@@ -36,7 +37,7 @@ public:
 signals:
 
 private:
-    static void qtMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+    static void qtMessageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg);
     static QtMessageHandler m_previousHandler;
 
     // Use it to keep track of qInstallMessageHandler call
@@ -46,4 +47,4 @@ private:
     int m_start = 0;
 };
 
-}
+} // namespace Status::Testing

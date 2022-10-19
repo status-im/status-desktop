@@ -1,13 +1,14 @@
 #pragma once
 
-#include <StatusGo/Wallet/Token.h>
 #include <StatusGo/Wallet/BigInt.h>
+#include <StatusGo/Wallet/Token.h>
 
 #include <QtQmlIntegration>
 
 namespace WalletGo = Status::StatusGo::Wallet;
 
-namespace Status::Wallet {
+namespace Status::Wallet
+{
 
 class WalletAsset : public QObject
 {
@@ -22,7 +23,7 @@ class WalletAsset : public QObject
     Q_PROPERTY(float value READ value CONSTANT)
 
 public:
-    explicit WalletAsset(const WalletGo::TokenPtr token, StatusGo::Wallet::BigInt balance, QObject *parent = nullptr);
+    explicit WalletAsset(const WalletGo::TokenPtr token, StatusGo::Wallet::BigInt balance, QObject* parent = nullptr);
 
     const QString name() const;
 
@@ -42,4 +43,4 @@ private:
     int m_count;
 };
 
-}
+} // namespace Status::Wallet

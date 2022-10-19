@@ -4,9 +4,11 @@
 
 #include <string>
 
-namespace Status::Testing {
+namespace Status::Testing
+{
 
-class AutoCleanTempTestDir {
+class AutoCleanTempTestDir
+{
 public:
     /// Creates a temporary folder to be used in tests. The folder content's will
     /// be removed when out of scope
@@ -19,4 +21,4 @@ private:
     const std::filesystem::path m_testFolder;
 };
 
-}
+} // namespace Status::Testing

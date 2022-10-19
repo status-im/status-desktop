@@ -4,6 +4,6 @@
 
 namespace Status::StatusGo::Settings
 {
-    /// \brief Retrieve settings
-    SettingsDto getSettings();
-}
+/// \brief Retrieve settings
+SettingsDto getSettings();
+} // namespace Status::StatusGo::Settings
