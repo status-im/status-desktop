@@ -15,8 +15,8 @@ Feature: Status Desktop Chat Basic Flows
 	# TODO: Add scenario end -> clear chat input.
 
     Scenario Outline: The user can chat in a public room
-	     When the user sends a chat message <message>
-		 Then the last chat message contains <message>
+	     When the user sends a chat message "<message>"
+		 Then the last chat message contains "<message>"
 		 Examples:
 		 | message  			 |
 		 | Hello    			 |
@@ -28,56 +28,53 @@ Feature: Status Desktop Chat Basic Flows
     @mayfail
     # TODO: It works standalone but when it runs as part of the sequence, the action of reply is not done always. The popup option does not appear.
     Scenario Outline: The user can reply to the last message
-         Given the user sends a chat message <message>
-         When the user replies to the message at index 0 with <reply>
+         Given the user sends a chat message "random chat message"
+         When the user replies to the message at index 0 with "<reply>"
          # TODO: Check the last message is really a reply, now just checking the last message is the expected one but could not be a reply. The popup option does not appear.
-         Then the chat message <reply> is displayed as a reply
+         Then the chat message "<reply>" is displayed as a reply
          Examples:
-		 | message			   | reply			 |
-		 | random chat message | This is a reply |
+		 | reply		   |
+		 | This is a reply |
 
 	@mayfail
 	# TODO: It works standalone but when it runs as part of the sequence, the action of edit is not done always. The popup option does not appear.
     Scenario Outline: The user can edit a message
-         Given the user sends a chat message <message>
-         When the user edits the message at index 0 and changes it to <edited>
+         Given the user sends a chat message "Edit me"
+         When the user edits the message at index 0 and changes it to "<edited>"
          # TODO: Check last message is an edited one, now just checking the last message is the expected one but could not be an edited one.
-         Then the chat message <edited> is displayed as an edited one
+         Then the chat message "<edited>" is displayed as an edited one
          Examples:
-		 | message | edited		  |
-		 | Edit me | Edited by me |
+		 | edited		|
+		 | Edited by me |
 
     @relyon-mailserver
     Scenario Outline: The user can reply to another message
-         When the user replies to the message at index 0 with <reply>
-         Then the chat message <reply> is displayed as a reply
+         When the user replies to the message at index 0 with "<reply>"
+         Then the chat message "<reply>" is displayed as a reply
          Examples:
 		 | reply		   |
 		 | This is a reply |
 
 # TODO: This scenario should be extracted to a different feature file bc it doesn't accomplish the background steps since it needs to change/specify the chat room
-#    Scenario Outline: The user joins a room and marks it as read
+#    Scenario: The user joins a room and marks it as read
 #         When the user joins chat room test
-#		 And the user marks the channel <channel> as read
+#		 And the user marks the channel "test" as read
 #         # TODO find a way to validate that it worked
-#         Examples:
-#		 | channel |
-#		 | test    |
 
 	@mayfail
 	# TODO: It works standalone but when it runs as part of the sequence, the action of delete is not done always. The popup option does not appear.
     Scenario Outline: The user can delete his/her own message
-         Given the user sends a chat message <message>
+         Given the user sends a chat message "<message>"
          When the user deletes the message at index 0
-         Then the last message displayed is not <message>
+         Then the last message displayed is not "<message>"
          Examples:
-		 | message			   |
-		 | random chat message |
+			 | message			   |
+			 | random chat message |
 
     Scenario: The user can clear chat history
-        Given the user sends a chat message Hi hi
-        And the user sends a chat message testing chat
-        And the user sends a chat message history
+        Given the user sends a chat message "Hi hi"
+        And the user sends a chat message "testing chat"
+        And the user sends a chat message "history"
         When the user clears chat history
         Then the chat is cleared
 
@@ -93,26 +90,23 @@ Feature: Status Desktop Chat Basic Flows
     @mayfail
 	# TODO: It works standalone but when it runs as part of the sequence, the action of activates link preview doesn't work.
     Scenario Outline: The user can activate image unfurling
-        Given the user sends a chat message <image_url>
-		And the image <image_url> is not unfurled in the chat
+        Given the user sends a chat message "<image_url>"
+		And the image "<image_url>" is not unfurled in the chat
 		When the user opens app settings screen
 		And the user opens the messaging settings
 		And the user activates link preview
 		And the user activates image unfurling
 		And the user opens the chat section
-		Then the image <image_url> is unfurled in the chat
+		Then the image "<image_url>" is unfurled in the chat
         Examples:
            | image_url                                                                                      |
            | https://github.com/status-im/status-desktop/raw/master/test/ui-test/fixtures/images/doggo.jpeg |
 
-    Scenario Outline: The user is able to use emoji suggestions
-        Given the user types <message>
+    Scenario: The user is able to use emoji suggestions
+        Given the user types "hello :thumbs"
 		And the user selects the emoji in the suggestion's list
 		When the user presses enter
-		Then the last chat message contains <emoji>
-		Examples:
-           | message	   | emoji |
-           | hello :thumbs | 👍    |
+		Then the last chat message contains "👍"
 
     @relyon-mailserver
     Scenario: The user cannot delete another user's message
@@ -120,28 +114,28 @@ Feature: Status Desktop Chat Basic Flows
 
    @relyon-mailserver
 	Scenario Outline: The user can do a mention
-		When the user inputs a mention to <displayName> with message <message>
-		Then the <displayName> mention with message <message> have been sent
+		When the user inputs a mention to "<displayName>" with message "<message>"
+		Then the "<displayName>" mention with message "<message>" have been sent
 		Examples:
 		| displayName | message          |
 		| tester123   |  testing mention |
 
     @relyon-mailserver
 	Scenario Outline: The user can not do a mention to a not existing users
-		Then the user cannot input a mention to a not existing user <displayName>
+		Then the user cannot input a mention to a not existing user "<displayName>"
 		Examples:
 		| displayName        |
 		| notExistingAccount |
 		| asdfgNoNo          |
 
     Scenario: The user can send an emoji as a message
-    	When the user sends the emoji heart_eyes as a message
-   		Then the last chat message contains 😍
+    	When the user sends the emoji "heart_eyes" as a message
+   		Then the last chat message contains "😍"
 
 	Scenario Outline: The user can send an emoji in a message
-    	When the user sends the emoji sunglasses with message <message>
-   		Then the last chat message contains 😎
-    	And the last chat message contains <message>
+    	When the user sends the emoji "sunglasses" with message "<message>"
+   		Then the last chat message contains "😎"
+    	And the last chat message contains "<message>"
     	Examples:
          | message          |
 		 | wow I'm so cool  |
@@ -149,14 +143,14 @@ Feature: Status Desktop Chat Basic Flows
 # TODO: This scenario should be extracted to a different feature file bc it doesn't accomplish the background steps since it needs to change/specify the chat room
 #	@merge
 #    Scenario: The user sees chats sorted by most recent activity
-#          When the user joins chat room first-chat
-#          And the user joins chat room second-chat
-#          And the user joins chat room third-chat
+#          When the user joins chat room "first-chat"
+#          And the user joins chat room "second-chat"
+#          And the user joins chat room "third-chat"
 #          Then the user chats are sorted accordingly
 #          | third-chat  |
 #          | second-chat |
 #          | first-chat  |
-#          When the user switches to second-chat chat
+#          When the user switches to "second-chat" chat
 #          And the user sends a random chat message
 #		   Then the random chat message is displayed
 #          And the user chats are sorted accordingly
@@ -165,9 +159,9 @@ Feature: Status Desktop Chat Basic Flows
 #          | first-chat  |
 
     Scenario: The user can type message with emoji autoreplace
-    	When the user sends a chat message Hello :)
-    	Then the last chat message contains 🙂
-    	And the last chat message contains Hello
+    	When the user sends a chat message "Hello :)"
+    	Then the last chat message contains "🙂"
+    	And the last chat message contains "Hello"
 
     Scenario: The user can send a sticker after installing a free pack
          Given the user installs the sticker pack at position 4

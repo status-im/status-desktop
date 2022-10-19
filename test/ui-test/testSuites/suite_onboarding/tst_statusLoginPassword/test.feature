@@ -17,10 +17,10 @@ Feature: Status Desktop login
 
     Scenario Outline: User tries to login with a valid password
         Given A first time user lands on the status desktop and generates new key
-        When user signs up with username <username> and password <password>
+        When user signs up with username "<username>" and password "<password>"
         Then the user lands on the signed in app
         When the user restarts the app
-        And the user <username> logs in with password <password>
+        And the user "<username>" logs in with password "<password>"
         Then the user lands on the signed in app
 
         Examples:
@@ -31,10 +31,10 @@ Feature: Status Desktop login
 	@merge
     Scenario Outline: User tries to login with an invalid password
         Given A first time user lands on the status desktop and generates new key
-        When user signs up with username <username> and password <password>
+        When user signs up with username "<username>" and password "<password>"
         Then the user lands on the signed in app
         When the user restarts the app
-        And the user <username> logs in with password <wrongpassword>
+        And the user "<username>" logs in with password "<wrongpassword>"
         Then the user is NOT able to login to Status Desktop application
             Examples:
                  | username 		  | password           |  wrongpassword    |
