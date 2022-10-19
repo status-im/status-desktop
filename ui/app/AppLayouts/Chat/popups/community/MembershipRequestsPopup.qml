@@ -76,7 +76,7 @@ StatusModal {
                                 hoverEnabled: true
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: communitySectionModule.acceptRequestToJoinCommunity(id)
+                                onClicked: communitySectionModule.acceptRequestToJoinCommunity(id, popup.communityData.id)
                             }
                         },
                         StatusRoundIcon {
@@ -90,7 +90,7 @@ StatusModal {
                                 hoverEnabled: true
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: communitySectionModule.declineRequestToJoinCommunity(id)
+                                onClicked: communitySectionModule.declineRequestToJoinCommunity(id, popup.communityData.id)
                             }
                         }
                     ]

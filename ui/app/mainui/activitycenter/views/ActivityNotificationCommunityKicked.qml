@@ -16,6 +16,7 @@ ActivityNotificationBase {
     id: root
 
     bodyComponent: RowLayout {
+        height: 50
         readonly property var community: root.store.getCommunityDetailsAsJson(notification.communityId)
 
         StatusSmartIdenticon {
@@ -27,6 +28,7 @@ ActivityNotificationBase {
             asset.letterSize: width / 2.4
             asset.name: community.image
             asset.isImage: true
+            Layout.alignment: Qt.AlignVCenter
             Layout.leftMargin: Style.current.padding
         }
 

@@ -312,12 +312,12 @@ QtObject {
                 )
     }
 
-    function acceptRequestToJoinCommunity(requestId) {
-        chatCommunitySectionModule.acceptRequestToJoinCommunity(requestId)
+    function acceptRequestToJoinCommunity(requestId, communityId) {
+        chatCommunitySectionModule.acceptRequestToJoinCommunity(requestId, communityId)
     }
 
-    function declineRequestToJoinCommunity(requestId) {
-        chatCommunitySectionModule.declineRequestToJoinCommunity(requestId)
+    function declineRequestToJoinCommunity(requestId, communityId) {
+        chatCommunitySectionModule.declineRequestToJoinCommunity(requestId, communityId)
     }
 
     function userNameOrAlias(pk) {

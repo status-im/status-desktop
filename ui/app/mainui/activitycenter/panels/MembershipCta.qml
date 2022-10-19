@@ -22,7 +22,8 @@ Item {
 
     StatusBaseText {
         id: textItem
-        anchors.centerIn: parent
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
         visible: !pending
         text: {
             if (root.accepted) {

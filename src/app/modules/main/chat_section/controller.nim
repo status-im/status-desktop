@@ -373,11 +373,11 @@ proc joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: s
       self.contactService, self.chatService, self.communityService, self.messageService,
       self.gifService, self.mailserversService)
 
-proc acceptRequestToJoinCommunity*(self: Controller, requestId: string) =
-  self.communityService.acceptRequestToJoinCommunity(self.sectionId, requestId)
+proc acceptRequestToJoinCommunity*(self: Controller, requestId: string, communityId: string) =
+  self.communityService.acceptRequestToJoinCommunity(communityId, requestId)
 
-proc declineRequestToJoinCommunity*(self: Controller, requestId: string) =
-  self.communityService.declineRequestToJoinCommunity(self.sectionId, requestId)
+proc declineRequestToJoinCommunity*(self: Controller, requestId: string, communityId: string) =
+  self.communityService.declineRequestToJoinCommunity(communityId, requestId)
 
 proc createCommunityChannel*(
     self: Controller,
