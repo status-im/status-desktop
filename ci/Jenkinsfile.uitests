@@ -123,6 +123,7 @@ pipeline {
                     squishPackageName: 'squish-6.7.2-qt514x-linux64',
                     testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
                     ])
+                    echo res
                     if ( res == "SUCCESS" || res == "UNSTABLE" ) {
                       return 
                     }
