@@ -6,6 +6,7 @@ type
   SavedAddressDto* = ref object of RootObj
     name*: string
     address*: string
+    ens*: string
     favourite*: bool
 
 proc newSavedAddressDto*(

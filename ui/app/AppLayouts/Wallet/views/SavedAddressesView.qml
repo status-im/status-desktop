@@ -109,6 +109,7 @@ Item {
 
             name: model.name
             address: model.address
+            ens: model.ens
             favourite: model.favourite
             store: RootStore
             contactsStore: root.contactsStore

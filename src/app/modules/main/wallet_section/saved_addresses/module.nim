@@ -36,7 +36,8 @@ method loadSavedAddresses*(self: Module) =
     savedAddresses.map(s => initItem(
       s.name,
       s.address,
-      s.favourite
+      s.favourite,
+      s.ens,
     ))
   )
 
