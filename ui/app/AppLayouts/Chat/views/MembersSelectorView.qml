@@ -17,8 +17,7 @@ MembersSelectorBase {
     limitReached: model.count >= membersLimit - 1 // -1 because creator is not on the list of members when creating chat
 
     function cleanup() {
-        root.edit.clear()
-        d.selectedMembers.clear()
+        d.cleanup()
     }
 
     onEntryAccepted: {
@@ -51,7 +50,9 @@ MembersSelectorBase {
     QtObject {
         id: d
 
-        property ListModel selectedMembers: ListModel {}
+        property ListModel selectedMembers: ListModel {
+            Component.onCompleted: d.addOurselvesToModel()
+        }
 
         function lookupContact(value) {
             if (value.startsWith(Constants.userLinkPrefix))
@@ -80,6 +81,19 @@ MembersSelectorBase {
                     return
                 }
             }
+        }
+
+        function addOurselvesToModel() {
+            d.selectedMembers.append({
+                                         "pubKey": userProfile.pubKey,
+                                         "displayName": userProfile.name
+                                     })
+        }
+
+        function cleanup() {
+            root.edit.clear()
+            d.selectedMembers.clear()
+            d.addOurselvesToModel()
         }
     }
 
