@@ -44,7 +44,7 @@ Item {
             id: listView
             // NOTE: some entries are hidden until implimentation
             model: [ { text: qsTr("All"), category: ActivityCenterPopup.ActivityCategory.All, visible: true, enabled: true },
-                     { text: qsTr("Admin"), category: ActivityCenterPopup.ActivityCategory.Admin, visible: true, enabled: root.hasAdmin },
+                     { text: qsTr("Admin"), category: ActivityCenterPopup.ActivityCategory.Admin, visible: root.hasAdmin, enabled: root.hasAdmin },
                      { text: qsTr("Mentions"), category: ActivityCenterPopup.ActivityCategory.Mentions, visible: true, enabled: root.hasMentions },
                      { text: qsTr("Replies"), category: ActivityCenterPopup.ActivityCategory.Replies, visible: true, enabled: root.hasReplies },
                      { text: qsTr("Contact requests"), category: ActivityCenterPopup.ActivityCategory.ContactRequests, visible: true, enabled: root.hasContactRequests },

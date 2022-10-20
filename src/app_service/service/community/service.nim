@@ -624,6 +624,7 @@ QtObject:
   proc requestToJoinCommunity*(self: Service, communityId: string, ensName: string) =
     try:
       let response = status_go.requestToJoinCommunity(communityId, ensName)
+      self.activityCenterService.parseACNotificationResponse(response)
 
       if not self.processRequestsToJoinCommunity(response.result):
         error "error: ", procName="requestToJoinCommunity", errDesription = "no 'requestsToJoinCommunity' key in response"
@@ -668,6 +669,7 @@ QtObject:
   proc leaveCommunity*(self: Service, communityId: string) =
     try:
       let response = status_go.leaveCommunity(communityId)
+      self.activityCenterService.parseACNotificationResponse(response)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)

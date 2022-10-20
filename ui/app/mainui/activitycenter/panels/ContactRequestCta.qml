@@ -19,8 +19,8 @@ Item {
     signal blockClicked()
     signal profileClicked()
 
-    width: Math.max(textItem.width, buttons.width)
-    height: Math.max(textItem.height, buttons.height)
+    implicitWidth: Math.max(textItem.width, buttons.width)
+    implicitHeight: Math.max(textItem.height, buttons.height)
 
     StatusBaseText {
         id: textItem

@@ -65,33 +65,23 @@ StatusModal {
                     title: displayName
 
                     components: [
-                        StatusRoundIcon {
-                            asset.name: "thumbs-up"
-                            asset.color: Theme.palette.white
-                            asset.bgWidth: 28
-                            asset.bgHeight: 28
-                            asset.bgColor: Theme.palette.successColor1
-                            MouseArea {
-                                id: thumbsUpSensor
-                                hoverEnabled: true
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: communitySectionModule.acceptRequestToJoinCommunity(id, popup.communityData.id)
-                            }
+                        StatusRoundButton {
+                            icon.name: "thumbs-up"
+                            icon.color: Style.current.white
+                            icon.hoverColor: Style.current.white
+                            implicitWidth: 28
+                            implicitHeight: 28
+                            color: Theme.palette.successColor1
+                            onClicked: popup.store.acceptRequestToJoinCommunity(id, popup.communityData.id)
                         },
-                        StatusRoundIcon {
-                            asset.name: "thumbs-down"
-                            asset.color: Theme.palette.white
-                            asset.bgWidth: 28
-                            asset.bgHeight: 28
-                            asset.bgColor: Theme.palette.dangerColor1
-                            MouseArea {
-                                id: thumbsDownSensor
-                                hoverEnabled: true
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: communitySectionModule.declineRequestToJoinCommunity(id, popup.communityData.id)
-                            }
+                        StatusRoundButton {
+                            icon.name: "thumbs-down"
+                            icon.color: Style.current.white
+                            icon.hoverColor: Style.current.white
+                            implicitWidth: 28
+                            implicitHeight: 28
+                            color: Theme.palette.dangerColor1
+                            onClicked: popup.store.declineRequestToJoinCommunity(id, popup.communityData.id)
                         }
                     ]
                 }

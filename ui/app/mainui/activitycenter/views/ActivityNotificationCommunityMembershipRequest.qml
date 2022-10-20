@@ -21,7 +21,7 @@ ActivityNotificationBase {
     signal activityCenterClose()
 
     bodyComponent: MessageView {
-        readonly property var contactDetails: Utils.getContactDetailsAsJson(senderId)
+        readonly property var contactDetails: Utils.getContactDetailsAsJson(notification.author)
 
         rootStore: root.store
         messageStore: root.store.messageStore
@@ -30,11 +30,11 @@ ActivityNotificationBase {
         messageTimestamp: notification.timestamp
         senderId: notification.author
         senderIcon: contactDetails.displayIcon
-        senderDisplayName: contactDetails.name
+        senderDisplayName: contactDetails.displayName
+        senderOptionalName: contactDetails.localNickname
         messageContextMenu: root.messageContextMenu
         activityCenterMessage: true
         activityCenterMessageRead: false
-        scrollToBottom: null
         onImageClicked: Global.openImagePopup(image, root.messageContextMenu)
         messageClickHandler: (sender,
                         point,

@@ -19,9 +19,9 @@ Item {
     property alias ctaComponent: ctaLoader.sourceComponent
     property alias previousNotificationIndex: dateGroupLabel.previousMessageIndex
 
-    height: Math.max(60, bodyLoader.height +
-                         (dateGroupLabel.visible ? dateGroupLabel.height : 0) +
-                         (badgeLoader.item ? badgeLoader.height : 0))
+    implicitHeight: Math.max(60, bodyLoader.height +
+                                 (dateGroupLabel.visible ? dateGroupLabel.height : 0) +
+                                 (badgeLoader.item ? badgeLoader.height : 0))
 
     StatusDateGroupLabel {
         id: dateGroupLabel

@@ -2,6 +2,7 @@ import QtQuick 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
 import utils 1.0
@@ -17,8 +18,8 @@ Item {
     signal acceptRequestToJoinCommunity()
     signal declineRequestToJoinCommunity()
 
-    width: Math.max(textItem.width, buttons.width)
-    height: Math.max(textItem.height, buttons.height)
+    implicitWidth: Math.max(textItem.width, buttons.width)
+    implicitHeight: Math.max(textItem.height, buttons.height)
 
     StatusBaseText {
         id: textItem
@@ -28,7 +29,8 @@ Item {
         text: {
             if (root.accepted) {
                 return qsTr("Accepted")
-            } else if (root.declined) {
+            } 
+            if (root.declined) {
                 return qsTr("Declined")
             }
             return ""
@@ -36,7 +38,8 @@ Item {
         color: {
             if (root.accepted) {
                 return Theme.palette.successColor1
-            } else if (root.declined) {
+            }
+            if (root.declined) {
                 return Theme.palette.dangerColor1
             }
             return Theme.palette.directColor1
@@ -49,34 +52,24 @@ Item {
         visible: pending
         spacing: Style.current.padding
 
-        StatusRoundIcon {
-            asset.name: "thumbs-up"
-            asset.color: Theme.palette.white
-            asset.bgWidth: 28
-            asset.bgHeight: 28
-            asset.bgColor: Theme.palette.successColor1
-            MouseArea {
-                id: thumbsUpSensor
-                hoverEnabled: true
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.acceptRequestToJoinCommunity()
-            }
+        StatusRoundButton {
+            icon.name: "thumbs-up"
+            icon.color: Style.current.white
+            icon.hoverColor: Style.current.white
+            implicitWidth: 28
+            implicitHeight: 28
+            color: Theme.palette.successColor1
+            onClicked: root.acceptRequestToJoinCommunity()
         }
 
-        StatusRoundIcon {
-            asset.name: "thumbs-down"
-            asset.color: Theme.palette.white
-            asset.bgWidth: 28
-            asset.bgHeight: 28
-            asset.bgColor: Theme.palette.dangerColor1
-            MouseArea {
-                id: thumbsDownSensor
-                hoverEnabled: true
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.declineRequestToJoinCommunity()
-            }
+        StatusRoundButton {
+            icon.name: "thumbs-down"
+            icon.color: Style.current.white
+            icon.hoverColor: Style.current.white
+            implicitWidth: 28
+            implicitHeight: 28
+            color: Theme.palette.dangerColor1
+            onClicked: root.declineRequestToJoinCommunity()
         }
     }
 }
