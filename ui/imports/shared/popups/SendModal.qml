@@ -44,6 +44,14 @@ StatusDialog {
         standardButtons: StandardButton.Ok
     }
 
+    Connections {
+        target: store.currentAccount.assets
+        onModelReset: {
+            popup.selectedAccount =  null
+            popup.selectedAccount = store.currentAccount
+        }
+    }
+
     property var sendTransaction: function() {
         let recipientAddress = Utils.isValidAddress(popup.addressText) ? popup.addressText : d.resolvedENSAddress
         d.isPendingTx = true
@@ -76,10 +84,7 @@ StatusDialog {
 
     QtObject {
         id: d
-        readonly property double maxFiatBalance: {
-            console.error(assetSelector.selectedAsset.name," >>> recalaculayte maxFiatBalance = ", assetSelector.selectedAsset.totalBalance)
-            return assetSelector.selectedAsset ? assetSelector.selectedAsset.totalBalance: 0
-        }
+        readonly property double maxFiatBalance: assetSelector.selectedAsset ? assetSelector.selectedAsset.totalBalance: 0
         readonly property bool isReady: amountToSendInput.valid && !amountToSendInput.pending && recipientReady
         readonly property bool errorMode: (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0) || networkSelector.errorMode || isNaN(amountToSendInput.text)
         readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending
@@ -517,7 +522,7 @@ StatusDialog {
     footer: SendModalFooter {
         maxFiatFees: popup.isLoading ? "..." : gasSelector.selectedGasFiatValue
         selectedTimeEstimate: popup.isLoading? "..." : gasSelector.selectedTimeEstimate
-        pending: d.isPendingTx
+        pending: d.isPendingTx || popup.isLoading
         visible: d.isReady && !isNaN(amountToSendInput.text) && gasValidator.isValid && !d.errorMode
         onNextButtonClicked: popup.sendTransaction()
     }

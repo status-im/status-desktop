@@ -1209,6 +1209,7 @@ Item {
 
     StatusListView {
         id: toastArea
+        objectName: "ephemeralNotificationList"
         anchors.right: parent.right
         anchors.rightMargin: 8
         anchors.bottom: parent.bottom

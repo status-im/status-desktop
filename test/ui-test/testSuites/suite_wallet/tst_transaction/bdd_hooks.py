@@ -16,8 +16,7 @@ _seed_phrase = "pelican chief sudden oval media rare swamp elephant lawsuit whea
 def hook(context):
     common_init_steps.context_init(context)
     common_init_steps.signs_up_with_seed_phrase_process_steps(context, _seed_phrase, _user, _password)
-    wallet_init_steps.enable_wallet_section()
-    wallet_init_steps.toggle_test_networks()
+    wallet_init_steps.activate_and_open_wallet()
 
 @OnFeatureEnd
 def hook(context):

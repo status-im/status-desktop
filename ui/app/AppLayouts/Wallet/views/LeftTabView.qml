@@ -79,6 +79,7 @@ Rectangle {
 
             StyledTextEdit {
                 id: walletAmountValue
+                objectName: "walletLeftListAmountValue"
                 color: Style.current.textColor
                 text: {
                     Utils.toLocaleString(parseFloat(RootStore.totalCurrencyBalance).toFixed(2), localAppSettings.language, {"currency": true}) + " " + RootStore.currentCurrency.toUpperCase()

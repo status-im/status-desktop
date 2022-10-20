@@ -169,6 +169,8 @@ class SettingsScreen:
         verify(tenorSwitch.enabled, "Tenor GIFs preview is enabled")
 
     def toggle_test_networks(self):
+        # needed cause if we do it immmediately the toggle doesn't work
+        time.sleep(2)
         click_obj_by_name(WalletSettingsScreen.NETWORKS_ITEM.value)
         click_obj_by_name(WalletSettingsScreen.TESTNET_TOGGLE.value)      
         

@@ -23,6 +23,8 @@ class MainWalletScreen(Enum):
     RIGHT_SIDE_TABBAR: str = "mainWallet_Right_Side_Tab_Bar"
     MAILSERVER_RETRY: str = "mailserver_retry"
     FIRST_ACCOUNT_ITEM: str = "firstWalletAccount_Item"
+    EPHEMERAL_NOTIFICATION_LIST: str = "mainWallet_Ephemeral_Notification_List"
+    TOTAL_CURRENCY_BALANCE: str = "mainWallet_totalCurrencyBalance"
 
 class AssetView(Enum):
     LIST: str = "mainWallet_Assets_View_List"
@@ -48,12 +50,10 @@ class SendPopup(Enum):
     SCROLL_BAR: str = "mainWallet_Send_Popup_Main"
     HEADER_ACCOUNTS_LIST: str = "mainWallet_Send_Popup_Header_Accounts"
     AMOUNT_INPUT: str = "mainWallet_Send_Popup_Amount_Input"
-    GAS_PRICE_INPUT: str = "mainWallet_Send_Popup_GasPrice_Input"
     MY_ACCOUNTS_TAB: str = "mainWallet_Send_Popup_My_Accounts_Tab"
     MY_ACCOUNTS_LIST: str = "mainWallet_Send_Popup_My_Accounts_List"
     NETWORKS_LIST: str = "mainWallet_Send_Popup_Networks_List"
     SEND_BUTTON: str = "mainWallet_Send_Popup_Send_Button"
-    PASSWORD_INPUT: str = "mainWallet_Send_Popup_Password_Input"
     ASSET_SELECTOR: str = "mainWallet_Send_Popup_Asset_Selector"
     ASSET_LIST: str = "mainWallet_Send_Popup_Asset_List"
     HIGH_GAS_BUTTON: str = "mainWallet_Send_Popup_GasSelector_HighGas_Button"
@@ -184,9 +184,10 @@ class StatusWalletScreen:
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
         
     def send_transaction(self, account_name, amount, token, chain_name, password):
-        # TODO wait for balance to update
-        # Maybe needs a fix on the app itself.  Make the Send modal be responsive to when the balance updates
-        time.sleep(2)
+        list = get_obj(AssetView.LIST.value)
+        squish.waitFor("list.count > 0", 60*1000*2)
+        squish.waitFor("float(str(list.itemAtIndex(0).balance)) > 0", 60*1000*2)
+
         click_obj_by_name(MainWalletScreen.SEND_BUTTON_FOOTER.value)
         
         self._click_repeater(SendPopup.HEADER_ACCOUNTS_LIST.value, account_name)
@@ -207,22 +208,18 @@ class StatusWalletScreen:
         accounts = get_obj(SendPopup.MY_ACCOUNTS_LIST.value)
         for index in range(accounts.count):
             if(accounts.itemAtIndex(index).objectName == account_name):
+                print("WE FOUND THE ACCOUNT")
                 click_obj(accounts.itemAtIndex(index))
                 break
-        
+
         scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
         time.sleep(1)
+        
+        click_obj_by_name(SendPopup.SEND_BUTTON.value)
+        wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
 
-        self._click_repeater(SendPopup.NETWORKS_LIST.value, chain_name)
-        
-        # With the simulator, the gas price estimation doesn't work
-        type(SendPopup.GAS_PRICE_INPUT.value, "20")
-       
-        click_obj_by_name(SendPopup.SEND_BUTTON.value)
-        
-        type(SendPopup.PASSWORD_INPUT.value, password)
-        click_obj_by_name(SendPopup.SEND_BUTTON.value)
-    
+        click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
+
     def _click_repeater(self, repeater_object_name: str, object_name: str):
         repeater = get_obj(repeater_object_name)
         for index in range(repeater.count):
@@ -350,7 +347,11 @@ class StatusWalletScreen:
                 verify_failure(f'FAIL: saved address {name} exists')
 
     def verify_transaction(self):
-        print("TODO: fix notification and ensure there is one")
+        pass
+        # TODO: figure out why it doesn t work in CI
+        # ephemeral_notification_list = get_obj(MainWalletScreen.EPHEMERAL_NOTIFICATION_LIST.value)
+        # print(ephemeral_notification_list.itemAtIndex(0).objectName)
+        # verify(str(ephemeral_notification_list.itemAtIndex(0).primaryText ) == "Transaction pending...", "Tx was not sent!")
         
     def verify_collectibles_exist(self, account_name: str):
         tabbar = get_obj(MainWalletScreen.RIGHT_SIDE_TABBAR.value)

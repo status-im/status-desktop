@@ -16,22 +16,16 @@ Feature: Status Desktop Transaction
 	** and the user opens wallet screen
 	** and the user accepts the signing phrase
 
-    Background: Navigation to main wallet screen
-
-        Given the user opens wallet screen
-        And the user clicks on the first account
-
-	@mayfail
     Scenario Outline: The user sends a transaction
  		When the user sends a transaction to himself from account "Status account" of "<amount>" "<token>" on "<chain_name>" with password "qqqqqqqqqq"
 		Then the transaction is in progress
 
     	Examples:
       	  | amount   | token | chain_name |
-      	  | 1 		 | ETH   | Goerli     |
-      	  | 0 		 | ETH   | Goerli     |
-      	  | 1 		 | STT   | Goerli     |
-      	  | 0 		 | STT   | Goerli     |
+      	  | 0.1		 | ETH   | Ethereum Mainnet     |
+      	  #| 0 		 | ETH   | Goerli     |
+      	  #| 1 		 | STT   | Goerli     |
+      	  #| 0 		 | STT   | Goerli     |
 
     @mayfail
     Scenario: The user registers an ENS name
