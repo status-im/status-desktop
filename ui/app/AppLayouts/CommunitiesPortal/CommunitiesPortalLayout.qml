@@ -29,7 +29,6 @@ StatusSectionLayout {
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     property var importCommunitiesPopup: importCommunitiesPopupComponent
     property var createCommunitiesPopup: createCommunitiesPopupComponent
-    property int contentPrefferedWidth: 100
     property var discordImportProgressPopup: discordImportProgressDialog
 
     notificationCount: root.communitiesStore.unreadNotificationsCount
@@ -234,13 +233,13 @@ StatusSectionLayout {
                     }
                 }
                 CommunityBanner {
-                    property bool importInProgress: root.communitiesStore.discordImportInProgress && !root.communitiesStore.discordImportCancelled
+                    readonly property bool importInProgress: root.communitiesStore.discordImportInProgress && !root.communitiesStore.discordImportCancelled
                     text: importInProgress ?
                         qsTr("'%1' import in progress...").arg(root.communitiesStore.discordImportCommunityName) :
                         qsTr("Import existing Discord community into Status")
                     buttonText: qsTr("Import existing")
                     icon.name: "download"
-                    buttonTooltipText: qsTr("Your current import must finished or be cancelled before a new import can be started.")
+                    buttonTooltipText: qsTr("Your current import must be finished or cancelled before a new import can be started.")
                     buttonLoading: importInProgress
                     onButtonClicked: {
                         chooseCommunityCreationTypePopup.close()

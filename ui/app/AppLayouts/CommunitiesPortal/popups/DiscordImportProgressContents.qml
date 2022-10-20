@@ -39,7 +39,6 @@ StatusScrollView {
             visible: d.status === DiscordImportProgressContents.ImportStatus.CompletedWithWarnings ||
                      d.status === DiscordImportProgressContents.ImportStatus.StoppedWithErrors
             type: StatusButton.Danger
-            font.weight: Font.Medium
             text: qsTr("Delete community & restart import")
             onClicked: {
                 // TODO display a confirmation and open CreateCommunityPopup again
@@ -49,7 +48,6 @@ StatusScrollView {
         StatusButton {
             visible: d.status === DiscordImportProgressContents.ImportStatus.InProgress
             type: StatusButton.Danger
-            font.weight: Font.Medium
             text: qsTr("Cancel import")
             onClicked: {
                 Global.openPopup(cancelConfirmationPopupCmp)
@@ -58,7 +56,6 @@ StatusScrollView {
         StatusButton {
             visible: d.status === DiscordImportProgressContents.ImportStatus.Stopped // TODO find out exactly when to display this button
             type: StatusButton.Danger
-            font.weight: Font.Medium
             text: qsTr("Restart import")
             onClicked: {
                 // TODO open CreateCommunityPopup again
@@ -68,14 +65,12 @@ StatusScrollView {
         },
         StatusButton {
             visible: d.status === DiscordImportProgressContents.ImportStatus.InProgress
-            font.weight: Font.Medium
             text: qsTr("Hide window")
             onClicked: root.close()
         },
         StatusButton {
             visible: d.status === DiscordImportProgressContents.ImportStatus.CompletedSuccessfully ||
                      d.status === DiscordImportProgressContents.ImportStatus.CompletedWithWarnings
-            font.weight: Font.Medium
             text: qsTr("Visit your new community")
             onClicked: {
                 root.close()
@@ -111,6 +106,7 @@ StatusScrollView {
         }
 
         readonly property int importProgress: root.store.discordImportProgress // FIXME for now it is 0..100
+        readonly property bool importInProgress: root.store.discordImportInProgress || (importProgress > 0 && importProgress < 100)
         readonly property bool importStopped: root.store.discordImportProgressStopped
         readonly property bool hasErrors: root.store.discordImportErrorsCount
         readonly property bool hasWarnings: root.store.discordImportWarningsCount
@@ -126,7 +122,7 @@ StatusScrollView {
                     return DiscordImportProgressContents.ImportStatus.CompletedWithWarnings
                 return DiscordImportProgressContents.ImportStatus.CompletedSuccessfully
             }
-            if (importProgress > 0 && importProgress < 100)
+            if (importInProgress)
                 return DiscordImportProgressContents.ImportStatus.InProgress
             return DiscordImportProgressContents.ImportStatus.Unknown
         }
@@ -141,7 +137,7 @@ StatusScrollView {
             if (progress <= 0.0)
               return qsTr("Pending...")
 
-            return state == "import.taskState.saving" ?
+            return state === "import.taskState.saving" ?
               qsTr("Saving... This can take a moment, almost done!") :
               qsTr("Working...")
         }
@@ -242,7 +238,7 @@ StatusScrollView {
                         bgCornerRadius: 8
                         visible: text
                         type: IssuePill.Type.Warning
-                        text: qsTr("%1 more issue(s) downloading assets").arg(errorsAndWarningsCount - 3)
+                        text: qsTr("%n more issue(s) downloading assets", "", subtaskDelegate.errorsAndWarningsCount - 3)
                     }
                 }
             }

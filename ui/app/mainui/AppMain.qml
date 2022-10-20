@@ -551,7 +551,7 @@ Item {
                 ModuleWarning {
                     Layout.fillWidth: true
                     readonly property int progress: communitiesPortalLayoutContainer.communitiesStore.discordImportProgress
-                    readonly property bool inProgress: progress > 0 && progress < 100
+                    readonly property bool inProgress: (progress > 0 && progress < 100) || communitiesPortalLayoutContainer.communitiesStore.discordImportInProgress
                     readonly property bool finished: progress >= 100
                     readonly property bool cancelled: communitiesPortalLayoutContainer.communitiesStore.discordImportCancelled
                     readonly property bool stopped: communitiesPortalLayoutContainer.communitiesStore.discordImportProgressStopped
@@ -794,7 +794,6 @@ Item {
 
                     CommunitiesPortalLayout {
                         id: communitiesPortalLayoutContainer
-                        contentPrefferedWidth: appView.width
                     }
 
                     Loader {
