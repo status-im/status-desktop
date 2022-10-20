@@ -284,6 +284,12 @@ QtObject:
     if(not self.allCommunities.hasKey(community.id)):
       self.allCommunities[community.id] = community
       self.events.emit(SIGNAL_COMMUNITY_ADDED, CommunityArgs(community: community))
+
+      if(not self.joinedCommunities.hasKey(community.id)):
+        if (community.joined and community.isMember):
+          self.joinedCommunities[community.id] = community
+          self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
+
       return
 
     if(self.curatedCommunities.hasKey(community.id)):
