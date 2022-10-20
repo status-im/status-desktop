@@ -120,8 +120,8 @@ Column {
                         if (!data.fetching && data.communityId) {
                             return linkMessageLoader.sourceComponent = invitationBubble
                         }
-
-                        return linkMessageLoader.sourceComponent = unfurledLinkComponent
+                        // do not show unfurledLinkComponent
+                        return
                     }
                 }
             }
@@ -144,13 +144,13 @@ Column {
                 // Reset the height in case we set it to 0 below. See note below
                 // for more information
                 this.height = undefined
-
                 const linkHostname = Utils.getHostname(link)
                 if (!localAccountSensitiveSettings.whitelistedUnfurlingSites) {
                     localAccountSensitiveSettings.whitelistedUnfurlingSites = {}
                 }
 
                 const whitelistHosts = Object.keys(localAccountSensitiveSettings.whitelistedUnfurlingSites)
+
                 const linkExists = whitelistHosts.some(hostname => linkHostname.endsWith(hostname))
 
                 const linkWhiteListed = linkExists && whitelistHosts.some(hostname =>
@@ -181,7 +181,8 @@ Column {
                             return invitationBubble
                         }
 
-                        return unfurledLinkComponent
+                        // do not show unfurledLinkComponent
+                        return
                     }
 
                     linkFetchConnections.enabled = true
@@ -316,7 +317,6 @@ Column {
                     if (!!linkData.callback) {
                         return linkData.callback()
                     }
-
                     Global.openLink(linkData.address)
                 }
             }

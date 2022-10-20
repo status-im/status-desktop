@@ -59,6 +59,7 @@ import ../../../app_service/common/social_links
 
 import ../../core/notifications/details
 import ../../core/eventemitter
+import ../../core/custom_urls/urls_manager
 
 export io_interface
 
@@ -75,6 +76,7 @@ type
     controller: Controller
     channelGroupModules: OrderedTable[string, chat_section_module.AccessInterface]
     events: EventEmitter
+    urlsManager: UrlsManager
     keycardService: keycard_service.Service
     settingsService: settings_service.Service
     privacyService: privacy_service.Service
@@ -100,6 +102,7 @@ method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
 proc newModule*[T](
   delegate: T,
   events: EventEmitter,
+  urlsManager: UrlsManager,
   keychainService: keychain_service.Service,
   accountsService: accounts_service.Service,
   chatService: chat_service.Service,
@@ -153,6 +156,7 @@ proc newModule*[T](
   result.moduleLoaded = false
 
   result.events = events
+  result.urlsManager = urlsManager
   result.keycardService = keycardService
   result.settingsService = settingsService
   result.privacyService = privacyService
@@ -969,3 +973,7 @@ method runAuthenticationPopup*[T](self: Module[T], keyUid: string, bip44Path: st
 
 method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
   self.view.emitDisplayKeycardSharedModuleFlow()
+
+method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
+  let linkToActivate = self.urlsManager.convertExternalLinkToInternal(statusDeepLink)
+  self.urlsManager.onUrlActivated(linkToActivate)

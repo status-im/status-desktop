@@ -15,7 +15,7 @@ type StatusFoundation* = ref object
   fleetConfiguration*: FleetConfiguration
   threadpool*: ThreadPool
   signalsManager*: SignalsManager
-  urlsManager: UrlsManager
+  urlsManager*: UrlsManager
 
 proc newStatusFoundation*(fleetConfig: string): StatusFoundation =
   result = StatusFoundation()

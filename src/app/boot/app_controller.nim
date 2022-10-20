@@ -202,6 +202,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.mainModule = main_module.newModule[AppController](
     result,
     statusFoundation.events,
+    statusFoundation.urlsManager,
     result.keychainService,
     result.accountsService,
     result.chatService,

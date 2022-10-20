@@ -50,6 +50,10 @@ QtObject {
         mainModule.setActiveSectionById(communityId);
     }
 
+    function activateStatusDeepLink(link) {
+        mainModuleInst.activateStatusDeepLink(link)
+    }
+
     function setObservedCommunity(communityId) {
         communitiesModuleInst.setObservedCommunity(communityId);
     }
@@ -392,29 +396,20 @@ QtObject {
             callback: null
         }
 
-        // Link to send a direct message
-        let index = link.indexOf("/u/")
-        if (index === -1) {
-            // Try /p/ as well
-            index = link.indexOf("/p/")
-        }
+        // User profile
+        // There is invitation bubble only for /c/ link for now
+        /*let index = link.indexOf("/u/")
         if (index > -1) {
-            const pk = link.substring(index + 3)
-            result.title = qsTr("Start a 1-on-1 chat with %1")
-                            .arg(Utils.isChatKey(pk) ? globalUtils.generateAlias(pk) : ("@" + Utils.removeStatusEns(pk)))
+            //const pk = link.substring(index + 3)
+            result.title = qsTr("Display user profile")
             result.callback = function () {
-                if (Utils.isChatKey(pk)) {
-                    chatCommunitySectionModule.createOneToOneChat("", pk, "")
-                } else {
-                // Not Refactored Yet
-//                    chatsModel.channelView.joinWithENS(pk);
-                }
+                mainModuleInst.activateStatusDeepLink(link)
             }
             return result
-        }
+        }*/
 
         // Community
-        index = link.lastIndexOf("/c/")
+        let index = link.lastIndexOf("/c/")
         if (index > -1) {
             const communityId = link.substring(index + 3)
 
@@ -446,42 +441,16 @@ QtObject {
             return result
         }
 
-        // Group chat
-        index = link.lastIndexOf("/g/")
-        if (index > -1) {
-            let indexAdminPk = link.lastIndexOf("a=")
-            let indexChatName = link.lastIndexOf("a1=")
-            let indexChatId = link.lastIndexOf("a2=")
-            const pubKey = link.substring(indexAdminPk + 2, indexChatName - 1)
-            const chatName = link.substring(indexChatName + 3, indexChatId - 1)
-            const chatId = link.substring(indexChatId + 3, link.length)
-            result.title = qsTr("Join the %1 group chat").arg(chatName)
-            result.callback = function () {
-                // Not Refactored Yet
-//                chatsModel.groups.joinGroupChatFromInvitation(chatName, chatId, pubKey);
-            }
-
-            return result
-        }
-
-        // Not Refactored Yet (when we get to this we will most likely remove it, since other approach will be used)
-//        // Public chat
-//        // This needs to be the last check because it is as VERY loose check
-//        index = link.lastIndexOf("/")
-//        if (index > -1) {
-//            const chatId = link.substring(index + 1)
-//            result.title = qsTr("Join the %1 public channel").arg(chatId)
-//            result.callback = function () {
-//                chatsModel.channelView.joinPublicChat(chatId);
-//            }
-//            return result
-//        }
 
         return result
     }
 
+    function isStatusDeepLink(link) {
+        return link.includes(Constants.deepLinkPrefix) || link.includes(Constants.joinStatusLink)
+    }
+
     function getLinkDataForStatusLinks(link) {
-        if (!link.includes(Constants.deepLinkPrefix) && !link.includes(Constants.joinStatusLink)) {
+        if (!isStatusDeepLink(link)) {
             return
         }
 
