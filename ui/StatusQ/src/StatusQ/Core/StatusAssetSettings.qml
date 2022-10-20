@@ -10,6 +10,7 @@ QtObject {
     property real width
     property real height
     property color color
+    property color hoverColor
     property color disabledColor
     property int rotation
     property bool isLetterIdenticon

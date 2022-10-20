@@ -8,11 +8,12 @@ Rectangle {
     id: statusRoundButton
 
     property StatusAssetSettings icon: StatusAssetSettings {
+        id: icon
         width: 23
         height: 23
         rotation: 0
 
-        property color hoverColor: {
+        hoverColor: {
             switch(statusRoundButton.type) {
             case StatusRoundButton.Type.Primary:
                 return Theme.palette.primaryColor1;
@@ -32,7 +33,7 @@ Rectangle {
             case StatusRoundButton.Type.Tertiary:
                 return Theme.palette.baseColor1;
             }
-        }        
+        }
 
         disabledColor: {
             switch(statusRoundButton.type) {

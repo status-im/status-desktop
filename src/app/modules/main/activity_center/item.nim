@@ -1,15 +1,16 @@
 import strformat, stint
 import ../../shared_models/message_item_qobject
+import ../../../../app_service/service/activity_center/dto/notification
 
 type Item* = ref object
   id: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
   chatId: string
   communityId: string
-  membershipStatus: int
+  membershipStatus: ActivityCenterMembershipStatus
   sectionId: string
   name: string
   author: string
-  notificationType: int
+  notificationType: ActivityCenterNotificationType
   timestamp: int64
   read: bool
   dismissed: bool
@@ -21,11 +22,11 @@ proc initItem*(
   id: string,
   chatId: string,
   communityId: string,
-  membershipStatus: int,
+  membershipStatus: ActivityCenterMembershipStatus,
   sectionId: string,
   name: string,
   author: string,
-  notificationType: int,
+  notificationType: ActivityCenterNotificationType,
   timestamp: int64,
   read: bool,
   dismissed: bool,
@@ -55,10 +56,10 @@ proc `$`*(self: Item): string =
     name: {$self.name},
     chatId: {$self.chatId},
     communityId: {$self.communityId},
-    membershipStatus: {$self.membershipStatus},
+    membershipStatus: {$self.membershipStatus.int},
     sectionId: {$self.sectionId},
     author: {$self.author},
-    notificationType: {$self.notificationType},
+    notificationType: {$self.notificationType.int},
     timestamp: {$self.timestamp},
     read: {$self.read},
     dismissed: {$self.dismissed},
@@ -82,13 +83,13 @@ proc chatId*(self: Item): string =
 proc communityId*(self: Item): string =
   return self.communityId
 
-proc membershipStatus*(self: Item): int =
+proc membershipStatus*(self: Item): ActivityCenterMembershipStatus =
   return self.membershipStatus
 
 proc sectionId*(self: Item): string =
   return self.sectionId
 
-proc notificationType*(self: Item): int =
+proc notificationType*(self: Item): ActivityCenterNotificationType =
   return self.notificationType
 
 proc timestamp*(self: Item): int64 =

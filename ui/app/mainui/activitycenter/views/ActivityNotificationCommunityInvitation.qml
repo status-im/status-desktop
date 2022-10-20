@@ -17,7 +17,7 @@ ActivityNotificationMessage {
     badgeComponent: CommunityBadge {
         id: communityBadge
 
-        property var community: root.store.getCommunityDetailsAsJson(notification.message.communityId)
+        readonly property var community: root.store.getCommunityDetailsAsJson(notification.message.communityId)
 
         communityName: community.name
         communityImage: community.image

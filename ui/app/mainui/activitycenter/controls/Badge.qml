@@ -9,11 +9,10 @@ Rectangle {
     id: root
 
     z: 100 // NOTE: workaround for message overlay
-    implicitWidth: childrenRect.width + Style.current.smallPadding
+    implicitWidth: childrenRect.width + Style.current.smallPadding * 2
     implicitHeight: visible ? 24 : 0
     radius: height / 2
     border.width: 1
     border.color: Style.current.borderSecondary
     color: Style.current.transparent
 }
-
