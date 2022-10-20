@@ -13,7 +13,7 @@ QtObject {
         property string logText: ""
 
         function createLog(name, argumentNames, args) {
-            let log = (new Date()).toLocaleTimeString(Qt.locale(), "h:mm:ss") + ": " + name
+            let log = (new Date()).toLocaleTimeString(Qt.locale(), "hh:mm:ss") + ": " + name
 
             if (!args || args.length === 0)
                 return log

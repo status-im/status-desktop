@@ -7,6 +7,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 QtObject {
+    property var mainModuleInst: mainModule
     property var globalUtilsInst: globalUtils
 
     function isDigit(value) {
@@ -545,14 +546,14 @@ QtObject {
     }
 
     function getContactDetailsAsJson(publicKey, getVerificationRequest=true) {
-        let jsonObj = mainModule.getContactDetailsAsJson(publicKey, getVerificationRequest)
+        let jsonObj = mainModuleInst.getContactDetailsAsJson(publicKey, getVerificationRequest)
         try {
             let obj = JSON.parse(jsonObj)
             return obj
         }
         catch (e) {
             // This log is available only in debug mode, if it's annoying we can remove it
-            console.debug("error parsing contact details for public key: ", publicKey, " error: ", e.message)
+            console.warn("error parsing contact details for public key: ", publicKey, " error: ", e.message)
 
             return {
                 displayName: "",
@@ -588,7 +589,7 @@ QtObject {
         if (publicKey === "") {
             return ""
         }
-        let jsonObj = globalUtils.getEmojiHashAsJson(publicKey)
+        let jsonObj = globalUtilsInst.getEmojiHashAsJson(publicKey)
         return JSON.parse(jsonObj)
     }
 
@@ -597,7 +598,7 @@ QtObject {
             return
         if (!force && isEnsVerified(publicKey, getVerificationRequest))
             return
-        let jsonObj = globalUtils.getColorHashAsJson(publicKey)
+        let jsonObj = globalUtilsInst.getColorHashAsJson(publicKey)
         return JSON.parse(jsonObj)
     }
 
@@ -605,7 +606,7 @@ QtObject {
         if (publicKey === "") {
             return 0
         }
-        return globalUtils.getColorId(publicKey)
+        return globalUtilsInst.getColorId(publicKey)
     }
 
     function colorForColorId(colorId)  {
@@ -625,7 +626,7 @@ QtObject {
         if (publicKey === "") {
             return ""
         }
-        return globalUtils.getCompressedPk(publicKey)
+        return globalUtilsInst.getCompressedPk(publicKey)
     }
 
     function getElidedPk(publicKey) {

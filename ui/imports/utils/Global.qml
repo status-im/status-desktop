@@ -1,6 +1,6 @@
 pragma Singleton
 
-import QtQuick 2.13
+import QtQuick 2.14
 import AppLayouts.Chat.popups 1.0
 
 import shared.popups 1.0
@@ -14,6 +14,7 @@ Item {
     property bool popupOpened: false
     property int settingsSubsection: Constants.settingsSubsection.profile
 
+    property var globalUtilsInst: typeof globalUtils !== "undefined" ? globalUtils : null
     property var mainModuleInst
     property var privacyModuleInst
     property var toastMessage
@@ -161,7 +162,7 @@ Item {
 
     function openLink(link) {
         // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
-        link = globalUtils.plainText(link);
+        link = globalUtilsInst.plainText(link);
         if (localAccountSensitiveSettings.showBrowserSelector) {
             openChooseBrowserPopup(link);
         } else {
