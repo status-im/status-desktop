@@ -18,6 +18,7 @@ Item {
 
     property alias titleRowComponentLoader: loader
     property list<Item> headerComponents
+    property alias bottomHeaderComponents: secondHeaderRow.contentItem
     default property Item content
 
     property bool dirty: false
@@ -53,33 +54,42 @@ Item {
         }
     }
 
-    RowLayout {
+    ColumnLayout {
         id: titleRow
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
-        width: visible ? root.contentWidth - Style.current.padding : 0
-        height: visible ? d.titleRowHeight : 0
-        visible: root.sectionTitle !== ""
+        width: root.contentWidth
+        height: childrenRect.height
+        spacing: 0
+        RowLayout {
+            Layout.preferredWidth: (parent.width - Style.current.padding)
+            Layout.preferredHeight: visible ? d.titleRowHeight : 0
+            Layout.leftMargin: Style.current.padding
+            visible: (root.sectionTitle !== "")
 
-        StatusBaseText {
-            Layout.fillWidth: true
-            text: root.sectionTitle
-            font.weight: Font.Bold
-            font.pixelSize: Constants.settingsSection.mainHeaderFontSize
-            color: Theme.palette.directColor1
+            StatusBaseText {
+                Layout.fillWidth: true
+                text: root.sectionTitle
+                font.weight: Font.Bold
+                font.pixelSize: Constants.settingsSection.mainHeaderFontSize
+                color: Theme.palette.directColor1
+            }
+
+            Loader {
+                id: loader
+            }
         }
-
-        Loader {
-            id: loader
+        Control {
+            id: secondHeaderRow
+            Layout.fillWidth: true
+            visible: !!contentItem
         }
     }
 
     StatusScrollView {
         id: scrollView
         objectName: "settingsContentBaseScrollView"
-        anchors.top: titleRow.visible ? titleRow.bottom : parent.top
+        anchors.top: titleRow.bottom
         anchors.bottom: parent.bottom
-        anchors.topMargin: Style.current.bigPadding
+        anchors.topMargin: Style.current.padding
         padding: 0
         width: root.contentWidth
 
