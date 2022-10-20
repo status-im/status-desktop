@@ -17,6 +17,8 @@ StatusScrollView {
     property var model
     property bool searchLayout: false
 
+    readonly property bool isEmpty: !featuredRepeater.count && !popularRepeater.count
+
     signal cardClicked(string communityId)
 
     clip: false
@@ -83,7 +85,7 @@ StatusScrollView {
 
         StatusBaseText {
             id: featuredLabel
-            visible: !root.searchLayout
+            visible: !root.searchLayout && featuredRepeater.count
             Layout.topMargin: d.scrollViewTopMargin
             text: qsTr("Featured")
             font.weight: Font.Bold
@@ -100,13 +102,14 @@ StatusScrollView {
             rowSpacing: Style.current.padding
 
             Repeater {
+                id: featuredRepeater
                 model: root.searchLayout ? root.model : featuredModel
                 delegate: communityCardDelegate
             }
         }
 
         StatusBaseText {
-            visible: !root.searchLayout
+            visible: !root.searchLayout && popularRepeater.count
             Layout.topMargin: 20
             text: qsTr("Popular")
             font.weight: Font.Bold
@@ -115,12 +118,13 @@ StatusScrollView {
         }
 
         GridLayout {
-            visible: !root.searchLayout
+            visible: !root.searchLayout && popularRepeater.count
             columns: 3
             columnSpacing: Style.current.padding
             rowSpacing: Style.current.padding
 
             Repeater {
+                id: popularRepeater
                 model: popularModel
                 delegate: communityCardDelegate
             }

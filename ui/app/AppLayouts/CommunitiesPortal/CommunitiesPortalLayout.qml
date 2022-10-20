@@ -162,6 +162,7 @@ StatusSectionLayout {
                 clip: true
 
                 CommunitiesGridView {
+                    id: communitiesGrid
                     anchors.fill: parent
                     anchors.rightMargin: d.preventShadowClipMargin
                     anchors.leftMargin: d.preventShadowClipMargin
@@ -180,7 +181,7 @@ StatusSectionLayout {
                     anchors.top: parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.topMargin: parent.height / 3.1
-                    visible: d.searchMode && filteredCommunitiesModel.count === 0
+                    visible: (d.searchMode && filteredCommunitiesModel.count === 0) || communitiesGrid.isEmpty
                     text: qsTr("No communities found")
                     color: Theme.palette.baseColor1
                     font.pixelSize: 15
