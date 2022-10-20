@@ -104,8 +104,13 @@ proc mainProc() =
   # We increase js stack size to prevent "Maximum call stack size exceeded" on UI loading.
   os.putEnv("QV4_JS_MAX_STACK_SIZE", "10485760")
   os.putEnv("QT_QUICK_CONTROLS_HOVER_ENABLED", "1")
-  let appController = newAppController(statusFoundation)
+
   let singleInstance = newSingleInstance($toMD5(DATADIR), openUri)
+  let urlSchemeEvent = newStatusUrlSchemeEventObject()
+  # init url manager before app controller
+  statusFoundation.initUrlSchemeManager(urlSchemeEvent, singleInstance, openUri)
+
+  let appController = newAppController(statusFoundation)
   let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
 
   let isProductionQVariant = newQVariant(if defined(production): true else: false)
@@ -116,9 +121,6 @@ proc mainProc() =
   # Register events objects
   let dockShowAppEvent = newStatusDockShowAppEventObject(singletonInstance.engine)
   let osThemeEvent = newStatusOSThemeEventObject(singletonInstance.engine)
-  let urlSchemeEvent = newStatusUrlSchemeEventObject()
-
-  statusFoundation.initUrlSchemeManager(urlSchemeEvent, singleInstance, openUri)
 
   if not defined(macosx):
     app.icon(app.applicationDirPath & statusAppIconPath)

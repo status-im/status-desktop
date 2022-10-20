@@ -226,6 +226,9 @@ method runAuthenticationPopup*(self: AccessInterface, keyUid: string, bip44Path:
 method onMyRequestAdded*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method activateStatusDeepLink*(self: AccessInterface, statusDeepLink: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c

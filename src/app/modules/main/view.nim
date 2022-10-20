@@ -226,6 +226,9 @@ QtObject:
     return self.delegate.getKeycardSharedModule()
   QtProperty[QVariant] keycardSharedModule:
     read = getKeycardSharedModule
+
+  proc activateStatusDeepLink*(self: View, statusDeepLink: string) {.slot.} =
+    self.delegate.activateStatusDeepLink(statusDeepLink)
     
   proc displayKeycardSharedModuleFlow*(self: View) {.signal.}
   proc emitDisplayKeycardSharedModuleFlow*(self: View) =

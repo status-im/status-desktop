@@ -518,12 +518,13 @@ Loader {
                     if (link.startsWith('//')) {
                         const pubkey = link.replace("//", "");
                         Global.openProfilePopup(pubkey)
-                        return;
-                    }
-
-                    if (link.startsWith('#')) {
+                        return
+                    } else if (link.startsWith('#')) {
                         rootStore.chatCommunitySectionModule.switchToChannel(link.replace("#", ""))
-                        return;
+                        return
+                    } else if (rootStore.isStatusDeepLink(link)) {
+                        rootStore.activateStatusDeepLink(link)
+                        return
                     }
 
                     Global.openLink(link)

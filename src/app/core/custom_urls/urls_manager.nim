@@ -6,15 +6,18 @@ import ../../global/app_signals
 logScope:
   topics = "urls-manager"
 
-const UriFormatUserProfile = "status-im://u/"
+const StatusInternalLink = "status-im"
+const StatusExternalLink = "join.status.im"
 
-const UriFormatCommunity = "status-im://c/"
+const UriFormatUserProfile = StatusInternalLink & "://u/"
 
-const UriFormatCommunityChannel = "status-im://cc/"
+const UriFormatCommunity = StatusInternalLink & "://c/"
 
-const UriFormatGroupChat = "status-im://g/"
+const UriFormatCommunityChannel = StatusInternalLink & "://cc/"
 
-const UriFormatBrowser = "status-im://b/"
+# enable after MVP
+#const UriFormatGroupChat = StatusInternalLink & "://g/"
+#const UriFormatBrowser = StatusInternalLink & "://b/"
 
 QtObject:
   type UrlsManager* = ref object of QObject
@@ -71,7 +74,6 @@ QtObject:
     #elif url.startsWith(UriFormatBrowser):
     #  data.action = StatusUrlAction.OpenLinkInBrowser
     #  data.url = url[UriFormatBrowser.len .. url.len-1]
-
     else:
       info "Unsupported deep link structure: ", url
       return
@@ -83,3 +85,10 @@ QtObject:
     if self.protocolUriOnStart != "":
       self.onUrlActivated(self.protocolUriOnStart)
       self.protocolUriOnStart = ""
+
+  proc convertExternalLinkToInternal*(self: UrlsManager, statusDeepLink: string): string =
+    let idx = find(statusDeepLink, StatusExternalLink)
+    result = statusDeepLink
+    if idx != -1:
+      result = statusDeepLink[idx + StatusExternalLink.len .. ^1]
+      result = StatusInternalLink & ":/" & result
