@@ -21,11 +21,10 @@ StatusListItem {
     property var contactsStore
     property string name
     property string address
+    property string ens
     property bool favourite: false
     property var saveAddress: function (name, address, favourite) {}
     property var deleteSavedAddress: function (address) {}
-    // TODO: fetch this from status-go
-    readonly property string ensName: ""
 
     signal openSendModal()
 
@@ -33,7 +32,7 @@ StatusListItem {
 
     title: name
     objectName: name
-    subTitle: (ensName.length > 0 ? ensName + " \u2022 " : "")
+    subTitle: (ens.length > 0 ? ens + " \u2022 " : "")
                 + Utils.elideText(address, 6, 4)
     color: "transparent"
     border.color: Theme.palette.baseColor5

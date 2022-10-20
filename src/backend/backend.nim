@@ -254,3 +254,7 @@ rpc(getDailyMarketValues, "wallet"):
   limit: int
   allDate: bool
   aggregate: int
+
+rpc(getName, "ens"):
+  chainId: int
+  address: string

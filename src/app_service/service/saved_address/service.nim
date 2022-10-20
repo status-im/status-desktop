@@ -5,6 +5,7 @@ import dto
 import ../../../app/core/eventemitter
 import ../../../backend/backend
 import ../../../app/core/[main]
+import ../network/service as network_service
 
 export dto
 
@@ -18,13 +19,15 @@ type
   Service* = ref object of RootObj
     events: EventEmitter
     savedAddresses: seq[SavedAddressDto]
+    networkService: network_service.Service
 
 proc delete*(self: Service) =
   discard
 
-proc newService*(events: EventEmitter): Service =
+proc newService*(events: EventEmitter, networkService: network_service.Service): Service =
   result = Service()
   result.events = events
+  result.networkService = networkService
 
 proc fetchAddresses(self: Service) =
   try:
@@ -34,6 +37,13 @@ proc fetchAddresses(self: Service) =
       response.result.getElems(),
       proc(x: JsonNode): SavedAddressDto = toSavedAddressDto(x)
     )
+    let chainId = self.networkService.getNetworkForEns().chainId
+    for savedAddress in self.savedAddresses:
+      try:
+        let nameResponse = backend.getName(chainId, savedAddress.address)
+        savedAddress.ens = nameResponse.result.getStr
+      except:
+        continue
 
   except Exception as e:
     error "error: ", procName="fetchAddress", errName = e.name, errDesription = e.msg
