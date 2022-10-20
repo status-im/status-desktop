@@ -1,1 +1,5 @@
 BackupSeedModal 1.0 BackupSeedModal.qml
+Acknowledgements 1.0 backupseed/Acknowledgements.qml
+ConfirmSeedPhrasePanel 1.0 backupseed/ConfirmSeedPhrasePanel.qml
+BackupSeedStepBase 1.0 backupseed/BackupSeedStepBase.qml
+ConfirmStoringSeedPhrasePanel 1.0 backupseed/ConfirmStoringSeedPhrasePanel.qml

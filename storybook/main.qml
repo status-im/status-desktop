@@ -33,19 +33,34 @@ ApplicationWindow {
             title: "ProfileDialogView"
         }
         ListElement {
-             title: "CommunitiesPortalLayout"
+            title: "CommunitiesPortalLayout"
         }
         ListElement {
-             title: "StatusCommunityCard"
+            title: "StatusCommunityCard"
         }
         ListElement {
-             title: "LoginView"
+            title: "LoginView"
         }
         ListElement {
-             title: "AboutView"
+            title: "AboutView"
         }
         ListElement {
             title: "LanguageCurrencySettings"
+        }
+        ListElement {
+            title: "BackupSeedModal"
+        }
+        ListElement {
+            title: "AcknowledgementsStep"
+        }
+        ListElement {
+            title: "ConfirmSeedPhrasePanel"
+        }
+        ListElement {
+            title: "BackupSeedStepBase"
+        }
+        ListElement {
+            title: "ConfirmStoringSeedPhrasePanel"
         }
     }
 
