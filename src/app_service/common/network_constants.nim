@@ -13,22 +13,51 @@ let INFURA_TOKEN_RESOLVED =
     INFURA_TOKEN
 
 const GOERLI_NETWORK_RPC_URL = $getEnv("GOERLI_NETWORK_RPC_URL")
-let OVERRIDE_TOKENS = 
-  if GOERLI_NETWORK_RPC_URL != "":
-    @[
-      {
-        "symbol": "STT",
-        "address": "0x8571Ddc46b10d31EF963aF49b6C7799Ea7eff818"
-      }
-    ]
-  else:
-    @[]
-
 let GOERLI_RPC_URL_RESOLVED =
   if GOERLI_NETWORK_RPC_URL != "":
     GOERLI_NETWORK_RPC_URL
   else:
     "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED
+
+let GOERLI_CONFIG = 
+  if GOERLI_NETWORK_RPC_URL != "":
+    %* {
+      "chainId": 5,
+      "chainName": "Goerli",
+      "rpcUrl": GOERLI_RPC_URL_RESOLVED,
+      "blockExplorerUrl": "https://goerli.etherscan.io/",
+      "iconUrl": "network/Network=Testnet",
+      "chainColor": "#939BA1",
+      "shortName": "goeEth",
+      "nativeCurrencyName": "Ether",
+      "nativeCurrencySymbol": "ETH",
+      "nativeCurrencyDecimals": 18,
+      "isTest": true,
+      "layer": 1,
+      "enabled": true,
+      "tokenOverrides": [
+        {
+          "symbol": "STT",
+          "address": "0x8571Ddc46b10d31EF963aF49b6C7799Ea7eff818"
+        }
+      ]
+    }
+  else:
+    %* {
+      "chainId": 5,
+      "chainName": "Goerli",
+      "rpcUrl": GOERLI_RPC_URL_RESOLVED,
+      "blockExplorerUrl": "https://goerli.etherscan.io/",
+      "iconUrl": "network/Network=Testnet",
+      "chainColor": "#939BA1",
+      "shortName": "goeEth",
+      "nativeCurrencyName": "Ether",
+      "nativeCurrencySymbol": "ETH",
+      "nativeCurrencyDecimals": 18,
+      "isTest": true,
+      "layer": 1,
+      "enabled": true,
+    }
 
 const OPENSEA_API_KEY {.strdefine.} = ""
 # allow runtime override via environment variable; core contributors can set a
@@ -60,22 +89,6 @@ let NETWORKS* = %* [
     "isTest": false,
     "layer": 1,
     "enabled": true,
-  },
-  {
-    "chainId": 5,
-    "chainName": "Goerli",
-    "rpcUrl": GOERLI_RPC_URL_RESOLVED,
-    "blockExplorerUrl": "https://goerli.etherscan.io/",
-    "iconUrl": "network/Network=Testnet",
-    "chainColor": "#939BA1",
-    "shortName": "goeEth",
-    "nativeCurrencyName": "Ether",
-    "nativeCurrencySymbol": "ETH",
-    "nativeCurrencyDecimals": 18,
-    "isTest": true,
-    "layer": 1,
-    "enabled": true,
-    "overrideTokens": OVERRIDE_TOKENS.toJson
   },
   {
     "chainId": 10,
@@ -138,6 +151,8 @@ let NETWORKS* = %* [
     "enabled": false,
   }
 ]
+
+NETWORKS.elems.add(GOERLI_CONFIG)
 
 var NODE_CONFIG* = %* {
   "BrowsersConfig": {
