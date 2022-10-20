@@ -45,24 +45,22 @@ SettingsContentBase {
         profilePreview.reload()
     }
 
+    bottomHeaderComponents: StatusTabBar {
+        id: editPreviwTabBar
+        StatusTabButton {
+            width: implicitWidth
+            text: qsTr("Edit")
+        }
+        StatusTabButton {
+            width: implicitWidth
+            text: qsTr("Preview")
+        }
+    }
+
     ColumnLayout {
         id: layout
         spacing: Constants.settingsSection.itemSpacing
         width: root.contentWidth
-
-        StatusTabBar {
-            id: editPreviwTabBar
-            Layout.fillWidth: true
-
-            StatusTabButton {
-                width: implicitWidth
-                text: qsTr("Edit")
-            }
-            StatusTabButton {
-                width: implicitWidth
-                text: qsTr("Preview")
-            }
-        }
 
         StackLayout {
             Layout.fillWidth: true
