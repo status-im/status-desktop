@@ -30,6 +30,9 @@ ApplicationWindow {
         id: pagesModel
 
         ListElement {
+            title: "ProfileDialogView"
+        }
+        ListElement {
              title: "CommunitiesPortalLayout"
         }
         ListElement {

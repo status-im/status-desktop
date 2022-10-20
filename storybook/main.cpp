@@ -10,9 +10,11 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QGuiApplication app(argc, argv);
-    QGuiApplication::setOrganizationName("Status");
-    QGuiApplication::setOrganizationDomain("status.im");
-    QGuiApplication::setApplicationName("Status Desktop Storybook");
+    QGuiApplication::setOrganizationName(QStringLiteral("Status"));
+    QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));
+    QGuiApplication::setApplicationName(QStringLiteral("Status Desktop Storybook"));
+
+    qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", QByteArrayLiteral("1"));
 
     QQmlApplicationEngine engine;
 
@@ -26,7 +28,7 @@ int main(int argc, char *argv[])
         SRC_DIR + QStringLiteral("/mocks"),
     };
 
-    for (auto& path : additionalImportPaths)
+    for (const auto& path : additionalImportPaths)
         engine.addImportPath(path);
 
     auto watcherFactory = [additionalImportPaths](QQmlEngine*, QJSEngine*) {
