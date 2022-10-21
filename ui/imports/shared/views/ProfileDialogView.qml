@@ -75,7 +75,7 @@ Pane {
             else
                 user = contactDetails.name
             if (!user)
-                user = root.publicKey
+                user = Utils.getCompressedPk(root.publicKey)
             return Constants.userLinkPrefix + user
         }
 
