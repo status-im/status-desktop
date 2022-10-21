@@ -23,8 +23,8 @@ _method = "bottom_menu"
 def hook(context):
     init_steps.context_init(context)  
     init_steps.signs_up_process_steps(context, _user, _password)
-    init_steps.when_the_user_joins_chat_room(_chat_room1)
-    init_steps.when_the_user_joins_chat_room(_chat_room2)
+    init_steps.the_user_joins_chat_room(_chat_room1)
+    init_steps.the_user_joins_chat_room(_chat_room2)
     init_steps.the_user_opens_the_community_portal_section()
     init_steps.the_user_lands_on_the_community_portal_section()
     init_steps.the_user_creates_a_community(_community_name, _community_description, _community_intro, _community_outro)

@@ -13,10 +13,12 @@ import time
 from enum import Enum
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
+from drivers.SDKeyboardCommands import *
 from utils.ObjectAccess import *
 import time
 
 class MainScreenComponents(Enum):
+    MAIN_WINDOW = "statusDesktop_mainWindow"
     PUBLIC_CHAT_ICON = "mainWindow_public_chat_icon_StatusIcon"
     CHAT_NAVBAR_ICON = "navBarListView_Chat_navbar_StatusNavBarTabButton"
     COMMUNITY_PORTAL_BUTTON = "navBarListView_Communities_Portal_navbar_StatusNavBarTabButton"
@@ -37,6 +39,7 @@ class MainScreenComponents(Enum):
     USERSTATUSMENU_AUTOMATIC_ACTION = "userContextmenu_AutomaticButton"
     USERSTATUSMENU_OPEN_PROFILE_POPUP = "userContextMenu_ViewMyProfileAction"
     SPLASH_SCREEN = "splashScreen"
+    TOOLBAR_BACK_BUTTON = "main_toolBar_back_button"
 
 class ProfilePopup(Enum):
     USER_IMAGE = "ProfileHeader_userImage"
@@ -72,7 +75,7 @@ class StatusMainScreen:
             sleep_test(0.5)
         verify_equal(loaded, False, "Checking splash screen animation has ended.")
     
-    # It closes all existing banner and waits them to disappear
+    # It closes all existing banner and waits them to disappear:
     def close_banners(self):
         self.wait_for_banner_to_disappear(MainScreenComponents.CONNECTION_INFO_BANNER.value)
         self.wait_for_banner_to_disappear(MainScreenComponents.UPDATE_APP_BANNER.value)
@@ -195,3 +198,9 @@ class StatusMainScreen:
         name_changed = setText(DisplayNamePopup.DISPLAY_NAME_INPUT.value, display_name)
         verify(name_changed, "set display name")
         click_obj_by_name(DisplayNamePopup.DISPLAY_NAME_OK_BUTTON.value)
+        
+    def click_escape(self):
+        press_escape(MainScreenComponents.MAIN_WINDOW.value)        
+    
+    def click_tool_bar_back_button(self):   
+        click_obj_by_name(MainScreenComponents.TOOLBAR_BACK_BUTTON.value)  

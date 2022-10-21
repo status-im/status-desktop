@@ -17,6 +17,7 @@ ToolBar {
     signal backButtonClicked()
     signal notificationButtonClicked()
 
+    objectName: "statusToolBar"
     implicitWidth: visible ? 518 : 0
     implicitHeight: visible ? 56 : 0
     padding: 4
@@ -27,6 +28,7 @@ ToolBar {
         anchors.rightMargin: 4
         spacing: 0
         StatusFlatButton {
+            objectName: "toolBarBackButton"
             icon.name: "arrow-left"
             icon.width: 20
             icon.height: 20

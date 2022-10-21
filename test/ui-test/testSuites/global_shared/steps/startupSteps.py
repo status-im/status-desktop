@@ -63,32 +63,46 @@ def a_first_time_user_lands_on_and_generates_new_key(context):
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.agree_terms_conditions_and_generate_new_key()
     
-def given_a_first_time_user_lands_on_and_navigates_to_import_seed_phrase(context):
+def a_first_time_user_lands_on_and_navigates_to_import_seed_phrase(context):
     erase_directory(context.userData[_status_data_folder])
     start_application(context.userData[_aut_name])
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.agree_terms_conditions_and_navigate_to_import_seed_phrase()
-    
-def when_the_user_signs_up(user, password):        
+
+def the_user_signs_up(user, password):        
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.input_username_and_password_and_finalize_sign_up(user, password)
     
-def when_the_user_lands_on_the_signed_in_app():
+def the_user_lands_on_the_signed_in_app():
     main_screen = StatusMainScreen()
     main_screen.is_ready()
     
 def signs_up_process_steps(context, user, password):
     a_first_time_user_lands_on_and_generates_new_key(context)
-    when_the_user_signs_up(user, password)
-    when_the_user_lands_on_the_signed_in_app()
+    the_user_signs_up(user, password)
+    the_user_lands_on_the_signed_in_app()
+    
+def the_user_inputs_the_seed_phrase(seed_phrase: str):
+    welcome_screen = StatusWelcomeScreen()
+    welcome_screen.input_seed_phrase(seed_phrase)
+    
+def the_user_clicks_on_the_following_ui_component(component: str):
+    click_on_an_object(component)
 
-def when_the_user_joins_chat_room(_chat_room):
+def signs_up_with_seed_phrase_process_steps(context, seed_phrase, user, password):
+    a_first_time_user_lands_on_and_navigates_to_import_seed_phrase(context)
+    the_user_inputs_the_seed_phrase(seed_phrase)
+    the_user_clicks_on_the_following_ui_component("seedPhraseView_Submit_Button")
+    the_user_signs_up(user, password)
+    the_user_lands_on_the_signed_in_app()
+
+def the_user_joins_chat_room(_chat_room):
     main_screen = StatusMainScreen()        
     main_screen.join_chat_room(_chat_room)
     chat_screen = StatusChatScreen()
     chat_screen.verify_chat_title(_chat_room)
 
-def when_the_user_opens_the_chat_section():
+def the_user_opens_the_chat_section():
     main_screen = StatusMainScreen()        
     main_screen.open_chat_section()
     
@@ -110,7 +124,7 @@ def the_user_lands_on_the_community(name: str):
 def the_admin_creates_a_community_channel(name: str, description: str, method: str):
     community_screen = StatusCommunityScreen()
     community_screen.create_community_channel(name, description, method)
-    
+
 def the_channel_is_open(name: str):
     chat_screen = StatusChatScreen()
     chat_screen.verify_chat_title(name)
@@ -122,5 +136,8 @@ def the_user_logs_in(username: str, password: str):
 def login_process_steps(context, user, password, data_dir_path):
     a_user_starts_the_application_with_a_specific_data_folder(context, data_dir_path)
     the_user_logs_in(user, password)
-    when_the_user_lands_on_the_signed_in_app()
-
+    the_user_lands_on_the_signed_in_app()
+    
+def the_user_opens_app_settings_screen():
+    main_screen = StatusMainScreen()
+    main_screen.open_settings()

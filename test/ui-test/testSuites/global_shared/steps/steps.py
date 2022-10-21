@@ -38,7 +38,11 @@ def step(context):
 @Given("the user joins chat room \"|any|\"")
 def step(context, room):
     the_user_joins_chat_room(room)
-    
+
+@Given("the user clicks on escape key")
+def step(context):
+    _statusMain.click_escape()    
+
 #########################
 ### ACTIONS region:
 #########################
@@ -52,8 +56,8 @@ def step(context, text, obj):
     input_text(text, obj)
 
 @When("user clicks on the following ui-component |any|")
-def step(context, obj):
-    click_on_an_object(obj)
+def step(context: any, obj: str):
+    the_user_clicks_on_the_following_ui_component(obj)
 
 @When("the user joins chat room \"|any|\"")
 def step(context, room):
@@ -77,4 +81,4 @@ def the_user_restarts_the_app(context: any):
     startApplication(context.userData["aut_name"])
     
 def the_user_joins_chat_room(room: str):
-    when_the_user_joins_chat_room(room)
+    the_user_joins_chat_room(room)

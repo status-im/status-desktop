@@ -13,7 +13,7 @@ _chat_room = "test"
 def hook(context):
     context_init(context)  
     signs_up_process_steps(context, _user, _password)
-    when_the_user_joins_chat_room(_chat_room)
+    the_user_joins_chat_room(_chat_room)
 
 @OnFeatureEnd
 def hook(context):
@@ -22,7 +22,7 @@ def hook(context):
     
 @OnScenarioStart
 def hook(context):
-    when_the_user_opens_the_chat_section()
+    the_user_opens_the_chat_section()
 
 @OnStepEnd
 def hook(context):

@@ -15,11 +15,11 @@ def step(context):
 
 @Given("A first time user lands on the status desktop and navigates to import seed phrase")
 def step(context):
-    given_a_first_time_user_lands_on_and_navigates_to_import_seed_phrase(context)
+    a_first_time_user_lands_on_and_navigates_to_import_seed_phrase(context)
     
 @Given("the user lands on the signed in app")
 def step(context):
-    when_the_user_lands_on_the_signed_in_app()
+    the_user_lands_on_the_signed_in_app()
 
 #########################
 ### ACTIONS region:
@@ -27,15 +27,15 @@ def step(context):
 
 @When("user signs up with username \"|any|\" and password \"|any|\"")
 def step(context, username, password):
-    when_the_user_signs_up(username, password)
+    the_user_signs_up(username, password)
 
 @When("the user inputs username |any|")
 def step(context, username):
     _welcomeScreen.input_username(username) 
     
-@When("The user inputs the seed phrase |any|")
+@When("The user inputs the seed phrase \"|any|\"")
 def step(context, seed_phrase):
-    _welcomeScreen.input_seed_phrase(seed_phrase)
+    the_user_inputs_the_seed_phrase(seed_phrase)
     
 @When("the user logs in with password |any|")
 def step(context, password: str):
@@ -55,7 +55,7 @@ def step(context):
 
 @Then("the user lands on the signed in app")
 def step(context):
-    when_the_user_lands_on_the_signed_in_app()
+    the_user_lands_on_the_signed_in_app()
       
 @Then("the invalid seed text is visible")
 def step(context):

@@ -4,31 +4,26 @@
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../testSuites/global_shared/"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
 
-import steps.startupSteps as init_steps
+import steps.startupSteps as common_init_steps
+import steps.walletInitSteps as wallet_init_steps
 
 # Global properties for the specific feature
 _user = "tester123"
-_password = "TesTEr16843/!@00"
-_data_folder_path = "../../../fixtures/mutual_contacts"
+_password = "qqqqqqqqqq"
+_seed_phrase = "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial"
 
 @OnFeatureStart
 def hook(context):
-    init_steps,context_init(context)
-    init_steps.login_process_steps(context, _user, _password, _data_folder_path)
+    common_init_steps.context_init(context)
+    common_init_steps.signs_up_with_seed_phrase_process_steps(context, _seed_phrase, _user, _password)
+    wallet_init_steps.enable_wallet_section()
+    wallet_init_steps.toggle_test_networks()
 
 @OnFeatureEnd
 def hook(context):
     currentApplicationContext().detach()
     snooze(_app_closure_timeout)
     
-@OnScenarioStart
-def hook(context):
-    init_steps.the_user_opens_the_chat_section()
-    
-@OnScenarioEnd
-def hook(context):
-    leave_current_chat()
-
 @OnStepEnd
 def hook(context):
     context.userData["step_name"] = context._data["text"]

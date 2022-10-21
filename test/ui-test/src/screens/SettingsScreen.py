@@ -124,10 +124,6 @@ class SettingsScreen:
             click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
             verify_object_enabled(SidebarComponents.WALLET_OPTION.value)
 
-    def activate_open_wallet_settings(self):
-        self.activate_wallet_option()
-        self.open_wallet_settings()
-
     def activate_open_wallet_section(self):
         self.activate_wallet_option()           
         click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)
@@ -175,7 +171,7 @@ class SettingsScreen:
 
     def toggle_test_networks(self):
         click_obj_by_name(WalletSettingsScreen.NETWORKS_ITEM.value)
-        click_obj_by_name(WalletSettingsScreen.TESTNET_TOGGLE.value)
+        click_obj_by_name(WalletSettingsScreen.TESTNET_TOGGLE.value)      
         
     def open_language_and_currency_settings(self):
         click_obj_by_name(SidebarComponents.LANGUAGE_CURRENCY_OPTION.value)

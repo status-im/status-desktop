@@ -258,7 +258,7 @@ def the_group_chat_is_created():
     _statusChat = StatusChatScreen()
     
 def the_user_opens_the_chat_section():
-    when_the_user_opens_the_chat_section()
+    the_user_opens_the_chat_section()
 
 def the_user_sends_a_random_chat_message(context):
     random_int = randint(0, 10000)
