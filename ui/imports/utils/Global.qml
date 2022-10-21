@@ -1,11 +1,8 @@
 pragma Singleton
 
-import QtQuick 2.14
-import AppLayouts.Chat.popups 1.0
+import QtQml 2.14
 
-import shared.popups 1.0
-
-Item {
+QtObject {
     id: root
 
     property var applicationWindow
@@ -52,70 +49,15 @@ Item {
     signal openEditDisplayNamePopup()
     signal openActivityCenterPopupRequested
 
-    function openContactRequestPopup(publicKey) {
-        const contactDetails = Utils.getContactDetailsAsJson(publicKey);
-        return openPopup(sendContactRequestPopupComponent, {
-            userPublicKey: publicKey,
-            userDisplayName: contactDetails.displayName,
-            userIcon: contactDetails.largeImage,
-            userIsEnsVerified: contactDetails.ensVerified
-        })
-    }
+    signal openContactRequestPopup(string publicKey, var cb)
 
-    function openInviteFriendsToCommunityPopup(community, communitySectionModule) {
-        return openPopup(inviteFriendsToCommunityPopup, {
-                             community,
-                             communitySectionModule
-                         })
-    }
+    signal openInviteFriendsToCommunityPopup(var community, var communitySectionModule, var cb)
 
-    function openSendIDRequestPopup(publicKey) {
-        const contactDetails = Utils.getContactDetailsAsJson(publicKey);
-        return openPopup(sendIDRequestPopupComponent, {
-            userPublicKey: publicKey,
-            userDisplayName: contactDetails.displayName,
-            userIcon: contactDetails.largeImage,
-            userIsEnsVerified: contactDetails.ensVerified,
-            "header.title": qsTr("Verify %1's Identity").arg(contactDetails.displayName),
-            challengeText: qsTr("Ask a question that only the real %1 will be able to answer e.g. a question about a shared experience, or ask %1 to enter a code or phrase you have sent to them via a different communication channel (phone, post, etc...).").arg(contactDetails.displayName),
-            buttonText: qsTr("Send verification request")
-        })
-    }
+    signal openSendIDRequestPopup(string publicKey, var cb)
 
-    function openIncomingIDRequestPopup(publicKey) {
-        try {
-            const request = appMain.rootStore.profileSectionStore.contactsStore.getVerificationDetailsFromAsJson(publicKey)
-            return openPopup(contactVerificationRequestPopupComponent, {
-                                 senderPublicKey: request.from,
-                                 senderDisplayName: request.displayName,
-                                 senderIcon: request.icon,
-                                 challengeText: request.challenge,
-                                 responseText: request.response,
-                                 messageTimestamp: request.requestedAt,
-                                 responseTimestamp: request.repliedAt
-                             })
-        } catch (e) {
-            console.error("Error getting or parsing verification data", e)
-        }
-    }
+    signal openIncomingIDRequestPopup(string publicKey, var cb)
 
-    function openOutgoingIDRequestPopup(publicKey) {
-        try {
-            const verificationDetails = appMain.rootStore.profileSectionStore.contactsStore.getSentVerificationDetailsAsJson(publicKey)
-            return openPopup(contactOutgoingVerificationRequestPopupComponent, {
-                                 userPublicKey: publicKey,
-                                 verificationStatus: verificationDetails.requestStatus,
-                                 verificationChallenge: verificationDetails.challenge,
-                                 verificationResponse: verificationDetails.response,
-                                 verificationResponseDisplayName: verificationDetails.displayName,
-                                 verificationResponseIcon: verificationDetails.icon,
-                                 verificationRequestedAt: verificationDetails.requestedAt,
-                                 verificationRepliedAt: verificationDetails.repliedAt
-                             })
-        } catch (e) {
-            console.error("Error getting or parsing verification data", e)
-        }
-    }
+    signal openOutgoingIDRequestPopup(string publicKey, var cb)
 
     function openProfilePopup(publicKey, parentPopup) {
         openProfilePopupRequested(publicKey, parentPopup)
@@ -126,9 +68,9 @@ Item {
     }
 
     function openPopup(popupComponent, params = {}) {
-        const popup = popupComponent.createObject(root.appMain, params);
-        popup.open();
-        return popup;
+        const popup = popupComponent.createObject(root.appMain, params)
+        popup.open()
+        return popup
     }
 
     function openDownloadModal(available, version, url){
@@ -178,64 +120,5 @@ Item {
     function playErrorSound() {
         if(errorSound)
             errorSound.play();
-    }
-
-    Component {
-        id: sendContactRequestPopupComponent
-
-        SendContactRequestModal {
-            anchors.centerIn: parent
-            onAccepted: appMain.rootStore.profileSectionStore.contactsStore.sendContactRequest(userPublicKey, message)
-            onClosed: destroy()
-        }
-    }
-
-    Component {
-        id: inviteFriendsToCommunityPopup
-
-        InviteFriendsToCommunityPopup {
-            anchors.centerIn: parent
-            rootStore: appMain.rootStore
-            contactsStore: appMain.rootStore.contactStore
-            onClosed: destroy()
-        }
-    }
-
-    Component {
-        id: sendIDRequestPopupComponent
-        SendContactRequestModal {
-            anchors.centerIn: parent
-            onAccepted: appMain.rootStore.profileSectionStore.contactsStore.sendVerificationRequest(userPublicKey, message)
-            onClosed: destroy()
-        }
-    }
-
-    Component {
-        id: contactVerificationRequestPopupComponent
-        ContactVerificationRequestPopup {
-            onResponseSent: {
-                appMain.rootStore.profileSectionStore.contactsStore.acceptVerificationRequest(senderPublicKey, response)
-            }
-            onVerificationRefused: {
-                appMain.rootStore.profileSectionStore.contactsStore.declineVerificationRequest(senderPublicKey)
-            }
-            onClosed: destroy()
-        }
-    }
-
-    Component {
-        id: contactOutgoingVerificationRequestPopupComponent
-        OutgoingContactVerificationRequestPopup {
-            onVerificationRequestCanceled: {
-                appMain.rootStore.profileSectionStore.contactsStore.cancelVerificationRequest(userPublicKey)
-            }
-            onUntrustworthyVerified: {
-                appMain.rootStore.profileSectionStore.contactsStore.verifiedUntrustworthy(userPublicKey)
-            }
-            onTrustedVerified: {
-                appMain.rootStore.profileSectionStore.contactsStore.verifiedTrusted(userPublicKey)
-            }
-            onClosed: destroy()
-        }
     }
 }

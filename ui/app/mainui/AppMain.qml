@@ -73,6 +73,18 @@ Item {
         }
     }
 
+    Popups {
+        rootStore: appMain.rootStore
+
+        Component.onCompleted: {
+            Global.openSendIDRequestPopup.connect(openSendIDRequestPopup)
+            Global.openOutgoingIDRequestPopup.connect(openOutgoingIDRequestPopup)
+            Global.openIncomingIDRequestPopup.connect(openIncomingIDRequestPopup)
+            Global.openInviteFriendsToCommunityPopup.connect(openInviteFriendsToCommunityPopup)
+            Global.openContactRequestPopup.connect(openContactRequestPopup)
+        }
+    }
+
     Connections {
         target: Global
         onOpenLinkInBrowser: {
