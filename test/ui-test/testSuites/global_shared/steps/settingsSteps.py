@@ -1,3 +1,5 @@
+import steps.startupSteps as common_init_steps
+import steps.walletInitSteps as wallet_init_steps
 
 from screens.StatusMainScreen import StatusMainScreen
 from screens.SettingsScreen import SettingsScreen
@@ -23,6 +25,22 @@ def step(context: any):
 def step(context: any):
     _settingsScreen.check_tenor_gif_preview_is_enabled()
     
+@Given("the user activates wallet and opens the wallet section")
+def step(context: any):
+    wallet_init_steps.the_user_activates_wallet_and_opens_the_wallet_section()
+    
+@Given("the user toggles test networks")
+def step(context: any):
+    wallet_init_steps.the_user_toggles_test_networks()
+
+@Given("the user activates wallet")
+def step(context: any):
+    the_user_activates_wallet() 
+
+@Given("the user opens the wallet settings")
+def step(context: any):
+    the_user_opens_the_wallet_settings()
+    
 #########################
 ### ACTIONS region:
 #########################
@@ -30,10 +48,6 @@ def step(context: any):
 @When("the user opens app settings screen")
 def step(context: any):
     the_user_opens_app_settings_screen()
-
-@When("the user opens the wallet settings")
-def step(context: any):
-    _settingsScreen.open_wallet_settings()
     
 @When("the user opens the messaging settings")
 def step(context: any):
@@ -46,33 +60,29 @@ def step(context: any):
 @When("the user activates image unfurling")
 def step(context: any):
     _settingsScreen.activate_image_unfurling()
-    
-@When("the user activates wallet and opens the wallet settings")
-def step(context: any):
-    _settingsScreen.activate_open_wallet_settings()
 
-@When("the user activates wallet and opens the wallet section")
+@When("the user activates wallet")
 def step(context: any):
-    _settingsScreen.activate_open_wallet_section()
+    the_user_activates_wallet() 
 
-@When("the user deletes the account |any|")
+@When("the user opens the wallet settings")
+def step(context: any):
+    the_user_opens_the_wallet_settings()
+
+@When("the user deletes the account \"|any|\"")
 def step(context: any, account_name: str):
     _statusMain.open_settings()
     _settingsScreen.delete_account(account_name)
-    
-@When("the user toggles test networks")
-def step(context: any):
-    _settingsScreen.toggle_test_networks()
 
 @When("the user selects the default account")
 def step(context: any):
     _settingsScreen.select_default_account()
 
-@When("the user edits default account to |any| name and |any| color")
+@When("the user edits default account to \"|any|\" name and \"|any|\" color")
 def step(context: any, account_name: str,  account_color: str):
     _settingsScreen.edit_account(account_name, account_color)
 
-@When("the user registers a random ens name with password |any|")
+@When("the user registers a random ens name with password \"|any|\"")
 def step(context, password):
     _statusMain.open_settings()
     _settingsScreen.register_random_ens_name(password)
@@ -160,11 +170,11 @@ def step(context: any, oldPassword: str, newPassword: str):
 def step(context: any, address: str):
     _settingsScreen.verify_address(address)
 
-@Then("the account |any| is not in the list of accounts")
+@Then("the account \"|any|\" is not in the list of accounts")
 def step(context: any, account_name):
     _settingsScreen.verify_no_account(account_name) 
 
-@Then("the new account with name |any| and color |any| is updated")
+@Then("the default account is updated to be named \"|any|\" with color \"|any|\"")
 def step(context, new_name: str, new_color: str):
     _settingsScreen.verify_editedAccount(new_name, new_color)
     
@@ -223,7 +233,13 @@ def step(context, display_name):
 ########################################################################### 
     
 def the_user_opens_app_settings_screen():
-    _statusMain.open_settings()
+    common_init_steps.the_user_opens_app_settings_screen()
     
 def the_user_opens_the_messaging_settings():
     _settingsScreen.open_messaging_settings()
+    
+def the_user_activates_wallet():
+    wallet_init_steps.the_user_activates_wallet()
+    
+def the_user_opens_the_wallet_settings():
+    wallet_init_steps.the_user_opens_the_wallet_settings()

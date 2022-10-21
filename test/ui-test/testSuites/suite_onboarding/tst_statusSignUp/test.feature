@@ -120,7 +120,7 @@ Feature: Status Desktop Sign Up
   Scenario Outline: User signs up with imported seed phrase
 
     Given A first time user lands on the status desktop and navigates to import seed phrase
-    When The user inputs the seed phrase <seed>
+    When The user inputs the seed phrase "<seed>"
     And user clicks on the following ui-component seedPhraseView_Submit_Button
     When user signs up with username "tester123" and password "TesTEr16843/!@00"
     Then the user lands on the signed in app
@@ -134,7 +134,7 @@ Feature: Status Desktop Sign Up
   Scenario: User signs up with wrong imported seed phrase
 
     Given A first time user lands on the status desktop and navigates to import seed phrase
-    When The user inputs the seed phrase truth gold urban vital rose market legal release border gospel leave potato
+    When The user inputs the seed phrase "truth gold urban vital rose market legal release border gospel leave potato"
     And user clicks on the following ui-component seedPhraseView_Submit_Button
     Then the following ui-component seedPhraseView_Submit_Button is not enabled
     And the invalid seed text is visible

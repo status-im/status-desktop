@@ -103,6 +103,7 @@ Rectangle {
         }
 
         StatusListView {
+            objectName: "walletAccountsListView"
             spacing: Style.current.smallPadding
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -111,6 +112,7 @@ Rectangle {
             // ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
             delegate: StatusListItem {
+                objectName: "walletAccountItem"
                 width: ListView.view.width
                 highlighted: RootStore.currentAccount.name === model.name
                 title: model.name

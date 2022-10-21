@@ -23,6 +23,7 @@ class MainWalletScreen(Enum):
     RIGHT_SIDE_TABBAR: str = "mainWallet_Right_Side_Tab_Bar"
     MAILSERVER_DIALOG: str = "mailserver_dialog"
     MAILSERVER_RETRY: str = "mailserver_retry"
+    FIRST_ACCOUNT_ITEM: str = "firstWalletAccount_Item"
 
 class AssetView(Enum):
     LIST: str = "mainWallet_Assets_View_List"
@@ -91,6 +92,10 @@ class TransactionsView(Enum):
     TRANSACTIONS_DETAIL_VIEW_HEADER: str =  "mainWallet_Transactions_Detail_View_Header"
 
 class StatusWalletScreen:
+    
+    #####################################
+    ### Screen actions region:
+    #####################################
     
     def accept_signing_phrase(self):
         click_obj_by_name(SigningPhrasePopUp.OK_GOT_IT_BUTTON.value)
@@ -173,11 +178,12 @@ class StatusWalletScreen:
         
         wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
         click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
-        
         time.sleep(5)
          
     def verify_account_name_is_present(self, account_name: str):
         verify_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name)
+        type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
+        click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
         
     def send_transaction(self, account_name, amount, token, chain_name, password):
         # TODO wait for balance to update
@@ -291,9 +297,20 @@ class StatusWalletScreen:
                 return
         
         assert False, "network name not found"
+        
+    def click_first_account(self):
+        click_obj_by_name(MainWalletScreen.FIRST_ACCOUNT_ITEM.value)
 
+    
+    #####################################
+    ### Verifications region:
+    #####################################
+             
+    def verify_account_name_is_present(self, account_name: str):
+        verify_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name)
         
     def verify_positive_balance(self, symbol: str):
+        time.sleep(5) # TODO: remove when it is faster @alaibe!
         list = get_obj(AssetView.LIST.value)
         reset = 0
         while (reset < 3):

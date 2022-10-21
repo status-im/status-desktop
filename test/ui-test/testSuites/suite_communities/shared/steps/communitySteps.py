@@ -29,7 +29,7 @@ def step(context, community_channel_name, community_channel_description, method)
 @Given("the user lands on the community named \"|any|\"")
 def step(context: any, community_name: str):
     the_user_lands_on_the_community(community_name)
-    
+
 @Given("the channel named \"|any|\" is open")
 def step(context, community_channel_name): 
     the_channel_is_open(community_channel_name)
@@ -78,7 +78,7 @@ def step(context, message_index: int):
 @When("the user creates a community named \"|any|\", with description \"|any|\", intro \"|any|\" and outro \"|any|\"")
 def step(context: any, community_name: str, community_description: str, community_intro: str, community_outro: str):
     the_user_creates_a_community(community_name, community_description, community_intro, community_outro)
-    
+
 @When("the admin creates a community channel named \"|any|\", with description \"|any|\", with the method \"|any|\"")
 def step(context, community_channel_name, community_channel_description, method):
     the_admin_creates_a_community_channel(community_channel_name, community_channel_description, method)
@@ -130,11 +130,11 @@ def step(context, user_name):
 @Then("the user lands on the community named \"|any|\"")
 def step(context: any, community_name: str):
     the_user_lands_on_the_community(community_name)
-   
+
 @Then("the channel named \"|any|\" is open")
 def step(context, community_channel_name): 
     the_channel_is_open(community_channel_name)
-    
+
 @Then("the amount of pinned messages is |integer|")
 def step(context, amount: int):
     _statusCommunityScreen.check_pin_count(amount)

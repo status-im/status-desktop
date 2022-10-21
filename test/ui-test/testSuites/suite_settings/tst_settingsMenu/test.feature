@@ -16,7 +16,8 @@ Feature: Status Desktop Settings Menu
 
 	@merge @mayfail
     Scenario: User can backup seed phrase
-        When the user activates wallet and opens the wallet settings
+        When the user activates wallet 
+		And the user opens the wallet settings
         And the user backs up the wallet seed phrase
         Then the backup seed phrase indicator is not displayed
 
