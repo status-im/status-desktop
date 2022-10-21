@@ -1,5 +1,4 @@
-import QtQuick 2.13
-import utils 1.0
+import QtQuick 2.14
 
 QtObject {
     readonly property FontLoader baseFont: FontLoader { source: "../../fonts/Inter/Inter-Regular.otf" }

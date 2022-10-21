@@ -152,8 +152,8 @@ Pane {
             size: StatusButton.Size.Small
             text: qsTr("Send Contact Request")
             onClicked: {
-                let contactRequestPopup = Global.openContactRequestPopup(root.publicKey)
-                contactRequestPopup.accepted.connect(d.reload)
+                Global.openContactRequestPopup(root.publicKey,
+                                               popup => popup.accepted.connect(d.reload))
             }
         }
     }
@@ -205,8 +205,8 @@ Pane {
             size: StatusButton.Size.Small
             text: qsTr("Respond to ID Request")
             onClicked: {
-                let idRequestPopup = Global.openIncomingIDRequestPopup(root.publicKey)
-                idRequestPopup.closed.connect(d.reload)
+                Global.openIncomingIDRequestPopup(root.publicKey,
+                                                  popup => popup.closed.connect(d.reload))
             }
         }
     }
@@ -384,8 +384,8 @@ Pane {
                                  d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy // we have an action button otherwise
                         onTriggered: {
                             moreMenu.close()
-                            let contactRequestPopup = Global.openContactRequestPopup(root.publicKey)
-                            contactRequestPopup.closed.connect(d.reload)
+                            Global.openContactRequestPopup(root.publicKey,
+                                                           popup => popup.closed.connect(d.reload))
                         }
                     }
                     StatusMenuItem {
@@ -396,8 +396,8 @@ Pane {
                                  !d.isVerificationRequestReceived
                         onTriggered: {
                             moreMenu.close()
-                            let idRequestPopup = Global.openSendIDRequestPopup(root.publicKey)
-                            idRequestPopup.accepted.connect(d.reload)
+                            Global.openSendIDRequestPopup(root.publicKey,
+                                                          popup => popup.accepted.connect(d.reload))
                         }
                     }
                     StatusMenuItem {
@@ -406,8 +406,8 @@ Pane {
                         enabled: d.isContact && !d.isBlocked && !d.isTrusted && d.isVerificationRequestSent
                         onTriggered: {
                             moreMenu.close()
-                            let idRequestPopup = Global.openOutgoingIDRequestPopup(root.publicKey)
-                            idRequestPopup.closed.connect(d.reload)
+                            Global.openOutgoingIDRequestPopup(root.publicKey,
+                                                              popup => popup.closed.connect(d.reload))
                         }
                     }
                     StatusMenuItem {

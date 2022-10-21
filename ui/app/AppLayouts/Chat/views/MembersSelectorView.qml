@@ -106,8 +106,8 @@ MembersSelectorBase {
             }
 
             if (root.model.count === 0) {
-                const popup = Global.openContactRequestPopup(contactDetails.publicKey)
-                popup.closed.connect(root.rejected)
+                Global.openContactRequestPopup(contactDetails.publicKey,
+                                               popup => popup.closed.connect(root.rejected))
                 return
             }
         }
