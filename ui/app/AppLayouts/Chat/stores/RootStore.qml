@@ -335,6 +335,10 @@ QtObject {
         return communitiesModuleInst.isCommunityRequestPending(id)
     }
 
+    function cancelPendingRequest(id: string) {
+        communitiesModuleInst.cancelRequestToJoinCommunity(id)
+    }
+
     function getSectionNameById(id) {
         return communitiesList.getSectionNameById(id)
     }

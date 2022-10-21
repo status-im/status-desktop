@@ -108,15 +108,16 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
 
         visible: !communityData.joined
-        enabled: !invitationPending
 
         text: {
-            if (invitationPending) return qsTr("Pending")
+            if (invitationPending) return qsTr("Membership request pending...")
             return root.communityData.access === Constants.communityChatOnRequestAccess ?
                     qsTr("Request to join") : qsTr("Join Community")
         }
 
-        onClicked: communityIntroDialog.open()
+        onClicked: {
+            communityIntroDialog.open()
+        }
 
         Connections {
             target: root.store.communitiesModuleInst
@@ -130,12 +131,17 @@ Item {
         CommunityIntroDialog {
             id: communityIntroDialog
 
+            isInvitationPending: joinCommunityButton.invitationPending
             name: communityData.name
             introMessage: communityData.introMessage
             imageSrc: communityData.image
             accessType: communityData.access
 
             onJoined: root.store.requestToJoinCommunity(communityData.id, root.store.userProfileInst.name)
+            onCancelMembershipRequest: {
+                root.store.cancelPendingRequest(communityData.id)
+                joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
+            }
         }
     }
 

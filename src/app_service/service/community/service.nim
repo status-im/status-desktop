@@ -114,6 +114,7 @@ const SIGNAL_COMMUNITY_CATEGORY_REORDERED* = "communityCategoryReordered"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 const SIGNAL_COMMUNITY_MEMBER_REMOVED* = "communityMemberRemoved"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
+const SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED* = "requestToJoinCommunityCanceled"
 const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
 const SIGNAL_COMMUNITY_MUTED* = "communityMuted"
 const SIGNAL_CATEGORY_MUTED* = "categoryMuted"
@@ -142,10 +143,13 @@ QtObject:
   proc loadCuratedCommunities(self: Service): seq[CuratedCommunity]
   proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto]
   proc loadMyPendingRequestsToJoin*(self: Service)
+  proc loadMyCanceledRequestsToJoin*(self: Service)
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto])
   proc handleCommunitiesSettingsUpdates(self: Service, communitiesSettings: seq[CommunitySettingsDto])
   proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
   proc declinedRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
+  proc canceledRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
+  proc getPendingRequestIndex(self: Service, communityId: string, requestId: string): int
 
   proc delete*(self: Service) =
     discard
@@ -199,11 +203,25 @@ QtObject:
             error "Received a membership request for an unknown community", communityId=membershipRequest.communityId
             continue
           var community = self.joinedCommunities[membershipRequest.communityId]
-          community.pendingRequestsToJoin.add(membershipRequest)
-          self.joinedCommunities[membershipRequest.communityId] = community
-          self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
 
-          self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY, CommunityRequestArgs(communityRequest: membershipRequest))
+          case RequestToJoinType(membershipRequest.state):
+          of RequestToJoinType.Pending:
+            community.pendingRequestsToJoin.add(membershipRequest)
+            self.joinedCommunities[membershipRequest.communityId] = community
+            self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
+            self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY, CommunityRequestArgs(communityRequest: membershipRequest))
+
+          of RequestToJoinType.Canceled:
+            let indexPending = self.getPendingRequestIndex(membershipRequest.communityId, membershipRequest.id)
+            if (indexPending != -1):
+              community.pendingRequestsToJoin.delete(indexPending)
+              self.joinedCommunities[membershipRequest.communityId] = community
+              self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
+          
+          of RequestToJoinType.Declined:
+            break
+          of RequestToJoinType.Accepted:
+            break
 
     self.events.on(SignalType.DiscordCategoriesAndChannelsExtracted.event) do(e: Args):
       var receivedData = DiscordCategoriesAndChannelsExtractedSignal(e)
@@ -264,6 +282,7 @@ QtObject:
     # therefore, we must keep the old one
     community.pendingRequestsToJoin = self.joinedCommunities[community.id].pendingRequestsToJoin
     community.declinedRequestsToJoin = self.joinedCommunities[community.id].declinedRequestsToJoin
+    community.canceledRequestsToJoin = self.joinedCommunities[community.id].canceledRequestsToJoin
 
     # Update the joinded community list with the new data
     self.joinedCommunities[community.id] = community
@@ -407,6 +426,7 @@ QtObject:
       if (community.admin):
         self.joinedCommunities[community.id].pendingRequestsToJoin = self.pendingRequestsToJoinForCommunity(community.id)
         self.joinedCommunities[community.id].declinedRequestsToJoin = self.declinedRequestsToJoinForCommunity(community.id)
+        self.joinedCommunities[community.id].canceledRequestsToJoin = self.canceledRequestsToJoinForCommunity(community.id)
 
     let allCommunities = self.loadAllCommunities()
     for community in allCommunities:
@@ -645,6 +665,29 @@ QtObject:
           self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_ADDED, CommunityRequestArgs(communityRequest: communityRequest))
     except Exception as e:
       error "Error fetching my community requests", msg = e.msg
+
+  proc loadMyCanceledRequestsToJoin*(self: Service) =
+    try:
+      let response = status_go.myCanceledRequestsToJoin()
+
+      if response.result.kind != JNull:
+        for jsonCommunityReqest in response.result:
+          let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
+          self.myCommunityRequests.add(communityRequest)
+          self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_ADDED, CommunityRequestArgs(communityRequest: communityRequest))
+    except Exception as e:
+      error "Error fetching my community requests", msg = e.msg
+
+  proc canceledRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
+    try:
+      let response = status_go.canceledRequestsToJoinForCommunity(communityId)
+
+      result = @[]
+      if response.result.kind != JNull:
+        for jsonCommunityReqest in response.result:
+          result.add(jsonCommunityReqest.toCommunityMembershipRequestDto())
+    except Exception as e:
+      error "Error fetching community requests", msg = e.msg
 
   proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
     try:
@@ -1214,6 +1257,25 @@ QtObject:
       community.pendingRequestsToJoin.delete(indexPending)
 
     self.joinedCommunities[communityId] = community
+
+  proc cancelRequestToJoinCommunity*(self: Service, communityId: string) =
+    try:
+      var i = 0
+      for communityRequest in self.myCommunityRequests:
+        if (communityRequest.communityId == communityId):
+          let response = status_go.cancelRequestToJoinCommunity(communityRequest.id)
+          if (not response.error.isNil):
+            let msg = response.error.message & " communityId=" & communityId
+            error "error while cancel membership request ", msg
+            return
+          self.myCommunityRequests.delete(i)
+          self.activityCenterService.parseACNotificationResponse(response)
+
+        i.inc()
+      
+      self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED, Args())
+    except Exception as e:
+      error "Error canceled request to join community", msg = e.msg
 
   proc acceptRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:

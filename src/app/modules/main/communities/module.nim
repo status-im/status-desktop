@@ -272,6 +272,9 @@ method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[Disc
   self.view.setDiscordImportErrorsCount(errorsCount)
   self.view.discordChannelsModel().hasSelectedItemsChanged()
 
+method cancelRequestToJoinCommunity*(self: Module, communityId: string) =
+  self.controller.cancelRequestToJoinCommunity(communityId)
+
 method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =
   self.controller.requestToJoinCommunity(communityId, ensName)
 

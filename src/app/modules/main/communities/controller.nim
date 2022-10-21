@@ -86,6 +86,9 @@ proc getCuratedCommunities*(self: Controller): seq[CuratedCommunity] =
 proc spectateCommunity*(self: Controller, communityId: string): string =
   self.communityService.spectateCommunity(communityId)
 
+proc cancelRequestToJoinCommunity*(self: Controller, communityId: string) =
+  self.communityService.cancelRequestToJoinCommunity(communityId)
+
 proc requestToJoinCommunity*(self: Controller, communityId: string, ensName: string) =
   self.communityService.requestToJoinCommunity(communityId, ensName)
 
