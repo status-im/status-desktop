@@ -418,6 +418,9 @@ QtObject:
   proc reorderCommunityChannel*(self: View, communityId: string, categoryId: string, chatId: string, position: int): string {.slot} =
     self.delegate.reorderCommunityChannel(communityId, categoryId, chatId, position)
 
+  proc cancelRequestToJoinCommunity*(self: View, communityId: string) {.slot.} =
+    self.delegate.cancelRequestToJoinCommunity(communityId)
+
   proc requestToJoinCommunity*(self: View, communityId: string, ensName: string) {.slot.} =
     self.delegate.requestToJoinCommunity(communityId, ensName)
 

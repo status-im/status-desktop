@@ -18,20 +18,31 @@ StatusDialog {
     property string introMessage
     property int accessType
     property url imageSrc
+    property bool isInvitationPending: false
 
     signal joined
+    signal cancelMembershipRequest
 
     title: qsTr("Welcome to %1").arg(name)
 
     footer: StatusDialogFooter {
         rightButtons: ObjectModel {
             StatusButton {
-                text: root.accessType === Constants.communityChatOnRequestAccess
-                      ? qsTr("Request to join %1").arg(root.name)
-                      : qsTr("Join %1").arg(root.name)
-                enabled: checkBox.checked
+                text: root.isInvitationPending ? qsTr("Cancel Membership Request")
+                                               : (root.accessType === Constants.communityChatOnRequestAccess
+                                                  ? qsTr("Request to join %1").arg(root.name)
+                                                  : qsTr("Join %1").arg(root.name) )
+                type: root.isInvitationPending ? StatusBaseButton.Type.Danger
+                                               : StatusBaseButton.Type.Normal
+                enabled: checkBox.checked || root.isInvitationPending
+
                 onClicked: {
-                    root.joined()
+                    if (root.isInvitationPending) {
+                        root.cancelMembershipRequest()
+                    } else {
+                       root.joined()
+                    }
+
                     root.close()
                 }
             }
@@ -71,6 +82,7 @@ StatusDialog {
         StatusCheckBox {
             id: checkBox
             Layout.alignment: Qt.AlignCenter
+            visible: !root.isInvitationPending
             text: qsTr("I agree with the above")
         }
     }

@@ -40,11 +40,22 @@ proc requestToJoinCommunity*(communityId: string, ensName: string): RpcResponse[
 proc myPendingRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result =  callPrivateRPC("myPendingRequestsToJoin".prefix)
 
+proc myCanceledRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result =  callPrivateRPC("myCanceledRequestsToJoin".prefix)
+
 proc pendingRequestsToJoinForCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("pendingRequestsToJoinForCommunity".prefix, %*[communityId])
 
 proc declinedRequestsToJoinForCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("declinedRequestsToJoinForCommunity".prefix, %*[communityId])
+
+proc canceledRequestsToJoinForCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("canceledRequestsToJoinForCommunity".prefix, %*[communityId])
+
+proc cancelRequestToJoinCommunity*(requestId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("cancelRequestToJoinCommunity".prefix, %*[{
+    "id": requestId
+  }])
 
 proc leaveCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("leaveCommunity".prefix, %*[communityId])

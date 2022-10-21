@@ -8,9 +8,10 @@ include ../../../common/json_utils
 import ../../chat/dto/chat
 
 type RequestToJoinType* {.pure.}= enum
-  Pending = 0,
-  Declined = 1,
-  Accepted = 2
+  Pending = 1,
+  Declined = 2,
+  Accepted = 3,
+  Canceled = 4
 
 type Member* = object
   id*: string
@@ -72,6 +73,7 @@ type CommunityDto* = object
   bannedMembersIds*: seq[string]
   declinedRequestsToJoin*: seq[CommunityMembershipRequestDto]
   encrypted*: bool
+  canceledRequestsToJoin*: seq[CommunityMembershipRequestDto]  
 
 type CuratedCommunity* = object
     available*: bool
