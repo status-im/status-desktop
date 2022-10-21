@@ -133,6 +133,7 @@ Item {
             name: communityData.name
             introMessage: communityData.introMessage
             imageSrc: communityData.image
+            accessType: communityData.access
 
             onJoined: root.store.requestToJoinCommunity(communityData.id, root.store.userProfileInst.name)
         }

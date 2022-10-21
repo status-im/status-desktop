@@ -3,6 +3,8 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.1
 import QtQml.Models 2.14
 
+import utils 1.0
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
@@ -14,6 +16,7 @@ StatusDialog {
 
     property string name
     property string introMessage
+    property int accessType
     property url imageSrc
 
     signal joined
@@ -23,7 +26,9 @@ StatusDialog {
     footer: StatusDialogFooter {
         rightButtons: ObjectModel {
             StatusButton {
-                text: qsTr("Join %1").arg(root.name)
+                text: root.accessType === Constants.communityChatOnRequestAccess
+                      ? qsTr("Request to join %1").arg(root.name)
+                      : qsTr("Join %1").arg(root.name)
                 enabled: checkBox.checked
                 onClicked: {
                     root.joined()
