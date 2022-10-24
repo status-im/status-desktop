@@ -75,11 +75,11 @@ SettingsContentBase {
             implicitHeight: 64
             components: [
                 StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
+                    icon: "next"
                     color: Theme.palette.baseColor1
                 }
             ]
+            onClicked: root.store.openLink("https://status.im/about/#our-principles")
         }
 
         Column {

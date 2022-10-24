@@ -225,7 +225,7 @@ StatusSectionLayout {
                     }
 
                     function getReleaseNotes() {
-                        console.log("TODO: getReleaseNotes")
+                        openLink("https://github.com/status-im/status-desktop/releases/%1".arg(getCurrentVersion()))
                     }
 
                     function openLink(url) {
