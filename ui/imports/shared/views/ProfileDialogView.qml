@@ -296,7 +296,7 @@ Pane {
                     text: {
                         let result = ""
                         if (d.userNickName) {
-                            if (d.contactDetails.ensVerified)
+                            if (d.contactDetails.ensVerified && d.contactDetails.name)
                                 result = d.prettyEnsName
                             else
                                 result = d.contactDetails.optionalName // original display name
