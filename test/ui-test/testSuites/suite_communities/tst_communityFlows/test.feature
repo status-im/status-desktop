@@ -46,7 +46,7 @@ Feature: Status Desktop community
             | test-channel    		 | Community channel description tested 1 | new-test-channel            |
 
 	@mayfail
-	# TODO: Weak. Sometimes passes sometimes fails (standalone or as part of the sequence). To anaylize.
+	# TODO: Weak. Sometimes passes sometimes fails (standalone or as part of the sequence). To analyze.
     Scenario: The admin deletes a community channel
         Given the admin creates a community channel named "test-channel2", with description "My description", with the method "bottom_menu"
         And the channel named "test-channel2" is open
@@ -55,7 +55,7 @@ Feature: Status Desktop community
         Then the channel count is 1
 
 	@mayfail
-	# TODO: Weak. Sometimes passes sometimes fails (standalone or as part of the sequence). To anaylize.
+	# TODO: Weak. Sometimes passes sometimes fails (standalone or as part of the sequence). To analyze.
     Scenario Outline: The admin creates a community category
         Given the admin creates a community channel named "<channel_name>", with description "Some description", with the method "<method>"
         When the admin creates a community category named "<category_name>", with channels "<channel_name>" and with the method "<method>"
@@ -85,7 +85,7 @@ Feature: Status Desktop community
         Then the category named "test-category" is missing
 
 	@mayfail
-	# TODO: Weak. Sometimes passes sometimes fails (standalone or as part of the sequence). To anaylize.
+	# TODO: Weak. Sometimes passes sometimes fails (standalone or as part of the sequence). To analyze.
 	# Also TODO: Missing validation of description changed and color changed. Now validation only checks the new community name.
     Scenario Outline: The admin edits a community
         When the admin renames the community to "<new_community_name>" and description to "<new_community_description>" and color to "<new_community_color>"

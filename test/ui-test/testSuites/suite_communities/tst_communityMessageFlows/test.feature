@@ -24,28 +24,22 @@ Feature: Status Desktop community messages
         And the user creates a community named "test_community", with description "Community description", intro "community intro" and outro "commmunity outro"
         Then the user lands on the community named "test_community"
 
-	@mayfail
-	# TODO: Verification is broken.
     Scenario: The user sends a test image
         When the user sends a test image in the current channel
         Then the last chat message contains the test image
 
-	@mayfail
-	# TODO: Verification is broken.
     Scenario: The user sends a test image with a message
         When the user sends a test image in the current channel with message "Message" with an image
         Then the test image is displayed just before the last message
         And the last chat message contains "Message"
 
 	@mayfail
-	# TODO: Verification is broken and the action of multiple images doesn't work. It is only sent one.
+	# TODO: The action of sending multiple images doesn't work. It is only sent one.
     Scenario: The user sends multiple test images with a message
         When the user sends multiple test images in the current channel with message "Message" with an image again
         Then the test images are displayed just before the last message
         And the last chat message contains "Message"
 
-	@mayfail
-	# TODO: The action is broken. Review it.
     Scenario: The user pins and unpins messages
         # This one wont work until #6554 is fixed
         # And the amount of pinned messages is 0

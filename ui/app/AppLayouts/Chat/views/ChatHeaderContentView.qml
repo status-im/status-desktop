@@ -264,6 +264,8 @@ Item {
         id: statusChatInfoButton
 
         StatusChatInfoButton {
+            readonly property string emojiIcon: chatContentModule? chatContentModule.chatDetails.emoji : "" // Needed for test
+
             objectName: "chatInfoBtnInHeader"
             title: {
                 const module = root.rootStore.currentChatContentModule()
@@ -305,7 +307,7 @@ Item {
                                 Utils.colorForPubkey(chatContentModule.chatDetails.id)
                               : chatContentModule.chatDetails.color
             : ""
-            asset.emoji: chatContentModule? chatContentModule.chatDetails.emoji : ""
+            asset.emoji: emojiIcon
             asset.emojiSize: "24x24"
             type: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown
             pinnedMessagesCount: chatContentModule? chatContentModule.pinnedMessagesModel.count : 0
