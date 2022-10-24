@@ -100,12 +100,18 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                walletStore: root.store.walletStore
+                // walletStore: root.store.walletStore
                 profileStore: root.store.profileStore
                 privacyStore: root.store.privacyStore
                 contactsStore: root.store.contactsStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth
+
+                accountSettings: localAccountSettings
+                accountSensitiveSettings: localAccountSensitiveSettings
+                communitiesModel: communitiesModule.model
+                accountsModel: root.store.walletStore.accounts
+                isKeycardUser: !userProfile.isKeycardUser
             }
 
             ContactsView {

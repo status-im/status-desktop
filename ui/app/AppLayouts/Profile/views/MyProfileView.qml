@@ -21,16 +21,20 @@ import StatusQ.Controls 0.1
 SettingsContentBase {
     id: root
 
-    property WalletStore walletStore
-    property ProfileStore profileStore
-    property PrivacyStore privacyStore
     property ContactsStore contactsStore
+    property PrivacyStore privacyStore
+    property ProfileStore profileStore
+    property var accountSettings
+    property var accountSensitiveSettings
+    property var communitiesModel
+    property var accountsModel
+    property bool isKeycardUser: false
 
     titleRowComponentLoader.sourceComponent: StatusButton {
         objectName: "profileSettingsChangePasswordButton"
         text: qsTr("Change Password")
         onClicked: changePasswordModal.open()
-        enabled: !userProfile.isKeycardUser
+        enabled: isKeycardUser
     }
 
     dirty: settingsView.dirty
@@ -73,7 +77,10 @@ SettingsContentBase {
                 Layout.fillWidth: true
                 profileStore: root.profileStore
                 privacyStore: root.privacyStore
-                walletStore: root.walletStore
+                accountSettings: root.accountSettings
+                accountSensitiveSettings: root.accountSensitiveSettings
+                communitiesModel: root.communitiesModel
+                accountsModel: root.accountsModel
             }
 
             MyProfilePreview {
@@ -82,6 +89,7 @@ SettingsContentBase {
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
             }
+
         }
 
         ChangePasswordModal {
@@ -95,5 +103,6 @@ SettingsContentBase {
             id: successPopup
             anchors.centerIn: parent
         }
+
     }
 }

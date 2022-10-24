@@ -33,19 +33,28 @@ ApplicationWindow {
             title: "ProfileDialogView"
         }
         ListElement {
-             title: "CommunitiesPortalLayout"
+            title: "CommunitiesPortalLayout"
         }
         ListElement {
-             title: "StatusCommunityCard"
+            title: "StatusCommunityCard"
         }
         ListElement {
-             title: "LoginView"
+            title: "LoginView"
         }
         ListElement {
-             title: "AboutView"
+            title: "AboutView"
         }
         ListElement {
             title: "LanguageCurrencySettings"
+        }
+        ListElement {
+            title: "MyProfileView"
+        }
+        ListElement {
+            title: "MyProfileSettingsView"
+        }
+        ListElement {
+            title: "MyProfilePreview"
         }
     }
 

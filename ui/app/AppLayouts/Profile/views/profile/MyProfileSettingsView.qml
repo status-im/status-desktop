@@ -2,7 +2,6 @@ import QtQuick 2.13
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.13
 
-import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
@@ -26,7 +25,10 @@ ColumnLayout {
 
     property PrivacyStore privacyStore
     property ProfileStore profileStore
-    property WalletStore walletStore
+    property var accountSettings
+    property var accountSensitiveSettings
+    property var communitiesModel
+    property var accountsModel
 
     readonly property bool dirty: descriptionPanel.displayName.text !== profileStore.displayName ||
                                   descriptionPanel.bio.text !== profileStore.bio ||
@@ -51,7 +53,7 @@ ColumnLayout {
         if (biometricsSwitch.checked)
             Global.openPopup(storePasswordModal)
         else
-            localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.never;
+            accountSettings.storeToKeychainValue = Constants.keychain.storedValue.never;
     }
 
     function offerToStorePassword(password, runStoreToKeyChainPopup)
@@ -59,7 +61,7 @@ ColumnLayout {
         if (Qt.platform.os !== "osx")
             return;
 
-        localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store;
+        accountSettings.storeToKeychainValue = Constants.keychain.storedValue.store;
         root.privacyStore.storeToKeyChain(password);
     }
 
@@ -132,7 +134,7 @@ ColumnLayout {
         components: [ StatusSwitch {
             id: biometricsSwitch
             horizontalPadding: 0
-            readonly property bool currentStoredValue: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
+            readonly property bool currentStoredValue: accountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
             checked: currentStoredValue
         } ]
         onClicked: biometricsSwitch.toggle()
@@ -156,14 +158,14 @@ ColumnLayout {
         }
 
         StatusTabButton {
-            enabled: localAccountSensitiveSettings.communitiesEnabled
+            enabled: accountSensitiveSettings.communitiesEnabled
             width: enabled ? implicitWidth : 0
             text: qsTr("Communities")
             onEnabledChanged: showcaseTabBar.validateCurrentIndex()
         }
 
         StatusTabButton {
-            enabled: localAccountSensitiveSettings.isWalletEnabled
+            enabled: accountSensitiveSettings.isWalletEnabled
             width: enabled ? implicitWidth : 0
             text: qsTr("Accounts")
             onEnabledChanged: showcaseTabBar.validateCurrentIndex()
@@ -187,7 +189,7 @@ ColumnLayout {
 
             Repeater {
                 id: communitiesRepeater
-                model: communitiesModule.model
+                model: communitiesModel
 
                 CommunityDelegate {
                     width: parent.width
@@ -209,7 +211,7 @@ ColumnLayout {
 
             Repeater {
                 id: accountsRepeater
-                model: root.walletStore.accounts
+                model: accountsModel
 
                 WalletAccountDelegate {
                     width: parent.width

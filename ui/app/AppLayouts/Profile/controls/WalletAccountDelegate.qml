@@ -2,15 +2,14 @@ import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 
-
 StatusListItem {
     id: root
-    
+
     property var account
     property bool showShevronIcon: true
 
     signal goToAccountView()
-    
+
     title: account.name
     subTitle: account.address
     objectName: account.name
@@ -23,7 +22,7 @@ StatusListItem {
     asset.width: 40
     asset.height: 40
     width: parent.width
-    
+
     components: !showShevronIcon ? [] : [ shevronIcon ]
 
     onClicked: {

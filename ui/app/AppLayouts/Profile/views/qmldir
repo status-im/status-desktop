@@ -1,2 +1,5 @@
 AboutView 1.0 AboutView.qml
 LanguageView 1.0 LanguageView.qml
+MyProfileView 1.0 MyProfileView.qml
+MyProfileSettingsView 1.0 profile/MyProfileSettingsView.qml
+MyProfilePreview 1.0 profile/MyProfilePreview.qml
