@@ -47,8 +47,8 @@ QtObject:
     read = getActiveMailserver
     notify = activeMailserverChanged
 
-  proc setActiveMailserver(self: View, nodeAddress: string) {.slot.} =
-    self.delegate.setActiveMailserver(nodeAddress)
+  proc setActiveMailserver(self: View, mailserverID: string) {.slot.} =
+    self.delegate.setActiveMailserver(mailserverID)
 
   proc onActiveMailserverSet*(self: View, nodeAddress: string) =
     if(self.activeMailserver == nodeAddress):

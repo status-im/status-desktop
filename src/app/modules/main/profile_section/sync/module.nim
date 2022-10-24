@@ -72,8 +72,8 @@ method getMailserverNameForNodeAddress*(self: Module, nodeAddress: string): stri
     return name
   return "---"
 
-method setActiveMailserver*(self: Module, nodeAddress: string) =
-  self.controller.pinMailserver(nodeAddress)
+method setActiveMailserver*(self: Module, mailserverID: string) =
+  self.controller.pinMailserver(mailserverID)
 
 method saveNewMailserver*(self: Module, name: string, nodeAddress: string) =
   self.controller.saveNewMailserver(name, nodeAddress)

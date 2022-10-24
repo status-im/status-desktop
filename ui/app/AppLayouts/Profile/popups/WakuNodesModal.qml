@@ -90,7 +90,7 @@ StatusModal {
                 model: root.messagingStore.mailservers
                 delegate: Component {
                     StatusListItem {
-                        title: qsTr("Node %1").arg(index)
+                        title: qsTr("Node %1").arg(index + 1)
                         subTitle: model.name
                         visible: !automaticSelectionSwitch.checked
                         height: visible ? implicitHeight : 0
@@ -101,7 +101,7 @@ StatusModal {
                                 checked: model.nodeAddress === root.messagingStore.activeMailserver
                                 onCheckedChanged: {
                                      if (checked) {
-                                        root.messagingStore.setActiveMailserver(model.nodeAddress)
+                                        root.messagingStore.setActiveMailserver(model.name)
                                     }
                                 }
                             }

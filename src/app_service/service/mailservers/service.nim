@@ -10,8 +10,8 @@ import ../node_configuration/service as node_configuration_service
 import ../../../backend/mailservers as status_mailservers
 
 # allow runtime override via environment variable; core contributors can set a
-# mailserver address in this way for local development or test
-let MAILSERVER_ADDRESS = $getEnv("MAILSERVER")
+# mailserver id in this way for local development or test
+let MAILSERVER_ID = $getEnv("MAILSERVER")
 
 # allow runtime override via environment variable. core contributors can set a
 # specific peer to set for testing messaging and mailserver functionality with squish.
@@ -121,8 +121,8 @@ QtObject:
         let mailserverID = self.saveMailserver(mailserverName, TEST_PEER_ENR)
         discard self.settingsService.pinMailserver(mailserverId, fleet)
 
-    if MAILSERVER_ADDRESS != "":
-      discard self.settingsService.pinMailserver(MAILSERVER_ADDRESS, fleet)
+    if MAILSERVER_ID != "":
+      discard self.settingsService.pinMailserver(MAILSERVER_ID, fleet)
 
   proc mailserverSynced*(self: Service, syncInfo: string) {.slot.} =
     let syncInfoParsed = parseJson(syncInfo)
