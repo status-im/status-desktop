@@ -180,37 +180,6 @@ proc storeAccounts*(id, hashedPassword: string): RpcResponse[JsonNode] {.raises:
     error "error doing rpc request", methodName = "storeAccounts", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc saveAccount*(
-  address: string,
-  name: string,
-  password: string,
-  color: string,
-  accountType: string,
-  isADerivedAccount = true,
-  walletIndex: int = 0,
-  id: string = "",
-  publicKey: string = "",
-) {.raises: [Exception].} =
-  var derivationPath = "m/44'/60'/0'/0/0"
-  let hashedPassword = hashPassword(password)
-
-  if (isADerivedAccount):
-    let derivationPath = (if accountType == GENERATED: "m/" else: "m/44'/60'/0'/0/") & $walletIndex
-    discard storeDerivedAccounts(id, hashedPassword, @[derivationPath])
-  elif accountType == KEY:
-    discard storeAccounts(id, hashedPassword)
-
-  discard callPrivateRPC("accounts_saveAccounts", %* [
-    [{
-      "color": color,
-      "name": name,
-      "address": address,
-      "public-key": publicKey,
-      "type": accountType,
-      "path": derivationPath
-    }]
-  ])
-
 proc addPeer*(peer: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
     let response = status_go.addPeer(peer)
