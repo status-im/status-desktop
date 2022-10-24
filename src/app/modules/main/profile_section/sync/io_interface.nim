@@ -27,7 +27,7 @@ method isAutomaticSelection*(self: AccessInterface): bool {.base.} =
 method getMailserverNameForNodeAddress*(self: AccessInterface, nodeAddress: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setActiveMailserver*(self: AccessInterface, nodeAddress: string) {.base.} =
+method setActiveMailserver*(self: AccessInterface, mailserverID: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method saveNewMailserver*(self: AccessInterface, name: string, nodeAddress: string) {.base.} =
