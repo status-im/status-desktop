@@ -77,11 +77,12 @@ class CreateOrEditCommunityChannelPopup(Enum):
     COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON: str = "createOrEditCommunityChannelBtn_StatusButton"
     EMOJI_BUTTON: str = "createOrEditCommunityChannel_EmojiButton"
     EMOJI_SEARCH_TEXT_INPUT: str = "statusDesktop_mainWindow_AppMain_EmojiPopup_SearchTextInput"
-    EMOJI_POPUP_EMOJI_PLACEHOLDER = "emojiPopup_Emoji_Button_Placeholder"
+    EMOJI_POPUP_EMOJI_PLACEHOLDER = "createOrEditCommunityChannel_Emoji_Button_Placeholder"
 
 class CreateOrEditCommunityCategoryPopup(Enum):
     COMMUNITY_CATEGORY_NAME_INPUT: str = "createOrEditCommunityCategoryNameInput_TextEdit"
     COMMUNITY_CATEGORY_LIST: str = "createOrEditCommunityCategoryChannelList_ListView"
+    COMMUNITY_CATEGORY_LIST_ITEM_PLACEHOLDER: str = "createOrEditCommunityCategoryChannelList_ListItem_Placeholder"
     COMMUNITY_CATEGORY_BUTTON: str = "createOrEditCommunityCategoryBtn_StatusButton"
 
 class StatusCommunityScreen:
@@ -116,14 +117,20 @@ class StatusCommunityScreen:
             else:
                 verify_failure("Can't find channel " + channel_name)
 
-    def _get_checked_channel_names_in_category_popup(self):
-        listView = get_obj(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_LIST.value)
+    def _get_checked_channel_names_in_category_popup(self, channel_name = ""):
+        listView = wait_and_get_obj(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_LIST.value)
+        
+        if (channel_name != ""):
+            # Wait for the list item to be loaded
+            wait_by_wildcards(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_LIST_ITEM_PLACEHOLDER.value, "%NAME%", channel_name)
+        
         result = []
 
         for index in range(listView.count):
             listItem = listView.itemAtIndex(index)
             if (listItem.checked):
                 result.append(listItem.objectName.toLower())
+
         return result
 
     def _open_edit_channel_popup(self):
@@ -210,7 +217,7 @@ class StatusCommunityScreen:
 
         self._open_category_edit_popup(category)
 
-        checked_channel_names = self._get_checked_channel_names_in_category_popup()
+        checked_channel_names = self._get_checked_channel_names_in_category_popup(community_channel_names[0])
         split = community_channel_names.split(", ")
         for channel_name in split:
             if channel_name in checked_channel_names:
@@ -276,7 +283,7 @@ class StatusCommunityScreen:
 
     def check_community_channel_emoji(self, emojiStr: str):
         obj = wait_and_get_obj(CommunityScreenComponents.CHAT_IDENTIFIER_CHANNEL_ICON.value)
-        expect_true(str(obj.icon.emoji).find(emojiStr) >= 0, "Same emoji check")
+        expect_true(str(obj.emojiIcon).find(emojiStr) >= 0, "Same emoji check")
 
     def _verify_image_sent(self, message_index: int):
         image_obj = get_obj(CommunityScreenComponents.CHAT_LOG.value).itemAtIndex(message_index)
@@ -330,7 +337,7 @@ class StatusCommunityScreen:
 
     def check_pin_count(self, wanted_pin_count: int):
         pin_text_obj = wait_and_get_obj(CommunityScreenComponents.PIN_TEXT.value)
-        verify_equals(pin_text_obj.text, wanted_pin_count)
+        verify_equals(str(pin_text_obj.text), str(wanted_pin_count))
 
     def invite_user_to_community(self, user_name: str, message: str):
         click_obj_by_name(CommunityScreenComponents.ADD_MEMBERS_BUTTON.value)
