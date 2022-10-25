@@ -196,6 +196,7 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 store: root.store
+                accountSettings: localAccountSensitiveSettings
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.browserSettings)
                 contentWidth: d.contentWidth
             }

@@ -12,6 +12,8 @@ import StatusQ.Core.Theme 0.1
 ColumnLayout {
     id: root
 
+    property var accountSettings
+
     StatusBaseText {
         text: qsTr("Default DApp explorer")
         font.pixelSize: 15
@@ -33,11 +35,11 @@ ColumnLayout {
         id: noneRadioButton
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: 10
-        checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerNone
-        text: qsTr("none")
+        checked: accountSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerNone
+        text: qsTr("None")
         onCheckedChanged: {
             if (checked) {
-                localAccountSensitiveSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerNone
+                accountSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerNone
             }
         }
     }
@@ -46,11 +48,11 @@ ColumnLayout {
         id: etherscanRadioButton
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: 10
-        checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEtherscan
+        checked: accountSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEtherscan
         text: "etherscan.io"
         onCheckedChanged: {
-            if (checked && localAccountSensitiveSettings.useBrowserEthereumExplorer !== Constants.browserEthereumExplorerEtherscan) {
-                localAccountSensitiveSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEtherscan
+            if (checked && accountSettings.useBrowserEthereumExplorer !== Constants.browserEthereumExplorerEtherscan) {
+                accountSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEtherscan
             }
         }
     }
@@ -59,11 +61,11 @@ ColumnLayout {
         id: ethplorerRadioButton
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: 10
-        checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEthplorer
+        checked: accountSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEthplorer
         text: "ethplorer.io"
         onCheckedChanged: {
             if (checked) {
-                localAccountSensitiveSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEthplorer
+                accountSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEthplorer
             }
         }
     }
@@ -72,11 +74,11 @@ ColumnLayout {
         id: blockchairRadioButton
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: 10
-        checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerBlockchair
+        checked: accountSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerBlockchair
         text: "blockchair.com"
         onCheckedChanged: {
             if (checked) {
-                localAccountSensitiveSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerBlockchair
+                accountSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerBlockchair
             }
         }
     }

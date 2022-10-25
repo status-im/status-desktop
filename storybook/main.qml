@@ -56,6 +56,9 @@ ApplicationWindow {
         ListElement {
             title: "InviteFriendsToCommunityPopup"
         }
+        ListElement {
+             title: "BrowserSettings"
+        }
     }
 
     SplitView {
