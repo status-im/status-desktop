@@ -69,7 +69,8 @@ SettingsContentBase {
 
                 onInviteFriends: {
                     Global.openInviteFriendsToCommunityPopup(communityData,
-                                                             root.profileSectionStore.communitiesProfileModule)
+                                                             root.profileSectionStore.communitiesProfileModule,
+                                                             null)
                 }
             }
 
