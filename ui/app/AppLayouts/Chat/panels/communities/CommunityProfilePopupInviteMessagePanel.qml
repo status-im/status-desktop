@@ -58,7 +58,6 @@ ColumnLayout {
 
     PickedContacts {
         id: existingContacts
-        enabled: false
         contactsStore: root.contactsStore
         pubKeys: root.pubKeys
         Layout.fillWidth: true

@@ -30,9 +30,6 @@ Item {
         return parts.some(p => p.startsWith(filter))
     }
 
-    implicitWidth: contactGridView.implicitWidth + contactGridView.margins
-    implicitHeight: visible ? contactGridView.contentHeight : 0
-
     StatusGridView {
         id: contactGridView
         anchors.fill: parent
@@ -65,6 +62,8 @@ Item {
             statusListItemIcon.badge.border.color: Theme.palette.baseColor4
             statusListItemIcon.badge.implicitHeight: 14 // 10 px + 2 px * 2 borders
             statusListItemIcon.badge.implicitWidth: 14 // 10 px + 2 px * 2 borders
+
+            sensor.enabled: false
         }
     }
 }
