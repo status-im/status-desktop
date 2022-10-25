@@ -1,7 +1,5 @@
 import QtQuick 2.14
 
-import StatusQ.Core.Theme 0.1
-
 Flickable {
     id: root
 
@@ -17,7 +15,7 @@ Flickable {
 
     TextEdit {
         id: logTextEdit
-        font.family: Theme.palette.monoFont.name
+        font.family: "courier"
         font.letterSpacing: 1.2
         readOnly: true
         selectByMouse: true
