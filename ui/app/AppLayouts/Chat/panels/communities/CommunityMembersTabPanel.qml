@@ -55,6 +55,7 @@ Item {
 
         ListView {
             id: membersList
+            objectName: "CommunityMembersTabPanel_MembersListViews"
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -78,6 +79,7 @@ Item {
 
                 components: [
                     StatusButton {
+                        objectName: "MemberListIten_KickButton"
                         visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers) && isHovered && canBeBanned
                         text: qsTr("Kick")
                         type: StatusBaseButton.Type.Danger

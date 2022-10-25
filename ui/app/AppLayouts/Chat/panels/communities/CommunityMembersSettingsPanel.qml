@@ -236,6 +236,7 @@ SettingsPageLayout {
                 hoverColor: "transparent"
             },
             StatusButton {
+                objectName: "CommunityMembers_KickModal_KickButton"
                 text: qsTr("Kick")
                 type: StatusBaseButton.Type.Danger
                 onClicked: {

@@ -62,6 +62,10 @@ class CommunitySettingsComponents(Enum):
     COMMUNITY_NAME_TEXT = "communitySettings_CommunityName_Text"
     COMMUNITY_DESCRIPTION_TEXT = "communitySettings_CommunityDescription_Text"
     COMMUNITY_LETTER_IDENTICON = "communitySettings_Community_LetterIdenticon"
+    MEMBERS_BUTTON = "communitySettings_Members_NavigationListItem"
+    MEMBERS_TAB_MEMBERS_LISTVIEW = "communitySettings_MembersTab_Members_ListView"
+    MEMBER_KICK_BUTTON = "communitySettings_MembersTab_Member_Kick_Button"
+    MEMBER_CONFIRM_KICK_BUTTON = "communitySettings_KickModal_Kick_Button"
 
 class CommunityColorPanelComponents(Enum):
     HEX_COLOR_INPUT = "communitySettings_ColorPanel_HexColor_Input"
@@ -350,3 +354,33 @@ class StatusCommunityScreen:
         type(CommunityScreenComponents.INVITE_POPUP_MESSAGE_INPUT.value, message)
         click_obj_by_name(CommunityScreenComponents.INVITE_POPUP_SEND_BUTTON.value)
 
+    def _get_member_obj(self, member_name: str):
+        members_list = wait_and_get_obj(CommunitySettingsComponents.MEMBERS_TAB_MEMBERS_LISTVIEW.value)
+        for index in range(members_list.count):
+            member_item = members_list.itemAtIndex(index)
+            if (member_item.userName.toLower() == member_name.lower()):
+                return member_item
+        return None
+
+    def kick_member_from_community(self, member_name: str):
+        click_obj_by_name(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)
+        click_obj_by_name(CommunitySettingsComponents.MEMBERS_BUTTON.value)
+        
+        member_item = self._get_member_obj(member_name)
+
+        if member_item == None:
+            verify_failure("Member with name " + member_name + " not found in the community member list")
+            
+        hover_obj(member_item)
+        click_obj_by_name(CommunitySettingsComponents.MEMBER_KICK_BUTTON.value)
+        click_obj_by_name(CommunitySettingsComponents.MEMBER_CONFIRM_KICK_BUTTON.value)
+        
+        time.sleep(1)
+        verification_member_item = self._get_member_obj(member_name)
+        verify_equal(verification_member_item, None, "Member with name " + member_name + " is still found in the community member list after being kicked")
+
+    def verify_number_of_members(self, amount: int):
+        header = get_obj(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)
+        verify_values_equal(str(header.nbMembers), str(amount), "Number of members is not correct")
+        
+    
