@@ -4,17 +4,22 @@
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../testSuites/global_shared/"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
 
-from steps.startupSteps import context_init
+import steps.startupSteps as init_steps
 
-@OnScenarioStart
+# Global properties for the specific feature
+_user = "tester123"
+_password = "TesTEr16843/!@00"
+
+@OnFeatureStart
 def hook(context):
-    context_init(context)
+    init_steps.context_init(context)  
+    init_steps.signs_up_process_steps(context, _user, _password)
 
-@OnScenarioEnd
+@OnFeatureEnd
 def hook(context):
     currentApplicationContext().detach()
     snooze(_app_closure_timeout)
-
+    
 @OnStepEnd
 def hook(context):
     context.userData["step_name"] = context._data["text"]

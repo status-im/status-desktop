@@ -37,6 +37,10 @@ def step(context, data_folder_path):
 def step(context):
     the_user_restarts_the_app(context)
     
+@Given("the user joins chat room \"|any|\"")
+def step(context, room):
+    the_user_joins_chat_room(room)
+    
 #########################
 ### ACTIONS region:
 #########################
@@ -55,7 +59,7 @@ def step(context, obj):
 
 @When("the user joins chat room \"|any|\"")
 def step(context, room):
-    when_the_user_joins_chat_room(room)
+    the_user_joins_chat_room(room)
 
 #########################
 ### VERIFICATIONS region:
@@ -73,3 +77,6 @@ def the_user_restarts_the_app(context: any):
     waitFor(lambda: currentApplicationContext().detach(), 500)
     time.sleep(5)
     startApplication(context.userData["aut_name"])
+    
+def the_user_joins_chat_room(room: str):
+    when_the_user_joins_chat_room(room)
