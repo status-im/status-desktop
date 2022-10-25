@@ -209,8 +209,8 @@ Rectangle {
     ColumnLayout {
         id: messageLayout
         anchors.fill: parent
-        anchors.topMargin: 8
-        anchors.bottomMargin: 8
+        anchors.topMargin: 2
+        anchors.bottomMargin: 2
 
         Loader {
             Layout.fillWidth: true
