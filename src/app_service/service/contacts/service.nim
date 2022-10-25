@@ -490,6 +490,10 @@ QtObject:
 
   proc removeContact*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
+
+    if contact.added:
+      discard status_contacts.retractContactRequest(publicKey)
+
     contact.removed = true
     contact.added = false
 
