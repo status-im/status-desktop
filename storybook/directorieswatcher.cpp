@@ -13,7 +13,8 @@ DirectoriesWatcher::DirectoriesWatcher(QObject *parent)
 void DirectoriesWatcher::addPaths(const QStringList &paths)
 {
     for (auto& path : paths) {
-        QDirIterator it(path, QDir::AllDirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+        QDirIterator it(path, QDir::AllDirs | QDir::NoDotAndDotDot,
+                        QDirIterator::Subdirectories);
 
         while (it.hasNext()) {
             const auto& subpath = it.filePath();

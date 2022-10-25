@@ -47,6 +47,15 @@ ApplicationWindow {
         ListElement {
             title: "LanguageCurrencySettings"
         }
+        ListElement {
+            title: "CommunityProfilePopupInviteFriendsPanel"
+        }
+        ListElement {
+            title: "CommunityProfilePopupInviteMessagePanel"
+        }
+        ListElement {
+            title: "InviteFriendsToCommunityPopup"
+        }
     }
 
     SplitView {
