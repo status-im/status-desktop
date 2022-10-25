@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import Storybook 1.0
+import Models 1.0
 
 ListView {
     id: root
@@ -10,43 +11,11 @@ ListView {
     spacing: 25
     ScrollBar.vertical: ScrollBar { x: root.width }
 
-    ImageSelectPopup {
-        id: iconSelector
-
-        parent: root
-        anchors.centerIn: parent
-        width: parent.width * 0.8
-        height: parent.height * 0.8
-
-        model: ListModel {
-            id: iconsModel
-        }
-
-        Component.onCompleted: {
-            const uniqueIcons = StorybookUtils.getUniqueValuesFromModel(root.model, "icon")
-            uniqueIcons.map(image => iconsModel.append( { image }))
-        }
-    }
-
-    ImageSelectPopup {
-        id: bannerSelector
-
-        parent: root
-        anchors.centerIn: parent
-        width: parent.width * 0.8
-        height: parent.height * 0.8
-
-        model: ListModel {
-            id: bannersModel
-        }
-
-        Component.onCompleted: {
-            const uniqueBanners = StorybookUtils.getUniqueValuesFromModel(root.model, "banner")
-            uniqueBanners.map(image => bannersModel.append( { image }))
-        }
-    }
-
     delegate: ColumnLayout {
+        id: rootDelegate
+
+        readonly property var _model: model
+
         width: ListView.view.width
 
         Label {
@@ -87,6 +56,49 @@ ListView {
             }
         }
 
+        ListView {
+            id: tagsSelector
+
+            Layout.fillWidth: true
+            implicitHeight: contentItem.childrenRect.height + ScrollBar.horizontal.height
+
+            clip: true
+            orientation: ListView.Horizontal
+            spacing: 4
+
+            model: ListModel {
+                id: communityTags
+                Component.onCompleted: {
+                    const allTags = JSON.parse(ModelsData.communityTags)
+                    const selectedTags = JSON.parse(rootDelegate._model.tags)
+                    for (const key of Object.keys(allTags)) {
+                        const selected = selectedTags.find(tag => tag.name === key) !== undefined
+                        communityTags.append({ name: key, emoji: allTags[key], selected: selected });
+                    }
+                }
+            }
+
+            delegate: Button {
+                text: model.name
+                checkable: true
+                checked: model.selected
+
+                onClicked: {
+                    model.selected = !model.selected
+
+                    const selectedTags = []
+                    for (let i = 0; i < communityTags.count; ++i) {
+                        const tag = communityTags.get(i)
+                        if (tag.selected) selectedTags.push({ name: tag.name, emoji: tag.emoji })
+                    }
+
+                    rootDelegate._model.tags = JSON.stringify(selectedTags)
+                }
+            }
+
+            ScrollBar.horizontal: ScrollBar {}
+        }
+
         RowLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 50
@@ -105,12 +117,22 @@ ListView {
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: {
-                        iconSelector.open()
-                        StorybookUtils.singleShotConnection(iconSelector.selected, icon => {
-                            model.icon = icon
-                            iconSelector.close()
-                        })
+                    onClicked: iconSelector.open()
+
+                    ImageSelectPopup {
+                        id: iconSelector
+
+                        parent: root
+                        anchors.centerIn: parent
+                        width: parent.width * 0.8
+                        height: parent.height * 0.8
+
+                        model: IconModel {}
+
+                        onSelected: {
+                            rootDelegate._model.icon = icon
+                            close()
+                        }
                     }
                 }
             }
@@ -129,12 +151,22 @@ ListView {
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: {
-                        bannerSelector.open()
-                        StorybookUtils.singleShotConnection(bannerSelector.selected, banner => {
-                            model.banner = banner
-                            bannerSelector.close()
-                        })
+                    onClicked: bannerSelector.open()
+
+                    ImageSelectPopup {
+                        id: bannerSelector
+
+                        parent: root
+                        anchors.centerIn: parent
+                        width: parent.width * 0.8
+                        height: parent.height * 0.8
+
+                        model: BannerModel {}
+
+                        onSelected: {
+                            rootDelegate._model.banner = icon
+                            close()
+                        }
                     }
                 }
             }
@@ -166,6 +198,21 @@ ListView {
                 from: 0; to: 10 * 1000 * 1000
                 value:  model.members
                 onValueChanged: model.members = value
+            }
+        }
+
+        Row {
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "active:\t"
+            }
+
+            SpinBox {
+                editable: true
+                height: 30
+                from: 0; to: 10 * 1000 * 1000
+                value:  model.activeMembers
+                onValueChanged: model.activeMembers = value
             }
         }
 
