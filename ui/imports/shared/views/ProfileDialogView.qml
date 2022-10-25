@@ -329,7 +329,7 @@ Pane {
                         return txtPendingContactRequestComponent
 
                     // contact request, incoming, pending
-                    if (!d.isContact && d.isContactRequestReceived)
+                    if (!d.isContact && d.isContactRequestReceived && !d.contactDetails.removed)
                         return btnAcceptContactRequestComponent
 
                     // contact request, incoming, rejected
