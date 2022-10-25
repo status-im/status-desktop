@@ -9,6 +9,8 @@ import shared.controls 1.0
 ModalPopup {
     id: popup
 
+    property var accountSettings
+
     title: qsTr("Search engine")
 
     onClosed: {
@@ -30,10 +32,10 @@ ModalPopup {
         RadioButtonSelector {
             title: qsTr("None")
             buttonGroup: searchEnginGroup
-            checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineNone
+            checked: accountSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineNone
             onCheckedChanged: {
                 if (checked) {
-                    localAccountSensitiveSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineNone
+                    accountSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineNone
                 }
             }
         }
@@ -41,10 +43,10 @@ ModalPopup {
         RadioButtonSelector {
             title: "Google"
             buttonGroup: searchEnginGroup
-            checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineGoogle
+            checked: accountSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineGoogle
             onCheckedChanged: {
                 if (checked) {
-                    localAccountSensitiveSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineGoogle
+                    accountSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineGoogle
                 }
             }
         }
@@ -52,10 +54,10 @@ ModalPopup {
         RadioButtonSelector {
             title: "Yahoo!"
             buttonGroup: searchEnginGroup
-            checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineYahoo
+            checked: accountSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineYahoo
             onCheckedChanged: {
                 if (checked) {
-                    localAccountSensitiveSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineYahoo
+                    accountSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineYahoo
                 }
             }
         }
@@ -63,10 +65,10 @@ ModalPopup {
         RadioButtonSelector {
             title: "DuckDuckGo"
             buttonGroup: searchEnginGroup
-            checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineDuckDuckGo
+            checked: accountSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineDuckDuckGo
             onCheckedChanged: {
                 if (checked) {
-                    localAccountSensitiveSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineDuckDuckGo
+                    accountSettings.shouldShowBrowserSearchEngine = Constants.browserSearchEngineDuckDuckGo
                 }
             }
         }

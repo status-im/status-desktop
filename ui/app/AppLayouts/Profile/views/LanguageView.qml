@@ -12,8 +12,9 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Profile.stores 1.0
+
 import "../popups"
-import "../stores"
 
 import SortFilterProxyModel 0.2
 

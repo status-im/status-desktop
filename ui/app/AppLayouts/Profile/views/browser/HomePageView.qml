@@ -10,12 +10,12 @@ import StatusQ.Core.Theme 0.1
 ColumnLayout {
     id: root
 
-    property string homepage: ""
+    property var accountSettings
 
     spacing: 0
 
     StatusBaseText {
-        text: qsTr("homepage")
+        text: qsTr("Homepage")
         font.pixelSize: 15
         color: Theme.palette.directColor1
     }
@@ -30,7 +30,7 @@ ColumnLayout {
         id: defaultRadioButton
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: 10
-        checked: root.homepage == ""
+        checked: root.accountSettings.browserHomepage === ""
         text: qsTr("System default")
     }
 
@@ -38,7 +38,7 @@ ColumnLayout {
         id: customRadioButton
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: 10
-        checked: root.homepage !== ""
+        checked: root.accountSettings.browserHomepage !== ""
         text: qsTr("Other")
     }
 
@@ -48,9 +48,9 @@ ColumnLayout {
         Layout.topMargin: 10
         visible: customRadioButton.checked
         placeholderText: qsTr("Example: duckduckgo.com")
-        text: root.homepage
+        text: root.accountSettings.browserHomepage
         onTextChanged: {
-            root.homepage = text
+            root.accountSettings.browserHomepage = text
         }
     }
 

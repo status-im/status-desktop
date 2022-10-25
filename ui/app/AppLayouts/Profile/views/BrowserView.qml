@@ -12,8 +12,9 @@ import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
 
+import AppLayouts.Profile.stores 1.0
+
 import "../popups"
-import "../stores"
 import "browser"
 import "wallet"
 
@@ -21,8 +22,11 @@ SettingsContentBase {
     id: root
 
     property ProfileSectionStore store
+    property var accountSettings
 
-    property Component searchEngineModal: SearchEngineModal {}
+    property Component searchEngineModal: SearchEngineModal {
+        accountSettings: root.accountSettings
+    }
 
     Item {
         id: rootItem
@@ -38,7 +42,7 @@ SettingsContentBase {
 
             HomePageView {
                 id: homePageView
-                homepage: localAccountSensitiveSettings.browserHomepage
+                accountSettings: root.accountSettings
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.leftMargin: Style.current.padding
@@ -51,7 +55,7 @@ SettingsContentBase {
                 anchors.rightMargin: 0
                 text: qsTr("Search engine used in the address bar")
                 currentValue: {
-                    switch (localAccountSensitiveSettings.shouldShowBrowserSearchEngine) {
+                    switch (accountSettings.shouldShowBrowserSearchEngine) {
                     case Constants.browserSearchEngineGoogle: return "Google"
                     case Constants.browserSearchEngineYahoo: return "Yahoo!"
                     case Constants.browserSearchEngineDuckDuckGo: return "DuckDuckGo"
@@ -64,6 +68,7 @@ SettingsContentBase {
 
             DefaultDAppExplorerView {
                 id: dAppExplorerView
+                accountSettings: root.accountSettings
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.leftMargin: Style.current.padding
@@ -76,12 +81,8 @@ SettingsContentBase {
                 title: qsTr("Show Favorites Bar")
                 components: [
                     StatusSwitch {
-                        checked: localAccountSensitiveSettings.shouldShowFavoritesBar
-                        onCheckedChanged: {
-                            if (localAccountSensitiveSettings.shouldShowFavoritesBar !== checked) {
-                                localAccountSensitiveSettings.shouldShowFavoritesBar = checked
-                            }
-                        }
+                        checked: accountSettings.shouldShowFavoritesBar
+                        onToggled: { accountSettings.shouldShowFavoritesBar = checked }
                     }
                 ]
             }

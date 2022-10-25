@@ -1,1 +1,7 @@
 LanguageStore 1.0 LanguageStore.qml
+AppearanceStore 1.0 AppearanceStore.qml
+ProfileStore 1.0 ProfileStore.qml
+NotificationsStore 1.0 NotificationsStore.qml
+DevicesStore 1.0 DevicesStore.qml
+ProfileSectionStore 1.0 ProfileSectionStore.qml
+WalletStore 1.0 WalletStore.qml

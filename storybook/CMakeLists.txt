@@ -17,7 +17,7 @@ endif()
 
 find_package(
   Qt5
-  COMPONENTS Core Quick QuickControls2
+  COMPONENTS Core Quick QuickControls2 WebEngine
   REQUIRED)
 
 file(GLOB_RECURSE QML_FILES "stubs/*.qml" "mocks/*.qml" "pages/*.qml" "src/*.qml" "src/qmldir" "../ui/StatusQ/*.qml" "../ui/app/*.qml")
@@ -35,7 +35,7 @@ add_executable(
 target_compile_definitions(${PROJECT_NAME}
                            PRIVATE SRC_DIR="${CMAKE_CURRENT_LIST_DIR}")
 target_link_libraries(
-  ${PROJECT_NAME} PRIVATE Qt5::Core Qt5::Quick Qt5::QuickControls2
+  ${PROJECT_NAME} PRIVATE Qt5::Core Qt5::Quick Qt5::QuickControls2 Qt5::WebEngine
                           SortFilterProxyModel)
 
 set(QML_IMPORT_PATH "${CMAKE_SOURCE_DIR}/src" CACHE STRING "" FORCE)
