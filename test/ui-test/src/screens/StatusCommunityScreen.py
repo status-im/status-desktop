@@ -34,7 +34,6 @@ class CommunityScreenComponents(Enum):
     COMMUNITY_EDIT_CATEGORY_MENU_ITEM = "edit_сategory_StatusMenuItemDelegate"
     COMMUNITY_DELETE_CATEGORY_MENU_ITEM = "delete_сategory_StatusMenuItemDelegate"
     COMMUNITY_CONFIRM_DELETE_CATEGORY_BUTTON = "confirmDeleteCategoryButton_StatusButton"
-    CHAT_IDENTIFIER_CHANNEL_NAME = "msgDelegate_channelIdentifierNameText_StyledText"
     CHAT_IDENTIFIER_CHANNEL_ICON = "mainWindow_chatInfoBtnInHeader_StatusChatInfoButton"
     CHAT_MORE_OPTIONS_BUTTON = "chat_moreOptions_menuButton"
     EDIT_CHANNEL_MENU_ITEM = "edit_Channel_StatusMenuItemDelegate"
@@ -146,10 +145,6 @@ class StatusCommunityScreen:
 
         click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON.value)
 
-    # TODO check if this function is needed, it seems to do the same as verify_chat_title in StatusChatScreen 
-    def verify_channel_name(self, community_channel_name: str):
-        verify_text_matching(CommunityScreenComponents.CHAT_IDENTIFIER_CHANNEL_NAME.value, community_channel_name)
-
     def edit_community_channel(self, new_community_channel_name: str):
         self._open_edit_channel_popup()
 
@@ -256,7 +251,6 @@ class StatusCommunityScreen:
 
     def check_channel_count(self, count_to_check: int):
         chatListObj = get_obj(CommunityScreenComponents.NOT_CATEGORIZED_CHAT_LIST.value)
-        # Squish doesn't follow the type hints when parsing gherkin values
         verify_equals(chatListObj.statusChatListItems.count, int(count_to_check))
 
     def search_and_change_community_channel_emoji(self, emoji_description: str):

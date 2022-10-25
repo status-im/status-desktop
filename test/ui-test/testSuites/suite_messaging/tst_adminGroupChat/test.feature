@@ -36,5 +36,6 @@ Feature: Status Desktop Group Chat
 		When the user saves changes
 		Then the chat image is changed
 
+	Scenario: As an admin user I want to leave current chat
 		When the user leaves current chat
 		Then the chat "Fat&Lazy" does not exist

@@ -68,6 +68,14 @@ def step(context, createdTxt):
 @Given("the group chat contains the following members")
 def step(context):
     _statusChat.verify_members_added(context.table)
+    
+@Given("the user opens the chat section")
+def step(context):
+    the_user_opens_the_chat_section()
+    
+@Given("the user sends a random chat message")
+def step(context):
+    the_user_sends_a_random_chat_message(context)
 
 #########################
 ### ACTIONS region:
@@ -75,7 +83,7 @@ def step(context):
 
 @When("the user opens the chat section")
 def step(context):
-    when_the_user_opens_the_chat_section()
+    the_user_opens_the_chat_section()
 
 @When("the user sends a chat message \"|any|\"")
 def step(context, message):
@@ -129,10 +137,7 @@ def step(context, sticker_index):
     
 @When("the user sends a random chat message")
 def step(context):
-    random_int = randint(0, 10000)
-    message = "random message " + str(random_int)
-    _statusChat.send_message(message)
-    context.userData["randomMessage"] = message
+    the_user_sends_a_random_chat_message(context)
 
 @When("the user switches to \"|any|\" chat")
 def step(context, chatName):
@@ -245,3 +250,12 @@ def the_user_creates_a_group_chat_adding_users(context: any):
     
 def the_group_chat_is_created():
     _statusChat = StatusChatScreen()
+    
+def the_user_opens_the_chat_section():
+    when_the_user_opens_the_chat_section()
+
+def the_user_sends_a_random_chat_message(context):
+    random_int = randint(0, 10000)
+    message = "random message " + str(random_int)
+    _statusChat.send_message(message)
+    context.userData["randomMessage"] = message
