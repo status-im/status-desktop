@@ -40,6 +40,7 @@ Item {
 
     StatusListView {
         id: contactListView
+        objectName: "ExistingContacts_ListView"
         anchors.fill: parent
         rightMargin: 0
         leftMargin: 0

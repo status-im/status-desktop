@@ -111,6 +111,9 @@ def step(context, emoji_description: str):
 def step(context):
     _statusCommunityScreen.delete_current_community_channel()
 
+@When("the admin invites the user named |any| to the community with message |any|")
+def step(context, user_name, message):
+    _statusCommunityScreen.invite_user_to_community(user_name, message)
 
 #########################
 ### VERIFICATIONS region:
@@ -185,3 +188,4 @@ def the_admin_creates_a_community_category(name: str, channels: str, method: str
     
 def the_category_contains_channels(category_name: str, channels: str):
     _statusCommunityScreen.verify_category_contains_channels(category_name, channels)
+

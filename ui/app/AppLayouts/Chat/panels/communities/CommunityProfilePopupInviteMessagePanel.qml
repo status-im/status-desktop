@@ -14,6 +14,7 @@ import shared.status 1.0
 
 ColumnLayout {
     id: root
+    objectName: "CommunityProfilePopupInviteMessagePanel_ColumnLayout"
 
     property var pubKeys: ([])
 
@@ -33,6 +34,7 @@ ColumnLayout {
 
     StatusInput {
         id: messageInput
+        input.edit.objectName: "CommunityProfilePopupInviteMessagePanel_MessageInput"
         label: qsTr("Invitation Message")
         charLimit: d.maxMsgLength
         placeholderText: qsTr("The message a contact will get with community invitation")

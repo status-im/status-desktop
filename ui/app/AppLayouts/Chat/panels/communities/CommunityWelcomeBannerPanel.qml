@@ -83,13 +83,15 @@ Rectangle {
 
     StatusButton {
         id: addMembersBtn
+        objectName:"CommunityWelcomeBannerPanel_AddMembersButton"
         text: qsTr("Add members")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: welcomeText.bottom
         anchors.topMargin: Style.current.padding
         onClicked: {
             Global.openInviteFriendsToCommunityPopup(root.activeCommunity,
-                                                     root.communitySectionModule)
+                                                     root.communitySectionModule,
+                                                     null)
         }
     }
 

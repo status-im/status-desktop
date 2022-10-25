@@ -58,6 +58,7 @@ StatusStackModal {
     rightPadding: 0
 
     nextButton: StatusButton {
+        objectName: "InviteFriendsToCommunityPopup_NextButton"
         text: qsTr("Next")
         enabled: root.pubKeys.length
         onClicked: {
@@ -66,6 +67,7 @@ StatusStackModal {
     }
 
     finishButton: StatusButton {
+        objectName: "InviteFriendsToCommunityPopup_SendButton"
         enabled: root.pubKeys.length > 0
         text: qsTr("Send Invites")
         onClicked: {

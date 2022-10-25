@@ -289,6 +289,9 @@ Item {
                     width: parent.width
 
                     Repeater {
+                        objectName: "LoginView_AccountsRepeater"
+                        width: parent.width
+                        height: parent.height
                         model: proxyModel
 
                         delegate: AccountMenuItemPanel {
