@@ -73,6 +73,7 @@ StatusScrollView {
             name: model.name
             description: model.description
             members: model.members
+            activeUsers: model.activeMembers
             popularity: model.popularity
             categories: tagsJson.model
 
