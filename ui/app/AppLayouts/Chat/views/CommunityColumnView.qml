@@ -54,8 +54,9 @@ Item {
     StatusChatInfoButton {
         id: communityHeader
         objectName: "communityHeaderButton"
+        readonly property int nbMembers: communityData.members.count
         title: communityData.name
-        subTitle: qsTr("%n member(s)", "", communityData.members.count)
+        subTitle: qsTr("%n member(s)", "", nbMembers)
         asset.name: communityData.image
         asset.color: communityData.color
         asset.isImage: true

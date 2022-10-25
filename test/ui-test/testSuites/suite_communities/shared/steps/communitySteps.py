@@ -51,6 +51,10 @@ def step(context, category_name, channel_names):
 ### ACTIONS region:
 #########################
 
+@When("the user opens the community named \"|any|\"")
+def step(context, community_name):
+    _statusMainScreen.click_community(community_name)
+
 @When("the user sends a test image in the current channel")
 def step(context): 
     _statusCommunityScreen.send_test_image(context.userData["fixtures_root"], False, "")
@@ -115,6 +119,10 @@ def step(context):
 def step(context, user_name, message):
     _statusCommunityScreen.invite_user_to_community(user_name, message)
 
+@When("the admin kicks the user named |any|")
+def step(context, user_name):
+    _statusCommunityScreen.kick_member_from_community(user_name)
+
 #########################
 ### VERIFICATIONS region:
 #########################
@@ -163,7 +171,10 @@ def step(context):
 def step(context):
     _statusCommunityScreen.verify_sent_test_image(True, True)   
 
-    
+@Then("the number of members is |any|")
+def step(context, amount):
+    _statusCommunityScreen.verify_number_of_members(amount)
+
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:
 ########################################################################### 
@@ -188,4 +199,3 @@ def the_admin_creates_a_community_category(name: str, channels: str, method: str
     
 def the_category_contains_channels(category_name: str, channels: str):
     _statusCommunityScreen.verify_category_contains_channels(category_name, channels)
-
