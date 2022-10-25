@@ -45,6 +45,11 @@ class CommunityScreenComponents(Enum):
     CHAT_INPUT_ROOT = "chatInput_Root"
     TOGGLE_PIN_MESSAGE_BUTTON = "chatView_TogglePinMessageButton"
     PIN_TEXT = "chatInfoButton_Pin_Text"
+    ADD_MEMBERS_BUTTON = "community_AddMembers_Button"
+    EXISTING_CONTACTS_LISTVIEW = "community_InviteFirends_Popup_ExistinContacts_ListView"
+    INVITE_POPUP_NEXT_BUTTON = "community_InviteFriendsToCommunityPopup_NextButton"
+    INVITE_POPUP_MESSAGE_INPUT = "community_ProfilePopupInviteMessagePanel_MessageInput"
+    INVITE_POPUP_SEND_BUTTON = "community_InviteFriend_SendButton"
 
 class CommunitySettingsComponents(Enum):
     EDIT_COMMUNITY_SCROLL_VIEW = "communitySettings_EditCommunity_ScrollView"
@@ -322,3 +327,26 @@ class StatusCommunityScreen:
     def check_pin_count(self, wanted_pin_count: int):
         pin_text_obj = wait_and_get_obj(CommunityScreenComponents.PIN_TEXT.value)
         verify_equals(pin_text_obj.text, wanted_pin_count)
+
+    def invite_user_to_community(self, user_name: str, message: str):
+        click_obj_by_name(CommunityScreenComponents.ADD_MEMBERS_BUTTON.value)
+        
+        contacts_list = wait_and_get_obj(CommunityScreenComponents.EXISTING_CONTACTS_LISTVIEW.value)
+        
+        contact_item = None
+        found = False
+        for index in range(contacts_list.count):
+            contact_item = contacts_list.itemAtIndex(index)
+            if (contact_item.userName.toLower() == user_name.lower()):
+                found = True
+                break
+        
+        if not found:
+            verify_failure("Contact with name " + user_name + " not found in the Existing Contacts list")
+            
+        click_obj(contact_item)
+        click_obj_by_name(CommunityScreenComponents.INVITE_POPUP_NEXT_BUTTON.value)
+        time.sleep(0.5)
+        type(CommunityScreenComponents.INVITE_POPUP_MESSAGE_INPUT.value, message)
+        click_obj_by_name(CommunityScreenComponents.INVITE_POPUP_SEND_BUTTON.value)
+

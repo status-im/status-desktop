@@ -83,6 +83,7 @@ Rectangle {
 
     StatusButton {
         id: addMembersBtn
+        objectName:"CommunityWelcomeBannerPanel_AddMembersButton"
         text: qsTr("Add members")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: welcomeText.bottom

@@ -40,7 +40,7 @@ def step(context):
 @Given("the group chat is created")
 def step(context):
     the_group_chat_is_created()
-    
+     
 @Given("the user clicks on \"|any|\" chat")
 def step(context, chatName):
     _statusMain.open_chat(chatName)
@@ -80,6 +80,7 @@ def step(context):
 #########################
 ### ACTIONS region:
 #########################
+
 
 @When("the user opens the chat section")
 def step(context):

@@ -6,7 +6,7 @@ Feature: Status Desktop Group Chat
 
   Background:
 
-    Given the user starts the application with a specific data folder "../../../fixtures/group_chat"
+    Given the user starts the application with a specific data folder "../../../fixtures/mutual_contacts"
     When the user "tester123" logs in with password "TesTEr16843/!@00"
     Then the user lands on the signed in app
 

@@ -19,6 +19,14 @@ mainWindow_chatInfoBtnInHeader_StatusChatInfoButton = {"container": statusDeskto
 communityChatListCategories_Repeater = {"container": statusDesktop_mainWindow, "objectName": "communityChatListCategories", "type": "Repeater"}
 chatInput_Root = {"container": statusDesktop_mainWindow, "objectName": "statusChatInput", "type": "Rectangle", "visible": True}
 emojiPopup_Emoji_Button_Placeholder = {"container": statusDesktop_mainWindow, "objectName": "statusEmoji_%NAME%", "type": "StatusEmoji", "visible": True}
+community_AddMembers_Button = {"container": statusDesktop_mainWindow, "objectName": "CommunityWelcomeBannerPanel_AddMembersButton", "type": "StatusButton", "visible": True}
+community_InviteFirends_Popup_InvitePanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityProfilePopupInviteFrindsPanel_ColumnLayout", "type": "ColumnLayout", "visible": True}
+community_InviteFirends_Popup_ExistinContacts_ListView = {"container": community_InviteFirends_Popup_InvitePanel, "objectName": "ExistingContacts_ListView", "type": "StatusListView", "visible": True}
+community_InviteFriendsToCommunityPopup_NextButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "InviteFriendsToCommunityPopup_NextButton", "type": "StatusButton", "visible": True}
+community_InviteFriends_Popup_MessagePanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityProfilePopupInviteMessagePanel_ColumnLayout", "type": "ColumnLayout", "visible": True}
+community_ProfilePopupInviteMessagePanel_MessageInput = {"container": community_InviteFriends_Popup_MessagePanel, "objectName": "CommunityProfilePopupInviteMessagePanel_MessageInput", "type": "TextEdit", "visible": True}
+community_InviteFriend_SendButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "InviteFriendsToCommunityPopup_SendButton", "type": "StatusButton", "visible": True}
+
 
 # Community channel popup:
 createOrEditCommunityChannelNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelNameInput", "type": "TextEdit", "visible": True}

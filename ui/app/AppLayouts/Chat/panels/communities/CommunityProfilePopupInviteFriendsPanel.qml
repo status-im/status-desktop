@@ -14,6 +14,7 @@ import shared.status 1.0
 
 ColumnLayout {
     id: root
+    objectName: "CommunityProfilePopupInviteFrindsPanel_ColumnLayout"
 
     property string headerTitle: ""
 
