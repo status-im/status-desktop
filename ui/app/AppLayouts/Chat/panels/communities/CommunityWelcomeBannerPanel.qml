@@ -89,7 +89,8 @@ Rectangle {
         anchors.topMargin: Style.current.padding
         onClicked: {
             Global.openInviteFriendsToCommunityPopup(root.activeCommunity,
-                                                     root.communitySectionModule)
+                                                     root.communitySectionModule,
+                                                     null)
         }
     }
 

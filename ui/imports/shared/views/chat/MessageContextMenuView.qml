@@ -61,7 +61,7 @@ StatusPopupMenu {
     readonly property bool isContact: {
         return root.selectedUserPublicKey !== "" && !!contactDetails.isContact
     }
-    readonly property bool isBlockedContact: !!d.contactDetails && d.contactDetails.isBlocked
+    readonly property bool isBlockedContact: (!!d.contactDetails && d.contactDetails.isBlocked) || false
 
     readonly property int outgoingVerificationStatus: {
         if (root.selectedUserPublicKey === "" || root.isMe || !root.isContact) {
@@ -197,7 +197,7 @@ StatusPopupMenu {
                                                                       : Constants.trustStatus.unknown
         isContact: root.isContact
         isCurrentUser: root.isMe
-        userIsEnsVerified: !!d.contactDetails && d.contactDetails.ensVerified
+        userIsEnsVerified: (!!d.contactDetails && d.contactDetails.ensVerified) || false
     }
 
     Item {
@@ -256,7 +256,7 @@ StatusPopupMenu {
         enabled: root.isProfile && !root.isMe && !root.isContact
                                 && !root.isBlockedContact && !root.hasPendingContactRequest
         onTriggered: {
-            Global.openContactRequestPopup(root.selectedUserPublicKey)
+            Global.openContactRequestPopup(root.selectedUserPublicKey, null)
             root.close()
         }
     }
@@ -269,7 +269,7 @@ StatusPopupMenu {
                                 && root.outgoingVerificationStatus === Constants.verificationStatus.unverified
                                 && !root.hasReceivedVerificationRequestFrom
         onTriggered: {
-            Global.openSendIDRequestPopup(root.selectedUserPublicKey)
+            Global.openSendIDRequestPopup(root.selectedUserPublicKey, null)
             root.close()
         }
     }
@@ -286,9 +286,9 @@ StatusPopupMenu {
                                     || root.isVerificationRequestSent)
         onTriggered: {
             if (hasReceivedVerificationRequestFrom) {
-                Global.openIncomingIDRequestPopup(root.selectedUserPublicKey)
+                Global.openIncomingIDRequestPopup(root.selectedUserPublicKey, null)
             } else if (root.isVerificationRequestSent) {
-                Global.openOutgoingIDRequestPopup(root.selectedUserPublicKey)
+                Global.openOutgoingIDRequestPopup(root.selectedUserPublicKey, null)
             }
 
             root.close()

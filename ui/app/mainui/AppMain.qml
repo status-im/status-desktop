@@ -383,7 +383,8 @@ Item {
                         enabled: model.canManageUsers
                         onTriggered: {
                             Global.openInviteFriendsToCommunityPopup(model,
-                                                                     communityContextMenu.chatCommunitySectionModule)
+                                                                     communityContextMenu.chatCommunitySectionModule,
+                                                                     null)
                         }
                     }
 
