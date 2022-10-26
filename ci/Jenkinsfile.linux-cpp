@@ -85,6 +85,6 @@ pipeline {
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
-    always { cleanWs() }
+    cleanup { cleanWs() }
   }
 }
