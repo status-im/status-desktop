@@ -22,7 +22,6 @@ QtObject:
   type
     Model* = ref object of QAbstractListModel
       activityCenterNotifications*: seq[Item]
-      nbUnreadNotifications*: int
 
   proc setup(self: Model) = self.QAbstractListModel.setup
 
@@ -43,23 +42,25 @@ QtObject:
 
   proc unreadCountChanged*(self: Model) {.signal.}
 
-  proc unreadCount*(self: Model): int {.slot.}  =
-    self.nbUnreadNotifications
+  proc unreadCount*(self: Model): int {.slot.} =
+    result = 0
+    for notification in self.activityCenterNotifications:
+      if (notification.isNotReadOrActiveCTA()):
+          result += 1
+    return result
 
   QtProperty[int] unreadCount:
     read = unreadCount
     notify = unreadCountChanged
 
   proc markAllAsRead*(self: Model)  =
-    self.nbUnreadNotifications = 0
-    self.unreadCountChanged()
-
     for activityCenterNotification in self.activityCenterNotifications:
       activityCenterNotification.read = true
 
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.activityCenterNotifications.len - 1, 0, nil)
     self.dataChanged(topLeft, bottomRight, @[NotifRoles.Read.int])
+    self.unreadCountChanged()
 
   method rowCount*(self: Model, index: QModelIndex = nil): int = self.activityCenterNotifications.len
 
@@ -124,16 +125,7 @@ QtObject:
       NotifRoles.RepliedMessage.int: "repliedMessage"
     }.toTable
 
-  proc reduceUnreadCount(self: Model, numberNotifs: int) =
-    self.nbUnreadNotifications = self.nbUnreadNotifications - numberNotifs
-    if (self.nbUnreadNotifications < 0):
-      self.nbUnreadNotifications = 0
-    self.unreadCountChanged()
-
   proc markActivityCenterNotificationUnread*(self: Model, notificationId: string) =
-    self.nbUnreadNotifications = self.nbUnreadNotifications + 1
-    self.unreadCountChanged()
-
     var i = 0
     for acnViewItem in self.activityCenterNotifications:
       if (acnViewItem.id == notificationId):
@@ -142,13 +134,9 @@ QtObject:
         self.dataChanged(index, index, @[NotifRoles.Read.int])
         break
       i.inc
-
-  proc markActivityCenterNotificationRead*(self: Model, notificationId: string) =
-    self.nbUnreadNotifications = self.nbUnreadNotifications - 1
-    if (self.nbUnreadNotifications < 0):
-      self.nbUnreadNotifications = 0
     self.unreadCountChanged()
 
+  proc markActivityCenterNotificationRead*(self: Model, notificationId: string) =
     var i = 0
     for acnViewItem in self.activityCenterNotifications:
       if (acnViewItem.id == notificationId):
@@ -157,6 +145,7 @@ QtObject:
         self.dataChanged(index, index, @[NotifRoles.Read.int])
         break
       i.inc
+    self.unreadCountChanged()
 
   proc removeNotifications*(self: Model, ids: seq[string]) =
     var i = 0
@@ -175,8 +164,7 @@ QtObject:
       self.activityCenterNotifications.delete(indexUpdated)
       self.endRemoveRows()
       i = i + 1
-
-    self.reduceUnreadCount(ids.len)
+    self.unreadCountChanged()
 
   proc setNewData*(self: Model, activityCenterNotifications: seq[Item]) =
     self.beginResetModel()
@@ -189,13 +177,6 @@ QtObject:
     self.activityCenterNotifications.add(activityCenterNotification)
 
     self.endInsertRows()
-
-    if (addToCount and not activityCenterNotification.read):
-      self.nbUnreadNotifications = self.nbUnreadNotifications + 1
-      self.unreadCountChanged()
-
-  proc updateUnreadCount*(self: Model, count: int) =
-    self.nbUnreadNotifications = count
     self.unreadCountChanged()
 
   proc addActivityNotificationItemsToList*(self: Model, activityCenterNotifications: seq[Item]) =
@@ -208,3 +189,4 @@ QtObject:
             self.removeNotifications(@[notif.id])
             break
         self.addActivityNotificationItemToList(activityCenterNotification, false)
+    self.unreadCountChanged()

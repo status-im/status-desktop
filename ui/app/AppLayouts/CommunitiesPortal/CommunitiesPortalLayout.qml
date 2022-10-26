@@ -31,7 +31,7 @@ StatusSectionLayout {
     property var createCommunitiesPopup: createCommunitiesPopupComponent
     property var discordImportProgressPopup: discordImportProgressDialog
 
-    notificationCount: root.communitiesStore.unreadNotificationsCount
+    notificationCount: activityCenterStore.unreadNotificationsCount
     onNotificationButtonClicked: Global.openActivityCenterPopup()
 
     onVisibleChanged: {

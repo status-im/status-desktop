@@ -40,14 +40,14 @@ import AppLayouts.stores 1.0
 import "popups"
 import "panels"
 import "activitycenter/popups"
-import "activitycenter/stores" as AC
+import "activitycenter/stores"
 
 Item {
     id: appMain
 
     property alias appLayout: appLayout
     property RootStore rootStore: RootStore {}
-    property AC.RootStore acStore: AC.RootStore {}
+    property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
     // set from main.qml
     property var sysPalette
 
@@ -983,8 +983,7 @@ Item {
                 height: appView.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
                 y: 56
                 store: chatLayoutContainer.rootStore
-                acStore: appMain.acStore
-                chatSectionModule: chatLayoutContainer.rootStore.chatCommunitySectionModule
+                activityCenterStore: appMain.activityCenterStore
                 onClosed: {
                     Global.activityCenterPopupOpened = false
                 }

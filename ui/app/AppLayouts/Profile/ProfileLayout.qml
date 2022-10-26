@@ -22,7 +22,7 @@ StatusSectionLayout {
     property var emojiPopup
 
     backButtonName: root.store.backButtonName
-    notificationCount: root.store.unreadNotificationsCount
+    notificationCount: activityCenterStore.unreadNotificationsCount
 
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     onBackButtonClicked: {

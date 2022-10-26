@@ -35,7 +35,7 @@ StatusSectionLayout {
         tab.item.url = _internal.determineRealURL(url)
     }
 
-    notificationCount: root.globalStore.unreadNotificationsCount
+    notificationCount: activityCenterStore.unreadNotificationsCount
     onNotificationButtonClicked: Global.openActivityCenterPopup()
 
     QtObject {

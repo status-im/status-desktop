@@ -46,9 +46,6 @@ QtObject:
     self.model.addActivityNotificationItemsToList(activityCenterNotifications)
     self.hasMoreToShowChanged()
 
-    let count = self.delegate.unreadActivityCenterNotificationsCount()
-    self.model.updateUnreadCount(count)
-
   proc loadMoreNotifications(self: View) {.slot.} =
     self.delegate.fetchActivityCenterNotifications()
 

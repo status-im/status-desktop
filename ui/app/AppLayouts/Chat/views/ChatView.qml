@@ -59,7 +59,7 @@ StatusSectionLayout {
 
     notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList && headerContent.membersButton.visible ? 0 : 14
     onNotificationButtonClicked: Global.openActivityCenterPopup()
-    notificationCount: root.rootStore.unreadNotificationsCount
+    notificationCount: activityCenterStore.unreadNotificationsCount
 
     headerContent: ChatHeaderContentView {
         id: headerContent

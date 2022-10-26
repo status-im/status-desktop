@@ -16,6 +16,7 @@ import utils 1.0
 
 import "../views"
 import "../panels"
+import "../stores"
 
 Popup {
     id: root
@@ -39,15 +40,14 @@ Popup {
     property int contactRequestsCount: 0
     property int membershipCount: 0
 
+    property ActivityCenterStore activityCenterStore
     property var store
-    property var acStore
-    property var chatSectionModule
     property var messageContextMenu: MessageContextMenuView {
         store: root.store
         reactionModel: root.store.emojiReactionsModel
     }
 
-    readonly property int unreadNotificationsCount : root.store.unreadNotificationsCount
+    readonly property int unreadNotificationsCount: root.activityCenterStore.unreadNotificationsCount
 
     function filterActivityCategories(notificationType) {
         switch (root.currentActivityCategory) {
@@ -136,7 +136,7 @@ Popup {
 
     Repeater {
         id: notificationTypeCounter
-        model: root.store.activityCenterList
+        model: root.activityCenterStore.activityCenterList
 
         delegate: Item {
             Component.onCompleted: calcNotificationType(model.notificationType, 1)
@@ -153,11 +153,11 @@ Popup {
         hasMentions: root.mentionsCount > 0
         hasContactRequests: root.contactRequestsCount > 0
         hasMembership: root.membershipCount > 0
-        hideReadNotifications: acStore.hideReadNotifications
+        hideReadNotifications: activityCenterStore.hideReadNotifications
         currentActivityCategory: root.currentActivityCategory
         onCategoryTriggered: root.currentActivityCategory = category
-        onMarkAllReadClicked: errorText = root.store.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
-        onShowHideReadNotifications: acStore.hideReadNotifications = hideReadNotifications
+        onMarkAllReadClicked: errorText = root.activityCenterStore.markAllActivityCenterNotificationsRead()
+        onShowHideReadNotifications: activityCenterStore.hideReadNotifications = hideReadNotifications
     }
 
     StatusListView {
@@ -169,10 +169,10 @@ Popup {
         anchors.margins: Style.current.smallPadding
 
         model: SortFilterProxyModel {
-            sourceModel: root.store.activityCenterList
+            sourceModel: root.activityCenterStore.activityCenterList
 
             filters: ExpressionFilter { expression: filterActivityCategories(model.notificationType) &&
-                                                    !(acStore.hideReadNotifications && model.read) }
+                                                    !(activityCenterStore.hideReadNotifications && model.read) }
 
             sorters: [
                 RoleSorter {
@@ -191,6 +191,7 @@ Popup {
                 ActivityNotificationMention {
                     width: listView.availableWidth
                     store: root.store
+                    activityCenterStore: root.activityCenterStore
                     notification: model
                     messageContextMenu: root.messageContextMenu
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
@@ -203,6 +204,7 @@ Popup {
                 ActivityNotificationReply {
                     width: listView.availableWidth
                     store: root.store
+                    activityCenterStore: root.activityCenterStore
                     notification: model
                     messageContextMenu: root.messageContextMenu
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
@@ -215,6 +217,7 @@ Popup {
                 ActivityNotificationContactRequest {
                     width: listView.availableWidth
                     store: root.store
+                    activityCenterStore: root.activityCenterStore
                     notification: model
                     messageContextMenu: root.messageContextMenu
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
@@ -227,6 +230,7 @@ Popup {
                 ActivityNotificationCommunityInvitation {
                     width: listView.availableWidth
                     store: root.store
+                    activityCenterStore: root.activityCenterStore
                     notification: model
                     messageContextMenu: root.messageContextMenu
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
@@ -239,6 +243,7 @@ Popup {
                 ActivityNotificationCommunityMembershipRequest {
                     width: listView.availableWidth
                     store: root.store
+                    activityCenterStore: root.activityCenterStore
                     notification: model
                     messageContextMenu: root.messageContextMenu
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
@@ -251,6 +256,7 @@ Popup {
                 ActivityNotificationCommunityRequest {
                     width: listView.availableWidth
                     store: root.store
+                    activityCenterStore: root.activityCenterStore
                     notification: model
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                 }
@@ -261,6 +267,7 @@ Popup {
                 ActivityNotificationCommunityKicked {
                     width: listView.availableWidth
                     store: root.store
+                    activityCenterStore: root.activityCenterStore
                     notification: model
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                 }

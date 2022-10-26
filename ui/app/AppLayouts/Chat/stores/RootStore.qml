@@ -125,13 +125,6 @@ QtObject {
     property var globalUtilsInst: globalUtils
 
     property var mainModuleInst: mainModule
-    property var activityCenterModuleInst: activityCenterModule
-    property var activityCenterList: activityCenterModuleInst.activityNotificationsModel
-    property int unreadNotificationsCount: activityCenterList.unreadCount
-
-    function loadMoreNotifications() {
-        activityCenterModuleInst.loadMoreNotifications()
-    }
 
     property var communitiesModuleInst: communitiesModule
     property var communitiesList: communitiesModuleInst.model
@@ -155,29 +148,6 @@ QtObject {
 
     property var stickersStore: StickersStore {
         stickersModule: stickersModuleInst
-    }
-
-    // Not Refactored Yet
-//    property var activeCommunity: chatsModelInst.communities.activeCommunity
-
-    function getBadgeDetails(sectionId, chatId) {
-        try {
-            const jsonObj = root.activityCenterModuleInst.getDetails(sectionId, chatId)
-            let obj = JSON.parse(jsonObj)
-            return obj
-        }
-        catch (e) {
-            return {
-                sType: "",
-                sName: "",
-                sImage: "",
-                sColor: "",
-                cName: "",
-                cImage: "",
-                cColor: "",
-                cEmoji: ""
-            }
-        }
     }
 
     function sendSticker(channelId, hash, replyTo, pack, url) {

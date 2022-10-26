@@ -52,14 +52,14 @@ ActivityNotificationBase {
             }
 
             root.activityCenterClose()
-            root.store.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.id)
+            root.activityCenterStore.switchTo(notification)
         }
 
         CommunityBadge {
             readonly property var community: root.store.getCommunityDetailsAsJson(notification.communityId)
 
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 6
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 15
             anchors.left: parent.left
             anchors.leftMargin: 160 // TODO: get right text margin
             communityName: community.name
