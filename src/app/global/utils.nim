@@ -151,5 +151,18 @@ QtObject:
   proc getCompressedPk*(self: Utils, publicKey: string): string {.slot.} =
     compressPk(publicKey)
 
+  proc getDecompressedPk*(self: Utils, compressedKey: string): string {.slot.} =
+    decompressPk(compressedKey)
+
+  proc decompressCommunityKey*(self: Utils, publicKey: string): string {.slot.} =
+    decompressCommunityKey(publicKey)
+
+  proc compressCommunityKey*(self: Utils, publicKey: string): string {.slot.} =
+    compressCommunityKey(publicKey)
+
   proc isCompressedPubKey*(self: Utils, publicKey: string): bool {.slot.} =
     conversion.isCompressedPubKey(publicKey)
+
+  # Changes publicKey compression between 33-bytes and multiformat zQ..
+  proc changeCommunityKeyCompression*(self: Utils, publicKey: string): string {.slot.} =
+    changeCommunityKeyCompression(publicKey)
