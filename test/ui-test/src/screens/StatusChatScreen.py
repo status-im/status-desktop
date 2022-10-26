@@ -72,6 +72,8 @@ class ChatComponents(Enum):
     LINK_PREVIEW_UNFURLED_LINK_IMAGE = "chatView_unfurledLinkComponent_linkImage"
     LINK_PREVIEW_OPEN_SETTINGS = "chatView_LinksMessageView_enableBtn"
 
+    DELETE_CHANNEL_CONFIRMATION_DIALOG_DELETE_BUTTON = "delete_Channel_ConfirmationDialog_DeleteButton"
+
 class ChatStickerPopup(Enum):
     STICKERS_POPUP_GET_STICKERS_BUTTON = "chat_StickersPopup_GetStickers_Button"
     STICKERS_POPUP_MARKET_GRID_VIEW = "chat_StickersPopup_StickerMarket_GridView"
@@ -140,10 +142,13 @@ class StatusChatScreen:
         hover_and_click_object_by_name(ChatComponents.EDIT_NAME_AND_IMAGE_MENUITEM.value)
 
     def leave_chat(self):
-        time.sleep(2)
+        time.sleep(1)
         hover_and_click_object_by_name(ChatComponents.MORE_OPTIONS_BUTTON.value)
-        time.sleep(2)
+        time.sleep(1)
         hover_and_click_object_by_name(ChatComponents.LEAVE_CHAT_MENUITEM.value)
+        visible, _ = is_loaded_visible_and_enabled(ChatComponents.DELETE_CHANNEL_CONFIRMATION_DIALOG_DELETE_BUTTON.value, 100)
+        if (visible):
+            click_obj_by_name(ChatComponents.DELETE_CHANNEL_CONFIRMATION_DIALOG_DELETE_BUTTON.value)
 
     def group_chat_edit_name(self, name):
         setText(GroupChatEditPopup.GROUP_CHAT_EDIT_NAME.value, name)

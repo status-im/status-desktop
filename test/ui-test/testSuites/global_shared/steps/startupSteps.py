@@ -8,6 +8,7 @@ from screens.StatusMainScreen import StatusMainScreen
 from screens.StatusChatScreen import StatusChatScreen
 from screens.StatusCommunityPortalScreen import StatusCommunityPortalScreen
 from screens.StatusCommunityScreen import StatusCommunityScreen
+from screens.StatusLoginScreen import StatusLoginScreen
 
 # Project settings properties:
 _status_desktop_app_name = "nim_status_client"
@@ -48,9 +49,17 @@ def context_init(context):
 
     context.userData[_fixtures_root] = os.path.join(joined_path, "fixtures/") 
 
-def given_a_first_time_user_lands_on_and_generates_new_key(context):
+def a_first_time_user_lands_on(context):
     erase_directory(context.userData[_status_data_folder])
     start_application(context.userData[_aut_name])
+
+def a_user_starts_the_application_with_a_specific_data_folder(context, data_folder_path):
+    clear_directory(context.userData["status_data_folder_path"])
+    copy_directory(data_folder_path, context.userData["status_data_folder_path"])
+    start_application(context.userData[_aut_name])
+
+def a_first_time_user_lands_on_and_generates_new_key(context):
+    a_first_time_user_lands_on(context)
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.agree_terms_conditions_and_generate_new_key()
     
@@ -69,7 +78,7 @@ def when_the_user_lands_on_the_signed_in_app():
     main_screen.is_ready()
     
 def signs_up_process_steps(context, user, password):
-    given_a_first_time_user_lands_on_and_generates_new_key(context)
+    a_first_time_user_lands_on_and_generates_new_key(context)
     when_the_user_signs_up(user, password)
     when_the_user_lands_on_the_signed_in_app()
 
@@ -105,3 +114,13 @@ def the_admin_creates_a_community_channel(name: str, description: str, method: s
 def the_channel_is_open(name: str):
     chat_screen = StatusChatScreen()
     chat_screen.verify_chat_title(name)
+
+def the_user_logs_in(username: str, password: str):
+    loginScreen = StatusLoginScreen()
+    loginScreen.login(username, password)
+
+def login_process_steps(context, user, password, data_dir_path):
+    a_user_starts_the_application_with_a_specific_data_folder(context, data_dir_path)
+    the_user_logs_in(user, password)
+    when_the_user_lands_on_the_signed_in_app()
+

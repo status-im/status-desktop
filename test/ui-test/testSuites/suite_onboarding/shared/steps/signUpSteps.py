@@ -11,7 +11,7 @@ _mainScreen = StatusMainScreen()
 
 @Given("A first time user lands on the status desktop and generates new key")
 def step(context):
-    given_a_first_time_user_lands_on_and_generates_new_key(context)    
+    a_first_time_user_lands_on_and_generates_new_key(context)    
 
 @Given("A first time user lands on the status desktop and navigates to import seed phrase")
 def step(context):

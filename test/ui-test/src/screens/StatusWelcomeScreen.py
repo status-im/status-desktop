@@ -76,11 +76,11 @@ class StatusWelcomeScreen:
         verify_screen(AgreementPopUp.OK_GOT_IT_BUTTON.value)
 
     def agree_terms_conditions_and_generate_new_key(self):
-        self._agree_terms_and_conditions()
+        self.agree_terms_and_conditions()
         click_obj_by_name(SignUpComponents.GENERATE_NEW_KEYS.value)
         
     def agree_terms_conditions_and_navigate_to_import_seed_phrase(self):
-        self._agree_terms_and_conditions()
+        self.agree_terms_and_conditions()
         click_obj_by_name(SeedPhraseComponents.IMPORT_A_SEED_TEXT.value)
         click_obj_by_name(SeedPhraseComponents.IMPORT_A_SEED_BUTTON.value)
 
@@ -141,7 +141,7 @@ class StatusWelcomeScreen:
             validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.FINALIZE_PSW_BUTTON.value, 50)[0],
             message = 'Try clicking "Finalize" until button not visible (moved to the next screen')
 
-    def _agree_terms_and_conditions(self):
+    def agree_terms_and_conditions(self):
         if sys.platform == "darwin":
             click_obj_by_name(AgreementPopUp.OK_GOT_IT_BUTTON.value)
 

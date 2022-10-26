@@ -29,9 +29,7 @@ _statusChat = StatusChatScreen()
 
 @Given("the user starts the application with a specific data folder \"|any|\"")
 def step(context, data_folder_path):
-    clear_directory(context.userData["status_data_folder_path"])
-    copy_directory(data_folder_path, context.userData["status_data_folder_path"])
-    startApplication(context.userData["aut_name"])
+    a_user_starts_the_application_with_a_specific_data_folder(context, data_folder_path)
 
 @Given("the user restarts the app")
 def step(context):
