@@ -287,6 +287,12 @@ method userCanJoin*(self: Module, communityId: string): bool =
 method isCommunityRequestPending*(self: Module, communityId: string): bool =
   self.controller.isCommunityRequestPending(communityId)
 
+method isCommunityRequestDeclined*(self: Module, communityId: string): bool =
+  self.controller.isCommunityRequestDeclined(communityId)
+
+method communityMembershipRequestRejected*(self: Module, membershipRequest: CommunityMembershipRequestDto) =
+  self.view.communityMembershipRequestRejected(membershipRequest.communityId)
+
 method deleteCommunityChat*(self: Module, communityId: string, channelId: string) =
   self.controller.deleteCommunityChat(communityId, channelId)
 

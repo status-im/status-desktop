@@ -94,6 +94,7 @@ type
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
 const SIGNAL_COMMUNITY_SPECTATED* = "communitySpectated"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
+const SIGNAL_COMMUNITY_MY_REQUEST_REJECTED* = "communityMyRequestRejected"
 const SIGNAL_COMMUNITY_LEFT* = "communityLeft"
 const SIGNAL_COMMUNITY_CREATED* = "communityCreated"
 const SIGNAL_COMMUNITY_ADDED* = "communityAdded"
@@ -141,10 +142,12 @@ QtObject:
   proc loadCuratedCommunities(self: Service): seq[CuratedCommunity]
   proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto]
   proc loadMyPendingRequestsToJoin*(self: Service)
+  proc loadMyDeclinedRequestsToJoin*(self: Service)
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto])
   proc handleCommunitiesSettingsUpdates(self: Service, communitiesSettings: seq[CommunitySettingsDto])
   proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
   proc declinedRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
+  proc getPendingRequestIndex(self: Service, communityId: string, requestId: string): int
 
   proc delete*(self: Service) =
     discard
@@ -201,8 +204,16 @@ QtObject:
           community.pendingRequestsToJoin.add(membershipRequest)
           self.joinedCommunities[membershipRequest.communityId] = community
           self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
-
           self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY, CommunityRequestArgs(communityRequest: membershipRequest))
+      
+      if(receivedData.declinedMembershipRequests.len > 0):
+        for membershipRequest in receivedData.declinedMembershipRequests:
+          # remove my pending requests
+          keepIf(self.myCommunityRequests, request => request.communityId != membershipRequest.communityId)
+          self.myCommunityRequests.add(membershipRequest)
+          self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_REJECTED, CommunityRequestArgs(communityRequest: membershipRequest))
+          singletonInstance.globalEvents.myRequestToJoinCommunityRejected("Community Request Rejected",
+            fmt "Your request to join community is rejected", membershipRequest.communityId)
 
     self.events.on(SignalType.DiscordCategoriesAndChannelsExtracted.event) do(e: Args):
       var receivedData = DiscordCategoriesAndChannelsExtractedSignal(e)
@@ -422,6 +433,7 @@ QtObject:
         self.joinedCommunities[settings.id].settings = settings
 
     self.loadMyPendingRequestsToJoin()
+    self.loadMyDeclinedRequestsToJoin()
 
   proc loadCommunityTags(self: Service): string =
     let response = status_go.getCommunityTags()
@@ -643,6 +655,18 @@ QtObject:
           self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_ADDED, CommunityRequestArgs(communityRequest: communityRequest))
     except Exception as e:
       error "Error fetching my community requests", msg = e.msg
+
+  proc loadMyDeclinedRequestsToJoin*(self: Service) =
+    try:
+      let response = status_go.myDeclinedRequestsToJoin()
+
+      if response.result.kind != JNull:
+        for jsonCommunityReqest in response.result:
+          let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
+          self.myCommunityRequests.add(communityRequest)
+          self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_ADDED, CommunityRequestArgs(communityRequest: communityRequest))
+    except Exception as e:
+      error "Error fetching my declined community requests", msg = e.msg
 
   proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
     try:
@@ -1312,7 +1336,13 @@ QtObject:
   proc isCommunityRequestPending*(self: Service, communityId: string): bool {.slot.} =
     for communityRequest in self.myCommunityRequests:
       if (communityRequest.communityId == communityId):
-        return true
+        return communityRequest.state == RequestToJoinType.Pending.int
+    return false
+
+  proc isCommunityRequestDeclined*(self: Service, communityId: string): bool {.slot.} =
+    for communityRequest in self.myCommunityRequests:
+      if (communityRequest.communityId == communityId):
+        return communityRequest.state == RequestToJoinType.Declined.int
     return false
 
   proc requestExtractDiscordChannelsAndCategories*(self: Service, filesToImport: seq[string]) =

@@ -35,7 +35,6 @@ QtObject:
       return
 
     trace "Raw signal data", data = $jsonSignal
-
     var signal:Signal
     try:
       signal = self.decode(jsonSignal)

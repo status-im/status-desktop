@@ -113,6 +113,8 @@ QtObject:
 
   proc discordImportWarningsCountChanged*(self: View) {.signal.}
 
+  proc communityMembershipRequestRejected*(self: View, communityId: string) {.signal.}
+
   proc setDiscordImportWarningsCount*(self: View, count: int) {.slot.} =
     if (self.discordImportWarningsCount == count): return
     self.discordImportWarningsCount = count
@@ -412,6 +414,9 @@ QtObject:
 
   proc isCommunityRequestPending*(self: View, communityId: string): bool {.slot.} =
     self.delegate.isCommunityRequestPending(communityId)
+
+  proc isCommunityRequestDeclined*(self: View, communityId: string): bool {.slot.} =
+    self.delegate.isCommunityRequestDeclined(communityId)
 
   proc deleteCommunityChat*(self: View, communityId: string, channelId: string) {.slot.} =
     self.delegate.deleteCommunityChat(communityId, channelId)

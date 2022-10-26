@@ -428,6 +428,7 @@ QtObject {
     readonly property QtObject ephemeralNotificationType: QtObject {
         readonly property int normal: 0
         readonly property int success: 1
+        readonly property int fail: 2
     }
 
     readonly property QtObject translationsState: QtObject {

@@ -40,6 +40,9 @@ proc requestToJoinCommunity*(communityId: string, ensName: string): RpcResponse[
 proc myPendingRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result =  callPrivateRPC("myPendingRequestsToJoin".prefix)
 
+proc myDeclinedRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result =  callPrivateRPC("myDeclinedRequestsToJoin".prefix)
+
 proc pendingRequestsToJoinForCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("pendingRequestsToJoinForCommunity".prefix, %*[communityId])
 

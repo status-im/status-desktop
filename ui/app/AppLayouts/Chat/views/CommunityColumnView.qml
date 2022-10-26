@@ -101,6 +101,7 @@ Item {
         id: joinCommunityButton
 
         property bool invitationPending: root.store.isCommunityRequestPending(communityData.id)
+        property bool invitationDeclined: root.store.isCommunityRequestDeclined(communityData.id)
 
         anchors.top: communityHeader.bottom
         anchors.topMargin: 8
@@ -108,10 +109,11 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
 
         visible: !communityData.joined
-        enabled: !invitationPending
+        enabled: !invitationPending && !invitationDeclined
 
         text: {
             if (invitationPending) return qsTr("Pending")
+            if (invitationDeclined) return qsTr("Membership Request Rejected")
             return root.communityData.access === Constants.communityChatOnRequestAccess ?
                     qsTr("Request to join") : qsTr("Join Community")
         }
@@ -125,6 +127,12 @@ Item {
                     joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
                 }
             }
+           onCommunityMembershipRequestRejected: function (communityId) {
+               if (communityId === communityData.id) {
+                   joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
+                   joinCommunityButton.invitationDeclined = root.store.isCommunityRequestDeclined(communityData.id)
+               }
+           }
         }
 
         CommunityIntroDialog {

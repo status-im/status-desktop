@@ -874,6 +874,8 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
   var finalEphNotifType = EphemeralNotificationType.Default
   if(ephNotifType == EphemeralNotificationType.Success.int):
     finalEphNotifType = EphemeralNotificationType.Success
+  if(ephNotifType == EphemeralNotificationType.Fail.int):
+    finalEphNotifType = EphemeralNotificationType.Fail
   let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, icon,
   loading, finalEphNotifType, url, details)
   self.view.ephemeralNotificationModel().addItem(item)
@@ -979,3 +981,7 @@ method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
   let linkToActivate = self.urlsManager.convertExternalLinkToInternal(statusDeepLink)
   self.urlsManager.onUrlActivated(linkToActivate)
+
+method onCommunityMyRequestRejected*[T](self: Module[T], membershipRequest: CommunityMembershipRequestDto) =
+  let communityDetails = self.controller.getCommunityById(membershipRequest.communityId)
+  self.displayEphemeralNotification(fmt "{communityDetails.name} membership rejected ", "", conf.COMMUNITIESPORTAL_SECTION_ICON, false, EphemeralNotificationType.Fail.int, "")

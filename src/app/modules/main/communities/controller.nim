@@ -58,6 +58,10 @@ proc init*(self: Controller) =
       self.delegate.communityEdited(community)
       self.delegate.curatedCommunityEdited(CuratedCommunity(communityId: community.id, available: true, community:community))
 
+  self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_REJECTED) do(e: Args):
+    var args = CommunityRequestArgs(e)
+    self.delegate.communityMembershipRequestRejected(args.communityRequest)
+
   self.events.on(SIGNAL_COMMUNITY_MUTED) do(e:Args):
     let args = CommunityMutedArgs(e)
     self.delegate.communityMuted(args.communityId, args.muted)
@@ -199,6 +203,9 @@ proc userCanJoin*(self: Controller, communityId: string): bool =
 
 proc isCommunityRequestPending*(self: Controller, communityId: string): bool =
   return self.communityService.isCommunityRequestPending(communityId)
+
+proc isCommunityRequestDeclined*(self: Controller, communityId: string): bool =
+  return self.communityService.isCommunityRequestDeclined(communityId)
 
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
   return self.contactsService.getStatusForContactWithId(publicKey)

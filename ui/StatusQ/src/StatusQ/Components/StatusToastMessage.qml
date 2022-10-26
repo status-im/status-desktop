@@ -95,7 +95,8 @@ Control {
     property int type: StatusToastMessage.Type.Default
     enum Type {
         Default,
-        Success
+        Success,
+        Fail
     }
 
     /*!
@@ -231,8 +232,16 @@ Control {
                 implicitHeight: 32
                 Layout.alignment: Qt.AlignVCenter
                 radius: (root.width/2)
-                color: (root.type === StatusToastMessage.Type.Success) ?
-                        Theme.palette.successColor2 : Theme.palette.primaryColor3
+                color: {
+                    switch (root.type) {
+                    case StatusToastMessage.Type.Success:
+                        return Theme.palette.successColor2
+                    case StatusToastMessage.Type.Fail:
+                        return Theme.palette.dangerColor2
+                    default:
+                        return Theme.palette.primaryColor3
+                    }
+                }
                 visible: loader.sourceComponent != undefined
                 Loader {
                     id: loader
@@ -244,8 +253,16 @@ Control {
                     Component {
                         id: loadingInd
                         StatusLoadingIndicator {
-                            color: (root.type === StatusToastMessage.Type.Success) ?
-                                   Theme.palette.successColor1 : Theme.palette.primaryColor1
+                            color: {
+                                switch (root.type) {
+                                case StatusToastMessage.Type.Success:
+                                    return Theme.palette.successColor1
+                                case StatusToastMessage.Type.Fail:
+                                    return Theme.palette.dangerColor1
+                                default:
+                                    return Theme.palette.primaryColor1
+                                }
+                            }
                         }
                     }
                     Component {
@@ -254,8 +271,16 @@ Control {
                             anchors.centerIn: parent
                             width: root.icon.width
                             height: root.icon.height
-                            color: (root.type === StatusToastMessage.Type.Success) ?
-                                   Theme.palette.successColor1 : Theme.palette.primaryColor1
+                            color: {
+                                switch (root.type) {
+                                case StatusToastMessage.Type.Success:
+                                    return Theme.palette.successColor1
+                                case StatusToastMessage.Type.Fail:
+                                    return Theme.palette.dangerColor1
+                                default:
+                                    return Theme.palette.primaryColor1
+                                }
+                            }
                             icon: root.icon.name
                         }
                     }

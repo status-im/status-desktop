@@ -8,9 +8,9 @@ include ../../../common/json_utils
 import ../../chat/dto/chat
 
 type RequestToJoinType* {.pure.}= enum
-  Pending = 0,
-  Declined = 1,
-  Accepted = 2
+  Pending = 1,
+  Declined = 2,
+  Accepted = 3
 
 type Member* = object
   id*: string

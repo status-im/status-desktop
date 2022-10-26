@@ -23,6 +23,7 @@ type MessageSignal* = ref object of Signal
   communities*: seq[CommunityDto]
   communitiesSettings*: seq[CommunitySettingsDto]
   membershipRequests*: seq[CommunityMembershipRequestDto]
+  declinedMembershipRequests*: seq[CommunityMembershipRequestDto]
   activityCenterNotifications*: seq[ActivityCenterNotificationDto]
   statusUpdates*: seq[StatusUpdateDto]
   deletedMessages*: seq[RemovedMessageDto]
@@ -99,6 +100,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if event["event"]{"requestsToJoinCommunity"} != nil:
     for jsonCommunity in event["event"]["requestsToJoinCommunity"]:
       signal.membershipRequests.add(jsonCommunity.toCommunityMembershipRequestDto())
+  
+  if event["event"]{"declinedRequestsToJoinCommunity"} != nil:
+    for jsonCommunity in event["event"]["declinedRequestsToJoinCommunity"]:
+      signal.declinedMembershipRequests.add(jsonCommunity.toCommunityMembershipRequestDto())
 
   if event["event"]{"removedMessages"} != nil:
     for jsonRemovedMessage in event["event"]["removedMessages"]:

@@ -365,6 +365,10 @@ QtObject {
         return communitiesModuleInst.isCommunityRequestPending(id)
     }
 
+    function isCommunityRequestDeclined(id) {
+        return communitiesModuleInst.isCommunityRequestDeclined(id)
+    }
+
     function getSectionNameById(id) {
         return communitiesList.getSectionNameById(id)
     }
