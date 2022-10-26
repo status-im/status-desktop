@@ -192,7 +192,8 @@ Item {
             enabled: communityData.canManageUsers && adminPopupMenu.showInviteButton
             onTriggered: {
                 Global.openInviteFriendsToCommunityPopup(root.communityData,
-                                                         root.communitySectionModule)
+                                                         root.communitySectionModule,
+                                                         null)
             }
         }
     }
@@ -267,7 +268,8 @@ Item {
                     enabled: communityData.canManageUsers
                     onTriggered: {
                         Global.openInviteFriendsToCommunityPopup(root.communityData,
-                                                                 root.communitySectionModule)
+                                                                 root.communitySectionModule,
+                                                                 null)
                     }
                 }
             }

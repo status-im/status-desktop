@@ -207,7 +207,7 @@ SettingsContentBase {
                     }
 
                     onShowVerificationRequest: {
-                        Global.openIncomingIDRequestPopup(publicKey)
+                        Global.openIncomingIDRequestPopup(publicKey, null)
                     }
                 }
 

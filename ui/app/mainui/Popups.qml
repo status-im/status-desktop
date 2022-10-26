@@ -10,7 +10,7 @@ QtObject {
 
     /* required */ property var rootStore
 
-    function openSendIDRequestPopup(publicKey, cb) {
+    function openSendIDRequestPopup(publicKey, callback = null) {
         const contactDetails = Utils.getContactDetailsAsJson(publicKey)
         const popup = Global.openPopup(sendIDRequestPopupComponent, {
             userPublicKey: publicKey,
@@ -21,11 +21,11 @@ QtObject {
             challengeText: qsTr("Ask a question that only the real %1 will be able to answer e.g. a question about a shared experience, or ask %1 to enter a code or phrase you have sent to them via a different communication channel (phone, post, etc...).").arg(contactDetails.displayName),
             buttonText: qsTr("Send verification request")
         })
-        if (cb)
-            cb(popup)
+        if (callback)
+            callback(popup)
     }
 
-    function openOutgoingIDRequestPopup(publicKey, cb) {
+    function openOutgoingIDRequestPopup(publicKey, callback = null) {
         try {
             const verificationDetails = root.rootStore.profileSectionStore.contactsStore.getSentVerificationDetailsAsJson(publicKey)
             const popupProperties = {
@@ -39,14 +39,14 @@ QtObject {
                 verificationRepliedAt: verificationDetails.repliedAt
             }
             const popup = Global.openPopup(contactOutgoingVerificationRequestPopupComponent, popupProperties)
-            if (cb)
-                cb(popup)
+            if (callback)
+                callback(popup)
         } catch (e) {
             console.error("Error getting or parsing verification data", e)
         }
     }
 
-    function openIncomingIDRequestPopup(publicKey, cb) {
+    function openIncomingIDRequestPopup(publicKey, callback = null) {
         try {
             const request = root.rootStore.profileSectionStore.contactsStore.getVerificationDetailsFromAsJson(publicKey)
             const popupProperties = {
@@ -60,20 +60,20 @@ QtObject {
             }
 
             const popup = Global.openPopup(contactVerificationRequestPopupComponent, popupProperties)
-            if (cb)
-                cb(popup)
+            if (callback)
+                callback(popup)
         } catch (e) {
             console.error("Error getting or parsing verification data", e)
         }
     }
 
-    function openInviteFriendsToCommunityPopup(community, communitySectionModule, cb) {
+    function openInviteFriendsToCommunityPopup(community, communitySectionModule, callback = null) {
         const popup = Global.openPopup(inviteFriendsToCommunityPopup, { community, communitySectionModule })
-        if (cb)
-            cb(popup)
+        if (callback)
+            callback(popup)
     }
 
-    function openContactRequestPopup(publicKey, cb) {
+    function openContactRequestPopup(publicKey, callback = null) {
         const contactDetails = Utils.getContactDetailsAsJson(publicKey)
         const popupProperties = {
             userPublicKey: publicKey,
@@ -83,8 +83,8 @@ QtObject {
         }
 
         const popup = Global.openPopup(sendContactRequestPopupComponent, popupProperties)
-        if (cb)
-            cb(popup)
+        if (callback)
+            callback(popup)
     }
 
     readonly property list<Component> _d: [

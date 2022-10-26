@@ -209,7 +209,8 @@ StatusSectionLayout {
 
                 onInviteNewPeopleClicked: {
                     Global.openInviteFriendsToCommunityPopup(root.community,
-                                                             root.chatCommunitySectionModule)
+                                                             root.chatCommunitySectionModule,
+                                                             null)
                 }
 
                 onAirdropTokensClicked: { /* TODO in future */ }

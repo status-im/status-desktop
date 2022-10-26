@@ -49,15 +49,15 @@ QtObject {
     signal openEditDisplayNamePopup()
     signal openActivityCenterPopupRequested
 
-    signal openContactRequestPopup(string publicKey, var cb)
+    signal openContactRequestPopup(string publicKey, var callback)
 
-    signal openInviteFriendsToCommunityPopup(var community, var communitySectionModule, var cb)
+    signal openInviteFriendsToCommunityPopup(var community, var communitySectionModule, var callback)
 
-    signal openSendIDRequestPopup(string publicKey, var cb)
+    signal openSendIDRequestPopup(string publicKey, var callback)
 
-    signal openIncomingIDRequestPopup(string publicKey, var cb)
+    signal openIncomingIDRequestPopup(string publicKey, var callback)
 
-    signal openOutgoingIDRequestPopup(string publicKey, var cb)
+    signal openOutgoingIDRequestPopup(string publicKey, var callback)
 
     function openProfilePopup(publicKey, parentPopup) {
         openProfilePopupRequested(publicKey, parentPopup)
