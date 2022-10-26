@@ -14,13 +14,15 @@ else()
   file(GLOB_RECURSE SOURCES *.cpp)
 endif()
 
-qt5_add_big_resources(QRC_FILES qml.qrc ../src/statusq.qrc ../src/assets.qrc)
+set(QRC_FILES qml.qrc ../src/statusq.qrc ../src/assets.qrc)
+qt5_add_big_resources(QRC_COMPILED ${QRC_FILES})
 
 add_executable(
   ${PROJECT_NAME}
   ${HEADERS}
   ${SOURCES}
   ${QRC_FILES}
+  ${QRC_COMPILED}
   ${QML_FILES}
   ${JS_FILES})
 
