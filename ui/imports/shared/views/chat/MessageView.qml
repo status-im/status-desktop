@@ -643,8 +643,8 @@ Loader {
                         width: 20
                         height: 20
                         name: delegate.replyMessage ? delegate.replyMessage.senderIcon : ""
-                        assetSettings.isImage: delegate.replyMessage && (delegate.replyMessage.messageContentType == Constants.discordMessageType || delegate.replyMessage.senderIcon.startsWith("data"))
-                        showRing: delegate.replyMessage && delegate.replyMessage.messageContentType != Constants.discordMessageType
+                        assetSettings.isImage: delegate.replyMessage && (delegate.replyMessage.contentType === Constants.messageContentType.discordMessageType || delegate.replyMessage.senderIcon.startsWith("data"))
+                        showRing: delegate.replyMessage && delegate.replyMessage.contentType !== Constants.messageContentType.discordMessageType
                         pubkey: delegate.replySenderId
                         colorId: Utils.colorIdForPubkey(delegate.replySenderId)
                         colorHash: Utils.getColorHashAsJson(delegate.replySenderId, false, !root.isDiscordMessage)
