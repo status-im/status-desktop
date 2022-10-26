@@ -114,6 +114,7 @@ StatusModal {
 
             StatusInput {
                 id: chatKeyInput
+                input.edit.objectName: "SendContactRequestModal_ChatKey_Input"
 
                 placeholderText: qsTr("Enter chat key here")
                 input.text: input.edit.focus? d.realChatKey : d.elidedChatKey
@@ -135,6 +136,7 @@ StatusModal {
 
             StatusInput {
                 id: messageInput
+                input.edit.objectName: "SendContactRequestModal_SayWhoYouAre_Input"
                 charLimit: d.maxMsgLength
 
                 placeholderText: qsTr("Say who you are / why you want to become a contact...")
@@ -155,6 +157,7 @@ StatusModal {
         StatusButton {
             id: btnCreateEdit
             enabled: d.validChatKey && messageInput.valid
+            objectName: "SendContactRequestModal_Send_Button"
             text: qsTr("Send Contact Request")
             onClicked: {
                 root.contactsStore.sendContactRequest(d.resolvedPubKey, messageInput.text)

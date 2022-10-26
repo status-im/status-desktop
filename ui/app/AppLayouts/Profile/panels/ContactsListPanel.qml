@@ -51,6 +51,7 @@ Item {
 
     StatusListView {
         id: contactsList
+        objectName: "ContactListPanel_ListView"
         anchors.top: title.bottom
         anchors.left: parent.left
         anchors.right: parent.right
@@ -96,6 +97,7 @@ Item {
             contactsStore: root.contactsStore
             name: model.displayName
             publicKey: model.pubKey
+            compressedPk: Utils.getCompressedPk(model.pubKey)
             iconSource: model.icon
             isContact: model.isContact
             isBlocked: model.isBlocked

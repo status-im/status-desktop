@@ -161,6 +161,10 @@ def step(context, display_name):
 def step(context: any, oldPassword: str, newPassword: str):
     _settingsScreen.change_user_password(oldPassword, newPassword)
 
+@When("the user sends a contact request to the chat key \"|any|\" with the reason \"|any|\"")
+def step(context: any, chat_key: str, reason: str):
+    _settingsScreen.add_contact_by_chat_key(chat_key, reason)
+
 #########################
 ### VERIFICATIONS region:
 #########################
@@ -226,6 +230,10 @@ def step(context: any):
 @Then("in profile popup the user's display name should be \"|any|\"")
 def step(context, display_name):
     _statusMain.verify_profile_popup_display_name(display_name)
+
+@Then("the contact request for chat key \"|any|\" is present in the pending requests tab")
+def step(context, chat_key: str):
+    _settingsScreen.verify_contact_request(chat_key)
     
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:
