@@ -26,6 +26,7 @@ SettingsContentBase {
     property bool isPending: false
 
     titleRowComponentLoader.sourceComponent: StatusButton {
+        objectName: "ContactsView_ContactRequest_Button"
         text: qsTr("Send contact request to chat key")
         onClicked: {
             sendContactRequest.open()
@@ -81,6 +82,7 @@ SettingsContentBase {
             }
             StatusTabButton {
                 id: pendingRequestsBtn
+                objectName: "ContactsView_PendingRequest_Button"
                 width: implicitWidth
                 enabled: root.contactsStore.receivedContactRequestsModel.count > 0 ||
                          root.contactsStore.sentContactRequestsModel.count > 0
@@ -211,6 +213,7 @@ SettingsContentBase {
 
                 ContactsListPanel {
                     id: sentRequests
+                    objectName: "sentRequests_ContactsListPanel"
                     Layout.fillWidth: true
                     title: qsTr("Sent")
                     searchString: searchBox.text

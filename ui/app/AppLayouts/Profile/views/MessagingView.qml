@@ -148,6 +148,7 @@ SettingsContentBase {
 
         // CONTACTS SECTION
         StatusContactRequestsIndicatorListItem {
+            objectName: "MessagingView_ContactsListItem_btn"
             Layout.fillWidth: true
             title: qsTr("Contacts, Requests, and Blocked Users")
             requestsCount: root.contactsStore.receivedContactRequestsModel.count

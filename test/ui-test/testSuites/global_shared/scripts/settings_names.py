@@ -91,6 +91,16 @@ settingsContentBase_ScrollView = {"container": statusDesktop_mainWindow, "object
 displayMessageLinkPreviewItem = {"container": statusDesktop_mainWindow, "objectName": "displayMessageLinkPreviewsItem", "type": "StatusListItem"}
 imageUnfurlingItem = {"container": statusDesktop_mainWindow, "objectName": "imageUnfurlingItem", "type": "StatusListItem"}
 tenorGifsPreviewSwitchItem = {"container": statusDesktop_mainWindow, "objectName": "MessagingView_sitesListView_StatusListItem_tenor_gifs_subdomain", "type": "StatusListItem"}
+contacts_listItem_btn = {"container": statusDesktop_mainWindow, "objectName": "MessagingView_ContactsListItem_btn", "type": "StatusContactRequestsIndicatorListItem"}
+
+# Contacts View
+contact_request_to_chat_key_btn = {"container": statusDesktop_mainWindow, "objectName": "ContactsView_ContactRequest_Button", "type": "StatusButton"}
+contactRequest_ChatKey_Input = {"container": statusDesktop_mainWindow, "objectName": "SendContactRequestModal_ChatKey_Input", "type": "TextEdit"}
+contactRequest_SayWhoYouAre_Input = {"container": statusDesktop_mainWindow, "objectName": "SendContactRequestModal_SayWhoYouAre_Input", "type": "TextEdit"}
+contactRequest_Send_Button = {"container": statusDesktop_mainWindow, "objectName": "SendContactRequestModal_Send_Button", "type": "StatusButton"}
+contactRequest_PendingRequests_Button = {"container": statusDesktop_mainWindow, "objectName": "ContactsView_PendingRequest_Button", "type": "StatusTabButton"}
+sentRequests_ContactsListPanel = {"container": settingsContentBase_ScrollView, "objectName": "sentRequests_ContactsListPanel", "type": "ContactsListPanel"}
+sentRequests_contactListPanel_ListView = {"container": sentRequests_ContactsListPanel, "objectName": "ContactListPanel_ListView", "type": "StatusListView"}
 
 # Communities Settings:
 settings_Communities_MainView_LeaveCommunityButtons = {"container": statusDesktop_mainWindow, "objectName":"CommunitiesListPanel_leaveCommunityPopupButton", "type": "StatusBaseButton", "visible": True}

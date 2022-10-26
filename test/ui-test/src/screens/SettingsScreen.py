@@ -51,7 +51,15 @@ class MessagingOptionScreen(Enum):
     ACTIVATE_OR_DECTIVATE_IMAGE_UNFURLING: str = "imageUnfurlingItem"
     TENOR_GIFS_PREVIEW_SWITCH_ITEM: str = "tenorGifsPreviewSwitchItem"
     SCROLLVIEW: str = "settingsContentBase_ScrollView"
-
+    CONTACTS_BTN: str = "contacts_listItem_btn"
+   
+class ContactsViewScreen(Enum):
+    CONTACT_REQUEST_CHAT_KEY_BTN: str = "contact_request_to_chat_key_btn"
+    CONTACT_REQUEST_CHAT_KEY_INPUT: str = "contactRequest_ChatKey_Input"
+    CONTACT_REQUEST_SAY_WHO_YOU_ARE_INPUT: str = "contactRequest_SayWhoYouAre_Input"
+    CONTACT_REQUEST_SEND_BUTTON: str = "contactRequest_Send_Button"
+    CONTACT_REQUEST_PENDING_REQUEST_TAB_BUTTON: str = "contactRequest_PendingRequests_Button"
+    SENT_REQUESTS_CONTACT_PANEL_LIST_VIEW: str = "sentRequests_contactListPanel_ListView"
 
 class WalletSettingsScreen(Enum):
     GENERATED_ACCOUNTS: str = "settings_Wallet_MainView_GeneratedAccounts"
@@ -345,5 +353,26 @@ class SettingsScreen:
 
         click_obj_by_name(ChangePasswordMenu.CHANGE_PASSWORD_SUBMIT_BUTTON.value)
         click_obj_by_name(ChangePasswordMenu.CHANGE_PASSWORD_SUCCESS_MENU_SIGN_OUT_QUIT_BUTTON.value)
+        
+    def add_contact_by_chat_key(self, chat_key: str, who_you_are: str):
+        click_obj_by_name(MessagingOptionScreen.CONTACTS_BTN.value)
+        click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_CHAT_KEY_BTN.value)
+        
+        type(ContactsViewScreen.CONTACT_REQUEST_CHAT_KEY_INPUT.value, chat_key)
+        type(ContactsViewScreen.CONTACT_REQUEST_SAY_WHO_YOU_ARE_INPUT.value, who_you_are)
+        
+        click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_SEND_BUTTON.value)
 
+    def verify_contact_request(self, chat_key: str):
+        click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_PENDING_REQUEST_TAB_BUTTON.value)
+        contact_list = get_obj(ContactsViewScreen.SENT_REQUESTS_CONTACT_PANEL_LIST_VIEW.value)
+        contact_keys = []
+        for index in range(contact_list.count):
+            contact = contact_list.itemAtIndex(index)
+            contact_keys.append(str(contact.compressedPk))
+            if (contact.compressedPk == chat_key):
+                return
+        contact_keys_tr = ", ".join(contact_keys)
+        verify_failure(f'The list of pending contacts contains "{contact_keys_tr}"  but we wanted the key"{chat_key}"')
+        
         
