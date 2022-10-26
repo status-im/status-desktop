@@ -143,10 +143,15 @@ def step(context):
 @When("the user switches to \"|any|\" chat")
 def step(context, chatName):
     _statusChat.switch_to_chat(chatName)
-    
+
 @When("the user creates a group chat adding users")
 def step(context):
     the_user_creates_a_group_chat_adding_users(context)
+
+@When("the user creates a one to one chat with \"|any|\"")
+def step(context, username):
+    _statusMain.open_start_chat_view()
+    _statusCreateChatView.create_chat([[username]])
 
 @When("the user saves changes")
 def step(context):
@@ -154,7 +159,7 @@ def step(context):
     
 @When("the user leaves current chat")
 def step(context):
-    _statusChat.leave_chat()
+    leave_current_chat()
 
 #########################
 ### VERIFICATIONS region:
@@ -260,3 +265,6 @@ def the_user_sends_a_random_chat_message(context):
     message = "random message " + str(random_int)
     _statusChat.send_message(message)
     context.userData["randomMessage"] = message
+
+def leave_current_chat():
+    _statusChat.leave_chat()
