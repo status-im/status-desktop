@@ -23,7 +23,7 @@ ActivityNotificationMessage {
 
             property var community: root.store.getCommunityDetailsAsJson(notification.message.communityId)
             // TODO: here i need chanel
-            // property var channel: root.store.chatSectionModule.getItemAsJson(notification.chatId)
+            // property var channel: root.store.getItemAsJson(notification.chatId)
 
             communityName: community.name
             communityImage: community.image
@@ -36,7 +36,7 @@ ActivityNotificationMessage {
             }
             onChannelNameClicked: {
                 root.activityCenterClose()
-                root.store.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.id)
+                root.activityCenterStore.switchTo(notification)
             }
         }
     }

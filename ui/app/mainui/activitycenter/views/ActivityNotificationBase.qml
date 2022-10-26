@@ -13,6 +13,7 @@ Item {
 
     property var notification
     property var store
+    property var activityCenterStore
 
     property alias bodyComponent: bodyLoader.sourceComponent
     property alias badgeComponent: badgeLoader.sourceComponent
@@ -30,8 +31,8 @@ Item {
         anchors.left: parent.left
         messageTimestamp: notification.timestamp
         previousMessageTimestamp: root.previousNotificationIndex == 0 ? "" :
-                                        root.store.activityCenterList.getNotificationData(previousNotificationIndex,
-                                                                                          "timestamp")
+                                        root.activityCenterStore.activityCenterList.getNotificationData(
+                                            previousNotificationIndex, "timestamp")
         visible: text !== ""
     }
 
@@ -57,21 +58,18 @@ Item {
 
         sourceComponent: StatusFlatRoundButton {
             id: markReadBtn
+            icon.width: 20
+            icon.height: 20
             icon.source: Style.svg("check-activity")
-            icon.color: notification.read ? icon.disabledColor : "transparent"
-            color: "transparent"
-            tooltip.text: !notification.read ? qsTr("Mark as Read") : qsTr("Mark as Unread")
+            icon.color: root.notification.read ? icon.disabledColor : "transparent"
+            tooltip.text: !root.notification.read ? qsTr("Mark as Read") : qsTr("Mark as Unread")
             tooltip.orientation: StatusToolTip.Orientation.Left
             tooltip.x: -tooltip.width - Style.current.padding
             tooltip.y: 4
             onClicked: {
                 notification.read ?
-                    root.store.activityCenterModuleInst.markActivityCenterNotificationUnread(
-                        notification.id, notification.message.communityId,
-                        notification.message.chatId, notification.notificationType) :
-                    root.store.activityCenterModuleInst.markActivityCenterNotificationRead(
-                        notification.id, notification.message.communityId,
-                        notification.chatId, notification.notificationType)
+                    root.activityCenterStore.markActivityCenterNotificationUnread(root.notification) :
+                    root.activityCenterStore.markActivityCenterNotificationRead(root.notification)
             }
         }
     }

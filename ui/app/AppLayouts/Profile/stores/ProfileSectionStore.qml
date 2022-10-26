@@ -8,10 +8,6 @@ QtObject {
 
     property string backButtonName
 
-    property var activityCenterModuleInst: activityCenterModule
-    property var activityCenterList: activityCenterModuleInst.activityNotificationsModel
-    property int unreadNotificationsCount: activityCenterList.unreadCount
-
     property var aboutModuleInst: aboutModule
 
     property var profileSectionModuleInst: profileSectionModule

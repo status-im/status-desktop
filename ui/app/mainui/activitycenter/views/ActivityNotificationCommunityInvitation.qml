@@ -28,7 +28,7 @@ ActivityNotificationMessage {
         }
         onChannelNameClicked: {
             root.activityCenterClose()
-            root.store.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.id)
+            root.activityCenterStore.switchTo(notification)
         }
     }
 }

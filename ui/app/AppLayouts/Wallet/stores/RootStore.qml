@@ -23,10 +23,6 @@ QtObject {
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 
-    property var activityCenterModuleInst: activityCenterModule
-    property var activityCenterList: activityCenterModuleInst.activityNotificationsModel
-    property int unreadNotificationsCount: activityCenterList.unreadCount
-
     property var walletTokensModule: walletSectionAllTokens
     property var tokens: walletSectionAllTokens.all
 

@@ -23,7 +23,7 @@ import "../layouts"
 StatusSectionLayout {
     id: root
 
-    notificationCount: root.rootStore.unreadNotificationsCount
+    notificationCount: activityCenterStore.unreadNotificationsCount
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     // TODO: get this model from backend?
     property var settingsMenuModel: root.rootStore.communityPermissionsEnabled ? [{name: qsTr("Overview"), icon: "show"},

@@ -85,7 +85,7 @@ Page {
 
             StatusActivityCenterButton {
                 Layout.alignment: Qt.AlignVCenter
-                unreadNotificationsCount: root.rootStore.unreadNotificationsCount
+                unreadNotificationsCount: activityCenterStore.unreadNotificationsCount
                 onClicked: Global.openActivityCenterPopup()
             }
         }

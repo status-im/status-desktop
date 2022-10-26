@@ -65,7 +65,7 @@ Item {
         height: root.height - seedPhraseWarning.height
         width: root.width
         backButtonName: RootStore.backButtonName
-        notificationCount: RootStore.unreadNotificationsCount
+        notificationCount: activityCenterStore.unreadNotificationsCount
         onNotificationButtonClicked: Global.openActivityCenterPopup()
         onBackButtonClicked: {
             rightPanelStackView.currentItem.resetStack();

@@ -19,7 +19,7 @@ StatusSectionLayout {
 
     property RootStore store: RootStore {}
 
-    notificationCount: root.store.unreadNotificationsCount
+    notificationCount: activityCenterStore.unreadNotificationsCount
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     centerPanel: ColumnLayout {
         id: rpcColumn
