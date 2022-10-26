@@ -1,5 +1,7 @@
 import QtQuick 2.14
 
+import utils 1.0
+
 QtObject {
     readonly property FontLoader baseFont: FontLoader { source: "../../fonts/Inter/Inter-Regular.otf" }
     readonly property FontLoader monoFont: FontLoader { source: "../../fonts/InterStatus/InterStatus-Regular.otf" }
