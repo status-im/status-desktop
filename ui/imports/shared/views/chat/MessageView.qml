@@ -52,7 +52,7 @@ Loader {
     property string messageImage: ""
     property double messageTimestamp: 0 // We use double, because QML's int is too small
     property string messageOutgoingStatus: ""
-    property int messageContentType: 1
+    property int messageContentType: Constants.messageContentType.messageType
     property bool pinnedMessage: false
     property string messagePinnedBy: ""
     property var reactionsModel: []
@@ -78,13 +78,6 @@ Loader {
     property bool editModeOn: false
     property bool isEdited: false
 
-    property string responseTo: responseToMessageWithId
-
-    // Legacy
-    property bool isCurrentUser: amISender
-    property string displayUserName: senderDisplayName
-    property string outgoingStatus: messageOutgoingStatus
-    property string authorCurrentMsg: senderId
     property string authorPrevMsg: {
         if(!prevMessageAsJsonObj ||
                 // The system message for private groups appear as created by the group host, but it shouldn't
@@ -100,9 +93,8 @@ Loader {
     property bool shouldRepeatHeader: ((messageTimestamp - prevMsgTimestamp) / 60 / 1000) > Constants.repeatHeaderInterval || isDiscordMessage
 
     property bool hasMention: false
+
     property bool stickersLoaded: false
-
-
     property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
     property int stickerPack: -1
 
@@ -116,11 +108,9 @@ Loader {
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
-    property bool isExpired: (outgoingStatus === "sending" && (Math.floor(messageTimestamp) + 180000) < Date.now())
-    property int statusAgeEpoch: 0
+    readonly property bool isExpired: (messageOutgoingStatus === "sending" && (Math.floor(messageTimestamp) + 180000) < Date.now())
 
     signal imageClicked(var image)
-    property var scrollToBottom: function () {}
 
     // WARNING: To much arguments here. Create an object argument.
     property var messageClickHandler: function(sender, point,
@@ -162,7 +152,7 @@ Loader {
         messageContextMenu.hideEmojiPicker = hideEmojiPicker
 
         if (isReply){
-            let obj = messageStore.getMessageByIdAsJson(responseTo)
+            let obj = messageStore.getMessageByIdAsJson(responseToMessageWithId)
             if(!obj)
                 return
 
@@ -234,7 +224,7 @@ Loader {
         case Constants.messageContentType.gapType:
             return
         default:
-            item.replyMessage = item.getReplyMessage()
+            item.updateReplyInfo()
         }
     }
 
@@ -372,6 +362,14 @@ Loader {
         ColumnLayout {
             spacing: 0
 
+            function startMessageFoundAnimation() {
+                delegate.startMessageFoundAnimation();
+            }
+
+            function updateReplyInfo() {
+                delegate.replyMessage = delegate.getReplyMessage()
+            }
+
             StatusDateGroupLabel {
                 id: dateGroupLabel
                 Layout.fillWidth: true
@@ -416,14 +414,14 @@ Loader {
                 }
 
                 readonly property int contentType: convertContentType(root.messageContentType)
-                readonly property bool isReply: root.responseTo !== ""
+                readonly property bool isReply: root.responseToMessageWithId !== ""
     
                 property var replyMessage: getReplyMessage()
 
                 readonly property string replySenderId: replyMessage ? replyMessage.senderId : ""
 
                 function getReplyMessage() {
-                    return root.messageStore && isReply && root.responseToExistingMessage ? root.messageStore.getMessageByIdAsJson(root.responseTo) : null
+                    return root.messageStore && isReply && root.responseToExistingMessage ? root.messageStore.getMessageByIdAsJson(root.responseToMessageWithId) : null
                 }
 
                 function editCompletedHandler(newMessageText) {
@@ -462,7 +460,7 @@ Loader {
                 hasExpired: root.isExpired
                 reactionsModel: root.reactionsModel
 
-                showHeader: root.authorCurrentMsg !== root.authorPrevMsg ||
+                showHeader: root.senderId !== root.authorPrevMsg ||
                             root.shouldRepeatHeader || dateGroupLabel.visible || isAReply
                 isActiveMessage: d.isMessageActive
 
@@ -620,8 +618,8 @@ Loader {
 
                 replyDetails: StatusMessageDetails {
                     messageText:  delegate.replyMessage ? delegate.replyMessage.messageText
-                                                      //: There is should be a message for reply which source message was deleted
-                                                    : qsTr("&lt;deleted&gt;")
+                                                          //: deleted message
+                                                        : qsTr("&lt;deleted&gt;")
                     contentType: delegate.replyMessage ? delegate.convertContentType(delegate.replyMessage.contentType) : 0
                     messageContent: {
                         if (!delegate.replyMessage)
@@ -644,7 +642,7 @@ Loader {
                     sender.profileImage {
                         width: 20
                         height: 20
-                        name:  delegate.replyMessage ? delegate.replyMessage.senderIcon : ""
+                        name: delegate.replyMessage ? delegate.replyMessage.senderIcon : ""
                         assetSettings.isImage: delegate.replyMessage && (delegate.replyMessage.messageContentType == Constants.discordMessageType || delegate.replyMessage.senderIcon.startsWith("data"))
                         showRing: delegate.replyMessage && delegate.replyMessage.messageContentType != Constants.discordMessageType
                         pubkey: delegate.replySenderId

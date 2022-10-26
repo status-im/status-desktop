@@ -41,7 +41,6 @@ ActivityNotificationBase {
         activityCenterMessage: true
         activityCenterMessageRead: false
         onImageClicked: Global.openImagePopup(image, root.messageContextMenu)
-        scrollToBottom: null
         messageClickHandler: (sender, 
                               point,
                               isProfileClick,
