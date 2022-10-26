@@ -78,5 +78,7 @@
         <file>demoapp/data/profile-image-1.jpeg</file>
         <file>demoapp/data/profile-image-2.jpeg</file>
         <file>pages/StatusComboBoxPage.qml</file>
+        <file>pages/StatusChartPanelPage.qml</file>
+        <file>pages/StatusTextAreaPage.qml</file>
     </qresource>
 </RCC>

@@ -172,5 +172,27 @@
         <file>StatusQ/Popups/StatusStackModal.qml</file>
         <file>StatusQ/qmldir</file>
         <file>StatusQ/Components/StatusListPickerProxies.qml</file>
+        <file>StatusQ/Layout/StatusSectionLayout.qml</file>
+        <file>StatusQ/Layout/StatusMainLayout.qml</file>
+        <file>StatusQ/Components/private/chart/Chart.js</file>
+        <file>StatusQ/Components/private/chart/Chart.qml</file>
+        <file>StatusQ/Components/private/chart/LICENSE</file>
+        <file>StatusQ/Components/private/statusMessage/StatusMessageEmojiReactions.qml</file>
+        <file>StatusQ/Components/StatusChartPanel.qml</file>
+        <file>StatusQ/Components/StatusDateGroupLabel.qml</file>
+        <file>StatusQ/Components/StatusMessageSenderDetails.qml</file>
+        <file>StatusQ/Controls/StatusBackButton.qml</file>
+        <file>StatusQ/Controls/StatusComboBox.qml</file>
+        <file>StatusQ/Controls/StatusItemDelegate.qml</file>
+        <file>StatusQ/Controls/StatusNavigationButton.qml</file>
+        <file>StatusQ/Core/Utils/JSONListModel.qml</file>
+        <file>StatusQ/Core/Utils/xss.js</file>
+        <file>StatusQ/Core/StatusAssetSettings.qml</file>
+        <file>StatusQ/Core/StatusCenteredFlow.qml</file>
+        <file>StatusQ/Core/StatusGridView.qml</file>
+        <file>StatusQ/Core/StatusListView.qml</file>
+        <file>StatusQ/Core/StatusProfileImageSettings.qml</file>
+        <file>StatusQ/Core/StatusRollArea.qml</file>
+        <file>StatusQ/Popups/Dialog/StatusDialogBackground.qml</file>
     </qresource>
 </RCC>

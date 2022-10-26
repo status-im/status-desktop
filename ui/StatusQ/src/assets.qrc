@@ -97,7 +97,6 @@
         <file>assets/img/icons/tiny/secure.svg</file>
         <file>assets/img/icons/tiny/settings.svg</file>
         <file>assets/img/icons/tiny/SNT.svg</file>
-        <file>assets/img/icons/tiny/subtract.svg</file>
         <file>assets/img/icons/tiny/time.svg</file>
         <file>assets/img/icons/tiny/tiny-checkmark.svg</file>
         <file>assets/img/icons/tiny/tiny-contact.svg</file>
@@ -10367,5 +10366,19 @@
         <file>assets/twemoji/svg/ae.svg</file>
         <file>assets/twemoji/svg/e50a.svg</file>
         <file>assets/twemoji/twemoji.js</file>
+        <file>assets/img/icons/tiny/exclamation.svg</file>
+        <file>assets/img/icons/tiny/tiny-exclamation.svg</file>
+        <file>assets/img/icons/discord.svg</file>
+        <file>assets/img/icons/github.svg</file>
+        <file>assets/img/icons/key_pair_private_key.svg</file>
+        <file>assets/img/icons/key_pair_seed_phrase.svg</file>
+        <file>assets/img/icons/pencil-outline.svg</file>
+        <file>assets/img/icons/qr-scan.svg</file>
+        <file>assets/img/icons/status-logo-icon.svg</file>
+        <file>assets/img/icons/telegram.svg</file>
+        <file>assets/img/icons/twitter.svg</file>
+        <file>assets/img/icons/unfavourite.svg</file>
+        <file>assets/img/icons/youtube.svg</file>
+        <file>assets/twemoji/LICENSE</file>
     </qresource>
 </RCC>
