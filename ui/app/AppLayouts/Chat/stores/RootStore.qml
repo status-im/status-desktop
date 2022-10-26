@@ -388,15 +388,13 @@ QtObject {
         }*/
 
         // Community
-        let index = link.lastIndexOf("/c/")
-        if (index > -1) {
-            const communityId = link.substring(index + 3)
-
+        const communityId = Utils.getCommunityIdFromShareLink(link)
+        if (communityId !== "") {
             const communityName = getSectionNameById(communityId)
 
             if (!communityName) {
                 // Unknown community, fetch the info if possible
-                communitiesModuleInst.requestCommunityInfo(communityId)
+                root.requestCommunityInfo(communityId)
                 result.communityId = communityId
                 result.fetching = true
                 return result

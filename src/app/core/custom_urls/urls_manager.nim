@@ -2,6 +2,8 @@ import NimQml, strutils, chronicles
 import ../eventemitter
 
 import ../../global/app_signals
+import ../../../app_service/common/conversion
+import ../../../app_service/service/accounts/utils
 
 logScope:
   topics = "urls-manager"
@@ -44,6 +46,11 @@ QtObject:
     result.protocolUriOnStart = protocolUriOnStart
     result.loggedIn = false
 
+  proc prepareCommunityId(self: UrlsManager, communityId: string): string =
+    if isCompressedPubKey(communityId):
+      return changeCommunityKeyCompression(communityId)
+    return communityId
+
   proc onUrlActivated*(self: UrlsManager, urlRaw: string) {.slot.} =
     if not self.loggedIn:
       self.protocolUriOnStart = urlRaw
@@ -62,7 +69,7 @@ QtObject:
     # Open community with `community_key`
     elif url.startsWith(UriFormatCommunity):
       data.action = StatusUrlAction.OpenCommunity
-      data.communityId = url[UriFormatCommunity.len .. url.len-1]
+      data.communityId = self.prepareCommunityId(url[UriFormatCommunity.len .. url.len-1])
 
     # Open community which has a channel with `channel_key` and makes that channel active
     elif url.startsWith(UriFormatCommunityChannel):
