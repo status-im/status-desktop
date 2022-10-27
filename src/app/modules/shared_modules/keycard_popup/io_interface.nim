@@ -3,6 +3,8 @@ import ../../../../app/core/eventemitter
 from ../../../../app_service/service/keycard/service import KeycardEvent, CardMetadata, KeyDetails
 import models/key_pair_item
 
+const SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED_AND_WALLET_ADDRESS_GENERATED* = "sharedKeycarModuleUserAuthenticatedAndWalletAddressGenerated"
+
 const SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP* = "sharedKeycarModuleDisplayPopup"
 const SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED* = "sharedKeycarModuleFlowTerminated"
 const SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER* = "sharedKeycarModuleAuthenticateUser"
@@ -35,6 +37,7 @@ type
 type
   SharedKeycarModuleArgs* = ref object of SharedKeycarModuleBaseArgs
     password*: string
+    pin*: string # this is used in case we need to run another keycard flow which requires pin, after we successfully authenticated logged in user
     keyUid*: string
     txR*: string
     txS*: string
@@ -61,6 +64,15 @@ type FlowType* {.pure.} = enum
   ChangeKeycardPin = "ChangeKeycardPin"
   ChangeKeycardPuk = "ChangeKeycardPuk"
   ChangePairingCode = "ChangePairingCode"
+  AuthenticateAndDeriveAccountAddress = "AuthenticateAndDeriveAccountAddress"
+
+type
+  SharedKeycarModuleUserAuthenticatedAndWalletAddressGeneratedArgs* = ref object of Args
+    uniqueIdentifier*: string
+    address*: string
+    publicKey*: string
+    derivedFrom*: string
+    password*: string
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -146,7 +158,7 @@ method migratingProfileKeyPair*(self: AccessInterface): bool {.base.} =
 method getSigningPhrase*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
+method onUserAuthenticated*(self: AccessInterface, password: string, pin: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method keychainObtainedDataFailure*(self: AccessInterface, errorDescription: string, errorType: string) {.base.} =

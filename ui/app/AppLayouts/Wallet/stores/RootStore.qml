@@ -5,8 +5,16 @@ import QtQuick 2.13
 import utils 1.0
 import shared.stores 1.0 as SharedStore
 
+import "../panels"
+
 QtObject {
     id: root
+
+    readonly property int defaultSelectedType: SelectGeneratedAccount.AddAccountType.GenerateNew
+    readonly property string defaultSelectedKeyUid: userProfile.keyUid
+    readonly property bool defaultSelectedKeyUidMigratedToKeycard: userProfile.isKeycardUser
+
+    property bool loggedInUserAuthenticated: false
 
     property string backButtonName: ""
     property var currentAccount: Constants.isCppApp ? walletSectionAccounts.currentAccount: walletSectionCurrent
@@ -112,6 +120,10 @@ QtObject {
 
     function generateNewAccount(password, accountName, color, emoji, path, derivedFrom) {
         return walletSectionAccounts.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)
+    }
+
+    function addNewWalletAccountGeneratedFromKeycard(accountType, accountName, color, emoji) {
+        return walletSectionAccounts.addNewWalletAccountGeneratedFromKeycard(accountType, accountName, color, emoji)
     }
 
     function addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji) {
@@ -233,5 +245,17 @@ QtObject {
 
     function loggedInUserIsKeycardUser() {
         return userProfile.isKeycardUser
+    }
+
+    function createSharedKeycardModule() {
+        walletSectionAccounts.createSharedKeycardModule()
+    }
+
+    function destroySharedKeycarModule() {
+        walletSectionAccounts.destroySharedKeycarModule()
+    }
+
+    function authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath) {
+        walletSectionAccounts.authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath)
     }
 }

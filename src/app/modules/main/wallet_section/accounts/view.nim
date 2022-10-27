@@ -146,7 +146,7 @@ QtObject:
   proc getDerivedAddressesError(self: View): string {.slot.} =
     return self.derivedAddressesError
 
-  proc setDerivedAddressesError(self: View, error: string) {.slot.} =
+  proc setDerivedAddressesError*(self: View, error: string) {.slot.} =
     self.derivedAddressesError = error
     self.derivedAddressErrorChanged()
 
@@ -175,7 +175,8 @@ QtObject:
 
         var generatedAccs: Model = newModel()
         generatedAccs.setItems(items.filter(x => cmpIgnoreCase(x.getDerivedFrom(), item.getDerivedFrom()) == 0))
-        generatedAccounts.add(initGeneratedWalletItem("Default", "status", generatedAccs, item.getDerivedFrom()))
+        generatedAccounts.add(initGeneratedWalletItem("Default", "status", generatedAccs, item.getDerivedFrom(),
+          item.getKeyUid(), item.getMigratedToKeycard()))
         generated.add(item)
 
       # Account generated from profile seed phrase
@@ -191,7 +192,8 @@ QtObject:
         var generatedAccs1: Model = newModel()
         var filterItems: seq[Item] = items.filter(x => cmpIgnoreCase(x.getDerivedFrom(), item.getDerivedFrom()) == 0)
         generatedAccs1.setItems(filterItems)
-        generatedAccounts.add(initGeneratedWalletItem("Seed " & $importedSeedIndex , "seed-phrase", generatedAccs1, item.getDerivedFrom()))
+        generatedAccounts.add(initGeneratedWalletItem("Seed " & $importedSeedIndex , "seed-phrase", generatedAccs1, item.getDerivedFrom(),
+          item.getKeyUid(), item.getMigratedToKeycard()))
         imported.add(item)
         importedSeedIndex += 1
 
@@ -206,6 +208,10 @@ QtObject:
 
   proc generateNewAccount*(self: View, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string {.slot.} =
     return self.delegate.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)
+
+  proc addNewWalletAccountGeneratedFromKeycard*(self: View, accountType: string, accountName: string, color: string, 
+    emoji: string): string {.slot.} =
+    return self.delegate.addNewWalletAccountGeneratedFromKeycard(accountType, accountName, color, emoji)
 
   proc addAccountsFromPrivateKey*(self: View, privateKey: string, password: string, accountName: string, color: string, emoji: string): string {.slot.} =
     return self.delegate.addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji)
@@ -283,3 +289,12 @@ QtObject:
 
   proc authenticateUser*(self: View) {.slot.} =
     self.delegate.authenticateUser()
+
+  proc createSharedKeycardModule*(self: View) {.slot.} =
+    self.delegate.createSharedKeycardModule()
+
+  proc destroySharedKeycarModule*(self: View) {.slot.} =
+    self.delegate.destroySharedKeycarModule()
+
+  proc authenticateUserAndDeriveAddressOnKeycardForPath*(self: View, keyUid: string, derivationPath: string) {.slot.} =
+    self.delegate.authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath)

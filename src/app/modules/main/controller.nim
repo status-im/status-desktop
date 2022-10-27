@@ -266,6 +266,7 @@ proc init*(self: Controller) =
       password = args.keyUid
     let data = SharedKeycarModuleArgs(uniqueIdentifier: self.authenticateUserFlowRequestedBy,
       password: password,
+      pin: args.pin,
       keyUid: args.keyUid,
       txR: args.txR,
       txS: args.txS,

@@ -16,6 +16,10 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method generateNewAccount*(self: AccessInterface, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method addNewWalletAccountGeneratedFromKeycard*(self: AccessInterface, accountType: string, accountName: string, 
+  color: string, emoji: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method addAccountsFromPrivateKey*(self: AccessInterface, privateKey: string, password: string, accountName: string, color: string, emoji: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -53,4 +57,20 @@ method authenticateUser*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method authenticateUserAndDeriveAddressOnKeycardForPath*(self: AccessInterface, keyUid: string, derivationPath: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method createSharedKeycardModule*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method destroySharedKeycarModule*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onUserAuthenticatedAndWalletAddressGenerated*(self: AccessInterface, address: string, publicKey: string, 
+  derivedFrom: string, password: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method addressDetailsFetched*(self: AccessInterface, derivedAddress: DerivedAddressDto, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")

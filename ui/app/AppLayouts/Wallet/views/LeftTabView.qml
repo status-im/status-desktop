@@ -12,6 +12,7 @@ import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.controls 1.0
+import shared.popups.keycard 1.0
 
 import "../controls"
 import "../popups"
@@ -30,11 +31,33 @@ Rectangle {
 
     color: Style.current.secondaryMenuBackground
 
-    AddAccountModal {
+    Loader {
         id: addAccountModal
-        anchors.centerIn: parent
-        onAfterAddAccount: root.onAfterAddAccount()
-        emojiPopup: root.emojiPopup
+        active: false
+        asynchronous: true
+
+        function open() {
+            if (!active) {
+                RootStore.createSharedKeycardModule()
+                active = true
+            }
+            item.open()
+        }
+
+        function close() {
+            if (item) {
+                RootStore.destroySharedKeycarModule()
+                item.close()
+            }
+            active = false
+        }
+
+        sourceComponent: AddAccountModal {
+            anchors.centerIn: parent
+            onAfterAddAccount: root.onAfterAddAccount()
+            emojiPopup: root.emojiPopup
+            onClosed: addAccountModal.close()
+        }
     }
 
     ColumnLayout {

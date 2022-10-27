@@ -1,4 +1,4 @@
-import NimQml, json, os, chronicles, random
+import NimQml, json, os, chronicles, random, strutils
 import keycard_go
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
@@ -25,6 +25,7 @@ type KCSFlowType* {.pure.} = enum
 
 const EmptyTxHash = "0000000000000000000000000000000000000000000000000000000000000000"
 const DefaultBIP44Path = "m/0"
+const DefaultEIP1581Path = "m/43'/60'/1581'"
 
 const PINLengthForStatusApp* = 6
 const PUKLengthForStatusApp* = 12
@@ -235,6 +236,23 @@ QtObject:
   proc startChangePairingFlow*(self: Service) =
     var payload = %* { }
     self.currentFlow = KCSFlowType.ChangePairing
+    self.startFlow(payload)
+
+  proc startExportPublicFlow*(self: Service, path: string, exportMasterAddr = false, exportPrivateAddr = false, pin = "") =
+    if exportPrivateAddr and not path.startsWith(DefaultEIP1581Path):
+      error "in order to export private address path must not be outside of eip1581 tree"
+      return
+
+    var payload = %* { 
+      RequestParamBIP44Path: DefaultBIP44Path,
+      RequestParamExportMasterAddress: exportMasterAddr,
+      RequestParamExportPrivate: exportPrivateAddr
+    }
+    if path.len > 0:
+      payload[RequestParamBIP44Path] = %* path
+    if pin.len > 0:
+      payload[RequestParamPIN] = %* pin
+    self.currentFlow = KCSFlowType.ExportPublic
     self.startFlow(payload)
 
   proc startStoreMetadataFlow*(self: Service, cardName: string, pin: string, walletPaths: seq[string]) =

@@ -1,17 +1,27 @@
-import tables, NimQml, sequtils, sugar
+import tables, NimQml, sequtils, sugar, chronicles
 
 import ./io_interface, ./view, ./item, ./controller
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
+import ../../../../../app_service/common/account_constants
+import ../../../../../app_service/service/keycard/service as keycard_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/accounts/service as accounts_service
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
+import ../../../shared_modules/keycard_popup/module as keycard_shared_module
 import ./compact_item as compact_item
 import ./compact_model as compact_model
 
 export io_interface
+
+type WalletAccountDetails = object
+  address: string
+  path: string
+  addressAccountIsDerivedFrom: string
+  publicKey: string
+  keyUid: string
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -20,16 +30,25 @@ type
     view: View
     controller: Controller
     moduleLoaded: bool
+    keycardService: keycard_service.Service
+    accountsService: accounts_service.Service
+    walletAccountService: wallet_account_service.Service
+    keycardSharedModule: keycard_shared_module.AccessInterface
+    walletAccountWhichIsAboutToBeAdded: WalletAccountDetails
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
+  keycardService: keycard_service.Service,
   walletAccountService: wallet_account_service.Service,
   accountsService: accounts_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
+  result.keycardService = keycardService
+  result.accountsService = accountsService
+  result.walletAccountService = walletAccountService
   result.view = newView(result)
   result.controller = controller.newController(result, events, walletAccountService, accountsService)
   result.moduleLoaded = false
@@ -37,9 +56,18 @@ proc newModule*(
 method delete*(self: Module) =
   self.view.delete
   self.controller.delete
+  if not self.keycardSharedModule.isNil:
+    self.keycardSharedModule.delete
 
 method refreshWalletAccounts*(self: Module) =
+  let keyPairMigrated = proc(migratedKeyPairs: seq[KeyPairDto], keyUid: string): bool =
+    for kp in migratedKeyPairs:
+      if kp.keyUid == keyUid:
+        return true
+    return false
+
   let walletAccounts = self.controller.getWalletAccounts()
+  let migratedKeyPairs = self.controller.getAllMigratedKeyPairs()
 
 
   let items = walletAccounts.map(proc (w: WalletAccountDto): item.Item =
@@ -102,7 +130,9 @@ method refreshWalletAccounts*(self: Module) =
       assets,
       w.emoji,
       w.derivedfrom,
-      relatedAccounts
+      relatedAccounts,
+      w.keyUid,
+      keyPairMigrated(migratedKeyPairs, w.keyUid)
     ))
 
   self.view.setItems(items)
@@ -136,6 +166,9 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     self.refreshWalletAccounts()
 
+  self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
+    self.refreshWalletAccounts()
+
   self.controller.init()
   self.view.load()
 
@@ -147,14 +180,20 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.accountsModuleDidLoad()
 
-method generateNewAccount*(self: Module, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string =
-  return self.controller.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)
+method generateNewAccount*(self: Module, password: string, accountName: string, color: string, emoji: string, 
+  path: string, derivedFrom: string): string =
+  let  skipPasswordVerification = singletonInstance.userProfile.getIsKeycardUser()
+  return self.controller.generateNewAccount(password, accountName, color, emoji, path, derivedFrom, skipPasswordVerification)
 
-method addAccountsFromPrivateKey*(self: Module, privateKey: string, password: string, accountName: string, color: string, emoji: string): string =
-  return self.controller.addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji)
+method addAccountsFromPrivateKey*(self: Module, privateKey: string, password: string, accountName: string, color: string, 
+  emoji: string): string =
+  let  skipPasswordVerification = singletonInstance.userProfile.getIsKeycardUser()
+  return self.controller.addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji, skipPasswordVerification)
 
-method addAccountsFromSeed*(self: Module, seedPhrase: string, password: string, accountName: string, color: string, emoji: string, path: string): string =
-  return self.controller.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji, path)
+method addAccountsFromSeed*(self: Module, seedPhrase: string, password: string, accountName: string, color: string, 
+  emoji: string, path: string): string =
+  let  skipPasswordVerification = singletonInstance.userProfile.getIsKeycardUser()
+  return self.controller.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji, path, skipPasswordVerification)
 
 method addWatchOnlyAccount*(self: Module, address: string, accountName: string, color: string, emoji: string): string =
   return self.controller.addWatchOnlyAccount(address, accountName, color, emoji)
@@ -186,3 +225,76 @@ method onUserAuthenticated*(self: Module, password: string) =
     self.view.userAuthenticationSuccess(password)
   else:
     self.view.userAuthentiactionFail()
+
+method createSharedKeycardModule*(self: Module) =
+  self.keycardSharedModule = keycard_shared_module.newModule[Module](self, UNIQUE_WALLET_SECTION_ACCOUNTS_MODULE_IDENTIFIER, 
+    self.events, self.keycardService, settingsService = nil, privacyService = nil, self.accountsService, 
+    self.walletAccountService, keychainService = nil)
+
+method destroySharedKeycarModule*(self: Module) =
+  self.keycardSharedModule.delete
+  self.keycardSharedModule = nil
+
+proc checkIfWalletAccountIsAlreadyCreated(self: Module, keyUid: string, derivationPath: string): bool =
+  let walletAccounts = self.controller.getWalletAccounts()
+  for w in walletAccounts:
+    if w.keyUid == keyUid and w.path == derivationPath:
+      return true
+  return false
+
+proc findFirstAvaliablePathForWallet(self: Module, keyUid: string): string =
+  let walletAccounts = self.controller.getWalletAccounts()
+  # starting from 1, "0" is already reserved for the default wallet account
+  for i in 1 .. 256: # we hope that nobody will have 256 accounts added, so no need to change derivation tree
+    let path = account_constants.PATH_WALLET_ROOT & "/" & $i 
+    var found = false
+    for w in walletAccounts:
+      if w.keyUid == keyUid and w.path == path:
+        found = true
+        break
+    if not found:
+      return path
+  error "we couldn't find available wallet account path"
+  
+method authenticateUserAndDeriveAddressOnKeycardForPath*(self: Module, keyUid: string, derivationPath: string) =
+  var finalPath = derivationPath
+  if self.checkIfWalletAccountIsAlreadyCreated(keyUid, finalPath):
+    finalPath = self.findFirstAvaliablePathForWallet(keyUid)
+  if self.keycardSharedModule.isNil:
+    self.createSharedKeycardModule()
+  self.walletAccountWhichIsAboutToBeAdded = WalletAccountDetails(keyUid: keyUid, path: finalPath)
+  self.view.setDerivedAddressesLoading(true)
+  self.view.setDerivedAddressesError("")
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.AuthenticateAndDeriveAccountAddress, keyUid, finalPath)
+
+method onUserAuthenticatedAndWalletAddressGenerated*(self: Module, address: string, publicKey: string, 
+  derivedFrom: string, password: string) =
+  if address.len == 0:
+    self.view.setDerivedAddressesError("wrong-path") # this should be checked on the UI side and we should not allow entering invalid path format
+  if password.len == 0:
+    self.view.setDerivedAddressesLoading(false)
+    return
+  self.onUserAuthenticated(password)
+  self.walletAccountWhichIsAboutToBeAdded.address = address
+  self.walletAccountWhichIsAboutToBeAdded.addressAccountIsDerivedFrom = derivedFrom
+  self.walletAccountWhichIsAboutToBeAdded.publicKey = publicKey
+  self.controller.fetchDerivedAddressDetails(address)
+
+method addressDetailsFetched*(self: Module, derivedAddress: DerivedAddressDto, error: string) =
+  var derivedAddressDto = derivedAddress
+  if error.len > 0:
+    derivedAddressDto.address = self.walletAccountWhichIsAboutToBeAdded.address
+    derivedAddressDto.alreadyCreated = true
+  self.view.setDerivedAddresses(@[derivedAddressDto], error)
+
+method addNewWalletAccountGeneratedFromKeycard*(self: Module, accountType: string, accountName: string, color: string, 
+  emoji: string): string =
+  return self.controller.addWalletAccount(accountName, 
+    self.walletAccountWhichIsAboutToBeAdded.address, 
+    self.walletAccountWhichIsAboutToBeAdded.path, 
+    self.walletAccountWhichIsAboutToBeAdded.addressAccountIsDerivedFrom, 
+    self.walletAccountWhichIsAboutToBeAdded.publicKey, 
+    self.walletAccountWhichIsAboutToBeAdded.keyUid, 
+    accountType, 
+    color, 
+    emoji)

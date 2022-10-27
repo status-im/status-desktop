@@ -24,6 +24,26 @@ proc getAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc deleteAccount*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("accounts_deleteAccount", %* [address])
 
+proc saveAccount*(name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, accountType, color, emoji: string,
+  walletDefaultAccount: bool, chatDefaultAccount: bool): 
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [
+    [{
+      "name": name,
+      "address": address,
+      "path": path,
+      "derived-from": addressAccountIsDerivedFrom,
+      "public-key": publicKey,
+      "key-uid": keyUid,
+      "type": accountType,
+      "color": color,
+      "emoji": emoji,
+      "wallet": walletDefaultAccount,
+      "chat": chatDefaultAccount
+    }]
+  ]
+  return core.callPrivateRPC("accounts_saveAccounts", payload)
+
 proc updateAccount*(name, address, publicKey, walletType, color, emoji: string) {.raises: [Exception].} =
   discard core.callPrivateRPC("accounts_saveAccounts", %* [
     [{
@@ -284,6 +304,10 @@ proc getDerivedAddressListForMnemonic*(mnemonic: string, path: string, pageSize:
 proc getDerivedAddressForPrivateKey*(privateKey: string,): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [privateKey]
   result = core.callPrivateRPC("wallet_getDerivedAddressForPrivateKey", payload)
+
+proc getDerivedAddressDetails*(address: string,): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [address]
+  result = core.callPrivateRPC("wallet_getDerivedAddressDetails", payload)
 
 proc verifyPassword*(password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [password]

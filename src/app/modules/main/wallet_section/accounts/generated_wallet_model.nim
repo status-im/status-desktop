@@ -7,7 +7,9 @@ type
     Name = UserRole + 1,
     IconName,
     GeneratedModel,
-    DerivedFrom
+    DerivedFrom,
+    KeyUid,
+    MigratedToKeycard
 
 QtObject:
   type
@@ -47,6 +49,8 @@ QtObject:
       ModelRole.IconName.int: "iconName",
       ModelRole.GeneratedModel.int: "generatedModel",
       ModelRole.DerivedFrom.int: "derivedfrom",
+      ModelRole.KeyUid.int: "keyUid",
+      ModelRole.MigratedToKeycard.int: "migratedToKeycard"
     }.toTable
 
   method data(self: GeneratedWalletModel, index: QModelIndex, role: int): QVariant =
@@ -68,6 +72,10 @@ QtObject:
       result = newQVariant(item.getGeneratedModel())
     of ModelRole.DerivedFrom:
       result = newQVariant(item.getDerivedFrom())
+    of ModelRole.KeyUid:
+      result = newQVariant(item.getKeyUid())
+    of ModelRole.MigratedToKeycard:
+      result = newQVariant(item.getMigratedToKeycard())
 
   proc setItems*(self: GeneratedWalletModel, items: seq[GeneratedWalletItem]) =
     self.beginResetModel()

@@ -72,6 +72,24 @@ const getDerivedAddressForPrivateKeyTask*: Task = proc(argEncoded: string) {.gcs
     }
     arg.finish(output)
 
+type
+  FetchDerivedAddressDetailsTaskArg* = ref object of QObjectTaskArg
+    address: string
+
+const fetchDerivedAddressDetailsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchDerivedAddressDetailsTaskArg](argEncoded)
+  var data = %* {
+    "details": "",
+    "error": ""
+  }
+  try:
+    let response = status_go_accounts.getDerivedAddressDetails(arg.address)
+    data["details"] = response.result
+  except Exception as e:
+    let err = fmt"Error getting details for an address: {e.msg}"
+    data["error"] = %* err
+  arg.finish(data)
+
 #################################################
 # Async timer
 #################################################

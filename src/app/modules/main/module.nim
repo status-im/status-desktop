@@ -169,7 +169,7 @@ proc newModule*[T](
   result.walletSectionModule = wallet_section_module.newModule(
     result, events, tokenService,
     transactionService, collectible_service, walletAccountService,
-    settingsService, savedAddressService, networkService, accountsService
+    settingsService, savedAddressService, networkService, accountsService, keycardService
   )
   result.browserSectionModule = browser_section_module.newModule(
     result, events, bookmarkService, settingsService, networkService,
@@ -950,16 +950,17 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
   #  self.setActiveSection(item)
   #  self.browserSectionModule.openUrl(url)
 
+proc isSharedKeycardModuleFlowRunning[T](self: Module[T]): bool =
+  return not self.keycardSharedModule.isNil
+
 method getKeycardSharedModule*[T](self: Module[T]): QVariant =
-  return self.keycardSharedModule.getModuleAsVariant()
+  if self.isSharedKeycardModuleFlowRunning():
+    return self.keycardSharedModule.getModuleAsVariant()
 
 proc createSharedKeycardModule[T](self: Module[T]) =
   self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_IDENTIFIER, 
     self.events, self.keycardService, self.settingsService, self.privacyService, self.accountsService, 
     self.walletAccountService, self.keychainService)
-
-proc isSharedKeycardModuleFlowRunning[T](self: Module[T]): bool =
-  return not self.keycardSharedModule.isNil
 
 method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
   if self.isSharedKeycardModuleFlowRunning():

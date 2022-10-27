@@ -27,7 +27,8 @@ StatusModal {
     property var emojiPopup: null
 
     header.title: qsTr("Generate an account")
-    closePolicy: Popup.CloseOnEscape
+    closePolicy: nextButton.loading? Popup.NoAutoClose : Popup.CloseOnEscape
+    hasCloseButton: !nextButton.loading
 
     signal afterAddAccount()
 
@@ -45,11 +46,21 @@ StatusModal {
         onUserAuthenticationSuccess: {
             validationError.text = ""
             d.password = password
-            d.getDerivedAddressList()
+            RootStore.loggedInUserAuthenticated = true
+            if (d.selectedAccountType === SelectGeneratedAccount.AddAccountType.ImportPrivateKey) {
+                d.generateNewAccount()
+            }
+            else {
+                if (!d.selectedKeyUidMigratedToKeycard) {
+                    d.getDerivedAddressList()
+                }
+            }
         }
         onUserAuthentiactionFail: {
             d.password = ""
+            RootStore.loggedInUserAuthenticated = false
             validationError.text = qsTr("An authentication failed")
+            nextButton.loading = false
         }
     }
 
@@ -60,13 +71,24 @@ StatusModal {
         readonly property int pageNumber: 1
 
         property string password: ""
-        property int selectedAccountType: SelectGeneratedAccount.AddAccountType.GenerateNew
+        property int selectedAccountType: RootStore.defaultSelectedType
+        property string selectedAccountDerivedFromAddress: ""
+        property string selectedKeyUid: RootStore.defaultSelectedKeyUid
+        property bool selectedKeyUidMigratedToKeycard: RootStore.defaultSelectedKeyUidMigratedToKeycard
+        property string selectedPath: ""
+        property string selectedAddress: ""
+        property bool selectedAddressAvailable: true
+
         readonly property bool authenticationNeeded: d.selectedAccountType !== SelectGeneratedAccount.AddAccountType.WatchOnly &&
                                                      d.password === ""
         property string addAccountIcon: ""
 
-
-
+        property bool isLoading: RootStore.derivedAddressesLoading
+        onIsLoadingChanged:  {
+            if(!isLoading && nextButton.loading) {
+                d.generateNewAccount()
+            }
+        }
 
         function getDerivedAddressList() {
             if(d.selectedAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase
@@ -83,7 +105,6 @@ StatusModal {
 
         function generateNewAccount() {
             // TODO the loading doesn't work because the function freezes the view. Might need to use threads
-            nextButton.loading = true
             if (!advancedSelection.validate()) {
                 Global.playErrorSound()
                 return nextButton.loading = false
@@ -93,9 +114,17 @@ StatusModal {
 
             switch(d.selectedAccountType) {
             case SelectGeneratedAccount.AddAccountType.GenerateNew:
+                if (d.selectedKeyUidMigratedToKeycard) {
+                    errMessage = RootStore.addNewWalletAccountGeneratedFromKeycard(Constants.generatedWalletType,
+                                                                                   accountNameInput.text,
+                                                                                   colorSelectionGrid.selectedColor,
+                                                                                   accountNameInput.input.asset.emoji)
+                }
+                else {
                 errMessage = RootStore.generateNewAccount(d.password, accountNameInput.text, colorSelectionGrid.selectedColor,
                                                           accountNameInput.input.asset.emoji, advancedSelection.expandableItem.completePath,
                                                           advancedSelection.expandableItem.derivedFromAddress)
+                }
                 break
             case SelectGeneratedAccount.AddAccountType.ImportSeedPhrase:
                 errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, d.password,
@@ -123,9 +152,16 @@ StatusModal {
         }
 
         function nextButtonClicked() {
+            nextButton.loading = true
             if (d.authenticationNeeded) {
                 d.password = ""
-                RootStore.authenticateUser()
+                if (d.selectedKeyUidMigratedToKeycard &&
+                        d.selectedAccountType === SelectGeneratedAccount.AddAccountType.GenerateNew) {
+                    RootStore.authenticateUserAndDeriveAddressOnKeycardForPath(d.selectedKeyUid, d.selectedPath)
+                }
+                else {
+                    RootStore.authenticateUser()
+                }
             }
             else {
                 d.generateNewAccount()
@@ -134,6 +170,7 @@ StatusModal {
     }
 
     onOpened: {
+        RootStore.loggedInUserAuthenticated = false
         d.addAccountIcon = "password"
         if (RootStore.loggedInUserUsesBiometricLogin()) {
             d.addAccountIcon = "touch-id"
@@ -148,6 +185,7 @@ StatusModal {
     }
 
     onClosed: {
+        RootStore.loggedInUserAuthenticated = false
         d.password = ""
         validationError.text = ""
         accountNameInput.reset()
@@ -157,7 +195,7 @@ StatusModal {
 
     contentItem: StatusScrollView {
         id: scroll
-        width: popup.width
+        width: root.width
         topPadding: Style.current.halfPadding
         bottomPadding: Style.current.halfPadding
         leftPadding: Style.current.padding
@@ -214,6 +252,7 @@ StatusModal {
             StatusColorSelectorGrid {
                 id: colorSelectionGrid
                 anchors.horizontalCenter: parent.horizontalCenter
+                enabled: accountNameInput.valid
                 titleText: qsTr("color").toUpperCase()
             }
 
@@ -232,13 +271,24 @@ StatusModal {
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width
+                enabled: accountNameInput.valid
 
                 primaryText: qsTr("Advanced")
                 type: StatusExpandableItem.Type.Tertiary
                 expandable: true
                 expandableComponent: AdvancedAddAccountView {
                     width: parent.width
-                    onCalculateDerivedPath: d.getDerivedAddressList()
+                    enterPasswordIcon: d.addAccountIcon
+                    onCalculateDerivedPath: {
+                        if (d.selectedKeyUidMigratedToKeycard) {
+                            d.password = ""
+                            validationError.text = ""
+                            RootStore.loggedInUserAuthenticated = false
+                        }
+                        else{
+                            d.getDerivedAddressList()
+                        }
+                    }
                     onEnterPressed: {
                         if (nextButton.enabled) {
                             nextButton.clicked(null)
@@ -246,12 +296,14 @@ StatusModal {
                         }
                     }
 
-                    onAddAccountTypeChanged: {
-                        d.selectedAccountType = addAccountType
-                    }
-
                     Component.onCompleted: {
-                        d.selectedAccountType = addAccountType
+                        d.selectedAccountType = Qt.binding(() => addAccountType)
+                        d.selectedAccountDerivedFromAddress = Qt.binding(() => derivedFromAddress)
+                        d.selectedKeyUid = Qt.binding(() => selectedKeyUid)
+                        d.selectedKeyUidMigratedToKeycard = Qt.binding(() => selectedKeyUidMigratedToKeycard)
+                        d.selectedPath = Qt.binding(() => path)
+                        d.selectedAddress = Qt.binding(() => selectedAddress)
+                        d.selectedAddressAvailable = Qt.binding(() => selectedAddressAvailable)
                         advancedSelection.isValid = Qt.binding(() => isValid)
                     }
                 }
@@ -264,9 +316,6 @@ StatusModal {
             id: nextButton
 
             text: {
-                if (d.authenticationNeeded) {
-                    return qsTr("Authenticate")
-                }
                 if (loading) {
                     return qsTr("Loading...")
                 }
@@ -275,19 +324,18 @@ StatusModal {
 
 
             enabled: {
-                if (d.authenticationNeeded) {
-                    return true
+                if (!accountNameInput.valid) {
+                    return false
                 }
                 if (loading) {
                     return false
                 }
-                return accountNameInput.text !== "" && advancedSelection.isValid
+                return advancedSelection.isValid
             }
 
             icon.name: d.authenticationNeeded? d.addAccountIcon : ""
             highlighted: focus
 
-            Keys.onReturnPressed: d.nextButtonClicked()
             onClicked : d.nextButtonClicked()
         }
     ]

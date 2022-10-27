@@ -17,6 +17,11 @@ ColumnLayout {
     id: advancedSection
 
     property int addAccountType: SelectGeneratedAccount.AddAccountType.GenerateNew
+    property string selectedKeyUid: RootStore.defaultSelectedKeyUid
+    property bool selectedKeyUidMigratedToKeycard: RootStore.defaultSelectedKeyUidMigratedToKeycard
+    property string selectedAddress: ""
+    property bool selectedAddressAvailable: true
+    property string enterPasswordIcon: ""
     property string derivedFromAddress: ""
     property string mnemonicText: ""
     property alias privateKey: importPrivateKeyPanel.text
@@ -100,6 +105,8 @@ ColumnLayout {
         Component.onCompleted: {
             advancedSection.addAccountType = Qt.binding(function() {return addAccountType})
             advancedSection.derivedFromAddress = Qt.binding(function() {return derivedFromAddress})
+            advancedSection.selectedKeyUid = Qt.binding(function() {return selectedKeyUid})
+            advancedSection.selectedKeyUidMigratedToKeycard = Qt.binding(function() {return selectedKeyUidMigratedToKeycard})
         }
     }
 
@@ -155,7 +162,18 @@ ColumnLayout {
             id: derivedAddressesPanel
             Layout.preferredWidth: ((parent.width - (Style.current.bigPadding/2))/2)
             Layout.alignment: Qt.AlignTop
-            Component.onCompleted: advancedSection.pathSubFix = Qt.binding(function() { return derivedAddressesPanel.pathSubFix})
+
+            selectedAccountType: advancedSection.addAccountType
+            selectedKeyUid: advancedSection.selectedKeyUid
+            selectedKeyUidMigratedToKeycard: advancedSection.selectedKeyUidMigratedToKeycard
+            selectedPath: advancedSection.path
+            enterPasswordIcon: advancedSection.enterPasswordIcon
+
+            Component.onCompleted: {
+                advancedSection.selectedAddress = Qt.binding(function() { return derivedAddressesPanel.selectedAddress})
+                advancedSection.selectedAddressAvailable = Qt.binding(function() { return derivedAddressesPanel.selectedAddressAvailable})
+                advancedSection.pathSubFix = Qt.binding(function() { return derivedAddressesPanel.pathSubFix})
+            }
         }
     }
 }

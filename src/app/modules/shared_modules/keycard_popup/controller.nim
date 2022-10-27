@@ -81,6 +81,9 @@ proc newController*(delegate: io_interface.AccessInterface,
 proc serviceApplicable[T](service: T): bool =
   if not service.isNil:
     return true
+  when (service is keycard_service.Service):
+    error "KeycardService is mandatory for using shared keycard popup module"
+    return
   var serviceName = ""
   when (service is wallet_account_service.Service):
     serviceName = "WalletAccountService"
@@ -88,7 +91,11 @@ proc serviceApplicable[T](service: T): bool =
     serviceName = "PrivacyService"
   when (service is settings_service.Service):
     serviceName = "SettingsService"
-  debug "service doesn't meant to be used from the context it's used, check the context shared popup module is used", service=serviceName
+  when (service is accounts_service.Service):
+    serviceName = "AccountsService"
+  when (service is keychain_service.Service):
+    serviceName = "KeychainService"
+  debug "service is not set, check the context shared keycard popup module is used", service=serviceName
 
 proc disconnectKeycardReponseSignal(self: Controller) =
   self.events.disconnect(self.connectionKeycardResponse)
@@ -130,7 +137,7 @@ proc init*(self: Controller) =
     if args.uniqueIdentifier != self.uniqueIdentifier:
       return
     self.connectKeycardReponseSignal()
-    self.delegate.onUserAuthenticated(args.password)
+    self.delegate.onUserAuthenticated(args.password, args.pin)
   self.connectionIds.add(handlerId)
 
 proc getKeycardData*(self: Controller): string =
@@ -259,31 +266,47 @@ proc getSeedPhraseLength*(self: Controller): int =
   return self.tmpSeedPhraseLength
 
 proc validSeedPhrase*(self: Controller, seedPhrase: string): bool =
+  if not serviceApplicable(self.accountsService):
+    return
   let err = self.accountsService.validateMnemonic(seedPhrase)
   return err.len == 0
 
 proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =
+  if not serviceApplicable(self.accountsService):
+    return
   let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)
   return acc.keyUid
 
 proc seedPhraseRefersToSelectedKeyPair*(self: Controller, seedPhrase: string): bool =
+  if not serviceApplicable(self.accountsService):
+    return
   let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)
   return acc.keyUid == self.tmpSelectedKeyPairDto.keyUid
 
 proc verifyPassword*(self: Controller, password: string): bool =
+  if not serviceApplicable(self.accountsService):
+    return
   return self.accountsService.verifyPassword(password)
 
 proc convertSelectedKeyPairToKeycardAccount*(self: Controller, password: string): bool =
+  if not serviceApplicable(self.accountsService):
+    return
   singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
   return self.accountsService.convertToKeycardAccount(self.tmpSelectedKeyPairDto.keyUid, password)
 
 proc getLoggedInAccount*(self: Controller): AccountDto =
+  if not serviceApplicable(self.accountsService):
+    return
   return self.accountsService.getLoggedInAccount()
 
 proc getCurrentKeycardServiceFlow*(self: Controller): keycard_service.KCSFlowType =
+  if not serviceApplicable(self.keycardService):
+    return
   return self.keycardService.getCurrentFlow()
 
 proc getLastReceivedKeycardData*(self: Controller): tuple[flowType: string, flowEvent: KeycardEvent] =
+  if not serviceApplicable(self.keycardService):
+    return
   return self.keycardService.getLastReceivedKeycardData()
 
 proc getMetadataFromKeycard*(self: Controller): CardMetadata =
@@ -297,40 +320,71 @@ proc setMetadataFromKeycard*(self: Controller, cardMetadata: CardMetadata, updat
 proc setNamePropForKeyPairStoredOnKeycard*(self: Controller, name: string) =
   self.delegate.setNamePropForKeyPairStoredOnKeycard(name)
 
+proc notifyAboutGeneratedWalletAccount*(self: Controller, generatedWalletAccount: GeneratedWalletAccount, derivedFrom: string) =
+  let data = SharedKeycarModuleUserAuthenticatedAndWalletAddressGeneratedArgs(uniqueIdentifier: self.uniqueIdentifier,
+    address: generatedWalletAccount.address,
+    publicKey: generatedWalletAccount.publicKey,
+    derivedFrom: derivedFrom,
+    password: self.getPassword()
+  )
+  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED_AND_WALLET_ADDRESS_GENERATED, data)
+
 proc runSharedModuleFlow*(self: Controller, flowToRun: FlowType) =
   self.delegate.runFlow(flowToRun)
 
 proc cancelCurrentFlow*(self: Controller) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.keycardService.cancelCurrentFlow()
   # in most cases we're running another flow after canceling the current one, 
   # this way we're giving to the keycard some time to cancel the current flow 
   sleep(200)
 
 proc runGetAppInfoFlow*(self: Controller, factoryReset = false) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.cancelCurrentFlow()
   self.keycardService.startGetAppInfoFlow(factoryReset)
 
 proc runGetMetadataFlow*(self: Controller, resolveAddress = false) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.cancelCurrentFlow()
   self.keycardService.startGetMetadataFlow(resolveAddress)
 
 proc runChangePinFlow*(self: Controller) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.cancelCurrentFlow()
   self.keycardService.startChangePinFlow()
 
 proc runChangePukFlow*(self: Controller) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.cancelCurrentFlow()
   self.keycardService.startChangePukFlow()
 
 proc runChangePairingFlow*(self: Controller) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.cancelCurrentFlow()
   self.keycardService.startChangePairingFlow()
 
 proc runStoreMetadataFlow*(self: Controller, cardName: string, pin: string, walletPaths: seq[string]) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.cancelCurrentFlow()
   self.keycardService.startStoreMetadataFlow(cardName, pin, walletPaths)
 
+proc runDeriveAccountFlow*(self: Controller, bip44Path = "", pin = "") =
+  if not serviceApplicable(self.keycardService):
+    return
+  self.cancelCurrentFlow()
+  self.keycardService.startExportPublicFlow(bip44Path, exportMasterAddr=true, exportPrivateAddr=false, pin)
+
 proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", puk = "", factoryReset = false) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.cancelCurrentFlow()
   self.keycardService.startLoadAccountFlow(seedPhraseLength, seedPhrase, puk, factoryReset)
 
@@ -338,6 +392,8 @@ proc runSignFlow*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
   ## For signing a transaction  we need to provide a key uid of a keypair that an account we want to sign a transaction 
   ## for belongs to. If we're just doing an authentication for a logged in user, then default key uid is always the key 
   ## uid of the logged in user.
+  if not serviceApplicable(self.keycardService):
+    return
   self.tmpKeyUidWhichIsBeingAuthenticating = keyUid
   if self.tmpKeyUidWhichIsBeingAuthenticating.len == 0:
     self.tmpKeyUidWhichIsBeingAuthenticating = singletonInstance.userProfile.getKeyUid()
@@ -345,6 +401,8 @@ proc runSignFlow*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
   self.keycardService.startSignFlow(bip44Path, txHash)
 
 proc resumeCurrentFlowLater*(self: Controller) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.keycardService.resumeCurrentFlowLater()
 
 proc readyToDisplayPopup*(self: Controller) =
@@ -357,16 +415,18 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
   var data = SharedKeycarModuleFlowTerminatedArgs(uniqueIdentifier: self.uniqueIdentifier,
     lastStepInTheCurrentFlow: lastStepInTheCurrentFlow)
   if lastStepInTheCurrentFlow:
-    data.password = self.tmpPassword
+    data.password = self.getPassword()
+    data.pin = self.getPin()
     data.keyUid = flowEvent.keyUid
     data.txR = flowEvent.txSignature.r
     data.txS = flowEvent.txSignature.s
     data.txV = flowEvent.txSignature.v
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED, data)
 
-proc authenticateUser*(self: Controller) =
+proc authenticateUser*(self: Controller, keyUid = "") =
   self.disconnectKeycardReponseSignal()
-  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: self.uniqueIdentifier)
+  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: self.uniqueIdentifier,
+    keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
@@ -429,24 +489,38 @@ proc getSigningPhrase*(self: Controller): string =
   return self.settingsService.getSigningPhrase()
 
 proc enterKeycardPin*(self: Controller, pin: string) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.keycardService.enterPin(pin)
 
 proc enterKeycardPuk*(self: Controller, puk: string) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.keycardService.enterPuk(puk)
 
 proc storePinToKeycard*(self: Controller, pin: string, puk: string) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.keycardService.storePin(pin, puk)
 
 proc storePukToKeycard*(self: Controller, puk: string) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.keycardService.storePuk(puk)
 
 proc storePairingCodeToKeycard*(self: Controller, pairingCode: string) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.keycardService.storePairingCode(pairingCode)
 
 proc storeSeedPhraseToKeycard*(self: Controller, seedPhraseLength: int, seedPhrase: string) =
+  if not serviceApplicable(self.keycardService):
+    return
   self.keycardService.storeSeedPhrase(seedPhraseLength, seedPhrase)
 
 proc generateRandomPUK*(self: Controller): string =
+  if not serviceApplicable(self.keycardService):
+    return
   return self.keycardService.generateRandomPUK()
 
 proc isMnemonicBackedUp*(self: Controller): bool =
@@ -470,11 +544,15 @@ proc getMnemonicWordAtIndex*(self: Controller, index: int): string =
   return self.privacyService.getMnemonicWordAtIndex(index)
 
 proc tryToObtainDataFromKeychain*(self: Controller) =
+  if not serviceApplicable(self.keychainService):
+    return
   if(not singletonInstance.userProfile.getUsingBiometricLogin()):
     return
   let loggedInAccount = self.getLoggedInAccount()
   self.keychainService.tryToObtainData(loggedInAccount.name)
 
 proc tryToStoreDataToKeychain*(self: Controller, password: string) =
+  if not serviceApplicable(self.keychainService):
+    return
   let loggedInAccount = self.getLoggedInAccount()
   self.keychainService.storeData(loggedInAccount.name, password)

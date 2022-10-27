@@ -16,7 +16,9 @@ type
     Assets,
     Emoji,
     DerivedFrom,
-    RelatedAccounts
+    RelatedAccounts,
+    KeyUid,
+    MigratedToKeycard
 
 QtObject:
   type
@@ -64,7 +66,9 @@ QtObject:
       ModelRole.CurrencyBalance.int:"currencyBalance",
       ModelRole.Emoji.int: "emoji",
       ModelRole.DerivedFrom.int: "derivedfrom",
-      ModelRole.RelatedAccounts.int: "relatedAccounts"
+      ModelRole.RelatedAccounts.int: "relatedAccounts",
+      ModelRole.KeyUid.int: "keyUid",
+      ModelRole.MigratedToKeycard.int: "migratedToKeycard"
     }.toTable
 
 
@@ -111,6 +115,10 @@ QtObject:
       result = newQVariant(item.getDerivedFrom())
     of ModelRole.RelatedAccounts:
       result = newQVariant(item.getRelatedAccounts())
+    of ModelRole.KeyUid:
+      result = newQVariant(item.getKeyUid())
+    of ModelRole.MigratedToKeycard:
+      result = newQVariant(item.getMigratedToKeycard())
 
   proc getAccountNameByAddress*(self: Model, address: string): string =
     for account in self.items:
