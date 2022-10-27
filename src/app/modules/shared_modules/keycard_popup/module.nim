@@ -19,6 +19,12 @@ export io_interface
 logScope:
   topics = "keycard-popup-module"
 
+type DerivingAccountDetails = object
+  keyUid: string
+  path: string
+  deriveAddressAfterAuthentication: bool
+  addressRequested: bool
+
 type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
@@ -28,6 +34,7 @@ type
     initialized: bool
     tmpLocalState: State # used when flow is run, until response arrives to determine next state appropriatelly
     authenticationPopupIsAlreadyRunning: bool
+    derivingAccountDetails: DerivingAccountDetails
 
 proc newModule*[T](delegate: T,
   uniqueIdentifier: string,
@@ -47,6 +54,8 @@ proc newModule*[T](delegate: T,
     privacyService, accountsService, walletAccountService, keychainService)
   result.initialized = false
   result.authenticationPopupIsAlreadyRunning = false
+  result.derivingAccountDetails.deriveAddressAfterAuthentication = false
+  result.derivingAccountDetails.addressRequested = false
 
 ## Forward declaration
 proc updateKeyPairItemIfDataAreKnown[T](self: Module[T], address: string, item: var KeyPairItem): bool
@@ -207,6 +216,13 @@ method onTertiaryActionClicked*[T](self: Module[T]) =
   debug "sm_tertiary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
 
 method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEvent: KeycardEvent) =
+  if self.derivingAccountDetails.deriveAddressAfterAuthentication and
+    self.derivingAccountDetails.addressRequested:
+      # clearing...
+      self.derivingAccountDetails = DerivingAccountDetails()
+      # notify about generated address
+      self.controller.notifyAboutGeneratedWalletAccount(keycardEvent.generatedWalletAccount, keycardEvent.masterKeyAddress)
+      return
   ## Check local state first, in case postponed flow is run
   if not self.tmpLocalState.isNil:
     let nextState = self.tmpLocalState.resolveKeycardNextState(keycardFlowType, keycardEvent, self.controller)
@@ -239,14 +255,6 @@ proc buildKeyPairsList[T](self: Module[T], excludeAlreadyMigratedPairs: bool): s
       if kp.keyUid == keyUid:
         return true
 
-  let findItemByDerivedFromAddress = proc(items: seq[KeyPairItem], address: string): KeyPairItem =
-    if address.len == 0:
-      return nil
-    for i in 0 ..< items.len:
-      if(items[i].derivedFrom == address):
-        return items[i]
-    return nil
-
   let countOfKeyPairsForType = proc(items: seq[KeyPairItem], keyPairType: KeyPairType): int =
     result = 0
     for i in 0 ..< items.len:
@@ -258,50 +266,52 @@ proc buildKeyPairsList[T](self: Module[T], excludeAlreadyMigratedPairs: bool): s
   for a in accounts:
     if a.isChat or a.walletType == WalletTypeWatch or (excludeAlreadyMigratedPairs and keyPairMigrated(a.keyUid)):
       continue
-    var item = findItemByDerivedFromAddress(items, a.derivedfrom)
-    if a.walletType == WalletTypeDefaultStatusAccount or a.walletType == WalletTypeGenerated:
-      if item.isNil:
-        item = initKeyPairItem(pubKey = a.publicKey,
-          keyUid = a.keyUid,
-          locked = false,
-          name = singletonInstance.userProfile.getName(),
-          image = singletonInstance.userProfile.getIcon(),
-          icon = "",
-          pairType = KeyPairType.Profile,
-          derivedFrom = a.derivedfrom)
-        items.insert(item, 0) # Status Account must be at first place
-      var icon = ""
-      if a.walletType == WalletTypeDefaultStatusAccount:
-        icon = "wallet"
-      items[0].addAccount(a.name, a.path, a.address, a.emoji, a.color, icon, balance = 0.0)
+    if a.walletType == WalletTypeDefaultStatusAccount:
+      var item = initKeyPairItem(pubKey = a.publicKey,
+        keyUid = a.keyUid,
+        locked = false,
+        name = singletonInstance.userProfile.getName(),
+        image = singletonInstance.userProfile.getIcon(),
+        icon = "wallet",
+        pairType = KeyPairType.Profile,
+        derivedFrom = a.derivedfrom)
+      for ga in accounts:
+        if cmpIgnoreCase(ga.derivedfrom, a.derivedfrom) != 0:
+          continue
+        var icon = ""
+        if a.walletType == WalletTypeDefaultStatusAccount:
+          icon = "wallet"
+        item.addAccount(ga.name, ga.path, ga.address, ga.emoji, ga.color, icon, balance = 0.0)
+      items.insert(item, 0) # Status Account must be at first place
       continue
     if a.walletType == WalletTypeSeed:
       let diffImports = countOfKeyPairsForType(items, KeyPairType.SeedImport)
-      if item.isNil:
-        item = initKeyPairItem(pubKey = a.publicKey,
-          keyUid = a.keyUid,
-          locked = false,
-          name = "Seed Phrase " & $(diffImports + 1), # string created here should be transalted, but so far it's like it is
-          image = "",
-          icon = "key_pair_seed_phrase",
-          pairType = KeyPairType.SeedImport,
-          derivedFrom = a.derivedfrom)
-        items.add(item)
-      item.addAccount(a.name, a.path, a.address, a.emoji, a.color, icon = "", balance = 0.0)
+      var item = initKeyPairItem(pubKey = a.publicKey,
+        keyUid = a.keyUid,
+        locked = false,
+        name = "Seed Phrase " & $(diffImports + 1), # string created here should be transalted, but so far it's like it is
+        image = "",
+        icon = "key_pair_seed_phrase",
+        pairType = KeyPairType.SeedImport,
+        derivedFrom = a.derivedfrom)
+      for ga in accounts:
+        if cmpIgnoreCase(ga.derivedfrom, a.derivedfrom) != 0:
+          continue
+        item.addAccount(ga.name, ga.path, ga.address, ga.emoji, ga.color, icon = "", balance = 0.0)
+      items.add(item)
       continue
     if a.walletType == WalletTypeKey:
       let diffImports = countOfKeyPairsForType(items, KeyPairType.PrivateKeyImport)
-      if item.isNil:
-        item = initKeyPairItem(pubKey = a.publicKey,
-          keyUid = a.keyUid,
-          locked = false,
-          name = "Key " & $(diffImports + 1), # string created here should be transalted, but so far it's like it is
-          image = "",
-          icon = "key_pair_private_key",
-          pairType = KeyPairType.PrivateKeyImport,
-          derivedFrom = a.derivedfrom)
-        items.add(item)
+      var item = initKeyPairItem(pubKey = a.publicKey,
+        keyUid = a.keyUid,
+        locked = false,
+        name = "Key " & $(diffImports + 1), # string created here should be transalted, but so far it's like it is
+        image = "",
+        icon = "key_pair_private_key",
+        pairType = KeyPairType.PrivateKeyImport,
+        derivedFrom = a.derivedfrom)
       item.addAccount(a.name, a.path, a.address, a.emoji, a.color, icon = "", balance = 0.0)
+      items.add(item)
       continue
   if items.len == 0:
     debug "sm_there is no any key pair for the logged in user that is not already migrated to a keycard"
@@ -409,6 +419,15 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runChangePairingFlow()
     return
+  if flowToRun == FlowType.AuthenticateAndDeriveAccountAddress:
+    self.derivingAccountDetails = DerivingAccountDetails(
+      keyUid: keyUid,
+      path: bip44Path,
+      deriveAddressAfterAuthentication: true,
+      addressRequested: false
+    )
+    self.controller.authenticateUser(keyUid)
+    return
 
 method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =
   var paths: seq[string]
@@ -463,7 +482,12 @@ method setKeyPairStoredOnKeycard*[T](self: Module[T], cardMetadata: CardMetadata
 method setNamePropForKeyPairStoredOnKeycard*[T](self: Module[T], name: string) =
   self.view.setNamePropForKeyPairStoredOnKeycard(name)
   
-method onUserAuthenticated*[T](self: Module[T], password: string) =
+method onUserAuthenticated*[T](self: Module[T], password: string, pin: string) =
+  if self.derivingAccountDetails.deriveAddressAfterAuthentication:
+    self.derivingAccountDetails.addressRequested = true
+    self.controller.setPassword(password)
+    self.controller.runDeriveAccountFlow(self.derivingAccountDetails.path, pin)
+    return
   let currStateObj = self.view.currentStateObj()
   if not currStateObj.isNil and currStateObj.flowType() == FlowType.SetupNewKeycard:
     self.controller.setPassword(password)

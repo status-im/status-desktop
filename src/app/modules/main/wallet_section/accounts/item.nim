@@ -17,6 +17,8 @@ type
     emoji: string
     derivedfrom: string
     relatedAccounts: compact_model.Model
+    keyUid: string
+    migratedToKeycard: bool
 
 proc initItem*(
   name: string,
@@ -31,7 +33,9 @@ proc initItem*(
   assets: token_model.Model,
   emoji: string,
   derivedfrom: string,
-  relatedAccounts: compact_model.Model
+  relatedAccounts: compact_model.Model,
+  keyUid: string,
+  migratedToKeycard: bool
 ): Item =
   result.name = name
   result.address = address
@@ -46,6 +50,8 @@ proc initItem*(
   result.emoji = emoji
   result.derivedfrom = derivedfrom
   result.relatedAccounts = relatedAccounts
+  result.keyUid = keyUid
+  result.migratedToKeycard = migratedToKeycard
 
 proc `$`*(self: Item): string =
   result = fmt"""WalletAccountItem(
@@ -62,6 +68,8 @@ proc `$`*(self: Item): string =
     emoji: {self.emoji},
     derivedfrom: {self.derivedfrom},
     relatedAccounts: {self.relatedAccounts}
+    keyUid: {self.keyUid},
+    migratedToKeycard: {self.migratedToKeycard}
     ]"""
 
 proc getName*(self: Item): string =
@@ -102,3 +110,9 @@ proc getDerivedFrom*(self: Item): string =
 
 proc getRelatedAccounts*(self: Item): compact_model.Model =
   return self.relatedAccounts
+
+proc getKeyUid*(self: Item): string =
+  return self.keyUid
+
+proc getMigratedToKeycard*(self: Item): bool =
+  return self.migratedToKeycard

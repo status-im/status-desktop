@@ -122,6 +122,14 @@ rpc(generateAccountWithDerivedPath, "accounts"):
   path: string
   derivedFrom: string
 
+rpc(generateAccountWithDerivedPathPasswordVerified, "accounts"):
+  password: string
+  name: string
+  color: string
+  emoji: string
+  path: string
+  derivedFrom: string
+
 rpc(addAccountWithMnemonicAndPath, "accounts"):
   mnemonic: string
   password: string
@@ -130,7 +138,22 @@ rpc(addAccountWithMnemonicAndPath, "accounts"):
   emoji: string
   path: string
 
+rpc(addAccountWithMnemonicAndPathPasswordVerified, "accounts"):
+  mnemonic: string
+  password: string
+  name: string
+  color: string
+  emoji: string
+  path: string
+
 rpc(addAccountWithPrivateKey, "accounts"):
+  privateKey: string
+  password: string
+  name: string
+  color: string
+  emoji: string
+
+rpc(addAccountWithPrivateKeyPasswordVerified, "accounts"):
   privateKey: string
   password: string
   name: string

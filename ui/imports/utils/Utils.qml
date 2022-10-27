@@ -735,11 +735,11 @@ QtObject {
     }
 
     function isInvalidPath(msg) {
-        return msg.includes("error parsing derivation path")
+        return msg.includes(Constants.wrongDerivationPathError)
     }
 
     function accountAlreadyExistsError(msg) {
-        return msg.includes("account already exists")
+        return msg.includes(Constants.existingAccountError)
     }
 
     // See also: backend/interpret/cropped_image.nim

@@ -333,6 +333,7 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool) =
     self.storeKeycardAccountAndLogin(storeToKeychain)
   else:
     self.delegate.moveToLoadingAppState()
+    self.delegate.storeKeyPairForNewKeycardUser()
     self.accountsService.setupAccountKeycard(self.tmpKeycardEvent)
     if storeToKeychain:
       singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_STORE)

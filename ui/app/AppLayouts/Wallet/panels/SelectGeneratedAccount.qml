@@ -14,6 +14,9 @@ StatusSelect {
 
     property int addAccountType
     property string derivedFromAddress: ""
+    property string selectedKeyUid: userProfile.keyUid
+    property bool selectedKeyUidMigratedToKeycard: userProfile.isKeycardUser
+
 
     enum AddAccountType {
         GenerateNew,
@@ -24,7 +27,9 @@ StatusSelect {
 
     function resetMe() {
         _internal.getGeneratedAccountsModel()
-        addAccountType = SelectGeneratedAccount.AddAccountType.GenerateNew
+        selectAccountType.addAccountType = SelectGeneratedAccount.AddAccountType.GenerateNew
+        selectAccountType.selectedKeyUid = userProfile.keyUid
+        selectAccountType.selectedKeyUidMigratedToKeycard = userProfile.isKeycardUser
     }
 
     Connections {
@@ -55,16 +60,17 @@ StatusSelect {
                 for (var row = 0; row < _internal.delegateModel.model.count; row++) {
                     if (_internal.delegateModel.items.count > 0) {
                         var item = _internal.delegateModel.items.get(row).model;
-                        generatedAccountsModel.append({"name": item.name, "iconName": item.iconName, "generatedModel": item.generatedModel, "derivedfrom": item.derivedfrom, "isHeader": false})
+                        generatedAccountsModel.append({"name": item.name, "iconName": item.iconName, "generatedModel": item.generatedModel, "derivedfrom": item.derivedfrom, "isHeader": false,
+                                                                              "keyUid": item.keyUid, "migratedToKeycard": item.migratedToKeycard})
                         if (row === 0 && _internal.delegateModel.model.count > 1) {
-                            generatedAccountsModel.append({"name": qsTr("Imported"), "iconName": "", "derivedfrom": "", "isHeader": true})
+                            generatedAccountsModel.append({"name": qsTr("Imported"), "iconName": "", "derivedfrom": "", "isHeader": true, "keyUid": "", "migratedToKeycard": false})
                         }
                     }
                 }
-                generatedAccountsModel.append({"name": qsTr("Add new"), "iconName": "", "derivedfrom": "", "isHeader": true})
-                generatedAccountsModel.append({"name": _internal.importSeedPhraseString, "iconName": "seed-phrase", "derivedfrom": "", "isHeader": false})
-                generatedAccountsModel.append({"name": _internal.importPrivateKeyString, "iconName": "password", "derivedfrom": "", "isHeader": false})
-                generatedAccountsModel.append({"name": _internal.addWatchOnlyAccountString, "iconName": "show", "derivedfrom": "", "isHeader": false})
+                generatedAccountsModel.append({"name": qsTr("Add new"), "iconName": "", "derivedfrom": "", "isHeader": true, "keyUid": "", "migratedToKeycard": false})
+                generatedAccountsModel.append({"name": _internal.importSeedPhraseString, "iconName": "seed-phrase", "derivedfrom": "", "isHeader": false, "keyUid": "", "migratedToKeycard": false})
+                generatedAccountsModel.append({"name": _internal.importPrivateKeyString, "iconName": "password", "derivedfrom": "", "isHeader": false, "keyUid": "", "migratedToKeycard": false})
+                generatedAccountsModel.append({"name": _internal.addWatchOnlyAccountString, "iconName": "show", "derivedfrom": "", "isHeader": false, "keyUid": "", "migratedToKeycard": false})
             }
         }
     }
@@ -120,6 +126,9 @@ StatusSelect {
             selectedItem.enabled =  !model.isHeader
 
             selectAccountType.derivedFromAddress = model.derivedfrom
+            selectAccountType.selectedKeyUid = model.keyUid
+            selectAccountType.selectedKeyUidMigratedToKeycard = model.migratedToKeycard
+
             selectMenu.close()
         }
         Component.onCompleted: {

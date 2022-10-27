@@ -6,6 +6,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 
 import utils 1.0
 
@@ -14,9 +15,17 @@ import "../stores"
 Item {
     id: derivedAddresses
 
+    property int selectedAccountType: RootStore.defaultSelectedType
+    property string selectedKeyUid: RootStore.defaultSelectedKeyUid
+    property bool selectedKeyUidMigratedToKeycard: RootStore.defaultSelectedKeyUidMigratedToKeycard
+    property string selectedPath: ""
     property string pathSubFix: ""
     property bool isLoading: RootStore.derivedAddressesLoading
     property bool pathError: Utils.isInvalidPath(RootStore.derivedAddressesError)
+    property string enterPasswordIcon: ""
+
+    property alias selectedAddress: selectedDerivedAddress.title
+    property alias selectedAddressAvailable: selectedDerivedAddress.enabled
 
     function reset() {
         RootStore.resetDerivedAddressModel()
@@ -42,6 +51,10 @@ Item {
 
     QtObject {
         id: _internal
+
+        readonly property bool showEnterPinPassButton: !RootStore.loggedInUserAuthenticated &&
+                                                       derivedAddresses.selectedAccountType !== SelectGeneratedAccount.AddAccountType.ImportSeedPhrase &&
+                                                       derivedAddresses.selectedAccountType !== SelectGeneratedAccount.AddAccountType.ImportPrivateKey
         property int pageSize: 6
         property int noOfPages: Math.ceil(RootStore.derivedAddressesList.count/pageSize)
         property int lastPageSize: RootStore.derivedAddressesList.count - ((noOfPages -1) * pageSize)
@@ -62,6 +75,13 @@ Item {
         // dimensions
         property int popupWidth: 359
         property int maxAddressWidth: 102
+
+        function runAction() {
+            if (derivedAddresses.selectedKeyUidMigratedToKeycard)
+                RootStore.authenticateUserAndDeriveAddressOnKeycardForPath(derivedAddresses.selectedKeyUid, derivedAddresses.selectedPath)
+            else
+                RootStore.authenticateUser()
+        }
     }
 
     Connections {
@@ -90,6 +110,7 @@ Item {
             property int pathSubFix: 0
             property bool hasActivity: false
             implicitWidth: parent.width
+            visible: !_internal.showEnterPinPassButton
             color: "transparent"
             border.width: 1
             border.color: Theme.palette.baseColor2
@@ -116,6 +137,17 @@ Item {
             }
             enabled: RootStore.derivedAddressesList.count > 0
             Component.onCompleted: derivedAddresses.pathSubFix = Qt.binding(function() { return pathSubFix})
+        }
+
+        StatusButton {
+            visible: _internal.showEnterPinPassButton
+            text: derivedAddresses.selectedKeyUidMigratedToKeycard || userProfile.isKeycardUser?
+                      qsTr("Enter PIN") :
+                      qsTr("Enter password")
+            icon.name: derivedAddresses.enterPasswordIcon
+            highlighted: focus
+
+            onClicked: _internal.runAction()
         }
     }
 

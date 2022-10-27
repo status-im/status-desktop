@@ -14,6 +14,7 @@ import ./buy_sell_crypto/module as buy_sell_crypto_module
 
 import ../../../global/global_singleton
 import ../../../core/eventemitter
+import ../../../../app_service/service/keycard/service as keycard_service
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/transaction/service as transaction_service
 import ../../../../app_service/service/collectible/service as collectible_service
@@ -53,7 +54,8 @@ proc newModule*(
   settingsService: settings_service.Service,
   savedAddressService: saved_address_service.Service,
   networkService: network_service.Service,
-  accountsService: accounts_service.Service
+  accountsService: accounts_service.Service,
+  keycardService: keycard_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -62,7 +64,7 @@ proc newModule*(
   result.controller = newController(result, settingsService, walletAccountService, networkService)
   result.view = newView(result)
 
-  result.accountsModule = accounts_module.newModule(result, events, walletAccountService, accountsService)
+  result.accountsModule = accounts_module.newModule(result, events, keycardService, walletAccountService, accountsService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService)
   result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)

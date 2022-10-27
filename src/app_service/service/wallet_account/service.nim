@@ -32,6 +32,7 @@ const SIGNAL_WALLET_ACCOUNT_UPDATED* = "walletAccount/walletAccountUpdated"
 const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* = "walletAccount/networkEnabledUpdated"
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY* = "walletAccount/derivedAddressesReady"
 const SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT* = "walletAccount/tokensRebuilt"
+const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_DETAILS_FETCHED* = "walletAccount/derivedAddressDetailsFetched"
 
 const SIGNAL_NEW_KEYCARD_SET* = "newKeycardSet"
 const SIGNAL_KEYCARD_LOCKED* = "keycardLocked"
@@ -232,43 +233,73 @@ QtObject:
     self.buildAllTokens()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
-  proc generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string =
+  proc generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string, 
+    path: string, derivedFrom: string, skipPasswordVerification: bool): string =
     try:
-      discard backend.generateAccountWithDerivedPath(
-        hashPassword(password),
-        accountName,
-        color,
-        emoji,
-        path,
-        derivedFrom)
+      if skipPasswordVerification:
+        discard backend.generateAccountWithDerivedPathPasswordVerified(
+          hashPassword(password),
+          accountName,
+          color,
+          emoji,
+          path,
+          derivedFrom)
+      else:
+        discard backend.generateAccountWithDerivedPath(
+          hashPassword(password),
+          accountName,
+          color,
+          emoji,
+          path,
+          derivedFrom)
     except Exception as e:
       return fmt"Error generating new account: {e.msg}"
 
     self.addNewAccountToLocalStore()
 
-  proc addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string, emoji: string): string =
+  proc addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string, 
+    emoji: string, skipPasswordVerification: bool): string =
     try:
-      discard backend.addAccountWithPrivateKey(
-        privateKey,
-        hashPassword(password),
-        accountName,
-        color,
-        emoji)
+      if skipPasswordVerification:
+        discard backend.addAccountWithPrivateKeyPasswordVerified(
+          privateKey,
+          hashPassword(password),
+          accountName,
+          color,
+          emoji)
+      else:
+        discard backend.addAccountWithPrivateKey(
+          privateKey,
+          hashPassword(password),
+          accountName,
+          color,
+          emoji)
     except Exception as e:
       return fmt"Error adding account with private key: {e.msg}"
 
     self.addNewAccountToLocalStore()
 
-  proc addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string, emoji: string, path: string): string =
+  proc addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string, 
+    emoji: string, path: string, skipPasswordVerification: bool): string =
     try:
-      discard backend.addAccountWithMnemonicAndPath(
-        mnemonic,
-        hashPassword(password),
-        accountName,
-        color,
-        emoji,
-        path
-      )
+      if skipPasswordVerification:
+        discard backend.addAccountWithMnemonicAndPathPasswordVerified(
+          mnemonic,
+          hashPassword(password),
+          accountName,
+          color,
+          emoji,
+          path
+        )
+      else:
+        discard backend.addAccountWithMnemonicAndPath(
+          mnemonic,
+          hashPassword(password),
+          accountName,
+          color,
+          emoji,
+          path
+        )
     except Exception as e:
       return fmt"Error adding account with mnemonic: {e.msg}"
 
@@ -378,6 +409,27 @@ QtObject:
       derivedAddresses: derivedAddress,
       error: error
     ))
+
+  proc fetchDerivedAddressDetails*(self: Service, address: string) =
+    let arg = FetchDerivedAddressDetailsTaskArg(
+      address: address,
+      tptr: cast[ByteAddress](fetchDerivedAddressDetailsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onDerivedAddressDetailsFetched",
+    )
+    self.threadpool.start(arg)
+
+  proc onDerivedAddressDetailsFetched*(self: Service, jsonString: string) {.slot.} =
+    var data = DerivedAddressesArgs()
+    try:
+      let response = parseJson(jsonString)
+      let addrDto = response{"details"}.toDerivedAddressDto()
+      data.derivedAddresses.add(addrDto)
+      data.error = response["error"].getStr()
+    except Exception as e:
+      error "error: ", procName="getDerivedAddressDetails", errName = e.name, errDesription = e.msg
+      data.error = e.msg
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_DETAILS_FETCHED, data)
 
   proc onStartBuildingTokensTimer*(self: Service, response: string) {.slot.} =
     if ((now().toTime().toUnix() - self.timerStartTimeInSeconds) < CheckBalanceSlotExecuteIntervalInSeconds):
@@ -567,3 +619,15 @@ QtObject:
     except Exception as e:
       error "error: ", procName="deleteKeycard", errName = e.name, errDesription = e.msg
     return false
+
+  proc addWalletAccount*(self: Service, name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, accountType, 
+    color, emoji: string): string =
+    try:
+      let response = status_go_accounts.saveAccount(name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, 
+        accountType, color, emoji, walletDefaultAccount = false, chatDefaultAccount = false)
+      if not response.error.isNil:
+        return "(" & $response.error.code & ") " & response.error.message
+      self.addNewAccountToLocalStore()
+    except Exception as e:
+      error "error: ", procName="deleteKeycard", errName = e.name, errDesription = e.msg
+      return "error: " & e.msg

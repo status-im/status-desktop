@@ -1,3 +1,5 @@
+import strutils
+
 type
   KeyDetails* = object
     address*: string
@@ -14,6 +16,11 @@ type
   WalletAccount* = object
     path*: string
     address*: string
+
+  GeneratedWalletAccount* = object
+    address*: string
+    publicKey*: string
+    privateKey*: string
 
   CardMetadata* = object
     name*: string
@@ -34,6 +41,7 @@ type
     pinRetries*: int
     pukRetries*: int
     cardMetadata*: CardMetadata
+    generatedWalletAccount*: GeneratedWalletAccount
     txSignature*: TransactionSignature
     eip1581Key*: KeyDetails
     encryptionKey*: KeyDetails
@@ -41,6 +49,7 @@ type
     walletKey*: KeyDetails
     walletRootKey*: KeyDetails
     whisperKey*: KeyDetails
+    masterKeyAddress*: string
 
 proc toKeyDetails(jsonObj: JsonNode): KeyDetails =
   discard jsonObj.getProp(ResponseParamAddress, result.address)
@@ -58,6 +67,13 @@ proc toApplicationInfo(jsonObj: JsonNode): ApplicationInfo =
 proc toWalletAccount(jsonObj: JsonNode): WalletAccount =
   discard jsonObj.getProp(ResponseParamPath, result.path)
   discard jsonObj.getProp(ResponseParamAddress, result.address)
+
+proc toGeneratedWalletAccount(jsonObj: JsonNode): GeneratedWalletAccount =
+  discard jsonObj.getProp(ResponseParamAddress, result.address)
+  if jsonObj.getProp(ResponseParamPublicKey, result.publicKey) and not result.publicKey.startsWith("0x"):
+    result.publicKey = "0x" & result.publicKey
+  if jsonObj.getProp(ResponseParamPrivateKey, result.privateKey) and not result.privateKey.startsWith("0x"):
+    result.privateKey = "0x" & result.privateKey
 
 proc toCardMetadata(jsonObj: JsonNode): CardMetadata =
   discard jsonObj.getProp(ResponseParamName, result.name)
@@ -77,7 +93,8 @@ proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
   discard jsonObj.getProp(ResponseParamFreeSlots, result.freePairingSlots)
   discard jsonObj.getProp(ResponseParamPINRetries, result.pinRetries)
   discard jsonObj.getProp(ResponseParamPUKRetries, result.pukRetries)
-  if jsonObj.getProp(ResponseParamKeyUID, result.keyUid):
+  discard jsonObj.getProp(ResponseParamMasterKeyAddress, result.masterKeyAddress)
+  if jsonObj.getProp(ResponseParamKeyUID, result.keyUid) and not result.keyUid.startsWith("0x"):
     result.keyUid = "0x" & result.keyUid
 
   var obj: JsonNode
@@ -96,7 +113,7 @@ proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
   if(jsonObj.getProp(ResponseParamWalletKey, obj)):
     result.walletKey = toKeyDetails(obj)
 
-  if(jsonObj.getProp(ResponseParamWalleRootKey, obj)):
+  if(jsonObj.getProp(ResponseParamWalletRootKey, obj)):
     result.walletRootKey = toKeyDetails(obj)
 
   if(jsonObj.getProp(ResponseParamWhisperKey, obj)):
@@ -109,6 +126,9 @@ proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
 
   if(jsonObj.getProp(ResponseParamCardMeta, obj)):
     result.cardMetadata = toCardMetadata(obj)
+  
+  if(jsonObj.getProp(ResponseParamExportedKey, obj)):
+    result.generatedWalletAccount = toGeneratedWalletAccount(obj)
 
   if(jsonObj.getProp(ResponseParamTXSignature, obj)):
     result.txSignature = toTransactionSignature(obj)
