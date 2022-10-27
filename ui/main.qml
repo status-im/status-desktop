@@ -33,6 +33,7 @@ StatusWindow {
         Qt.application.displayName = qsTr("Status Desktop")
         Qt.application.organization = "Status"
         Qt.application.domain = "status.im"
+        Qt.application.version = aboutModule.getCurrentVersion()
         return Qt.application.displayName
     }
     visible: true
