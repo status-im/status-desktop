@@ -76,11 +76,18 @@ def step(context):
 @Given("the user sends a random chat message")
 def step(context):
     the_user_sends_a_random_chat_message(context)
+    
+@Given("the user saves changes")
+def step(context):
+    the_user_saves_changes()
+    
+@Given("the chat title is \"|any|\"")
+def step(context, title):
+    the_chat_title_is(title)
 
 #########################
 ### ACTIONS region:
 #########################
-
 
 @When("the user opens the chat section")
 def step(context):
@@ -155,11 +162,15 @@ def step(context, username):
 
 @When("the user saves changes")
 def step(context):
-    _statusChat.group_chat_edit_save() 
+    the_user_saves_changes()
     
 @When("the user leaves current chat")
 def step(context):
     leave_current_chat()
+    
+@When("the user leaves chat \"|any|\" by right click on it")
+def step(context, chatName: str):
+    _statusMain.leave_chat(chatName)
 
 #########################
 ### VERIFICATIONS region:
@@ -229,7 +240,7 @@ def step(context):
     
 @Then("the chat title is \"|any|\"")
 def step(context, title):
-    _statusChat.verify_chat_title(title)
+    the_chat_title_is(title)
 
 @Then("the chat color is \"|any|\"")
 def step(context, color):
@@ -268,3 +279,9 @@ def the_user_sends_a_random_chat_message(context):
 
 def leave_current_chat():
     _statusChat.leave_chat()
+    
+def the_user_saves_changes():
+    _statusChat.group_chat_edit_save()
+    
+def the_chat_title_is(title: str):
+    _statusChat.verify_chat_title(title)
