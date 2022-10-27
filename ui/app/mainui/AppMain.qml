@@ -51,6 +51,8 @@ Item {
     // set from main.qml
     property var sysPalette
 
+    signal closeProfilePopup()
+
     Connections {
         target: rootStore.mainModuleInst
 
@@ -121,6 +123,9 @@ Item {
         }
 
         onOpenProfilePopupRequested: {
+            if (Global.profilePopupOpened) {
+                appMain.closeProfilePopup()
+            }
             Global.openPopup(profilePopupComponent, {publicKey: publicKey, parentPopup: parentPopup})
             Global.profilePopupOpened = true
         }
@@ -210,12 +215,17 @@ Item {
             id: profilePopup
             profileStore: appMain.rootStore.profileSectionStore.profileStore
             contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+
             onClosed: {
                 if (profilePopup.parentPopup) {
                     profilePopup.parentPopup.close()
                 }
                 Global.profilePopupOpened = false
                 destroy()
+            }
+
+            Component.onCompleted: {
+                appMain.closeProfilePopup.connect(profilePopup.close)
             }
         }
     }
