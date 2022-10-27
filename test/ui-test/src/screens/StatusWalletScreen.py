@@ -299,7 +299,7 @@ class StatusWalletScreen:
                     found = True
                     if (tokenListItem.balance == "0" and reset < 3):
                         break
-                    
+
                     return
                 
             if not found:
