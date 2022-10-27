@@ -40,6 +40,7 @@ class MainScreenComponents(Enum):
     USERSTATUSMENU_OPEN_PROFILE_POPUP = "userContextMenu_ViewMyProfileAction"
     SPLASH_SCREEN = "splashScreen"
     TOOLBAR_BACK_BUTTON = "main_toolBar_back_button"
+    LEAVE_CHAT_MENUITEM = "leaveChatMenuItem"
 
 class ProfilePopup(Enum):
     USER_IMAGE = "ProfileHeader_userImage"
@@ -204,3 +205,11 @@ class StatusMainScreen:
     
     def click_tool_bar_back_button(self):   
         click_obj_by_name(MainScreenComponents.TOOLBAR_BACK_BUTTON.value)  
+
+    def leave_chat(self, chatName: str):
+        [loaded, chat_button] = self._find_chat(chatName)
+        if loaded:
+            right_click_obj(chat_button)
+            hover_and_click_object_by_name(MainScreenComponents.LEAVE_CHAT_MENUITEM.value)
+            
+        verify(loaded, "Trying to get chat: " + chatName)
