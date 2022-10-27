@@ -20,4 +20,5 @@ set(QML_IMPORT_PATH
 
 add_subdirectory(vendor/SortFilterProxyModel)
 add_subdirectory(sandbox)
+add_subdirectory(sanity_checker)
 add_subdirectory(tests)
