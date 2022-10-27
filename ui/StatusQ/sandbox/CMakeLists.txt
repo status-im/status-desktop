@@ -5,7 +5,7 @@ find_package(
   COMPONENTS Core Quick QuickControls2
   REQUIRED)
 
-file(GLOB_RECURSE QML_FILES "../*.qml")
+file(GLOB_RECURSE QML_FILES "../*.qml" "../qmldir")
 file(GLOB_RECURSE JS_FILES "../*.js")
 file(GLOB_RECURSE HEADERS *.h)
 if(APPLE)
