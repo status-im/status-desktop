@@ -36,6 +36,8 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	run-windows \
 	status-go \
 	status-keycard-go \
+        statusq-sanity-checker \
+        run-statusq-sanity-checker \
 	update
 
 ifeq ($(NIM_PARAMS),)
@@ -636,5 +638,11 @@ run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client.exe"
 	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe
+
+statusq-sanity-checker:
+	cmake -Bui/StatusQ/build -Sui/StatusQ && cmake --build ui/StatusQ/build --target SanityChecker
+
+run-statusq-sanity-checker: statusq-sanity-checker
+	ui/StatusQ/build/sanity_checker/SanityChecker
 
 endif # "variables.mk" was not included
