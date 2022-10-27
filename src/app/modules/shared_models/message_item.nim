@@ -134,6 +134,7 @@ proc initItem*(
 
   if ContentType.DiscordMessage == contentType:
     result.messageText = discordMessage.content
+    result.senderId = discordMessage.author.id
     result.senderDisplayName = discordMessage.author.name
     result.senderIcon = discordMessage.author.localUrl
     result.timestamp = parseInt(discordMessage.timestamp)*1000

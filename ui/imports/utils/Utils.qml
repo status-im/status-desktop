@@ -562,13 +562,13 @@ QtObject {
     }
 
     function isEnsVerified(publicKey, getVerificationRequest=true) {
-        if (!publicKey)
-            return false
+        if (publicKey === "" || !isChatKey(publicKey) )
+            return
         return getContactDetailsAsJson(publicKey, getVerificationRequest).ensVerified
     }
 
     function getEmojiHashAsJson(publicKey) {
-        if (publicKey === "") {
+        if (publicKey === "" || !isChatKey(publicKey)) {
             return ""
         }
         let jsonObj = globalUtilsInst.getEmojiHashAsJson(publicKey)
@@ -576,7 +576,7 @@ QtObject {
     }
 
     function getColorHashAsJson(publicKey, force=false, getVerificationRequest=true) {
-        if (publicKey === "")
+        if (publicKey === "" || !isChatKey(publicKey) )
             return
         if (!force && isEnsVerified(publicKey, getVerificationRequest))
             return
@@ -585,7 +585,7 @@ QtObject {
     }
 
     function colorIdForPubkey(publicKey) {
-        if (publicKey === "") {
+        if (publicKey === "" || !isChatKey(publicKey)) {
             return 0
         }
         return globalUtilsInst.getColorId(publicKey)
@@ -608,6 +608,8 @@ QtObject {
         if (publicKey === "") {
             return ""
         }
+        if (!isChatKey(publicKey))
+            return publicKey
         return globalUtilsInst.getCompressedPk(publicKey)
     }
 
