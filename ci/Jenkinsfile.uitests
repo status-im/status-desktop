@@ -57,6 +57,7 @@ pipeline {
     /* Include library in order to compile the project */
     LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/"
     INFURA_TOKEN = "cd313fedd0dd4699b194d72b5184be06"
+    GOERLI_NETWORK_RPC_URL = "http://0.0.0.0:${855 + env.EXECUTOR_NUMBER}"
   }
 
   stages {
@@ -90,13 +91,12 @@ pipeline {
             "-p 127.0.0.1:${goerli_rpc_port}:8545 -v ${goerli_db_path}:/goerli-db",
             "-e 10 -m='${mnemonic}' --chain.chainId 5 --database.dbPath /goerli-db"
           ) { c ->
-            sh "docker logs ${c.id}"
             docker.image('statusteam/status-go:v0.84.0').withRun(
               "-p 127.0.0.1:${rpc_port}:8545 -p 127.0.0.1:${geth_port}:30303/tcp -p 127.0.0.1:${geth_port}:30303/udp -v ${env.WORKSPACE}/ci/mailserver/config.json:/config.json",
               "-log=INFO -log-without-color -c=/config.json -dir=/tmp"
             ) { c2 ->
               env.PEER_ENR = sh(script:"RPC_PORT=${rpc_port} MAILSERVER_PORT=${geth_port} ${env.WORKSPACE}/ci/mailserver/get_enode.sh", returnStdout:true).trim()
-              withEnv(["TEST_PEER_ENR=${env.PEER_ENR}", "GOERLI_NETWORK_RPC_URL=http://0.0.0.0:${goerli_rpc_port}"]){
+              withEnv(["TEST_PEER_ENR=${env.PEER_ENR}"]){
                 wrap([
                   $class: 'Xvfb',
                   autoDisplayName: true,
@@ -109,22 +109,22 @@ pipeline {
                         --retry
                         2
 
-                      --tags
-                      ~mayfail
-                      
-                      --tags
-                      ~merge
+                        --tags
+                        ~mayfail
+                        
+                        --tags
+                        ~merge
 
-                      --tags
-                      ~relyon-mailserver
-                      
-                      --config
-                      addAUT
-                      nim_status_client
-                      ${WORKSPACE}/bin
-                    ''',
-                    squishPackageName: 'squish-6.7.2-qt514x-linux64',
-                    testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
+                        --tags
+                        ~relyon-mailserver
+                        
+                        --config
+                        addAUT
+                        nim_status_client
+                        ${WORKSPACE}/bin
+                      ''',
+                      squishPackageName: 'squish-6.7.2-qt514x-linux64',
+                      testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
                     ])
                     echo res
                     if ( res == "SUCCESS" || res == "UNSTABLE" ) {
@@ -135,6 +135,7 @@ pipeline {
                 }
               }
             }
+            sh "docker logs ${c.id}"
           }
         }
       }
