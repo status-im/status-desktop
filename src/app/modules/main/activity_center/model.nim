@@ -17,6 +17,7 @@ type
     Accepted
     Author
     RepliedMessage
+    ChatType
 
 QtObject:
   type
@@ -70,23 +71,24 @@ QtObject:
     if index.row < 0 or index.row >= self.activityCenterNotifications.len:
       return
 
-    let acitivityNotificationItem = self.activityCenterNotifications[index.row]
+    let activityNotificationItem = self.activityCenterNotifications[index.row]
     let communityItemRole = role.NotifRoles
     case communityItemRole:
-      of NotifRoles.Id: result = newQVariant(acitivityNotificationItem.id)
-      of NotifRoles.ChatId: result = newQVariant(acitivityNotificationItem.chatId)
-      of NotifRoles.CommunityId: result = newQVariant(acitivityNotificationItem.communityId)
-      of NotifRoles.MembershipStatus: result = newQVariant(acitivityNotificationItem.membershipStatus.int)
-      of NotifRoles.SectionId: result = newQVariant(acitivityNotificationItem.sectionId)
-      of NotifRoles.Name: result = newQVariant(acitivityNotificationItem.name)
-      of NotifRoles.Author: result = newQVariant(acitivityNotificationItem.author)
-      of NotifRoles.NotificationType: result = newQVariant(acitivityNotificationItem.notificationType.int)
-      of NotifRoles.Message: result = newQVariant(acitivityNotificationItem.messageItem)
-      of NotifRoles.Timestamp: result = newQVariant(acitivityNotificationItem.timestamp)
-      of NotifRoles.Read: result = newQVariant(acitivityNotificationItem.read.bool)
-      of NotifRoles.Dismissed: result = newQVariant(acitivityNotificationItem.dismissed.bool)
-      of NotifRoles.Accepted: result = newQVariant(acitivityNotificationItem.accepted.bool)
-      of NotifRoles.RepliedMessage: result = newQVariant(acitivityNotificationItem.repliedMessageItem)
+      of NotifRoles.Id: result = newQVariant(activityNotificationItem.id)
+      of NotifRoles.ChatId: result = newQVariant(activityNotificationItem.chatId)
+      of NotifRoles.CommunityId: result = newQVariant(activityNotificationItem.communityId)
+      of NotifRoles.MembershipStatus: result = newQVariant(activityNotificationItem.membershipStatus.int)
+      of NotifRoles.SectionId: result = newQVariant(activityNotificationItem.sectionId)
+      of NotifRoles.Name: result = newQVariant(activityNotificationItem.name)
+      of NotifRoles.Author: result = newQVariant(activityNotificationItem.author)
+      of NotifRoles.NotificationType: result = newQVariant(activityNotificationItem.notificationType.int)
+      of NotifRoles.Message: result = newQVariant(activityNotificationItem.messageItem)
+      of NotifRoles.Timestamp: result = newQVariant(activityNotificationItem.timestamp)
+      of NotifRoles.Read: result = newQVariant(activityNotificationItem.read.bool)
+      of NotifRoles.Dismissed: result = newQVariant(activityNotificationItem.dismissed.bool)
+      of NotifRoles.Accepted: result = newQVariant(activityNotificationItem.accepted.bool)
+      of NotifRoles.RepliedMessage: result = newQVariant(activityNotificationItem.repliedMessageItem)
+      of NotifRoles.ChatType: result = newQVariant(activityNotificationItem.chatType.int)
 
   proc getNotificationData(self: Model, index: int, data: string): string {.slot.} =
     if index < 0 or index >= self.activityCenterNotifications.len: return ("")
@@ -105,6 +107,7 @@ QtObject:
     of "read": result = $(notif.read)
     of "dismissed": result = $(notif.dismissed)
     of "accepted": result = $(notif.accepted)
+    of "chatType": result = $(notif.chatType)
     else: result = ("")
 
   method roleNames(self: Model): Table[int, string] =
@@ -122,7 +125,8 @@ QtObject:
       NotifRoles.Read.int: "read",
       NotifRoles.Dismissed.int: "dismissed",
       NotifRoles.Accepted.int: "accepted",
-      NotifRoles.RepliedMessage.int: "repliedMessage"
+      NotifRoles.RepliedMessage.int: "repliedMessage",
+      NotifRoles.ChatType.int: "chatType"
     }.toTable
 
   proc markActivityCenterNotificationUnread*(self: Model, notificationId: string) =

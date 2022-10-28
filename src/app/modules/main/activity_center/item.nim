@@ -1,6 +1,7 @@
 import strformat, stint
 import ../../shared_models/message_item_qobject
 import ../../../../app_service/service/activity_center/dto/notification
+import ../../../../app_service/service/chat/dto/chat
 
 const CONTACT_REQUEST_PENDING_STATE = 1
 
@@ -19,6 +20,7 @@ type Item* = ref object
   accepted: bool
   messageItem: MessageItem
   repliedMessageItem: MessageItem
+  chatType: ChatType
 
 proc initItem*(
   id: string,
@@ -34,7 +36,8 @@ proc initItem*(
   dismissed: bool,
   accepted: bool,
   messageItem: MessageItem,
-  repliedMessageItem: MessageItem
+  repliedMessageItem: MessageItem,
+  chatType: ChatType
 ): Item =
   result = Item()
   result.id = id
@@ -51,6 +54,7 @@ proc initItem*(
   result.accepted = accepted
   result.messageItem = messageItem
   result.repliedMessageItem = repliedMessageItem
+  result.chatType = chatType
 
 proc `$`*(self: Item): string =
   result = fmt"""StickerItem(
@@ -81,6 +85,10 @@ proc author*(self: Item): string =
 
 proc chatId*(self: Item): string =
   return self.chatId
+
+
+proc chatType*(self: Item): ChatType =
+  return self.chatType
 
 proc communityId*(self: Item): string =
   return self.communityId

@@ -13,7 +13,17 @@ import "../controls"
 ActivityNotificationMessage {
     id: root
 
-    badgeComponent: notification.message.communityId ? communityBadgeComponent : notification.chatId ? groupChatBadgeComponent : null
+    badgeComponent: {
+        switch (notification.chatType)
+        {
+        case Constants.chatType.communityChat:
+            return communityBadgeComponent
+        case Constants.chatType.privateGroupChat:
+            return groupChatBadgeComponent
+        default:
+            return null
+        }
+    }
 
     Component {
         id: communityBadgeComponent
@@ -22,14 +32,12 @@ ActivityNotificationMessage {
             id: communityBadge
 
             property var community: root.store.getCommunityDetailsAsJson(notification.message.communityId)
-            // TODO: here i need chanel
-            // property var channel: root.store.getItemAsJson(notification.chatId)
+            property var channel: root.store.getChatDetails(notification.chatId)
 
             communityName: community.name
             communityImage: community.image
             communityColor: community.color
-
-            // channelName: channel.name
+            channelName: channel.name
 
             onCommunityNameClicked: {
                 root.store.setActiveCommunity(notification.message.communityId)
@@ -45,10 +53,14 @@ ActivityNotificationMessage {
         id: groupChatBadgeComponent
 
         ChannelBadge {
-            realChatType: root.realChatType
-            textColor: Utils.colorForPubkey(notification.message.senderId)
-            name: root.name
-            profileImage: Global.getProfileImage(notification.message.chatId)
+            property var group: root.store.getChatDetails(notification.chatId)
+
+            chatType: notification.chatType
+            name: group.name
+            asset.isImage: asset.name != ""
+            asset.name: group.icon
+            asset.emoji: group.emoji
+            asset.color: group.color
         }
     }
 }

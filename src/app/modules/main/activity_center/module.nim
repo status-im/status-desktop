@@ -138,7 +138,8 @@ method convertToItems*(
         n.dismissed,
         n.accepted,
         messageItem,
-        repliedMessageItem
+        repliedMessageItem,
+        chatDetails.chatType
       )
     )
 
@@ -247,3 +248,12 @@ method getDetails*(self: Module, sectionId: string, chatId: string): string =
       jsonObject["cColor"] = %* c.color
       jsonObject["cEmoji"] = %* c.emoji
       return $jsonObject
+
+method getChatDetailsAsJson*(self: Module, chatId: string): string =
+  let chatDto = self.controller.getChatDetails(chatId)
+  var jsonObject = newJObject()
+  jsonObject["name"] = %* chatDto.name
+  jsonObject["icon"] = %* chatDto.icon
+  jsonObject["color"] = %* chatDto.color
+  jsonObject["emoji"] = %* chatDto.emoji
+  return $jsonObject

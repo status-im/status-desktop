@@ -348,13 +348,23 @@ QtObject {
     }
 
     function getCommunityDetailsAsJson(id) {
-        let jsonObj = communitiesModuleInst.getCommunityDetails(id)
+        const jsonObj = communitiesModuleInst.getCommunityDetails(id)
         try {
-            let obj = JSON.parse(jsonObj)
-            return obj
+            return JSON.parse(jsonObj)
         }
         catch (e) {
             console.warn("error parsing community by id: ", id, " error: ", e.message)
+            return {}
+        }
+    }
+
+    function getChatDetails(id) {
+        const jsonObj = activityCenterModule.getChatDetailsAsJson(id)
+        try {
+            return JSON.parse(jsonObj)
+        }
+        catch (e) {
+            console.warn("error parsing chat by id: ", id, " error: ", e.message)
             return {}
         }
     }
