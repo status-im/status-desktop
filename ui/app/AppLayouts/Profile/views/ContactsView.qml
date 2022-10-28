@@ -25,14 +25,12 @@ SettingsContentBase {
     property alias searchStr: searchBox.text
     property bool isPending: false
 
-    headerComponents: [
-        StatusButton {
-            text: qsTr("Send contact request to chat key")
-            onClicked: {
-                sendContactRequest.open()
-            }
+    titleRowComponentLoader.sourceComponent: StatusButton {
+        text: qsTr("Send contact request to chat key")
+        onClicked: {
+            sendContactRequest.open()
         }
-    ]
+    }
 
     function openContextMenu(publicKey, name, icon) {
         contactContextMenu.selectedUserPublicKey = publicKey
