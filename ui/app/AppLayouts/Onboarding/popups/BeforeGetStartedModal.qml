@@ -14,6 +14,8 @@ StatusDialog {
     id: root
 
     width: 480
+    topPadding: Style.current.bigPadding
+    bottomPadding: Style.current.bigPadding
     closePolicy: Popup.NoAutoClose
 
     header: StatusDialogHeader {
@@ -37,13 +39,13 @@ StatusDialog {
     contentItem: Item {
         Column {
             width: 416
-            spacing: 16
+            spacing: Style.current.padding
             anchors.centerIn: parent
 
             StatusCheckBox {
                 id: acknowledge
                 objectName: "acknowledgeCheckBox"
-                spacing: 8
+                spacing: Style.current.halfPadding
                 font.pixelSize: 15
                 width: parent.width
                 text: qsTr("I acknowledge that Status Desktop is in Beta and by using it I take the full responsibility for all risks concerning my data and funds.")

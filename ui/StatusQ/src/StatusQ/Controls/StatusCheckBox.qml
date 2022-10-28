@@ -1,16 +1,15 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import QtGraphicalEffects 1.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
-
 
 CheckBox {
     id: root
 
     property bool leftSide: true
+
+    font.family: Theme.palette.baseFont.name
 
     indicator: Rectangle {
         anchors.left: root.leftSide? parent.left : undefined
@@ -36,12 +35,13 @@ CheckBox {
 
     contentItem: StatusBaseText {
         text: root.text
-        font.pixelSize: root.font.pixelSize
+        font: root.font
         opacity: enabled ? 1.0 : 0.3
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.WordWrap
         width: parent.width
         color: Theme.palette.directColor1
+        lineHeight: 1.2
         leftPadding: root.leftSide? (!!root.text ? root.indicator.width + root.spacing
                                  : root.indicator.width) : 0
         rightPadding: !root.leftSide? (!!root.text ? root.indicator.width + root.spacing
