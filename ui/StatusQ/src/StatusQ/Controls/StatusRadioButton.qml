@@ -3,7 +3,6 @@ import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
 
 RadioButton {
     id: root
@@ -21,6 +20,8 @@ RadioButton {
         Small,
         Large
     }
+
+    font.family: Theme.palette.baseFont.name
 
     indicator: Rectangle {
         implicitWidth: root.size === StatusRadioButton.Size.Large ? 20 : 14
