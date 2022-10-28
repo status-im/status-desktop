@@ -414,12 +414,8 @@ QtObject {
         return result
     }
 
-    function isStatusDeepLink(link) {
-        return link.includes(Constants.deepLinkPrefix) || link.includes(Constants.joinStatusLink)
-    }
-
     function getLinkDataForStatusLinks(link) {
-        if (!isStatusDeepLink(link)) {
+        if (!Utils.isStatusDeepLink(link)) {
             return
         }
 

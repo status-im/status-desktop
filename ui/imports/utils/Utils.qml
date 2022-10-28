@@ -451,6 +451,10 @@ QtObject {
         return matches[0].substring(3)
     }
 
+    function isStatusDeepLink(link) {
+        return link.includes(Constants.deepLinkPrefix) || link.includes(Constants.joinStatusLink)
+    }
+
     function hasImageExtension(url) {
         return Constants.acceptedImageExtensions.some(ext => url.toLowerCase().includes(ext))
     }
@@ -602,6 +606,14 @@ QtObject {
     function colorForPubkey(publicKey) {
         const pubKeyColorId = colorIdForPubkey(publicKey)
         return colorForColorId(pubKeyColorId)
+    }
+
+    function getChatKeyFromShareLink(link) {
+        let index = link.lastIndexOf("/u/")
+        if (index === -1) {
+            return link
+        }
+        return link.substring(index + 3)
     }
 
     function getCompressedPk(publicKey) {

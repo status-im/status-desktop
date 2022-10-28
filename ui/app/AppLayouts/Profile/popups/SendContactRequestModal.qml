@@ -56,6 +56,9 @@ StatusModal {
                 return
             }
 
+            if (Utils.isStatusDeepLink(text)) {
+                text = Utils.getChatKeyFromShareLink(text)
+            }
             Qt.callLater(d.lookupContact, text);
         }
     }
