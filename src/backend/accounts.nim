@@ -134,17 +134,18 @@ proc multiAccountImportMnemonic*(mnemonic: string): RpcResponse[JsonNode] {.rais
     error "error doing rpc request", methodName = "multiAccountImportMnemonic", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc createAccountFromMnemonic*(mnemonic: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc createAccountFromMnemonicAndDeriveAccountsForPaths*(mnemonic: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* {
     "mnemonicPhrase": mnemonic,
+    "paths": paths,
     "Bip39Passphrase": ""
   }
 
   try:
-    let response = status_go.createAccountFromMnemonic($payload)
+    let response = status_go.createAccountFromMnemonicAndDeriveAccountsForPaths($payload)
     result.result = Json.decode(response, JsonNode)
   except RpcException as e:
-    error "error doing rpc request", methodName = "createAccountFromMnemonic", exception=e.msg
+    error "error doing rpc request", methodName = "createAccountFromMnemonicAndDeriveAccountsForPaths", exception=e.msg
     raise newException(RpcException, e.msg)
 
 proc deriveAccounts*(accountId: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =

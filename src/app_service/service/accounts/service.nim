@@ -21,7 +21,7 @@ export dto_generated_accounts
 logScope:
   topics = "accounts-service"
 
-const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
+const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET, PATH_ENCRYPTION]
 const ACCOUNT_ALREADY_EXISTS_ERROR =  "account already exists"
 const output_csv {.booldefine.} = false
 const KDF_ITERATIONS* {.intdefine.} = 256_000
@@ -336,18 +336,10 @@ proc addKeycardDetails(self: Service, settingsJson: var JsonNode, accountData: v
     if not accountData.isNil:
       accountData["keycard-pairing"] = kcDataObj{"key"}
 
-proc setupAccount*(self: Service, accountId, password, displayName: string, keycardUsage: bool): string =
+proc setupAccount*(self: Service, accountId, password, displayName: string): string =
   try:
     let installationId = $genUUID()
     var accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
-
-    var usedPassword = password
-    if password.len == 0:
-      # this means we're setting up an account using keycard
-      usedPassword = accountDataJson{"key-uid"}.getStr
-
-    self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr)
-
     let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
     var settingsJson = self.getAccountSettings(accountId, installationId, displayName)
     let nodeConfigJson = self.getDefaultNodeConfig(installationId)
@@ -358,15 +350,16 @@ proc setupAccount*(self: Service, accountId, password, displayName: string, keyc
       error "error: ", procName="setupAccount", errDesription = description
       return description
 
-    let hashedPassword = hashString(usedPassword)
+    self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr)
+    let hashedPassword = hashString(password)
     discard self.storeAccount(accountId, hashedPassword)
     discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
-
-    if keycardUsage:
-      self.addKeycardDetails(settingsJson, accountDataJson)
+    self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, 
+      accountDataJson,
+      subaccountDataJson, 
+      settingsJson, 
+      nodeConfigJson)
     
-    self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, accountDataJson,
-      subaccountDataJson, settingsJson, nodeConfigJson)
     self.setLocalAccountSettingsFile()
 
     if self.getLoggedInAccount.isValid():
@@ -377,16 +370,40 @@ proc setupAccount*(self: Service, accountId, password, displayName: string, keyc
     error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
     return e.msg
 
-proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) = 
+proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent, useImportedAcc: bool) = 
   try:
-    let installationId = $genUUID()
+    var keyUid = keycardData.keyUid
+    var address = keycardData.masterKey.address
+    var whisperPrivateKey = keycardData.whisperKey.privateKey
+    var whisperPublicKey = keycardData.whisperKey.publicKey
+    var whisperAddress = keycardData.whisperKey.address
+    var walletPublicKey = keycardData.walletKey.publicKey
+    var walletAddress = keycardData.walletKey.address
+    var walletRootAddress = keycardData.walletRootKey.address
+    var eip1581Address = keycardData.eip1581Key.address
+    var encryptionPublicKey = keycardData.encryptionKey.publicKey
+    if useImportedAcc:
+      keyUid = self.importedAccount.keyUid
+      address = self.importedAccount.address
+      whisperPublicKey = self.importedAccount.derivedAccounts.whisper.publicKey
+      whisperAddress = self.importedAccount.derivedAccounts.whisper.address
+      walletPublicKey = self.importedAccount.derivedAccounts.defaultWallet.publicKey
+      walletAddress = self.importedAccount.derivedAccounts.defaultWallet.address
+      walletRootAddress = self.importedAccount.derivedAccounts.walletRoot.address
+      eip1581Address = self.importedAccount.derivedAccounts.eip1581.address
+      encryptionPublicKey = self.importedAccount.derivedAccounts.encryption.publicKey
 
-    let alias = generateAliasFromPk(keycardData.whisperKey.publicKey)
+      whisperPrivateKey = self.importedAccount.derivedAccounts.whisper.privateKey
+      if whisperPrivateKey.startsWith("0x"):
+        whisperPrivateKey = whisperPrivateKey[2 .. ^1]
+
+    let installationId = $genUUID()
+    let alias = generateAliasFromPk(whisperPublicKey)
     
     let openedAccounts = self.openedAccounts()
     var displayName: string
     for acc in openedAccounts:
-      if acc.keyUid == keycardData.keyUid:
+      if acc.keyUid == keyUid:
         displayName = acc.name
         break
     if displayName.len == 0:
@@ -395,26 +412,27 @@ proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) =
     var accountDataJson = %* {
       "name": alias,
       "display-name": displayName,
-      "address": keycardData.masterKey.address,
-      "key-uid": keycardData.keyUid
+      "address": address,
+      "key-uid": keyUid,
+      "kdfIterations": KDF_ITERATIONS,
     }
 
-    self.setKeyStoreDir(keycardData.keyUid)
+    self.setKeyStoreDir(keyUid)
     let nodeConfigJson = self.getDefaultNodeConfig(installationId)
     let subaccountDataJson = %* [
       {
-        "public-key": keycardData.walletKey.publicKey,
-        "address": keycardData.walletKey.address,
+        "public-key": walletPublicKey,
+        "address": walletAddress,
         "color": "#4360df",
         "wallet": true,
         "path": PATH_DEFAULT_WALLET,
         "name": "Status account",
-        "derived-from": keycardData.masterKey.address,
+        "derived-from": address,
         "emoji": self.defaultWalletEmoji,
       },
       {
-        "public-key": keycardData.whisperKey.publicKey,
-        "address": keycardData.whisperKey.address,
+        "public-key": whisperPublicKey,
+        "address": whisperAddress,
         "name": alias,
         "path": PATH_WHISPER,
         "chat": true,
@@ -423,14 +441,14 @@ proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) =
     ]
 
     var settingsJson = %* {
-      "key-uid": keycardData.keyUid,
-      "public-key": keycardData.whisperKey.publicKey,
+      "key-uid": keyUid,
+      "public-key": whisperPublicKey,
       "name": alias,
       "display-name": "",
-      "address":  keycardData.whisperKey.address,
-      "eip1581-address":  keycardData.eip1581Key.address,
-      "dapps-address":  keycardData.walletKey.address,
-      "wallet-root-address":  keycardData.walletRootKey.address,
+      "address": whisperAddress,
+      "eip1581-address": eip1581Address,
+      "dapps-address":  walletAddress,
+      "wallet-root-address": walletRootAddress,
       "preview-privacy?": true,
       "signing-phrase": generateSigningPhrase(3),
       "log-level": $LogLevel.INFO,
@@ -443,7 +461,7 @@ proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) =
       "appearance": 0,
       "installation-id": installationId,
       "current-user-status": {
-        "publicKey": keycardData.whisperKey.publicKey,
+        "publicKey": whisperPublicKey,
         "statusType": 1,
         "clock": 0,
         "text": ""
@@ -458,10 +476,8 @@ proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) =
       error "error: ", procName="setupAccountKeycard", errDesription = description
       return
 
-    let hashedPassword = hashString(keycardData.keyUid) # using hashed keyUid as password
-
-    self.loggedInAccount = self.saveKeycardAccountAndLogin(keycardData.whisperKey.privateKey, 
-      hashedPassword, 
+    self.loggedInAccount = self.saveKeycardAccountAndLogin(chatKey = whisperPrivateKey, 
+      password = encryptionPublicKey, 
       accountDataJson, 
       subaccountDataJson, 
       settingsJson, 
@@ -470,15 +486,27 @@ proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) =
   except Exception as e:
     error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
 
-proc createAccountFromMnemonic*(self: Service, mnemonic: string): GeneratedAccountDto =
+proc createAccountFromMnemonic*(self: Service, mnemonic: string, includeEncryption = false, includeWhisper = false,
+  includeRoot = false, includeDefaultWallet = false, includeEip1581 = false): GeneratedAccountDto =
   if mnemonic.len == 0:
     error "empty mnemonic"
     return
+  var paths: seq[string]
+  if includeEncryption:
+    paths.add(PATH_ENCRYPTION)
+  if includeWhisper:
+    paths.add(PATH_WHISPER)
+  if includeRoot:
+    paths.add(PATH_WALLET_ROOT)
+  if includeDefaultWallet:
+    paths.add(PATH_DEFAULT_WALLET)
+  if includeEip1581:
+    paths.add(PATH_EIP_1581)
   try:
-    let response = status_account.createAccountFromMnemonic(mnemonic)
+    let response = status_account.createAccountFromMnemonicAndDeriveAccountsForPaths(mnemonic, paths)
     return toGeneratedAccountDto(response.result)
   except Exception as e:
-    error "error: ", procName="createAccountFromMnemonic", errName = e.name, errDesription = e.msg
+    error "error: ", procName="createAccountFromMnemonicAndDeriveAccountsForPaths", errName = e.name, errDesription = e.msg
 
 proc importMnemonic*(self: Service, mnemonic: string): string =
   if mnemonic.len == 0:
@@ -609,10 +637,8 @@ proc loginAccountKeycard*(self: Service, keycardData: KeycardEvent): string =
     var settingsJson: JsonNode
     self.addKeycardDetails(settingsJson, accountDataJson)
 
-    let hashedPassword = hashString(keycardData.keyUid) # using hashed keyUid as password
-
     let response = status_account.loginWithKeycard(keycardData.whisperKey.privateKey, 
-      hashedPassword,
+      keycardData.encryptionKey.publicKey,
       accountDataJson)
 
     var error = "response doesn't contain \"error\""
@@ -642,7 +668,7 @@ proc verifyAccountPassword*(self: Service, account: string, password: string): b
     error "error: ", procName="verifyAccountPassword", errName = e.name, errDesription = e.msg
 
 
-proc convertToKeycardAccount*(self: Service, keyUid: string, password: string): bool = 
+proc convertToKeycardAccount*(self: Service, keyUid: string, currentPassword: string, newPassword: string): bool = 
   try:
     var accountDataJson = %* {
       "name": self.getLoggedInAccount().name,
@@ -659,11 +685,9 @@ proc convertToKeycardAccount*(self: Service, keyUid: string, password: string): 
       error "error: ", procName="convertToKeycardAccount", errDesription = description
       return
 
-    let hashedCurrentPassword = hashString(password)
-    let hashedNewPassword = hashString(keyUid)
-
-    let response = status_account.convertToKeycardAccount(self.keyStoreDir, accountDataJson, settingsJson, hashedCurrentPassword, 
-    hashedNewPassword)
+    let hashedCurrentPassword = hashString(currentPassword)
+    let response = status_account.convertToKeycardAccount(self.keyStoreDir, accountDataJson, settingsJson, 
+      hashedCurrentPassword, newPassword)
 
     if(response.result.contains("error")):
       let errMsg = response.result["error"].getStr

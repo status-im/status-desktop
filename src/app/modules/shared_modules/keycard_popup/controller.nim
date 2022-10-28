@@ -291,8 +291,11 @@ proc verifyPassword*(self: Controller, password: string): bool =
 proc convertSelectedKeyPairToKeycardAccount*(self: Controller, password: string): bool =
   if not serviceApplicable(self.accountsService):
     return
+  let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
   singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
-  return self.accountsService.convertToKeycardAccount(self.tmpSelectedKeyPairDto.keyUid, password)
+  return self.accountsService.convertToKeycardAccount(self.tmpSelectedKeyPairDto.keyUid, 
+    currentPassword = password,
+    newPassword = acc.derivedAccounts.encryption.publicKey)
 
 proc getLoggedInAccount*(self: Controller): AccountDto =
   if not serviceApplicable(self.accountsService):
