@@ -102,3 +102,10 @@ method getHistoricalDataForToken*(self: Module, symbol: string, currency: string
 
 method tokenHistoricalDataResolved*(self: Module, tokenDetails: string) =
   self.view.tokenHistoricalDataReady(tokenDetails)
+
+
+method fetchHistoricalBalanceForTokenAsJson*(self: Module, address: string, symbol: string, timeIntervalEnum: int) =
+  self.controller.fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum)
+
+method tokenBalanceHistoryDataResolved*(self: Module, balanceHistoryJson: string) =
+  self.view.tokenBalanceHistoryDataReady(balanceHistoryJson)

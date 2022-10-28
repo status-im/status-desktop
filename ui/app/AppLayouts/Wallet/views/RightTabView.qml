@@ -117,9 +117,12 @@ Item {
             }
             AssetsDetailView {
                 id: assetDetailView
+
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 visible: (stack.currentIndex === 2)
+
+                address:  RootStore.currentAccount.mixedcaseAddress
             }
             TransactionDetailView {
                 id: transactionDetailView

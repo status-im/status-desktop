@@ -31,7 +31,7 @@ QtObject {
               current = isCurrentSystemThemeDark? darkTheme : lightTheme;
               break;
             default:
-              console.warning('Unknown theme. Valid themes are "light" and "dark"')
+              console.warn('Unknown theme. Valid themes are "light" and "dark"')
         }
     }
 }

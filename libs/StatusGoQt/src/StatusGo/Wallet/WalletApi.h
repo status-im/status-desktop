@@ -70,14 +70,24 @@ struct TokenBalanceHistory
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TokenBalanceHistory, value, time)
 
+/// @see status-go's services/wallet/transfer/controller.go BalanceHistoryTimeInterval
+enum BalanceHistoryTimeInterval
+{
+    BalanceHistory7Hours = 1,
+    BalanceHistory1Month,
+    BalanceHistory6Months,
+    BalanceHistory1Year,
+    BalanceHistoryAllTime
+};
+
 /// \warning it relies on the stored transaction data fetched by calling \c checkRecentHistory
 /// \todo reconsider \c checkRecentHistory dependency
 ///
 /// \see checkRecentHistory
-/// \note status-go's API -> GetBalanceHistoryOnChain@api.go
+/// \note status-go's API -> GetBalanceHistory@api.go
 /// \throws \c CallPrivateRpcError
 std::vector<TokenBalanceHistory>
-getBalanceHistoryOnChain(Accounts::EOAddress account, const std::chrono::seconds& secondsToNow, int sampleCount);
+getBalanceHistory(const ChainID& chainID, Accounts::EOAddress account, BalanceHistoryTimeInterval timeInterval);
 
 /// \note status-go's API -> CheckRecentHistory@api.go
 /// \throws \c CallPrivateRpcError

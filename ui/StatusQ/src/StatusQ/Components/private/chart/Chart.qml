@@ -24,6 +24,13 @@ Canvas {
 
     signal animationFinished()
 
+
+    function updateToNewData()
+    {
+        jsChart.update('none');
+        root.requestPaint();
+    }
+
     function animateToNewData()
     {
         chartAnimationProgress = 0.1;

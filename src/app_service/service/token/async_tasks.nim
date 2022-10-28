@@ -85,3 +85,44 @@ const getTokenHistoricalDataTask*: Task = proc(argEncoded: string) {.gcsafe, nim
     }
     arg.finish(output)
 
+type
+  BalanceHistoryTimeInterval* {.pure.} = enum
+    BalanceHistory7Hours = 0,
+    BalanceHistory1Month,
+    BalanceHistory6Months,
+    BalanceHistory1Year,
+    BalanceHistoryAllTime
+
+type
+  GetTokenBalanceHistoryDataTaskArg = ref object of QObjectTaskArg
+    chainId: int
+    address: string
+    symbol: string
+    timeInterval: BalanceHistoryTimeInterval
+
+const getTokenBalanceHistoryDataTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[GetTokenBalanceHistoryDataTaskArg](argEncoded)
+  var response = %*{}
+  try:
+    # status-go time intervals are starting from 1
+    response = backend.getBalanceHistory(arg.chainId, arg.address, int(arg.timeInterval) + 1).result
+
+    let output = %* {
+        "chainId": arg.chainId,
+        "address": arg.address,
+        "symbol": arg.symbol,
+        "timeInterval": int(arg.timeInterval),
+        "historicalData": response
+    }
+
+    arg.finish(output)
+    return
+  except Exception as e:
+    let output = %* {
+      "chainId": arg.chainId,
+      "address": arg.address,
+      "symbol": arg.symbol,
+      "timeInterval": int(arg.timeInterval),
+      "error": "Balance history value not found",
+    }
+    arg.finish(output)

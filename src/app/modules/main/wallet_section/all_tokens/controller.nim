@@ -40,6 +40,10 @@ proc init*(self: Controller) =
     let args = TokenHistoricalDataArgs(e)
     self.delegate.tokenHistoricalDataResolved(args.result)
 
+  self.events.on(SIGNAL_BALANCE_HISTORY_DATA_READY) do(e:Args):
+    let args = TokenBalanceHistoryDataArgs(e)
+    self.delegate.tokenBalanceHistoryDataResolved(args.result)
+
 proc getTokens*(self: Controller): seq[token_service.TokenDto] =
   proc compare(x, y: token_service.TokenDto): int =
     if x.name < y.name:
@@ -73,3 +77,5 @@ method findTokenSymbolByAddress*(self: Controller, address: string): string =
 method getHistoricalDataForToken*(self: Controller, symbol: string, currency: string, range: int) =
   self.tokenService.getHistoricalDataForToken(symbol, currency, range)
 
+method fetchHistoricalBalanceForTokenAsJson*(self: Controller, address: string, symbol: string, timeIntervalEnum: int) =
+  self.tokenService.fetchHistoricalBalanceForTokenAsJson(address, symbol, BalanceHistoryTimeInterval(timeIntervalEnum))

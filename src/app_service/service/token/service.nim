@@ -22,6 +22,7 @@ include async_tasks
 const SIGNAL_TOKEN_DETAILS_LOADED* = "tokenDetailsLoaded"
 const SIGNAL_TOKEN_LIST_RELOADED* = "tokenListReloaded"
 const SIGNAL_TOKEN_HISTORICAL_DATA_LOADED* = "tokenHistoricalDataLoaded"
+const SIGNAL_BALANCE_HISTORY_DATA_READY* = "tokenBalanceHistoryDataReady"
 
 type
   TokenDetailsLoadedArgs* = ref object of Args
@@ -41,6 +42,10 @@ type
 
 type
   TokenHistoricalDataArgs* = ref object of Args
+    result*: string
+
+type
+  TokenBalanceHistoryDataArgs* = ref object of Args
     result*: string
 
 QtObject:
@@ -198,7 +203,7 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc tokenHistorticalDataResolved*(self: Service, response: string) {.slot.} =
+  proc tokenHistoricalDataResolved*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
       info "prepared tokens are not a json object"
@@ -208,13 +213,41 @@ QtObject:
       result: response
     ))
 
+  proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.} =
+    # TODO
+    let responseObj = response.parseJson
+    if (responseObj.kind != JObject):
+      info "blance history response is not a json object"
+      return
+
+    self.events.emit(SIGNAL_BALANCE_HISTORY_DATA_READY, TokenBalanceHistoryDataArgs(
+      result: response
+    ))
+
   proc getHistoricalDataForToken*(self: Service, symbol: string, currency: string, range: int) =
     let arg = GetTokenHistoricalDataTaskArg(
       tptr: cast[ByteAddress](getTokenHistoricalDataTask),
       vptr: cast[ByteAddress](self.vptr),
-      slot: "tokenHistorticalDataResolved",
+      slot: "tokenHistoricalDataResolved",
       symbol: symbol,
       currency: currency,
       range: range
     )
     self.threadpool.start(arg)
+
+  proc fetchHistoricalBalanceForTokenAsJson*(self: Service, address: string, symbol: string, timeInterval: BalanceHistoryTimeInterval) =
+    let networks = self.networkService.getNetworks()
+    for network in networks:
+      if network.enabled and network.nativeCurrencySymbol == symbol:
+        let arg = GetTokenBalanceHistoryDataTaskArg(
+          tptr: cast[ByteAddress](getTokenBalanceHistoryDataTask),
+          vptr: cast[ByteAddress](self.vptr),
+          slot: "tokenBalanceHistoryDataResolved",
+          chainId: network.chainId,
+          address: address,
+          symbol: symbol,
+          timeInterval: timeInterval
+        )
+        self.threadpool.start(arg)
+        return
+    error "faild to find a network with the symbol", symbol
