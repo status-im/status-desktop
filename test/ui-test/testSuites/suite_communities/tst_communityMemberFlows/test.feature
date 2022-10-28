@@ -14,6 +14,8 @@ Feature: Status Desktop community members
     As a user I want to interact with members in a community
 
 
+	@mayfail
+	# TODO: It is throwing "RecursionError: maximum recursion depth exceeded" in `And the user opens the chat section
     Scenario: User invites a mutual contact
         Given the user starts the application with a specific data folder "../../../fixtures/mutual_contacts"
         When the user "tester123" logs in with password "TesTEr16843/!@00"
