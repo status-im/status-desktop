@@ -18,7 +18,7 @@ Item {
         property real minStep: 12000
         property real maxStep: 22000
 
-        property var graphTabsModel: [{text: "Price", enabled: true}, {text: "Balance", enabled: false}]
+        property var graphTabsModel: [{text: "Price", enabled: true}, {text: "Balance", enabled: true}]
         property var timeRangeTabsModel: [{text: "1H", enabled: true},
                 {text: "1D", enabled: true},{text: "7D", enabled: true},
                 {text: "1M", enabled: true}, {text: "6M", enabled: true},

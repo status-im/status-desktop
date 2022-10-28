@@ -353,7 +353,7 @@ TEST(WalletApi, TestCheckRecentHistory)
 }
 
 // TODO: this is a debugging test. Augment it with local Ganache environment to have a reliable test
-TEST(WalletApi, TestGetBalanceHistoryOnChain)
+TEST(WalletApi, TestGetBalanceHistory)
 {
     ScopedTestAccount testAccount(test_info_->name());
 
@@ -366,6 +366,15 @@ TEST(WalletApi, TestGetBalanceHistoryOnChain)
     const auto updatedAccounts = Accounts::getAccounts();
     ASSERT_EQ(updatedAccounts.size(), 3);
 
+    auto networks = Wallet::getEthereumChains(false);
+    ASSERT_GT(networks.size(), 0);
+    auto mainNetIt =
+        std::find_if(networks.begin(), networks.end(), [](const auto& n) { return n.chainName == "Mainnet"; });
+    ASSERT_NE(mainNetIt, networks.end());
+    const auto& mainNet = *mainNetIt;
+
+    auto tokens = Wallet::getTokens(mainNet.chainId);
+
     const auto newAccountIt =
         std::find_if(updatedAccounts.begin(), updatedAccounts.end(), [newTestAccountName](const auto& a) {
             return a.name == newTestAccountName;
@@ -373,18 +382,24 @@ TEST(WalletApi, TestGetBalanceHistoryOnChain)
     ASSERT_NE(newAccountIt, updatedAccounts.end());
     const auto& newAccount = *newAccountIt;
 
-    auto testIntervals = {std::chrono::round<std::chrono::seconds>(1h),
-                          std::chrono::round<std::chrono::seconds>(std::chrono::days(1)),
-                          std::chrono::round<std::chrono::seconds>(std::chrono::days(7)),
-                          std::chrono::round<std::chrono::seconds>(std::chrono::months(1)),
-                          std::chrono::round<std::chrono::seconds>(std::chrono::months(6)),
-                          std::chrono::round<std::chrono::seconds>(std::chrono::years(1)),
-                          std::chrono::round<std::chrono::seconds>(std::chrono::years(100))};
-    auto sampleCount = 10;
-    for(const auto& historyDuration : testIntervals)
+    auto testIntervals = {Wallet::BalanceHistoryTimeInterval::BalanceHistory7Hours,
+                          Wallet::BalanceHistoryTimeInterval::BalanceHistory1Month,
+                          Wallet::BalanceHistoryTimeInterval::BalanceHistory6Months,
+                          Wallet::BalanceHistoryTimeInterval::BalanceHistory1Year,
+                          Wallet::BalanceHistoryTimeInterval::BalanceHistoryAllTime};
+
+    std::map<Wallet::BalanceHistoryTimeInterval, QString> testIntervalsStrs{
+        {Wallet::BalanceHistoryTimeInterval::BalanceHistory7Hours, "7H"},
+        {Wallet::BalanceHistoryTimeInterval::BalanceHistory1Month, "1M"},
+        {Wallet::BalanceHistoryTimeInterval::BalanceHistory6Months, "6M"},
+        {Wallet::BalanceHistoryTimeInterval::BalanceHistory1Year, "1Y"},
+        {Wallet::BalanceHistoryTimeInterval::BalanceHistoryAllTime, "All"}};
+
+    for(const auto& historyInterval : testIntervals)
     {
-        auto balanceHistory = Wallet::getBalanceHistoryOnChain(newAccount.address, historyDuration, sampleCount);
-        ASSERT_TRUE(balanceHistory.size() > 0); // TODO: we get one extra, match sample size
+        // TODO: next `mainNet.nativeCurrencySymbol`, later `tokens.symbol`
+        auto balanceHistory = Wallet::getBalanceHistory(mainNet.chainId, newAccount.address, historyInterval);
+        ASSERT_TRUE(balanceHistory.size() > 0);
 
         auto weiToEth = [](const StatusGo::Wallet::BigInt& wei) -> double {
             StatusGo::Wallet::BigInt q; // wei / eth
@@ -398,19 +413,18 @@ TEST(WalletApi, TestGetBalanceHistoryOnChain)
             return q.convert_to<double>() + (qSzabos.convert_to<double>() / ((weiD / szaboD).convert_to<double>()));
         };
 
-        QFile file(QString("/tmp/balance_history-%1s.csv").arg(historyDuration.count()));
+        QFile file(QString("/tmp/balance_history-%s.csv").arg(testIntervalsStrs[historyInterval]));
         if(file.open(QIODevice::WriteOnly | QIODevice::Text))
         {
             QTextStream out(&file);
             out << "Balance, Timestamp" << Qt::endl;
-            for(int i = balanceHistory.size() - 1; i >= 0; --i)
+            for(int i = 0; i < balanceHistory.size(); ++i)
             {
                 out << weiToEth(balanceHistory[i].value) << "," << balanceHistory[i].time.toSecsSinceEpoch()
                     << Qt::endl;
             }
         }
         file.close();
-        sampleCount += 10;
     }
 }
 

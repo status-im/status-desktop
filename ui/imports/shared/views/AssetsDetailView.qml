@@ -14,14 +14,24 @@ import shared.controls 1.0
 
 import "../stores"
 
+/// \beware: heavy shortcuts here, refactor to match the requirements when touching this again
+/// \todo split into token history and balance views; they have different requirements that introduce unnecessary complexity
+/// \todo take a declarative approach, move logic into the typed backend and remove multiple source of truth (e.g. time ranges)
 Item {
     id: root
 
     property var token
+    /*required*/ property string address: ""
+
+    function createStore(address) {
+        return balanceHistoryComponent.createObject(null, {address: address})
+    }
 
     QtObject {
         id: d
         property var marketValueStore : RootStore.marketValueStore
+        // TODO: Should be temporary until non native tokens are supported by balance history
+        property bool isNativeToken: typeof token !== "undefined" && token ? token.symbol === "ETH" : false
     }
 
     Connections {
@@ -29,7 +39,7 @@ Item {
         onTokenHistoricalDataReady: {
             let response = JSON.parse(tokenDetails)
             if (response === null) {
-                console.debug("error parsing message for tokenHistoricalDataReady: error: ", response.error)
+                console.debug("error parsing json message for tokenHistoricalDataReady")
                 return
             }
             if(response.historicalData === null || response.historicalData <= 0)
@@ -59,6 +69,11 @@ Item {
         }
     }
 
+    enum GraphType {
+        Price = 0,
+        Balance
+    }
+
     Loader {
         id: graphDetailLoader
         width: parent.width
@@ -68,14 +83,66 @@ Item {
         active: root.visible
         sourceComponent: StatusChartPanel {
             id: graphDetail
-            graphsModel: d.marketValueStore.graphTabsModel
-            defaultTimeRangeIndexShown: TokenMarketValuesStore.TimeRange.All
-            timeRangeModel: d.marketValueStore.timeRangeTabsModel
-            onHeaderTabClicked: chart.animateToNewData()
+
+            property int selectedGraphType: AssetsDetailView.GraphType.Price
+            property var selectedStore: d.marketValueStore
+
+            function dataReady() {
+                return typeof selectedStore != "undefined"
+            }
+            function timeRangeSelected() {
+                return dataReady() && graphDetail.timeRangeTabBarIndex >= 0 && graphDetail.selectedTimeRange.length > 0
+            }
+
+            readonly property var labelsData: {
+                return timeRangeSelected()
+                    ? selectedStore.timeRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange]
+                    : []
+            }
+            readonly property var dataRange: {
+                return timeRangeSelected()
+                    ? selectedStore.dataRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange]
+                    : []
+            }
+            readonly property var maxTicksLimit: {
+                return timeRangeSelected() && typeof selectedStore.maxTicks != "undefined"
+                    ? selectedStore.maxTicks[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange]
+                    : 0
+            }
+
+            graphsModel: [
+                    {text: qsTr("Price"), enabled: true, id: AssetsDetailView.GraphType.Price},
+                    {
+                        text: qsTr("Balance"),
+                        enabled: false, // TODO: Enable after adding ECR20 token support and DB cache. Current prototype implementation works only for d.isNativeToken
+                        id: AssetsDetailView.GraphType.Balance
+                    },
+                ]
+            defaultTimeRangeIndexShown: ChartStoreBase.TimeRange.All
+            timeRangeModel: dataReady() && selectedStore.timeRangeTabsModel
+            onHeaderTabClicked: (privateIdentifier, isTimeRange) => {
+                if(!isTimeRange && graphDetail.selectedGraphType !== privateIdentifier) {
+                    graphDetail.selectedGraphType = privateIdentifier
+                }
+
+                if(graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance) {
+                    let selectedTimeRangeEnum = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
+                    if(balanceStore.isTimeToRequest(selectedTimeRangeEnum)) {
+                        RootStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, selectedTimeRangeEnum)
+                        balanceStore.updateRequestTime(selectedTimeRangeEnum)
+                    }
+                }
+
+                if(!isTimeRange) {
+                    graphDetail.selectedStore = graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? d.marketValueStore : balanceStore
+                }
+
+                chart.animateToNewData()
+            }
             chart.chartType: 'line'
             chart.chartData: {
                 return {
-                    labels: d.marketValueStore.timeRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange],
+                    labels: graphDetail.labelsData,
                     datasets: [{
                             xAxisId: 'x-axis-1',
                             yAxisId: 'y-axis-1',
@@ -83,7 +150,7 @@ Item {
                             borderColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 1)' : 'rgba(67, 96, 223, 1)',
                             borderWidth: 3,
                             pointRadius: 0,
-                            data: d.marketValueStore.dataRange[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange],
+                            data: graphDetail.dataRange,
                             parsing: false,
                         }]
                 }
@@ -133,7 +200,7 @@ Item {
                                     padding: 16,
                                     maxRotation: 0,
                                     minRotation: 0,
-                                    maxTicksLimit:  d.marketValueStore.maxTicks[graphDetail.timeRangeTabBarIndex][graphDetail.selectedTimeRange],
+                                    maxTicksLimit: graphDetail.maxTicksLimit,
                                 },
                             }],
                         yAxes: [{
@@ -149,6 +216,10 @@ Item {
                                     axis.paddingTop = 25;
                                     axis.paddingBottom = 0;
                                 },
+                                afterDataLimits: (axis) => {
+                                    if(axis.min < 0)
+                                        axis.min = 0;
+                                },
                                 ticks: {
                                     fontSize: 10,
                                     fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
@@ -158,6 +229,19 @@ Item {
                                     },
                                 }
                             }]
+                    }
+                }
+            }
+
+            TokenBalanceHistoryStore {
+                id: balanceStore
+
+                address: root.address
+
+                onNewDataReady: (timeRange) => {
+                    let selectedTimeRange = timeRangeStrToEnum(graphDetail.selectedTimeRange)
+                    if (timeRange === selectedTimeRange && address === root.address) {
+                        chart.updateToNewData()
                     }
                 }
             }
@@ -277,7 +361,7 @@ Item {
                             tagPrimaryLabel.text: qsTr("Website")
                             controlBackground.color: Theme.palette.baseColor2
                             controlBackground.border.color: "transparent"
-                            visible: token && token.assetWebsiteUrl !== ""
+                            visible: typeof token != "undefined" && token && token.assetWebsiteUrl !== ""
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
@@ -293,7 +377,7 @@ Item {
                             tagSecondaryLabel.text: token && token.smartContractAddress !== "" ? token.smartContractAddress : "---"
                             controlBackground.color: Theme.palette.baseColor2
                             controlBackground.border.color: "transparent"
-                            visible: token && token.builtOn !== "" && token.smartContractAddress !== ""
+                            visible: typeof token != "undefined" && token && token.builtOn !== "" && token.smartContractAddress !== ""
                         }
                     }
                 }

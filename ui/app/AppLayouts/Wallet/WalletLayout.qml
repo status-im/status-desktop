@@ -59,7 +59,6 @@ Item {
         }
     }
 
-
     StatusSectionLayout {
         anchors.top: seedPhraseWarning.bottom
         height: root.height - seedPhraseWarning.height

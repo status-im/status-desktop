@@ -96,12 +96,12 @@ StatusListItem {
         tagsModel.clear()
         if (root.keyPairAccounts === "") {
             // should never be here, as it's not possible to have keypair item without at least a single account
-            console.warning("accounts list is empty for selecting keycard pair")
+            console.warn("accounts list is empty for selecting keycard pair")
             return
         }
         let obj = JSON.parse(root.keyPairAccounts)
         if (obj.error) {
-            console.warning("error parsing accounts for selecting keycard pair, error: ", obj.error)
+            console.warn("error parsing accounts for selecting keycard pair, error: ", obj.error)
             return
         }
 

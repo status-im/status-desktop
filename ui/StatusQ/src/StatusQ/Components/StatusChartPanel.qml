@@ -58,6 +58,11 @@ Page {
     /*!
         \qmlproperty var StatusChartPanel::graphsModel
         This property holds the graphs model options to be set on the left side tab bar of the header.
+        The JS array entries are expected to be objects with the following properties:
+        - text (string): The text to be displayed on the tab
+        - enabled (bool): Whether the tab is enabled or not
+        - isTimeRange (bool): Whether the tab is a time range tab or graph type tab
+        - privateIdentifier (string): An optional unique identifier for the tab that will be received \c headerTabClicked signal. Otherwise, the text will be used.
     */
     property var graphsModel
     /*!
@@ -81,8 +86,10 @@ Page {
     /*!
         \qmlproperty string StatusChartPanel::selectedTimeRange
         This property holds holds the text of the current time range tab bar selected tab.
+
+        \todo no need for undefined state, make tab models declaratively
     */
-    property string selectedTimeRange: timeRangeTabBar.currentItem.text
+    property string selectedTimeRange: timeRangeTabBar.currentItem ? timeRangeTabBar.currentItem.text : ""
 
     /*!
         \qmlproperty string StatusChartPanel::defaultTimeRangeIndexShown
@@ -94,15 +101,18 @@ Page {
         \qmlsignal
         This signal is emitted when a header tab bar is clicked.
     */
-    signal headerTabClicked(string text)
+    signal headerTabClicked(var privateIdentifier, bool isTimeRange)
 
     Component {
         id: tabButton
         StatusTabButton {
+            property var privateIdentifier: null
+            property bool isTimeRange: false
+
             leftPadding: 0
             width: implicitWidth
             onClicked: {
-                root.headerTabClicked(text);
+                root.headerTabClicked(privateIdentifier, isTimeRange);
             }
         }
     }
@@ -111,7 +121,9 @@ Page {
         if (!!timeRangeModel) {
             for (var i = 0; i < timeRangeModel.length; i++) {
                 var timeTab = tabButton.createObject(root, { text: timeRangeModel[i].text,
-                                                             enabled: timeRangeModel[i].enabled });
+                                                             enabled: timeRangeModel[i].enabled,
+                                                             isTimeRange: true,
+                                                             privateIdentifier: timeRangeModel[i].text });
                 timeRangeTabBar.addItem(timeTab);
             }
             timeRangeTabBar.currentIndex = defaultTimeRangeIndexShown
@@ -119,7 +131,9 @@ Page {
         if (!!graphsModel) {
             for (var j = 0; j < graphsModel.length; j++) {
                 var graphTab = tabButton.createObject(root, { text: graphsModel[j].text,
-                                                              enabled: graphsModel[j].enabled });
+                                                              enabled: graphsModel[j].enabled,
+                                                              isTimeRange: false,
+                                                              privateIdentifier: typeof graphsModel[j].id !== "undefined" ? graphsModel[j].id : null});
                 graphsTabBar.addItem(graphTab);
             }
         }

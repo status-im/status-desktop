@@ -204,4 +204,9 @@ QtObject {
     function getHistoricalDataForToken(symbol, currency) {
         walletSectionAllTokens.getHistoricalDataForToken(symbol,currency)
     }
+
+    // TODO: range until we optimize to cache the data and abuse the requests
+    function fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum) {
+        walletSectionAllTokens.fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum)
+    }
 }

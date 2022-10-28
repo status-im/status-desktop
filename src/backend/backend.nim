@@ -282,3 +282,8 @@ rpc(getDailyMarketValues, "wallet"):
 rpc(getName, "ens"):
   chainId: int
   address: string
+
+rpc(getBalanceHistory, "wallet"):
+  chainId: int
+  address: string
+  timeInterval: int

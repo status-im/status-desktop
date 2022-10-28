@@ -82,3 +82,8 @@ QtObject:
     self.delegate.getHistoricalDataForToken(symbol, currency)
 
   proc tokenHistoricalDataReady*(self: View, tokenDetails: string) {.signal.}
+
+  proc fetchHistoricalBalanceForTokenAsJson*(self: View, address: string, symbol: string, timeIntervalEnum: int) {.slot.} =
+    self.delegate.fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum)
+
+  proc tokenBalanceHistoryDataReady*(self: View, balanceHistoryJson: string) {.signal.}

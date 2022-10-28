@@ -109,10 +109,10 @@ TokenBalances getTokensBalancesForChainIDs(const std::vector<ChainID>& chainIds,
 }
 
 std::vector<TokenBalanceHistory>
-getBalanceHistoryOnChain(Accounts::EOAddress account, const std::chrono::seconds& secondsToNow, int sampleCount)
+getBalanceHistory(const ChainID& chainID, Accounts::EOAddress account, BalanceHistoryTimeInterval timeInterval)
 {
-    std::vector<json> params = {account, secondsToNow.count(), sampleCount};
-    json inputJson = {{"jsonrpc", "2.0"}, {"method", "wallet_getBalanceHistoryOnChain"}, {"params", params}};
+    std::vector<json> params = {chainID, account, timeInterval};
+    json inputJson = {{"jsonrpc", "2.0"}, {"method", "wallet_getBalanceHistory"}, {"params", params}};
 
     auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
     const auto resultJson = json::parse(result);
