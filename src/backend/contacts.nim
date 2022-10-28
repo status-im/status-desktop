@@ -93,7 +93,7 @@ proc getVerificationRequestSentTo*(pubkey: string): RpcResponse[JsonNode] {.rais
 
 proc getVerificationRequestFrom*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [pubkey]
-  result = callPrivateRPC("getVerificationRequestFrom".prefix, payload)
+  result = callPrivateRPC("getLatestVerificationRequestFrom".prefix, payload)
 
 proc getReceivedVerificationRequests*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
