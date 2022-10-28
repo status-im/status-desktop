@@ -126,3 +126,6 @@ QtObject:
 
   proc getDetails*(self: View, sectionId: string, chatId: string): string {.slot.} =
     return self.delegate.getDetails(sectionId, chatId)
+
+  proc getChatDetailsAsJson*(self: View, chatId: string): string {.slot.} =
+    return self.delegate.getChatDetailsAsJson(chatId)

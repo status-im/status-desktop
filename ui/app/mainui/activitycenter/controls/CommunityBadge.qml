@@ -1,6 +1,9 @@
 import QtQuick 2.3
+import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.13
 
+import StatusQ.Core.Theme 0.1
+import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 
 import utils 1.0
@@ -22,74 +25,80 @@ Badge {
     signal communityNameClicked()
     signal channelNameClicked()
 
-    SVGImage {
-        id: communityIcon
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.smallPadding
-        anchors.verticalCenter:parent.verticalCenter
-        width: 16
-        height: 16
-        source: Style.svg("communities")
-    }
+    implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
+    implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
 
-    StatusSmartIdenticon {
-        id: identicon
-        anchors.left: communityIcon.right
-        anchors.leftMargin: Style.current.smallPadding
-        anchors.verticalCenter: parent.verticalCenter
-        name: root.communityName
-        asset.width: 16
-        asset.height: 16
-        asset.color: root.communityColor
-        asset.letterSize: width / 2.4
-        asset.name: root.communityImage
-        asset.isImage: true
-    }
+    RowLayout {
+        id: layout
 
-    StyledTextEdit {
-        id: communityNameText
-        width: implicitWidth > 300 ? 300 : implicitWidth
-        height: 18
-        anchors.left: identicon.right
-        anchors.leftMargin: 4
-        anchors.verticalCenter: parent.verticalCenter
-        text: Utils.getLinkStyle(root.communityName, hoveredLink, root.communityColor)
-        readOnly: true
-        textFormat: Text.RichText
-        clip: true
-        color: root.communityColor
-        font.pixelSize: 13
-        onLinkActivated: root.communityNameClicked()
-    }
-
-    SVGImage {
-        id: caretImage
-        source: Style.svg("show-category")
-        width: 16
-        height: 16
-        visible: root.channelName.length
-        anchors.left: communityNameText.right
-        anchors.verticalCenter: parent.verticalCenter
-
-        ColorOverlay {
-            anchors.fill: parent
-            source: parent
-            color: root.communityColor
+        anchors {
+            fill: parent
+            leftMargin: 8
+            rightMargin: 8
+            topMargin: 3
+            bottomMargin: 3
         }
-    }
 
-    StyledTextEdit {
-        id: channelNameText
-        width: implicitWidth > 300 ? 300 : implicitWidth
-        height: 18
-        anchors.left: caretImage.right
-        anchors.verticalCenter: parent.verticalCenter
-        text: Utils.getLinkStyle(root.channelName || name, hoveredLink, root.channelColor)
-        readOnly: true
-        textFormat: Text.RichText
-        clip: true
-        color: root.communityColor
-        font.pixelSize: 13
-        onLinkActivated: root.channelNameClicked()
+        spacing: 4
+
+        StatusIcon {
+            Layout.preferredWidth: 16
+            Layout.preferredHeight: 16
+            icon: "tiny/community"
+            color: Theme.palette.baseColor1
+        }
+
+        StatusSmartIdenticon {
+            Layout.alignment: Qt.AlignVCenter
+            name: root.communityName
+            asset.width: 16
+            asset.height: 16
+            asset.letterSize: 11
+            asset.color: root.communityColor
+            asset.name: root.communityImage
+            asset.isImage: true
+        }
+
+        RowLayout {
+            Layout.alignment: Qt.AlignVCenter
+            spacing: 0
+
+            StyledTextEdit {
+                Layout.maximumWidth: 300
+                Layout.alignment: Qt.AlignVCenter
+                text: Utils.getLinkStyle(root.communityName, hoveredLink, Theme.palette.baseColor1)
+                readOnly: true
+                textFormat: Text.RichText
+                clip: true
+                color: Theme.palette.baseColor1
+                font.pixelSize: 13
+                font.weight: Font.Medium
+                onLinkActivated: {
+                    root.communityNameClicked()
+                }
+            }
+
+            StatusIcon {
+                Layout.preferredWidth: 16
+                Layout.preferredHeight: 16
+                icon: "tiny/chevron-right"
+                color: Theme.palette.baseColor1
+            }
+
+            StyledTextEdit {
+                Layout.maximumWidth: 300
+                Layout.alignment: Qt.AlignVCenter
+                text: Utils.getLinkStyle("#" + root.channelName, hoveredLink, Theme.palette.baseColor1)
+                readOnly: true
+                textFormat: Text.RichText
+                clip: true
+                color: Theme.palette.baseColor1
+                font.pixelSize: 13
+                font.weight: Font.Medium
+                onLinkActivated: {
+                    root.channelNameClicked()
+                }
+            }
+        }
     }
 }
