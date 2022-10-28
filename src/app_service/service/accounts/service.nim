@@ -304,6 +304,12 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
 
   result["WakuConfig"]["Enabled"] = false.newJBool()
 
+  if existsEnv("WAKUV2_PORT"):
+    let wV2Port = parseInt($getEnv("WAKUV2_PORT"))
+    # Waku V2 config
+    result["WakuV2Config"]["Port"] = wV2Port.newJInt()
+    result["WakuV2Config"]["UDPPort"] = wV2Port.newJInt()
+
   if TEST_PEER_ENR != "":
     result["ClusterConfig"]["BootNodes"] = %* @[TEST_PEER_ENR]
     result["ClusterConfig"]["TrustedMailServers"] = %* @[TEST_PEER_ENR]
