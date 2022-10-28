@@ -12,5 +12,5 @@ const PATH_EIP_1581* = "m/43'/60'/1581'"
 const PATH_DEFAULT_WALLET* = PATH_WALLET_ROOT & "/0"
 # EIP1581 Chat Key 0, the default whisper key
 const PATH_WHISPER* = PATH_EIP_1581 & "/0'/0"
-
-
+# EIP1581 Encryption Key
+const PATH_ENCRYPTION* = PATH_EIP_1581 & "/1'/0"

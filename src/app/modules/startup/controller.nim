@@ -294,36 +294,40 @@ proc importMnemonic*(self: Controller): bool =
     self.delegate.importAccountError(error)
     return false
 
-proc setupAccount(self: Controller, accountId: string, storeToKeychain: bool, keycardUsage: bool) =
+proc setupKeychain(self: Controller, store: bool) =
+  if store:
+    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_STORE)
+    self.storePasswordToKeychain()
+  else:
+    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
+
+proc setupAccount(self: Controller, accountId: string, storeToKeychain: bool) =
   self.delegate.moveToLoadingAppState()
-  let error = self.accountsService.setupAccount(accountId, self.tmpPassword, self.tmpDisplayName, keycardUsage)
+  let error = self.accountsService.setupAccount(accountId, self.tmpPassword, self.tmpDisplayName)
   if error != "":
     self.delegate.setupAccountError(error)
   else:
-    if storeToKeychain:
-      singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_STORE)
-      self.storePasswordToKeychain()
-    else:
-      singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
-
+    self.setupKeychain(storeToKeychain)
+    
 proc storeGeneratedAccountAndLogin*(self: Controller, storeToKeychain: bool) =
   let accounts = self.getGeneratedAccounts()
   if accounts.len == 0:
     error "list of generated accounts is empty"
     return
   let accountId = accounts[0].id
-  self.setupAccount(accountId, storeToKeychain, keycardUsage = false)
+  self.setupAccount(accountId, storeToKeychain)
 
 proc storeImportedAccountAndLogin*(self: Controller, storeToKeychain: bool) =
   let accountId = self.getImportedAccount().id
-  self.setupAccount(accountId, storeToKeychain, keycardUsage = false)
+  self.setupAccount(accountId, storeToKeychain)
 
 proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool) =
   if self.importMnemonic():
-    let accountId = self.getImportedAccount().id
+    self.delegate.moveToLoadingAppState()
     self.delegate.storeKeyPairForNewKeycardUser()
     self.storeMetadataForNewKeycardUser()
-    self.setupAccount(accountId, storeToKeychain, keycardUsage = true)
+    self.accountsService.setupAccountKeycard(KeycardEvent(), useImportedAcc = true)
+    self.setupKeychain(storeToKeychain)
   else:
     error "an error ocurred while importing mnemonic"
 
@@ -334,12 +338,8 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool) =
   else:
     self.delegate.moveToLoadingAppState()
     self.delegate.storeKeyPairForNewKeycardUser()
-    self.accountsService.setupAccountKeycard(self.tmpKeycardEvent)
-    if storeToKeychain:
-      singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_STORE)
-      self.storePasswordToKeychain()
-    else:
-      singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
+    self.accountsService.setupAccountKeycard(self.tmpKeycardEvent, useImportedAcc = false)
+    self.setupKeychain(storeToKeychain)
 
 proc getOpenedAccounts*(self: Controller): seq[AccountDto] =
   return self.accountsService.openedAccounts()

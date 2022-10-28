@@ -7,6 +7,7 @@ import ../../../common/account_constants
 include ../../../common/[json_utils]
 
 type DerivedAccountDetails* = object
+  privateKey*: string
   publicKey*: string
   address*: string
   derivationPath*: string
@@ -16,9 +17,11 @@ type DerivedAccounts* = object
   walletRoot*: DerivedAccountDetails
   defaultWallet*: DerivedAccountDetails
   eip1581*: DerivedAccountDetails
+  encryption*: DerivedAccountDetails
 
 type GeneratedAccountDto* = object
   id*: string
+  privateKey*: string
   publicKey*: string
   address*: string
   keyUid*: string
@@ -37,6 +40,7 @@ proc toDerivedAccountDetails(jsonObj: JsonNode, derivationPath: string):
   # handle it a bit different.
   result = DerivedAccountDetails()
   result.derivationPath = derivationPath
+  discard jsonObj.getProp("privateKey", result.privateKey)
   discard jsonObj.getProp("publicKey", result.publicKey)
   discard jsonObj.getProp("address", result.address)
 
@@ -51,10 +55,13 @@ proc toDerivedAccounts*(jsonObj: JsonNode): DerivedAccounts =
       result.defaultWallet = toDerivedAccountDetails(derivedObj, derivationPath)
     elif(derivationPath == PATH_EIP_1581):
       result.eip1581 = toDerivedAccountDetails(derivedObj, derivationPath)
+    elif(derivationPath == PATH_ENCRYPTION):
+      result.encryption = toDerivedAccountDetails(derivedObj, derivationPath)      
 
 proc toGeneratedAccountDto*(jsonObj: JsonNode): GeneratedAccountDto =
   result = GeneratedAccountDto()
   discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("privateKey", result.privateKey)
   discard jsonObj.getProp("publicKey", result.publicKey)
   discard jsonObj.getProp("address", result.address)
   discard jsonObj.getProp("keyUid", result.keyUid)

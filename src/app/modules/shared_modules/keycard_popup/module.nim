@@ -272,7 +272,7 @@ proc buildKeyPairsList[T](self: Module[T], excludeAlreadyMigratedPairs: bool): s
         locked = false,
         name = singletonInstance.userProfile.getName(),
         image = singletonInstance.userProfile.getIcon(),
-        icon = "wallet",
+        icon = "",
         pairType = KeyPairType.Profile,
         derivedFrom = a.derivedfrom)
       for ga in accounts:
