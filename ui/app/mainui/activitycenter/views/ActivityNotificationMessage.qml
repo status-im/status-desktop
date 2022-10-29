@@ -51,8 +51,8 @@ ActivityNotificationBase {
                 return Global.openProfilePopup(notification.message.senderId)
             }
 
-            root.activityCenterClose()
             root.activityCenterStore.switchTo(notification)
+            root.activityCenterClose()
         }
     }
 }

@@ -15,6 +15,9 @@ ActivityNotificationMessage {
 
     badgeComponent: ReplyBadge {
         repliedMessageContent: notification.repliedMessage.messageText
-        onReplyClicked: root.activityCenterStore.switchTo(notification)
+        onReplyClicked: {
+            root.activityCenterStore.switchTo(notification)
+            root.activityCenterClose()
+        }
     }
 }

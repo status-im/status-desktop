@@ -25,10 +25,11 @@ ActivityNotificationMessage {
 
         onCommunityNameClicked: {
             root.store.setActiveCommunity(notification.message.communityId)
+            root.activityCenterClose()
         }
         onChannelNameClicked: {
-            root.activityCenterClose()
             root.activityCenterStore.switchTo(notification)
+            root.activityCenterClose()
         }
     }
 }

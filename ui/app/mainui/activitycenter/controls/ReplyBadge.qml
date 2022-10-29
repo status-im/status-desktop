@@ -24,13 +24,6 @@ Badge {
         width: 16
         height: width
         source: Style.svg("reply-small-arrow")
-
-        MouseArea {
-            id: arrowArea
-            hoverEnabled: true
-            anchors.fill: parent
-            onClicked: root.replyClicked()
-        }
     }
 
     StyledTextEdit {
@@ -46,5 +39,13 @@ Badge {
         textFormat: Text.RichText
         clip: true
         font.pixelSize: 13
+
+        MouseArea {
+            id: replyArea
+            hoverEnabled: true
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.replyClicked()
+        }
     }
 }

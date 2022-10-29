@@ -60,8 +60,8 @@ Badge {
         }
 
         RowLayout {
-            Layout.alignment: Qt.AlignVCenter
             spacing: 0
+            Layout.alignment: Qt.AlignVCenter
 
             StyledTextEdit {
                 Layout.maximumWidth: 300
@@ -81,6 +81,7 @@ Badge {
             StatusIcon {
                 Layout.preferredWidth: 16
                 Layout.preferredHeight: 16
+                visible: root.channelName.length > 0
                 icon: "tiny/chevron-right"
                 color: Theme.palette.baseColor1
             }
@@ -88,6 +89,7 @@ Badge {
             StyledTextEdit {
                 Layout.maximumWidth: 300
                 Layout.alignment: Qt.AlignVCenter
+                visible: root.channelName.length > 0
                 text: Utils.getLinkStyle("#" + root.channelName, hoveredLink, Theme.palette.baseColor1)
                 readOnly: true
                 textFormat: Text.RichText

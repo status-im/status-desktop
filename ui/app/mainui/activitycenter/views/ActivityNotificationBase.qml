@@ -22,7 +22,7 @@ Item {
 
     implicitHeight: Math.max(60, bodyLoader.height +
                                  (dateGroupLabel.visible ? dateGroupLabel.height : 0) +
-                                 (badgeLoader.item ? badgeLoader.height : 0))
+                                 (badgeLoader.item ? badgeLoader.height + Style.current.smallPadding : 0))
 
     StatusDateGroupLabel {
         id: dateGroupLabel
