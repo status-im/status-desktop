@@ -57,6 +57,7 @@ Badge {
             asset: root.asset
             name: root.name
         }
+
         StyledText {
             Layout.alignment: Qt.AlignVCenter
             text: chatType !== Constants.chatType.publicChat ?
@@ -66,7 +67,14 @@ Badge {
             color: Theme.palette.baseColor1
             font.weight: Font.Medium
             font.pixelSize: 13
+
+            MouseArea {
+                id: replyArea
+                hoverEnabled: true
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: root.channelNameClicked()
+            }
         }
     }
-
 }

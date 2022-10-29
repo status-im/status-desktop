@@ -51,8 +51,8 @@ ActivityNotificationBase {
                 return Global.openProfilePopup(notification.author)
             }
 
-            root.activityCenterClose()
             root.activityCenterStore.switchTo(notification)
+            root.activityCenterClose()
         }
 
         CommunityBadge {
@@ -66,7 +66,10 @@ ActivityNotificationBase {
             communityImage: community.image
             communityColor: community.color
 
-            onCommunityNameClicked: root.store.setActiveCommunity(notification.communityId)
+            onCommunityNameClicked: {
+                root.store.setActiveCommunity(notification.communityId)
+                root.activityCenterClose()
+            }
         }
     }
 

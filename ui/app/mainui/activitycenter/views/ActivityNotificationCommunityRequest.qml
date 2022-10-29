@@ -34,7 +34,9 @@ ActivityNotificationBase {
 
         StatusBaseText {
             text: qsTr("Request to join")
-            font.pixelSize: 15
+            color: Theme.palette.baseColor1
+            font.weight: Font.Medium
+            font.pixelSize: 13
             Layout.alignment: Qt.AlignVCenter
         }
 
@@ -56,8 +58,9 @@ ActivityNotificationBase {
                     return qsTr("declined")
                 return ""
             }
-            font.pixelSize: 15
-            color: Style.current.secondaryText
+            color: Theme.palette.baseColor1
+            font.weight: Font.Medium
+            font.pixelSize: 13
             Layout.alignment: Qt.AlignVCenter
             Layout.fillWidth: true
         }
@@ -74,7 +77,10 @@ ActivityNotificationBase {
             textFormat: Text.RichText
             color: Style.current.blue
             font.pixelSize: 13
-            onLinkActivated: root.store.setActiveCommunity(notification.communityId)
+            onLinkActivated: {
+                root.store.setActiveCommunity(notification.communityId)
+                root.activityCenterClose()
+            }
         }
     }
 }

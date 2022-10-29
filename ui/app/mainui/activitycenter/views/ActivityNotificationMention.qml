@@ -41,10 +41,11 @@ ActivityNotificationMessage {
 
             onCommunityNameClicked: {
                 root.store.setActiveCommunity(notification.message.communityId)
+                root.activityCenterClose()
             }
             onChannelNameClicked: {
-                root.activityCenterClose()
                 root.activityCenterStore.switchTo(notification)
+                root.activityCenterClose()
             }
         }
     }
@@ -61,6 +62,11 @@ ActivityNotificationMessage {
             asset.name: group.icon
             asset.emoji: group.emoji
             asset.color: group.color
+
+            onChannelNameClicked: {
+                root.activityCenterStore.switchTo(notification)
+                root.activityCenterClose()
+            }
         }
     }
 }
