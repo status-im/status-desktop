@@ -17,7 +17,7 @@ proc makePrivateRpcCall*(
   methodName: string, inputJSON: JsonNode
 ): RpcResponse[JsonNode] {.raises: [RpcException, ValueError, Defect, SerializationError].} =
   try:
-    debug "NewBE_callPrivateRPC", rpc_method=methodName
+    #debug "NewBE_callPrivateRPC", rpc_method=methodName
     let rpcResponseRaw = status_go.callPrivateRPC($inputJSON)
     result = Json.decode(rpcResponseRaw, RpcResponse[JsonNode])
     if(not result.error.isNil):

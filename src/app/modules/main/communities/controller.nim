@@ -98,7 +98,8 @@ proc createCommunity*(
     aX: int, aY: int, bX: int, bY: int,
     historyArchiveSupportEnabled: bool,
     pinMessageAllMembersEnabled: bool,
-    bannerJsonStr: string) =
+    bannerJsonStr: string,
+    encrypted: bool) =
   self.communityService.createCommunity(
     name,
     description,
@@ -111,7 +112,8 @@ proc createCommunity*(
     aX, aY, bX, bY,
     historyArchiveSupportEnabled,
     pinMessageAllMembersEnabled,
-    bannerJsonStr)
+    bannerJsonStr,
+    encrypted)
 
 proc reorderCommunityChat*(
     self: Controller,

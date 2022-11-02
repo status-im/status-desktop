@@ -215,9 +215,11 @@ QtObject:
                         imagePath: string,
                         aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool,
-                        pinMessageAllMembersEnabled: bool, bannerJsonStr: string) {.slot.} =
+                        pinMessageAllMembersEnabled: bool, bannerJsonStr: string,
+                        encrypted: bool) {.slot.} =
     self.delegate.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
-                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, bannerJsonStr)
+                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled,
+                                  bannerJsonStr, encrypted)
 
   proc deleteCommunityCategory*(self: View, communityId: string, categoryId: string): string {.slot.} =
     self.delegate.deleteCommunityCategory(communityId, categoryId)

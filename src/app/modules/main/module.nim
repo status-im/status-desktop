@@ -318,7 +318,8 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         isVerified = contactDetails.details.isContactVerified(),
         requestToJoinId = requestDto.id
       )
-    ) else: @[]
+    ) else: @[],
+    c.encrypted
   )
 
 

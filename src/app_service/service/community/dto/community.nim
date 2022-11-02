@@ -70,6 +70,7 @@ type CommunityDto* = object
   adminSettings*: CommunityAdminSettingsDto
   bannedMembersIds*: seq[string]
   declinedRequestsToJoin*: seq[CommunityMembershipRequestDto]
+  encrypted*: bool
 
 type CuratedCommunity* = object
     available*: bool
@@ -129,6 +130,7 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("description", result.description)
   discard jsonObj.getProp("introMessage", result.introMessage)
   discard jsonObj.getProp("outroMessage", result.outroMessage)
+  discard jsonObj.getProp("encrypted", result.encrypted)
 
   var chatsObj: JsonNode
   if(jsonObj.getProp("chats", chatsObj)):
@@ -242,7 +244,8 @@ proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
     canManageUsers: communityDto.canManageUsers,
     muted: communityDto.muted,
     historyArchiveSupportEnabled: communityDto.settings.historyArchiveSupportEnabled,
-    bannedMembersIds: communityDto.bannedMembersIds
+    bannedMembersIds: communityDto.bannedMembersIds,
+    encrypted: communityDto.encrypted,
   )
 
 proc parseCommunitiesSettings*(response: RpcResponse[JsonNode]): seq[CommunitySettingsDto] =

@@ -105,11 +105,12 @@ QtObject {
 
     function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityTags,
                              communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY,
-                             historyArchiveSupportEnabled, pinMessagesAllowedForMembers, bannerJsonStr) {
+                             historyArchiveSupportEnabled, pinMessagesAllowedForMembers, bannerJsonStr, encrypted) {
         communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, communityColor,
                                               communityTags, communityImage, imageCropperModalaX, imageCropperModalaY,
                                               imageCropperModalbX, imageCropperModalbY,
-                                              historyArchiveSupportEnabled, pinMessagesAllowedForMembers, bannerJsonStr);
+                                              historyArchiveSupportEnabled, pinMessagesAllowedForMembers,
+                                              bannerJsonStr, encrypted);
     }
 
     function communityHasMember(communityId, pubKey)
