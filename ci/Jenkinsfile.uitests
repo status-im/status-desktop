@@ -85,17 +85,16 @@ pipeline {
           def goerli_rpc_port = 855 + env.EXECUTOR_NUMBER
           def mnemonic = "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial"
           def goerli_db_path = "$WORKSPACE/test/ui-test/fixtures/ganache-dbs/goerli"
-          def rpc_port = 864 + env.EXECUTOR_NUMBER
-          def geth_port = 3131 + env.EXECUTOR_NUMBER
+          def tcp_port = 6010 + env.EXECUTOR_NUMBER
           docker.image('trufflesuite/ganache:v7.4.1').withRun(
             "-p 127.0.0.1:${goerli_rpc_port}:8545 -v ${goerli_db_path}:/goerli-db",
             "-e 10 -m='${mnemonic}' --chain.chainId 5 --database.dbPath /goerli-db"
           ) { c ->
-            docker.image('statusteam/status-go:v0.84.0').withRun(
-              "-p 127.0.0.1:${rpc_port}:8545 -p 127.0.0.1:${geth_port}:30303/tcp -p 127.0.0.1:${geth_port}:30303/udp -v ${env.WORKSPACE}/ci/mailserver/config.json:/config.json",
-              "-log=INFO -log-without-color -c=/config.json -dir=/tmp"
+            docker.image('statusteam/nim-waku').withRun(
+              "-p 127.0.0.1:${tcp_port}:60000/tcp",
+              "--use-db=true --persist-messages=true --nat=none --nodekey=1122334455667788990011223344556677889900112233445566778899001122"
             ) { c2 ->
-              env.PEER_ENR = sh(script:"RPC_PORT=${rpc_port} MAILSERVER_PORT=${geth_port} ${env.WORKSPACE}/ci/mailserver/get_enode.sh", returnStdout:true).trim()
+              env.PEER_ENR = "/ip4/127.0.0.1/tcp/" + tcp_port + "/p2p/16Uiu2HAmMGhfSTUzKbsjMWxc6T1X4wiTWSF1bEWSLjAukCm7KiHV"
               withEnv(["TEST_PEER_ENR=${env.PEER_ENR}"]){
                 wrap([
                   $class: 'Xvfb',
