@@ -311,9 +311,14 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
     result["WakuV2Config"]["UDPPort"] = wV2Port.newJInt()
 
   if TEST_PEER_ENR != "":
-    result["ClusterConfig"]["BootNodes"] = %* @[TEST_PEER_ENR]
-    result["ClusterConfig"]["TrustedMailServers"] = %* @[TEST_PEER_ENR]
-    result["ClusterConfig"]["StaticNodes"] = %* @[TEST_PEER_ENR]
+    let testPeerENRArr = %* @[TEST_PEER_ENR]
+    result["ClusterConfig"]["RelayNodes"] = testPeerENRArr
+    result["ClusterConfig"]["StoreNodes"] =  testPeerENRArr
+    result["ClusterConfig"]["FilterNodes"] =  testPeerENRArr
+    result["ClusterConfig"]["LightpushNodes"] = testPeerENRArr
+    result["ClusterConfig"]["BootNodes"] = %* testPeerENRArr
+    result["ClusterConfig"]["TrustedMailServers"] = testPeerENRArr
+    result["ClusterConfig"]["StaticNodes"] = testPeerENRArr
     result["ClusterConfig"]["RendezvousNodes"] = %* (@[])
     result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* (@[])
     result["Rendezvous"] = newJBool(false)
