@@ -608,6 +608,10 @@ clean: | clean-common
 	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO) $(STATUSKEYCARDGO)
 	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
 
+clean-git:
+	git clean -fdx
+	git submodule foreach --recursive git clean -fdx
+
 force-rebuild-status-go:
 	bash ./scripts/force-rebuild-status-go.sh $(STATUSGO)
 
