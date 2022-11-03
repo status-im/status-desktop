@@ -501,9 +501,9 @@ QtObject {
     }
 
     enum DiscordImportErrorCode {
-        Unknown = 0,
-        Warning = 1,
-        Error = 2
+        Unknown = 1,
+        Warning = 2,
+        Error = 3
     }
 
     readonly property int communityImported: 0
