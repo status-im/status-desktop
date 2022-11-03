@@ -23,7 +23,6 @@ Item {
 
     QtObject {
         id: d
-        readonly property var alwaysVisible : ["ETH", "SNT", "DAI", "STT"]
         property int selectedAssetIndex: -1
     }
 
@@ -37,7 +36,7 @@ Item {
             sourceModel: account.assets
             filters: [
                 ExpressionFilter {
-                    expression: d.alwaysVisible.includes(symbol) || (networkVisible && enabledNetworkBalance > 0)
+                    expression: networkVisible
                 }
             ]
         }

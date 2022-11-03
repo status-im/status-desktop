@@ -374,10 +374,10 @@ Item {
 
                             image.source: token  && token.builtOn !== "" ? Style.svg("tiny/" + RootStore.getNetworkIconUrl(token.builtOn)) : ""
                             tagPrimaryLabel.text: token && token.builtOn !== "" ? RootStore.getNetworkName(token.builtOn) : "---"
-                            tagSecondaryLabel.text: token && token.smartContractAddress !== "" ? token.smartContractAddress : "---"
+                            tagSecondaryLabel.text: token && token.address !== "" ? token.address : "---"
                             controlBackground.color: Theme.palette.baseColor2
                             controlBackground.border.color: "transparent"
-                            visible: typeof token != "undefined" && token && token.builtOn !== "" && token.smartContractAddress !== ""
+                            visible: typeof token != "undefined" && token && token.builtOn !== "" && token.address !== ""
                         }
                     }
                 }

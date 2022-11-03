@@ -48,16 +48,6 @@ type
 rpc(clientVersion, "web3"):
   discard
 
-rpc(getCustomTokens, "wallet"):
-  discard
-
-rpc(deleteCustomTokenByChainID, "wallet"):
-  chainId: int
-  address: string
-
-rpc(addCustomToken, "wallet"):
-  token: Token
-
 rpc(getOpenseaCollectionsByOwner, "wallet"):
   chainId: int
   address: string
@@ -95,16 +85,11 @@ rpc(getTokensBalancesForChainIDs, "wallet"):
   accounts: seq[string]
   tokens: seq[string]
 
-rpc(discoverToken, "wallet"):
-  chainId: int
-  address: string
-
 rpc(getPendingTransactionsByChainIDs, "wallet"):
   chainIds: seq[int]
 
-rpc(toggleVisibleToken, "wallet"):
-  chainId: int
-  address: string
+rpc(getWalletToken, "wallet"):
+  discard
 
 rpc(getTransactionEstimatedTime, "wallet"):
   chainId: int

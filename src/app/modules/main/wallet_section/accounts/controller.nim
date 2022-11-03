@@ -1,6 +1,8 @@
+import sugar, sequtils
 import io_interface
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/accounts/service as accounts_service
+import ../../../../../app_service/service/network/service as network_service
 
 import ../../../../global/global_singleton
 import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
@@ -16,18 +18,21 @@ type
     events: EventEmitter
     walletAccountService: wallet_account_service.Service
     accountsService: accounts_service.Service
+    networkService: network_service.Service
 
 proc newController*(
   delegate: io_interface.AccessInterface,
   events: EventEmitter,
   walletAccountService: wallet_account_service.Service,
-  accountsService: accounts_service.Service
+  accountsService: accounts_service.Service,
+  networkService: network_service.Service,
 ): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.walletAccountService = walletAccountService
   result.accountsService = accountsService
+  result.networkService = networkService
 
 proc delete*(self: Controller) =
   discard
@@ -101,3 +106,9 @@ proc addWalletAccount*(self: Controller, name, address, path, addressAccountIsDe
     color, emoji: string): string =
   return self.walletAccountService.addWalletAccount(name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, 
     accountType, color, emoji)
+
+proc getChainIds*(self: Controller): seq[int] = 
+  return self.networkService.getNetworks().map(n => n.chainId)
+
+proc getEnabledChainIds*(self: Controller): seq[int] = 
+  return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)

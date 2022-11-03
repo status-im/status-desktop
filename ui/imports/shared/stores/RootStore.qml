@@ -39,10 +39,6 @@ QtObject {
     property bool isNonArchivalNode:  history.isNonArchivalNode
 
     property var currentAccount: walletSectionCurrent
-    property var walletTokensModule: walletSectionAllTokens
-    property var tokens: walletSectionAllTokens.all
-    property var accounts: walletSectionAccounts.model
-
     property var marketValueStore: TokenMarketValuesStore{}
 
     function getNetworkColor(chainId) {

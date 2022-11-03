@@ -15,7 +15,7 @@ type
     Description
     AssetWebsiteUrl
     BuiltOn
-    SmartContractAddress
+    Address
     MarketCap
     HighDay
     LowDay
@@ -71,7 +71,7 @@ QtObject:
       ModelRole.Description.int:"description",
       ModelRole.AssetWebsiteUrl.int:"assetWebsiteUrl",
       ModelRole.BuiltOn.int:"builtOn",
-      ModelRole.SmartContractAddress.int:"smartContractAddress",
+      ModelRole.Address.int:"address",
       ModelRole.MarketCap.int:"marketCap",
       ModelRole.HighDay.int:"highDay",
       ModelRole.LowDay.int:"lowDay",
@@ -116,8 +116,8 @@ QtObject:
       result = newQVariant(item.getAssetWebsiteUrl())
     of ModelRole.BuiltOn:
       result = newQVariant(item.getBuiltOn())
-    of ModelRole.SmartContractAddress:
-      result = newQVariant(item.getSmartContractAddress())
+    of ModelRole.Address:
+      result = newQVariant(item.getAddress())
     of ModelRole.MarketCap:
       result = newQVariant(item.getMarketCap())
     of ModelRole.HighDay:
@@ -152,7 +152,7 @@ QtObject:
       of "description": result = $item.getDescription()
       of "assetWebsiteUrl": result = $item.getAssetWebsiteUrl()
       of "builtOn": result = $item.getBuiltOn()
-      of "smartContractAddress": result = $item.getSmartContractAddress()
+      of "Address": result = $item.getAddress()
       of "marketCap": result = $item.getMarketCap()
       of "highDay": result = $item.getHighDay()
       of "lowDay": result = $item.getLowDay()

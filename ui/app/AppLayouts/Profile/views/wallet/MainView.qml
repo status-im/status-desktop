@@ -20,33 +20,6 @@ Column {
     signal goToAccountView(address: string)
     signal goToDappPermissionsView()
 
-    // Temporary commented, we need to bring it back after MVP
-    // https://github.com/status-im/status-desktop/issues/5856
-
-//    StatusListItem {
-//        title: qsTr("Manage Assets & List")
-//        height: 64
-//        width: parent.width
-//        onClicked: Global.openPopup(tokenSettingsModalComponent)
-//        components: [
-//            StatusIcon {
-//                icon: "chevron-down"
-//                rotation: 270
-//                color: Theme.palette.baseColor1
-//            }
-//        ]
-//    }
-
-    Component {
-        id: tokenSettingsModalComponent
-        TokenSettingsModal {
-            walletStore: root.walletStore
-            onClosed: {
-                destroy();
-            }
-        }
-    }
-
     Separator {
         height: 17
     }

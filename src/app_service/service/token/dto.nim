@@ -62,18 +62,7 @@ proc newTokenDto*(
     symbol: symbol,
     decimals: decimals,
     hasIcon: hasIcon,
-    isCustom: isCustom,
-    description: description,
-    assetWebsiteUrl: assetWebsiteUrl,
-    builtOn: builtOn,
-    smartContractAddress: smartContractAddress,
-    marketCap: marketCap,
-    highDay: highDay,
-    lowDay: lowDay,
-    changePctHour: changePctHour,
-    changePctDay: changePctDay,
-    changePct24hour: changePct24hour,
-    change24hour: change24hour,
+    isCustom: isCustom
   )
 
 proc toTokenDto*(jsonObj: JsonNode, isVisible: bool, hasIcon: bool = false, isCustom: bool = true): TokenDto =
@@ -87,18 +76,6 @@ proc toTokenDto*(jsonObj: JsonNode, isVisible: bool, hasIcon: bool = false, isCu
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("decimals", result.decimals)
   discard jsonObj.getProp("color", result.color)
-  discard jsonObj.getProp("description", result.description)
-  discard jsonObj.getProp("assetWebsiteUrl", result.assetWebsiteUrl)
-  discard jsonObj.getProp("builtOn", result.builtOn)
-  discard jsonObj.getProp("smartContractAddress", result.smartContractAddress)
-  discard jsonObj.getProp("marketCap", result.marketCap)
-  discard jsonObj.getProp("highDay", result.highDay)
-  discard jsonObj.getProp("lowDay", result.lowDay)
-  discard jsonObj.getProp("changePctHour", result.changePctHour)
-  discard jsonObj.getProp("changePctDay", result.changePctDay)
-  discard jsonObj.getProp("changePct24hour", result.changePct24hour)
-  discard jsonObj.getProp("change24hour", result.change24hour)
-
   result.isVisible = isVisible
 
 proc addressAsString*(self: TokenDto): string =

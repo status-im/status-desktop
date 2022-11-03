@@ -470,7 +470,7 @@ method setKeyPairStoredOnKeycard*[T](self: Module[T], cardMetadata: CardMetadata
   for wa in cardMetadata.walletAccounts:
     if self.updateKeyPairItemIfDataAreKnown(wa.address, item):
       continue
-    let balance = self.controller.getBalanceForAddress(wa.address)
+    let balance = self.controller.getCurrencyBalanceForAddress(wa.address)
     knownKeyPair = false
     item.addAccount(name = "", wa.path, wa.address, emoji = "", color = self.generateRandomColor(), icon = "wallet", balance)
   self.view.setKeyPairStoredOnKeycardIsKnown(knownKeyPair)

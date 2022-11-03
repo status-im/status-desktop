@@ -8,29 +8,30 @@ const WalletTypeSeed* = "seed"
 const WalletTypeWatch* = "watch"
 const WalletTypeKey* = "key"
 
+var alwaysVisible = {
+  1: @["ETH", "SNT", "DAI"],
+  10: @["ETH", "SNT", "DAI"],
+  42161: @["ETH", "SNT", "DAI"],
+  5: @["ETH", "STT", "DAI"],
+  420: @["ETH", "STT", "DAI"],
+  421613: @["ETH", "STT", "DAI"],
+}.toTable
+
 type BalanceDto* = object
   balance*: float64
-  currencyBalance*: float64
   address*: string
   chainId*: int
-  enabled*: bool
 
 type
   WalletTokenDto* = object
     name*: string
     symbol*: string
     decimals*: int
-    hasIcon*: bool
     color*: string
-    isCustom*: bool
-    totalBalance*: BalanceDto
-    enabledNetworkBalance*: BalanceDto
     balancesPerChain*: Table[int, BalanceDto]
-    visible*: bool
     description*: string
     assetWebsiteUrl*: string
     builtOn*: string
-    smartContractAddress*: string
     marketCap*: string
     highDay*: string
     lowDay*: string
@@ -99,30 +100,67 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("emoji", result.emoji)
   discard jsonObj.getProp("derived-from", result.derivedfrom)
 
-proc getCurrencyBalance*(self: WalletAccountDto): float64 =
-  return self.tokens.map(t => t.enabledNetworkBalance.currencyBalance).foldl(a + b, 0.0)
+proc getCurrencyBalance*(self: BalanceDto, currencyPrice: float64): float64 =
+  return self.balance * currencyPrice
+
+proc getAddress*(self: WalletTokenDto): string =
+  for balance in self.balancesPerChain.values:
+    return balance.address
+
+  return ""
+
+proc getBalances*(self: WalletTokenDto, chainIds: seq[int]): seq[BalanceDto] =
+  for chainId in chainIds:
+    if self.balancesPerChain.hasKey(chainId):
+      result.add(self.balancesPerChain[chainId])
+
+proc getCurrencyBalance*(self: WalletTokenDto, chainIds: seq[int]): float64 =
+  var sum = 0.0
+  for chainId in chainIds:
+    if self.balancesPerChain.hasKey(chainId):
+      sum += self.balancesPerChain[chainId].getCurrencyBalance(self.currencyPrice)
+  
+  return sum
+
+proc getVisible*(self: WalletTokenDto, chainIds: seq[int]): bool =
+  for chainId in chainIds:
+    if alwaysVisible.hasKey(chainId) and self.symbol in alwaysVisible[chainId]:
+      return true
+
+    if self.balancesPerChain.hasKey(chainId) and self.balancesPerChain[chainId].balance > 0:
+      return true
+  
+  return false
+
+proc getCurrencyBalance*(self: WalletAccountDto, chainIds: seq[int]): float64 =
+  return self.tokens.map(t => t.getCurrencyBalance(chainIds)).foldl(a + b, 0.0)
+
+proc getBalance*(self: WalletTokenDto, chainIds: seq[int]): float64 =
+  var sum = 0.0
+  for chainId in chainIds:
+    if self.balancesPerChain.hasKey(chainId):
+      sum += self.balancesPerChain[chainId].balance
+  
+  return sum
+
+proc getBalance*(self: WalletAccountDto, chainIds: seq[int]): float64 =
+  return self.tokens.map(t => t.getBalance(chainIds)).foldl(a + b, 0.0)
 
 proc toBalanceDto*(jsonObj: JsonNode): BalanceDto =
   result = BalanceDto()
-  discard jsonObj.getProp("balance", result.balance)
-  discard jsonObj.getProp("currencyBalance", result.currencyBalance)
+  result.balance = jsonObj{"balance"}.getStr.parseFloat()
   discard jsonObj.getProp("address", result.address)
   discard jsonObj.getProp("chainId", result.chainId)
-  discard jsonObj.getProp("enabled", result.enabled)
 
 proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
   result = WalletTokenDto()
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("decimals", result.decimals)
-  discard jsonObj.getProp("hasIcon", result.hasIcon)
   discard jsonObj.getProp("color", result.color)
-  discard jsonObj.getProp("isCustom", result.isCustom)
-  discard jsonObj.getProp("visible", result.visible)
   discard jsonObj.getProp("description", result.description)
   discard jsonObj.getProp("assetWebsiteUrl", result.assetWebsiteUrl)
   discard jsonObj.getProp("builtOn", result.builtOn)
-  discard jsonObj.getProp("smartContractAddress", result.smartContractAddress)
   discard jsonObj.getProp("marketCap", result.marketCap)
   discard jsonObj.getProp("highDay", result.highDay)
   discard jsonObj.getProp("lowDay", result.lowDay)
@@ -132,45 +170,7 @@ proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
   discard jsonObj.getProp("change24hour", result.change24hour)
   discard jsonObj.getProp("currencyPrice", result.currencyPrice)
 
-  var totalBalanceObj: JsonNode
-  if(jsonObj.getProp("totalBalance", totalBalanceObj)):
-    result.totalBalance = toBalanceDto(totalBalanceObj)
-  
-  var enabledNetworkBalanceObj: JsonNode
-  if(jsonObj.getProp("enabledNetworkBalance", enabledNetworkBalanceObj)):
-    result.enabledNetworkBalance = toBalanceDto(enabledNetworkBalanceObj)
-    
   var balancesPerChainObj: JsonNode
   if(jsonObj.getProp("balancesPerChain", balancesPerChainObj)):
     for chainId, balanceObj in balancesPerChainObj:
       result.balancesPerChain[parseInt(chainId)] = toBalanceDto(balanceObj)
-
-proc walletTokenDtoToJson*(dto: WalletTokenDto): JsonNode =
-  var balancesPerChainJsonObj = newJObject()
-  for k, v in dto.balancesPerChain.pairs:
-    balancesPerChainJsonObj[$k] = %* v
-
-  result = %* {
-    "name": dto.name,
-    "symbol": dto.symbol,
-    "decimals": dto.decimals,
-    "hasIcon": dto.hasIcon,
-    "color": dto.color,
-    "isCustom": dto.isCustom,
-    "totalBalance": %* dto.totalBalance,
-    "enabledNetworkBalance": %* dto.enabledNetworkBalance,
-    "balancesPerChain": balancesPerChainJsonObj,
-    "visible": dto.visible,
-    "description": dto.description,
-    "assetWebsiteUrl": dto.assetWebsiteUrl,
-    "builtOn": dto.builtOn,
-    "smartContractAddress": dto.smartContractAddress,
-    "marketCap": dto.marketCap,
-    "highDay": dto.highDay,
-    "lowDay": dto.lowDay,
-    "changePctHour": dto.changePctHour,
-    "changePctDay": dto.changePctDay,
-    "changePct24hour": dto.changePct24hour,
-    "change24hour": dto.change24hour,
-    "currencyPrice": dto.currencyPrice,
-  }

@@ -248,9 +248,6 @@ QtObject:
       error "error: ", errDescription
       return
 
-  proc getCurrencyBalance*(self: Service): float64 =
-    return self.getWalletAccounts().map(a => a.getCurrencyBalance()).foldl(a + b, 0.0)
-
   proc addNewAccountToLocalStore(self: Service) =
     let accounts = self.fetchAccounts()
     var newAccount = accounts[0]
@@ -360,21 +357,13 @@ QtObject:
     self.buildAllTokens()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
 
-  proc toggleTokenVisible*(self: Service, chainId: int, address: string) =
-    self.tokenService.toggleVisible(chainId, address)
-    self.buildAllTokens()
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED, TokenVisibilityToggled())
-
   proc toggleNetworkEnabled*(self: Service, chainId: int) =
     self.networkService.toggleNetwork(chainId)
-    self.tokenService.init()
-    self.buildAllTokens()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
   method toggleTestNetworksEnabled*(self: Service) =
     discard self.settingsService.toggleTestNetworksEnabled()
     self.tokenService.init()
-    self.buildAllTokens()
     self.checkRecentHistory()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
@@ -488,24 +477,23 @@ QtObject:
     self.threadpool.start(arg)
 
   proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      info "prepared tokens are not a json object"
-      return
+    try:
+      let responseObj = response.parseJson
+      var data = TokensPerAccountArgs()
+      let walletAddresses = toSeq(self.walletAccounts.keys)
+      for wAddress in walletAddresses:
+        var tokensArr: JsonNode
+        var tokens: seq[WalletTokenDto]
+        if(responseObj.getProp(wAddress, tokensArr)):
+          tokens = map(tokensArr.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
+        
+        tokens.sort(priorityTokenCmp)
+        self.walletAccounts[wAddress].tokens = tokens
+        data.accountsTokens[wAddress] = tokens
 
-    var data = TokensPerAccountArgs()
-    let walletAddresses = toSeq(self.walletAccounts.keys)
-    for wAddress in walletAddresses:
-      var tokensArr: JsonNode
-      var tokens: seq[WalletTokenDto]
-      if(responseObj.getProp(wAddress, tokensArr)):
-        tokens = map(tokensArr.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
-      
-      tokens.sort(priorityTokenCmp)
-      self.walletAccounts[wAddress].tokens = tokens
-      data.accountsTokens[wAddress] = tokens
-
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, data)
+      self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, data)
+    except Exception as e:
+      error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
 
     # run timer again...
     self.startBuildingTokensTimer()
@@ -520,15 +508,10 @@ QtObject:
     if not calledFromTimerOrInit:
       self.ignoreTimeInitiatedTokensBuild = true
 
-    let walletAddresses = toSeq(self.walletAccounts.keys)
-
     let arg = BuildTokensTaskArg(
       tptr: cast[ByteAddress](prepareTokensTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAllTokensBuilt",
-      walletAddresses: walletAddresses,
-      currency: self.settingsService.getCurrency(),
-      networks: self.networkService.getNetworks()
     )
     self.threadpool.start(arg)
 
@@ -537,34 +520,18 @@ QtObject:
 
   proc getNetworkCurrencyBalance*(self: Service, network: NetworkDto): float64 =
     for walletAccount in toSeq(self.walletAccounts.values):
-      for token in walletAccount.tokens:
-        if token.balancesPerChain.hasKey(network.chainId):
-          let balance = token.balancesPerChain[network.chainId]
-          result += balance.currencyBalance
-
+      result += walletAccount.getCurrencyBalance(@[network.chainId])
+       
   proc findTokenSymbolByAddress*(self: Service, address: string): string =
-    return self.tokenService.findTokenSymbolByAddressInAllNetworks(address)
+    return self.tokenService.findTokenSymbolByAddress(address)
 
-  proc fetchBalanceForAddress*(self: Service, address: string): float64 =
-    let currency = self.settingsService.getCurrency()
-    let networks = self.networkService.getNetworks()
-    var networkSymbols: seq[string]
-    var allTokens: seq[TokenDto]
-    for n in networks:
-      networkSymbols.add(n.nativeCurrencySymbol)
-      allTokens.add(getTokensForChainId(n))
-    allTokens.add(getCustomTokens())
-    allTokens = deduplicate(allTokens)
+  proc getCurrencyBalanceForAddress*(self: Service, address: string): float64 =
+    let chainIds = self.networkService.getNetworks().map(n => n.chainId)
+    return self.walletAccounts[address].getCurrencyBalance(chainIds)
 
-    var prices = fetchPrices(networkSymbols, allTokens, currency)
-    let tokenBalances = getTokensBalances(@[address], allTokens)
-
-    var totalBalance = 0.0
-    for token in allTokens:
-      let balanceForToken = tokenBalances{address}{token.addressAsString()}.getStr
-      let chainBalanceForToken = parsefloat(hex2Balance(balanceForToken, token.decimals))
-      totalBalance = totalBalance + chainBalanceForToken * prices[token.symbol]
-    return totalBalance
+  proc getTotalCurrencyBalance*(self: Service): float64 =
+    let chainIds = self.networkService.getNetworks().filter(a => a.enabled).map(a => a.chainId)
+    return self.getWalletAccounts().map(a => a.getCurrencyBalance(chainIds)).foldl(a + b, 0.0)
 
   proc responseHasNoErrors(self: Service, procName: string, response: RpcResponse[JsonNode]): bool =
     var errMsg = ""
