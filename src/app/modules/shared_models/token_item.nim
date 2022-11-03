@@ -16,7 +16,7 @@ type
     description: string
     assetWebsiteUrl: string
     builtOn: string
-    smartContractAddress: string
+    address: string
     marketCap: string
     highDay: string
     lowDay: string
@@ -38,7 +38,7 @@ proc initItem*(
   description: string,
   assetWebsiteUrl: string,
   builtOn: string,
-  smartContractAddress: string,
+  address: string,
   marketCap: string,
   highDay: string,
   lowDay: string,
@@ -61,7 +61,7 @@ proc initItem*(
   result.description =  description
   result.assetWebsiteUrl = assetWebsiteUrl
   result.builtOn = builtOn
-  result.smartContractAddress = smartContractAddress
+  result.address = address
   result.marketCap = marketCap
   result.highDay = highDay
   result.lowDay = lowDay
@@ -84,7 +84,7 @@ proc `$`*(self: Item): string =
     description: {self.description},
     assetWebsiteUrl: {self.assetWebsiteUrl}
     builtOn: {self.builtOn}
-    smartContractAddress: {self.smartContractAddress}
+    address: {self.address}
     marketCap: {self.marketCap},
     highDay: {self.highDay},
     lowDay: {self.lowDay},
@@ -129,8 +129,8 @@ proc getAssetWebsiteUrl*(self: Item): string =
 proc getBuiltOn*(self: Item): string =
   return self.builtOn
 
-proc getSmartContractAddress*(self: Item): string =
-  return self.smartContractAddress
+proc getAddress*(self: Item): string =
+  return self.address
 
 proc getMarketCap*(self: Item): string =
   return self.marketCap

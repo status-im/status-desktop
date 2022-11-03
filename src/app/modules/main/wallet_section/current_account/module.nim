@@ -3,6 +3,7 @@ import NimQml, Tables, sequtils
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../../app_service/service/network/service as network_service
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
 
@@ -26,13 +27,14 @@ proc newModule*(
   delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   walletAccountService: wallet_account_service.Service,
+  networkService: network_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
   result.currentAccountIndex = 0
   result.view = newView(result)
-  result.controller = newController(result, walletAccountService)
+  result.controller = newController(result, walletAccountService, networkService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -70,21 +72,24 @@ method viewDidLoad*(self: Module) =
 
 proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto]) =
   var totalCurrencyBalanceForAllAssets = 0.0
+  let chainIds = self.controller.getChainIds()
+  let enabledChainIds = self.controller.getEnabledChainIds()
+
   var items: seq[Item]
   for t in tokens:
     let item = token_item.initItem(
       t.name,
       t.symbol,
-      t.totalBalance.balance,
-      t.totalBalance.currencyBalance,
-      t.enabledNetworkBalance.balance,
-      t.enabledNetworkBalance.currencybalance,
-      t.visible,
-      toSeq(t.balancesPerChain.values),
+      t.getBalance(chainIds),
+      t.getCurrencyBalance(chainIds),
+      t.getBalance(enabledChainIds),
+      t.getCurrencyBalance(enabledChainIds),
+      t.getVisible(enabledChainIds),
+      t.getBalances(enabledChainIds),
       t.description,
       t.assetWebsiteUrl,
       t.builtOn,
-      t.smartContractAddress,
+      t.getAddress(),
       t.marketCap,
       t.highDay,
       t.lowDay,
@@ -96,17 +101,18 @@ proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto]) =
       t.decimals,
     )
     items.add(item)
-    totalCurrencyBalanceForAllAssets += t.enabledNetworkBalance.currencybalance
+    totalCurrencyBalanceForAllAssets += t.getCurrencyBalance(enabledChainIds)
     
   self.view.getAssetsModel().setItems(items)
   self.view.setCurrencyBalance(totalCurrencyBalanceForAllAssets)
 
 method switchAccount*(self: Module, accountIndex: int) =
   self.currentAccountIndex = accountIndex
+  let enabledChainIds = self.controller.getEnabledChainIds()
   let walletAccount = self.controller.getWalletAccount(accountIndex)
   # can safely do this as the account will always contain atleast one account
   self.view.setDefaultWalletAccount(self.controller.getWalletAccount(0))
-  self.view.setData(walletAccount)
+  self.view.setData(walletAccount, enabledChainIds)
   self.setAssetsAndBalance(walletAccount.tokens)
 
 method update*(self: Module, address: string, accountName: string, color: string, emoji: string) =

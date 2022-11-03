@@ -61,13 +61,13 @@ proc newModule*(
   result.delegate = delegate
   result.events = events
   result.moduleLoaded = false
-  result.controller = newController(result, settingsService, walletAccountService, networkService)
+  result.controller = newController(result, settingsService, walletAccountService)
   result.view = newView(result)
 
-  result.accountsModule = accounts_module.newModule(result, events, keycardService, walletAccountService, accountsService)
+  result.accountsModule = accounts_module.newModule(result, events, keycardService, walletAccountService, accountsService, networkService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService)
-  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)
+  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService)
   result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService, networkService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)

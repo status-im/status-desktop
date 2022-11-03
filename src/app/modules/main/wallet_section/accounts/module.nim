@@ -8,6 +8,7 @@ import ../../../../../app_service/common/account_constants
 import ../../../../../app_service/service/keycard/service as keycard_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/accounts/service as accounts_service
+import ../../../../../app_service/service/network/service as network_service
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
 import ../../../shared_modules/keycard_popup/module as keycard_shared_module
@@ -41,7 +42,8 @@ proc newModule*(
   events: EventEmitter,
   keycardService: keycard_service.Service,
   walletAccountService: wallet_account_service.Service,
-  accountsService: accounts_service.Service
+  accountsService: accounts_service.Service,
+  networkService: network_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -50,7 +52,7 @@ proc newModule*(
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
   result.view = newView(result)
-  result.controller = controller.newController(result, events, walletAccountService, accountsService)
+  result.controller = controller.newController(result, events, walletAccountService, accountsService, networkService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -69,25 +71,25 @@ method refreshWalletAccounts*(self: Module) =
   let walletAccounts = self.controller.getWalletAccounts()
   let migratedKeyPairs = self.controller.getAllMigratedKeyPairs()
 
+  let chainIds = self.controller.getChainIds()
+  let enabledChainIds = self.controller.getEnabledChainIds()
 
   let items = walletAccounts.map(proc (w: WalletAccountDto): item.Item =
     let assets = token_model.newModel()
-
-
     assets.setItems(
       w.tokens.map(t => token_item.initItem(
           t.name,
           t.symbol,
-          t.totalBalance.balance,
-          t.totalBalance.currencyBalance,
-          t.enabledNetworkBalance.balance,
-          t.enabledNetworkBalance.currencyBalance,
-          t.visible,
-          toSeq(t.balancesPerChain.values),
+          t.getBalance(chainIds),
+          t.getCurrencyBalance(chainIds),
+          t.getBalance(enabledChainIds),
+          t.getCurrencyBalance(enabledChainIds),
+          t.getVisible(enabledChainIds),
+          t.getBalances(enabledChainIds),
           t.description,
           t.assetWebsiteUrl,
           t.builtOn,
-          t.smartContractAddress,
+          t.getAddress(),
           t.marketCap,
           t.highDay,
           t.lowDay,
@@ -111,7 +113,7 @@ method refreshWalletAccounts*(self: Module) =
           x.walletType,
           x.isWallet,
           x.isChat,
-          x.getCurrencyBalance(),
+          x.getBalance(enabledChainIds),
           x.emoji,
           x.derivedfrom,
         ))
@@ -126,7 +128,7 @@ method refreshWalletAccounts*(self: Module) =
       w.walletType,
       w.isWallet,
       w.isChat,
-      w.getCurrencyBalance(),
+      w.getBalance(enabledChainIds),
       assets,
       w.emoji,
       w.derivedfrom,

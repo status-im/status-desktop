@@ -143,7 +143,7 @@ QtObject:
   proc getTokenBalanceOnChain*(self: View, chainId: int, tokenSymbol: string): string {.slot.} =
     return self.assets.getTokenBalanceOnChain(chainId, tokenSymbol)
 
-proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
+proc setData*(self: View, dto: wallet_account_service.WalletAccountDto, chainIds: seq[int]) =
     self.name = dto.name
     self.nameChanged()
     self.address = dto.address
@@ -158,7 +158,7 @@ proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
     self.walletTypeChanged()
     self.isChat = dto.isChat
     self.isChatChanged()
-    self.currencyBalance = dto.getCurrencyBalance()
+    self.currencyBalance = dto.getCurrencyBalance(chainIds)
     self.currencyBalanceChanged()
     self.emoji = dto.emoji
     self.emojiChanged()

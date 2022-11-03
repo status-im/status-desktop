@@ -7,8 +7,6 @@ type
     ChainId = UserRole + 1,
     Address
     Balance
-    CurrencyBalance
-    Enabled
 
 QtObject:
   type
@@ -47,8 +45,6 @@ QtObject:
       ModelRole.ChainId.int:"chainId",
       ModelRole.Address.int:"address",
       ModelRole.Balance.int:"balance",
-      ModelRole.CurrencyBalance.int:"currencyBalance",
-      ModelRole.Enabled.int:"enabled",
     }.toTable
 
   method data(self: BalanceModel, index: QModelIndex, role: int): QVariant =
@@ -67,11 +63,7 @@ QtObject:
     of ModelRole.Address:
       result = newQVariant(item.address)
     of ModelRole.Balance:
-      result = newQVariant(item.balance)
-    of ModelRole.CurrencyBalance:
-      result = newQVariant(item.currencyBalance)
-    of ModelRole.Enabled:
-      result = newQVariant(item.enabled)
+      result = newQVariant($item.balance)
 
   proc rowData(self: BalanceModel, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -81,8 +73,6 @@ QtObject:
       of "chainId": result = $item.chainId
       of "address": result = $item.address
       of "balance": result = $item.balance
-      of "currencyBalance": result = $item.currencyBalance
-      of "enabled": result = $item.enabled
 
   proc setItems*(self: BalanceModel, items: seq[BalanceDto]) =
     self.beginResetModel()

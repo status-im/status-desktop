@@ -1,18 +1,23 @@
+import sugar, sequtils
 import io_interface
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../../app_service/service/network/service as network_service
 
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     walletAccountService: wallet_account_service.Service
+    networkService: network_service.Service
 
 proc newController*(
   delegate: io_interface.AccessInterface,
-  walletAccountService: wallet_account_service.Service
+  walletAccountService: wallet_account_service.Service,
+  networkService: network_service.Service,
 ): Controller =
   result = Controller()
   result.delegate = delegate
   result.walletAccountService = walletAccountService
+  result.networkService = networkService
 
 proc delete*(self: Controller) =
   discard
@@ -28,3 +33,9 @@ proc getIndex*(self: Controller, address: string): int =
 
 method findTokenSymbolByAddress*(self: Controller, address: string): string =
   return self.walletAccountService.findTokenSymbolByAddress(address)
+
+proc getChainIds*(self: Controller): seq[int] = 
+  return self.networkService.getNetworks().map(n => n.chainId)
+
+proc getEnabledChainIds*(self: Controller): seq[int] = 
+  return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)

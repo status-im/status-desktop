@@ -166,7 +166,7 @@ QtObject:
   proc setDefaultWalletAccount*(self: View, default: wallet_account_service.WalletAccountDto) =
     self.defaultAccount = default
 
-  proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
+  proc setData*(self: View, dto: wallet_account_service.WalletAccountDto, chainIds: seq[int]) =
     if(self.name != dto.name):
       self.name = dto.name
       self.nameChanged()
@@ -214,7 +214,7 @@ QtObject:
           x.walletType,
           x.isWallet,
           x.isChat,
-          x.getCurrencyBalance(),
+          x.getCurrencyBalance(chainIds),
           x.emoji,
           x.derivedfrom
         ))

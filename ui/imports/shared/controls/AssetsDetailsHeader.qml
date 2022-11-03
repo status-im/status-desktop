@@ -77,7 +77,6 @@ Control {
                 id: chainRepeater
                 model: balances ? balances : null
                 delegate: InformationTag {
-                    visible: model.enabled
                     tagPrimaryLabel.text: model.balance
                     tagPrimaryLabel.color: root.getNetworkColor(model.chainId)
                     image.source: Style.svg("tiny/%1".arg(root.getNetworkIcon(model.chainId)))

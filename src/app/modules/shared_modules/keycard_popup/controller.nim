@@ -464,10 +464,10 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
     return
   return self.walletAccountService.fetchAccounts()
 
-proc getBalanceForAddress*(self: Controller, address: string): float64 =
+proc getCurrencyBalanceForAddress*(self: Controller, address: string): float64 =
   if not serviceApplicable(self.walletAccountService):
     return
-  return self.walletAccountService.fetchBalanceForAddress(address)
+  return self.walletAccountService.getCurrencyBalanceForAddress(address)
 
 proc addMigratedKeyPair*(self: Controller, keyPair: KeyPairDto) =
   if not serviceApplicable(self.walletAccountService):

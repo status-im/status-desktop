@@ -21,24 +21,8 @@ QtObject {
     property var importedAccounts: walletSectionAccounts.imported
     property var generatedAccounts: walletSectionAccounts.generated
     property var watchOnlyAccounts: walletSectionAccounts.watchOnly
-    property var walletTokensModule: walletSectionAllTokens
-    property var defaultTokenList: walletSectionAllTokens.default
-    property var customTokenList: walletSectionAllTokens.custom
-
 
     property var currencyStore: SharedStore.RootStore.currencyStore
-
-    function addCustomToken(chainId, address, name, symbol, decimals) {
-        return walletSectionAllTokens.addCustomToken(chainId, address, name, symbol, decimals)
-    }
-
-    function toggleVisible(chainId, address) {
-        walletSectionAllTokens.toggleVisible(chainId, address)
-    }
-
-    function removeCustomToken(chainId, address) {
-        walletSectionAllTokens.removeCustomToken(chainId, address)
-    }
 
     property var currentAccount: walletSectionCurrent
 

@@ -46,7 +46,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.providerModule = provider_module.newModule(result, events, settingsService, networkService, providerService)
   result.bookmarkModule = bookmark_module.newModule(result, events, bookmarkService)
   result.dappsModule = dapps_module.newModule(result, dappPermissionsService, walletAccountService)
-  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)
+  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService)
 
 method delete*(self: Module) =
   self.view.delete
