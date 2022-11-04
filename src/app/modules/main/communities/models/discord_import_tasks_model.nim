@@ -102,10 +102,10 @@ QtObject:
 
       let errorItemsCount = self.items[idx].errors.items.len
 
-      # We only show the first 3 errors per task, then we add another
-      # "#n more issues" item in the UI
+      # We only show the first 3 warnings + any error per task,
+      # then we add another "#n more issues" item in the UI
       for i, error in item.errors:
-        if errorItemsCount + i < taskItem.MAX_VISIBLE_ERROR_ITEMS:
+        if (errorItemsCount + i < taskItem.MAX_VISIBLE_ERROR_ITEMS) or error.code > ord(DiscordImportErrorCode.Warning):
           let errorItem = initDiscordImportErrorItem(item.`type`, error.code, error.message)
           self.items[idx].errors.addItem(errorItem)
 
