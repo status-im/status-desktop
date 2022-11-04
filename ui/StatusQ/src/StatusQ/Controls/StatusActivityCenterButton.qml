@@ -36,7 +36,7 @@ StatusFlatRoundButton {
     type: StatusFlatRoundButton.Type.Secondary
 
     // initializing the tooltip
-    tooltip.text: qsTr("Activity")
+    tooltip.text: qsTr("Notifications")
     tooltip.orientation: StatusToolTip.Orientation.Bottom
     tooltip.y: parent.height + 12
 
