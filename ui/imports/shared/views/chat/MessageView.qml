@@ -520,7 +520,7 @@ Loader {
                     } else if (link.startsWith('#')) {
                         rootStore.chatCommunitySectionModule.switchToChannel(link.replace("#", ""))
                         return
-                    } else if (rootStore.isStatusDeepLink(link)) {
+                    } else if (Utils.isStatusDeepLink(link)) {
                         rootStore.activateStatusDeepLink(link)
                         return
                     }
