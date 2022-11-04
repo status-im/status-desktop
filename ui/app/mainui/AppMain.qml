@@ -992,8 +992,12 @@ Item {
             id: activityCenterPopupComponent
             ActivityCenterPopup {
                 id: activityCenter
-                height: appView.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
-                y: 56
+                // TODO get screen size // Taken from old code top bar height was fixed there to 56
+                property int _buttonSize: 56
+
+                x: parent.width - width - Style.current.smallPadding
+                y: parent.y + _buttonSize
+                height: appView.height - _buttonSize * 2
                 store: chatLayoutContainer.rootStore
                 activityCenterStore: appMain.activityCenterStore
                 onClosed: {
