@@ -21,6 +21,8 @@ QtObject {
     property bool discordImportProgressStopped: root.communitiesModuleInst.discordImportProgressStopped
     property string discordImportCommunityId: root.communitiesModuleInst.discordImportCommunityId
     property string discordImportCommunityName: root.communitiesModuleInst.discordImportCommunityName
+    property url discordImportCommunityImage: root.communitiesModuleInst.discordImportCommunityImage
+    property bool discordImportHasCommunityImage: root.communitiesModuleInst.discordImportHasCommunityImage
     property var discordImportTasks: root.communitiesModuleInst.discordImportTasks
     property string locale: localAppSettings.language
     property var advancedModule: profileSectionModule.advancedModule

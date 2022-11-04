@@ -83,6 +83,7 @@ type
 
   DiscordImportProgressArgs* = ref object of Args
     communityId*: string
+    communityImage*: string
     communityName*: string
     tasks*: seq[DiscordImportTaskProgress]
     progress*: float
@@ -222,6 +223,7 @@ QtObject:
       var receivedData = DiscordCommunityImportProgressSignal(e)
       self.events.emit(SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS, DiscordImportProgressArgs(
         communityId: receivedData.communityId,
+        communityImage: receivedData.communityImages.thumbnail,
         communityName: receivedData.communityName,
         tasks: receivedData.tasks,
         progress: receivedData.progress,

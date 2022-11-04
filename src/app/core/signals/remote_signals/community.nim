@@ -2,6 +2,7 @@ import json, tables
 import base
 
 import ../../../../app_service/service/community/dto/[community]
+import ../../../../app_service/service/chat/dto/[chat]
 import signal_type
 
 type CommunitySignal* = ref object of Signal
@@ -21,6 +22,7 @@ type DiscordCategoriesAndChannelsExtractedSignal* = ref object of Signal
 
 type DiscordCommunityImportProgressSignal* = ref object of Signal
   communityId*: string
+  communityImages*: Images
   communityName*: string
   tasks*: seq[DiscordImportTaskProgress]
   progress*: float
@@ -72,6 +74,9 @@ proc fromEvent*(T: type DiscordCommunityImportProgressSignal, event: JsonNode): 
     result.errorsCount = importProgressObj{"errorsCount"}.getInt()
     result.warningsCount = importProgressObj{"warningsCount"}.getInt()
     result.stopped = importProgressObj{"stopped"}.getBool()
+
+    if importProgressObj["communityImages"].kind == JObject:
+      result.communityImages = chat.toImages(importProgressObj["communityImages"])
 
     if importProgressObj["tasks"].kind == JArray:
       for task in importProgressObj["tasks"]:

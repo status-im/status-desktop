@@ -259,11 +259,18 @@ StatusScrollView {
             Layout.fillWidth: true
             spacing: 12
 
-            Image {
+            StatusLoadingIndicator {
+                Layout.preferredHeight: 24
+                Layout.preferredWidth: 24
+                Layout.alignment: Qt.AlignHCenter
+                visible: root.store.discordImportHasCommunityImage && root.store.discordImportCommunityImage.toString() == ""
+            }
+            StatusRoundedImage {
                 Layout.preferredWidth: 36
                 Layout.preferredHeight: 36
-                sourceSize: Qt.size(36, 36)
-                source: Style.svg("contact") // TODO community icon
+                image.sourceSize: Qt.size(36, 36)
+                image.source: root.store.discordImportCommunityImage
+                visible: root.store.discordImportCommunityImage.toString() !== ""
             }
             StatusBaseText {
                 Layout.fillWidth: true
