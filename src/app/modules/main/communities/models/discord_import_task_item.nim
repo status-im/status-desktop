@@ -43,7 +43,7 @@ proc initDiscordImportTaskItem*(
   # We only show the first 3 errors per task, then we add another
   # "#n more issues" item in the UI
   for i, error in errors:
-    if i < MAX_VISIBLE_ERROR_ITEMS:
+    if i < MAX_VISIBLE_ERROR_ITEMS or error.code > ord(DiscordImportErrorCode.Warning):
       result.errors.addItem(initDiscordImportErrorItem(`type`, error.code, error.message))
 
 proc getType*(self: DiscordImportTaskItem): string =
