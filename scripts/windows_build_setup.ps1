@@ -15,7 +15,10 @@ function Install-Scoop {
 # Install Git and other dependencies
 function Install-Dependencies {
     Write-Host "Installing dependencies..."
-    scoop install --global 7zip git dos2unix findutils wget make cmake gcc go rcedit inno-setup
+    scoop install --global `
+        7zip git dos2unix findutils `
+        wget rcedit inno-setup `
+        make cmake gcc go@1.18.8
     scoop bucket add extras
     scoop install --global vcredist2017
 }
