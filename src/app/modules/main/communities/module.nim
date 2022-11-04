@@ -309,6 +309,7 @@ method requestImportDiscordCommunity*(self: Module, name: string, description, i
                         color: string, tags: string, imagePath: string, aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool, filesToImport: seq[string], 
                         fromTimestamp: int, encrypted: bool) =
+  self.view.setDiscordImportHasCommunityImage(imagePath != "")
   self.controller.requestImportDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp, encrypted)
 
 method getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): DiscordImportTaskItem =
@@ -321,7 +322,7 @@ method getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): Dis
       t.errorsCount,
       t.warningsCount)
 
-method discordImportProgressUpdated*(self: Module, communityId: string, communityName: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool) =
+method discordImportProgressUpdated*(self: Module, communityId: string, communityName: string, communityImage: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool) =
 
   var taskItems: seq[DiscordImportTaskItem] = @[]
 
@@ -333,6 +334,7 @@ method discordImportProgressUpdated*(self: Module, communityId: string, communit
 
   self.view.setDiscordImportCommunityId(communityId)
   self.view.setDiscordImportCommunityName(communityName)
+  self.view.setDiscordImportCommunityImage(communityImage)
   self.view.setDiscordImportErrorsCount(errorsCount)
   self.view.setDiscordImportWarningsCount(warningsCount)
   # For some reason, exposing the global `progress` as QtProperty[float]`

@@ -72,7 +72,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS) do(e:Args):
     let args = DiscordImportProgressArgs(e)
-    self.delegate.discordImportProgressUpdated(args.communityId, args.communityName, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped)
+    self.delegate.discordImportProgressUpdated(args.communityId, args.communityName, args.communityImage, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped)
 
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()

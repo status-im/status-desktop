@@ -43,6 +43,8 @@ QtObject:
       discordDataExtractionInProgress: bool
       discordImportCommunityId: string
       discordImportCommunityName: string
+      discordImportCommunityImage: string
+      discordImportHasCommunityImage: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -83,6 +85,7 @@ QtObject:
     result.discordImportInProgress = false
     result.discordImportCancelled = false
     result.discordImportProgressStopped = false
+    result.discordImportHasCommunityImage = false
     result.discordImportTasksModel = newDiscordDiscordImportTasksModel()
     result.discordImportTasksModelVariant = newQVariant(result.discordImportTasksModel)
     result.observedItem = newActiveSection()
@@ -110,6 +113,20 @@ QtObject:
   QtProperty[int] discordOldestMessageTimestamp:
     read = getDiscordOldestMessageTimestamp
     notify = discordOldestMessageTimestampChanged
+
+  proc discordImportHasCommunityImageChanged*(self: View) {.signal.}
+
+  proc setDiscordImportHasCommunityImage*(self: View, hasImage: bool) {.slot.} =
+    if (self.discordImportHasCommunityImage == hasImage): return
+    self.discordImportHasCommunityImage = hasImage
+    self.discordImportHasCommunityImageChanged()
+
+  proc getDiscordImportHasCommunityImage*(self: View): bool {.slot.} =
+    return self.discordImportHasCommunityImage
+
+  QtProperty[bool] discordImportHasCommunityImage:
+    read = getDiscordImportHasCommunityImage
+    notify = discordImportHasCommunityImageChanged
 
   proc discordImportWarningsCountChanged*(self: View) {.signal.}
 
@@ -301,6 +318,20 @@ QtObject:
     read = getDiscordImportCommunityId
     notify = discordImportCommunityIdChanged
 
+  proc discordImportCommunityImageChanged*(self: View) {.signal.}
+
+  proc getDiscordImportCommunityImage(self: View): string {.slot.} =
+    return self.discordImportCommunityImage
+
+  proc setDiscordImportCommunityImage*(self: View, image: string) {.slot.} =
+    if (self.discordImportCommunityImage == image): return
+    self.discordImportCommunityImage = image
+    self.discordImportCommunityImageChanged()
+
+  QtProperty[string] discordImportCommunityImage:
+    read = getDiscordImportCommunityImage
+    notify = discordImportCommunityImageChanged
+
   proc discordImportCommunityNameChanged*(self: View) {.signal.}
 
   proc getDiscordImportCommunityName(self: View): string {.slot.} =
@@ -352,6 +383,8 @@ QtObject:
     self.setDiscordImportWarningsCount(0)
     self.setDiscordImportCommunityId("")
     self.setDiscordImportCommunityName("")
+    self.setDiscordImportCommunityImage("")
+    self.setDiscordImportHasCommunityImage(false)
     self.setDiscordImportInProgress(false)
     self.setDiscordImportCancelled(cancelled)
 
