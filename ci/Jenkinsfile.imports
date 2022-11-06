@@ -50,6 +50,12 @@ pipeline {
     stage('Check') {
       steps { sh 'make run-statusq-sanity-checker' }
     }
+
+    stage('Upload') {
+      steps { script {
+        env.PKG_URL = "${currentBuild.absoluteUrl}/consoleText"
+      } }
+    }
   }
 
   post {
