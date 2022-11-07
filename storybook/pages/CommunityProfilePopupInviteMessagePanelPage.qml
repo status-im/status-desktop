@@ -13,6 +13,10 @@ Item {
             return "compressed"
         }
 
+        function isCompressedPubKey() {
+            return true
+        }
+
         function getColorHashAsJson(publicKey) {
             return JSON.stringify([{colorId: 0, segmentLength: 1},
                                    {colorId: 19, segmentLength: 2}])
