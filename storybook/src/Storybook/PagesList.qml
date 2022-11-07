@@ -15,6 +15,8 @@ ListView {
 
         text: model.title
         checked: root.currentPage === model.title
+
         onClicked: root.pageSelected(model.title)
+        onCheckableChanged: checkable = false
     }
 }
