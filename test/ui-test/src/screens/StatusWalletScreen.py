@@ -176,9 +176,11 @@ class StatusWalletScreen:
         
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
         
+        time.sleep(1)
+        
         wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
         click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
-        time.sleep(5)
+        time.sleep(2)
          
     def verify_account_name_is_present(self, account_name: str):
         verify_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name)

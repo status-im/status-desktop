@@ -20,47 +20,6 @@ let GOERLI_RPC_URL_RESOLVED =
   else:
     "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED
 
-
-let GOERLI_CONFIG = 
-  if GOERLI_NETWORK_RPC_URL != "":
-    %* {
-      "chainId": 5,
-      "chainName": "Goerli",
-      "rpcUrl": GOERLI_RPC_URL_RESOLVED,
-      "blockExplorerUrl": "https://goerli.etherscan.io/",
-      "iconUrl": "network/Network=Testnet",
-      "chainColor": "#939BA1",
-      "shortName": "goeEth",
-      "nativeCurrencyName": "Ether",
-      "nativeCurrencySymbol": "ETH",
-      "nativeCurrencyDecimals": 18,
-      "isTest": true,
-      "layer": 1,
-      "enabled": true,
-      "tokenOverrides": [
-        {
-          "symbol": "STT",
-          "address": "0x8571Ddc46b10d31EF963aF49b6C7799Ea7eff818"
-        }
-      ]
-    }
-  else:
-    %* {
-      "chainId": 5,
-      "chainName": "Goerli",
-      "rpcUrl": GOERLI_RPC_URL_RESOLVED,
-      "blockExplorerUrl": "https://goerli.etherscan.io/",
-      "iconUrl": "network/Network=Testnet",
-      "chainColor": "#939BA1",
-      "shortName": "goeEth",
-      "nativeCurrencyName": "Ether",
-      "nativeCurrencySymbol": "ETH",
-      "nativeCurrencyDecimals": 18,
-      "isTest": true,
-      "layer": 1,
-      "enabled": true,
-    }
-
 const OPENSEA_API_KEY {.strdefine.} = ""
 # allow runtime override via environment variable; core contributors can set a
 # an opensea API key in this way for local development
@@ -75,8 +34,7 @@ let DEFAULT_TORRENT_CONFIG_PORT* = 9025
 let DEFAULT_TORRENT_CONFIG_DATADIR* = joinPath(main_constants.defaultDataDir(), "data", "archivedata")
 let DEFAULT_TORRENT_CONFIG_TORRENTDIR* = joinPath(main_constants.defaultDataDir(), "data", "torrents")
 
-
-let NETWORKS* = %* [
+var NETWORKS* = %* [
   {
     "chainId": 1,
     "chainName": "Ethereum Mainnet",
@@ -91,6 +49,21 @@ let NETWORKS* = %* [
     "isTest": false,
     "layer": 1,
     "enabled": true,
+  },
+  {
+      "chainId": 5,
+      "chainName": "Goerli",
+      "rpcUrl": GOERLI_RPC_URL_RESOLVED,
+      "blockExplorerUrl": "https://goerli.etherscan.io/",
+      "iconUrl": "network/Network=Testnet",
+      "chainColor": "#939BA1",
+      "shortName": "goeEth",
+      "nativeCurrencyName": "Ether",
+      "nativeCurrencySymbol": "ETH",
+      "nativeCurrencyDecimals": 18,
+      "isTest": true,
+      "layer": 1,
+      "enabled": true,
   },
   {
     "chainId": 10,
@@ -154,7 +127,30 @@ let NETWORKS* = %* [
   }
 ]
 
-NETWORKS.elems.add(GOERLI_CONFIG)
+if GOERLI_NETWORK_RPC_URL != "":
+  NETWORKS = %* [
+    {
+      "chainId": 5,
+      "chainName": "Goerli",
+      "rpcUrl": GOERLI_RPC_URL_RESOLVED,
+      "blockExplorerUrl": "https://goerli.etherscan.io/",
+      "iconUrl": "network/Network=Testnet",
+      "chainColor": "#939BA1",
+      "shortName": "goeEth",
+      "nativeCurrencyName": "Ether",
+      "nativeCurrencySymbol": "ETH",
+      "nativeCurrencyDecimals": 18,
+      "isTest": true,
+      "layer": 1,
+      "enabled": true,
+      "tokenOverrides": [
+        {
+          "symbol": "STT",
+          "address": "0x8571Ddc46b10d31EF963aF49b6C7799Ea7eff818"
+        }
+      ]
+    }
+  ]
 
 var NODE_CONFIG* = %* {
   "BrowsersConfig": {
@@ -237,7 +233,7 @@ var NODE_CONFIG* = %* {
   "EnsConfig": {
     "Enabled": true
   },
-  "Networks": Networks,
+  "Networks": NETWORKS,
   "TorrentConfig": {
     "Enabled": false,
     "Port": DEFAULT_TORRENT_CONFIG_PORT,
