@@ -1,4 +1,4 @@
-import json
+import json, chronicles
 
 import base
 
@@ -55,6 +55,7 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
     for jsonMsg in event["event"]["messages"]:
       var message = jsonMsg.toMessageDto()
       signal.messages.add(message)
+      info "received", signal="messages.new", messageID=message.id
 
   if event["event"]{"chats"} != nil:
     for jsonChat in event["event"]["chats"]:
