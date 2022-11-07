@@ -154,7 +154,7 @@ SettingsContentBase {
             ]
             onClicked: {
                 showMessageLinksSwitch.toggle()
-                if (showMessageLinksSwitch.checked === false) {
+                if (!showMessageLinksSwitch.checked) {
                     showMessageLinksSwitch.switchOffPreviewableSites()
                 }
             }
