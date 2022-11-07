@@ -33,6 +33,39 @@ SettingsContentBase {
         spacing: 2 * Constants.settingsSection.itemSpacing
         width: root.contentWidth
 
+        function switchOffPreviewableSites() {
+            //update all models
+            localAccountSensitiveSettings.displayChatImages = false
+            for (let i = 0; i < previewableSites.count; i++) {
+                let item = previewableSites.get(i)
+                RootStore.updateWhitelistedUnfurlingSites(item.address, false)
+            }
+        }
+
+        function buildPreviewablesSitesJSON() {
+            let whitelistAsString = root.messagingStore.getLinkPreviewWhitelist()
+            if(whitelistAsString == "")
+                return
+
+            if (!localAccountSensitiveSettings.whitelistedUnfurlingSites) {
+                localAccountSensitiveSettings.whitelistedUnfurlingSites = {}
+            }
+
+            let anyWhitelisted = false
+            let whitelist = JSON.parse(whitelistAsString)
+            whitelist.forEach(entry => {
+                                  entry.isWhitelisted = !!localAccountSensitiveSettings.whitelistedUnfurlingSites[entry.address]
+                                  if(entry.isWhitelisted) anyWhitelisted = true
+                })
+            return [anyWhitelisted, whitelist]
+        }
+
+        function populatePreviewableSites() {
+            const [anyWhitelisted, whitelist] = buildPreviewablesSitesJSON()
+            previewableSites.populateModel(whitelist)
+            previewableSites.anyWhitelisted = anyWhitelisted
+        }
+
         ButtonGroup {
             id: showProfilePictureToGroup
         }
@@ -136,18 +169,10 @@ SettingsContentBase {
             components: [
                 StatusSwitch {
                     id: showMessageLinksSwitch
-                    function switchOffPreviewableSites() {
-                        //update all models
-                        localAccountSensitiveSettings.displayChatImages = false
-                        for (let i = 0; i < previewableSites.count; i++) {
-                            let item = previewableSites.get(i)
-                            RootStore.updateWhitelistedUnfurlingSites(item.address, false)
-                        }
-                    }
                     checked: previewableSites.anyWhitelisted || localAccountSensitiveSettings.displayChatImages
                     onToggled: {
-                        if (checked === false) {
-                            switchOffPreviewableSites()
+                        if (!checked) {
+                            generalColumn.switchOffPreviewableSites()
                         }
                     }
                 }
@@ -155,33 +180,9 @@ SettingsContentBase {
             onClicked: {
                 showMessageLinksSwitch.toggle()
                 if (!showMessageLinksSwitch.checked) {
-                    showMessageLinksSwitch.switchOffPreviewableSites()
+                    generalColumn.switchOffPreviewableSites()
                 }
             }
-        }
-
-        function buildPreviewablesSitesJSON() {
-            let whitelistAsString = root.messagingStore.getLinkPreviewWhitelist()
-            if(whitelistAsString == "")
-                return
-
-            if (!localAccountSensitiveSettings.whitelistedUnfurlingSites) {
-                localAccountSensitiveSettings.whitelistedUnfurlingSites = {}
-            }
-
-            let anyWhitelisted = false
-            let whitelist = JSON.parse(whitelistAsString)
-            whitelist.forEach(entry => {
-                                  entry.isWhitelisted = !!localAccountSensitiveSettings.whitelistedUnfurlingSites[entry.address]
-                                  if(entry.isWhitelisted) anyWhitelisted = true
-                })
-            return [anyWhitelisted, whitelist]
-        }
-
-        function populatePreviewableSites() {
-            const [anyWhitelisted, whitelist] = buildPreviewablesSitesJSON()
-            previewableSites.populateModel(whitelist)
-            previewableSites.anyWhitelisted = anyWhitelisted
         }
 
         Component.onCompleted: {
