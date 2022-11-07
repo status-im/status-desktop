@@ -466,8 +466,8 @@ QtObject {
             readonly property int pukCellWidth: 50
             readonly property int pukCellHeight: 60
             readonly property int popupWidth: 640
-            readonly property int popupHeight: 640
-            readonly property int popupBiggerHeight: 766
+            readonly property int popupHeight: 500
+            readonly property int popupBiggerHeight: 626
             readonly property int titleHeight: 44
             readonly property int messageHeight: 48
             readonly property int footerButtonsHeight: 44
