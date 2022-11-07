@@ -144,8 +144,8 @@ SettingsContentBase {
                             RootStore.updateWhitelistedUnfurlingSites(item.address, false)
                         }
                     }
-                    checked: false
-                    onCheckedChanged: {
+                    checked: previewableSites.anyWhitelisted || localAccountSensitiveSettings.displayChatImages
+                    onToggled: {
                         if (checked === false) {
                             switchOffPreviewableSites()
                         }
@@ -153,7 +153,10 @@ SettingsContentBase {
                 }
             ]
             onClicked: {
-                showMessageLinksSwitch.checked = !showMessageLinksSwitch.checked
+                showMessageLinksSwitch.toggle()
+                if (showMessageLinksSwitch.checked === false) {
+                    showMessageLinksSwitch.switchOffPreviewableSites()
+                }
             }
         }
 
@@ -177,8 +180,8 @@ SettingsContentBase {
 
         function populatePreviewableSites() {
             const [anyWhitelisted, whitelist] = buildPreviewablesSitesJSON()
-            showMessageLinksSwitch.checked = anyWhitelisted
             previewableSites.populateModel(whitelist)
+            previewableSites.anyWhitelisted = anyWhitelisted
         }
 
         Component.onCompleted: {
@@ -219,6 +222,8 @@ SettingsContentBase {
                         previewableSites.remove(jsonModel.length - 1, rowsToDelete)
                     }
                 }
+                
+                property bool anyWhitelisted: false
             }
 
             Connections {
@@ -243,11 +248,6 @@ SettingsContentBase {
                 // TODO find a better icon for this
                 asset.name: Style.svg('globe')
                 asset.isImage: true
-                Component.onCompleted: {
-                    if (localAccountSensitiveSettings.displayChatImages) {
-                        showMessageLinksSwitch.checked = true
-                    }
-                }
                 components: [
                     StatusSwitch {
                         id: imageSwitch
