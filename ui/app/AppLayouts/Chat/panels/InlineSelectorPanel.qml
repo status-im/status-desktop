@@ -199,7 +199,7 @@ Item {
         parent: edit
         x: (parent.contentWidth - Style.current.halfPadding)
         y: (parent.height + Style.current.halfPadding)
-        visible: edit.text !== "" && root.suggestionsModel.count
+        visible: edit.text !== ""
         padding: Style.current.halfPadding
         background: StatusDialogBackground {
             id: bg
@@ -215,12 +215,23 @@ Item {
             }
         }
 
-        StatusListView {
-            id: suggestionsListView
+        ColumnLayout {
             anchors.fill: parent
-            implicitWidth: contentItem.childrenRect.width
-            implicitHeight: contentItem.childrenRect.height
-            onVisibleChanged: currentIndex = 0
+
+            StatusBaseText {
+                visible: root.suggestionsModel.count === 0
+                text: qsTr("No results found")
+                color: Theme.palette.baseColor1
+            }
+
+            StatusListView {
+                id: suggestionsListView
+                visible: root.suggestionsModel.count
+
+                implicitWidth: contentItem.childrenRect.width
+                implicitHeight: contentItem.childrenRect.height
+                onVisibleChanged: currentIndex = 0
+            }
         }
     }
 }
