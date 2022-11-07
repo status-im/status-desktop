@@ -286,11 +286,13 @@ Item {
         function closeSearchPopup() {
             if (item)
                 item.closeSearchPopup()
+
             active = false
         }
 
         sourceComponent: AppSearch {
             store: appMain.rootStore.appSearchStore
+            onClosed: appSearch.active = false
         }
     }
 

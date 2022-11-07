@@ -14,6 +14,8 @@ Item {
     })
     property alias opened: searchPopup.opened
 
+    signal closed()
+
     function openSearchPopup(){
         searchPopup.open()
     }
@@ -72,6 +74,7 @@ Item {
         }
         onClosed: {
             searchPopupMenu.dismiss();
+            appSearch.closed();
         }
         onResetSearchLocationClicked: {
             searchPopup.resetSearchSelection();
