@@ -27,6 +27,10 @@ StatusStackModal {
     QtObject {
         id: d
 
+        // values from Figma design
+        readonly property int footerButtonsHeight: 44
+        readonly property int popupContentHeight: 551
+
         function sendInvites(pubKeys, inviteMessage) {
             const error = root.communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys), inviteMessage);
             d.processInviteResult(error);
@@ -51,7 +55,6 @@ StatusStackModal {
 
     stackTitle: qsTr("Invite Contacts to %1").arg(community.name)
     width: 640
-    implicitHeight: 700
 
     padding: 0
     leftPadding: 0
@@ -59,6 +62,7 @@ StatusStackModal {
 
     nextButton: StatusButton {
         objectName: "InviteFriendsToCommunityPopup_NextButton"
+        implicitHeight: d.footerButtonsHeight
         text: qsTr("Next")
         enabled: root.pubKeys.length
         onClicked: {
@@ -68,6 +72,7 @@ StatusStackModal {
 
     finishButton: StatusButton {
         objectName: "InviteFriendsToCommunityPopup_SendButton"
+        implicitHeight: d.footerButtonsHeight
         enabled: root.pubKeys.length > 0
         text: qsTr("Send Invites")
         onClicked: {
@@ -87,6 +92,8 @@ StatusStackModal {
 
     stackItems: [
         Item {
+            implicitHeight: d.popupContentHeight
+
             CommunityProfilePopupInviteFriendsPanel {
                 anchors.fill: parent
                 anchors.topMargin: 16
