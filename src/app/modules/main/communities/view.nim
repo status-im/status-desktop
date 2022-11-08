@@ -462,6 +462,20 @@ QtObject:
        return false
     return sectionItem.hasMember(pubKey)
 
+  proc removeFileListItem*(self: View, filePath: string) {.slot.} =
+    var path = filePath
+    if path.startsWith("file://"):
+      path = replace(path, "file://", "")
+
+    let categoryId = self.discordChannelsModel.getChannelCategoryIdByFilePath(path)
+
+    # file list still uses full path, so relying on `filePath` here
+    self.discordFileListModel.removeItem(filePath)
+    self.discordChannelsModel.removeItemsByFilePath(path)
+
+    if categoryId != "" and not self.discordChannelsModel.hasItemsWithCategoryId(categoryId):
+      self.discordCategoriesModel.removeItem(categoryId)
+
   proc setFileListItems*(self: View, filePaths: string) {.slot.} =
     let filePaths = filePaths.split(',')
     var fileItems: seq[DiscordFileItem] = @[]
