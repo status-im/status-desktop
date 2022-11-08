@@ -67,6 +67,9 @@ proc setKeyStoreDir(self: Service, key: string) =
   self.keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, key) & main_constants.sep
   discard status_general.initKeystore(self.keyStoreDir)
 
+proc getKeyStoreDir*(self: Service): string = 
+  return self.keyStoreDir
+
 proc setDefaultWalletEmoji*(self: Service, emoji: string) =
   self.defaultWalletEmoji = emoji
 
