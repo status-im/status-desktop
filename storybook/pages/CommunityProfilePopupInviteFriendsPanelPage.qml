@@ -9,9 +9,11 @@ Item {
     property bool mainModuleReady: false
 
     QtObject {
-        function getCompressedPk(publicKey) {
-            return "compressed"
+        function isCompressedPubKey(publicKey) {
+            return true
         }
+
+        function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
 
         function getColorHashAsJson(publicKey) {
             return JSON.stringify([{colorId: 0, segmentLength: 1},

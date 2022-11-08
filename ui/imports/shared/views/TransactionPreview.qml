@@ -165,7 +165,7 @@ Item {
                     }
                     PropertyChanges {
                         target: txtToPrimary
-                        text: Utils.removeStatusEns(root.toAccount.name)
+                        text: root.toAccount.name
                     }
                 },
                 State {

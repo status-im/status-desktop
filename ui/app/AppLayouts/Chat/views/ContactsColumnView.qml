@@ -271,23 +271,6 @@ Item {
     }
 
     Component {
-        id: privateChatPopupComponent
-        PrivateChatPopup {
-            store: root.store
-            contactsStore: root.contactsStore
-            onJoinPrivateChat: {
-                chatSectionModule.createOneToOneChat("", publicKey, ensName)
-            }
-            onClosed: {
-                destroy()
-            }
-            onProfileClicked: {
-                root.openProfileClicked();
-            }
-        }
-    }
-
-    Component {
         id: communitiesPopupComponent
         CommunitiesPopup {
             anchors.centerIn: parent

@@ -27,13 +27,6 @@ proc first*(jArray: JsonNode, fieldName, id: string): JsonNode =
     if child{fieldName}.getStr.toLower == id.toLower:
       return child
 
-proc prettyEnsName*(ensName: string): string =
-  if ensName.endsWith(STATUS_DOMAIN):
-    return "@" & ensName.split(".")[0]
-  elif ensName.endsWith(ETH_DOMAIN):
-    return "@" & ensName
-  return ensName
-
 const sep = when defined(windows): "\\" else: "/"
 
 proc defaultDataDir(): string =

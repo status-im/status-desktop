@@ -22,7 +22,12 @@ SplitView {
 
         function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
 
-        function getColorHashAsJson(publicKey) { return JSON.stringify("") } // TODO
+        function getColorHashAsJson(publicKey) {
+            return JSON.stringify([{colorId: 0, segmentLength: 1},
+                                   {colorId: 19, segmentLength: 2}])
+        }
+
+        function isCompressedPubKey(publicKey) { return true }
 
         Component.onCompleted: {
             Utils.globalUtilsInst = this

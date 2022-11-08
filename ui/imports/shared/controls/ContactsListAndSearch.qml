@@ -129,7 +129,7 @@ Item {
                             root.validationError = qsTr("Can't chat with yourself");
                         } else {
                             chatKey.hasValidSearchResult = true
-                            searchResults.username = Utils.addStatusEns(chatKey.text.trim())
+                            searchResults.username = chatKey.text.trim()
                             let userAlias = globalUtils.generateAlias(resolvedPubKey)
                             userAlias = userAlias.length > 20 ? userAlias.substring(0, 19) + "..." : userAlias
                             searchResults.userAlias =  userAlias + " • " + Utils.compactAddress(resolvedPubKey, 4)

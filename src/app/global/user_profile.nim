@@ -84,13 +84,6 @@ QtObject:
     read = getEnsName
     notify = nameChanged
 
-  proc getPrettyEnsName*(self: UserProfile): string {.slot.} =
-    utils.prettyEnsName(self.ensName)
-  QtProperty[string] prettyEnsName:
-    read = getPrettyEnsName
-    notify = nameChanged
-
-
   # this is not a slot
   proc setFirstEnsName*(self: UserProfile, name: string) =
     if(self.firstEnsName == name):
@@ -105,7 +98,7 @@ QtObject:
     notify = nameChanged
 
   proc getPrettyFirstEnsName*(self: UserProfile): string {.slot.} =
-    utils.prettyEnsName(self.firstEnsName)
+    self.firstEnsName
   QtProperty[string] prettyFirstEnsName:
     read = getPrettyFirstEnsName
     notify = nameChanged
@@ -125,7 +118,7 @@ QtObject:
     notify = nameChanged
 
   proc getPrettyPreferredName*(self: UserProfile): string {.slot.} =
-    utils.prettyEnsName(self.preferredName)
+    self.preferredName
   QtProperty[string] prettyPreferredName:
     read = getPrettyPreferredName
     notify = nameChanged
@@ -149,7 +142,7 @@ QtObject:
     elif(self.firstEnsName.len > 0):
       return self.getPrettyFirstEnsName()
     elif(self.ensName.len > 0):
-      return self.getPrettyEnsName()
+      return self.ensName
     elif(self.displayName.len > 0):
       return self.getDisplayName()
     return self.username
