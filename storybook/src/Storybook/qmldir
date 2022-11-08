@@ -9,5 +9,6 @@ Logs 1.0 Logs.qml
 LogsAndControlsPanel 1.0 LogsAndControlsPanel.qml
 LogsView 1.0 LogsView.qml
 PagesList 1.0 PagesList.qml
+PopupBackground 1.0 PopupBackground.qml
 SourceCodeBox 1.0 SourceCodeBox.qml
 singleton StorybookUtils 1.0 StorybookUtils.qml

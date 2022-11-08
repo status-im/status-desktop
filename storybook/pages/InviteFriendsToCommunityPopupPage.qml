@@ -19,8 +19,7 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        Rectangle {
-            color: 'lightgray'
+        PopupBackground {
             anchors.fill: parent
         }
 

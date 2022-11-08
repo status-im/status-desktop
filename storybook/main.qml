@@ -59,6 +59,9 @@ ApplicationWindow {
         ListElement {
              title: "BrowserSettings"
         }
+        ListElement {
+             title: "CreateChannelPopup"
+        }
     }
 
     SplitView {
