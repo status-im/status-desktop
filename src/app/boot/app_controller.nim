@@ -423,7 +423,8 @@ proc buildAndRegisterUserProfile(self: AppController) =
       keycardLocked: false,
       accountsAddresses: @[defaultWalletAddress],
       keyUid: loggedInAccount.keyUid)
-    discard self.walletAccountService.addMigratedKeyPair(keyPair)
+    let keystoreDir = self.accountsService.getKeyStoreDir()
+    discard self.walletAccountService.addMigratedKeyPair(keyPair, keystoreDir)
 
 proc storeKeyPairForNewKeycardUser*(self: AppController) = 
   self.storeKeyPair = true

@@ -547,13 +547,15 @@ QtObject:
     error "error: ", procName=procName, errDesription = errMsg
     return false
 
-  proc addMigratedKeyPair*(self: Service, keyPair: KeyPairDto): bool =
+  proc addMigratedKeyPair*(self: Service, keyPair: KeyPairDto, keyStoreDir: string): bool =
     try:
       let response = backend.addMigratedKeyPair(
         keyPair.keycardUid,
         keyPair.keycardName,
         keyPair.keyUid,
-        keyPair.accountsAddresses)
+        keyPair.accountsAddresses,
+        keyStoreDir
+        )
       result = self.responseHasNoErrors("addMigratedKeyPair", response)
       if result:
         self.events.emit(SIGNAL_NEW_KEYCARD_SET, KeycardActivityArgs(keyPair: keyPair))
