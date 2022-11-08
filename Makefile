@@ -16,6 +16,7 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 .PHONY: \
 	all \
 	bottles \
+	check-qt-dir \
 	check-pkg-target-linux \
 	check-pkg-target-macos \
 	check-pkg-target-windows \
@@ -89,6 +90,12 @@ else
  RUN_TARGET := run-linux
 endif
 
+
+check-qt-dir:
+ifeq ($(QTDIR),)
+	$(error Cannot find your Qt5 installation. Please run "$(MAKE) QTDIR=/path/to/your/Qt5/installation/prefix ...")
+endif
+
 check-pkg-target-linux:
 ifneq ($(detected_OS),Linux)
 	$(error The pkg-linux target must be run on Linux)
@@ -124,9 +131,9 @@ $(BOTTLES_DIR):
 bottles: $(BOTTLES)
 endif
 
-deps: | deps-common bottles
+deps: check-qt-dir | deps-common bottles
 
-update: | update-common
+update: check-qt-dir | update-common
 
 QML_DEBUG ?= false
 QML_DEBUG_PORT ?= 49152
@@ -144,25 +151,21 @@ ifneq ($(detected_OS),Windows)
  QT5_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt5Core 2>/dev/null)
  QT5_LIBDIR := $(shell pkg-config --variable=libdir Qt5Core 2>/dev/null)
  ifeq ($(QT5_PCFILEDIR),)
-  ifeq ($(QTDIR),)
-   $(error Cannot find your Qt5 installation. Please run "$(MAKE) QTDIR=/path/to/your/Qt5/installation/prefix ...")
+  QT5_PCFILEDIR := $(QTDIR)/lib/pkgconfig
+  QT5_LIBDIR := $(QTDIR)/lib
+  # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
+  ifeq ($(detected_OS),Darwin)
+   NIM_PARAMS += -L:"-framework Foundation -framework AppKit -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication"
+   # Fix for failures due to 'can't allocate code signature data for'
+   NIM_PARAMS += --passL:"-headerpad_max_install_names"
+   NIM_PARAMS += --passL:"-F$(QT5_LIBDIR)"
+
+   HUNSPELL := bottles/hunspell/lib/libhunspell-1.7.a
+   NIM_PARAMS += --passL:"$(HUNSPELL)"
+
+   export QT5_LIBDIR
   else
-   QT5_PCFILEDIR := $(QTDIR)/lib/pkgconfig
-   QT5_LIBDIR := $(QTDIR)/lib
-   # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
-   ifeq ($(detected_OS),Darwin)
-    NIM_PARAMS += -L:"-framework Foundation -framework AppKit -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication"
-    # Fix for failures due to 'can't allocate code signature data for'
-    NIM_PARAMS += --passL:"-headerpad_max_install_names"
-    NIM_PARAMS += --passL:"-F$(QT5_LIBDIR)"
-
-    HUNSPELL := bottles/hunspell/lib/libhunspell-1.7.a
-    NIM_PARAMS += --passL:"$(HUNSPELL)"
-
-    export QT5_LIBDIR
-   else
-    NIM_PARAMS += --passL:"-L$(QT5_LIBDIR)"
-   endif
+   NIM_PARAMS += --passL:"-L$(QT5_LIBDIR)"
   endif
  endif
  DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
@@ -287,7 +290,7 @@ endif
 
 UI_RESOURCES := resources.rcc
 
-$(UI_RESOURCES): $(UI_SOURCES)
+$(UI_RESOURCES): check-qt-dir $(UI_SOURCES)
 	echo -e $(BUILD_MSG) "resources.rcc"
 	rm -f ./resources.rcc
 	rm -f ./ui/resources.qrc
@@ -300,7 +303,7 @@ TS_SOURCES := $(shell find ui/i18n -iname '*.ts') # ui/i18n/qml_*.ts
 QM_BINARIES := $(shell find ui/i18n -iname "*.ts" | sed 's/\.ts/\.qm/' | sed 's/ui/bin/') # bin/i18n/qml_*.qm
 
 $(QM_BINARIES): TS_FILE = $(shell echo $@ | sed 's/\.qm/\.ts/' | sed 's/bin/ui/')
-$(QM_BINARIES): $(TS_SOURCES)
+$(QM_BINARIES): check-qt-dir $(TS_SOURCES)
 	mkdir -p bin/i18n
 	lrelease -removeidentical $(TS_FILE) -qm $@
 
@@ -355,7 +358,7 @@ else
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
+$(NIM_STATUS_CLIENT): check-qt-dir $(NIM_SOURCES) $(DOTHERSIDE) | $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
@@ -398,7 +401,7 @@ ifeq ($(detected_OS),Linux)
  FCITX5_QT_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
 endif
 
-$(FCITX5_QT): | deps
+$(FCITX5_QT): check-qt-dir | deps
 	echo -e $(BUILD_MSG) "fcitx5-qt"
 	+ cd vendor/fcitx5-qt && \
 		mkdir -p build && \
