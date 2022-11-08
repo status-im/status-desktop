@@ -247,8 +247,8 @@ proc getMessageDetails*(self: Controller, messageId: string):
 proc deleteMessage*(self: Controller, messageId: string) =
   self.messageService.deleteMessage(messageId)
 
-proc editMessage*(self: Controller, messageId: string, updatedMsg: string) =
-  self.messageService.editMessage(messageId, updatedMsg)
+proc editMessage*(self: Controller, messageId: string, contentType: int, updatedMsg: string) =
+  self.messageService.editMessage(messageId, contentType, updatedMsg)
 
 proc getLinkPreviewData*(self: Controller, link: string, uuid: string): string =
   self.messageService.asyncGetLinkPreviewData(link, uuid)

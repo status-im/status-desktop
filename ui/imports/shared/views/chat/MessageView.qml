@@ -432,7 +432,7 @@ Loader {
 
                     const interpretedMessage = root.messageStore.interpretMessage(message)
                     root.messageStore.setEditModeOff(root.messageId)
-                    root.messageStore.editMessage(root.messageId, interpretedMessage)
+                    root.messageStore.editMessage(root.messageId, root.messageContentType, interpretedMessage)
                 }
 
                 audioMessageInfoText: qsTr("Audio Message")
