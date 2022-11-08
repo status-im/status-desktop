@@ -1,4 +1,5 @@
 CompilationErrorsBox 1.0 CompilationErrorsBox.qml
+FilteredPagesList 1.0 FilteredPagesList.qml
 HotComponentFromSource 1.0 HotComponentFromSource.qml
 HotLoader 1.0 HotLoader.qml
 HotReloader 1.0 HotReloader.qml

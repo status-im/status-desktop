@@ -104,9 +104,8 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                PagesList {
+                FilteredPagesList {
                     anchors.fill: parent
-
                     currentPage: root.currentPage
                     model: pagesModel
 
