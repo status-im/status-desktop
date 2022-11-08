@@ -222,6 +222,10 @@ QtObject {
         return text.replace(/<br\s*\/>/gm, " ")
     }
 
+    function stripHtmlTags(text) {
+        return text.replace(/<[^>]*>?/gm, '')
+    }
+
     function delegateModelSort(srcGroup, dstGroup, lessThan) {
         const insertPosition = (lessThan, item) => {
             let lower = 0

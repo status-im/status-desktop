@@ -58,23 +58,6 @@ QtObject {
         return Style.current.accountColors[colorIndex]
     }
 
-    function getReplyMessageStyle(msg, isCurrentUser) {
-        return `<style type="text/css">`+
-                    `a {`+
-                        `color: ${Style.current.textColor};`+
-                    `}`+
-                    `a.mention {`+
-                        `color: ${isCurrentUser ? Style.current.mentionColor : Style.current.turquoise};`+
-                        `background-color: ${Style.current.mentionBgColor};` +
-                    `}`+
-               `</style>`+
-               `</head>`+
-               `<body>`+
-                   `${msg}`+
-               `</body>`+
-            `</html>`
-    }
-
     function getLinkStyle(link, hoveredLink, textColor) {
         return `<style type="text/css">` +
                 `a {` +

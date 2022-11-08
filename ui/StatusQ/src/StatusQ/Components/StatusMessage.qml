@@ -80,6 +80,7 @@ Rectangle {
     signal profilePictureClicked(var sender, var mouse)
     signal senderNameClicked(var sender, var mouse)
     signal replyProfileClicked(var sender, var mouse)
+    signal replyMessageClicked(var mouse)
 
     signal addReactionClicked(var sender, var mouse)
     signal toggleReactionClicked(int emojiId)
@@ -219,11 +220,9 @@ Rectangle {
             sourceComponent: StatusMessageReply {
                 replyDetails: root.replyDetails
                 profileClickable: root.profileClickable
-                onReplyProfileClicked: root.replyProfileClicked(sender, mouse)
                 audioMessageInfoText: root.audioMessageInfoText
-                onLinkActivated: {
-                    root.linkActivated(link);
-                }
+                onReplyProfileClicked: root.replyProfileClicked(sender, mouse)
+                onMessageClicked: root.replyMessageClicked(mouse)
             }
         }
 

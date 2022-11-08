@@ -539,6 +539,10 @@ Loader {
                     root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true, false, false, null, false, false, true);
                 }
 
+                onReplyMessageClicked: {
+                    root.messageStore.messageModule.jumpToMessage(root.responseToMessageWithId)
+                }
+
                 onSenderNameClicked: {
                     d.setMessageActive(root.messageId, true);
                     root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true);
