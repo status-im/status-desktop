@@ -96,10 +96,10 @@ StatusModal {
                     && !!advancedSelection.expandableItem.mnemonicText) {
                 RootStore.getDerivedAddressListForMnemonic(advancedSelection.expandableItem.mnemonicText,
                                                            advancedSelection.expandableItem.path, numOfItems, pageNumber)
-            } else if(!!advancedSelection.expandableItem.path && !!advancedSelection.expandableItem.derivedFromAddress
+            } else if(!!d.selectedPath && !!d.selectedAccountDerivedFromAddress
                       && (d.password.length > 0)) {
-                RootStore.getDerivedAddressList(d.password, advancedSelection.expandableItem.derivedFromAddress,
-                                                advancedSelection.expandableItem.path, numOfItems, pageNumber)
+                RootStore.getDerivedAddressList(d.password, d.selectedAccountDerivedFromAddress,
+                                                d.selectedPath, numOfItems, pageNumber)
             }
         }
 
