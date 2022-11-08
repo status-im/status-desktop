@@ -29,7 +29,7 @@ proc makePrivateRpcCall*(
       error "rpc response error", err
       raise newException(ValueError, err)
 
-  except RpcException as e:
+  except Exception as e:
     error "error doing rpc request", methodName = methodName, exception=e.msg
     raise newException(RpcException, e.msg)
 
@@ -66,7 +66,7 @@ proc sendTransaction*(chainId: int, inputJSON: string, password: string): RpcRes
     var hashed_password = "0x" & $keccak_256.digest(password)
     let rpcResponseRaw = status_go.sendTransactionWithChainId(chainId, inputJSON, hashed_password)
     result = Json.decode(rpcResponseRaw, RpcResponse[JsonNode])
-  except RpcException as e:
+  except Exception as e:
     error "error sending tx", inputJSON, exception=e.msg
     raise newException(RpcException, e.msg)
 
@@ -76,7 +76,7 @@ proc migrateKeyStoreDir*(account: string, password: string, oldKeystoreDir: stri
   try:
     var hashed_password = "0x" & $keccak_256.digest(password)
     discard status_go.migrateKeyStoreDir(account, hashed_password, oldKeystoreDir, multiaccountKeystoreDir)
-  except RpcException as e:
+  except Exception as e:
     error "error migrating keystore dir", account, exception=e.msg
     raise newException(RpcException, e.msg)
 
