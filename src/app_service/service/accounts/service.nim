@@ -345,6 +345,7 @@ proc setupAccount*(self: Service, accountId, password, displayName: string): str
   try:
     let installationId = $genUUID()
     var accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
+    self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr) # must be called before `getDefaultNodeConfig`
     let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
     var settingsJson = self.getAccountSettings(accountId, installationId, displayName)
     let nodeConfigJson = self.getDefaultNodeConfig(installationId)
@@ -355,7 +356,6 @@ proc setupAccount*(self: Service, accountId, password, displayName: string): str
       error "error: ", procName="setupAccount", errDesription = description
       return description
 
-    self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr)
     let hashedPassword = hashString(password)
     discard self.storeAccount(accountId, hashedPassword)
     discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
