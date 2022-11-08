@@ -200,18 +200,35 @@ StatusStackModal {
                     model: fileListView.fileListModel
                     delegate: ColumnLayout {
                         width: ListView.view.width
-                        StatusCheckBox {
-                            id: fileCheckBox
+                        RowLayout {
+                            spacing: 20
                             Layout.fillWidth: true
-                            text: model.filePath
-                            font.pixelSize: 13
-                            checked: model.selected
-                            enabled: model.errorMessage === "" // TODO distinguish between error/warning
-                            onToggled: model.selected = checked
+                            Layout.topMargin: 8
+                            StatusBaseText {
+                                Layout.fillWidth: true
+                                text: model.filePath
+                                font.pixelSize: 13
+                                elide: Text.ElideRight
+                                wrapMode: Text.WordWrap
+                                maximumLineCount: 2
+                            }
+
+                            StatusFlatRoundButton {
+                                id: removeButton
+                                Layout.preferredWidth: 32
+                                Layout.preferredHeight: 32
+                                type: StatusFlatRoundButton.Type.Secondary
+                                icon.name: "close"
+                                icon.color: Theme.palette.directColor1
+                                icon.width: 24
+                                icon.height: 24
+                                onClicked: root.store.removeFileListItem(model.filePath)
+                            }
                         }
+
+
                         StatusBaseText {
                             Layout.fillWidth: true
-                            Layout.leftMargin: fileCheckBox.leftPadding + fileCheckBox.spacing + fileCheckBox.indicator.width
                             text: "%1 %2".arg("⚠").arg(model.errorMessage)
                             visible: model.errorMessage
                             font.pixelSize: 13

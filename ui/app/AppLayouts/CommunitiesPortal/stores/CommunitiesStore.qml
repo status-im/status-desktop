@@ -93,6 +93,9 @@ QtObject {
         root.communitiesModuleInst.navigateToCommunity(communityId)
     }
 
+    function removeFileListItem(filePath) {
+        root.communitiesModuleInst.removeFileListItem(filePath)
+    }
     function setFileListItems(filePaths) {
         root.communitiesModuleInst.setFileListItems(filePaths)
     }

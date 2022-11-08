@@ -1,4 +1,4 @@
-import NimQml, Tables
+import NimQml, Tables, strutils
 import discord_channel_item
 
 type
@@ -116,6 +116,13 @@ QtObject:
         return i
     return -1
 
+  proc findIndicesByFilePath(self: DiscordChannelsModel, filePath: string): seq[int] =
+    var indices: seq[int] = @[]
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getFilePath() == filePath):
+        indices.add(i)
+    return indices
+
   proc getItem*(self: DiscordChannelsModel, id: string): DiscordChannelItem =
     for i in 0 ..< self.items.len:
       if(self.items[i].getId() == id):
@@ -129,6 +136,12 @@ QtObject:
         break
     return allUnselected
 
+  proc hasItemsWithCategoryId*(self: DiscordChannelsModel, categoryId: string): bool =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getCategoryId() == categoryId):
+        return true
+    return false
+
   proc getHasSelectedItems*(self: DiscordChannelsModel): bool {.slot.} =
     for i in 0 ..< self.items.len:
       if self.items[i].getSelected():
@@ -138,6 +151,18 @@ QtObject:
   QtProperty[bool] hasSelectedItems:
     read = getHasSelectedItems
     notify = hasSelectedItemsChanged
+
+  proc removeItemsByFilePath*(self: DiscordChannelsModel, filePath: string) =
+    let indices = self.findIndicesByFilePath(filePath)
+    for i in 0 ..< indices.len:
+
+      let parentModelIndex = newQModelIndex()
+      defer: parentModelIndex.delete
+
+      self.beginRemoveRows(parentModelIndex, indices[i], indices[i])
+      self.items.delete(indices[i])
+      self.endRemoveRows()
+      self.countChanged()
 
   proc addItem*(self: DiscordChannelsModel, item: DiscordChannelItem) =
     let parentModelIndex = newQModelIndex()
@@ -162,6 +187,12 @@ QtObject:
         self.items[i].selected = true
         self.dataChanged(index, index, @[ModelRole.Selected.int])
     self.hasSelectedItemsChanged()
+
+  proc getChannelCategoryIdByFilePath*(self: DiscordChannelsModel, filePath: string): string =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getFilePath() == filePath):
+        return self.items[i].getCategoryId()
+    return ""
 
   proc getSelectedItems*(self: DiscordChannelsModel): seq[DiscordChannelItem] =
     for i in 0 ..< self.items.len:

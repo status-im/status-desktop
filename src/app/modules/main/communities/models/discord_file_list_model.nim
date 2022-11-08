@@ -132,6 +132,19 @@ QtObject:
         return i
     return -1
 
+  proc removeItem*(self: DiscordFileListModel, filePath: string) =
+    let idx = self.findIndexByFilePath(filePath)
+    if(idx == -1):
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginRemoveRows(parentModelIndex, idx, idx)
+    self.items.delete(idx)
+    self.endRemoveRows()
+    self.countChanged()
+
   proc addItem*(self: DiscordFileListModel, item: DiscordFileItem) =
       let parentModelIndex = newQModelIndex()
       defer: parentModelIndex.delete

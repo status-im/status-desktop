@@ -73,6 +73,19 @@ QtObject:
         return i
     return -1
 
+  proc removeItem*(self: DiscordCategoriesModel, id: string) =
+    let idx = self.findIndexById(id)
+    if(idx == -1):
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginRemoveRows(parentModelIndex, idx, idx)
+    self.items.delete(idx)
+    self.endRemoveRows()
+    self.countChanged()
+
   proc addItem*(self: DiscordCategoriesModel, item: DiscordCategoryItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
