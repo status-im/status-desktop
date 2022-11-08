@@ -35,6 +35,9 @@ import StatusQ.Core.Utils 0.1
       \image status_base_input.png
 
       For a list of components available see StatusQ.
+
+      \note The scrolling behavior of the \c StatusBaseInput is disabled for non-multiline configurations.
+        This is to prevent the \c StatusBaseInput capturing the macOS trackpad input from being propagated.
 */
 
 Item {
@@ -337,6 +340,7 @@ Item {
                         enabled: multiline
                     }
                     clip: true
+                    interactive: multiline
 
                     TextEdit {
                         id: edit
