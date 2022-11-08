@@ -450,8 +450,8 @@ method deleteMessage*(self: Module, messageId: string) =
 method onMessageDeleted*(self: Module, messageId: string) =
   self.view.model().removeItem(messageId)
 
-method editMessage*(self: Module, messageId: string, updatedMsg: string) =
-  self.controller.editMessage(messageId, updatedMsg)
+method editMessage*(self: Module, messageId: string, contentType: int, updatedMsg: string) =
+  self.controller.editMessage(messageId, contentType, updatedMsg)
 
 method onMessageEdited*(self: Module, message: MessageDto) =
   let itemBeforeChange = self.view.model().getItemWithMessageId(message.id)

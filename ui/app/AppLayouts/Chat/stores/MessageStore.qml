@@ -162,10 +162,10 @@ QtObject {
         messageModule.setEditModeOff(messageId)
     }
 
-    function editMessage(messageId, updatedMsg) {
+    function editMessage(messageId, contentType, updatedMsg) {
         if(!messageModule)
             return
-        messageModule.editMessage(messageId, updatedMsg)
+        messageModule.editMessage(messageId, contentType, updatedMsg)
     }
 
     function interpretMessage(msg) {
