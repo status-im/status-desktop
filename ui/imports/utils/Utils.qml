@@ -7,8 +7,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 QtObject {
-    property var mainModuleInst: mainModule
-    property var globalUtilsInst: globalUtils
+    property var mainModuleInst: typeof mainModule !== "undefined" ? mainModule : null
+    property var globalUtilsInst: typeof globalUtils !== "undefined" ? globalUtils : null
 
     function isDigit(value) {
       return /^\d$/.test(value);
