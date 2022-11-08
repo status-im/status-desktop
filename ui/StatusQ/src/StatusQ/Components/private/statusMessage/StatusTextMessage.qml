@@ -12,6 +12,7 @@ Item {
     property StatusMessageDetails messageDetails: StatusMessageDetails {}
     property bool isEdited: false
     property bool convertToSingleLine: false
+    property bool stripHtmlTags: false
 
     property alias textField: chatText
     property bool allowShowMore: true
@@ -25,16 +26,16 @@ Item {
         id: d
         property bool readMore: false
         readonly property bool veryLongChatText: chatText.length > 1000
-        readonly property int showMoreHeight: showMoreLoader.visible ? showMoreLoader.height : 0
+        readonly property int showMoreHeight: showMoreButtonLoader.visible ? showMoreButtonLoader.height : 0
 
         readonly property string text: {
             if (root.messageDetails.contentType === StatusMessage.ContentType.Sticker)
                 return "";
 
-            const formattedMessage = Utils.linkifyAndXSS(root.messageDetails.messageText);
-
             if (root.messageDetails.contentType === StatusMessage.ContentType.Emoji)
-                return Emoji.parse(formattedMessage, Emoji.size.middle, Emoji.format.png);
+                return Emoji.parse(root.messageDetails.messageText, Emoji.size.middle, Emoji.format.png);
+
+            let formattedMessage = Utils.linkifyAndXSS(root.messageDetails.messageText);
 
             if (root.isEdited) {
                 const index = formattedMessage.endsWith("code>") ? formattedMessage.length : formattedMessage.length - 4;
@@ -44,12 +45,20 @@ Item {
                 return Utils.getMessageWithStyle(Emoji.parse(editedMessage), chatText.hoveredLink)
             }
 
-            if (root.convertToSingleLine) {
-                const singleLineMessage = Utils.convertToSingleLine(formattedMessage)
-                return Utils.getMessageWithStyle(Emoji.parse(singleLineMessage), chatText.hoveredLink)
-            }
+            if (root.convertToSingleLine)
+                formattedMessage = Utils.convertToSingleLine(formattedMessage)
 
-            return Utils.getMessageWithStyle(Emoji.parse(formattedMessage), chatText.hoveredLink)
+            if (root.stripHtmlTags)
+                formattedMessage = Utils.stripHtmlTags(formattedMessage)
+
+            // add emoji tags even after html striped
+            formattedMessage = Emoji.parse(formattedMessage)
+
+            if (root.stripHtmlTags)
+                // short return not to add styling when no html
+                return formattedMessage
+
+            return Utils.getMessageWithStyle(formattedMessage, chatText.hoveredLink)
         }
     }
 
@@ -63,7 +72,7 @@ Item {
 
         width: parent.width
         height: effectiveHeight + d.showMoreHeight / 2
-        opacity: opMask.active ? 0 : 1
+        opacity: !showMoreOpacityMask.active && !horizontalOpacityMask.active ? 1 : 0
         clip: true
         text: d.text
         selectedTextColor: Theme.palette.directColor1
@@ -72,7 +81,7 @@ Item {
         font.family: Theme.palette.baseFont.name
         font.pixelSize: Theme.primaryTextFontSize
         textFormat: Text.RichText
-        wrapMode: Text.Wrap
+        wrapMode: root.convertToSingleLine ? Text.NoWrap : Text.Wrap
         readOnly: true
         selectByMouse: true
         onLinkActivated: {
@@ -84,10 +93,40 @@ Item {
         }
     }
 
+    // Horizontal crop mask
+
     Loader {
-        id: mask
+        id: horizontalClipMask
         anchors.fill: chatText
-        active: showMoreLoader.active && !d.readMore
+        active: horizontalOpacityMask.active
+        visible: false
+        sourceComponent: LinearGradient {
+            start: Qt.point(0, 0)
+            end: Qt.point(chatText.width, 0)
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "white" }
+                GradientStop { position: 0.85; color: "white" }
+                GradientStop { position: 1; color: "transparent" }
+            }
+        }
+    }
+
+    Loader {
+        id: horizontalOpacityMask
+        active: root.convertToSingleLine && chatText.implicitWidth > chatText.width
+        anchors.fill: chatText
+        sourceComponent: OpacityMask {
+            source: chatText
+            maskSource: horizontalClipMask
+        }
+    }
+
+    // Vertical "show more" mask
+
+    Loader {
+        id: showMoreMaskGradient
+        anchors.fill: chatText
+        active: showMoreButtonLoader.active && !d.readMore
         visible: false
         sourceComponent: LinearGradient {
             start: Qt.point(0, 0)
@@ -101,17 +140,17 @@ Item {
     }
 
     Loader {
-        id: opMask
-        active: showMoreLoader.active && !d.readMore
+        id: showMoreOpacityMask
+        active: showMoreButtonLoader.active && !d.readMore
         anchors.fill: chatText
         sourceComponent: OpacityMask {
             source: chatText
-            maskSource: mask
+            maskSource: showMoreMaskGradient
         }
     }
 
     Loader {
-        id: showMoreLoader
+        id: showMoreButtonLoader
         active: root.allowShowMore && d.veryLongChatText
         visible: active
         anchors.verticalCenter: chatText.bottom
