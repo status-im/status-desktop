@@ -98,7 +98,6 @@ StatusDialog {
 
         Column {
             id: content
-            width: parent.width
 
             StatusInput {
                 id: nameInput
@@ -108,8 +107,9 @@ StatusDialog {
                 placeholderText: qsTr("# Name the channel")
 
                 input.onTextChanged: {
-                    input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
-                    input.cursorPosition = input.text.length
+                    const cursorPosition = input.cursorPosition
+                    input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text)
+                    input.cursorPosition = cursorPosition
                     if (root.channelEmoji === "") {
                         input.letterIconName = text;
                     }
