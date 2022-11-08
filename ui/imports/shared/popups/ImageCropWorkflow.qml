@@ -14,6 +14,7 @@ Item {
     id: root
     objectName: "imageCropWorkflow"
 
+    property var callback: null
     property alias aspectRatio: imageCropper.aspectRatio
     property alias windowStyle: imageCropper.windowStyle
     /*required*/ property string imageFileDialogTitle: ""

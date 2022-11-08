@@ -73,9 +73,18 @@ QtObject:
   proc getSocialLinksJson(self: View): string {.slot.} =
     $(%*self.socialLinksModel.items)
 
+  proc temporarySocialLinksJsonChanged*(self: View) {.signal.}
+  proc getTemporarySocialLinksJson(self: View): string {.slot.} =
+    $(%*self.temporarySocialLinksModel.items)
+    
+
   QtProperty[string] socialLinksJson:
     read = getSocialLinksJson
     notify = socialLinksJsonChanged
+
+  QtProperty[string] temporarySocialLinksJson:
+    read = getTemporarySocialLinksJson
+    notify = temporarySocialLinksJsonChanged
 
   QtProperty[bool] socialLinksDirty:
     read = areSocialLinksDirty
@@ -83,20 +92,25 @@ QtObject:
 
   proc createCustomLink(self: View, text: string, url: string) {.slot.} =
     self.temporarySocialLinksModel.appendItem(initSocialLinkItem(text, url, LinkType.Custom))
+    self.temporarySocialLinksJsonChanged()
     self.socialLinksDirtyChanged()
 
   proc removeCustomLink(self: View, uuid: string) {.slot.} =
     if (self.temporarySocialLinksModel.removeItem(uuid)):
+      self.temporarySocialLinksJsonChanged()
       self.socialLinksDirtyChanged()
 
   proc updateLink(self: View, uuid: string, text: string, url: string): bool {.slot.} =
     if (self.temporarySocialLinksModel.updateItem(uuid, text, url)):
+      self.temporarySocialLinksJsonChanged()
       self.socialLinksDirtyChanged()
 
   proc resetSocialLinks(self: View): bool {.slot.} =
     if (self.areSocialLinksDirty()):
       self.temporarySocialLinksModel.setItems(self.socialLinksModel.items)
       self.socialLinksDirtyChanged()
+      self.temporarySocialLinksJsonChanged()
+
 
   proc saveSocialLinks(self: View): bool {.slot.} =
     result = self.delegate.saveSocialLinks()
@@ -104,6 +118,7 @@ QtObject:
       self.socialLinksModel.setItems(self.temporarySocialLinksModel.items)
       self.socialLinksDirtyChanged()
       self.socialLinksJsonChanged()
+      self.temporarySocialLinksJsonChanged()
 
   proc bioChanged*(self: View) {.signal.}
   proc getBio(self: View): string {.slot.} =
