@@ -145,7 +145,7 @@ Item {
         }
 
         onOpenChangeProfilePicPopup: {
-            var popup = changeProfilePicComponent.createObject(appMain);
+            var popup = changeProfilePicComponent.createObject(appMain, {callback: cb});
             popup.chooseImageToCrop();
         }
         onOpenBackUpSeedPopup: Global.openPopup(backupSeedModalComponent)
@@ -236,6 +236,15 @@ Item {
             title: qsTr("Profile Picture")
             acceptButtonText: qsTr("Make this my Profile Pic")
             onImageCropped: {
+                if (callback) {
+                    callback(image,
+                             cropRect.x.toFixed(),
+                             cropRect.y.toFixed(),
+                             (cropRect.x + cropRect.width).toFixed(),
+                             (cropRect.y + cropRect.height).toFixed())
+                    return
+                }
+
                 appMain.rootStore.profileSectionStore.profileStore.uploadImage(image,
                                               cropRect.x.toFixed(),
                                               cropRect.y.toFixed(),

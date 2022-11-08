@@ -44,7 +44,7 @@ QtObject {
     signal unblockContactRequested(string publicKey, string contactName)
     signal contactUnblocked(string publicKey)
 
-    signal openChangeProfilePicPopup()
+    signal openChangeProfilePicPopup(var cb)
     signal displayToastMessage(string title, string subTitle, string icon, bool loading, int ephNotifType, string url)
     signal openEditDisplayNamePopup()
     signal openActivityCenterPopupRequested

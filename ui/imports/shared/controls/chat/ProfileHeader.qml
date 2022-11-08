@@ -27,6 +27,7 @@ Item {
     property bool isContact: false
     property bool isCurrentUser
     property bool userIsEnsVerified
+    property rect cropRect: undefined
 
     property int imageSize: ProfileHeader.ImageSize.Compact
     property bool displayNameVisible: true
@@ -82,9 +83,11 @@ Item {
                 imageWidth: d.getSize(36, 64, 160)
                 imageHeight: imageWidth
                 showRing: !root.userIsEnsVerified
+                cropRect: root.cropRect
             }
 
             StatusRoundButton {
+                id: editButton
                 visible: root.editImageButtonVisible
                 anchors.bottom: userImage.bottom
                 anchors.right: userImage.right
@@ -102,7 +105,12 @@ Item {
                     if (!!root.store.profileLargeImage)
                         imageEditMenu.popup(this, mouse.x, mouse.y);
                     else
-                        Global.openChangeProfilePicPopup();
+                        Global.openChangeProfilePicPopup(tempIcon);
+                }
+
+                function tempIcon(image, aX, aY, bX, bY) {
+                    root.icon = image
+                    root.cropRect = Qt.rect(aX, aY, bX - aX, bY - aY)
                 }
             }
         }
@@ -211,14 +219,14 @@ Item {
             text: qsTr("Upload a file")
             icon.name: "download"
             iconRotation: 180
-            onTriggered: Global.openChangeProfilePicPopup()
+            onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
         }
 
         StatusMenuItem {
             text: qsTr("Remove image")
             type: StatusMenuItem.Danger
             icon.name: "delete"
-            onTriggered: root.store.removeImage()
+            onTriggered: root.icon = ""
         }
     }
 }

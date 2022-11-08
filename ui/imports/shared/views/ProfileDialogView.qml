@@ -27,6 +27,9 @@ Pane {
     property var profileStore
     property var contactsStore
 
+    property QtObject dirtyValues: null
+    property bool dirty: false
+
     signal closeRequested()
 
     padding: 0
@@ -249,9 +252,11 @@ Pane {
             UserImage {
                 Layout.alignment: Qt.AlignTop
                 objectName: "ProfileDialog_userImage"
-                name: d.userDisplayName
+                name: root.dirty ? root.dirtyValues.displayName
+                                 : d.userDisplayName
                 pubkey: root.publicKey
-                image: d.contactDetails.largeImage
+                image: root.dirty ? root.dirtyValues.profileLargeImage
+                                  : d.contactDetails.largeImage
                 interactive: false
                 imageWidth: 80
                 imageHeight: imageWidth
@@ -275,7 +280,8 @@ Pane {
                         font.bold: true
                         font.pixelSize: 22
                         elide: Text.ElideRight
-                        text: d.userDisplayName
+                        text: root.dirty ? root.dirtyValues.displayName
+                                         : d.userDisplayName
                     }
                     StatusContactVerificationIcons {
                         id: verificationIcons
@@ -543,8 +549,10 @@ Pane {
                     Layout.fillWidth: true
                     Layout.leftMargin: column.anchors.leftMargin + Style.current.halfPadding
                     Layout.rightMargin: column.anchors.rightMargin + Style.current.halfPadding
-                    bio: d.contactDetails.bio
-                    userSocialLinksJson: d.contactDetails.socialLinks
+                    bio: root.dirty ? root.dirtyValues.bio
+                                    : d.contactDetails.bio
+                    userSocialLinksJson: root.dirty ? root.profileStore.temporarySocialLinksJson
+                                                    : d.contactDetails.socialLinks
                 }
 
                 GridLayout {

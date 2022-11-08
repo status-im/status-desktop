@@ -42,6 +42,13 @@ Loader {
                 color: root.asset.imgIsIdenticon ?
                            Theme.palette.statusRoundedImage.backgroundColor :
                            root.asset.bgColor
+                image.fillMode: root.asset.cropRect ? Image.PreserveAspectCrop
+                                                    : Image.PreserveAspectFit
+                image.scale: root.asset.scale
+                image.x: root.asset.cropRectangle ? -root.asset.cropRectangle.x
+                                                  : 0
+                image.y: root.asset.cropRectangle ? -root.asset.cropRectangle.y
+                                                  : 0
             }
             Loader {
                 anchors.centerIn: parent

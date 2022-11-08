@@ -79,6 +79,8 @@ SettingsContentBase {
                 Layout.fillWidth: true
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
+                dirtyValues: settingsView.dirtyValues
+                dirty: settingsView.dirty
             }
         }
 

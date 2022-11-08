@@ -28,10 +28,18 @@ ColumnLayout {
     property ProfileStore profileStore
     property WalletStore walletStore
 
+    property QtObject dirtyValues: QtObject {
+        property string displayName: descriptionPanel.displayName.text
+        property string bio: descriptionPanel.bio.text
+        property bool biomentricValue: biometricsSwitch.checked
+        property url profileLargeImage: profileHeader.icon
+    }
+
     readonly property bool dirty: descriptionPanel.displayName.text !== profileStore.displayName ||
                                   descriptionPanel.bio.text !== profileStore.bio ||
                                   profileStore.socialLinksDirty ||
-                                  biometricsSwitch.checked != biometricsSwitch.currentStoredValue
+                                  biometricsSwitch.checked != biometricsSwitch.currentStoredValue ||
+                                  profileHeader.icon !== profileStore.profileLargeImage
 
     readonly property bool valid: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
 
@@ -41,17 +49,28 @@ ColumnLayout {
         profileStore.resetSocialLinks()
         descriptionPanel.reevaluateSocialLinkInputs()
         biometricsSwitch.checked = Qt.binding(() => { return biometricsSwitch.currentStoredValue })
+        profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
     }
 
     function save() {
         profileStore.setDisplayName(descriptionPanel.displayName.text)
         profileStore.setBio(descriptionPanel.bio.text)
         profileStore.saveSocialLinks()
-
+        if (profileHeader.icon === "") {
+            root.profileStore.removeImage()
+        } else {
+            profileStore.uploadImage(profileHeader.icon,
+                                     profileHeader.cropRect.x.toFixed(),
+                                     profileHeader.cropRect.y.toFixed(),
+                                     (profileHeader.cropRect.x + profileHeader.cropRect.width).toFixed(),
+                                     (profileHeader.cropRect.y + profileHeader.cropRect.height).toFixed());
+        }
         if (biometricsSwitch.checked)
             Global.openPopup(storePasswordModal)
         else
             localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.never;
+
+        reset()
     }
 
     function offerToStorePassword(password, runStoreToKeyChainPopup)
@@ -64,6 +83,7 @@ ColumnLayout {
     }
 
     ProfileHeader {
+        id: profileHeader
         Layout.fillWidth: true
         Layout.leftMargin: Style.current.padding
         Layout.rightMargin: Style.current.padding
