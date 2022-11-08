@@ -63,6 +63,10 @@ QtObject {
         return chatCommunitySectionModule.getMySectionId()
     }
 
+    function amIChatAdmin() {
+        return currentChatContentModule().amIChatAdmin()
+    }
+
     function acceptContactRequest(pubKey) {
         chatCommunitySectionModule.acceptContactRequest(pubKey)
     }

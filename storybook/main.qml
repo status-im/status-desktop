@@ -68,6 +68,9 @@ ApplicationWindow {
         ListElement {
              title: "ProfileFetchingView"
         }
+        ListElement {
+            title: "MembersSelector"
+        }
     }
 
     SplitView {

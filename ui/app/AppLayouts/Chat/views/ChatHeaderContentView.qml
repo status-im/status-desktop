@@ -345,9 +345,10 @@ Item {
         id: membersSelector
 
         MembersEditSelectorView {
-            sectionModule: root.chatSectionModule
-            chatContentModule: root.chatContentModule
             rootStore: root.rootStore
+            usersStore: UsersStore {
+                usersModule: root.chatContentModule.usersModule
+            }
 
             onConfirmed: root.state = d.stateInfoButtonContent
             onRejected: root.state = d.stateInfoButtonContent

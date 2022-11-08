@@ -14,19 +14,21 @@ import SortFilterProxyModel 0.2
 MembersSelectorBase {
     id: root
 
+    limitReached: model.count >= membersLimit - 1 // -1 because creator is not on the list of members when creating chat
+
     function cleanup() {
-        root.edit.clear();
-        d.selectedMembers.clear();
+        root.edit.clear()
+        d.selectedMembers.clear()
     }
 
-    onEntryAccepted: {
+    onEntryAccepted: if (suggestionsDelegate) {
         if (root.limitReached)
             return
-        if (d.addMember(suggestionsDelegate._pubKey, suggestionsDelegate.userName, suggestionsDelegate.isAdmin))
+        if (d.addMember(suggestionsDelegate._pubKey, suggestionsDelegate.userName, suggestionsDelegate.nickName))
             root.edit.clear()
     }
 
-    onEntryRemoved: {
+    onEntryRemoved: if (delegate) {
         d.removeMember(delegate._pubKey)
     }
 
@@ -40,10 +42,10 @@ MembersSelectorBase {
 
     delegate: StatusTagItem {
         readonly property string _pubKey: model.pubKey
+
         height: ListView.view.height
-        text: model.displayName
-        isReadonly: model.isAdmin
-        icon: model.isAdmin ? "crown" : ""
+        text: root.tagText(model.localNickname, model.displayName, model.alias)
+
         onClicked: root.entryRemoved(this)
     }
 
@@ -58,7 +60,7 @@ MembersSelectorBase {
             root.rootStore.contactsStore.resolveENS(value)
         }
 
-        function addMember(pubKey, displayName, isAdmin) {
+        function addMember(pubKey, displayName, localNickname) {
             for (let i = 0; i < d.selectedMembers.count; ++i) {
                 if (d.selectedMembers.get(i).pubKey === pubKey)
                     return false
@@ -67,7 +69,7 @@ MembersSelectorBase {
             d.selectedMembers.append({
                                          "pubKey": pubKey,
                                          "displayName": displayName,
-                                         "isAdmin": isAdmin
+                                         "localNickname": localNickname
                                      })
             return true
         }

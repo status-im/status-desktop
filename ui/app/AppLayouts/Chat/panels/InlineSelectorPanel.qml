@@ -19,12 +19,11 @@ Item {
 
     property alias suggestionsModel: suggestionsListView.model
     property alias suggestionsDelegate: suggestionsListView.delegate
+    property size suggestionsDelegateSize: Qt.size(344, 64)
 
     readonly property alias label: label
     readonly property alias warningLabel: warningLabel
     readonly property alias edit: edit
-
-    property bool confirmBtnEnabled: (listView.count > 0)
 
     signal confirmed()
     signal rejected()
@@ -66,105 +65,109 @@ Item {
                 Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    onWidthChanged: {
-                        listView.positionViewAtEnd();
-                    }
+                    StatusScrollView {
+                        id: scrollView
 
-                    RowLayout {
+                        function positionViewAtEnd() {
+                            if (scrollView.contentWidth > scrollView.width) {
+                                scrollView.contentX = scrollView.contentWidth - scrollView.width
+                            } else {
+                                scrollView.contentX = 0
+                            }
+                        }
+
                         anchors.fill: parent
-                        Item {
-                            //40 px least space for input
-                            Layout.preferredWidth: (listView.contentWidth < (parent.width - 40)) ?
-                                                    listView.contentWidth : (parent.width - 40)
-                            Layout.preferredHeight: 44
+                        padding: 0
+
+                        onContentWidthChanged: positionViewAtEnd()
+                        onWidthChanged: positionViewAtEnd()
+
+                        RowLayout {
+                            height: scrollView.height
                             StatusListView {
-                                clip: true
                                 id: listView
-                                width: parent.width
-                                height: 30
-                                anchors.verticalCenter: parent.verticalCenter
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 30
+                                implicitWidth: contentWidth
                                 orientation: ListView.Horizontal
                                 spacing: Style.current.halfPadding
-                                ScrollBar.horizontal: scrollBar
-                                onCountChanged: {
-                                    positionViewAtEnd();
-                                }
-                            }
-                            StatusScrollBar {
-                                id: scrollBar
-                                parent: listView.parent
-                                anchors.top: listView.bottom
-                                anchors.left: listView.left
-                                anchors.right: listView.right
-                                policy: ScrollBar.AsNeeded
-                                visible: resolveVisibility(policy, listView.width, listView.contentWidth)
-                            }
-                        }
-                        TextInput {
-                            id: edit
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            verticalAlignment: Text.AlignVCenter
-                            font.pixelSize: 15
-                            color: Theme.palette.directColor1
-                            clip: true
-
-                            selectByMouse: true
-                            selectionColor: Theme.palette.primaryColor2
-                            selectedTextColor: color
-
-                            cursorDelegate: Rectangle {
-                                color: Theme.palette.primaryColor1
-                                implicitWidth: 2
-                                radius: 1
-                                visible: edit.cursorVisible
-                                SequentialAnimation on visible {
-                                    loops: Animation.Infinite
-                                    running: edit.cursorVisible
-                                    PropertyAnimation { to: false; duration: 600; }
-                                    PropertyAnimation { to: true; duration: 600; }
-                                }
                             }
 
-                            Keys.onPressed: {
-                                if (event.matches(StandardKey.Paste)) {
-                                    event.accepted = true
-                                    const previousText = text;
-                                    const previousSelectedText = selectedText;
-                                    paste()
-                                    if (previousText === "" || previousSelectedText.length === previousText.length)
-                                        root.textPasted(text)
-                                    return;
-                                }
+                            TextInput {
+                                id: edit
+                                Layout.minimumWidth: 4
+                                Layout.fillHeight: true
+                                verticalAlignment: Text.AlignVCenter
+                                font.pixelSize: 15
+                                color: Theme.palette.directColor1
 
-                                if (suggestionsDialog.visible) {
-                                    if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                        root.entryAccepted(suggestionsListView.itemAtIndex(suggestionsListView.currentIndex))
-                                    } else if (event.key === Qt.Key_Up) {
-                                        suggestionsListView.decrementCurrentIndex()
-                                    } else if (event.key === Qt.Key_Down) {
-                                        suggestionsListView.incrementCurrentIndex()
+                                selectByMouse: true
+                                selectionColor: Theme.palette.primaryColor2
+                                selectedTextColor: color
+
+                                cursorDelegate: Rectangle {
+                                    color: Theme.palette.primaryColor1
+                                    implicitWidth: 2
+                                    radius: 1
+                                    visible: edit.cursorVisible
+                                    SequentialAnimation on visible {
+                                        loops: Animation.Infinite
+                                        running: edit.cursorVisible
+                                        PropertyAnimation { to: false; duration: 600; }
+                                        PropertyAnimation { to: true; duration: 600; }
                                     }
-                                } else {
-                                    if (event.key === Qt.Key_Backspace && edit.text === "" && listView.count > 0) {
-                                        root.entryRemoved(listView.itemAtIndex(listView.count - 1))
-                                    } else if (event.key === Qt.Key_Return || event.key === Qt.Enter)  {
-                                        root.enterKeyPressed()
-                                    } else if (event.key === Qt.Key_Escape)  {
-                                        root.rejected()
-                                    } else if (event.key === Qt.Key_Up) {
-                                        root.upKeyPressed();
-                                    } else if (event.key === Qt.Key_Down) {
-                                        root.downKeyPressed();
+                                }
+
+                                Keys.onPressed: {
+                                    if (event.matches(StandardKey.Paste)) {
+                                        event.accepted = true
+                                        const previousText = text;
+                                        const previousSelectedText = selectedText;
+                                        paste()
+                                        if (previousText === "" || previousSelectedText.length === previousText.length)
+                                            root.textPasted(text)
+                                        return;
+                                    }
+
+                                    if (suggestionsDialog.visible) {
+                                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                                            root.entryAccepted(suggestionsListView.itemAtIndex(suggestionsListView.currentIndex))
+                                        } else if (event.key === Qt.Key_Up) {
+                                            suggestionsListView.decrementCurrentIndex()
+                                        } else if (event.key === Qt.Key_Down) {
+                                            suggestionsListView.incrementCurrentIndex()
+                                        }
+                                    } else {
+                                        if (event.key === Qt.Key_Backspace && edit.text === "") {
+                                            root.entryRemoved(listView.itemAtIndex(listView.count - 1))
+                                        } else if (event.key === Qt.Key_Return || event.key === Qt.Enter)  {
+                                            root.enterKeyPressed()
+                                        } else if (event.key === Qt.Key_Escape)  {
+                                            root.rejected()
+                                        } else if (event.key === Qt.Key_Up) {
+                                            root.upKeyPressed()
+                                        } else if (event.key === Qt.Key_Down) {
+                                            root.downKeyPressed()
+                                        }
                                     }
                                 }
                             }
+
+                            // ensure edit cursor is visible
+                            Item {
+                                Layout.fillHeight: true
+                                implicitWidth: 1
+                            }
                         }
 
-                        // ensure edit cursor is visible
-                        Item {
-                            Layout.fillHeight: true
-                            implicitWidth: 1
+                        ScrollBar.horizontal: StatusScrollBar {
+                            id: scrollBar
+                            parent: scrollView.parent
+                            anchors.top: scrollView.bottom
+                            anchors.left: scrollView.left
+                            anchors.right: scrollView.right
+                            policy: ScrollBar.AsNeeded
+                            visible: resolveVisibility(policy, scrollView.width, scrollView.contentWidth)
                         }
                     }
                 }
@@ -192,7 +195,7 @@ Item {
         StatusButton {
             objectName: "inlineSelectorConfirmButton"
             Layout.alignment: Qt.AlignVCenter
-            enabled: root.confirmBtnEnabled
+            enabled: (listView.count > 0)
             text: qsTr("Confirm")
             onClicked: root.confirmed()
         }
@@ -207,9 +210,9 @@ Item {
 
     Popup {
         id: suggestionsDialog
-        parent: edit
-        x: (parent.contentWidth - Style.current.halfPadding)
-        y: (parent.height + Style.current.halfPadding)
+        parent: scrollView
+        x: Math.min(parent.width, parent.contentWidth)
+        y: parent.height + Style.current.halfPadding
         visible: edit.text !== ""
         padding: Style.current.halfPadding
         background: StatusDialogBackground {
@@ -226,10 +229,19 @@ Item {
             }
         }
 
+        height: suggestionsListView.count ?
+                    Math.min(400, suggestionsListView.count * suggestionsDelegateSize.height + 2 * padding) :
+                    noResultsFoundText.height + 2 * padding
+        width: suggestionsDelegateSize.width
+
         ColumnLayout {
             anchors.fill: parent
 
             StatusBaseText {
+                id: noResultsFoundText
+
+                Layout.fillWidth: true
+
                 visible: root.suggestionsModel.count === 0
                 text: qsTr("No results found")
                 color: Theme.palette.baseColor1
@@ -237,11 +249,22 @@ Item {
 
             StatusListView {
                 id: suggestionsListView
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
                 visible: root.suggestionsModel.count
 
-                implicitWidth: contentItem.childrenRect.width
-                implicitHeight: contentItem.childrenRect.height
+                highlightMoveDuration: 0
+                highlightMoveVelocity: -1
+
+                verticalScrollBar {
+                    visible: contentHeight > height
+                    policy: ScrollBar.AlwaysOn
+                }
+
                 onVisibleChanged: currentIndex = 0
+                onCountChanged: currentIndex = 0
             }
         }
     }

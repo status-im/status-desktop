@@ -21,7 +21,11 @@ InlineSelectorPanel {
     property var rootStore
 
     readonly property int membersLimit: 20 // see: https://github.com/status-im/status-mobile/issues/13066
-    property bool limitReached: (model.count === (membersLimit-1))
+    property bool limitReached: model.count >= membersLimit
+
+    function tagText(localNickname, displayName, aliasName) {
+        return localNickname || displayName || aliasName
+    }
 
     label.text: qsTr("To:")
     warningLabel.text: qsTr("%1 USER LIMIT REACHED").arg(membersLimit)
@@ -32,8 +36,10 @@ InlineSelectorPanel {
 
         sourceModel: root.rootStore.contactsModel
 
-        function searchPredicate(displayName) {
-            return displayName.toLowerCase().includes(root.edit.text.toLowerCase())
+        function searchPredicate(displayName, localNickname, nameAlias) {
+            return displayName.toLowerCase().includes(root.edit.text.toLowerCase()) ||
+                   localNickname.toLowerCase().includes(root.edit.text.toLowerCase()) ||
+                   (!displayName && nameAlias.toLowerCase().includes(root.edit.text.toLowerCase()))
         }
 
         function notAMemberPredicate(pubKey) {
@@ -49,7 +55,7 @@ InlineSelectorPanel {
                 enabled: root.edit.text !== ""
                 expression: {
                     root.edit.text // ensure expression is reevaluated when edit.text changes
-                    return _suggestionsModel.searchPredicate(model.displayName)
+                    return _suggestionsModel.searchPredicate(model.displayName, model.localNickname, model.alias)
                 }
             },
             ExpressionFilter {
@@ -59,13 +65,22 @@ InlineSelectorPanel {
                 }
             }
         ]
+
+        proxyRoles: ExpressionRole {
+            name: "title"
+            expression: model.localNickname || model.displayName || model.alias
+        }
+
         sorters: StringSorter {
-            roleName: "displayName"
+            roleName: "title"
+            numericMode: true
         }
     }
 
     suggestionsDelegate: ContactListItemDelegate {
         highlighted: ListView.isCurrentItem
+        height: root.suggestionsDelegateSize.height
+        width: root.suggestionsDelegateSize.width
         onClicked: root.entryAccepted(this)
     }
 
