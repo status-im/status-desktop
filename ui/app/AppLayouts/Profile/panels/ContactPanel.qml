@@ -55,7 +55,7 @@ StatusListItem {
     subTitle: {
         if (d.ensVerified) {
             if (d.localNickname)
-                return '@' + Utils.removeStatusEns(d.name)
+                return d.name
             return ""
         }
         return Utils.getElidedCompressedPk(root.publicKey)

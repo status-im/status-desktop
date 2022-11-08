@@ -185,8 +185,4 @@ StatusSectionLayout {
             root.rootStore.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
         }
     }
-
-    Component.onCompleted: {
-        rootStore.groupInfoPopupComponent = groupInfoPopupComponent;
-    }
 }

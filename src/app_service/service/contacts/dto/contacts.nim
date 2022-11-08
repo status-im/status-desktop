@@ -151,7 +151,7 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
 
 proc userExtractedName(contact: ContactsDto): string =
   if(contact.name.len > 0 and contact.ensVerified):
-    result = prettyEnsName(contact.name)
+    result = contact.name
   elif contact.displayName.len > 0:
     result = contact.displayName
   else:

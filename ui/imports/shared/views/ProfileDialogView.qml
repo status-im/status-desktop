@@ -47,7 +47,7 @@ Pane {
         readonly property bool isCurrentUser: root.profileStore.pubkey === root.publicKey
         readonly property string userDisplayName: contactDetails.displayName
         readonly property string userNickName: contactDetails.localNickname
-        readonly property string prettyEnsName: '@' + Utils.removeStatusEns(contactDetails.name)
+        readonly property string prettyEnsName: contactDetails.name
         readonly property bool isContact: contactDetails.isContact
         readonly property bool isBlocked: contactDetails.isBlocked
 

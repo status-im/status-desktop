@@ -61,7 +61,7 @@ Badge {
         StyledText {
             Layout.alignment: Qt.AlignVCenter
             text: chatType !== Constants.chatType.publicChat ?
-                      StatusQUtils.Emoji.parse(Utils.removeStatusEns(StatusQUtils.Utils.filterXSS(name))) :
+                      StatusQUtils.Emoji.parse(StatusQUtils.Utils.filterXSS(name)) :
                       "#" + StatusQUtils.Utils.filterXSS(name)
 
             color: Theme.palette.baseColor1
