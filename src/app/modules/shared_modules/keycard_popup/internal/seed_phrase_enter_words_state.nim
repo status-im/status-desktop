@@ -12,6 +12,7 @@ proc delete*(self: SeedPhraseEnterWordsState) =
 
 method executePrimaryCommand*(self: SeedPhraseEnterWordsState, controller: Controller) =
   let mnemonic = controller.getMnemonic()
+  controller.setSeedPhrase(mnemonic)
   controller.storeSeedPhraseToKeycard(mnemonic.split(" ").len, mnemonic)
 
 method executeTertiaryCommand*(self: SeedPhraseEnterWordsState, controller: Controller) =

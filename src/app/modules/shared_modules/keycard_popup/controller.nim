@@ -445,7 +445,10 @@ proc getBalanceForAddress*(self: Controller, address: string): float64 =
 proc addMigratedKeyPair*(self: Controller, keyPair: KeyPairDto): bool =
   if not serviceApplicable(self.walletAccountService):
     return
-  return self.walletAccountService.addMigratedKeyPair(keyPair)
+  if not serviceApplicable(self.accountsService):
+    return
+  let keystoreDir = self.accountsService.getKeyStoreDir()
+  return self.walletAccountService.addMigratedKeyPair(keyPair, keystoreDir)
 
 proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
   if not serviceApplicable(self.walletAccountService):
