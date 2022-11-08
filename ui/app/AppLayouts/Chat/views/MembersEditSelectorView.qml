@@ -19,35 +19,32 @@ import SortFilterProxyModel 0.2
 MembersSelectorBase {
     id: root
 
-    // TODO: use stores instead of modules
-    property var sectionModule
-    property var chatContentModule
+    property var usersStore
 
-    confirmBtnEnabled: true
     onConfirmed: {
-        d.updateGroupMembers()
-        d.resetTemporaryModel()
+        usersStore.updateGroupMembers()
+        usersStore.resetTemporaryModel()
     }
 
     onRejected: {
-        d.resetTemporaryModel()
+        usersStore.resetTemporaryModel()
     }
-    limitReached: (model.count === membersLimit)
-    onEntryAccepted: {
+
+    onEntryAccepted: if (suggestionsDelegate) {
         if (!root.limitReached) {
-            d.appendTemporaryModel(suggestionsDelegate._pubKey, suggestionsDelegate.userName)
+            usersStore.appendTemporaryModel(suggestionsDelegate._pubKey, suggestionsDelegate.userName)
             root.edit.clear()
         }
     }
 
-    onEntryRemoved: {
+    onEntryRemoved: if (delegate) {
         if (!delegate.isReadonly) {
-            d.removeFromTemporaryModel(delegate._pubKey)
+            usersStore.removeFromTemporaryModel(delegate._pubKey)
         }
     }
 
     model: SortFilterProxyModel {
-        sourceModel: root.chatContentModule.usersModule.temporaryModel
+        sourceModel: root.usersStore.temporaryModel
         sorters: RoleSorter {
             roleName: "isAdmin"
             sortOrder: Qt.DescendingOrder
@@ -58,35 +55,19 @@ MembersSelectorBase {
         readonly property string _pubKey: model.pubKey
 
         height: ListView.view.height
-        text: model.displayName !== "" ? model.displayName : model.alias
+        text: root.tagText(model.localNickname, model.displayName, model.alias)
+
         isReadonly: {
             if (model.isAdmin) return true
-            if (root.chatContentModule.amIChatAdmin()) return false
-            return index < root.chatContentModule.usersModule.model.count
+            if (root.rootStore.amIChatAdmin()) return false
+            return index < root.usersStore.usersModel.count
         }
         icon: model.isAdmin ? "crown" : ""
 
         onClicked: root.entryRemoved(this)
     }
 
-    QtObject {
-        id: d
-
-        function appendTemporaryModel(pubKey, displayName) {
-            root.chatContentModule.usersModule.appendTemporaryModel(pubKey, displayName)
-        }
-        function removeFromTemporaryModel(pubKey) {
-            root.chatContentModule.usersModule.removeFromTemporaryModel(pubKey)
-        }
-        function resetTemporaryModel() {
-            root.chatContentModule.usersModule.resetTemporaryModel()
-        }
-        function updateGroupMembers() {
-            root.chatContentModule.usersModule.updateGroupMembers()
-        }
-    }
-
     Component.onCompleted: {
-        d.resetTemporaryModel()
+        usersStore.resetTemporaryModel()
     }
 }

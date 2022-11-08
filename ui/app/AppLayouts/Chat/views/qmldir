@@ -1,1 +1,3 @@
 CreateChatView 1.0 CreateChatView.qml
+MembersSelectorView 1.0 MembersSelectorView.qml
+MembersEditSelectorView 1.0 MembersEditSelectorView.qml

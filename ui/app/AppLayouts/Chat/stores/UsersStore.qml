@@ -4,11 +4,20 @@ QtObject {
     id: root
 
     property var usersModule
-    property var usersModel
 
-    onUsersModuleChanged: {
-        if(!usersModule)
-            return
-        root.usersModel = usersModule.model
+    readonly property var usersModel: usersModule ? usersModule.model : null
+    readonly property var temporaryModel: usersModule ? usersModule.temporaryModel : null
+
+    function appendTemporaryModel(pubKey, displayName) {
+        usersModule.appendTemporaryModel(pubKey, displayName)
+    }
+    function removeFromTemporaryModel(pubKey) {
+        usersModule.removeFromTemporaryModel(pubKey)
+    }
+    function resetTemporaryModel() {
+        usersModule.resetTemporaryModel()
+    }
+    function updateGroupMembers() {
+        usersModule.updateGroupMembers()
     }
 }

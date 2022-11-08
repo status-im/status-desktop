@@ -33,6 +33,8 @@ ListView {
 
     readonly property int availableWidth: width - leftMargin - rightMargin
     readonly property int availableHeight: height - topMargin - bottomMargin
+    readonly property alias horizontalScrollBar: horizontalScrollBar
+    readonly property alias verticalScrollBar: verticalScrollBar
 
     clip: true
     boundsBehavior: Flickable.StopAtBounds
@@ -40,11 +42,13 @@ ListView {
     synchronousDrag: true
 
     ScrollBar.horizontal: StatusScrollBar {
+        id: horizontalScrollBar
         policy: ScrollBar.AsNeeded
         visible: resolveVisibility(policy, root.width, root.contentWidth)
     }
 
     ScrollBar.vertical: StatusScrollBar {
+        id: verticalScrollBar
         policy: ScrollBar.AsNeeded
         visible: resolveVisibility(policy, root.height, root.contentHeight)
     }

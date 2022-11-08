@@ -70,8 +70,8 @@ SplitView {
                                   })
         }
         Component.onCompleted: {
-            root.mainModuleReady = true
             Utils.mainModuleInst = this
+            root.mainModuleReady = true
         }
         Component.onDestruction: {
             root.mainModuleReady = false
