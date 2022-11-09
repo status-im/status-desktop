@@ -35,7 +35,7 @@ method deleteAccount*(self: AccessInterface, address: string) {.base.} =
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getDerivedAddressList*(self: AccessInterface, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int) {.base.} =
+method getDerivedAddressList*(self: AccessInterface, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getDerivedAddressListForMnemonic*(self: AccessInterface, mnemonic: string, path: string, pageSize: int, pageNumber: int) {.base.} =

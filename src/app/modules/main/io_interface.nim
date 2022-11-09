@@ -220,7 +220,7 @@ method onDisplayKeycardSharedModuleFlow*(self: AccessInterface) {.base.} =
 method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runAuthenticationPopup*(self: AccessInterface, keyUid: string, bip44Path: string, txHash: string) {.base.} =
+method runAuthenticationPopup*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
   
 method onMyRequestAdded*(self: AccessInterface) {.base.} =

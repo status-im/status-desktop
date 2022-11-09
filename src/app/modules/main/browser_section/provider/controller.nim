@@ -65,9 +65,7 @@ proc postMessage*(self: Controller, payloadMethod: string, requestType: string, 
 proc ensResourceURL*(self: Controller, ens: string, url: string): (string, string, string, string, bool) =
   return self.providerService.ensResourceURL(ens, url)
 
-proc authenticateUser*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
+proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_BROWSER_SECTION_TRANSACTION_MODULE_IDENTIFIER,
-    keyUid: keyUid,
-    bip44Path: bip44Path,
-    txHash: txHash)
+    keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)

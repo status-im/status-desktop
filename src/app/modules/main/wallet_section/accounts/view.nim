@@ -246,10 +246,10 @@ QtObject:
     self.setDerivedAddressesLoading(false)
     self.derivedAddressesChanged()
 
-  proc getDerivedAddressList*(self: View, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int) {.slot.} =
+  proc getDerivedAddressList*(self: View, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool) {.slot.} =
     self.setDerivedAddressesLoading(true)
     self.setDerivedAddressesError("")
-    self.delegate.getDerivedAddressList(password, derivedfrom, path, pageSize, pageNumber)
+    self.delegate.getDerivedAddressList(password, derivedfrom, path, pageSize, pageNumber, hashPassword)
 
   proc getDerivedAddressListForMnemonic*(self: View, mnemonic: string, path: string, pageSize: int, pageNumber: int) {.slot.} =
     self.setDerivedAddressesLoading(true)

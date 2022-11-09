@@ -195,8 +195,8 @@ QtObject {
         globalUtils.copyToClipboard(text)
     }
 
-    function getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber) {
-        walletSectionAccounts.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber)
+    function getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber, hashPassword) {
+        walletSectionAccounts.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber, hashPassword)
     }
 
     function getDerivedAddressData(index) {
