@@ -201,8 +201,8 @@ method addWatchOnlyAccount*(self: Module, address: string, accountName: string, 
 method deleteAccount*(self: Module, address: string) =
   self.controller.deleteAccount(address)
 
-method getDerivedAddressList*(self: Module, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int) =
-  self.controller.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber)
+method getDerivedAddressList*(self: Module, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool) =
+  self.controller.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber, hashPassword)
 
 method getDerivedAddressListForMnemonic*(self: Module, mnemonic: string, path: string, pageSize: int, pageNumber: int) =
   self.controller.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)

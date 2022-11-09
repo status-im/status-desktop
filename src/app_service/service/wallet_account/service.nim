@@ -238,7 +238,7 @@ QtObject:
     try:
       if skipPasswordVerification:
         discard backend.generateAccountWithDerivedPathPasswordVerified(
-          hashPassword(password),
+          password,
           accountName,
           color,
           emoji,
@@ -263,7 +263,7 @@ QtObject:
       if skipPasswordVerification:
         discard backend.addAccountWithPrivateKeyPasswordVerified(
           privateKey,
-          hashPassword(password),
+          password,
           accountName,
           color,
           emoji)
@@ -285,7 +285,7 @@ QtObject:
       if skipPasswordVerification:
         discard backend.addAccountWithMnemonicAndPathPasswordVerified(
           mnemonic,
-          hashPassword(password),
+          password,
           accountName,
           color,
           emoji,
@@ -364,9 +364,9 @@ QtObject:
 
     self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
 
-  proc getDerivedAddressList*(self: Service, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int)=
+  proc getDerivedAddressList*(self: Service, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool)=
     let arg = GetDerivedAddressesTaskArg(
-      password: hashPassword(password),
+      password: if hashPassword: hashPassword(password) else: password,
       derivedFrom: derivedFrom,
       path: path,
       pageSize: pageSize,

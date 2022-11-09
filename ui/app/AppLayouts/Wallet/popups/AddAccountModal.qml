@@ -99,7 +99,8 @@ StatusModal {
             } else if(!!d.selectedPath && !!d.selectedAccountDerivedFromAddress
                       && (d.password.length > 0)) {
                 RootStore.getDerivedAddressList(d.password, d.selectedAccountDerivedFromAddress,
-                                                d.selectedPath, numOfItems, pageNumber)
+                                                d.selectedPath, numOfItems, pageNumber,
+                                                !(d.selectedKeyUidMigratedToKeycard || userProfile.isKeycardUser))
             }
         }
 
