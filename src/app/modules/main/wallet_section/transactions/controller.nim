@@ -133,9 +133,7 @@ proc getLastTxBlockNumber*(self: Controller): string =
   return self.transactionService.getLastTxBlockNumber(self.networkService.getNetworkForBrowser().chainId)
 
 
-proc authenticateUser*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
+proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_TRANSACTION_MODULE_IDENTIFIER,
-    keyUid: keyUid,
-    bip44Path: bip44Path,
-    txHash: txHash)
+    keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)

@@ -140,9 +140,7 @@ proc getStatusToken*(self: Controller): string =
 proc getNetwork*(self: Controller): NetworkDto =
   return self.networkService.getNetworkForEns()
 
-proc authenticateUser*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
+proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_ENS_SECTION_TRANSACTION_MODULE_IDENTIFIER,
-    keyUid: keyUid,
-    bip44Path: bip44Path,
-    txHash: txHash)
+    keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)

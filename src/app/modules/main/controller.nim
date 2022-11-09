@@ -261,16 +261,10 @@ proc init*(self: Controller) =
       self.authenticateUserFlowRequestedBy.len == 0:
         return
     self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
-    var password = args.password
-    if password.len == 0 and args.keyUid.len > 0:
-      password = args.keyUid
     let data = SharedKeycarModuleArgs(uniqueIdentifier: self.authenticateUserFlowRequestedBy,
-      password: password,
+      password: args.password,
       pin: args.pin,
-      keyUid: args.keyUid,
-      txR: args.txR,
-      txS: args.txS,
-      txV: args.txV)
+      keyUid: args.keyUid)
     self.authenticateUserFlowRequestedBy = ""
     self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED, data)
 
@@ -284,7 +278,7 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER) do(e: Args):
     let args = SharedKeycarModuleAuthenticationArgs(e)
     self.authenticateUserFlowRequestedBy = args.uniqueIdentifier
-    self.delegate.runAuthenticationPopup(args.keyUid, args.bip44Path, args.txHash)
+    self.delegate.runAuthenticationPopup(args.keyUid)
 
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()

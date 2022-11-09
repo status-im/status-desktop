@@ -380,7 +380,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     if keyUid.len > 0:
       self.prepareKeyPairItemForAuthentication(keyUid)
       self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
-      self.controller.runSignFlow(keyUid, bip44Path, txHash)
+      self.controller.runAuthenticationFlow(keyUid)
       return
     if singletonInstance.userProfile.getUsingBiometricLogin():
       self.controller.tryToObtainDataFromKeychain()

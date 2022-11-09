@@ -5,6 +5,7 @@ import io_interface
 import ../../../global/global_singleton
 import ../../../core/signals/types
 import ../../../core/eventemitter
+import ../../../../app_service/common/account_constants
 import ../../../../app_service/service/keycard/service as keycard_service
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/privacy/service as privacy_service
@@ -385,13 +386,7 @@ proc runDeriveAccountFlow*(self: Controller, bip44Path = "", pin = "") =
   self.cancelCurrentFlow()
   self.keycardService.startExportPublicFlow(bip44Path, exportMasterAddr=true, exportPrivateAddr=false, pin)
 
-proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", puk = "", factoryReset = false) =
-  if not serviceApplicable(self.keycardService):
-    return
-  self.cancelCurrentFlow()
-  self.keycardService.startLoadAccountFlow(seedPhraseLength, seedPhrase, puk, factoryReset)
-
-proc runSignFlow*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
+proc runAuthenticationFlow*(self: Controller, keyUid = "") =
   ## For signing a transaction  we need to provide a key uid of a keypair that an account we want to sign a transaction 
   ## for belongs to. If we're just doing an authentication for a logged in user, then default key uid is always the key 
   ## uid of the logged in user.
@@ -401,7 +396,24 @@ proc runSignFlow*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
   if self.tmpKeyUidWhichIsBeingAuthenticating.len == 0:
     self.tmpKeyUidWhichIsBeingAuthenticating = singletonInstance.userProfile.getKeyUid()
   self.cancelCurrentFlow()
-  self.keycardService.startSignFlow(bip44Path, txHash)
+  self.keycardService.startExportPublicFlow(path = account_constants.PATH_ENCRYPTION)
+
+proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", puk = "", factoryReset = false) =
+  if not serviceApplicable(self.keycardService):
+    return
+  self.cancelCurrentFlow()
+  self.keycardService.startLoadAccountFlow(seedPhraseLength, seedPhrase, puk, factoryReset)
+
+# This flow is not in use any more for authentication purpose, will be use later for signing a transaction, but
+# we still do not support that. Going to keep this code, but as a comment.
+#
+# For running sign flow we need to be sure is a keycard we're signing with contains a keyuid for a keypair we're sending a transaction for.
+#
+# proc runSignFlow*(self: Controller, keyUid = "", bip44Path = "", txHash = "") =
+#   if not serviceApplicable(self.keycardService):
+#     return
+#   self.cancelCurrentFlow()
+#   self.keycardService.startSignFlow(bip44Path, txHash)
 
 proc resumeCurrentFlowLater*(self: Controller) =
   if not serviceApplicable(self.keycardService):
@@ -417,13 +429,11 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
   let (_, flowEvent) = self.getLastReceivedKeycardData()
   var data = SharedKeycarModuleFlowTerminatedArgs(uniqueIdentifier: self.uniqueIdentifier,
     lastStepInTheCurrentFlow: lastStepInTheCurrentFlow)
+  let exportedEncryptionPubKey = flowEvent.generatedWalletAccount.publicKey
   if lastStepInTheCurrentFlow:
-    data.password = self.getPassword()
+    data.password = if exportedEncryptionPubKey.len > 0: exportedEncryptionPubKey else: self.getPassword()
     data.pin = self.getPin()
     data.keyUid = flowEvent.keyUid
-    data.txR = flowEvent.txSignature.r
-    data.txS = flowEvent.txSignature.s
-    data.txV = flowEvent.txSignature.v
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED, data)
 
 proc authenticateUser*(self: Controller, keyUid = "") =
