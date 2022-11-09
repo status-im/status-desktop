@@ -968,11 +968,11 @@ method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurr
     self.keycardSharedModule.delete
     self.keycardSharedModule = nil
 
-method runAuthenticationPopup*[T](self: Module[T], keyUid: string, bip44Path: string, txHash: string) =
+method runAuthenticationPopup*[T](self: Module[T], keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.Authentication, keyUid, bip44Path, txHash)
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.Authentication, keyUid)
 
 method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
   self.view.emitDisplayKeycardSharedModuleFlow()
