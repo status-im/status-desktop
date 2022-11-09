@@ -16,6 +16,14 @@ type TrustStatus* {.pure.}= enum
   Trusted = 1,
   Untrustworthy = 2
 
+
+type ContactRequestState* {.pure.} = enum
+  None = 0
+  Mutual = 1
+  Sent = 2
+  Received = 3
+  Dismissed = 4
+
 type  VerificationStatus* {.pure.}= enum
   Unverified = 0
   Verifying = 1
@@ -51,6 +59,7 @@ type ContactsDto* = object
   isSyncing*: bool
   removed*: bool
   trustStatus*: TrustStatus
+  requestState*: ContactRequestState
   verificationStatus*: VerificationStatus
 
 proc `$`(self: Images): string =
@@ -92,6 +101,11 @@ proc toImages(jsonObj: JsonNode): Images =
   if(jsonObj.getProp("thumbnail", thumbnailObj)):
     discard thumbnailObj.getProp("uri", result.thumbnail)
 
+proc toContactRequestState*(value: int): ContactRequestState =
+  result = ContactRequestState.None
+  if value >= ord(low(ContactRequestState)) or value <= ord(high(ContactRequestState)):
+      result = ContactRequestState(value)
+
 proc toTrustStatus*(value: int): TrustStatus =
   result = TrustStatus.Unknown
   if value >= ord(low(TrustStatus)) or value <= ord(high(TrustStatus)):
@@ -126,6 +140,12 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("localNickname", result.localNickname)
   discard jsonObj.getProp("bio", result.bio)
   
+
+  result.requestState = ContactRequestState.None
+  var requestState: int
+  discard jsonObj.getProp("contactRequestState", requestState)
+  result.requestState = requestState.toContactRequestState()
+
   result.trustStatus = TrustStatus.Unknown
   var trustStatusInt: int
   discard jsonObj.getProp("trustStatus", trustStatusInt)
@@ -170,6 +190,9 @@ proc userOptionalName*(contact: ContactsDto): string =
 proc isContactRequestReceived*(self: ContactsDto): bool =
   return self.hasAddedUs
 
+proc isReceivedContactRequestRejected*(self: ContactsDto): bool =
+  return self.requestState == ContactRequestState.Dismissed
+
 proc isContactRequestSent*(self: ContactsDto): bool =
   return self.added
 
@@ -181,11 +204,6 @@ proc isContactRemoved*(self: ContactsDto): bool =
 #   # TODO not implemented in `status-go` yet
 #   # We don't have this prop for now.
 #   return false
-
-# Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-# proc isReceivedContactRequestRejected*(self: ContactsDto): bool =
-#   # We need to check this.
-#   return self.removed
 
 proc isBlocked*(self: ContactsDto): bool =
   return self.blocked
