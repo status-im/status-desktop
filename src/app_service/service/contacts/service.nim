@@ -233,7 +233,7 @@ QtObject:
         x.isContactRequestReceived() and 
         not x.isContactRequestSent() and
         not x.isContactRemoved() and
-        # not x.isReceivedContactRequestRejected() and
+        not x.isReceivedContactRequestRejected() and
         not x.isBlocked())
     elif (group == ContactsGroup.OutgoingPendingContactRequests):
       return contacts.filter(x => x.id != myPubKey and 
@@ -242,12 +242,11 @@ QtObject:
         # not x.isSentContactRequestRejected() and
         not x.isContactRemoved() and
         not x.isBlocked())
-    # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-    # elif (group == ContactsGroup.IncomingRejectedContactRequests):
-    #   return contacts.filter(x => x.id != myPubKey and 
-    #     x.isContactRequestReceived() and 
-    #     x.isReceivedContactRequestRejected() and
-    #     not x.isBlocked())
+    elif (group == ContactsGroup.IncomingRejectedContactRequests):
+      return contacts.filter(x => x.id != myPubKey and 
+        x.isContactRequestReceived() and 
+        x.isReceivedContactRequestRejected() and
+        not x.isBlocked())
     # elif (group == ContactsGroup.OutgoingRejectedContactRequests):
     #   return contacts.filter(x => x.id != myPubKey and 
     #     x.isContactRequestSent() and 
