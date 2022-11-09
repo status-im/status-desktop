@@ -22,95 +22,88 @@ Item {
         id: loader
         anchors.fill: parent
         sourceComponent: {
-            if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pluginReader ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameSuccess ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameFailure ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPin ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPuk ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPukSuccess ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPukFailure ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCode ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCodeSuccess ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCodeFailure ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetSuccess ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmptyMetadata ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardEmpty ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardNotEmpty ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardAlreadyUnlocked ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockKeycardOptions ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockKeycardSuccess ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsReadyToSign ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPasswordFailed ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid)
-            {
+            switch (root.sharedKeycardModule.currentState.stateType) {
+            case Constants.keycardSharedState.pluginReader:
+            case Constants.keycardSharedState.insertKeycard:
+            case Constants.keycardSharedState.keycardInserted:
+            case Constants.keycardSharedState.readingKeycard:
+            case Constants.keycardSharedState.keyPairMigrateSuccess:
+            case Constants.keycardSharedState.keyPairMigrateFailure:
+            case Constants.keycardSharedState.migratingKeyPair:
+            case Constants.keycardSharedState.keycardRenameSuccess:
+            case Constants.keycardSharedState.keycardRenameFailure:
+            case Constants.keycardSharedState.renamingKeycard:
+            case Constants.keycardSharedState.changingKeycardPin:
+            case Constants.keycardSharedState.changingKeycardPuk:
+            case Constants.keycardSharedState.changingKeycardPukSuccess:
+            case Constants.keycardSharedState.changingKeycardPukFailure:
+            case Constants.keycardSharedState.changingKeycardPairingCode:
+            case Constants.keycardSharedState.changingKeycardPairingCodeSuccess:
+            case Constants.keycardSharedState.changingKeycardPairingCodeFailure:
+            case Constants.keycardSharedState.factoryResetSuccess:
+            case Constants.keycardSharedState.keycardEmptyMetadata:
+            case Constants.keycardSharedState.keycardEmpty:
+            case Constants.keycardSharedState.keycardNotEmpty:
+            case Constants.keycardSharedState.keycardAlreadyUnlocked:
+            case Constants.keycardSharedState.notKeycard:
+            case Constants.keycardSharedState.unlockKeycardOptions:
+            case Constants.keycardSharedState.unlockKeycardSuccess:
+            case Constants.keycardSharedState.wrongKeycard:
+            case Constants.keycardSharedState.biometricsReadyToSign:
+            case Constants.keycardSharedState.maxPinRetriesReached:
+            case Constants.keycardSharedState.maxPukRetriesReached:
+            case Constants.keycardSharedState.maxPairingSlotsReached:
+            case Constants.keycardSharedState.recognizedKeycard:
+            case Constants.keycardSharedState.keycardMetadataDisplay:
+            case Constants.keycardSharedState.biometricsPasswordFailed:
+            case Constants.keycardSharedState.biometricsPinFailed:
+            case Constants.keycardSharedState.biometricsPinInvalid:
                 return initComponent
-            }
-            if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmation ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata)
-            {
+
+            case Constants.keycardSharedState.factoryResetConfirmation:
+            case Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata:
                 return confirmationComponent
-            }
-            if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.selectExistingKeyPair)
-            {
+
+            case Constants.keycardSharedState.selectExistingKeyPair:
                 return selectKeyPairComponent
-            }
-            if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPin ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.repeatPin ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPinSuccess ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPinFailure ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinSet ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinVerified)
-            {
+
+            case Constants.keycardSharedState.createPin:
+            case Constants.keycardSharedState.repeatPin:
+            case Constants.keycardSharedState.enterPin:
+            case Constants.keycardSharedState.wrongPin:
+            case Constants.keycardSharedState.wrongKeychainPin:
+            case Constants.keycardSharedState.changingKeycardPinSuccess:
+            case Constants.keycardSharedState.changingKeycardPinFailure:
+            case Constants.keycardSharedState.pinSet:
+            case Constants.keycardSharedState.pinVerified:
                 return keycardPinComponent
-            }
-            if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPuk ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.repeatPuk ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPuk ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPuk)
-            {
+
+            case Constants.keycardSharedState.createPuk:
+            case Constants.keycardSharedState.repeatPuk:
+            case Constants.keycardSharedState.enterPuk:
+            case Constants.keycardSharedState.wrongPuk:
                 return keycardPukComponent
-            }
-            if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterSeedPhrase ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongSeedPhrase)
-            {
+
+            case Constants.keycardSharedState.enterSeedPhrase:
+            case Constants.keycardSharedState.wrongSeedPhrase:
                 return enterSeedPhraseComponent
-            }
-            if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseDisplay)
-            {
+
+            case Constants.keycardSharedState.seedPhraseDisplay:
                 return seedPhraseComponent
-            }
-            if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseEnterWords)
-            {
+
+            case Constants.keycardSharedState.seedPhraseEnterWords:
                 return enterSeedPhraseWordsComponent
-            }
-            if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPassword ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterBiometricsPassword ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongBiometricsPassword ||
-                    root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPassword) {
+
+            case Constants.keycardSharedState.enterPassword:
+            case Constants.keycardSharedState.enterBiometricsPassword:
+            case Constants.keycardSharedState.wrongBiometricsPassword:
+            case Constants.keycardSharedState.wrongPassword:
                 return passwordComponent
-            }
-            if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterKeycardName) {
+
+            case Constants.keycardSharedState.enterKeycardName:
                 return enterNameComponent
-            }
-            if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPairingCode) {
+
+            case Constants.keycardSharedState.createPairingCode:
                 return enterPairingCodeComponent
             }
 
