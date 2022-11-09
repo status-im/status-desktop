@@ -17,33 +17,27 @@ Feature: Status Desktop Wallet
         Given the user opens wallet screen
         And the user clicks on the first account
 
-	Scenario: The user can import seed phrase and observe an account data
-        Given the user opens app settings screen
-        And the user opens the wallet settings
-        And the user toggles test networks
-        And the user opens wallet screen
-        When an account named "one" is added via imported seed phrase "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial" and authenticated using password "TesTEr16843/!@00"
-        Then the new account "one" is added
-        And the user has a positive balance of "ETH"
-        And the user has a positive balance of "STT"
-        # And the collectibles are listed for the on
-        And the transactions are listed for the added account
-
-	Scenario: The user can manage a watch only account
-        When the user adds watch only account "0x8397bc3c5a60a1883174f722403d63a8833312b7" named "AccountWatch"
+	Scenario: The user can manage and observe a watch only account
+        When the user adds watch only account "0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A" named "AccountWatch"
         Then the new account "AccountWatch" is added
+		And the user has a positive balance of "ETH"
+        And the user has a positive balance of "SNT"
+        # And the collectibles are listed for the on
+        # And the transactions are listed for the added account
 
     Scenario: The user imports a private key
         When an account named "AccountPrivate" is added via private key "8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f" and authenticated using password "TesTEr16843/!@00"
         Then the new account "AccountPrivate" is added
 
-	@mayfail
 	Scenario: The user generates a new account from wallet and deletes it
         When an account named "AccountGenerated" is generated and authenticated using password "TesTEr16843/!@00"
         Then the new account "AccountGenerated" is added
-
         When the user deletes the account "AccountGenerated"
         Then the account "AccountGenerated" is not in the list of accounts
+
+	Scenario: The user can import seed phrase
+        When an account named "AccountSeed" is added via imported seed phrase "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial" and authenticated using password "TesTEr16843/!@00"
+        Then the new account "AccountSeed" is added
 
     Scenario: The user edits the default account
         Given the user opens app settings screen

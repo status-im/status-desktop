@@ -118,14 +118,13 @@ class SettingsScreen:
         click_obj_by_name(SidebarComponents.WALLET_OPTION.value)
 
     def activate_wallet_option(self):
-        if not (is_found(SidebarComponents.WALLET_OPTION.value)):
-            click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
-            click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_WALLET.value)
-            click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
-            verify_object_enabled(SidebarComponents.WALLET_OPTION.value)
+        click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
+        click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_WALLET.value)
+        click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
+        verify_object_enabled(SidebarComponents.WALLET_OPTION.value)
 
     def activate_open_wallet_section(self):
-        self.activate_wallet_option()           
+        self.activate_wallet_option()    
         click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)
     
     def delete_account(self, account_name: str):
