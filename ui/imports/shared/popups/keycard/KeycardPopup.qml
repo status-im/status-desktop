@@ -16,33 +16,27 @@ StatusModal {
     closePolicy: d.disablePopupClose? Popup.NoAutoClose : Popup.CloseOnEscape
 
     header.title: {
-        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
+        switch (root.sharedKeycardModule.currentState.flowType) {
+        case Constants.keycardSharedFlow.setupNewKeycard:
             return qsTr("Set up a new Keycard with an existing account")
-        }
-        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
+        case Constants.keycardSharedFlow.factoryReset:
             return qsTr("Factory reset a Keycard")
-        }
-        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+        case Constants.keycardSharedFlow.authentication:
             return qsTr("Authenticate")
-        }
-        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.unlockKeycard) {
+        case Constants.keycardSharedFlow.unlockKeycard:
             return qsTr("Unlock Keycard")
-        }
-        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.displayKeycardContent) {
+        case Constants.keycardSharedFlow.displayKeycardContent:
             return qsTr("Check what’s on a Keycard")
-        }
-        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard) {
+        case Constants.keycardSharedFlow.renameKeycard:
             return qsTr("Rename Keycard")
-        }
-        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin) {
+        case Constants.keycardSharedFlow.changeKeycardPin:
             return qsTr("Change pin")
-        }
-        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPuk) {
+        case Constants.keycardSharedFlow.changeKeycardPuk:
             return qsTr("Create a 12-digit personal unblocking key (PUK)")
-        }
-        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changePairingCode) {
+        case Constants.keycardSharedFlow.changePairingCode:
             return qsTr("Create a new pairing code")
         }
+
         return ""
     }
 
