@@ -57,7 +57,7 @@ pipeline {
     /* Include library in order to compile the project */
     LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/"
     INFURA_TOKEN = "cd313fedd0dd4699b194d72b5184be06"
-    GOERLI_NETWORK_RPC_URL = "http://0.0.0.0:${855 + env.EXECUTOR_NUMBER}"
+    GANACHE_NETWORK_RPC_URL = "http://0.0.0.0:${855 + env.EXECUTOR_NUMBER}"
   }
 
   stages {
@@ -110,7 +110,7 @@ pipeline {
 
                         --tags
                         ~mayfail
-                        
+
                         --tags
                         ~merge
 

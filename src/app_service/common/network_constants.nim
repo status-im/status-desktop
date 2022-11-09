@@ -13,13 +13,7 @@ let INFURA_TOKEN_RESOLVED =
     INFURA_TOKEN
 
 
-const GOERLI_NETWORK_RPC_URL = $getEnv("GOERLI_NETWORK_RPC_URL")
-let GOERLI_RPC_URL_RESOLVED =
-  if GOERLI_NETWORK_RPC_URL != "":
-    GOERLI_NETWORK_RPC_URL
-  else:
-    "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED
-
+const GANACHE_NETWORK_RPC_URL = $getEnv("GANACHE_NETWORK_RPC_URL")
 const OPENSEA_API_KEY {.strdefine.} = ""
 # allow runtime override via environment variable; core contributors can set a
 # an opensea API key in this way for local development
@@ -53,7 +47,7 @@ var NETWORKS* = %* [
   {
       "chainId": 5,
       "chainName": "Goerli",
-      "rpcUrl": GOERLI_RPC_URL_RESOLVED,
+      "rpcUrl": "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
       "blockExplorerUrl": "https://goerli.etherscan.io/",
       "iconUrl": "network/Network=Testnet",
       "chainColor": "#939BA1",
@@ -127,12 +121,33 @@ var NETWORKS* = %* [
   }
 ]
 
-if GOERLI_NETWORK_RPC_URL != "":
+if GANACHE_NETWORK_RPC_URL != "":
   NETWORKS = %* [
+    {
+      "chainId": 1,
+      "chainName": "Ethereum Mainnet",
+      "rpcUrl": GANACHE_NETWORK_RPC_URL,
+      "blockExplorerUrl": "https://etherscan.io/",
+      "iconUrl": "network/Network=Ethereum",
+      "chainColor": "#627EEA",
+      "shortName": "eth",
+      "nativeCurrencyName": "Ether",
+      "nativeCurrencySymbol": "ETH",
+      "nativeCurrencyDecimals": 18,
+      "isTest": false,
+      "layer": 1,
+      "enabled": true,
+      "tokenOverrides": [
+        {
+          "symbol": "SNT",
+          "address": "0x8571Ddc46b10d31EF963aF49b6C7799Ea7eff818"
+        }
+      ]
+    },
     {
       "chainId": 5,
       "chainName": "Goerli",
-      "rpcUrl": GOERLI_RPC_URL_RESOLVED,
+      "rpcUrl": GANACHE_NETWORK_RPC_URL,
       "blockExplorerUrl": "https://goerli.etherscan.io/",
       "iconUrl": "network/Network=Testnet",
       "chainColor": "#939BA1",
@@ -149,6 +164,66 @@ if GOERLI_NETWORK_RPC_URL != "":
           "address": "0x8571Ddc46b10d31EF963aF49b6C7799Ea7eff818"
         }
       ]
+    },
+    {
+      "chainId": 10,
+      "chainName": "Optimism",
+      "rpcUrl": GANACHE_NETWORK_RPC_URL,
+      "blockExplorerUrl": "https://optimistic.etherscan.io",
+      "iconUrl": "network/Network=Optimism",
+      "chainColor": "#E90101",
+      "shortName": "opt",
+      "nativeCurrencyName": "Ether",
+      "nativeCurrencySymbol": "ETH",
+      "nativeCurrencyDecimals": 18,
+      "isTest":  false,
+      "layer":   2,
+      "enabled": true,
+    },
+    {
+      "chainId": 420,
+      "chainName": "Optimism Goerli Testnet",
+      "rpcUrl": GANACHE_NETWORK_RPC_URL,
+      "blockExplorerUrl": "https://goerli-optimism.etherscan.io/",
+      "iconUrl": "network/Network=Testnet",
+      "chainColor": "#939BA1",
+      "shortName": "goerOpt",
+      "nativeCurrencyName": "Ether",
+      "nativeCurrencySymbol": "ETH",
+      "nativeCurrencyDecimals": 18,
+      "isTest":  true,
+      "layer":   2,
+      "enabled": false,
+    },
+    {
+      "chainId": 42161,
+      "chainName": "Arbitrum",
+      "rpcUrl": GANACHE_NETWORK_RPC_URL,
+      "blockExplorerUrl": "https://arbiscan.io/",
+      "iconUrl": "network/Network=Arbitrum",
+      "chainColor": "#51D0F0",
+      "shortName": "arb",
+      "nativeCurrencyName": "Ether",
+      "nativeCurrencySymbol": "ETH",
+      "nativeCurrencyDecimals": 18,
+      "isTest":  false,
+      "layer":   2,
+      "enabled": true,
+    },
+    {
+      "chainId": 421613,
+      "chainName": "Arbitrum Goerli",
+      "rpcUrl": GANACHE_NETWORK_RPC_URL,
+      "blockExplorerUrl": "https://goerli.arbiscan.io/",
+      "iconUrl": "network/Network=Testnet",
+      "chainColor": "#939BA1",
+      "shortName": "rinArb",
+      "nativeCurrencyName": "Ether",
+      "nativeCurrencySymbol": "ETH",
+      "nativeCurrencyDecimals": 18,
+      "isTest":  true,
+      "layer":   2,
+      "enabled": false,
     }
   ]
 

@@ -21,7 +21,6 @@ class MainWalletScreen(Enum):
     SAVED_ADDRESSES_BUTTON: str = "mainWallet_Saved_Addresses_Button"
     NETWORK_SELECTOR_BUTTON: str = "mainWallet_Network_Selector_Button"
     RIGHT_SIDE_TABBAR: str = "mainWallet_Right_Side_Tab_Bar"
-    MAILSERVER_DIALOG: str = "mailserver_dialog"
     MAILSERVER_RETRY: str = "mailserver_retry"
     FIRST_ACCOUNT_ITEM: str = "firstWalletAccount_Item"
 
@@ -131,7 +130,7 @@ class StatusWalletScreen:
         wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
         click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
         
-        time.sleep(5)
+        time.sleep(1)
     
     def import_seed_phrase(self, account_name: str, password: str, mnemonic: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
@@ -139,10 +138,11 @@ class StatusWalletScreen:
         type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
         
         click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
+        time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
         time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_SEED_PHRASE.value)
-                
+        time.sleep(1)
         words = mnemonic.split()
         scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
         time.sleep(1)
@@ -156,16 +156,12 @@ class StatusWalletScreen:
         input_seed_phrase(AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value, words)
         time.sleep(1)
         
-        visible, _ = is_loaded_visible_and_enabled(MainWalletScreen.MAILSERVER_DIALOG.value, 500)
-        if (visible):
-            click_obj_by_name(MainWalletScreen.MAILSERVER_RETRY.value)
-        
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
         
         wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
         click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
         
-        time.sleep(5)
+        time.sleep(1)
         
     def generate_new_account(self, account_name: str, password: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
@@ -180,7 +176,7 @@ class StatusWalletScreen:
         
         wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
         click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
-        time.sleep(2)
+        time.sleep(1)
          
     def verify_account_name_is_present(self, account_name: str):
         verify_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name)
