@@ -11,8 +11,8 @@ QtObject {
     readonly property bool isDDMMYYDateFormat: localAccountSensitiveSettings.isDDMMYYDateFormat
     readonly property bool is24hTimeFormat: localAccountSensitiveSettings.is24hTimeFormat
 
-    function changeLanguage(locale) {
-        root.languageModule.changeLanguage(locale)
+    function changeLanguage(language) {
+        root.languageModule.changeLanguage(language)
     }
 
     function setIsDDMMYYDateFormat(isDDMMYYDateFormat) {

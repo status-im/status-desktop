@@ -22,7 +22,9 @@ SplitView {
             contentWidth: parent.width
 
             languageStore: LanguageStore {
-                readonly property string currentLanguage: "en"
+                property string currentLanguage: "en"
+                readonly property bool isDDMMYYDateFormat: true
+                readonly property bool is24hTimeFormat: true
 
                 readonly property ListModel languageModel: ListModel {
                     ListElement {
@@ -31,6 +33,7 @@ SplitView {
                         shortName: "العربية"
                         flag: "🇸🇦"
                         state: 0
+                        selected: false
                     }
                     ListElement {
                         locale: "en"
@@ -38,11 +41,13 @@ SplitView {
                         shortName: "English"
                         flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿"
                         state: 2
+                        selected: true
                     }
                 }
 
-                function changeLanguage(locale) {
-                    logs.logEvent("languageStore::changeLanguage", ["locale"], arguments)
+                function changeLanguage(language) {
+                    logs.logEvent("languageStore::changeLanguage", ["language"], arguments)
+                    currentLanguage = language
                 }
 
                 function setIsDDMMYYDateFormat(isDDMMYYDateFormat) {
@@ -56,7 +61,7 @@ SplitView {
 
             currencyStore: QtObject {
                 property string currentCurrency: "usd"
-                property string currentCurrencySymbol: "usd"
+                property string currentCurrencySymbol: "$"
 
                 readonly property ListModel currenciesModel: ListModel {
                     ListElement {
@@ -65,8 +70,8 @@ SplitView {
                         name: "US Dollars"
                         symbol: "$"
                         category: ""
-                        imageSource: "../../../../imports/shared/assets/twemoji/svg/1f1fa-1f1f8.svg"
-                        selected: false
+                        imageSource: "../../assets/twemoji/svg/1f1fa-1f1f8.svg"
+                        selected: true
                     }
 
                     ListElement {
@@ -75,7 +80,7 @@ SplitView {
                         name: "British Pound"
                         symbol: "£"
                         category: ""
-                        imageSource: "../../../../imports/shared/assets/twemoji/svg/1f1ec-1f1e7.svg"
+                        imageSource: "../../assets/twemoji/svg/1f1ec-1f1e7.svg"
                         selected: false
                     }
                 }

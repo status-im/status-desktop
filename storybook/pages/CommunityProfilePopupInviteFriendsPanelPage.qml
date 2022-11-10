@@ -20,10 +20,6 @@ Item {
                                    {colorId: 19, segmentLength: 2}])
         }
 
-        function isCompressedPubKey() {
-            return true
-        }
-
         Component.onCompleted: {
             Utils.globalUtilsInst = this
             globalUtilsReady = true
