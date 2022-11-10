@@ -8,7 +8,7 @@ proc newKeycardEmptyMetadataState*(flowType: FlowType, backState: State): Keycar
 proc delete*(self: KeycardEmptyMetadataState) =
   self.State.delete
 
-method executePreTertiaryStateCommand*(self: KeycardEmptyMetadataState, controller: Controller) =
+method executeCancelCommand*(self: KeycardEmptyMetadataState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.DisplayKeycardContent or

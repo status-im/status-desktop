@@ -15,7 +15,7 @@ method executePrePrimaryStateCommand*(self: SeedPhraseEnterWordsState, controlle
   controller.setSeedPhrase(mnemonic)
   controller.storeSeedPhraseToKeycard(mnemonic.split(" ").len, mnemonic)
 
-method executePreTertiaryStateCommand*(self: SeedPhraseEnterWordsState, controller: Controller) =
+method executeCancelCommand*(self: SeedPhraseEnterWordsState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

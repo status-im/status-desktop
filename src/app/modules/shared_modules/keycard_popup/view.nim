@@ -55,9 +55,9 @@ QtObject:
     result.currentStateVariant = newQVariant(result.currentState)
 
     signalConnect(result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2)
+    signalConnect(result.currentState, "cancelActionClicked()", result, "onCancelActionClicked()", 2)
     signalConnect(result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
     signalConnect(result.currentState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
-    signalConnect(result.currentState, "tertiaryActionClicked()", result, "onTertiaryActionClicked()", 2)
 
   proc currentStateObj*(self: View): State =
     return self.currentState.getStateObj()
@@ -85,14 +85,14 @@ QtObject:
   proc onBackActionClicked*(self: View) {.slot.} =
     self.delegate.onBackActionClicked()
 
+  proc onCancelActionClicked*(self: View) {.slot.} =
+    self.delegate.onCancelActionClicked()
+
   proc onPrimaryActionClicked*(self: View) {.slot.} =
     self.delegate.onPrimaryActionClicked()
 
   proc onSecondaryActionClicked*(self: View) {.slot.} =
     self.delegate.onSecondaryActionClicked()
-
-  proc onTertiaryActionClicked*(self: View) {.slot.} =
-    self.delegate.onTertiaryActionClicked()
 
   proc keyPairModel*(self: View): KeyPairModel =
     return self.keyPairModel

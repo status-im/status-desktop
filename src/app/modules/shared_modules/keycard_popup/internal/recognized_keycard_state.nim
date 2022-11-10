@@ -30,5 +30,5 @@ method getNextSecondaryState*(self: RecognizedKeycardState, controller: Controll
     self.flowType == FlowType.ChangePairingCode:
       return createState(StateType.EnterPin, self.flowType, nil)
 
-method executePreTertiaryStateCommand*(self: RecognizedKeycardState, controller: Controller) =
+method executeCancelCommand*(self: RecognizedKeycardState, controller: Controller) =
   error "recognized state must not be canceled"

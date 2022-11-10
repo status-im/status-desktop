@@ -18,6 +18,6 @@ method getNextSecondaryState*(self: RepeatPukState, controller: Controller): Sta
   if self.flowType == FlowType.ChangeKeycardPuk:
     return createState(StateType.ChangingKeycardPuk, self.flowType, nil)
 
-method executePreTertiaryStateCommand*(self: RepeatPukState, controller: Controller) =
+method executeCancelCommand*(self: RepeatPukState, controller: Controller) =
   if self.flowType == FlowType.ChangeKeycardPuk:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

@@ -12,6 +12,6 @@ method executePrePrimaryStateCommand*(self: KeycardAlreadyUnlockedState, control
   if self.flowType == FlowType.UnlockKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
-method executePreTertiaryStateCommand*(self: KeycardAlreadyUnlockedState, controller: Controller) =
+method executeCancelCommand*(self: KeycardAlreadyUnlockedState, controller: Controller) =
   if self.flowType == FlowType.UnlockKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

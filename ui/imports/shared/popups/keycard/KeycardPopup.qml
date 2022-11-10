@@ -50,7 +50,7 @@ StatusModal {
     }
 
     onClosed: {
-        root.sharedKeycardModule.currentState.doTertiaryAction()
+        root.sharedKeycardModule.currentState.doCancelAction()
     }
 
     contentItem: StatusScrollView {

@@ -16,7 +16,7 @@ method getNextSecondaryState*(self: BiometricsPasswordFailedState, controller: C
   if self.flowType == FlowType.Authentication:
     return createState(StateType.EnterPassword, self.flowType, nil)
 
-method executePreTertiaryStateCommand*(self: BiometricsPasswordFailedState, controller: Controller) =
+method executeCancelCommand*(self: BiometricsPasswordFailedState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

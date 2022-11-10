@@ -21,7 +21,7 @@ method getNextPrimaryState*(self: PinVerifiedState, controller: Controller): Sta
   if self.flowType == FlowType.ChangePairingCode:
     return createState(StateType.CreatePairingCode, self.flowType, nil)
 
-method executePreTertiaryStateCommand*(self: PinVerifiedState, controller: Controller) =
+method executeCancelCommand*(self: PinVerifiedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.DisplayKeycardContent or

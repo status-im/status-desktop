@@ -13,7 +13,7 @@ method executePrePrimaryStateCommand*(self: KeycardNotEmptyState, controller: Co
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
     controller.runGetMetadataFlow(resolveAddress = true)
 
-method executePreTertiaryStateCommand*(self: KeycardNotEmptyState, controller: Controller) =
+method executeCancelCommand*(self: KeycardNotEmptyState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

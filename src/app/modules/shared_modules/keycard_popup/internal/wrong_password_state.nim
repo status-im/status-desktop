@@ -24,7 +24,7 @@ method executePreSecondaryStateCommand*(self: WrongPasswordState, controller: Co
   if self.flowType == FlowType.Authentication:
     controller.tryToObtainDataFromKeychain()
 
-method executePreTertiaryStateCommand*(self: WrongPasswordState, controller: Controller) =
+method executeCancelCommand*(self: WrongPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

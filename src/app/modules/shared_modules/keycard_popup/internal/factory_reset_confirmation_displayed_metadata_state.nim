@@ -15,7 +15,7 @@ method executePrePrimaryStateCommand*(self: FactoryResetConfirmationDisplayMetad
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
     controller.runGetAppInfoFlow(factoryReset = true)
     
-method executePreTertiaryStateCommand*(self: FactoryResetConfirmationDisplayMetadataState, controller: Controller) =
+method executeCancelCommand*(self: FactoryResetConfirmationDisplayMetadataState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

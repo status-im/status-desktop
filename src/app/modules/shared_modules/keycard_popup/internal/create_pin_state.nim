@@ -15,7 +15,7 @@ method executePreBackStateCommand*(self: CreatePinState, controller: Controller)
     if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
       controller.cancelCurrentFlow()
 
-method executePreTertiaryStateCommand*(self: CreatePinState, controller: Controller) =
+method executeCancelCommand*(self: CreatePinState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.ChangeKeycardPin:

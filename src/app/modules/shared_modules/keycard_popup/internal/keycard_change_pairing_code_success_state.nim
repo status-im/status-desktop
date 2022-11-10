@@ -12,6 +12,6 @@ method executePrePrimaryStateCommand*(self: ChangingKeycardPairingCodeSuccessSta
   if self.flowType == FlowType.ChangePairingCode:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
-method executePreTertiaryStateCommand*(self: ChangingKeycardPairingCodeSuccessState, controller: Controller) =
+method executeCancelCommand*(self: ChangingKeycardPairingCodeSuccessState, controller: Controller) =
   if self.flowType == FlowType.ChangePairingCode:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)

@@ -46,8 +46,12 @@ QtObject:
     notify = stateWrapperChanged
 
   proc backActionClicked*(self: StateWrapper) {.signal.}
-  proc backAction*(self: StateWrapper) {.slot.} =
+  proc doBackAction*(self: StateWrapper) {.slot.} =
     self.backActionClicked()
+
+  proc cancelActionClicked*(self: StateWrapper) {.signal.}
+  proc doCancelAction*(self: StateWrapper) {.slot.} =
+    self.cancelActionClicked()
 
   proc primaryActionClicked*(self: StateWrapper) {.signal.}
   proc doPrimaryAction*(self: StateWrapper) {.slot.} =
@@ -56,7 +60,3 @@ QtObject:
   proc secondaryActionClicked*(self: StateWrapper) {.signal.}
   proc doSecondaryAction*(self: StateWrapper) {.slot.} =
     self.secondaryActionClicked()
-
-  proc tertiaryActionClicked*(self: StateWrapper) {.signal.}
-  proc doTertiaryAction*(self: StateWrapper) {.slot.} =
-    self.tertiaryActionClicked()

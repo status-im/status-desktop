@@ -32,7 +32,7 @@ method executePrePrimaryStateCommand*(self: WrongSeedPhraseState, controller: Co
     else:
       controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
 
-method executePreTertiaryStateCommand*(self: WrongSeedPhraseState, controller: Controller) =
+method executeCancelCommand*(self: WrongSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.UnlockKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

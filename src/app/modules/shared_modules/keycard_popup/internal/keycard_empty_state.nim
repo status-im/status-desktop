@@ -19,7 +19,7 @@ method executePrePrimaryStateCommand*(self: KeycardEmptyState, controller: Contr
     self.flowType == FlowType.ChangePairingCode:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
-method executePreTertiaryStateCommand*(self: KeycardEmptyState, controller: Controller) =
+method executeCancelCommand*(self: KeycardEmptyState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or

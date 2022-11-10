@@ -30,7 +30,7 @@ method executePreSecondaryStateCommand*(self: EnterPinState, controller: Control
     controller.setUsePinFromBiometrics(false)
     controller.tryToObtainDataFromKeychain()
 
-method executePreTertiaryStateCommand*(self: EnterPinState, controller: Controller) =
+method executeCancelCommand*(self: EnterPinState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.Authentication or
