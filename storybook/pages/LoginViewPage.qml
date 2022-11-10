@@ -59,7 +59,7 @@ SplitView {
                     readonly property string stateType: Constants.startupState.welcome
                 }
 
-                function setPassword() {
+                function setPassword(password) {
                     logs.logEvent("StartupStore::setPassword", ["password"], arguments)
                 }
 
@@ -75,7 +75,15 @@ SplitView {
                     logs.logEvent("StartupStore::doTertiaryAction")
                 }
 
-                function setSelectedLoginAccountByIndex() {
+                function doQuaternaryAction() {
+                    logs.logEvent("StartupStore::doQuaternaryAction")
+                }
+
+                function doQuinaryAction() {
+                    logs.logEvent("StartupStore::doQuinaryAction")
+                }
+
+                function setSelectedLoginAccountByIndex(index) {
                     logs.logEvent("StartupStore::setSelectedLoginAccountByIndex", ["index"], arguments)
                 }
             }
