@@ -6,6 +6,7 @@ import StatusQ.Core.Backpressure 1.0
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
+import StatusQ.Core.Utils 0.1
 
 /*!
    \qmltype StatusInput
@@ -256,10 +257,12 @@ Item {
         \qmlmethod
         This function validates the text input's text.
     */
+
     function validate(force) {
         if (!force && !statusBaseInput.dirty && validationMode === StatusInput.ValidationMode.OnlyWhenDirty) {
             return
         }
+
         statusBaseInput.valid = true
         if (validators.length) {
             for (let idx in validators) {
@@ -403,7 +406,7 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
                 height: visible ? contentHeight : 0
                 visible: root.charLimit > 0
-                text: "%1 / %2".arg(statusBaseInput.text.length).arg(root.charLimit)
+                text: "%1 / %2".arg(Utils.encodeUtf8(statusBaseInput.text).length).arg(root.charLimit)
                 font.pixelSize: 12
                 color: statusBaseInput.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
             }

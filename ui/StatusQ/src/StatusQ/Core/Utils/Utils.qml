@@ -265,6 +265,10 @@ QtObject {
         else if (flickableBottom <= rectBottom)
             flickable.contentY = rectBottom - flickable.height
     }
+
+    function encodeUtf8(str){
+        return unescape( encodeURIComponent(str));
+    }
 }
 
 

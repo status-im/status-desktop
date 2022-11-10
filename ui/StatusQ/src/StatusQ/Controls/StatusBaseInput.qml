@@ -371,7 +371,8 @@ Item {
                             }
                             root.dirty = true
                             if (root.maximumLength > 0) {
-                                if (text.length > root.maximumLength) {
+                                let utf8Length = Utils.encodeUtf8(text).length
+                                if (utf8Length > root.maximumLength) {
                                     var cursor = cursorPosition
                                     text = previousText
                                     if (cursor > text.length) {
