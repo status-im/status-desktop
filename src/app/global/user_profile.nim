@@ -1,7 +1,5 @@
 import NimQml
 
-import ../../app_service/common/utils
-
 import local_account_settings
 
 QtObject:

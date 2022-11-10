@@ -1,4 +1,4 @@
-import Tables, json, stint, chronicles, nimcrypto
+import json, stint, chronicles, nimcrypto
 
 import ../app_service/service/transaction/dto
 import ../app_service/service/eth/dto/transaction
