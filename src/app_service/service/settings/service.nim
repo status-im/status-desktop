@@ -1,8 +1,9 @@
-import NimQml, chronicles, json, strutils, sequtils, tables, sugar
+import NimQml, chronicles, json, strutils, sequtils
 
 import ../../common/[network_constants]
 import ../../common/types as common_types
 import ../../common/social_links
+import ../../common/utils as common_utils
 import ../../../app/core/eventemitter
 import ../../../app/core/fleets/fleet_configuration
 import ../../../app/core/signals/types
@@ -834,6 +835,11 @@ QtObject:
 
   proc setSocialLinks*(self: Service, links: SocialLinks): bool =
     result = false
+    let isValid = all(links, proc (link: SocialLink): bool = common_utils.validateLink(link.url))
+    if (not isValid):
+      error "error saving social links"
+      return result
+
     try:
       let response = status_settings.setSocialLinks(%*links)
 
