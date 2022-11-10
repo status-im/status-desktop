@@ -178,7 +178,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     m.containsContactMentions(),
     m.seen,
     timestamp = m.whisperTimestamp,
-    localTimestamp = m.timestamp,
+    clock = m.clock,
     m.contentType.ContentType,
     m.messageType,
     m.contactRequestState,

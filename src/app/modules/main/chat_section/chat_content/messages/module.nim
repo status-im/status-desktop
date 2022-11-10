@@ -88,7 +88,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     messageContainsMentions = false,
     seen = true,
     timestamp = 0,
-    localTimestamp = 0,
+    clock = 0,
     ContentType.FetchMoreMessagesButton,
     messageType = -1,
     contactRequestState = 0,
@@ -129,7 +129,7 @@ proc createChatIdentifierItem(self: Module): Item =
     messageContainsMentions = false,
     seen = true,
     timestamp = 0,
-    localTimestamp = 0,
+    clock = 0,
     ContentType.ChatIdentifier,
     messageType = -1,
     contactRequestState = 0,
@@ -197,7 +197,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         m.containsContactMentions(),
         m.seen,
         timestamp = m.whisperTimestamp,
-        localTimestamp = m.timestamp,
+        clock = m.clock,
         m.contentType.ContentType,
         m.messageType,
         m.contactRequestState,
@@ -291,7 +291,7 @@ method messageAdded*(self: Module, message: MessageDto) =
     message.containsContactMentions(),
     message.seen,
     timestamp = message.whisperTimestamp,
-    localTimestamp = message.timestamp,
+    clock = message.clock,
     message.contentType.ContentType,
     message.messageType,
     message.contactRequestState,
@@ -312,7 +312,7 @@ method messageAdded*(self: Module, message: MessageDto) =
     message.discordMessage
   )
 
-  self.view.model().insertItemBasedOnTimestamp(item)
+  self.view.model().insertItemBasedOnClock(item)
 
 method onSendingMessageSuccess*(self: Module, message: MessageDto) =
   self.messageAdded(message)
