@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.14
 import QtQuick.Dialogs 1.3
 import QtQuick.Layouts 1.14
 
@@ -171,26 +171,49 @@ Item {
                         spacing: 2
 
                         StatusBaseText {
+                            id: communityNameText
                             Layout.fillWidth: true
-
                             text: d.invitedCommunity.name
                             font.weight: Font.Bold
-                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                            maximumLineCount: 1
+                            elide: Text.ElideRight
                             font.pixelSize: 17
                             color: Theme.palette.directColor1
+
+                            StatusToolTip {
+                                id: communityNameTooltip
+                                enabled: communityNameText.truncated
+                                text: communityNameText.text
+                                visible: nameHoverHandler.hovered
+                            }
+
+                            HoverHandler {
+                                id: nameHoverHandler
+                            }
                         }
 
                         StatusBaseText {
+                            id: communityDescriptionText
                             Layout.fillWidth: true
-
+                            maximumLineCount: 1
                             text: d.invitedCommunity.description
-                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                            elide: Text.ElideRight
                             color: Theme.palette.directColor1
+
+                            StatusToolTip {
+                                id: communityDescriptionTooltip
+                                enabled: communityDescriptionText.truncated
+                                text: communityDescriptionText.text
+                                visible: descHoverHandler.hovered
+                            }
+
+                            HoverHandler {
+                                id: descHoverHandler
+                            }
                         }
 
                         StatusBaseText {
                             Layout.fillWidth: true
-
                             text: qsTr("%n member(s)", "", d.invitedCommunity.nbMembers)
                             font.pixelSize: 13
                             font.weight: Font.Medium
