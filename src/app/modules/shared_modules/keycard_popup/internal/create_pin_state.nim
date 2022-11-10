@@ -8,14 +8,14 @@ proc newCreatePinState*(flowType: FlowType, backState: State): CreatePinState =
 proc delete*(self: CreatePinState) =
   self.State.delete
   
-method executeBackCommand*(self: CreatePinState, controller: Controller) =
+method executePreBackStateCommand*(self: CreatePinState, controller: Controller) =
   controller.setPin("")
   controller.setPinMatch(false)
   if self.flowType == FlowType.SetupNewKeycard:
     if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
       controller.cancelCurrentFlow()
 
-method executeTertiaryCommand*(self: CreatePinState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: CreatePinState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.ChangeKeycardPin:

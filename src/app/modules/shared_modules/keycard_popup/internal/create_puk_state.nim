@@ -8,7 +8,7 @@ proc newCreatePukState*(flowType: FlowType, backState: State): CreatePukState =
 proc delete*(self: CreatePukState) =
   self.State.delete
   
-method executeTertiaryCommand*(self: CreatePukState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: CreatePukState, controller: Controller) =
   if self.flowType == FlowType.ChangeKeycardPuk:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

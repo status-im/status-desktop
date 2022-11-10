@@ -10,7 +10,7 @@ proc newWrongBiometricsPasswordState*(flowType: FlowType, backState: State): Wro
 proc delete*(self: WrongBiometricsPasswordState) =
   self.State.delete
 
-method executePrimaryCommand*(self: WrongBiometricsPasswordState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: WrongBiometricsPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongPassword, add = false))
     let password = controller.getPassword()
@@ -21,7 +21,7 @@ method executePrimaryCommand*(self: WrongBiometricsPasswordState, controller: Co
     else:
       controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongPassword, add = true))
 
-method executeTertiaryCommand*(self: WrongBiometricsPasswordState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: WrongBiometricsPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

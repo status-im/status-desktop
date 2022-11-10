@@ -29,14 +29,14 @@ proc doMigration(self: MigratingKeyPairState, controller: Controller) =
     controller.runStoreMetadataFlow(selectedKeyPairDto.keycardName, controller.getPin(), 
       controller.getSelectedKeyPairWalletPaths())
 
-method executePrimaryCommand*(self: MigratingKeyPairState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: MigratingKeyPairState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     if controller.getSelectedKeyPairIsProfile():
       controller.authenticateUser()
     else:
       self.doMigration(controller)
 
-method executeSecondaryCommand*(self: MigratingKeyPairState, controller: Controller) =
+method executePreSecondaryStateCommand*(self: MigratingKeyPairState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     self.doMigration(controller)
 

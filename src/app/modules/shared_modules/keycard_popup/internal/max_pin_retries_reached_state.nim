@@ -26,7 +26,7 @@ method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Control
       controller.runSharedModuleFlow(FlowType.UnlockKeycard)
   return nil
 
-method executeTertiaryCommand*(self: MaxPinRetriesReachedState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: MaxPinRetriesReachedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.DisplayKeycardContent or

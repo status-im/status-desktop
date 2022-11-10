@@ -8,14 +8,14 @@ proc newFactoryResetConfirmationDisplayMetadataState*(flowType: FlowType, backSt
 proc delete*(self: FactoryResetConfirmationDisplayMetadataState) =
   self.State.delete
 
-method executePrimaryCommand*(self: FactoryResetConfirmationDisplayMetadataState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: FactoryResetConfirmationDisplayMetadataState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset:
     controller.runGetAppInfoFlow(factoryReset = true)
   elif self.flowType == FlowType.SetupNewKeycard:
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
     controller.runGetAppInfoFlow(factoryReset = true)
     
-method executeTertiaryCommand*(self: FactoryResetConfirmationDisplayMetadataState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: FactoryResetConfirmationDisplayMetadataState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

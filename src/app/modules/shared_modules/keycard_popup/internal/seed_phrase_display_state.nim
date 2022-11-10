@@ -8,7 +8,7 @@ proc newSeedPhraseDisplayState*(flowType: FlowType, backState: State): SeedPhras
 proc delete*(self: SeedPhraseDisplayState) =
   self.State.delete
 
-method executeTertiaryCommand*(self: SeedPhraseDisplayState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: SeedPhraseDisplayState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

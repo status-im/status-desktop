@@ -10,7 +10,7 @@ proc newEnterSeedPhraseState*(flowType: FlowType, backState: State): EnterSeedPh
 proc delete*(self: EnterSeedPhraseState) =
   self.State.delete
 
-method executePrimaryCommand*(self: EnterSeedPhraseState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: EnterSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     self.verifiedSeedPhrase = controller.validSeedPhrase(controller.getSeedPhrase()) and
       controller.seedPhraseRefersToSelectedKeyPair(controller.getSeedPhrase())
@@ -32,7 +32,7 @@ method getNextPrimaryState*(self: EnterSeedPhraseState, controller: Controller):
       if not self.verifiedSeedPhrase:
         return createState(StateType.WrongSeedPhrase, self.flowType, nil)
 
-method executeTertiaryCommand*(self: EnterSeedPhraseState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: EnterSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.UnlockKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

@@ -8,11 +8,11 @@ proc newSelectExistingKeyPairState*(flowType: FlowType, backState: State): Selec
 proc delete*(self: SelectExistingKeyPairState) =
   self.State.delete
 
-method executePrimaryCommand*(self: SelectExistingKeyPairState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: SelectExistingKeyPairState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.runLoadAccountFlow()
 
-method executeTertiaryCommand*(self: SelectExistingKeyPairState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: SelectExistingKeyPairState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

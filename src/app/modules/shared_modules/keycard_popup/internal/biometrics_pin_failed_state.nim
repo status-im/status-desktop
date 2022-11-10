@@ -8,11 +8,11 @@ proc newBiometricsPinFailedState*(flowType: FlowType, backState: State): Biometr
 proc delete*(self: BiometricsPinFailedState) =
   self.State.delete
 
-method executePrimaryCommand*(self: BiometricsPinFailedState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: BiometricsPinFailedState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.tryToObtainDataFromKeychain()
 
-method executeSecondaryCommand*(self: BiometricsPinFailedState, controller: Controller) =
+method executePreSecondaryStateCommand*(self: BiometricsPinFailedState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setUsePinFromBiometrics(true)
 
@@ -20,7 +20,7 @@ method getNextSecondaryState*(self: BiometricsPinFailedState, controller: Contro
   if self.flowType == FlowType.Authentication:
     return createState(StateType.EnterPin, self.flowType, nil)
 
-method executeTertiaryCommand*(self: BiometricsPinFailedState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: BiometricsPinFailedState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setPassword("")
     controller.setPin("")

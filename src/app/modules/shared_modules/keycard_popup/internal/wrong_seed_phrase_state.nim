@@ -12,7 +12,7 @@ proc newWrongSeedPhraseState*(flowType: FlowType, backState: State): WrongSeedPh
 proc delete*(self: WrongSeedPhraseState) =
   self.State.delete
 
-method executePrimaryCommand*(self: WrongSeedPhraseState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: WrongSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = false))
     sleep(500) # just to shortly remove text on the UI side
@@ -32,7 +32,7 @@ method executePrimaryCommand*(self: WrongSeedPhraseState, controller: Controller
     else:
       controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
 
-method executeTertiaryCommand*(self: WrongSeedPhraseState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: WrongSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.UnlockKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

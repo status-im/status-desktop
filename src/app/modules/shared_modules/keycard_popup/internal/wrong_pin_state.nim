@@ -22,7 +22,7 @@ method getNextPrimaryState*(self: WrongPinState, controller: Controller): State 
     self.flowType == FlowType.ChangePairingCode:
       controller.runSharedModuleFlow(FlowType.FactoryReset)
 
-method executeSecondaryCommand*(self: WrongPinState, controller: Controller) =
+method executePreSecondaryStateCommand*(self: WrongPinState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
@@ -36,7 +36,7 @@ method executeSecondaryCommand*(self: WrongPinState, controller: Controller) =
     controller.setUsePinFromBiometrics(false)
     controller.tryToObtainDataFromKeychain()
 
-method executeTertiaryCommand*(self: WrongPinState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: WrongPinState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.Authentication or

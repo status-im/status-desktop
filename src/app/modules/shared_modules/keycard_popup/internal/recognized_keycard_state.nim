@@ -8,7 +8,7 @@ proc newRecognizedKeycardState*(flowType: FlowType, backState: State): Recognize
 proc delete*(self: RecognizedKeycardState) =
   self.State.delete
 
-method executeBackCommand*(self: RecognizedKeycardState, controller: Controller) =
+method executePreBackStateCommand*(self: RecognizedKeycardState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
       controller.cancelCurrentFlow()
@@ -30,5 +30,5 @@ method getNextSecondaryState*(self: RecognizedKeycardState, controller: Controll
     self.flowType == FlowType.ChangePairingCode:
       return createState(StateType.EnterPin, self.flowType, nil)
 
-method executeTertiaryCommand*(self: RecognizedKeycardState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: RecognizedKeycardState, controller: Controller) =
   error "recognized state must not be canceled"

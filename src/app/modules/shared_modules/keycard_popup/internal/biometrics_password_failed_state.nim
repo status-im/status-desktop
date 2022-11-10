@@ -8,7 +8,7 @@ proc newBiometricsPasswordFailedState*(flowType: FlowType, backState: State): Bi
 proc delete*(self: BiometricsPasswordFailedState) =
   self.State.delete
 
-method executePrimaryCommand*(self: BiometricsPasswordFailedState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: BiometricsPasswordFailedState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.tryToObtainDataFromKeychain()
 
@@ -16,7 +16,7 @@ method getNextSecondaryState*(self: BiometricsPasswordFailedState, controller: C
   if self.flowType == FlowType.Authentication:
     return createState(StateType.EnterPassword, self.flowType, nil)
 
-method executeTertiaryCommand*(self: BiometricsPasswordFailedState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: BiometricsPasswordFailedState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

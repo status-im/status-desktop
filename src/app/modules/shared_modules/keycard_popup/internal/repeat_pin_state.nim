@@ -8,11 +8,11 @@ proc newRepeatPinState*(flowType: FlowType, backState: State): RepeatPinState =
 proc delete*(self: RepeatPinState) =
   self.State.delete
 
-method executeBackCommand*(self: RepeatPinState, controller: Controller) =
+method executePreBackStateCommand*(self: RepeatPinState, controller: Controller) =
   controller.setPin("")
   controller.setPinMatch(false)
 
-method executeSecondaryCommand*(self: RepeatPinState, controller: Controller) =
+method executePreSecondaryStateCommand*(self: RepeatPinState, controller: Controller) =
   if not controller.getPinMatch():
     return
   if self.flowType == FlowType.SetupNewKeycard:
@@ -26,7 +26,7 @@ method getNextSecondaryState*(self: RepeatPinState, controller: Controller): Sta
   if self.flowType == FlowType.ChangeKeycardPin:
     return createState(StateType.ChangingKeycardPin, self.flowType, nil)
 
-method executeTertiaryCommand*(self: RepeatPinState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: RepeatPinState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.ChangeKeycardPin:

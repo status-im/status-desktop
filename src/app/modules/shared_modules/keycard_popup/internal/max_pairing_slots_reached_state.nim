@@ -21,7 +21,7 @@ method getNextPrimaryState*(self: MaxPairingSlotsReachedState, controller: Contr
       controller.runSharedModuleFlow(FlowType.UnlockKeycard)
   return nil
 
-method executeTertiaryCommand*(self: MaxPairingSlotsReachedState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: MaxPairingSlotsReachedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.Authentication or

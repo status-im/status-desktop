@@ -8,7 +8,7 @@ proc newChangingKeycardPinState*(flowType: FlowType, backState: State): Changing
 proc delete*(self: ChangingKeycardPinState) =
   self.State.delete
 
-method executeSecondaryCommand*(self: ChangingKeycardPinState, controller: Controller) =
+method executePreSecondaryStateCommand*(self: ChangingKeycardPinState, controller: Controller) =
   if self.flowType == FlowType.ChangeKeycardPin:
     controller.storePinToKeycard(controller.getPin(), "")
 

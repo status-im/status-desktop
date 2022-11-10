@@ -8,14 +8,14 @@ proc newKeycardEmptyMetadataState*(flowType: FlowType, backState: State): Keycar
 proc delete*(self: KeycardEmptyMetadataState) =
   self.State.delete
 
-method executeTertiaryCommand*(self: KeycardEmptyMetadataState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: KeycardEmptyMetadataState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
-method executePrimaryCommand*(self: KeycardEmptyMetadataState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: KeycardEmptyMetadataState, controller: Controller) =
   if self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)

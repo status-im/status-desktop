@@ -14,6 +14,6 @@ method getNextPrimaryState*(self: CreatePairingCodeState, controller: Controller
       return createState(StateType.ChangingKeycardPairingCode, self.flowType, nil)
     return createState(StateType.ChangingKeycardPairingCodeFailure, self.flowType, nil)
 
-method executeTertiaryCommand*(self: CreatePairingCodeState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: CreatePairingCodeState, controller: Controller) =
   if self.flowType == FlowType.ChangePairingCode:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

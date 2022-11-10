@@ -16,6 +16,6 @@ method getNextSecondaryState*(self: UnlockKeycardOptionsState, controller: Contr
   if self.flowType == FlowType.UnlockKeycard:
     return createState(StateType.EnterPuk, self.flowType, self)
 
-method executeTertiaryCommand*(self: UnlockKeycardOptionsState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: UnlockKeycardOptionsState, controller: Controller) =
   if self.flowType == FlowType.UnlockKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

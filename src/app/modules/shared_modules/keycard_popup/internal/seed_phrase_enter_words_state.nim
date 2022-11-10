@@ -10,12 +10,12 @@ proc newSeedPhraseEnterWordsState*(flowType: FlowType, backState: State): SeedPh
 proc delete*(self: SeedPhraseEnterWordsState) =
   self.State.delete
 
-method executePrimaryCommand*(self: SeedPhraseEnterWordsState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: SeedPhraseEnterWordsState, controller: Controller) =
   let mnemonic = controller.getMnemonic()
   controller.setSeedPhrase(mnemonic)
   controller.storeSeedPhraseToKeycard(mnemonic.split(" ").len, mnemonic)
 
-method executeTertiaryCommand*(self: SeedPhraseEnterWordsState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: SeedPhraseEnterWordsState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

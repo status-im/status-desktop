@@ -10,7 +10,7 @@ proc newEnterPasswordState*(flowType: FlowType, backState: State): EnterPassword
 proc delete*(self: EnterPasswordState) =
   self.State.delete
 
-method executePrimaryCommand*(self: EnterPasswordState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: EnterPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     let password = controller.getPassword()
     self.success = controller.verifyPassword(password)
@@ -24,11 +24,11 @@ method getNextPrimaryState*(self: EnterPasswordState, controller: Controller): S
     if not self.success:
       return createState(StateType.WrongPassword, self.flowType, nil)
 
-method executeSecondaryCommand*(self: EnterPasswordState, controller: Controller) =
+method executePreSecondaryStateCommand*(self: EnterPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.tryToObtainDataFromKeychain()
 
-method executeTertiaryCommand*(self: EnterPasswordState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: EnterPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

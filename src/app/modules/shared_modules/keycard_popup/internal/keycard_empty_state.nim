@@ -8,7 +8,7 @@ proc newKeycardEmptyState*(flowType: FlowType, backState: State): KeycardEmptySt
 proc delete*(self: KeycardEmptyState) =
   self.State.delete
 
-method executePrimaryCommand*(self: KeycardEmptyState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: KeycardEmptyState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or
@@ -19,7 +19,7 @@ method executePrimaryCommand*(self: KeycardEmptyState, controller: Controller) =
     self.flowType == FlowType.ChangePairingCode:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
-method executeTertiaryCommand*(self: KeycardEmptyState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: KeycardEmptyState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or

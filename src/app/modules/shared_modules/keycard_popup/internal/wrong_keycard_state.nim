@@ -8,7 +8,7 @@ proc newWrongKeycardState*(flowType: FlowType, backState: State): WrongKeycardSt
 proc delete*(self: WrongKeycardState) =
   self.State.delete
 
-method executePrimaryCommand*(self: WrongKeycardState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: WrongKeycardState, controller: Controller) =
   if self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
@@ -16,7 +16,7 @@ method executePrimaryCommand*(self: WrongKeycardState, controller: Controller) =
     self.flowType == FlowType.ChangePairingCode:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
-method executeTertiaryCommand*(self: WrongKeycardState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: WrongKeycardState, controller: Controller) =
   if self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.RenameKeycard or
