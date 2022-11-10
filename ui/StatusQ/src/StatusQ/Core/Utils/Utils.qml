@@ -267,7 +267,7 @@ QtObject {
     }
 
     function encodeUtf8(str){
-        return unescape( encodeURIComponent(str));
+        return unescape(encodeURIComponent(str));
     }
 }
 
