@@ -1,4 +1,4 @@
-import json, random, times, strutils, os
+import json, random, times, strutils, os, re, chronicles
 import nimcrypto
 import signing_phrases
 
@@ -51,3 +51,11 @@ proc defaultDataDir(): string =
       else:
         targetDir
   absolutePath(joinPath(parentDir, "Status"))
+
+proc validateLink*(link: string): bool =
+  result = true
+  if link.len() != 0:
+    if not match(
+        link, re"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)", 0):
+      error "Invalid social link", errDescription = link
+      result = false
