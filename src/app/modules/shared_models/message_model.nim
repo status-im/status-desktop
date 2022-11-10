@@ -244,12 +244,12 @@ QtObject:
       if(self.items[i].responseToMessageWithId == messageId):
         result.add(self.items[i].id)
 
-  proc findIndexBasedOnTimestampToInsertTo(self: Model, timestamp: int64, localTimestamp: int64): int =
+  proc findIndexBasedOnClockToInsertTo(self: Model, clock: int64, id: string): int =
     for i in 0 ..< self.items.len:
-      if timestamp > self.items[i].timestamp:
+      if clock > self.items[i].clock:
         return i
-      elif timestamp == self.items[i].timestamp:
-        if localTimestamp > self.items[i].localTimestamp:
+      elif clock == self.items[i].clock: # break ties by message id
+        if id > self.items[i].id:
           return i
     return 0
 
@@ -323,14 +323,14 @@ QtObject:
       self.updateItemAtIndex(1)
     self.countChanged()
 
-  proc insertItemBasedOnTimestamp*(self: Model, item: Item) =
+  proc insertItemBasedOnClock*(self: Model, item: Item) =
     if(self.findIndexForMessageId(item.id) != -1):
       return
 
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
-    let position = self.findIndexBasedOnTimestampToInsertTo(item.timestamp, item.localTimestamp)
+    let position = self.findIndexBasedOnClockToInsertTo(item.clock, item.id)
 
     self.beginInsertRows(parentModelIndex, position, position)
     self.items.insert(item, position)

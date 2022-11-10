@@ -86,7 +86,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     message.containsContactMentions(),
     message.seen,
     timestamp = message.whisperTimestamp,
-    localTimestamp = message.timestamp,
+    clock = message.clock,
     ContentType(message.contentType),
     message.messageType,
     message.contactRequestState,
