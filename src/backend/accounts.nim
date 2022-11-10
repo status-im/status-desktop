@@ -89,7 +89,29 @@ proc decompressPk*(publicKey: string): RpcResponse[string] =
     let secp256k1Code = "fe701"
     response.removePrefix(secp256k1Code)
     result.result = "0x" & response
-  
+
+proc decompressCommunityKey*(publicKey: string): RpcResponse[string] =
+
+  let response = status_go.decompressPublicKey(publicKey)
+
+  # json response indicates error
+  try:
+    let jsonReponse = parseJson(response)
+    result.error = RpcError(message: jsonReponse["error"].getStr())
+  except JsonParsingError as e:
+    result.result = response
+
+proc compressCommunityKey*(publicKey: string): RpcResponse[string] =
+
+  let response = status_go.compressPublicKey(publicKey)
+
+  # json response indicates error
+  try:
+    let jsonReponse = parseJson(response)
+    result.error = RpcError(message: jsonReponse["error"].getStr())
+  except JsonParsingError as e:
+    result.result = response
+
 proc compressPk*(publicKey: string): RpcResponse[string] =
   let secp256k1Code = "0xe701"
   let base58btc = "z"

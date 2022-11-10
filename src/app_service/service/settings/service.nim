@@ -359,26 +359,26 @@ QtObject:
       return self.settings.pinnedMailserver.statusProd
     return ""
 
-  proc pinMailserver*(self: Service, address: string, fleet: Fleet): bool =
+  proc pinMailserver*(self: Service, mailserverID: string, fleet: Fleet): bool =
     var newMailserverJsonObj = self.settings.pinnedMailserver.pinnedMailserverToJsonNode()
-    newMailserverJsonObj[$fleet] = %* address
+    newMailserverJsonObj[$fleet] = %* mailserverID
     if(self.saveSetting(KEY_PINNED_MAILSERVERS, newMailserverJsonObj)):
       if (fleet == Fleet.Prod):
-        self.settings.pinnedMailserver.ethProd = address
+        self.settings.pinnedMailserver.ethProd = mailserverID
       elif (fleet == Fleet.Staging):
-        self.settings.pinnedMailserver.ethStaging = address
+        self.settings.pinnedMailserver.ethStaging = mailserverID
       elif (fleet == Fleet.Test):
-        self.settings.pinnedMailserver.ethTest = address
+        self.settings.pinnedMailserver.ethTest = mailserverID
       elif (fleet == Fleet.WakuV2Prod):
-        self.settings.pinnedMailserver.wakuv2Prod = address
+        self.settings.pinnedMailserver.wakuv2Prod = mailserverID
       elif (fleet == Fleet.WakuV2Test):
-        self.settings.pinnedMailserver.wakuv2Test = address
+        self.settings.pinnedMailserver.wakuv2Test = mailserverID
       elif (fleet == Fleet.GoWakuTest):
-        self.settings.pinnedMailserver.goWakuTest = address
+        self.settings.pinnedMailserver.goWakuTest = mailserverID
       elif (fleet == Fleet.StatusTest):
-        self.settings.pinnedMailserver.statusTest = address
+        self.settings.pinnedMailserver.statusTest = mailserverID
       elif (fleet == Fleet.StatusProd):
-        self.settings.pinnedMailserver.statusProd = address
+        self.settings.pinnedMailserver.statusProd = mailserverID
       return true
     return false
 

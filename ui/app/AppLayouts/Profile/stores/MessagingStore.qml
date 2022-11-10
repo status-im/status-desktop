@@ -23,8 +23,8 @@ QtObject {
         return root.syncModule.getMailserverNameForNodeAddress(nodeAddress)
     }
 
-    function setActiveMailserver(nodeAddress) {
-        root.syncModule.setActiveMailserver(nodeAddress)
+    function setActiveMailserver(mailserverID) {
+        root.syncModule.setActiveMailserver(mailserverID)
     }
 
     function saveNewMailserver(name, nodeAddress) {

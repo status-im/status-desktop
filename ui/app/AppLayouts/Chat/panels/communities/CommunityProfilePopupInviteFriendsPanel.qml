@@ -86,11 +86,11 @@ ColumnLayout {
 
     StatusDescriptionListItem {
         title: qsTr("Share community")
-        subTitle: `${Constants.communityLinkPrefix}${root.community && root.community.id.substring(0, 4)}...${root.community && root.community.id.substring(root.community.id.length -2)}`
+        subTitle: Utils.getCommunityShareLink(root.community.id, true)
         tooltip.text: qsTr("Copied!")
         asset.name: "copy"
         iconButton.onClicked: {
-            let link = `${Constants.communityLinkPrefix}${root.community.id}`
+            let link = Utils.getCommunityShareLink(root.community.id)
             root.rootStore.copyToClipboard(link)
             tooltip.visible = !tooltip.visible
         }

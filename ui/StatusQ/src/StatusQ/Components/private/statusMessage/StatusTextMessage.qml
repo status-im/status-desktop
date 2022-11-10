@@ -63,7 +63,7 @@ Item {
 
         width: parent.width
         height: effectiveHeight + d.showMoreHeight / 2
-        visible: !opMask.active
+        opacity: opMask.active ? 0 : 1
         clip: true
         text: d.text
         selectedTextColor: Theme.palette.directColor1
@@ -87,7 +87,7 @@ Item {
     Loader {
         id: mask
         anchors.fill: chatText
-        active: showMoreLoader.active
+        active: showMoreLoader.active && !d.readMore
         visible: false
         sourceComponent: LinearGradient {
             start: Qt.point(0, 0)

@@ -41,9 +41,9 @@ proc getPinnedMailserver*(self: Controller): string =
   let fleet = self.settingsService.getFleet()
   self.settingsService.getPinnedMailserver(fleet)
 
-proc pinMailserver*(self: Controller, nodeAddress: string) =
+proc pinMailserver*(self: Controller, mailserverID: string) =
   let fleet = self.settingsService.getFleet()
-  discard self.settingsService.pinMailserver(nodeAddress, fleet)
+  discard self.settingsService.pinMailserver(mailserverID, fleet)
 
 proc saveNewMailserver*(self: Controller, name: string, nodeAddress: string) =
   discard self.mailserversService.saveMailserver(name, nodeAddress)

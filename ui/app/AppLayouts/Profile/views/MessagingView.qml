@@ -33,6 +33,39 @@ SettingsContentBase {
         spacing: 2 * Constants.settingsSection.itemSpacing
         width: root.contentWidth
 
+        function switchOffPreviewableSites() {
+            //update all models
+            localAccountSensitiveSettings.displayChatImages = false
+            for (let i = 0; i < previewableSites.count; i++) {
+                let item = previewableSites.get(i)
+                RootStore.updateWhitelistedUnfurlingSites(item.address, false)
+            }
+        }
+
+        function buildPreviewablesSitesJSON() {
+            let whitelistAsString = root.messagingStore.getLinkPreviewWhitelist()
+            if(whitelistAsString == "")
+                return
+
+            if (!localAccountSensitiveSettings.whitelistedUnfurlingSites) {
+                localAccountSensitiveSettings.whitelistedUnfurlingSites = {}
+            }
+
+            let anyWhitelisted = false
+            let whitelist = JSON.parse(whitelistAsString)
+            whitelist.forEach(entry => {
+                                  entry.isWhitelisted = !!localAccountSensitiveSettings.whitelistedUnfurlingSites[entry.address]
+                                  if(entry.isWhitelisted) anyWhitelisted = true
+                })
+            return [anyWhitelisted, whitelist]
+        }
+
+        function populatePreviewableSites() {
+            const [anyWhitelisted, whitelist] = buildPreviewablesSitesJSON()
+            previewableSites.populateModel(whitelist)
+            previewableSites.anyWhitelisted = anyWhitelisted
+        }
+
         ButtonGroup {
             id: showProfilePictureToGroup
         }
@@ -136,43 +169,19 @@ SettingsContentBase {
             components: [
                 StatusSwitch {
                     id: showMessageLinksSwitch
-                    checked: false
-                    onCheckedChanged: {
-                        if (checked === false) {
-                            // Switch all the whitelists to false
-                            imageSwitch.checked = false
-                            for (let i = 0; i < sitesListView.count; i++) {
-                                let item = sitesListView.itemAt(i)
-                                item.whitelistSwitch.checked = false
-                            }
+                    checked: previewableSites.anyWhitelisted || localAccountSensitiveSettings.displayChatImages
+                    onToggled: {
+                        if (!checked) {
+                            generalColumn.switchOffPreviewableSites()
                         }
                     }
                 }
             ]
             onClicked: {
-                showMessageLinksSwitch.checked = !showMessageLinksSwitch.checked
-            }
-        }
-
-        function populatePreviewableSites() {
-            let whitelistAsString = root.messagingStore.getLinkPreviewWhitelist()
-            if(whitelistAsString == "")
-                return
-            let whitelist = JSON.parse(whitelistAsString)
-            if (!localAccountSensitiveSettings.whitelistedUnfurlingSites) {
-                localAccountSensitiveSettings.whitelistedUnfurlingSites = {}
-            }
-            previewableSites.clear()
-            var oneEntryIsActive = false
-            whitelist.forEach(entry => {
-                                  entry.isWhitelisted = !!localAccountSensitiveSettings.whitelistedUnfurlingSites[entry.address]
-                                  if (entry.isWhitelisted) {
-                                      oneEntryIsActive = true
-                                  }
-                                  previewableSites.append(entry)
-                              })
-            if (oneEntryIsActive) {
-                showMessageLinksSwitch.checked = true
+                showMessageLinksSwitch.toggle()
+                if (!showMessageLinksSwitch.checked) {
+                    generalColumn.switchOffPreviewableSites()
+                }
             }
         }
 
@@ -196,6 +205,26 @@ SettingsContentBase {
 
             ListModel {
                 id: previewableSites
+                function populateModel(jsonModel) {
+                    // add/update rows
+                    Object.entries(jsonModel)
+                        .forEach(([index, newRow]) => {
+                            var existingRow = previewableSites.get(index)
+                            let isRowIdentical = existingRow != undefined && Object.entries(newRow)
+                                        .every(([key, value]) => value == existingRow[key])
+                            if(!isRowIdentical) {
+                                previewableSites.set(index, newRow)
+                            }
+                    })
+
+                    // remove rows that are not in the new model
+                    if(previewableSites.count > jsonModel.length) {
+                        let rowsToDelete = previewableSites.count - jsonModel.length
+                        previewableSites.remove(jsonModel.length - 1, rowsToDelete)
+                    }
+                }
+                
+                property bool anyWhitelisted: false
             }
 
             Connections {
@@ -220,24 +249,17 @@ SettingsContentBase {
                 // TODO find a better icon for this
                 asset.name: Style.svg('globe')
                 asset.isImage: true
-                Component.onCompleted: {
-                    if (localAccountSensitiveSettings.displayChatImages) {
-                        showMessageLinksSwitch.checked = true
-                    }
-                }
                 components: [
                     StatusSwitch {
                         id: imageSwitch
                         checked: localAccountSensitiveSettings.displayChatImages
-                        onCheckedChanged: {
-                            if (localAccountSensitiveSettings.displayChatImages !== checked) {
-                                localAccountSensitiveSettings.displayChatImages = checked
-                            }
+                        onToggled: {
+                                localAccountSensitiveSettings.displayChatImages = !localAccountSensitiveSettings.displayChatImages
                         }
                     }
                 ]
                 onClicked: {
-                    imageSwitch.checked = !imageSwitch.checked
+                    localAccountSensitiveSettings.displayChatImages = !localAccountSensitiveSettings.displayChatImages
                 }
             }
 
@@ -248,7 +270,6 @@ SettingsContentBase {
                 delegate: Component {
                     StatusListItem {
                         objectName: "MessagingView_sitesListView_StatusListItem_" + model.title.replace(/ /g, "_").toLowerCase()
-                        property alias whitelistSwitch: siteSwitch
                         width: parent.width
                         implicitHeight: 64
                         title: model.title
@@ -283,11 +304,13 @@ SettingsContentBase {
                             StatusSwitch {
                                 id: siteSwitch
                                 checked: !!model.isWhitelisted
-                                onCheckedChanged: RootStore.updateWhitelistedUnfurlingSites(model.address, checked)
+                                onToggled: {
+                                    RootStore.updateWhitelistedUnfurlingSites(model.address, checked)
+                                }
                             }
                         ]
                         onClicked: {
-                            siteSwitch.checked = !siteSwitch.checked
+                            RootStore.updateWhitelistedUnfurlingSites(model.address, !model.isWhitelisted)
                         }
                     }
                 }

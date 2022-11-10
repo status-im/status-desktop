@@ -314,6 +314,7 @@ proc load(self: AppController) =
 
   self.settingsService.init()
   self.nodeConfigurationService.init()
+  self.mailserversService.init()
   self.contactsService.init()
   self.chatService.init()
   self.messageService.init()
@@ -327,7 +328,6 @@ proc load(self: AppController) =
   self.savedAddressService.init()
   self.aboutService.init()
   self.devicesService.init()
-  self.mailserversService.init()
   self.ensService.init()
   self.gifService.init()
 

@@ -608,12 +608,38 @@ QtObject {
         return colorForColorId(pubKeyColorId)
     }
 
+    function getCommunityShareLink(communityId, elided = false) {
+        if (communityId === "") {
+            return ""
+        }
+
+        let compressedPk = communityId
+        if (!globalUtilsInst.isCompressedPubKey(compressedPk)) {
+            compressedPk = globalUtilsInst.changeCommunityKeyCompression(compressedPk)
+        }
+        return Constants.communityLinkPrefix +
+                (elided ? StatusQUtils.Utils.elideText(compressedPk, 4, 2) : compressedPk)
+    }
+
     function getChatKeyFromShareLink(link) {
         let index = link.lastIndexOf("/u/")
         if (index === -1) {
             return link
         }
         return link.substring(index + 3)
+    }
+
+    function getCommunityIdFromShareLink(link) {
+        let index = link.lastIndexOf("/c/")
+        if (index === -1) {
+            return ""
+        }
+        const communityKey = link.substring(index + 3)
+        if (globalUtilsInst.isCompressedPubKey(communityKey)) {
+            // is zQ.., need to be converted to standard compression
+            return globalUtilsInst.changeCommunityKeyCompression(communityKey)
+        }
+        return communityKey
     }
 
     function getCompressedPk(publicKey) {
