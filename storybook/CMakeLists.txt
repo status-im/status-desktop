@@ -38,7 +38,14 @@ target_link_libraries(
   ${PROJECT_NAME} PRIVATE Qt5::Core Qt5::Quick Qt5::QuickControls2 Qt5::WebEngine
                           SortFilterProxyModel)
 
-set(QML_IMPORT_PATH "${CMAKE_SOURCE_DIR}/src" CACHE STRING "" FORCE)
+list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ/src")
+list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/app")
+list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/imports")
+list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/src")
+list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/pages")
+list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/stubs")
+list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/mocks")
+set(QML_IMPORT_PATH "${QML_DIRS}" CACHE STRING "Qt Creator extra QML import paths" FORCE)
 
 if (APPLE)
   find_library(AppKit AppKit)
