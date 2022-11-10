@@ -385,7 +385,8 @@ Loader {
             StatusMessage {
                 id: delegate
                 Layout.fillWidth: true
-
+                Layout.topMargin: 2
+                Layout.bottomMargin: 2
                 function convertContentType(value) {
                     switch (value) {
                     case Constants.messageContentType.messageType:

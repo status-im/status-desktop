@@ -9,7 +9,7 @@ import StatusQ.Controls 0.1
 
 import "./private/statusMessage"
 
-Rectangle {
+Control {
     id: root
 
     enum ContentType {
@@ -122,297 +122,296 @@ Rectangle {
                     + messageLayout.anchors.topMargin
                     + messageLayout.anchors.bottomMargin
 
-    color: {
-        if (root.overrideBackground)
-            return root.overrideBackgroundColor;
+    hoverEnabled: (!root.isActiveMessage && !root.disableHover)
+    background: Rectangle {
+        color: {
+            if (root.overrideBackground)
+                return root.overrideBackgroundColor;
 
-        if (root.editMode)
-            return Theme.palette.baseColor2;
+            if (root.editMode)
+                return Theme.palette.baseColor2;
 
-        if (hoverHandler.hovered || root.isActiveMessage) {
-           if (root.hasMention)
-              return Theme.palette.mentionColor3;
-           if (root.isPinned)
-              return Theme.palette.pinColor2;
-           return Theme.palette.baseColor2;
-        }
+            if (root.hovered || root.isActiveMessage) {
+                if (root.hasMention)
+                    return Theme.palette.mentionColor3;
+                if (root.isPinned)
+                    return Theme.palette.pinColor2;
+                return Theme.palette.baseColor2;
+            }
 
-        if (root.hasMention)
-           return Theme.palette.mentionColor4;
-        if (root.isPinned)
-           return Theme.palette.pinColor3;
-        return "transparent";
-    }
-
-    Rectangle {
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            left: parent.left
-        }
-        width: 2
-        visible: root.isPinned
-        color: Theme.palette.pinColor1
-    }
-
-    Rectangle {
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            left: parent.left
-        }
-        width: 2
-        visible: root.hasMention
-        color: Theme.palette.mentionColor1
-    }
-
-    SequentialAnimation {
-        id: messageFoundAnimation
-
-        PauseAnimation {
-            duration: 600
-        }
-        NumberAnimation {
-            target: highlightRect
-            property: "opacity"
-            to: 1.0
-            duration: 1500
-        }
-        PauseAnimation {
-            duration: 1000
-        }
-        NumberAnimation {
-            target: highlightRect
-            property: "opacity"
-            to: 0.0
-            duration: 1500
+            if (root.hasMention)
+                return Theme.palette.mentionColor4;
+            if (root.isPinned)
+                return Theme.palette.pinColor3;
+            return "transparent";
         }
     }
 
-    Rectangle {
-        id: highlightRect
-        anchors.fill: parent
-        opacity: 0
-        visible: opacity > 0.001
-        color: Theme.palette.baseColor2
-    }
+    contentItem: Item {
+        Rectangle {
+            anchors {
+                top: parent.top
+                bottom: parent.bottom
+                left: parent.left
+            }
+            width: 2
+            visible: root.isPinned
+            color: Theme.palette.pinColor1
+        }
 
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-    }
+        Rectangle {
+            anchors {
+                top: parent.top
+                bottom: parent.bottom
+                left: parent.left
+            }
+            width: 2
+            visible: root.hasMention
+            color: Theme.palette.mentionColor1
+        }
 
-    HoverHandler {
-        id: hoverHandler
-        enabled: !root.isActiveMessage && !root.disableHover
-    }
+        SequentialAnimation {
+            id: messageFoundAnimation
 
-    ColumnLayout {
-        id: messageLayout
-        anchors.fill: parent
-        anchors.topMargin: 2
-        anchors.bottomMargin: 2
-
-        Loader {
-            Layout.fillWidth: true
-            active: isAReply
-            visible: active
-            sourceComponent: StatusMessageReply {
-                replyDetails: root.replyDetails
-                profileClickable: root.profileClickable
-                audioMessageInfoText: root.audioMessageInfoText
-                onReplyProfileClicked: root.replyProfileClicked(sender, mouse)
-                onMessageClicked: root.replyMessageClicked(mouse)
+            PauseAnimation {
+                duration: 600
+            }
+            NumberAnimation {
+                target: highlightRect
+                property: "opacity"
+                to: 1.0
+                duration: 1500
+            }
+            PauseAnimation {
+                duration: 1000
+            }
+            NumberAnimation {
+                target: highlightRect
+                property: "opacity"
+                to: 0.0
+                duration: 1500
             }
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.leftMargin: 16
-            Layout.rightMargin: 16
-            spacing: 8
+        Rectangle {
+            id: highlightRect
+            anchors.fill: parent
+            opacity: 0
+            visible: opacity > 0.001
+            color: Theme.palette.baseColor2
+        }
 
-            Item {
-                implicitWidth: root.messageDetails.sender.profileImage.assetSettings.width
-                implicitHeight: profileImage.visible ? profileImage.height : 0
-                Layout.alignment: Qt.AlignTop
-                StatusSmartIdenticon {
-                    id: profileImage
-                    active: root.showHeader
-                    visible: active
-                    name: root.messageDetails.sender.displayName
-                    asset: root.messageDetails.sender.profileImage.assetSettings
-                    ringSettings: root.messageDetails.sender.profileImage.ringSettings
+        MouseArea {
+            id: mouseArea
+            anchors.fill: parent
+        }
 
-                    MouseArea {
-                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        acceptedButtons: Qt.LeftButton | Qt.RightButton
-                        anchors.fill: parent
-                        enabled: root.profileClickable
-                        onClicked: root.profilePictureClicked(this, mouse)
-                    }
-                }
-            }
+        ColumnLayout {
+            id: messageLayout
+            anchors.fill: parent
 
-            ColumnLayout {
-
-                spacing: 4
-                Layout.alignment: Qt.AlignTop
+            Loader {
                 Layout.fillWidth: true
+                active: isAReply
+                visible: active
+                sourceComponent: StatusMessageReply {
+                    replyDetails: root.replyDetails
+                    profileClickable: root.profileClickable
+                    audioMessageInfoText: root.audioMessageInfoText
+                    onReplyProfileClicked: root.replyProfileClicked(sender, mouse)
+                    onMessageClicked: root.replyMessageClicked(mouse)
+                }
+            }
 
-                Loader {
-                    active: root.isPinned && !editMode
-                    visible: active
-                    sourceComponent: StatusPinMessageDetails {
-                        pinnedMsgInfoText: root.pinnedMsgInfoText
-                        pinnedBy: root.pinnedBy
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin: 16
+                Layout.rightMargin: 16
+                spacing: 8
+
+                Item {
+                    implicitWidth: root.messageDetails.sender.profileImage.assetSettings.width
+                    implicitHeight: profileImage.visible ? profileImage.height : 0
+                    Layout.alignment: Qt.AlignTop
+                    Layout.topMargin: 2
+                    StatusSmartIdenticon {
+                        id: profileImage
+                        active: root.showHeader
+                        visible: active
+                        name: root.messageDetails.sender.displayName
+                        asset: root.messageDetails.sender.profileImage.assetSettings
+                        ringSettings: root.messageDetails.sender.profileImage.ringSettings
+
+                        MouseArea {
+                            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+                            anchors.fill: parent
+                            enabled: root.profileClickable
+                            onClicked: root.profilePictureClicked(this, mouse)
+                        }
                     }
                 }
-                StatusMessageHeader {
+
+                ColumnLayout {
+
+                    spacing: 0
+                    Layout.alignment: Qt.AlignTop
                     Layout.fillWidth: true
-                    sender: root.messageDetails.sender
-                    amISender: root.messageDetails.amISender
-                    messageOriginInfo: root.messageDetails.messageOriginInfo
-                    resendText: root.resendText
-                    showResendButton: root.hasExpired && root.messageDetails.amISender
-                    onClicked: root.senderNameClicked(sender, mouse)
-                    onResendClicked: root.resendClicked()
-                    visible: root.showHeader && !editMode
-                    timestamp.text: root.timestampString
-                    timestamp.tooltip.text: root.timestampTooltipString
-                    displayNameClickable: root.profileClickable
-                }
-                Loader {
-                    Layout.fillWidth: true
-                    active: !root.editMode && !!root.messageDetails.messageText && !root.hideMessage
-                    visible: active
-                    sourceComponent: StatusTextMessage {
-                        objectName: "StatusMessage_textMessage"
-                        messageDetails: root.messageDetails
-                        isEdited: root.isEdited
-                        onLinkActivated: {
-                            root.linkActivated(link);
+
+                    Loader {
+                        active: root.isPinned && !editMode
+                        visible: active
+                        sourceComponent: StatusPinMessageDetails {
+                            pinnedMsgInfoText: root.pinnedMsgInfoText
+                            pinnedBy: root.pinnedBy
+                        }
+                    }
+                    StatusMessageHeader {
+                        Layout.fillWidth: true
+                        sender: root.messageDetails.sender
+                        amISender: root.messageDetails.amISender
+                        messageOriginInfo: root.messageDetails.messageOriginInfo
+                        resendText: root.resendText
+                        showResendButton: root.hasExpired && root.messageDetails.amISender
+                        onClicked: root.senderNameClicked(sender, mouse)
+                        onResendClicked: root.resendClicked()
+                        visible: root.showHeader && !editMode
+                        timestamp.text: root.timestampString
+                        timestamp.tooltip.text: root.timestampTooltipString
+                        displayNameClickable: root.profileClickable
+                    }
+                    Loader {
+                        Layout.fillWidth: true
+                        active: !root.editMode && !!root.messageDetails.messageText && !root.hideMessage
+                        visible: active
+                        sourceComponent: StatusTextMessage {
+                            objectName: "StatusMessage_textMessage"
+                            messageDetails: root.messageDetails
+                            isEdited: root.isEdited
+                            onLinkActivated: {
+                                root.linkActivated(link);
+                            }
+                        }
+
+                    }
+
+                    Loader {
+                        active: root.messageDetails.contentType === StatusMessage.ContentType.Image && !editMode
+                        visible: active
+                        sourceComponent: StatusImageMessage {
+                            source: root.messageDetails.contentType === StatusMessage.ContentType.Image ? root.messageDetails.messageContent : ""
+                            onClicked: root.imageClicked(image, mouse, imageSource)
+                            shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
                         }
                     }
 
-                }
-
-                Loader {
-                    active: root.messageDetails.contentType === StatusMessage.ContentType.Image && !editMode
-                    visible: active
-                    sourceComponent: StatusImageMessage {
-                        source: root.messageDetails.contentType === StatusMessage.ContentType.Image ? root.messageDetails.messageContent : ""
-                        onClicked: root.imageClicked(image, mouse, imageSource)
-                        shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
-                    }
-                }
-
-                Loader {
-                    active: !!root.messageAttachments && !editMode
-                    visible: active
-                    sourceComponent: Column {
-                        spacing: 4
-                        Layout.fillWidth: true
-                        Repeater {
-                            model: attachmentsModel
-                            delegate: StatusImageMessage {
-                                source: model.source
-                                onClicked: root.imageClicked(image, mouse, imageSource)
-                                shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
+                    Loader {
+                        active: !!root.messageAttachments && !editMode
+                        visible: active
+                        sourceComponent: Column {
+                            spacing: 4
+                            Layout.fillWidth: true
+                            Repeater {
+                                model: attachmentsModel
+                                delegate: StatusImageMessage {
+                                    source: model.source
+                                    onClicked: root.imageClicked(image, mouse, imageSource)
+                                    shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
+                                }
                             }
                         }
                     }
-                }
 
-                Loader {
-                    active: root.messageDetails.contentType === StatusMessage.ContentType.Sticker && !editMode
-                    visible: active
-                    sourceComponent: StatusSticker {
-                        asset.isImage: true
-                        asset.name: root.messageDetails.messageContent
-                        onLoaded: root.stickerLoaded()
-                        onClicked: {
-                            root.stickerClicked()
+                    Loader {
+                        active: root.messageDetails.contentType === StatusMessage.ContentType.Sticker && !editMode
+                        visible: active
+                        sourceComponent: StatusSticker {
+                            asset.isImage: true
+                            asset.name: root.messageDetails.messageContent
+                            onLoaded: root.stickerLoaded()
+                            onClicked: {
+                                root.stickerClicked()
+                            }
                         }
                     }
-                }
-                Loader {
-                    active: root.messageDetails.contentType === StatusMessage.ContentType.Audio && !editMode
-                    visible: active
-                    sourceComponent: StatusAudioMessage {
-                        audioSource: root.messageDetails.messageContent
-                        hovered: hoverHandler.hovered
-                        audioMessageInfoText: root.audioMessageInfoText
-                    }
-                }
-                Loader {
-                    id: linksLoader
-                    active: !root.editMode
-                    visible: active
-                }
-                Loader {
-                    id: transactionBubbleLoader
-                    active: root.messageDetails.contentType === StatusMessage.ContentType.Transaction && !editMode
-                    visible: active
-                }
-                Loader {
-                    id: invitationBubbleLoader
-                    active: root.messageDetails.contentType === StatusMessage.ContentType.Invitation && !editMode
-                    visible: active
-                }
-                StatusEditMessage {
-                    id: editComponent
-                    Layout.fillWidth: true
-                    Layout.rightMargin: 16
-                    active: root.editMode
-                    visible: active
-                    msgText: root.messageDetails.messageText
-                    saveButtonText: root.saveButtonText
-                    cancelButtonText: root.cancelButtonText
-                    onEditCancelled: root.editCancelled()
-                    onEditCompleted: root.editCompleted(newMsgText)
-                }
-                StatusBaseText {
-                    color: Theme.palette.dangerColor1
-                    text: root.resendText
-                    font.pixelSize: 12
-                    visible: root.hasExpired && root.messageDetails.amISender && !root.timestamp && !editMode
-                    MouseArea {
-                        cursorShape: Qt.PointingHandCursor
-                        anchors.fill: parent
-                        onClicked: root.resendClicked()
-                    }
-                }
-                Loader {
-                    active: root.reactionsModel.count > 0
-                    visible: active
-                    sourceComponent: StatusMessageEmojiReactions {
-                        id: emojiReactionsPanel
-
-                        emojiReactionsModel: root.reactionsModel
-                        store: root.messageStore
-                        icons: root.reactionIcons
-
-                        onHoverChanged: {
-                            root.hoverChanged(messageId, hovered)
+                    Loader {
+                        active: root.messageDetails.contentType === StatusMessage.ContentType.Audio && !editMode
+                        visible: active
+                        sourceComponent: StatusAudioMessage {
+                            audioSource: root.messageDetails.messageContent
+                            hovered: root.hovered
+                            audioMessageInfoText: root.audioMessageInfoText
                         }
+                    }
+                    Loader {
+                        id: linksLoader
+                        active: !root.editMode
+                        visible: active
+                    }
+                    Loader {
+                        id: transactionBubbleLoader
+                        active: root.messageDetails.contentType === StatusMessage.ContentType.Transaction && !editMode
+                        visible: active
+                    }
+                    Loader {
+                        id: invitationBubbleLoader
+                        active: root.messageDetails.contentType === StatusMessage.ContentType.Invitation && !editMode
+                        visible: active
+                    }
+                    StatusEditMessage {
+                        id: editComponent
+                        Layout.fillWidth: true
+                        Layout.rightMargin: 16
+                        active: root.editMode
+                        visible: active
+                        msgText: root.messageDetails.messageText
+                        saveButtonText: root.saveButtonText
+                        cancelButtonText: root.cancelButtonText
+                        onEditCancelled: root.editCancelled()
+                        onEditCompleted: root.editCompleted(newMsgText)
+                    }
+                    StatusBaseText {
+                        color: Theme.palette.dangerColor1
+                        text: root.resendText
+                        font.pixelSize: 12
+                        visible: root.hasExpired && root.messageDetails.amISender && !root.timestamp && !editMode
+                        MouseArea {
+                            cursorShape: Qt.PointingHandCursor
+                            anchors.fill: parent
+                            onClicked: root.resendClicked()
+                        }
+                    }
+                    Loader {
+                        active: root.reactionsModel.count > 0
+                        visible: active
+                        sourceComponent: StatusMessageEmojiReactions {
+                            id: emojiReactionsPanel
 
-                        isCurrentUser: root.messageDetails.amISender
-                        onAddEmojiClicked: root.addReactionClicked(sender, mouse)
-                        onToggleReaction: root.toggleReactionClicked(emojiID)
+                            emojiReactionsModel: root.reactionsModel
+                            store: root.messageStore
+                            icons: root.reactionIcons
+
+                            onHoverChanged: {
+                                root.hoverChanged(messageId, hovered)
+                            }
+
+                            isCurrentUser: root.messageDetails.amISender
+                            onAddEmojiClicked: root.addReactionClicked(sender, mouse)
+                            onToggleReaction: root.toggleReactionClicked(emojiID)
+                        }
                     }
                 }
             }
         }
-    }
 
-    StatusMessageQuickActions {
-        id: quickActionsPanel
-        anchors.right: parent.right
-        anchors.rightMargin: 20
-        anchors.top: parent.top
-        anchors.topMargin: -8
-        visible: hoverHandler.hovered && !root.hideQuickActions
+        StatusMessageQuickActions {
+            id: quickActionsPanel
+            anchors.right: parent.right
+            anchors.rightMargin: 20
+            anchors.top: parent.top
+            anchors.topMargin: -8
+            visible: root.hovered && !root.hideQuickActions
+        }
     }
 
     ListModel {
