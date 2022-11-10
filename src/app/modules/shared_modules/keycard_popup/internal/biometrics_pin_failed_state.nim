@@ -20,7 +20,7 @@ method getNextSecondaryState*(self: BiometricsPinFailedState, controller: Contro
   if self.flowType == FlowType.Authentication:
     return createState(StateType.EnterPin, self.flowType, nil)
 
-method executePreTertiaryStateCommand*(self: BiometricsPinFailedState, controller: Controller) =
+method executeCancelCommand*(self: BiometricsPinFailedState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setPassword("")
     controller.setPin("")

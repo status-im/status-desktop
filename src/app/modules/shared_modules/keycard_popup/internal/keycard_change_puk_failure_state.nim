@@ -12,6 +12,6 @@ method executePrePrimaryStateCommand*(self: ChangingKeycardPukFailureState, cont
   if self.flowType == FlowType.ChangeKeycardPuk:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
-method executePreTertiaryStateCommand*(self: ChangingKeycardPukFailureState, controller: Controller) =
+method executeCancelCommand*(self: ChangingKeycardPukFailureState, controller: Controller) =
   if self.flowType == FlowType.ChangeKeycardPuk:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)

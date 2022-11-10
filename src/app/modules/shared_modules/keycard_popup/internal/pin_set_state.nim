@@ -22,6 +22,6 @@ method getNextPrimaryState*(self: PinSetState, controller: Controller): State =
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.StoreMetadata:
       return createState(StateType.UnlockKeycardSuccess, self.flowType, nil)
 
-method executePreTertiaryStateCommand*(self: PinSetState, controller: Controller) =
+method executeCancelCommand*(self: PinSetState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

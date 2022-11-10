@@ -36,16 +36,17 @@ QtObject {
             height: Constants.keycard.general.footerButtonsHeight
             width: height
             onClicked: {
-                root.sharedKeycardModule.currentState.backAction()
+                root.sharedKeycardModule.currentState.doBackAction()
             }
         }
     ]
 
     property list<StatusBaseButton> rightButtons: [
         StatusButton {
-            id: tertiaryButton
+            id: cancelButton
             height: Constants.keycard.general.footerButtonsHeight
-            text: {
+            text: qsTr("Cancel")
+            visible: {
                 switch (root.sharedKeycardModule.currentState.flowType) {
 
                 case Constants.keycardSharedFlow.setupNewKeycard:
@@ -64,7 +65,7 @@ QtObject {
                     case Constants.keycardSharedState.factoryResetSuccess:
                     case Constants.keycardSharedState.pinVerified:
                     case Constants.keycardSharedState.keycardMetadataDisplay:
-                        return qsTr("Cancel")
+                        return true
                     }
                     break
 
@@ -86,7 +87,7 @@ QtObject {
                     case Constants.keycardSharedState.keycardEmptyMetadata:
                     case Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata:
                     case Constants.keycardSharedState.factoryResetConfirmation:
-                        return qsTr("Cancel")
+                        return true
                     }
                     break
 
@@ -112,7 +113,7 @@ QtObject {
                     case Constants.keycardSharedState.enterBiometricsPassword:
                     case Constants.keycardSharedState.wrongBiometricsPassword:
                     case Constants.keycardSharedState.enterPin:
-                        return qsTr("Cancel")
+                        return true
                     }
                     break
 
@@ -128,7 +129,7 @@ QtObject {
                     case Constants.keycardSharedState.notKeycard:
                     case Constants.keycardSharedState.unlockKeycardOptions:
                     case Constants.keycardSharedState.enterSeedPhrase:
-                        return qsTr("Cancel")
+                        return true
                     }
                     break
 
@@ -146,7 +147,7 @@ QtObject {
                     case Constants.keycardSharedState.maxPinRetriesReached:
                     case Constants.keycardSharedState.maxPukRetriesReached:
                     case Constants.keycardSharedState.maxPairingSlotsReached:
-                        return qsTr("Cancel")
+                        return true
                     }
                     break
 
@@ -165,7 +166,7 @@ QtObject {
                     case Constants.keycardSharedState.maxPinRetriesReached:
                     case Constants.keycardSharedState.maxPukRetriesReached:
                     case Constants.keycardSharedState.maxPairingSlotsReached:
-                        return qsTr("Cancel")
+                        return true
                     }
                     break
 
@@ -185,7 +186,7 @@ QtObject {
                     case Constants.keycardSharedState.maxPinRetriesReached:
                     case Constants.keycardSharedState.maxPukRetriesReached:
                     case Constants.keycardSharedState.maxPairingSlotsReached:
-                        return qsTr("Cancel")
+                        return true
                     }
                     break
 
@@ -205,7 +206,7 @@ QtObject {
                     case Constants.keycardSharedState.maxPinRetriesReached:
                     case Constants.keycardSharedState.maxPukRetriesReached:
                     case Constants.keycardSharedState.maxPairingSlotsReached:
-                        return qsTr("Cancel")
+                        return true
                     }
                     break
 
@@ -224,14 +225,13 @@ QtObject {
                     case Constants.keycardSharedState.maxPinRetriesReached:
                     case Constants.keycardSharedState.maxPukRetriesReached:
                     case Constants.keycardSharedState.maxPairingSlotsReached:
-                        return qsTr("Cancel")
+                        return true
                     }
                     break
                 }
 
-                return ""
+                return false
             }
-            visible: text !== ""
             enabled: {
                 switch (root.sharedKeycardModule.currentState.stateType) {
 
@@ -250,7 +250,7 @@ QtObject {
             }
 
             onClicked: {
-                root.sharedKeycardModule.currentState.doTertiaryAction()
+                root.sharedKeycardModule.currentState.doCancelAction()
             }
         },
 

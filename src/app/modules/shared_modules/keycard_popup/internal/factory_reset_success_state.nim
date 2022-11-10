@@ -14,7 +14,7 @@ method executePrePrimaryStateCommand*(self: FactoryResetSuccessState, controller
   elif self.flowType == FlowType.SetupNewKeycard:
     controller.runLoadAccountFlow()
 
-method executePreTertiaryStateCommand*(self: FactoryResetSuccessState, controller: Controller) =
+method executeCancelCommand*(self: FactoryResetSuccessState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 

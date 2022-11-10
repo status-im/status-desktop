@@ -21,7 +21,7 @@ method executePrePrimaryStateCommand*(self: WrongBiometricsPasswordState, contro
     else:
       controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongPassword, add = true))
 
-method executePreTertiaryStateCommand*(self: WrongBiometricsPasswordState, controller: Controller) =
+method executeCancelCommand*(self: WrongBiometricsPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

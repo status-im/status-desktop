@@ -12,6 +12,6 @@ method executePrePrimaryStateCommand*(self: KeycardRenameFailureState, controlle
   if self.flowType == FlowType.RenameKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
-method executePreTertiaryStateCommand*(self: KeycardRenameFailureState, controller: Controller) =
+method executeCancelCommand*(self: KeycardRenameFailureState, controller: Controller) =
   if self.flowType == FlowType.RenameKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)

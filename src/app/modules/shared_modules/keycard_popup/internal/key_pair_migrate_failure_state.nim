@@ -12,6 +12,6 @@ method executePrePrimaryStateCommand*(self: KeyPairMigrateFailureState, controll
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
-method executePreTertiaryStateCommand*(self: KeyPairMigrateFailureState, controller: Controller) =
+method executeCancelCommand*(self: KeyPairMigrateFailureState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)

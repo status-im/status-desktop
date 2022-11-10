@@ -20,7 +20,7 @@ method getNextSecondaryState*(self: KeycardInsertedState, controller: Controller
     return createState(StateType.ReadingKeycard, self.flowType, self.getBackState)
   return createState(StateType.ReadingKeycard, self.flowType, nil)
 
-method executePreTertiaryStateCommand*(self: KeycardInsertedState, controller: Controller) =
+method executeCancelCommand*(self: KeycardInsertedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.Authentication or

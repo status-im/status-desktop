@@ -90,7 +90,7 @@ method onPrimaryActionClicked*(self: AccessInterface) {.base.} =
 method onSecondaryActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onTertiaryActionClicked*(self: AccessInterface) {.base.} =
+method onCancelActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onKeycardResponse*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent) {.base.} =

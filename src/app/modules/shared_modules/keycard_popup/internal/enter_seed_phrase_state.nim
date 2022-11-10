@@ -32,7 +32,7 @@ method getNextPrimaryState*(self: EnterSeedPhraseState, controller: Controller):
       if not self.verifiedSeedPhrase:
         return createState(StateType.WrongSeedPhrase, self.flowType, nil)
 
-method executePreTertiaryStateCommand*(self: EnterSeedPhraseState, controller: Controller) =
+method executeCancelCommand*(self: EnterSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.UnlockKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

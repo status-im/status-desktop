@@ -13,7 +13,7 @@ method executePreBackStateCommand*(self: ReadingKeycardState, controller: Contro
     if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
       controller.cancelCurrentFlow()
 
-method executePreTertiaryStateCommand*(self: ReadingKeycardState, controller: Controller) =
+method executeCancelCommand*(self: ReadingKeycardState, controller: Controller) =
   error "reading state must not be canceled"
 
 method getNextSecondaryState*(self: ReadingKeycardState, controller: Controller): State =

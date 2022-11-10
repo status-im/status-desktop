@@ -26,7 +26,7 @@ method getNextSecondaryState*(self: RepeatPinState, controller: Controller): Sta
   if self.flowType == FlowType.ChangeKeycardPin:
     return createState(StateType.ChangingKeycardPin, self.flowType, nil)
 
-method executePreTertiaryStateCommand*(self: RepeatPinState, controller: Controller) =
+method executeCancelCommand*(self: RepeatPinState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.ChangeKeycardPin:

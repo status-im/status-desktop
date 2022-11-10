@@ -13,7 +13,7 @@ method executePreBackStateCommand*(self: InsertKeycardState, controller: Control
     if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
       controller.cancelCurrentFlow()
 
-method executePreTertiaryStateCommand*(self: InsertKeycardState, controller: Controller) =
+method executeCancelCommand*(self: InsertKeycardState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.Authentication or

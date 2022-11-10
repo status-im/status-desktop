@@ -13,7 +13,7 @@ method executePrePrimaryStateCommand*(self: WrongPukState, controller: Controlle
     if controller.getPuk().len == PUKLengthForStatusApp:
       controller.enterKeycardPuk(controller.getPuk())
 
-method executePreTertiaryStateCommand*(self: WrongPukState, controller: Controller) =
+method executeCancelCommand*(self: WrongPukState, controller: Controller) =
   if self.flowType == FlowType.UnlockKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

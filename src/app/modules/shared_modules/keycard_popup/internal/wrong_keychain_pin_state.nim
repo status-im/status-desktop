@@ -14,7 +14,7 @@ method getNextPrimaryState*(self: WrongKeychainPinState, controller: Controller)
       controller.enterKeycardPin(controller.getPin())
   return nil
 
-method executePreTertiaryStateCommand*(self: WrongKeychainPinState, controller: Controller) =
+method executeCancelCommand*(self: WrongKeychainPinState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

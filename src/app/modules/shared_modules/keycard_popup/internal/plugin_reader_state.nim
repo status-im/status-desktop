@@ -13,7 +13,7 @@ method executePreBackStateCommand*(self: PluginReaderState, controller: Controll
     if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
       controller.cancelCurrentFlow()
 
-method executePreTertiaryStateCommand*(self: PluginReaderState, controller: Controller) =
+method executeCancelCommand*(self: PluginReaderState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.Authentication or

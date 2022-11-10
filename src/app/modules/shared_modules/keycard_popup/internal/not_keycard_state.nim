@@ -8,7 +8,7 @@ proc newNotKeycardState*(flowType: FlowType, backState: State): NotKeycardState 
 proc delete*(self: NotKeycardState) =
   self.State.delete
 
-method executePreTertiaryStateCommand*(self: NotKeycardState, controller: Controller) =
+method executeCancelCommand*(self: NotKeycardState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.Authentication or
