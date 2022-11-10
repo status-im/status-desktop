@@ -8,12 +8,12 @@ proc newPluginReaderState*(flowType: FlowType, backState: State): PluginReaderSt
 proc delete*(self: PluginReaderState) =
   self.State.delete
 
-method executeBackCommand*(self: PluginReaderState, controller: Controller) =
+method executePreBackStateCommand*(self: PluginReaderState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
       controller.cancelCurrentFlow()
 
-method executeTertiaryCommand*(self: PluginReaderState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: PluginReaderState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.Authentication or

@@ -8,13 +8,13 @@ proc newFactoryResetSuccessState*(flowType: FlowType, backState: State): Factory
 proc delete*(self: FactoryResetSuccessState) =
   self.State.delete
 
-method executePrimaryCommand*(self: FactoryResetSuccessState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: FactoryResetSuccessState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
   elif self.flowType == FlowType.SetupNewKeycard:
     controller.runLoadAccountFlow()
 
-method executeTertiaryCommand*(self: FactoryResetSuccessState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: FactoryResetSuccessState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 

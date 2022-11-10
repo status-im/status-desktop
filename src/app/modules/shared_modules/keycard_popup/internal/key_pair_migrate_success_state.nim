@@ -8,7 +8,7 @@ proc newKeyPairMigrateSuccessState*(flowType: FlowType, backState: State): KeyPa
 proc delete*(self: KeyPairMigrateSuccessState) =
   self.State.delete
 
-method executePrimaryCommand*(self: KeyPairMigrateSuccessState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: KeyPairMigrateSuccessState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
     if controller.getSelectedKeyPairIsProfile():

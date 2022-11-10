@@ -8,10 +8,10 @@ proc newKeyPairMigrateFailureState*(flowType: FlowType, backState: State): KeyPa
 proc delete*(self: KeyPairMigrateFailureState) =
   self.State.delete
 
-method executePrimaryCommand*(self: KeyPairMigrateFailureState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: KeyPairMigrateFailureState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
-method executeTertiaryCommand*(self: KeyPairMigrateFailureState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: KeyPairMigrateFailureState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)

@@ -8,7 +8,7 @@ proc newChangingKeycardPairingCodeState*(flowType: FlowType, backState: State): 
 proc delete*(self: ChangingKeycardPairingCodeState) =
   self.State.delete
 
-method executeSecondaryCommand*(self: ChangingKeycardPairingCodeState, controller: Controller) =
+method executePreSecondaryStateCommand*(self: ChangingKeycardPairingCodeState, controller: Controller) =
   if self.flowType == FlowType.ChangePairingCode:
     controller.storePairingCodeToKeycard(controller.getPairingCode())
 

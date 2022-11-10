@@ -22,7 +22,7 @@ method getNextPrimaryState*(self: MaxPukRetriesReachedState, controller: Control
   if self.flowType == FlowType.UnlockKeycard:
     return createState(StateType.EnterSeedPhrase, self.flowType, self)
 
-method executeTertiaryCommand*(self: MaxPukRetriesReachedState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: MaxPukRetriesReachedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.Authentication or

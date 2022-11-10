@@ -8,10 +8,10 @@ proc newKeycardAlreadyUnlockedState*(flowType: FlowType, backState: State): Keyc
 proc delete*(self: KeycardAlreadyUnlockedState) =
   self.State.delete
 
-method executePrimaryCommand*(self: KeycardAlreadyUnlockedState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: KeycardAlreadyUnlockedState, controller: Controller) =
   if self.flowType == FlowType.UnlockKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
-method executeTertiaryCommand*(self: KeycardAlreadyUnlockedState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: KeycardAlreadyUnlockedState, controller: Controller) =
   if self.flowType == FlowType.UnlockKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

@@ -8,10 +8,10 @@ proc newKeycardRenameFailureState*(flowType: FlowType, backState: State): Keycar
 proc delete*(self: KeycardRenameFailureState) =
   self.State.delete
 
-method executePrimaryCommand*(self: KeycardRenameFailureState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: KeycardRenameFailureState, controller: Controller) =
   if self.flowType == FlowType.RenameKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
-method executeTertiaryCommand*(self: KeycardRenameFailureState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: KeycardRenameFailureState, controller: Controller) =
   if self.flowType == FlowType.RenameKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)

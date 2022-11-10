@@ -111,32 +111,48 @@ method getBackState*(self: State): State {.inline base.} =
 method displayBackButton*(self: State): bool {.inline base.} =
   return not self.backState.isNil
 
-## Returns next state instance in case the "primary" action is triggered
+## Returns next state instance if "primary" action is triggered
 method getNextPrimaryState*(self: State, controller: Controller): State  {.inline base.} =
   return nil
 
-## Returns next state instance in case the "secondary" action is triggered
+## Returns next state instance if "secondary" action is triggered
 method getNextSecondaryState*(self: State, controller: Controller): State {.inline base.} =
   return nil
 
-## Returns next state instance in case the "tertiary" action is triggered
+## Returns next state instance if "tertiary" action is triggered
 method getNextTertiaryState*(self: State, controller: Controller): State {.inline base.} =
   return nil
 
-## This method is executed in case "back" button is clicked
-method executeBackCommand*(self: State, controller: Controller) {.inline base.} =
+## This method is executed before back state is set, if "back" action is triggered
+method executePreBackStateCommand*(self: State, controller: Controller) {.inline base.} =
   discard
 
-## This method is executed in case "primary" action is triggered
-method executePrimaryCommand*(self: State, controller: Controller) {.inline base.} =
+## This method is executed after back state is set, if "back" action is triggered
+method executePostBackStateCommand*(self: State, controller: Controller) {.inline base.} =
   discard
 
-## This method is executed in case "secondary" action is triggered
-method executeSecondaryCommand*(self: State, controller: Controller) {.inline base.} =
+## This method is executed before primary state is set, if "primary" action is triggered
+method executePrePrimaryStateCommand*(self: State, controller: Controller) {.inline base.} =
   discard
 
-## This method is executed in case "tertiary" action is triggered
-method executeTertiaryCommand*(self: State, controller: Controller) {.inline base.} =
+## This method is executed after primary state is set, if "primary" action is triggered
+method executePostPrimaryStateCommand*(self: State, controller: Controller) {.inline base.} =
+  discard
+
+## This method is executed before secondary state is set, if "secondary" action is triggered
+method executePreSecondaryStateCommand*(self: State, controller: Controller) {.inline base.} =
+  discard
+
+## This method is executed after secondary state is set, if "secondary" action is triggered
+method executePostSecondaryStateCommand*(self: State, controller: Controller) {.inline base.} =
+  discard
+
+## This method is executed before tertiary state is set, if "tertiary" action is triggered
+method executePreTertiaryStateCommand*(self: State, controller: Controller) {.inline base.} =
+  discard
+
+## This method is executed after tertiary state is set, if "tertiary" action is triggered
+method executePostTertiaryStateCommand*(self: State, controller: Controller) {.inline base.} =
   discard
 
 ## This method is used for handling aync responses for keycard related states

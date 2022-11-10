@@ -166,10 +166,11 @@ method onBackActionClicked*[T](self: Module[T]) =
     error "sm_cannot resolve current state"
     return
   debug "sm_back_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
-  currStateObj.executeBackCommand(self.controller)
+  currStateObj.executePreBackStateCommand(self.controller)
   let backState = currStateObj.getBackState()
   self.preStateActivities(backState.flowType(), backState.stateType())
   self.view.setCurrentState(backState)
+  currStateObj.executePostBackStateCommand(self.controller)
   debug "sm_back_action - set state", setCurrFlow=backState.flowType(), newCurrState=backState.stateType()
   currStateObj.delete()    
     
@@ -179,12 +180,13 @@ method onPrimaryActionClicked*[T](self: Module[T]) =
     error "sm_cannot resolve current state"
     return
   debug "sm_primary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
-  currStateObj.executePrimaryCommand(self.controller)
+  currStateObj.executePrePrimaryStateCommand(self.controller)
   let nextState = currStateObj.getNextPrimaryState(self.controller)
   if nextState.isNil:
     return
   self.preStateActivities(nextState.flowType(), nextState.stateType())
   self.view.setCurrentState(nextState)
+  currStateObj.executePostPrimaryStateCommand(self.controller)
   debug "sm_primary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
 
 method onSecondaryActionClicked*[T](self: Module[T]) =
@@ -193,12 +195,13 @@ method onSecondaryActionClicked*[T](self: Module[T]) =
     error "sm_cannot resolve current state"
     return
   debug "sm_secondary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
-  currStateObj.executeSecondaryCommand(self.controller)
+  currStateObj.executePreSecondaryStateCommand(self.controller)
   let nextState = currStateObj.getNextSecondaryState(self.controller)
   if nextState.isNil:
     return
   self.preStateActivities(nextState.flowType(), nextState.stateType())
   self.view.setCurrentState(nextState)
+  currStateObj.executePostSecondaryStateCommand(self.controller)
   debug "sm_secondary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
 
 method onTertiaryActionClicked*[T](self: Module[T]) =
@@ -207,12 +210,13 @@ method onTertiaryActionClicked*[T](self: Module[T]) =
     error "sm_cannot resolve current state"
     return
   debug "sm_tertiary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
-  currStateObj.executeTertiaryCommand(self.controller)
+  currStateObj.executePreTertiaryStateCommand(self.controller)
   let nextState = currStateObj.getNextTertiaryState(self.controller)
   if nextState.isNil:
     return
   self.preStateActivities(nextState.flowType(), nextState.stateType())
   self.view.setCurrentState(nextState)
+  currStateObj.executePostTertiaryStateCommand(self.controller)
   debug "sm_tertiary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
 
 method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEvent: KeycardEvent) =

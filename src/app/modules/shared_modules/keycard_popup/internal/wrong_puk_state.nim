@@ -8,12 +8,12 @@ proc newWrongPukState*(flowType: FlowType, backState: State): WrongPukState =
 proc delete*(self: WrongPukState) =
   self.State.delete
 
-method executePrimaryCommand*(self: WrongPukState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: WrongPukState, controller: Controller) =
   if self.flowType == FlowType.UnlockKeycard:
     if controller.getPuk().len == PUKLengthForStatusApp:
       controller.enterKeycardPuk(controller.getPuk())
 
-method executeTertiaryCommand*(self: WrongPukState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: WrongPukState, controller: Controller) =
   if self.flowType == FlowType.UnlockKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

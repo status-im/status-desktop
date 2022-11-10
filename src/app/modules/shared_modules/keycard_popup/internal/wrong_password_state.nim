@@ -10,7 +10,7 @@ proc newWrongPasswordState*(flowType: FlowType, backState: State): WrongPassword
 proc delete*(self: WrongPasswordState) =
   self.State.delete
 
-method executePrimaryCommand*(self: WrongPasswordState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: WrongPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongPassword, add = false))
     let password = controller.getPassword()
@@ -20,11 +20,11 @@ method executePrimaryCommand*(self: WrongPasswordState, controller: Controller) 
     else:
       controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongPassword, add = true))
 
-method executeSecondaryCommand*(self: WrongPasswordState, controller: Controller) =
+method executePreSecondaryStateCommand*(self: WrongPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.tryToObtainDataFromKeychain()
 
-method executeTertiaryCommand*(self: WrongPasswordState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: WrongPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

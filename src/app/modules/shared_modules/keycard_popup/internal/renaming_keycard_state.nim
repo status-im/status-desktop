@@ -10,7 +10,7 @@ proc newRenamingKeycardState*(flowType: FlowType, backState: State): RenamingKey
 proc delete*(self: RenamingKeycardState) =
   self.State.delete
 
-method executePrimaryCommand*(self: RenamingKeycardState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: RenamingKeycardState, controller: Controller) =
   if self.flowType == FlowType.RenameKeycard:
     let md = controller.getMetadataFromKeycard()
     let paths = md.walletAccounts.map(a => a.path)

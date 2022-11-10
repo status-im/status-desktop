@@ -17,7 +17,7 @@ method getNextPrimaryState*(self: KeycardMetadataDisplayState, controller: Contr
   if self.flowType == FlowType.RenameKeycard:
     return createState(StateType.EnterKeycardName, self.flowType, nil)
 
-method executeTertiaryCommand*(self: KeycardMetadataDisplayState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: KeycardMetadataDisplayState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.DisplayKeycardContent or

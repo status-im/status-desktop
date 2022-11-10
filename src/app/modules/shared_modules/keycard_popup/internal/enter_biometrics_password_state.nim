@@ -10,7 +10,7 @@ proc newEnterBiometricsPasswordState*(flowType: FlowType, backState: State): Ent
 proc delete*(self: EnterBiometricsPasswordState) =
   self.State.delete
 
-method executePrimaryCommand*(self: EnterBiometricsPasswordState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: EnterBiometricsPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     let password = controller.getPassword()
     self.success = controller.verifyPassword(password)
@@ -25,7 +25,7 @@ method getNextPrimaryState*(self: EnterBiometricsPasswordState, controller: Cont
     if not self.success:
       return createState(StateType.WrongBiometricsPassword, self.flowType, nil)
 
-method executeTertiaryCommand*(self: EnterBiometricsPasswordState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: EnterBiometricsPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

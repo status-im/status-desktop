@@ -8,11 +8,11 @@ proc newBiometricsReadyToSignState*(flowType: FlowType, backState: State): Biome
 proc delete*(self: BiometricsReadyToSignState) =
   self.State.delete
 
-method executePrimaryCommand*(self: BiometricsReadyToSignState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: BiometricsReadyToSignState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.tryToObtainDataFromKeychain()
 
-method executeSecondaryCommand*(self: BiometricsReadyToSignState, controller: Controller) =
+method executePreSecondaryStateCommand*(self: BiometricsReadyToSignState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setUsePinFromBiometrics(true)
 
@@ -20,7 +20,7 @@ method getNextSecondaryState*(self: BiometricsReadyToSignState, controller: Cont
   if self.flowType == FlowType.Authentication:
     return createState(StateType.EnterPin, self.flowType, nil)
 
-method executeTertiaryCommand*(self: BiometricsReadyToSignState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: BiometricsReadyToSignState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
     controller.setPassword("")
     controller.setPin("")

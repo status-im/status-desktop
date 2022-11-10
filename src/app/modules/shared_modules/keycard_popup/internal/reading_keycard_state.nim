@@ -8,12 +8,12 @@ proc newReadingKeycardState*(flowType: FlowType, backState: State): ReadingKeyca
 proc delete*(self: ReadingKeycardState) =
   self.State.delete
 
-method executeBackCommand*(self: ReadingKeycardState, controller: Controller) =
+method executePreBackStateCommand*(self: ReadingKeycardState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     if not self.getBackState.isNil and self.getBackState.stateType == StateType.SelectExistingKeyPair:
       controller.cancelCurrentFlow()
 
-method executeTertiaryCommand*(self: ReadingKeycardState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: ReadingKeycardState, controller: Controller) =
   error "reading state must not be canceled"
 
 method getNextSecondaryState*(self: ReadingKeycardState, controller: Controller): State =

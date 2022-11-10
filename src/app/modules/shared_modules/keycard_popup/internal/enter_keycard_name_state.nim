@@ -14,7 +14,7 @@ method getNextPrimaryState*(self: EnterKeycardNameState, controller: Controller)
   if self.flowType == FlowType.RenameKeycard:
     return createState(StateType.RenamingKeycard, self.flowType, nil)
 
-method executeTertiaryCommand*(self: EnterKeycardNameState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: EnterKeycardNameState, controller: Controller) =
   if self.flowType == FlowType.RenameKeycard:
     controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

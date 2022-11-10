@@ -8,10 +8,10 @@ proc newChangingKeycardPinFailureState*(flowType: FlowType, backState: State): C
 proc delete*(self: ChangingKeycardPinFailureState) =
   self.State.delete
 
-method executePrimaryCommand*(self: ChangingKeycardPinFailureState, controller: Controller) =
+method executePrePrimaryStateCommand*(self: ChangingKeycardPinFailureState, controller: Controller) =
   if self.flowType == FlowType.ChangeKeycardPin:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
-method executeTertiaryCommand*(self: ChangingKeycardPinFailureState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: ChangingKeycardPinFailureState, controller: Controller) =
   if self.flowType == FlowType.ChangeKeycardPin:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)

@@ -8,7 +8,7 @@ proc newChangingKeycardPukState*(flowType: FlowType, backState: State): Changing
 proc delete*(self: ChangingKeycardPukState) =
   self.State.delete
 
-method executeSecondaryCommand*(self: ChangingKeycardPukState, controller: Controller) =
+method executePreSecondaryStateCommand*(self: ChangingKeycardPukState, controller: Controller) =
   if self.flowType == FlowType.ChangeKeycardPuk:
     controller.storePukToKeycard(controller.getPuk())
 

@@ -8,7 +8,7 @@ proc newRepeatPukState*(flowType: FlowType, backState: State): RepeatPukState =
 proc delete*(self: RepeatPukState) =
   self.State.delete
 
-method executeBackCommand*(self: RepeatPukState, controller: Controller) =
+method executePreBackStateCommand*(self: RepeatPukState, controller: Controller) =
   controller.setPuk("")
   controller.setPukMatch(false)
 
@@ -18,6 +18,6 @@ method getNextSecondaryState*(self: RepeatPukState, controller: Controller): Sta
   if self.flowType == FlowType.ChangeKeycardPuk:
     return createState(StateType.ChangingKeycardPuk, self.flowType, nil)
 
-method executeTertiaryCommand*(self: RepeatPukState, controller: Controller) =
+method executePreTertiaryStateCommand*(self: RepeatPukState, controller: Controller) =
   if self.flowType == FlowType.ChangeKeycardPuk:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
