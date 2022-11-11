@@ -24,3 +24,4 @@ ImportCommunityPopup 1.0 ImportCommunityPopup.qml
 DisplayNamePopup 1.0 DisplayNamePopup.qml
 AddEditSavedAddressPopup 1.0 AddEditSavedAddressPopup.qml
 SendContactRequestModal 1.0 SendContactRequestModal.qml
+AccountsModalHeader 1.0 AccountsModalHeader.qml

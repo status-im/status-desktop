@@ -160,12 +160,12 @@ StatusDialog {
         }
     }
 
-    header: SendModalHeader {
+    header: AccountsModalHeader {
         anchors.top: parent.top
         anchors.topMargin: -height - 18
         model: popup.store.accounts
         selectedAccount: popup.selectedAccount
-        changeSelectedAccount: function(newIndex) {
+        changeSelectedAccount: function(newAccount, newIndex) {
             if (newIndex > popup.store.accounts) {
                 return
             }
