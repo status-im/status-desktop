@@ -34,6 +34,9 @@ Feature: Status Desktop Chat Basic Flows
 
     Scenario Outline: The user can edit a message
          Given the user sends a chat message "Edit me"
+         # Checking that message can be edited several times
+         When the user edits the message at index 0 and changes it to "first edition"
+         Then the chat message "first edition" is displayed as an edited one
          When the user edits the message at index 0 and changes it to "<edited>"
          Then the chat message "<edited>" is displayed as an edited one
          Examples:
