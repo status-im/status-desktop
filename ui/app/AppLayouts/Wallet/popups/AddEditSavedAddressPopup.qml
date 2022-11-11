@@ -99,6 +99,7 @@ StatusDialog {
             }
             readOnly: root.edit
             wrongInputValidationError: qsTr("Please enter a valid ENS name OR Ethereum Address")
+            ownAddressError: qsTr("Can't add yourself as a saved address")
         }
     }
 

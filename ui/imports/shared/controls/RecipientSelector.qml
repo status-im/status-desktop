@@ -27,6 +27,7 @@ Item {
     property bool readOnly: false
     readonly property string addressValidationError: qsTr("Invalid ethereum address")
     property alias wrongInputValidationError: inpAddress.wrongInputValidationError
+    property alias ownAddressError: inpAddress.ownAddressError
     property bool isValid: false
     property bool isSelectorVisible: true
     property bool addContactEnabled: true

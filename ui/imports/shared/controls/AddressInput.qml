@@ -21,6 +21,7 @@ Item {
     property int parentWidth
     property bool addContactEnabled: true
     property alias wrongInputValidationError: contactFieldAndList.wrongInputValidationError
+    property alias ownAddressError: contactFieldAndList.ownAddressError
 
     height: contactFieldAndList.chatKey.height
 
