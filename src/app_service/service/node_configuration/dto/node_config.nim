@@ -41,11 +41,7 @@ type
     TrustedMailServers*: seq[string]
     PushNotificationsServers*: seq[string]
     RendezvousNodes*: seq[string]
-    RelayNodes*: seq[string]
-    StoreNodes*: seq[string]
-    FilterNodes*: seq[string]
-    LightpushNodes*: seq[string]
-    WakuRendezvousNodes*: seq[string]
+    WakuNodes*: seq[string]
     DiscV5BootstrapNodes*: seq[string]
 
 
@@ -275,30 +271,10 @@ proc toClusterConfig*(jsonObj: JsonNode): ClusterConfig =
       for valueObj in arr:
         result.RendezvousNodes.add(valueObj.getStr)
 
-  if(jsonObj.getProp("RelayNodes", arr)):
+  if(jsonObj.getProp("WakuNodes", arr)):
     if(arr.kind == JArray):
       for valueObj in arr:
-        result.RelayNodes.add(valueObj.getStr)
-
-  if(jsonObj.getProp("StoreNodes", arr)):
-    if(arr.kind == JArray):
-      for valueObj in arr:
-        result.StoreNodes.add(valueObj.getStr)
-
-  if(jsonObj.getProp("FilterNodes", arr)):
-    if(arr.kind == JArray):
-      for valueObj in arr:
-        result.FilterNodes.add(valueObj.getStr)
-
-  if(jsonObj.getProp("LightpushNodes", arr)):
-    if(arr.kind == JArray):
-      for valueObj in arr:
-        result.LightpushNodes.add(valueObj.getStr)
-
-  if(jsonObj.getProp("WakuRendezvousNodes", arr)):
-    if(arr.kind == JArray):
-      for valueObj in arr:
-        result.WakuRendezvousNodes.add(valueObj.getStr)
+        result.WakuNodes.add(valueObj.getStr)
 
   if(jsonObj.getProp("DiscV5BootstrapNodes", arr)):
     if(arr.kind == JArray):

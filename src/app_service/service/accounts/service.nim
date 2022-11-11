@@ -307,10 +307,7 @@ QtObject:
 
     # TODO: fleet.status.im should have different sections depending on the node type
     #       or maybe it's not necessary because a node has the identify protocol
-    result["ClusterConfig"]["RelayNodes"] =  %* dnsDiscoveryURL
-    result["ClusterConfig"]["StoreNodes"] =  %* dnsDiscoveryURL
-    result["ClusterConfig"]["FilterNodes"] =  %* dnsDiscoveryURL
-    result["ClusterConfig"]["LightpushNodes"] =  %* dnsDiscoveryURL
+    result["ClusterConfig"]["WakuNodes"] = %* dnsDiscoveryURL
     result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* dnsDiscoveryURL
 
     result["WakuV2Config"]["EnableDiscV5"] = true.newJBool()
@@ -328,13 +325,10 @@ QtObject:
 
     if TEST_PEER_ENR != "":
       let testPeerENRArr = %* @[TEST_PEER_ENR]
-      result["ClusterConfig"]["RelayNodes"] = testPeerENRArr
-      result["ClusterConfig"]["StoreNodes"] =  testPeerENRArr
-      result["ClusterConfig"]["FilterNodes"] =  testPeerENRArr
-      result["ClusterConfig"]["LightpushNodes"] = testPeerENRArr
+      result["ClusterConfig"]["WakuNodes"] = %* testPeerENRArr
       result["ClusterConfig"]["BootNodes"] = %* testPeerENRArr
-      result["ClusterConfig"]["TrustedMailServers"] = testPeerENRArr
-      result["ClusterConfig"]["StaticNodes"] = testPeerENRArr
+      result["ClusterConfig"]["TrustedMailServers"] = %* testPeerENRArr
+      result["ClusterConfig"]["StaticNodes"] = %* testPeerENRArr
       result["ClusterConfig"]["RendezvousNodes"] = %* (@[])
       result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* (@[])
       result["Rendezvous"] = newJBool(false)
