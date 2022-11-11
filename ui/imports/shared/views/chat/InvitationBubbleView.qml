@@ -190,6 +190,8 @@ Item {
 
                             text: d.invitedCommunity.description
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                            elide: Text.ElideRight
+                            maximumLineCount: 3
                             font.pixelSize: 15
                             color: Theme.palette.directColor1
                         }
