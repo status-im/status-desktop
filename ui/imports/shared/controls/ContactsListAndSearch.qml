@@ -37,6 +37,7 @@ Item {
     property bool hideCommunityMembers: false
     property bool addContactEnabled: true
     property string wrongInputValidationError: qsTr("Enter a valid chat key or ENS username");
+    property string ownAddressError: qsTr("Can't chat with yourself");
 
     readonly property var resolveENS: Backpressure.debounce(root, 500, function (ensName) {
         noContactsRect.visible = false
@@ -51,7 +52,7 @@ Item {
             pubKey = ""
             ensUsername = "";
         } else if (RootStore.userProfileInst.pubKey === chatKey.text) {
-            root.validationError = qsTr("Can't chat with yourself");
+            root.validationError = ownAddressError;
         } else {
             root.validationError = "";
         }
@@ -126,7 +127,7 @@ Item {
                         searchResults.showProfileNotFoundMessage = root.showContactList
                     } else {
                         if (userProfile.pubKey === resolvedPubKey) {
-                            root.validationError = qsTr("Can't chat with yourself");
+                            root.validationError = ownAddressError;
                         } else {
                             chatKey.hasValidSearchResult = true
                             searchResults.username = chatKey.text.trim()
