@@ -6,6 +6,7 @@ import QtQml.Models 2.14
 import utils 1.0
 
 import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
 
 import "../controls"
 
@@ -84,13 +85,27 @@ Control {
     contentItem: ColumnLayout {
         spacing: 20
 
-        StatusBaseText {
+        StatusScrollView {
+            id: scrollView
+            visible: root.bio !== ""
+            padding: 0
+            rightPadding: scrollBar.visible ? 16 : 0
+            Layout.maximumHeight: 108
             Layout.fillWidth: true
-            visible: text !== ""
-            text: root.bio
-            wrapMode: Text.Wrap
-            font.weight: Font.Medium
-            lineHeight: 1.2
+            TextArea.flickable: bioText
+            ScrollBar.vertical: StatusScrollBar {
+                id: scrollBar
+                policy: scrollView.contentHeight > scrollView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+            }
+
+            StatusBaseText {
+                id: bioText
+                text: root.bio
+                wrapMode: Text.Wrap
+                font.weight: Font.Medium
+                lineHeight: 1.2
+                width: scrollView.availableWidth
+            }
         }
 
         StatusCenteredFlow {
