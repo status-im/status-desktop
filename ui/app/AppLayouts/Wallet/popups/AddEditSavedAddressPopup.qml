@@ -40,6 +40,7 @@ StatusDialog {
     header: StatusDialogHeader {
         headline.title: edit ? qsTr("Edit saved address") : qsTr("Add saved address")
         headline.subtitle: edit ? name : ""
+        actions.closeButton.onClicked: root.close()
     }
 
     onOpened: {
