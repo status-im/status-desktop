@@ -66,6 +66,24 @@ SettingsContentBase {
             Layout.fillWidth: true
             currentIndex: editPreviwTabBar.currentIndex
 
+            onImplicitHeightChanged: {
+                // During opening Profile, StackLayout always set implicitHeight of his biggest
+                // child implicitHeight and it reflecting on a scroll area.
+                // Use implicitHeight of current child
+                if (currentIndex === 0 && implicitHeight !== settingsView.implicitHeight) {
+                    implicitHeight = settingsView.implicitHeight
+                } else if (currentIndex === 1 && implicitHeight !== profilePreview.implicitHeight) {
+                    implicitHeight = profilePreview.implicitHeight
+                }
+            }
+
+            onCurrentIndexChanged: {
+                switch(currentIndex) {
+                case 0: implicitHeight = settingsView.implicitHeight; break
+                case 1: implicitHeight = profilePreview.implicitHeight; break
+                }
+            }
+
             MyProfileSettingsView {
                 id: settingsView
                 Layout.fillWidth: true
