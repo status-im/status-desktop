@@ -203,10 +203,7 @@ proc setFleet*(self: Service, fleet: string): bool =
     else:
       wakuVersion = 1
 
-  newConfiguration.ClusterConfig.RelayNodes = dnsDiscoveryURL
-  newConfiguration.ClusterConfig.StoreNodes = dnsDiscoveryURL
-  newConfiguration.ClusterConfig.FilterNodes = dnsDiscoveryURL
-  newConfiguration.ClusterConfig.LightpushNodes = dnsDiscoveryURL
+  newConfiguration.ClusterConfig.WakuNodes = dnsDiscoveryURL
   newConfiguration.ClusterConfig.DiscV5BootstrapNodes = dnsDiscoveryURL
 
   newConfiguration = setWakuConfig(newConfiguration, wakuVersion)
