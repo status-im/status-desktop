@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
+import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -13,6 +14,7 @@ import StatusQ.Core.Utils 0.1
 import utils 1.0
 
 import shared.controls 1.0
+import shared.popups 1.0
 
 import "../stores"
 
@@ -25,7 +27,7 @@ StatusModal {
 
     onSelectedAccountChanged: {
         if (selectedAccount.address) {
-            txtWalletAddress.text = selectedAccount.mixedcaseAddress
+            txtWalletAddress.text = selectedAccount.address
         }
     }
 
@@ -50,53 +52,13 @@ StatusModal {
     }
 
     hasFloatingButtons: true
-    advancedHeaderComponent: StatusFloatingButtonsSelector {
-        id: floatingHeader
+    advancedHeaderComponent: AccountsModalHeader {
         model: RootStore.accounts
-        delegate: Rectangle {
-            width: button.width
-            height: button.height
-            radius: 8
-            visible: floatingHeader.visibleIndices.includes(index)
-            StatusButton {
-                id: button
-                topPadding: 8
-                bottomPadding: 0
-                implicitHeight: 32
-                leftPadding: 4
-                text: name
-                asset.emoji: !!emoji ? emoji: ""
-                asset.emojiSize: Emoji.size.middle
-                icon.name: !emoji ? "filled-account": ""
-                normalColor: "transparent"
-                highlighted: index === floatingHeader.currentIndex
-                onClicked: {
-                    popup.selectedAccount =  model
-                    floatingHeader.currentIndex = index
-                }
-                Component.onCompleted: {
-                    // On startup make the preseected wallet in the floating menu
-                    if(name === popup.selectedAccount.name)
-                        floatingHeader.currentIndex = index
-                }
-            }
+        selectedAccount: popup.selectedAccount
+        changeSelectedAccount: function(newAccount, newIndex) {
+            popup.selectedAccount = newAccount
         }
-        popupMenuDelegate: StatusListItem {
-            implicitWidth: 272
-            title: name
-            subTitle: currencyBalance
-            asset.emoji: !!emoji ? emoji: ""
-            asset.color: model.color
-            asset.name: !emoji ? "filled-account": ""
-            asset.letterSize: 14
-            asset.isLetterIdenticon: !!model.emoji
-            asset.bgColor: Theme.palette.indirectColor1
-            onClicked: {
-                popup.selectedAccount =  model
-                floatingHeader.itemSelected(index)
-            }
-            visible: !floatingHeader.visibleIndices.includes(index)
-        }
+        showAllWalletTypes: true
     }
 
     contentItem: Column {
@@ -286,9 +248,7 @@ StatusModal {
             testNetworks: RootStore.testNetworks
             closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-            onToggleNetwork: {
-                RootStore.toggleNetwork(chainId)
-            }
+            onToggleNetwork: (chainId) => RootStore.toggleNetwork(chainId)
         }
 
         states: [

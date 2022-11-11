@@ -16,25 +16,31 @@ import "../controls"
 import "../views"
 
 StatusFloatingButtonsSelector {
-    id: floatingHeader
+    id: root
 
     property var selectedAccount
+    // Expected signature: function(newAccount, newIndex)
     property var changeSelectedAccount: function(){}
+    property bool showAllWalletTypes: false
 
     repeater.objectName: "accountsListFloatingHeader"
-    
+
     signal updatedSelectedAccount(var account)
 
     QtObject {
         id: d
         property var firstModelData: null
+
+        function isWalletTypeAccepted(walletType, index) {
+            return (root.showAllWalletTypes || walletType !== Constants.watchWalletType)
+        }
     }
 
     delegate: Rectangle {
         width: button.width
         height: button.height
         radius: 8
-        visible: floatingHeader.visibleIndices.includes(index) && walletType !== Constants.watchWalletType
+        visible: root.visibleIndices.includes(index) && d.isWalletTypeAccepted(walletType, index)
         color: Theme.palette.baseColor3
         StatusButton {
             id: button
@@ -47,10 +53,10 @@ StatusFloatingButtonsSelector {
             icon.name: !emoji ? "filled-account": ""
             normalColor: "transparent"
             hoverColor: Theme.palette.statusFloatingButtonHighlight
-            highlighted: index === floatingHeader.currentIndex
+            highlighted: index === root.currentIndex
             onClicked: {
-                changeSelectedAccount(index)
-                floatingHeader.currentIndex = index
+                changeSelectedAccount(model, index)
+                root.currentIndex = index
             }
             Component.onCompleted: {
                 // On startup make the preseected wallet in the floating menu,
@@ -59,21 +65,21 @@ StatusFloatingButtonsSelector {
                     d.firstModelData = model
                 }
 
-                if(name !== floatingHeader.selectedAccount.name) {
+                if(name !== root.selectedAccount.name) {
                     return
                 }
 
-                if(name === floatingHeader.selectedAccount.name) {
-                    if(walletType !== Constants.watchWalletType) {
+                if(name === root.selectedAccount.name) {
+                    if(d.isWalletTypeAccepted(walletType, index)) {
                         // If the selected index wont be displayed, added it to the visible indices
                         if(index > 2) {
                             visibleIndices = [0, 1, index]
                         }
-                        floatingHeader.currentIndex = index
+                        root.currentIndex = index
                     }
                     else {
-                        changeSelectedAccount(0)
-                        floatingHeader.currentIndex = 0
+                        changeSelectedAccount(root.selectedAccount, 0)
+                        root.currentIndex = 0
                     }
                 }
             }
@@ -90,10 +96,10 @@ StatusFloatingButtonsSelector {
         asset.isLetterIdenticon: !!model.emoji
         asset.bgColor: Theme.palette.indirectColor1
         onClicked: {
-            changeSelectedAccount(index)
-            floatingHeader.itemSelected(index)
+            changeSelectedAccount(model, index)
+            root.itemSelected(index)
         }
-        visible: !floatingHeader.visibleIndices.includes(index) && walletType !== Constants.watchWalletType
+        visible: !root.visibleIndices.includes(index) && d.isWalletTypeAccepted(walletType, index)
     }
 }
 
