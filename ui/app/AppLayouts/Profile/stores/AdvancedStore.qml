@@ -7,7 +7,6 @@ QtObject {
     property var advancedModule
 
     // Advanced Module Properties
-    property string currentChainId: advancedModule? advancedModule.currentChainId : 0
     property string fleet: advancedModule? advancedModule.fleet : ""
     property string bloomLevel: advancedModule? advancedModule.bloomLevel : ""
     property bool wakuV2LightClientEnabled: advancedModule? advancedModule.wakuV2LightClientEnabled : false

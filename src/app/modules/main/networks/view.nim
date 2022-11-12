@@ -3,6 +3,7 @@ import Tables, NimQml, sequtils, sugar
 import ../../../../app_service/service/network/dto
 import ./io_interface
 import ./model
+import ./networks_extra_store_proxy
 import ./item
 
 QtObject:
@@ -14,6 +15,9 @@ QtObject:
       layer1: Model
       layer2: Model
       areTestNetworksEnabled: bool
+      # Lazy initized but here to keep a reference to the object not to be GCed
+      layer1Proxy: NetworksExtraStoreProxy
+      layer2Proxy: NetworksExtraStoreProxy
 
   proc setup(self: View) =
     self.QObject.setup
@@ -28,6 +32,8 @@ QtObject:
     result.layer1 = newModel()
     result.layer2 = newModel()
     result.enabled = newModel()
+    result.layer1Proxy = nil
+    result.layer2Proxy = nil
     result.setup()
 
   proc areTestNetworksEnabledChanged*(self: View) {.signal.}
@@ -98,7 +104,7 @@ QtObject:
         n.shortName,
         balance,
       ))
-    
+
     self.all.setItems(items)
     self.layer1.setItems(items.filter(i => i.getLayer() == 1))
     self.layer2.setItems(items.filter(i => i.getLayer() == 2))
@@ -114,7 +120,29 @@ QtObject:
   proc toggleNetwork*(self: View, chainId: int) {.slot.} =
     self.delegate.toggleNetwork(chainId)
 
-  proc toggleTestNetworksEnabled*(self: View) {.slot.} = 
+  proc toggleTestNetworksEnabled*(self: View) {.slot.} =
     self.delegate.toggleTestNetworksEnabled()
     self.areTestNetworksEnabled = not self.areTestNetworksEnabled
     self.areTestNetworksEnabledChanged()
+
+  proc layer1ProxyChanged*(self: View) {.signal.}
+
+  proc getLayer1Proxy(self: View): QVariant {.slot.} =
+    if self.layer1Proxy.isNil:
+      self.layer1Proxy = newNetworksExtraStoreProxy(self.layer1)
+    return newQVariant(self.layer1Proxy)
+
+  QtProperty[QVariant] layer1Proxy:
+    read = getLayer1Proxy
+    notify = layer1ProxyChanged
+
+  proc layer2ProxyChanged*(self: View) {.signal.}
+
+  proc getLayer2Proxy(self: View): QVariant {.slot.} =
+    if self.layer2Proxy.isNil:
+      self.layer2Proxy = newNetworksExtraStoreProxy(self.layer2)
+    return newQVariant(self.layer2Proxy)
+
+  QtProperty[QVariant] layer2Proxy:
+    read = getLayer2Proxy
+    notify = layer2ProxyChanged

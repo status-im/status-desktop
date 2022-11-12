@@ -12,7 +12,7 @@ import utils 1.0
 
 // TODO: replace with StatusModal
 Popup {
-    id: popup
+    id: root
     modal: false
     width: 360
     height: 432
@@ -24,6 +24,9 @@ Popup {
     property var layer1Networks
     property var layer2Networks
     property var testNetworks
+
+    // If true NetworksExtraStoreProxy expected for layer1Networks and layer2Networks properties
+    property bool useNetworksExtraStoreProxy: false
 
     signal toggleNetwork(int chainId)
 
@@ -45,8 +48,8 @@ Popup {
     contentItem: StatusScrollView {
         id: scrollView
         contentHeight: content.height
-        width: popup.width
-        height: popup.height
+        width: root.width
+        height: root.height
         padding: 0
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -61,7 +64,7 @@ Popup {
                 width: parent.width
                 height: parent.height
                 objectName: "networkSelectPopupChainRepeaterLayer1"
-                model: popup.layer1Networks
+                model: root.layer1Networks
 
                 delegate: chainItem
             }
@@ -80,14 +83,14 @@ Popup {
 
             Repeater {
                 id: chainRepeater2
-                model: popup.layer2Networks
+                model: root.layer2Networks
 
                 delegate: chainItem
             }
 
             Repeater {
                 id: chainRepeater3
-                model: popup.testNetworks
+                model: root.testNetworks
 
                 delegate: chainItem
             }
@@ -111,10 +114,12 @@ Popup {
             components: [
                 StatusCheckBox {
                     id: checkBox
-                    checked: model.isEnabled
+                    checked: root.useNetworksExtraStoreProxy ? model.isActive : model.isEnabled
                     onCheckedChanged: {
-                        if (model.isEnabled !== checked) {
-                            popup.toggleNetwork(model.chainId)
+                        if(root.useNetworksExtraStoreProxy && model.isActive !== checked) {
+                            model.isActive = checked
+                        } else if (model.isEnabled !== checked) {
+                            root.toggleNetwork(model.chainId)
                         }
                     }
                 }

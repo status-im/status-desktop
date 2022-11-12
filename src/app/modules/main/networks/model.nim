@@ -3,7 +3,7 @@ import NimQml, Tables, strutils, strformat
 import ./item
 
 type
-  ModelRole {.pure.} = enum
+  ModelRole* {.pure.} = enum
     ChainId = UserRole + 1,
     NativeCurrencyDecimals
     Layer
@@ -48,7 +48,7 @@ QtObject:
     read = getCount
     notify = countChanged
 
-  method rowCount(self: Model, index: QModelIndex = nil): int =
+  method rowCount*(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
   method roleNames(self: Model): Table[int, string] =
@@ -109,7 +109,7 @@ QtObject:
     of ModelRole.Balance:
       result = newQVariant(item.getBalance())
 
-  proc rowData(self: Model, index: int, column: string): string {.slot.} =
+  proc rowData*(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
       return
     let item = self.items[index]

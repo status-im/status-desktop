@@ -19,14 +19,14 @@ import shared.popups 1.0
 import "../stores"
 
 StatusModal {
-    id: popup
+    id: root
 
     property var selectedAccount
     property string networkPrefix: ""
     property string completeAddressWithNetworkPrefix
 
     onSelectedAccountChanged: {
-        if (selectedAccount.address) {
+        if (selectedAccount && selectedAccount.address) {
             txtWalletAddress.text = selectedAccount.address
         }
     }
@@ -47,23 +47,23 @@ StatusModal {
         target: RootStore.enabledNetworks
         function onModelReset() {
             if(RootStore.enabledNetworks.count === 0)
-                popup.networkPrefix = ""
+                root.networkPrefix = ""
         }
     }
 
     hasFloatingButtons: true
     advancedHeaderComponent: AccountsModalHeader {
         model: RootStore.accounts
-        selectedAccount: popup.selectedAccount
+        selectedAccount: root.selectedAccount
         changeSelectedAccount: function(newAccount, newIndex) {
-            popup.selectedAccount = newAccount
+            root.selectedAccount = newAccount
         }
         showAllWalletTypes: true
     }
 
     contentItem: Column {
         id: layout
-        width: popup.width
+        width: root.width
 
         topPadding: Style.current.xlPadding
         spacing: Style.current.bigPadding
@@ -97,16 +97,21 @@ StatusModal {
                 flow: Grid.TopToBottom
                 columns: need2Columns ? 2 : 1
                 spacing: 5
+                property var networkProxies: [RootStore.layer1NetworksProxy, RootStore.layer2NetworksProxy]
                 Repeater {
-                    model: RootStore.enabledNetworks
-                    delegate: InformationTag {
-                        tagPrimaryLabel.text: model.shortName
-                        tagPrimaryLabel.color: model.chainColor
-                        image.source: Style.svg("tiny/" + model.iconUrl)
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: selectPopup.open()
+                    model: multiChainList.networkProxies.length
+                    delegate: Repeater {
+                        model: multiChainList.networkProxies[index]
+                        delegate: InformationTag {
+                            tagPrimaryLabel.text: model.shortName
+                            tagPrimaryLabel.color: model.chainColor
+                            image.source: Style.svg("tiny/" + model.iconUrl)
+                            visible: model.isActive
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: selectPopup.open()
+                            }
                         }
                     }
                 }
@@ -200,15 +205,21 @@ StatusModal {
                     id: networksLabel
                     spacing: -1
                     Repeater {
-                        model: RootStore.enabledNetworks
-                        delegate: StatusBaseText {
-                            font.pixelSize: 15
-                            color: chainColor
-                            text: shortName + ":"
-                            Component.onCompleted: {
-                                if(index === 0)
-                                    popup.networkPrefix = ""
-                                popup.networkPrefix +=text
+                        model: multiChainList.networkProxies.length
+                        delegate: Repeater {
+                            model: multiChainList.networkProxies[index]
+                            delegate: StatusBaseText {
+                                font.pixelSize: 15
+                                color: chainColor
+                                text: shortName + ":"
+                                visible: model.isActive
+                                onVisibleChanged: {
+                                    if (visible) {
+                                        networkPrefix += text
+                                    } else {
+                                        networkPrefix = networkPrefix.replace(text, "")
+                                    }
+                                }
                             }
                         }
                     }
@@ -241,14 +252,16 @@ StatusModal {
 
         NetworkSelectPopup {
             id: selectPopup
+
             x: multiChainList.x + Style.current.xlPadding + Style.current.halfPadding
             y: centralLayout.y
-            layer1Networks: RootStore.layer1Networks
-            layer2Networks: RootStore.layer2Networks
-            testNetworks: RootStore.testNetworks
-            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-            onToggleNetwork: (chainId) => RootStore.toggleNetwork(chainId)
+            layer1Networks: RootStore.layer1NetworksProxy
+            layer2Networks: RootStore.layer2NetworksProxy
+            testNetworks: RootStore.testNetworks
+            useNetworksExtraStoreProxy: true
+
+            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
         }
 
         states: [
@@ -272,8 +285,8 @@ StatusModal {
                     textToCopy: txtWalletAddress.text
                 }
                 PropertyChanges {
-                    target: popup
-                    completeAddressWithNetworkPrefix: popup.selectedAccount.address
+                    target: root
+                    completeAddressWithNetworkPrefix: root.selectedAccount.address
                 }
             },
             State {
@@ -293,11 +306,11 @@ StatusModal {
                 }
                 PropertyChanges {
                     target: copyToClipBoard
-                    textToCopy: popup.networkPrefix + txtWalletAddress.text
+                    textToCopy: root.networkPrefix + txtWalletAddress.text
                 }
                 PropertyChanges {
-                    target: popup
-                    completeAddressWithNetworkPrefix: popup.networkPrefix + popup.selectedAccount.address
+                    target: root
+                    completeAddressWithNetworkPrefix: root.networkPrefix + root.selectedAccount.address
                 }
             }
         ]
