@@ -268,6 +268,7 @@ method setSelectedLoginAccount*[T](self: Module[T], item: login_acc_item.Item) =
   self.controller.connectKeychain()
 
 method emitAccountLoginError*[T](self: Module[T], error: string) =
+  self.controller.setPassword("")
   self.view.emitAccountLoginError(error)
 
 method emitObtainingPasswordError*[T](self: Module[T], errorDescription: string, errorType: string) =
