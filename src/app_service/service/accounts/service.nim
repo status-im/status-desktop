@@ -8,6 +8,9 @@ from ../keycard/service import KeycardEvent, KeyDetails
 import ../../../backend/general as status_general
 import ../../../backend/core as status_core
 
+import ../../../app/core/eventemitter
+import ../../../app/core/signals/types
+import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/fleets/fleet_configuration
 import ../../common/[account_constants, network_constants, utils, string_utils]
 import ../../../constants as main_constants
@@ -30,10 +33,18 @@ const KDF_ITERATIONS* {.intdefine.} = 256_000
 # specific peer to set for testing messaging and mailserver functionality with squish.
 let TEST_PEER_ENR = getEnv("TEST_PEER_ENR").string
 
+const SIGNAL_CONVERTING_PROFILE_KEYPAIR* = "convertingProfileKeypair"
+
+type ResultArgs* = ref object of Args
+  success*: bool
+
 include utils
+include async_tasks
 
 QtObject:
   type Service* = ref object of QObject
+    events: EventEmitter
+    threadpool: ThreadPool
     fleetConfiguration: FleetConfiguration
     generatedAccounts: seq[GeneratedAccountDto]
     accounts: seq[AccountDto]
@@ -46,10 +57,11 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(fleetConfiguration: FleetConfiguration): Service =
-    result = Service()
+  proc newService*(events: EventEmitter, threadpool: ThreadPool, fleetConfiguration: FleetConfiguration): Service =
     new(result, delete)
     result.QObject.setup
+    result.events = events
+    result.threadpool = threadpool
     result.fleetConfiguration = fleetConfiguration
     result.isFirstTimeAccountLogin = false
     result.keyStoreDir = main_constants.ROOTKEYSTOREDIR
@@ -677,36 +689,48 @@ QtObject:
       error "error: ", procName="verifyAccountPassword", errName = e.name, errDesription = e.msg
 
 
-  proc convertToKeycardAccount*(self: Service, keyUid: string, currentPassword: string, newPassword: string): bool = 
+  proc convertToKeycardAccount*(self: Service, keyUid: string, currentPassword: string, newPassword: string) = 
+    var accountDataJson = %* {
+      "name": self.getLoggedInAccount().name,
+      "key-uid": keyUid
+    }
+    var settingsJson = %* {
+      "display-name": self.getLoggedInAccount().name
+    }
+
+    self.addKeycardDetails(settingsJson, accountDataJson)
+    
+    if(accountDataJson.isNil or settingsJson.isNil):
+      let description = "at least one json object is not prepared well"
+      error "error: ", procName="convertToKeycardAccount", errDesription = description
+      return
+
+    let hashedCurrentPassword = hashString(currentPassword)
+    let arg = ConvertToKeycardAccountTaskArg(
+      tptr: cast[ByteAddress](convertToKeycardAccountTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onConvertToKeycardAccount",
+      accountDataJson: accountDataJson,
+      settingsJson: settingsJson,
+      keyStoreDir: self.keyStoreDir,
+      hashedCurrentPassword: hashedCurrentPassword,
+      newPassword: newPassword
+    )
+    self.threadpool.start(arg)
+
+  proc onConvertToKeycardAccount*(self: Service, response: string) {.slot.} =
+    var result = false
     try:
-      var accountDataJson = %* {
-        "name": self.getLoggedInAccount().name,
-        "key-uid": keyUid
-      }
-      var settingsJson = %* {
-        "display-name": self.getLoggedInAccount().name
-      }
-
-      self.addKeycardDetails(settingsJson, accountDataJson)
-      
-      if(accountDataJson.isNil or settingsJson.isNil):
-        let description = "at least one json object is not prepared well"
-        error "error: ", procName="convertToKeycardAccount", errDesription = description
-        return
-
-      let hashedCurrentPassword = hashString(currentPassword)
-      let response = status_account.convertToKeycardAccount(self.keyStoreDir, accountDataJson, settingsJson, 
-        hashedCurrentPassword, newPassword)
-
-      if(response.result.contains("error")):
-        let errMsg = response.result["error"].getStr
+      let rpcResponse = Json.decode(response, RpcResponse[JsonNode])
+      if(rpcResponse.result.contains("error")):
+        let errMsg = rpcResponse.result["error"].getStr
         if(errMsg.len == 0):
-          return true
+          result = true
         else:
           error "error: ", procName="convertToKeycardAccount", errDesription = errMsg
-      return false
     except Exception as e:
-      error "error: ", procName="convertToKeycardAccount", errName = e.name, errDesription = e.msg
+      error "error handilng migrated keypair response", errDesription=e.msg
+    self.events.emit(SIGNAL_CONVERTING_PROFILE_KEYPAIR, ResultArgs(success: result))
 
   proc verifyPassword*(self: Service, password: string): bool =
     try:

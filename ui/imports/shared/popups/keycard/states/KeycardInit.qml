@@ -26,6 +26,7 @@ Item {
         id: d
 
         readonly property bool hideKeyPair: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.hideKeyPair
+        readonly property bool continuousProcessingAnimation: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair
     }
 
     Timer {
@@ -484,13 +485,25 @@ Item {
             }
             PropertyChanges {
                 target: image
-                pattern: Constants.keycardAnimations.warning.pattern
+                pattern: d.continuousProcessingAnimation?
+                             Constants.keycardAnimations.processing.pattern :
+                             Constants.keycardAnimations.warning.pattern
                 source: ""
-                startImgIndexForTheFirstLoop: Constants.keycardAnimations.warning.startImgIndexForTheFirstLoop
-                startImgIndexForOtherLoops: Constants.keycardAnimations.warning.startImgIndexForOtherLoops
-                endImgIndex: Constants.keycardAnimations.warning.endImgIndex
-                duration: Constants.keycardAnimations.warning.duration
-                loops: Constants.keycardAnimations.warning.loops
+                startImgIndexForTheFirstLoop: d.continuousProcessingAnimation?
+                                                  Constants.keycardAnimations.processing.startImgIndexForTheFirstLoop :
+                                                  Constants.keycardAnimations.warning.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: d.continuousProcessingAnimation?
+                                                Constants.keycardAnimations.processing.startImgIndexForOtherLoops :
+                                                Constants.keycardAnimations.warning.startImgIndexForOtherLoops
+                endImgIndex: d.continuousProcessingAnimation?
+                                 Constants.keycardAnimations.processing.endImgIndex :
+                                 Constants.keycardAnimations.warning.endImgIndex
+                duration: d.continuousProcessingAnimation?
+                              Constants.keycardAnimations.processing.duration :
+                              Constants.keycardAnimations.warning.duration
+                loops: d.continuousProcessingAnimation?
+                           Constants.keycardAnimations.processing.loops :
+                           Constants.keycardAnimations.warning.loops
             }
             PropertyChanges {
                 target: message

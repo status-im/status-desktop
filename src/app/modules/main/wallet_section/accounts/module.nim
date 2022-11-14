@@ -167,6 +167,9 @@ method load*(self: Module) =
     self.refreshWalletAccounts()
 
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
+    let args = KeycardActivityArgs(e)
+    if not args.success:
+      return
     self.refreshWalletAccounts()
 
   self.controller.init()

@@ -51,6 +51,8 @@ type
     tmpUsePinFromBiometrics: bool
     tmpOfferToStoreUpdatedPinToKeychain: bool
     tmpKeycardUid: string
+    tmpAddingMigratedKeypairSuccess: bool
+    tmpConvertingProfileSuccess: bool
 
 proc newController*(delegate: io_interface.AccessInterface,
   uniqueIdentifier: string,
@@ -78,6 +80,8 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.tmpSeedPhraseLength = 0
   result.tmpSelectedKeyPairIsProfile = false
   result.tmpUsePinFromBiometrics = false
+  result.tmpAddingMigratedKeypairSuccess = false
+  result.tmpConvertingProfileSuccess = false
 
 proc serviceApplicable[T](service: T): bool =
   if not service.isNil:
@@ -140,6 +144,16 @@ proc init*(self: Controller) =
     self.connectKeycardReponseSignal()
     self.delegate.onUserAuthenticated(args.password, args.pin)
   self.connectionIds.add(handlerId)
+
+  self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
+    let args = KeycardActivityArgs(e)
+    self.tmpAddingMigratedKeypairSuccess = args.success
+    self.delegate.onSecondaryActionClicked()
+  
+  self.events.on(SIGNAL_CONVERTING_PROFILE_KEYPAIR) do(e: Args):
+    let args = ResultArgs(e)
+    self.tmpConvertingProfileSuccess = args.success
+    self.delegate.onSecondaryActionClicked()
 
 proc getKeycardData*(self: Controller): string =
   return self.delegate.getKeycardData()
@@ -289,14 +303,17 @@ proc verifyPassword*(self: Controller, password: string): bool =
     return
   return self.accountsService.verifyPassword(password)
 
-proc convertSelectedKeyPairToKeycardAccount*(self: Controller, password: string): bool =
+proc convertSelectedKeyPairToKeycardAccount*(self: Controller, password: string) =
   if not serviceApplicable(self.accountsService):
     return
   let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
   singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
-  return self.accountsService.convertToKeycardAccount(self.tmpSelectedKeyPairDto.keyUid, 
+  self.accountsService.convertToKeycardAccount(self.tmpSelectedKeyPairDto.keyUid, 
     currentPassword = password,
     newPassword = acc.derivedAccounts.encryption.publicKey)
+
+proc getConvertingProfileSuccess*(self: Controller): bool =
+  return self.tmpConvertingProfileSuccess
 
 proc getLoggedInAccount*(self: Controller): AccountDto =
   if not serviceApplicable(self.accountsService):
@@ -429,8 +446,8 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
   let (_, flowEvent) = self.getLastReceivedKeycardData()
   var data = SharedKeycarModuleFlowTerminatedArgs(uniqueIdentifier: self.uniqueIdentifier,
     lastStepInTheCurrentFlow: lastStepInTheCurrentFlow)
-  let exportedEncryptionPubKey = flowEvent.generatedWalletAccount.publicKey
   if lastStepInTheCurrentFlow:
+    let exportedEncryptionPubKey = flowEvent.generatedWalletAccount.publicKey
     data.password = if exportedEncryptionPubKey.len > 0: exportedEncryptionPubKey else: self.getPassword()
     data.pin = self.getPin()
     data.keyUid = flowEvent.keyUid
@@ -452,13 +469,16 @@ proc getBalanceForAddress*(self: Controller, address: string): float64 =
     return
   return self.walletAccountService.fetchBalanceForAddress(address)
 
-proc addMigratedKeyPair*(self: Controller, keyPair: KeyPairDto): bool =
+proc addMigratedKeyPair*(self: Controller, keyPair: KeyPairDto) =
   if not serviceApplicable(self.walletAccountService):
     return
   if not serviceApplicable(self.accountsService):
     return
   let keystoreDir = self.accountsService.getKeyStoreDir()
-  return self.walletAccountService.addMigratedKeyPair(keyPair, keystoreDir)
+  self.walletAccountService.addMigratedKeyPairAsync(keyPair, keystoreDir)
+
+proc getAddingMigratedKeypairSuccess*(self: Controller): bool =
+  return self.tmpAddingMigratedKeypairSuccess
 
 proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
   if not serviceApplicable(self.walletAccountService):

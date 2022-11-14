@@ -443,3 +443,26 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
 
   arg.finish(builtTokensPerAccount)
 
+#################################################
+# Async add migrated keypair
+#################################################
+
+type
+  AddMigratedKeyPairTaskArg* = ref object of QObjectTaskArg
+    keyPair: KeyPairDto 
+    keyStoreDir: string
+
+const addMigratedKeyPairTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AddMigratedKeyPairTaskArg](argEncoded)
+  try:
+    let response = backend.addMigratedKeyPair(
+      arg.keyPair.keycardUid,
+      arg.keyPair.keycardName,
+      arg.keyPair.keyUid,
+      arg.keyPair.accountsAddresses,
+      arg.keyStoreDir
+      )
+    arg.finish(response)
+  except Exception as e:
+    error "error adding new keypair: ", message = e.msg  
+    arg.finish("")
