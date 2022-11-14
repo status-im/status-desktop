@@ -17,6 +17,7 @@ type ActivityCenterNotificationType* {.pure.}= enum
   CommunityRequest = 7
   CommunityMembershipRequest = 8
   CommunityKicked = 9
+  ContactVerification = 10
 
 type ActivityCenterMembershipStatus* {.pure.}= enum
   Idle = 0,

@@ -15,6 +15,7 @@ type
     Gap = 10
     Edit = 11
     DiscordMessage = 12
+    ContactIdentityVerification = 13
 
 type
   StatusType* {.pure.} = enum
