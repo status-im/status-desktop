@@ -59,9 +59,6 @@ pipeline {
     stage('Deps') {
       steps {
         sh 'make update'
-        /* trigger fetching of git submodules */
-        sh 'make check-pkg-target-linux'
-        /* TODO: Re-add caching of Nim compiler. */
         sh 'make deps'
       }
     }
