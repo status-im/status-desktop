@@ -59,13 +59,15 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
+  echo "TX module.nim viewDidLoad >>>"
   self.checkRecentHistory()
   let accounts = self.getWalletAccounts()
 
   self.moduleLoaded = true
   self.delegate.transactionsModuleDidLoad()
 
-  self.controller.checkPendingTransactions()
+  echo "SETTING CHEKCING PENDING TX"
+  self.view.setPendingTx(self.controller.checkPendingTransactions())
 
 method switchAccount*(self: Module, accountIndex: int) =
   let walletAccount = self.controller.getWalletAccount(accountIndex)
@@ -146,6 +148,7 @@ method onUserAuthenticated*(self: Module, password: string) =
 
 method transactionWasSent*(self: Module, result: string) =
   self.view.transactionWasSent(result)
+  self.view.setPendingTx(self.controller.checkPendingTransactions())
 
 method suggestedFees*(self: Module, chainId: int): string = 
   return self.controller.suggestedFees(chainId)

@@ -49,3 +49,7 @@ proc createMultiTransaction*(multiTransaction: MultiTransactionDto, data: seq[Tr
   var hashed_password = "0x" & $keccak_256.digest(password)
   let payload = %* [multiTransaction, data, hashed_password]
   result = core.callPrivateRPC("wallet_createMultiTransaction", payload)
+
+proc watchTransaction*(chainId: int, hash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, hash]
+  core.callPrivateRPC("wallet_watchTransactionByChainID", payload)

@@ -76,10 +76,7 @@ StatusDialog {
 
     QtObject {
         id: d
-        readonly property double maxFiatBalance: {
-            console.error(assetSelector.selectedAsset.name," >>> recalaculayte maxFiatBalance = ", assetSelector.selectedAsset.totalBalance)
-            return assetSelector.selectedAsset ? assetSelector.selectedAsset.totalBalance: 0
-        }
+        readonly property double maxFiatBalance: assetSelector.selectedAsset ? assetSelector.selectedAsset.totalBalance: 0
         readonly property bool isReady: amountToSendInput.valid && !amountToSendInput.pending && recipientReady
         readonly property bool errorMode: (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0) || networkSelector.errorMode || isNaN(amountToSendInput.text)
         readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending

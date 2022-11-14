@@ -33,6 +33,7 @@ Item {
     property StartupStore startupStore
 
     Component.onCompleted: {
+        d.doLogin("khushboomehta")
         d.resetLogin()
     }
 

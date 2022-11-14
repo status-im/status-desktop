@@ -79,13 +79,13 @@ Item {
 //            }
         }
 
-        Timer {
-            id: recentHistoryTimer
-            interval: Constants.walletFetchRecentHistoryInterval
-            running: true
-            repeat: true
-            onTriggered: RootStore.checkRecentHistory()
-        }
+//        Timer {
+//            id: recentHistoryTimer
+//            interval: Constants.walletFetchRecentHistoryInterval
+//            running: true
+//            repeat: true
+//            onTriggered: RootStore.checkRecentHistory()
+//        }
 
         leftPanel: LeftTabView {
             id: leftTab

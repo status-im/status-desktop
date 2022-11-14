@@ -31,11 +31,13 @@ type
     BaseGasFees
     TotalFees
     MaxTotalFees
+    Symbol
 
 QtObject:
   type
     Model* = ref object of QAbstractListModel
       items: seq[Item]
+      pendingItems: seq[Item]
       itemsWithDateHeaders: seq[Item]
       hasMore: bool
 
@@ -94,7 +96,8 @@ QtObject:
       ModelRole.IsTimeStamp.int: "isTimeStamp",
       ModelRole.BaseGasFees.int: "baseGasFees",
       ModelRole.TotalFees.int: "totalFees",
-      ModelRole.MaxTotalFees.int: "maxTotalFees"
+      ModelRole.MaxTotalFees.int: "maxTotalFees",
+      ModelRole.Symbol.int: "symbol"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -158,6 +161,8 @@ QtObject:
       result = newQVariant(item.getTotalFees())
     of ModelRole.MaxTotalFees:
       result = newQVariant(item.getMaxTotalFees())
+    of ModelRole.Symbol:
+      result = newQVariant(item.getSymbol())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
@@ -187,6 +192,8 @@ QtObject:
   proc cmpTransactions*(x, y: Item): int =
     # Sort proc to compare transactions from a single account.
     # Compares first by block number, then by nonce
+    if x.getBlockNumber().isEmptyOrWhitespace or y.getBlockNumber().isEmptyOrWhitespace :
+      return cmp(x.getTimestamp(), y.getTimestamp())
     result = cmp(x.getBlockNumber().parseHexInt, y.getBlockNumber().parseHexInt)
     if result == 0:
       result = cmp(x.getNonce(), y.getNonce())
@@ -222,19 +229,20 @@ QtObject:
         t.baseGasFees,
         t.totalFees,
         t.maxTotalFees,
+        t.symbol
       ))
 
       var allTxs = self.items.concat(newTxItems)
       allTxs.sort(cmpTransactions, SortOrder.Descending)
-      eth_service_utils.deduplicate(allTxs, tx => tx.getId())
+      eth_service_utils.deduplicate(allTxs, tx => tx.getTxHash())
 
       # add day headers to the transaction list
       var itemsWithDateHeaders: seq[Item] = @[]
       var tempTimeStamp: Time
       for tx in allTxs:
-        let duration =  fromUnix(tx.getTimestamp()) - tempTimeStamp
-        if(duration.inDays != 0):
-          itemsWithDateHeaders.add(initItem("", "", "", "", "",  tx.getTimestamp(), "", "", "", "", "", "", "", "", "", 0, "", "", "", "", 0, true, "", "", ""))
+        let durationInDays =  (tempTimeStamp.toTimeInterval() - fromUnix(tx.getTimestamp()).toTimeInterval()).days
+        if(durationInDays != 0):
+          itemsWithDateHeaders.add(initItem("", "", "", "", "",  tx.getTimestamp(), "", "", "", "", "", "", "", "", "", 0, "", "", "", "", 0, true, "", "", "", ""))
         itemsWithDateHeaders.add(tx)
         tempTimeStamp = fromUnix(tx.getTimestamp())
 
