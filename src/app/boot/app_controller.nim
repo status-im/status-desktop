@@ -138,7 +138,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
   result.settingsService)
   result.keychainService = keychain_service.newService(statusFoundation.events)
-  result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
+  result.accountsService = accounts_service.newService(statusFoundation.events, statusFoundation.threadpool, 
+    statusFoundation.fleetConfiguration)
   result.networkService = network_service.newService(statusFoundation.events, result.settingsService)
   result.contactsService = contacts_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, 

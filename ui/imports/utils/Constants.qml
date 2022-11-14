@@ -196,6 +196,15 @@ QtObject {
             readonly property int loops: 1
         }
 
+        readonly property QtObject processing: QtObject {
+            readonly property string pattern: "keycard/warning/img-%1"
+            readonly property int startImgIndexForTheFirstLoop: 0
+            readonly property int startImgIndexForOtherLoops: 18
+            readonly property int endImgIndex: 47
+            readonly property int duration: 1500
+            readonly property int loops: -1
+        }
+
         readonly property QtObject strongError: QtObject {
             readonly property string pattern: "keycard/strong_error/img-%1"
             readonly property int startImgIndexForTheFirstLoop: 0

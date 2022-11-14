@@ -89,6 +89,7 @@ type TokensPerAccountArgs* = ref object of Args
   accountsTokens*: OrderedTable[string, seq[WalletTokenDto]] # [wallet address, list of tokens]
 
 type KeycardActivityArgs* = ref object of Args
+  success*: bool
   keycardUid*: string
   keycardNewUid*: string
   keycardNewName*: string
@@ -113,6 +114,7 @@ QtObject:
     walletAccounts: OrderedTable[string, WalletAccountDto]
     timerStartTimeInSeconds: int64
     priceCache: TimedCache
+    processedKeyPair: KeyPairDto
 
   # Forward declaration
   proc buildAllTokens(self: Service, calledFromTimerOrInit = false)
@@ -547,6 +549,28 @@ QtObject:
     error "error: ", procName=procName, errDesription = errMsg
     return false
 
+  proc addMigratedKeyPairAsync*(self: Service, keyPair: KeyPairDto, keyStoreDir: string) =
+    let arg = AddMigratedKeyPairTaskArg(
+      tptr: cast[ByteAddress](addMigratedKeyPairTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onMigratedKeyPairAdded",
+      keyPair: keyPair,
+      keyStoreDir: keyStoreDir
+    )
+    self.processedKeyPair = keyPair
+    self.threadpool.start(arg)
+
+  proc onMigratedKeyPairAdded*(self: Service, response: string) {.slot.} =
+    var result = false
+    try:
+      let rpcResponse = Json.decode(response, RpcResponse[JsonNode])
+      result = self.responseHasNoErrors("addMigratedKeyPair", rpcResponse)
+    except Exception as e:
+      error "error handilng migrated keypair response", errDesription=e.msg
+    let data = KeycardActivityArgs(success: result, keyPair: self.processedKeyPair)
+    self.processedKeyPair = KeyPairDto()
+    self.events.emit(SIGNAL_NEW_KEYCARD_SET, data)
+
   proc addMigratedKeyPair*(self: Service, keyPair: KeyPairDto, keyStoreDir: string): bool =
     try:
       let response = backend.addMigratedKeyPair(
@@ -558,7 +582,7 @@ QtObject:
         )
       result = self.responseHasNoErrors("addMigratedKeyPair", response)
       if result:
-        self.events.emit(SIGNAL_NEW_KEYCARD_SET, KeycardActivityArgs(keyPair: keyPair))
+        self.events.emit(SIGNAL_NEW_KEYCARD_SET, KeycardActivityArgs(success: true, keyPair: keyPair))
     except Exception as e:
       error "error: ", procName="addMigratedKeyPair", errName = e.name, errDesription = e.msg
 

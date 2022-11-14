@@ -1,33 +1,36 @@
 type
   MigratingKeyPairState* = ref object of State
-    migrationSuccess: bool
+    authenticationDone: bool 
+    authenticationOk: bool
+    addingMigratedKeypairDone: bool
+    addingMigratedKeypairOk: bool
+    profileConversionDone: bool
+    profileConversionOk: bool
 
 proc newMigratingKeyPairState*(flowType: FlowType, backState: State): MigratingKeyPairState =
   result = MigratingKeyPairState()
   result.setup(flowType, StateType.MigratingKeyPair, backState)
-  result.migrationSuccess = false
+  result.authenticationDone = false
+  result.authenticationOk = false
+  result.addingMigratedKeypairDone = false
+  result.addingMigratedKeypairOk = false
+  result.profileConversionDone = false
+  result.profileConversionOk = false
 
 proc delete*(self: MigratingKeyPairState) =
   self.State.delete
 
 proc doMigration(self: MigratingKeyPairState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycard:
-    let password = controller.getPassword()
-    controller.setPassword("")
-    if controller.getSelectedKeyPairIsProfile():
-      self.migrationSuccess = controller.verifyPassword(password)
-      if not self.migrationSuccess:
-        return
-    let selectedKeyPairDto = controller.getSelectedKeyPairDto()
-    self.migrationSuccess = controller.addMigratedKeyPair(selectedKeyPairDto)
-    if not self.migrationSuccess:
-      return
-    if controller.getSelectedKeyPairIsProfile():
-      self.migrationSuccess = self.migrationSuccess and controller.convertSelectedKeyPairToKeycardAccount(password)
-    if not self.migrationSuccess:
-      return
-    controller.runStoreMetadataFlow(selectedKeyPairDto.keycardName, controller.getPin(), 
-      controller.getSelectedKeyPairWalletPaths())
+  let selectedKeyPairDto = controller.getSelectedKeyPairDto()
+  controller.addMigratedKeyPair(selectedKeyPairDto)
+
+proc doConversion(self: MigratingKeyPairState, controller: Controller) =
+  let password = controller.getPassword()
+  controller.convertSelectedKeyPairToKeycardAccount(password)
+
+proc runStoreMetadataFlow(self: MigratingKeyPairState, controller: Controller) =
+  let selectedKeyPairDto = controller.getSelectedKeyPairDto()
+  controller.runStoreMetadataFlow(selectedKeyPairDto.keycardName, controller.getPin(), controller.getSelectedKeyPairWalletPaths())
 
 method executePrePrimaryStateCommand*(self: MigratingKeyPairState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
@@ -37,13 +40,40 @@ method executePrePrimaryStateCommand*(self: MigratingKeyPairState, controller: C
       self.doMigration(controller)
 
 method executePreSecondaryStateCommand*(self: MigratingKeyPairState, controller: Controller) =
+  ## Secondary action is called after each async action during migration process. 
   if self.flowType == FlowType.SetupNewKeycard:
-    self.doMigration(controller)
+    if controller.getSelectedKeyPairIsProfile():
+      if not self.authenticationDone:
+        self.authenticationDone = true
+        let password = controller.getPassword()
+        self.authenticationOk = controller.verifyPassword(password)
+        if self.authenticationOk:
+          self.doMigration(controller)
+          return
+      if not self.addingMigratedKeypairDone:
+        self.addingMigratedKeypairDone = true
+        self.addingMigratedKeypairOk = controller.getAddingMigratedKeypairSuccess()
+        if self.addingMigratedKeypairOk:
+          self.doConversion(controller)
+          return
+      if not self.profileConversionDone:
+        self.profileConversionDone = true
+        self.profileConversionOk = controller.getConvertingProfileSuccess()
+        if self.profileConversionOk:
+          self.runStoreMetadataFlow(controller)
+    else:
+      if not self.addingMigratedKeypairDone:
+        self.addingMigratedKeypairDone = true
+        self.addingMigratedKeypairOk = controller.getAddingMigratedKeypairSuccess()
+        if self.addingMigratedKeypairOk:
+          self.runStoreMetadataFlow(controller)
 
 method getNextSecondaryState*(self: MigratingKeyPairState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycard:
-    if not self.migrationSuccess:
-      return createState(StateType.KeyPairMigrateFailure, self.flowType, nil)
+    if self.authenticationDone and not self.authenticationOk or
+      self.addingMigratedKeypairDone and not self.addingMigratedKeypairOk or
+      self.profileConversionDone and not self.profileConversionOk:
+        return createState(StateType.KeyPairMigrateFailure, self.flowType, nil)
 
 method resolveKeycardNextState*(self: MigratingKeyPairState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
