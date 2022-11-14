@@ -65,6 +65,9 @@ ApplicationWindow {
         ListElement {
             title: "UserListPanel"
         }
+        ListElement {
+             title: "ProfileFetchingView"
+        }
     }
 
     SplitView {
