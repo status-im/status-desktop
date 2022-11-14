@@ -311,6 +311,11 @@ Item {
         height: 440
     }
 
+    StatusStickersPopup {
+        id: statusStickersPopup
+        store: chatLayoutContainer.rootStore
+    }
+
     StatusMainLayout {
         id: appLayout
 
@@ -801,6 +806,7 @@ Item {
                         id: chatLayoutContainer
 
                         chatView.emojiPopup: statusEmojiPopup
+                        chatView.stickersPopup: statusStickersPopup
 
                         contactsStore: appMain.rootStore.contactStore
                         rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
@@ -899,6 +905,7 @@ Item {
 
                                     sourceComponent: ChatLayout {
                                         chatView.emojiPopup: statusEmojiPopup
+                                        chatView.stickersPopup: statusStickersPopup
 
                                         contactsStore: appMain.rootStore.contactStore
                                         rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel

@@ -33,8 +33,10 @@ Rectangle {
     property var store
 
     property var emojiPopup: null
+    property var stickersPopup: null
     // Use this to only enable the Connections only when this Input opens the Emoji popup
     property bool emojiPopupOpened: false
+    property bool stickersPopupOpened: false
     property bool closeGifPopupAfterSelection: true
 
     property bool emojiEvent: false
@@ -46,9 +48,6 @@ Rectangle {
     property bool isEdit: false
     property bool isContactBlocked: false
     property bool isActiveChannel: false
-
-    property var recentStickers
-    property var stickerPackList
 
     property int messageLimit: 2000
     property int messageLimitVisible: 200
@@ -149,6 +148,20 @@ Rectangle {
                 }
             }
         }
+        readonly property StateGroup stickersPopupTakeover: StateGroup {
+            states: State {
+                when: control.stickersPopupOpened
+
+                PropertyChanges {
+                    target: stickersPopup
+
+                    parent: control
+                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                    x: control.width - stickersPopup.width - Style.current.halfPadding
+                    y: -stickersPopup.height
+                }
+            }
+        }
 
         function copyMentions(start, end) {
             copiedMentionsPos = []
@@ -212,8 +225,8 @@ Rectangle {
     }
 
     function togglePopup(popup, btn) {
-        if (popup !== stickersPopup) {
-            stickersPopup.close()
+        if (popup !== control.stickersPopup) {
+            control.stickersPopup.close()
         }
 
         if (popup !== gifPopup) {
@@ -245,6 +258,21 @@ Rectangle {
         onClosed: {
             emojiBtn.highlighted = false
             control.emojiPopupOpened = false
+        }
+    }
+
+    Connections {
+        enabled: control.stickersPopupOpened
+        target: control.stickersPopup
+
+        onStickerSelected: {
+            control.stickerSelected(hashId, packId, url)
+            control.hideExtendedArea();
+            messageInputField.forceActiveFocus();
+        }
+        onClosed: {
+            stickersBtn.highlighted = false
+            control.stickersPopupOpened = false
         }
     }
 
@@ -955,24 +983,6 @@ Rectangle {
         }
     }
 
-    StatusStickersPopup {
-        id: stickersPopup
-        x: control.width - width - Style.current.halfPadding
-        y: -height
-        store: control.store
-        enabled: !!control.recentStickers && !!control.stickerPackList
-        recentStickers: control.recentStickers
-        stickerPackList: control.stickerPackList
-        onStickerSelected: {
-            control.stickerSelected(hashId, packId, url)
-            control.hideExtendedArea();
-            messageInputField.forceActiveFocus();
-        }
-        onClosed: {
-            stickersBtn.highlighted = false
-        }
-    }
-
     RowLayout {
         id: layout
         anchors.fill: parent
@@ -1407,7 +1417,11 @@ Rectangle {
                                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                                 visible: !isEdit && emojiBtn.visible
                                 color: "transparent"
-                                onClicked: togglePopup(stickersPopup, stickersBtn)
+                                onClicked: {
+                                    control.stickersPopupOpened = true
+                                    
+                                    togglePopup(control.stickersPopup, stickersBtn)
+                                }
                             }
                         }
                     }
