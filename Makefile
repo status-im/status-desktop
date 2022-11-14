@@ -131,9 +131,9 @@ $(BOTTLES_DIR):
 bottles: $(BOTTLES)
 endif
 
-deps: check-qt-dir | deps-common bottles
+deps: | check-qt-dir deps-common bottles
 
-update: check-qt-dir | update-common
+update: | check-qt-dir update-common
 
 QML_DEBUG ?= false
 QML_DEBUG_PORT ?= 49152
@@ -290,7 +290,7 @@ endif
 
 UI_RESOURCES := resources.rcc
 
-$(UI_RESOURCES): check-qt-dir $(UI_SOURCES)
+$(UI_RESOURCES): $(UI_SOURCES) | check-qt-dir
 	echo -e $(BUILD_MSG) "resources.rcc"
 	rm -f ./resources.rcc
 	rm -f ./ui/resources.qrc
@@ -303,7 +303,7 @@ TS_SOURCES := $(shell find ui/i18n -iname '*.ts') # ui/i18n/qml_*.ts
 QM_BINARIES := $(shell find ui/i18n -iname "*.ts" | sed 's/\.ts/\.qm/' | sed 's/ui/bin/') # bin/i18n/qml_*.qm
 
 $(QM_BINARIES): TS_FILE = $(shell echo $@ | sed 's/\.qm/\.ts/' | sed 's/bin/ui/')
-$(QM_BINARIES): check-qt-dir $(TS_SOURCES)
+$(QM_BINARIES): $(TS_SOURCES) | check-qt-dir
 	mkdir -p bin/i18n
 	lrelease -removeidentical $(TS_FILE) -qm $@
 
@@ -358,7 +358,7 @@ else
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): check-qt-dir $(NIM_SOURCES) $(DOTHERSIDE) | $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
@@ -401,7 +401,7 @@ ifeq ($(detected_OS),Linux)
  FCITX5_QT_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
 endif
 
-$(FCITX5_QT): check-qt-dir | deps
+$(FCITX5_QT): | check-qt-dir deps
 	echo -e $(BUILD_MSG) "fcitx5-qt"
 	+ cd vendor/fcitx5-qt && \
 		mkdir -p build && \
