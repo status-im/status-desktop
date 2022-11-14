@@ -33,6 +33,7 @@ include ../../common/json_utils
 const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
 const SIGNAL_TRANSACTION_SENT* = "transactionSent"
 const SIGNAL_SUGGESTED_ROUTES_READY* = "suggestedRoutesReady"
+const SIGNAL_PENDING_TX_COMPLETED* = "pendingTransactionCompleted"
 
 type
   EstimatedTime* {.pure.} = enum
@@ -64,6 +65,10 @@ type
   SuggestedRoutesArgs* = ref object of Args
     suggestedRoutes*: string
 
+type
+  PendingTxCompletedArgs* = ref object of Args
+    txHash*: string
+
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
@@ -73,7 +78,7 @@ QtObject:
     tokenService: token_service.Service
 
   # Forward declaration
-  proc checkPendingTransactions*(self: Service)
+  proc checkPendingTransactions*(self: Service): seq[TransactionDto]
   proc checkPendingTransactions*(self: Service, address: string)
 
   proc delete*(self: Service) =
@@ -103,6 +108,23 @@ QtObject:
 
   proc init*(self: Service) =
     self.doConnect()
+
+  proc watchTransactionResult*(self: Service, watchTxResult: string) {.slot.} =
+    let watchTxResult = parseJson(watchTxResult)
+    let txHash = watchTxResult["txHash"].getStr
+    let success = watchTxResult["isSuccessfull"].getBool
+    if(success):
+      self.events.emit(SIGNAL_PENDING_TX_COMPLETED, PendingTxCompletedArgs(txHash: txHash))
+
+  proc watchTransaction*(self: Service, chainId: int, transactionHash: string) =
+      let arg = WatchTransactionTaskArg(
+        chainId: chainId,
+        txHash: transactionHash,
+        tptr: cast[ByteAddress](watchTransactionsTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "watchTransactionResult",
+      )
+      self.threadpool.start(arg)
   
   proc getTransactionReceipt*(self: Service, chainId: int, transactionHash: string): JsonNode =
     try:
@@ -119,19 +141,19 @@ QtObject:
       let errDescription = e.msg
       error "error deleting pending transaction: ", errDescription
   
-  proc confirmTransactionStatus(self: Service, pendingTransactions: JsonNode) =
-    for trx in pendingTransactions.getElems():
-      let transactionReceipt = self.getTransactionReceipt(trx["network_id"].getInt, trx["hash"].getStr)
+  proc confirmTransactionStatus(self: Service, pendingTransactions: seq[TransactionDto]) =
+    for trx in pendingTransactions:
+      let transactionReceipt = self.getTransactionReceipt(trx.chainId, trx.txHash)
       if transactionReceipt != nil and transactionReceipt.kind != JNull:
-        self.deletePendingTransaction(trx["network_id"].getInt, trx["hash"].getStr)
+        self.deletePendingTransaction(trx.chainId, trx.txHash)
         let ev = TransactionMinedArgs(
-                  data: trx["additionalData"].getStr,
-                  transactionHash: trx["hash"].getStr,
-                  chainId: trx["network_id"].getInt,
+                  data: trx.additionalData,
+                  transactionHash: trx.txHash,
+                  chainId: trx.chainId,
                   success: transactionReceipt{"status"}.getStr == "0x1",
                   revertReason: ""
                 )
-        self.events.emit(parseEnum[PendingTransactionTypeDto](trx["type"].getStr).event, ev)
+        self.events.emit(parseEnum[PendingTransactionTypeDto](trx.typeValue).event, ev)
 
   proc getPendingTransactions*(self: Service): JsonNode =
     try:
@@ -151,14 +173,19 @@ QtObject:
       let errDescription = e.msg
       error "error getting pending txs by address: ", errDescription, address
 
-  proc checkPendingTransactions*(self: Service) =
+  proc checkPendingTransactions*(self: Service): seq[TransactionDto] =
     # TODO move this to a thread
     let pendingTransactions = self.getPendingTransactions()
     if (pendingTransactions.kind == JArray and pendingTransactions.len > 0):
-      self.confirmTransactionStatus(pendingTransactions)
+      let pendingTxs = pendingTransactions.getElems().map(x => x.toPendingTransactionDto())
+      self.confirmTransactionStatus(pendingTxs)
+      for tx in pendingTxs:
+        self.watchTransaction(tx.chainId, tx.txHash)
+      return pendingTxs
 
   proc checkPendingTransactions*(self: Service, address: string) =
-    self.confirmTransactionStatus(self.getPendingOutboundTransactionsByAddress(address))
+    let pendingTxs = self.getPendingOutboundTransactionsByAddress(address).getElems().map(x => x.toPendingTransactionDto())
+    self.confirmTransactionStatus(pendingTxs)
 
   proc trackPendingTransaction*(self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string, 
     data: string, chainId: int) =
@@ -337,6 +364,11 @@ QtObject:
         paths,
         password,
       )
+      # Watch for this transaction to be completed
+      if response.result{"hashes"} != nil:
+        for hash in response.result["hashes"][$chainID]:
+          let txHash = hash.getStr
+          self.watchTransaction(chainID, txHash)
       let output = %* {"result": response.result{"hashes"}, "success":true, "uuid": %uuid }
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
     except Exception as e:

@@ -1,6 +1,7 @@
 import json, strutils, stint, json_serialization, strformat
 include  ../../common/json_utils
 import ../network/dto
+import ../../common/conversion as service_conversion
 
 type
   PendingTransactionTypeDto* {.pure.} = enum
@@ -53,7 +54,8 @@ type
     baseGasFees*: string
     totalFees*: string
     maxTotalFees*: string
-
+    additionalData*: string
+    symbol*: string
 
 proc getTotalFees(tip: string, baseFee: string, gasUsed: string, maxFee: string): string =
     var maxFees = stint.fromHex(Uint256, maxFee)
@@ -92,6 +94,22 @@ proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   discard jsonObj.getProp("base_gas_fee", result.baseGasFees)
   result.totalFees = getTotalFees(result.maxPriorityFeePerGas, result.baseGasFees, result.gasUsed, result.maxFeePerGas)
   result.maxTotalFees = getMaxTotalFees(result.maxFeePerGas, result.gasLimit)
+
+proc toPendingTransactionDto*(jsonObj: JsonNode): TransactionDto =
+  result = TransactionDto()
+  result.value = "0x" & toHex(toUInt256(parseFloat(jsonObj{"value"}.getStr)))
+  result.timestamp = u256(jsonObj{"timestamp"}.getInt)
+  discard jsonObj.getProp("hash", result.txHash)
+  discard jsonObj.getProp("from", result.fromAddress)
+  discard jsonObj.getProp("to", result.to)
+  discard jsonObj.getProp("gasPrice", result.gasPrice)
+  discard jsonObj.getProp("gasLimit", result.gasLimit)
+  discard jsonObj.getProp("type", result.typeValue)
+  discard jsonObj.getProp("network_id", result.chainId)
+  discard jsonObj.getProp("multi_transaction_id", result.multiTransactionID)
+  discard jsonObj.getProp("additionalData", result.additionalData)
+  discard jsonObj.getProp("data", result.input)
+  discard jsonObj.getProp("symbol", result.symbol)
 
 proc cmpTransactions*(x, y: TransactionDto): int =
   # Sort proc to compare transactions from a single account.

@@ -119,7 +119,7 @@ ColumnLayout {
             networkIcon: modelData !== undefined && !!modelData ? RootStore.getNetworkIcon(modelData.chainId) : ""
             networkColor: modelData !== undefined && !!modelData ? RootStore.getNetworkColor(modelData.chainId) : ""
             networkName: modelData !== undefined && !!modelData ? RootStore.getNetworkShortName(modelData.chainId) : ""
-            symbol: modelData !== undefined && !!modelData ? RootStore.findTokenSymbolByAddress(modelData.contract) : ""
+            symbol: modelData !== undefined && !!modelData ? !!modelData.symbol ? modelData.symbol : RootStore.findTokenSymbolByAddress(modelData.contract) : ""
             transferStatus: modelData !== undefined && !!modelData ? RootStore.hex2Dec(modelData.txStatus) : ""
             shortTimeStamp: modelData !== undefined && !!modelData ? Utils.formatShortTime(modelData.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat) : ""
             savedAddressName: modelData !== undefined && !!modelData ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""

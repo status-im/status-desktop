@@ -69,9 +69,6 @@ QtObject:
     self.setHistoryFetchState(address, true)
     self.delegate.loadTransactions(address, toBlock, limit, loadMore)
 
-  proc checkRecentHistory*(self: View) {.slot.} =
-    self.delegate.checkRecentHistory()
-
   proc setTrxHistoryResult*(self: View, transactions: seq[TransactionDto], address: string, wasFetchMore: bool) =
     if not self.models.hasKey(address):
       self.models[address] = newModel()
@@ -167,3 +164,9 @@ QtObject:
     return self.delegate.getLastTxBlockNumber()
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: string) {.signal.}
+
+  proc setPendingTx*(self: View, pendingTx: seq[TransactionDto]) =
+    for tx in pendingTx:
+      if not self.models.hasKey(tx.fromAddress):
+        self.models[tx.fromAddress] = newModel()
+      self.models[tx.fromAddress].addNewTransactions(@[tx], false)
