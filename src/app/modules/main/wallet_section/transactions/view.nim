@@ -167,3 +167,9 @@ QtObject:
     return self.delegate.getLastTxBlockNumber()
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: string) {.signal.}
+
+  proc setPendingTx*(self: View, pendingTx: seq[TransactionDto]) =
+    for tx in pendingTx:
+      if not self.models.hasKey(tx.fromAddress):
+        self.models[tx.fromAddress] = newModel()
+      self.models[tx.fromAddress].addNewTransactions(@[tx], false)

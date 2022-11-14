@@ -27,6 +27,7 @@ type
     baseGasFees: string
     totalFees: string
     maxTotalFees: string
+    symbol: string
 
 proc initItem*(
   id: string,
@@ -53,7 +54,8 @@ proc initItem*(
   isTimeStamp: bool,
   baseGasFees: string,
   totalFees: string,
-  maxTotalFees: string
+  maxTotalFees: string,
+  symbol: string
 ): Item =
   result.id = id
   result.typ = typ
@@ -80,6 +82,7 @@ proc initItem*(
   result.baseGasFees = baseGasFees
   result.totalFees = totalFees
   result.maxTotalFees = maxTotalFees
+  result.symbol = symbol
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
@@ -108,6 +111,7 @@ proc `$`*(self: Item): string =
     baseGasFees: {self.baseGasFees},
     totalFees: {self.totalFees},
     maxTotalFees: {self.maxTotalFees},
+    symbol: {self.symbol},
     ]"""
 
 proc getId*(self: Item): string =
@@ -183,4 +187,7 @@ proc  getTotalFees*(self: Item): string =
   return self.totalFees
 
 proc  getMaxTotalFees*(self: Item): string =
-  return self.maxTotalFees
+  return self.maxTotalFees  
+
+proc  getSymbol*(self: Item): string =
+  return self.symbol

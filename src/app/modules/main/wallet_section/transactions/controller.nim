@@ -42,6 +42,7 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   self.events.on(SignalType.Wallet.event) do(e:Args):
     var data = WalletSignal(e)
+    echo "SignalType.Wallet.event >>>>>>>>>",data.eventType
     case data.eventType:
       of "new-transfers":
         for account in data.accounts:
@@ -81,8 +82,11 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_SUGGESTED_ROUTES_READY) do(e:Args):
     self.delegate.suggestedRoutesReady(SuggestedRoutesArgs(e).suggestedRoutes)
 
-proc checkPendingTransactions*(self: Controller) =
-  self.transactionService.checkPendingTransactions()
+  self.events.on(SIGNAL_DELETE_PENDING_TX) do(e:Args):
+    self.walletAccountService.checkRecentHistory()
+
+proc checkPendingTransactions*(self: Controller): seq[TransactionDto] =
+  return self.transactionService.checkPendingTransactions()
 
 proc checkRecentHistory*(self: Controller) =
   self.walletAccountService.checkRecentHistory()
