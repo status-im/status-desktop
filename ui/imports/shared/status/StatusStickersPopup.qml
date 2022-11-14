@@ -15,11 +15,12 @@ import AppLayouts.Chat.stores 1.0
 Popup {
     id: root
     property var store
-    property var recentStickers: StickerData {}
-    property var stickerPackList: StickerPackData {}
+    property var recentStickers: store.stickersModuleInst.recent
+    property var stickerPackList: store.stickersModuleInst.stickerPacks
     signal stickerSelected(string hashId, string packId, string url)
     property int installedPacksCount: stickersModule.numInstalledStickerPacks
     property bool stickerPacksLoaded: false
+    enabled: !!recentStickers && !!stickerPackList
     width: 360
     height: 440
     modal: false

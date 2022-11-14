@@ -146,8 +146,6 @@ Page {
                 visible: membersSelector.model.count > 0
                 chatType: membersSelector.model.count === 1? Constants.chatType.oneToOne : Constants.chatType.privateGroupChat
                 emojiPopup: root.emojiPopup
-                recentStickers: root.rootStore.stickersModuleInst.recent
-                stickerPackList: root.rootStore.stickersModuleInst.stickerPacks
                 closeGifPopupAfterSelection: true
                 onSendTransactionCommandButtonClicked: {
                     root.rootStore.createChatStartSendTransactionProcess = true;

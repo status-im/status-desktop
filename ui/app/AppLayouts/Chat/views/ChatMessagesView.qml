@@ -33,6 +33,7 @@ Item {
     property string channelEmoji
 
     property var emojiPopup
+    property var stickersPopup
 
     property bool stickersLoaded: false
     property alias chatLogView: chatLogView
@@ -265,6 +266,7 @@ Item {
             contactsStore: root.contactsStore
             channelEmoji: root.channelEmoji
             emojiPopup: root.emojiPopup
+            stickersPopup: root.stickersPopup
             chatLogView: ListView.view
 
             isActiveChannel: root.isActiveChannel
