@@ -55,9 +55,7 @@ pipeline {
   stages {
     stage('Deps') {
       steps { 
-        /* trigger fetching of git submodules */
-        sh 'make check-pkg-target-macos'
-        /* TODO: Re-add caching of Nim compiler. */
+        sh 'make update'
         withCredentials([
           usernamePassword( /* For fetching HomeBrew bottles. */
             credentialsId: "status-im-auto-pkgs",
