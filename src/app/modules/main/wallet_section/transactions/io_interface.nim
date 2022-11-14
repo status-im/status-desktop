@@ -16,7 +16,7 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method checkRecentHistory*(self: AccessInterface) {.base.} =
+method checkRecentHistory*(self: AccessInterface, calledFromTimerOrInit: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method switchAccount*(self: AccessInterface, accountIndex: int) {.base.} =

@@ -81,11 +81,14 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_SUGGESTED_ROUTES_READY) do(e:Args):
     self.delegate.suggestedRoutesReady(SuggestedRoutesArgs(e).suggestedRoutes)
 
-proc checkPendingTransactions*(self: Controller) =
-  self.transactionService.checkPendingTransactions()
+  self.events.on(SIGNAL_PENDING_TX_COMPLETED) do(e:Args):
+    self.walletAccountService.checkRecentHistory()
 
-proc checkRecentHistory*(self: Controller) =
-  self.walletAccountService.checkRecentHistory()
+proc checkPendingTransactions*(self: Controller): seq[TransactionDto] =
+  return self.transactionService.checkPendingTransactions()
+
+proc checkRecentHistory*(self: Controller, calledFromTimerOrInit = false) =
+  self.walletAccountService.checkRecentHistory(calledFromTimerOrInit)
 
 proc getWalletAccounts*(self: Controller): seq[WalletAccountDto] =
   self.walletAccountService.getWalletAccounts()

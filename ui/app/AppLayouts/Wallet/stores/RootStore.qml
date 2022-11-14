@@ -160,10 +160,6 @@ QtObject {
         return globalUtils.hex2Dec(value)
     }
 
-    function checkRecentHistory() {
-        walletSectionTransactions.checkRecentHistory()
-    }
-
      function fetchCollectionCollectiblesList(slug) {
         walletSectionCollectiblesCollectibles.fetch(slug)
     }

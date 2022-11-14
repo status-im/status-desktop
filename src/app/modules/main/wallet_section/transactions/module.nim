@@ -29,7 +29,6 @@ type
     tmpSendTransactionDetails: TmpSendTransactionDetails
 
 # Forward declarations
-method checkRecentHistory*(self: Module)
 method getWalletAccounts*(self: Module): seq[WalletAccountDto]
 method loadTransactions*(self: Module, address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false)
 
@@ -59,20 +58,17 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  self.checkRecentHistory()
+  self.controller.checkRecentHistory(calledFromTimerOrInit = true)
   let accounts = self.getWalletAccounts()
 
   self.moduleLoaded = true
   self.delegate.transactionsModuleDidLoad()
 
-  self.controller.checkPendingTransactions()
+  self.view.setPendingTx(self.controller.checkPendingTransactions())
 
 method switchAccount*(self: Module, accountIndex: int) =
   let walletAccount = self.controller.getWalletAccount(accountIndex)
   self.view.switchAccount(walletAccount)
-
-method checkRecentHistory*(self: Module) =
-  self.controller.checkRecentHistory()
 
 method getWalletAccounts*(self: Module): seq[WalletAccountDto] =
   self.controller.getWalletAccounts()
@@ -146,6 +142,7 @@ method onUserAuthenticated*(self: Module, password: string) =
 
 method transactionWasSent*(self: Module, result: string) =
   self.view.transactionWasSent(result)
+  self.view.setPendingTx(self.controller.checkPendingTransactions())
 
 method suggestedFees*(self: Module, chainId: int): string = 
   return self.controller.suggestedFees(chainId)

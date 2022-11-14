@@ -565,8 +565,6 @@ QtObject {
     readonly property int fetchRangeLast3Days: 259200
     readonly property int fetchRangeLast7Days: 604800
 
-    readonly property int walletFetchRecentHistoryInterval: 1200000 // 20 mins
-
     readonly property int limitLongChatText: 500
     readonly property int limitLongChatTextCompactMode: 1000
 
