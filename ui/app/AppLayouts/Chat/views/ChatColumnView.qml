@@ -32,6 +32,7 @@ Item {
     property var rootStore
     property var contactsStore
     property var emojiPopup
+    property var stickersPopup
 
     // Not Refactored Yet
     //property int chatGroupsListViewCount: 0
@@ -215,6 +216,7 @@ Item {
                             rootStore: root.rootStore
                             contactsStore: root.contactsStore
                             emojiPopup: root.emojiPopup
+                            stickersPopup: root.stickersPopup
                             sendTransactionNoEnsModal: cmpSendTransactionNoEns
                             receiveTransactionModal: cmpReceiveTransaction
                             sendTransactionWithEnsModal: cmpSendTransactionWithEns
@@ -263,6 +265,7 @@ Item {
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
                         emojiPopup: root.emojiPopup
+                        stickersPopup: root.stickersPopup
                         sendTransactionNoEnsModal: cmpSendTransactionNoEns
                         receiveTransactionModal: cmpReceiveTransaction
                         sendTransactionWithEnsModal: cmpSendTransactionWithEns

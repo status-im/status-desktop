@@ -36,6 +36,7 @@ ColumnLayout {
     property var contactsStore
     property bool isActiveChannel: false
     property var emojiPopup
+    property var stickersPopup
     property alias textInputField: chatInput
     property UsersStore usersStore: UsersStore {}
 
@@ -145,6 +146,7 @@ ColumnLayout {
             messageContextMenu: contextmenu
             messageStore: messageStore
             emojiPopup: root.emojiPopup
+            stickersPopup: root.stickersPopup
             usersStore: root.usersStore
             stickersLoaded: root.stickersLoaded
             isChatBlocked: root.isBlocked
@@ -183,11 +185,10 @@ ColumnLayout {
 
                 messageContextMenu: contextmenu
                 emojiPopup: root.emojiPopup
+                stickersPopup: root.stickersPopup
                 isContactBlocked: root.isBlocked
                 isActiveChannel: root.isActiveChannel
                 anchors.bottom: parent.bottom
-                recentStickers: root.rootStore.stickersModuleInst.recent
-                stickerPackList: root.rootStore.stickersModuleInst.stickerPacks
                 chatType: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown
 
                 Binding on chatInputPlaceholder {

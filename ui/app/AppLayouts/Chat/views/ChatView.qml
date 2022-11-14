@@ -31,6 +31,7 @@ StatusSectionLayout {
 
     property Component membershipRequestPopup
     property var emojiPopup
+    property var stickersPopup
     property bool stickersLoaded: false
 
     signal communityInfoButtonClicked()
@@ -84,6 +85,7 @@ StatusSectionLayout {
         contactsStore: root.contactsStore
         stickersLoaded: root.stickersLoaded
         emojiPopup: root.emojiPopup
+        stickersPopup: root.stickersPopup
         onOpenStickerPackPopup: {
             Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId} )
         }

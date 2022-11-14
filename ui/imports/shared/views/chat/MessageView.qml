@@ -29,6 +29,7 @@ Loader {
 
     property var chatLogView
     property var emojiPopup
+    property var stickersPopup
 
     // Once we redo qml we will know all section/chat related details in each message form the parent components
     // without an explicit need to fetch those details via message store/module.
@@ -678,6 +679,7 @@ Loader {
                     store: root.rootStore
                     usersStore: root.usersStore
                     emojiPopup: root.emojiPopup
+                    stickersPopup: root.stickersPopup
                     messageContextMenu: root.messageContextMenu
 
                     chatType: root.messageStore.getChatType()
