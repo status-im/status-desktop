@@ -78,7 +78,6 @@ Item {
         selectedTextColor: Theme.palette.directColor1
         selectionColor: Theme.palette.primaryColor3
         color: Theme.palette.directColor1
-        verticalAlignment: TextEdit.AlignVCenter
         font.family: Theme.palette.baseFont.name
         font.pixelSize: Theme.primaryTextFontSize
         textFormat: Text.RichText
