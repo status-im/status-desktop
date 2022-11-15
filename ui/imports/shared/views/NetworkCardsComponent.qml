@@ -33,7 +33,7 @@ Item {
     property bool interactive: true
     property var weiToEth: function(wei) {}
 
-    signal reCalculateSuggestedRoute()
+    property var reCalculateSuggestedRoute: function() {}
 
     QtObject {
         id: d
