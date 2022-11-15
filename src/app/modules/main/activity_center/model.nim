@@ -7,6 +7,7 @@ type
     ChatId
     CommunityId
     MembershipStatus
+    VerificationStatus
     SectionId
     Name
     NotificationType
@@ -79,6 +80,7 @@ QtObject:
       of NotifRoles.ChatId: result = newQVariant(activityNotificationItem.chatId)
       of NotifRoles.CommunityId: result = newQVariant(activityNotificationItem.communityId)
       of NotifRoles.MembershipStatus: result = newQVariant(activityNotificationItem.membershipStatus.int)
+      of NotifRoles.VerificationStatus: result = newQVariant(activityNotificationItem.verificationStatus.int)
       of NotifRoles.SectionId: result = newQVariant(activityNotificationItem.sectionId)
       of NotifRoles.Name: result = newQVariant(activityNotificationItem.name)
       of NotifRoles.Author: result = newQVariant(activityNotificationItem.author)
@@ -101,6 +103,7 @@ QtObject:
       NotifRoles.ChatId.int:"chatId",
       NotifRoles.CommunityId.int:"communityId",
       NotifRoles.MembershipStatus.int: "membershipStatus",
+      NotifRoles.VerificationStatus.int: "verificationStatus",
       NotifRoles.SectionId.int: "sectionId",
       NotifRoles.Name.int: "name",
       NotifRoles.Author.int: "author",

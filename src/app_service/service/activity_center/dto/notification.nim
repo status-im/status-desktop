@@ -2,6 +2,7 @@
 
 import json, strformat, strutils, stint, json_serialization
 import ../../message/dto/message
+import ../../contacts/dto/contacts
 
 include ../../../common/json_utils
 include ../../../common/utils
@@ -30,10 +31,12 @@ type ActivityCenterNotificationDto* = ref object of RootObj
   chatId*: string
   communityId*: string
   membershipStatus*: ActivityCenterMembershipStatus
+  verificationStatus*: VerificationStatus
   name*: string
   author*: string
   notificationType*: ActivityCenterNotificationType
   message*: MessageDto
+  replyMessage*: MessageDto
   timestamp*: int64
   read*: bool
   dismissed*: bool
@@ -45,6 +48,7 @@ proc `$`*(self: ActivityCenterNotificationDto): string =
     chatId: {self.chatId},
     communityId: {self.communityId},
     membershipStatus: {self.membershipStatus},
+    contactVerificationStatus: {self.verificationStatus},
     author: {self.author},
     notificationType: {$self.notificationType.int},
     timestamp: {self.timestamp},
@@ -52,6 +56,7 @@ proc `$`*(self: ActivityCenterNotificationDto): string =
     dismissed: {$self.dismissed},
     accepted: {$self.accepted},
     message: {self.message}
+    replyMessage: {self.replyMessage}
     )"""
 
 proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotificationDto =
@@ -66,6 +71,13 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
     (membershipStatusInt >= ord(low(ActivityCenterMembershipStatus)) or
     membershipStatusInt <= ord(high(ActivityCenterMembershipStatus)))):
       result.membershipStatus = ActivityCenterMembershipStatus(membershipStatusInt)
+
+  result.verificationStatus = VerificationStatus.Unverified
+  var verificationStatusInt: int
+  if (jsonObj.getProp("contactVerificationStatus", verificationStatusInt) and
+    (verificationStatusInt >= ord(low(VerificationStatus)) or
+    verificationStatusInt <= ord(high(VerificationStatus)))):
+      result.verificationStatus = VerificationStatus(verificationStatusInt)
 
   discard jsonObj.getProp("author", result.author)
 
@@ -86,6 +98,9 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   elif result.notificationType == ActivityCenterNotificationType.NewOneToOne and
     jsonObj.contains("lastMessage") and jsonObj{"lastMessage"}.kind != JNull:
     result.message = jsonObj{"lastMessage"}.toMessageDto()
+
+  if jsonObj.contains("replyMessage") and jsonObj{"replyMessage"}.kind != JNull:
+    result.replyMessage = jsonObj{"replyMessage"}.toMessageDto()
 
 
 proc parseActivityCenterNotifications*(rpcResult: JsonNode): (string, seq[ActivityCenterNotificationDto]) =

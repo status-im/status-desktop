@@ -2,6 +2,7 @@ import strformat, stint
 import ../../shared_models/message_item_qobject
 import ../../../../app_service/service/activity_center/dto/notification
 import ../../../../app_service/service/chat/dto/chat
+import ../../../../app_service/service/contacts/dto/contacts
 
 const CONTACT_REQUEST_PENDING_STATE = 1
 
@@ -10,6 +11,7 @@ type Item* = ref object
   chatId: string
   communityId: string
   membershipStatus: ActivityCenterMembershipStatus
+  verificationStatus: VerificationStatus
   sectionId: string
   name: string
   author: string
@@ -27,6 +29,7 @@ proc initItem*(
   chatId: string,
   communityId: string,
   membershipStatus: ActivityCenterMembershipStatus,
+  verificationStatus: VerificationStatus,
   sectionId: string,
   name: string,
   author: string,
@@ -44,6 +47,7 @@ proc initItem*(
   result.chatId = chatId
   result.communityId = communityId
   result.membershipStatus = membershipStatus
+  result.verificationStatus = verificationStatus
   result.sectionId = sectionId
   result.name = name
   result.author = author
@@ -63,6 +67,7 @@ proc `$`*(self: Item): string =
     chatId: {$self.chatId},
     communityId: {$self.communityId},
     membershipStatus: {$self.membershipStatus.int},
+    verificationStatus: {$self.verificationStatus.int},
     sectionId: {$self.sectionId},
     author: {$self.author},
     notificationType: {$self.notificationType.int},
@@ -86,7 +91,6 @@ proc author*(self: Item): string =
 proc chatId*(self: Item): string =
   return self.chatId
 
-
 proc chatType*(self: Item): ChatType =
   return self.chatType
 
@@ -95,6 +99,9 @@ proc communityId*(self: Item): string =
 
 proc membershipStatus*(self: Item): ActivityCenterMembershipStatus =
   return self.membershipStatus
+
+proc verificationStatus*(self: Item): VerificationStatus =
+  return self.verificationStatus
 
 proc sectionId*(self: Item): string =
   return self.sectionId
@@ -129,6 +136,9 @@ proc isNotReadOrActiveCTA*(self: Item): bool =
            self.membershipStatus == ActivityCenterMembershipStatus.Pending) or
           (self.notificationType == ActivityCenterNotificationType.ContactRequest and
            self.messageItem.contactRequestState == CONTACT_REQUEST_PENDING_STATE) or
+          (self.notificationType == ActivityCenterNotificationType.ContactVerification and
+           (self.verificationStatus == VerificationStatus.Verifying or
+            self.verificationStatus == VerificationStatus.Verified)) or
           (self.notificationType == ActivityCenterNotificationType.Mention and
            not self.read) or
           (self.notificationType == ActivityCenterNotificationType.Reply and

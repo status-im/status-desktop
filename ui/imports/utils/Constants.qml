@@ -383,6 +383,7 @@ QtObject {
         readonly property int declined: 3
         readonly property int canceled: 4
         readonly property int trusted: 5
+        readonly property int untrustworthy: 6
     }
 
     readonly property QtObject contactsPanelUsage: QtObject {
@@ -577,6 +578,7 @@ QtObject {
     readonly property int activityCenterNotificationTypeCommunityRequest: 7
     readonly property int activityCenterNotificationTypeCommunityMembershipRequest: 8
     readonly property int activityCenterNotificationTypeCommunityKicked: 9
+    readonly property int activityCenterNotificationTypeContactVerification: 10
 
     readonly property int activityCenterMembershipStatusPending: 1
     readonly property int activityCenterMembershipStatusAccepted: 2
