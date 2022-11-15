@@ -117,7 +117,7 @@ QtObject:
           return token
     except Exception as e:
       error "Error finding token by symbol", msg = e.msg
-    
+
   proc findTokenByAddress*(self: Service, network: NetworkDto, address: Address): TokenDto =
     for token in self.tokens[network.chainId]:
       if token.address == address:
@@ -242,31 +242,43 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-# Historical Balance
+  # Callback to process the response of fetchHistoricalBalanceForTokenAsJson call
   proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.} =
-    # TODO
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
-      info "blance history response is not a json object"
+      warn "blance history response is not a json object"
       return
 
     self.events.emit(SIGNAL_BALANCE_HISTORY_DATA_READY, TokenBalanceHistoryDataArgs(
       result: response
     ))
 
-  proc fetchHistoricalBalanceForTokenAsJson*(self: Service, address: string, symbol: string, timeInterval: BalanceHistoryTimeInterval) =
+  proc fetchHistoricalBalanceForTokenAsJson*(self: Service, address: string, tokenSymbol: string, currencySymbol: string, timeInterval: BalanceHistoryTimeInterval) =
+    # create an empty list of chain ids
+    var chainIds: seq[int] = @[]
     let networks = self.networkService.getNetworks()
     for network in networks:
-      if network.enabled and network.nativeCurrencySymbol == symbol:
-        let arg = GetTokenBalanceHistoryDataTaskArg(
-          tptr: cast[ByteAddress](getTokenBalanceHistoryDataTask),
-          vptr: cast[ByteAddress](self.vptr),
-          slot: "tokenBalanceHistoryDataResolved",
-          chainId: network.chainId,
-          address: address,
-          symbol: symbol,
-          timeInterval: timeInterval
-        )
-        self.threadpool.start(arg)
-        return
-    error "faild to find a network with the symbol", symbol
+      if network.enabled:
+        if network.nativeCurrencySymbol == tokenSymbol:
+          chainIds.add(network.chainId)
+        else:
+          for token in self.tokens[network.chainId]:
+            if token.symbol == tokenSymbol:
+              chainIds.add(network.chainId)
+
+    if chainIds.len == 0:
+      error "faild to find a network with the symbol", tokenSymbol
+      return
+
+    let arg = GetTokenBalanceHistoryDataTaskArg(
+      tptr: cast[ByteAddress](getTokenBalanceHistoryDataTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "tokenBalanceHistoryDataResolved",
+      chainIds: chainIds,
+      address: address,
+      tokenSymbol: tokenSymbol,
+      currencySymbol: currencySymbol,
+      timeInterval: timeInterval
+    )
+    self.threadpool.start(arg)
+    return

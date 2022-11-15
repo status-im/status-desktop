@@ -66,9 +66,10 @@ type
 
 type
   GetTokenBalanceHistoryDataTaskArg = ref object of QObjectTaskArg
-    chainId: int
+    chainIds: seq[int]
     address: string
-    symbol: string
+    tokenSymbol: string
+    currencySymbol: string
     timeInterval: BalanceHistoryTimeInterval
 
 const getTokenBalanceHistoryDataTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
@@ -76,12 +77,13 @@ const getTokenBalanceHistoryDataTask*: Task = proc(argEncoded: string) {.gcsafe,
   var response = %*{}
   try:
     # status-go time intervals are starting from 1
-    response = backend.getBalanceHistory(arg.chainId, arg.address, int(arg.timeInterval) + 1).result
+    response = backend.getBalanceHistory(arg.chainIds, arg.address, arg.tokenSymbol, arg.currencySymbol, int(arg.timeInterval) + 1).result
 
     let output = %* {
-        "chainId": arg.chainId,
+        "chainIds": arg.chainIds,
         "address": arg.address,
-        "symbol": arg.symbol,
+        "tokenSymbol": arg.tokenSymbol,
+        "currencySymbol": arg.currencySymbol,
         "timeInterval": int(arg.timeInterval),
         "historicalData": response
     }
@@ -90,10 +92,11 @@ const getTokenBalanceHistoryDataTask*: Task = proc(argEncoded: string) {.gcsafe,
     return
   except Exception as e:
     let output = %* {
-      "chainId": arg.chainId,
+      "chainIds": arg.chainIds,
       "address": arg.address,
-      "symbol": arg.symbol,
+      "tokenSymbol": arg.tokenSymbol,
+      "currencySymbol": arg.currencySymbol,
       "timeInterval": int(arg.timeInterval),
-      "error": "Balance history value not found",
+      "error": e.msg,
     }
     arg.finish(output)

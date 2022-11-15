@@ -229,8 +229,8 @@ QtObject {
     property bool marketHistoryIsLoading: walletSectionAllTokens.marketHistoryIsLoading
 
     // TODO: range until we optimize to cache the data and abuse the requests
-    function fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum) {
-        walletSectionAllTokens.fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum)
+    function fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum) {
+        walletSectionAllTokens.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum)
     }
 
     property bool balanceHistoryIsLoading: walletSectionAllTokens.balanceHistoryIsLoading
