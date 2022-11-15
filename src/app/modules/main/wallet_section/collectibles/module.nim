@@ -32,7 +32,7 @@ proc newModule*(
   result.moduleLoaded = false
 
   result.collectiblesModule = collectibles_module.newModule(result, collectibleService)
-  result.collectionsModule = collectionsModule.newModule(result, collectibleService)
+  result.collectionsModule = collectionsModule.newModule(result, events, collectibleService)
   result.collectibleModule = collectibleModule.newModule(result, collectibleService)
 
 method delete*(self: Module) =
