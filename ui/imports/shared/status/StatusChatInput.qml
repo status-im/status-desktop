@@ -303,6 +303,9 @@ Rectangle {
                 event.accepted = true
                 messageTooLongDialog.open()
             }
+        } else if (event.key === Qt.Key_Escape && control.isReply) {
+            control.isReply = false
+            event.accepted = true
         }
 
         const symbolPressed = event.text.length > 0 &&
