@@ -87,7 +87,9 @@ ColumnLayout {
                     customMode: root.customMode
                     requiredGasInEth: root.requiredGasInEth
                     selectedAsset: root.selectedAsset
-                    onReCalculateSuggestedRoute: root.reCalculateSuggestedRoute()
+                    reCalculateSuggestedRoute: function() {
+                        root.reCalculateSuggestedRoute()
+                    }
                     bestRoutes: root.bestRoutes
                     weiToEth: root.weiToEth
                     interactive: root.interactive

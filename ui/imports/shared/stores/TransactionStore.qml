@@ -114,12 +114,12 @@ QtObject {
         mainModuleInst.resolveENS(value, "")
     }
 
-    function getWei2Eth(wei) {
-        return globalUtils.wei2Eth(wei,18)
+    function getWei2Eth(wei, decimals) {
+        return globalUtils.wei2Eth(wei, decimals)
     }
 
-    function getEth2Wei(eth) {
-         return globalUtils.eth2Wei(eth, 18)
+    function getEth2Wei(eth, decimals) {
+         return globalUtils.eth2Wei(eth, decimals)
     }
 
     function plainText(text) {
