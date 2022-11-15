@@ -387,7 +387,7 @@ Rectangle {
 
         // ⌘⇧U
         if (isUploadFilePressed(event)) {
-            imageBtn.clicked()
+            imageBtn.clicked(null)
             event.accepted = true
         }
 
