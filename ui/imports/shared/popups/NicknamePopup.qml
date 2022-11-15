@@ -1,6 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
+import DotherSide 0.1
+
 import utils 1.0
 import shared.controls 1.0
 
@@ -61,7 +63,10 @@ StatusModal {
                 validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
                 validators: [
                     StatusRegularExpressionValidator {
-                        regularExpression: /^[0-9A-Za-z_-]*$/
+                        validatorObj: RXValidator { regularExpression: /^[\w\d_-]*$/u }
+                        validate: function (value) {
+                            return validatorObj.test(value)
+                        }
                     }
                 ]
                 Keys.onReleased: {

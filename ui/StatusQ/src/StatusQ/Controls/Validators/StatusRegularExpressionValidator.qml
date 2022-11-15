@@ -28,7 +28,7 @@ StatusValidator {
     id: root
 
     /*!
-       \qmlproperty string StatusRegularExpressionValidator::regularExpression
+       \qmlproperty var StatusRegularExpressionValidator::regularExpression
         This property holds the regular expression used for validation.
 
         Note that this property should be a regular expression in JS syntax, e.g /a/ for the regular expression matching "a".
@@ -50,11 +50,11 @@ StatusValidator {
     property var regularExpression
 
     name: "regex"
-    errorMessage: `Must match regex(${validatorObj.regularExpression.toString()})`
+    errorMessage: `Must match regex(${regularExpression.toString()})`
     validatorObj: RegularExpressionValidator { regularExpression: root.regularExpression }
 
     validate: function (value) {
         // Basic validation management
-        return root.validatorObj.regularExpression.test(value)
+        return root.regularExpression.test(value)
     }
 }
