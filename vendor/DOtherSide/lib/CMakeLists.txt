@@ -35,7 +35,7 @@ macro(add_target name type)
     endif()
 
     # for DOtherSide.pc
-    set(PC_REQUIRES "Qt5Core, Qt5Gui, Qt5Widgets, Qt5Qml, Qt5Quick, Qt5Network, Qt5DBus, Qt5Multimedia SortFilterProxyModel")
+    set(PC_REQUIRES "Qt5Core, Qt5Gui, Qt5Widgets, Qt5Qml, Qt5Quick, Qt5Network, Qt5DBus, Qt5Multimedia, SortFilterProxyModel")
     if (${Qt5QuickControls2_FOUND})
         target_link_libraries(${name} PRIVATE Qt5::QuickControls2)
         set(PC_REQUIRES "${PC_REQUIRES}, Qt5QuickControls2")
