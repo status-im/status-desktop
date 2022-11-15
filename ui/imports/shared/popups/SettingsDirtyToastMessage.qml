@@ -55,7 +55,7 @@ Rectangle {
         const margin = 20;
         const offset = h2 - (y1 - y2);
 
-        if (offset <= 0)
+        if (offset <= 0 || flickable.contentHeight <= 0)
             return;
 
         toastFlickAnimation.from = flickable.contentY;

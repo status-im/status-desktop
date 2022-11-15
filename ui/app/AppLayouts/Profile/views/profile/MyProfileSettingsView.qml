@@ -38,7 +38,7 @@ ColumnLayout {
     readonly property bool dirty: descriptionPanel.displayName.text !== profileStore.displayName ||
                                   descriptionPanel.bio.text !== profileStore.bio ||
                                   profileStore.socialLinksDirty ||
-                                  biometricsSwitch.checked != biometricsSwitch.currentStoredValue ||
+                                  biometricsSwitch.checked !== biometricsSwitch.currentStoredValue ||
                                   profileHeader.icon !== profileStore.profileLargeImage
 
     readonly property bool valid: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
