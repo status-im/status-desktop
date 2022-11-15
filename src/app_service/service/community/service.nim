@@ -523,6 +523,15 @@ QtObject:
     else:
       return 0
 
+  proc getCategoryById*(self: Service, communityId: string, categoryId: string): Category = 
+    if(not self.joinedCommunities.contains(communityId)):
+      error "trying to get community categories for an unexisting community id"
+      return
+
+    let categories = self.joinedCommunities[communityId].categories
+    let categoryIndex = findIndexById(categoryId, categories)
+    return categories[categoryIndex]
+
   proc getCategories*(self: Service, communityId: string, order: SortOrder = SortOrder.Ascending): seq[Category] =
     if(not self.joinedCommunities.contains(communityId)):
       error "trying to get community categories for an unexisting community id"
