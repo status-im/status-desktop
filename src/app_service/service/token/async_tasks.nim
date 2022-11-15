@@ -76,7 +76,7 @@ const getTokenBalanceHistoryDataTask*: Task = proc(argEncoded: string) {.gcsafe,
   var response = %*{}
   try:
     # status-go time intervals are starting from 1
-    response = backend.getBalanceHistory(arg.chainId, arg.address, int(arg.timeInterval) + 1).result
+    response = backend.getBalanceHistory(arg.chainId, arg.address, arg.symbol, int(arg.timeInterval) + 1).result
 
     let output = %* {
         "chainId": arg.chainId,

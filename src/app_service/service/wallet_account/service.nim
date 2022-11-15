@@ -215,7 +215,7 @@ QtObject:
         of "wallet-tick-reload":
           self.buildAllTokens(self.getAddresses())
           self.checkRecentHistory()
-        
+
 
   proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
     if not self.walletAccounts.hasKey(address):
@@ -241,6 +241,7 @@ QtObject:
       return
 
     discard backend.startWallet()
+    discard backend.startBalanceHistory()
 
   proc checkRecentHistory*(self: Service) =
     if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):

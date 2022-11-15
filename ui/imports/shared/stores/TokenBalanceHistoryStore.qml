@@ -6,6 +6,7 @@ ChartStoreBase {
     id: root
 
     /*required*/ property string address: ""
+    /*required*/ property string symbol: ""
 
     /// \arg timeRange: of type ChartStoreBase.TimeRange
     function setData(timeRange, timeRangeData, balanceData) {
@@ -39,6 +40,7 @@ ChartStoreBase {
                 console.warn("Invalid or unsupported time range")
             break;
         }
+
         root.newDataReady(timeRange)
     }
 
@@ -50,7 +52,7 @@ ChartStoreBase {
     Connections {
         target: walletSectionAllTokens
         onTokenBalanceHistoryDataReady: (balanceHistory) => {
-           // chainId, address, symbol, timeInterval
+            // chainId, address, symbol, timeInterval
             let response = JSON.parse(balanceHistory)
             if (response === null) {
                 console.warn("error parsing balance history json message data")
@@ -62,7 +64,7 @@ ChartStoreBase {
                 console.warn("error no data in balance history. Must be an error from status-go")
                 root.resetRequestTime()
                 return
-            } else if(response.address !== root.address) {
+            } else if(response.address !== root.address && response.symbol !== root.symbol) {
                 // Ignore data for other addresses. Will be handled by other instances of this store
                 return
             }

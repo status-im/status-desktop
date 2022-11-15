@@ -20,7 +20,7 @@ import "../stores"
 Item {
     id: root
 
-    property var token
+    property var token: ""
     /*required*/ property string address: ""
 
     function createStore(address) {
@@ -114,7 +114,7 @@ Item {
                     {text: qsTr("Price"), enabled: true, id: AssetsDetailView.GraphType.Price},
                     {
                         text: qsTr("Balance"),
-                        enabled: false, // TODO: Enable after adding ECR20 token support and DB cache. Current prototype implementation works only for d.isNativeToken
+                        enabled: d.isNativeToken,
                         id: AssetsDetailView.GraphType.Balance
                     },
                 ]
@@ -237,6 +237,7 @@ Item {
                 id: balanceStore
 
                 address: root.address
+                symbol: token.symbol
 
                 onNewDataReady: (timeRange) => {
                     let selectedTimeRange = timeRangeStrToEnum(graphDetail.selectedTimeRange)

@@ -86,11 +86,26 @@ enum BalanceHistoryTimeInterval
 /// \see checkRecentHistory
 /// \note status-go's API -> GetBalanceHistory@api.go
 /// \throws \c CallPrivateRpcError
-std::vector<TokenBalanceHistory>
-getBalanceHistory(const ChainID& chainID, Accounts::EOAddress account, BalanceHistoryTimeInterval timeInterval);
+std::vector<TokenBalanceHistory> getBalanceHistory(const ChainID& chainID,
+                                                   Accounts::EOAddress account,
+                                                   const QString& currency,
+                                                   BalanceHistoryTimeInterval timeInterval);
+
+/// \note status-go's API -> updateBalanceHistoryForAllEnabledNetworks@api.go
+///
+/// \throws \c CallPrivateRpcError
+bool updateBalanceHistoryForAllEnabledNetworks();
 
 /// \note status-go's API -> CheckRecentHistory@api.go
 /// \throws \c CallPrivateRpcError
 void checkRecentHistory(const std::vector<Accounts::EOAddress>& accounts);
+
+/// \note status-go's API -> startWallet@api.go
+/// \throws \c CallPrivateRpcError
+void startWallet();
+
+/// \note status-go's API -> startBalanceHistory@api.go
+/// \throws \c CallPrivateRpcError
+void startBalanceHistory();
 
 } // namespace Status::StatusGo::Wallet

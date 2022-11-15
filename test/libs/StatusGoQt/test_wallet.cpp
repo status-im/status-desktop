@@ -309,7 +309,7 @@ TEST(WalletApi, TestGetTokensBalancesForChainIDs_WatchOnlyAccount)
     ASSERT_GT(addressBalance.at(sntMain.address), 0);
 }
 
-// TODO: this is a debugging test. Augment it with local Ganache environment to have a reliable test
+// TODO: this is a debugging test. Augment it with local Ganache environment to have a reliable integration test
 TEST(WalletApi, TestCheckRecentHistory)
 {
     ScopedTestAccount testAccount(test_info_->name());
@@ -352,7 +352,7 @@ TEST(WalletApi, TestCheckRecentHistory)
     ASSERT_TRUE(historyReady);
 }
 
-// TODO: this is a debugging test. Augment it with local Ganache environment to have a reliable test
+// TODO: this is a debugging test. Augment it with local Ganache environment to have a reliable integration test
 TEST(WalletApi, TestGetBalanceHistory)
 {
     ScopedTestAccount testAccount(test_info_->name());
@@ -397,8 +397,9 @@ TEST(WalletApi, TestGetBalanceHistory)
 
     for(const auto& historyInterval : testIntervals)
     {
-        // TODO: next `mainNet.nativeCurrencySymbol`, later `tokens.symbol`
-        auto balanceHistory = Wallet::getBalanceHistory(mainNet.chainId, newAccount.address, historyInterval);
+        // TODO: test also for `tokens.symbol`
+        auto balanceHistory = Wallet::getBalanceHistory(
+            mainNet.chainId, newAccount.address, mainNet.nativeCurrencySymbol.value(), historyInterval);
         ASSERT_TRUE(balanceHistory.size() > 0);
 
         auto weiToEth = [](const StatusGo::Wallet::BigInt& wei) -> double {
@@ -413,7 +414,7 @@ TEST(WalletApi, TestGetBalanceHistory)
             return q.convert_to<double>() + (qSzabos.convert_to<double>() / ((weiD / szaboD).convert_to<double>()));
         };
 
-        QFile file(QString("/tmp/balance_history-%s.csv").arg(testIntervalsStrs[historyInterval]));
+        QFile file(QString("/tmp/StatusTests/balance/balance_history-%1.csv").arg(testIntervalsStrs[historyInterval]));
         if(file.open(QIODevice::WriteOnly | QIODevice::Text))
         {
             QTextStream out(&file);
@@ -423,9 +424,84 @@ TEST(WalletApi, TestGetBalanceHistory)
                 out << weiToEth(balanceHistory[i].value) << "," << balanceHistory[i].time.toSecsSinceEpoch()
                     << Qt::endl;
             }
+            file.close();
         }
-        file.close();
     }
+}
+
+// TODO: this is a debugging test. Augment it with local Ganache environment to have a reliable integration test
+TEST(WalletApi, TestStartWallet)
+{
+    ScopedTestAccount testAccount(test_info_->name());
+
+    // Add watch account
+    const auto newTestAccountName = u"test_watch_only-name"_qs;
+    Accounts::addAccountWatch(Accounts::EOAddress("0x473780deAF4a2Ac070BBbA936B0cdefe7F267dFc"),
+                              newTestAccountName,
+                              QColor("fuchsia"),
+                              u""_qs);
+    const auto updatedAccounts = Accounts::getAccounts();
+    ASSERT_EQ(updatedAccounts.size(), 3);
+
+    const auto newAccountIt =
+        std::find_if(updatedAccounts.begin(), updatedAccounts.end(), [newTestAccountName](const auto& a) {
+            return a.name == newTestAccountName;
+        });
+    ASSERT_NE(newAccountIt, updatedAccounts.end());
+    const auto& newAccount = *newAccountIt;
+
+    auto networks = Wallet::getEthereumChains(false);
+    ASSERT_GT(networks.size(), 0);
+    auto mainNetIt =
+        std::find_if(networks.begin(), networks.end(), [](const auto& n) { return n.chainName == "Mainnet"; });
+    ASSERT_NE(mainNetIt, networks.end());
+    const auto& mainNet = *mainNetIt;
+
+    int walletTickReloadReceivedCount = 0;
+    int bhStartedReceivedCount = 0;
+    int bhEndedReceivedCount = 0;
+    QObject::connect(StatusGo::SignalsManager::instance(),
+                     &StatusGo::SignalsManager::wallet,
+                     testAccount.app(),
+                     [&walletTickReloadReceivedCount, &bhStartedReceivedCount, &bhEndedReceivedCount](QSharedPointer<StatusGo::EventData> data) {
+                         Wallet::Transfer::Event event = data->eventInfo();
+                         if(event.type == Wallet::Transfer::Events::WalletTickReload)
+                            walletTickReloadReceivedCount++;
+                         else if(event.type == Wallet::Transfer::Events::EventBalanceHistoryUpdateStarted)
+                            bhStartedReceivedCount++;
+                         else if(event.type == Wallet::Transfer::Events::EventBalanceHistoryUpdateFinished)
+                            bhEndedReceivedCount++;
+                     });
+
+    Wallet::startBalanceHistory();
+
+    // The balance history update should have been already starting and be interrupted by getBalanceHistory calls
+    auto balanceHistory = Wallet::getBalanceHistory(mainNet.chainId,
+                                                    Accounts::EOAddress("0x473780deAF4a2Ac070BBbA936B0cdefe7F267dFc"),
+                                                    mainNet.nativeCurrencySymbol.value(),
+                                                    Wallet::BalanceHistoryTimeInterval::BalanceHistory6Months);
+    ASSERT_TRUE(balanceHistory.size() > 0);
+
+    testAccount.processMessages(10000, [&bhEndedReceivedCount]() { return bhEndedReceivedCount < 1; });
+    ASSERT_GE(bhStartedReceivedCount, 1);
+    ASSERT_EQ(bhEndedReceivedCount, 1);
+
+    testAccount.processMessages(2000, [&bhStartedReceivedCount]() { return bhStartedReceivedCount < 2; });
+    ASSERT_EQ(bhStartedReceivedCount, 2);
+
+    balanceHistory = Wallet::getBalanceHistory(mainNet.chainId,
+                                               Accounts::EOAddress("0x473780deAF4a2Ac070BBbA936B0cdefe7F267dFc"),
+                                               mainNet.nativeCurrencySymbol.value(),
+                                               Wallet::BalanceHistoryTimeInterval::BalanceHistory1Year);
+    ASSERT_TRUE(balanceHistory.size() > 0);
+
+    testAccount.processMessages(10000, [&bhEndedReceivedCount]() { return bhEndedReceivedCount < 2; });
+    ASSERT_GE(bhStartedReceivedCount, 2);
+    ASSERT_EQ(bhEndedReceivedCount, 2);
+
+    testAccount.processMessages(2000, [&bhStartedReceivedCount]() { return bhStartedReceivedCount < 3; });
+    ASSERT_EQ(bhStartedReceivedCount, 3);
+    ASSERT_EQ(bhEndedReceivedCount, 2);
 }
 
 } // namespace Status::Testing

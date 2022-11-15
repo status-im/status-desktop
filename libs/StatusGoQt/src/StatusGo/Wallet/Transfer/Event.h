@@ -22,6 +22,10 @@ struct Events
     static const EventType RecentHistoryReady;
     static const EventType FetchingHistoryError;
     static const EventType NonArchivalNodeDetected;
+
+    static const EventType WalletTickReload;
+    static const EventType EventBalanceHistoryUpdateStarted;
+    static const EventType EventBalanceHistoryUpdateFinished;
 };
 
 /// \see status-go's Event@events.go in services/wallet/transfer module

@@ -33,6 +33,10 @@ proc init*(self: Controller) =
     let args = TokenHistoricalDataArgs(e)
     self.delegate.tokenHistoricalDataResolved(args.result)
 
+  self.events.on(SIGNAL_BALANCE_HISTORY_DATA_READY) do(e:Args):
+    let args = TokenBalanceHistoryDataArgs(e)
+    self.delegate.tokenBalanceHistoryDataResolved(args.result)
+
 method findTokenSymbolByAddress*(self: Controller, address: string): string =
   return self.walletAccountService.findTokenSymbolByAddress(address)
 

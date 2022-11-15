@@ -108,11 +108,25 @@ TokenBalances getTokensBalancesForChainIDs(const std::vector<ChainID>& chainIds,
     return resultData;
 }
 
-std::vector<TokenBalanceHistory>
-getBalanceHistory(const ChainID& chainID, Accounts::EOAddress account, BalanceHistoryTimeInterval timeInterval)
+std::vector<TokenBalanceHistory> getBalanceHistory(const ChainID& chainID,
+                                                   Accounts::EOAddress account,
+                                                   const QString& currency,
+                                                   BalanceHistoryTimeInterval timeInterval)
 {
-    std::vector<json> params = {chainID, account, timeInterval};
+    std::vector<json> params = {chainID, account, currency, timeInterval};
     json inputJson = {{"jsonrpc", "2.0"}, {"method", "wallet_getBalanceHistory"}, {"params", params}};
+
+    auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
+    const auto resultJson = json::parse(result);
+    checkPrivateRpcCallResultAndReportError(resultJson);
+
+    return resultJson.get<CallPrivateRpcResponse>().result;
+}
+
+bool updateBalanceHistoryForAllEnabledNetworks()
+{
+    json inputJson = {
+        {"jsonrpc", "2.0"}, {"method", "wallet_updateBalanceHistoryForAllEnabledNetworks"}, {"params", {}}};
 
     auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
     const auto resultJson = json::parse(result);
@@ -125,6 +139,22 @@ void checkRecentHistory(const std::vector<Accounts::EOAddress>& accounts)
 {
     std::vector<json> params = {accounts};
     json inputJson = {{"jsonrpc", "2.0"}, {"method", "wallet_checkRecentHistory"}, {"params", params}};
+    auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
+    const auto resultJson = json::parse(result);
+    checkPrivateRpcCallResultAndReportError(resultJson);
+}
+
+void startWallet()
+{
+    json inputJson = {{"jsonrpc", "2.0"}, {"method", "wallet_startWallet"}, {"params", {}}};
+    auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
+    const auto resultJson = json::parse(result);
+    checkPrivateRpcCallResultAndReportError(resultJson);
+}
+
+void startBalanceHistory()
+{
+    json inputJson = {{"jsonrpc", "2.0"}, {"method", "wallet_startBalanceHistory"}, {"params", {}}};
     auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
     const auto resultJson = json::parse(result);
     checkPrivateRpcCallResultAndReportError(resultJson);
