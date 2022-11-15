@@ -182,8 +182,15 @@ def step(context, message):
     
 @Then("the chat message \"|any|\" is displayed as a reply")
 def step(context, message):
-    # TODO: Check the last message is really a reply.
-    _statusChat.verify_last_message_sent(message) 
+    _statusChat.verify_last_message_is_reply(message) 
+
+@Then("the chat message \"|any|\" is displayed as a reply of \"|any|\"")
+def step(context, reply, message):
+    _statusChat.verify_last_message_is_reply_to(reply, message) 
+
+@Then("the chat message \"|any|\" is displayed as a reply of this user's \"|any|\"")
+def step(context, reply, message):
+    _statusChat.verify_last_message_is_reply_to_loggedin_user_message(reply, message) 
     
 @Then("the chat message \"|any|\" is displayed as an edited one")
 def step(context, message):
