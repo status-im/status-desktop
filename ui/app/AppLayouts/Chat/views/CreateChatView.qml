@@ -19,6 +19,21 @@ Page {
     property var rootStore
     property var emojiPopup: null
 
+    QtObject {
+        id: d
+
+        function createChat() {
+            root.rootStore.createChatInitMessage = chatInput.textInput.text
+            root.rootStore.createChatFileUrls = chatInput.fileUrls
+            membersSelector.createChat()
+
+            membersSelector.cleanup()
+            chatInput.textInput.clear()
+
+            Global.closeCreateChatView()
+        }
+    }
+
     padding: 0
 
     Behavior on opacity { NumberAnimation {}}
@@ -63,15 +78,7 @@ Page {
                     }
                 }
 
-                onConfirmed: {
-                    root.rootStore.createChatInitMessage = chatInput.textInput.text
-                    root.rootStore.createChatFileUrls = chatInput.fileUrls
-                    createChat()
-
-                    cleanup()
-                    chatInput.textInput.clear()
-                    Global.closeCreateChatView();
-                }
+                onConfirmed: { d.createChat() }
 
                 onRejected: {
                     cleanup()
@@ -163,15 +170,8 @@ Page {
                     root.rootStore.createChatStickerUrl = url;
                     membersSelector.createChat();
                 }
-                onSendMessage: {
-                    root.rootStore.createChatInitMessage = chatInput.textInput.text
-                    root.rootStore.createChatFileUrls = chatInput.fileUrls
-                    membersSelector.createChat()
 
-                    membersSelector.cleanup()
-                    chatInput.textInput.clear()
-                    Global.closeCreateChatView();
-                }
+                onSendMessage: { d.createChat() }
             }
         }
 

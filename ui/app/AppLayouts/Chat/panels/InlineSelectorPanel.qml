@@ -199,7 +199,7 @@ Item {
 
         StatusButton {
             Layout.alignment: Qt.AlignVCenter
-            text: qsTr("Reject")
+            text: qsTr("Cancel")
             type: StatusBaseButton.Type.Danger
             onClicked: root.rejected()
         }
