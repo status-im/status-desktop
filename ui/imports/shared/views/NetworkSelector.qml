@@ -79,7 +79,7 @@ Item {
                 amountToSend: root.amountToSend
                 isLoading: root.isLoading
                 weiToEth: function(wei) {
-                return "%1 %2".arg(LocaleUtils.numberToLocaleString(parseFloat(store.getWei2Eth(wei)))).arg(selectedAsset.symbol)
+                return "%1 %2".arg(LocaleUtils.numberToLocaleString(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)))).arg(selectedAsset.symbol)
                 }
             }
         }
@@ -103,7 +103,7 @@ Item {
                 isLoading: root.isLoading
                 interactive: root.interactive
                 weiToEth: function(wei) {
-                    return parseFloat(store.getWei2Eth(wei))
+                    return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
                 }
             }
         }
@@ -128,7 +128,7 @@ Item {
                 isLoading: root.isLoading
                 interactive: root.interactive
                 weiToEth: function(wei) {
-                    return parseFloat(store.getWei2Eth(wei))
+                    return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
                 }
             }
         }
