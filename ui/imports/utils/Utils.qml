@@ -730,8 +730,7 @@ QtObject {
         return (str.length > maxLength) ? str.substr(0, maxLength-4) + '...' : str;
     }
 
-    function escapeHtml(unsafeStr)
-    {
+    function escapeHtml(unsafeStr) {
         return unsafeStr
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")

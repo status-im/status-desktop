@@ -16,6 +16,7 @@ type
     Declined
     Canceled
     Trusted
+    Untrustworthy
 
 type
   UserItem* = ref object of RootObj

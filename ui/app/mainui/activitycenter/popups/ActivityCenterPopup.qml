@@ -38,6 +38,7 @@ Popup {
     property int mentionsCount: 0
     property int repliesCount: 0
     property int contactRequestsCount: 0
+    property int identityRequestsCount: 0
     property int membershipCount: 0
 
     property ActivityCenterStore activityCenterStore
@@ -57,6 +58,8 @@ Popup {
             return notificationType === Constants.activityCenterNotificationTypeReply
         case ActivityCenterPopup.ActivityCategory.ContactRequests:
             return notificationType === Constants.activityCenterNotificationTypeContactRequest
+        case ActivityCenterPopup.ActivityCategory.IdentityVerification:
+            return notificationType === Constants.activityCenterNotificationTypeContactVerification
         case ActivityCenterPopup.ActivityCategory.Membership:
             return notificationType === Constants.activityCenterNotificationTypeCommunityInvitation ||
                    notificationType === Constants.activityCenterNotificationTypeCommunityMembershipRequest ||
@@ -77,6 +80,9 @@ Popup {
             break;
         case Constants.activityCenterNotificationTypeContactRequest:
             root.contactRequestsCount += cnt;
+            break;
+        case Constants.activityCenterNotificationTypeContactVerification:
+            root.identityRequestsCount += cnt;
             break;
         case Constants.activityCenterNotificationTypeCommunityInvitation:
             root.membershipCount += cnt;
@@ -145,6 +151,7 @@ Popup {
         hasReplies: root.repliesCount > 0
         hasMentions: root.mentionsCount > 0
         hasContactRequests: root.contactRequestsCount > 0
+        hasIdentityRequests: root.identityRequestsCount > 0
         hasMembership: root.membershipCount > 0
         hideReadNotifications: activityCenterStore.hideReadNotifications
         currentActivityCategory: root.currentActivityCategory
@@ -190,6 +197,8 @@ Popup {
                         return replyNotificationComponent
                     case Constants.activityCenterNotificationTypeContactRequest:
                         return contactRequestNotificationComponent
+                    case Constants.activityCenterNotificationTypeContactVerification:
+                        return verificationRequestNotificationComponent
                     case Constants.activityCenterNotificationTypeCommunityInvitation:
                         return communityInvitationNotificationComponent
                     case Constants.activityCenterNotificationTypeCommunityMembershipRequest:
@@ -231,6 +240,17 @@ Popup {
         id: contactRequestNotificationComponent
 
         ActivityNotificationContactRequest {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+        }
+    }
+    Component {
+        id: verificationRequestNotificationComponent
+
+        ActivityNotificationContactVerification {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             store: root.store

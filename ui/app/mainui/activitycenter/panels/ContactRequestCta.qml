@@ -28,6 +28,7 @@ Item {
         id: textItem
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
+        anchors.rightMargin: Style.current.smallPadding
         visible: !buttons.visible
         text: {
             if (root.accepted) {

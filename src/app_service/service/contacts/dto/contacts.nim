@@ -30,6 +30,7 @@ type VerificationStatus* {.pure.}= enum
   Declined = 3
   Canceled = 4
   Trusted = 5
+  Untrustworthy = 6
 
 type VerificationRequest* = object
   id*: string

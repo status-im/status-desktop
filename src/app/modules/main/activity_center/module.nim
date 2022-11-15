@@ -126,11 +126,15 @@ method convertToItems*(
           let repliedMessage = self.controller.getMessageById(n.chatId, n.message.responseTo)
           repliedMessageItem = self.createMessageItemFromDto(repliedMessage, chatDetails)
 
+        if (n.notificationType == ActivityCenterNotificationType.ContactVerification):
+          repliedMessageItem = self.createMessageItemFromDto(n.replyMessage, chatDetails)
+
       return notification_item.initItem(
         n.id,
         n.chatId,
         n.communityId,
         n.membershipStatus,
+        n.verificationStatus,
         sectionId,
         n.name,
         n.author,
