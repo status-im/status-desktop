@@ -263,6 +263,12 @@ proc getChatDetails*(self: Controller, chatId: string): ChatDto =
 proc getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[ChatDto] =
   return self.chatService.getChatsOfChatTypes(types)
 
+proc getCommunityDetails*(self: Controller, communityId: string): CommunityDto =
+  return self.communityService.getCommunityById(communityId)
+
+proc getCommunityCategoryDetails*(self: Controller, communityId: string, categoryId: string): Category =
+  return self.communityService.getCategoryById(communityId, categoryId)
+
 proc setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string) =
   self.activeItemId = itemId
   self.activeSubItemId = subItemId

@@ -722,7 +722,25 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let renderedMessageText = self.controller.getRenderedText(message.parsedText)
   let plainText = singletonInstance.utils.plainText(renderedMessageText)
-  singletonInstance.globalEvents.showMessageNotification(contactDetails.defaultDisplayName, plainText, sectionIdMsgBelongsTo,
+  let chatDetails = self.controller.getChatDetails(chatIdMsgBelongsTo)
+  var notificationTitle = contactDetails.defaultDisplayName
+
+  case chatDetails.chatType:
+    of ChatType.Public:
+      notificationTitle.add(fmt" ({chatDetails.name})")
+    of ChatType.PrivateGroupChat:
+      notificationTitle.add(fmt" ({chatDetails.name})")
+    of ChatType.CommunityChat:
+      let communityDetails = self.controller.getCommunityDetails(chatDetails.communityId)
+      if (chatDetails.categoryId.len == 0):
+        notificationTitle.add(fmt" (#{chatDetails.name})")
+      else:
+        let categoryDetails = self.controller.getCommunityCategoryDetails(chatDetails.communityId, chatDetails.categoryId)
+        notificationTitle.add(fmt" (#{chatDetails.name}, {categoryDetails.name})")
+    else:
+      discard
+      
+  singletonInstance.globalEvents.showMessageNotification(notificationTitle, plainText, sectionIdMsgBelongsTo,
     self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat, 
     message.id, notificationType.int, 
     chatTypeMsgBelongsTo == ChatType.OneToOne, chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
