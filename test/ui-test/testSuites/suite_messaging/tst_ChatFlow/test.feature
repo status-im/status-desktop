@@ -24,17 +24,15 @@ Feature: Status Desktop Chat Basic Flows
 		 | I am from status   	 |
 		 | tell me how you do?   |
 
-    # TODO: Scenario: The user can reply to their OWN message
     @mayfail
     # TODO: It works standalone but when it runs as part of the sequence, the action of reply is not done always. The popup option does not appear.
-    Scenario Outline: The user can reply to the last message
-         Given the user sends a chat message "random chat message"
+    Scenario Outline: The user can reply to own message
+         Given the user sends a chat message "<message>"
          When the user replies to the message at index 0 with "<reply>"
-         # TODO: Check the last message is really a reply, now just checking the last message is the expected one but could not be a reply. The popup option does not appear.
-         Then the chat message "<reply>" is displayed as a reply
+         Then the chat message "<reply>" is displayed as a reply of this user's "<message>"
          Examples:
-		 | reply		   |
-		 | This is a reply |
+     | message             | reply           |
+     | random chat message | This is a reply |
 
 	@mayfail
 	# TODO: It works standalone but when it runs as part of the sequence, the action of edit is not done always. The popup option does not appear.

@@ -84,6 +84,8 @@ class ChatStickerPopup(Enum):
 
 class ChatItems(Enum):
     STATUS_MESSAGE_TEXT_MESSAGE = "StatusMessage_textMessage"
+    STATUS_MESSAGE_REPLY_DETAILS = "StatusMessage_replyDetails"
+    STATUS_MESSAGE_REPLY_DETAILS_TEXT_MESSAGE = "StatusMessage_replyDetails_textMessage"
     STATUS_TEXT_MESSAGE_CHAT_TEXT = "StatusTextMessage_chatText"
 
 class ChatMessagesHistory(Enum):
@@ -318,7 +320,26 @@ class StatusChatScreen:
     def verify_last_message_is_not_loaded(self):
         [loaded, _] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
         verify_false(loaded, "Success: No message was found")
-                
+
+    def verify_last_message_is_reply(self, message: str):
+        last_message_obj = self.get_message_at_index(0)
+        last_message_reply_details_obj = getChildrenWithObjectName(last_message_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS.value)[0]
+        verify(not is_null(last_message_reply_details_obj), "Checking last message is a reply: " + message)
+
+    def verify_last_message_is_reply_to(self, reply: str, message: str):
+        last_message_obj = self.get_message_at_index(0)
+        last_message_reply_details_obj = getChildrenWithObjectName(last_message_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS.value)[0]
+        text_message_obj = getChildrenWithObjectName(last_message_reply_details_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS_TEXT_MESSAGE.value)[0]
+        verify_text_contains(str(text_message_obj.messageDetails.messageText), str(message))
+
+    def verify_last_message_is_reply_to_loggedin_user_message(self, reply: str, message: str):
+        last_message_obj = self.get_message_at_index(0)
+        last_message_reply_details_obj = getChildrenWithObjectName(last_message_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS.value)[0]
+        text_message_obj = getChildrenWithObjectName(last_message_reply_details_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS_TEXT_MESSAGE.value)[0]
+        verify_text_contains(str(text_message_obj.messageDetails.messageText), str(message))
+        verify_values_equal(str(last_message_reply_details_obj.replyDetails.sender.id), str(last_message_obj.senderId), "Message sender ID doesn't match reply message sender ID")
+
+
     def verify_last_message_sent(self, message: str):
         # Get the message text
         # We don't search for StatusTextMessage_chatText directly, because there're 2 instances of it in a reply message

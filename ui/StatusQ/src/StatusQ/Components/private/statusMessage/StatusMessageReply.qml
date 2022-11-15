@@ -97,6 +97,7 @@ Item {
                     }
                 }
                 StatusTextMessage {
+                    objectName: "StatusMessage_replyDetails_textMessage"
                     Layout.fillWidth: true
                     textField.font.pixelSize: Theme.secondaryTextFontSize
                     textField.color: Theme.palette.baseColor1

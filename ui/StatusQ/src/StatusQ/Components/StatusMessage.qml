@@ -215,6 +215,7 @@ Control {
                 active: isAReply
                 visible: active
                 sourceComponent: StatusMessageReply {
+                    objectName: "StatusMessage_replyDetails"
                     replyDetails: root.replyDetails
                     profileClickable: root.profileClickable
                     audioMessageInfoText: root.audioMessageInfoText
