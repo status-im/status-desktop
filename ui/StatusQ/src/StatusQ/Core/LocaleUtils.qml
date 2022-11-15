@@ -10,7 +10,9 @@ QtObject {
         if (Number.isInteger(num))
             return 0
 
-        return num.toString().split('.')[1].length
+        let parts = num.toString().split('.')
+        // Decimal trick doesn't work for numbers represented in scientific notation, hence the hardcoded fallback
+        return (parts.length > 1 && parts[1].indexOf("e") == -1) ? parts[1].length : 2
     }
 
     function stripTrailingZeroes(numStr, locale) {

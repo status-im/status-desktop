@@ -66,9 +66,10 @@ struct TokenBalanceHistory
 {
     BigInt value;
     QDateTime time;
+    BigInt blockNumber;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TokenBalanceHistory, value, time)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TokenBalanceHistory, value, time, blockNumber)
 
 /// @see status-go's services/wallet/transfer/controller.go BalanceHistoryTimeInterval
 enum BalanceHistoryTimeInterval
@@ -86,11 +87,30 @@ enum BalanceHistoryTimeInterval
 /// \see checkRecentHistory
 /// \note status-go's API -> GetBalanceHistory@api.go
 /// \throws \c CallPrivateRpcError
-std::vector<TokenBalanceHistory>
-getBalanceHistory(const ChainID& chainID, Accounts::EOAddress account, BalanceHistoryTimeInterval timeInterval);
+std::vector<TokenBalanceHistory> getBalanceHistory(const std::vector<ChainID>& chainIds,
+                                                   Accounts::EOAddress account,
+                                                   const QString& currency,
+                                                   BalanceHistoryTimeInterval timeInterval);
+
+/// \note status-go's API -> updateBalanceHistoryForAllEnabledNetworks@api.go
+///
+/// \throws \c CallPrivateRpcError
+bool updateBalanceHistoryForAllEnabledNetworks();
 
 /// \note status-go's API -> CheckRecentHistory@api.go
 /// \throws \c CallPrivateRpcError
 void checkRecentHistory(const std::vector<Accounts::EOAddress>& accounts);
+
+/// \note status-go's API -> StartWallet@api.go
+/// \throws \c CallPrivateRpcError
+void startWallet();
+
+/// \note status-go's API -> StopWallet@api.go
+/// \throws \c CallPrivateRpcError
+void stopWallet();
+
+/// \note status-go's API -> UpdateVisibleTokens@api.go
+/// \throws \c CallPrivateRpcError
+void updateVisibleTokens(std::vector<QString> symbols);
 
 } // namespace Status::StatusGo::Wallet

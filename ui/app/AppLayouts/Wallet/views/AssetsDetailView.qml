@@ -20,18 +20,12 @@ import shared.stores 1.0
 Item {
     id: root
 
-    property var token
+    property var token: {}
     /*required*/ property string address: ""
-
-    function createStore(address) {
-        return balanceHistoryComponent.createObject(null, {address: address})
-    }
 
     QtObject {
         id: d
         property var marketValueStore : RootStore.marketValueStore
-        // TODO: Should be temporary until non native tokens are supported by balance history
-        property bool isNativeToken: typeof token !== "undefined" && token ? token.symbol === "ETH" : false
     }
 
     Connections {
@@ -115,11 +109,7 @@ Item {
 
             graphsModel: [
                     {text: qsTr("Price"), enabled: true, id: AssetsDetailView.GraphType.Price},
-                    {
-                        text: qsTr("Balance"),
-                        enabled: false, // TODO: Enable after adding ECR20 token support and DB cache. Current prototype implementation works only for d.isNativeToken
-                        id: AssetsDetailView.GraphType.Balance
-                    },
+                    {text: qsTr("Balance"), enabled: true, id: AssetsDetailView.GraphType.Balance},
                 ]
             defaultTimeRangeIndexShown: ChartStoreBase.TimeRange.All
             timeRangeModel: dataReady() && selectedStore.timeRangeTabsModel
@@ -129,11 +119,7 @@ Item {
                 }
 
                 if(graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance) {
-                    let selectedTimeRangeEnum = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
-                    if(balanceStore.isTimeToRequest(selectedTimeRangeEnum)) {
-                        RootStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, selectedTimeRangeEnum)
-                        balanceStore.updateRequestTime(selectedTimeRangeEnum)
-                    }
+                    graphDetail.updateBalanceStore()
                 }
 
                 if(!isTimeRange) {
@@ -241,16 +227,32 @@ Item {
                 active: RootStore.marketHistoryIsLoading
             }
 
+            function updateBalanceStore() {
+                let selectedTimeRangeEnum = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
+
+                let currencySymbol = RootStore.currencyStore.currentCurrency
+                if(!balanceStore.hasData(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)) {
+                    RootStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)
+                }
+            }
+
             TokenBalanceHistoryStore {
                 id: balanceStore
 
-                address: root.address
-
-                onNewDataReady: (timeRange) => {
-                    let selectedTimeRange = timeRangeStrToEnum(graphDetail.selectedTimeRange)
-                    if (timeRange === selectedTimeRange && address === root.address) {
+                onNewDataReady: (address, tokenSymbol, currencySymbol, timeRange) => {
+                    if (timeRange === timeRangeStrToEnum(graphDetail.selectedTimeRange)) {
                         chart.updateToNewData()
                     }
+                }
+
+                Connections {
+                    target: root
+                    function onAddressChanged() { graphDetail.updateBalanceStore() }
+                }
+
+                Connections {
+                    target: token
+                    function onSymbolChanged() { graphDetail.updateBalanceStore() }
                 }
             }
         }

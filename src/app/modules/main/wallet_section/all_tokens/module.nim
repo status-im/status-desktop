@@ -63,8 +63,8 @@ method tokenHistoricalDataResolved*(self: Module, tokenDetails: string) =
   self.view.setTokenHistoricalDataReady(tokenDetails)
 
 
-method fetchHistoricalBalanceForTokenAsJson*(self: Module, address: string, symbol: string, timeIntervalEnum: int) =
-  self.controller.fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum)
+method fetchHistoricalBalanceForTokenAsJson*(self: Module, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
+  self.controller.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol,timeIntervalEnum)
 
 method tokenBalanceHistoryDataResolved*(self: Module, balanceHistoryJson: string) =
   self.view.setTokenBalanceHistoryDataReady(balanceHistoryJson)
