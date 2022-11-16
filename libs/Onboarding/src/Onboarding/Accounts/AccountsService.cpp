@@ -363,26 +363,32 @@ QJsonObject AccountsService::getDefaultNodeConfig(const QString& installationId)
 {
     try
     {
+        const auto envVarInfuraToken = "INFURA_TOKEN";
+        const auto envVarWakuV2Port = "WAKUV2_PORT";
+
         auto templateNodeConfigJsonStr = getDataFromFile(":/Status/StaticConfig/node-config.json").value();
         auto fleetJson = getDataFromFile(":/Status/StaticConfig/fleets.json").value();
-        auto envInfuraKey = qEnvironmentVariable("INFURA_TOKEN");
-        auto infuraKey =
-            envInfuraKey.isEmpty() ? getDataFromFile(":/Status/StaticConfig/infura_key").value() : envInfuraKey;
+        const auto infuraKey = qEnvironmentVariable(envVarInfuraToken, getDataFromFile(":/Status/StaticConfig/infura_key").value());
 
         auto templateDefaultNetworksJson = getDataFromFile(":/Status/StaticConfig/default-networks.json").value();
         QString defaultNetworksContent = templateDefaultNetworksJson.replace("%INFURA_TOKEN_RESOLVED%", infuraKey);
         QJsonArray defaultNetworksJson = QJsonDocument::fromJson(defaultNetworksContent.toUtf8()).array();
 
-        auto DEFAULT_TORRENT_CONFIG_PORT = 9025;
-        auto DEFAULT_TORRENT_CONFIG_DATADIR = m_statusgoDataDir / "archivedata";
-        auto DEFAULT_TORRENT_CONFIG_TORRENTDIR = m_statusgoDataDir / "torrents";
+        const auto DEFAULT_WAKUV2_CONFIG_PORT = "0";
+        const auto DEFAULT_TORRENT_CONFIG_PORT = 9025;
+        const auto DEFAULT_TORRENT_CONFIG_DATADIR = m_statusgoDataDir / "archivedata";
+        const auto DEFAULT_TORRENT_CONFIG_TORRENTDIR = m_statusgoDataDir / "torrents";
+
+        const auto wakuV2Port = qEnvironmentVariable(envVarWakuV2Port, DEFAULT_WAKUV2_CONFIG_PORT);
 
         auto nodeConfigJsonStr =
             templateNodeConfigJsonStr.replace("%INSTALLATIONID%", installationId)
                 .replace("%INFURA_TOKEN_RESOLVED%", infuraKey)
                 .replace("%DEFAULT_TORRENT_CONFIG_PORT%", QString::number(DEFAULT_TORRENT_CONFIG_PORT))
                 .replace("%DEFAULT_TORRENT_CONFIG_DATADIR%", DEFAULT_TORRENT_CONFIG_DATADIR.c_str())
-                .replace("%DEFAULT_TORRENT_CONFIG_TORRENTDIR%", DEFAULT_TORRENT_CONFIG_TORRENTDIR.c_str());
+                .replace("%DEFAULT_TORRENT_CONFIG_TORRENTDIR%", DEFAULT_TORRENT_CONFIG_TORRENTDIR.c_str())
+                .replace("%DEFAULT_WAKUV2_CONFIG_PORT%", wakuV2Port);
+
         QJsonObject nodeConfigJson = QJsonDocument::fromJson(nodeConfigJsonStr.toUtf8()).object();
 
         QJsonObject clusterConfig = nodeConfigJson["ClusterConfig"].toObject();

@@ -64,11 +64,11 @@
   "WakuV2Config": {
     "Enabled": false,
     "Host": "0.0.0.0",
-    "Port": 0,
+    "Port": %DEFAULT_WAKUV2_CONFIG_PORT%,
     "LightClient": false,
     "PersistPeers": true,
     "EnableDiscV5": true,
-    "UDPPort": 0,
+    "UDPPort": %DEFAULT_WAKUV2_CONFIG_PORT%,
     "PeerExchange": true,
     "AutoUpdate": true
   },
