@@ -33,8 +33,6 @@ Feature: Status Desktop community messages
         Then the test image is displayed just before the last message
         And the last chat message contains "Message"
 
-	@mayfail
-	# TODO: The action of sending multiple images doesn't work. It is only sent one.
     Scenario: The user sends multiple test images with a message
         When the user sends multiple test images in the current channel with message "Message" with an image again
         Then the test images are displayed just before the last message
