@@ -253,8 +253,7 @@ Control {
                 }
 
                 ColumnLayout {
-
-                    spacing: 0
+                    spacing: 2
                     Layout.alignment: Qt.AlignTop
                     Layout.fillWidth: true
 
@@ -292,7 +291,6 @@ Control {
                                 root.linkActivated(link);
                             }
                         }
-
                     }
 
                     Loader {
