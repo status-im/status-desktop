@@ -233,9 +233,12 @@ QtObject:
     for chat in chats:
       if (chat.active):
         self.events.emit(SIGNAL_CHAT_CREATED, CreatedChatArgs(chat: chat))
-
-    for i, msg in messages:
-      self.events.emit(SIGNAL_SENDING_SUCCESS, MessageSendingSuccess(message: msg, chat: chats[i]))
+      
+    for msg in messages:
+      for chat in chats:
+        if chat.id == msg.chatId:
+          self.events.emit(SIGNAL_SENDING_SUCCESS, MessageSendingSuccess(message: msg, chat: chat))
+          break
 
   proc processUpdateForTransaction*(self: Service, messageId: string, response: RpcResponse[JsonNode]) =
     var (chats, messages) = self.processMessageUpdateAfterSend(response)
