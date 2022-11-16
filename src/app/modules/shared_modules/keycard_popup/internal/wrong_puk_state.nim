@@ -26,7 +26,7 @@ method resolveKeycardNextState*(self: WrongPukState, keycardFlowType: string, ke
     if keycardFlowType == ResponseTypeValueEnterPUK and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPUK:
-        controller.setKeycardData($keycardEvent.pukRetries)
+        controller.setRemainingAttempts(keycardEvent.pukRetries)
         controller.setPukValid(false)
         if keycardEvent.pukRetries > 0:
           return nil

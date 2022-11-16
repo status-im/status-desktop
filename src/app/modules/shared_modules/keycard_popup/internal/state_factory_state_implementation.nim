@@ -139,7 +139,7 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
         if singletonInstance.userProfile.getUsingBiometricLogin():
           if keycardEvent.error.len > 0 and
             keycardEvent.error == ErrorPIN:
-              controller.setKeycardData($keycardEvent.pinRetries)
+              controller.setRemainingAttempts(keycardEvent.pinRetries)
               if keycardEvent.pinRetries > 0:
                 if not controller.usePinFromBiometrics():
                   return createState(StateType.WrongKeychainPin, state.flowType, nil)

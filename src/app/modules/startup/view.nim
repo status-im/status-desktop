@@ -28,6 +28,7 @@ QtObject:
       loginAccountsModelVariant: QVariant
       appState: AppState
       keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
+      remainingAttempts: int
 
   proc delete*(self: View) =
     self.currentStartupStateVariant.delete
@@ -54,6 +55,7 @@ QtObject:
     result.selectedLoginAccountVariant = newQVariant(result.selectedLoginAccount)
     result.loginAccountsModel = login_acc_model.newModel()
     result.loginAccountsModelVariant = newQVariant(result.loginAccountsModel)
+    result.remainingAttempts = -1
 
     signalConnect(result.currentStartupState, "backActionClicked()", result, "onBackActionClicked()", 2)
     signalConnect(result.currentStartupState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
@@ -249,6 +251,18 @@ QtObject:
   QtProperty[string] keycardData:
     read = getKeycardData
     notify = keycardDataChanged
+
+  proc remainingAttemptsChanged*(self: View) {.signal.}
+  proc setRemainingAttempts*(self: View, value: int) =
+    if self.remainingAttempts == value:
+      return
+    self.remainingAttempts = value
+    self.remainingAttemptsChanged()
+  proc getRemainingAttempts*(self: View): int {.slot.} =
+    return self.remainingAttempts
+  QtProperty[int] remainingAttempts:
+    read = getRemainingAttempts
+    notify = remainingAttemptsChanged
 
   proc displayKeycardSharedModuleFlow*(self: View) {.signal.}
   proc emitDisplayKeycardSharedModuleFlow*(self: View) =

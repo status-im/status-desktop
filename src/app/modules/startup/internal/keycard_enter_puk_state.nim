@@ -29,7 +29,7 @@ method resolveKeycardNextState*(self: KeycardEnterPukState, keycardFlowType: str
     if keycardFlowType == ResponseTypeValueEnterPUK and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPUK:
-        controller.setKeycardData($keycardEvent.pukRetries)
+        controller.setRemainingAttempts(keycardEvent.pukRetries)
         if keycardEvent.pukRetries > 0:
           return createState(StateType.KeycardWrongPuk, self.flowType, self.getBackState)
         return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)
@@ -41,7 +41,7 @@ method resolveKeycardNextState*(self: KeycardEnterPukState, keycardFlowType: str
     if keycardFlowType == ResponseTypeValueEnterPUK and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPUK:
-        controller.setKeycardData($keycardEvent.pukRetries)
+        controller.setRemainingAttempts(keycardEvent.pukRetries)
         if keycardEvent.pukRetries > 0:
           return createState(StateType.KeycardWrongPuk, self.flowType, self.getBackState)
         return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)

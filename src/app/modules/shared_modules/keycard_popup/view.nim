@@ -21,6 +21,7 @@ QtObject:
       keyPairForProcessing: KeyPairSelectedItem
       keyPairForProcessingVariant: QVariant
       keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
+      remainingAttempts: int
 
   proc delete*(self: View) =
     self.currentStateVariant.delete
@@ -53,6 +54,7 @@ QtObject:
     result.delegate = delegate
     result.currentState = newStateWrapper()
     result.currentStateVariant = newQVariant(result.currentState)
+    result.remainingAttempts = -1
 
     signalConnect(result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2)
     signalConnect(result.currentState, "cancelActionClicked()", result, "onCancelActionClicked()", 2)
@@ -81,6 +83,18 @@ QtObject:
     read = getKeycardData
     write = setKeycardData
     notify = keycardDataChanged
+
+  proc remainingAttemptsChanged*(self: View) {.signal.}
+  proc setRemainingAttempts*(self: View, value: int) =
+    if self.remainingAttempts == value:
+      return
+    self.remainingAttempts = value
+    self.remainingAttemptsChanged()
+  proc getRemainingAttempts*(self: View): int {.slot.} =
+    return self.remainingAttempts
+  QtProperty[int] remainingAttempts:
+    read = getRemainingAttempts
+    notify = remainingAttemptsChanged
 
   proc onBackActionClicked*(self: View) {.slot.} =
     self.delegate.onBackActionClicked()

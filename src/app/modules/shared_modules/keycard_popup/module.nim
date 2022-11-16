@@ -75,6 +75,9 @@ method getKeycardData*[T](self: Module[T]): string =
 method setKeycardData*[T](self: Module[T], value: string) =
   self.view.setKeycardData(value)
 
+method setRemainingAttempts*[T](self: Module[T], value: int) =
+  self.view.setRemainingAttempts(value)
+
 method setUidOfAKeycardWhichNeedToBeProcessed*[T](self: Module[T], value: string) =
   self.controller.setUidOfAKeycardWhichNeedToBeProcessed(value)
 

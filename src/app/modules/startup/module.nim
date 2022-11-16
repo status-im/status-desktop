@@ -335,6 +335,9 @@ method getKeycardData*[T](self: Module[T]): string =
 method setKeycardData*[T](self: Module[T], value: string) =
   self.view.setKeycardData(value)
 
+method setRemainingAttempts*[T](self: Module[T], value: int) =
+  self.view.setRemainingAttempts(value)
+  
 method runFactoryResetPopup*[T](self: Module[T]) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:

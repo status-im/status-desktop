@@ -18,7 +18,7 @@ Item {
 
     property StartupStore startupStore
 
-    property int remainingAttempts: parseInt(root.startupStore.startupModuleInst.keycardData, 10)
+    property int remainingAttempts: root.startupStore.startupModuleInst.remainingAttempts
 
     onRemainingAttemptsChanged: {
         if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardWrongPin) {

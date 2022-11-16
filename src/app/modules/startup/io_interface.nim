@@ -130,6 +130,9 @@ method getKeycardData*(self: AccessInterface): string {.base.} =
 method setKeycardData*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setRemainingAttempts*(self: AccessInterface, value: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method runFactoryResetPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

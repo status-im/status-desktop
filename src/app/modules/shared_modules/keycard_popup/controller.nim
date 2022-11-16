@@ -161,6 +161,9 @@ proc getKeycardData*(self: Controller): string =
 proc setKeycardData*(self: Controller, value: string) =
   self.delegate.setKeycardData(value)
 
+proc setRemainingAttempts*(self: Controller, value: int) =
+  self.delegate.setRemainingAttempts(value)
+
 proc containsMetadata*(self: Controller): bool =
   return self.tmpKeycardContainsMetadata
 

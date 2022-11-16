@@ -30,7 +30,7 @@ method resolveKeycardNextState*(self: EnterPukState, keycardFlowType: string, ke
     if keycardFlowType == ResponseTypeValueEnterPUK and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPUK:
-        controller.setKeycardData($keycardEvent.pukRetries)
+        controller.setRemainingAttempts(keycardEvent.pukRetries)
         if keycardEvent.pukRetries > 0:
           return createState(StateType.WrongPuk, self.flowType, self.getBackState)
         return createState(StateType.MaxPukRetriesReached, self.flowType, nil)
