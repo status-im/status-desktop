@@ -113,16 +113,15 @@ StatusSectionLayout {
     rightPanel: Component {
         id: userListComponent
         UserListPanel {
-            rootStore: root.rootStore
             label: qsTr("Members")
             messageContextMenu: quickActionMessageOptionsMenu
-            usersModule: {
+            usersModel: {
                 let chatContentModule = root.rootStore.currentChatContentModule()
                 if (!chatContentModule || !chatContentModule.usersModule) {
                     // New communities have no chats, so no chatContentModule
-                    return {}
+                    return 0
                 }
-                return chatContentModule.usersModule
+                return chatContentModule.usersModule.model
             }
         }
     }

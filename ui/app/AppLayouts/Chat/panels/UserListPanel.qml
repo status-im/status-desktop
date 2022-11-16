@@ -16,14 +16,9 @@ Item {
     id: root
     anchors.fill: parent
 
-    // Important:
-    // Each chat/channel has its own ChatContentModule and each ChatContentModule has a single usersModule
-    // usersModule on the backend contains everything needed for this component
-    property var usersModule
+    property var usersModel
     property var messageContextMenu
     property string label
-
-    property var rootStore
 
     StatusBaseText {
         id: titleText
@@ -63,7 +58,7 @@ Item {
             displayMarginEnd: anchors.bottomMargin
 
             model: SortFilterProxyModel {
-                sourceModel: usersModule.model
+                sourceModel: root.usersModel
 
                 sorters: [
                     RoleSorter {
