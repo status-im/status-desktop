@@ -17,7 +17,7 @@ endif()
 
 find_package(
   Qt5
-  COMPONENTS Core Quick QuickControls2 WebEngine
+  COMPONENTS Core Quick QuickControls2 WebEngine Test
   REQUIRED)
 
 file(GLOB_RECURSE QML_FILES "stubs/*.qml" "mocks/*.qml" "pages/*.qml" "src/*.qml" "src/qmldir" "../ui/StatusQ/*.qml" "../ui/app/*.qml")
@@ -28,6 +28,7 @@ add_executable(
   main.cpp
   cachecleaner.cpp cachecleaner.h
   directorieswatcher.cpp directorieswatcher.h
+  sectionsdecoratormodel.cpp sectionsdecoratormodel.h
   ${QML_FILES} main.qml
   ${JS_FILES}
 )
@@ -37,6 +38,11 @@ target_compile_definitions(${PROJECT_NAME}
 target_link_libraries(
   ${PROJECT_NAME} PRIVATE Qt5::Core Qt5::Quick Qt5::QuickControls2 Qt5::WebEngine
                           SortFilterProxyModel)
+
+enable_testing()
+add_executable(SectionsDecoratorModelTest tests/tst_SectionsDecoratorModel.cpp sectionsdecoratormodel.cpp)
+add_test(NAME SectionsDecoratorModelTest COMMAND SectionsDecoratorModelTest)
+target_link_libraries(SectionsDecoratorModelTest PRIVATE Qt5::Test)
 
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ/src")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/app")
