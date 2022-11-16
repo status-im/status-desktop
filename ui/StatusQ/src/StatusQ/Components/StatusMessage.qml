@@ -73,8 +73,8 @@ Control {
     property StatusMessageDetails messageDetails: StatusMessageDetails {}
     property StatusMessageDetails replyDetails: StatusMessageDetails {}
 
-    property string timestampString: Qt.formatTime(new Date(timestamp), "hh:mm");
-    property string timestampTooltipString: Qt.formatTime(new Date(timestamp), "dddd, MMMM d, yyyy hh:mm:ss t");
+    property string timestampString: new Date(notification.timestamp).toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
+    property string timestampTooltipString: new Date(notification.timestamp).toLocaleString()
 
     signal clicked(var sender, var mouse)
     signal profilePictureClicked(var sender, var mouse)

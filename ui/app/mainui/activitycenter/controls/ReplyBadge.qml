@@ -1,7 +1,6 @@
-import QtQuick 2.3
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.3
-import Qt.labs.platform 1.1
+import QtQuick 2.4
+
+import StatusQ.Core 0.1
 
 import utils 1.0
 import shared.controls 1.0
@@ -20,24 +19,20 @@ Badge {
         id: replyIcon
         anchors.left: parent.left
         anchors.leftMargin: Style.current.smallPadding
-        anchors.verticalCenter:parent.verticalCenter
+        anchors.verticalCenter: parent.verticalCenter
         width: 16
         height: width
         source: Style.svg("reply-small-arrow")
     }
 
-    StyledTextEdit {
-        id: communityNameText
-        width: implicitWidth > 300 ? 300 : implicitWidth
-        height: 18
+    StatusBaseText {
         anchors.left: replyIcon.right
         anchors.leftMargin: 4
         anchors.verticalCenter: parent.verticalCenter
-        text: Utils.getReplyMessageStyle(StatusQUtils.Emoji.parse(StatusQUtils.Utils.linkifyAndXSS(repliedMessageContent), 
-                                         StatusQUtils.Emoji.size.small), false)
-        readOnly: true
-        textFormat: Text.RichText
-        clip: true
+        width: Math.min(implicitWidth, 300)
+        text: repliedMessageContent
+        maximumLineCount: 1
+        elide: Text.ElideRight
         font.pixelSize: 13
 
         MouseArea {

@@ -42,10 +42,6 @@ Popup {
 
     property ActivityCenterStore activityCenterStore
     property var store
-    property var messageContextMenu: MessageContextMenuView {
-        store: root.store
-        reactionModel: root.store.emojiReactionsModel
-    }
 
     readonly property int unreadNotificationsCount: root.activityCenterStore.unreadNotificationsCount
 
@@ -194,9 +190,8 @@ Popup {
                     store: root.store
                     activityCenterStore: root.activityCenterStore
                     notification: model
-                    messageContextMenu: root.messageContextMenu
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
-                    onActivityCenterClose: root.close()
+                    onCloseActivityCenter: root.close()
                 }
             }
             DelegateChoice {
@@ -207,9 +202,8 @@ Popup {
                     store: root.store
                     activityCenterStore: root.activityCenterStore
                     notification: model
-                    messageContextMenu: root.messageContextMenu
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
-                    onActivityCenterClose: root.close()
+                    onCloseActivityCenter: root.close()
                 }
             }
             DelegateChoice {
@@ -220,9 +214,8 @@ Popup {
                     store: root.store
                     activityCenterStore: root.activityCenterStore
                     notification: model
-                    messageContextMenu: root.messageContextMenu
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
-                    onActivityCenterClose: root.close()
+                    onCloseActivityCenter: root.close()
                 }
             }
             DelegateChoice {
@@ -233,9 +226,8 @@ Popup {
                     store: root.store
                     activityCenterStore: root.activityCenterStore
                     notification: model
-                    messageContextMenu: root.messageContextMenu
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
-                    onActivityCenterClose: root.close()
+                    onCloseActivityCenter: root.close()
                 }
             }
             DelegateChoice {
@@ -246,9 +238,8 @@ Popup {
                     store: root.store
                     activityCenterStore: root.activityCenterStore
                     notification: model
-                    messageContextMenu: root.messageContextMenu
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
-                    onActivityCenterClose: root.close()
+                    onCloseActivityCenter: root.close()
                 }
             }
             DelegateChoice {
@@ -260,6 +251,7 @@ Popup {
                     activityCenterStore: root.activityCenterStore
                     notification: model
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
+                    onCloseActivityCenter: root.close()
                 }
             }
             DelegateChoice {
@@ -271,6 +263,7 @@ Popup {
                     activityCenterStore: root.activityCenterStore
                     notification: model
                     previousNotificationIndex: Math.min(listView.count - 1, index + 1)
+                    onCloseActivityCenter: root.close()
                 }
             }
         }

@@ -13,63 +13,30 @@ import shared.views.chat 1.0
 import "../controls"
 import "../panels"
 
-ActivityNotificationBase {
+ActivityNotificationMessage {
     id: root
 
-    property var messageContextMenu
+    readonly property var contactDetails: Utils.getContactDetailsAsJson(notification.author)
 
-    signal activityCenterClose()
+    messageDetails.messageText: qsTr("Wants to join")
+    messageDetails.sender.displayName: contactDetails.displayName
+    messageDetails.sender.secondaryName: contactDetails.localNickname
+    messageDetails.sender.profileImage.name: contactDetails.displayIcon
+    messageDetails.sender.profileImage.assetSettings.isImage: true
+    messageDetails.sender.profileImage.pubkey: notification.author
+    messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(notification.author)
+    messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(notification.author, false, true)
 
-    bodyComponent: MessageView {
-        readonly property var contactDetails: Utils.getContactDetailsAsJson(notification.author)
+    messageBadgeComponent: CommunityBadge {
+        readonly property var community: root.store.getCommunityDetailsAsJson(notification.communityId)
 
-        rootStore: root.store
-        messageStore: root.store.messageStore
-        messageId: notification.id
-        messageText: qsTr("Wants to join")
-        messageTimestamp: notification.timestamp
-        senderId: notification.author
-        senderIcon: contactDetails.displayIcon
-        senderDisplayName: contactDetails.displayName
-        senderOptionalName: contactDetails.localNickname
-        messageContextMenu: root.messageContextMenu
-        activityCenterMessage: true
-        activityCenterMessageRead: false
-        onImageClicked: Global.openImagePopup(image, root.messageContextMenu)
-        messageClickHandler: (sender,
-                        point,
-                        isProfileClick,
-                        isSticker = false,
-                        isImage = false,
-                        image = null,
-                        isEmoji = false,
-                        ideEmojiPicker = false,
-                        isReply = false,
-                        isRightClickOnImage = false,
-                        imageSource = "") => {
-            if (isProfileClick) {
-                return Global.openProfilePopup(notification.author)
-            }
+        communityName: community.name
+        communityImage: community.image
+        communityColor: community.color
 
-            root.activityCenterStore.switchTo(notification)
-            root.activityCenterClose()
-        }
-
-        CommunityBadge {
-            readonly property var community: root.store.getCommunityDetailsAsJson(notification.communityId)
-
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 15
-            anchors.left: parent.left
-            anchors.leftMargin: 160 // TODO: get right text margin
-            communityName: community.name
-            communityImage: community.image
-            communityColor: community.color
-
-            onCommunityNameClicked: {
-                root.store.setActiveCommunity(notification.communityId)
-                root.activityCenterClose()
-            }
+        onCommunityNameClicked: {
+            root.store.setActiveCommunity(notification.communityId)
+            root.closeActivityCenter()
         }
     }
 

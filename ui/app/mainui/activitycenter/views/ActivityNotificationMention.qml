@@ -41,11 +41,11 @@ ActivityNotificationMessage {
 
             onCommunityNameClicked: {
                 root.store.setActiveCommunity(notification.message.communityId)
-                root.activityCenterClose()
+                root.closeActivityCenter()
             }
             onChannelNameClicked: {
                 root.activityCenterStore.switchTo(notification)
-                root.activityCenterClose()
+                root.closeActivityCenter()
             }
         }
     }
@@ -65,7 +65,7 @@ ActivityNotificationMessage {
 
             onChannelNameClicked: {
                 root.activityCenterStore.switchTo(notification)
-                root.activityCenterClose()
+                root.closeActivityCenter()
             }
         }
     }

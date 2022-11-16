@@ -14,6 +14,8 @@ import "../panels"
 ActivityNotificationMessage {
     id: root
 
+    maximumLineCount: 5
+
     ctaComponent: ContactRequestCta {
         readonly property string senderId: notification.message.senderId
         readonly property var contactDetails: Utils.getContactDetailsAsJson(senderId)

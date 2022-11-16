@@ -79,7 +79,7 @@ ActivityNotificationBase {
             font.pixelSize: 13
             onLinkActivated: {
                 root.store.setActiveCommunity(notification.communityId)
-                root.activityCenterClose()
+                root.closeActivityCenter()
             }
         }
     }

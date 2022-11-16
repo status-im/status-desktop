@@ -31,6 +31,7 @@ StatusListPicker 0.1 StatusListPicker.qml
 StatusExpandableItem 0.1 StatusExpandableItem.qml
 StatusSmartIdenticon 0.1 StatusSmartIdenticon.qml
 StatusMessage 0.1 StatusMessage.qml
+StatusMessageHeader 0.1 StatusMessageHeader.qml
 StatusMessageDetails 0.1 StatusMessageDetails.qml
 StatusMessageSenderDetails 0.1 StatusMessageSenderDetails.qml
 StatusTagSelector 0.1 StatusTagSelector.qml

@@ -2,57 +2,112 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as CoreUtils
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
 import shared 1.0
 import utils 1.0
-import shared.views.chat 1.0
 
 ActivityNotificationBase {
     id: root
 
-    property var messageContextMenu
+    readonly property string timestampString: new Date(notification.timestamp).toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
+    readonly property string timestampTooltipString: new Date(notification.timestamp).toLocaleString()
 
-    signal activityCenterClose()
+    property int maximumLineCount: 2
 
-    bodyComponent: MessageView {
-        rootStore: root.store
-        messageStore: root.store.messageStore
-        messageContextMenu: root.messageContextMenu
-
-        messageId: notification.id
-        senderDisplayName: notification.message.senderDisplayName
+    property StatusMessageDetails messageDetails: StatusMessageDetails {
         messageText: notification.message.messageText
-        senderId: notification.message.senderId
-        senderOptionalName: notification.message.senderOptionalName
-        senderIcon: notification.message.senderIcon
         amISender: notification.message.amISender
-        messageImage: notification.message.messageImage
-        messageTimestamp: notification.timestamp
-        messageOutgoingStatus: notification.message.outgoingStatus
-        messageContentType: notification.message.contentType
-        senderTrustStatus: notification.message.senderTrustStatus
-        activityCenterMessage: true
-        activityCenterMessageRead: false
-        onImageClicked: Global.openImagePopup(image, root.messageContextMenu)
-        messageClickHandler: (sender, 
-                              point,
-                              isProfileClick,
-                              isSticker = false,
-                              isImage = false,
-                              image = null,
-                              isEmoji = false,
-                              ideEmojiPicker = false,
-                              isReply = false,
-                              isRightClickOnImage = false,
-                              imageSource = "") => {
-            if (isProfileClick) {
-                return Global.openProfilePopup(notification.message.senderId)
+        sender.id: notification.message.senderId
+        sender.displayName: notification.message.senderDisplayName
+        sender.secondaryName: notification.message.senderOptionalName
+        sender.trustIndicator: notification.message.senderTrustStatus
+        sender.profileImage {
+            width: 40
+            height: 40
+            name: notification.message.senderIcon || ""
+            assetSettings.isImage: notification.message.senderIcon.startsWith("data")
+            pubkey: notification.message.senderId
+            colorId: Utils.colorIdForPubkey(notification.message.senderId)
+            colorHash: Utils.getColorHashAsJson(notification.message.senderId, false, true)
+            showRing: true
+        }
+    }
+
+    property Component messageSubheaderComponent: null
+    property Component messageBadgeComponent: null
+
+    function openProfilePopup() {
+        closeActivityCenter()
+        Global.openProfilePopup(notification.message.senderId)
+    }
+
+    bodyComponent: RowLayout {
+        id: messageRow
+        spacing: 8
+
+        Item {
+            Layout.preferredWidth: root.messageDetails.sender.profileImage.assetSettings.width
+            Layout.preferredHeight: profileImage.height
+            Layout.alignment: Qt.AlignTop
+            Layout.topMargin: 2
+
+            StatusSmartIdenticon {
+                id: profileImage
+                name: root.messageDetails.sender.displayName
+                asset: root.messageDetails.sender.profileImage.assetSettings
+                ringSettings: root.messageDetails.sender.profileImage.ringSettings
+
+                MouseArea {
+                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    anchors.fill: parent
+                    onClicked: root.openProfilePopup()
+                }
+            }
+        }
+
+        ColumnLayout {
+            spacing: 2
+            Layout.alignment: Qt.AlignTop
+            Layout.fillWidth: true
+
+            StatusMessageHeader {
+                sender: root.messageDetails.sender
+                amISender: root.messageDetails.amISender
+                messageOriginInfo: root.messageDetails.messageOriginInfo
+                timestamp.text: root.timestampString
+                timestamp.tooltip.text: root.timestampTooltipString
+                onClicked: root.openProfilePopup()
             }
 
-            root.activityCenterStore.switchTo(notification)
-            root.activityCenterClose()
+            Loader {
+                sourceComponent: root.messageSubheaderComponent
+                Layout.fillWidth: true
+            }
+
+            RowLayout {
+                spacing: 2
+                Layout.fillWidth: true
+
+                StatusBaseText {
+                    text: CoreUtils.Utils.stripHtmlTags(root.messageDetails.messageText)
+                    maximumLineCount: root.maximumLineCount
+                    wrapMode: Text.Wrap
+                    elide: Text.ElideRight
+                    font.pixelSize: 15
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.maximumWidth: 400 // From designs, fixed value to align all possible CTAs
+                }
+
+                Loader {
+                    sourceComponent: root.messageBadgeComponent
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.fillHeight: true
+                }
+            }
         }
     }
 }
