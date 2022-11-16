@@ -31,36 +31,47 @@ ApplicationWindow {
 
         ListElement {
             title: "ProfileDialogView"
+            section: "Views"
         }
         ListElement {
              title: "CommunitiesPortalLayout"
-        }
-        ListElement {
-             title: "StatusCommunityCard"
+             section: "Views"
         }
         ListElement {
              title: "LoginView"
+             section: "Views"
         }
         ListElement {
              title: "AboutView"
-        }
-        ListElement {
-            title: "LanguageCurrencySettings"
+             section: "Views"
         }
         ListElement {
             title: "CommunityProfilePopupInviteFriendsPanel"
+            section: "Panels"
         }
         ListElement {
             title: "CommunityProfilePopupInviteMessagePanel"
+            section: "Panels"
+        }
+        ListElement {
+             title: "StatusCommunityCard"
+             section: "Panels"
         }
         ListElement {
             title: "InviteFriendsToCommunityPopup"
-        }
-        ListElement {
-             title: "BrowserSettings"
+            section: "Popups"
         }
         ListElement {
              title: "CreateChannelPopup"
+             section: "Popups"
+        }
+        ListElement {
+            title: "LanguageCurrencySettings"
+            section: "Settings"
+        }
+        ListElement {
+             title: "BrowserSettings"
+             section: "Settings"
         }
     }
 

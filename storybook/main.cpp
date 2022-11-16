@@ -2,8 +2,9 @@
 #include <QQmlApplicationEngine>
 #include <QtWebEngine>
 
-#include <cachecleaner.h>
-#include <directorieswatcher.h>
+#include "cachecleaner.h"
+#include "directorieswatcher.h"
+#include "sectionsdecoratormodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -33,6 +34,8 @@ int main(int argc, char *argv[])
 
     for (const auto& path : additionalImportPaths)
         engine.addImportPath(path);
+
+    qmlRegisterType<SectionsDecoratorModel>("Storybook", 1, 0, "SectionsDecoratorModel");
 
     auto watcherFactory = [additionalImportPaths](QQmlEngine*, QJSEngine*) {
         auto watcher = new DirectoriesWatcher();

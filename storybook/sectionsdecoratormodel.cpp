@@ -9,6 +9,9 @@ SectionsDecoratorModel::SectionsDecoratorModel(QObject *parent)
 
 void SectionsDecoratorModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
+    if (m_sourceModel == nullptr && sourceModel == nullptr)
+        return;
+
     if (m_sourceModel != nullptr) {
         qWarning("Changing source model is not supported!");
         return;
@@ -74,7 +77,14 @@ QHash<int, QByteArray> SectionsDecoratorModel::roleNames() const
 
 void SectionsDecoratorModel::flipFolding(int index)
 {
+    if (index < 0 || index >= m_rowsMetadata.size())
+        return;
+
     auto &row = m_rowsMetadata[index];
+
+    if (!row.isSection)
+        return;
+
     row.folded = !row.folded;
 
     const auto idx = this->index(index, 0, {});
