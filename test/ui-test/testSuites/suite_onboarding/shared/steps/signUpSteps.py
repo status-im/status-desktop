@@ -20,15 +20,14 @@ def step(context):
 @Given("the user lands on the signed in app")
 def step(context):
     the_user_lands_on_the_signed_in_app()
-
-#########################
-### ACTIONS region:
-#########################
-
-@When("user signs up with username \"|any|\" and password \"|any|\"")
+    
+@Given("the user signs up with username \"|any|\" and password \"|any|\"")
 def step(context, username, password):
     the_user_signs_up(username, password)
 
+#########################
+### ACTIONS region:
+########################
 @When("the user inputs username |any|")
 def step(context, username):
     _welcomeScreen.input_username(username) 

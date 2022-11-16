@@ -23,8 +23,9 @@ class SettingsSubsection(Enum):
     ADVANCED: str = "10" + _SETTINGS_MENU_ITEM_OBJ_NAME
     ABOUT: str = "11" + _EXTRA_MENU_ITEM_OBJ_NAME
     COMMUNITY: str = "12" + _APP_MENU_ITEM_OBJ_NAME
-    SIGNOUT: str = "13" + _EXTRA_MENU_ITEM_OBJ_NAME
-    BACKUP_SEED: str = "14" + _MAIN_MENU_ITEM_OBJ_NAME
+    KEYCARD: str = "13" + _MAIN_MENU_ITEM_OBJ_NAME
+    SIGNOUT: str = "14" + _EXTRA_MENU_ITEM_OBJ_NAME
+    BACKUP_SEED: str = "15" + _MAIN_MENU_ITEM_OBJ_NAME
 
 # Main:
 navBarListView_Settings_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
