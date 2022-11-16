@@ -39,7 +39,6 @@ Feature: Status Desktop Chat Basic Flows
     Scenario Outline: The user can edit a message
          Given the user sends a chat message "Edit me"
          When the user edits the message at index 0 and changes it to "<edited>"
-         # TODO: Check last message is an edited one, now just checking the last message is the expected one but could not be an edited one.
          Then the chat message "<edited>" is displayed as an edited one
          Examples:
 		 | edited		|
