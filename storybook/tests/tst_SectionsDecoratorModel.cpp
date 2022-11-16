@@ -75,6 +75,36 @@ private slots:
         QVERIFY(model.roleNames().contains(TestSourceModel::SectionRole));
     }
 
+    void changingSourceModelHasNoEffectTest() {
+        TestSourceModel src1(QStringList{"Section 1", "Section 1", "Section 1", "Section 2", "Section 2", "Section 3"});
+        TestSourceModel src2(QStringList{});
+
+        SectionsDecoratorModel model;
+
+        QCOMPARE(model.rowCount(), 0);
+        QCOMPARE(model.roleNames().count(), 3);
+
+        model.setSourceModel(nullptr);
+
+        QCOMPARE(model.rowCount(), 0);
+        QCOMPARE(model.roleNames().count(), 3);
+
+        model.setSourceModel(&src1);
+
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(model.roleNames().count(), 5);
+
+        model.setSourceModel(&src2);
+
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(model.roleNames().count(), 5);
+
+        model.setSourceModel(nullptr);
+
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(model.roleNames().count(), 5);
+    }
+
     void initialUnfoldedStateTest() {
         TestSourceModel src(QStringList{"Section 1", "Section 1", "Section 1", "Section 2", "Section 2", "Section 3"});
         SectionsDecoratorModel model;
@@ -305,6 +335,195 @@ private slots:
         QCOMPARE(model.data(model.index(2, 0), SectionsDecoratorModel::SubitemsCountRole).toInt(), 1);
     }
 
+    void flipFoldingForNonSectionHasNoEffecttest() {
+
+        TestSourceModel src(QStringList{"Section 1", "Section 1", "Section 1", "Section 2", "Section 2", "Section 3"});
+        SectionsDecoratorModel model;
+        model.setSourceModel(&src);
+
+        QCOMPARE(model.rowCount(), 9);
+
+        QSignalSpy modelResetSpy(&model, &SectionsDecoratorModel::modelReset);
+        QSignalSpy rowsInsertedSpy(&model, &SectionsDecoratorModel::rowsInserted);
+        QSignalSpy rowsRemovedSpy(&model, &SectionsDecoratorModel::rowsRemoved);
+
+        model.flipFolding(9);
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+        QCOMPARE(rowsRemovedSpy.count(), 0);
+
+        QCOMPARE(model.data(model.index(0, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(1, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(2, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(3, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(4, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(5, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(6, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(7, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(8, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+
+        model.flipFolding(1000);
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+        QCOMPARE(rowsRemovedSpy.count(), 0);
+
+        QCOMPARE(model.data(model.index(0, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(1, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(2, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(3, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(4, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(5, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(6, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(7, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(8, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+
+        model.flipFolding(-1);
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+        QCOMPARE(rowsRemovedSpy.count(), 0);
+
+        QCOMPARE(model.data(model.index(0, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(1, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(2, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(3, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(4, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(5, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(6, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(7, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(8, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+
+        model.flipFolding(-1000);
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+        QCOMPARE(rowsRemovedSpy.count(), 0);
+
+        QCOMPARE(model.data(model.index(0, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(1, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(2, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(3, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(4, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(5, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(6, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(7, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(8, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+
+        model.flipFolding(1);
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+        QCOMPARE(rowsRemovedSpy.count(), 0);
+
+        QCOMPARE(model.data(model.index(0, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(1, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(2, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(3, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(4, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(5, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(6, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(7, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(8, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+
+        model.flipFolding(2);
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+        QCOMPARE(rowsRemovedSpy.count(), 0);
+
+        QCOMPARE(model.data(model.index(0, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(1, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(2, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(3, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(4, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(5, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(6, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(7, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(8, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+
+        model.flipFolding(3);
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+        QCOMPARE(rowsRemovedSpy.count(), 0);
+
+        QCOMPARE(model.data(model.index(0, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(1, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(2, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(3, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(4, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(5, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(6, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(7, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(8, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+
+        model.flipFolding(1);
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+        QCOMPARE(rowsRemovedSpy.count(), 0);
+
+        QCOMPARE(model.data(model.index(0, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(1, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(2, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(3, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(4, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(5, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(6, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(7, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(8, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+
+        model.flipFolding(2);
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+        QCOMPARE(rowsRemovedSpy.count(), 0);
+
+        QCOMPARE(model.data(model.index(0, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(1, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(2, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(3, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(4, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(5, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(6, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(7, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(8, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+
+        model.flipFolding(3);
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+        QCOMPARE(rowsRemovedSpy.count(), 0);
+
+        QCOMPARE(model.data(model.index(0, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(1, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(2, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(3, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(4, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(5, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(6, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(7, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(8, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+
+        model.flipFolding(8);
+        QCOMPARE(model.rowCount(), 9);
+        QCOMPARE(modelResetSpy.count(), 0);
+        QCOMPARE(rowsInsertedSpy.count(), 0);
+        QCOMPARE(rowsRemovedSpy.count(), 0);
+
+        QCOMPARE(model.data(model.index(0, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(1, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(2, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(3, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(4, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(5, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(6, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(7, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+        QCOMPARE(model.data(model.index(8, 0), SectionsDecoratorModel::IsFoldedRole).toBool(), false);
+    }
+
     void unfoldingTest() {
         TestSourceModel src(QStringList{"Section 1", "Section 1", "Section 1", "Section 2", "Section 2", "Section 3"});
         SectionsDecoratorModel model;
@@ -472,7 +691,7 @@ private slots:
         SectionsDecoratorModel model;
         model.setSourceModel(&proxy);
 
-        QSignalSpy spy(&model, SIGNAL(modelReset()));
+        QSignalSpy spy(&model, &SectionsDecoratorModel::modelReset);
 
         proxy.setFilterRole(TestSourceModel::TitleRole);
         proxy.setFilterWildcard("*1");

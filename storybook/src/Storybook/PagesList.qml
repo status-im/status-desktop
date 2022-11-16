@@ -8,15 +8,42 @@ ListView {
     clip: true
 
     property string currentPage
+
     signal pageSelected(string page)
+    signal sectionClicked(int index)
 
-    delegate: Button {
-        width: parent.width
+    readonly property string foldedPrefix: "▶  "
+    readonly property string unfoldedPrefix: "▼  "
 
-        text: model.title
-        checked: root.currentPage === model.title
+    delegate: ItemDelegate {
+        id: delegate
 
-        onClicked: root.pageSelected(model.title)
-        onCheckableChanged: checkable = false
+        width: ListView.view.width
+
+        TextMetrics {
+            id: textMetrics
+            text: root.unfoldedPrefix
+            font: delegate.font
+        }
+
+        function sectionPrefix(isFolded) {
+            return isFolded ? foldedPrefix : unfoldedPrefix
+        }
+
+        text: model.isSection
+              ? sectionPrefix(model.isFolded) + model.section + ` (${model.subitemsCount})`
+              : model.title
+
+        font.bold: model.isSection
+        highlighted: root.currentPage === model.title
+
+        onClicked: model.isSection
+                   ? sectionClicked(index)
+                   : root.pageSelected(model.title)
+
+        Component.onCompleted: {
+            if (!model.isSection)
+                leftPadding += textMetrics.advanceWidth
+        }
     }
 }

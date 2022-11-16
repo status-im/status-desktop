@@ -4,6 +4,8 @@ import QtQuick.Controls 2.14
 
 import SortFilterProxyModel 0.2
 
+import Storybook 1.0
+
 ColumnLayout {
     id: root
 
@@ -24,6 +26,12 @@ ColumnLayout {
         }
     }
 
+    SectionsDecoratorModel {
+        id: sectionsModel
+
+        sourceModel: filteredModel
+    }
+
     TextField {
         id: textField
 
@@ -42,8 +50,9 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        model: filteredModel
+        model: sectionsModel
 
         onPageSelected: root.pageSelected(page)
+        onSectionClicked: sectionsModel.flipFolding(index)
     }
 }
