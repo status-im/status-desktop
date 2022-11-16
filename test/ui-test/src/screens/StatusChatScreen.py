@@ -196,8 +196,8 @@ class StatusChatScreen:
         self.send_message(message)
     
     def edit_message_at_index(self, index: int, message: str):
-        message_object_to_edit = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))
-        hover_obj(message_object_to_edit)
+        message_object_to_edit = wait_and_get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))
+        move_mouse_over_object(message_object_to_edit)
         click_obj_by_name(ChatComponents.EDIT_MESSAGE_BUTTON.value)
         wait_for_object_and_type(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, "<Ctrl+a>")
         type(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, message)
@@ -339,6 +339,10 @@ class StatusChatScreen:
         verify_text_contains(str(text_message_obj.messageDetails.messageText), str(message))
         verify_values_equal(str(last_message_reply_details_obj.replyDetails.sender.id), str(last_message_obj.senderId), "Message sender ID doesn't match reply message sender ID")
 
+
+    def verify_last_message_is_edited(self, message: str):
+        last_message_obj = self.get_message_at_index(0)
+        verify(bool(last_message_obj.isEdited), "Message is not marked as edited")
 
     def verify_last_message_sent(self, message: str):
         # Get the message text

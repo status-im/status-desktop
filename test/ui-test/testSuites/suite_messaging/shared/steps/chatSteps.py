@@ -194,8 +194,8 @@ def step(context, reply, message):
     
 @Then("the chat message \"|any|\" is displayed as an edited one")
 def step(context, message):
-    # TODO: Check last message is an edited one.
     _statusChat.verify_last_message_sent(message)  
+    _statusChat.verify_last_message_is_edited(message)
          
 @Then("the last message displayed is not \"|any|\"")
 def step(context, message):
