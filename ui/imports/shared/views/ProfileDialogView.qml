@@ -93,6 +93,10 @@ Pane {
                 if (publicKey === root.publicKey) d.reload()
             }
         }
+
+        readonly property var timer: Timer {
+            id: timer
+        }
     }
 
     function reload() {
@@ -585,6 +589,7 @@ Pane {
                         placeholderTextColor: Theme.palette.directColor1
                         edit.readOnly: true
                         rightComponent: StatusButton {
+                            id: copyLinkBtn
                             anchors.verticalCenter: parent.verticalCenter
                             borderColor: Theme.palette.primaryColor1
                             size: StatusBaseButton.Size.Tiny
@@ -592,6 +597,9 @@ Pane {
                             onClicked: {
                                 text = qsTr("Copied")
                                 root.profileStore.copyToClipboard(d.linkToProfile)
+                                d.timer.setTimeout(function() {
+                                    copyLinkBtn.text = qsTr("Copy")
+                                }, 2000);
                             }
                         }
                     }
@@ -616,6 +624,7 @@ Pane {
                             oneRow: !root.readOnly
                         }
                         rightComponent: StatusButton {
+                            id: copyHashBtn
                             anchors.verticalCenter: parent.verticalCenter
                             borderColor: Theme.palette.primaryColor1
                             size: StatusBaseButton.Size.Tiny
@@ -623,6 +632,9 @@ Pane {
                             onClicked: {
                                 root.profileStore.copyToClipboard(Utils.getEmojiHashAsJson(root.publicKey).join("").toString())
                                 text = qsTr("Copied")
+                                d.timer.setTimeout(function() {
+                                    copyHashBtn.text = qsTr("Copy")
+                                }, 2000);
                             }
                         }
                     }
