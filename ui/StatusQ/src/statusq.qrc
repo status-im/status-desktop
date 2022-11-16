@@ -6,7 +6,6 @@
         <file>StatusQ/Components/private/statusMessage/StatusAudioMessage.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusEditMessage.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusImageMessage.qml</file>
-        <file>StatusQ/Components/private/statusMessage/StatusMessageHeader.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusMessageQuickActions.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusMessageReply.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusPinMessageDetails.qml</file>
@@ -46,6 +45,7 @@
         <file>StatusQ/Components/StatusMemberListItem.qml</file>
         <file>StatusQ/Components/StatusMessage.qml</file>
         <file>StatusQ/Components/StatusMessageDetails.qml</file>
+        <file>StatusQ/Components/StatusMessageHeader.qml</file>
         <file>StatusQ/Components/StatusNavigationListItem.qml</file>
         <file>StatusQ/Components/StatusNavigationPanelHeadline.qml</file>
         <file>StatusQ/Components/StatusRoundedImage.qml</file>

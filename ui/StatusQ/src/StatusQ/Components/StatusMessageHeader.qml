@@ -7,6 +7,8 @@ import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
+import "./private/statusMessage"
+
 Item {
     id: root
 

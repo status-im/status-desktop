@@ -20,6 +20,8 @@ Item {
     property alias ctaComponent: ctaLoader.sourceComponent
     property alias previousNotificationIndex: dateGroupLabel.previousMessageIndex
 
+    signal closeActivityCenter()
+
     implicitHeight: Math.max(60, bodyLoader.height +
                                  (dateGroupLabel.visible ? dateGroupLabel.height : 0) +
                                  (badgeLoader.item ? badgeLoader.height + Style.current.smallPadding : 0))
@@ -47,7 +49,7 @@ Item {
         id: badgeLoader
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.leftMargin: 61 // TODO find a way to align with the text of the message
+        anchors.leftMargin: 50 // TODO find a way to align with the text of the message
     }
 
     Loader {

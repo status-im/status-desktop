@@ -17,7 +17,7 @@ ActivityNotificationMessage {
         repliedMessageContent: notification.repliedMessage.messageText
         onReplyClicked: {
             root.activityCenterStore.switchTo(notification)
-            root.activityCenterClose()
+            root.closeActivityCenter()
         }
     }
 }
