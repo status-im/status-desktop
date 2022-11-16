@@ -62,6 +62,9 @@ ApplicationWindow {
         ListElement {
              title: "CreateChannelPopup"
         }
+        ListElement {
+            title: "UserListPanel"
+        }
     }
 
     SplitView {
