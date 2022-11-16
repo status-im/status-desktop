@@ -64,7 +64,7 @@ Item {
         readonly property string stateLoginRegularUser: "regularUserLogin"
         readonly property string stateLoginKeycardUser: "keycardUserLogin"
 
-        property int remainingAttempts: parseInt(root.startupStore.startupModuleInst.keycardData, 10)
+        property int remainingAttempts: root.startupStore.startupModuleInst.remainingAttempts
         onRemainingAttemptsChanged: {
             pinInputField.statesInitialization()
             pinInputField.forceFocus()

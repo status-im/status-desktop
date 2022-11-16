@@ -16,7 +16,7 @@ Item {
 
     property StartupStore startupStore
 
-    property int remainingAttempts: parseInt(root.startupStore.startupModuleInst.keycardData, 10)
+    property int remainingAttempts: root.startupStore.startupModuleInst.remainingAttempts
 
     Component.onCompleted: {
         d.allEntriesValid = false

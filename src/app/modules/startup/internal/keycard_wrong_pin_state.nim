@@ -27,7 +27,7 @@ method resolveKeycardNextState*(self: KeycardWrongPinState, keycardFlowType: str
     if keycardFlowType == ResponseTypeValueEnterPIN and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPIN:
-        controller.setKeycardData($keycardEvent.pinRetries)
+        controller.setRemainingAttempts(keycardEvent.pinRetries)
         if keycardEvent.pinRetries > 0:
           return self
         return createState(StateType.KeycardMaxPinRetriesReached, self.flowType, self.getBackState)

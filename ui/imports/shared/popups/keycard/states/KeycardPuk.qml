@@ -17,7 +17,7 @@ Item {
 
     property var sharedKeycardModule
 
-    property int remainingAttempts: parseInt(root.sharedKeycardModule.keycardData, 10)
+    property int remainingAttempts: root.sharedKeycardModule.remainingAttempts
 
     signal pukUpdated(string puk)
 

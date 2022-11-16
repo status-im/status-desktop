@@ -326,7 +326,7 @@ proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardF
         return createState(StateType.LoginKeycardRecognizedKeycard, state.flowType, nil)
       if keycardEvent.error.len > 0:
         if keycardEvent.error == RequestParamPIN:
-          controller.setKeycardData($keycardEvent.pinRetries)
+          controller.setRemainingAttempts(keycardEvent.pinRetries)
           if keycardEvent.pinRetries > 0:
             return createState(StateType.LoginKeycardWrongPin, state.flowType, nil)
           return createState(StateType.LoginKeycardMaxPinRetriesReached, state.flowType, nil)
