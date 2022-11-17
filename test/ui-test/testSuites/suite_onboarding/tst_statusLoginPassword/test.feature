@@ -15,6 +15,8 @@ Feature: Status Desktop login
 
     The following scenarios cover login by using a password.
 
+    The feature start sequence follows the global one (setup on global `bdd_hooks`): No additional steps
+
     Scenario Outline: User tries to login with a valid password
         Given A first time user lands on the status desktop and generates new key
         And the user signs up with username "<username>" and password "<password>"
@@ -27,8 +29,6 @@ Feature: Status Desktop login
             | username 		   | password          |
             | Athletic_Prime   | TesTEr16843/!@00  |
 
-
-	@merge
     Scenario Outline: User tries to login with an invalid password
         Given A first time user lands on the status desktop and generates new key
         And the user signs up with username "<username>" and password "<password>"
@@ -36,8 +36,7 @@ Feature: Status Desktop login
         When the user restarts the app
         And the user "<username>" logs in with password "<wrongpassword>"
         Then the user is NOT able to login to Status Desktop application
-            Examples:
-                 | username 		  | password           |  wrongpassword    |
-                 | Athletic_Prime     | TesTEr16843/!@00   |  Invalid34        |
-                 | Granular_Diligent  | TesTEr16843/!@11   |  Testpwd          |
-                 | Nervous_Pesky      | TesTEr16843/!@22   |  WrongPSW         |
+
+        Examples:
+             | username 		  | password           |  wrongpassword    |
+             | Nervous_Pesky      | TesTEr16843/!@22   |  WrongPSW         |

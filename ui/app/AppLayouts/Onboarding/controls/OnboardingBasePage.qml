@@ -18,6 +18,7 @@ Page {
 
     StatusRoundButton {
         id: backButton
+        objectName: "onboardingBackButton"
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.bottom: parent.bottom
