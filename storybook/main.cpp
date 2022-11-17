@@ -1,6 +1,9 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+
+#ifdef QT_WEBENGINE_LIB
 #include <QtWebEngine>
+#endif
 
 #include "cachecleaner.h"
 #include "directorieswatcher.h"
@@ -12,7 +15,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+#ifdef QT_WEBENGINE_LIB
     QtWebEngine::initialize();
+#endif
     QGuiApplication app(argc, argv);
     QGuiApplication::setOrganizationName(QStringLiteral("Status"));
     QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));
@@ -23,13 +28,13 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     const QStringList additionalImportPaths {
-        SRC_DIR + QStringLiteral("/../ui/StatusQ/src"),
-        SRC_DIR + QStringLiteral("/../ui/app"),
-        SRC_DIR + QStringLiteral("/../ui/imports"),
-        SRC_DIR + QStringLiteral("/src"),
-        SRC_DIR + QStringLiteral("/pages"),
-        SRC_DIR + QStringLiteral("/stubs"),
-        SRC_DIR + QStringLiteral("/mocks"),
+        QML_IMPORT_ROOT + QStringLiteral("/../ui/StatusQ/src"),
+        QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
+        QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
+        QML_IMPORT_ROOT + QStringLiteral("/src"),
+        QML_IMPORT_ROOT + QStringLiteral("/pages"),
+        QML_IMPORT_ROOT + QStringLiteral("/stubs"),
+        QML_IMPORT_ROOT + QStringLiteral("/mocks"),
     };
 
     for (const auto& path : additionalImportPaths)
@@ -53,7 +58,7 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType<CacheCleaner>(
                 "Storybook", 1, 0, "CacheCleaner", cleanerFactory);
 
-    const QUrl url(SRC_DIR + QStringLiteral("/main.qml"));
+    const QUrl url(QML_IMPORT_ROOT + QStringLiteral("/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)

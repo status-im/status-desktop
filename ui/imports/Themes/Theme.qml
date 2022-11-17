@@ -1,8 +1,16 @@
 import QtQuick 2.14
 
-import utils 1.0
-
 QtObject {
+
+    enum FontSize {
+        FontSizeXS,
+        FontSizeS,
+        FontSizeM,
+        FontSizeL,
+        FontSizeXL,
+        FontSizeXXL
+    }
+
     readonly property FontLoader baseFont: FontLoader { source: "../../fonts/Inter/Inter-Regular.otf" }
     readonly property FontLoader monoFont: FontLoader { source: "../../fonts/InterStatus/InterStatus-Regular.otf" }
     readonly property FontLoader codeFont: FontLoader { source: "../../fonts/RobotoMono/RobotoMono-Regular.ttf" }
@@ -103,42 +111,42 @@ QtObject {
 
     function updateFontSize(fontSize) {
         switch (fontSize) {
-            case Constants.fontSizeXS:
+            case Theme.FontSizeXS:
                 primaryTextFontSize = 13
                 secondaryTextFontSize = 12
                 tertiaryTextFontSize = 10
                 asideTextFontSize = 8
                 break;
 
-            case Constants.fontSizeS:
+            case Theme.FontSizeS:
                 primaryTextFontSize = 14
                 secondaryTextFontSize = 13
                 tertiaryTextFontSize = 11
                 asideTextFontSize = 9
                 break;
 
-            case Constants.fontSizeM:
+            case Theme.FontSizeM:
                 primaryTextFontSize = 15
                 secondaryTextFontSize = 14
                 tertiaryTextFontSize = 12
                 asideTextFontSize = 10
                 break;
 
-            case Constants.fontSizeL:
+            case Theme.FontSizeL:
                 primaryTextFontSize = 16
                 secondaryTextFontSize = 15
                 tertiaryTextFontSize = 13
                 asideTextFontSize = 11
                 break;
 
-            case Constants.fontSizeXL:
+            case Theme.FontSizeXL:
                 primaryTextFontSize = 17
                 secondaryTextFontSize = 16
                 tertiaryTextFontSize = 14
                 asideTextFontSize = 12
                 break;
 
-            case Constants.fontSizeXXL:
+            case Theme.FontSizeXXL:
                 primaryTextFontSize = 18
                 secondaryTextFontSize = 17
                 tertiaryTextFontSize = 15

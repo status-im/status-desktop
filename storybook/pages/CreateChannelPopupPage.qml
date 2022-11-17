@@ -48,12 +48,12 @@ SplitView {
             }
 
 
-            onCreateCommunityChannel: (chName, chDescription, chEmoji, chColor, chCategoryId) => {
+            onCreateCommunityChannel: function(chName, chDescription, chEmoji, chColor, chCategoryId) {
                 logs.logEvent("onCreateCommunityChannel",
                               ["chName", "chDescription", "chEmoji", "chColor", "chCategoryId"], arguments)
             }
 
-            onEditCommunityChannel: (chName, chDescription, chEmoji, chColor, chCategoryId) => {
+            onEditCommunityChannel: function(chName, chDescription, chEmoji, chColor, chCategoryId) {
                 logs.logEvent("onEditCommunityChannel",
                               ["chName", "chDescription", "chEmoji", "chColor", "chCategoryId"], arguments)
             }
