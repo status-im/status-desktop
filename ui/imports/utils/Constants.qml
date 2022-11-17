@@ -573,13 +573,6 @@ QtObject {
     readonly property string lightThemeName: "light"
     readonly property string darkThemeName: "dark"
 
-    readonly property int fontSizeXS: 0
-    readonly property int fontSizeS: 1
-    readonly property int fontSizeM: 2
-    readonly property int fontSizeL: 3
-    readonly property int fontSizeXL: 4
-    readonly property int fontSizeXXL: 5
-
     readonly property int notifyAllMessages: 0
     readonly property int notifyJustMentions: 1
     readonly property int notifyNone: 2

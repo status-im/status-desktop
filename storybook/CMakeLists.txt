@@ -34,7 +34,7 @@ add_executable(
 )
 
 target_compile_definitions(${PROJECT_NAME}
-                           PRIVATE SRC_DIR="${CMAKE_CURRENT_LIST_DIR}")
+                           PRIVATE QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}")
 target_link_libraries(
   ${PROJECT_NAME} PRIVATE Qt5::Core Qt5::Quick Qt5::QuickControls2 Qt5::WebEngine
                           SortFilterProxyModel)
