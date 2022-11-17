@@ -13,6 +13,11 @@
 
 #define STATUS_READ_NLOHMAN_JSON_PROPERTY_1_ARGS(FIELD) STATUS_READ_NLOHMAN_JSON_PROPERTY_2_ARGS(FIELD, #FIELD)
 
+#define STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT_2_ARGS(FIELD, NAME)                                                          \
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_3_ARGS(FIELD, NAME, false)
+
+#define STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT_1_ARGS(FIELD) STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT_2_ARGS(FIELD, #FIELD)
+
 // This macro reads prop from the nlohman json object. It implies that nlohman json object is named `j` and the struct
 // instance that json object should be mapped to is named `d`.
 //
@@ -31,3 +36,8 @@
                                                STATUS_READ_NLOHMAN_JSON_PROPERTY_3_ARGS,                               \
                                                STATUS_READ_NLOHMAN_JSON_PROPERTY_2_ARGS,                               \
                                                STATUS_READ_NLOHMAN_JSON_PROPERTY_1_ARGS)(__VA_ARGS__))
+
+#define STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(...)                                                                     \
+    STATUS_EXPAND(STATUS_MACRO_SELECTOR_2_ARGS(__VA_ARGS__,                                                            \
+                                               STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT_2_ARGS,                           \
+                                               STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT_1_ARGS)(__VA_ARGS__))
