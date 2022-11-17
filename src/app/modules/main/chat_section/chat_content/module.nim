@@ -334,7 +334,7 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
         item.messageContainsMentions = m.containsContactMentions()
 
   if(self.controller.getMyChatId() == contactId):
-    self.view.updateChatDetailsNameAndIcon(updatedContact.details.displayName, updatedContact.icon)
+    self.view.updateChatDetailsNameAndIcon(updatedContact.defaultDisplayName, updatedContact.icon)
     self.view.updateTrustStatus(updatedContact.details.trustStatus == TrustStatus.Untrustworthy)
 
 method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificationCount: int) =
