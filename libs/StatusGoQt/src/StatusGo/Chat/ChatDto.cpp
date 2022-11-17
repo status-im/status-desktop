@@ -18,10 +18,10 @@ void Chats::from_json(const json& j, Category& d)
 {
     STATUS_READ_NLOHMAN_JSON_PROPERTY(name)
     STATUS_READ_NLOHMAN_JSON_PROPERTY(position)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(id, "category_id", false)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(id, "category_id")
     if(!j.contains("category_id"))
     {
-        STATUS_READ_NLOHMAN_JSON_PROPERTY(id, "id", false)
+        STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(id, "id")
     }
 }
 
@@ -35,8 +35,8 @@ void Chats::to_json(json& j, const Permission& d)
 
 void Chats::from_json(const json& j, Permission& d)
 {
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(access, "access", false)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(ensOnly, "ens_only", false)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(access)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(ensOnly, "ens_only")
 }
 
 void Chats::to_json(json& j, const Images& d)
@@ -72,10 +72,10 @@ void Chats::to_json(json& j, const ChatMember& d)
 
 void Chats::from_json(const json& j, ChatMember& d)
 {
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(id)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(id)
     STATUS_READ_NLOHMAN_JSON_PROPERTY(joined)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(roles)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(admin, "admin", false)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(roles)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY(admin)
 }
 
 void Chats::to_json(json& j, const ChatDto& d)
@@ -126,25 +126,25 @@ void Chats::from_json(const json& j, ChatDto& d)
     STATUS_READ_NLOHMAN_JSON_PROPERTY(unviewedMessagesCount)
     STATUS_READ_NLOHMAN_JSON_PROPERTY(unviewedMentionsCount)
     STATUS_READ_NLOHMAN_JSON_PROPERTY(canPost)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(alias, "alias", false)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(icon, "icon", false)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(alias)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(icon)
     STATUS_READ_NLOHMAN_JSON_PROPERTY(muted)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(position, "position", false)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(position)
     STATUS_READ_NLOHMAN_JSON_PROPERTY(communityId)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(profile, "profile", false)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(joined)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(syncedTo)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(syncedFrom)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(highlight, "highlight", false)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(permissions, "permissions", false)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(profile)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(joined)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(syncedTo)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(syncedFrom)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(highlight)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(permissions)
     STATUS_READ_NLOHMAN_JSON_PROPERTY(chatType)
 
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(categoryId, "categoryId", false)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(categoryId, "categoryId")
     if(!j.contains("categoryId"))
     {
         // Communities have `categoryID` and chats have `categoryId`
         // This should be fixed in status-go, but would be a breaking change
-        STATUS_READ_NLOHMAN_JSON_PROPERTY(categoryId, "categoryID", false)
+        STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(categoryId, "categoryID")
     }
 
     // Add community ID if needed
@@ -208,7 +208,7 @@ void Chats::from_json(const json& j, ChannelGroupDto& d)
     STATUS_READ_NLOHMAN_JSON_PROPERTY(color)
     STATUS_READ_NLOHMAN_JSON_PROPERTY(muted)
     STATUS_READ_NLOHMAN_JSON_PROPERTY(images)
-    STATUS_READ_NLOHMAN_JSON_PROPERTY(permissions, "permissions", false)
+    STATUS_READ_NLOHMAN_JSON_PROPERTY_OPT(permissions)
 
     STATUS_READ_NLOHMAN_JSON_PROPERTY(channelGroupType)
     if(d.channelGroupType.isEmpty()) d.channelGroupType = ChannelGroupTypeUnknown;
