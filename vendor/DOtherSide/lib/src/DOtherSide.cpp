@@ -21,6 +21,7 @@
 
 #include <iostream>
 
+#include <QtGlobal>
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 #include <QtCore/QModelIndex>
@@ -53,6 +54,8 @@
 #ifdef QT_QUICKCONTROLS2_LIB
 #include <QtQuickControls2/QQuickStyle>
 #endif
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "DOtherSide/DOtherSideTypesCpp.h"
 #include "DOtherSide/DosQMetaObject.h"
@@ -174,6 +177,35 @@ void dos_qguiapplication_initialize_opengl()
     QGuiApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 }
 
+// This catches the QT and QML logs and outputs them.
+// This is necessary on Windows, because otherwise we do not get any logs at all
+void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QByteArray localMsg = msg.toLocal8Bit();
+    const char *file = context.file ? context.file : "";
+    const char *function = context.function ? context.function : "";
+    switch (type) {
+    case QtDebugMsg:
+        fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
+        break;
+    case QtInfoMsg:
+        fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
+        break;
+    case QtWarningMsg:
+        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
+        break;
+    case QtCriticalMsg:
+        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
+        break;
+    case QtFatalMsg:
+        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
+        break;
+    default:
+        fprintf(stderr, "Default: %s (%s:%u, %s)\n", localMsg.constData(), file, context.line, function);
+        break;
+    }
+}
+
 void dos_qguiapplication_create()
 {
     // The parameters argc and argv and the strings pointed to by the argv array shall be modifiable by the program,
@@ -193,6 +225,8 @@ void dos_qguiapplication_create()
     static int argc = 1;
     static char *argv[] = {toCharPtr(QStringLiteral("Status"))};
 #endif
+
+    qInstallMessageHandler(myMessageOutput);
 
     new QGuiApplication(argc, argv);
     register_meta_types();
