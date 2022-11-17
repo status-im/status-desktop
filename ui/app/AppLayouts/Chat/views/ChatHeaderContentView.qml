@@ -267,18 +267,7 @@ Item {
             readonly property string emojiIcon: chatContentModule? chatContentModule.chatDetails.emoji : "" // Needed for test
 
             objectName: "chatInfoBtnInHeader"
-            title: {
-                const module = root.rootStore.currentChatContentModule()
-                if(!module)
-                    return ""
-
-                if (module.chatDetails.type === Constants.chatType.oneToOne) {
-                    const d = Utils.getContactDetailsAsJson(module.chatDetails.id)
-                    if (!!d.displayName)
-                        return d.displayName
-                }
-                return module.chatDetails.name
-            }
+            title: chatContentModule? chatContentModule.chatDetails.name : ""
 
             subTitle: {
                 if(!chatContentModule)
