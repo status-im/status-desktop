@@ -366,24 +366,7 @@ Item {
 
     Component {
         id: cmpSendTransactionWithEns
-        SendModal {
-            id: sendTransactionWithEns
-            onClosed: {
-                destroy()
-            }
-            preSelectedRecipient: {
-                parentModule.prepareChatContentModuleForChatId(activeChatId)
-                let chatContentModule = parentModule.getChatContentModule()
-
-                return {
-                    address: "",
-                    alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
-                    identicon: chatContentModule.chatDetails.icon,
-                    name: chatContentModule.chatDetails.name,
-                    type: RecipientSelector.Type.Contact,
-                    ensVerified: true
-                }
-            }
+        Item {
         }
     }
 

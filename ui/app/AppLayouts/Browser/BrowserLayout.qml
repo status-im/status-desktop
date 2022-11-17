@@ -59,13 +59,11 @@ StatusSectionLayout {
             }
         }
 
-        property Component sendTransactionModalComponent: SendModal {
-            anchors.centerIn: parent
-            selectedAccount: WalletStore.dappBrowserAccount
-            preSelectedAsset: _internal.getEthAsset()
+        property Component sendTransactionModalComponent: Item {
+            
         }
 
-        property Component signMessageModalComponent: SignMessageModal {}
+        property Component signMessageModalComponent: Item {}
 
         property MessageDialog sendingError: MessageDialog {
             title: qsTr("Error sending the transaction")

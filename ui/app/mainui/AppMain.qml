@@ -1075,10 +1075,7 @@ Item {
                 this.active = false
             }
             property var selectedAccount
-            sourceComponent: SendModal {
-                onClosed: {
-                    sendModal.closed()
-                }
+            sourceComponent: Item {
             }
             onLoaded: {
                 if (!!sendModal.selectedAccount) {
