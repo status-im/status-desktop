@@ -21,6 +21,7 @@ mainWindow_WelcomeScreen_User_Profile_Image = {"container": statusDesktop_mainWi
 mainWindow_WelcomeScreen_ChatKeyText = {"container": statusDesktop_mainWindow, "type": "StyledText", "objectName": "insertDetailsViewChatKeyTxt"}
 mainWindow_WelcomeScreen_Image_Crop_Workflow_Item= {"container": statusDesktop_mainWindow, "type": "Item", "objectName": "imageCropWorkflow"}
 mainWindow_WelcomeScreen_Image_Cropper_Accept_Button= {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "imageCropperAcceptButton"}
+onboarding_back_button = {"container": statusDesktop_mainWindow, "objectName": "onboardingBackButton", "type": "StatusRoundButton", "visible": True}
 
 # Seed phrase form:
 import_a_seed_phrase_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Import a seed phrase", "type": "StatusBaseText", "unnamed": 1, "visible": True}

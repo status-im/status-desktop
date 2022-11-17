@@ -10,21 +10,22 @@
 # *****************************************************************************/
 Feature: Password strength validation including UI pixel-perfect validation
 
-    @merge
-    Scenario Outline: As a user I want to see the strength of the password
+    The feature start sequence is the following (setup on its own `bdd_hooks`):
+    ** given A first time user lands on the status desktop and generates new key
+    ** and the user inputs username "tester123"
 
-		Given A first time user lands on the status desktop and generates new key
-		When the user inputs username <username>
-		When user inputs the following <password> with ui-component onboarding_newPsw_Input
-		Then the password strength indicator is <strength>
+    Scenario Outline: As a user I want to see the strength of the password
+        Given the user clears input "onboarding_newPsw_Input"
+		When the user inputs the following "<password>" with ui-component "onboarding_newPsw_Input"
+		Then the password strength indicator is "<strength>"
 
 		Examples:
-	      | username  | password   | strength                          |
-	      | tester123 | abc        | lower_very_weak                   |
-	      | tester124 | ABC        | upper_very_weak                   |
-	      | tester124 | 123        | numbers_very_weak                 |
-	      | tester124 | +_!        | symbols_very_weak                 |
-	      | tester124 | +1_3!48    | numbers_symbols_weak              |
-	      | tester124 | +1_3!48a   | numbers_symbols_lower_so-so       |
-	      | tester124 | +1_3!48aT  | numbers_symbols_lower_upper_good  |
-	      | tester124 | +1_3!48aTq | numbers_symbols_lower_upper_great |
+	      | password   | strength                          |
+	      | abc        | lower_very_weak                   |
+	      | ABC        | upper_very_weak                   |
+	      | 123        | numbers_very_weak                 |
+	      | +_!        | symbols_very_weak                 |
+	      | +1_3!48    | numbers_symbols_weak              |
+	      | +1_3!48a   | numbers_symbols_lower_so-so       |
+	      | +1_3!48aT  | numbers_symbols_lower_upper_good  |
+	      | +1_3!48aTq | numbers_symbols_lower_upper_great |

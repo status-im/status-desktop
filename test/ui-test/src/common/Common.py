@@ -1,6 +1,7 @@
 
 import drivers.SquishDriver as driver
 import drivers.SquishDriverVerification as verification
+import drivers.SDKeyboardCommands as keyCommands
 
 def start_application(app_name: str):
     driver.start_application(app_name)
@@ -16,3 +17,7 @@ def object_not_enabled(objName: str):
 
 def str_to_bool(string: str):
     return string.lower() in ["yes", "true", "1", "y", "enabled"]
+
+def clear_input_text(objName: str):
+    keyCommands.press_select_all(objName)
+    keyCommands.press_backspace(objName)

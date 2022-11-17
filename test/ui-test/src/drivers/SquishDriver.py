@@ -65,9 +65,9 @@ def is_found(objName: str):
     
 # It waits for the object with given objectName to appear in the UI (visible and enabled):
 # It returns True in case it appears without exceeding a specific timeout. Otherwise, false.
-def is_displayed(objName: str):
+def is_displayed(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
     try:
-        squish.waitForObject(getattr(names, objName))
+        squish.waitForObject(getattr(names, objName), timeout)
         return True
     except LookupError:
         return False

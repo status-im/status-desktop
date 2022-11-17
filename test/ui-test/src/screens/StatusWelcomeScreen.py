@@ -15,6 +15,7 @@ from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from common.SeedUtils import *
 from screens.StatusMainScreen import MainScreenComponents
+import common.Common as common
 
 
 class AgreementPopUp(Enum):
@@ -22,7 +23,6 @@ class AgreementPopUp(Enum):
     ACKNOWLEDGE_CHECKBOX: str = "acknowledge_checkbox"
     TERMS_OF_USE_CHECK_BOX: str = "termsOfUseCheckBox_StatusCheckBox"
     GET_STARTED_BUTTON: str = "getStartedStatusButton_StatusButton"
-
 
 class SignUpComponents(Enum):
     NEW_TO_STATUS: str = "mainWindow_I_am_new_to_Status_StatusBaseText"
@@ -41,6 +41,7 @@ class SignUpComponents(Enum):
     PROFILE_IMAGE_CROPPER_ACCEPT_BUTTON: str = "mainWindow_WelcomeScreen_Image_Cropper_Accept_Button"
     WELCOME_SCREEN_USER_PROFILE_IMAGE: str = "mainWindow_WelcomeScreen_User_Profile_Image"
     WELCOME_SCREEN_CHAT_KEY_TEXT: str = "mainWindow_WelcomeScreen_ChatKeyText"
+    BACK_BTN: str = "onboarding_back_button"
     
 class SeedPhraseComponents(Enum):
     IMPORT_A_SEED_TEXT: str = "import_a_seed_phrase_StatusBaseText"
@@ -112,6 +113,7 @@ class StatusWelcomeScreen:
                 message = 'Try clicking "I prefer to use password" until not visible and enabled (moved to the next screen)')
 
     def input_username(self, username: str):
+        common.clear_input_text(SignUpComponents.USERNAME_INPUT.value) 
         type(SignUpComponents.USERNAME_INPUT.value, username)
         click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
 
@@ -217,7 +219,7 @@ class StatusWelcomeScreen:
         imagePresent("profiletestimage", True, 97, 95, 100, True)
         
     def profile_settings_image_is_updated(self):
-         # first time clicking on settings button closes the my profile modal
+        # first time clicking on settings button closes the my profile modal
         click_obj_by_name(MainScreen.SETTINGS_BUTTON.value)
         click_obj_by_name(MainScreen.SETTINGS_BUTTON.value)
         imagePresent("profiletestimage", True, 97, 100, 183, True)
@@ -237,5 +239,13 @@ class StatusWelcomeScreen:
     def enter_password(self, password):
         click_obj_by_name(LoginView.PASSWORD_INPUT.value)
         type(LoginView.PASSWORD_INPUT.value, password)
-        click_obj_by_name(LoginView.SUBMIT_BTN.value)        
+        click_obj_by_name(LoginView.SUBMIT_BTN.value)   
         
+    def navigate_back_to_user_profile_page(self):
+        count = 0
+        while not is_displayed(SignUpComponents.USERNAME_INPUT.value, 500):
+            click_obj_by_name(SignUpComponents.BACK_BTN.value)
+            count += 1
+            if count > 5:
+                verify_failure("Error during onboarding process navigating back to user profile page")
+                break

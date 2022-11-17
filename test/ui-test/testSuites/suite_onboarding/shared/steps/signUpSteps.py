@@ -1,4 +1,4 @@
-from steps.startupSteps import *
+import steps.startupSteps as init_steps
 from screens.StatusWelcomeScreen import StatusWelcomeScreen
 from screens.StatusMainScreen import StatusMainScreen
 
@@ -11,42 +11,66 @@ _mainScreen = StatusMainScreen()
 
 @Given("A first time user lands on the status desktop and generates new key")
 def step(context):
-    a_first_time_user_lands_on_and_generates_new_key(context)    
+    init_steps.a_first_time_user_lands_on_and_generates_new_key(context)    
 
 @Given("A first time user lands on the status desktop and navigates to import seed phrase")
 def step(context):
-    a_first_time_user_lands_on_and_navigates_to_import_seed_phrase(context)
+    init_steps.a_first_time_user_lands_on_and_navigates_to_import_seed_phrase(context)
     
 @Given("the user lands on the signed in app")
 def step(context):
-    the_user_lands_on_the_signed_in_app()
+    init_steps.the_user_lands_on_the_signed_in_app()
     
 @Given("the user signs up with username \"|any|\" and password \"|any|\"")
 def step(context, username, password):
-    the_user_signs_up(username, password)
+    init_steps.the_user_signs_up(username, password)
+    
+@Given("the user signs up with profileImage \"|any|\", username \"|any|\" and password \"|any|\"")
+def step(context, profileImageUrl: str, username: str, password: str):
+    _welcomeScreen.input_username_profileImage_password_and_finalize_sign_up("file:///"+context.userData["fixtures_root"]+"images/"+profileImageUrl, username, password)
+    
+@Given("my profile modal has the updated profile image")
+def step(context):
+    _welcomeScreen.profile_modal_image_is_updated()
+    
+@Given("the profile setting has the updated profile image")
+def step(context):
+    _welcomeScreen.profile_settings_image_is_updated()
+    
+@Given("a screenshot of the profileImage is taken")
+def step(context):
+    _welcomeScreen.grab_screenshot()
+    
+@Given("the user inputs username \"|any|\"")
+def step(context, username):
+    the_user_inputs_username(username)
 
 #########################
 ### ACTIONS region:
 ########################
-@When("the user inputs username |any|")
+@When("the user signs up with username \"|any|\" and password \"|any|\"")
+def step(context, username, password):
+    init_steps.the_user_signs_up(username, password)
+    
+@When("the user inputs username \"|any|\"")
 def step(context, username):
-    _welcomeScreen.input_username(username) 
+    the_user_inputs_username(username)
     
-@When("The user inputs the seed phrase \"|any|\"")
+@When("the user inputs the seed phrase \"|any|\"")
 def step(context, seed_phrase):
-    the_user_inputs_the_seed_phrase(seed_phrase)
+    init_steps.the_user_inputs_the_seed_phrase(seed_phrase)
     
-@When("the user logs in with password |any|")
+@When("the user logs in with password \"|any|\"")
 def step(context, password: str):
     _welcomeScreen.enter_password(password)
     
-@When("the user signs up with profileImage |any|, username |any| and password |any|")
-def step(context, profileImageUrl, username, password):
-    _welcomeScreen.input_username_profileImage_password_and_finalize_sign_up("file:///"+context.userData["fixtures_root"]+"images/"+profileImageUrl, username, password)
-
-@When("a screenshot of the profileImage is taken")
-def step(context):
-    _welcomeScreen.grab_screenshot()
+@When("the user inputs the new password \"|any|\"")
+def step(context, password: str):
+    _welcomeScreen.type_new_password(password)
+    
+@When("the user inputs the new confirmation password \"|any|\"")
+def step(context, password: str):
+    _welcomeScreen.type_confirm_password(password)
     
 #########################
 ### VERIFICATIONS region:
@@ -54,7 +78,7 @@ def step(context):
 
 @Then("the user lands on the signed in app")
 def step(context):
-    the_user_lands_on_the_signed_in_app()
+    init_steps.the_user_lands_on_the_signed_in_app()
       
 @Then("the invalid seed text is visible")
 def step(context):
@@ -63,14 +87,6 @@ def step(context):
 @Then("the user is online")
 def step(context):
     _mainScreen.user_is_online()
- 
-@Then("my profile modal has the updated profile image")
-def step(context):
-    _welcomeScreen.profile_modal_image_is_updated()
-    
-@Then("the profile setting has the updated profile image")
-def step(context):
-    _welcomeScreen.profile_settings_image_is_updated()
  
 @Then("the profile navigation bar has the updated profile image")
 def step(context):
@@ -81,4 +97,5 @@ def step(context):
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:
 ########################################################################### 
-
+def the_user_inputs_username(username: str):
+    _welcomeScreen.input_username(username)
