@@ -1,10 +1,12 @@
-#include <StatusGo/Messenger/Service.h>
-
 #include <Onboarding/Accounts/AccountsService.h>
 
-#include <StatusGo/SignalsManager.h>
-
 #include <ScopedTestAccount.h>
+
+#include <StatusGo/Messenger/Service.h>
+#include <StatusGo/Messages/InputMessage.h>
+#include <StatusGo/Messages/MessagesApi.h>
+#include <StatusGo/Metadata/api_response.h>
+#include <StatusGo/SignalsManager.h>
 
 #include <gtest/gtest.h>
 
@@ -34,6 +36,13 @@ TEST(MessagingApi, TestStartMessaging)
         return !nodeReady;
     });
     ASSERT_TRUE(nodeReady);
+}
+
+/// Simple test to validate sendChatMessage rpc function. \todo Expand it later.
+TEST(MessagingApi, TestSendMessage)
+{
+    const auto message = StatusGo::Messages::InputMessage::createTextMessage("Hello Status", "someChatId");
+    EXPECT_THROW( StatusGo::Messages::sendMessage(message), StatusGo::CallPrivateRpcError );
 }
 
 } // namespace

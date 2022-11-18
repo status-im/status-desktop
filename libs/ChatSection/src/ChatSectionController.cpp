@@ -1,5 +1,9 @@
 #include "Status/ChatSection/ChatSectionController.h"
 
+#include <StatusGo/Messages/InputMessage.h>
+#include <StatusGo/Messages/MessagesApi.h>
+#include <StatusGo/Metadata/api_response.h>
+
 using namespace Status::ChatSection;
 
 ChatSectionController::ChatSectionController()
@@ -38,4 +42,19 @@ void ChatSectionController::setCurrentChatIndex(int index)
 
     m_currentChat = chat;
     emit currentChatChanged();
+}
+
+void ChatSectionController::sendMessage(const QString &message) const
+{
+    namespace Messages = StatusGo::Messages;
+    auto chatMessage = Messages::InputMessage::createTextMessage(message, m_currentChat->id());
+    try {
+        Messages::sendMessage(chatMessage);
+    }
+    catch(const StatusGo::CallPrivateRpcError& rpcError)
+    {
+        qWarning() << "Can't send message " << message
+                   << " to id " << m_currentChat->id()
+                   << ", error: " << rpcError.errorResponse().error.message.c_str();
+    }
 }

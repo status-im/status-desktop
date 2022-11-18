@@ -106,6 +106,12 @@ target_sources(${PROJECT_NAME}
         src/StatusGo/Chat/ChatDto.h
         src/StatusGo/Chat/ChatDto.cpp
 
+        src/StatusGo/Messages/InputMessage.h
+        src/StatusGo/Messages/InputMessage.cpp
+        src/StatusGo/Messages/MessagesApi.h
+        src/StatusGo/Messages/MessagesApi.cpp
+        src/StatusGo/Messages/MessageDto.h
+
         src/StatusGo/Messenger/Service.h
         src/StatusGo/Messenger/Service.cpp
 

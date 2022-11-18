@@ -46,6 +46,7 @@ PanelAndContentBase {
             Layout.fillHeight: true
 
             selectedChat: chatSectionController.currentChat
+            chatSectionController: chatSectionController
         }
     }
 }
