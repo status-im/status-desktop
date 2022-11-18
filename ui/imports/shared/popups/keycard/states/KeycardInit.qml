@@ -17,7 +17,8 @@ Item {
 
     Component.onCompleted: {
         if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
-                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard) {
+                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard ||
+                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard) {
             root.sharedKeycardModule.currentState.doPrimaryAction()
         }
     }
@@ -26,7 +27,9 @@ Item {
         id: d
 
         readonly property bool hideKeyPair: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.hideKeyPair
-        readonly property bool continuousProcessingAnimation: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair
+        readonly property bool copyFromAKeycardPartDone: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.copyFromAKeycardPartDone
+        readonly property bool continuousProcessingAnimation: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
+                                                              root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard
     }
 
     Timer {
@@ -150,7 +153,8 @@ Item {
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPin ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPuk ||
-                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCode
+                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCode ||
+                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard
             }
             StatusBaseText {
                 id: title
@@ -177,6 +181,7 @@ Item {
                             (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted && !d.hideKeyPair) ||
                             (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard && !d.hideKeyPair) ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
@@ -257,6 +262,23 @@ Item {
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
                             return true
                 }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard && !d.hideKeyPair) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.removeKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyToKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardFailure ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardSuccess)
+                            return true
+                }
 
                 return false
             }
@@ -276,6 +298,7 @@ Item {
                             (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted && !d.hideKeyPair) ||
                             (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard && !d.hideKeyPair) ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure) {
                         return keyPairComponent
@@ -361,6 +384,28 @@ Item {
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard)
                         return keyPairForProcessingComponent
                 }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.removeKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyToKeycard) {
+                        if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                            return knownKeyPairComponent
+                        }
+                        return unknownKeyPairCompontnt
+                    }
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPinRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPukRetriesReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardFailure ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardSuccess)
+                        return keyPairForProcessingComponent
+                }
 
                 return undefined
             }
@@ -399,7 +444,12 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard
             PropertyChanges {
                 target: title
-                text: qsTr("Insert Keycard...")
+                text: {
+                    if (d.copyFromAKeycardPartDone) {
+                        return qsTr("Insert empty Keycard...")
+                    }
+                    return qsTr("Insert Keycard...")
+                }
                 font.weight: Font.Bold
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
@@ -455,7 +505,8 @@ Item {
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPin ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPuk ||
-                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCode
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCode ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard
             PropertyChanges {
                 target: title
                 text: {
@@ -476,6 +527,9 @@ Item {
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCode) {
                         return qsTr("Setting your pairing code...")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard) {
+                        return qsTr("Copying Keycard...")
                     }
                     return ""
                 }
@@ -591,7 +645,8 @@ Item {
                             root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard ||
                             root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPin ||
                             root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changeKeycardPuk ||
-                            root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changePairingCode) {
+                            root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.changePairingCode ||
+                            root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard) {
                         return qsTr("Keycard inserted does not match the Keycard below")
                     }
                     if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.unlockKeycard) {
@@ -664,10 +719,18 @@ Item {
             }
             PropertyChanges {
                 target: message
-                text: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard?
-                          qsTr("To migrate %1 on to this Keycard, you\nwill need to perform a factory reset first")
-                          .arg(root.sharedKeycardModule.selectedKeyPairItem.name) :
-                          ""
+                text: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
+                        return qsTr("To migrate %1 on to this Keycard, you\nwill need to perform a factory reset first")
+                        .arg(root.sharedKeycardModule.selectedKeyPairItem.name)
+                    }
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard) {
+                        return qsTr("To copy %1 on to this Keycard, you\nwill need to perform a factory reset first")
+                        .arg(root.sharedKeycardModule.keyPairStoredOnKeycard.name)
+                    }
+
+                    return ""
+                }
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
             }
@@ -679,11 +742,13 @@ Item {
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.maxPairingSlotsReached
             PropertyChanges {
                 target: title
-                text: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard?
+                text: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
+                      root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard?
                           qsTr("Keycard locked and already stores keys") : qsTr("Keycard locked")
                 font.pixelSize: Constants.keycard.general.fontSize1
                 font.weight: Font.Bold
-                color: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard?
+                color: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
+                       root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard?
                            Theme.palette.directColor1 : Theme.palette.dangerColor1
             }
             PropertyChanges {
@@ -700,7 +765,8 @@ Item {
                 target: message
                 text: {
                     if (root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.useGeneralMessageForLockedState) {
-                        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard)
+                        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
+                                root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard)
                             return qsTr("The Keycard you have inserted is locked,\nyou will need to factory reset it before proceeding")
                         return qsTr("You will need to unlock it before proceeding")
                     }
@@ -713,7 +779,8 @@ Item {
                     return ""
                 }
                 font.pixelSize: Constants.keycard.general.fontSize2
-                color: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard?
+                color: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
+                       root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard?
                            Theme.palette.directColor1 : Theme.palette.dangerColor1
             }
         },
@@ -774,7 +841,8 @@ Item {
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockKeycardSuccess ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameSuccess ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPukSuccess ||
-                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCodeSuccess
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCodeSuccess ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardSuccess
             PropertyChanges {
                 target: title
                 text: {
@@ -782,7 +850,8 @@ Item {
                         return qsTr("Key pair successfully migrated")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetSuccess) {
-                        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard)
+                        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
+                                root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard)
                             return qsTr("Your Keycard has been reset")
                         return qsTr("Keycard successfully factory reset")
                     }
@@ -797,6 +866,10 @@ Item {
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCodeSuccess) {
                         return qsTr("Pairing code successfully set")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardSuccess) {
+                        return qsTr("This Keycard is now a copy of %1")
+                        .arg(root.sharedKeycardModule.keyPairStoredOnKeycard.name)
                     }
                     return ""
                 }
@@ -821,7 +894,8 @@ Item {
                         return qsTr("To complete migration close Status and log in with your new Keycard")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetSuccess) {
-                        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard)
+                        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
+                                root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard)
                             return qsTr("You can now create a new key pair on this Keycard")
                         return qsTr("You can now use this Keycard as if it\nwas a brand new empty Keycard")
                     }
@@ -836,7 +910,8 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPukFailure ||
-                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCodeFailure
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCodeFailure ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardFailure
             PropertyChanges {
                 target: title
                 text: {
@@ -851,6 +926,10 @@ Item {
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCodeFailure) {
                         return qsTr("Setting pairing code failed")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardFailure) {
+                        return qsTr("Copying %1 Keycard failed")
+                        .arg(root.sharedKeycardModule.keyPairStoredOnKeycard.name)
                     }
                     return ""
                 }
@@ -975,6 +1054,79 @@ Item {
                 text: qsTr("The PIN length doesn't match Keycard's PIN length")
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
+            }
+        },
+        State {
+            name: Constants.keycardSharedState.removeKeycard
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.removeKeycard
+            PropertyChanges {
+                target: title
+                text: qsTr("Remove Keycard")
+                font.pixelSize: Constants.keycard.general.fontSize1
+                font.weight: Font.Bold
+                color: Theme.palette.directColor1
+            }
+            PropertyChanges {
+                target: image
+                pattern: Constants.keycardAnimations.cardRemoved.pattern
+                source: ""
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.cardRemoved.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.cardRemoved.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.cardRemoved.endImgIndex
+                duration: Constants.keycardAnimations.cardRemoved.duration
+                loops: Constants.keycardAnimations.cardRemoved.loops
+            }
+            PropertyChanges {
+                target: message
+                text: ""
+            }
+        },
+        State {
+            name: Constants.keycardSharedState.sameKeycard
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.sameKeycard
+            PropertyChanges {
+                target: title
+                text: qsTr("Oops this is the same Keycard!")
+                font.pixelSize: Constants.keycard.general.fontSize1
+                font.weight: Font.Bold
+                color: Theme.palette.directColor1
+            }
+            PropertyChanges {
+                target: image
+                pattern: Constants.keycardAnimations.strongError.pattern
+                source: ""
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
+                duration: Constants.keycardAnimations.strongError.duration
+                loops: Constants.keycardAnimations.strongError.loops
+            }
+            PropertyChanges {
+                target: message
+                text: qsTr("You need to remove this Keycard and insert\nan empty new or factory reset Keycard")
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.directColor1
+            }
+        },
+        State {
+            name: Constants.keycardSharedState.copyToKeycard
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyToKeycard
+            PropertyChanges {
+                target: title
+                text: qsTr("Copy “%1” to inserted keycard")
+                .arg(root.sharedKeycardModule.keyPairStoredOnKeycard.name)
+                font.pixelSize: Constants.keycard.general.fontSize1
+                font.weight: Font.Bold
+                color: Theme.palette.directColor1
+            }
+            PropertyChanges {
+                target: image
+                source: Style.png("keycard/card-inserted")
+                pattern: ""
+            }
+            PropertyChanges {
+                target: message
+                text: ""
             }
         }
     ]

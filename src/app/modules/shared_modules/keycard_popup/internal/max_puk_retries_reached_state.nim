@@ -17,7 +17,8 @@ method getNextPrimaryState*(self: MaxPukRetriesReachedState, controller: Control
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
-    self.flowType == FlowType.ChangePairingCode:
+    self.flowType == FlowType.ChangePairingCode or
+    self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.runSharedModuleFlow(FlowType.UnlockKeycard)
   if self.flowType == FlowType.UnlockKeycard:
     return createState(StateType.EnterSeedPhrase, self.flowType, self)
@@ -31,5 +32,6 @@ method executeCancelCommand*(self: MaxPukRetriesReachedState, controller: Contro
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
-    self.flowType == FlowType.ChangePairingCode:
+    self.flowType == FlowType.ChangePairingCode or
+    self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

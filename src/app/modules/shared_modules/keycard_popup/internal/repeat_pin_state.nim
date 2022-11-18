@@ -59,7 +59,7 @@ method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, k
         return createState(StateType.PinSet, self.flowType, nil)
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.LoadAccount:
       if keycardFlowType == ResponseTypeValueKeycardFlowResult:
-        if controller.getKeyUidWhichIsBeingUnlocking() != keycardEvent.keyUid:
+        if controller.getKeyUidWhichNeedToBeProcessed() != keycardEvent.keyUid:
           error "load account keyUid and keyUid being unlocked do not match"
           controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
           return

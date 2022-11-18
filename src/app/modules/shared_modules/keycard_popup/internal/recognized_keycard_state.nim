@@ -27,7 +27,8 @@ method getNextSecondaryState*(self: RecognizedKeycardState, controller: Controll
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
-    self.flowType == FlowType.ChangePairingCode:
+    self.flowType == FlowType.ChangePairingCode or
+    self.flowType == FlowType.CreateCopyOfAKeycard:
       return createState(StateType.EnterPin, self.flowType, nil)
 
 method executeCancelCommand*(self: RecognizedKeycardState, controller: Controller) =

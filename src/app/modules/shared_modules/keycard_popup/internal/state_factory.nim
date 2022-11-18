@@ -4,6 +4,7 @@ import ../../../../../app_service/service/keycard/constants
 from ../../../../../app_service/service/keycard/service import KCSFlowType
 from ../../../../../app_service/service/keycard/service import PINLengthForStatusApp
 from ../../../../../app_service/service/keycard/service import PUKLengthForStatusApp
+import ../../../../../app_service/service/wallet_account/key_pair_dto
 import ../controller
 import state
 
@@ -38,6 +39,8 @@ include biometrics_pin_invalid_state
 include biometrics_ready_to_sign_state
 include changing_keycard_pin_state
 include changing_keycard_puk_state
+include copy_to_keycard_state
+include copying_keycard_state
 include changing_keycard_pairing_code_state
 include create_pairing_code_state
 include create_pin_state
@@ -60,6 +63,8 @@ include keycard_change_pin_failure_state
 include keycard_change_pin_success_state
 include keycard_change_puk_failure_state
 include keycard_change_puk_success_state
+include keycard_copy_failure_state
+include keycard_copy_success_state
 include keycard_empty_metadata_state
 include keycard_empty_state
 include keycard_inserted_state
@@ -78,9 +83,11 @@ include pin_verified_state
 include plugin_reader_state 
 include reading_keycard_state
 include recognized_keycard_state
+include remove_keycard_state
 include renaming_keycard_state
 include repeat_pin_state
 include repeat_puk_state
+include same_keycard_state
 include seed_phrase_display_state
 include seed_phrase_enter_words_state
 include select_existing_key_pair_state

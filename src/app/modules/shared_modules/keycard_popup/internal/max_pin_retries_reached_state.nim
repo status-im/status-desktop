@@ -14,7 +14,8 @@ method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Control
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
-    self.flowType == FlowType.ChangePairingCode:
+    self.flowType == FlowType.ChangePairingCode or
+    self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.runSharedModuleFlow(FlowType.UnlockKeycard)
   if self.flowType == FlowType.SetupNewKeycard:
     let currValue = extractPredefinedKeycardDataToNumber(controller.getKeycardData())
@@ -33,7 +34,8 @@ method executeCancelCommand*(self: MaxPinRetriesReachedState, controller: Contro
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
-    self.flowType == FlowType.ChangePairingCode:
+    self.flowType == FlowType.ChangePairingCode or
+    self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
   if self.flowType == FlowType.SetupNewKeycard:
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.UseUnlockLabelForLockedState, add = false))

@@ -35,6 +35,8 @@ StatusModal {
             return qsTr("Create a 12-digit personal unblocking key (PUK)")
         case Constants.keycardSharedFlow.changePairingCode:
             return qsTr("Create a new pairing code")
+        case Constants.keycardSharedFlow.createCopyOfAKeycard:
+            return qsTr("Create a backup copy of this Keycard")
         }
 
         return ""
@@ -66,25 +68,14 @@ StatusModal {
             id: content
             width: scrollView.availableWidth
             height: {
-                if (!root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
-                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard) {
-                        if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
-                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {
-                            return Constants.keycard.general.popupBiggerHeight
-                        }
-                    }
-                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
-                        if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
-                                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {
-                            return Constants.keycard.general.popupBiggerHeight
-                        }
-                    }
-                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.displayKeycardContent) {
-                        if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
-                            return Constants.keycard.general.popupBiggerHeight
-                        }
+                // for all flows
+                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {
+                    if (!root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                        return Constants.keycard.general.popupBiggerHeight
                     }
                 }
+
                 return Constants.keycard.general.popupHeight
             }
 

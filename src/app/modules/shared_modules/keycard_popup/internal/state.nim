@@ -68,6 +68,12 @@ type StateType* {.pure.} = enum
   ChangingKeycardPairingCode = "ChangingKeycardPairingCode"
   ChangingKeycardPairingCodeSuccess = "ChangingKeycardPairingCodeSuccess"
   ChangingKeycardPairingCodeFailure = "ChangingKeycardPairingCodeFailure"
+  RemoveKeycard = "RemoveKeycard"
+  SameKeycard = "SameKeycard"
+  CopyToKeycard = "CopyToKeycard"
+  CopyingKeycard = "CopyingKeycard"
+  CopyingKeycardFailure = "CopyingKeycardFailure"
+  CopyingKeycardSuccess = "CopyingKeycardSuccess"
 
 
 ## This is the base class for all state we may have in onboarding/login flow.

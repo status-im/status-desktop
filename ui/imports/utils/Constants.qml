@@ -90,6 +90,7 @@ QtObject {
         readonly property int useUnlockLabelForLockedState: 32
         readonly property int useGeneralMessageForLockedState: 64
         readonly property int maxPUKReached: 128
+        readonly property int copyFromAKeycardPartDone: 256
     }
 
     readonly property QtObject keycardSharedFlow: QtObject {
@@ -103,6 +104,7 @@ QtObject {
         readonly property string changeKeycardPin: "ChangeKeycardPin"
         readonly property string changeKeycardPuk: "ChangeKeycardPuk"
         readonly property string changePairingCode: "ChangePairingCode"
+        readonly property string createCopyOfAKeycard: "CreateCopyOfAKeycard"
     }
 
     readonly property QtObject keycardSharedState: QtObject {
@@ -168,6 +170,12 @@ QtObject {
         readonly property string changingKeycardPairingCode: "ChangingKeycardPairingCode"
         readonly property string changingKeycardPairingCodeSuccess: "ChangingKeycardPairingCodeSuccess"
         readonly property string changingKeycardPairingCodeFailure: "ChangingKeycardPairingCodeFailure"
+        readonly property string removeKeycard: "RemoveKeycard"
+        readonly property string sameKeycard: "SameKeycard"
+        readonly property string copyToKeycard: "CopyToKeycard"
+        readonly property string copyingKeycard: "CopyingKeycard"
+        readonly property string copyingKeycardFailure: "CopyingKeycardFailure"
+        readonly property string copyingKeycardSuccess: "CopyingKeycardSuccess"
     }
 
     readonly property QtObject keycardAnimations: QtObject {
@@ -183,6 +191,15 @@ QtObject {
 
         readonly property QtObject cardInserted: QtObject {
             readonly property string pattern: "keycard/card_inserted/img-%1"
+            readonly property int startImgIndexForTheFirstLoop: 0
+            readonly property int startImgIndexForOtherLoops: 0
+            readonly property int endImgIndex: 29
+            readonly property int duration: 1000
+            readonly property int loops: 1
+        }
+
+        readonly property QtObject cardRemoved: QtObject {
+            readonly property string pattern: "keycard/card_removed/img-%1"
             readonly property int startImgIndexForTheFirstLoop: 0
             readonly property int startImgIndexForOtherLoops: 0
             readonly property int endImgIndex: 29
