@@ -81,6 +81,9 @@ method setRemainingAttempts*[T](self: Module[T], value: int) =
 method setUidOfAKeycardWhichNeedToBeProcessed*[T](self: Module[T], value: string) =
   self.controller.setUidOfAKeycardWhichNeedToBeProcessed(value)
 
+method setKeyUidWhichNeedToBeProcessed*[T](self: Module[T], value: string) =
+  self.controller.setKeyUidWhichNeedToBeProcessed(value)
+
 method setPin*[T](self: Module[T], value: string) =
   self.controller.setPin(value)
 
@@ -352,6 +355,10 @@ proc prepareKeyPairForProcessing[T](self: Module[T], keyUid: string) =
     item.setIcon("keycard")
   self.view.setKeyPairForProcessing(item)
 
+method setKeyPairForCopy*[T](self: Module[T], item: KeyPairItem) =
+  self.view.createKeyPairForProcessing()
+  self.view.setKeyPairForProcessing(item)
+
 method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path = "", txHash = "") =
   ## In case of `Authentication` if we're signing a transaction we need to provide a key uid of a keypair that an account 
   ## we want to sign a transaction for belongs to. If we're just doing an authentication for a logged in user, then 
@@ -427,6 +434,11 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
       addressRequested: false
     )
     self.controller.authenticateUser(keyUid)
+    return
+  if flowToRun == FlowType.CreateCopyOfAKeycard:
+    self.view.createKeyPairStoredOnKeycard()
+    self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
+    self.controller.runGetMetadataFlow(resolveAddress = true)
     return
 
 method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =

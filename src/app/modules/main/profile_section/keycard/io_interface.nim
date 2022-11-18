@@ -38,7 +38,7 @@ method runImportOrRestoreViaSeedPhrasePopup*(self: AccessInterface) {.base.} =
 method runImportFromKeycardToAppPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runUnlockKeycardPopupForKeycardWithUid*(self: AccessInterface, keycardUid: string) {.base.} =
+method runUnlockKeycardPopupForKeycardWithUid*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runDisplayKeycardContentPopup*(self: AccessInterface) {.base.} =
@@ -53,7 +53,7 @@ method runRenameKeycardPopup*(self: AccessInterface, keycardUid: string, keyUid:
 method runChangePinPopup*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runCreateBackupCopyOfAKeycardPopup*(self: AccessInterface) {.base.} =
+method runCreateBackupCopyOfAKeycardPopup*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runCreatePukPopup*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =

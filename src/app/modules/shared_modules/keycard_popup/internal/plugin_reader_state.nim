@@ -22,7 +22,8 @@ method executeCancelCommand*(self: PluginReaderState, controller: Controller) =
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
-    self.flowType == FlowType.ChangePairingCode:
+    self.flowType == FlowType.ChangePairingCode or
+    self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: PluginReaderState, keycardFlowType: string, keycardEvent: KeycardEvent, 

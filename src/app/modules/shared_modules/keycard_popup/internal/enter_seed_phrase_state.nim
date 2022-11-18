@@ -18,9 +18,16 @@ method executePrePrimaryStateCommand*(self: EnterSeedPhraseState, controller: Co
       controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
     else:
       controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
+  if self.flowType == FlowType.CreateCopyOfAKeycard:
+    self.verifiedSeedPhrase = controller.validSeedPhrase(controller.getSeedPhrase()) and
+      controller.seedPhraseRefersToKeyPairBeingProcessed(controller.getSeedPhrase())
+    if self.verifiedSeedPhrase:
+      controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
+    else:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
   if self.flowType == FlowType.UnlockKeycard:
     self.verifiedSeedPhrase = controller.validSeedPhrase(controller.getSeedPhrase()) and
-      controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getKeyUidWhichIsBeingUnlocking()
+      controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getKeyUidWhichNeedToBeProcessed()
     if self.verifiedSeedPhrase:
       controller.runGetMetadataFlow()
     else:
@@ -31,10 +38,14 @@ method getNextPrimaryState*(self: EnterSeedPhraseState, controller: Controller):
     self.flowType == FlowType.UnlockKeycard:
       if not self.verifiedSeedPhrase:
         return createState(StateType.WrongSeedPhrase, self.flowType, nil)
+  if self.flowType == FlowType.CreateCopyOfAKeycard:
+    if not self.verifiedSeedPhrase:
+      return createState(StateType.WrongSeedPhrase, self.flowType, self.getBackState)
 
 method executeCancelCommand*(self: EnterSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.UnlockKeycard:
+    self.flowType == FlowType.UnlockKeycard or
+    self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: EnterSeedPhraseState, keycardFlowType: string, keycardEvent: KeycardEvent, 
@@ -52,9 +63,15 @@ method resolveKeycardNextState*(self: EnterSeedPhraseState, keycardFlowType: str
       if keycardFlowType == ResponseTypeValueKeycardFlowResult:
         if keycardEvent.error.len == 0:
           controller.setKeycardUid(keycardEvent.instanceUID)
-          controller.runLoadAccountFlow(seedPhraseLength = controller.getSeedPhraseLength(), seedPhrase = controller.getSeedPhrase(), puk = "", factoryReset = true)
+          controller.runLoadAccountFlow(seedPhraseLength = controller.getSeedPhraseLength(), seedPhrase = controller.getSeedPhrase(), 
+            pin = "", puk = "", factoryReset = true)
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.LoadAccount:
       if keycardFlowType == ResponseTypeValueEnterNewPIN and 
         keycardEvent.error.len > 0 and
         keycardEvent.error == ErrorRequireInit:
           return createState(StateType.CreatePin, self.flowType, nil)
+  if self.flowType == FlowType.CreateCopyOfAKeycard:
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+      keycardEvent.keyUid.len > 0:
+        controller.setDestinationKeycardUid(keycardEvent.instanceUID)
+        return createState(StateType.CopyingKeycard, self.flowType, nil)

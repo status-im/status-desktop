@@ -45,6 +45,10 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newChangingKeycardPinState(flowType, backState)
   if stateToBeCreated == StateType.ChangingKeycardPuk:
     return newChangingKeycardPukState(flowType, backState)
+  if stateToBeCreated == StateType.CopyToKeycard:
+    return newCopyToKeycardState(flowType, backState)
+  if stateToBeCreated == StateType.CopyingKeycard:
+    return newCopyingKeycardState(flowType, backState)
   if stateToBeCreated == StateType.CreatePairingCode:
     return newCreatePairingCodeState(flowType, backState)
   if stateToBeCreated == StateType.CreatePin:
@@ -87,6 +91,10 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newChangingKeycardPukFailureState(flowType, backState)
   if stateToBeCreated == StateType.ChangingKeycardPukSuccess:
     return newChangingKeycardPukSuccessState(flowType, backState)
+  if stateToBeCreated == StateType.CopyingKeycardFailure:
+    return newCopyingKeycardFailureState(flowType, backState)
+  if stateToBeCreated == StateType.CopyingKeycardSuccess:
+    return newCopyingKeycardSuccessState(flowType, backState)
   if stateToBeCreated == StateType.KeycardInserted:
     return newKeycardInsertedState(flowType, backState)
   if stateToBeCreated == StateType.KeycardEmptyMetadata:
@@ -127,12 +135,16 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newReadingKeycardState(flowType, backState)
   if stateToBeCreated == StateType.RecognizedKeycard:
     return newRecognizedKeycardState(flowType, backState)
+  if stateToBeCreated == StateType.RemoveKeycard:
+    return newRemoveKeycardState(flowType, backState)
   if stateToBeCreated == StateType.RenamingKeycard:
     return newRenamingKeycardState(flowType, backState)
   if stateToBeCreated == StateType.RepeatPin:
     return newRepeatPinState(flowType, backState)
   if stateToBeCreated == StateType.RepeatPuk:
     return newRepeatPukState(flowType, backState)
+  if stateToBeCreated == StateType.SameKeycard:
+    return newSameKeycardState(flowType, backState)
   if stateToBeCreated == StateType.SeedPhraseDisplay:
     return newSeedPhraseDisplayState(flowType, backState)
   if stateToBeCreated == StateType.SeedPhraseEnterWords:

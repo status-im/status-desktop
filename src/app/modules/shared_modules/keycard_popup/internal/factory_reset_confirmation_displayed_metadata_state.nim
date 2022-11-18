@@ -11,13 +11,15 @@ proc delete*(self: FactoryResetConfirmationDisplayMetadataState) =
 method executePrePrimaryStateCommand*(self: FactoryResetConfirmationDisplayMetadataState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset:
     controller.runGetAppInfoFlow(factoryReset = true)
-  elif self.flowType == FlowType.SetupNewKeycard:
-    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
-    controller.runGetAppInfoFlow(factoryReset = true)
+  elif self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.CreateCopyOfAKeycard:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
+      controller.runGetAppInfoFlow(factoryReset = true)
     
 method executeCancelCommand*(self: FactoryResetConfirmationDisplayMetadataState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
-    self.flowType == FlowType.SetupNewKeycard:
+    self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: FactoryResetConfirmationDisplayMetadataState, keycardFlowType: string, keycardEvent: KeycardEvent, 

@@ -55,8 +55,8 @@ QtObject:
   proc runImportFromKeycardToAppPopup*(self: View) {.slot.} =
     self.delegate.runImportFromKeycardToAppPopup()
 
-  proc runUnlockKeycardPopupForKeycardWithUid*(self: View, keycardUid: string) {.slot.} =
-    self.delegate.runUnlockKeycardPopupForKeycardWithUid(keycardUid)
+  proc runUnlockKeycardPopupForKeycardWithUid*(self: View, keycardUid: string, keyUid: string) {.slot.} =
+    self.delegate.runUnlockKeycardPopupForKeycardWithUid(keycardUid, keyUid)
 
   proc runDisplayKeycardContentPopup*(self: View) {.slot.} =
     self.delegate.runDisplayKeycardContentPopup()
@@ -70,8 +70,8 @@ QtObject:
   proc runChangePinPopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
     self.delegate.runChangePinPopup(keycardUid, keyUid)
 
-  proc runCreateBackupCopyOfAKeycardPopup*(self: View) {.slot.} =
-    self.delegate.runCreateBackupCopyOfAKeycardPopup()
+  proc runCreateBackupCopyOfAKeycardPopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
+    self.delegate.runCreateBackupCopyOfAKeycardPopup(keycardUid, keyUid)
 
   proc runCreatePukPopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
     self.delegate.runCreatePukPopup(keycardUid, keyUid)

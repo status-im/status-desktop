@@ -119,11 +119,12 @@ method runImportOrRestoreViaSeedPhrasePopup*(self: Module) =
 method runImportFromKeycardToAppPopup*(self: Module) =
   info "TODO: Import from Keycard to Status Desktop..."
 
-method runUnlockKeycardPopupForKeycardWithUid*(self: Module, keycardUid: string) =
+method runUnlockKeycardPopupForKeycardWithUid*(self: Module, keycardUid: string, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
   self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
+  self.keycardSharedModule.setKeyUidWhichNeedToBeProcessed(keyUid)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.UnlockKeycard)
 
 method runDisplayKeycardContentPopup*(self: Module) =
@@ -152,8 +153,15 @@ method runChangePinPopup*(self: Module, keycardUid: string, keyUid: string) =
   self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangeKeycardPin, keyUid)
 
-method runCreateBackupCopyOfAKeycardPopup*(self: Module) =
-  info "TODO: Create a Backup Copy of a Keycard..."
+method runCreateBackupCopyOfAKeycardPopup*(self: Module, keycardUid: string, keyUid: string) =
+  self.createSharedKeycardModule()
+  if self.keycardSharedModule.isNil:
+    return
+  let item = self.view.keycardModel().getItemByKeycardUid(keycardUid)
+  self.keycardSharedModule.setKeyPairForCopy(item)
+  self.keycardSharedModule.setKeyUidWhichNeedToBeProcessed(keyUid)
+  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.CreateCopyOfAKeycard, keyUid)
 
 method runCreatePukPopup*(self: Module, keycardUid: string, keyUid: string) =
   self.createSharedKeycardModule()
@@ -176,12 +184,21 @@ proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPa
         return accounts[i]
     return nil
 
+  let isAccountInKnownAccounts = proc(knownAccounts: seq[WalletAccountDto], address: string): bool =
+    for i in 0 ..< knownAccounts.len:
+      if(knownAccounts[i].address == address):
+        return true
+    return false
+
   var knownAccounts: seq[WalletAccountDto]
   for accAddr in keyPair.accountsAddresses:
     let account = findAccountByAccountAddress(walletAccounts, accAddr)
     if account.isNil:
       ## we should never be here cause we need to remove deleted accounts from the `keypairs` table and sync
       ## that state accross different app instances
+      continue
+    if isAccountInKnownAccounts(knownAccounts, accAddr):
+      # if there are more then one keycard for a single keypair we don't want to add the same accounts addresses more than once
       continue
     knownAccounts.add(account)
   if knownAccounts.len == 0:

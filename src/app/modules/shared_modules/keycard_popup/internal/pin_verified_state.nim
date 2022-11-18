@@ -12,7 +12,8 @@ method getNextPrimaryState*(self: PinVerifiedState, controller: Controller): Sta
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
-    self.flowType == FlowType.RenameKeycard:
+    self.flowType == FlowType.RenameKeycard or
+    self.flowType == FlowType.CreateCopyOfAKeycard:
       return createState(StateType.KeycardMetadataDisplay, self.flowType, nil)
   if self.flowType == FlowType.ChangeKeycardPin:
     return createState(StateType.CreatePin, self.flowType, nil)
@@ -28,5 +29,6 @@ method executeCancelCommand*(self: PinVerifiedState, controller: Controller) =
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
-    self.flowType == FlowType.ChangePairingCode:
+    self.flowType == FlowType.ChangePairingCode or
+    self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

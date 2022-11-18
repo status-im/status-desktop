@@ -113,7 +113,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runCreateBackupCopyOfAKeycardPopup()
+            root.keycardStore.runCreateBackupCopyOfAKeycardPopup(root.keycardUid, d.keyUid)
         }
     }
 
@@ -134,7 +134,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runUnlockKeycardPopupForKeycardWithUid(root.keycardUid)
+            root.keycardStore.runUnlockKeycardPopupForKeycardWithUid(root.keycardUid, d.keyUid)
         }
     }
 

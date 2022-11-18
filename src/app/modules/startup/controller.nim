@@ -411,9 +411,9 @@ proc cancelCurrentFlow*(self: Controller) =
   # this way we're giving to the keycard some time to cancel the current flow 
   sleep(200)
 
-proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", puk = "", factoryReset = false) =
+proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", pin = "", puk = "", factoryReset = false) =
   self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled
-  self.keycardService.startLoadAccountFlow(seedPhraseLength, seedPhrase, puk, factoryReset)
+  self.keycardService.startLoadAccountFlow(seedPhraseLength, seedPhrase, pin, puk, factoryReset)
 
 proc runLoginFlow*(self: Controller) =
   self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled

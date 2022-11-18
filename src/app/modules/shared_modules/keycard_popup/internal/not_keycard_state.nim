@@ -17,5 +17,15 @@ method executeCancelCommand*(self: NotKeycardState, controller: Controller) =
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or
-    self.flowType == FlowType.ChangePairingCode:
+    self.flowType == FlowType.ChangePairingCode or
+    self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+
+method executePrePrimaryStateCommand*(self: NotKeycardState, controller: Controller) =
+  if self.flowType == FlowType.CreateCopyOfAKeycard:
+    if isPredefinedKeycardDataFlagSet(controller.getKeycardData(), PredefinedKeycardData.CopyFromAKeycardPartDone):
+      controller.runLoadAccountFlow(seedPhraseLength = 0, seedPhrase = "", pin = controller.getPin())
+
+method resolveKeycardNextState*(self: NotKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+  controller: Controller): State =
+  return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)

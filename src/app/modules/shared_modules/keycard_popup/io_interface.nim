@@ -57,6 +57,7 @@ type FlowType* {.pure.} = enum
   ChangeKeycardPuk = "ChangeKeycardPuk"
   ChangePairingCode = "ChangePairingCode"
   AuthenticateAndDeriveAccountAddress = "AuthenticateAndDeriveAccountAddress"
+  CreateCopyOfAKeycard = "CreateCopyOfAKeycard"
 
 type
   SharedKeycarModuleUserAuthenticatedAndWalletAddressGeneratedArgs* = ref object of Args
@@ -105,6 +106,9 @@ method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Pa
 method setUidOfAKeycardWhichNeedToBeProcessed*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setKeyUidWhichNeedToBeProcessed*(self: AccessInterface, value: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setPin*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -136,6 +140,9 @@ method getSeedPhrase*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method validSeedPhrase*(self: AccessInterface, value: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setKeyPairForCopy*(self: AccessInterface, item: KeyPairItem) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setSelectedKeyPair*(self: AccessInterface, item: KeyPairItem) {.base.} =

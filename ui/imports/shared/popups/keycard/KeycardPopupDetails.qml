@@ -20,6 +20,7 @@ QtObject {
         case Constants.keycardSharedState.changingKeycardPuk:
         case Constants.keycardSharedState.changingKeycardPairingCode:
         case Constants.keycardSharedState.migratingKeyPair:
+        case Constants.keycardSharedState.copyingKeycard:
             return true
 
         case Constants.keycardSharedState.keyPairMigrateSuccess:
@@ -228,6 +229,38 @@ QtObject {
                         return true
                     }
                     break
+
+                case Constants.keycardSharedFlow.createCopyOfAKeycard:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.pluginReader:
+                    case Constants.keycardSharedState.readingKeycard:
+                    case Constants.keycardSharedState.insertKeycard:
+                    case Constants.keycardSharedState.keycardInserted:
+                    case Constants.keycardSharedState.recognizedKeycard:
+                    case Constants.keycardSharedState.enterPin:
+                    case Constants.keycardSharedState.wrongPin:
+                    case Constants.keycardSharedState.notKeycard:
+                    case Constants.keycardSharedState.pinVerified:
+                    case Constants.keycardSharedState.keycardMetadataDisplay:
+                    case Constants.keycardSharedState.maxPinRetriesReached:
+                    case Constants.keycardSharedState.maxPukRetriesReached:
+                    case Constants.keycardSharedState.maxPairingSlotsReached:
+                    case Constants.keycardSharedState.removeKeycard:
+                    case Constants.keycardSharedState.sameKeycard:
+                    case Constants.keycardSharedState.copyToKeycard:
+                    case Constants.keycardSharedState.enterSeedPhrase:
+                    case Constants.keycardSharedState.wrongSeedPhrase:
+                    case Constants.keycardSharedState.keycardNotEmpty:
+                        return true
+
+                    case Constants.keycardSharedState.keycardEmptyMetadata:
+                        let copyFromAKeycardPartDone = root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.copyFromAKeycardPartDone
+                        if (copyFromAKeycardPartDone) {
+                            return true
+                        }
+                        break
+                    }
+                    break
                 }
 
                 return false
@@ -241,6 +274,7 @@ QtObject {
                 case Constants.keycardSharedState.changingKeycardPin:
                 case Constants.keycardSharedState.changingKeycardPuk:
                 case Constants.keycardSharedState.changingKeycardPairingCode:
+                case Constants.keycardSharedState.copyingKeycard:
                     if (root.disablePopupClose) {
                         return false
                     }
@@ -315,6 +349,7 @@ QtObject {
                 case Constants.keycardSharedState.changingKeycardPin:
                 case Constants.keycardSharedState.changingKeycardPuk:
                 case Constants.keycardSharedState.changingKeycardPairingCode:
+                case Constants.keycardSharedState.copyingKeycard:
                     if (root.disablePopupClose) {
                         return false
                     }
@@ -632,6 +667,64 @@ QtObject {
                         return qsTr("Set paring code")
                     }
                     break
+
+                case Constants.keycardSharedFlow.createCopyOfAKeycard:
+                    let copyFromAKeycardPartDone = root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.copyFromAKeycardPartDone
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+
+                    case Constants.keycardSharedState.enterPin:
+                    case Constants.keycardSharedState.wrongPin:
+                        if (copyFromAKeycardPartDone) {
+                            return qsTr("I don’t know the PIN")
+                        }
+                        break
+
+                    case Constants.keycardSharedState.wrongKeycard:
+                    case Constants.keycardSharedState.keycardEmpty:
+                    case Constants.keycardSharedState.copyingKeycard:
+                    case Constants.keycardSharedState.copyingKeycardSuccess:
+                    case Constants.keycardSharedState.copyingKeycardFailure:
+                        return qsTr("Done")
+
+                    case Constants.keycardSharedState.pinVerified:
+                    case Constants.keycardSharedState.keycardMetadataDisplay:
+                    case Constants.keycardSharedState.removeKeycard:
+                    case Constants.keycardSharedState.factoryResetSuccess:
+                    case Constants.keycardSharedState.copyToKeycard:
+                    case Constants.keycardSharedState.enterSeedPhrase:
+                        return qsTr("Next")
+
+                    case Constants.keycardSharedState.keycardEmptyMetadata:
+                        if (copyFromAKeycardPartDone) {
+                            return qsTr("Next")
+                        }
+                        return qsTr("Done")
+
+                    case Constants.keycardSharedState.wrongSeedPhrase:
+                        return qsTr("Try entering seed phrase again")
+
+                    case Constants.keycardSharedState.maxPinRetriesReached:
+                    case Constants.keycardSharedState.maxPukRetriesReached:
+                    case Constants.keycardSharedState.maxPairingSlotsReached:
+                        return qsTr("Unlock Keycard")
+
+                    case Constants.keycardSharedState.sameKeycard:
+                        return qsTr("Try inserting a different Keycard")
+
+                    case Constants.keycardSharedState.notKeycard:
+                        if (copyFromAKeycardPartDone) {
+                            return qsTr("Try inserting a different Keycard")
+                        }
+                        break
+
+                    case Constants.keycardSharedState.keycardNotEmpty:
+                        return qsTr("Check what is stored on this Keycard")
+
+                    case Constants.keycardSharedState.factoryResetConfirmation:
+                    case Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata:
+                        return qsTr("Factory reset this Keycard")
+                    }
+                    break
                 }
 
                 return ""
@@ -646,6 +739,7 @@ QtObject {
                 case Constants.keycardSharedState.changingKeycardPin:
                 case Constants.keycardSharedState.changingKeycardPuk:
                 case Constants.keycardSharedState.changingKeycardPairingCode:
+                case Constants.keycardSharedState.copyingKeycard:
                     if (root.disablePopupClose) {
                         return false
                     }
@@ -728,6 +822,16 @@ QtObject {
                     switch (root.sharedKeycardModule.currentState.stateType) {
 
                     case Constants.keycardSharedState.createPairingCode:
+                        return root.primaryButtonEnabled
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.createCopyOfAKeycard:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+
+                    case Constants.keycardSharedState.factoryResetConfirmation:
+                    case Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata:
+                    case Constants.keycardSharedState.enterSeedPhrase:
                         return root.primaryButtonEnabled
                     }
                     break

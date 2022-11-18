@@ -171,11 +171,16 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc startLoadAccountFlow*(self: Service, seedPhraseLength: int, seedPhrase: string, puk: string, factoryReset: bool) =
+  proc startLoadAccountFlow*(self: Service, seedPhraseLength: int, seedPhrase: string, pin: string, puk: string, 
+    factoryReset: bool) =
     var payload = %* { }
     if seedPhrase.len > 0 and seedPhraseLength > 0:
       payload[RequestParamMnemonic] = %* seedPhrase
       payload[RequestParamMnemonicLen] = %* seedPhraseLength
+      payload[RequestParamNewPUK] = %* self.generateRandomPUK()
+    if pin.len > 0:
+      payload[RequestParamPIN] = %* pin
+      payload[RequestParamNewPIN] = %* pin
       payload[RequestParamNewPUK] = %* self.generateRandomPUK()
     if puk.len > 0:
       payload[RequestParamNewPUK] = %* puk

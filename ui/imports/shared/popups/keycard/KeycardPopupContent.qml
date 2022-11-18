@@ -58,6 +58,12 @@ Item {
             case Constants.keycardSharedState.biometricsPasswordFailed:
             case Constants.keycardSharedState.biometricsPinFailed:
             case Constants.keycardSharedState.biometricsPinInvalid:
+            case Constants.keycardSharedState.removeKeycard:
+            case Constants.keycardSharedState.sameKeycard:
+            case Constants.keycardSharedState.copyToKeycard:
+            case Constants.keycardSharedState.copyingKeycard:
+            case Constants.keycardSharedState.copyingKeycardSuccess:
+            case Constants.keycardSharedState.copyingKeycardFailure:
                 return initComponent
 
             case Constants.keycardSharedState.factoryResetConfirmation:

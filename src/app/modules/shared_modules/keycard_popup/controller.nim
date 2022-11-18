@@ -33,6 +33,7 @@ type
     tmpKeycardContainsMetadata: bool
     tmpCardMetadata: CardMetadata
     tmpKeycardUidForProcessing: string
+    tmpKeyUidForProcessing: string
     tmpPin: string
     tmpPinMatch: bool
     tmpPuk: string
@@ -47,12 +48,14 @@ type
     tmpSeedPhrase: string
     tmpSeedPhraseLength: int
     tmpKeyUidWhichIsBeingAuthenticating: string
-    tmpKeyUidWhichIsBeingUnlocking: string
     tmpUsePinFromBiometrics: bool
     tmpOfferToStoreUpdatedPinToKeychain: bool
     tmpKeycardUid: string
     tmpAddingMigratedKeypairSuccess: bool
     tmpConvertingProfileSuccess: bool
+    tmpKeycardCopyCardMetadata: CardMetadata
+    tmpKeycardCopyPin: string
+    tmpKeycardCopyDestinationKeycardUid: string
 
 proc newController*(delegate: io_interface.AccessInterface,
   uniqueIdentifier: string,
@@ -176,6 +179,12 @@ proc setUidOfAKeycardWhichNeedToBeProcessed*(self: Controller, value: string) =
 proc getUidOfAKeycardWhichNeedToBeProcessed*(self: Controller): string =
   return self.tmpKeycardUidForProcessing
 
+proc getKeyUidWhichNeedToBeProcessed*(self: Controller): string =
+  self.tmpKeyUidForProcessing
+
+proc setKeyUidWhichNeedToBeProcessed*(self: Controller, keyUid: string) =
+  self.tmpKeyUidForProcessing = keyUid
+
 proc setPin*(self: Controller, value: string) =
   self.tmpPin = value
 
@@ -239,12 +248,6 @@ proc getPairingCode*(self: Controller): string =
 proc getKeyUidWhichIsBeingAuthenticating*(self: Controller): string =
   self.tmpKeyUidWhichIsBeingAuthenticating
 
-proc getKeyUidWhichIsBeingUnlocking*(self: Controller): string =
-  self.tmpKeyUidWhichIsBeingUnlocking
-
-proc setKeyUidWhichIsBeingUnlocking*(self: Controller, keyUid: string) =
-  self.tmpKeyUidWhichIsBeingUnlocking = keyUid
-
 proc setSelectedKeyPairIsProfile*(self: Controller, value: bool) =
   self.tmpSelectedKeyPairIsProfile = value
 
@@ -265,6 +268,12 @@ proc setKeycardUid*(self: Controller, value: string) =
 
 proc getKeycardUid*(self: Controller): string =
   return self.tmpKeycardUid
+
+proc setDestinationKeycardUid*(self: Controller, value: string) =
+  self.tmpKeycardCopyDestinationKeycardUid = value
+
+proc getDestinationKeycardUid*(self: Controller): string =
+  return self.tmpKeycardCopyDestinationKeycardUid
 
 proc setSelectedKeyPairWalletPaths*(self: Controller, paths: seq[string]) =
   self.tmpSelectedKeyPairWalletPaths = paths
@@ -300,6 +309,12 @@ proc seedPhraseRefersToSelectedKeyPair*(self: Controller, seedPhrase: string): b
     return
   let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)
   return acc.keyUid == self.tmpSelectedKeyPairDto.keyUid
+
+proc seedPhraseRefersToKeyPairBeingProcessed*(self: Controller, seedPhrase: string): bool =
+  if not serviceApplicable(self.accountsService):
+    return
+  let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)
+  return acc.keyUid == self.tmpKeyUidForProcessing
 
 proc verifyPassword*(self: Controller, password: string): bool =
   if not serviceApplicable(self.accountsService):
@@ -340,6 +355,20 @@ proc setMetadataFromKeycard*(self: Controller, cardMetadata: CardMetadata, updat
   self.tmpCardMetadata = cardMetadata
   if updateKeyPair:
     self.delegate.setKeyPairStoredOnKeycard(cardMetadata)
+
+proc getMetadataForKeycardCopy*(self: Controller): CardMetadata =
+  return self.tmpKeycardCopyCardMetadata
+
+proc setMetadataForKeycardCopy*(self: Controller, cardMetadata: CardMetadata, updateKeyPair = false) =
+  self.tmpKeycardCopyCardMetadata = cardMetadata
+  if updateKeyPair:
+    self.delegate.setKeyPairStoredOnKeycard(cardMetadata)
+
+proc setPinForKeycardCopy*(self: Controller, value: string) =
+  self.tmpKeycardCopyPin = value
+
+proc getPinForKeycardCopy*(self: Controller): string =
+  return self.tmpKeycardCopyPin
 
 proc setNamePropForKeyPairStoredOnKeycard*(self: Controller, name: string) =
   self.delegate.setNamePropForKeyPairStoredOnKeycard(name)
@@ -418,11 +447,11 @@ proc runAuthenticationFlow*(self: Controller, keyUid = "") =
   self.cancelCurrentFlow()
   self.keycardService.startExportPublicFlow(path = account_constants.PATH_ENCRYPTION)
 
-proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", puk = "", factoryReset = false) =
+proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", pin = "", puk = "", factoryReset = false) =
   if not serviceApplicable(self.keycardService):
     return
   self.cancelCurrentFlow()
-  self.keycardService.startLoadAccountFlow(seedPhraseLength, seedPhrase, puk, factoryReset)
+  self.keycardService.startLoadAccountFlow(seedPhraseLength, seedPhrase, pin, puk, factoryReset)
 
 # This flow is not in use any more for authentication purpose, will be use later for signing a transaction, but
 # we still do not support that. Going to keep this code, but as a comment.

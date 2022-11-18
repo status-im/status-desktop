@@ -22,8 +22,8 @@ QtObject {
         root.keycardModule.runImportFromKeycardToAppPopup()
     }
 
-    function runUnlockKeycardPopupForKeycardWithUid(keycardUid) {
-        root.keycardModule.runUnlockKeycardPopupForKeycardWithUid(keycardUid)
+    function runUnlockKeycardPopupForKeycardWithUid(keycardUid, keyUid) {
+        root.keycardModule.runUnlockKeycardPopupForKeycardWithUid(keycardUid, keyUid)
     }
 
     function runDisplayKeycardContentPopup() {
@@ -42,8 +42,8 @@ QtObject {
         root.keycardModule.runChangePinPopup(keycardUid, keyUid)
     }
 
-    function runCreateBackupCopyOfAKeycardPopup() {
-        root.keycardModule.runCreateBackupCopyOfAKeycardPopup()
+    function runCreateBackupCopyOfAKeycardPopup(keycardUid, keyUid) {
+        root.keycardModule.runCreateBackupCopyOfAKeycardPopup(keycardUid, keyUid)
     }
 
     function runCreatePukPopup(keycardUid, keyUid) {
