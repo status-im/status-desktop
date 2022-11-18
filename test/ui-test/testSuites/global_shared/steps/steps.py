@@ -69,7 +69,7 @@ def step(context, text, obj):
 
 @When("the user clicks on the following ui-component \"|any|\"")
 def step(context: any, obj: str):
-    the_user_clicks_on_the_following_ui_component(obj)
+    init_steps.the_user_clicks_on_the_following_ui_component(obj)
 
 @When("the user joins chat room \"|any|\"")
 def step(context, room):
@@ -88,9 +88,9 @@ def step(context, obj):
 ###########################################################################
 
 def the_user_restarts_the_app(context: any):
-    waitFor(lambda: currentApplicationContext().detach(), 500)
+    init_steps.waitFor(lambda: init_steps.currentApplicationContext().detach(), 500)
     time.sleep(5)
-    startApplication(context.userData["aut_name"])
+    init_steps.startApplication(context.userData["aut_name"])
     
 def the_user_joins_chat_room(room: str):
     init_steps.the_user_joins_chat_room(room)

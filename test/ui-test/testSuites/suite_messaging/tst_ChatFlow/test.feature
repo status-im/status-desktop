@@ -48,11 +48,6 @@ Feature: Status Desktop Chat Basic Flows
 		 | reply		   |
 		 | This is a reply |
 
-# TODO: This scenario should be extracted to a different feature file bc it doesn't accomplish the background steps since it needs to change/specify the chat room
-#    Scenario: The user joins a room and marks it as read
-#         When the user joins chat room test
-#		 And the user marks the channel "test" as read
-#         # TODO find a way to validate that it worked
 
     Scenario Outline: The user can delete his/her own message
          Given the user sends a chat message "<message>"
@@ -130,24 +125,6 @@ Feature: Status Desktop Chat Basic Flows
     	Examples:
          | message          |
 		 | wow I'm so cool  |
-
-# TODO: This scenario should be extracted to a different feature file bc it doesn't accomplish the background steps since it needs to change/specify the chat room
-#	@merge
-#    Scenario: The user sees chats sorted by most recent activity
-#          When the user joins chat room "first-chat"
-#          And the user joins chat room "second-chat"
-#          And the user joins chat room "third-chat"
-#          Then the user chats are sorted accordingly
-#          | third-chat  |
-#          | second-chat |
-#          | first-chat  |
-#          When the user switches to "second-chat" chat
-#          And the user sends a random chat message
-#		   Then the random chat message is displayed
-#          And the user chats are sorted accordingly
-#          | second-chat |
-#          | third-chat  |
-#          | first-chat  |
 
     Scenario: The user can type message with emoji autoreplace
     	When the user sends a chat message "Hello :)"
