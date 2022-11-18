@@ -40,34 +40,38 @@ Item {
         anchors.rightMargin: Style.current.padding
         spacing: Style.current.padding
 
-        StatusListView {
-            id: listView
-            // NOTE: some entries are hidden until implimentation
-            model: [ { text: qsTr("All"), category: ActivityCenterPopup.ActivityCategory.All, visible: true, enabled: true },
-                     { text: qsTr("Admin"), category: ActivityCenterPopup.ActivityCategory.Admin, visible: root.hasAdmin, enabled: root.hasAdmin },
-                     { text: qsTr("Mentions"), category: ActivityCenterPopup.ActivityCategory.Mentions, visible: true, enabled: root.hasMentions },
-                     { text: qsTr("Replies"), category: ActivityCenterPopup.ActivityCategory.Replies, visible: true, enabled: root.hasReplies },
-                     { text: qsTr("Contact requests"), category: ActivityCenterPopup.ActivityCategory.ContactRequests, visible: true, enabled: root.hasContactRequests },
-                     { text: qsTr("Identity verification"), category: ActivityCenterPopup.ActivityCategory.IdentityVerification, visible: false, enabled: true },
-                     { text: qsTr("Transactions"), category: ActivityCenterPopup.ActivityCategory.Transactions, visible: false, enabled: true },
-                     { text: qsTr("Membership"), category: ActivityCenterPopup.ActivityCategory.Membership, visible: true, enabled: root.hasMembership },
-                     { text: qsTr("System"), category: ActivityCenterPopup.ActivityCategory.System, visible: false, enabled: true } ]
-            orientation: StatusListView.Horizontal
-            spacing: 0
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        StatusRollArea {
+            Layout.preferredHeight: innerRow.implicitHeight
             Layout.fillWidth: true
-            Layout.fillHeight: true
 
-            delegate: StatusFlatButton {
-                enabled: modelData.enabled
-                visible: modelData.visible
-                width: visible ? implicitWidth : 0
-                text: modelData.text
-                anchors.verticalCenter: parent.verticalCenter
-                size: StatusBaseButton.Size.Small
-                highlighted: modelData.category == root.currentActivityCategory
-                onClicked: root.categoryTriggered(modelData.category)
-                onEnabledChanged: if (!enabled && highlighted) root.categoryTriggered(ActivityCenterPopup.ActivityCategory.All)
+            content: RowLayout {
+                id: innerRow
+                spacing: 0
+
+                Repeater {
+                    // NOTE: some entries are hidden until implimentation
+                    model: [ { text: qsTr("All"), category: ActivityCenterPopup.ActivityCategory.All, visible: true, enabled: true },
+                            { text: qsTr("Admin"), category: ActivityCenterPopup.ActivityCategory.Admin, visible: root.hasAdmin, enabled: root.hasAdmin },
+                            { text: qsTr("Mentions"), category: ActivityCenterPopup.ActivityCategory.Mentions, visible: true, enabled: root.hasMentions },
+                            { text: qsTr("Replies"), category: ActivityCenterPopup.ActivityCategory.Replies, visible: true, enabled: root.hasReplies },
+                            { text: qsTr("Contact requests"), category: ActivityCenterPopup.ActivityCategory.ContactRequests, visible: true, enabled: root.hasContactRequests },
+                            { text: qsTr("Identity verification"), category: ActivityCenterPopup.ActivityCategory.IdentityVerification, visible: false, enabled: true },
+                            { text: qsTr("Transactions"), category: ActivityCenterPopup.ActivityCategory.Transactions, visible: false, enabled: true },
+                            { text: qsTr("Membership"), category: ActivityCenterPopup.ActivityCategory.Membership, visible: true, enabled: root.hasMembership },
+                            { text: qsTr("System"), category: ActivityCenterPopup.ActivityCategory.System, visible: false, enabled: true } ]
+
+                    StatusFlatButton {
+                        enabled: modelData.enabled
+                        visible: modelData.visible
+                        width: visible ? implicitWidth : 0
+                        text: modelData.text
+                        anchors.verticalCenter: parent.verticalCenter
+                        size: StatusBaseButton.Size.Small
+                        highlighted: modelData.category == root.currentActivityCategory
+                        onClicked: root.categoryTriggered(modelData.category)
+                        onEnabledChanged: if (!enabled && highlighted) root.categoryTriggered(ActivityCenterPopup.ActivityCategory.All)
+                    }
+                }
             }
         }
 
