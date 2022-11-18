@@ -8,6 +8,7 @@ Item {
     id: root
 
     required property var selectedChat
+    required property var chatSectionController
 
     ColumnLayout {
         anchors.left: parent.left
@@ -36,6 +37,19 @@ Item {
 
         Label {
             text: "is muted: %1".arg(root.selectedChat.muted)
+        }
+
+        Row {
+            TextField {
+                id: chatInput
+                width: root.width / 2
+            }
+
+            Button {
+                id: sendMessageButton
+                text: "Send"
+                onClicked: chatSectionController.sendMessage(chatInput.text)
+            }
         }
     }
 }

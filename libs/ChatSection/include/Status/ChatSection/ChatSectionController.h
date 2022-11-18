@@ -24,6 +24,7 @@ public:
 
     Q_INVOKABLE void init(const QString& sectionId);
     Q_INVOKABLE void setCurrentChatIndex(int index);
+    Q_INVOKABLE void sendMessage(const QString &message) const;
 
 signals:
     void chatsModelChanged();
