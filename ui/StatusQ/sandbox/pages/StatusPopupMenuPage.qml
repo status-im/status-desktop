@@ -22,8 +22,8 @@ GridLayout {
         onClicked: complexMenu.popup()
     }
 
-
     StatusButton {
+        id: customPopupButton
         text: "Menu with custom images and icons"
         onClicked: customMenu.popup()
     }
@@ -51,7 +51,6 @@ GridLayout {
 
     StatusPopupMenu {
         id: complexMenu
-        subMenuItemIcons: [{ icon: 'info' }]
 
         StatusMenuItem { 
             text: "One" 
@@ -65,13 +64,10 @@ GridLayout {
             assetSettings.name: "info"
         }
 
-        StatusMenuItem { 
-            text: "Three"
-            assetSettings.name: "info"
-        }
-
         StatusPopupMenu {
-            title: "Four"
+            title: "Two"
+            assetSettings.name: "info"
+
             StatusMenuItem { 
                 text: "One"
                 assetSettings.name: "info"
@@ -81,21 +77,21 @@ GridLayout {
                 assetSettings.name: "info"
             }
         }
+
+        StatusMenuItem {
+            text: "Disabled"
+            assetSettings.name: "info"
+            enabled: false
+        }
+
+        StatusMenuItem {
+            text: "Danger"
+            type: StatusMenuItem.Type.Danger
+        }
     }
 
     StatusPopupMenu {
         id: customMenu
-
-        subMenuItemIcons: [
-            { icon: "chat" },
-            { 
-                source: "qrc:/demoapp/data/profile-image-1.jpeg"
-            },
-            { 
-                isLetterIdenticon: true, 
-                color: "red" 
-            }
-        ]
 
         StatusMenuItem {
             text: "Anywhere"
@@ -104,14 +100,15 @@ GridLayout {
         StatusMenuSeparator {}
 
         StatusPopupMenu {
-            title: "Chat" 
+            title: "Chat"
+            assetSettings.name: "chat"
 
             StatusMenuItem { 
                 text: "vitalik.eth"
                 assetSettings.isImage: true
+                assetSettings.imgIsIdenticon: true
                 assetSettings.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
 CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-                assetSettings.imgIsIdenticon: true
             }
 
             StatusMenuItem { 
@@ -123,6 +120,8 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
 
         StatusPopupMenu {
             title: "Cryptokitties"
+            assetSettings.isImage: true
+            assetSettings.name: "qrc:/demoapp/data/profile-image-1.jpeg"
 
             StatusMenuItem { 
                 text: "welcome" 
@@ -146,6 +145,8 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
 
         StatusPopupMenu {
             title: "Another community"
+            assetSettings.isLetterIdenticon: true
+            assetSettings.bgColor: "red"
 
             StatusMenuItem { 
                 text: "welcome" 

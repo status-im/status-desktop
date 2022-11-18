@@ -7,187 +7,161 @@ import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
 MenuItem {
-    id: statusPopupMenuItem
+    id: root
     implicitWidth: parent ? parent.width : 0
-    implicitHeight: action.enabled ? 34 : 0
-    objectName: action.objectName
+    implicitHeight: menu.hideDisabledItems && !enabled ? 0 : 38
+    objectName: action ? action.objectName : "StatusMenuItemDelegate"
 
-    property int subMenuIndex
-    property var statusPopupMenu: null
+    spacing: 4
+    horizontalPadding: 8
 
-    Component.onCompleted: {
-        if (!!subMenu) {
-            subMenuIndex = statusPopupMenu.menuItemCount
-            statusPopupMenu.menuItemCount += 1
+    QtObject {
+        id: d
+
+        readonly property bool isSubMenu: !!root.subMenu
+        readonly property bool isStatusSubMenu: isSubMenu && (root.subMenu instanceof StatusPopupMenu)
+        readonly property bool subMenuOpened: isSubMenu && root.subMenu.opened
+        readonly property bool hasAction: !!root.action
+        readonly property bool isStatusAction: d.hasAction && (root.action instanceof StatusMenuItem)
+        readonly property bool isStatusDangerAction: d.isStatusAction && root.action.type === StatusMenuItem.Type.Danger
+
+        readonly property StatusAssetSettings assetSettings: d.isStatusSubMenu
+                                                             ? root.subMenu.assetSettings
+                                                             : d.isStatusAction
+                                                               ? root.action.assetSettings
+                                                               : d.defaultAsset
+
+        readonly property StatusFontSettings fontSettings: d.isStatusSubMenu
+                                                           ? root.subMenu.fontSettings
+                                                           : d.isStatusAction ? root.action.fontSettings : d.defaultFontSettings
+
+        readonly property StatusAssetSettings defaultAsset: StatusAssetSettings {
+            width: 18
+            height: 18
+            rotation: 0
         }
-    }
 
-    action: StatusMenuItem {
-        onTriggered: { statusPopupMenu.menuItemClicked(statusPopupMenuItem.subMenuIndex); }
-    }
-
-    Component {
-        id: indicatorComponent
-        Item {
-            implicitWidth: 24
-            implicitHeight: 24
-            StatusIcon {
-                anchors.centerIn: parent
-                width: {
-                    let width = statusPopupMenuItem.action && statusPopupMenuItem.action.assetSettings.width
-                    return !!width ? width : 18
-                }
-                rotation: !!statusPopupMenuItem.action.iconRotation ? statusPopupMenuItem.action.iconRotation : 0
-                icon: {
-                    if (statusPopupMenuItem.subMenu && !!statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex] &&
-                        statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].icon.toString() !== "") {
-                        return statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].icon;
-                    } else if (!!statusPopupMenuItem.action && statusPopupMenuItem.action.assetSettings.name !== "") {
-                        return statusPopupMenuItem.action.assetSettings.name;
-                    } else if (!!statusPopupMenuItem.action.assetSettings && statusPopupMenuItem.action.assetSettings.name !== "") {
-                        return statusPopupMenuItem.action.assetSettings.name;
-                    } else {
-                        return "";
-                    }
-                }
-                color: {
-                    let c = !!statusPopupMenuItem.action.assetSettings && statusPopupMenuItem.action.assetSettings.color
-
-                    if (!Qt.colorEqual(c, "transparent")) {
-                        return c
-                    }
-                    switch (statusPopupMenuItem.action.type) {
-                        case StatusMenuItem.Type.Danger:
-                          return Theme.palette.dangerColor1
-                        default:
-                          return Theme.palette.primaryColor1
-                    }
-                }
-            }
+        readonly property StatusFontSettings defaultFontSettings: StatusFontSettings {
+            pixelSize: 13
+            bold: false
+            italic: false
         }
     }
 
     Component {
-        id: statusLetterIdenticonCmp
-        Item {
-            implicitWidth: 24
-            implicitHeight: 24
+        id: indicatorIcon
 
-            StatusLetterIdenticon {
-                anchors.centerIn: parent
-                width: 16
-                height: 16
-                color: {
-                    let subMenuItemIcon = statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex]
-                    return subMenuItemIcon && subMenuItemIcon.color ? subMenuItemIcon.color : statusPopupMenuItem.action.assetSettings.bgColor
-                }
-                name: statusPopupMenuItem.text
-                letterSize: 11
+        StatusIcon {
+            width: d.assetSettings.width
+            height: d.assetSettings.height
+            rotation: d.assetSettings.rotation
+            icon: d.assetSettings.name
+            color: {
+                const c = d.assetSettings.color;
+                if (!Qt.colorEqual(c, "transparent"))
+                    return c;
+                if (!root.enabled)
+                    return Theme.palette.baseColor1;
+                if (d.isStatusDangerAction)
+                    return Theme.palette.dangerColor1;
+                return Theme.palette.primaryColor1;
             }
         }
     }
 
     Component {
-        id: statusRoundImageCmp
+        id: indicatorLetterIdenticon
 
-        Item {
-            implicitWidth: 24
-            implicitHeight: 24
-            StatusRoundedImage {
-                anchors.centerIn: parent
-                width: statusPopupMenuItem.action.assetSettings.width
-                height: statusPopupMenuItem.action.assetSettings.height
-                image.source: statusPopupMenuItem.subMenu ?
-                    statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].source :
-                    statusPopupMenuItem.action.assetSettings.name
-                border.width: (statusPopupMenuItem.subMenu && statusPopupMenu.subMenuItemIcons[statusPopupMenuItem.subMenuIndex].isIdenticon) || 
-                    statusPopupMenuItem.action.assetSettings.imgIsIdenticon ? 1 : 0
-                border.color: Theme.palette.directColor7
-            }
+        StatusLetterIdenticon {
+            width: d.assetSettings.width
+            height: d.assetSettings.height
+            color: d.assetSettings.bgColor
+            name: root.text
+            letterSize: 11
         }
     }
 
-    indicator: Loader {
-        sourceComponent: {
-            let subMenuItemIcon = statusPopupMenu.subMenuItemIcons && statusPopupMenu.subMenuItemIcons[parent.subMenuIndex]
-            
-            if ((parent.subMenu && subMenuItemIcon && statusPopupMenu.subMenuItemIcons[parent.subMenuIndex].source) ||
-                statusPopupMenuItem.action.assetSettings && !!statusPopupMenuItem.action.assetSettings.name.toString()
-                && statusPopupMenuItem.action.assetSettings.isImage) {
-                return statusRoundImageCmp
-            }
+    Component {
+        id: indicatorImage
 
-            return (parent.subMenu && subMenuItemIcon && subMenuItemIcon.isLetterIdenticon) || 
-                (statusPopupMenuItem.action.assetSettings && statusPopupMenuItem.action.assetSettings.isLetterIdenticon) ?
-                statusLetterIdenticonCmp : indicatorComponent
+        StatusRoundedImage {
+            width: d.assetSettings.width
+            height: d.assetSettings.height
+            image.source: d.assetSettings.name
+            border.width: d.isSubMenu && d.assetSettings.imgIsIdenticon ? 1 : 0
+            border.color: Theme.palette.directColor7
         }
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: 8
-        active: {
-            if (enabled) {
-                let hasIconSettings = !!statusPopupMenuItem.action.assetSettings.name ||
-                  (statusPopupMenuItem.action.assetSettings &&
-                    (!!statusPopupMenuItem.action.assetSettings.name || !!statusPopupMenuItem.action.assetSettings.isLetterIdenticon))
+    }
 
-                let hasImageSettings = statusPopupMenuItem.action.assetSettings && !!statusPopupMenuItem.action.assetSettings.name.toString()
+    indicator: Item {
+        x: root.mirrored ? root.width - width - root.rightPadding : root.leftPadding
+        y: root.topPadding + (root.availableHeight - height) / 2
 
-                return enabled && (parent.subMenu && !!statusPopupMenu.subMenuItemIcons[parent.subMenuIndex]) || hasIconSettings || hasImageSettings
+        implicitWidth: 24
+        implicitHeight: 24
+        visible: d.assetSettings.isLetterIdenticon
+                 || d.assetSettings.isImage
+                 || !!d.assetSettings.name
+
+        Loader {
+            anchors.centerIn: parent
+            active: parent.visible
+            sourceComponent: {
+                if (d.assetSettings.isImage)
+                    return indicatorImage;
+                if (d.assetSettings.isLetterIdenticon)
+                    return indicatorLetterIdenticon;
+                return indicatorIcon;
             }
-            return false
-        }      
+
+        }
     }
 
     contentItem: StatusBaseText {
-        anchors.left: statusPopupMenuItem.indicator.right
-        anchors.right: arrowIcon.visible ? arrowIcon.left : arrowIcon.right
-        anchors.rightMargin: 8
-        anchors.leftMargin: 4
+        readonly property real arrowPadding: root.spacing + (root.subMenu && root.arrow ? root.arrow.width : 0)
+        readonly property real indicatorPadding: root.spacing + (root.indicator.visible ? root.indicator.width : 0)
+
+        leftPadding: !root.mirrored ? indicatorPadding : arrowPadding
+        rightPadding: root.mirrored ? indicatorPadding : arrowPadding
 
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
 
-        text: statusPopupMenuItem.text
-        color: {
-            switch (statusPopupMenuItem.action.type) {
-                case StatusMenuItem.Type.Danger:
-                  return Theme.palette.dangerColor1
-                default:
-                  return Theme.palette.directColor1
-            }
-        }
-        font.pixelSize: !!statusPopupMenuItem.action.fontSettings ? statusPopupMenuItem.action.fontSettings.pixelSize : 13
-        font.bold: !!statusPopupMenuItem.action.fontSettings ? statusPopupMenuItem.action.fontSettings.bold : false
-        font.italic: !!statusPopupMenuItem.action.fontSettings ? statusPopupMenuItem.action.fontSettings.italic : false
+        text: root.text
+        color: !root.enabled ? Theme.palette.baseColor1
+                             : d.isStatusDangerAction ? Theme.palette.dangerColor1 : Theme.palette.directColor1
+
+        font.pixelSize: d.fontSettings.pixelSize
+        font.bold: d.fontSettings.bold
+        font.italic: d.fontSettings.italic
         elide: Text.ElideRight
-        visible: statusPopupMenuItem.action.enabled
     }
 
     arrow: StatusIcon {
         id: arrowIcon
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: 8
+        x: root.mirrored ? root.leftPadding : root.width - width - root.rightPadding
+        y: root.topPadding + (root.availableHeight - height) / 2
+
         height: 16
-        visible: statusPopupMenuItem.subMenu
+        visible: d.isSubMenu
         icon: "next"
         color: Theme.palette.directColor1
     }
 
     background: Rectangle {
         color: {
-            if (statusPopupMenuItem.hovered) {
-                return statusPopupMenuItem.action.type === StatusMenuItem.Type.Danger ? Theme.palette.dangerColor3 : Theme.palette.statusPopupMenu.hoverBackgroundColor
-            }
-            return "transparent"
+            if (!root.hovered && !d.subMenuOpened)
+                return "transparent"
+            if (d.isStatusDangerAction)
+                return Theme.palette.dangerColor3;
+            return Theme.palette.statusPopupMenu.hoverBackgroundColor;
         }
     }
 
     MouseArea {
-        id: sensor
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
-        hoverEnabled: statusPopupMenuItem.action.enabled
-        onPressed: mouse.accepted = false
+        acceptedButtons: Qt.NoButton
+        hoverEnabled: root.enabled
     }
 }

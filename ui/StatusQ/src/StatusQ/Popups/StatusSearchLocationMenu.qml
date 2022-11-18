@@ -29,6 +29,8 @@ StatusPopupMenu {
     MenuItem { implicitHeight: 0.00001 }
     Instantiator {
         model: root.locationModel
+
+        // NOTE: Use DelegateChooser here
         delegate: Loader {
             sourceComponent: (!!model.subItems && model.subItems.count > 0) ? subMenus : subMenuItemComponent
             onLoaded: {
@@ -39,13 +41,13 @@ StatusPopupMenu {
                     item.parentIconName = model.iconName;
                     item.parentImageSource = model.imageSource;
                     item.parentIdenticonColor = !!model.iconColor ? model.iconColor : Theme.palette.primaryColor1;
-                    root.subMenuItemIcons.push({
-                                    source: model.imageSource,
-                                    icon: model.iconName,
-                                    isIdenticon: model.isIdenticon,
-                                    color: model.iconColor,
-                                    isLetterIdenticon: !model.imageSource && !model.iconName
-                                   });
+
+                    item.assetSettings.source = model.imageSource;
+                    item.assetSettings.isIdenticon = model.isIdenticon;
+                    item.assetSettings.name = model.iconName;
+                    item.assetSettings.color = model.iconColor;
+                    item.assetSettings.isLetterIdenticon = !model.imageSource && !model.iconName;
+
                     root.insertMenu(index + numDefaultItems, item);
                 } else {
                     item.value = model.value
