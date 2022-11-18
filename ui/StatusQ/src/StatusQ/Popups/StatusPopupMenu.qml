@@ -10,20 +10,31 @@ import StatusQ.Popups 0.1
 
 Menu {
     id: root
+
     closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
     topPadding: 8
     bottomPadding: 8
     bottomMargin: 16
 
-    property int menuItemCount: 0
-    property var subMenuItemIcons: []
+    property StatusAssetSettings assetSettings: StatusAssetSettings {
+        width: 18
+        height: 18
+        rotation: 0
+        isLetterIdenticon: false
+        isImage: false
+        color: "transparent"
+    }
+
+    property StatusFontSettings fontSettings: StatusFontSettings {}
+
+    property bool hideDisabledItems: false
 
     property var openHandler
     property var closeHandler
 
-    dim: false
-
     signal menuItemClicked(int menuIndex)
+
+    dim: false
 
     onOpened: {
         if (typeof openHandler === "function") {
@@ -37,9 +48,7 @@ Menu {
         }
     }
 
-    delegate: StatusMenuItemDelegate {
-        statusPopupMenu: root
-    }
+    delegate: StatusMenuItemDelegate { }
 
     contentItem: StatusListView {
         currentIndex: root.currentIndex

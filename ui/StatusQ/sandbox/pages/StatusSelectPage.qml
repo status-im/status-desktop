@@ -41,7 +41,6 @@ Column {
         model: commmonModel
 
         selectMenu.delegate: StatusMenuItemDelegate {
-            statusPopupMenu: select
             action: StatusMenuItem {
                 assetSettings.name: "filled-account"
                 text: name

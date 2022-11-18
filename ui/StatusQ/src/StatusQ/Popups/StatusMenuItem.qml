@@ -9,17 +9,20 @@ Action {
         Normal,
         Danger
     }
-    icon.color: "transparent"
+
     property int type: StatusMenuItem.Type.Normal
-    property real iconRotation: 0
+
     property StatusAssetSettings assetSettings: StatusAssetSettings {
-        width: 16
-        height: 16
-        color: "transparent"
+        width: 18
+        height: 18
+        rotation: 0
         isLetterIdenticon: false
         imgIsIdenticon: false
+        color: "transparent"
         name: statusMenuItem.icon.name
     }
 
     property StatusFontSettings fontSettings: StatusFontSettings {}
+
+    icon.color: "transparent"
 }
