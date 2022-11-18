@@ -567,14 +567,14 @@ $(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	cp "$(shell which libgcc_s_seh-1.dll)" $(OUTPUT)/bin/
 	cp "$(shell which libwinpthread-1.dll)" $(OUTPUT)/bin/
 	echo -e $(BUILD_MSG) "deployable folder"
-	windeployqt --compiler-runtime --qmldir ui --release \
+	windeployqt --compiler-runtime --qmldir ui --release -webengine -serialport -positioning -webenginecore \
 		tmp/windows/dist/Status/bin/DOtherSide.dll
 	mv tmp/windows/dist/Status/bin/vc_redist.x64.exe tmp/windows/dist/Status/vendor/
 	cp status.iss $(OUTPUT)/status.iss
 # if WINDOWS_CODESIGN_PFX_PATH is not set then DLLs, EXEs are not signed
-# ifdef WINDOWS_CODESIGN_PFX_PATH
-# 	scripts/sign-windows-bin.sh ./tmp/windows/dist/Status
-# endif
+ifdef WINDOWS_CODESIGN_PFX_PATH
+	scripts/sign-windows-bin.sh ./tmp/windows/dist/Status
+endif
 	echo -e $(BUILD_MSG) "exe"
 	mkdir -p $(INSTALLER_OUTPUT)
 	ISCC \
@@ -582,9 +582,9 @@ $(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	   -D"BaseName=$(shell basename $(STATUS_CLIENT_EXE) .exe)" \
 	   -D"Version=$(shell cat VERSION)" \
 	   $(OUTPUT)/status.iss
-# ifdef WINDOWS_CODESIGN_PFX_PATH
-# 	scripts/sign-windows-bin.sh $(INSTALLER_OUTPUT)
-# endif
+ifdef WINDOWS_CODESIGN_PFX_PATH
+	scripts/sign-windows-bin.sh $(INSTALLER_OUTPUT)
+endif
 
 $(STATUS_CLIENT_7Z): OUTPUT := tmp/windows/dist/Status
 $(STATUS_CLIENT_7Z): $(STATUS_CLIENT_EXE)
