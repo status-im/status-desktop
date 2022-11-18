@@ -12,6 +12,8 @@ Feature: Status Desktop Main Settings Section
 
 	# TODO: It must be reformulated or extracted to a different feature file bc preconditions of this feature file also include closing the backup seed phrase indicator at first instance
 	# so the validation is not providing relevant information
+	# TODO: It is also unstable. Needs to be checked.
+    @mayfail
     Scenario: The user can backup seed phrase
         Given the user activates wallet
 		And the user opens the wallet settings
