@@ -195,11 +195,11 @@ endif
 RELEASE ?= false
 ifeq ($(RELEASE),false)
  # We need `-d:debug` to get Nim's default stack traces
- NIM_PARAMS += -d:release
+ NIM_PARAMS += -d:debug
  # Enable debugging symbols in DOtherSide, in case we need GDB backtraces
- CFLAGS += -g
- CXXFLAGS += -g
- RCC_PARAMS = --no-compress
+#  CFLAGS += -g
+#  CXXFLAGS += -g
+#  RCC_PARAMS = --no-compress
 else
  # Additional optimization flags for release builds are not included at present;
  # adding them will involve refactoring config.nims in the root of this repo
