@@ -1,14 +1,24 @@
 CompilationErrorsBox 1.0 CompilationErrorsBox.qml
+FigmaImagesProxyModel 1.0 FigmaImagesProxyModel.qml
+FigmaLinksCache 1.0 FigmaLinksCache.qml
+FigmaPreviewWindow 1.0 FigmaPreviewWindow.qml
 FilteredPagesList 1.0 FilteredPagesList.qml
+FlickableImage 1.0 FlickableImage.qml
 HotComponentFromSource 1.0 HotComponentFromSource.qml
 HotLoader 1.0 HotLoader.qml
 HotReloader 1.0 HotReloader.qml
 HotReloaderControls 1.0 HotReloaderControls.qml
 ImageSelectPopup 1.0 ImageSelectPopup.qml
+ImagesGridView 1.0 ImagesGridView.qml
+ImagesNavigationLayout 1.0 ImagesNavigationLayout.qml
 Logs 1.0 Logs.qml
 LogsAndControlsPanel 1.0 LogsAndControlsPanel.qml
 LogsView 1.0 LogsView.qml
+PageToolBar 1.0 PageToolBar.qml
 PagesList 1.0 PagesList.qml
 PopupBackground 1.0 PopupBackground.qml
+SettingsLayout 1.0 SettingsLayout.qml
+SingleItemProxyModel 1.0 SingleItemProxyModel.qml
 SourceCodeBox 1.0 SourceCodeBox.qml
+singleton FigmaUtils 1.0 FigmaUtils.qml
 singleton StorybookUtils 1.0 StorybookUtils.qml
