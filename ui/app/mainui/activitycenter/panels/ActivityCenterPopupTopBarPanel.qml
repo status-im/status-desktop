@@ -41,11 +41,9 @@ Item {
         spacing: Style.current.padding
 
         StatusRollArea {
-            Layout.preferredHeight: innerRow.implicitHeight
             Layout.fillWidth: true
 
             content: RowLayout {
-                id: innerRow
                 spacing: 0
 
                 Repeater {
@@ -63,13 +61,12 @@ Item {
                     StatusFlatButton {
                         enabled: modelData.enabled
                         visible: modelData.visible
-                        width: visible ? implicitWidth : 0
                         text: modelData.text
-                        anchors.verticalCenter: parent.verticalCenter
                         size: StatusBaseButton.Size.Small
-                        highlighted: modelData.category == root.currentActivityCategory
+                        highlighted: modelData.category === root.currentActivityCategory
                         onClicked: root.categoryTriggered(modelData.category)
                         onEnabledChanged: if (!enabled && highlighted) root.categoryTriggered(ActivityCenterPopup.ActivityCategory.All)
+                        Layout.preferredWidth: visible ? implicitWidth : 0
                     }
                 }
             }
