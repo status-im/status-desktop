@@ -12,7 +12,7 @@ _password = "TesTEr16843/!@00"
 
 @OnFeatureStart
 def hook(context):
-    init_steps.context_init(context)  
+    init_steps.context_init(context, testSettings)
     init_steps.signs_up_process_steps(context, _user, _password)
 
 @OnFeatureEnd

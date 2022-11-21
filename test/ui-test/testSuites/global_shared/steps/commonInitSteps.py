@@ -28,7 +28,10 @@ _fixtures_root = "fixtures_root"
 _search_images = "search_images"
 _scenario_name = "scenario_name"
     
-def context_init(context):
+def context_init(context, testSettings, screenshot_on_fail = True):
+    # With this property it is enabled that every test failure will cause Squish to take a screenshot of the desktop when the failure occurred
+    testSettings.logScreenshotOnFail = screenshot_on_fail
+    
     filesMngr.erase_directory(_status_qt_path)
     context.userData = {}
     context.userData[_aut_name] = _status_desktop_app_name

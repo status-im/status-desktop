@@ -13,7 +13,7 @@ _data_folder_path = "../../../fixtures/mutual_contacts"
 
 @OnFeatureStart
 def hook(context):
-    init_steps,context_init(context)
+    init_steps.context_init(context, testSettings)
     init_steps.login_process_steps(context, _user, _password, _data_folder_path)
 
 @OnFeatureEnd
