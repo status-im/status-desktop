@@ -16,7 +16,7 @@
 import common.Common as common
 import time
 
-import steps.startupSteps as init_steps
+import steps.commonInitSteps as init_steps
 from screens.StatusMainScreen import StatusMainScreen
 from screens.StatusChatScreen import StatusChatScreen
 
@@ -29,7 +29,7 @@ _statusChat = StatusChatScreen()
 
 @Given("the user starts the application with a specific data folder \"|any|\"")
 def step(context, data_folder_path):
-    common.a_user_starts_the_application_with_a_specific_data_folder(context, data_folder_path)
+    init_steps.a_user_starts_the_application_with_a_specific_data_folder(context, data_folder_path)
 
 @Given("the user restarts the app")
 def step(context):

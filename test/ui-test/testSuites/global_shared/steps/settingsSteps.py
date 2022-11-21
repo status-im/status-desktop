@@ -1,5 +1,4 @@
-import steps.startupSteps as common_init_steps
-import steps.walletInitSteps as wallet_init_steps
+import steps.commonInitSteps as init_steps
 
 from screens.StatusMainScreen import StatusMainScreen
 from screens.SettingsScreen import SettingsScreen
@@ -27,11 +26,11 @@ def step(context: any):
     
 @Given("the user activates wallet and opens the wallet section")
 def step(context: any):
-    wallet_init_steps.the_user_activates_wallet_and_opens_the_wallet_section()
+    init_steps.the_user_activates_wallet_and_opens_the_wallet_section()
     
 @Given("the user toggles test networks")
 def step(context: any):
-    wallet_init_steps.the_user_toggles_test_networks()
+    init_steps.the_user_toggles_test_networks()
 
 @Given("the user activates wallet")
 def step(context: any):
@@ -233,7 +232,7 @@ def step(context, display_name):
 ########################################################################### 
     
 def the_user_opens_app_settings_screen():
-    common_init_steps.the_user_opens_app_settings_screen()
+    init_steps.the_user_opens_app_settings_screen()
     
 def the_user_opens_the_messaging_settings():
     _settingsScreen.open_messaging_settings()

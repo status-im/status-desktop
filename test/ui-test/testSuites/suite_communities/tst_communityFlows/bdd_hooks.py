@@ -4,7 +4,7 @@
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../testSuites/global_shared/"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
 
-import steps.startupSteps as init_steps
+import steps.commonInitSteps as init_steps
 
 # Global properties for the specific feature
 _user = "tester123"

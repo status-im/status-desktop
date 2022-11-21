@@ -11,6 +11,7 @@ from screens.StatusChatScreen import StatusChatScreen
 from screens.StatusCommunityPortalScreen import StatusCommunityPortalScreen
 from screens.StatusCommunityScreen import StatusCommunityScreen
 from screens.StatusLoginScreen import StatusLoginScreen
+from screens.SettingsScreen import SettingsScreen
 
 # Project settings properties:
 _status_desktop_app_name = "nim_status_client"
@@ -152,3 +153,12 @@ def the_user_navigates_back_to_user_profile_page():
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.navigate_back_to_user_profile_page()
     
+def the_user_activates_wallet_and_opens_the_wallet_section():
+    settings_screen = SettingsScreen()
+    settings_screen.activate_open_wallet_section()
+
+def the_user_toggles_test_networks():
+    settings_screen = SettingsScreen()
+    settings_screen.toggle_test_networks()    
+    main_screen = StatusMainScreen()
+    main_screen.click_tool_bar_back_button()
