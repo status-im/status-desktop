@@ -37,8 +37,8 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	run-windows \
 	status-go \
 	status-keycard-go \
-        statusq-sanity-checker \
-        run-statusq-sanity-checker \
+	statusq-sanity-checker \
+	run-statusq-sanity-checker \
 	update
 
 ifeq ($(NIM_PARAMS),)
@@ -612,8 +612,9 @@ clean: | clean-common
 	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
 
 clean-git:
-	git clean -fdx
-	git submodule foreach --recursive git clean -fdx
+	git clean -qfdx
+	git submodule foreach --recursive git reset -q --hard
+	git submodule foreach --recursive git clean -qfdx
 
 force-rebuild-status-go:
 	bash ./scripts/force-rebuild-status-go.sh $(STATUSGO)
