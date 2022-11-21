@@ -22,6 +22,10 @@ StackLayout {
 
     clip: true
 
+    onCurrentIndexChanged: {
+        Global.closeCreateChatView()
+    }
+
     Component {
         id: membershipRequestPopupComponent
         MembershipRequestsPopup {
