@@ -29,7 +29,7 @@ add_executable(
   cachecleaner.cpp cachecleaner.h
   directorieswatcher.cpp directorieswatcher.h
   sectionsdecoratormodel.cpp sectionsdecoratormodel.h
-  ${QML_FILES} main.qml
+  ${QML_FILES} main.qml PagesModel.qml
   ${JS_FILES}
 )
 
