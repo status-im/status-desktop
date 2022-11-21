@@ -2,6 +2,8 @@ import chronicles, json, strutils
 
 import ./dto/node_config
 import ../settings/service as settings_service
+import ../community/service
+import ../../../app/core/eventemitter
 import ../../../app/core/fleets/fleet_configuration
 import ../../../backend/node_config as status_node_config
 
@@ -17,18 +19,24 @@ const BLOOM_LEVEL_FULL* = "full"
 const BLOOM_LEVEL_LIGHT* = "light"
 
 type
+  ErrorArgs* = ref object of Args
+    msg*: string
+
+type
   Service* = ref object of RootObj
     configuration: NodeConfigDto
     fleetConfiguration: FleetConfiguration
     settingsService: settings_service.Service
+    events: EventEmitter
 
 proc delete*(self: Service) =
   discard
 
-proc newService*(fleetConfiguration: FleetConfiguration, settingsService: settings_service.Service): Service =
+proc newService*(fleetConfiguration: FleetConfiguration, settingsService: settings_service.Service, events: EventEmitter): Service =
   result = Service()
   result.fleetConfiguration = fleetConfiguration
   result.settingsService = settingsService
+  result.events = events
 
 proc adaptNodeSettingsForTheAppNeed(self: Service) =
   self.configuration.DataDir = "./ethereum"
@@ -65,13 +73,17 @@ proc saveConfiguration(self: Service, configuration: NodeConfigDto): bool =
   return true
 
 method enableCommunityHistoryArchiveSupport*(self: Service): bool =
-  let response = status_node_config.enableCommunityHistoryArchiveSupport()
-  if(not response.error.isNil):
-    error "error enabling community history archive support: ", errDescription = response.error.message
-    return false
+  try:
+    let response = status_node_config.enableCommunityHistoryArchiveSupport()
+    if(not response.error.isNil):
+      error "error enabling community history archive support: ", errDescription = response.error.message
+      return false
 
-  self.fetchNodeConfig()
-  return true
+    self.fetchNodeConfig()
+    return true
+  except Exception as e:
+    error "Error enabling community history archive support", msg = e.msg
+    self.events.emit(SIGNAL_ENABLE_COMMUNITY_ARCHIVE_FAILED, ErrorArgs(msg: e.msg))
 
 method disableCommunityHistoryArchiveSupport*(self: Service): bool =
   let response = status_node_config.disableCommunityHistoryArchiveSupport()

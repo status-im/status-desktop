@@ -101,3 +101,6 @@ method isCommunityHistoryArchiveSupportEnabled*(self: AccessInterface): bool {.b
 
 method toggleCommunityHistoryArchiveSupport*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method enableCommunityHistoryArchiveSupportFailed*(self: AccessInterface, msg: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
