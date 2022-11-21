@@ -209,6 +209,9 @@ Control {
         ColumnLayout {
             id: messageLayout
             anchors.fill: parent
+            anchors.topMargin: 2
+            anchors.bottomMargin: 2
+            spacing: 2
 
             Loader {
                 Layout.fillWidth: true
@@ -234,7 +237,6 @@ Control {
                     implicitWidth: root.messageDetails.sender.profileImage.assetSettings.width
                     implicitHeight: profileImage.visible ? profileImage.height : 0
                     Layout.alignment: Qt.AlignTop
-                    Layout.topMargin: 2
                     StatusSmartIdenticon {
                         id: profileImage
                         active: root.showHeader

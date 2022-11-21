@@ -386,8 +386,6 @@ Loader {
             StatusMessage {
                 id: delegate
                 Layout.fillWidth: true
-                Layout.topMargin: 2
-                Layout.bottomMargin: 2
                 function convertContentType(value) {
                     switch (value) {
                     case Constants.messageContentType.messageType:
@@ -477,7 +475,8 @@ Loader {
                 hideQuickActions: root.isChatBlocked ||
                                   root.placeholderMessage ||
                                   root.activityCenterMessage ||
-                                  root.isInPinnedPopup
+                                  root.isInPinnedPopup ||
+                                  root.editModeOn
                 hideMessage: d.isSingleImage && d.unfurledLinksCount === 1
 
                 overrideBackground: root.activityCenterMessage || root.placeholderMessage
