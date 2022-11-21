@@ -306,7 +306,7 @@ Item {
                 let mnemonicString = ""
                 const sortTable = mnemonicInput.sort((a, b) => a.pos - b.pos)
                 for (let i = 0; i < mnemonicInput.length; i++) {
-                    mnemonicString += sortTable[i].seed + ((i === (grid.count-1)) ? "" : " ")
+                    mnemonicString += sortTable[i].seed.toLowerCase() + ((i === (grid.count-1)) ? "" : " ")
                 }
 
                 if (Utils.isMnemonic(mnemonicString) && root.startupStore.validMnemonic(mnemonicString)) {
