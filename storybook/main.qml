@@ -31,10 +31,40 @@ ApplicationWindow {
 
         ListElement {
             title: "ProfileDialogView"
+
+            figma: [
+                ListElement {
+                    link: "https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=733%3A12552"
+                },
+                ListElement {
+                    link: "https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=682%3A15078"
+                },
+                ListElement {
+                    link: "https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=682%3A17655"
+                },
+                ListElement {
+                    link: "https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=682%3A17087"
+                },
+                ListElement {
+                    link: "https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=4%3A23525"
+                },
+                ListElement {
+                    link: "https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=4%3A23932"
+                }
+            ]
             section: "Views"
         }
         ListElement {
              title: "CommunitiesPortalLayout"
+
+             figma: [
+                 ListElement {
+                     link: "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A415655"
+                 },
+                 ListElement {
+                     link: "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A415935"
+                 }
+             ]
              section: "Views"
         }
         ListElement {
@@ -55,6 +85,15 @@ ApplicationWindow {
         }
         ListElement {
              title: "StatusCommunityCard"
+
+             figma: [
+                 ListElement {
+                     link: "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416159"
+                 },
+                 ListElement {
+                     link: "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416160"
+                 }
+             ]
              section: "Panels"
         }
         ListElement {
@@ -87,48 +126,54 @@ ApplicationWindow {
     SplitView {
         anchors.fill: parent
 
-        ColumnLayout {
-            SplitView.preferredWidth: 240
+        Pane {
+            SplitView.preferredWidth: 270
 
-            CheckBox {
-                id: loadAsyncCheckBox
+            ColumnLayout {
+                width: parent.width
+                height: parent.height
 
-                Layout.fillWidth: true
+                Button {
+                    Layout.fillWidth: true
 
-                text: "Load asynchronously"
-            }
+                    text: "Settings"
 
-            CheckBox {
-                id: darkModeCheckBox
-
-                Layout.fillWidth: true
-
-                text: "Dark mode"
-
-                StatusLightTheme { id: lightTheme }
-                StatusDarkTheme { id: darkTheme }
-
-                Binding {
-                    target: Theme
-                    property: "palette"
-                    value: darkModeCheckBox.checked ? darkTheme : lightTheme
+                    onClicked: settingsPopup.open()
                 }
-            }
 
-            HotReloaderControls {
-                id: hotReloaderControls
+                CheckBox {
+                    id: darkModeCheckBox
 
-                Layout.fillWidth: true
+                    Layout.fillWidth: true
 
-                onForceReloadClicked: reloader.forceReload()
-            }
+                    text: "Dark mode"
 
-            Pane {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                    StatusLightTheme { id: lightTheme }
+                    StatusDarkTheme { id: darkTheme }
+
+                    Binding {
+                        target: Theme
+                        property: "palette"
+                        value: darkModeCheckBox.checked ? darkTheme : lightTheme
+                    }
+                }
+
+                HotReloaderControls {
+                    id: hotReloaderControls
+
+                    Layout.fillWidth: true
+
+                    onForceReloadClicked: reloader.forceReload()
+                }
+
+                MenuSeparator {
+                    Layout.fillWidth: true
+                }
 
                 FilteredPagesList {
-                    anchors.fill: parent
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
                     currentPage: root.currentPage
                     model: pagesModel
 
@@ -137,7 +182,7 @@ ApplicationWindow {
             }
         }
 
-        Item {
+        Page {
             SplitView.fillWidth: true
 
             Loader {
@@ -147,7 +192,7 @@ ApplicationWindow {
                 clip: true
 
                 source: `pages/${root.currentPage}Page.qml`
-                asynchronous: loadAsyncCheckBox.checked
+                asynchronous: settingsLayout.loadAsynchronously
                 visible: status === Loader.Ready
 
                 // force reload when `asynchronous` changes
@@ -167,13 +212,107 @@ ApplicationWindow {
                 visible: viewLoader.status === Loader.Error
                 text: "Loading page failed"
             }
+
+            footer: PageToolBar {
+                id: pageToolBar
+
+                title: `pages/${root.currentPage}Page.qml`
+                figmaPagesCount: currentPageModelItem.object
+                                 ? currentPageModelItem.object.figmaCount : 0
+
+                Instantiator {
+                    id: currentPageModelItem
+
+                    model: SingleItemProxyModel {
+                        sourceModel: pagesModel
+                        roleName: "title"
+                        value: root.currentPage
+                    }
+
+                    delegate: QtObject {
+                        readonly property string title: model.title
+                        readonly property var figma: model.figma
+                        readonly property int figmaCount: figma ? figma.count : 0
+                    }
+                }
+
+                onFigmaPreviewClicked: {
+                    if (!settingsLayout.figmaToken) {
+                        noFigmaTokenDialog.open()
+                        return
+                    }
+
+                    const window = figmaWindow.createObject(root, {
+                        figmaModel: currentPageModelItem.object.figma,
+                        title: currentPageModelItem.object.title + " - Figma"
+                    })
+                }
+            }
+        }
+    }
+
+    Dialog {
+        id: settingsPopup
+
+        anchors.centerIn: Overlay.overlay
+        width: 420
+        modal: true
+
+        header: Pane {
+            background: null
+
+            Label {
+                text: "Settings"
+            }
+        }
+
+        SettingsLayout {
+            id: settingsLayout
+
+            width: parent.width
+        }
+    }
+
+    Dialog {
+        id: noFigmaTokenDialog
+
+        anchors.centerIn: Overlay.overlay
+
+        title: "Figma token not set"
+        standardButtons: Dialog.Ok
+
+        Label {
+            text: "Please set Figma personal token in \"Settings\""
+        }
+    }
+
+    FigmaLinksCache {
+        id: figmaImageLinksCache
+
+        figmaToken: settingsLayout.figmaToken
+    }
+
+    Component {
+        id: figmaWindow
+
+        FigmaPreviewWindow {
+            property alias figmaModel: figmaImagesProxyModel.sourceModel
+
+            model: FigmaImagesProxyModel {
+                id: figmaImagesProxyModel
+
+                figmaLinksCache: figmaImageLinksCache
+            }
+
+            onClosing: Qt.callLater(destroy)
         }
     }
 
     Settings {
         property alias currentPage: root.currentPage
-        property alias loadAsynchronously: loadAsyncCheckBox.checked
+        property alias loadAsynchronously: settingsLayout.loadAsynchronously
         property alias darkMode: darkModeCheckBox.checked
         property alias hotReloading: hotReloaderControls.enabled
+        property alias figmaToken: settingsLayout.figmaToken
     }
 }
