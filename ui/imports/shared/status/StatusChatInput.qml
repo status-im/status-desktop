@@ -422,10 +422,12 @@ Rectangle {
             event.accepted = true
         }
 
-        if (event.key === Qt.Key_Down) {
+        if (event.key === Qt.Key_Down && emojiSuggestions.visible) {
+            event.accepted = true
             return emojiSuggestions.listView.incrementCurrentIndex()
         }
-        if (event.key === Qt.Key_Up) {
+        if (event.key === Qt.Key_Up && emojiSuggestions.visible) {
+            event.accepted = true
             return emojiSuggestions.listView.decrementCurrentIndex()
         }
 
