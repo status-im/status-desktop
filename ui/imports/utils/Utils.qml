@@ -371,8 +371,8 @@ QtObject {
             case "first":
                 if (firstPasswordField.text === "") {
                     return [false, qsTr("You need to enter a password")];
-                } else if (firstPasswordField.text.length < 6) {
-                    return [false, qsTr("Password needs to be 6 characters or more")];
+                } else if (firstPasswordField.text.length < Constants.minPasswordLength) {
+                    return [false, qsTr("Password needs to be %n character(s) or more", "", Constants.minPasswordLength)];
                 }
                 return [true, ""];
 

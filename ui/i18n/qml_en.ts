@@ -4,10 +4,10 @@
 <context>
     <name>AppMain</name>
     <message numerus="yes">
-        <location filename="../app/mainui/AppMain.qml" line="572"/>
-        <location filename="../app/mainui/AppMain.qml" line="581"/>
-        <location filename="../app/mainui/AppMain.qml" line="572"/>
-        <location filename="../app/mainui/AppMain.qml" line="581"/>
+        <location filename="../app/mainui/AppMain.qml" line="611"/>
+        <location filename="../app/mainui/AppMain.qml" line="620"/>
+        <location filename="../app/mainui/AppMain.qml" line="611"/>
+        <location filename="../app/mainui/AppMain.qml" line="620"/>
         <source>%n issue(s)</source>
         <translation>
             <numerusform>%n issue</numerusform>
@@ -18,8 +18,8 @@
 <context>
     <name>ChatHeaderContentView</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Chat/views/ChatHeaderContentView.qml" line="291"/>
-        <location filename="../app/AppLayouts/Chat/views/ChatHeaderContentView.qml" line="291"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatHeaderContentView.qml" line="282"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatHeaderContentView.qml" line="282"/>
         <source>%n member(s)</source>
         <translation>
             <numerusform>%n member</numerusform>
@@ -54,8 +54,8 @@
 <context>
     <name>CommunityColumnView</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="58"/>
-        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="58"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="59"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="59"/>
         <source>%n member(s)</source>
         <translation>
             <numerusform>%n member</numerusform>
@@ -102,8 +102,17 @@
 <context>
     <name>DiscordImportProgressContents</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="284"/>
-        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="284"/>
+        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="241"/>
+        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="241"/>
+        <source>%n more issue(s) downloading assets</source>
+        <translation>
+            <numerusform>%n more issue downloading assets</numerusform>
+            <numerusform>%n more issues downloading assets</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="287"/>
+        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="287"/>
         <source>‘%1’ was imported with %n issue(s).</source>
         <translation>
             <numerusform>‘%1’ was imported with %n issue.</numerusform>
@@ -126,8 +135,8 @@
 <context>
     <name>ImportSeedPhrasePanel</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Wallet/panels/ImportSeedPhrasePanel.qml" line="263"/>
-        <location filename="../app/AppLayouts/Wallet/panels/ImportSeedPhrasePanel.qml" line="263"/>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportSeedPhrasePanel.qml" line="258"/>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportSeedPhrasePanel.qml" line="258"/>
         <source>%n word(s)</source>
         <translation>
             <numerusform>%n word</numerusform>
@@ -171,10 +180,10 @@
 <context>
     <name>KeycardPin</name>
     <message numerus="yes">
-        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="266"/>
-        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="301"/>
-        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="266"/>
-        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="301"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="287"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="322"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="287"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="322"/>
         <source>%n attempt(s) remaining</source>
         <translation>
             <numerusform>%n attempt remaining</numerusform>
@@ -197,8 +206,8 @@
 <context>
     <name>KeycardPuk</name>
     <message numerus="yes">
-        <location filename="../imports/shared/popups/keycard/states/KeycardPuk.qml" line="145"/>
-        <location filename="../imports/shared/popups/keycard/states/KeycardPuk.qml" line="145"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPuk.qml" line="160"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPuk.qml" line="160"/>
         <source>%n attempt(s) remaining</source>
         <translation>
             <numerusform>%n attempt remaining</numerusform>
@@ -221,8 +230,8 @@
 <context>
     <name>LoginView</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1074"/>
-        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1074"/>
+        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1077"/>
+        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1077"/>
         <source>%n attempt(s) remaining</source>
         <translation>
             <numerusform>%n attempt remaining</numerusform>
@@ -251,6 +260,27 @@
         <translation>
             <numerusform>%n network</numerusform>
             <numerusform>%n networks</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>PasswordView</name>
+    <message numerus="yes">
+        <location filename="../imports/shared/views/PasswordView.qml" line="23"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="23"/>
+        <source>Minimum %n character(s). To strengthen your password consider including:</source>
+        <translation>
+            <numerusform>Minimum %n character. To strengthen your password consider including:</numerusform>
+            <numerusform>Minimum %n characters. To strengthen your password consider including:</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../imports/shared/views/PasswordView.qml" line="119"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="119"/>
+        <source>Password must be at least %n character(s) long</source>
+        <translation>
+            <numerusform>Password must be at least %n character long</numerusform>
+            <numerusform>Password must be at least %n characters long</numerusform>
         </translation>
     </message>
 </context>
@@ -299,6 +329,18 @@
         <translation>
             <numerusform>%Ln pinned message</numerusform>
             <numerusform>%Ln pinned messages</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>Utils</name>
+    <message numerus="yes">
+        <location filename="../imports/utils/Utils.qml" line="375"/>
+        <location filename="../imports/utils/Utils.qml" line="375"/>
+        <source>Password needs to be %n character(s) or more</source>
+        <translation>
+            <numerusform>Password needs to be %n character or more</numerusform>
+            <numerusform>Password needs to be %n characters or more</numerusform>
         </translation>
     </message>
 </context>
