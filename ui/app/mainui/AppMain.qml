@@ -776,6 +776,8 @@ Item {
                         if (!obj)
                             return
 
+                        createChatView.opened = false
+
                         if (obj === browserLayoutContainer && browserLayoutContainer.active == false) {
                             browserLayoutContainer.active = true;
                         }
