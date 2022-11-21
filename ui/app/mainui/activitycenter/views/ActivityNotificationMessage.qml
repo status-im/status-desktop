@@ -52,6 +52,7 @@ ActivityNotificationBase {
             Layout.preferredWidth: root.messageDetails.sender.profileImage.assetSettings.width
             Layout.preferredHeight: profileImage.height
             Layout.alignment: Qt.AlignTop
+            Layout.leftMargin: Style.current.padding
             Layout.topMargin: 2
 
             StatusSmartIdenticon {

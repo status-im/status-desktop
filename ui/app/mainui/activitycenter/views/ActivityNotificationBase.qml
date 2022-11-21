@@ -32,9 +32,8 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
         messageTimestamp: notification.timestamp
-        previousMessageTimestamp: root.previousNotificationIndex == 0 ? "" :
-                                        root.activityCenterStore.activityCenterList.getNotificationData(
-                                            previousNotificationIndex, "timestamp")
+        previousMessageTimestamp: root.activityCenterStore.activityCenterList.getNotificationData(
+                                    previousNotificationIndex, "timestamp")
         visible: text !== ""
     }
 
