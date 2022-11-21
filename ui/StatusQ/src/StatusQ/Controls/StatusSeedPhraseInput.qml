@@ -133,7 +133,7 @@ Item {
         onTextChanged: {
             d.isInputValidWord = false
             filteredList.clear();
-            let textToCheck = text.trim()
+            let textToCheck = text.trim().toLowerCase()
             if (textToCheck !== "") {
                 for (var i = 0; i < inputList.count; i++) {
                     if (inputList.get(i).seedWord.startsWith(textToCheck)) {
