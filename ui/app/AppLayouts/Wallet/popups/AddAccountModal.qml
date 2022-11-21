@@ -22,7 +22,6 @@ import "../panels"
 StatusModal {
     id: root
 
-    property int minPswLen: 10
     readonly property int marginBetweenInputs: 38
     property var emojiPopup: null
 

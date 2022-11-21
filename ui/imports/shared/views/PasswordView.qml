@@ -14,14 +14,13 @@ import StatusQ.Components 0.1
 ColumnLayout {
     id: root
 
-    property bool ready: newPswInput.text.length >= root.minPswLen && newPswInput.text === confirmPswInput.text && errorTxt.text === ""
-    property int minPswLen: 10
+    property bool ready: newPswInput.text.length >= Constants.minPasswordLength && newPswInput.text === confirmPswInput.text && errorTxt.text === ""
     property bool createNewPsw: true
     property string title: qsTr("Create a password")
     property bool titleVisible: true
     property string introText: qsTr("Create a password to unlock Status on this device & sign transactions.")
     property string recoverText: qsTr("You will not be able to recover this password if it is lost.")
-    property string strengthenText: qsTr("Minimum %1 characters. To strengthen your password consider including:").arg(minPswLen)
+    property string strengthenText: qsTr("Minimum %n character(s). To strengthen your password consider including:", "", Constants.minPasswordLength)
     property bool highSizeIntro: false
 
     property var passwordStrengthScoreFunction: function () {}
@@ -62,7 +61,7 @@ ColumnLayout {
             return
         }
 
-        if(newPswInput.text.length >= root.minPswLen) {
+        if(newPswInput.text.length >= Constants.minPasswordLength) {
             errorTxt.text = ""
             if(confirmPswInput.text !== newPswInput.text) {
                 errorTxt.text = qsTr("Passwords don't match")
@@ -117,7 +116,7 @@ ColumnLayout {
 
             // * Password too short
             else if(isTooShort())
-                errorTxt.text = qsTr("Password must be at least %1 characters long").arg(root.minPswLen)
+                errorTxt.text = qsTr("Password must be at least %n character(s) long", "", Constants.minPasswordLength)
         }
 
         function isInPwndDatabase() {
@@ -130,7 +129,7 @@ ColumnLayout {
             return false
         }
 
-        function isTooShort() { return newPswInput.text.length < root.minPswLen }
+        function isTooShort() { return newPswInput.text.length < Constants.minPasswordLength }
     }
 
     spacing: Style.current.bigPadding
@@ -237,9 +236,9 @@ ColumnLayout {
         StatusPasswordStrengthIndicator {
             id: strengthInditactor
             Layout.fillWidth: true
-            value: Math.min(root.minPswLen, newPswInput.text.length)
+            value: Math.min(Constants.minPasswordLength, newPswInput.text.length)
             from: 0
-            to: root.minPswLen
+            to: Constants.minPasswordLength
             labelVeryWeak: qsTr("Very weak")
             labelWeak: qsTr("Weak")
             labelSoso: qsTr("So-so")
