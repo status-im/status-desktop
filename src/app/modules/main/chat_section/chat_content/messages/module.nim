@@ -536,6 +536,58 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
 method getMessages*(self: Module): seq[message_item.Item] =
   return self.view.model().items
 
+method getMessageById*(self: Module, messageId: string): message_item.Item =
+  let (m, _, err) = self.controller.getMessageDetails(messageId)
+  if(err.len == 0):
+    let sender = self.controller.getContactDetails(m.`from`)
+
+    let renderedMessageText = self.controller.getRenderedText(m.parsedText)
+    var transactionContract = m.transactionParameters.contract
+    var transactionValue = m.transactionParameters.value
+    var isCurrentUser = sender.isCurrentUser
+    if(m.contentType.ContentType == ContentType.Transaction):
+      (transactionContract, transactionValue) = self.controller.getTransactionDetails(m)
+      if m.transactionParameters.fromAddress != "":
+        isCurrentUser = self.currentUserWalletContainsAddress(m.transactionParameters.fromAddress)
+    var item = initItem(
+      m.id,
+      m.communityId,
+      m.responseTo,
+      m.`from`,
+      sender.defaultDisplayName,
+      sender.optionalName,
+      sender.icon,
+      (isCurrentUser and m.contentType.ContentType != ContentType.DiscordMessage),
+      sender.details.added,
+      m.outgoingStatus,
+      renderedMessageText,
+      m.image,
+      m.containsContactMentions(),
+      m.seen,
+      timestamp = m.whisperTimestamp,
+      clock = m.clock,
+      m.contentType.ContentType,
+      m.messageType,
+      m.contactRequestState,
+      sticker = m.sticker.url,
+      m.sticker.pack,
+      m.links,
+      newTransactionParametersItem(m.transactionParameters.id,
+        m.transactionParameters.fromAddress,
+        m.transactionParameters.address,
+        transactionContract,
+        transactionValue,
+        m.transactionParameters.transactionHash,
+        m.transactionParameters.commandState,
+        m.transactionParameters.signature),
+      m.mentionedUsersPks(),
+      sender.details.trustStatus,
+      sender.details.ensVerified,
+      m.discordMessage
+      )
+    return item
+  return nil
+
 method onMailserverSynced*(self: Module, syncedFrom: int64) =
   let chatDto = self.controller.getChatDetails()
   if (not chatDto.hasMoreMessagesToRequest(syncedFrom)):

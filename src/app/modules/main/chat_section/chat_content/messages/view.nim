@@ -1,5 +1,6 @@
 import NimQml, json
 import ../../../../shared_models/message_model
+import ../../../../shared_models/message_item
 import io_interface
 
 QtObject:
@@ -54,6 +55,19 @@ QtObject:
     let jsonObj = self.model.getMessageByIndexAsJson(index)
     if(jsonObj.isNil):
       return ""
+    return $jsonObj
+
+  proc getReplyMessageByIdAsJson*(self: View, messageId: string): string {.slot.} =
+    var jsonObj = self.model.getMessageByIdAsJson(messageId)
+    if(jsonObj.isNil):
+      # trying to get message from status-go
+      let messageItem = self.delegate.getMessageById(messageId)
+      if messageItem == nil:
+        return ""
+        
+      jsonObj = messageItem.toJsonNode();
+      if(jsonObj.isNil):
+        return ""
     return $jsonObj
 
   proc getSectionId*(self: View): string {.slot.} =

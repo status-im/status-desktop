@@ -39,7 +39,6 @@ Loader {
     property string messageId: ""
     property string communityId: ""
     property string responseToMessageWithId: ""
-    property bool responseToExistingMessage: false
 
     property string senderId: ""
     property string senderDisplayName: ""
@@ -231,6 +230,10 @@ Loader {
         }
     }
 
+    function replyDeleted() {
+        item.replyDeleted()
+    }
+
     QtObject {
         id: d
 
@@ -373,6 +376,10 @@ Loader {
                 delegate.replyMessage = delegate.getReplyMessage()
             }
 
+            function replyDeleted() {
+                delegate.replyMessage = null
+            }
+
             StatusDateGroupLabel {
                 id: dateGroupLabel
                 Layout.fillWidth: true
@@ -422,7 +429,9 @@ Loader {
                 readonly property string replySenderId: replyMessage ? replyMessage.senderId : ""
 
                 function getReplyMessage() {
-                    return root.messageStore && isReply && root.responseToExistingMessage ? root.messageStore.getMessageByIdAsJson(root.responseToMessageWithId) : null
+                    return root.messageStore && isReply
+                            ? root.messageStore.getReplyMessageByIdAsJson(root.responseToMessageWithId)
+                            : null
                 }
 
                 function editCompletedHandler(newMessageText) {
