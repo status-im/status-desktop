@@ -3,9 +3,10 @@
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../testSuites/global_shared/"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "../shared/steps/"))
 
-import steps.startupSteps as common_init_steps
-import steps.walletInitSteps as wallet_init_steps
+import steps.commonInitSteps as init_steps
+import walletInitSteps as wallet_init_steps
 
 # Global properties for the specific feature
 _user = "tester123"
@@ -14,7 +15,7 @@ _password = "TesTEr16843/!@00"
 @OnFeatureStart
 def hook(context):
     context_init(context)  
-    common_init_steps.signs_up_process_steps(context, _user, _password)
+    init_steps.signs_up_process_steps(context, _user, _password)
     wallet_init_steps.activate_and_open_wallet()
 
 @OnFeatureEnd

@@ -1,4 +1,4 @@
-import steps.walletInitSteps as wallet_init_steps
+import walletInitSteps as wallet_init_steps
 
 from screens.StatusMainScreen import StatusMainScreen
 from screens.StatusWalletScreen import StatusWalletScreen

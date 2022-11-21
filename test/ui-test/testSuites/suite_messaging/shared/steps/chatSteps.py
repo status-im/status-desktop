@@ -1,5 +1,5 @@
 from random import randint
-from steps.startupSteps import *
+import steps.commonInitSteps as init_steps
 from screens.StatusMainScreen import StatusMainScreen
 from screens.StatusChatScreen import StatusChatScreen
 from screens.StatusCreateChatScreen import StatusCreateChatScreen
@@ -276,7 +276,7 @@ def the_group_chat_is_created():
     _statusChat = StatusChatScreen()
     
 def the_user_opens_the_chat_section():
-    the_user_opens_the_chat_section()
+    init_steps.the_user_opens_the_chat_section()
 
 def the_user_sends_a_random_chat_message(context):
     random_int = randint(0, 10000)

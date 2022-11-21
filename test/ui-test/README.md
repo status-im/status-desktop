@@ -16,3 +16,5 @@ UI test application for **Status Desktop**
     * Save changes.
 
 Now you should be able to create new suites, test cases and run the existing ones just only by clicking `Run` buttons!!
+
+[Here](https://hackmd.io/@status-desktop/S19eu_Baq) a more detailed **installation guide** specific for this project.

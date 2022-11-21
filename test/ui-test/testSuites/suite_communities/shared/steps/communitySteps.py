@@ -1,4 +1,4 @@
-import steps.startupSteps as init_steps
+import steps.commonInitSteps as init_steps
 from screens.StatusMainScreen import StatusMainScreen
 from screens.StatusCommunityPortalScreen import StatusCommunityPortalScreen
 from screens.StatusCommunityScreen import StatusCommunityScreen

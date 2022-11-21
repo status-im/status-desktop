@@ -4,7 +4,7 @@
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../testSuites/global_shared/"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
 
-from steps.startupSteps import context_init
+from steps.commonInitSteps import context_init
 
 @OnScenarioStart
 def hook(context):
