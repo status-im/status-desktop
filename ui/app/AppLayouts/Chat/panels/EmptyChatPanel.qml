@@ -18,6 +18,7 @@ Item {
 
     Image {
         id: walkieTalkieImage
+        objectName: "emptyChatPanelImage"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         source: Style.png("chat/chat@2x")

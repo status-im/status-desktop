@@ -41,6 +41,7 @@ class MainScreenComponents(Enum):
     SPLASH_SCREEN = "splashScreen"
     TOOLBAR_BACK_BUTTON = "main_toolBar_back_button"
     LEAVE_CHAT_MENUITEM = "leaveChatMenuItem"
+    EMPTY_CHAT_PANEL_IMAGE = "mainWindow_emptyChatPanelImage"
 
 class ProfilePopup(Enum):
     USER_IMAGE = "ProfileHeader_userImage"
@@ -60,12 +61,13 @@ class ChatNamePopUp(Enum):
 class StatusMainScreen:
 
     def __init__(self):
-        verify_screen(MainScreenComponents.PUBLIC_CHAT_ICON.value)
+        verify_screen(MainScreenComponents.EMPTY_CHAT_PANEL_IMAGE.value)
         
     # Main screen is ready to interact with it (Splash screen animation not present and no banners on top of the screen)
     def is_ready(self):
         self.wait_for_splash_animation_ends()
         self.close_banners()
+        verify(is_displayed(MainScreenComponents.EMPTY_CHAT_PANEL_IMAGE.value), "Verifying if empty chat panel image is displayed")
         
     def wait_for_splash_animation_ends(self, timeoutMSec: int = 10000):
         start = time.time()
