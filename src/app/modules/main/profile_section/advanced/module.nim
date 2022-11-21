@@ -139,3 +139,7 @@ method toggleCommunityHistoryArchiveSupport*(self: Module) =
 
 method isCommunityHistoryArchiveSupportEnabled*(self: Module): bool =
   self.controller.isCommunityHistoryArchiveSupportEnabled()
+
+method enableCommunityHistoryArchiveSupportFailed*(self: Module, msg: string) =
+  self.view.setEnableCommunityHistoryArchiveSupportFailedMsg(msg)
+  self.view.enableCommunityHistoryArchiveSupportFailed()

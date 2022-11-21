@@ -14,6 +14,7 @@ QtObject {
     property bool isAutoMessageEnabled: advancedModule? advancedModule.isAutoMessageEnabled : false
     property bool isDebugEnabled: advancedModule? advancedModule.isDebugEnabled : false
     property bool isCommunityHistoryArchiveSupportEnabled: advancedModule? advancedModule.isCommunityHistoryArchiveSupportEnabled : false
+    property string enableCommunityHistoryArchiveSupportFailedMsg: advancedModule ? advancedModule.enableCommunityHistoryArchiveSupportFailedMsg : ""
 
     property var customNetworksModel: advancedModule? advancedModule.customNetworksModel : []
 
@@ -35,6 +36,17 @@ QtObject {
         readonly property string communityPermissions: "communityPermissions"
         readonly property string discordImportTool: "discordImportTool"
     }
+
+    readonly property Connections connections: Connections {
+        target: advancedModule
+        function onEnableCommunityHistoryArchiveSupportFailed() {
+            root.enableCommunityHistoryArchiveSupportFailed()
+        }
+    }
+
+
+    signal enableCommunityHistoryArchiveSupportFailed()
+
 
     function logDir() {
         if(!root.advancedModule)

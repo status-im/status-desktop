@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQml.Models 2.14
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
@@ -10,6 +11,8 @@ import shared.popups 1.0
 import shared.status 1.0
 
 import StatusQ.Core 0.1
+import StatusQ.Popups.Dialog 0.1
+import StatusQ.Controls 0.1
 
 import "../stores"
 import "../controls"
@@ -534,6 +537,39 @@ SettingsContentBase {
 
             onCancelButtonClicked: {
                 close()
+            }
+        }
+
+        Connections {
+            target: advancedStore
+            function onEnableCommunityHistoryArchiveSupportFailed() {
+              if (root.advancedStore.enableCommunityHistoryArchiveSupportFailedMsg !== "") {
+                Global.openPopup(errorMessageDialogCmp, {
+                  errorMessage: root.advancedStore.enableCommunityHistoryArchiveSupportFailedMsg
+                })
+              }
+            }
+        }
+
+        Component {
+            id: errorMessageDialogCmp
+            StatusDialog {
+                id: errorMessageDialog
+                property string errorMessage: ""
+                title: qsTr("An error occoured")
+
+                StatusBaseText {
+                    anchors.fill: parent
+                    text: {
+                      if (errorMessageDialog.errorMessage.indexOf("address already in use") > -1) {
+                        return qsTr("The specified torrent client port is already in use.")
+                      }
+                      return errorMessageDialog.errorMessage
+                    }
+                }
+
+                standardButtons: Dialog.Ok
+                onAccepted: errorMessageDialog.close()
             }
         }
     }

@@ -5,6 +5,7 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      enableCommunityHistoryArchiveSupportFailedMsg*: string
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -16,6 +17,19 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
+
+  proc enableCommunityHistoryArchiveSupportFailedMsgChanged*(self: View) {.signal.}
+  proc getEnableCommunityHistoryArchiveSupportFailedMsg*(self: View): string {.slot.} =
+    return self.enableCommunityHistoryArchiveSupportFailedMsg
+  QtProperty[string] enableCommunityHistoryArchiveSupportFailedMsg:
+    read = getEnableCommunityHistoryArchiveSupportFailedMsg
+    notify = enableCommunityHistoryArchiveSupportFailedMsgChanged
+
+  proc setEnableCommunityHistoryArchiveSupportFailedMsg*(self: View, msg: string) {.slot.} =
+    self.enableCommunityHistoryArchiveSupportFailedMsg = msg
+    self.enableCommunityHistoryArchiveSupportFailedMsgChanged()
+
+  proc enableCommunityHistoryArchiveSupportFailed*(self: View) {.signal.}
 
   proc fleetChanged*(self: View) {.signal.}
   proc getFleet*(self: View): string {.slot.} =

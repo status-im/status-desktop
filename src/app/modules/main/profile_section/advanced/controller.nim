@@ -4,6 +4,7 @@ import io_interface
 import ../../../../global/app_signals
 import ../../../../core/eventemitter
 import ../../../../core/fleets/fleet_configuration
+import ../../../../../app_service/service/community/service
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/stickers/service as stickers_service
 import ../../../../../app_service/service/node_configuration/service as node_configuration_service
@@ -33,6 +34,9 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
+  self.events.on(SIGNAL_ENABLE_COMMUNITY_ARCHIVE_FAILED) do(e:Args):
+    let args = ErrorArgs(e)
+    self.delegate.enableCommunityHistoryArchiveSupportFailed(args.msg)
   discard
 
 proc getFleet*(self: Controller): string =

@@ -136,7 +136,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.activityCenterService = activity_center_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.keycardService = keycard_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
-  result.settingsService)
+  result.settingsService, statusFoundation.events)
   result.keychainService = keychain_service.newService(statusFoundation.events)
   result.accountsService = accounts_service.newService(statusFoundation.events, statusFoundation.threadpool, 
     statusFoundation.fleetConfiguration)
