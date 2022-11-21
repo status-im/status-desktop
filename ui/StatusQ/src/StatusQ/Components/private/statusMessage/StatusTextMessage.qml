@@ -69,12 +69,16 @@ Item {
         readonly property int effectiveHeight: d.veryLongChatText && !d.readMore
                                                ? Math.min(chatText.implicitHeight, 200)
                                                : chatText.implicitHeight
+        property FontMetrics metrics: FontMetrics {
+            font: chatText.font
+        }
 
         width: parent.width
         height: effectiveHeight + d.showMoreHeight / 2
         opacity: !showMoreOpacityMask.active && !horizontalOpacityMask.active ? 1 : 0
         clip: true
-        text: d.text
+        text: root.convertToSingleLine ? metrics.elidedText(d.text, Text.ElideRight, chatText.width)
+                                       : d.text
         selectedTextColor: Theme.palette.directColor1
         selectionColor: Theme.palette.primaryColor3
         color: Theme.palette.directColor1
