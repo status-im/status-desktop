@@ -4,6 +4,8 @@
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../testSuites/global_shared/"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
 
+import steps.startupSteps as init_steps
+
 # Global properties for the specific feature
 _user = "tester123"
 _password = "TesTEr16843/!@00"
@@ -11,9 +13,9 @@ _chat_room = "test"
 
 @OnFeatureStart
 def hook(context):
-    context_init(context)  
-    signs_up_process_steps(context, _user, _password)
-    the_user_joins_chat_room(_chat_room)
+    init_steps.context_init(context, testSettings)  
+    init_steps.signs_up_process_steps(context, _user, _password)
+    init_steps.the_user_joins_chat_room(_chat_room)
 
 @OnFeatureEnd
 def hook(context):
@@ -22,7 +24,7 @@ def hook(context):
     
 @OnScenarioStart
 def hook(context):
-    the_user_opens_the_chat_section()
+    init_steps.the_user_opens_the_chat_section()
 
 @OnStepEnd
 def hook(context):

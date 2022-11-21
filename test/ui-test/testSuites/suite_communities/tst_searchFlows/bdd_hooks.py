@@ -21,7 +21,7 @@ _method = "bottom_menu"
 
 @OnFeatureStart
 def hook(context):
-    init_steps.context_init(context)  
+    init_steps.context_init(context, testSettings)  
     init_steps.signs_up_process_steps(context, _user, _password)
     init_steps.the_user_joins_chat_room(_chat_room1)
     init_steps.the_user_joins_chat_room(_chat_room2)

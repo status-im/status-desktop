@@ -5,7 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../../testSuites/glo
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "../shared/steps/"))
 
-import steps.commonInitSteps as common_init_steps
+import steps.commonInitSteps as init_steps
 import walletInitSteps as wallet_init_steps
 
 # Global properties for the specific feature
@@ -15,8 +15,8 @@ _seed_phrase = "pelican chief sudden oval media rare swamp elephant lawsuit whea
 
 @OnFeatureStart
 def hook(context):
-    common_init_steps.context_init(context)
-    common_init_steps.signs_up_with_seed_phrase_process_steps(context, _seed_phrase, _user, _password)
+    init_steps.context_init(context, testSettings)
+    init_steps.signs_up_with_seed_phrase_process_steps(context, _seed_phrase, _user, _password)
     wallet_init_steps.activate_and_open_wallet()
 
 @OnFeatureEnd

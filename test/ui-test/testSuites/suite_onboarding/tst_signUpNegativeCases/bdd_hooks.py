@@ -12,7 +12,7 @@ _onboarding_new_psw_input = "onboarding_newPsw_Input"
 
 @OnFeatureStart
 def hook(context):
-    init_steps.context_init(context)  
+    init_steps.context_init(context, testSettings)  
     init_steps.a_first_time_user_lands_on_and_generates_new_key(context)
 
 @OnFeatureEnd
