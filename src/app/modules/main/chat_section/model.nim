@@ -388,13 +388,13 @@ QtObject:
     result.hasNotifications = false
     result.notificationsCount = 0
     for i in 0 ..< self.items.len:
-      # if it's category item type is set to `ChatType.Unknown`
-      # (in one point of time we may start maintaining notifications per category as well)
       if(self.items[i].BaseItem.`type` == ChatType.Unknown.int):
-        continue
-
-      result.hasNotifications = result.hasNotifications or self.items[i].BaseItem.hasUnreadMessages
-      result.notificationsCount = result.notificationsCount + self.items[i].BaseItem.notificationsCount
+        for subItem in self.items[i].subItems().items():
+          result.hasNotifications = result.hasNotifications or subItem.BaseItem.hasUnreadMessages
+          result.notificationsCount = result.notificationsCount + subItem.BaseItem.notificationsCount
+      else:
+        result.hasNotifications = result.hasNotifications or self.items[i].BaseItem.hasUnreadMessages
+        result.notificationsCount = result.notificationsCount + self.items[i].BaseItem.notificationsCount
 
   proc reorderModel*(self: Model, id: string, position: int) =
     let index = self.getItemIdxById(id)

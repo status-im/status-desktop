@@ -343,7 +343,8 @@ method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
   # notify parent module about active chat/channel
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
   # update notifications caused by setting active chat/channel
-  self.controller.markAllMessagesRead(self.controller.getActiveChatId())
+  if singletonInstance.localAccountSensitiveSettings.getActiveSection() == self.controller.getMySectionId():
+    self.controller.markAllMessagesRead(self.controller.getActiveChatId())
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
