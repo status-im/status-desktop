@@ -143,5 +143,8 @@ method didIJoinedChat*(self: AccessInterface): bool {.base.} =
 method getMessages*(self: AccessInterface): seq[message_item.Item] =
   raise newException(ValueError, "No implementation available")
 
+method getMessageById*(self: AccessInterface, messageId: string): message_item.Item {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onMailserverSynced*(self: AccessInterface, syncedFrom: int64) =
   raise newException(ValueError, "No implementation available")

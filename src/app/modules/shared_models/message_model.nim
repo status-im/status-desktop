@@ -12,7 +12,6 @@ type
     NextMsgIndex
     CommunityId
     ResponseToMessageWithId
-    ResponseToExistingMessage
     SenderId
     SenderDisplayName
     SenderOptionalName
@@ -83,12 +82,6 @@ QtObject:
   method rowCount(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
-  proc doesMessageExist(self: Model, messageId: string): bool =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == messageId):
-        return true
-    return false
-
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Id.int:"id",
@@ -97,7 +90,6 @@ QtObject:
       ModelRole.NextMsgIndex.int:"nextMsgIndex",
       ModelRole.CommunityId.int:"communityId",
       ModelRole.ResponseToMessageWithId.int:"responseToMessageWithId",
-      ModelRole.ResponseToExistingMessage.int:"responseToExistingMessage",
       ModelRole.SenderId.int:"senderId",
       ModelRole.SenderDisplayName.int:"senderDisplayName",
       ModelRole.SenderOptionalName.int:"senderOptionalName",
@@ -156,8 +148,6 @@ QtObject:
       result = newQVariant(item.communityId)
     of ModelRole.ResponseToMessageWithId:
       result = newQVariant(item.responseToMessageWithId)
-    of ModelRole.ResponseToExistingMessage:
-      result = newQVariant(self.doesMessageExist(item.responseToMessageWithId))
     of ModelRole.SenderId:
       result = newQVariant(item.senderId)
     of ModelRole.SenderDisplayName:
@@ -341,12 +331,14 @@ QtObject:
     if position + 1 < self.items.len:
       self.updateItemAtIndex(position + 1)
     self.countChanged()
+  
+  proc replyDeleted*(self: Model, messageIndex: int) {.signal.}
 
   proc updateMessagesWithResponseTo(self: Model, messageId: string) =
     for i in 0 ..< self.items.len:
       if(self.items[i].responseToMessageWithId == messageId):
         let ind = self.createIndex(i, 0, nil)
-        self.dataChanged(ind, ind, @[ModelRole.ResponseToExistingMessage.int])
+        self.replyDeleted(i)
 
   proc removeItem*(self: Model, messageId: string) =
     let ind = self.findIndexForMessageId(messageId)

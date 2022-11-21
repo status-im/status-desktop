@@ -251,6 +251,13 @@ Item {
                     }
                 }
             }
+
+            onReplyDeleted: {
+                let item = chatLogView.itemAtIndex(messageIndex)
+                if (item) {
+                    item.replyDeleted()
+                }
+            }
         }
 
         delegate: MessageView {
@@ -277,7 +284,6 @@ Item {
             messageId: model.id
             communityId: model.communityId
             responseToMessageWithId: model.responseToMessageWithId
-            responseToExistingMessage: model.responseToExistingMessage
             senderId: model.senderId
             senderDisplayName: model.senderDisplayName
             senderOptionalName: model.senderOptionalName
