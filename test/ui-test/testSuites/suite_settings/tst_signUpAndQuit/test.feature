@@ -10,6 +10,8 @@ Feature: Status Desktop Sign out and Quit
         And the user lands on the signed in app
         Given the user opens app settings screen
 
+	# TODO: Unstable. It fails sometimes reporting a FATAL error in CI execution: "The AUT did not respond to network communication"
+	@mayfail
     Scenario: The user quits the app
         When the user clicks on Sign out and Quit
         Then the app is closed
