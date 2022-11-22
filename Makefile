@@ -612,9 +612,7 @@ clean: | clean-common
 	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
 
 clean-git:
-	git clean -qfdx
-	git submodule foreach --recursive git reset -q --hard
-	git submodule foreach --recursive git clean -qfdx
+	./scripts/clean-git.sh
 
 force-rebuild-status-go:
 	bash ./scripts/force-rebuild-status-go.sh $(STATUSGO)
