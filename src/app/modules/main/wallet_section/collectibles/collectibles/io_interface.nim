@@ -1,3 +1,5 @@
+import ./item
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -15,6 +17,9 @@ method fetch*(self: AccessInterface, collectionSlug: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setCurrentAddress*(self: AccessInterface, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getCollectible*(self: AccessInterface, collectionSlug: string, id: int) : Item {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

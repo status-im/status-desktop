@@ -100,3 +100,9 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+
+  proc getItemByID*(self: Model, id: int): Item = 
+    for item in self.items:
+      if(item.getId() == id):
+        return item
+    return initItem()

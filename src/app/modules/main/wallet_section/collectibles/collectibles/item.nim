@@ -57,6 +57,9 @@ proc initItem*(
   result.rankings = rankings
   result.stats = stats
 
+proc initItem*: Item =
+  result = initItem(-1, "", "", "transparent", "Collectibles", "", @[], @[], @[])
+
 proc `$`*(self: Item): string =
   result = fmt"""Collectibles(
     id: {self.id},

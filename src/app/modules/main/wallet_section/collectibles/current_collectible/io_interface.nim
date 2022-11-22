@@ -1,3 +1,6 @@
+import ../collections/item as collection_item
+import ../collectibles/item as collectible_item
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -11,18 +14,14 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method switchAccount*(self: AccessInterface, accountIndex: int) {.base.} =
+method update*(self: AccessInterface, slug: string, id: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-# Methods called by submodules of this module
-method collectibleModuleDidLoad*(self: AccessInterface) {.base.} =
+method setData*(self: AccessInterface, collection: collection_item.Item, collectible: collectible_item.Item) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method collectiblesModuleDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method collectionsModuleDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method currentCollectibleModuleDidLoad*(self: AccessInterface) {.base.} =
+# View Delegate Interface
+# Delegate for the view must be declared here due to use of QtObject and multi
+# inheritance, which is not well supported in Nim.
+method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

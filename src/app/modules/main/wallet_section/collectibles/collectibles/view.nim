@@ -34,8 +34,14 @@ QtObject:
   proc fetch*(self: View, collectionSlug: string) {.slot.} =
     self.delegate.fetch(collectionSlug)
 
-  proc getModelForCollection*(self: View, collectionSlug: string): QObject {.slot.} =
+  proc getModelForCollectionPrivate(self: View, collectionSlug: string): Model =
     if not self.models.hasKey(collectionSlug):
       self.models[collectionSlug] = newModel()
-
     return self.models[collectionSlug]
+
+  proc getModelForCollection*(self: View, collectionSlug: string): QObject {.slot.} =
+    return self.getModelForCollectionPrivate(collectionSlug)
+
+  proc getCollectible*(self: View, collectionSlug: string, id: int): Item =
+    let model = self.getModelForCollectionPrivate(collectionSlug)
+    return model.getItemByID(id)

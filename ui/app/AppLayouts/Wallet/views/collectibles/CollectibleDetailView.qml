@@ -15,15 +15,17 @@ import "../../controls"
 Item {
     id: root
 
+    property var currentCollectible: RootStore.currentCollectible
+
     CollectibleDetailsHeader {
         id: collectibleHeader
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        asset.name: RootStore.collectiblesStore.collectibleImageUrl
+        asset.name: currentCollectible.collectionImageUrl
         asset.isImage: true
-        primaryText: RootStore.collectiblesStore.name
-        secondaryText: RootStore.collectiblesStore.collectibleId
+        primaryText: currentCollectible.name
+        secondaryText: currentCollectible.id
     }
 
     ColumnLayout {
@@ -45,17 +47,17 @@ Item {
                 width: 253
                 height: 253
                 radius: 2
-                color: RootStore.collectiblesStore.backgroundColor
+                color: currentCollectible.backgroundColor
                 border.color: Theme.palette.directColor8
                 border.width: 1
-                image.source: RootStore.collectiblesStore.imageUrl
+                image.source: currentCollectible.imageUrl
             }
             StatusBaseText {
                 id: collectibleText
                 width: parent.width - collectibleimage.width - Style.current.bigPadding
                 height: collectibleimage.height
 
-                text: RootStore.collectiblesStore.description
+                text: currentCollectible.description
                 color: Theme.palette.directColor1
                 font.pixelSize: 15
                 lineHeight: 22
@@ -69,7 +71,7 @@ Item {
             id: collectiblesDetailsTab
             Layout.fillWidth: true
             Layout.topMargin: Style.current.xlPadding
-            visible: RootStore.collectiblesStore.properties.count > 0
+            visible: currentCollectible.properties.count > 0
 
             StatusTabButton {
                 leftPadding: 0
@@ -83,7 +85,7 @@ Item {
                 width: parent.width
                 spacing: 10
                 Repeater {
-                    model: RootStore.collectiblesStore.properties
+                    model: currentCollectible.properties
                     InformationTile {
                         maxWidth: parent.width
                         primaryText: model.traitType

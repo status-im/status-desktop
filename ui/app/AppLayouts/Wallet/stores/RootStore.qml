@@ -34,8 +34,9 @@ QtObject {
     property var walletTokensModule: walletSectionAllTokens
     property var tokens: walletSectionAllTokens.all
 
-    property CollectiblesStore collectiblesStore: CollectiblesStore { }
     property var collectionList: walletSectionCollectiblesCollections.model
+    property var collectibleLists: walletSectionCollectiblesCollectibles.model
+    property var currentCollectible: walletSectionCollectibleCurrent
 
     property var savedAddresses: walletSectionSavedAddresses.model
 
@@ -160,7 +161,7 @@ QtObject {
         return globalUtils.hex2Dec(value)
     }
 
-     function fetchCollectionCollectiblesList(slug) {
+    function fetchCollectionCollectiblesList(slug) {
         walletSectionCollectiblesCollectibles.fetch(slug)
     }
 
@@ -175,6 +176,10 @@ QtObject {
 //        else
 //            return parseInt(value) + qsTr(" of ") +
 //            walletModelV2Inst.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString();
+    }
+
+    function selectCollectible(slug, id) {
+        walletSectionCollectibleCurrent.update(slug, id)
     }
 
     function createOrUpdateSavedAddress(name, address, favourite) {

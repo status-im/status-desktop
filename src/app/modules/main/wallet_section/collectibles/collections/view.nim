@@ -37,3 +37,6 @@ QtObject:
 
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
+
+  proc getCollection*(self: View, slug: string): Item =
+    return self.model.getItemBySlug(slug)
