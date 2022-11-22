@@ -28,8 +28,7 @@ Column {
 
     signal imageClicked(var image)
 
-    spacing: Style.current.halfPadding
-    height: childrenRect.height
+    spacing: 4
 
     QtObject {
         id: d
@@ -275,7 +274,6 @@ Column {
                 isCurrentUser: root.isCurrentUser
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
-                anchors.topMargin: 1
                 playing: root.messageStore.playAnimation
                 isOnline: root.store.mainModuleInst.isOnline
             }
@@ -292,7 +290,6 @@ Column {
                 anchors.right: parent.right
                 anchors.leftMargin: Style.current.smallPadding
                 anchors.rightMargin: Style.current.smallPadding
-                color: Theme.palette.directColor1
             }
 
             StatusBaseText {
@@ -304,7 +301,7 @@ Column {
                 anchors.top: linkTitle.bottom
                 anchors.topMargin: 2
                 anchors.left: linkTitle.left
-                anchors.bottomMargin: Style.current.smallPadding
+                anchors.bottomMargin: Style.current.halfPadding
             }
 
             MouseArea {
@@ -370,7 +367,6 @@ Column {
                 wrapMode: Text.WordWrap
                 anchors.top: unfurlingImage.bottom
                 anchors.topMargin: Style.current.halfPadding
-                font.pixelSize: 15
                 color: Theme.palette.directColor1
             }
 

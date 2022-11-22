@@ -57,16 +57,12 @@ Item {
 
     Connections {
         target: root.store.communitiesModuleInst
-        onCommunityChanged: function (communityId) {
+        function onCommunityChanged(communityId) {
             if (communityId === root.communityId) {
                 d.reevaluate()
             }
         }
-    }
-
-    Connections {
-        target: root.store.communitiesModuleInst
-        onCommunityAdded: function (communityId) {
+        function onCommunityAdded(communityId) {
             if (communityId === root.communityId) {
                 d.reevaluate()
             }
@@ -136,7 +132,6 @@ Item {
     //                        }
                         }
                         wrapMode: Text.WordWrap
-                        font.pixelSize: 15
                     }
                 }
 
@@ -190,7 +185,6 @@ Item {
 
                             text: d.invitedCommunity.description
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                            font.pixelSize: 15
                             color: Theme.palette.directColor1
                         }
 
