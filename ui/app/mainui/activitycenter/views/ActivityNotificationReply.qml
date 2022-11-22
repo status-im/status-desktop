@@ -20,4 +20,9 @@ ActivityNotificationMessage {
             root.closeActivityCenter()
         }
     }
+
+    onMessageClicked: {
+        root.activityCenterStore.switchTo(notification)
+        root.closeActivityCenter()
+    }
 }

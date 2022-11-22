@@ -17,6 +17,8 @@ ActivityNotificationBase {
 
     property int maximumLineCount: 2
 
+    signal messageClicked()
+
     property StatusMessageDetails messageDetails: StatusMessageDetails {
         messageText: notification.message.messageText
         amISender: notification.message.amISender
@@ -43,70 +45,76 @@ ActivityNotificationBase {
         closeActivityCenter()
         Global.openProfilePopup(notification.message.senderId)
     }
+    bodyComponent: MouseArea {
+        hoverEnabled: root.messageBadgeComponent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: root.messageClicked()
+        height: messageRow.implicitHeight
+        RowLayout {
+            id: messageRow
+            spacing: 8
+            width: parent.width
 
-    bodyComponent: RowLayout {
-        id: messageRow
-        spacing: 8
+            Item {
+                Layout.preferredWidth: root.messageDetails.sender.profileImage.assetSettings.width
+                Layout.preferredHeight: profileImage.height
+                Layout.alignment: Qt.AlignTop
+                Layout.leftMargin: Style.current.padding
+                Layout.topMargin: 2
 
-        Item {
-            Layout.preferredWidth: root.messageDetails.sender.profileImage.assetSettings.width
-            Layout.preferredHeight: profileImage.height
-            Layout.alignment: Qt.AlignTop
-            Layout.leftMargin: Style.current.padding
-            Layout.topMargin: 2
+                StatusSmartIdenticon {
+                    id: profileImage
+                    name: root.messageDetails.sender.displayName
+                    asset: root.messageDetails.sender.profileImage.assetSettings
+                    ringSettings: root.messageDetails.sender.profileImage.ringSettings
 
-            StatusSmartIdenticon {
-                id: profileImage
-                name: root.messageDetails.sender.displayName
-                asset: root.messageDetails.sender.profileImage.assetSettings
-                ringSettings: root.messageDetails.sender.profileImage.ringSettings
-
-                MouseArea {
-                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    anchors.fill: parent
-                    onClicked: root.openProfilePopup()
+                    MouseArea {
+                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        anchors.fill: parent
+                        onClicked: root.openProfilePopup()
+                    }
                 }
             }
-        }
 
-        ColumnLayout {
-            spacing: 2
-            Layout.alignment: Qt.AlignTop
-            Layout.fillWidth: true
-
-            StatusMessageHeader {
-                sender: root.messageDetails.sender
-                amISender: root.messageDetails.amISender
-                messageOriginInfo: root.messageDetails.messageOriginInfo
-                timestamp.text: root.timestampString
-                timestamp.tooltip.text: root.timestampTooltipString
-                onClicked: root.openProfilePopup()
-            }
-
-            Loader {
-                sourceComponent: root.messageSubheaderComponent
-                Layout.fillWidth: true
-            }
-
-            RowLayout {
+            ColumnLayout {
                 spacing: 2
+                Layout.alignment: Qt.AlignTop
                 Layout.fillWidth: true
 
-                StatusBaseText {
-                    text: CoreUtils.Utils.stripHtmlTags(root.messageDetails.messageText)
-                    maximumLineCount: root.maximumLineCount
-                    wrapMode: Text.Wrap
-                    elide: Text.ElideRight
-                    font.pixelSize: 15
-                    Layout.alignment: Qt.AlignVCenter
-                    Layout.maximumWidth: 400 // From designs, fixed value to align all possible CTAs
+                StatusMessageHeader {
+                    sender: root.messageDetails.sender
+                    amISender: root.messageDetails.amISender
+                    messageOriginInfo: root.messageDetails.messageOriginInfo
+                    timestamp.text: root.timestampString
+                    timestamp.tooltip.text: root.timestampTooltipString
+                    onClicked: root.openProfilePopup()
                 }
 
                 Loader {
-                    sourceComponent: root.messageBadgeComponent
-                    Layout.alignment: Qt.AlignVCenter
-                    Layout.fillHeight: true
+                    sourceComponent: root.messageSubheaderComponent
+                    Layout.fillWidth: true
+                }
+
+                RowLayout {
+                    spacing: 2
+                    Layout.fillWidth: true
+
+                    StatusBaseText {
+                        text: CoreUtils.Utils.stripHtmlTags(root.messageDetails.messageText)
+                        maximumLineCount: root.maximumLineCount
+                        wrapMode: Text.Wrap
+                        elide: Text.ElideRight
+                        font.pixelSize: 15
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.maximumWidth: 400 // From designs, fixed value to align all possible CTAs
+                    }
+
+                    Loader {
+                        sourceComponent: root.messageBadgeComponent
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.fillHeight: true
+                    }
                 }
             }
         }
