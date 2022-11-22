@@ -44,7 +44,7 @@ Feature: Status Desktop Chat Basic Flows
 		 | edited		|
 		 | Edited by me |
 
-    @relyon-mailserver
+    @mayfail
     Scenario Outline: The user can reply to another message
          When the user replies to the message at index 0 with "<reply>"
          Then the chat message "<reply>" is displayed as a reply
@@ -105,11 +105,10 @@ Feature: Status Desktop Chat Basic Flows
 		When the user presses enter
 		Then the last chat message contains "👍"
 
-    @relyon-mailserver
+    @mayfail
     Scenario: The user cannot delete another user's message
          Then the user cannot delete the last message
 
-   @relyon-mailserver
 	Scenario Outline: The user can do a mention
 		When the user inputs a mention to "<displayName>" with message "<message>"
 		Then the "<displayName>" mention with message "<message>" have been sent
@@ -117,7 +116,6 @@ Feature: Status Desktop Chat Basic Flows
 		| displayName | message          |
 		| tester123   |  testing mention |
 
-    @relyon-mailserver
 	Scenario Outline: The user can not do a mention to a not existing users
 		Then the user cannot input a mention to a not existing user "<displayName>"
 		Examples:

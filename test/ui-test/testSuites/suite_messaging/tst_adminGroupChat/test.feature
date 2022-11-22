@@ -15,7 +15,6 @@ Feature: Status Desktop Group Chat
    	 | Nervous  |
    	Then the group chat is created
 
-	@relyon-mailserver
 	Scenario: As an admin user I want to change group chat's name, color, image and leave chat
 
 		# As an admin user I want to change group chat's name
