@@ -21,6 +21,8 @@ logScope:
 
 include ../../common/json_utils
 
+const COMMUNITY_PERMISSION_ACCESS_ON_REQUEST = 3
+
 type
   CommunityArgs* = ref object of Args
     community*: CommunityDto
@@ -597,6 +599,10 @@ QtObject:
 
     for jsonCommunityReqest in responseResult["requestsToJoinCommunity"]:
       let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
+      let community = self.allCommunities[communityRequest.communityId]
+      if (community.permissions.access != COMMUNITY_PERMISSION_ACCESS_ON_REQUEST):
+        return true #skip notification and request for public communities
+      
       self.myCommunityRequests.add(communityRequest)
       self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_ADDED, CommunityRequestArgs(communityRequest: communityRequest))
 
