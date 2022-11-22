@@ -43,7 +43,6 @@ SettingsContentBase {
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
-                color: Theme.palette.textColor
                 font.pixelSize: 22
                 font.bold: true
                 text: root.store.getCurrentVersion()
@@ -51,7 +50,6 @@ SettingsContentBase {
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
-                color: Theme.palette.textColor
                 font.pixelSize: 15
                 text: qsTr("Current Version")
             }
