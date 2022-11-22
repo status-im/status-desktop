@@ -87,9 +87,9 @@ Item {
             bottomPadding: 16
             spacing: 24
 
-            Repeater {
-                objectName: "collectiblesRepeater"
-                model: RootStore.getCollectionCollectiblesList(root.slug)
+            Component {
+                id: collectibleDelegate
+
                 StatusRoundedImage {
                     id: image
                     width: 146
@@ -115,21 +115,17 @@ Item {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: {
-                            RootStore.collectiblesStore.collectibleImageUrl = collectionImageUrl;
-                            RootStore.collectiblesStore.name =  model.name;
-                            RootStore.collectiblesStore.collectibleId = model.id;
-                            RootStore.collectiblesStore.description = model.description;
-                            RootStore.collectiblesStore.permalink = model.permalink;
-                            RootStore.collectiblesStore.imageUrl = model.imageUrl;
-                            RootStore.collectiblesStore.backgroundColor = model.backgroundColor;
-                            RootStore.collectiblesStore.properties = model.properties;
-                            RootStore.collectiblesStore.rankings = model.rankings;
-                            RootStore.collectiblesStore.stats = model.stats;
-                            RootStore.collectiblesStore.collectionIndex = root.collectionIndex;
+                            RootStore.selectCollectible(root.slug, model.id)
                             root.collectibleClicked();
                         }
                     }
                 }
+            }
+
+            Repeater {
+                objectName: "collectiblesRepeater"
+                model: RootStore.getCollectionCollectiblesList(root.slug)
+                delegate: collectibleDelegate
             }
         }
     }

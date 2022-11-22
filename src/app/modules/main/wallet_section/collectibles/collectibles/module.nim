@@ -56,3 +56,6 @@ method fetch*(self: Module, collectionSlug: string) =
     c.statistics.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)),
   ))
   self.view.setItems(collectionSlug, items)
+
+method getCollectible*(self: Module, collectionSlug: string, id: int): Item =
+  return self.view.getCollectible(collectionSlug, id)

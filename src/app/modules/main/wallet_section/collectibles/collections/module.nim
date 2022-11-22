@@ -51,3 +51,6 @@ method setCollections*(self: Module, collections: seq[CollectionDto]) =
       c.ownedAssetCount,
     ))
   )
+
+method getCollection*(self: Module, slug: string): Item = 
+  return self.view.getCollection(slug)

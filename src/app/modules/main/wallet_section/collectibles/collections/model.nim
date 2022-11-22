@@ -74,3 +74,9 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+
+  proc getItemBySlug*(self: Model, slug: string): Item = 
+    for item in self.items:
+      if(item.getSlug() == slug):
+        return item
+    return initItem()

@@ -13,6 +13,9 @@ proc initItem*(name, slug, imageUrl: string, ownedAssetCount: int): Item =
   result.imageUrl = imageUrl
   result.ownedAssetCount = ownedAssetCount
 
+proc initItem*(): Item =
+  result = initItem("", "", "", 0)
+
 proc `$`*(self: Item): string =
   result = fmt"""CollectibleCollection(
     name: {self.name},
