@@ -137,7 +137,7 @@ QtObject:
       for contact in contacts:
         self.addContact(contact)
 
-      # Identity verifications      
+      # Identity verifications
       for request in self.fetchReceivedVerificationRequests():
         self.receivedIdentityRequests[request.fromId] = request
 
@@ -548,7 +548,7 @@ QtObject:
 
   proc markUntrustworthy*(self: Service, publicKey: string) =
     let response = status_contacts.markUntrustworthy(publicKey)
-    if(not response.error.isNil):
+    if not response.error.isNil:
       let msg = response.error.message
       error "error marking as untrustworthy ", msg
       return
@@ -560,34 +560,52 @@ QtObject:
       TrustArgs(publicKey: publicKey, isUntrustworthy: true))
 
   proc verifiedTrusted*(self: Service, publicKey: string) =
-    let response = status_contacts.verifiedTrusted(publicKey)
-    if(not response.error.isNil):
-      let msg = response.error.message
-      error "error confirming identity ", msg
-      return
+    try:
+      var response = status_contacts.getVerificationRequestSentTo(publicKey)
+      if not response.error.isNil:
+        let msg = response.error.message
+        raise newException(RpcException, msg)
 
-    if self.contacts.hasKey(publicKey):
-      self.contacts[publicKey].trustStatus = TrustStatus.Trusted
-      self.contacts[publicKey].verificationStatus = VerificationStatus.Trusted
+      let request = response.result.toVerificationRequest()
 
-    self.events.emit(SIGNAL_CONTACT_TRUSTED,
-      TrustArgs(publicKey: publicKey, isUntrustworthy: false))
-    self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: publicKey))
+      response = status_contacts.verifiedTrusted(request.id)
+      if not response.error.isNil:
+        let msg = response.error.message
+        raise newException(RpcException, msg)
+
+      if self.contacts.hasKey(publicKey):
+        self.contacts[publicKey].trustStatus = TrustStatus.Trusted
+        self.contacts[publicKey].verificationStatus = VerificationStatus.Trusted
+
+        self.events.emit(SIGNAL_CONTACT_TRUSTED,
+          TrustArgs(publicKey: publicKey, isUntrustworthy: false))
+        self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: publicKey))
+    except Exception as e:
+      error "error verified trusted request", msg=e.msg
 
   proc verifiedUntrustworthy*(self: Service, publicKey: string) =
-    let response = status_contacts.verifiedUntrustworthy(publicKey)
-    if(not response.error.isNil):
-      let msg = response.error.message
-      error "error confirming identity ", msg
-      return
+    try:
+      var response = status_contacts.getVerificationRequestSentTo(publicKey)
+      if not response.error.isNil:
+        let msg = response.error.message
+        raise newException(RpcException, msg)
 
-    if self.contacts.hasKey(publicKey):
-      self.contacts[publicKey].trustStatus = TrustStatus.Untrustworthy
-      self.contacts[publicKey].verificationStatus = VerificationStatus.Verified
+      let request = response.result.toVerificationRequest()
 
-    self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY,
-      TrustArgs(publicKey: publicKey, isUntrustworthy: true))
-    self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: publicKey))
+      response = status_contacts.verifiedUntrustworthy(request.id)
+      if not response.error.isNil:
+        let msg = response.error.message
+        raise newException(RpcException, msg)
+
+      if self.contacts.hasKey(publicKey):
+        self.contacts[publicKey].trustStatus = TrustStatus.Untrustworthy
+        self.contacts[publicKey].verificationStatus = VerificationStatus.Verified
+
+        self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY,
+          TrustArgs(publicKey: publicKey, isUntrustworthy: true))
+        self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: publicKey))
+    except Exception as e:
+      error "error verified untrustworthy request", msg=e.msg
 
   proc removeTrustStatus*(self: Service, publicKey: string) =
     let response = status_contacts.removeTrustStatus(publicKey)
@@ -641,7 +659,7 @@ QtObject:
 
   proc hasReceivedVerificationRequestFrom*(self: Service, fromId: string): bool =
     result = self.receivedIdentityRequests.contains(fromId)
-    
+
   proc sendVerificationRequest*(self: Service, publicKey: string, challenge: string) =
     try:
       let response = status_contacts.sendVerificationRequest(publicKey, challenge)
@@ -653,7 +671,7 @@ QtObject:
       var contact = self.getContactById(publicKey)
       contact.verificationStatus = VerificationStatus.Verifying
       self.saveContact(contact)
-      
+
       self.events.emit(SIGNAL_CONTACT_VERIFICATION_SENT, ContactArgs(contactId: publicKey))
     except Exception as e:
       error "Error sending verification request", msg = e.msg
@@ -676,17 +694,20 @@ QtObject:
 
   proc acceptVerificationRequest*(self: Service, publicKey: string, responseText: string) =
     try:
-      let response = status_contacts.acceptVerificationRequest(publicKey, responseText)
+      if not self.receivedIdentityRequests.contains(publicKey):
+        raise newException(ValueError, fmt"No verification request for public key: `{publicKey}`")
+
+      var request = self.receivedIdentityRequests[publicKey]
+      let response = status_contacts.acceptVerificationRequest(request.id, responseText)
       if(not response.error.isNil):
         let msg = response.error.message
         raise newException(RpcException, msg)
 
-      var request = self.receivedIdentityRequests[publicKey]
       request.status = VerificationStatus.Verified
       request.response = responseText
       request.repliedAt = getTime().toUnix * 1000
       self.receivedIdentityRequests[publicKey] = request
-      
+
       self.events.emit(SIGNAL_CONTACT_VERIFICATION_ACCEPTED,
         VerificationRequestArgs(verificationRequest: request))
     except Exception as e:
@@ -694,16 +715,18 @@ QtObject:
 
   proc declineVerificationRequest*(self: Service, publicKey: string) =
     try:
-      let response = status_contacts.declineVerificationRequest(publicKey)
+      if not self.receivedIdentityRequests.contains(publicKey):
+        raise newException(ValueError, fmt"No verification request for public key: `{publicKey}`")
+
+      var request = self.receivedIdentityRequests[publicKey]
+      let response = status_contacts.declineVerificationRequest(request.id)
       if(not response.error.isNil):
         let msg = response.error.message
         raise newException(RpcException, msg)
 
-      var request = self.receivedIdentityRequests[publicKey]
       request.status = VerificationStatus.Declined
       self.receivedIdentityRequests[publicKey] = request
-      
+
       self.events.emit(SIGNAL_CONTACT_VERIFICATION_DECLINED, ContactArgs(contactId: publicKey))
     except Exception as e:
       error "error declining contact verification request", msg=e.msg
-    

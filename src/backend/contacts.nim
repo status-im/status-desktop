@@ -59,12 +59,16 @@ proc markUntrustworthy*(pubkey: string): RpcResponse[JsonNode] {.raises: [Except
   let payload = %* [pubkey]
   result = callPrivateRPC("markAsUntrustworthy".prefix, payload)
 
-proc verifiedTrusted*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [pubkey]
+proc verifiedTrusted*(requestId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[{
+    "id": requestId
+  }]
   result = callPrivateRPC("verifiedTrusted".prefix, payload)
 
-proc verifiedUntrustworthy*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [pubkey]
+proc verifiedUntrustworthy*(requestId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[{
+    "id": requestId
+  }]
   result = callPrivateRPC("verifiedUntrustworthy".prefix, payload)
 
 proc removeTrustStatus*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
@@ -79,12 +83,12 @@ proc sendVerificationRequest*(pubkey: string, challenge: string): RpcResponse[Js
   let payload = %* [pubkey, challenge]
   result = callPrivateRPC("sendContactVerificationRequest".prefix, payload)
 
-proc acceptVerificationRequest*(pubkey: string, response: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [pubkey, response]
+proc acceptVerificationRequest*(requestId: string, response: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [requestId, response]
   result = callPrivateRPC("acceptContactVerificationRequest".prefix, payload)
 
-proc declineVerificationRequest*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [pubkey]
+proc declineVerificationRequest*(requestId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [requestId]
   result = callPrivateRPC("declineContactVerificationRequest".prefix, payload)
 
 proc getVerificationRequestSentTo*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =

@@ -16,7 +16,6 @@ type TrustStatus* {.pure.}= enum
   Trusted = 1,
   Untrustworthy = 2
 
-
 type ContactRequestState* {.pure.} = enum
   None = 0
   Mutual = 1
@@ -24,7 +23,7 @@ type ContactRequestState* {.pure.} = enum
   Received = 3
   Dismissed = 4
 
-type  VerificationStatus* {.pure.}= enum
+type VerificationStatus* {.pure.}= enum
   Unverified = 0
   Verifying = 1
   Verified = 2
@@ -33,6 +32,7 @@ type  VerificationStatus* {.pure.}= enum
   Trusted = 5
 
 type VerificationRequest* = object
+  id*: string
   fromID*: string
   toID*: string
   challenge*: string
@@ -118,6 +118,7 @@ proc toVerificationStatus*(value: int): VerificationStatus =
   
 proc toVerificationRequest*(jsonObj: JsonNode): VerificationRequest =
   result = VerificationRequest()
+  discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("from", result.fromID)
   discard jsonObj.getProp("to", result.toID)
   discard jsonObj.getProp("challenge", result.challenge)
