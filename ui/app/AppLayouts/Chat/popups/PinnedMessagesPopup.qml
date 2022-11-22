@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 import QtQml.Models 2.14
+import QtGraphicalEffects 1.14
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -25,16 +26,12 @@ StatusDialog {
     padding: 0
 
     title: root.messageToPin ? qsTr("Pin limit reached") : qsTr("Pinned messages")
-
-    header: StatusDialogHeader {
-        visible: root.title
-        headline.title: root.title
-        headline.subtitle: root.messageToPin ? qsTr("Unpin a previous message first")
-                                              : qsTr("%n message(s)", "", pinnedMessageListView.count)
-        actions.closeButton.onClicked: root.close()
-    }
+    subtitle: root.messageToPin ? qsTr("Unpin a previous message first")
+                                : qsTr("%n message(s)", "", pinnedMessageListView.count)
 
     contentItem: ColumnLayout {
+        id: column
+
         StatusBaseText {
             visible: pinnedMessageListView.count === 0
             text: qsTr("Pinned messages will appear here.")
@@ -141,6 +138,21 @@ StatusDialog {
 
             onJumpToMessage: {
                 root.messageStore.messageModule.jumpToMessage(messageId)
+            }
+        }
+
+        layer.enabled: root.visible
+        layer.effect: OpacityMask {
+            maskSource: Rectangle {
+                width: column.width
+                height: column.height
+                radius: background.radius
+
+                Rectangle {
+                    width: parent.width
+                    height: parent.radius
+                    anchors.top: parent.top
+                }
             }
         }
     }
