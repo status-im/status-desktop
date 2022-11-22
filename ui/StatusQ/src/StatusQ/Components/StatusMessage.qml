@@ -389,7 +389,6 @@ Control {
                             id: emojiReactionsPanel
 
                             emojiReactionsModel: root.reactionsModel
-                            store: root.messageStore
                             icons: root.reactionIcons
 
                             onHoverChanged: {

@@ -20,7 +20,6 @@ Item {
     signal hoverChanged(bool hovered)
     signal toggleReaction(int emojiID)
 
-    property var store
     property bool isCurrentUser
     property var emojiReactionsModel
 
