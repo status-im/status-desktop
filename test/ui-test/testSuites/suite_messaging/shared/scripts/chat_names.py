@@ -4,11 +4,8 @@ from scripts.global_names import *
 mainWindow_scrollView_ScrollView = {"container": statusDesktop_mainWindow, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 chatView_chatLogView_lastMsg_MessageView = {"container": chatView_log, "index": 0, "type": "MessageView"}
 chatView_lastChatText_Text = {"container": chatView_chatLogView_lastMsg_MessageView, "type": "TextEdit", "objectName": "StatusTextMessage_chatText", "visible": True}
-chatView_replyToMessageButton = {"container": chatView_log, "objectName": "replyToMessageButton", "type": "StatusFlatRoundButton", "visible": True}
-chatView_editMessageButton = {"container": chatView_log, "objectName": "editMessageButton", "type": "StatusFlatRoundButton"}
 chatView_editMessageInputComponent = {"container": statusDesktop_mainWindow, "objectName": "editMessageInput", "type": "StatusChatInput", "visible": True}
 chatView_editMessageInputTextArea = {"container": chatView_editMessageInputComponent, "objectName": "messageInputField", "type": "TextArea", "visible": True}
-chatView_DeleteMessageButton = {"container": chatView_log, "objectName": "chatDeleteMessageButton", "type": "StatusFlatRoundButton"}
 chatButtonsPanelConfirmDeleteMessageButton_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "chatButtonsPanelConfirmDeleteMessageButton", "type": "StatusButton"}
 mark_as_Read_StatusMenuItemDelegate = {"container": statusDesktop_mainWindow_overlay, "objectName": "chatMarkAsReadMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
 chat_Input_Stickers_Button = {"container": statusDesktop_mainWindow, "objectName": "statusChatInputStickersButton", "type": "StatusFlatRoundButton", "visible": True}
