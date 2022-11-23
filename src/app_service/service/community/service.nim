@@ -146,7 +146,7 @@ QtObject:
   proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto]
   proc loadMyPendingRequestsToJoin*(self: Service)
   proc loadMyCanceledRequestsToJoin*(self: Service)
-  proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto])
+  proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string])
   proc handleCommunitiesSettingsUpdates(self: Service, communitiesSettings: seq[CommunitySettingsDto])
   proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
   proc declinedRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
@@ -192,7 +192,7 @@ QtObject:
       # Handling community updates
       if (receivedData.communities.len > 0):
         # Channel added removed is notified in the chats param
-        self.handleCommunityUpdates(receivedData.communities, receivedData.chats)
+        self.handleCommunityUpdates(receivedData.communities, receivedData.chats, receivedData.removedChats)
 
       if (receivedData.communitiesSettings.len > 0):
         self.handleCommunitiesSettingsUpdates(receivedData.communitiesSettings)
@@ -304,7 +304,7 @@ QtObject:
         self.joinedCommunities[settings.id].settings = settings
         self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.joinedCommunities[settings.id]))
 
-  proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto]) =
+  proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string]) =
     var community = communities[0]
     if(not self.allCommunities.hasKey(community.id)):
       self.allCommunities[community.id] = community
@@ -377,11 +377,11 @@ QtObject:
             chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
 
     # channel was removed
-    elif(community.chats.len < prev_community.chats.len):
+    elif((community.chats.len-removedChats.len) < prev_community.chats.len):
       for prv_chat in prev_community.chats:
         if findIndexById(prv_chat.id, community.chats) == -1:
           self.events.emit(SIGNAL_COMMUNITY_CHANNEL_DELETED, CommunityChatIdArgs(communityId: community.id,
-          chatId: community.id&prv_chat.id))
+          chatId: prv_chat.id))
     # some property has changed
     else:
       for chat in community.chats:
