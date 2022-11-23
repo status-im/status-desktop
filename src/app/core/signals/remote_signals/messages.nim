@@ -26,6 +26,7 @@ type MessageSignal* = ref object of Signal
   activityCenterNotifications*: seq[ActivityCenterNotificationDto]
   statusUpdates*: seq[StatusUpdateDto]
   deletedMessages*: seq[RemovedMessageDto]
+  removedChats*: seq[string]
   currentStatus*: seq[StatusUpdateDto]
   settings*: seq[SettingsFieldDto]
   clearedHistories*: seq[ClearedHistoryDto]
@@ -104,6 +105,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if event["event"]{"removedMessages"} != nil:
     for jsonRemovedMessage in event["event"]["removedMessages"]:
       signal.deletedMessages.add(jsonRemovedMessage.toRemovedMessageDto())
+
+  if event["event"]{"removedChats"} != nil:
+    for removedChatID in event["event"]["removedChats"]:
+      signal.removedChats.add(removedChatID.getStr())
 
   if event["event"]{"activityCenterNotifications"} != nil:
     for jsonNotification in event["event"]["activityCenterNotifications"]:
