@@ -113,12 +113,6 @@ QtObject:
     self.model.removeNotifications(notificationIds)
 
   proc addActivityCenterNotification*(self: View, activityCenterNotifications: seq[Item]) =
-      # TODO this should be handled by the chat or community module
-      # if self.channelView.activeChannel.id == activityCenterNotification.chatId:
-      #   activityCenterNotification.read = true
-      #   let communityId = self.status.chat.getCommunityIdForChat(activityCenterNotification.chatId)
-      #   if communityId != "":
-      #     self.communities.joinedCommunityList.decrementMentions(communityId, activityCenterNotification.chatId)
     self.model.addActivityNotificationItemsToList(activityCenterNotifications)
 
   proc switchTo*(self: View, sectionId: string, chatId: string, messageId: string) {.slot.} =

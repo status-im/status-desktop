@@ -11,6 +11,7 @@ import utils 1.0
 Item {
     id: root
 
+    property int filteredIndex: 0
     property var notification
     property var store
     property var activityCenterStore
@@ -18,7 +19,6 @@ Item {
     property alias bodyComponent: bodyLoader.sourceComponent
     property alias badgeComponent: badgeLoader.sourceComponent
     property alias ctaComponent: ctaLoader.sourceComponent
-    property alias previousNotificationIndex: dateGroupLabel.previousMessageIndex
 
     signal closeActivityCenter()
 
@@ -32,8 +32,7 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
         messageTimestamp: notification.timestamp
-        previousMessageTimestamp: root.activityCenterStore.activityCenterList.getNotificationData(
-                                    previousNotificationIndex, "timestamp")
+        previousMessageTimestamp: filteredIndex === 0 || !notification.previousTimestamp ? 0 : notification.previousTimestamp
         visible: text !== ""
     }
 
