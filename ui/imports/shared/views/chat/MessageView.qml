@@ -378,8 +378,7 @@ Loader {
                 Layout.topMargin: 16
                 Layout.bottomMargin: 16
                 messageTimestamp: root.messageTimestamp
-                previousMessageIndex: root.prevMessageIndex
-                previousMessageTimestamp: root.prevMsgTimestamp
+                previousMessageTimestamp: root.prevMessageIndex === -1 ? 0 : root.prevMsgTimestamp
                 visible: text !== ""
             }
 

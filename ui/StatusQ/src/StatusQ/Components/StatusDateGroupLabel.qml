@@ -1,12 +1,12 @@
 import QtQuick 2.14
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Core.Theme 0.1
 
 StatusBaseText {
     id: root
 
-    property int previousMessageIndex: -1
     property double previousMessageTimestamp
     property double messageTimestamp
 
@@ -15,13 +15,10 @@ StatusBaseText {
     horizontalAlignment: Text.AlignHCenter
 
     text: {
-        if (previousMessageIndex === -1)
-            return "";
+        const currentMsgDate = new Date(messageTimestamp)
+        const prevMsgDate = new Date(previousMessageTimestamp)
 
-        const currentMsgDate = new Date(messageTimestamp);
-        const prevMsgDate = new Date(previousMessageTimestamp);
-
-        if (!!prevMsgDate && currentMsgDate.getDay() === prevMsgDate.getDay())
+        if (prevMsgDate > 0 && currentMsgDate.getDay() === prevMsgDate.getDay())
             return "";
 
         const now = new Date();
@@ -29,7 +26,7 @@ StatusBaseText {
             return qsTr("Today");
 
         const yesterday = new Date();
-        yesterday.setDate(now.getDate()-1);
+        yesterday.setDate(now.getDate() - 1);
         if (yesterday.getFullYear() == currentMsgDate.getFullYear() && yesterday.getMonth() == currentMsgDate.getMonth() && yesterday.getDate() == currentMsgDate.getDate())
             return qsTr("Yesterday");
 

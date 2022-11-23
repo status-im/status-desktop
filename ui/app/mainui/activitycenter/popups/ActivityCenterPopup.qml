@@ -187,10 +187,10 @@ Popup {
 
                 ActivityNotificationMention {
                     width: listView.availableWidth
+                    filteredIndex: index
                     store: root.store
                     activityCenterStore: root.activityCenterStore
                     notification: model
-                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                     onCloseActivityCenter: root.close()
                 }
             }
@@ -199,10 +199,10 @@ Popup {
 
                 ActivityNotificationReply {
                     width: listView.availableWidth
+                    filteredIndex: index
                     store: root.store
                     activityCenterStore: root.activityCenterStore
                     notification: model
-                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                     onCloseActivityCenter: root.close()
                 }
             }
@@ -211,10 +211,10 @@ Popup {
 
                 ActivityNotificationContactRequest {
                     width: listView.availableWidth
+                    filteredIndex: index
                     store: root.store
                     activityCenterStore: root.activityCenterStore
                     notification: model
-                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                     onCloseActivityCenter: root.close()
                 }
             }
@@ -223,10 +223,10 @@ Popup {
 
                 ActivityNotificationCommunityInvitation {
                     width: listView.availableWidth
+                    filteredIndex: index
                     store: root.store
                     activityCenterStore: root.activityCenterStore
                     notification: model
-                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                     onCloseActivityCenter: root.close()
                 }
             }
@@ -235,10 +235,10 @@ Popup {
 
                 ActivityNotificationCommunityMembershipRequest {
                     width: listView.availableWidth
+                    filteredIndex: index
                     store: root.store
                     activityCenterStore: root.activityCenterStore
                     notification: model
-                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                     onCloseActivityCenter: root.close()
                 }
             }
@@ -247,10 +247,10 @@ Popup {
 
                 ActivityNotificationCommunityRequest {
                     width: listView.availableWidth
+                    filteredIndex: index
                     store: root.store
                     activityCenterStore: root.activityCenterStore
                     notification: model
-                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                     onCloseActivityCenter: root.close()
                 }
             }
@@ -259,10 +259,10 @@ Popup {
 
                 ActivityNotificationCommunityKicked {
                     width: listView.availableWidth
+                    filteredIndex: index
                     store: root.store
                     activityCenterStore: root.activityCenterStore
                     notification: model
-                    previousNotificationIndex: Math.min(listView.count - 1, index + 1)
                     onCloseActivityCenter: root.close()
                 }
             }

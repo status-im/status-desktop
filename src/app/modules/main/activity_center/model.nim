@@ -12,6 +12,7 @@ type
     NotificationType
     Message
     Timestamp
+    PreviousTimestamp
     Read
     Dismissed
     Accepted
@@ -72,8 +73,8 @@ QtObject:
       return
 
     let activityNotificationItem = self.activityCenterNotifications[index.row]
-    let communityItemRole = role.NotifRoles
-    case communityItemRole:
+    let notificationItemRole = role.NotifRoles
+    case notificationItemRole:
       of NotifRoles.Id: result = newQVariant(activityNotificationItem.id)
       of NotifRoles.ChatId: result = newQVariant(activityNotificationItem.chatId)
       of NotifRoles.CommunityId: result = newQVariant(activityNotificationItem.communityId)
@@ -84,31 +85,15 @@ QtObject:
       of NotifRoles.NotificationType: result = newQVariant(activityNotificationItem.notificationType.int)
       of NotifRoles.Message: result = newQVariant(activityNotificationItem.messageItem)
       of NotifRoles.Timestamp: result = newQVariant(activityNotificationItem.timestamp)
+      of NotifRoles.PreviousTimestamp: result = newQVariant(if index.row > 0:
+                                                              self.activityCenterNotifications[index.row - 1].timestamp
+                                                            else:
+                                                              0)
       of NotifRoles.Read: result = newQVariant(activityNotificationItem.read.bool)
       of NotifRoles.Dismissed: result = newQVariant(activityNotificationItem.dismissed.bool)
       of NotifRoles.Accepted: result = newQVariant(activityNotificationItem.accepted.bool)
       of NotifRoles.RepliedMessage: result = newQVariant(activityNotificationItem.repliedMessageItem)
       of NotifRoles.ChatType: result = newQVariant(activityNotificationItem.chatType.int)
-
-  proc getNotificationData(self: Model, index: int, data: string): string {.slot.} =
-    if index < 0 or index >= self.activityCenterNotifications.len: return ("")
-
-    let notif = self.activityCenterNotifications[index]
-    case data:
-    of "id": result = notif.id
-    of "chatId": result = notif.chatId
-    of "communityId": result = notif.communityId
-    of "membershipStatus": result = $(notif.membershipStatus.int)
-    of "sectionId": result = notif.sectionId
-    of "name": result = notif.name
-    of "author": result = notif.author
-    of "notificationType": result = $(notif.notificationType.int)
-    of "timestamp": result = $(notif.timestamp)
-    of "read": result = $(notif.read)
-    of "dismissed": result = $(notif.dismissed)
-    of "accepted": result = $(notif.accepted)
-    of "chatType": result = $(notif.chatType)
-    else: result = ("")
 
   method roleNames(self: Model): Table[int, string] =
     {
@@ -122,6 +107,7 @@ QtObject:
       NotifRoles.NotificationType.int: "notificationType",
       NotifRoles.Message.int: "message",
       NotifRoles.Timestamp.int: "timestamp",
+      NotifRoles.PreviousTimestamp.int: "previousTimestamp",
       NotifRoles.Read.int: "read",
       NotifRoles.Dismissed.int: "dismissed",
       NotifRoles.Accepted.int: "accepted",
@@ -176,15 +162,19 @@ QtObject:
     self.endResetModel()
 
   proc addActivityNotificationItemToList*(self: Model, activityCenterNotification: Item, addToCount: bool = true) =
-    self.beginInsertRows(newQModelIndex(), self.activityCenterNotifications.len, self.activityCenterNotifications.len)
-
-    self.activityCenterNotifications.add(activityCenterNotification)
-
+    self.beginInsertRows(newQModelIndex(), 0, 0)
+    self.activityCenterNotifications.insert(activityCenterNotification, 0)
     self.endInsertRows()
+
     self.unreadCountChanged()
 
+    if self.activityCenterNotifications.len > 1:
+      let topLeft = self.createIndex(0, 0, nil)
+      let bottomRight = self.createIndex(1, 0, nil)
+      self.dataChanged(topLeft, bottomRight, @[NotifRoles.Timestamp.int, NotifRoles.PreviousTimestamp.int])
+
   proc addActivityNotificationItemsToList*(self: Model, activityCenterNotifications: seq[Item]) =
-    if (self.activityCenterNotifications.len == 0):
+    if self.activityCenterNotifications.len == 0:
       self.setNewData(activityCenterNotifications)
     else:
       for activityCenterNotification in activityCenterNotifications:
