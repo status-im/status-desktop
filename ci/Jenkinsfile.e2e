@@ -128,7 +128,6 @@ pipeline {
         ]) { script {
           def result = squish([
             extraOptions: [
-              '--retry', '2',
               '--tags', '~mayfail',
               '--tags', '~merge',
               '--tags', '~relyon-mailserver',
