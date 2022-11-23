@@ -139,6 +139,7 @@ pipeline {
             testSuite: "${WORKSPACE}/test/ui-test/testSuites/*",
           ])
           print("Squish run result: ${result}")
+          /* Ignore UNSTABLE caused by retried tests. */
           if (!['SUCCESS', 'UNSTABLE'].contains(result)) {
             throw new Exception('Squish run failed!')
           }
