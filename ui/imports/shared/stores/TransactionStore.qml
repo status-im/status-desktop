@@ -26,33 +26,29 @@ QtObject {
     property var disabledChainIdsToList: []
 
     function addRemoveDisabledFromChain(chainID, isDisabled) {
-        var tempList = disabledChainIdsFromList
         if(isDisabled) {
-            tempList.push(chainID)
+            disabledChainIdsFromList.push(chainID)
         }
         else {
-            for(var i = 0; i < tempList.length;i++) {
-                if(tempList[i] === chainID) {
-                    tempList.splice(i, 1)
+            for(var i = 0; i < disabledChainIdsFromList.length;i++) {
+                if(disabledChainIdsFromList[i] === chainID) {
+                    disabledChainIdsFromList.splice(i, 1)
                 }
             }
         }
-        disabledChainIdsFromList = tempList
     }
 
     function addRemoveDisabledToChain(chainID, isDisabled) {
-        var tempList = disabledChainIdsToList
         if(isDisabled) {
-            tempList.push(chainID)
+            root.disabledChainIdsToList.push(chainID)
         }
         else {
-            for(var i = 0; i < tempList.length;i++) {
-                if(tempList[i] === chainID) {
-                    tempList.splice(i, 1)
+            for(var i = 0; i < root.disabledChainIdsToList.length;i++) {
+                if(root.disabledChainIdsToList[i] === chainID) {
+                    root.disabledChainIdsToList.splice(i, 1)
                 }
             }
         }
-        disabledChainIdsToList = tempList
     }
 
     function getEtherscanLink() {

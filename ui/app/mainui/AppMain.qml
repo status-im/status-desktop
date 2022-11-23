@@ -1092,15 +1092,19 @@ Item {
                 this.active = false
             }
             property var selectedAccount
+            property bool isBridgeTx
             sourceComponent: SendModal {
                 onClosed: {
                     sendModal.closed()
+                    sendModal.isBridgeTx = false
                 }
             }
             onLoaded: {
                 if (!!sendModal.selectedAccount) {
                     item.selectedAccount = sendModal.selectedAccount
                 }
+                if(isBridgeTx)
+                    item.isBridgeTx = sendModal.isBridgeTx
             }
         }
 

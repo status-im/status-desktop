@@ -44,7 +44,9 @@ Item {
         function resetAllSetValues() {
             for(var i = 0; i<fromNetworksRepeater.count; i++) {
                 fromNetworksRepeater.itemAt(i).amountToSend = 0
+                fromNetworksRepeater.itemAt(i).isOnBestRoute = false
                 toNetworksRepeater.itemAt(i).amountToReceive = 0
+                toNetworksRepeater.itemAt(i).isOnBestRoute = false
             }
         }
     }
@@ -76,6 +78,7 @@ Item {
                     id: fromNetwork
                     objectName: model.chainId
                     property double amountToSend: 0
+                    property bool isOnBestRoute: false
                     property string tokenBalanceOnChain: selectedAccount && selectedAccount!== undefined && selectedAsset!== undefined ? selectedAccount.getTokenBalanceOnChain(model.chainId, selectedAsset.symbol) : ""
                     property var hasGas: selectedAccount.hasGas(model.chainId, model.nativeCurrencySymbol, requiredGasInEth)
                     primaryText: model.chainName
@@ -91,7 +94,13 @@ Item {
                     clickable: root.interactive
                     onClicked: {
                         store.addRemoveDisabledFromChain(model.chainId, disabled)
-                        root.reCalculateSuggestedRoute()
+                        // only recalculate if the a best route was disabled
+                        if(root.bestRoutes.length === 0 || isOnBestRoute)
+                            root.reCalculateSuggestedRoute()
+                    }
+                    onVisibleChanged: {
+                        if(visible)
+                            disabled = store.disabledChainIdsFromList.includes(model.chainId)
                     }
                     // To-do needed for custom view
 //                    onAdvancedInputTextChanged: {
@@ -120,6 +129,7 @@ Item {
                 StatusCard {
                     id: toCard
                     objectName: model.chainId
+                    property bool isOnBestRoute: false
                     property double amountToReceive: 0
                     primaryText: model.chainName
                     secondaryText: LocaleUtils.numberToLocaleString(amountToReceive)
@@ -135,7 +145,13 @@ Item {
                     clickable: root.interactive
                     onClicked: {
                         store.addRemoveDisabledToChain(model.chainId, disabled)
-                        root.reCalculateSuggestedRoute()
+                        // only recalculate if the a best route was disabled
+                        if(root.bestRoutes.length === 0 || isOnBestRoute)
+                            root.reCalculateSuggestedRoute()
+                    }
+                    onVisibleChanged: {
+                        if(visible)
+                            disabled = store.disabledChainIdsToList.includes(model.chainId)
                     }
                     // To-do needed for custom view
 //                    onAdvancedInputTextChanged: {
@@ -190,6 +206,8 @@ Item {
                     let amountToReceive = weiToEth(bestRoutes[i].amountOut)
                     fromN.amountToSend = amountToSend
                     toN.amountToReceive += amountToReceive
+                    fromN.isOnBestRoute = true
+                    toN.isOnBestRoute = true
                     d.thereIsApossibleRoute = true
                     StatusQUtils.Utils.drawArrow(ctx, fromN.x + fromN.width,
                                                  fromN.y + fromN.height/2,

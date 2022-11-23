@@ -16,6 +16,7 @@ Rectangle {
     property string maxFiatFees: "..."
     property alias selectedTimeEstimate: estimatedTime.text
     property bool pending: true
+    property alias nextButtonText: nextButton.text
 
     signal nextButtonClicked()
 
@@ -80,6 +81,7 @@ Rectangle {
             }
 
             StatusFlatButton {
+                id: nextButton
                 text: qsTr("Send")
                 objectName: "sendModalFooterSendButton"
                 size: StatusBaseButton.Size.Large
@@ -88,6 +90,7 @@ Rectangle {
                 enabled: !footer.pending
                 loading: footer.pending
                 onClicked: nextButtonClicked()
+                icon.name: "password"
             }
         }
     }

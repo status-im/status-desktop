@@ -15,10 +15,13 @@ import "../controls"
 RowLayout {
     id: root
 
+    property var store
     property var bestRoutes
     property double amountToSend: 0
     property bool isLoading: false
+    property bool isBridgeTx: false
     property var weiToEth: function(wei) {}
+    property var reCalculateSuggestedRoute: function() {}
 
     spacing: 10
 
@@ -42,16 +45,9 @@ RowLayout {
             Layout.maximumWidth: 410
             font.pixelSize: 15
             color: Theme.palette.baseColor1
-            text: qsTr("The networks where the receipient will receive tokens. Amounts calculated automatically for the lowest cost.")
+            text: isBridgeTx ? qsTr("Choose the network to bridge token to") :
+                              qsTr("The networks where the receipient will receive tokens. Amounts calculated automatically for the lowest cost.")
             wrapMode: Text.WordWrap
-        }
-        BalanceExceeded {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Style.current.bigPadding
-            transferPossible: root.bestRoutes !== undefined ? root.bestRoutes.length > 0 : true
-            amountToSend: root.amountToSend
-            isLoading: root.isLoading
         }
         ScrollView {
             Layout.fillWidth: true
@@ -62,30 +58,90 @@ RowLayout {
             ScrollBar.vertical.policy: ScrollBar.AlwaysOff
             ScrollBar.horizontal.policy: ScrollBar.AsNeeded
             clip: true
-            visible: !root.isLoading ? root.bestRoutes !== undefined ? root.bestRoutes.length > 0 : true : false
+            visible: !root.isLoading ? root.isBridgeTx ? true : root.bestRoutes !== undefined ? root.bestRoutes.length > 0 : true : false
             Row {
                 id: row
                 spacing: Style.current.padding
                 Repeater {
                     id: repeater
                     objectName: "networksList"
-                    model: root.bestRoutes
-                    StatusListItem {
-                        id: item
-                        objectName: modelData.toNetwork.chainName
-                        leftPadding: 5
-                        rightPadding: 5
-                        implicitWidth: 150
-                        title: modelData.toNetwork.chainName
-                        subTitle: root.weiToEth(modelData.amountIn)
-                        statusListItemSubTitle.color: Theme.palette.primaryColor1
-                        asset.width: 32
-                        asset.height: 32
-                        asset.name: Style.svg("tiny/" + modelData.toNetwork.iconUrl)
-                        asset.isImage: true
-                        color: "transparent"
-                    }
+                    model: isBridgeTx ? store.allNetworks : root.bestRoutes
+                    delegate: isBridgeTx ? networkItem : routeItem
                 }
+            }
+        }
+        BalanceExceeded {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: Style.current.bigPadding
+            transferPossible: root.bestRoutes !== undefined ? root.bestRoutes.length > 0 : true
+            amountToSend: root.amountToSend
+            isLoading: root.isLoading
+        }
+    }
+
+    ButtonGroup {
+        buttons: repeater.children
+    }
+
+    Component {
+        id: routeItem
+        StatusListItem {
+            objectName: modelData.toNetwork.chainName
+            leftPadding: 5
+            rightPadding: 5
+            implicitWidth: 126
+            title: modelData.toNetwork.chainName
+            subTitle: root.weiToEth(modelData.amountIn)
+            statusListItemSubTitle.color: Theme.palette.primaryColor1
+            asset.width: 32
+            asset.height: 32
+            asset.name: Style.svg("tiny/" + modelData.toNetwork.iconUrl)
+            asset.isImage: true
+            color: "transparent"
+        }
+    }
+
+    Component {
+        id: networkItem
+        StatusRadioButton {
+            id: gasRectangle
+            width: contentItem.implicitWidth
+            contentItem: StatusListItem {
+                id: card
+                objectName: chainName
+                leftPadding: 5
+                rightPadding: 5
+                implicitWidth: 150
+                title: chainName
+                subTitle: root.weiToEth(balance)
+                statusListItemSubTitle.color: Theme.palette.primaryColor1
+                asset.width: 32
+                asset.height: 32
+                asset.name: Style.svg("tiny/" + iconUrl)
+                asset.isImage: true
+                color: {
+                    if (sensor.containsMouse || highlighted ||  gasRectangle.checked) {
+                        return Theme.palette.baseColor2
+                    }
+                    return Theme.palette.statusListItem.backgroundColor
+                }
+                onClicked: gasRectangle.toggle()
+            }
+            onCheckedChanged: {
+                store.addRemoveDisabledToChain(chainId, !gasRectangle.checked)
+                if(checked)
+                    root.reCalculateSuggestedRoute()
+            }
+            checked: index === 0
+            indicator: Item {
+                width: card.width
+                height: card.height
+            }
+            Component.onCompleted: {
+                store.addRemoveDisabledToChain(chainId, !gasRectangle.checked)
+                if(index === (repeater.count -1))
+                    root.reCalculateSuggestedRoute()
             }
         }
     }

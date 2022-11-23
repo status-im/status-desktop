@@ -22,6 +22,8 @@ import "../views"
 StatusDialog {
     id: popup
 
+    property bool isBridgeTx: false
+
     property string preSelectedRecipient
     property string preDefinedAmountToSend
     property var preSelectedAsset
@@ -29,14 +31,14 @@ StatusDialog {
 
     property alias modalHeader: modalHeader.text
 
-    property alias selectedPriority: gasSelector.selectedPriority
+    property alias selectedPriority: fees.selectedPriority
     property var store: TransactionStore{}
     property var contactsStore: store.contactStore
     property var selectedAccount: store.currentAccount
     property var bestRoutes
     property string addressText
     property bool isLoading: false
-    property int sendType: Constants.SendType.Transfer
+    property int sendType: isBridgeTx ? Constants.SendType.Bridge : Constants.SendType.Transfer
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
         title: qsTr("Error sending the transaction")
@@ -61,19 +63,19 @@ StatusDialog {
                     assetSelector.selectedAsset.symbol,
                     amountToSendInput.text,
                     d.uuid,
-                    gasSelector.selectedPriority,
+                    fees.selectedPriority,
                     JSON.stringify(popup.bestRoutes)
                     )
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
         d.sendTxError = false
-        if(popup.selectedAccount && assetSelector.selectedAsset) {
+        if(!!popup.selectedAccount && !!assetSelector.selectedAsset) {
             popup.isLoading = true
             let amount = parseFloat(amountToSendInput.text) * Math.pow(10, assetSelector.selectedAsset.decimals)
             popup.store.suggestedRoutes(popup.selectedAccount.address, amount.toString(16), assetSelector.selectedAsset.symbol,
                                         store.disabledChainIdsFromList, store.disabledChainIdsToList,
-                                        d.preferredChainIds, gasSelector.selectedPriority, popup.sendType)
+                                        d.preferredChainIds, fees.selectedPriority, popup.sendType)
         }
     })
 
@@ -85,6 +87,10 @@ StatusDialog {
     QtObject {
         id: d
         readonly property double maxFiatBalance: assetSelector.selectedAsset ? assetSelector.selectedAsset.totalBalance: 0
+        onMaxFiatBalanceChanged: {
+            floatValidator.top = maxFiatBalance
+            amountToSendInput.validate()
+        }
         readonly property bool isReady: amountToSendInput.valid && !amountToSendInput.pending && recipientReady
         readonly property bool errorMode: (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0) || networkSelector.errorMode || isNaN(amountToSendInput.text)
         readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending
@@ -147,8 +153,6 @@ StatusDialog {
     onSelectedAccountChanged: popup.recalculateRoutesAndFees()
 
     onOpened: {
-        popup.store.disabledChainIdsFromList = []
-        popup.store.disabledChainIdsToList = []
         amountToSendInput.input.edit.forceActiveFocus()
 
         if(!!popup.preSelectedAsset) {
@@ -163,6 +167,16 @@ StatusDialog {
             recipientSelector.input.text = popup.preSelectedRecipient
             d.waitTimer.restart()
         }
+
+        if(popup.isBridgeTx) {
+            recipientSelector.input.text = popup.selectedAccount.address
+            d.waitTimer.restart()
+        }
+    }
+
+    onClosed: {
+        popup.store.disabledChainIdsFromList = []
+        popup.store.disabledChainIdsToList = []
     }
 
     header: AccountsModalHeader {
@@ -186,14 +200,13 @@ StatusDialog {
         ColumnLayout {
             id: group1
             Layout.preferredWidth: parent.width
-            spacing: Style.current.padding
 
             Rectangle {
                 Layout.preferredWidth: parent.width
                 Layout.preferredHeight: assetAndAmmountSelector.height + Style.current.padding
                 color: Theme.palette.baseColor3
 
-                layer.enabled: scrollView.contentY > -8
+                layer.enabled: scrollView.contentY > 0
                 layer.effect: DropShadow {
                     verticalOffset: 2
                     radius: 16
@@ -214,7 +227,7 @@ StatusDialog {
                         StatusBaseText {
                             id: modalHeader
                             anchors.verticalCenter: parent.verticalCenter
-                            text: qsTr("Send")
+                            text: popup.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
                             font.pixelSize: 15
                             color: Theme.palette.directColor1
                         }
@@ -237,14 +250,14 @@ StatusDialog {
                             anchors.left: parent.left
                             anchors.leftMargin: -Style.current.padding
                             width: parent.width - assetSelector.width
-                            placeholderText: assetSelector.selectedAsset ? "%1 %2".arg(LocaleUtils.numberToLocaleString(0, 2)).arg(assetSelector.selectedAsset.symbol) : ""
+                            placeholderText: assetSelector.selectedAsset ? "%1 %2".arg(LocaleUtils.numberToLocaleString(0, 2)).arg(assetSelector.selectedAsset.symbol) : LocaleUtils.numberToLocaleString(0, 2)
                             input.edit.color: d.errorMode ? Theme.palette.dangerColor1 : Theme.palette.directColor1
                             input.edit.readOnly: !popup.interactive
                             validators: [
                                 StatusFloatValidator{
                                     id: floatValidator
                                     bottom: 0
-                                    top: assetSelector.selectedAsset ? assetSelector.selectedAsset.totalBalance: 0
+                                    top: d.maxFiatBalance
                                     errorMessage: ""
                                 }
                             ]
@@ -264,6 +277,7 @@ StatusDialog {
                             enabled: popup.interactive
                             assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : []
                             defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")
+                            placeholderText: popup.isBridgeTx ? qsTr("Select token to bridge") : qsTr("Select token to send")
                             getCurrencyBalanceString: function (currencyBalance) {
                                 return "%1 %2".arg(Utils.toLocaleString(currencyBalance.toFixed(2), popup.store.locale, {"currency": true})).arg(popup.store.currentCurrency.toUpperCase())
                             }
@@ -306,10 +320,13 @@ StatusDialog {
                         input.edit.color: txtFiatBalance.input.edit.activeFocus ? Theme.palette.directColor1 : Theme.palette.baseColor1
                         input.edit.readOnly: true
                         text: {
-                            let fiatValue = popup.store.getFiatValue(amountToSendInput.text, assetSelector.selectedAsset.symbol, popup.store.currentCurrency)
-                            return parseFloat(fiatValue) === 0 ? LocaleUtils.numberToLocaleString(parseFloat(fiatValue), 2) : LocaleUtils.numberToLocaleString(parseFloat(fiatValue))
+                            if(!!assetSelector.selectedAsset) {
+                                let fiatValue = popup.store.getFiatValue(amountToSendInput.text, assetSelector.selectedAsset.symbol, popup.store.currentCurrency)
+                                return parseFloat(fiatValue) === 0 ? LocaleUtils.numberToLocaleString(parseFloat(fiatValue), 2) : LocaleUtils.numberToLocaleString(parseFloat(fiatValue))
+                            }
+                            return LocaleUtils.numberToLocaleString(0, 2)
                         }
-                        input.implicitHeight: 15
+                        input.implicitHeight: Style.current.bigPadding
                         implicitWidth: txtFiatBalance.input.edit.contentWidth + 50
                         input.rightComponent: StatusBaseText {
                             id: currencyText
@@ -326,14 +343,34 @@ StatusDialog {
                             // amountToSendInput.text = root.getCryptoValue(balance, popup.store.currentCurrency, assetSelector.selectedAsset.symbol)
                         }
                     }
+
+                    TokenListView {
+                        id: tokenListRect
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        visible: !assetSelector.selectedAsset
+                        assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : []
+                        currentCurrencySymbol: RootStore.currencyStore.currentCurrencySymbol
+                        searchTokenSymbolByAddressFn: function (address) {
+                            if(popup.selectedAccount) {
+                                return popup.selectedAccount.findTokenSymbolByAddress(address)
+                            }
+                            return ""
+                        }
+                        onTokenSelected: {
+                            assetSelector.userSelectedToken = selectedToken.symbol
+                            assetSelector.selectedAsset = selectedToken
+                        }
+                    }
                 }
             }
 
             StatusScrollView {
                 id: scrollView
+                topPadding: 0
                 Layout.fillHeight: true
                 Layout.preferredWidth: parent.width
-                contentHeight: layout.height
+                contentHeight: layout.height + Style.current.padding
                 contentWidth: parent.width
                 z: 0
                 objectName: "sendModalScroll"
@@ -341,12 +378,15 @@ StatusDialog {
                 Column {
                     id: layout
                     width: scrollView.availableWidth
-                    spacing: Style.current.halfPadding
+                    spacing: Style.current.bigPadding
                     anchors.left: parent.left
 
                     StatusInput {
                         id: recipientSelector
                         property bool isPending: false
+
+                        height: visible ? implicitHeight: 0
+                        visible: !isBridgeTx && !!assetSelector.selectedAsset
 
                         width: parent.width
                         anchors.left: parent.left
@@ -419,7 +459,7 @@ StatusDialog {
                             recipientSelector.input.text = address
                             d.waitTimer.restart()
                         }
-                        visible: !d.recipientReady
+                        visible: !d.recipientReady && !isBridgeTx && !!assetSelector.selectedAsset
                     }
 
                     NetworkSelector {
@@ -433,86 +473,30 @@ StatusDialog {
                         interactive: popup.interactive
                         selectedAccount: popup.selectedAccount
                         amountToSend: isNaN(parseFloat(amountToSendInput.text)) ? 0 : parseFloat(amountToSendInput.text)
-                        requiredGasInEth: gasSelector.selectedGasEthValue
+                        requiredGasInEth: fees.selectedGasEthValue
                         selectedAsset: assetSelector.selectedAsset
                         onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
-                        visible: d.recipientReady
+                        visible: d.recipientReady && !!assetSelector.selectedAsset
 
                         isLoading: popup.isLoading
                         bestRoutes: popup.bestRoutes
+                        isBridgeTx: popup.isBridgeTx
                     }
 
-                    Rectangle {
+                    FeesView {
                         id: fees
-                        radius: 13
-                        color: Theme.palette.indirectColor1
-                        height: text.height + gasSelector.height + gasValidator.height + Style.current.xlPadding
                         width: parent.width
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
-                        visible: d.recipientReady
-
-                        RowLayout {
-                            id: feesLayout
-                            spacing: 10
-                            anchors.top: parent.top
-                            anchors.left: parent.left
-                            anchors.margins: Style.current.padding
-
-                            StatusRoundIcon {
-                                id: feesIcon
-                                Layout.alignment: Qt.AlignTop
-                                radius: 8
-                                asset.name: "fees"
-                            }
-                            Column {
-                                Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-                                Layout.preferredWidth: fees.width - feesIcon.width - Style.current.xlPadding
-                                Item {
-                                    width: parent.width
-                                    height: childrenRect.height
-                                    StatusBaseText {
-                                        id: text
-                                        anchors.left: parent.left
-                                        font.pixelSize: 15
-                                        font.weight: Font.Medium
-                                        color: Theme.palette.directColor1
-                                        text: qsTr("Fees")
-                                        wrapMode: Text.WordWrap
-                                    }
-                                    StatusBaseText {
-                                        anchors.right: parent.right
-                                        anchors.rightMargin: Style.current.padding
-                                        id: totalFeesAdvanced
-                                        text: popup.isLoading ? "..." : gasSelector.selectedGasFiatValue
-                                        font.pixelSize: 15
-                                        color: Theme.palette.directColor1
-                                        visible: networkSelector.advancedOrCustomMode && popup.bestRoutes.length > 0
-                                    }
-                                }
-                                GasSelector {
-                                    id: gasSelector
-                                    width: parent.width
-                                    getGasEthValue: popup.store.getGasEthValue
-                                    getFiatValue: popup.store.getFiatValue
-                                    currentCurrency: popup.store.currencyStore.currentCurrency
-                                    currentCurrencySymbol: popup.store.currencyStore.currentCurrencySymbol
-                                    visible: gasValidator.isValid && !popup.isLoading
-                                    advancedOrCustomMode: networkSelector.advancedOrCustomMode
-                                    bestRoutes: popup.bestRoutes
-                                    selectedTokenSymbol: assetSelector.selectedAsset ? assetSelector.selectedAsset.symbol: ""
-                                    onSelectedPriorityChanged: popup.recalculateRoutesAndFees()
-                                }
-                                GasValidator {
-                                    id: gasValidator
-                                    width: parent.width
-                                    isLoading: popup.isLoading
-                                    isValid: popup.bestRoutes ? popup.bestRoutes.length > 0 : true
-                                }
-                            }
-                        }
+                        visible: d.recipientReady && !!assetSelector.selectedAsset
+                        selectedTokenSymbol: assetSelector.selectedAsset ? assetSelector.selectedAsset.symbol: ""
+                        advancedOrCustomMode: networkSelector.advancedOrCustomMode
+                        isLoading: popup.isLoading
+                        bestRoutes: popup.bestRoutes
+                        store: popup.store
+                        onPriorityChanged: popup.recalculateRoutesAndFees()
                     }
                 }
             }
@@ -520,10 +504,11 @@ StatusDialog {
     }
 
     footer: SendModalFooter {
-        maxFiatFees: popup.isLoading ? "..." : gasSelector.selectedGasFiatValue
-        selectedTimeEstimate: popup.isLoading? "..." : gasSelector.selectedTimeEstimate
+        nextButtonText: popup.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
+        maxFiatFees: popup.isLoading ? "..." : fees.selectedGasFiatValue
+        selectedTimeEstimate: popup.isLoading? "..." : fees.selectedTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: d.isReady && !isNaN(amountToSendInput.text) && gasValidator.isValid && !d.errorMode
+        visible: d.isReady && !isNaN(amountToSendInput.text) && fees.isValid && !d.errorMode
         onNextButtonClicked: popup.sendTransaction()
     }
 
@@ -541,7 +526,7 @@ StatusDialog {
                 return
             }
             popup.bestRoutes =  response.suggestedRoutes.best
-            gasSelector.estimatedGasFeesTime = response.suggestedRoutes.gasTimeEstimates
+            fees.estimatedGasFeesTime = response.suggestedRoutes.gasTimeEstimates
             popup.isLoading = false
         }
     }
