@@ -15,42 +15,33 @@ Feature: Status Desktop Main Settings Section
 	# TODO: It is also unstable. Needs to be checked.
     @mayfail
     Scenario: The user can backup seed phrase
-        Given the user activates wallet
-		And the user opens the wallet settings
-        When the user backs up the wallet seed phrase
-        Then the backup seed phrase indicator is not displayed
+      Given the user activates wallet
+	    And the user opens the wallet settings
+      When the user backs up the wallet seed phrase
+      Then the backup seed phrase indicator is not displayed
 
-    Scenario: The user can switch state to offline
-    	When the users switches state to offline
-    	Then the user appears offline
+    Scenario: The user can switch state between offline and online
+      Given the users switches state to offline
+      And the user appears offline
+      When the user restarts the app
+      And the user "tester123" logs in with password "TesTEr16843/!@00"
+      Then the user appears offline
 
-    	Given the user restarts the app
-    	And the user "tester123" logs in with password "TesTEr16843/!@00"
-    	Then the user appears offline
-
-    Scenario: The user can switch state to online
-        When the users switches state to offline
-    	And the user restarts the app
-    	And the user "tester123" logs in with password "TesTEr16843/!@00"
-    	Then the user appears offline
-
-        When the users switches state to online
-    	Then the user appears online
-
+      Given the users switches state to online
+    	And the user appears online
     	When the user restarts the app
     	And the user "tester123" logs in with password "TesTEr16843/!@00"
     	Then the user appears online
 
 	Scenario: The user can switch state to automatic
-        When the users switches state to automatic
-    	Then the user status is automatic
-
+      Given the users switches state to automatic
+    	And the user status is automatic
     	When the user restarts the app
     	And the user "tester123" logs in with password "TesTEr16843/!@00"
     	Then the user status is automatic
 
 	Scenario: The user can change the password and login with new password
-    	When the user changes the password from TesTEr16843/!@00 to NewPassword@12345
+    	Given the user changes the password from TesTEr16843/!@00 to NewPassword@12345
     	And the user restarts the app
     	And the user "tester123" logs in with password "NewPassword@12345"
     	Then the user lands on the signed in app

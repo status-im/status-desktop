@@ -23,14 +23,18 @@ Feature: Status Language Settings
     	And the user clicks on Language & Currency
 
 	# Each language run takes 30 seconds, so only some of them are enabled until we can parallelize executions
-    Scenario Outline: The user is able to select a specific language and after a restart, the language is kept
-		When the user opens the language selector
+
+  # Comments:
+  # Unless the implementation is different between languages - this might only need done once.
+  # A separate scenario could be created to verify that each language is available as an option
+    Scenario Outline: Selected language persists after a restart
+		Given the user opens the language selector
 		And the user selects the language <native>
-		Then the application displays <native> as the selected language
-		When the user restarts the app
+		And the application displays <native> as the selected language
+		When the user restarts the app # Consider creating a wapper step that restarts and logs in.
 		And the user "tester123" logs in with password "TesTEr16843/!@00"
-		Then the user lands on the signed in app
-		When the user opens app settings screen
+		And the user lands on the signed in app
+		And the user opens app settings screen
 		And the user clicks on Language & Currency
 		Then the application displays <native> as the selected language
 	Examples:
@@ -59,7 +63,9 @@ Feature: Status Language Settings
 	        #| Tagalog                 | Tagalog                 |
 	        #| Turkish                 | Türkçe                  |
 
-	# Each language run takes 30 seconds, so only some of them are enabled until we can parallelize executions
+
+  # Is this a duplicate of above?
+  # Each language run takes 30 seconds, so only some of them are enabled until we can parallelize executions
 	Scenario Outline: The user is able to search and select a specific language and after a restart, the language is kept
 		When the user opens the language selector
 		And the user searches the language <native>
