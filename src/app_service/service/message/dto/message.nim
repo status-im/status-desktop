@@ -104,6 +104,8 @@ type MessageDto* = object
   contactRequestState*: int
   links*: seq[string]
   editedAt*: int
+  deleted*: bool
+  deletedForMe*: bool
   transactionParameters*: TransactionParameters
 
 proc toParsedText*(jsonObj: JsonNode): ParsedText =
@@ -208,6 +210,8 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   discard jsonObj.getProp("contactRequestState", result.contactRequestState)
   discard jsonObj.getProp("image", result.image)
   discard jsonObj.getProp("editedAt", result.editedAt)
+  discard jsonObj.getProp("deleted", result.deleted)
+  discard jsonObj.getProp("deletedForMe", result.deletedForMe)
 
   var quotedMessageObj: JsonNode
   if(jsonObj.getProp("quotedMessage", quotedMessageObj)):
