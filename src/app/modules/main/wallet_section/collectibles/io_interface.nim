@@ -15,9 +15,6 @@ method switchAccount*(self: AccessInterface, accountIndex: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # Methods called by submodules of this module
-method collectibleModuleDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method collectiblesModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

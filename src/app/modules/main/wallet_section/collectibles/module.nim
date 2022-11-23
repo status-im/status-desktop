@@ -4,7 +4,6 @@ import ../../../../core/eventemitter
 import ../../../../../app_service/service/collectible/service as collectible_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
-import ./collectible/module as collectible_module
 import ./collections/module as collections_module
 import ./collectibles/module as collectibles_module
 import ./current_collectible/module as current_collectible_module
@@ -19,7 +18,6 @@ type
 
     collectiblesModule: collectibles_module.AccessInterface
     collectionsModule: collections_module.AccessInterface
-    collectibleModule: collectible_module.AccessInterface
     currentCollectibleModule: current_collectible_module.AccessInterface
 
 proc newModule*(
@@ -35,20 +33,17 @@ proc newModule*(
 
   result.collectiblesModule = collectibles_module.newModule(result, collectibleService)
   result.collectionsModule = collectionsModule.newModule(result, events, collectibleService)
-  result.collectibleModule = collectibleModule.newModule(result, collectibleService)
   result.currentCollectibleModule = currentCollectibleModule.newModule(result, result.collectionsModule, result.collectiblesModule)
 
 method delete*(self: Module) =
   self.collectiblesModule.delete
   self.collectionsModule.delete
-  self.collectibleModule.delete
   self.currentCollectibleModule.delete
 
 method load*(self: Module) =
   self.controller.init
   self.collectiblesModule.load
   self.collectionsModule.load
-  self.collectibleModule.load
   self.currentCollectibleModule.load
 
 method isLoaded*(self: Module): bool =
@@ -61,17 +56,11 @@ proc checkIfModuleDidLoad(self: Module) =
   if(not self.collectionsModule.isLoaded()):
     return
 
-  if(not self.collectibleModule.isLoaded()):
-    return
-
   if(not self.currentCollectibleModule.isLoaded()):
     return
 
   self.moduleLoaded = true
   self.delegate.collectiblesModuleDidLoad()
-
-method collectibleModuleDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
 
 method collectiblesModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
