@@ -171,6 +171,11 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 
   if(messages.len > 0):
     for m in messages:
+      # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
+      # Now we just skip deleted messages
+      if m.deleted or m.deletedForMe:
+        continue
+
       let sender = self.controller.getContactDetails(m.`from`)
 
       let renderedMessageText = self.controller.getRenderedText(m.parsedText)
@@ -274,7 +279,12 @@ method messageAdded*(self: Module, message: MessageDto) =
   let index = self.view.model().findIndexForMessageId(message.replace)
   if(index != -1):
     self.view.model().removeItem(message.replace)
-
+  
+  # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
+  # Now we just skip deleted messages
+  if message.deleted or message.deletedForMe:
+    return
+    
   var item = initItem(
     message.id,
     message.communityId,
