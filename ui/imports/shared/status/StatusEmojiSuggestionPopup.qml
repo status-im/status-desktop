@@ -1,10 +1,8 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.12
-import QtQuick.Dialogs 1.3
+import QtQuick 2.14
 
-import utils 1.0
 import shared 1.0
+
+import StatusQ.Core.Utils 0.1
 
 StatusInputListPopup {
     id: emojiSuggestions
@@ -19,7 +17,7 @@ StatusInputListPopup {
     }
 
     getImageSource: function (modelData) {
-        return `qrc:/StatusQ/src/assets/twemoji/72x72/${modelData.unicode}.png`
+        return Emoji.svgImage(modelData.unicode)
     }
     getText: function (modelData) {
         return modelData.shortname
