@@ -45,9 +45,6 @@ class ChatComponents(Enum):
     LAST_MESSAGE_TEXT = "chatView_lastChatText_Text"
     LAST_MESSAGE = "chatView_chatLogView_lastMsg_MessageView"
     MEMBERS_LISTVIEW = "chatView_chatMembers_ListView"
-    REPLY_TO_MESSAGE_BUTTON = "chatView_replyToMessageButton"
-    EDIT_MESSAGE_BUTTON = "chatView_editMessageButton"
-    DELETE_MESSAGE_BUTTON = "chatView_DeleteMessageButton"
     CONFIRM_DELETE_MESSAGE_BUTTON = "chatButtonsPanelConfirmDeleteMessageButton_StatusButton"
     SUGGESTIONS_BOX = "chatView_SuggestionBoxPanel"
     SUGGESTIONS_LIST = "chatView_suggestion_ListView"
@@ -91,6 +88,11 @@ class ChatItems(Enum):
 class ChatMessagesHistory(Enum):
     CHAT_CREATED_TEXT = 1
     HAS_ADDED_TEXT = 0
+
+class ChatMessageHoverMenu(Enum):
+    REPLY_TO_BUTTON = "replyToMessageButton"
+    EDIT_BUTTON = "editMessageButton"
+    DELETE_BUTTON = "chatDeleteMessageButton"
     
 class Emoji(Enum):
     EMOJI_SUGGESTIONS_FIRST_ELEMENT = "emojiSuggestions_first_inputListRectangle"
@@ -192,13 +194,20 @@ class StatusChatScreen:
         message_object_to_reply_to = self.get_message_at_index(index)
         verify(not is_null(message_object_to_reply_to), "Message to reply to is loaded")
         move_mouse_over_object(message_object_to_reply_to)
-        click_obj_by_name(ChatComponents.REPLY_TO_MESSAGE_BUTTON.value)
+        found_reply_to_button = get_children_with_object_name(message_object_to_reply_to, ChatMessageHoverMenu.REPLY_TO_BUTTON.value)[0]
+        verify(not is_null(found_reply_to_button), "Reply button found")
+        move_mouse_over_object(found_reply_to_button)
+        click_obj(found_reply_to_button)
         self.send_message(message)
     
     def edit_message_at_index(self, index: int, message: str):
         message_object_to_edit = wait_and_get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))
+        verify(not is_null(message_object_to_edit), "Message to edit is loaded")
         move_mouse_over_object(message_object_to_edit)
-        click_obj_by_name(ChatComponents.EDIT_MESSAGE_BUTTON.value)
+        found_edit_button = get_children_with_object_name(message_object_to_edit, ChatMessageHoverMenu.EDIT_BUTTON.value)[0]
+        verify(not is_null(found_edit_button), "Edit button found")
+        move_mouse_over_object(found_edit_button)
+        click_obj(found_edit_button)
         wait_for_object_and_type(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, "<Ctrl+a>")
         type(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, message)
         press_enter(ChatComponents.EDIT_MESSAGE_TEXTAREA.value)
@@ -208,7 +217,7 @@ class StatusChatScreen:
         verify(chat_lists.count > 0, "At least one chat exists")
         for i in range(chat_lists.count):
             chat = chat_lists.itemAt(i)
-            chat_list_items = getChildrenWithObjectName(chat, "chatItem")
+            chat_list_items = get_children_with_object_name(chat, "chatItem")
             verify(len(chat_list_items) > 0, "StatusChatListItem exists")
             if str(chat_list_items[0].name) == chatName:
                 click_obj(chat)
@@ -230,7 +239,10 @@ class StatusChatScreen:
     def delete_message_at_index(self, index: int):
         message_object_to_delete = self.get_message_at_index(index)
         move_mouse_over_object(message_object_to_delete)
-        click_obj_by_name(ChatComponents.DELETE_MESSAGE_BUTTON.value)
+        found_delete_button = get_children_with_object_name(message_object_to_delete, ChatMessageHoverMenu.DELETE_BUTTON.value)[0]
+        verify(not is_null(found_delete_button), "Delete button found")
+        move_mouse_over_object(found_delete_button)
+        click_obj(found_delete_button)
         click_obj_by_name(ChatComponents.CONFIRM_DELETE_MESSAGE_BUTTON.value)
 
     def cannot_delete_last_message(self):
@@ -238,8 +250,9 @@ class StatusChatScreen:
         if not loaded:
             verify_failure("No message found")
             return 
-        hover_obj(last_message_obj)
-        object_not_enabled(ChatComponents.DELETE_MESSAGE_BUTTON.value)       
+        move_mouse_over_object(last_message_obj)
+        found_delete_button = get_children_with_object_name(last_message_obj, ChatMessageHoverMenu.DELETE_BUTTON.value)[0]
+        verify_false(is_visible_and_enabled(found_delete_button), "Delete button is hidden")
         
     def send_message_with_mention(self, displayName: str, message: str):
         self.do_mention(displayName)
@@ -323,19 +336,19 @@ class StatusChatScreen:
 
     def verify_last_message_is_reply(self, message: str):
         last_message_obj = self.get_message_at_index(0)
-        last_message_reply_details_obj = getChildrenWithObjectName(last_message_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS.value)[0]
+        last_message_reply_details_obj = get_children_with_object_name(last_message_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS.value)[0]
         verify(not is_null(last_message_reply_details_obj), "Checking last message is a reply: " + message)
 
     def verify_last_message_is_reply_to(self, reply: str, message: str):
         last_message_obj = self.get_message_at_index(0)
-        last_message_reply_details_obj = getChildrenWithObjectName(last_message_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS.value)[0]
-        text_message_obj = getChildrenWithObjectName(last_message_reply_details_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS_TEXT_MESSAGE.value)[0]
+        last_message_reply_details_obj = get_children_with_object_name(last_message_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS.value)[0]
+        text_message_obj = get_children_with_object_name(last_message_reply_details_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS_TEXT_MESSAGE.value)[0]
         verify_text_contains(str(text_message_obj.messageDetails.messageText), str(message))
 
     def verify_last_message_is_reply_to_loggedin_user_message(self, reply: str, message: str):
         last_message_obj = self.get_message_at_index(0)
-        last_message_reply_details_obj = getChildrenWithObjectName(last_message_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS.value)[0]
-        text_message_obj = getChildrenWithObjectName(last_message_reply_details_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS_TEXT_MESSAGE.value)[0]
+        last_message_reply_details_obj = get_children_with_object_name(last_message_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS.value)[0]
+        text_message_obj = get_children_with_object_name(last_message_reply_details_obj, ChatItems.STATUS_MESSAGE_REPLY_DETAILS_TEXT_MESSAGE.value)[0]
         verify_text_contains(str(text_message_obj.messageDetails.messageText), str(message))
         verify_values_equal(str(last_message_reply_details_obj.replyDetails.sender.id), str(last_message_obj.senderId), "Message sender ID doesn't match reply message sender ID")
 
@@ -348,19 +361,18 @@ class StatusChatScreen:
         # Get the message text
         # We don't search for StatusTextMessage_chatText directly, because there're 2 instances of it in a reply message
         last_message_obj = self.get_message_at_index(0)
-        text_message_obj = getChildrenWithObjectName(last_message_obj, ChatItems.STATUS_MESSAGE_TEXT_MESSAGE.value)[0]
-        text_edit_obj = getChildrenWithObjectName(text_message_obj, ChatItems.STATUS_TEXT_MESSAGE_CHAT_TEXT.value)[0]
+        text_message_obj = get_children_with_object_name(last_message_obj, ChatItems.STATUS_MESSAGE_TEXT_MESSAGE.value)[0]
+        text_edit_obj = get_children_with_object_name(text_message_obj, ChatItems.STATUS_TEXT_MESSAGE_CHAT_TEXT.value)[0]
         verify(not is_null(text_edit_obj), "Checking last message sent: " + message)
         verify_text_contains(str(text_edit_obj.text), str(message))
 
     def verify_last_message_sent_is_not(self, message: str):
-        chat_log_obj = wait_and_get_obj(ChatComponents.CHAT_LOG.value)
-        last_message_obj = chat_log_obj.itemAtIndex(int(0))
-        text_message_objs = getChildrenWithObjectName(last_message_obj, ChatItems.STATUS_MESSAGE_TEXT_MESSAGE.value)
+        last_message_obj = self.get_message_at_index(0)
+        text_message_objs = get_children_with_object_name(last_message_obj, ChatItems.STATUS_MESSAGE_TEXT_MESSAGE.value)
         if len(text_message_objs) == 0:
             passes("Success: No message was found")
             return
-        text_edit_obj = getChildrenWithObjectName(text_message_objs[0], ChatItems.STATUS_TEXT_MESSAGE_CHAT_TEXT.value)[0]
+        text_edit_obj = get_children_with_object_name(text_message_objs[0], ChatItems.STATUS_TEXT_MESSAGE_CHAT_TEXT.value)[0]
         verify(not is_null(text_edit_obj), "Checking last message sent: " + message)
         verify_text_does_not_contain(str(text_edit_obj.text), str(message))
     
@@ -436,7 +448,7 @@ class StatusChatScreen:
         chat_lists = get_obj(ChatComponents.CHAT_LIST.value)
         chat = chat_lists.itemAt(index)
         verify(not is_null(chat), "Chat ({}) at index {} exists".format(chatName, index))
-        chat_list_items = getChildrenWithObjectName(chat, "chatItem")
+        chat_list_items = get_children_with_object_name(chat, "chatItem")
         verify(len(chat_list_items) > 0, "StatusChatListItem exists")
         verify(str(chat_list_items[0].name) == chatName, "Chat in order")
 

@@ -24,8 +24,6 @@ Feature: Status Desktop Chat Basic Flows
 		 | I am from status   	 |
 		 | tell me how you do?   |
 
-    @mayfail
-    # TODO: It works standalone but when it runs as part of the sequence, the action of reply is not done always. The popup option does not appear.
     Scenario Outline: The user can reply to own message
          Given the user sends a chat message "<message>"
          When the user replies to the message at index 0 with "<reply>"
@@ -34,8 +32,6 @@ Feature: Status Desktop Chat Basic Flows
      | message             | reply           |
      | random chat message | This is a reply |
 
-	@mayfail
-	# TODO: It works standalone but when it runs as part of the sequence, the action of edit is not done always. The popup option does not appear.
     Scenario Outline: The user can edit a message
          Given the user sends a chat message "Edit me"
          When the user edits the message at index 0 and changes it to "<edited>"
@@ -58,8 +54,6 @@ Feature: Status Desktop Chat Basic Flows
 #		 And the user marks the channel "test" as read
 #         # TODO find a way to validate that it worked
 
-	@mayfail
-	# TODO: It works standalone but when it runs as part of the sequence, the action of delete is not done always. The popup option does not appear.
     Scenario Outline: The user can delete his/her own message
          Given the user sends a chat message "<message>"
          When the user deletes the message at index 0
