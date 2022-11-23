@@ -54,6 +54,7 @@ chatView_chatMembers_ListView = {"container": statusDesktop_mainWindow, "objectN
 
 # Stickers Popup
 chat_StickersPopup_GetStickers_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "stickersPopupGetStickersButton", "type": "StatusButton", "visible": True}
+chat_StickersPopup_Retry_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "stickersPopupRetryButton", "type": "StatusButton", "visible": True}
 chat_StickersPopup_StickerMarket_GridView = {"container": statusDesktop_mainWindow_overlay, "objectName": "stickerMarketStatusGridView", "type": "StatusGridView", "visible": True}
 chat_StickersPopup_StickerMarket_DelegateItem_1 = {"container": chat_StickersPopup_StickerMarket_GridView, "objectName": "stickerMarketDelegateItem1", "type": "Item", "visible": True}
 chat_StickersPopup_StickerMarket_Install_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "statusStickerMarketInstallButton", "type": "StatusStickerButton", "visible": True}
