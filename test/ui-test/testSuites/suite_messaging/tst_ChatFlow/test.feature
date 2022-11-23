@@ -160,8 +160,8 @@ Feature: Status Desktop Chat Basic Flows
     	Then the last chat message contains "🙂"
     	And the last chat message contains "Hello"
 
- 	@mayfail
-	# TODO: It works standalone but when it runs as part of the sequence and mostly in the CI, the action of verification doesn't work.
+	@mayfail
+	# NOTE: It may be flaky due to undeterministic network conditions and 3rd party infura response.
     Scenario: The user can send a sticker after installing a free pack
          Given the user installs the sticker pack at position 4
          When the user sends the sticker at position 2 in the list

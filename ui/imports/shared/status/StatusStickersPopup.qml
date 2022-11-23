@@ -103,6 +103,26 @@ Popup {
                 active: d.stickerPacksLoading
                 sourceComponent: loadingImageComponent
             }
+
+            ColumnLayout {
+                id: failedToLoadStickersInfo
+
+                anchors.centerIn: parent
+                visible: d.stickerPacksLoadFailed
+
+                StatusBaseText {
+                    text: qsTr("Failed to load stickers")
+                    color: Theme.palette.dangerColor1
+                }
+
+                StatusButton {
+                    objectName: "stickersPopupRetryButton"
+                    Layout.alignment: Qt.AlignHCenter
+                    text: qsTr("Try again")
+
+                    onClicked: d.loadStickers()
+                }
+            }
         }
 
         Item {

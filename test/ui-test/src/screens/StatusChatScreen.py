@@ -76,6 +76,7 @@ class ChatComponents(Enum):
 
 class ChatStickerPopup(Enum):
     STICKERS_POPUP_GET_STICKERS_BUTTON = "chat_StickersPopup_GetStickers_Button"
+    STICKERS_POPUP_RETRY_BUTTON = "chat_StickersPopup_Retry_Button"
     STICKERS_POPUP_MARKET_GRID_VIEW = "chat_StickersPopup_StickerMarket_GridView"
     STICKERS_POPUP_MARKET_GRID_VIEW_DELEGATE_ITEM_1 = "chat_StickersPopup_StickerMarket_DelegateItem_1"
     STICKERS_POPUP_MARKET_INSTALL_BUTTON = "chat_StickersPopup_StickerMarket_Install_Button"
@@ -272,9 +273,25 @@ class StatusChatScreen:
         click_obj_by_name(ChatStickerPopup.STICKERS_POPUP_GET_STICKERS_BUTTON.value)
         
         # Wait for grid view to be loaded
-        loaded, grid_view = is_loaded_visible_and_enabled(ChatStickerPopup.STICKERS_POPUP_MARKET_GRID_VIEW.value)
-        if (not loaded):
-            verify_failure("Sticker market grid view is not loaded")
+        grid_view_displayed, grid_view = is_loaded_visible_and_enabled(ChatStickerPopup.STICKERS_POPUP_MARKET_GRID_VIEW.value)
+        verify(grid_view_displayed, "Sticker market grid view is not loaded")
+        
+        # Stickers may not be loaded, retry to load them
+        stickers_not_loaded = is_displayed(ChatStickerPopup.STICKERS_POPUP_RETRY_BUTTON.value)
+        if (stickers_not_loaded):
+            click_obj_by_name(ChatStickerPopup.STICKERS_POPUP_RETRY_BUTTON.value)
+        
+        # Wait for stickers to load
+        stickers_grid_displayed = is_displayed(ChatStickerPopup.STICKERS_POPUP_MARKET_GRID_VIEW_DELEGATE_ITEM_1.value)
+        
+        # In the meantime popup may be closed due to external (unknown?) reason, reopen it
+        if (not stickers_grid_displayed):
+            grid_view_displayed = is_displayed(ChatStickerPopup.STICKERS_POPUP_MARKET_GRID_VIEW.value)
+            if (not grid_view_displayed):
+                click_obj_by_name(ChatComponents.CHAT_INPUT_STICKER_BUTTON.value)
+                click_obj_by_name(ChatStickerPopup.STICKERS_POPUP_GET_STICKERS_BUTTON.value)
+                grid_view_displayed, grid_view = is_loaded_visible_and_enabled(ChatStickerPopup.STICKERS_POPUP_MARKET_GRID_VIEW.value)
+                verify(grid_view_displayed, "Sticker market grid view is not loaded")
           
         # Wait for the items in the GridView to be loaded
         verify(is_displayed(ChatStickerPopup.STICKERS_POPUP_MARKET_GRID_VIEW_DELEGATE_ITEM_1.value), "Sticker item 0 is not displayed")
