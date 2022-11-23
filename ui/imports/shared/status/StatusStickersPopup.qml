@@ -7,20 +7,36 @@ import utils 1.0
 import shared.panels 1.0
 
 import StatusQ.Core 0.1
-import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 //TODO improve this!
 import AppLayouts.Chat.stores 1.0
 
 Popup {
     id: root
+
     property var store
-    property var recentStickers: store.stickersModuleInst.recent
-    property var stickerPackList: store.stickersModuleInst.stickerPacks
+
     signal stickerSelected(string hashId, string packId, string url)
-    property int installedPacksCount: stickersModule.numInstalledStickerPacks
-    property bool stickerPacksLoaded: false
-    enabled: !!recentStickers && !!stickerPackList
+
+    QtObject {
+        id: d
+
+        // FIXME: move me to store
+        readonly property int installedPacksCount: root.store.stickersModuleInst.numInstalledStickerPacks
+        readonly property var recentStickers: root.store.stickersModuleInst.recent
+        readonly property var stickerPackList: store.stickersModuleInst.stickerPacks
+        readonly property bool stickerPacksLoaded: store.stickersModuleInst.packsLoaded
+        readonly property bool stickerPacksLoadFailed: store.stickersModuleInst.packsLoadFailed
+        readonly property bool stickerPacksLoading: !stickerPacksLoaded && !stickerPacksLoadFailed
+
+        function loadStickers() {
+            store.stickersModuleInst.loadStickers()
+        }
+    }
+
+    enabled: !!d.recentStickers && !!d.stickerPackList
     width: 360
     height: 440
     modal: false
@@ -39,30 +55,18 @@ Popup {
             color: "#22000000"
         }
     }
+
     onClosed: {
         stickerMarket.visible = false
         footerContent.visible = true
         stickersContainer.visible = true
     }
+
     Connections {
         target: mainModule
         function onOnlineStatusChanged() {
             root.close()
         }
-    }
-
-    Component.onCompleted: {
-        if (stickersModule.packsLoaded) {
-            root.setStickersReady()
-        }
-    }
-
-    function setStickersReady() {
-        root.stickerPacksLoaded = true
-        stickerPackListView.visible = true
-        loadingGrid.active = false
-        loadingStickerPackListView.model = []
-        noStickerPacks.visible = installedPacksCount === 0 || stickersModule.recent.rowCount() === 0
     }
 
     contentItem: ColumnLayout {
@@ -75,7 +79,7 @@ Popup {
             Layout.fillWidth: true
             Layout.fillHeight: true
             store: root.store
-            stickerPacks: stickerPackList
+            stickerPacks: d.stickerPackList
             packId: stickerPackListView.selectedPackId
             onInstallClicked: {
                 stickersModule.install(packId)
@@ -84,7 +88,7 @@ Popup {
             }
             onUninstallClicked: {
                 stickersModule.uninstall(packId)
-                stickerGrid.model = recentStickers
+                stickerGrid.model = d.recentStickers
                 btnHistory.clicked()
             }
             onBackClicked: {
@@ -95,9 +99,9 @@ Popup {
 
             Loader {
                 id: marketLoader
-                active: !root.stickerPacksLoaded
-                sourceComponent: loadingImageComponent
                 anchors.centerIn: parent
+                active: d.stickerPacksLoading
+                sourceComponent: loadingImageComponent
             }
         }
 
@@ -114,7 +118,7 @@ Popup {
             Item {
                 id: noStickerPacks
                 anchors.fill: parent
-                visible: installedPacksCount == 0
+                visible: d.installedPacksCount == 0 || stickersModule.recent.rowCount() === 0
 
                 Image {
                     id: imgNoStickers
@@ -136,7 +140,7 @@ Popup {
 
                     StyledText {
                         id: lblNoStickersYet
-                        visible: root.installedPacksCount === 0
+                        visible: d.installedPacksCount === 0
                         anchors.fill: parent
                         font.pixelSize: 15
                         text: qsTr("You don't have any stickers yet")
@@ -155,7 +159,7 @@ Popup {
                     }
                 }
 
-                StatusQControls.StatusButton {
+                StatusButton {
                     objectName: "stickersPopupGetStickersButton"
                     visible: lblNoStickersYet.visible
                     text: qsTr("Get Stickers")
@@ -172,14 +176,13 @@ Popup {
             StatusStickerList {
                 id: stickerGrid
                 objectName: "statusStickerPopupStickerGrid"
-                model: recentStickers
+                model: d.recentStickers
                 packId: stickerPackListView.selectedPackId
                 onStickerClicked: {
                     root.stickerSelected(hash, packId, url)
                     root.close()
                 }
             }
-
 
             Component {
                 id: loadingImageComponent
@@ -191,7 +194,7 @@ Popup {
 
             Loader {
                 id: loadingGrid
-                active: stickersModule.recent.rowCount() === 0
+                active: d.stickerPacksLoading
                 sourceComponent: loadingImageComponent
                 anchors.centerIn: parent
             }
@@ -204,14 +207,14 @@ Popup {
             rightPadding: Style.current.padding / 2
             spacing: Style.current.padding / 2
 
-            StatusQControls.StatusFlatRoundButton {
+            StatusFlatRoundButton {
                 id: btnAddStickerPack
                 implicitHeight: 40
                 implicitWidth: 24
                 icon.name: "add"
-                type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
+                type: StatusFlatRoundButton.Type.Tertiary
                 color: "transparent"
-                state: root.stickerPacksLoaded ? "default" : "pending"
+                state: d.stickerPacksLoading ? "default" : "pending"
                 onClicked: {
                     stickersContainer.visible = false
                     stickerMarket.visible = true
@@ -219,14 +222,14 @@ Popup {
                 }
             }
 
-            StatusQControls.StatusTabBarIconButton {
+            StatusTabBarIconButton {
                 id: btnHistory
                 icon.name: "time"
                 highlighted: true
                 onClicked: {
                     highlighted = true
                     stickerPackListView.selectedPackId = -1
-                    stickerGrid.model = recentStickers
+                    stickerGrid.model = d.recentStickers
                 }
             }
 
@@ -242,7 +245,8 @@ Popup {
                     Repeater {
                         id: stickerPackListView
                         property int selectedPackId: -1
-                        model: stickerPackList
+                        model: d.stickerPackList
+                        visible: d.stickerPacksLoaded
 
                         delegate: StatusStickerPackIconWithIndicator {
                             id: packIconWithIndicator
@@ -262,7 +266,7 @@ Popup {
                     }
                     Repeater {
                         id: loadingStickerPackListView
-                        model: new Array(7)
+                        model: d.stickerPacksLoading ? 7 : 0
 
                         delegate: Rectangle {
                             width: 24
@@ -278,14 +282,6 @@ Popup {
                     }
                 }
             }
-        }
-    }
-    Connections {
-        id: loadedConnection
-        target: stickersModule
-        onStickerPacksLoaded: {
-            root.setStickersReady()
-            loadedConnection.enabled = false
         }
     }
 }
