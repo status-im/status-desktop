@@ -14,10 +14,12 @@ Feature: Password strength validation including UI pixel-perfect validation
     ** given A first time user lands on the status desktop and generates new key
     ** and the user inputs username "tester123"
 
+    #Since there is only 1 scenario it would be better to have the background steps as part of the scenario, or at least within the feature.
+
     Scenario Outline: As a user I want to see the strength of the password
-        Given the user clears input "onboarding_newPsw_Input"
-		When the user inputs the following "<password>" with ui-component "onboarding_newPsw_Input"
-		Then the password strength indicator is "<strength>"
+      Given the user clears password field
+  		When the user enters "<password>" into the password field
+  		Then the password strength indicator is "<strength>"
 
 		Examples:
 	      | password   | strength                          |

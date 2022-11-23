@@ -27,7 +27,7 @@ Feature: Status Desktop Sign Up
     Given A first time user lands on the status desktop and navigates to import seed phrase
     When the user inputs the seed phrase "<seed>"
     And the user clicks on the following ui-component "seedPhraseView_Submit_Button"
-    Given the user signs up with username "tester123" and password "TesTEr16843/!@00"
+    And the user signs up with username "tester123" and password "TesTEr16843/!@00"
     Then the user lands on the signed in app
     And the user is online
 

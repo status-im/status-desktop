@@ -10,77 +10,43 @@ Feature: Status Desktop Sign Up, negative cases
    [Cleanup]
    ** the user navigates to first onboarding page
 
-  Scenario Outline: The user cannot sign up with wrong username format
-    Given the user clears input "onboarding_DiplayName_Input"
-    When the user inputs the following "<username>" with ui-component "onboarding_DiplayName_Input"
-    Then the following ui-component "onboarding_DetailsView_NextButton" is not enabled
+  #Consider passing examples in a datatable to cut overhead
+  Scenario Outline: Entering a <reason> username
+    Given the user clears the display name field
+    When the user enters "<username>" into the display name field
+    Then the Next button is disabled
 
     Examples:
-      | username |
-      | Athl     |
-      | Gra      |
-      | tester3@ |
+      | username | reason       |
+      |          | empty        |
+      | 1234     | 1 char short |
+      | 1234!    | invalid char |
 
-  Scenario Outline: The user cannot sign up with wrong password format in both new password and confirmation input
-   Given the user inputs username "<username>"
-    When the user inputs the following "<wrongpassword>" with ui-component "onboarding_newPsw_Input"
-    And the user inputs the following "<wrongpassword>" with ui-component "onboarding_confirmPsw_Input"
-    Then the following ui-component "onboarding_create_password_button" is not enabled
 
-    Examples:
-      | username  | wrongpassword |
-      | tester124 | badP          |
+  Scenario Outline: <reason> password creation
+  Given the user inputs username "tester123"
+   When "<password-1>" is entered into the first password field
+   And "<password-2>" is entered into the second password field
+   Then the create password button is disabled
 
-  Scenario Outline: The user cannot sign up with right password format in new password input but incorrect in confirmation password input
-    Given the user inputs username "<username>"
-    And the user inputs the following "<password>" with ui-component "onboarding_newPsw_Input"
-    When the user inputs the following "<wrongpassword>" with ui-component "onboarding_confirmPsw_Input"
-    Then the following ui-component "onboarding_create_password_button" is not enabled
+   Examples:
+   | password-1       | password-2             | button-state | reason                     |
+   |                  |                        | disabled     | empty                      |
+   | 1234567890       |                        | disabled     | valid/empty                |
+   |                  | 1234567890             | disabled     | empty/valid                |
+   | 123456789        | 123456789              | disabled     | 1 char short               |
+   | TesTEr16843/!@01 | 1234567890             | disabled     | mismatched                 |
+  # | TesTEr16843/!@01 | TesTEr16843/!@01       | enabled      | matching valid passwords   |
 
-    Examples:
-      | username  | wrongpassword | password         |
-      | tester124 | bad2!s        | TesTEr16843/!@01 |
 
-  Scenario Outline: The user cannot sign up with incorrect confirmation-again password
-    Given the user inputs username "<username>"
-    And the user inputs the following "<password>" with ui-component "onboarding_newPsw_Input"
-    And the user inputs the following "<password>" with ui-component "onboarding_confirmPsw_Input"
-    And the user clicks on the following ui-component "onboarding_create_password_button"
-    When the user inputs the following "<wrongpassword>" with ui-component "onboarding_confirmPswAgain_Input"
-    Then the following ui-component "onboarding_finalise_password_button" is not enabled
+  Scenario Outline: Invalid confirmation-again password
+    Given the user inputs username "tester123"
+    When "<password>" is entered into the first password field
+    And "<password>" is entered into the second password field
+    And the create password button is clicked
+    When "<wrongpassword>" is entered into the third password field
+    Then the finalise password button is disabled
 
     Examples:
       | username  | wrongpassword   | password         |
       | tester123 | TesTEr16843/!@) | TesTEr16843/!@01 |
-
-  Scenario Outline: The user cannot finish Sign Up and Sign In process with wrong password format in both new password and confirmation input
-    Given the user inputs username "<username>"
-    When the user inputs the following "<wrongpassword>" with ui-component "onboarding_newPsw_Input"
-    And the user inputs the following "<wrongpassword>" with ui-component "onboarding_confirmPsw_Input"
-    Then the following ui-component "onboarding_create_password_button" is not enabled
-
-    Examples:
-      | username  | wrongpassword   |
-      | tester123 | Invalid34       |
-
-  Scenario Outline: The user cannot finish Sign Up and Sign In process with right password format in new password input but incorrect in confirmation password input
-    Given the user inputs username "<username>"
-    And the user inputs the following "<password>" with ui-component "onboarding_newPsw_Input"
-    When the user inputs the following "<wrongpassword>" with ui-component "onboarding_confirmPsw_Input"
-    Then the following ui-component "onboarding_create_password_button" is not enabled
-
-    Examples:
-      | username  | wrongpassword   | password         |
-      | tester123 | Invalid34       | TesTEr16843/!@00 |
-
-  Scenario Outline: The user cannot finish Sign Up and Sign In process with incorrect confirmation-again password
-    Given the user inputs username "<username>"
-    And the user inputs the following "<password>" with ui-component "onboarding_newPsw_Input"
-    And the user inputs the following "<password>" with ui-component "onboarding_confirmPsw_Input"
-    And the user clicks on the following ui-component "onboarding_create_password_button"
-    When the user inputs the following "<wrongpassword>" with ui-component "onboarding_confirmPswAgain_Input"
-    Then the following ui-component "onboarding_finalise_password_button" is not enabled
-
-    Examples:
-      | username  | wrongpassword   | password         |
-      | tester123 | Invalid34       | TesTEr16843/!@00 |

@@ -7,9 +7,9 @@ Feature: Status Desktop Sign Up with seed phrase, negative cases
   The feature start sequence follows the global one (setup on global `bdd_hooks`): No additional steps
 
   Scenario: User signs up with wrong imported seed phrase
-
     Given A first time user lands on the status desktop and navigates to import seed phrase
     When the user inputs the seed phrase "truth gold urban vital rose market legal release border gospel leave potato"
-    And the user clicks on the following ui-component "seedPhraseView_Submit_Button"
-    Then the following ui-component "seedPhraseView_Submit_Button" is not enabled
+    And submit seed phrase button is clicked
+    Then the submit seed phrase button is disabled
     And the invalid seed text is visible
+# Confirm if it is possible to test click on a disabled component.
