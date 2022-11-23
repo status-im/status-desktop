@@ -194,14 +194,13 @@ class StatusWalletScreen:
         time.sleep(1)
         type(SendPopup.AMOUNT_INPUT.value, amount)
 
-        if token != Tokens.ETH.value:
-            click_obj_by_name(SendPopup.ASSET_SELECTOR.value)
-            asset_list = get_obj(SendPopup.ASSET_LIST.value)
-            for index in range(asset_list.count):
-                tokenObj = asset_list.itemAtIndex(index)
-                if(not squish.isNull(tokenObj) and tokenObj.objectName == "AssetSelector_ItemDelegate_" + token):
-                    click_obj(asset_list.itemAtIndex(index))
-                    break
+        click_obj_by_name(SendPopup.ASSET_SELECTOR.value)
+        asset_list = get_obj(SendPopup.ASSET_LIST.value)
+        for index in range(asset_list.count):
+            tokenObj = asset_list.itemAtIndex(index)
+            if(not squish.isNull(tokenObj) and tokenObj.objectName == "AssetSelector_ItemDelegate_" + token):
+                click_obj(asset_list.itemAtIndex(index))
+                break
         
         click_obj_by_name(SendPopup.MY_ACCOUNTS_TAB.value)
         

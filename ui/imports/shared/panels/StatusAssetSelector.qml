@@ -29,13 +29,14 @@ Item {
 
     // Define this in the usage to get balance in currency selected by user
     property var getCurrencyBalanceString: function (currencyBalance) { return "" }
+    property string placeholderText
 
     function resetInternal() {
         assets = null
         selectedAsset = null
     }
 
-    implicitWidth: 106
+    implicitWidth: comboBox.width
     implicitHeight: comboBox.implicitHeight
 
     onSelectedAssetChanged: {
@@ -59,7 +60,7 @@ Item {
     StatusComboBox {
         id: comboBox
         objectName: "assetSelectorButton"
-        width: parent.width
+        width: control.width
         height: parent.height
 
         control.padding: 4
@@ -86,31 +87,38 @@ Item {
             border.width: 1
             border.color: comboBox.control.hovered ? Theme.palette.primaryColor2 : Theme.palette.directColor8
             radius: 16
+            width: rowLayout.width
+            implicitHeight: 48
         }
 
         contentItem: RowLayout {
+            id: rowLayout
             spacing: 8
             StatusBaseText {
-                Layout.maximumWidth: 50
                 Layout.leftMargin: 8
                 Layout.alignment: Qt.AlignVCenter
                 font.pixelSize: 15
                 elide: Text.ElideRight
                 verticalAlignment: Text.AlignVCenter
-                color: Theme.palette.directColor1
+                color: !!root.selectedAsset ? Theme.palette.directColor1: Theme.palette.baseColor1
                 font.weight: Font.Medium
-                text: d.text
+                text: !!root.selectedAsset ? d.text : placeholderText
             }
             StatusRoundedImage {
                 Layout.preferredWidth: 40
                 Layout.preferredHeight: 40
                 Layout.alignment: Qt.AlignVCenter
+                visible: !!d.iconSource
                 image.source: d.iconSource
                 image.onStatusChanged: {
                     if (image.status === Image.Error) {
                         image.source = defaultToken
                     }
                 }
+            }
+            Item {
+                width: 8
+                height: 0
             }
         }
 
@@ -122,16 +130,14 @@ Item {
             padding: 16
             objectName: "AssetSelector_ItemDelegate_" + symbol
             onClicked: {
-                // TODO: move this out of StatusQ, this involves dependency on BE code
                 // WARNING: Wrong ComboBox value processing. Check `StatusAccountSelector` for more info.
                 root.userSelectedToken = symbol
                 root.selectedAsset = {name: name, symbol: symbol, totalBalance: totalBalance, totalCurrencyBalance: totalCurrencyBalance, balances: balances, decimals: decimals}
             }
 
-            // TODO: move this out of StatusQ, this involves dependency on BE code
             // WARNING: Wrong ComboBox value processing. Check `StatusAccountSelector` for more info.
             Component.onCompleted: {
-                if ((userSelectedToken === "" && index === 0) || symbol === userSelectedToken)
+                if (symbol === userSelectedToken)
                     root.selectedAsset = { name: name, symbol: symbol, totalBalance: totalBalance, totalCurrencyBalance: totalCurrencyBalance, balances: balances, decimals: decimals}
             }
 

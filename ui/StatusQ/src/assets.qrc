@@ -10380,5 +10380,6 @@
         <file>assets/img/icons/unfavourite.svg</file>
         <file>assets/img/icons/youtube.svg</file>
         <file>assets/twemoji/LICENSE</file>
+        <file>assets/img/icons/bridge.svg</file>
     </qresource>
 </RCC>

@@ -54,6 +54,16 @@ Rectangle {
                 Global.openPopup(buySellModal);
             }
         }
+
+        StatusFlatButton {
+            id: bridgeBtn
+            icon.name: "bridge"
+            text: qsTr("Bridge")
+            onClicked: function () {
+                sendModal.isBridgeTx = true
+                sendModal.open()
+            }
+        }
     }
 
     Component {

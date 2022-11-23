@@ -19,7 +19,7 @@ import "../views"
 Item {
     id: root
     clip: true
-    implicitHeight: accountSelectionTabBar.height + stackLayout.height + Style.current.bigPadding
+    implicitHeight: visible ? accountSelectionTabBar.height + stackLayout.height + Style.current.bigPadding: 0
 
     property var store
 
@@ -33,7 +33,6 @@ Item {
     StatusTabBar {
         id: accountSelectionTabBar
         anchors.top: parent.top
-        anchors.topMargin: 20
         anchors.left: parent.left
         width: parent.width
         

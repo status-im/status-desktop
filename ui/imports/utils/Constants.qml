@@ -695,6 +695,7 @@ QtObject {
         ENSRegister,
         ENSRelease,
         ENSSetPubKey,
-        StickersBuy
+        StickersBuy,
+        Bridge
     }
 }

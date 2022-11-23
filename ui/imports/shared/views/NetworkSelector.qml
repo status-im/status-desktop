@@ -14,7 +14,7 @@ import "../controls"
 Item {
     id: root
 
-    implicitHeight: visible ? tabBar.height + stackLayout.height + 2* Style.current.xlPadding : 0
+    implicitHeight: visible ? tabBar.height + stackLayout.height + Style.current.xlPadding : 0
 
     property var store
     property var selectedAccount
@@ -29,6 +29,7 @@ Item {
                                  (tabBar.currentIndex === 2) ?
                                      customNetworkRoutingPage.errorMode: false
     property bool interactive: true
+    property bool isBridgeTx: false
 
     signal reCalculateSuggestedRoute()
 
@@ -41,7 +42,6 @@ Item {
     StatusSwitchTabBar {
         id: tabBar
         anchors.top: parent.top
-        anchors.topMargin: Style.current.bigPadding
         anchors.horizontalCenter: parent.horizontalCenter
         StatusSwitchTabButton {
             text: qsTr("Simple")
@@ -76,10 +76,15 @@ Item {
                 anchors.margins: Style.current.padding
                 width: stackLayout.width  - Style.current.bigPadding
                 bestRoutes: root.bestRoutes
+                isBridgeTx: root.isBridgeTx
                 amountToSend: root.amountToSend
                 isLoading: root.isLoading
+                store: root.store
                 weiToEth: function(wei) {
-                return "%1 %2".arg(LocaleUtils.numberToLocaleString(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)))).arg(selectedAsset.symbol)
+                    return "%1 %2".arg(LocaleUtils.numberToLocaleString(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)))).arg(selectedAsset.symbol)
+                }
+                reCalculateSuggestedRoute: function() {
+                    root.reCalculateSuggestedRoute()
                 }
             }
         }
