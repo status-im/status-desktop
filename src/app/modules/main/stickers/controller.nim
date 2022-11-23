@@ -82,6 +82,9 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_ALL_STICKER_PACKS_LOADED) do(e: Args):
     self.delegate.allPacksLoaded()
 
+  self.events.on(SIGNAL_ALL_STICKER_PACKS_LOAD_FAILED) do(e: Args):
+    self.delegate.allPacksLoadFailed()
+
   self.events.on(SIGNAL_STICKER_GAS_ESTIMATED) do(e: Args):
     let args = StickerGasEstimatedArgs(e)
     self.delegate.gasEstimateReturned(args.estimate, args.uuid)

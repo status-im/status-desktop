@@ -11,18 +11,18 @@ type
     chainId*: int
     running*: ByteAddress # pointer to threadpool's `.running` Atomic[bool]
 
-proc getMarketStickerPacks*(running: var Atomic[bool], chainId: int): Table[string, StickerPackDto] =
-  result = initTable[string, StickerPackDto]()
+proc getMarketStickerPacks*(running: var Atomic[bool], chainId: int): 
+    tuple[stickers: Table[string, StickerPackDto], error: string] =
+  result = (initTable[string, StickerPackDto](), "")
   try:
     let marketResponse = status_stickers.market(chainId)
     if marketResponse.result.kind != JArray: return
     for currItem in marketResponse.result.items():
       let stickerPack = currItem.toStickerPackDto()
-      result[stickerPack.id] = stickerPack
+      result.stickers[stickerPack.id] = stickerPack
   except RpcException:
     error "Error in getMarketStickerPacks", message = getCurrentExceptionMsg()
-    result = initTable[string, StickerPackDto]()
-
+    result.error = getCurrentExceptionMsg()
 
 # The pragmas `{.gcsafe, nimcall.}` in this context do not force the compiler
 # to accept unsafe code, rather they work in conjunction with the proc
@@ -45,8 +45,9 @@ const estimateTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
 const obtainMarketStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[ObtainMarketStickerPacksTaskArg](argEncoded)
   var running = cast[ptr Atomic[bool]](arg.running)
-  let marketStickerPacks = getMarketStickerPacks(running[], arg.chainId)
+  let (marketStickerPacks, error) = getMarketStickerPacks(running[], arg.chainId)
   var packs: seq[StickerPackDto] = @[]
   for packId, stickerPack in marketStickerPacks.pairs:
     packs.add(stickerPack)
-  arg.finish(%*(packs))
+  let tpl: tuple[packs: seq[StickerPackDto], error: string] = (packs, error)
+  arg.finish(tpl)

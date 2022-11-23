@@ -40,6 +40,9 @@ method getNumInstalledStickerPacks*(self: AccessInterface): int {.base.} =
 method allPacksLoaded*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method allPacksLoadFailed*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method estimate*(self: AccessInterface, packId: string, address: string, price: string, uuid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

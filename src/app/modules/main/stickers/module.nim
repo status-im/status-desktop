@@ -158,6 +158,9 @@ method clearStickerPacks*(self: Module) =
 method allPacksLoaded*(self: Module) =
   self.view.allPacksLoaded()
 
+method allPacksLoadFailed*(self: Module) =
+  self.view.allPacksLoadFailed()
+
 method populateInstalledStickerPacks*(self: Module, stickers: Table[string, StickerPackDto]) =
   var stickerPackItems: seq[PackItem] = @[]
   for stickerPack in stickers.values:
