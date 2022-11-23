@@ -54,8 +54,8 @@ type
 # Signals which may be emitted by this service:
 const SIGNAL_STICKER_PACK_LOADED* = "stickerPackLoaded"
 const SIGNAL_ALL_STICKER_PACKS_LOADED* = "allStickerPacksLoaded"
+const SIGNAL_ALL_STICKER_PACKS_LOAD_FAILED* = "allStickerPacksLoadFailed"
 const SIGNAL_STICKER_GAS_ESTIMATED* = "stickerGasEstimated"
-const SIGNAL_INSTALLED_STICKER_PACKS_LOADED* = "installedStickerPacksLoaded"
 const SIGNAL_STICKER_TRANSACTION_CONFIRMED* = "stickerTransactionConfirmed"
 const SIGNAL_STICKER_TRANSACTION_REVERTED* = "stickerTransactionReverted"
 
@@ -245,8 +245,14 @@ QtObject:
 
     result = (response: $response, success: success)
 
-  proc setMarketStickerPacks*(self: Service, availableStickersJSON: string) {.slot.} =
-    let availableStickers = JSON.decode($availableStickersJSON, seq[StickerPackDto])
+  proc setMarketStickerPacks*(self: Service, strickersJSON: string) {.slot.} =
+    let stickersResult = Json.decode(strickersJSON, tuple[packs: seq[StickerPackDto], error: string])
+
+    if stickersResult.error != "":
+      self.events.emit(SIGNAL_ALL_STICKER_PACKS_LOAD_FAILED, Args())
+      return
+
+    let availableStickers = stickersResult.packs
 
     for stickerPack in availableStickers:
       if self.marketStickerPacks.contains(stickerPack.id): continue
@@ -258,7 +264,6 @@ QtObject:
         isBought: isBought,
         isPending: false
       ))
-
 
     let chainId = self.networkService.getNetworkForStickers().chainId
     let pendingStickerPacksResponse = status_stickers.pending() 

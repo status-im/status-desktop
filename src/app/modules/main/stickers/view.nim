@@ -9,6 +9,7 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       packsLoaded*: bool
+      packsLoadFailed*: bool
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
       signingPhrase: string
@@ -66,6 +67,8 @@ QtObject:
 
   proc stickerPacksLoaded*(self: View) {.signal.}
 
+  proc packsLoadFailedChanged*(self: View) {.signal.}
+
   proc installedStickerPacksUpdated*(self: View) {.signal.}
 
   proc clearStickerPacks*(self: View) =
@@ -110,8 +113,22 @@ QtObject:
 
   proc allPacksLoaded*(self: View) =
     self.packsLoaded = true
+    self.packsLoadFailed = false
+
     self.stickerPacksLoaded()
+    self.packsLoadFailedChanged()
     self.installedStickerPacksUpdated()
+
+  proc allPacksLoadFailed*(self: View) =
+    self.packsLoadFailed = true
+    self.packsLoadFailedChanged()
+
+  proc getPacksLoadFailed(self: View): bool {.slot.} =
+    self.packsLoadFailed
+
+  QtProperty[bool] packsLoadFailed:
+    read = getPacksLoadFailed
+    notify = packsLoadFailedChanged
 
   proc send*(self: View, channelId: string, hash: string, replyTo: string, pack: string, url: string) {.slot.} =
     let sticker = initItem(hash, pack, url)
