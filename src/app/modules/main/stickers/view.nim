@@ -130,6 +130,14 @@ QtObject:
     read = getPacksLoadFailed
     notify = packsLoadFailedChanged
 
+  proc loadStickers(self: View) {.slot.} =
+    self.packsLoaded = false
+    self.packsLoadFailed = false
+    self.stickerPacksLoaded()
+    self.packsLoadFailedChanged()
+
+    self.delegate.obtainMarketStickerPacks()
+
   proc send*(self: View, channelId: string, hash: string, replyTo: string, pack: string, url: string) {.slot.} =
     let sticker = initItem(hash, pack, url)
     self.addRecentStickerToList(sticker)
