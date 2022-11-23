@@ -1,4 +1,4 @@
-library 'status-jenkins-lib@v1.6.1'
+library 'status-jenkins-lib@v1.6.3'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -43,7 +43,7 @@ pipeline {
   }
 
   environment {
-    TARGET = 'e2e'
+    TARGET = 'linux-e2e'
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Disable colors in Nim compiler logs */
