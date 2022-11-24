@@ -14,19 +14,17 @@ type MailserverRequestExpiredSignal* = ref object of Signal
   # TODO
 
 type HistoryRequestStartedSignal* = ref object of Signal
-  requestId*: string
   numBatches*: int
 
-type HistoryRequestBatchProcessedSignal* = ref object of Signal
+type HistoryRequestSuccessSignal* = ref object of Signal
   requestId*: string
-  batchIndex*: int
-  numBatches*: int
+  peerId*: string
 
 type HistoryRequestCompletedSignal* = ref object of Signal
-  requestId*: string
 
 type HistoryRequestFailedSignal* = ref object of Signal
   requestId*: string
+  peerId*: string
   errorMessage*: string
   error*: bool
 
@@ -56,25 +54,23 @@ proc fromEvent*(T: type MailserverRequestExpiredSignal, jsonSignal: JsonNode): M
 proc fromEvent*(T: type HistoryRequestStartedSignal, jsonSignal: JsonNode): HistoryRequestStartedSignal =
   result = HistoryRequestStartedSignal()
   result.signalType = SignalType.HistoryRequestStarted
-  result.requestId = jsonSignal["event"]{"requestId"}.getStr()
   result.numBatches = jsonSIgnal["event"]{"numBatches"}.getInt()
 
-proc fromEvent*(T: type HistoryRequestBatchProcessedSignal, jsonSignal: JsonNode): HistoryRequestBatchProcessedSignal =
-  result = HistoryRequestBatchProcessedSignal()
-  result.signalType = SignalType.HistoryRequestBatchProcessed
+proc fromEvent*(T: type HistoryRequestSuccessSignal, jsonSignal: JsonNode): HistoryRequestSuccessSignal =
+  result = HistoryRequestSuccessSignal()
+  result.signalType = SignalType.HistoryRequestSuccess
   result.requestId = jsonSignal["event"]{"requestId"}.getStr()
-  result.batchIndex = jsonSIgnal["event"]{"batchIndex"}.getInt()
-  result.numBatches = jsonSIgnal["event"]{"numBatches"}.getInt()
+  result.peerId = jsonSignal["event"]{"peerId"}.getStr()
 
 proc fromEvent*(T: type HistoryRequestCompletedSignal, jsonSignal: JsonNode): HistoryRequestCompletedSignal =
   result = HistoryRequestCompletedSignal()
   result.signalType = SignalType.HistoryRequestCompleted
-  result.requestId = jsonSignal["event"]{"requestId"}.getStr()
 
 proc fromEvent*(T: type HistoryRequestFailedSignal, jsonSignal: JsonNode): HistoryRequestFailedSignal =
   result = HistoryRequestFailedSignal()
-  result.signalType = SignalType.HistoryRequestStarted
+  result.signalType = SignalType.HistoryRequestFailed
   result.requestId = jsonSignal["event"]{"requestId"}.getStr()
+  result.peerId = jsonSignal["event"]{"peerId"}.getStr()
   if jsonSignal["event"].kind != JNull:
     result.errorMessage = jsonSignal["event"]{"errorMessage"}.getStr()
     result.error = result.errorMessage != ""
