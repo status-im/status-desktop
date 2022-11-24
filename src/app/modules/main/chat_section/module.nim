@@ -129,8 +129,9 @@ proc buildChatSectionUI(
   for chatDto in channelGroup.chats:
     if (chatDto.categoryId != ""):
       continue
-    let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
-    let notificationsCount = chatDto.unviewedMentionsCount
+
+    let hasNotification = not chatDto.muted and (chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0)
+    let notificationsCount = if (chatDto.muted): 0 else: chatDto.unviewedMentionsCount
 
     var chatName = chatDto.name
     var chatImage = ""
@@ -703,9 +704,17 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
   self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, trustStatus)
 
 method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string, 
-  chatTypeMsgBelongsTo: ChatType, lastMessageTimestamp: int, unviewedMessagesCount: int, unviewedMentionsCount: int, message: MessageDto) =
+    chatTypeMsgBelongsTo: ChatType, lastMessageTimestamp: int, unviewedMessagesCount: int, unviewedMentionsCount: int,
+    message: MessageDto) =
   self.updateLastMessageTimestamp(chatIdMsgBelongsTo, lastMessageTimestamp)
 
+  let chatDetails = self.controller.getChatDetails(chatIdMsgBelongsTo)
+
+  if (chatDetails.muted):
+    # No need to update the badge nor send a notification
+    return
+
+  # Badge notification
   let messageBelongsToActiveSection = sectionIdMsgBelongsTo == self.controller.getMySectionId() and 
     self.controller.getMySectionId() == self.delegate.getActiveSectionId()
   let messageBelongsToActiveChat = self.controller.getActiveChatId() == chatIdMsgBelongsTo
@@ -723,7 +732,6 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let renderedMessageText = self.controller.getRenderedText(message.parsedText)
   let plainText = singletonInstance.utils.plainText(renderedMessageText)
-  let chatDetails = self.controller.getChatDetails(chatIdMsgBelongsTo)
   var notificationTitle = contactDetails.defaultDisplayName
 
   case chatDetails.chatType:
@@ -743,8 +751,8 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
       
   singletonInstance.globalEvents.showMessageNotification(notificationTitle, plainText, sectionIdMsgBelongsTo,
     self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat, 
-    message.id, notificationType.int, 
-    chatTypeMsgBelongsTo == ChatType.OneToOne, chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
+    message.id, notificationType.int, chatTypeMsgBelongsTo == ChatType.OneToOne,
+    chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
 
 method onMeMentionedInEditedMessage*(self: Module, chatId: string, editedMessage : MessageDto) =
   if((editedMessage.communityId.len == 0 and
