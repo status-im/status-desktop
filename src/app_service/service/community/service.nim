@@ -841,6 +841,10 @@ QtObject:
         community.settings = communitySettings
         # add this to the joinedCommunities list and communitiesSettings
         self.joinedCommunities[community.id] = community
+        # add new community channel group and chats to chat service
+        self.chatService.updateOrAddChannelGroup(community.toChannelGroupDto())
+        for chat in community.chats: 
+          self.chatService.updateOrAddChat(chat)
 
         self.events.emit(SIGNAL_COMMUNITY_CREATED, CommunityArgs(community: community))
     except Exception as e:
