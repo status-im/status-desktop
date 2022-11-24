@@ -88,9 +88,9 @@ def step(context, obj):
 ###########################################################################
 
 def the_user_restarts_the_app(context: any):
-    init_steps.waitFor(lambda: init_steps.currentApplicationContext().detach(), 500)
+    waitFor(lambda: currentApplicationContext().detach(), 500)
     time.sleep(5)
-    init_steps.startApplication(context.userData["aut_name"])
+    startApplication(context.userData["aut_name"])
     
 def the_user_joins_chat_room(room: str):
     init_steps.the_user_joins_chat_room(room)
