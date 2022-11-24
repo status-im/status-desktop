@@ -23,6 +23,7 @@ Item {
     property string headerButtonText: ""
     property int headerWidth: 0
     property string previousPageName: ""
+    property bool saveChangesButtonEnabled: !!root.contentItem && !!root.contentItem.saveChangesButtonEnabled
 
     readonly property Item contentItem: contentLoader.item
     readonly property size settingsDirtyToastMessageImplicitSize: 
@@ -96,7 +97,7 @@ Item {
         }
         active: root.dirty
         flickable: root.dirty ? root.contentItem : null
-        saveChangesButtonEnabled: !!root.contentItem && !!root.contentItem.saveChangesButtonEnabled
+        saveChangesButtonEnabled: root.saveChangesButtonEnabled
         onResetChangesClicked: root.resetChangesClicked()
         onSaveChangesClicked: root.saveChangesClicked()
     }

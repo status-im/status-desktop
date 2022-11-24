@@ -7,6 +7,7 @@ import StatusQ.Controls 0.1
 
 import SortFilterProxyModel 0.2
 import utils 1.0
+import shared.popups 1.0
 
 import AppLayouts.Chat.controls.community 1.0
 
@@ -16,8 +17,21 @@ StatusScrollView {
     property var store
     property int viewWidth: 560 // by design
 
+    signal editPermission(int index, var holidings, var permission, var channels, bool isPrivate)
+    signal removePermission(int index)
+
+    QtObject {
+        id: d
+        property int permissionIndexToRemove
+    }
+
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height + mainLayout.anchors.topMargin
+
+    onRemovePermission: {
+        d.permissionIndexToRemove = index
+        Global.openPopup(deletePopup)
+    }
 
     ColumnLayout {
         id: mainLayout
@@ -54,10 +68,24 @@ StatusScrollView {
                 }
                 isPrivate: model.isPrivate
 
-                onEditClicked: store.editPermission(model.index)
+                onEditClicked: root.editPermission(model.index, model.holdingsListModel, model.permissionsObjectModel, model.channelsListModel, model.isPrivate)
                 onDuplicateClicked: store.duplicatePermission(model.index)
-                onRemoveClicked: store.removePermission(model.index)
+                onRemoveClicked: root.removePermission(model.index)
             }
         }
     }
+
+    Component {
+        id: deletePopup
+        ConfirmationDialog {
+            id: declineAllDialog
+            header.title: qsTr("Sure you want to delete permission")
+            confirmationText: qsTr("If you delete this permission, any of your community members who rely on this permission will loose the access this permission gives them.")
+            onConfirmButtonClicked: {
+                store.removePermission(d.permissionIndexToRemove)
+                close()
+            }
+        }
+    }
+
 }
