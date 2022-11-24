@@ -21,11 +21,7 @@ macro(add_target name type)
 
     set_target_properties(${name} PROPERTIES CXX_STANDARD 11 AUTOMOC ON)
 
-    if(APPLE)
-        target_include_directories(${name} PUBLIC include include/Qt ${CMAKE_SOURCE_DIR}/../../bottles/hunspell/include)
-    else()
-        target_include_directories(${name} PUBLIC include include/Qt)
-    endif()
+    target_include_directories(${name} PUBLIC include include/Qt)
 
     target_link_libraries(${name} PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Network Qt5::Multimedia SortFilterProxyModel)
 
