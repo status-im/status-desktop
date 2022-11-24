@@ -38,6 +38,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+         title: "CommunityPermissionsSettingsPanel"
+         section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
