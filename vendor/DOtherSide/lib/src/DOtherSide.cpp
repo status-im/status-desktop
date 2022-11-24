@@ -75,7 +75,6 @@
 #include "DOtherSide/Status/SoundManager.h"
 #include "DOtherSide/Status/QClipboardProxy.h"
 #include "DOtherSide/Status/RXValidator.h"
-#include "DOtherSide/DosSpellchecker.h"
 
 #include <qqmlsortfilterproxymodeltypes.h>
 
@@ -86,7 +85,6 @@ void register_meta_types()
     qRegisterMetaType<QVector<int>>();
     qmlRegisterType<StatusWindow>("DotherSide", 0 , 1, "StatusWindow");
     qmlRegisterType<StatusSyntaxHighlighterHelper>("DotherSide", 0 , 1, "StatusSyntaxHighlighter");
-    qmlRegisterType<SpellChecker>("DotherSide", 0, 1, "SpellChecker");
     qmlRegisterSingletonType<QClipboardProxy>("DotherSide", 0 , 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
     qmlRegisterType<RXValidator>("DotherSide", 0, 1, "RXValidator");
     qqsfpm::registerTypes();
