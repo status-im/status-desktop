@@ -1,13 +1,14 @@
 #include "DOtherSide/Status/QClipboardProxy.h"
 
+#include <QGuiApplication>
 #include <QClipboard>
 
-QClipboardProxy::QClipboardProxy(QClipboard* c) : clipboard(c)
+QClipboardProxy::QClipboardProxy()
 {
-    QObject::connect(c, SIGNAL (dataChanged()), this, SLOT(textChanged()));
+    connect(QGuiApplication::clipboard(), &QClipboard::dataChanged, this, &QClipboardProxy::textChanged);
 }
 
 QString QClipboardProxy::text() const
 {
-    return clipboard->text();
+    return QGuiApplication::clipboard()->text();
 }
