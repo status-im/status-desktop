@@ -29,7 +29,7 @@ SplitView {
                     collectiblesModel: CollectiblesModel {}
                     channelsModel: ChannelsModel {}
 
-                    function editPermission(index) {
+                    function editPermission(index, holdings, permissions, channels, isPrivate) {
                         logs.logEvent("CommunitiesStore::editPermission - index: " + index)
                     }
 

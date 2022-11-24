@@ -235,7 +235,7 @@ Control{
                 }
                 StatusBaseText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("Remove")
+                    text: qsTr("Delete")
                     color: Theme.palette.dangerColor1
                     font.pixelSize: d.buttonTextPixelSize
                 }

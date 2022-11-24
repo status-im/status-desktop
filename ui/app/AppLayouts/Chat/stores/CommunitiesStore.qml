@@ -84,9 +84,8 @@ QtObject {
         ListElement { key: "general"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "#general"}
     }
 
-    function createPermissions(holdings, permissions, isPrivate) {
-        console.log("TODO: Create permissions - backend call - Now dummy data shown")
-        // TO BE REMOVED: It shold just be a call to the backend sharing `holdings`, `permissions`, `channels` and `isPrivate` properties.
+    function createPermission(holdings, permissions, isPrivate, channels, index = null) {
+        // TO BE REPLACED: It shold just be a call to the backend sharing `holdings`, `permissions`, `channels` and `isPrivate` properties.
         var permission = {
             isPrivate: true,
             holdingsListModel: [],
@@ -123,8 +122,16 @@ QtObject {
         // TODO: Set channels list. Now mocked data.
         permission.channelsListModel = root.channelsModel
 
-        // Add into permission model:
-        root.permissionsModel.append(permission)
+        if(index !== null) {
+            // Edit permission model:
+            console.log("TODO: Edit permissions - backend call")
+            root.permissionsModel.set(index, permission)
+        }
+        else {
+            // Add into permission model:
+            console.log("TODO: Create permissions - backend call - Now dummy data shown")
+            root.permissionsModel.append(permission)
+        }
     }
 
     function setHoldingsTextFormat(type, name, amount) {
@@ -142,15 +149,20 @@ QtObject {
         }
     }
 
-    function editPermission(index) {
-        console.log("TODO: Edit permissions - backend call")
+    function editPermission(index, holdings, permissions, channels, isPrivate) {
+        // TO BE REPLACED: Call to backend
+        createPermission(holdings, permissions, isPrivate, channels, index)
     }
 
     function duplicatePermission(index) {
+        // TO BE REPLACED: Call to backend
         console.log("TODO: Duplicate permissions - backend call")
+        const permission = root.permissionsModel.get(index)
+        createPermission(permission.holdingsListModel, permission.permissionsObjectModel, permission.isPrivate, permission.channelsListModel)
     }
 
     function removePermission(index) {
         console.log("TODO: Remove permissions - backend call")
+        root.permissionsModel.remove(index)
     }
 }

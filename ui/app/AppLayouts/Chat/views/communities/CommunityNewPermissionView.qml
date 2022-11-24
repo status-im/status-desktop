@@ -21,17 +21,156 @@ StatusScrollView {
 
     property var store
     property int viewWidth: 560 // by design
+    property bool isEditState: false
+    property bool dirty: {
+
+        let trick = d.triggerDirtyTool // Trick: Used to force the reevaluation of dirty when an item of the list is updated
+
+        // Holdings:
+        const dirtyHoldingsList = d.checkIfHoldingsDirty()
+
+        // Permissions:
+        let dirtyPermissionObj = false
+        if(root.permissionObject && d.dirtyValues.permissionObject.key !== null) {
+            dirtyPermissionObj = (d.dirtyValues.permissionObject.key !== root.permissionObject.key) ||
+                    (d.dirtyValues.permissionObject.text !== root.permissionObject.text) ||
+                    (d.dirtyValues.permissionObject.imageSource !== root.permissionObject.imageSource)
+        }
+        else {
+            dirtyPermissionObj = d.dirtyValues.permissionObject.key !== null
+        }
+
+        // TODO: Channels:
+        let dirtyChannelsList = false
+
+        return dirtyHoldingsList || dirtyPermissionObj || dirtyChannelsList || d.dirtyValues.isPrivateDirty
+    }
+    property bool saveChanges: false
+    property bool resetChanges: false
+
+    property int permissionIndex
+
+    // roles: type, key, name, amount, imageSource, operator
+    property var holdingsModel: ListModel {}
+
+    // roles: key, text, imageSource
+    property var permissionObject
+
+    // TODO roles:
+    property var channelsModel: ListModel {}
+
+    property bool isPrivate
 
     signal permissionCreated()
 
     QtObject {
         id: d
-        property bool isPrivate: false
         property int permissionType: PermissionTypes.Type.None
+        property bool triggerDirtyTool: false // Trick: Used to force the reevaluation of dirty when an item of the list is updated
+
+        property QtObject dirtyValues: QtObject {
+            property ListModel holdingsModel: ListModel {}
+            property QtObject permissionObject: QtObject {
+               property var key: null
+               property string text: ""
+               property string imageSource: ""
+            }
+            property bool isPrivateDirty: false
+
+            // TODO: Channels
+        }
+
+        function saveChanges() {
+
+            root.store.editPermission(root.permissionIndex,
+                                      d.dirtyValues.holdingsModel,
+                                      d.dirtyValues.permissionObject,
+                                      root.channelsModel,
+                                      d.dirtyValues.isPrivateDirty ? !root.isPrivate : root.isPrivate)
+        }
+
+        function loadInitValues() {
+            // Holdings:
+            d.dirtyValues.holdingsModel.clear()
+            if(root.holdingsModel) {
+                for(let i = 0; i < root.holdingsModel.count; i++) {
+                    let item = root.holdingsModel.get(i)
+                    let initItem = null
+                    if(item.shortName) {
+                        initItem =  {
+                            type: item.type,
+                            key: item.key,
+                            name: item.name,
+                            shortName: item.shortName,
+                            amount: item.amount,
+                            imageSource: item.imageSource,
+                            operator: item.operator
+                        }
+                    }
+                    else {
+                        initItem =  {
+                            type: item.type,
+                            key: item.key,
+                            name: item.name,
+                            amount: item.amount,
+                            imageSource: item.imageSource,
+                            operator: item.operator
+                        }
+                    }
+                    d.dirtyValues.holdingsModel.append(initItem)
+                }
+            }
+
+            // Permissions:
+            d.dirtyValues.permissionObject.key = root.permissionObject ? root.permissionObject.key : null
+            d.dirtyValues.permissionObject.text = root.permissionObject ? root.permissionObject.text : ""
+            d.dirtyValues.permissionObject.imageSource = root.permissionObject ? root.permissionObject.imageSource : ""
+
+            // TODO: Channels
+
+            // Is private permission
+            d.dirtyValues.isPrivateDirty = false
+        }
+
+        function checkIfHoldingsDirty() {
+            let dirty = false
+            if(root.holdingsModel) {
+                if(root.holdingsModel.count !== d.dirtyValues.holdingsModel.count) {
+                    dirty = true
+                }
+                else {
+                    // Check element by element
+                    let equals = 0
+                    for(let i = 0; i < root.holdingsModel.count; i++) {
+                        const item1 = root.holdingsModel.get(i)
+                        for(let j = 0; j < d.dirtyValues.holdingsModel.count; j++) {
+                            let item2 = d.dirtyValues.holdingsModel.get(j)
+                            // key, name, shortName, amount, operator
+                            if((item1.key === item2.key) &&
+                               (item1.name === item2.name) &&
+                               (item1.shortName === item2.shortName) &&
+                               (item1.amount === item2.amount) &&
+                               (item1.operator === item2.operator)) {
+                                equals = equals + 1
+                            }
+                        }
+                    }
+                    dirty = (equals !== root.holdingsModel.count)
+                }
+            }
+            else {
+                dirty = (d.dirtyValues.holdingsModel.count !== 0)
+            }
+            return dirty
+        }
     }
 
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
+
+    onSaveChangesChanged: if(saveChanges) d.saveChanges()
+    onResetChangesChanged: if(resetChanges)  d.loadInitValues()
+    onPermissionObjectChanged: d.loadInitValues()
 
     ColumnLayout {
         id: mainLayout
@@ -49,14 +188,9 @@ StatusScrollView {
             title: qsTr("Who holds")
             defaultItemText: qsTr("Example: 10 SNT")
 
-            // roles: type, key, name, amount, imageSource, operator
-            ListModel {
-                id: holdingsModel
-            }
-
             property int editedIndex
             itemsModel: SortFilterProxyModel {
-                sourceModel: holdingsModel
+                sourceModel: d.dirtyValues.holdingsModel
 
                 proxyRoles: ExpressionRole {
                     name: "text"
@@ -73,7 +207,7 @@ StatusScrollView {
                     const name = item.shortName ? item.shortName : item.name
                     const imageSource = item.iconSource.toString()
 
-                    holdingsModel.append({ type, key, name, amount, imageSource, operator })
+                    d.dirtyValues.holdingsModel.append({ type, key, name, amount, imageSource, operator })
                 }
 
                 onAddToken: {
@@ -95,7 +229,7 @@ StatusScrollView {
                     const name = any ? "" : customDomain
                     const icon = Style.svg("ensUsernames")
 
-                    holdingsModel.append({type: HoldingTypes.Type.Ens, key, name, amount: 1, imageSource: icon, operator })
+                    d.dirtyValues.holdingsModel.append({type: HoldingTypes.Type.Ens, key, name, amount: 1, imageSource: icon, operator })
                     dropdown.close()
                 }
 
@@ -105,7 +239,8 @@ StatusScrollView {
                     const name = modelItem.shortName ? modelItem.shortName : modelItem.name
                     const imageSource = modelItem.iconSource.toString()
 
-                    holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Token, key, name, amount, imageSource })
+                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Token, key, name, amount, imageSource })
+                    d.triggerDirtyTool = !d.triggerDirtyTool
                     dropdown.close()
                 }
 
@@ -115,7 +250,8 @@ StatusScrollView {
                     const name = modelItem.name
                     const imageSource = modelItem.iconSource.toString()
 
-                    holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Collectible, key, name, amount, imageSource })
+                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Collectible, key, name, amount, imageSource })
+                    d.triggerDirtyTool = !d.triggerDirtyTool
                     dropdown.close()
                 }
 
@@ -124,15 +260,16 @@ StatusScrollView {
                     const name = any ? "" : customDomain
                     const icon = Style.svg("ensUsernames")
 
-                    holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Ens, key, name: name, amount: 1, imageSource: icon })
+                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Ens, key, name: name, amount: 1, imageSource: icon })
+                    d.triggerDirtyTool = !d.triggerDirtyTool
                     dropdown.close()
                 }
 
                 onRemoveClicked: {
-                    holdingsModel.remove(tokensSelector.editedIndex)
+                    d.dirtyValues.holdingsModel.remove(tokensSelector.editedIndex)
 
-                    if (holdingsModel.count) {
-                        holdingsModel.set(0, { operator: OperatorsUtils.Operators.None})
+                    if (d.dirtyValues.holdingsModel && d.dirtyValues.holdingsModel.count) {
+                        d.dirtyValues.holdingsModel.set(0, { operator: OperatorsUtils.Operators.None})
                     }
 
                     dropdown.close()
@@ -144,7 +281,7 @@ StatusScrollView {
                 dropdown.x = tokensSelector.addButton.width + 4
                 dropdown.y = 0
 
-                if (holdingsModel.count === 0)
+                if (d.dirtyValues.holdingsModel && d.dirtyValues.holdingsModel.count === 0)
                     dropdown.openFlow(HoldingsDropdown.FlowType.Add)
                 else
                     dropdown.openFlow(HoldingsDropdown.FlowType.AddWithOperators)
@@ -200,20 +337,9 @@ StatusScrollView {
             useIcons: true
             title: qsTr("Is allowed to")
             defaultItemText: qsTr("Example: View and post")
+            itemsModel: d.dirtyValues.permissionObject.key ? d.dirtyValues.permissionObject : null
 
-            Binding on itemsModel {
-                when: d.permissionType !== PermissionTypes.Type.None
-                value: QtObject {
-                    id: permissionsListObjectModel
-
-                    readonly property int operator: OperatorsUtils.Operators.None
-                    property var key
-                    property string text: ""
-                    property string imageSource: ""
-                }
-            }
-
-            addButton.visible: d.permissionType === PermissionTypes.Type.None
+            addButton.visible: !root.permissionObject
 
             PermissionsDropdown {
                 id: permissionsDropdown
@@ -222,9 +348,9 @@ StatusScrollView {
 
                 onDone: {
                     d.permissionType = permissionType
-                    permissionsListObjectModel.key = permissionType
-                    permissionsListObjectModel.text = title
-                    permissionsListObjectModel.imageSource = asset
+                    d.dirtyValues.permissionObject.key = permissionType
+                    d.dirtyValues.permissionObject.text = title
+                    d.dirtyValues.permissionObject.imageSource = asset
                     permissionsDropdown.close()
                 }
             }
@@ -293,19 +419,23 @@ StatusScrollView {
                 }
             }
             StatusSwitch {
-                checked: d.isPrivate
-                onToggled: { d.isPrivate = checked }
+                checked: d.dirtyValues.isPrivateDirty ? !root.isPrivate : root.isPrivate
+                onToggled: d.dirtyValues.isPrivateDirty = (root.isPrivate !== checked)
             }
         }
         StatusButton {
+            visible: !root.isEditState
             Layout.topMargin: 24
             text: qsTr("Create permission")
-            enabled: holdingsModel.count > 0 && permissionsListObjectModel.key !== undefined
+            enabled: d.dirtyValues.holdingsModel && d.dirtyValues.holdingsModel.count > 0 && d.dirtyValues.permissionObject.key !== null
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
             onClicked: {
-                root.store.createPermissions(holdingsModel, permissionsListObjectModel, d.isPrivate)
+                root.store.createPermission(d.dirtyValues.holdingsModel,
+                                            d.dirtyValues.permissionObject,
+                                            d.dirtyValues.isPrivateDirty ? !root.isPrivate : root.isPrivate,
+                                            root.channelsModel)
                 root.permissionCreated()
             }
         }

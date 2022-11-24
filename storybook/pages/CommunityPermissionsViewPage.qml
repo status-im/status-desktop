@@ -27,18 +27,13 @@ SplitView {
                 store: CommunitiesStore {
                     permissionsModel: PermissionsModel { id: mockedModel }
 
-                    function editPermission(index) {
-                        logs.logEvent("CommunitiesStore::editPermission - index: " + index)
-                    }
-
                     function duplicatePermission(index) {
                         logs.logEvent("CommunitiesStore::duplicatePermission - index: " + index)
                     }
-
-                    function removePermission(index) {
-                        logs.logEvent("CommunitiesStore::removePermission - index: " + index)
-                    }
                 }
+                onEditPermission: logs.logEvent("CommunitiesStore::editPermission - index: " + index)
+                onRemovePermission: logs.logEvent("CommunitiesStore::removePermission - index: " + index)
+
             }
         }
 
