@@ -95,8 +95,6 @@ Feature: Status Desktop community
             | new_community_name       | new_community_description  | new_community_color |
             | myCommunityNamedChanged  | Cool new description 123   | #ff0000             |
 
-	@mayfail
-	# TODO: Test broken. Validation doesn't work (No attribute ` emoji`found error).
     Scenario Outline: The admin changes the emoji of a channel
         When the admin changes the current community channel emoji to "<new_emoji_description>"
         Then the community channel has emoji "<new_emoji>"
