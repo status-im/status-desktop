@@ -170,19 +170,20 @@ QtObject:
 
     self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
       let h = HistoryRequestStartedSignal(e)
-      info "history request started", requestId=h.requestId, numBatches=h.numBatches
-
-    self.events.on(SignalType.HistoryRequestBatchProcessed.event) do(e: Args):
-      let h = HistoryRequestBatchProcessedSignal(e)
-      info "history batch processed", requestId=h.requestId, batchIndex=h.batchIndex
+      info "history request started", numBatches=h.numBatches
 
     self.events.on(SignalType.HistoryRequestCompleted.event) do(e: Args):
       let h = HistoryRequestCompletedSignal(e)
-      info "history request completed", requestId=h.requestId
+      info "history request completed"
 
     self.events.on(SignalType.HistoryRequestFailed.event) do(e: Args):
       let h = HistoryRequestFailedSignal(e)
-      info "history request failed", requestId=h.requestId, errorMessage=h.errorMessage
+      info "history request failed", requestId=h.requestId, peerId=h.peerId, errorMessage=h.errorMessage
+
+    self.events.on(SignalType.HistoryRequestSuccess.event) do(e: Args):
+      let h = HistoryRequestSuccessSignal(e)
+      info "history request success", requestId=h.requestId, peerId=h.peerId
+
 
   proc initMailservers(self: Service) =
     let wakuVersion = self.nodeConfigurationService.getWakuVersion()
