@@ -1,6 +1,7 @@
 pragma Singleton
 
 import QtQuick 2.14
+import utils 1.0
 
 QtObject {
     readonly property QtObject icons: QtObject {
@@ -30,4 +31,34 @@ QtObject {
                             "Health":"🧠","Hobby":"📐","Innovation":"🧪","Language":"📜","Lifestyle":"✨","Local":"📍","Love":"❤️","Markets":"💎","Movies & TV":"🎞","Music":"🎶","NFT":"🖼","NSFW":"🍆",
                             "News":"🗞","Non-profit":"🙏","Org":"🏢","Pets":"🐶","Play":"🎲","Podcast":"🎙️","Politics":"🗳️","Privacy":"👻","Product":"🍱","Psyche":"🍁","Security":"🔒","Social":"☕",
                             "Software dev":"👩‍💻","Sports":"⚽️","Tech":"📱","Travel":"🗺","Vehicles":"🚕","Web3":"🌐"})
+
+
+    readonly property QtObject tokens: QtObject {
+        readonly property string socks: Style.png("tokens/SOCKS")
+        readonly property string zrx: Style.png("tokens/ZRX")
+        readonly property string inch: Style.png("tokens/CUSTOM-TOKEN")
+        readonly property string aave: Style.png("tokens/CUSTOM-TOKEN")
+        readonly property string amp: Style.png("tokens/CUSTOM-TOKEN")
+    }
+
+    readonly property QtObject collectibles: QtObject {
+        readonly property string anniversary: Style.png("collectibles/Anniversary")
+        readonly property string cryptoKitties: Style.png("collectibles/CryptoKitties")
+        readonly property string kitty1: Style.png("collectibles/Furbeard")
+        readonly property string kitty1Big: Style.png("collectibles/FurbeardBig")
+        readonly property string kitty2: Style.png("collectibles/Magicat")
+        readonly property string kitty2Big: Style.png("collectibles/MagicatBig")
+        readonly property string kitty3: Style.png("collectibles/HappyMeow")
+        readonly property string kitty3Big: Style.png("collectibles/HappyMeowBig")
+        readonly property string kitty4: Style.png("collectibles/Furbeard")
+        readonly property string kitty4Big: Style.png("collectibles/FurbeardBig")
+        readonly property string kitty5: Style.png("collectibles/Magicat")
+        readonly property string kitty5Big: Style.png("collectibles/MagicatBig")
+        readonly property string superRare: Style.png("collectibles/SuperRare")
+        readonly property string custom: Style.png("collectibles/SNT")
+    }
 }
+
+
+
+
