@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.13
 import StatusQ.Layout 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
 import utils 1.0
 import shared 1.0
@@ -183,9 +184,12 @@ StatusSectionLayout {
             Layout.fillHeight: true
             Layout.rightMargin: Style.current.padding
             Layout.leftMargin: Style.current.padding
-            // TODO: replace with StatusTextArea once it lives in StatusQ.
-            // Not Refactored Yet
-            TextArea { id: callResult; Layout.fillWidth: true; text: root.store.nodeModelInst.callResult; readOnly: true }
+            StatusTextArea { 
+                id: callResult
+                Layout.fillWidth: true
+                text: root.store.nodeModelInst.callResult
+                readOnly: true
+            }
         }
 
         RowLayout {
@@ -237,6 +241,7 @@ StatusSectionLayout {
                         leftPadding: 0
                         padding: 0
                         font.pixelSize: 14
+                        selectByMouse: true
                         placeholderText: qsTr("Type json-rpc message... e.g {\"method\": \"eth_accounts\"}")
                         anchors.right: rpcSendBtn.left
                         anchors.rightMargin: 16
@@ -254,15 +259,6 @@ StatusSectionLayout {
                         }
                         background: Rectangle {
                             color: "#00000000"
-                        }
-                    }
-
-                    MouseArea {
-                        id: mouseArea1
-                        anchors.rightMargin: 50
-                        anchors.fill: parent
-                        onClicked : {
-                            txtData.forceActiveFocus(Qt.MouseFocusReason)
                         }
                     }
                 }
