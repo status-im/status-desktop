@@ -7,14 +7,30 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
+/*!
+    To create menu elements from a model, use Instantiator:
+
+    \qml
+        StatusPopupMenu {
+            id: myMenu
+
+            StatusMenuInstantiator {
+                model: myModel
+                menu: myMenu
+                delegate: StatusMenuItem {
+                    text: model.text
+                    assetSettings.name: model.iconName
+                    onTriggered: {
+                        popupMenu.dismiss()
+                    }
+                }
+            }
+        }
+    \endqml
+ */
 
 Menu {
     id: root
-
-    closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
-    topPadding: 8
-    bottomPadding: 8
-    bottomMargin: 16
 
     property StatusAssetSettings assetSettings: StatusAssetSettings {
         width: 18
@@ -27,7 +43,10 @@ Menu {
 
     property StatusFontSettings fontSettings: StatusFontSettings {}
 
-    property bool hideDisabledItems: false
+    property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
+        ringPxSize: Math.max(1.5, root.assetSettings.width / 24.0)
+        distinctiveColors: Theme.palette.identiconRingColors
+    }
 
     property var openHandler
     property var closeHandler
@@ -35,6 +54,10 @@ Menu {
     signal menuItemClicked(int menuIndex)
 
     dim: false
+    closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
+    topPadding: 8
+    bottomPadding: 8
+    bottomMargin: 16
 
     onOpened: {
         if (typeof openHandler === "function") {
@@ -53,27 +76,28 @@ Menu {
     contentItem: StatusListView {
         currentIndex: root.currentIndex
         implicitHeight: contentHeight
+        implicitWidth: contentWidth
         interactive: contentHeight > availableHeight
         model: root.contentModel
     }
 
     background: Item {
-        id: statusPopupMenuBackground
+        id: backgroundItem
         implicitWidth: 176
 
         Rectangle {
-            id: statusPopupMenuBackgroundContent
-            implicitWidth: statusPopupMenuBackground.width
-            implicitHeight: statusPopupMenuBackground.height
+            id: backgroundContent
+            implicitWidth: backgroundItem.width
+            implicitHeight: backgroundItem.height
             color: Theme.palette.statusPopupMenu.backgroundColor
             radius: 8
             layer.enabled: true
             layer.effect: DropShadow {
-                width: statusPopupMenuBackgroundContent.width
-                height: statusPopupMenuBackgroundContent.height
-                x: statusPopupMenuBackgroundContent.x
-                visible: statusPopupMenuBackgroundContent.visible
-                source: statusPopupMenuBackgroundContent
+                width: backgroundContent.width
+                height: backgroundContent.height
+                x: backgroundContent.x
+                visible: backgroundContent.visible
+                source: backgroundContent
                 horizontalOffset: 0
                 verticalOffset: 4
                 radius: 12

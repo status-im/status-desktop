@@ -2,155 +2,174 @@ import QtQuick 2.14
 import QtQml 2.14
 import QtQuick.Controls 2.14
 
+import Qt.labs.qmlmodels 1.0
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Popups 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 StatusPopupMenu {
     id: root
-    dim: false
 
-    property var searchPopup
     property var locationModel
     readonly property int numDefaultItems: 2
 
     signal itemClicked(string firstLevelItemValue, string secondLevelItemValue)
 
+    signal resetSearchSelection()
+
+    signal setSearchSelection(string text,
+                              string secondaryText,
+                              string imageSource,
+                              string isIdenticon,
+                              string iconName,
+                              string iconColor,
+                              var isUserIcon,
+                              int colorId,
+                              string colorHash)
+
+    function processTriggeredMenuItem(title,
+                                      parentImageSource,
+                                      parentIsIdenticon,
+                                      parentIconName,
+                                      parentIdenticonColoe) {
+        root.resetSearchSelection()
+        let menuItem = root.menuAt(root.currentIndex)
+
+        root.setSearchSelection(menuItem.title,
+                           "",
+                           menuItem.parentImageSource,
+                           menuItem.parentIsIdenticon,
+                           menuItem.parentIconName,
+                           menuItem.parentIdenticonColor)
+
+        //TODO fix error "QML StatusPopupMenu: cannot find any window to open popup in."
+        root.dismiss()
+    }
+
     StatusMenuItem {
         text: qsTr("Anywhere")
         onTriggered: {
-            searchPopup.resetSearchSelection();
+            root.resetSearchSelection();
             root.itemClicked("", "");
         }
     }
+
     StatusMenuSeparator { }
-    //Dummy item to keep seperator in right position
-    MenuItem { implicitHeight: 0.00001 }
-    Instantiator {
+
+    StatusMenuInstantiator {
         model: root.locationModel
+        menu: root
 
-        // NOTE: Use DelegateChooser here
-        delegate: Loader {
-            sourceComponent: (!!model.subItems && model.subItems.count > 0) ? subMenus : subMenuItemComponent
-            onLoaded: {
-                if (!!model.subItems && model.subItems.count > 0)  {
-                    item.parentValue = model.value
-                    item.title = model.title;
-                    item.subItemsModel = model.subItems;
-                    item.parentIconName = model.iconName;
-                    item.parentImageSource = model.imageSource;
-                    item.parentIdenticonColor = !!model.iconColor ? model.iconColor : Theme.palette.primaryColor1;
+        delegate: DelegateChooser {
+            role: "hasSubItems"
 
-                    item.assetSettings.source = model.imageSource;
-                    item.assetSettings.isIdenticon = model.isIdenticon;
-                    item.assetSettings.name = model.iconName;
-                    item.assetSettings.color = model.iconColor;
-                    item.assetSettings.isLetterIdenticon = !model.imageSource && !model.iconName;
-
-                    root.insertMenu(index + numDefaultItems, item);
-                } else {
-                    item.value = model.value
-                    item.text = model.title;
-                    item.assetSettings.name = !!model.imageSource ? !!model.imageSource : model.iconName;
-                    item.assetSettings.color = model.iconColor;
-                    item.assetSettings.isImage = !!model.imageSource;
-                    item.assetSettings.isLetterIdenticon = !model.imageSource && !model.iconName
-                    item.assetSettings.imgIsIdenticon = model.isIdenticon;
-                    root.insertItem(index + numDefaultItems, item);
+            DelegateChoice {
+                roleValue: false
+                delegate: StatusSearchPopupMenuItem {
+                    text: model.title
+                    assetSettings.name: !!model.imageSource ? !!model.imageSource : model.iconName
+                    assetSettings.color: !!model.iconColor ? model.iconColor : "transparent"
+                    assetSettings.isImage: !!model.imageSource
+                    assetSettings.isLetterIdenticon: !model.imageSource && !model.iconName
+                    assetSettings.imgIsIdenticon: model.isIdenticon
+                    onTriggered: {
+                        root.resetSearchSelection()
+                        root.setSearchSelection(text,
+                                                "",
+                                                "",
+                                                assetSettings.isIdenticon,
+                                                assetSettings.name,
+                                                assetSettings.color)
+                        root.itemClicked(model.value, "")
+                    }
                 }
             }
-        }
-        onObjectRemoved: { root.removeItem(root.takeItem(index + numDefaultItems)); }
-    }
 
-    Component {
-        id: subMenuItemComponent
-        StatusSearchPopupMenuItem {
-            onTriggered: {
-                searchPopup.resetSearchSelection()
-                searchPopup.setSearchSelection(text,
-                                               "",
-                                               "",
-                                               assetSettings.isIdenticon,
-                                               assetSettings.name,
-                                               assetSettings.color)
-                root.itemClicked(value, "")
-            }
-        }
-    }
+            DelegateChoice {
+                roleValue: true
+                delegate: StatusPopupMenu {
+                    id: subMenuDelegate
 
-    Component {
-        id: subMenus
-        StatusPopupMenu {
-            id: menu
-            dim: false
-            property var subItemsModel
-            property string parentValue
-            property string parentIconName
-            property string parentImageSource
-            property string parentIdenticonColor
-            property string parentIsIdenticon
-            Repeater {
-                id: menuLoader
-                model: menu.subItemsModel
-                property string parentValue: menu.parentValue
-                property string parentTitleText: menu.title
-                property string parentIconName: menu.parentIconName
-                property string parentImageSource: menu.parentImageSource
-                property string parentIdenticonColor: menu.parentIdenticonColor
-                property string parentIsIdenticon: menu.parentIsIdenticon
-                Loader {
-                    id: subMenuLoader
-                    sourceComponent: StatusSearchPopupMenuItem {
-                        value: model.value
-                        text: model.text
-                        assetSettings.isImage: !!model.imageSource
-                        assetSettings.name: !!StatusQUtils.Emoji.iconSource(model.imageSource) ?
-                                            StatusQUtils.Emoji.iconSource(model.imageSource) : model.imageSource
-                        assetSettings.color: model.isUserIcon ? Theme.palette.userCustomizationColors[model.colorId] : model.iconColor
-                        assetSettings.bgColor: model.iconColor
-                        assetSettings.charactersLen: model.isUserIcon ? 2 : 1
-                        ringSettings.ringSpecModel: model.colorHash
-                        onTriggered: {
-                            searchPopup.resetSearchSelection()
-                            if (menuLoader.parentTitleText === "Chat") {
-                                searchPopup.setSearchSelection(model.text,
-                                                               "",
-                                                               model.imageSource,
-                                                               model.isIdenticon,
-                                                               model.iconName,
-                                                               model.iconColor,
-                                                               model.isUserIcon,
-                                                               model.colorId,
-                                                               model.colorHash.toJson())
-                            } else {
-                                searchPopup.setSearchSelection(menuLoader.parentTitleText,
-                                                   model.text,
-                                                   menuLoader.parentImageSource,
-                                                   menuLoader.parentIsIdenticon,
-                                                   menuLoader.parentIconName,
-                                                   menuLoader.parentIdenticonColor)
+                    readonly property var subItemsModel: model.subItems
+                    readonly property string parentValue: model.value
+                    readonly property string parentIconName: model.iconName
+                    readonly property string parentImageSource: model.imageSource
+                    readonly property string parentIdenticonColor: !!model.iconColor ? model.iconColor : "transparent"
+                    readonly property bool parentIsIdenticon: model.isIdenticon
+
+                    title: model.title
+                    assetSettings.name: !!model.iconName ? model.iconName : model.imageSource
+                    assetSettings.color: !!model.iconColor ? model.iconColor : "transparent"
+                    assetSettings.isImage: !!model.imageSource
+                    assetSettings.imgIsIdenticon: model.isIdenticon
+                    assetSettings.isLetterIdenticon: !model.imageSource && !model.iconName
+
+                    Instantiator {
+                        id: menuLoader
+
+                        readonly property string parentValue: subMenuDelegate.parentValue
+                        readonly property string parentTitleText: subMenuDelegate.title
+                        readonly property string parentIconName: subMenuDelegate.parentIconName
+                        readonly property string parentImageSource: subMenuDelegate.parentImageSource
+                        readonly property string parentIdenticonColor: subMenuDelegate.parentIdenticonColor
+                        readonly property string parentIsIdenticon: subMenuDelegate.parentIsIdenticon
+
+                        model: subMenuDelegate.subItemsModel
+
+                        onObjectAdded: {
+                            if (object instanceof Action)
+                                subMenuDelegate.addAction(object)
+                            else if (object instanceof MenuItem)
+                                subMenuDelegate.addItem(object)
+                        }
+
+                        onObjectRemoved: {
+                            subMenuDelegate.removeItem(object)
+                        }
+
+                        delegate: StatusSearchPopupMenuItem {
+                            value: model.value
+                            text: model.text
+                            assetSettings.isImage: !!model.imageSource
+                            assetSettings.name: !!StatusQUtils.Emoji.iconSource(model.imageSource) ?
+                                                  StatusQUtils.Emoji.iconSource(model.imageSource) : model.imageSource
+                            assetSettings.color: model.isUserIcon ? Theme.palette.userCustomizationColors[model.colorId] : model.iconColor
+                            assetSettings.bgColor: model.iconColor
+                            assetSettings.charactersLen: model.isUserIcon ? 2 : 1
+                            ringSettings.ringSpecModel: model.colorHash
+                            onTriggered: {
+                                root.resetSearchSelection()
+                                if (menuLoader.parentTitleText === "Chat") {
+                                    root.setSearchSelection(model.text,
+                                                            "",
+                                                            model.imageSource,
+                                                            model.isIdenticon,
+                                                            model.iconName,
+                                                            model.iconColor,
+                                                            model.isUserIcon,
+                                                            model.colorId,
+                                                            model.colorHash.toJson())
+                                } else {
+                                    root.setSearchSelection(menuLoader.parentTitleText,
+                                                            model.text,
+                                                            menuLoader.parentImageSource,
+                                                            menuLoader.parentIsIdenticon,
+                                                            menuLoader.parentIconName,
+                                                            menuLoader.parentIdenticonColor,
+                                                            "",
+                                                            -1,
+                                                            "")
+                                }
+                                root.itemClicked(subMenuDelegate.parentValue, value)
+                                root.dismiss()
                             }
-                            root.itemClicked(menuLoader.parentValue, value)
-                            root.dismiss()
                         }
                     }
                 }
             }
         }
     }
-    onMenuItemClicked: {
-        searchPopup.resetSearchSelection()
-        let menuItem = root.menuAt(root.currentIndex)
-        searchPopup.setSearchSelection(menuItem.title,
-                           "",
-                           menuItem.parentImageSource,
-                           menuItem.parentIsIdenticon,
-                           menuItem.parentIconName,
-                           menuItem.parentIdenticonColor)
-        root.itemClicked(menuItem.parentValue, "")
-        //TODO fix error "QML StatusPopupMenu: cannot find any window to open popup in."
-        root.dismiss()
-    }
+
 }

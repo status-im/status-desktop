@@ -4,6 +4,7 @@ StatusMenuSeparator 0.1 StatusMenuSeparator.qml
 StatusPopupMenu 0.1 StatusPopupMenu.qml
 StatusMenuItem 0.1 StatusMenuItem.qml
 StatusMenuItemDelegate 0.1 StatusMenuItemDelegate.qml
+StatusMenuInstantiator 0.1 StatusMenuInstantiator.qml
 StatusMenuHeadline 0.1 StatusMenuHeadline.qml
 StatusModal 0.1 StatusModal.qml
 StatusStackModal 0.1 StatusStackModal.qml
@@ -12,5 +13,4 @@ StatusSearchPopup 0.1 StatusSearchPopup.qml
 StatusModalDivider 0.1 StatusModalDivider.qml
 StatusSearchPopupMenuItem 0.1 StatusSearchPopupMenuItem.qml
 StatusSearchLocationMenu 0.1 StatusSearchLocationMenu.qml
-StatusSpellcheckingMenuItems 0.1 StatusSpellcheckingMenuItems.qml
 StatusColorDialog 0.1 StatusColorDialog.qml

@@ -22,6 +22,7 @@ QtObject {
             active: false
             position: 0
             isCategory: false
+            hasSubItems: false
             subItems: []
         }
         ListElement {
@@ -40,6 +41,7 @@ QtObject {
             active: false
             position: 1
             isCategory: false
+            hasSubItems: false
             subItems: []
         }
         ListElement {
@@ -59,6 +61,7 @@ QtObject {
             active: true
             position: 2
             isCategory: false
+            hasSubItems: false
             subItems: []
         }
         ListElement {
@@ -77,6 +80,7 @@ QtObject {
             active: false
             position: 3
             isCategory: false
+            hasSubItems: false
             subItems: []
         }
         ListElement {
@@ -95,6 +99,7 @@ QtObject {
             active: false
             position: 4
             isCategory: false
+            hasSubItems: false
             subItems: []
         }
         ListElement {
@@ -113,6 +118,7 @@ QtObject {
             active: false
             position: 5
             isCategory: false
+            hasSubItems: false
             subItems: []
         }
     }
@@ -133,6 +139,7 @@ QtObject {
             active: false
             position: 0
             isCategory: true
+            hasSubItems: false
             subItems: []
         }
         ListElement {
@@ -149,6 +156,7 @@ QtObject {
             active: false
             position: 0
             isCategory: false
+            hasSubItems: false
             subItems: []
         }
         ListElement {
@@ -165,6 +173,7 @@ QtObject {
             active: true
             position: 1
             isCategory: true
+            hasSubItems: true
             subItems: [
                 ListElement {
                     itemId: "x012340002"
@@ -210,6 +219,7 @@ QtObject {
             active: false
             position: 2
             isCategory: true
+            hasSubItems: true
             subItems: [
                 ListElement {
                     itemId: "x012340005"
@@ -357,6 +367,8 @@ QtObject {
             imageSource: ""
             iconName: "chat"
             iconColor: ""
+            isIdenticon: false
+            hasSubItems: true
             subItems: [
                 ListElement {
                     value: "sub_item_1_1"
@@ -374,11 +386,23 @@ QtObject {
                     iconColor: ""
                 }]}
         ListElement {
+            value: "item_1"
+            title: "No submenu"
+            imageSource: ""
+            iconName: "airdrop"
+            iconColor: ""
+            isIdenticon: false
+            hasSubItems: false
+            subItems: []
+        }
+        ListElement {
             value: "item_2"
             title: "Community item";
             imageSource: "qrc:/demoapp/data/profile-image-1.jpeg"
             iconName: ""
             iconColor: ""
+            isIdenticon: false
+            hasSubItems: true
             subItems: [
                 ListElement {
                     value: "sub_item_2_1"
@@ -407,6 +431,8 @@ QtObject {
             imageSource: "";
             iconName: "info"
             iconColor: ""
+            isIdenticon: false
+            hasSubItems: true
             subItems: [
                 ListElement {
                     value: "sub_item_3_1"
@@ -421,6 +447,8 @@ QtObject {
             imageSource: "";
             iconName: ""
             iconColor: "red"
+            isIdenticon: false
+            hasSubItems: true
             subItems: [
                 ListElement {
                     value: "sub_item_4_1"

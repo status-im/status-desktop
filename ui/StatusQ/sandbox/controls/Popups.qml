@@ -338,18 +338,17 @@ Column {
         header.subTitle: "Basic address"
         header.popupMenu: StatusPopupMenu {
             id: popupMenu
-            Repeater {
+
+            StatusMenuInstantiator {
                 model: dummyAccountsModel
-                delegate: Loader {
-                    sourceComponent: popupMenu.delegate
-                    onLoaded: {
-                        item.action.text = model.name
-                        item.action.assetSettings.name = model.iconName
+                menu: popupMenu
+                delegate: StatusMenuItem {
+                    text: model.name
+                    assetSettings.name: model.iconName
+                    onTriggered: {
+                        popupMenu.dismiss()
                     }
                 }
-            }
-            onMenuItemClicked: {
-                popupMenu.dismiss()
             }
         }
     }

@@ -55,8 +55,9 @@ QtObject {
     /*!
        \qmlproperty real StatusIdenticonRingSettings::initalAngleRad
        This property provides the initial angle, in radians, the identicon ring will start rendering the line.
+       Defaults to 0.
     */
-    property real initalAngleRad
+    property real initalAngleRad: 0
 
     /*!
        \qmlproperty real StatusIdenticonRingSettings::ringPxSize
