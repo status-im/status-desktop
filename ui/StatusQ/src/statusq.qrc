@@ -168,7 +168,6 @@
         <file>StatusQ/Popups/StatusSearchLocationMenu.qml</file>
         <file>StatusQ/Popups/StatusSearchPopup.qml</file>
         <file>StatusQ/Popups/StatusSearchPopupMenuItem.qml</file>
-        <file>StatusQ/Popups/StatusSpellcheckingMenuItems.qml</file>
         <file>StatusQ/Popups/StatusStackModal.qml</file>
         <file>StatusQ/qmldir</file>
         <file>StatusQ/Components/StatusListPickerProxies.qml</file>
@@ -194,5 +193,6 @@
         <file>StatusQ/Core/StatusProfileImageSettings.qml</file>
         <file>StatusQ/Core/StatusRollArea.qml</file>
         <file>StatusQ/Popups/Dialog/StatusDialogBackground.qml</file>
+        <file>StatusQ/Popups/StatusMenuInstantiator.qml</file>
     </qresource>
 </RCC>

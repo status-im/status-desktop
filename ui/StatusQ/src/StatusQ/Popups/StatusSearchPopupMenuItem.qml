@@ -4,61 +4,16 @@ import QtQuick.Layouts 1.12
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
-MenuItem {
+StatusMenuItem {
     id: root
-    implicitHeight: 38
 
     property string value: ""
 
-    property StatusAssetSettings assetSettings: StatusAssetSettings {
-        height: 16
-        width: 16
-        isImage: (name.toString() !== "")
-        isLetterIdenticon: (name.toString() === "")
-        color: (name === "channel") ? Theme.palette.directColor1 : "transparent"
-        letterSize: charactersLen > 1 ? 8 : 11
-        imgIsIdenticon: false
-    }
-
-    property alias ringSettings: identicon.ringSettings
-
-    background: Rectangle {
-        color: root.hovered ? Theme.palette.statusPopupMenu.hoverBackgroundColor : "transparent"
-    }
-
-    contentItem: RowLayout {
-        anchors.left: parent.left
-        anchors.leftMargin: 12
-        Item {
-            Layout.preferredWidth: root.assetSettings.width
-            Layout.preferredHeight: root.assetSettings.height
-            Layout.alignment: Qt.AlignVCenter
-            StatusSmartIdenticon {
-                id: identicon
-                anchors.centerIn: parent
-                asset: root.assetSettings
-                name: root.text
-                ringSettings: root.ringSettings
-            }
-        }
-        StatusBaseText {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignVCenter
-            text: root.text
-            color: Theme.palette.directColor1
-            font.pixelSize: 13
-            elide: Text.ElideRight
-        }
-        Item {
-            Layout.fillWidth: true
-        }
-    }
-    MouseArea {
-        id: sensor
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onPressed: mouse.accepted = false
-    }
+    assetSettings.isImage: assetSettings.name.toString() !== ""
+    assetSettings.isLetterIdenticon: assetSettings.name.toString() === ""
+    assetSettings.color: assetSettings.name === "channel" ? Theme.palette.directColor1 : "transparent"
+    assetSettings.letterSize: assetSettings.charactersLen > 1 ? 8 : 11
+    assetSettings.imgIsIdenticon: false
 }

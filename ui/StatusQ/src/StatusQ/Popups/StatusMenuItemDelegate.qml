@@ -8,8 +8,9 @@ import StatusQ.Popups 0.1
 
 MenuItem {
     id: root
+
     implicitWidth: parent ? parent.width : 0
-    implicitHeight: menu.hideDisabledItems && !enabled ? 0 : 38
+    implicitHeight: 38
     objectName: action ? action.objectName : "StatusMenuItemDelegate"
 
     spacing: 4
@@ -25,17 +26,61 @@ MenuItem {
         readonly property bool isStatusAction: d.hasAction && (root.action instanceof StatusMenuItem)
         readonly property bool isStatusDangerAction: d.isStatusAction && root.action.type === StatusMenuItem.Type.Danger
 
-        readonly property StatusAssetSettings assetSettings: d.isStatusSubMenu
+        readonly property StatusAssetSettings originalAssetSettings: d.isStatusSubMenu
                                                              ? root.subMenu.assetSettings
                                                              : d.isStatusAction
                                                                ? root.action.assetSettings
-                                                               : d.defaultAsset
+                                                               : d.defaultAssetSettings
+
+        readonly property StatusAssetSettings assetSettings: StatusAssetSettings {
+
+            // overriden properties
+            readonly property int letterSize: 11
+            readonly property color color: !d.originalAssetSettings.isImage && !d.originalAssetSettings.isLetterIdenticon
+                                ? d.iconColor
+                                :  d.originalAssetSettings.color
+
+            //icon
+            readonly property string name:  d.originalAssetSettings.name
+            readonly property url source:  d.originalAssetSettings.source
+            readonly property real width:  d.originalAssetSettings.width
+            readonly property real height:  d.originalAssetSettings.height
+            readonly property color hoverColor:  d.originalAssetSettings.hoverColor
+            readonly property color disabledColor:  d.originalAssetSettings.disabledColor
+            readonly property int rotation:  d.originalAssetSettings.rotation
+            readonly property bool isLetterIdenticon:  d.originalAssetSettings.isLetterIdenticon
+            readonly property int charactersLen:  d.originalAssetSettings.charactersLen
+            readonly property string emoji:  d.originalAssetSettings.emoji
+            readonly property string emojiSize:  d.originalAssetSettings.emojiSize
+
+            //icon b
+            readonly property real bgWidth:  d.originalAssetSettings.bgWidth
+            readonly property real bgHeight:  d.originalAssetSettings.bgHeight
+            readonly property int bgRadius:  d.originalAssetSettings.bgRadius
+            readonly property color bgColor:  d.originalAssetSettings.bgColor
+
+            //image
+            readonly property bool isImage:  d.originalAssetSettings.isImage
+            readonly property int imgStatus:  d.originalAssetSettings.imgStatus
+            readonly property bool imgIsIdenticon:  d.originalAssetSettings.imgIsIdenticon
+
+            // crop
+            readonly property rect cropRect: d.originalAssetSettings.cropRect
+        }
 
         readonly property StatusFontSettings fontSettings: d.isStatusSubMenu
                                                            ? root.subMenu.fontSettings
-                                                           : d.isStatusAction ? root.action.fontSettings : d.defaultFontSettings
+                                                           : d.isStatusAction
+                                                             ? root.action.fontSettings
+                                                             : d.defaultFontSettings
 
-        readonly property StatusAssetSettings defaultAsset: StatusAssetSettings {
+        readonly property StatusIdenticonRingSettings ringSettings: d.isStatusSubMenu
+                                                                    ? root.subMenu.ringSettings
+                                                                    : d.isStatusAction
+                                                                      ? root.action.ringSettings
+                                                                      : d.defaultRingSettings
+
+        readonly property StatusAssetSettings defaultAssetSettings: StatusAssetSettings {
             width: 18
             height: 18
             rotation: 0
@@ -46,50 +91,21 @@ MenuItem {
             bold: false
             italic: false
         }
-    }
 
-    Component {
-        id: indicatorIcon
-
-        StatusIcon {
-            width: d.assetSettings.width
-            height: d.assetSettings.height
-            rotation: d.assetSettings.rotation
-            icon: d.assetSettings.name
-            color: {
-                const c = d.assetSettings.color;
-                if (!Qt.colorEqual(c, "transparent"))
-                    return c;
-                if (!root.enabled)
-                    return Theme.palette.baseColor1;
-                if (d.isStatusDangerAction)
-                    return Theme.palette.dangerColor1;
-                return Theme.palette.primaryColor1;
-            }
+        readonly property StatusIdenticonRingSettings defaultRingSettings: StatusIdenticonRingSettings {
+            ringPxSize: Math.max(1.5, d.assetSettings.width / 24.0)
+            distinctiveColors: Theme.palette.identiconRingColors
         }
-    }
 
-    Component {
-        id: indicatorLetterIdenticon
-
-        StatusLetterIdenticon {
-            width: d.assetSettings.width
-            height: d.assetSettings.height
-            color: d.assetSettings.bgColor
-            name: root.text
-            letterSize: 11
-        }
-    }
-
-    Component {
-        id: indicatorImage
-
-        StatusRoundedImage {
-            width: d.assetSettings.width
-            height: d.assetSettings.height
-            image.source: d.assetSettings.name
-            border.width: d.isSubMenu && d.assetSettings.imgIsIdenticon ? 1 : 0
-            border.color: Theme.palette.directColor7
+        readonly property color iconColor: {
+            const c = d.originalAssetSettings.color;
+            if (!Qt.colorEqual(c, "transparent"))
+                return c
+            if (!root.enabled)
+                return Theme.palette.baseColor1
+            if (d.isStatusDangerAction)
+                return Theme.palette.dangerColor1
+            return Theme.palette.primaryColor1
         }
     }
 
@@ -103,17 +119,12 @@ MenuItem {
                  || d.assetSettings.isImage
                  || !!d.assetSettings.name
 
-        Loader {
+        StatusSmartIdenticon {
             anchors.centerIn: parent
             active: parent.visible
-            sourceComponent: {
-                if (d.assetSettings.isImage)
-                    return indicatorImage;
-                if (d.assetSettings.isLetterIdenticon)
-                    return indicatorLetterIdenticon;
-                return indicatorIcon;
-            }
-
+            name: root.text
+            asset: d.assetSettings
+            ringSettings: d.ringSettings
         }
     }
 

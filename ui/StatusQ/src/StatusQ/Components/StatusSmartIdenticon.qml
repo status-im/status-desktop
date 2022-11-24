@@ -28,9 +28,11 @@ Loader {
 
     Component {
         id: roundedImage
+
         Item {
             width: root.asset.width
             height: root.asset.height
+
             StatusRoundedImage {
                 id: statusRoundImage
                 width: parent.width
@@ -44,7 +46,6 @@ Loader {
                            root.asset.bgColor
                 image.fillMode: root.asset.cropRect ? Image.PreserveAspectCrop
                                                     : Image.PreserveAspectFit
-                image.scale: root.asset.scale
                 image.x: root.asset.cropRectangle ? -root.asset.cropRectangle.x
                                                   : 0
                 image.y: root.asset.cropRectangle ? -root.asset.cropRectangle.y

@@ -113,8 +113,23 @@ StatusSectionLayout {
         }
         StatusSearchLocationMenu {
             id: searchPopupMenu
-            searchPopup: searchPopup
             locationModel: Models.optionsModel
+
+            onResetSearchSelection: {
+                searchPopup.resetSearchSelection()
+            }
+
+            onSetSearchSelection: {
+                searchPopup.setSearchSelection(text,
+                                               secondaryText,
+                                               imageSource,
+                                               isIdenticon,
+                                               iconName,
+                                               iconColor,
+                                               isUserIcon,
+                                               colorId,
+                                               colorHash)
+            }
         }
     }
 

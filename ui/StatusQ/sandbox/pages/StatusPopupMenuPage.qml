@@ -2,10 +2,14 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.13
 
+import Qt.labs.qmlmodels 1.0
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
+
+import "../demoapp/data" 1.0
 
 GridLayout {
     columns: 1
@@ -33,6 +37,15 @@ GridLayout {
         onClicked: differentFontMenu.popup()
     }
 
+    StatusButton {
+        text: "StatusSearchLocationMenu"
+        onClicked: searchPopupMenu.popup()
+
+        StatusSearchLocationMenu {
+            id: searchPopupMenu
+            locationModel: Models.optionsModel
+        }
+    }
 
     StatusPopupMenu {
         id: simpleMenu
@@ -115,6 +128,17 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                 text: "Pascal"
                 assetSettings.isImage: true
                 assetSettings.name: "qrc:/demoapp/data/profile-image-1.jpeg"
+                ringSettings.ringSpecModel:
+                    ListModel {
+                        ListElement { colorId: 13; segmentLength: 5 }
+                        ListElement { colorId: 31; segmentLength: 5 }
+                        ListElement { colorId: 10; segmentLength: 1 }
+                        ListElement { colorId: 2; segmentLength: 5 }
+                        ListElement { colorId: 26; segmentLength: 2 }
+                        ListElement { colorId: 19; segmentLength: 4 }
+                        ListElement { colorId: 28; segmentLength: 3 }
+                    }
+                ringSettings.distinctiveColors: Theme.palette.identiconRingColors
             }
         }
 
@@ -146,12 +170,12 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         StatusPopupMenu {
             title: "Another community"
             assetSettings.isLetterIdenticon: true
-            assetSettings.bgColor: "red"
+            assetSettings.color: "red"
 
             StatusMenuItem { 
                 text: "welcome" 
                 assetSettings.isLetterIdenticon: true
-                assetSettings.bgColor: "red"
+                assetSettings.color: "blue"
             }
         }
     }
