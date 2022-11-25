@@ -3,6 +3,9 @@
 
 #include "cachecleaner.h"
 #include "directorieswatcher.h"
+#include "figmadecoratormodel.h"
+#include "figmalinks.h"
+#include "figmalinkssource.h"
 #include "sectionsdecoratormodel.h"
 
 int main(int argc, char *argv[])
@@ -35,6 +38,9 @@ int main(int argc, char *argv[])
         engine.addImportPath(path);
 
     qmlRegisterType<SectionsDecoratorModel>("Storybook", 1, 0, "SectionsDecoratorModel");
+    qmlRegisterType<FigmaDecoratorModel>("Storybook", 1, 0, "FigmaDecoratorModel");
+    qmlRegisterType<FigmaLinksSource>("Storybook", 1, 0, "FigmaLinksSource");
+    qmlRegisterUncreatableType<FigmaLinks>("Storybook", 1, 0, "FigmaLinks", "");
 
     auto watcherFactory = [additionalImportPaths](QQmlEngine*, QJSEngine*) {
         auto watcher = new DirectoriesWatcher();

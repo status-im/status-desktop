@@ -17,7 +17,7 @@ ColumnLayout {
 
         RoundButton {
             text: "⬅"
-            enabled: root.currentIndex !== 0
+            enabled: root.currentIndex !== 0 && root.currentIndex !== -1
             onClicked: root.left()
         }
         RoundButton {

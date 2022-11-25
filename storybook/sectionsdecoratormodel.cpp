@@ -1,5 +1,7 @@
 #include "sectionsdecoratormodel.h"
 
+#include "modelutils.h"
+
 #include <QScopeGuard>
 
 SectionsDecoratorModel::SectionsDecoratorModel(QObject *parent)
@@ -121,20 +123,6 @@ void SectionsDecoratorModel::calculateOffsets()
     });
 }
 
-std::optional<int> SectionsDecoratorModel::findSectionRole() const
-{
-    const auto roleNames = m_sourceModel->roleNames();
-    auto i = roleNames.constBegin();
-
-    while (i != roleNames.constEnd()) {
-        if (i.value() == QStringLiteral("section"))
-            return i.key();
-        ++i;
-    }
-
-    return std::nullopt;
-}
-
 void SectionsDecoratorModel::initialize()
 {
     beginResetModel();
@@ -142,7 +130,8 @@ void SectionsDecoratorModel::initialize()
 
     m_rowsMetadata.clear();
 
-    const auto sectionRoleOpt = findSectionRole();
+    const auto sectionRoleOpt = ModelUtils::findRole(
+                QByteArrayLiteral("section"), m_sourceModel);
 
     if (!sectionRoleOpt) {
         qWarning("Section role not found!");

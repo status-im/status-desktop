@@ -36,7 +36,6 @@ private:
         int count = 0;
     };
 
-    std::optional<int> findSectionRole() const;
     void initialize();
     void calculateOffsets();
 
