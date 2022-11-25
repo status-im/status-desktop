@@ -330,22 +330,24 @@ Item {
                 })
             }
 
-            property bool communityAdded: false
+            property bool communitiesAlreadyAdded: false
 
             onAboutToUpdateFilteredRegularModel: {
-                communityAdded = false
+                communitiesAlreadyAdded = false
             }
 
             filterRegularItem: function(item) {
-                if(!item.enabled)
+                if(!item.enabled) {
                     return false
+                }
 
-                if(item.sectionType === Constants.appSection.community)
-                    if(communityAdded)
+                if(item.sectionType === Constants.appSection.community) {
+                    if(communitiesAlreadyAdded) {
                         return false
-                    else
-                        communityAdded = true
-
+                    } else {
+                        communitiesAlreadyAdded = true
+                    }
+                }
                 return true
             }
 
@@ -354,7 +356,7 @@ Item {
             }
 
             regularNavBarButton: StatusNavBarTabButton {
-                id: navbar
+                property var model
                 objectName: model.name + "-navbar"
                 anchors.horizontalCenter: parent.horizontalCenter
                 name: model.icon.length > 0? "" : model.name

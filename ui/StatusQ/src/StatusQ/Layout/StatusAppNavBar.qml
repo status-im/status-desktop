@@ -59,14 +59,23 @@ Rectangle {
             statusAppNavBar.aboutToUpdateFilteredRegularModel()
         }
 
-        DelegateChooser {
-            id: delegateChooser
-            role: communityTypeRole
-            DelegateChoice { roleValue: communityTypeValue; delegate: communityNavButton }
-            DelegateChoice { delegate: regularNavBarButton }
-        }
+        delegate: Component {
+            Item {
+                id: itemParent
+                width: parent.width
+                height: childrenRect.height
 
-        delegate: delegateChooser
+                Component.onCompleted: {
+                    if (model[communityTypeRole] === communityTypeValue) {
+                        communityNavButton.createObject(itemParent);
+                    } else {
+                        // Pass the model to the component when creating it
+                        regularNavBarButton.createObject(itemParent, { model: model });
+                    }
+                }
+            }
+            
+        }
     }
 
     Component {
@@ -74,12 +83,12 @@ Rectangle {
 
         Item {
             width: parent.width
-            height: (necessaryHightForCommunities > maxHightForCommunities)?
-                        maxHightForCommunities : necessaryHightForCommunities
+            height: (necessaryHeightForCommunities > maxHeightForCommunities)?
+                        maxHeightForCommunities : necessaryHeightForCommunities
 
             property int communityNavBarButtonHeight: 40
 
-            property int maxHightForCommunities: {
+            property int maxHeightForCommunities: {
                 let numOfOtherThanCommunityBtns = navBarListView.model.count - 1
                 let numOfSpacingsForNavBar = navBarListView.model.count - 1
 
@@ -88,7 +97,7 @@ Rectangle {
                         numOfSpacingsForNavBar * navBarButtonSpacing
             }
 
-            property int necessaryHightForCommunities: {
+            property int necessaryHeightForCommunities: {
                 let numOfSpacingsForCommunities = communityListView.model.count - 1
                 return communityListView.model.count * communityNavBarButtonHeight +
                         numOfSpacingsForCommunities * navBarButtonSpacing +
@@ -114,7 +123,7 @@ Rectangle {
                 width: parent.width
                 height: navBarButtonSpacing
                 anchors.top: parent.top
-                visible: parent.necessaryHightForCommunities > parent.maxHightForCommunities
+                visible: parent.necessaryHeightForCommunities > parent.maxHeightForCommunities
 
                 Rectangle {
                     height: 1

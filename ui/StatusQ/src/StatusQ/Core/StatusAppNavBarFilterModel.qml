@@ -2,29 +2,29 @@ import QtQuick 2.13
 import QtQml.Models 2.13
 
 DelegateModel {
-    id: delegateModel
+    id: root
 
     property var filterAcceptsItem: function(item) { return true; }
 
     signal aboutToUpdateFilteredModel()
 
     function update() {
-        delegateModel.aboutToUpdateFilteredModel()
+        root.aboutToUpdateFilteredModel()
 
-        if (items.count > 0) {
-            items.setGroups(0, items.count, "items");
+        if (root.items.count > 0) {
+            root.items.setGroups(0, root.items.count, "items");
         }
 
         var visible = [];
-        for (var i = 0; i < items.count; ++i) {
-            var item = items.get(i);
+        for (var i = 0; i < root.items.count; ++i) {
+            var item = root.items.get(i);
             if (filterAcceptsItem(item.model)) {
                 visible.push(item);
             }
         }
 
         for (i = 0; i < visible.length; ++i) {
-            item = visible[i];
+            var item = visible[i];
             item.inVisible = true;
             if (item.visibleIndex !== i) {
                 visibleItems.move(item.visibleIndex, i, 1);
