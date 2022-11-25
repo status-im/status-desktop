@@ -71,11 +71,6 @@ Column {
     }
 
     StatusButton {
-        text: "Spellchecking menu"
-        onClicked: spellMenu.open()
-    }
-
-    StatusButton {
         text: "Modal with Editable Title"
         onClicked: editTitleModal.open()
     }
@@ -406,12 +401,14 @@ Column {
         hasFloatingButtons: true
         advancedHeaderComponent: StatusFloatingButtonsSelector {
             id: floatingHeader
+
             model: dummyAccountsModel
+
             delegate: Rectangle {
                 width: button.width
                 height: button.height
                 radius: 8
-                visible: visibleIndices.includes(index)
+                visible: floatingHeader.visibleIndices.includes(index)
                 color: Theme.palette.statusAppLayout.backgroundColor
                 StatusButton {
                     id: button
@@ -430,29 +427,23 @@ Column {
                     }
                 }
             }
+
             popupMenuDelegate: StatusListItem {
                 implicitWidth: 272
                 title: name
                 onClicked: floatingHeader.itemSelected(index)
-                visible: !visibleIndices.includes(index)
             }
         }
     }
 
     ListModel {
         id: dummyAccountsModel
-        ListElement{name: "Account 1"; iconName: "filled-account"; emoji:  "🥑"}
-        ListElement{name: "Account 2"; iconName: "filled-account"}
+        ListElement{name: "Account 1"; iconName: "filled-account"; emoji: "🥑" }
+        ListElement{name: "Account 2"; iconName: "filled-account"; emoji: "🚀" }
         ListElement{name: "Account 3"; iconName: "filled-account"}
         ListElement{name: "Account 4"; iconName: "filled-account"}
         ListElement{name: "Account 5"; iconName: "filled-account"}
         ListElement{name: "Account 6"; iconName: "filled-account"}
         ListElement{name: "Account 7"; iconName: "filled-account"}
-    }
-
-    StatusSpellcheckingMenuItems {
-        id: spellMenu
-        anchors.centerIn: parent
-        suggestions: ["suggestion1", "suggestion2", "suggestion3", "suggestion4"]
     }
 }

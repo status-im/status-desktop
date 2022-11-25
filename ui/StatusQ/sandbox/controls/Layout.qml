@@ -201,33 +201,7 @@ Column {
                 badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
-
-                popupMenu: StatusPopupMenu {
-
-                    StatusMenuItem {
-                        text: qsTr("Invite People")
-                        icon.name: "share-ios"
-                    }
-
-                    StatusMenuItem {
-                        text: qsTr("View Community")
-                        icon.name: "group"
-                    }
-
-                    StatusMenuItem {
-                        text: qsTr("Edit Community")
-                        icon.name: "edit"
-                        enabled: false
-                    }
-
-                    StatusMenuSeparator {}
-
-                    StatusMenuItem {
-                        text: qsTr("Leave Community")
-                        icon.name: "arrow-left"
-                        type: StatusMenuItem.Type.Danger
-                    }
-                }
+                popupMenu: communityPopupMenu
             }
         }
 
@@ -284,33 +258,7 @@ Column {
                 badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
-
-                popupMenu: StatusPopupMenu {
-
-                    StatusMenuItem {
-                        text: qsTr("Invite People")
-                        icon.name: "share-ios"
-                    }
-
-                    StatusMenuItem {
-                        text: qsTr("View Community")
-                        icon.name: "group"
-                    }
-
-                    StatusMenuItem {
-                        text: qsTr("Edit Community")
-                        icon.name: "edit"
-                        enabled: false
-                    }
-
-                    StatusMenuSeparator {}
-
-                    StatusMenuItem {
-                        text: qsTr("Leave Community")
-                        icon.name: "arrow-left"
-                        type: StatusMenuItem.Type.Danger
-                    }
-                }
+                popupMenu: communityPopupMenu
             }
         }
 
@@ -372,33 +320,7 @@ Column {
                 badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
-
-                popupMenu: StatusPopupMenu {
-
-                    StatusMenuItem {
-                        text: qsTr("Invite People")
-                        icon.name: "share-ios"
-                    }
-
-                    StatusMenuItem {
-                        text: qsTr("View Community")
-                        icon.name: "group"
-                    }
-
-                    StatusMenuItem {
-                        text: qsTr("Edit Community")
-                        icon.name: "edit"
-                        enabled: false
-                    }
-
-                    StatusMenuSeparator {}
-
-                    StatusMenuItem {
-                        text: qsTr("Leave Community")
-                        icon.name: "arrow-left"
-                        type: StatusMenuItem.Type.Danger
-                    }
-                }
+                popupMenu: communityPopupMenu
             }
         }
 
@@ -465,33 +387,38 @@ Column {
                 badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                 badge.border.width: 2
+                popupMenu: communityPopupMenu
+            }
+        }
+    }
 
-                popupMenu: StatusPopupMenu {
+    Component {
+        id: communityPopupMenu
 
-                    StatusMenuItem {
-                        text: qsTr("Invite People")
-                        icon.name: "share-ios"
-                    }
+        StatusPopupMenu {
 
-                    StatusMenuItem {
-                        text: qsTr("View Community")
-                        icon.name: "group"
-                    }
+            StatusMenuItem {
+                text: qsTr("Invite People")
+                icon.name: "share-ios"
+            }
 
-                    StatusMenuItem {
-                        text: qsTr("Edit Community")
-                        icon.name: "edit"
-                        enabled: false
-                    }
+            StatusMenuItem {
+                text: qsTr("View Community")
+                icon.name: "group"
+            }
 
-                    StatusMenuSeparator {}
+            StatusMenuItem {
+                text: qsTr("Edit Community")
+                icon.name: "edit"
+                enabled: false
+            }
 
-                    StatusMenuItem {
-                        text: qsTr("Leave Community")
-                        icon.name: "arrow-left"
-                        type: StatusMenuItem.Type.Danger
-                    }
-                }
+            StatusMenuSeparator {}
+
+            StatusMenuItem {
+                text: qsTr("Leave Community")
+                icon.name: "arrow-left"
+                type: StatusMenuItem.Type.Danger
             }
         }
     }

@@ -22,6 +22,7 @@ Item {
     readonly property int labelMargin: 7
     property var model
     property alias selectMenu: selectMenu
+    property alias menuDelegate: menuInstantiator.delegate
     property color bgColorHover: bgColor
     // TODO: Fix the indirect handling of children
     property alias selectedItemComponent: selectedItemContainer.children
@@ -53,10 +54,9 @@ Item {
     }
 
     Rectangle {
-        property bool hovered: false
         id: inputRectangle
-        height: selectedItemContainer.implicitHeight
-        color: hovered ? bgColorHover : bgColor
+        height: Math.max(56, selectedItemContainer.implicitHeight)
+        color: mouseArea.containsMouse ? bgColorHover : bgColor
         radius: 8
         anchors.top: root.hasLabel ? inputLabel.bottom : parent.top
         anchors.topMargin: root.hasLabel ? root.labelMargin : 0
@@ -108,21 +108,26 @@ Item {
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         width: parent.width
 
-        Repeater {
-            id: menuItems
-            model: root.model
+        StatusMenuInstantiator {
+            id: menuInstantiator
+
             property int zeroItemsViewHeight
-            delegate: selectMenu.delegate
-            onItemAdded: {
+
+            menu: selectMenu
+            model: root.model
+
+            onObjectAdded: {
                 root.zeroItemsView.visible = false
                 root.zeroItemsView.height = 0
             }
-            onItemRemoved: {
+
+            onObjectRemoved: {
                 if (count === 0) {
                     root.zeroItemsView.visible = true
                     root.zeroItemsView.height = zeroItemsViewHeight
                 }
             }
+
             Component.onCompleted: {
                 zeroItemsViewHeight = root.zeroItemsView.height
                 root.zeroItemsView.visible = count === 0
@@ -152,12 +157,6 @@ Item {
         anchors.fill: inputRectangle
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
-        onEntered: {
-            inputRectangle.hovered = true
-        }
-        onExited: {
-            inputRectangle.hovered = false
-        }
         onClicked: {
             if (selectMenu.opened) {
                 selectMenu.close()
