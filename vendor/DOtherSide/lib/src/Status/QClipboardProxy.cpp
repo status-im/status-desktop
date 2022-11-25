@@ -54,8 +54,8 @@ QString QClipboardProxy::imageBase64() const
     const auto img = image();
     QByteArray byteArray;
     QBuffer buffer(&byteArray);
-    img.save(&buffer, "PNG"); // writes the image in PNG format inside the buffer
-    return QStringLiteral("data:image/png;base64,") + byteArray.toBase64();
+    img.save(&buffer, "JPG");
+    return QStringLiteral("data:image/jpeg;base64,") + byteArray.toBase64();
 }
 
 bool QClipboardProxy::hasUrls() const
