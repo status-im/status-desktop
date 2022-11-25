@@ -796,7 +796,7 @@ Rectangle {
     function validSubstr(substr) {
         for(var i = 0; i < substr.length; i++) {
             var c = substr.charAt(i);
-            if (Utils.isSpace(c) === true || Utils.isPunct(c) === true)
+            if (Utils.isSpace(c) || Utils.isPunct(c))
                 return false;
         }
         return true;

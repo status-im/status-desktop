@@ -755,7 +755,6 @@ QtObject {
 
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
-        return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
+        return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
     }
-
 }
