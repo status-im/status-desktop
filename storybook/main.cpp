@@ -1,10 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
-#ifdef QT_WEBENGINE_LIB
-#include <QtWebEngine>
-#endif
-
 #include "cachecleaner.h"
 #include "directorieswatcher.h"
 #include "sectionsdecoratormodel.h"
@@ -15,9 +11,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
-#ifdef QT_WEBENGINE_LIB
-    QtWebEngine::initialize();
-#endif
+
     QGuiApplication app(argc, argv);
     QGuiApplication::setOrganizationName(QStringLiteral("Status"));
     QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));
