@@ -200,8 +200,6 @@ Item {
                     contextMenu.hideEmojiPicker = true
                     contextMenu.isRightClickOnImage = true
                     contextMenu.parent = imagePopup.contentItem
-                    contextMenu.setXPosition = function() { return mouse.x + Style.current.smallPadding }
-                    contextMenu.setYPosition = function() { return mouse.y - Style.current.smallPadding }
                     contextMenu.show()
                 }
             }
