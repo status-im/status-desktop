@@ -20,7 +20,7 @@ class QClipboardProxy : public QObject
 
     Q_PROPERTY(bool hasImage READ hasImage NOTIFY contentChanged)
     Q_PROPERTY(QImage image READ image NOTIFY contentChanged)
-    Q_PROPERTY(QByteArray imageBase64 READ imageBase64 NOTIFY contentChanged)
+    Q_PROPERTY(QString imageBase64 READ imageBase64 NOTIFY contentChanged)
 
     Q_PROPERTY(bool hasUrls READ hasUrls NOTIFY contentChanged)
     Q_PROPERTY(QList<QUrl> urls READ urls NOTIFY contentChanged)
@@ -35,7 +35,7 @@ class QClipboardProxy : public QObject
 
     bool hasImage() const;
     QImage image() const;
-    QByteArray imageBase64() const;
+    QString imageBase64() const;
 
     bool hasUrls() const;
     QList<QUrl> urls() const;
