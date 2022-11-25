@@ -5,7 +5,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Core.Utils 0.1 as SQ
+import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 import shared.panels 1.0
@@ -13,25 +13,18 @@ import shared.panels 1.0
 import SortFilterProxyModel 0.2
 
 import "../../../Chat/controls/community"
-import "../../stores"
 
 Flickable {
     id: root
 
-    property var store: CommunitiesStore {}
+    property var store
+    property int viewWidth: 560 // by design
 
-
-    signal createPermission()
-
-    // TODO: Call this when permissions are stored in backend to start a new permissions flow
-    function clearPermissions() {
-        d.permissions.clear()
-    }
+    signal permissionCreated()
 
     QtObject {
         id: d
         property bool isPrivate: false
-        property ListModel permissions: ListModel{}
         property int permissionType: PermissionTypes.Type.None
     }
 
@@ -42,7 +35,7 @@ Flickable {
 
     ColumnLayout {
         id: mainLayout
-        width: 560 // by design
+        width: root.viewWidth
         spacing: 0
         CurveSeparatorWithText {
             Layout.alignment: Qt.AlignLeft
@@ -55,8 +48,6 @@ Flickable {
             icon: Style.svg("contact_verified")
             title: qsTr("Who holds")
             defaultItemText: qsTr("Example: 10 SNT")
-            andOperatorText: qsTr("and")
-            orOperatorText: qsTr("or")
 
             // roles: type, key, name, amount, imageSource, operator
             ListModel {
@@ -64,28 +55,12 @@ Flickable {
             }
 
             property int editedIndex
-
-            function getText(type, name, amount) {
-                switch (type) {
-                    case HoldingTypes.Type.Token:
-                    case HoldingTypes.Type.Collectible:
-                        return `${LocaleUtils.numberToLocaleString(amount)} ${name}`
-                    case HoldingTypes.Type.Ens:
-                        if (name)
-                            return qsTr("ENS username on '%1' domain").arg(name)
-                        else
-                            return qsTr("Any ENS username")
-                    default:
-                        return ""
-                }
-            }
-
             itemsModel: SortFilterProxyModel {
                 sourceModel: holdingsModel
 
                 proxyRoles: ExpressionRole {
                     name: "text"
-                    expression: tokensSelector.getText(model.type, model.name, model.amount)
+                    expression: root.store.setHoldingsTextFormat(model.type, model.name, model.amount)
                }
             }
 
@@ -95,11 +70,10 @@ Flickable {
 
                 function addItem(type, item, amount, operator) {
                     const key = item.key
-                    const name = item.name
+                    const name = item.shortName ? item.shortName : item.name
                     const imageSource = item.iconSource.toString()
 
                     holdingsModel.append({ type, key, name, amount, imageSource, operator })
-                    d.permissions.append([{ key }, { operator }])
                 }
 
                 onAddToken: {
@@ -120,13 +94,12 @@ Flickable {
                     const icon = Style.svg("ensUsernames")
 
                     holdingsModel.append({type: HoldingTypes.Type.Ens, key, name, amount: 1, imageSource: icon, operator })
-                    d.permissions.append([{ key }, { operator }])
                     dropdown.close()
                 }
 
                 onUpdateToken: {
                     const modelItem = store.getTokenByKey(key)
-                    const name = modelItem.name
+                    const name = modelItem.shortName ? modelItem.shortName : modelItem.name
                     const imageSource = modelItem.iconSource.toString()
 
                     holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Token, key, name, amount, imageSource })
@@ -155,7 +128,7 @@ Flickable {
                     holdingsModel.remove(tokensSelector.editedIndex)
 
                     if (holdingsModel.count) {
-                        holdingsModel.set(0, { operator: SQ.Utils.Operators.None})
+                        holdingsModel.set(0, { operator: OperatorsUtils.Operators.None})
                     }
 
                     dropdown.close()
@@ -229,7 +202,8 @@ Flickable {
                 value: QtObject {
                     id: permissionsListObjectModel
 
-                    readonly property int operator: SQ.Utils.Operators.None
+                    readonly property int operator: OperatorsUtils.Operators.None
+                    property var key
                     property string text: ""
                     property string imageSource: ""
                 }
@@ -244,6 +218,7 @@ Flickable {
 
                 onDone: {
                     d.permissionType = permissionType
+                    permissionsListObjectModel.key = permissionType
                     permissionsListObjectModel.text = title
                     permissionsListObjectModel.imageSource = asset
                     permissionsDropdown.close()
@@ -321,13 +296,13 @@ Flickable {
         StatusButton {
             Layout.topMargin: 24
             text: qsTr("Create permission")
-            enabled: d.permissions.count > 0
+            enabled: holdingsModel.count > 0 && permissionsListObjectModel.key !== undefined
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
             onClicked: {
-                root.store.createPermissions(d.permissions)
-                root.clearPermissions()
+                root.store.createPermissions(holdingsModel, permissionsListObjectModel, d.isPrivate)
+                root.permissionCreated()
             }
         }
     }

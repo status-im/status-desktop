@@ -1,6 +1,13 @@
 import QtQuick 2.0
 
+import AppLayouts.Chat.controls.community 1.0
+import StatusQ.Core.Utils 0.1 as SQ
+import utils 1.0
+
 QtObject {
+    id: root
+
+    property var permissionsModel: ListModel {} // Backend permissions list object model asignement. Please check the current expected data in qml defined in `createPermissions` method
 
     // TODO: Replace to real data, now dummy model
     property var  tokensModel: ListModel {
@@ -71,6 +78,12 @@ QtObject {
         }
     }
 
+    // TODO: Replace to real data, now dummy model
+    property var  channelsModel: ListModel {
+        ListElement { key: "wellcome"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "#welcome"}
+        ListElement { key: "general"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "#general"}
+    }
+
     readonly property QtObject _d: QtObject {
         id: d
 
@@ -105,7 +118,73 @@ QtObject {
         return null
     }
 
-    function createPermissions(permissions) {
-        console.log("TODO: Create permissions - backend call")
+    function createPermissions(holdings, permissions, isPrivate) {
+        console.log("TODO: Create permissions - backend call - Now dummy data shown")
+        // TO BE REMOVED: It shold just be a call to the backend sharing `holdings`, `permissions`, `channels` and `isPrivate` properties.
+        var permission = {
+            isPrivate: true,
+            holdingsListModel: [],
+            permissionsObjectModel: {
+                key: "",
+                text: "",
+                imageSource: ""
+            },
+            channelsListModel: []
+        };
+
+        // Setting HOLDINGS:
+        for (var i = 0; i < holdings.count; i++ ) {
+            var entry = holdings.get(i);
+             // roles: type, key, name, amount, imageSource, operator
+            permission.holdingsListModel.push({
+                                                  operator: entry.operator,
+                                                  type: entry.type,
+                                                  key: entry.key,
+                                                  name: entry.name,
+                                                  amount: entry.amount,
+                                                  imageSource: entry.imageSource
+                                          });
+        }
+
+        // Setting PERMISSIONS:
+        permission.permissionsObjectModel.key = permissions.key
+        permission.permissionsObjectModel.text = permissions.text
+        permission.permissionsObjectModel.imageSource = permissions.imageSource
+
+        // Setting PRIVATE permission property:
+        permission.isPrivate = isPrivate
+
+        // TODO: Set channels list. Now mocked data.
+        permission.channelsListModel = root.channelsModel
+
+        // Add into permission model:
+        root.permissionsModel.append(permission)
+    }
+
+    function setHoldingsTextFormat(type, name, amount) {
+        switch (type) {
+            case HoldingTypes.Type.Token:
+            case HoldingTypes.Type.Collectible:
+                return `${LocaleUtils.numberToLocaleString(amount)} ${name}`
+            case HoldingTypes.Type.Ens:
+                if (name)
+                    return qsTr("ENS username on '%1' domain").arg(name)
+                else
+                    return qsTr("Any ENS username")
+            default:
+                return ""
+        }
+    }
+
+    function editPermission(index) {
+        console.log("TODO: Edit permissions - backend call")
+    }
+
+    function duplicatePermission(index) {
+        console.log("TODO: Duplicate permissions - backend call")
+    }
+
+    function removePermission(index) {
+        console.log("TODO: Remove permissions - backend call")
     }
 }

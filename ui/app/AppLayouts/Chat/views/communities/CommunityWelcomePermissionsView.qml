@@ -10,7 +10,7 @@ import utils 1.0
 Flickable {
     id: root
 
-    signal addPermission()
+    property int viewWidth: 560 // by design
 
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height + mainLayout.anchors.topMargin
@@ -19,7 +19,7 @@ Flickable {
 
     ColumnLayout {
         id: mainLayout
-        width: 560 // by design
+        width: root.viewWidth
         spacing: 24
 
         Rectangle {
@@ -126,14 +126,6 @@ Flickable {
                     }
                 }
             }
-        }
-
-        StatusButton {
-            text: qsTr("Add permission")
-            height: 44
-            Layout.alignment: Qt.AlignHCenter
-            Layout.fillWidth: true
-            onClicked: root.addPermission()
         }
     }
 }

@@ -19,6 +19,9 @@ Item {
     // optional
     property bool dirty: false
     property bool editable: false
+    property bool headerButtonVisible: false
+    property string headerButtonText: ""
+    property int headerWidth: 0
 
     readonly property Item contentItem: contentLoader.item
     readonly property size settingsDirtyToastMessageImplicitSize: 
@@ -27,6 +30,7 @@ Item {
 
     signal saveChangesClicked
     signal resetChangesClicked
+    signal headerButtonClicked
 
     function reloadContent() {
         contentLoader.active = false
@@ -46,16 +50,27 @@ Item {
         anchors.fill: parent
         spacing: 16
 
-        Item {
-            width: parent.width
+        RowLayout {
+            Layout.maximumWidth: root.headerWidth === 0 ? parent.width : (root.headerWidth + itemHeader.Layout.leftMargin)
             Layout.preferredHeight: 56
-            Layout.leftMargin: 36
+
             StatusBaseText {
-                anchors.verticalCenter: parent.verticalCenter
+                id: itemHeader
+                Layout.leftMargin: 64
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter
                 text: root.title
                 color: Theme.palette.directColor1
                 font.pixelSize: 26
                 font.bold: true
+            }
+
+            StatusButton {
+                visible: root.headerButtonVisible
+                text: root.headerButtonText
+                Layout.preferredHeight: 44
+                Layout.alignment: Qt.AlignHCenter
+                onClicked: root.headerButtonClicked()
             }
         }
 
@@ -64,7 +79,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.topMargin: 16
-            Layout.leftMargin: 24
+            Layout.leftMargin: 64
             Layout.rightMargin: 24
 
             sourceComponent: root.content

@@ -5,13 +5,7 @@ import StatusQ.Core.Theme 0.1
 import "./xss.js" as XSS
 
 QtObject {
-
-    // Logical operators
-    enum Operators {
-        None,
-        And,
-        Or
-    }
+    id: root
 
     function getAbsolutePosition(node) {
         var returnPos = {};
