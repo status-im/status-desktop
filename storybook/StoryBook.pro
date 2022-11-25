@@ -1,3 +1,7 @@
+if(!wasm-emscripten) {
+    error("Use CMake configuration for platforms other then wasm!")
+}
+
 QT += core \
     quick \
     quickcontrols2 \
