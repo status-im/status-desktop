@@ -44,6 +44,8 @@ class CommunityScreenComponents(Enum):
     COMMUNITY_CHAT_LIST_CATEGORIES = "communityChatListCategories_Repeater"
     CHAT_INPUT_ROOT = "chatInput_Root"
     TOGGLE_PIN_MESSAGE_BUTTON = "chatView_TogglePinMessageButton"
+    REPLY_TO_MESSAGE_BUTTON = "chatView_ReplyToMessageButton"
+    
     PIN_TEXT = "chatInfoButton_Pin_Text"
     ADD_MEMBERS_BUTTON = "community_AddMembers_Button"
     EXISTING_CONTACTS_LISTVIEW = "community_InviteFirends_Popup_ExistinContacts_ListView"
@@ -314,26 +316,27 @@ class StatusCommunityScreen:
             image_index = 2 if has_message else 1
             self._verify_image_sent(image_index)
 
-
-    def _do_wait_for_pin_button(self, message_index: int):
+    def _do_wait_for_msg_action_button(self, message_index: int, btn_name: str):
         if (self._retry_number > 3):
-            verify_failure("Cannot find the pin button after hovering the message")
+            verify_failure("Cannot find the action button after hovering the message")
         
-        message_object_to_pin = wait_and_get_obj(CommunityScreenComponents.CHAT_LOG.value).itemAtIndex(int(message_index))
-        move_mouse_over_object(message_object_to_pin)
-        pin_visible, _ = is_loaded_visible_and_enabled(CommunityScreenComponents.TOGGLE_PIN_MESSAGE_BUTTON.value, 100)
-        if not pin_visible:
+        message_object_to_action = wait_and_get_obj(CommunityScreenComponents.CHAT_LOG.value).itemAtIndex(int(message_index))
+        move_mouse_over_object(message_object_to_action)
+        btn_visible, _ = is_loaded_visible_and_enabled(btn_name, 100)
+        if not btn_visible:
             self._retry_number += 1
-            self._do_wait_for_pin_button(message_index)
+            self._do_wait_for_msg_action_button(message_index, btn_name)
              
-    def _wait_for_pin_button(self, message_index: int):
+    def _wait_for_msg_action_button(self, message_index: int, btn_name: str):
         self._retry_number = 0
-        self._do_wait_for_pin_button(message_index)
-        
+        self._do_wait_for_msg_action_button(message_index, btn_name)
+    
+    def _click_msg_action_button(self, message_index: int, btn_name: str):
+        self._wait_for_msg_action_button(message_index, btn_name)
+        click_obj_by_name(btn_name)
+            
     def toggle_pin_message_at_index(self, message_index: int):
-        self._wait_for_pin_button(message_index)
-        
-        click_obj_by_name(CommunityScreenComponents.TOGGLE_PIN_MESSAGE_BUTTON.value)
+        self._click_msg_action_button(message_index, CommunityScreenComponents.TOGGLE_PIN_MESSAGE_BUTTON.value)
 
     def check_pin_count(self, wanted_pin_count: int):
         pin_text_obj = wait_and_get_obj(CommunityScreenComponents.PIN_TEXT.value)
@@ -390,4 +393,5 @@ class StatusCommunityScreen:
         header = get_obj(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)
         verify_values_equal(str(header.nbMembers), str(amount), "Number of members is not correct")
         
-    
+    def toggle_reply_message_at_index(self, message_index: int):
+        self._click_msg_action_button(message_index, CommunityScreenComponents.REPLY_TO_MESSAGE_BUTTON.value)
