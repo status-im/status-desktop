@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, strformat, chronicles, os, std/algorithm, strutils
+import NimQml, Tables, json, sequtils, strformat, chronicles, os, std/algorithm, strutils, uuids, base64
 
 import ./dto/chat as chat_dto
 import ../message/dto/message as message_dto
@@ -339,18 +339,45 @@ QtObject:
       error "Error deleting channel", chatId, msg = e.msg
       return
 
-  proc sendImages*(self: Service, chatId: string, imagePathsJson: string): string =
+  proc sendImages*(self: Service, chatId: string, imagePathsAndDataJson: string): string =
     result = ""
     try:
-      var images = Json.decode(imagePathsJson, seq[string])
+      var images = Json.decode(imagePathsAndDataJson, seq[string])
+      let base64JPGPrefix = "data:image/jpeg;base64,"
+      var imagePaths: seq[string] = @[]
 
-      for imagePath in images.mitems:
+      for imagePathOrSource in images.mitems:
+
+        var imagePath = ""
+
+        if imagePathOrSource.startsWith(base64JPGPrefix):
+          # If an image was copied to clipboard we're receiving it from there
+          # as base64 encoded string. The base64 string will always have JPG data
+          # because image_resizer (a few lines below) will always generate jpgs
+          # (which needs to be fixed as well). 
+          #
+          # We save the image data to a tmp location because image_resizer expects
+          # a filepath to operate on.
+          #
+          # TODO: 
+          # Make image_resizer work for all image types (and ensure the same 
+          # for base64 encoded string received via clipboard
+          let base64Str = imagePathOrSource.replace(base64JPGPrefix, "")
+          let bytes = base64.decode(base64Str)
+          let tmpPath = TMPDIR & $genUUID() & ".jpg"
+          writeFile(tmpPath, bytes)
+          imagePath = tmpPath
+        else:
+          imagePath = imagePathOrSource
+
         var image = singletonInstance.utils.formatImagePath(imagePath)
         imagePath = image_resizer(image, 2000, TMPDIR)
 
-      let response = status_chat.sendImages(chatId, images)
+        imagePaths.add(imagePath)
 
-      for imagePath in images.items:
+      let response = status_chat.sendImages(chatId, imagePaths)
+
+      for imagePath in imagePaths:
         removeFile(imagePath)
 
       discard self.processMessageUpdateAfterSend(response)

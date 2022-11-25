@@ -58,7 +58,7 @@ Rectangle {
 
     property alias textInput: messageInputField
 
-    property var fileUrls: []
+    property var fileUrlsAndSources: []
 
     property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this proeprty?
 
@@ -398,21 +398,27 @@ Rectangle {
         }
 
         if (event.matches(StandardKey.Paste)) {
-            messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
-
-            // cursor position must be stored in a helper property because setting readonly to true causes change
-            // of the cursor position to the end of the input
-            d.copyTextStart = messageInputField.cursorPosition
-            messageInputField.readOnly = true
-
-            const clipboardText = globalUtils.plainText(QClipboardProxy.text)
-            const copiedText = globalUtils.plainText(d.copiedTextPlain)
-            if (copiedText === clipboardText) {
-                d.internalPaste = true
+            if (QClipboardProxy.hasImage) {
+                const clipboardImage = QClipboardProxy.imageBase64
+                showImageArea([clipboardImage])
+                event.accepted = true
             } else {
-                d.copiedTextPlain = ""
-                d.copiedTextFormatted = ""
-                d.copiedMentionsPos = []
+                messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
+
+                // cursor position must be stored in a helper property because setting readonly to true causes change
+                // of the cursor position to the end of the input
+                d.copyTextStart = messageInputField.cursorPosition
+                messageInputField.readOnly = true
+
+                const clipboardText = globalUtils.plainText(QClipboardProxy.text)
+                const copiedText = globalUtils.plainText(d.copiedTextPlain)
+                if (copiedText === clipboardText) {
+                    d.internalPaste = true
+                } else {
+                    d.copiedTextPlain = ""
+                    d.copiedTextFormatted = ""
+                    d.copiedMentionsPos = []
+                }
             }
         }
 
@@ -814,7 +820,7 @@ Rectangle {
     function hideExtendedArea() {
         isImage = false;
         isReply = false;
-        control.fileUrls = []
+        control.fileUrlsAndSources = []
         imageArea.imageSource = [];
         replyArea.userName = ""
         replyArea.message = ""
@@ -836,11 +842,12 @@ Rectangle {
         return validImages
     }
 
-    function showImageArea(imagePaths) {
+    function showImageArea(imagePathsOrData) {
         isImage = true;
         isReply = false;
-        imageArea.imageSource = imagePaths
-        control.fileUrls = imageArea.imageSource
+
+        imageArea.imageSource = imagePathsOrData
+        control.fileUrlsAndSources = imageArea.imageSource
     }
 
     function showReplyArea(messageId, userName, message, contentType, image, sticker) {
@@ -890,7 +897,7 @@ Rectangle {
         ]
         onAccepted: {
             imageBtn.highlighted = false
-            let validImages = validateImages(imageDialog.fileUrls)
+            let validImages = validateImages(imageDialog.fileUrlsAndSources)
             if (validImages.length > 0) {
                 control.showImageArea(validImages)
             }
@@ -1147,11 +1154,11 @@ Rectangle {
                     visible: isImage
                     onImageClicked: Global.openImagePopup(chatImage, messageContextMenu)
                     onImageRemoved: {
-                        if (control.fileUrls.length > index && control.fileUrls[index]) {
-                            control.fileUrls.splice(index, 1)
+                        if (control.fileUrlsAndSources.length > index && control.fileUrlsAndSources[index]) {
+                            control.fileUrlsAndSources.splice(index, 1)
                         }
-                        isImage = control.fileUrls.length > 0
-                        validateImages(control.fileUrls)
+                        isImage = control.fileUrlsAndSources.length > 0
+                        validateImages(control.fileUrlsAndSources)
                     }
                 }
 
