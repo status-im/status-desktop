@@ -98,11 +98,12 @@ QtObject {
         return msg
     }
 
-    function sendMessage(event, text, replyMessageId, fileUrls) {
+    function sendMessage(event, text, replyMessageId, fileUrlsAndSources) {
         var chatContentModule = currentChatContentModule()
-        if (fileUrls.length > 0){
-            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrls));
+        if (fileUrlsAndSources.length > 0){
+            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrlsAndSources));
         }
+
         let msg = globalUtils.plainText(StatusQUtils.Emoji.deparse(text))
         if (msg.length > 0) {
             msg = interpretMessage(msg)

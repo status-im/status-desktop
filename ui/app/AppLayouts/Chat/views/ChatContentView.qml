@@ -234,7 +234,7 @@ ColumnLayout {
                     if(root.rootStore.sendMessage(event,
                                                   chatInput.getTextWithPublicKeys(),
                                                   chatInput.isReply? chatInput.replyMessageId : "",
-                                                  chatInput.fileUrls
+                                                  chatInput.fileUrlsAndSources
                                                   ))
                     {
                         Global.sendMessageSound.stop();

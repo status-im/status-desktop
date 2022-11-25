@@ -60,8 +60,8 @@ method getModuleAsVariant*(self: Module): QVariant =
 method getChatId*(self: Module): string =
   return self.controller.getChatId()
 
-method sendImages*(self: Module, imagePathsJson: string): string =
-  self.controller.sendImages(imagePathsJson)
+method sendImages*(self: Module, imagePathsAndDataJson: string): string =
+  self.controller.sendImages(imagePathsAndDataJson)
 
 method sendChatMessage*(
     self: Module,
