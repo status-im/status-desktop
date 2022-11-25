@@ -421,9 +421,9 @@ QtObject:
             chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
 
           # Handle name/description changes
-          if(chat.id == prev_chat.id and (chat.name != prev_chat.name or chat.description != prev_chat.description)):
-            let chatFullId = community.id & chat.id
-            var updatedChat = findChatById(chatFullId, updatedChats)
+          if(chat.id == prev_chat.id and
+            (chat.name != prev_chat.name or chat.description != prev_chat.description or chat.color != prev_chat.color)):
+            var updatedChat = findChatById(chat.id, updatedChats)
             updatedChat.updateMissingFields(chat)
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
 
