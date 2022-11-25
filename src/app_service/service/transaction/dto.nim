@@ -163,6 +163,8 @@ type
     bonderFees*: string
     cost*: float
     estimatedTime*: int
+    amountInLocked*: bool
+
 
 proc `$`*(self: TransactionPathDto): string =
   return fmt"""TransactionPath(
@@ -176,7 +178,8 @@ proc `$`*(self: TransactionPathDto): string =
     tokenFees:{self.tokenFees},
     bonderFees:{self.bonderFees},
     cost:{self.cost},
-    estimatedTime:{self.estimatedTime}
+    estimatedTime:{self.estimatedTime},
+    amountInLocked:{self.amountInLocked}
   )"""
 
 proc toTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
@@ -193,6 +196,7 @@ proc toTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result.amountOut = stint.fromHex(UInt256, jsonObj{"AmountOut"}.getStr)
   result.estimatedTime = jsonObj{"EstimatedTime"}.getInt
   discard jsonObj.getProp("GasAmount", result.gasAmount)
+  discard jsonObj.getProp("AmountInLocked", result.amountInLocked)
 
 proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result = TransactionPathDto()

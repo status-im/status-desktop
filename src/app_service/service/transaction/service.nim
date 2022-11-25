@@ -379,7 +379,7 @@ QtObject:
   proc suggestedRoutesReady*(self: Service, suggestedRoutes: string) {.slot.} =
     self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedRoutes))
 
-  proc suggestedRoutes*(self: Service, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int): SuggestedRoutesDto =
+  proc suggestedRoutes*(self: Service, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int, lockedInAmounts: string): SuggestedRoutesDto =
     let arg = GetSuggestedRoutesTaskArg(
       tptr: cast[ByteAddress](getSuggestedRoutesTask),
       vptr: cast[ByteAddress](self.vptr),
@@ -390,7 +390,8 @@ QtObject:
       disabledFromChainIDs: disabledFromChainIDs,
       disabledToChainIDs: disabledToChainIDs,
       preferredChainIDs: preferredChainIDs,
-      sendType: sendType
+      sendType: sendType,
+      lockedInAmounts: lockedInAmounts
     )
     self.threadpool.start(arg)
 

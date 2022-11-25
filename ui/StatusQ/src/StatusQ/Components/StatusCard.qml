@@ -62,7 +62,16 @@ Rectangle {
        advanced mode before it locked for any new changes
     */
     property int lockTimeout: 1500
-
+    /*!
+       \qmlproperty int StatusCard::locked
+       This property holds if the custom amount entered by user is locked
+    */
+    property bool locked: false
+    /*!
+       \qmlproperty int StatusCard::preCalculatedAdvancedText
+       This property is the amounts calculated by the routing algorithm
+    */
+    property string preCalculatedAdvancedText
     /*!
        \qmlproperty alias StatusCard::primaryText
        Used to set Primary text in the StatusCard
@@ -137,6 +146,12 @@ Rectangle {
     signal clicked()
 
     /*!
+        \qmlsignal StatusCard::cardLocked
+        This signal is emitted when the card is locked or unlocked
+    */
+    signal cardLocked(bool isLocked)
+
+    /*!
        \qmlproperty string StatusCard::state
        This property holds the states of the StatusCard.
        Possible values are:
@@ -200,7 +215,7 @@ Rectangle {
 
             StatusInput {
                 id: advancedInput
-                property bool locked: false
+                property bool tempLock: false
                 implicitWidth: 80
                 maximumHeight: 32
                 topPadding: 0
@@ -208,7 +223,7 @@ Rectangle {
                 leftPadding: 8
                 rightPadding: 5
                 input.edit.font.pixelSize: 13
-                input.edit.readOnly: locked || disabled
+                input.edit.readOnly: disabled
                 input.rightComponent: Row {
                     width: implicitWidth
                     spacing: 4
@@ -216,15 +231,15 @@ Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         width: 12
                         height: 12
-                        icon.name: advancedInput.locked ? "lock" : "unlock"
+                        icon.name: root.locked && advancedInput.tempLock ? "lock" : "unlock"
                         icon.width: 12
                         icon.height: 12
-                        icon.color: advancedInput.locked ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+                        icon.color: root.locked && advancedInput.tempLock? Theme.palette.primaryColor1 : Theme.palette.baseColor1
                         type: StatusFlatRoundButton.Type.Secondary
                         enabled: !disabled
                         onClicked: {
-                            advancedInput.locked = !advancedInput.locked
-                            waitTimer.restart()
+                            advancedInput.tempLock = !advancedInput.tempLock
+                            root.cardLocked(advancedInput.tempLock)
                         }
                     }
                     StatusFlatRoundButton {
@@ -235,19 +250,22 @@ Rectangle {
                         icon.height: 14
                         icon.color: Theme.palette.baseColor1
                         type: StatusFlatRoundButton.Type.Secondary
-                        onClicked: advancedInput.edit.clear()
+                        onClicked: advancedInput.input.edit.clear()
                     }
                 }
+                text: root.preCalculatedAdvancedText
                 onTextChanged: {
-                    locked = false
+                    advancedInput.tempLock = false
                     waitTimer.restart()
                 }
                 Timer {
                     id: waitTimer
                     interval: lockTimeout
                     onTriggered: {
-                        if(advancedInput.text)
-                            advancedInput.locked = true
+                        advancedInput.tempLock = true
+                        if(!!advancedInput.text && root.preCalculatedAdvancedText !== advancedInput.text) {
+                            root.cardLocked(advancedInput.tempLock)
+                        }
                     }
                 }
             }
@@ -320,7 +338,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: advancedInput
-                input.color: Theme.palette.directColor1
+                input.edit.color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: basicInput
@@ -438,7 +456,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: advancedInput
-                input.color: Theme.palette.directColor1
+                input.edit.color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: basicInput
@@ -497,7 +515,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: advancedInput
-                input.color: Theme.palette.directColor1
+                input.edit.color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: basicInput

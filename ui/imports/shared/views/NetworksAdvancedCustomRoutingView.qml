@@ -26,6 +26,7 @@ ColumnLayout {
     property var weiToEth: function(wei) {}
     property bool interactive: true
     property bool isBridgeTx: false
+    property bool showUnpreferredNetworks: preferredToggleButton.checked
 
     signal reCalculateSuggestedRoute()
 

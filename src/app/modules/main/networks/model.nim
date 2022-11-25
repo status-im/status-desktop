@@ -157,25 +157,25 @@ QtObject:
 
   proc getNetworkIconUrl*(self: Model, shortName: string): string {.slot.} =
     for item in self.items:
-      if(item.getShortName() == toLowerAscii(shortName)):
+      if cmpIgnoreCase(item.getShortName(), shortName) == 0:
         return item.getIconURL()
     return ""
 
   proc getNetworkName*(self: Model, shortName: string): string {.slot.} =
     for item in self.items:
-      if(item.getShortName() == toLowerAscii(shortName)):
+      if cmpIgnoreCase(item.getShortName(), shortName) == 0:
         return item.getChainName()
     return ""   
 
   proc getNetworkColor*(self: Model, shortName: string): string {.slot.} =
     for item in self.items:
-      if(item.getShortName() == toLowerAscii(shortName)):
+      if cmpIgnoreCase(item.getShortName(), shortName) == 0:
         return item.getChainColor()
     return ""
 
   proc getNetworkChainId*(self: Model, shortName: string): int {.slot.} =
     for item in self.items:
-      if(item.getShortName() == toLowerAscii(shortName)):
+      if cmpIgnoreCase(item.getShortName(), shortName) == 0:
         return item.getChainId()
     return 0
 

@@ -93,8 +93,8 @@ QtObject {
         return walletSectionTransactions.getChainIdForBrowser()
     }
 
-    function suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType) {
-        walletSectionTransactions.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType)
+    function suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, lockedInAmounts) {
+        walletSectionTransactions.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, JSON.stringify(lockedInAmounts))
     }
 
     function hex2Eth(value) {
@@ -124,29 +124,86 @@ QtObject {
         return globalUtils.plainText(text)
     }
 
-    property var preferredChainIds: []
-
-    function addPreferredChain(chainID) {
-        if(!chainID)
-            return
-
-        if(preferredChainIds.includes(chainID))
-            return
-
-        preferredChainIds.push(chainID)
+    function setDefaultPreferredDisabledChains() {
+        let mainnetChainId = getMainnetChainId()
+        preferredChainIds.push(mainnetChainId)
+        addUnpreferredChainsToDisabledChains()
     }
+
+    function resetTxStoreProperties() {
+        disabledChainIdsFromList = []
+        disabledChainIdsToList = []
+        preferredChainIds = []
+        lockedInAmounts = []
+    }
+
+    property var preferredChainIds: []
 
     function getMainnetChainId() {
         return networksModule.getMainnetChainId()
     }
 
+    function addPreferredChains(preferredchains, showUnpreferredNetworks) {
+        for(const chain of preferredchains) {
+            if(!preferredChainIds.includes(chain)) {
+                preferredChainIds.push(chain)
+                // remove from disabled accounts as it was added as preferred
+                addRemoveDisabledToChain(chain, false)
+            }
+        }
+
+        // here we are trying to remove chains that are not preferred from the list and
+        // also disable them incase the showUnpreferredNetworks toggle is turned off
+        for(var i = 0; i < preferredChainIds.length; i++) {
+            if(!preferredchains.includes(preferredChainIds[i])) {
+                if(!showUnpreferredNetworks)
+                    addRemoveDisabledToChain(preferredChainIds[i], true)
+                preferredChainIds.splice(i, 1)
+            }
+        }
+    }
+
     function addUnpreferredChainsToDisabledChains() {
-        let mainnetChainId = getMainnetChainId()
         for(var i = 0; i < allNetworks.count; i++) {
             let chainId = allNetworks.rowData(i, "chainId") * 1
-            if(mainnetChainId !== chainId) {
+            if(!preferredChainIds.includes(chainId)) {
                 addRemoveDisabledToChain(chainId, true)
             }
+        }
+    }
+
+    function splitAndFormatAddressPrefix(text, isBridgeTx, showUnpreferredNetworks) {
+        let address = ""
+        let tempPreferredChains = []
+        let chainFound = false
+        let splitWords = plainText(text).split(':')
+        let editedText = ""
+
+        for(var i=0; i<splitWords.length; i++) {
+            const word = splitWords[i]
+            if(word.startsWith("0x")) {
+                address = word
+                editedText += word
+            } else {
+                let chainColor = allNetworks.getNetworkColor(word)
+                if(!!chainColor) {
+                    chainFound = true
+                    if(!isBridgeTx)
+                        tempPreferredChains.push(allNetworks.getNetworkChainId(word))
+                    editedText += `<span style='color: %1'>%2</span>`.arg(chainColor).arg(word)+':'
+                }
+            }
+        }
+
+        if(!chainFound && !isBridgeTx)
+            addPreferredChains([getMainnetChainId()], showUnpreferredNetworks)
+        else
+            addPreferredChains(tempPreferredChains, showUnpreferredNetworks)
+
+        editedText +="</a></p>"
+        return {
+            formattedText: editedText,
+            address: address
         }
     }
 
@@ -170,6 +227,23 @@ QtObject {
             return qsTr("< 5 minutes")
         default:
             return qsTr("> 5 minutes")
+        }
+    }
+
+    property var lockedInAmounts: []
+
+    function addLockedInAmount(chainID, value, decimals, locked) {
+        let amount = Number.fromLocaleString(Qt.locale(), value) * Math.pow(10, decimals)
+        let index  = lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined && lockedItem.chainID === chainID)
+        if(index === -1) {
+            lockedInAmounts.push({"chainID": chainID, "value": amount.toString(16)})
+        }
+        else {
+            if(locked) {
+                lockedInAmounts[index].value = amount.toString(16)
+            } else {
+                lockedInAmounts.splice(index,1)
+            }
         }
     }
 }
