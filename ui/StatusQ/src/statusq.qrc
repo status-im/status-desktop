@@ -193,5 +193,6 @@
         <file>StatusQ/Core/StatusRollArea.qml</file>
         <file>StatusQ/Popups/Dialog/StatusDialogBackground.qml</file>
         <file>StatusQ/Popups/StatusMenuInstantiator.qml</file>
+        <file>StatusQ/Core/Utils/OperatorsUtils.qml</file>
     </qresource>
 </RCC>

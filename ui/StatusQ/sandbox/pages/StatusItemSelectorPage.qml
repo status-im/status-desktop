@@ -13,8 +13,6 @@ ColumnLayout {
         iconSize: 24
         title: "Item Selector Title"
         defaultItemText: "Example: Empty items"
-        andOperatorText: "and"
-        orOperatorText: "or"
 
         itemsModel: ListModel {
             id: model
@@ -39,7 +37,7 @@ ColumnLayout {
                         model.append({
                             text: input.text,
                             imageSource: "qrc:/images/SNT.png",
-                            operator: model.count > 0 ? Utils.Operators.Or : Utils.Operators.None
+                            operator: model.count > 0 ? OperatorsUtils.Operators.Or : OperatorsUtils.Operators.None
                         })
 
                         dropdown.close()

@@ -101,36 +101,10 @@ Rectangle {
     */
     property bool useIcons: false
     /*!
-       \qmlproperty string StatusItemSelector::andOperatorText
-       This property holds the string text representation for an `AND` logical operator.
-    */
-    property string andOperatorText: qsTr("and")
-    /*!
-       \qmlproperty string StatusItemSelector::orOperatorText
-       This property holds the string text representation for an `OR` logical operator.
-    */
-    property string orOperatorText: qsTr("or")
-    /*!
        \qmlsignal StatusItemSelector::itemClicked
        This signal is emitted when the item is clicked.
     */
     signal itemClicked(var item, int index, var mouse)
-
-
-    QtObject {
-        id: d
-
-        function operatorTextFormat(operator) {
-            switch(operator) {
-                case Utils.Operators.And:
-                    return root.andOperatorText
-                case Utils.Operators.Or:
-                    return root.orOperatorText
-                case Utils.Operators.None:
-                    return ""
-            }
-        }
-    }
 
     color: Theme.palette.baseColor4
     implicitHeight: columnLayout.implicitHeight + columnLayout.anchors.topMargin + columnLayout.anchors.bottomMargin
@@ -190,9 +164,9 @@ Rectangle {
                     spacing: flow.spacing
 
                     StatusBaseText {                        
-                        visible: model.operator !== Utils.Operators.None
+                        visible: model.operator !== OperatorsUtils.Operators.None
                         Layout.alignment: Qt.AlignVCenter
-                        text: d.operatorTextFormat(model.operator)
+                        text: OperatorsUtils.setOperatorTextFormat(model.operator)
                         color: Theme.palette.primaryColor1
                         font.pixelSize: 17
                         MouseArea {
@@ -200,10 +174,10 @@ Rectangle {
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 // Switch operator
-                                if(model.operator === Utils.Operators.And)
-                                    model.operator = Utils.Operators.Or
+                                if(model.operator === OperatorsUtils.Operators.And)
+                                    model.operator = OperatorsUtils.Operators.Or
                                 else
-                                    model.operator = Utils.Operators.And
+                                    model.operator = OperatorsUtils.Operators.And
                             }
                         }
                     }

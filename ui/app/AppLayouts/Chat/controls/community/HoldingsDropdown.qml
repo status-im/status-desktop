@@ -5,7 +5,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Core.Utils 0.1 as SQ
+import StatusQ.Core.Utils 0.1
 
 
 StatusDropdown {
@@ -35,7 +35,7 @@ StatusDropdown {
 
     function reset() {
         d.currentHoldingType = HoldingTypes.Type.Token
-        d.operator = SQ.Utils.Operators.None
+        d.operator = OperatorsUtils.Operators.None
         d.tokenAmountText = ""
         d.collectibleAmountText = ""
 
@@ -106,7 +106,7 @@ StatusDropdown {
 
         property int currentHoldingType: HoldingTypes.Type.Token
 
-        property int operator: SQ.Utils.Operators.None
+        property int operator: OperatorsUtils.Operators.None
         property bool ensDomainNameValid: false
 
         signal addClicked
@@ -304,7 +304,7 @@ StatusDropdown {
                 const modelItem = store.getTokenByKey(tokenKey)
 
                 if (modelItem) {
-                    tokensPanel.tokenName = modelItem.name
+                    tokensPanel.tokenName = modelItem.shortName
                     tokensPanel.tokenImage = modelItem.iconSource
                 } else {
                     tokensPanel.tokenName = d.defaultTokenNameText

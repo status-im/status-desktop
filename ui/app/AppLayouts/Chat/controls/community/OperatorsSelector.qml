@@ -3,7 +3,7 @@ import QtQuick 2.14
 
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQ
+import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 
@@ -19,12 +19,12 @@ ColumnLayout {
             {
                 icon: "add",
                 text: qsTr("And..."),
-                operator: SQ.Utils.Operators.And
+                operator: OperatorsUtils.Operators.And
             },
             {
                 icon: "condition-Or",
                 text: qsTr("Or..."),
-                operator: SQ.Utils.Operators.Or
+                operator: OperatorsUtils.Operators.Or
             }
         ]
 

@@ -158,11 +158,7 @@ StatusSectionLayout {
     centerPanel: Loader {
         id: centerPanelContentLoader
         anchors.fill: parent
-        //anchors.margins: 32
-        anchors {
-            leftMargin: 28
-            bottomMargin: 16
-        }
+        anchors.bottomMargin: 16
         active: root.community
         sourceComponent: StackLayout {
             currentIndex: d.currentIndex
