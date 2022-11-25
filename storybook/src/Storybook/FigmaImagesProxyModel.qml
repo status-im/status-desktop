@@ -1,30 +1,47 @@
 import QtQuick 2.14
 
 ListModel {
+    id: root
+
     /* required */ property FigmaLinksCache figmaLinksCache
     property alias sourceModel: d.model
 
     readonly property Instantiator _d: Instantiator {
         id: d
 
+        property int idCounter: 0
+
         model: 0
 
         delegate: QtObject {
             id: delegate
 
+            property int uniqueId
+
             Component.onCompleted: {
                 append({
                     rawLink: model.link,
-                    imageLink: ""
+                    imageLink: "",
+                    uniqueId: d.idCounter
                 })
+
+                uniqueId = d.idCounter
+                d.idCounter++
 
                 figmaLinksCache.getImageUrl(model.link, link => {
                     if (delegate)
-                        setProperty(model.index, "imageLink", link)
+                        root.setProperty(model.index, "imageLink", link)
                 })
             }
         }
 
-        onObjectRemoved: console.warn("FigmaImagesProxyModel: removing items from the source model is not supported!")
+        onObjectRemoved: {
+            for (let i = 0; i < root.count; i++) {
+                if (root.get(i).uniqueId === object.uniqueId) {
+                    root.remove(i)
+                    break
+                }
+            }
+        }
     }
 }

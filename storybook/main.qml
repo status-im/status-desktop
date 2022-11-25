@@ -18,16 +18,29 @@ ApplicationWindow {
 
     font.pixelSize: 13
 
+    PagesModel {
+        id: pagesModel
+    }
+
+    FigmaLinksSource {
+        id: figmaLinksSource
+
+        filePath: "figma.json"
+    }
+
+    FigmaDecoratorModel {
+        id: figmaModel
+
+        sourceModel: pagesModel
+        figmaLinks: figmaLinksSource.figmaLinks
+    }
+
     HotReloader {
         id: reloader
 
         loader: viewLoader
         enabled: hotReloaderControls.enabled
         onReloaded: hotReloaderControls.notifyReload()
-    }
-
-    PagesModel {
-        id: pagesModel
     }
 
     SplitView {
@@ -125,13 +138,13 @@ ApplicationWindow {
 
                 title: `pages/${root.currentPage}Page.qml`
                 figmaPagesCount: currentPageModelItem.object
-                                 ? currentPageModelItem.object.figmaCount : 0
+                                 ? currentPageModelItem.object.figma.count : 0
 
                 Instantiator {
                     id: currentPageModelItem
 
                     model: SingleItemProxyModel {
-                        sourceModel: pagesModel
+                        sourceModel: figmaModel
                         roleName: "title"
                         value: root.currentPage
                     }
@@ -139,7 +152,6 @@ ApplicationWindow {
                     delegate: QtObject {
                         readonly property string title: model.title
                         readonly property var figma: model.figma
-                        readonly property int figmaCount: figma ? figma.count : 0
                     }
                 }
 

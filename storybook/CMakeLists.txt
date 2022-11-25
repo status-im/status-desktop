@@ -28,20 +28,33 @@ add_executable(
   main.cpp
   cachecleaner.cpp cachecleaner.h
   directorieswatcher.cpp directorieswatcher.h
+  figmadecoratormodel.cpp figmadecoratormodel.h
+  figmaio.cpp figmaio.h
+  figmalinks.cpp figmalinks.h
+  figmalinksmodel.cpp figmalinksmodel.h
+  figmalinkssource.cpp figmalinkssource.h
+  modelutils.cpp modelutils.h
   sectionsdecoratormodel.cpp sectionsdecoratormodel.h
   ${QML_FILES} main.qml PagesModel.qml
   ${JS_FILES}
+  figma.json
 )
 
 target_compile_definitions(${PROJECT_NAME}
                            PRIVATE QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}")
+
 target_link_libraries(
   ${PROJECT_NAME} PRIVATE Qt5::Core Qt5::Quick Qt5::QuickControls2 SortFilterProxyModel)
 
 enable_testing()
-add_executable(SectionsDecoratorModelTest tests/tst_SectionsDecoratorModel.cpp sectionsdecoratormodel.cpp)
+add_executable(SectionsDecoratorModelTest tests/tst_SectionsDecoratorModel.cpp sectionsdecoratormodel.cpp modelutils.cpp)
 add_test(NAME SectionsDecoratorModelTest COMMAND SectionsDecoratorModelTest)
 target_link_libraries(SectionsDecoratorModelTest PRIVATE Qt5::Test)
+
+add_executable(FigmaDecoratorModelTest tests/tst_FigmaDecoratorModel.cpp figmadecoratormodel.cpp figmalinkssource.cpp
+    figmalinks.cpp figmaio.cpp modelutils.cpp figmalinksmodel.cpp)
+add_test(NAME FigmaModelTest COMMAND FigmaModelTest)
+target_link_libraries(FigmaDecoratorModelTest PRIVATE Qt5::Test Qt5::Qml)
 
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ/src")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/app")
