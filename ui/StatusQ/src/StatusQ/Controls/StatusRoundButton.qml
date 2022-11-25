@@ -21,6 +21,8 @@ Rectangle {
                 return Theme.palette.indirectColor1;
             case StatusRoundButton.Type.Tertiary:
                 return Theme.palette.primaryColor1;
+            case StatusRoundButton.Type.Quaternary:
+                return Theme.palette.dangerColor1;
             }
         }
 
@@ -32,6 +34,8 @@ Rectangle {
                 return Theme.palette.indirectColor1;
             case StatusRoundButton.Type.Tertiary:
                 return Theme.palette.baseColor1;
+            case StatusRoundButton.Type.Quaternary:
+                return Theme.palette.dangerColor1;
             }
         }
 
@@ -42,6 +46,8 @@ Rectangle {
             case StatusRoundButton.Type.Secondary:
                 return Theme.palette.indirectColor1;
             case StatusRoundButton.Type.Tertiary:
+                return Theme.palette.baseColor1;
+            case StatusRoundButton.Type.Quaternary:
                 return Theme.palette.baseColor1;
             }
         }
@@ -63,7 +69,8 @@ Rectangle {
     enum Type {
         Primary,
         Secondary,
-        Tertiary
+        Tertiary,
+        Quaternary
     }
     /// Implementation
 
@@ -78,6 +85,8 @@ Rectangle {
                 return Theme.palette.primaryColor1;
             case StatusRoundButton.Type.Tertiary:
                 return "transparent";
+            case StatusRoundButton.Type.Quaternary:
+                return Theme.palette.dangerColor3;
             }
         }
 
@@ -89,6 +98,8 @@ Rectangle {
                 return Theme.palette.miscColor1;
             case StatusRoundButton.Type.Tertiary:
                 return Theme.palette.primaryColor3;
+            case StatusRoundButton.Type.Quaternary:
+                return Theme.palette.dangerColor2;
             }
         }
 
@@ -100,6 +111,8 @@ Rectangle {
                 return Theme.palette.baseColor1;
             case StatusRoundButton.Type.Tertiary:
                 return "transparent";
+            case StatusRoundButton.Type.Quaternary:
+                return Theme.palette.baseColor2;
             }
         }
     }
