@@ -149,8 +149,8 @@ method transactionWasSent*(self: Module, result: string) =
 method suggestedFees*(self: Module, chainId: int): string = 
   return self.controller.suggestedFees(chainId)
 
-method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int): string =
-  return self.controller.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType)
+method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int, lockedInAmounts: string): string =
+  return self.controller.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
 
 method getChainIdForChat*(self: Module): int =
   return self.controller.getChainIdForChat()

@@ -72,7 +72,7 @@ StatusDialog {
             let amount = parseFloat(amountToSendInput.text) * Math.pow(10, assetSelector.selectedAsset.decimals)
             popup.store.suggestedRoutes(popup.selectedAccount.address, amount.toString(16), assetSelector.selectedAsset.symbol,
                                         store.disabledChainIdsFromList, store.disabledChainIdsToList,
-                                        store.preferredChainIds, popup.sendType)
+                                        store.preferredChainIds, popup.sendType, store.lockedInAmounts)
         }
     })
 
@@ -84,9 +84,9 @@ StatusDialog {
             amountToSendInput.validate()
         }
         readonly property bool isReady: amountToSendInput.valid && !amountToSendInput.pending && recipientReady
-        readonly property bool errorMode: (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0) || networkSelector.errorMode || isNaN(amountToSendInput.text)
+        readonly property bool errorMode: popup.isLoading || !isReady ? false : (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0) || networkSelector.errorMode || isNaN(amountToSendInput.text)
         readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending
-        property bool isAddressValid: false
+        property bool isAddressValid: Utils.isValidAddress(popup.addressText)
         property bool isENSValid: false
         readonly property var resolveENS: Backpressure.debounce(popup, 500, function (ensName) {
             store.resolveENS(ensName)
@@ -94,33 +94,16 @@ StatusDialog {
         property string resolvedENSAddress
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
-        property var preferredChainIds: []
         property string totalTimeEstimate
         property string totalFeesInEth
         property string totalFeesInFiat
 
         property Timer waitTimer: Timer {
-            interval: 1000
+            interval: 1500
             onTriggered: {
-                d.isAddressValid = false
-                let splitWords = popup.store.plainText(recipientSelector.input.text).split(':')
-                let editedText = ""
-                for(var i=0; i<splitWords.length; i++) {
-                    if(splitWords[i].startsWith("0x")) {
-                        d.isAddressValid = Utils.isValidAddress(splitWords[i])
-                        popup.addressText =   splitWords[i]
-                        editedText += splitWords[i]
-                    } else {
-                        let chainColor = popup.store.allNetworks.getNetworkColor(splitWords[i])
-                        if(!!chainColor) {
-                            if(!isBridgeTx)
-                                store.addPreferredChain(popup.store.allNetworks.getNetworkChainId(splitWords[i]))
-                             editedText += `<span style='color: %1'>%2</span>`.arg(chainColor).arg(splitWords[i])+':'
-                        }
-                    }
-                }
-                editedText +="</a></p>"
-                recipientSelector.input.text = editedText
+                let result = store.splitAndFormatAddressPrefix(recipientSelector.input.text, isBridgeTx, networkSelector.showUnpreferredNetworks)
+                popup.addressText = result.address
+                recipientSelector.input.text = result.formattedText
                 popup.recalculateRoutesAndFees()
             }
         }
@@ -138,8 +121,7 @@ StatusDialog {
 
     onOpened: {
         if(!isBridgeTx) {
-            store.addPreferredChain(popup.store.getMainnetChainId())
-            store.addUnpreferredChainsToDisabledChains()
+            store.setDefaultPreferredDisabledChains()
         }
 
         amountToSendInput.input.edit.forceActiveFocus()
@@ -163,10 +145,7 @@ StatusDialog {
         }
     }
 
-    onClosed: {
-        popup.store.disabledChainIdsFromList = []
-        popup.store.disabledChainIdsToList = []
-    }
+    onClosed: popup.store.resetTxStoreProperties()
 
     header: AccountsModalHeader {
         anchors.top: parent.top
@@ -394,12 +373,12 @@ StatusDialog {
                         multiline: false
                         input.edit.textFormat: TextEdit.RichText
                         input.rightComponent: RowLayout {
-                            StatusButton {
-                                visible: recipientSelector.text === ""
-                                borderColor: Theme.palette.primaryColor1
-                                size: StatusBaseButton.Size.Tiny
-                                text: qsTr("Paste")
-                                onClicked: recipientSelector.input.edit.paste()
+                            StatusIcon {
+                                Layout.preferredWidth: 16
+                                Layout.preferredHeight: 16
+                                icon: "tiny/checkmark"
+                                color: Theme.palette.primaryColor1
+                                visible: d.recipientReady
                             }
                             StatusFlatRoundButton {
                                 visible: recipientSelector.text !== ""

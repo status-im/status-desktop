@@ -24,7 +24,7 @@ RowLayout {
     property var selectedAccount
     property var weiToEth: function(wei) {}
     property var reCalculateSuggestedRoute: function() {}
-
+    property bool errorMode: false
     spacing: 10
 
     StatusRoundIcon {
@@ -94,8 +94,15 @@ RowLayout {
             rightPadding: 5
             implicitWidth: 126
             title: modelData.toNetwork.chainName
-            subTitle: root.weiToEth(modelData.amountIn)
-            statusListItemSubTitle.color: Theme.palette.primaryColor1
+            subTitle: {
+                let index  = store.lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined && lockedItem.chainID === modelData.toNetwork.chainId)
+                if(!root.errorMode || index === -1)
+                    return root.weiToEth(modelData.amountIn)
+                else {
+                    return root.weiToEth(parseInt(store.lockedInAmounts[index].value, 16))
+                }
+            }
+            statusListItemSubTitle.color: root.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
             asset.width: 32
             asset.height: 32
             asset.name: Style.svg("tiny/" + modelData.toNetwork.iconUrl)

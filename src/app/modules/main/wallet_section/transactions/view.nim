@@ -120,7 +120,7 @@ QtObject:
   proc suggestedFees*(self: View, chainId: int): string {.slot.} =
     return self.delegate.suggestedFees(chainId)
 
-  proc suggestedRoutes*(self: View, account: string, amount: string, token: string, disabledFromChainIDs: string, disabledToChainIDs: string, preferredChainIDs: string, sendType: int): string {.slot.} =
+  proc suggestedRoutes*(self: View, account: string, amount: string, token: string, disabledFromChainIDs: string, disabledToChainIDs: string, preferredChainIDs: string, sendType: int, lockedInAmounts: string): string {.slot.} =
     var parsedAmount = stint.u256("0")
     var seqPreferredChainIDs = seq[uint64] : @[]
     var seqDisabledFromChainIDs = seq[uint64] : @[]
@@ -149,7 +149,7 @@ QtObject:
     except Exception as e:
       discard
 
-    return self.delegate.suggestedRoutes(account, parsedAmount, token, seqDisabledFromChainIDs, seqDisabledToChainIDs, seqPreferredChainIDs, sendType)
+    return self.delegate.suggestedRoutes(account, parsedAmount, token, seqDisabledFromChainIDs, seqDisabledToChainIDs, seqPreferredChainIDs, sendType, lockedInAmounts)
   
   proc getChainIdForChat*(self: View): int {.slot.} =
     return self.delegate.getChainIdForChat()

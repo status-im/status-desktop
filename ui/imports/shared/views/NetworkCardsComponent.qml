@@ -21,25 +21,15 @@ Item {
     property bool customMode: false
     property double amountToSend: 0
     property double requiredGasInEth: 0
-    property bool errorMode: {
-        if(customMode) {
-            return (d.customAmountToSend > amountToSend) || (d.customAmountToSend < amountToSend) ||
-                    (d.customAmountToReceive > amountToSend) || (d.customAmountToReceive < amountToSend)
-        }
-        else {
-            return  !d.thereIsApossibleRoute
-        }
-    }
+    property bool errorMode: !d.thereIsApossibleRoute || d.customAmountToSend > root.amountToSend
     property bool interactive: true
     property bool showPreferredChains: false
     property var weiToEth: function(wei) {}
-
     property var reCalculateSuggestedRoute: function() {}
 
     QtObject {
         id: d
         property double customAmountToSend: 0
-        property double customAmountToReceive: 0
         property bool thereIsApossibleRoute: false
 
         function resetAllSetValues() {
@@ -51,6 +41,16 @@ Item {
             }
         }
 
+        function calculateCustomAmounts() {
+            d.customAmountToSend = 0
+            for(var i = 0; i<fromNetworksRepeater.count; i++) {
+                if(fromNetworksRepeater.itemAt(i).locked) {
+                    let amountEntered = parseFloat(fromNetworksRepeater.itemAt(i).advancedInputText)
+                    d.customAmountToSend += isNaN(amountEntered) ? 0 : amountEntered
+                }
+            }
+        }
+
         function draw() {
             canvas.clear()
             canvas.requestPaint()
@@ -59,6 +59,7 @@ Item {
 
     onVisibleChanged: if(visible) d.draw()
     onBestRoutesChanged: d.draw()
+    onErrorModeChanged: if(errorMode) d.draw()
 
     width: 410
     height: visible ? networkCardsLayout.height : 0
@@ -85,15 +86,23 @@ Item {
                     property int routeOnNetwork: 0
                     property string tokenBalanceOnChain: selectedAccount && selectedAccount!== undefined && selectedAsset!== undefined ? selectedAccount.getTokenBalanceOnChain(model.chainId, selectedAsset.symbol) : ""
                     property var hasGas: selectedAccount.hasGas(model.chainId, model.nativeCurrencySymbol, requiredGasInEth)
+
                     primaryText: model.chainName
                     secondaryText: (parseFloat(tokenBalanceOnChain) === 0 && root.amountToSend !== 0) ?
-                                       qsTr("No Balance") : !hasGas ? qsTr("No Gas") : LocaleUtils.numberToLocaleString(fromNetwork.amountToSend)
+                                       qsTr("No Balance") : !hasGas ? qsTr("No Gas") : advancedInputText
                     tertiaryText: qsTr("BALANCE: ") + LocaleUtils.numberToLocaleString(parseFloat(tokenBalanceOnChain))
+                    locked: store.lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined && lockedItem.chainID ===  model.chainId) !== -1
+                    preCalculatedAdvancedText: {
+                        let index  = store.lockedInAmounts.findIndex(lockedItem => lockedItem!== undefined && lockedItem.chainID === model.chainId)
+                        if(locked && index !== -1) {
+                            return root.weiToEth(parseInt(store.lockedInAmounts[index].value, 16))
+                        }
+                        else return LocaleUtils.numberToLocaleString(fromNetwork.amountToSend)
+                    }
                     state: tokenBalanceOnChain === 0 || !hasGas ? "unavailable" : root.errorMode ? "error" : "default"
                     cardIcon.source: Style.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
                     advancedMode: root.customMode
-                    advancedInputText: LocaleUtils.numberToLocaleString(fromNetwork.amountToSend)
                     disabled: store.disabledChainIdsFromList.includes(model.chainId)
                     clickable: root.interactive
                     onClicked: {
@@ -106,73 +115,70 @@ Item {
                         if(visible)
                             disabled = store.disabledChainIdsFromList.includes(model.chainId)
                     }
-                    // To-do needed for custom view
-//                    onAdvancedInputTextChanged: {
-//                        if(selectedNetwork && selectedNetwork.chainName === model.chainName) {
-//                            d.customAmountToSend = isNaN(parseFloat(advancedInputText)) ? 0 : parseFloat(advancedInputText)
-//                        }
-//                    }
+                    onCardLocked: {
+                        store.addLockedInAmount(model.chainId, advancedInputText, root.selectedAsset.decimals, isLocked)
+                        locked = store.lockedInAmounts.length > 0 && store.lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined &&  lockedItem.chainID ===  model.chainId) !== -1
+                        d.calculateCustomAmounts()
+                        if(!locked || d.customAmountToSend <= root.amountToSend)
+                            root.reCalculateSuggestedRoute()
+                    }
                 }
             }
         }
         ColumnLayout {
-            id: toNetworksLayout
+            id: toMainNetworksLayout
             Layout.alignment: Qt.AlignRight | Qt.AlignTop
             spacing: 12
             StatusBaseText {
-                Layout.alignment: Qt.AlignRight
+                Layout.alignment: Qt.AlignRight | Qt.AlignTop
                 Layout.maximumWidth: 100
                 font.pixelSize: 10
                 color: Theme.palette.baseColor1
                 text: StatusQUtils.Utils.elideText(selectedAccount.address, 6, 4).toUpperCase()
                 elide: Text.ElideMiddle
             }
-            Repeater {
-                id: toNetworksRepeater
-                model: root.allNetworks
-                StatusCard {
-                    id: toCard
-                    objectName: model.chainId
-                    property int routeOnNetwork: 0
-                    property double amountToReceive: 0
-                    property bool preferred: store.preferredChainIds.includes(model.chainId)
-                    primaryText: model.chainName
-                    secondaryText: LocaleUtils.numberToLocaleString(amountToReceive)
-                    tertiaryText: state === "unpreferred"  ? qsTr("UNPREFERRED") : ""
-                    state: root.errorMode ? "error" : !preferred ? "unpreferred" : "default"
-                    opacity: preferred || showPreferredChains ? 1 : 0
-                    cardIcon.source: Style.svg(model.iconUrl)
-                    disabledText: qsTr("Disabled")
-                    advancedMode: root.customMode
-                    advancedInputText: LocaleUtils.numberToLocaleString(amountToReceive)
-                    disabled: store.disabledChainIdsToList.includes(model.chainId)
-                    clickable: root.interactive
-                    onClicked: {
-                        store.addRemoveDisabledToChain(model.chainId, disabled)
-                        // only recalculate if the a best route was disabled
-                        if(root.bestRoutes.length === 0 || routeOnNetwork !== 0 || !disabled)
-                            root.reCalculateSuggestedRoute()
-                    }
-                    onVisibleChanged: {
-                        if(visible) {
-                            disabled = store.disabledChainIdsToList.includes(model.chainId)
-                            preferred = store.preferredChainIds.includes(model.chainId)
-                        }
-                    }
-                    onOpacityChanged: {
-                        if(opacity === 1) {
-                            disabled = store.disabledChainIdsToList.includes(model.chainId)
-                        } else {
-                            if(opacity === 0 && routeOnNetwork > 0)
+            Column {
+                id: toNetworksLayout
+                spacing: root.customMode ? 26 : 12
+                Repeater {
+                    id: toNetworksRepeater
+                    model: root.allNetworks
+                    StatusCard {
+                        id: toCard
+                        objectName: model.chainId
+                        property int routeOnNetwork: 0
+                        property double amountToReceive: 0
+                        property bool preferred: store.preferredChainIds.includes(model.chainId)
+                        primaryText: model.chainName
+                        secondaryText: LocaleUtils.numberToLocaleString(amountToReceive)
+                        tertiaryText: state === "unpreferred"  ? qsTr("UNPREFERRED") : ""
+                        state: root.errorMode ? "error" : !preferred ? "unpreferred" : "default"
+                        opacity: preferred || showPreferredChains ? 1 : 0
+                        cardIcon.source: Style.svg(model.iconUrl)
+                        disabledText: qsTr("Disabled")
+                        disabled: store.disabledChainIdsToList.includes(model.chainId)
+                        clickable: root.interactive
+                        onClicked: {
+                            store.addRemoveDisabledToChain(model.chainId, disabled)
+                            // only recalculate if the a best route was disabled
+                            if(root.bestRoutes.length === 0 || routeOnNetwork !== 0 || !disabled)
                                 root.reCalculateSuggestedRoute()
                         }
+                        onVisibleChanged: {
+                            if(visible) {
+                                disabled = store.disabledChainIdsToList.includes(model.chainId)
+                                preferred = store.preferredChainIds.includes(model.chainId)
+                            }
+                        }
+                        onOpacityChanged: {
+                            if(opacity === 1) {
+                                disabled = store.disabledChainIdsToList.includes(model.chainId)
+                            } else {
+                                if(opacity === 0 && routeOnNetwork > 0)
+                                    root.reCalculateSuggestedRoute()
+                            }
+                        }
                     }
-
-                    // To-do needed for custom view
-//                    onAdvancedInputTextChanged: {
-//                        if(selectedNetwork && selectedNetwork.chainName === model.chainName)
-//                            d.customAmountToReceive = isNaN(parseFloat(advancedInputText)) ? 0 : parseFloat(advancedInputText)
-//                    }
                 }
             }
         }
@@ -200,7 +206,7 @@ Item {
             if(bestRoutes === undefined)
                 return
 
-            // in case you are drwaing multiple routes we need an offset so that the lines dont overlap
+            // in case you are drawing multiple routes we need an offset so that the lines dont overlap
             let yOffsetFrom = 0
             let yOffsetTo = 0
             let xOffset = 0
@@ -232,14 +238,15 @@ Item {
                     fromN.routeOnNetwork += 1
                     toN.routeOnNetwork += 1
                     d.thereIsApossibleRoute = true
-                    let routeColor = toN.preferred ? '#627EEA' : Theme.palette.pinColor1
+                    let routeColor = root.errorMode ? Theme.palette.dangerColor1 : toN.preferred ? '#627EEA' : Theme.palette.pinColor1
                     StatusQUtils.Utils.drawArrow(ctx, fromN.x + fromN.width,
                                                  fromN.y + fromN.cardIconPosition + yOffsetFrom,
-                                                 toNetworksLayout.x + toN.x,
-                                                 toN.y + toN.cardIconPosition + yOffsetTo,
+                                                 toMainNetworksLayout.x + toN.x,
+                                                 toNetworksLayout.y + toN.y + toN.cardIconPosition + yOffsetTo,
                                                  routeColor, xOffset)
                 }
             }
+            d.calculateCustomAmounts()
         }
     }
 }

@@ -24,12 +24,10 @@ Item {
     property var bestRoutes
     property bool isLoading: false
     property bool advancedOrCustomMode: (tabBar.currentIndex === 1) || (tabBar.currentIndex === 2)
-    property bool errorMode: (tabBar.currentIndex === 1) ?
-                                 advancedNetworkRoutingPage.errorMode :
-                                 (tabBar.currentIndex === 2) ?
-                                     customNetworkRoutingPage.errorMode: false
+    property bool errorMode: advancedNetworkRoutingPage.errorMode
     property bool interactive: true
     property bool isBridgeTx: false
+    property bool showUnpreferredNetworks: advancedNetworkRoutingPage.showUnpreferredNetworks
 
     signal reCalculateSuggestedRoute()
 
@@ -49,10 +47,9 @@ Item {
         StatusSwitchTabButton {
             text: qsTr("Advanced")
         }
-        // To-do Implementaion is not ready yet
-//        StatusSwitchTabButton {
-//            text: qsTr("Custom")
-//        }
+        StatusSwitchTabButton {
+            text: qsTr("Custom")
+        }
     }
 
     StackLayout {
@@ -60,10 +57,9 @@ Item {
         anchors.top: tabBar.bottom
         anchors.topMargin: Style.current.bigPadding
         height: currentIndex == 0 ? networksSimpleRoutingPage.height + networksSimpleRoutingPage.anchors.margins + Style.current.bigPadding:
-                                    currentIndex == 1 ? advancedNetworkRoutingPage.height + advancedNetworkRoutingPage.anchors.margins + Style.current.bigPadding:
-                                                        customNetworkRoutingPage.height + customNetworkRoutingPage.anchors.margins + Style.current.bigPadding
+                                   advancedNetworkRoutingPage.height + advancedNetworkRoutingPage.anchors.margins + Style.current.bigPadding
         width: parent.width
-        currentIndex: tabBar.currentIndex
+        currentIndex: tabBar.currentIndex === 0 ? 0 : 1
 
         Rectangle {
             id: simple
@@ -82,6 +78,7 @@ Item {
                 store: root.store
                 selectedAsset: root.selectedAsset
                 selectedAccount: root.selectedAccount
+                errorMode: root.errorMode
                 weiToEth: function(wei) {
                     return "%1 %2".arg(LocaleUtils.numberToLocaleString(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)))).arg(selectedAsset.symbol)
                 }
@@ -101,32 +98,7 @@ Item {
                 anchors.left: parent.left
                 anchors.margins: Style.current.padding
                 store: root.store
-                selectedAccount: root.selectedAccount
-                amountToSend: root.amountToSend
-                requiredGasInEth: root.requiredGasInEth
-                selectedAsset: root.selectedAsset
-                onReCalculateSuggestedRoute: root.reCalculateSuggestedRoute()
-                bestRoutes: root.bestRoutes
-                isLoading: root.isLoading
-                interactive: root.interactive
-                isBridgeTx: root.isBridgeTx
-                weiToEth: function(wei) {
-                    return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
-                }
-            }
-        }
-
-        Rectangle {
-            id: custom
-            radius: d.backgroundRectRadius
-            color: d.backgroundRectColor
-            NetworksAdvancedCustomRoutingView {
-                id: customNetworkRoutingPage
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.margins: Style.current.padding
-                customMode: true
-                store: root.store
+                customMode: tabBar.currentIndex === 2
                 selectedAccount: root.selectedAccount
                 amountToSend: root.amountToSend
                 requiredGasInEth: root.requiredGasInEth

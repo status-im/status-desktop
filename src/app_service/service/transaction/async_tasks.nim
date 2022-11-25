@@ -40,6 +40,7 @@ type
     disabledToChainIDs: seq[uint64]
     preferredChainIDs: seq[uint64]
     sendType: int
+    lockedInAmounts: string
 
 proc getGasEthValue*(gweiValue: float, gasLimit: uint64): float =
   let weiValue = service_conversion.gwei2Wei(gweiValue) * u256(gasLimit)
@@ -66,13 +67,20 @@ const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
 
   try:
     let amountAsHex = "0x" & eth_utils.stripLeadingZeros(arg.amount.toHex)
-    let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, arg.preferredChainIDs, arg.sendType).result
+    var lockedInAmounts = Table[string, string] : initTable[string, string]()
 
+    try:
+      for lockedAmount in parseJson(arg.lockedInAmounts):
+        lockedInAmounts[$lockedAmount["chainID"].getInt] = "0x" & lockedAmount["value"].getStr
+    except:
+      discard
+
+    let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, arg.preferredChainIDs, arg.sendType, lockedInAmounts).result
     var bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
 
     # retry along with unpreferred chains incase no route is possible with preferred chains
     if(bestPaths.len == 0 and arg.preferredChainIDs.len > 0):
-      let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, @[], arg.sendType).result
+      let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, @[], arg.sendType, lockedInAmounts).result
       bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
 
     bestPaths.sort(sortAsc[TransactionPathDto])

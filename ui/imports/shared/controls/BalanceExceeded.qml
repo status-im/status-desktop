@@ -17,7 +17,7 @@ ColumnLayout {
     property double amountToSend: 0
     property bool isLoading: true
 
-    visible: !balancedExceededError.transferPossible && balancedExceededError.amountToSend > 0 || isLoading
+    visible: !balancedExceededError.transferPossible || isLoading
 
     StatusIcon {
         Layout.preferredHeight: 20
@@ -40,7 +40,7 @@ ColumnLayout {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         color: Theme.palette.dangerColor1
-        text: isLoading ? qsTr("Calculating fees"): balancedExceededError.amountToSend > 0 ? qsTr("Balance exceeded"): qsTr("No networks available")
+        text: isLoading ? qsTr("Calculating fees") : qsTr("Balance exceeded")
         wrapMode: Text.WordWrap
     }
 }

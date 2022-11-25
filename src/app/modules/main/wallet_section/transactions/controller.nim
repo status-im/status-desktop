@@ -114,8 +114,8 @@ proc suggestedFees*(self: Controller, chainId: int): string =
   let suggestedFees = self.transactionService.suggestedFees(chainId)
   return suggestedFees.toJson()
 
-proc suggestedRoutes*(self: Controller, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int): string =
-  let suggestedRoutes = self.transactionService.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType)
+proc suggestedRoutes*(self: Controller, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int, lockedInAmounts: string): string =
+  let suggestedRoutes = self.transactionService.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
   return suggestedRoutes.toJson()
 
 proc getChainIdForChat*(self: Controller): int =
