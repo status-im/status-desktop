@@ -66,7 +66,12 @@ def step(context, message):
 @When("the user sends multiple test images in the current channel with message \"|any|\" with an image again")
 def step(context, message): 
     _statusCommunityScreen.send_test_image(context.userData["fixtures_root"], True, message)
-    
+
+@When("the user replies to community chat message at index |integer| with \"|any|\"")
+def step(context, message_index: int, message: str):
+    _statusCommunityScreen.toggle_reply_message_at_index(message_index)
+    the_user_sends_a_chat_message(message)
+        
 @When("the user pins the message at index |integer|")
 def step(context, message_index: int):
     _statusCommunityScreen.toggle_pin_message_at_index(message_index)

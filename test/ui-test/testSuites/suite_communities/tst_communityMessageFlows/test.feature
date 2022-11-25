@@ -53,3 +53,11 @@ Feature: Status Desktop community messages
 
         When the user unpins the message at index 0
         Then the amount of pinned messages is 1
+
+    Scenario Outline: The user can reply to own message
+        Given the user sends a chat message "<message>"
+        When the user replies to community chat message at index 0 with "<reply>"
+        Then the chat message "<reply>" is displayed as a reply of this user's "<message>"
+        Examples:
+        | message                | reply           |
+        | Community chat message | This is a reply |
