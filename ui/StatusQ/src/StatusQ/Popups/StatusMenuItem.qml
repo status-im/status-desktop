@@ -20,7 +20,7 @@ Action {
         rotation: 0
         isLetterIdenticon: false
         imgIsIdenticon: false
-        color: "transparent"
+        color: root.icon.color
         name: root.icon.name
     }
 
@@ -32,5 +32,11 @@ Action {
         distinctiveColors: Theme.palette.identiconRingColors
     }
 
-    icon.color: "transparent"
+    icon.color: {
+        if (!root.enabled)
+            return Theme.palette.baseColor1
+        if (type === StatusMenuItem.Type.Danger)
+            return Theme.palette.dangerColor1
+        return Theme.palette.primaryColor1
+    }
 }

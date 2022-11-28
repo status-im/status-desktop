@@ -21,7 +21,7 @@ Instantiator {
             menu.removeMenu(object)
         else if (object instanceof Action)
             menu.removeAction(object)
-        else // if (object instanceof MenuItem)
+        else
             menu.removeItem(object)
     }
 }

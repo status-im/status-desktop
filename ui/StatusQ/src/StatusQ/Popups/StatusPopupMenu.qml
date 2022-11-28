@@ -38,7 +38,7 @@ Menu {
         rotation: 0
         isLetterIdenticon: false
         isImage: false
-        color: "transparent"
+        color: Theme.palette.primaryColor1
     }
 
     property StatusFontSettings fontSettings: StatusFontSettings {}
@@ -47,6 +47,8 @@ Menu {
         ringPxSize: Math.max(1.5, root.assetSettings.width / 24.0)
         distinctiveColors: Theme.palette.identiconRingColors
     }
+
+    property bool hideDisabledItems: true
 
     property var openHandler
     property var closeHandler
@@ -71,7 +73,10 @@ Menu {
         }
     }
 
-    delegate: StatusMenuItemDelegate { }
+    delegate: StatusMenuItemDelegate {
+        visible: root.hideDisabledItems ? enabled : true
+        height: visible ? implicitHeight : 0
+    }
 
     contentItem: StatusListView {
         currentIndex: root.currentIndex

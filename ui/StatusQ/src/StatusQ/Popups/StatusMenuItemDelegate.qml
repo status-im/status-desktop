@@ -36,15 +36,13 @@ MenuItem {
 
             // overriden properties
             readonly property int letterSize: 11
-            readonly property color color: !d.originalAssetSettings.isImage && !d.originalAssetSettings.isLetterIdenticon
-                                ? d.iconColor
-                                :  d.originalAssetSettings.color
 
             //icon
             readonly property string name:  d.originalAssetSettings.name
             readonly property url source:  d.originalAssetSettings.source
             readonly property real width:  d.originalAssetSettings.width
             readonly property real height:  d.originalAssetSettings.height
+            readonly property color color: d.originalAssetSettings.color
             readonly property color hoverColor:  d.originalAssetSettings.hoverColor
             readonly property color disabledColor:  d.originalAssetSettings.disabledColor
             readonly property int rotation:  d.originalAssetSettings.rotation
@@ -80,10 +78,16 @@ MenuItem {
                                                                       ? root.action.ringSettings
                                                                       : d.defaultRingSettings
 
+
         readonly property StatusAssetSettings defaultAssetSettings: StatusAssetSettings {
             width: 18
             height: 18
             rotation: 0
+            // Link to standard Qt properties. Not because it's a good idea,
+            // but because it we use it in some places and it will make refactor easier.
+            name: d.isSubMenu ? "" : root.action.icon.name
+            source: d.isSubMenu ? "" : root.action.icon.source
+            color: d.isSubMenu ? "" : root.action.icon.color
         }
 
         readonly property StatusFontSettings defaultFontSettings: StatusFontSettings {
@@ -95,17 +99,6 @@ MenuItem {
         readonly property StatusIdenticonRingSettings defaultRingSettings: StatusIdenticonRingSettings {
             ringPxSize: Math.max(1.5, d.assetSettings.width / 24.0)
             distinctiveColors: Theme.palette.identiconRingColors
-        }
-
-        readonly property color iconColor: {
-            const c = d.originalAssetSettings.color;
-            if (!Qt.colorEqual(c, "transparent"))
-                return c
-            if (!root.enabled)
-                return Theme.palette.baseColor1
-            if (d.isStatusDangerAction)
-                return Theme.palette.dangerColor1
-            return Theme.palette.primaryColor1
         }
     }
 

@@ -27,9 +27,11 @@ Item {
 
     width: parent.width
     height: 64
+
     Rectangle {
         anchors.fill: root
-        color: sensor.containsMouse ? Theme.palette.statusSelect.menuItemHoverBackgroundColor : Theme.palette.statusSelect.menuItemBackgroundColor
+        color: sensor.containsMouse ? Theme.palette.statusSelect.menuItemHoverBackgroundColor
+                                    : Theme.palette.statusSelect.menuItemBackgroundColor
     }
 
     MouseArea {

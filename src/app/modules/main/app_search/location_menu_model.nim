@@ -68,7 +68,7 @@ QtObject:
     of ModelRole.SubItems:
       result = newQVariant(item.subItems)
     of ModelRole.HasSubItems:
-      result = newQVariant(bool(item.subItems) and item.subItems.count > 0)
+      result = newQVariant(not isNil(item.subItems) and item.subItems.rowCount(nil) > 0)
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

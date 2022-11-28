@@ -33,6 +33,7 @@ Loader {
             width: root.asset.width
             height: root.asset.height
 
+
             StatusRoundedImage {
                 id: statusRoundImage
                 width: parent.width

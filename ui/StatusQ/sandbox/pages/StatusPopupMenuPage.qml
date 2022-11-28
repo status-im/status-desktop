@@ -49,6 +49,7 @@ GridLayout {
 
     StatusPopupMenu {
         id: simpleMenu
+
         StatusMenuItem { 
             text: "One" 
         }
@@ -64,6 +65,7 @@ GridLayout {
 
     StatusPopupMenu {
         id: complexMenu
+        hideDisabledItems: false
 
         StatusMenuItem { 
             text: "One" 

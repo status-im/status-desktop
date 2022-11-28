@@ -217,15 +217,15 @@ Item {
 
         StatusMenuItem {
             text: qsTr("Upload a file")
-            icon.name: "download"
-            iconRotation: 180
+            assetSettings.name: "download"
+            assetSettings.rotation: 180
             onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
         }
 
         StatusMenuItem {
             text: qsTr("Remove image")
             type: StatusMenuItem.Danger
-            icon.name: "delete"
+            assetSettings.name: "delete"
             onTriggered: root.icon = ""
         }
     }
