@@ -132,7 +132,6 @@
         <file>StatusQ/Core/Utils/Utils.qml</file>
         <file>StatusQ/Core/qmldir</file>
         <file>StatusQ/Core/StatusAnimatedStack.qml</file>
-        <file>StatusQ/Core/StatusAppNavBarFilterModel.qml</file>
         <file>StatusQ/Core/StatusBaseText.qml</file>
         <file>StatusQ/Core/StatusFontSettings.qml</file>
         <file>StatusQ/Core/StatusIcon.qml</file>
