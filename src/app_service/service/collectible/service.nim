@@ -68,10 +68,13 @@ QtObject:
       address: address,
     )
     self.threadpool.start(arg)
-    
+
+  proc getNetwork*(self: Service): NetworkDto =
+    return self.networkService.getNetworkForCollectibles()
+  
   proc getCollectibles*(self: Service, address: string, collectionSlug: string): seq[CollectibleDto] =
     try:
-      let chainId = self.networkService.getNetworkForCollectibles().chainId
+      let chainId = self.getNetwork().chainId
       let response = backend.getOpenseaAssetsByOwnerAndCollection(chainId, address, collectionSlug, limit)
       return map(response.result.getElems(), proc(x: JsonNode): CollectibleDto = x.toCollectibleDto())
     except Exception as e:

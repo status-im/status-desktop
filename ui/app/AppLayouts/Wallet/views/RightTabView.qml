@@ -29,7 +29,7 @@ Item {
         function getBackButtonText(index) {
             switch(index) {
                 case 1:
-                return qsTr("Assets")
+                return qsTr("Collectibles")
                 case 2:
                 return qsTr("Assets")
                 case 3:

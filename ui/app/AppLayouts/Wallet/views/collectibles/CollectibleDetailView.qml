@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.14
 import QtQuick.Layouts 1.13
 
 import StatusQ.Components 0.1
@@ -16,6 +16,7 @@ Item {
     id: root
 
     property var currentCollectible: RootStore.currentCollectible
+    readonly property int isNarrowMode : width < 700
 
     CollectibleDetailsHeader {
         id: collectibleHeader
@@ -24,14 +25,20 @@ Item {
         anchors.right: parent.right
         asset.name: currentCollectible.collectionImageUrl
         asset.isImage: true
-        primaryText: currentCollectible.name
+        primaryText: currentCollectible.collectionName
         secondaryText: currentCollectible.id
+        isNarrowMode: root.isNarrowMode
+        networkName: currentCollectible.networkName
+        networkColor: currentCollectible.networkColor
+        networkIconURL: currentCollectible.networkIconUrl
     }
 
     ColumnLayout {
+        id: collectibleBody
         anchors.top: collectibleHeader.bottom
-        anchors.topMargin: 46
+        anchors.topMargin: 25
         anchors.left: parent.left
+        anchors.leftMargin: root.isNarrowMode ? 0 : 52
         anchors.right: parent.right
         anchors.bottom: parent.bottom
 
@@ -39,38 +46,72 @@ Item {
 
         Row {
             id: collectibleImageDetails
+            Layout.preferredHeight: root.isNarrowMode ? 152 : collectibleimage.height
             Layout.preferredWidth: parent.width
             spacing: 24
 
             StatusRoundedImage {
                 id: collectibleimage
-                width: 253
-                height: 253
+                readonly property int size : root.isNarrowMode ? 132 : 253
+                width: size
+                height: size
                 radius: 2
                 color: currentCollectible.backgroundColor
                 border.color: Theme.palette.directColor8
                 border.width: 1
                 image.source: currentCollectible.imageUrl
             }
-            StatusBaseText {
-                id: collectibleText
-                width: parent.width - collectibleimage.width - Style.current.bigPadding
-                height: collectibleimage.height
 
-                text: currentCollectible.description
-                color: Theme.palette.directColor1
-                font.pixelSize: 15
-                lineHeight: 22
-                lineHeightMode: Text.FixedHeight
-                elide: Text.ElideRight
-                wrapMode: Text.Wrap
+            Column {
+                id: collectibleNameAndDescription
+                spacing: 12
+
+                width: parent.width - collectibleimage.width - Style.current.bigPadding
+
+                StatusBaseText {
+                    id: collectibleName
+                    width: parent.width
+                    height: 24
+
+                    text: currentCollectible.name
+                    color: Theme.palette.directColor1
+                    font.pixelSize: 17
+                    lineHeight: 24
+                    elide: Text.ElideRight
+                    wrapMode: Text.WordWrap
+                }
+
+                StatusScrollView {
+                    id: descriptionScrollView
+                    width: parent.width
+                    height: collectibleImageDetails.height - collectibleName.height - parent.spacing
+
+                    contentWidth: availableWidth
+                    contentHeight: descriptionText.height
+
+                    padding: 0
+                    
+                    StatusBaseText {
+                        id: descriptionText
+                        width: descriptionScrollView.availableWidth
+
+                        text: currentCollectible.description
+                        textFormat: Text.MarkdownText
+                        color: Theme.palette.directColor4
+                        font.pixelSize: 15
+                        lineHeight: 22
+                        lineHeightMode: Text.FixedHeight
+                        elide: Text.ElideRight
+                        wrapMode: Text.Wrap
+                    }
+                }
             }
         }
 
         StatusTabBar {
             id: collectiblesDetailsTab
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.xlPadding
+            Layout.topMargin: root.isNarrowMode ? 0 : Style.current.xlPadding
             visible: currentCollectible.properties.count > 0
 
             StatusTabButton {
@@ -80,9 +121,12 @@ Item {
             }
         }
 
-        StackLayout {
+        StatusScrollView {
+            id: scrollView
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             Flow {
-                width: parent.width
+                width: scrollView.availableWidth
                 spacing: 10
                 Repeater {
                     model: currentCollectible.properties
