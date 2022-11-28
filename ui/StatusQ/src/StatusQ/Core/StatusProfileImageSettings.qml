@@ -3,6 +3,7 @@ import StatusQ.Core.Theme 0.1
 
 QtObject {
     id: root
+
     property int width
     property int height
     property bool isIdenticon: false
@@ -28,7 +29,7 @@ QtObject {
 
     readonly property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
         initalAngleRad: 0
-        ringPxSize: Math.max(1.5, root.width / 24.0)
+        ringPxSize: root.assetSettings.ringPxSize
         ringSpecModel: root.showRing ? root.colorHash : undefined
         distinctiveColors: Theme.palette.identiconRingColors
     }

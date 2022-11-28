@@ -44,7 +44,7 @@ Menu {
     property StatusFontSettings fontSettings: StatusFontSettings {}
 
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
-        ringPxSize: Math.max(1.5, root.assetSettings.width / 24.0)
+        ringPxSize: root.assetSettings.ringPxSize
         distinctiveColors: Theme.palette.identiconRingColors
     }
 

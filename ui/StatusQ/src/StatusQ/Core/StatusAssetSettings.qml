@@ -37,4 +37,7 @@ QtObject {
 
     // crop
     property rect cropRect
+
+    // ring settings hints
+    readonly property real ringPxSize: Math.max(1.5, root.width / 24.0)
 }

@@ -97,7 +97,7 @@ MenuItem {
         }
 
         readonly property StatusIdenticonRingSettings defaultRingSettings: StatusIdenticonRingSettings {
-            ringPxSize: Math.max(1.5, d.assetSettings.width / 24.0)
+            ringPxSize: d.assetSettings.ringPxSize
             distinctiveColors: Theme.palette.identiconRingColors
         }
     }

@@ -28,7 +28,7 @@ Action {
 
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
         initalAngleRad: 0
-        ringPxSize: Math.max(1.5, root.assetSettings.width / 24.0)
+        ringPxSize: root.assetSettings.ringPxSize
         distinctiveColors: Theme.palette.identiconRingColors
     }
 
