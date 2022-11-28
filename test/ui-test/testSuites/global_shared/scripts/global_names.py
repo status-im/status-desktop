@@ -13,7 +13,6 @@ mainWindow_ScrollView_2 = {"container": statusDesktop_mainWindow, "occurrence": 
 mainWindow_ProfileNavBarButton = {"container": statusDesktop_mainWindow, "objectName": "statusProfileNavBarTabButton", "type": "StatusNavBarTabButton", "visible": True}
 settings_navbar_settings_icon_StatusIcon = {"container": mainWindow_navBarListView_ListView, "objectName": "settings-icon", "type": "StatusIcon", "visible": True}
 splashScreen = {"container": statusDesktop_mainWindow, "objectName": "splashScreen", "type": "SplashScreen"}
-navBarListView_Chat_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Chat-navbar", "type": "StatusNavBarTabButton", "visible": True}
 mainWindow_StatusToolBar = {"container": statusDesktop_mainWindow, "objectName": "statusToolBar", "type": "StatusToolBar", "visible": True}
 main_toolBar_back_button = {"container": mainWindow_StatusToolBar, "objectName": "toolBarBackButton", "type": "StatusFlatButton", "visible": True}
 mainWindow_emptyChatPanelImage = {"container": statusDesktop_mainWindow, "objectName": "emptyChatPanelImage", "type": "Image", "visible": True}
@@ -33,7 +32,8 @@ modal_Close_Button = {"container": statusDesktop_mainWindow_overlay, "objectName
 delete_Channel_ConfirmationDialog_DeleteButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "deleteChatConfirmationDialogDeleteButton", "type": "StatusButton"}
 
 # Main Window - chat related:
-navBarListView_Chat_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Chat-navbar", "type": "StatusNavBarTabButton", "visible": True}
+mainWindow_statusChatNavBarListView_ListView = {"container": statusDesktop_mainWindow, "objectName": "statusChatNavBarListView", "type": "ListView", "visible": True}
+navBarListView_Chat_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_statusChatNavBarListView_ListView, "objectName": "Chat-navbar", "type": "StatusNavBarTabButton", "visible": True}
 mainWindow_public_chat_icon_StatusIcon = {"container": statusDesktop_mainWindow, "objectName": "public-chat-icon", "source": "qrc:/StatusQ/src/assets/img/icons/public-chat.svg", "type": "StatusIcon", "visible": True}
 chatList_Repeater = {"container": statusDesktop_mainWindow, "objectName": "chatListItems", "type": "Repeater"}
 chatList = {"container": statusDesktop_mainWindow, "objectName": "ContactsColumnView_chatList", "type": "StatusChatList"}
@@ -44,7 +44,6 @@ chatView_StatusChatInfoButton = {"container": statusDesktop_mainWindow, "objectN
 chatInfoButton_Pin_Text = {"container": chatView_StatusChatInfoButton, "objectName": "StatusChatInfo_pinText", "type": "StatusBaseText", "visible": True}
 joinPublicChat_input = {"container": statusDesktop_mainWindow_overlay, "objectName": "joinPublicChannelInput", "type": "TextEdit", "visible": True}
 startChat_Btn = {"container": statusDesktop_mainWindow_overlay, "objectName": "startChatButton", "type": "StatusButton"}
-navBarListView_Chat_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Chat-navbar", "type": "StatusNavBarTabButton", "visible": True}
 
 # My Profile Popup
 ProfileHeader_userImage = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileHeader_userImage", "type": "UserImage", "visible": True}
