@@ -319,8 +319,8 @@ Item {
     }
 
     Connections {
-        target: root.store.communitiesModuleInst
-        function onImportingCommunityStateChanged(state, errorMsg) {
+        target: root.store
+        function onImportingCommunityStateChanged(communityId, state, errorMsg) {
             let title = ""
             let loading = false
 

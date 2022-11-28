@@ -1,10 +1,13 @@
 import QtQuick 2.13
 import QtQml.Models 2.2
 
+import utils 1.0
+
 QtObject {
     id: root
 
     property var communitiesModuleInst: communitiesModule
+    property var mainModuleInst: mainModule
 
     readonly property var curatedCommunitiesModel: root.communitiesModuleInst.curatedCommunities
 
@@ -51,6 +54,8 @@ QtObject {
 
     property string communityTags: communitiesModuleInst.tags
 
+    signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
+
     function createCommunity(args = {
                                 name: "",
                                 description: "",
@@ -83,6 +88,16 @@ QtObject {
 
     function importCommunity(communityKey) {
         root.communitiesModuleInst.importCommunity(communityKey);
+    }
+
+    function requestCommunityInfo(communityKey) {
+        let publicKey = communityKey
+        if (Utils.isCompressedPubKey(communityKey)) {
+            publicKey = Utils.changeCommunityKeyCompression(communityKey)
+        }
+
+        root.mainModuleInst.setCommunityIdToSpectate(publicKey)
+        root.communitiesModuleInst.requestCommunityInfo(publicKey);
     }
 
     function setActiveCommunity(communityId) {
@@ -154,5 +169,13 @@ QtObject {
                     args.color, args.tags,
                     args.image.src, args.image.AX, args.image.AY, args.image.BX, args.image.BY,
                     args.options.historyArchiveSupportEnabled, args.options.pinMessagesAllowedForMembers, from, args.options.encrypted);
+    }
+
+
+    readonly property Connections connections: Connections {
+      target: communitiesModuleInst
+      function onImportingCommunityStateChanged(communityId, state, errorMsg) {
+          root.importingCommunityStateChanged(communityId, state, errorMsg)
+      }
     }
 }

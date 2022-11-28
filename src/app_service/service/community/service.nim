@@ -100,6 +100,7 @@ const SIGNAL_COMMUNITY_CREATED* = "communityCreated"
 const SIGNAL_COMMUNITY_ADDED* = "communityAdded"
 const SIGNAL_COMMUNITY_IMPORTED* = "communityImported"
 const SIGNAL_COMMUNITY_DATA_IMPORTED* = "communityDataImported" # This one is when just loading the data with requestCommunityInfo
+const SIGNAL_COMMUNITY_LOAD_DATA_FAILED* = "communityLoadDataFailed"
 const SIGNAL_COMMUNITY_EDITED* = "communityEdited"
 const SIGNAL_COMMUNITIES_UPDATE* = "communityUpdated"
 const SIGNAL_COMMUNITY_CHANNEL_CREATED* = "communityChannelCreated"
@@ -1165,16 +1166,21 @@ QtObject:
       error "Error reordering category channel", msg = e.msg, communityId, categoryId, position
 
 
-  proc asyncCommunityInfoLoaded*(self: Service, rpcResponse: string) {.slot.} =
-    let rpcResponseObj = rpcResponse.parseJson
-    if (rpcResponseObj{"error"}.kind != JNull):
-      let error = Json.decode($rpcResponseObj["error"], RpcError)
+  proc asyncCommunityInfoLoaded*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
+    let rpcResponseObj = communityIdAndRpcResponse.parseJson
+    if (rpcResponseObj{"response"}{"error"}.kind != JNull):
+      let error = Json.decode($rpcResponseObj["response"]["error"], RpcError)
       error "Error requesting community info", msg = error.message
       return
 
-    let community = rpcResponseObj{"result"}.toCommunityDto()
-    self.allCommunities[community.id] = community
-    self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
+    var community = rpcResponseObj{"response"}{"result"}.toCommunityDto()
+    if community.id != "":
+      self.allCommunities[community.id] = community
+      self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
+    else:
+      community.id = rpcResponseObj{"response"}{"communityId"}.getStr()
+      self.events.emit(SIGNAL_COMMUNITY_LOAD_DATA_FAILED, CommunityArgs(community: community, error: "Couldn't find community info"))
+
 
   proc requestCommunityInfo*(self: Service, communityId: string) =
     try:

@@ -232,6 +232,9 @@ method onMyRequestAdded*(self: AccessInterface) {.base.} =
 method activateStatusDeepLink*(self: AccessInterface, statusDeepLink: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setCommunityIdToSpectate*(self: AccessInterface, commnityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c
