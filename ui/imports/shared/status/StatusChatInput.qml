@@ -64,54 +64,17 @@ Rectangle {
 
     property var messageContextMenu
 
-    property alias suggestions: suggestionsBox
-
     enum ImageErrorMessageLocation {
         Top,
         Bottom
     }
 
     objectName: "statusChatInput"
+
     function parseMessage(message) {
-        let mentionsMap = new Map()
-        let index = 0
-        while (true) {
-            index = message.indexOf("<a href=", index)
-            if (index < 0) {
-                break
-            }
-            const startIndex = index
-            const endIndex = message.indexOf("</a>", index) + 4
-            if (endIndex < 0) {
-                index += 8 // "<a href="
-                continue
-            }
-            const addrIndex = message.indexOf("0x", index + 8)
-            if (addrIndex < 0) {
-                index += 8 // "<a href="
-                continue
-            }
-            const addrEndIndex = message.indexOf("\"", addrIndex)
-            if (addrEndIndex < 0) {
-                index += 8 // "<a href="
-                continue
-            }
-            const mentionLink = message.substring(startIndex, endIndex)
-            const linkTag = message.substring(index, endIndex)
-            const linkText = linkTag.replace(/(<([^>]+)>)/ig,"").trim()
-            const atSymbol = linkText.startsWith("@") ? '' : '@'
-            const mentionTag = Constants.mentionSpanTag + atSymbol + linkText + '</span> '
-            mentionsMap.set(mentionLink, mentionTag)
-            index += linkTag.length
-        }
-
-        let text = message;
-
-        for (let [key, value] of mentionsMap)
-            text = text.replace(new RegExp(key, 'g'), value)
-
-        textInput.text = text
-        textInput.cursorPosition = textInput.length
+        //TODO: evaluate this. Probably can be done automatically by decorators
+        chatMentionsFeature.parseMessage(message)
+        //TODO Add emoji parser
     }
 
     implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
@@ -125,14 +88,14 @@ Rectangle {
         //mentions helper properties
         property string copiedTextPlain: ""
         property string copiedTextFormatted: ""
-        property var copiedMentionsPos: []
         property int copyTextStart: 0
 
         // set to true when pasted text comes from this component (was copied within this component)
         property bool internalPaste: false
 
-        property int leftOfMentionIndex: -1
-        property int rightOfMentionIndex: -1
+        //TODO: move this to mentions feature
+//        property int leftOfMentionIndex: -1
+//        property int rightOfMentionIndex: -1
 
         readonly property StateGroup emojiPopupTakeover: StateGroup {
             states: State {
@@ -159,61 +122,6 @@ Rectangle {
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                     x: control.width - stickersPopup.width - Style.current.halfPadding
                     y: -stickersPopup.height
-                }
-            }
-        }
-
-        function copyMentions(start, end) {
-            copiedMentionsPos = []
-            for (let k = 0; k < mentionsPos.length; k++) {
-                if (mentionsPos[k].leftIndex >= start && mentionsPos[k].rightIndex <= end) {
-                    const mention = {
-                        name: mentionsPos[k].name,
-                        pubKey: mentionsPos[k].pubKey,
-                        leftIndex: mentionsPos[k].leftIndex - start,
-                        rightIndex: mentionsPos[k].rightIndex - start
-                    }
-                    copiedMentionsPos.push(mention)
-                }
-            }
-        }
-
-        function sortMentions() {
-            if (mentionsPos.length < 2) {
-                return
-            }
-            mentionsPos = mentionsPos.sort(function(a, b){
-                return a.leftIndex - b.leftIndex
-            })
-        }
-
-        function updateMentionsPositions() {
-            if (mentionsPos.length == 0) {
-                return
-            }
-
-            const unformattedText = messageInputField.getText(0, messageInputField.length)
-            if (!unformattedText.includes("@")) {
-                return
-            }
-
-            const keyEvent = messageInputField.keyEvent
-            if ((keyEvent.key === Qt.Key_Right) || (keyEvent.key === Qt.Key_Left)
-                    || (keyEvent.key === Qt.Key_Up) || (keyEvent.key === Qt.Key_Down)) {
-                return
-            }
-
-            let lastRightIndex = -1
-            for (var k = 0; k < mentionsPos.length; k++) {
-                const aliasIndex = unformattedText.indexOf(mentionsPos[k].name, lastRightIndex)
-                if (aliasIndex === -1) {
-                    continue
-                }
-                lastRightIndex = aliasIndex + mentionsPos[k].name.length
-
-                if (aliasIndex - 1 !== mentionsPos[k].leftIndex) {
-                    mentionsPos[k].leftIndex = aliasIndex - 1
-                    mentionsPos[k].rightIndex = aliasIndex + mentionsPos[k].name.length
                 }
             }
         }
@@ -246,6 +154,11 @@ Rectangle {
         }
     }
 
+    ChatMentionsFeature {
+        id: chatMentionsFeature
+        textInput: messageInputField
+    }
+
     Connections {
         enabled: control.emojiPopupOpened
         target: emojiPopup
@@ -274,29 +187,6 @@ Rectangle {
             stickersBtn.highlighted = false
             control.stickersPopupOpened = false
         }
-    }
-
-    property var mentionsPos: []
-
-    function insertMention(aliasName, publicKey, lastAtPosition, lastCursorPosition) {
-        let startInd = aliasName.indexOf("(");
-        if (startInd > 0){
-            aliasName = aliasName.substring(0, startInd-1)
-        }
-
-        const hasEmoji = StatusQUtils.Emoji.hasEmoji(messageInputField.text)
-        const spanPlusAlias = `${Constants.mentionSpanTag}@${aliasName}</a></span> `;
-
-        let rightIndex = hasEmoji ? lastCursorPosition + 2 : lastCursorPosition
-        messageInputField.remove(lastAtPosition, rightIndex)
-        messageInputField.insert(lastAtPosition, spanPlusAlias)
-        messageInputField.cursorPosition = lastAtPosition + aliasName.length + 2;
-        if (messageInputField.cursorPosition === 0) {
-            // It reset to 0 for some reason, go back to the end
-            messageInputField.cursorPosition = messageInputField.length
-        }
-        mentionsPos.push({name: aliasName, pubKey: publicKey, leftIndex: lastAtPosition, rightIndex: (lastAtPosition+aliasName.length + 1)});
-        d.sortMentions()
     }
 
     function isUploadFilePressed(event) {
@@ -335,24 +225,26 @@ Rectangle {
             control.isReply = false
             event.accepted = true
         }
-
-        const symbolPressed = event.text.length > 0 &&
-                            event.key !== Qt.Key_Backspace &&
-                            event.key !== Qt.Key_Delete &&
-                            event.key !== Qt.Key_Escape
-        if (mentionsPos.length > 0 && symbolPressed) {
-            for (var i = 0; i < mentionsPos.length; i++) {
-                if (messageInputField.cursorPosition === mentionsPos[i].leftIndex) {
-                    d.leftOfMentionIndex = i
-                    event.accepted = true
-                    return
-                } else if (messageInputField.cursorPosition === mentionsPos[i].rightIndex) {
-                    d.rightOfMentionIndex = i
-                    event.accepted = true
-                    return
-                }
-            }
-        }
+//TODO: Make sure user cannot navigate inside the mention
+//        const symbolPressed = event.text.length > 0 &&
+//                            event.key !== Qt.Key_Backspace &&
+//                            event.key !== Qt.Key_Delete &&
+//                            event.key !== Qt.Key_Escape
+//        if (mentionsPos.length > 0 && symbolPressed) {
+//            for (var i = 0; i < mentionsPos.length; i++) {
+//                if (messageInputField.cursorPosition === mentionsPos[i].leftIndex) {
+//                    console.log("~~~Mention leftindex at cursor position", mentionsPos[i].name)
+//                    d.leftOfMentionIndex = i
+//                    event.accepted = true
+//                    return
+//                } else if (messageInputField.cursorPosition === mentionsPos[i].rightIndex) {
+//                    console.log("~~~Mention rightindex at cursor position", mentionsPos[i].name)
+//                    d.rightOfMentionIndex = i
+//                    event.accepted = true
+//                    return
+//                }
+//            }
+//        }
 
         if (event.key === Qt.Key_Tab) {
             if (checkTextInsert()) {
@@ -393,7 +285,7 @@ Rectangle {
                             messageInputField.selectionStart, messageInputField.selectionEnd)
                 d.copiedTextFormatted = messageInputField.getFormattedText(
                             messageInputField.selectionStart, messageInputField.selectionEnd)
-                d.copyMentions(messageInputField.selectionStart, messageInputField.selectionEnd)
+                mentionsFeature.copyMentions(messageInputField.selectionStart, messageInputField.selectionEnd)
             }
         }
 
@@ -412,7 +304,7 @@ Rectangle {
             } else {
                 d.copiedTextPlain = ""
                 d.copiedTextFormatted = ""
-                d.copiedMentionsPos = []
+                chatMentionsFeature.discardCopiedMentions()
             }
         }
 
@@ -440,7 +332,7 @@ Rectangle {
             let suggestionItem = suggestionsBox.suggestionsModel.get(suggestionsBox.listView.currentIndex);
             if (aliasName.toLowerCase() === suggestionItem.name.toLowerCase()
                     && (event.key !== Qt.Key_Backspace) && (event.key !== Qt.Key_Delete)) {
-                insertMention(aliasName, suggestionItem.publicKey, lastAtPosition, lastCursorPosition);
+                chatMentionsFeature.insertMention(aliasName, suggestionItem.publicKey, lastAtPosition, lastCursorPosition);
             } else if (event.key === Qt.Key_Space) {
                 var plainTextToReplace = messageInputField.getText(lastAtPosition, lastCursorPosition);
                 messageInputField.remove(lastAtPosition, lastCursorPosition);
@@ -516,6 +408,7 @@ Rectangle {
     }
 
     function getPlainText() {
+        //TODO: no need to replace
         const textWithoutMention = messageInputField.text.replace(/<span style="[ :#0-9a-z;\-\.,\(\)]+">(@([a-z\.]+(\ ?[a-z]+\ ?[a-z]+)?))<\/span>/ig, "\[\[mention\]\]$1\[\[mention\]\]")
 
         const deparsedEmoji = StatusQUtils.Emoji.deparse(textWithoutMention);
@@ -527,85 +420,8 @@ Rectangle {
         return currentText.replace(/\[\[mention\]\]/g, '')
     }
 
-    function parseMarkdown(markdownText) {
-        const htmlText = markdownText
-        .replace(/\~\~([^*]+)\~\~/gim, '~~<span style="text-decoration: line-through">$1</span>~~')
-        .replace(/\*\*([^*]+)\*\*/gim, ':asterisk::asterisk:<b>$1</b>:asterisk::asterisk:')
-        .replace(/\`([^*]+)\`/gim, '`<code>$1</code>`')
-        .replace(/\*([^*]+)\*/gim, ':asterisk:<i>$1</i>:asterisk:')
-        return htmlText.replace(/\:asterisk\:/gim, "*")
-    }
-
-    function getFormattedText(start, end) {
-        start = start || 0
-        end = end || messageInputField.length
-
-        const oldFormattedText = messageInputField.getFormattedText(start, end)
-
-        const found = oldFormattedText.match(/<!--StartFragment-->([\w\W\s]*)<!--EndFragment-->/m);
-
-        return found[1]
-    }
-
     function getTextWithPublicKeys() {
-        let result = messageInputField.text
-
-        if (mentionsPos.length > 0) {
-            for (var k = 0; k < mentionsPos.length; k++) {
-                let leftIndex = result.indexOf(mentionsPos[k].name)
-                let rightIndex = leftIndex + mentionsPos[k].name.length
-                result = result.substring(0, leftIndex)
-                         + mentionsPos[k].pubKey
-                         + result.substring(rightIndex, result.length)
-            }
-        }
-
-        return result
-    }
-
-    function setFormatInInput(formationFunction, startTag, endTag, formationChar, numFormationChars) {
-        const inputText = getFormattedText()
-        const plainInputText = messageInputField.getText(0, messageInputField.length)
-
-        let lengthDifference
-
-        try {
-            const result = formationFunction(inputText)
-
-            if (!result) {
-                return
-            }
-            const parsed = JSON.parse(result)
-
-            let substring
-            let nbEmojis
-            parsed.forEach(function (match) {
-                match[1] += 1
-                const truncatedInputText = inputText.substring(0, match[1] + numFormationChars)
-                const truncatedPlainText = plainInputText.substring(0, messageInputField.cursorPosition)
-
-                const lengthDifference = truncatedInputText.length - truncatedPlainText.length
-
-                nbEmojis = StatusQUtils.Emoji.nbEmojis(truncatedInputText)
-
-
-                match[1] += (nbEmojis * -2)
-                match[0] += (nbEmojis * -2)
-                substring = inputText.substring(match[0], match[1])
-
-                if (plainInputText.charAt(match[0] - 1) !== formationChar) {
-                    match[0] -= lengthDifference
-                    match[1] -= lengthDifference
-                } else {
-                    match[1] -= lengthDifference
-                }
-
-                messageInputField.remove(match[0], match[1])
-                insertInTextInput(match[0], `${startTag}${substring}${endTag}`)
-            })
-        } catch (e) {
-            //
-        }
+        return chatMentionsFeature.getTextWithPublicKeys()
     }
 
     function onRelease(event) {
@@ -620,43 +436,22 @@ Rectangle {
             eventText = "&nbsp;"
         }
 
-        if(d.rightOfMentionIndex !== -1) {
-            messageInputField.insert(mentionsPos[d.rightOfMentionIndex].rightIndex, eventText)
+//        if(d.rightOfMentionIndex !== -1) {
+//            messageInputField.insert(mentionsPos[d.rightOfMentionIndex].rightIndex, eventText)
 
-            d.rightOfMentionIndex = -1
-        }
+//            d.rightOfMentionIndex = -1
+//        }
 
-        if(d.leftOfMentionIndex !== -1) {
-            messageInputField.insert(mentionsPos[d.leftOfMentionIndex].leftIndex, eventText)
+//        if(d.leftOfMentionIndex !== -1) {
+//            messageInputField.insert(mentionsPos[d.leftOfMentionIndex].leftIndex, eventText)
 
-            d.leftOfMentionIndex = -1
-        }
+//            d.leftOfMentionIndex = -1
+//        }
 
         messageInputField.readOnly = false
 
         if (d.internalPaste) {
-            if (d.copiedTextPlain.includes("@")) {
-                d.copiedTextFormatted = d.copiedTextFormatted.replace(/span style="/g, "span style=\" text-decoration:none;")
-
-                let lastFoundIndex = -1
-                for (let j = 0; j < d.copiedMentionsPos.length; j++) {
-                    const name = d.copiedMentionsPos[j].name
-                    const indexOfName = d.copiedTextPlain.indexOf(name, lastFoundIndex)
-                    lastFoundIndex += name.length
-
-                    if (indexOfName === d.copiedMentionsPos[j].leftIndex + 1) {
-                        const mention = {
-                            name: name,
-                            pubKey: d.copiedMentionsPos[j].pubKey,
-                            leftIndex: (d.copiedMentionsPos[j].leftIndex + d.copyTextStart - 1),
-                            rightIndex: (d.copiedMentionsPos[j].leftIndex + d.copyTextStart + name.length)
-                        }
-                        mentionsPos.push(mention)
-                        d.sortMentions()
-                    }
-                }
-            }
-
+            chatMentionsFeature.pasteMentions(d.copiedTextPlain, d.copiedTextFormatted)
             const prevLength = messageInputField.length
             insertInTextInput(d.copyTextStart, d.copiedTextFormatted)
             messageInputField.cursorPosition = d.copyTextStart + messageInputField.length - prevLength
@@ -936,7 +731,7 @@ Rectangle {
         onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
             messageInputField.forceActiveFocus();
             let name = item.name.replace("@", "")
-            insertMention(name, item.publicKey, lastAtPosition, lastCursorPosition)
+            chatMentionsFeature.insertMention(name, item.publicKey, lastAtPosition, lastCursorPosition)
             suggestionsBox.suggestionsModel.clear()
         }
         onVisibleChanged: {
@@ -1193,18 +988,8 @@ Rectangle {
                             bottomPadding: 9
                             leftPadding: 0
                             padding: 0
+                            Keys.forwardTo: [chatMentionsFeature]
                             Keys.onPressed: {
-                                if (mentionsPos.length > 0) {
-                                    for (var i = 0; i < mentionsPos.length; i++) {
-                                        if ((messageInputField.cursorPosition === (mentionsPos[i].leftIndex))
-                                                && (event.key === Qt.Key_Delete)) {
-                                            messageInputField.remove(mentionsPos[i].rightIndex, mentionsPos[i].leftIndex)
-                                            mentionsPos.pop(i)
-                                            d.sortMentions()
-                                        }
-                                    }
-                                }
-
                                 keyEvent = event;
                                 onKeyPress(event)
                                 cursorWhenPressed = cursorPosition;
@@ -1221,35 +1006,6 @@ Rectangle {
                             }
 
                             onCursorPositionChanged: {
-                                if (mentionsPos.length > 0) {
-                                    for (var i = 0; i < mentionsPos.length; i++) {
-                                        if ((messageInputField.cursorPosition === (mentionsPos[i].leftIndex + 1)) && (keyEvent.key === Qt.Key_Right)) {
-                                            messageInputField.cursorPosition = mentionsPos[i].rightIndex;
-                                        } else if (messageInputField.cursorPosition === (mentionsPos[i].rightIndex - 1)) {
-                                            if (keyEvent.key === Qt.Key_Left) {
-                                                messageInputField.cursorPosition = mentionsPos[i].leftIndex;
-                                            } else if ((keyEvent.key === Qt.Key_Backspace) || (keyEvent.key === Qt.Key_Delete)) {
-                                                messageInputField.remove(mentionsPos[i].rightIndex, mentionsPos[i].leftIndex);
-                                                mentionsPos.pop(i);
-                                                d.sortMentions()
-                                            }
-                                        } else if (((messageInputField.cursorPosition > mentionsPos[i].leftIndex) &&
-                                                    (messageInputField.cursorPosition  < mentionsPos[i].rightIndex)) &&
-                                                   ((keyEvent.key === Qt.Key_Left) && ((keyEvent.modifiers & Qt.AltModifier) ||
-                                                                                       (keyEvent.modifiers & Qt.ControlModifier)))) {
-                                            messageInputField.cursorPosition = mentionsPos[i].leftIndex;
-                                        } else if ((keyEvent.key === Qt.Key_Up) || (keyEvent.key === Qt.Key_Down)) {
-                                            if (messageInputField.cursorPosition >= mentionsPos[i].leftIndex &&
-                                                    messageInputField.cursorPosition <= (((mentionsPos[i].leftIndex + mentionsPos[i].rightIndex)/2))) {
-                                                messageInputField.cursorPosition = mentionsPos[i].leftIndex;
-                                            } else if (messageInputField.cursorPosition <= mentionsPos[i].rightIndex &&
-                                                       messageInputField.cursorPosition > (((mentionsPos[i].leftIndex + mentionsPos[i].rightIndex)/2))) {
-                                                messageInputField.cursorPosition = mentionsPos[i].rightIndex;
-                                            }
-                                        }
-                                    }
-                                }
-
                                 inputScrollView.ensureVisible(cursorRectangle)
                             }
 
@@ -1274,12 +1030,19 @@ Rectangle {
                                     remove(removeFrom, cursorPosition);
                                 }
 
-                                d.updateMentionsPositions()
-
                                 messageLengthLimit.remainingChars = (messageLimit - length);
                             }
 
                             onReleased: function (event) {
+                                //TODO: position the suggestion popup correctly
+                                if (event.button === Qt.LeftButton) {
+                                    if (event.modifiers === Qt.NoModifier) {
+                                        if (event.timestamp - lastClick < 500) {
+                                            selectWord();
+                                        }
+                                        lastClick = event.timestamp;
+                                    }
+                                }
                                 const now = Date.now()
                                 if (messageInputField.selectedText.trim() !== "") {
                                     // If it's a double click, just check the mouse position

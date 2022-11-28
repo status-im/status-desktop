@@ -663,16 +663,11 @@ Loader {
 
                     readonly property string messageText: editTextInput.textInput.text
 
-                    // TODO: Move this property and Escape handler to StatusChatInput
-                    property bool suggestionsOpened: false
-
                     width: parent.width
 
                     Keys.onEscapePressed: {
-                        if (!suggestionsOpened) {
-                            delegate.editCancelled()
-                        }
-                        suggestionsOpened = false
+                        //TODO: make sure to test suggestions popup + escape while on edit mode
+                        delegate.editCancelled()
                     }
 
                     store: root.rootStore
@@ -686,12 +681,6 @@ Loader {
 
                     onSendMessage: {
                         delegate.editCompletedHandler(editTextInput.textInput.text)
-                    }
-
-                    suggestions.onVisibleChanged: {
-                        if (suggestions.visible) {
-                            suggestionsOpened = true
-                        }
                     }
 
                     Component.onCompleted: {
