@@ -695,17 +695,17 @@ QtObject:
     self.checkRecentHistory(true)
 
   proc startFetchingHistoryTimer(self: Service, resetTimeToNow = true) =
-    if(self.closingApp):
+    if(self.closingApp or
+        not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled() or
+        self.isHistoryFetchTimerAlreadyRunning):
       return
 
-    if(self.isHistoryFetchTimerAlreadyRunning):
-      return
-
-    self.isHistoryFetchTimerAlreadyRunning = true
-    let arg = TimerTaskArg(
-      tptr: cast[ByteAddress](timerTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onStartHistoryFetchingTimer",
-      timeoutInMilliseconds: CheckHistoryIntervalInMilliseconds
-    )
-    self.threadpool.start(arg)
+    # TODO move this to status-go, because the 20 minutes timer leaves the app hanging when trying to leave
+    # self.isHistoryFetchTimerAlreadyRunning = true
+    # let arg = TimerTaskArg(
+    #   tptr: cast[ByteAddress](timerTask),
+    #   vptr: cast[ByteAddress](self.vptr),
+    #   slot: "onStartHistoryFetchingTimer",
+    #   timeoutInMilliseconds: CheckHistoryIntervalInMilliseconds
+    # )
+    # self.threadpool.start(arg)
