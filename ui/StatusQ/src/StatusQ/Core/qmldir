@@ -1,7 +1,6 @@
 module StatusQ.Core
 
 StatusAnimatedStack 0.1 StatusAnimatedStack.qml
-StatusAppNavBarFilterModel 0.1 StatusAppNavBarFilterModel.qml
 StatusAssetSettings 0.1 StatusAssetSettings.qml
 StatusBaseText 0.1 StatusBaseText.qml
 StatusCenteredFlow 0.1 StatusCenteredFlow.qml
