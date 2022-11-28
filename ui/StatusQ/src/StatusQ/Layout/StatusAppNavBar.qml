@@ -1,8 +1,5 @@
 import QtQuick 2.13
-import QtQuick.Layouts 1.13
-import QtQuick.Controls 2.13
-import QtQml.Models 2.13
-import Qt.labs.qmlmodels 1.0
+import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -10,186 +7,129 @@ import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
 Rectangle {
-    id: statusAppNavBar
+    id: root
 
-    width: 78
-    implicitHeight: 600
+    property alias chatItemsModel: chatItemsListView.model
+    property alias chatItemDelegate: chatItemsListView.delegate
+
+    property alias communityItemsModel: communityItemsListView.model
+    property alias communityItemDelegate: communityItemsListView.delegate
+
+    property alias regularItemsModel: regularItemsListView.model
+    property alias regularItemDelegate: regularItemsListView.delegate
+
+    property real delegateHeight
+
+    property alias cameraComponent: cameraItemLoader.sourceComponent
+    property alias profileComponent: profileItemLoader.sourceComponent
+
+    implicitWidth: 78
+    implicitHeight: layout.implicitHeight
+
     color: Theme.palette.statusAppNavBar.backgroundColor
 
-    property var sectionModel: []
-    property string communityTypeRole: ""
-    property int communityTypeValue: -1
-    property int navBarButtonSpacing: 12
+    QtObject {
+        id: d
 
-    property StatusNavBarTabButton navBarCameraButton 
-    property StatusNavBarTabButton navBarProfileButton
-    property Component regularNavBarButton
-    property Component communityNavBarButton
+        readonly property real spacing: 12
+        readonly property real separatorWidth: 30
 
-    property var filterRegularItem: function(item) { return true; }
-    property var filterCommunityItem: function(item) { return true; }
-
-    signal aboutToUpdateFilteredRegularModel()
-    signal aboutToUpdateFilteredCommunityModel()
-
-    onNavBarProfileButtonChanged: {
-        if (!!navBarProfileButton) {
-            navBarProfileButton.parent = navBarProfileButtonSlot
+        function implicitListViewHeight(listView) {
+            return listView.count ? listView.count * root.delegateHeight + (listView.count - 1) * listView.spacing : 0
         }
     }
 
-    onNavBarCameraButtonChanged: {
-        if (!!navBarCameraButton) {
-            navBarCameraButton.parent = navBarCameraButtonSlot
-        }
-    }
+    ColumnLayout {
+        id: layout
 
-    function triggerUpdate(){
-        navBarModel.update()
-    }
-
-    StatusAppNavBarFilterModel {
-        id: navBarModel
-
-        filterAcceptsItem: filterRegularItem
-
-        model: statusAppNavBar.sectionModel
-
-        onAboutToUpdateFilteredModel: {
-            statusAppNavBar.aboutToUpdateFilteredRegularModel()
+        anchors {
+            fill: parent
+            topMargin: 48
+            bottomMargin: 24
         }
 
-        DelegateChooser {
-            id: delegateChooser
-            role: communityTypeRole
-            DelegateChoice { roleValue: communityTypeValue; delegate: communityNavButton }
-            DelegateChoice { delegate: regularNavBarButton }
+        spacing: d.spacing
+
+        ListView {
+            id: chatItemsListView
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.minimumHeight: root.delegateHeight
+            Layout.preferredHeight: d.implicitListViewHeight(this)
+            Layout.maximumHeight: Layout.preferredHeight
+
+            objectName: "statusChatNavBarListView"
+
+            visible: count
+            clip: true
+            spacing: d.spacing
+            boundsBehavior: contentHeight > height ? Flickable.DragAndOvershootBounds : Flickable.StopAtBounds
         }
 
-        delegate: delegateChooser
-    }
+        Rectangle {
+            id: firstSectionSeparator
 
-    Component {
-        id: communityNavButton
+            implicitHeight: 1
+            Layout.preferredWidth: d.separatorWidth
+            Layout.alignment: Qt.AlignHCenter
+            color: Theme.palette.directColor7
+
+            visible: chatItemsListView.count && communityItemsListView.contentHeight > communityItemsListView.height
+        }
+
+        ListView {
+            id: communityItemsListView
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.minimumHeight: root.delegateHeight
+            Layout.preferredHeight: d.implicitListViewHeight(this)
+            Layout.maximumHeight: Layout.preferredHeight
+
+            visible: count
+            clip: true
+            spacing: d.spacing
+            boundsBehavior: contentHeight > height ? Flickable.DragAndOvershootBounds : Flickable.StopAtBounds
+        }
+
+        Rectangle {
+            id: secondSectionSeparator
+
+            implicitHeight: 1
+            Layout.preferredWidth: d.separatorWidth
+            Layout.alignment: Qt.AlignHCenter
+            color: Theme.palette.directColor7
+            visible: chatItemsListView.count || communityItemsListView.count
+        }
+
+        ListView {
+            id: regularItemsListView
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: d.implicitListViewHeight(this)
+
+            objectName: "statusMainNavBarListView"
+
+            visible: count
+            clip: true
+            spacing: d.spacing
+            boundsBehavior: contentHeight > height ? Flickable.DragAndOvershootBounds : Flickable.StopAtBounds
+        }
 
         Item {
-            width: parent.width
-            height: (necessaryHightForCommunities > maxHightForCommunities)?
-                        maxHightForCommunities : necessaryHightForCommunities
-
-            property int communityNavBarButtonHeight: 40
-
-            property int maxHightForCommunities: {
-                let numOfOtherThanCommunityBtns = navBarListView.model.count - 1
-                let numOfSpacingsForNavBar = navBarListView.model.count - 1
-
-                return navBarListView.height -
-                        numOfOtherThanCommunityBtns * communityNavBarButtonHeight -
-                        numOfSpacingsForNavBar * navBarButtonSpacing
-            }
-
-            property int necessaryHightForCommunities: {
-                let numOfSpacingsForCommunities = communityListView.model.count - 1
-                return communityListView.model.count * communityNavBarButtonHeight +
-                        numOfSpacingsForCommunities * navBarButtonSpacing +
-                        separatorBottom.height
-            }
-
-            StatusAppNavBarFilterModel {
-                id: navBarCommunityModel
-
-                filterAcceptsItem: filterCommunityItem
-
-                model: statusAppNavBar.sectionModel
-
-                delegate: communityNavBarButton
-
-                onAboutToUpdateFilteredModel: {
-                    statusAppNavBar.aboutToUpdateFilteredCommunityModel()
-                }
-            }
-
-            Item {
-                id: separatorTop
-                width: parent.width
-                height: navBarButtonSpacing
-                anchors.top: parent.top
-                visible: parent.necessaryHightForCommunities > parent.maxHightForCommunities
-
-                Rectangle {
-                    height: 1
-                    width: 30
-                    color: Theme.palette.directColor7
-                    anchors.top: parent.top
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-            }
-
-            ListView {
-                id: communityListView
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: separatorTop.visible? separatorTop.bottom : parent.top
-                anchors.bottom: separatorBottom.top
-                clip: true
-
-                boundsBehavior: contentHeight > height ? Flickable.DragAndOvershootBounds : Flickable.StopAtBounds
-                spacing: navBarButtonSpacing
-
-                model: navBarCommunityModel
-            }
-
-            Item {
-                id: separatorBottom
-                width: parent.width
-                height: navBarButtonSpacing
-                anchors.bottom: parent.bottom
-
-                Rectangle {
-                    height: 1
-                    width: 30
-                    color: Theme.palette.directColor7
-                    anchors.bottom: parent.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-            }
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
-    }
 
-    ListView {
-        id: navBarListView
-        objectName: "statusMainNavBarListView"
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.topMargin: 48
-        anchors.bottom: navBarProfileButtonSlot.top
-        anchors.bottomMargin: navBarButtonSpacing
+        Loader {
+            id: cameraItemLoader
+            Layout.alignment: Qt.AlignHCenter
+        }
 
-        spacing: navBarButtonSpacing
-
-        boundsBehavior: Flickable.StopAtBounds
-        model: navBarModel
-    }
-
-    Item {
-        id: navBarCameraButtonSlot
-        anchors.horizontalCenter: parent.horizontalCenter
-        height: visible? statusAppNavBar.navBarProfileButton.height : 0
-        width: visible? statusAppNavBar.navBarProfileButton.width : 0
-        visible: !!statusAppNavBar.navBarCameraButton
-        anchors.bottom: navBarProfileButtonSlot.visible ? navBarProfileButtonSlot.top : parent.bottom
-        anchors.bottomMargin: visible ? 12 : 0
-    }
-
-
-    Item {
-        id: navBarProfileButtonSlot
-        anchors.horizontalCenter: parent.horizontalCenter
-        height: visible? statusAppNavBar.navBarProfileButton.height : 0
-        width: visible? statusAppNavBar.navBarProfileButton.width : 0
-        visible: !!statusAppNavBar.navBarProfileButton
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: visible ? 24 : 0
+        Loader {
+            id: profileItemLoader
+            Layout.alignment: Qt.AlignHCenter
+        }
     }
 }

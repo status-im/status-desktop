@@ -34,8 +34,9 @@ import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core 0.1
 
 import AppLayouts.Browser.stores 1.0 as BrowserStores
-
 import AppLayouts.stores 1.0
+
+import SortFilterProxyModel 0.2
 
 import "popups"
 import "panels"
@@ -320,58 +321,35 @@ Item {
         anchors.fill: parent
 
         leftPanel: StatusAppNavBar {
-            communityTypeRole: "sectionType"
-            communityTypeValue: Constants.appSection.community
-            sectionModel: appMain.rootStore.mainModuleInst.sectionsModel
-
-            Component.onCompleted: {
-                appMain.rootStore.mainModuleInst.sectionsModel.sectionVisibilityUpdated.connect(function(){
-                    triggerUpdate()
-                })
+            chatItemsModel: SortFilterProxyModel {
+                sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+                filters: [
+                    ValueFilter {
+                        roleName: "sectionType"
+                        value: Constants.appSection.chat
+                    },
+                    ValueFilter {
+                        roleName: "enabled"
+                        value: true
+                    }
+                ]
             }
+            chatItemDelegate: navbarButton
 
-            property bool communityAdded: false
-
-            onAboutToUpdateFilteredRegularModel: {
-                communityAdded = false
+            communityItemsModel: SortFilterProxyModel {
+                sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+                filters: [
+                    ValueFilter {
+                        roleName: "sectionType"
+                        value: Constants.appSection.community
+                    },
+                    ValueFilter {
+                        roleName: "enabled"
+                        value: true
+                    }
+                ]
             }
-
-            filterRegularItem: function(item) {
-                if(!item.enabled)
-                    return false
-
-                if(item.sectionType === Constants.appSection.community)
-                    if(communityAdded)
-                        return false
-                    else
-                        communityAdded = true
-
-                return true
-            }
-
-            filterCommunityItem: function(item) {
-                return item.sectionType === Constants.appSection.community
-            }
-
-            regularNavBarButton: StatusNavBarTabButton {
-                id: navbar
-                objectName: model.name + "-navbar"
-                anchors.horizontalCenter: parent.horizontalCenter
-                name: model.icon.length > 0? "" : model.name
-                icon.name: model.icon
-                icon.source: model.image
-                tooltip.text: model.name
-                checked: model.active
-                badge.value: model.notificationsCount
-                badge.visible: model.hasNotification
-                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
-                badge.border.width: 2
-                onClicked: {
-                    changeAppSectionBySectionId(model.id)
-                }
-            }
-
-            communityNavBarButton: StatusNavBarTabButton {
+            communityItemDelegate: StatusNavBarTabButton {
                 objectName: "CommunityNavBarButton"
                 anchors.horizontalCenter: parent.horizontalCenter
                 name: model.icon.length > 0? "" : model.name
@@ -433,15 +411,33 @@ Item {
                 }
             }
 
-            navBarProfileButton: StatusNavBarTabButton {
+            regularItemsModel: SortFilterProxyModel {
+                sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+                filters: [
+                    RangeFilter {
+                        roleName: "sectionType"
+                        minimumValue: Constants.appSection.wallet
+                        maximumValue: Constants.appSection.communitiesPortal
+                    },
+                    ValueFilter {
+                        roleName: "enabled"
+                        value: true
+                    }
+                ]
+            }
+            regularItemDelegate: navbarButton
+
+            delegateHeight: 40
+
+            profileComponent: StatusNavBarTabButton {
                 id: profileButton
                 objectName: "statusProfileNavBarTabButton"
                 property bool opened: false
 
                 name: appMain.rootStore.userProfileInst.name
                 icon.source: appMain.rootStore.userProfileInst.icon
-                width: 32
-                height: 32
+                implicitWidth: 32
+                implicitHeight: 32
                 identicon.asset.width: width
                 identicon.asset.height: height
                 identicon.asset.charactersLen: 2
@@ -479,6 +475,27 @@ Item {
                     y: profileButton.y - userStatusContextMenu.height + profileButton.height
                     x: profileButton.x + profileButton.width + 5
                     store: appMain.rootStore
+                }
+            }
+
+            Component {
+                id: navbarButton
+                StatusNavBarTabButton {
+                    id: navbar
+                    objectName: model.name + "-navbar"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    name: model.icon.length > 0? "" : model.name
+                    icon.name: model.icon
+                    icon.source: model.image
+                    tooltip.text: model.name
+                    checked: model.active
+                    badge.value: model.notificationsCount
+                    badge.visible: model.hasNotification
+                    badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+                    badge.border.width: 2
+                    onClicked: {
+                        changeAppSectionBySectionId(model.id)
+                    }
                 }
             }
         }
