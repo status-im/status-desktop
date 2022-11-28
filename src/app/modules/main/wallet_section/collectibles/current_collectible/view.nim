@@ -1,6 +1,7 @@
 import NimQml, sequtils, sugar
 
 import ./io_interface
+import ../../../../../../app_service/service/network/dto as network_dto
 import ../collections/model as collections_model
 import ../collectibles/model as collectibles_model
 import ../collections/item as collection_item
@@ -12,13 +13,18 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
 
+      networkName: string
+      networkColor: string
+      networkIconUrl: string
+
+      collectionName: string
+      collectionImageUrl: string
+
       name: string
       id: string
       description: string
       backgroundColor: string
       imageUrl: string
-      collectionID: string
-      collectionImageUrl: string
       permalink: string
       propertiesModel: TraitModel
       rankingsModel: TraitModel
@@ -42,6 +48,33 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
+
+  proc getNetworkName(self: View): QVariant {.slot.} =
+    return newQVariant(self.networkName)
+
+  proc networkNameChanged(self: View) {.signal.}
+
+  QtProperty[QVariant] networkName:
+    read = getNetworkName
+    notify = networkNameChanged
+
+  proc getNetworkColor(self: View): QVariant {.slot.} =
+    return newQVariant(self.networkColor)
+
+  proc networkColorChanged(self: View) {.signal.}
+
+  QtProperty[QVariant] networkColor:
+    read = getNetworkColor
+    notify = networkColorChanged
+
+  proc getNetworkIconUrl(self: View): QVariant {.slot.} =
+    return newQVariant(self.networkIconUrl)
+
+  proc networkIconUrlChanged(self: View) {.signal.}
+
+  QtProperty[QVariant] networkIconUrl:
+    read = getNetworkIconUrl
+    notify = networkIconUrlChanged
 
   proc getName(self: View): QVariant {.slot.} =
     return newQVariant(self.name)
@@ -88,14 +121,14 @@ QtObject:
     read = getImageUrl
     notify = imageUrlChanged
 
-  proc getCollectionID(self: View): QVariant {.slot.} =
-    return newQVariant(self.collectionID)
+  proc getCollectionName(self: View): QVariant {.slot.} =
+    return newQVariant(self.collectionName)
 
-  proc collectionIDChanged(self: View) {.signal.}
+  proc collectionNameChanged(self: View) {.signal.}
 
-  QtProperty[QVariant] collectionID:
-    read = getCollectionID
-    notify = collectionIDChanged
+  QtProperty[QVariant] collectionName:
+    read = getCollectionName
+    notify = collectionNameChanged
 
   proc getCollectionImageUrl(self: View): QVariant {.slot.} =
     return newQVariant(self.collectionImageUrl)
@@ -145,7 +178,27 @@ QtObject:
   proc update*(self: View, slug: string, id: int) {.slot.} =
     self.delegate.update(slug, id)
 
-  proc setData*(self: View, collection: collection_item.Item, collectible: collectible_item.Item) =
+  proc setData*(self: View, collection: collection_item.Item, collectible: collectible_item.Item, network: network_dto.NetworkDto) =
+    if (self.networkName != network.chainName):
+      self.networkName = network.chainName
+      self.networkNameChanged()
+
+    if (self.networkColor != network.chainColor):
+      self.networkColor = network.chainColor
+      self.networkColorChanged()
+
+    if (self.networkIconUrl != network.iconURL):
+      self.networkIconUrl = network.iconURL
+      self.networkIconUrlChanged()
+
+    if (self.collectionName != collection.getName()):
+      self.collectionName = collection.getName()
+      self.collectionNameChanged()
+
+    if (self.collectionImageUrl != collection.getImageUrl()):
+      self.collectionImageUrl = collection.getImageUrl()
+      self.collectionImageUrlChanged()
+    
     if (self.name != collectible.getName()):
       self.name = collectible.getName()
       self.nameChanged()
@@ -166,10 +219,6 @@ QtObject:
     if (self.imageUrl != collectible.getImageUrl()):
       self.imageUrl = collectible.getImageUrl()
       self.imageUrlChanged()
-
-    if (self.collectionImageUrl != collection.getImageUrl()):
-      self.collectionImageUrl = collection.getImageUrl()
-      self.collectionImageUrlChanged()
 
     self.propertiesModel.setItems(collectible.getProperties())
     self.propertiesChanged()

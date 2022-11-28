@@ -1,3 +1,4 @@
+import ../../../../../../app_service/service/network/dto as network_dto
 import ../collections/item as collection_item
 import ../collectibles/item as collectible_item
 
@@ -17,7 +18,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method update*(self: AccessInterface, slug: string, id: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setData*(self: AccessInterface, collection: collection_item.Item, collectible: collectible_item.Item) {.base.} =
+method setData*(self: AccessInterface, collection: collection_item.Item, collectible: collectible_item.Item, network: network_dto.NetworkDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface
