@@ -12,6 +12,8 @@ import StatusQ.Platform 0.1
 import "demoapp"
 import "demoapp/data" 1.0
 
+import SortFilterProxyModel 0.2
+
 Rectangle {
     id: demoApp
     height: 602
@@ -74,65 +76,27 @@ Rectangle {
         width: demoApp.width - demoApp.border.width * 2
 
         leftPanel: StatusAppNavBar {
-
             id: navBar
 
-            communityTypeRole: "sectionType"
-            communityTypeValue: appSectionType.community
-            sectionModel: Models.demoAppSectionsModel
-
-            property bool communityAdded: false
-
-            onAboutToUpdateFilteredRegularModel: {
-                communityAdded = false
-            }
-
-            filterRegularItem: function(item) {
-                if(item.sectionType === appSectionType.community)
-                    if(communityAdded)
-                        return false
-                    else
-                        communityAdded = true
-
-                return true
-            }
-
-            filterCommunityItem: function(item) {
-                return item.sectionType === appSectionType.community
-            }
-
-            regularNavBarButton: StatusNavBarTabButton {
-                anchors.horizontalCenter: parent.horizontalCenter
-                name: model.icon.length > 0? "" : model.name
-                icon.name: model.icon
-                icon.source: model.image
-                tooltip.text: model.name
-                autoExclusive: true
-                checked: model.active
-                badge.value: model.notificationsCount
-                badge.visible: model.hasNotification
-                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
-                badge.border.width: 2
-                onClicked: {
-                    if(model.sectionType === appSectionType.chat)
-                    {
-                        appView.sourceComponent = statusAppChatView
-                        demoApp.setActiveItem(model.sectionId)
-                    }
-                    else if(model.sectionType === appSectionType.communitiesPortal)
-                    {
-                        appView.sourceComponent = statusCommunityPortalView
-                        demoApp.setActiveItem(model.sectionId)
-                    }
-                    else if(model.sectionType === appSectionType.profileSettings)
-                    {
-                        appView.sourceComponent = statusAppProfileSettingsView
-                        demoApp.setActiveItem(model.sectionId)
-                    }
+            chatItemsModel: SortFilterProxyModel {
+                sourceModel: Models.demoAppSectionsModel
+                filters: ValueFilter {
+                    roleName: "sectionType"
+                    value: appSectionType.chat
                 }
             }
 
-            communityNavBarButton: StatusNavBarTabButton {
+            chatItemDelegate: navButtonComponent
+
+            communityItemsModel: SortFilterProxyModel {
+                sourceModel: Models.demoAppSectionsModel
+                filters: ValueFilter {
+                    roleName: "sectionType"
+                    value: appSectionType.community
+                }
+            }
+
+            communityItemDelegate: StatusNavBarTabButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 name: model.icon.length > 0? "" : model.name
                 icon.name: model.icon
@@ -176,6 +140,52 @@ Rectangle {
                         text: qsTr("Leave Community")
                         icon.name: "arrow-left"
                         type: StatusMenuItem.Type.Danger
+                    }
+                }
+            }
+
+            regularItemsModel: SortFilterProxyModel {
+                sourceModel: Models.demoAppSectionsModel
+                filters: RangeFilter {
+                    roleName: "sectionType"
+                    minimumValue: appSectionType.communitiesPortal
+                    maximumValue: appSectionType.demoApp
+                }
+            }
+            regularItemDelegate: navButtonComponent
+
+            delegateHeight: 40
+
+            Component {
+                id: navButtonComponent
+                StatusNavBarTabButton {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    name: model.icon.length > 0? "" : model.name
+                    icon.name: model.icon
+                    icon.source: model.image
+                    tooltip.text: model.name
+                    autoExclusive: true
+                    checked: model.active
+                    badge.value: model.notificationsCount
+                    badge.visible: model.hasNotification
+                    badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+                    badge.border.width: 2
+                    onClicked: {
+                        if(model.sectionType === appSectionType.chat)
+                        {
+                            appView.sourceComponent = statusAppChatView
+                            demoApp.setActiveItem(model.sectionId)
+                        }
+                        else if(model.sectionType === appSectionType.communitiesPortal)
+                        {
+                            appView.sourceComponent = statusCommunityPortalView
+                            demoApp.setActiveItem(model.sectionId)
+                        }
+                        else if(model.sectionType === appSectionType.profileSettings)
+                        {
+                            appView.sourceComponent = statusAppProfileSettingsView
+                            demoApp.setActiveItem(model.sectionId)
+                        }
                     }
                 }
             }

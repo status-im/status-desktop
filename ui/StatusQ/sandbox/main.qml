@@ -70,11 +70,8 @@ StatusWindow {
         leftPanel: StatusAppNavBar {
             height: rootWindow.height
 
-            communityTypeRole: "sectionType"
-            communityTypeValue: appSectionType.community
-            sectionModel: Models.mainAppSectionsModel
-
-            regularNavBarButton: StatusNavBarTabButton {
+            regularItemsModel: Models.mainAppSectionsModel
+            regularItemDelegate: StatusNavBarTabButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 name: model.icon.length > 0? "" : model.name
                 icon.name: model.icon
@@ -103,6 +100,7 @@ StatusWindow {
                     rootWindow.setActiveItem(model.sectionId)
                 }
             }
+            delegateHeight: 40
         }
 
         rightPanel: Item {
