@@ -35,7 +35,12 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_COMMUNITY_DATA_IMPORTED) do(e:Args):
     let args = CommunityArgs(e)
-    self.delegate.communityAdded(args.community)
+    self.delegate.communityImported(args.community)
+
+  self.events.on(SIGNAL_COMMUNITY_LOAD_DATA_FAILED) do(e: Args):
+    let args = CommunityArgs(e)
+    self.delegate.onImportCommunityErrorOccured(args.community.id, args.error)
+
 
   self.events.on(SIGNAL_CURATED_COMMUNITY_FOUND) do(e:Args):
     let args = CuratedCommunityArgs(e)
@@ -48,7 +53,7 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_IMPORTED) do(e:Args):
     let args = CommunityArgs(e)
     if(args.error.len > 0):
-      self.delegate.onImportCommunityErrorOccured(args.error)
+      self.delegate.onImportCommunityErrorOccured(args.community.id, args.error)
     else:
       self.delegate.communityImported(args.community)
 

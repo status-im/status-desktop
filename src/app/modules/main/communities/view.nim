@@ -471,9 +471,9 @@ QtObject:
   proc importCommunity*(self: View, communityKey: string) {.slot.} =
     self.delegate.importCommunity(communityKey)
 
-  proc importingCommunityStateChanged*(self:View, state: int, errorMsg: string) {.signal.}
-  proc emitImportingCommunityStateChangedSignal*(self: View, state: int, errorMsg: string) =
-    self.importingCommunityStateChanged(state, errorMsg)
+  proc importingCommunityStateChanged*(self:View, communityId: string, state: int, errorMsg: string) {.signal.}
+  proc emitImportingCommunityStateChangedSignal*(self: View, communityId: string, state: int, errorMsg: string) =
+    self.importingCommunityStateChanged(communityId, state, errorMsg)
 
   proc isMemberOfCommunity*(self: View, communityId: string, pubKey: string): bool {.slot.} =
     let sectionItem = self.model.getItemById(communityId)

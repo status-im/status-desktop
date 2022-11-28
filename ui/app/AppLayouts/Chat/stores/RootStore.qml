@@ -47,6 +47,8 @@ QtObject {
 
     property var advancedModule: profileSectionModule.advancedModule
 
+    signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
+
     function setActiveCommunity(communityId) {
         mainModule.setActiveSectionById(communityId);
     }
@@ -569,5 +571,12 @@ QtObject {
 
     function hex2Eth(value) {
         return globalUtils.hex2Eth(value)
+    }
+
+    readonly property Connections communitiesModuleConnections: Connections {
+      target: communitiesModuleInst
+      function onImportingCommunityStateChanged(communityId, state, errorMsg) {
+          root.importingCommunityStateChanged(communityId, state, errorMsg)
+      }
     }
 }

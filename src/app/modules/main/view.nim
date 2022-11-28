@@ -239,3 +239,6 @@ QtObject:
   proc destroyKeycardSharedModuleFlow*(self: View) {.signal.}
   proc emitDestroyKeycardSharedModuleFlow*(self: View) =
     self.destroyKeycardSharedModuleFlow()
+
+  proc setCommunityIdToSpectate*(self: View, communityId: string) {.slot.} = 
+    self.delegate.setCommunityIdToSpectate(communityId)

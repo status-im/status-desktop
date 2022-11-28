@@ -575,6 +575,9 @@ method emitStoringPasswordSuccess*[T](self: Module[T]) =
 method emitMailserverNotWorking*[T](self: Module[T]) =
   self.view.emitMailserverNotWorking()
 
+method setCommunityIdToSpectate*[T](self: Module[T], communityId: string) =
+  self.statusUrlCommunityToSpectate = communityId
+
 method getActiveSectionId*[T](self: Module[T]): string =
   return self.controller.getActiveSectionId()
 

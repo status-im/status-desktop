@@ -301,14 +301,14 @@ method deleteCommunityChat*(self: Module, communityId: string, channelId: string
 
 method communityImported*(self: Module, community: CommunityDto) =
   self.view.addItem(self.getCommunityItem(community))
-  self.view.emitImportingCommunityStateChangedSignal(ImportCommunityState.Imported.int, "")
+  self.view.emitImportingCommunityStateChangedSignal(community.id, ImportCommunityState.Imported.int, "")
 
 method importCommunity*(self: Module, communityKey: string) =
-  self.view.emitImportingCommunityStateChangedSignal(ImportCommunityState.ImportingInProgress.int, "")
+  self.view.emitImportingCommunityStateChangedSignal(communityKey, ImportCommunityState.ImportingInProgress.int, "")
   self.controller.importCommunity(communityKey)
 
-method onImportCommunityErrorOccured*(self: Module, error: string) =
-  self.view.emitImportingCommunityStateChangedSignal(ImportCommunityState.ImportingError.int, error)
+method onImportCommunityErrorOccured*(self: Module, communityId: string, error: string) =
+  self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingError.int, error)
 
 method requestExtractDiscordChannelsAndCategories*(self: Module, filesToImport: seq[string]) =
   self.view.setDiscordDataExtractionInProgress(true)

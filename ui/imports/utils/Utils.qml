@@ -26,6 +26,10 @@ QtObject {
         return (startsWith0x(value) && isHex(value) && value.length === 132) || globalUtilsInst.isCompressedPubKey(value)
     }
 
+    function isCompressedPubKey(pubKey) {
+      return globalUtilsInst.isCompressedPubKey(pubKey)
+    }
+
     function isValidETHNamePrefix(value) {
         return !(value.trim() === "" || value.endsWith(".") || value.indexOf("..") > -1)
     }
@@ -618,6 +622,11 @@ QtObject {
             return globalUtilsInst.changeCommunityKeyCompression(communityKey)
         }
         return communityKey
+    }
+
+
+    function changeCommunityKeyCompression(communityKey) {
+        return globalUtilsInst.changeCommunityKeyCompression(communityKey)
     }
 
     function getCompressedPk(publicKey) {

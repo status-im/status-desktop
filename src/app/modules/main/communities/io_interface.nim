@@ -113,7 +113,7 @@ method curatedCommunityEdited*(self: AccessInterface, community: CuratedCommunit
 method communityImported*(self: AccessInterface, community: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onImportCommunityErrorOccured*(self: AccessInterface, error: string) {.base.} =
+method onImportCommunityErrorOccured*(self: AccessInterface, communityId: string, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
