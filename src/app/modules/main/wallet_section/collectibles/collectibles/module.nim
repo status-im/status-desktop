@@ -4,6 +4,7 @@ import ../../../../../global/global_singleton
 import ./io_interface, ./view, ./controller, ./item
 import ../io_interface as delegate_interface
 import ../../../../../../app_service/service/collectible/service as collectible_service
+import ../../../../../core/eventemitter
 
 export io_interface
 
@@ -15,12 +16,12 @@ type
     moduleLoaded: bool
     currentAddress: string
 
-proc newModule*(delegate: delegate_interface.AccessInterface, collectibleService: collectible_service.Service):
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, collectibleService: collectible_service.Service):
   Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
-  result.controller = controller.newController(result, collectibleService)
+  result.controller = controller.newController(result, events, collectibleService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -43,7 +44,9 @@ method setCurrentAddress*(self: Module, address: string) =
   self.currentAddress = address
 
 method fetch*(self: Module, collectionSlug: string) =
-  let collectibles = self.controller.fetch(self.currentAddress, collectionSlug)
+  self.controller.fetch(self.currentAddress, collectionSlug)
+
+method setCollectibles*(self: Module, collectionSlug: string, collectibles: seq[CollectibleDto]) =
   let items = collectibles.map(c => initItem(
     c.id,
     c.name,

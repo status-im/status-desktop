@@ -31,7 +31,7 @@ proc newModule*(
   result.controller = newController(result, walletAccountService)
   result.moduleLoaded = false
 
-  result.collectiblesModule = collectibles_module.newModule(result, collectibleService)
+  result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService)
   result.collectionsModule = collectionsModule.newModule(result, events, collectibleService)
   result.currentCollectibleModule = currentCollectibleModule.newModule(result, collectibleService, result.collectionsModule, result.collectiblesModule)
 

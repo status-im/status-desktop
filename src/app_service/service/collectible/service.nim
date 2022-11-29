@@ -21,7 +21,19 @@ const GetCollections* = "get-collections"
 
 type
   GetCollectionsArgs* = ref object of Args
+    chainId*: int
+    address*: string
     collections*: seq[CollectionDto]
+
+const GetCollectibles* = "get-collectibles"
+
+type
+  GetCollectiblesArgs* = ref object of Args
+    chainId*: int
+    address*: string
+    collectionSlug*: string
+    collectibles*: seq[CollectibleDto]
+    error*: string
 
 QtObject:
   type
@@ -47,37 +59,74 @@ QtObject:
   proc init*(self: Service) =
     discard
 
+  proc getNetwork*(self: Service): NetworkDto =
+    return self.networkService.getNetworkForCollectibles()
+
   proc onGetCollections*(self: Service, response: string) {.slot.} =
+    var data = GetCollectionsArgs()
     try:
       let responseObj = response.parseJson
-      if (responseObj.kind != JArray):
-        self.events.emit(GetCollections, GetCollectionsArgs())
-        return
-      
-      let collections = map(responseObj.getElems(), proc(x: JsonNode): CollectionDto = x.toCollectionDto())
-      self.events.emit(GetCollections, GetCollectionsArgs(collections: collections))
-    except:
-      self.events.emit(GetCollections, GetCollectionsArgs())
+      if (responseObj.kind == JObject):
+        let chainIdJson = responseObj["chainId"]
+        let addressJson = responseObj["address"]
+
+        let validAccount = (chainIdJson.kind == JInt and 
+          addressJson.kind == JString)
+        if (validAccount):
+          data.chainId = chainIdJson.getInt()
+          data.address = addressJson.getStr()
+
+          let collectionsJson = responseObj["collections"]
+          if (collectionsJson.kind == JArray):
+            data.collections = map(collectionsJson.getElems(), proc(x: JsonNode): CollectionDto = x.toCollectionDto())
+    except Exception as e:
+      let errDesription = e.msg
+      error "error onGetCollections: ", errDesription
+    self.events.emit(GetCollections, data)
 
   proc getCollectionsAsync*(self: Service, address: string) =
     let arg = GetCollectionsTaskArg(
       tptr: cast[ByteAddress](getCollectionsTaskArg),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onGetCollections",
-      chainId: self.networkService.getNetworkForCollectibles().chainId,
+      chainId: self.getNetwork().chainId,
       address: address,
     )
     self.threadpool.start(arg)
-
-  proc getNetwork*(self: Service): NetworkDto =
-    return self.networkService.getNetworkForCollectibles()
   
-  proc getCollectibles*(self: Service, address: string, collectionSlug: string): seq[CollectibleDto] =
+  proc onGetCollectibles*(self: Service, response: string) {.slot.} =
+    var data = GetCollectiblesArgs()
     try:
-      let chainId = self.getNetwork().chainId
-      let response = backend.getOpenseaAssetsByOwnerAndCollection(chainId, address, collectionSlug, limit)
-      return map(response.result.getElems(), proc(x: JsonNode): CollectibleDto = x.toCollectibleDto())
+      let responseObj = response.parseJson
+      if (responseObj.kind == JObject):
+        let chainIdJson = responseObj["chainId"]
+        let addressJson = responseObj["address"]
+        let collectionSlugJson = responseObj["collectionSlug"]
+        
+        let validCollection = (chainIdJson.kind == JInt and 
+          addressJson.kind == JString and 
+          collectionSlugJson.kind == JString)
+        if (validCollection):
+          data.chainId = chainIdJson.getInt()
+          data.address = addressJson.getStr()
+          data.collectionSlug = collectionSlugJson.getStr()
+
+          let collectiblesJson = responseObj["collectibles"]
+          if (collectiblesJson.kind == JArray):
+            data.collectibles = map(collectiblesJson.getElems(), proc(x: JsonNode): CollectibleDto = x.toCollectibleDto())
     except Exception as e:
       let errDesription = e.msg
-      error "error: ", errDesription
-      return
+      error "error onGetCollectibles: ", errDesription
+    self.events.emit(GetCollectibles, data)
+
+  proc getCollectiblesAsync*(self: Service, address: string, collectionSlug: string) =
+    let arg = GetCollectiblesTaskArg(
+      tptr: cast[ByteAddress](getCollectiblesTaskArg),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onGetCollectibles",
+      chainId: self.getNetwork().chainId,
+      address: address,
+      collectionSlug: collectionSlug,
+      limit: limit
+    )
+    self.threadpool.start(arg)
