@@ -126,7 +126,8 @@ Loader {
                                                isRightClickOnImage = false,
                                                imageSource = "") {
 
-        if (placeholderMessage || activityCenterMessage) {
+        if (placeholderMessage || activityCenterMessage ||
+                !(root.rootStore.mainModuleInst.activeSection.joined || isProfileClick)) {
             return
         }
 
@@ -475,7 +476,9 @@ Loader {
                                   root.placeholderMessage ||
                                   root.activityCenterMessage ||
                                   root.isInPinnedPopup ||
-                                  root.editModeOn
+                                  root.editModeOn ||
+                                  !root.rootStore.mainModuleInst.activeSection.joined
+
                 hideMessage: d.isSingleImage && d.unfurledLinksCount === 1
 
                 overrideBackground: root.activityCenterMessage || root.placeholderMessage
