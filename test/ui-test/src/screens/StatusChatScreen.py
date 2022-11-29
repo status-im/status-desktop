@@ -427,7 +427,7 @@ class StatusChatScreen:
 
     def verify_chat_image(self, path: str):
         fullPath = path + "images/ui-test-image0.jpg"
-        imagePresent(fullPath, True, 95, 25, 150, True)
+        image_present(fullPath, True, 95, 25, 150, True)
         
     def verify_members_added(self, members):
         self.verify_total_members_is_displayed_in_toolbar(members)

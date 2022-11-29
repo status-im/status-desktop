@@ -31,11 +31,11 @@ def step(context, profileImageUrl: str, username: str, password: str):
     
 @Given("my profile modal has the updated profile image")
 def step(context):
-    _welcomeScreen.profile_modal_image_is_updated()
+    _mainScreen.profile_modal_image_is_updated()
     
 @Given("the profile setting has the updated profile image")
 def step(context):
-    _welcomeScreen.profile_settings_image_is_updated()
+    _mainScreen.profile_settings_image_is_updated()
     
 @Given("a screenshot of the profileImage is taken")
 def step(context):
@@ -90,9 +90,9 @@ def step(context):
  
 @Then("the profile navigation bar has the updated profile image")
 def step(context):
-    _welcomeScreen.profile_image_is_updated()
-    delete_created_searchImage(context.userData["search_images"] +"profiletestimage.png")
-    delete_created_searchImage(context.userData["search_images"]+"loginUserName.png")
+    _mainScreen.profile_image_is_updated()
+    filesMngr.delete_created_searchImage(context.userData["search_images"] + "profiletestimage.png")
+    filesMngr.delete_created_searchImage(context.userData["search_images"] + "loginUserName.png")
     
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:

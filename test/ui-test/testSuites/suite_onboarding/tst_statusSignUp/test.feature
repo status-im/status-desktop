@@ -38,8 +38,6 @@ Feature: Status Desktop Sign Up
 		| provide between target maze travel enroll edge churn random sight grass lion diet sugar cable fiction reflect reason gaze camp tone maximum task unlock | 0xCb59031d11D233112CB57DFd667fE1FF6Cd7b6Da |
 
 
-  @mayfail
-  # TODO: Check validation. It may be broken due to the new user profile design.
   Scenario: The user signs up with a profile image
     Given A first time user lands on the status desktop and generates new key
     And the user signs up with profileImage "doggo.jpeg", username "tester123" and password "TesTEr16843/!@00"
@@ -48,4 +46,5 @@ Feature: Status Desktop Sign Up
     And the user restarts the app
     And a screenshot of the profileImage is taken
     When the user logs in with password "TesTEr16843/!@00"
-    Then the profile navigation bar has the updated profile image
+    Then the user lands on the signed in app
+    And the profile navigation bar has the updated profile image
