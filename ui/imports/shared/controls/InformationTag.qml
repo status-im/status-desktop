@@ -21,7 +21,7 @@ Control {
     background: Rectangle {
         id: controlBackground
         implicitWidth: 66
-        implicitHeight: 32
+        implicitHeight: 26
         color: "transparent"
         border.width: 1
         border.color: Theme.palette.baseColor2
@@ -34,22 +34,22 @@ Control {
         Image {
             id: image
             Layout.alignment: Qt.AlignVCenter
-            Layout.maximumWidth: visible ? 22 : 0
-            Layout.maximumHeight: visible ? 22 : 0
+            Layout.maximumWidth: visible ? 16 : 0
+            Layout.maximumHeight: visible ? 16 : 0
             visible: image.source !== ""
         }
         StatusIcon {
             id: iconAsset
             Layout.alignment: Qt.AlignVCenter
-            Layout.maximumWidth: visible ? 22 : 0
-            Layout.maximumHeight: visible ? 22 : 0
+            Layout.maximumWidth: visible ? 16 : 0
+            Layout.maximumHeight: visible ? 16 : 0
             visible: iconAsset.icon !== ""
         }
         StatusBaseText {
             id: tagPrimaryLabel
             Layout.alignment: Qt.AlignVCenter
-            font.pixelSize: Style.current.primaryTextFontSize
-            font.weight: Font.Medium
+            font.pixelSize: Style.current.tertiaryTextFontSize
+            font.weight: Font.Normal
             color: Theme.palette.directColor1
             visible: text !== ""
         }
@@ -57,8 +57,8 @@ Control {
             id: tagSecondaryLabel
             Layout.alignment: Qt.AlignVCenter
             Layout.maximumWidth: 100
-            font.pixelSize: Style.current.primaryTextFontSize
-            font.weight: Font.Medium
+            font.pixelSize: Style.current.tertiaryTextFontSize
+            font.weight: Font.Normal
             color: Theme.palette.baseColor1
             visible: text !== ""
             elide: Text.ElideMiddle
