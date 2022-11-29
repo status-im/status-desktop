@@ -679,9 +679,11 @@ method blockContact*(self: Module, publicKey: string) =
 method onContactBlocked*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
   self.view.chatsModel().blockUnblockItemOrSubItemById(publicKey, blocked=true)
+  self.updateParentBadgeNotifications()
 
 method onContactUnblocked*(self: Module, publicKey: string) =
   self.view.chatsModel().blockUnblockItemOrSubItemById(publicKey, blocked=false)
+  self.onContactDetailsUpdated(publicKey)
 
 method onContactDetailsUpdated*(self: Module, publicKey: string) =
   if(self.controller.isCommunity()):
