@@ -32,7 +32,8 @@ class MainScreenComponents(Enum):
     SECURE_SEEDPHRASE_BANNER = "secureSeedPhrase_Banner"
     CONNECTION_INFO_BANNER = "connectionInfo_Banner"
     UPDATE_APP_BANNER = "appVersionUpdate_Banner"
-    TESTNET_INFO_BANNER = "testnetInfo_Banner"    
+    TESTNET_INFO_BANNER = "testnetInfo_Banner"   
+    PROFILE_SETTINGS_VIEW = "mainWindow_ProfileSettingsView" 
     PROFILE_NAVBAR_BUTTON = "mainWindow_ProfileNavBarButton"
     USERSTATUSMENU_ALWAYS_ACTIVE_ACTION = "userContextmenu_AlwaysActiveButton"
     USERSTATUSMENU_INACTIVE_ACTION = "userContextmenu_InActiveButton"
@@ -215,3 +216,23 @@ class StatusMainScreen:
             hover_and_click_object_by_name(MainScreenComponents.LEAVE_CHAT_MENUITEM.value)
             
         verify(loaded, "Trying to get chat: " + chatName)
+    
+    def profile_image_is_updated(self):
+        # open profile popup and check image on profileNavBarButton and profileNavBarPopup
+        profileNavBarButton = wait_and_get_obj(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
+        click_obj(profileNavBarButton)
+        profilePopupImage = wait_and_get_obj(ProfilePopup.USER_IMAGE.value)
+        image_present("loginUserName", True, 95, 75, 100, True, profileNavBarButton)
+        image_present("loginUserName", True, 95, 75, 100, True, profilePopupImage)
+        
+    def profile_modal_image_is_updated(self):
+        click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
+        click_obj_by_name(MainScreenComponents.USERSTATUSMENU_OPEN_PROFILE_POPUP.value)
+        image_present("profiletestimage", True, 97, 95, 100, True)
+        
+    def profile_settings_image_is_updated(self):
+        # first time clicking on settings button closes the my profile modal
+        click_obj_by_name(MainScreenComponents.SETTINGS_BUTTON.value)
+        click_obj_by_name(MainScreenComponents.SETTINGS_BUTTON.value)
+        myProfileSettingsObject = wait_and_get_obj(MainScreenComponents.PROFILE_SETTINGS_VIEW.value)
+        image_present("profiletestimage", True, 95, 100, 183, True, myProfileSettingsObject)

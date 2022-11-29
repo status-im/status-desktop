@@ -14,7 +14,6 @@ import sys
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from common.SeedUtils import *
-from screens.StatusMainScreen import MainScreenComponents
 import common.Common as common
 
 
@@ -213,28 +212,10 @@ class StatusWelcomeScreen:
         if sys.platform == "darwin":
             click_obj_by_name(SignUpComponents.PASSWORD_PREFERENCE.value)
             
-    def profile_modal_image_is_updated(self):
-        click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
-        click_obj_by_name(MainScreenComponents.USERSTATUSMENU_OPEN_PROFILE_POPUP.value)
-        imagePresent("profiletestimage", True, 97, 95, 100, True)
-        
-    def profile_settings_image_is_updated(self):
-        # first time clicking on settings button closes the my profile modal
-        click_obj_by_name(MainScreen.SETTINGS_BUTTON.value)
-        click_obj_by_name(MainScreen.SETTINGS_BUTTON.value)
-        imagePresent("profiletestimage", True, 97, 100, 183, True)
-            
     def grab_screenshot(self):
         # take a screenshot of the profile image to compare it later with the main screen
         loginUserName = wait_and_get_obj(LoginView.LOGIN_VIEW_USER_IMAGE.value)
         grabScreenshot_and_save(loginUserName, "loginUserName", 200)
-        
-    def profile_image_is_updated(self):
-        profileNavBarButton = wait_and_get_obj(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
-        imagePresent("loginUserName", True, 98, 85, 100, True)
-
-        click_obj(profileNavBarButton)
-        imagePresent("loginUserName", True, 99, 95, 100, True)
         
     def enter_password(self, password):
         click_obj_by_name(LoginView.PASSWORD_INPUT.value)

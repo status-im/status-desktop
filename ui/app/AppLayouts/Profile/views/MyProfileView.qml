@@ -68,7 +68,7 @@ SettingsContentBase {
 
             MyProfileSettingsView {
                 id: settingsView
-
+                objectName: "myProfileSettingsView"
                 profileStore: root.profileStore
                 privacyStore: root.privacyStore
                 walletStore: root.walletStore
