@@ -846,6 +846,10 @@ method mnemonicBackedUp*[T](self: Module[T]) =
     self.calculateProfileSectionHasNotification(),
     notificationsCount = 0)
 
+method displayWindowsOsNotification*[T](self: Module[T], title: string,
+    message: string) =
+  self.view.displayWindowsOsNotification(title, message)
+
 method osNotificationClicked*[T](self: Module[T], details: NotificationDetails) =
   if(details.notificationType == NotificationType.NewContactRequest):
     self.controller.switchTo(details.sectionId, "", "")
