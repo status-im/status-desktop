@@ -5,6 +5,11 @@
 import stint
 import ../../common/conversion as service_conversion
 
+proc sortAsc[T](t1, t2: T): int =
+  if (t1.fromNetwork.chainId > t2.fromNetwork.chainId): return 1
+  elif (t1.fromNetwork.chainId < t2.fromNetwork.chainId): return -1
+  else: return 0
+
 type
   LoadTransactionsTaskArg* = ref object of QObjectTaskArg
     chainId: int
@@ -77,7 +82,8 @@ const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
     let amountAsHex = "0x" & eth_utils.stripLeadingZeros(arg.amount.toHex)
     let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, arg.preferredChainIDs, arg.priority, arg.sendType).result
 
-    let bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
+    var bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
+    bestPaths.sort(sortAsc[TransactionPathDto])
     let output = %*{
       "suggestedRoutes": SuggestedRoutesDto(
         best: bestPaths,

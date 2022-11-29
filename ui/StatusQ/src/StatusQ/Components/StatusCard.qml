@@ -124,6 +124,11 @@ Rectangle {
        This property allows user to customize the card icon in the StatusCard
     */
     property alias cardIcon: cardIcon
+    /*!
+       \qmlproperty real StatusCard::cardIconPosition
+       This property exposes the card icon posistion to help draw the network routes
+    */
+    property real cardIconPosition: layout.y + cardIcon.y + cardIcon.height/2
 
     /*!
         \qmlsignal StatusCard::clicked
