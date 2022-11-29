@@ -238,6 +238,11 @@ proc init*(self: Controller) =
     var args = ClickedNotificationArgs(e)
     self.delegate.osNotificationClicked(args.details)
 
+  if defined(windows):
+    self.events.on(SIGNAL_DISPLAY_WINDOWS_OS_NOTIFICATION) do(e: Args):
+      var args = NotificationArgs(e)
+      self.delegate.displayWindowsOsNotification(args.title, args.message)
+
   self.events.on(SIGNAL_DISPLAY_APP_NOTIFICATION) do(e: Args):
     var args = NotificationArgs(e)
     self.delegate.displayEphemeralNotification(args.title, args.message, args.details)

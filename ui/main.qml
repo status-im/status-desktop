@@ -123,6 +123,15 @@ StatusWindow {
     }
 
     Connections {
+        id: windowsOsNotificationsConnection
+        enabled: false
+        target: Global.mainModuleInst
+        function onDisplayWindowsOsNotification(title, message) {
+            systemTray.showMessage(title, message)
+        }
+    }
+
+    Connections {
         target: startupModule
 
         function onStartUpUIRaised() {
@@ -143,6 +152,10 @@ StatusWindow {
             else if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
                 Global.mainModuleInst = mainModule
+                if (Qt.platform.os === Constants.windows) {
+                    windowsOsNotificationsConnection.enabled = true
+                }
+
                 loader.sourceComponent = app
 
                 if(localAccountSensitiveSettings.recentEmojis === "") {
@@ -243,6 +256,12 @@ StatusWindow {
                     return "imports/assets/icons/status-logo-dev-round-rect.svg"
                 else
                     return "imports/assets/icons/status-logo-dev-circle.svg"
+            }
+        }
+
+        onMessageClicked: {
+            if (Qt.platform.os === Constants.windows) {
+                applicationWindow.makeStatusAppActive()
             }
         }
 

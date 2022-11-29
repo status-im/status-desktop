@@ -135,6 +135,9 @@ method mnemonicBackedUp*(self: AccessInterface) {.base.} =
 method osNotificationClicked*(self: AccessInterface, details: NotificationDetails) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method displayWindowsOsNotification*(self: AccessInterface, title: string, message: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method displayEphemeralNotification*(self: AccessInterface, title: string, subTitle: string, details: NotificationDetails) 
   {.base.} =
   raise newException(ValueError, "No implementation available")
