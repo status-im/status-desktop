@@ -487,13 +487,6 @@ Loader {
                 profileClickable: !root.isDiscordMessage
                 messageAttachments: root.messageAttachments
 
-                timestampString: Utils.formatShortTime(timestamp,
-                                                       localAccountSensitiveSettings.is24hTimeFormat)
-
-                timestampTooltipString: Utils.formatLongDateTime(timestamp,
-                                                                 localAccountSensitiveSettings.isDDMMYYDateFormat,
-                                                                 localAccountSensitiveSettings.is24hTimeFormat);
-
                 onEditCancelled: {
                     root.messageStore.setEditModeOff(root.messageId)
                 }

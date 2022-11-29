@@ -57,11 +57,10 @@ Item {
         anchors.rightMargin: Style.current.padding
 
         sourceComponent: StatusFlatRoundButton {
-            id: markReadBtn
             icon.width: 20
             icon.height: 20
-            icon.source: Style.svg("check-activity")
-            icon.color: root.notification.read ? icon.disabledColor : "transparent"
+            icon.name: "checkmark"
+            icon.color: root.notification.read ? icon.disabledColor : Theme.palette.primaryColor1
             tooltip.text: !root.notification.read ? qsTr("Mark as Read") : qsTr("Mark as Unread")
             tooltip.orientation: StatusToolTip.Orientation.Left
             tooltip.x: -tooltip.width - Style.current.padding

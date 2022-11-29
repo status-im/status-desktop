@@ -33,8 +33,7 @@ ActivityNotificationBase {
             assetSettings.isImage: notification.message.senderIcon.startsWith("data")
             pubkey: notification.message.senderId
             colorId: Utils.colorIdForPubkey(notification.message.senderId)
-            colorHash: Utils.getColorHashAsJson(notification.message.senderId, false, true)
-            showRing: true
+            colorHash: Utils.getColorHashAsJson(notification.message.senderId)
         }
     }
 
@@ -86,6 +85,7 @@ ActivityNotificationBase {
                     sender: root.messageDetails.sender
                     amISender: root.messageDetails.amISender
                     messageOriginInfo: root.messageDetails.messageOriginInfo
+                    tertiaryDetail: Utils.getElidedCompressedPk(sender.id)
                     timestamp.text: root.timestampString
                     timestamp.tooltip.text: root.timestampTooltipString
                     onClicked: root.openProfilePopup()
