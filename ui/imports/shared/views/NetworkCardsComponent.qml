@@ -44,9 +44,9 @@ Item {
         function resetAllSetValues() {
             for(var i = 0; i<fromNetworksRepeater.count; i++) {
                 fromNetworksRepeater.itemAt(i).amountToSend = 0
-                fromNetworksRepeater.itemAt(i).isOnBestRoute = false
+                fromNetworksRepeater.itemAt(i).routeOnNetwork = 0
                 toNetworksRepeater.itemAt(i).amountToReceive = 0
-                toNetworksRepeater.itemAt(i).isOnBestRoute = false
+                toNetworksRepeater.itemAt(i).routeOnNetwork = 0
             }
         }
     }
@@ -78,7 +78,7 @@ Item {
                     id: fromNetwork
                     objectName: model.chainId
                     property double amountToSend: 0
-                    property bool isOnBestRoute: false
+                    property int routeOnNetwork: 0
                     property string tokenBalanceOnChain: selectedAccount && selectedAccount!== undefined && selectedAsset!== undefined ? selectedAccount.getTokenBalanceOnChain(model.chainId, selectedAsset.symbol) : ""
                     property var hasGas: selectedAccount.hasGas(model.chainId, model.nativeCurrencySymbol, requiredGasInEth)
                     primaryText: model.chainName
@@ -95,7 +95,7 @@ Item {
                     onClicked: {
                         store.addRemoveDisabledFromChain(model.chainId, disabled)
                         // only recalculate if the a best route was disabled
-                        if(root.bestRoutes.length === 0 || isOnBestRoute)
+                        if(root.bestRoutes.length === 0 || routeOnNetwork !== 0 || !disabled)
                             root.reCalculateSuggestedRoute()
                     }
                     onVisibleChanged: {
@@ -129,7 +129,7 @@ Item {
                 StatusCard {
                     id: toCard
                     objectName: model.chainId
-                    property bool isOnBestRoute: false
+                    property int routeOnNetwork: 0
                     property double amountToReceive: 0
                     primaryText: model.chainName
                     secondaryText: LocaleUtils.numberToLocaleString(amountToReceive)
@@ -146,7 +146,7 @@ Item {
                     onClicked: {
                         store.addRemoveDisabledToChain(model.chainId, disabled)
                         // only recalculate if the a best route was disabled
-                        if(root.bestRoutes.length === 0 || isOnBestRoute)
+                        if(root.bestRoutes.length === 0 || routeOnNetwork !== 0 || !disabled)
                             root.reCalculateSuggestedRoute()
                     }
                     onVisibleChanged: {
@@ -185,6 +185,11 @@ Item {
             if(bestRoutes === undefined)
                 return
 
+            // in case you are drwaing multiple routes we need an offset so that the lines dont overlap
+            let yOffsetFrom = 0
+            let yOffsetTo = 0
+            let xOffset = 0
+
             // Get the canvas context
             var ctx = getContext("2d");
             for(var i = 0; i< bestRoutes.length; i++) {
@@ -202,18 +207,21 @@ Item {
                     }
                 }
                 if(toN !== null && fromN !== null) {
+                    yOffsetFrom = toN.objectName === fromN.objectName  && toN.routeOnNetwork !== 0 ? toN.routeOnNetwork * 10 : 0
+                    yOffsetTo = toN.routeOnNetwork * 10
+                    xOffset = toN.routeOnNetwork * 10
                     let amountToSend = weiToEth(bestRoutes[i].amountIn)
                     let amountToReceive = weiToEth(bestRoutes[i].amountOut)
                     fromN.amountToSend = amountToSend
                     toN.amountToReceive += amountToReceive
-                    fromN.isOnBestRoute = true
-                    toN.isOnBestRoute = true
+                    fromN.routeOnNetwork += 1
+                    toN.routeOnNetwork += 1
                     d.thereIsApossibleRoute = true
                     StatusQUtils.Utils.drawArrow(ctx, fromN.x + fromN.width,
-                                                 fromN.y + fromN.height/2,
+                                                 fromN.y + fromN.cardIconPosition + yOffsetFrom,
                                                  toNetworksLayout.x + toN.x,
-                                                 toN.y + toN.height/2,
-                                                 '#627EEA')
+                                                 toN.y + toN.cardIconPosition + yOffsetTo,
+                                                 '#627EEA', xOffset)
                 }
             }
         }
