@@ -161,9 +161,9 @@ ApplicationWindow {
                         return
                     }
 
-                    const window = figmaWindow.createObject(root, {
+                    figmaWindow.createObject(root, {
                         figmaModel: currentPageModelItem.object.figma,
-                        title: currentPageModelItem.object.title + " - Figma"
+                        pageTitle: currentPageModelItem.object.title
                     })
                 }
             }
@@ -215,13 +215,19 @@ ApplicationWindow {
         id: figmaWindow
 
         FigmaPreviewWindow {
+            property string pageTitle
             property alias figmaModel: figmaImagesProxyModel.sourceModel
+
+            title: pageTitle + " - Figma"
 
             model: FigmaImagesProxyModel {
                 id: figmaImagesProxyModel
 
                 figmaLinksCache: figmaImageLinksCache
             }
+
+            onRemoveLinksRequested: figmaLinksSource.remove(pageTitle, indexes)
+            onAppendLinksRequested: figmaLinksSource.append(pageTitle, links)
 
             onClosing: Qt.callLater(destroy)
         }

@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QSaveFile>
 
 QMap<QString, QStringList> FigmaIO::read(const QString &file)
 {
@@ -46,4 +47,29 @@ QMap<QString, QStringList> FigmaIO::read(const QString &file)
     }
 
     return mapping;
+}
+
+void FigmaIO::write(const QString &file, const QMap<QString, QStringList> &map)
+{
+    QJsonObject rootObject;
+
+    std::for_each(map.constKeyValueBegin(), map.constKeyValueEnd(),
+                  [&rootObject](auto entry) {
+        const auto& [key, links] = entry;
+        rootObject.insert(key, QJsonArray::fromStringList(links));
+    });
+
+    QSaveFile saveFile(file);
+    if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        qWarning() << "FigmaIO::write - failed to open file:" << file;
+        return;
+    }
+
+    QJsonDocument doc(rootObject);
+    saveFile.write(doc.toJson());
+
+    bool commitResult = saveFile.commit();
+
+    if (!commitResult)
+        qWarning() << "FigmaIO::write - failed to write to file:" << file;
 }

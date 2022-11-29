@@ -30,7 +30,6 @@ ToolBar {
         ToolButton {
             id: openFigmaButton
 
-            enabled: root.figmaPagesCount
             text: `Figma designs (${root.figmaPagesCount})`
 
             onClicked: root.figmaPreviewClicked()
