@@ -306,7 +306,7 @@ SettingsContentBase {
                 anchors.leftMargin: Style.current.padding
                 anchors.rightMargin: Style.current.padding
                 spacing: 11
-                visible: root.advancedStore.isWakuV2
+                visible: root.advancedStore.isWakuV2 && root.advancedStore.fleet != Constants.status_prod
                 Component {
                     id: wakuV2ModeConfirmationDialogComponent
                     ConfirmationDialog {
