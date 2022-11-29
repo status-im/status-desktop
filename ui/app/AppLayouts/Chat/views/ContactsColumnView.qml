@@ -55,7 +55,7 @@ Item {
 
             StatusNavigationPanelHeadline {
                 Layout.alignment: Qt.AlignVCenter
-                text: qsTr("Chat")
+                text: qsTr("Messages")
             }
 
             Item {
