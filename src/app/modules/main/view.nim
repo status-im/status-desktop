@@ -128,6 +128,8 @@ QtObject:
 
   proc mailserverNotWorking*(self:View) {.signal.}
 
+  proc displayWindowsOsNotification*(self:View, title: string, message: string) {.signal.}
+
   proc emitMailservernotWorking*(self: View) =
     self.mailserverNotWorking()
 

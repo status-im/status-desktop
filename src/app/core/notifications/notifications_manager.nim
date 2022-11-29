@@ -16,6 +16,7 @@ const NOTIFICATION_SOUND = "qrc:/imports/assets/audio/notification.wav"
 # Signals which may be emitted by this class:
 const SIGNAL_ADD_NOTIFICATION_TO_ACTIVITY_CENTER* = "addNotificationToActivityCenter"
 const SIGNAL_DISPLAY_APP_NOTIFICATION* = "displayAppNotification"
+const SIGNAL_DISPLAY_WINDOWS_OS_NOTIFICATION* = "displayWindowsOsNotification"
 const SIGNAL_OS_NOTIFICATION_CLICKED* = "osNotificationClicked"
 
 # Notification preferences
@@ -32,6 +33,7 @@ type
   NotificationArgs* = ref object of Args
     title*: string
     message*: string
+    identifier*: string
     details*: NotificationDetails
 
   ClickedNotificationArgs* = ref object of Args
@@ -85,9 +87,13 @@ QtObject:
     self.notificationSetUp = true
 
   proc showOSNotification(self: NotificationsManager, title: string, message: string, identifier: string) =
-    ## This method will add new notification to the OS Notification center. Param
-    ## "identifier" is used to uniquely define notification bubble.    
-    self.osNotification.showNotification(title, message, identifier)
+    if defined(windows):
+      let data = NotificationArgs(title: title, message: message)
+      self.events.emit(SIGNAL_DISPLAY_WINDOWS_OS_NOTIFICATION, data)
+    else:
+      ## This method will add new notification to the OS Notification center. Param
+      ## "identifier" is used to uniquely define notification bubble.
+      self.osNotification.showNotification(title, message, identifier)
 
   proc onOSNotificationClicked(self: NotificationsManager, identifier: string) {.slot.} =
     ## This slot is called once user clicks OS notificaiton bubble, "identifier"
