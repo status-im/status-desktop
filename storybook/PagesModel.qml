@@ -50,6 +50,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "ImagesGridView"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }

@@ -4,6 +4,7 @@
 #include <QStringListModel>
 
 #include "figmadecoratormodel.h"
+#include "figmaio.h"
 #include "figmalinks.h"
 #include "figmalinksmodel.h"
 #include "figmalinkssource.h"
@@ -66,6 +67,25 @@ class FigmaDecoratorModelTest: public QObject
     Q_OBJECT
 
 private slots:
+    void figmaIOTest() {
+        QTemporaryFile file;
+        QVERIFY(file.open());
+        file.close();
+
+        const auto readEmpty = FigmaIO::read(file.fileName());
+        QCOMPARE(readEmpty, {});
+
+        const QMap<QString, QStringList> content = {
+            { "k_1", { "l_1", "l_2"}},
+            { "k_2", { "l_3", "l_4"}}
+        };
+
+        FigmaIO::write(file.fileName(), content);
+        const auto readContent = FigmaIO::read(file.fileName());
+
+        QCOMPARE(readContent, content);
+    }
+
     void readingFigmaFileTest() {
         FigmaLinksSource figmaLinksSource;
 

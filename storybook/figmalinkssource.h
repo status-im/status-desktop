@@ -19,6 +19,9 @@ public:
     void setFilePath(const QUrl& path);
     FigmaLinks* getFigmaLinks() const;
 
+    Q_INVOKABLE void remove(const QString &key, const QList<int> &indexes);
+    Q_INVOKABLE void append(const QString &key, const QList<QString> &links);
+
 signals:
     void filePathChanged();
     void figmaLinksChanged();
