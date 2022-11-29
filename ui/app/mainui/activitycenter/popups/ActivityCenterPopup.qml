@@ -82,7 +82,7 @@ Popup {
             root.membershipCount += cnt;
             break;
         case Constants.activityCenterNotificationTypeCommunityMembershipRequest:
-        // NOTE: not a typo, membership requests are shown in both categories
+            // NOTE: not a typo, membership requests are shown in both categories
             root.membershipCount += cnt;
             root.adminCount += cnt;
             break;
@@ -107,14 +107,11 @@ Popup {
     x: Global.applicationWindow.width - root.width - Style.current.halfPadding
     width: 560
     padding: 0
-    dim: true
     modal: false
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     parent: Overlay.overlay
 
-    Overlay.modeless: MouseArea {
-        onClicked: activityCenter.close()
-    }
+    Overlay.modeless: null
 
     background: Rectangle {
         color: Style.current.background
