@@ -20,6 +20,8 @@ logScope:
 
 include ../../../../../app_service/common/json_utils
 
+const cancelledRequest* = "cancelled"
+
 # Shouldn't be public ever, user only within this module.
 type TmpSendEnsTransactionDetails = object
   ensUsername: string
@@ -359,10 +361,14 @@ method setPrefferedEnsUsername*(self: Module, ensUsername: string) =
   self.controller.setPreferredName(ensUsername)
 
 method onUserAuthenticated*(self: Module, password: string) =
-  if self.tmpSendEnsTransactionDetails.isRegistration:
-    self.registerEns(password)
-  elif self.tmpSendEnsTransactionDetails.isRelease:
-    self.releaseEns(password)
-  elif self.tmpSendEnsTransactionDetails.isSetPubKey:
-    self.setPubKey(password)
+  if password.len == 0:
+    let response = %* {"success": false, "result": cancelledRequest}
+    self.view.emitTransactionWasSentSignal($response)
+  else:
+    if self.tmpSendEnsTransactionDetails.isRegistration:
+      self.registerEns(password)
+    elif self.tmpSendEnsTransactionDetails.isRelease:
+      self.releaseEns(password)
+    elif self.tmpSendEnsTransactionDetails.isSetPubKey:
+     self.setPubKey(password)
 

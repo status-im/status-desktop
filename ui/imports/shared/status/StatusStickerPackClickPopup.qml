@@ -106,8 +106,7 @@ ModalPopup {
                         try {
                             let response = JSON.parse(txResult)
                             if (!response.success) {
-                                if (Utils.isInvalidPasswordMessage(response.result)) {
-                                    buyStickersPackModal.setSendTxError()
+                                if (response.result.includes(Constants.walletSection.cancelledMessage)) {
                                     return
                                 }
                                 buyStickersPackModal.sendingError.text = response.result

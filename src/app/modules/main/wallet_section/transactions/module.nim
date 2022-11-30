@@ -1,4 +1,4 @@
-import NimQml, stint
+import NimQml, stint, json
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -9,6 +9,8 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 import ../../../../../app_service/service/network/service as network_service
 
 export io_interface
+
+const cancelledRequest* = "cancelled"
 
 # Shouldn't be public ever, user only within this module.
 type TmpSendTransactionDetails = object
@@ -135,9 +137,13 @@ method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string
   ##################################
 
 method onUserAuthenticated*(self: Module, password: string) =
-  self.controller.transfer(self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
-    self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid,
-    self.tmpSendTransactionDetails.priority, self.tmpSendTransactionDetails.selectedRoutes, password)
+  if password.len == 0:
+    let response = %* {"uuid": self.tmpSendTransactionDetails.uuid, "success": false, "error": cancelledRequest}
+    self.view.transactionWasSent($response)
+  else:
+    self.controller.transfer(self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
+      self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid,
+      self.tmpSendTransactionDetails.priority, self.tmpSendTransactionDetails.selectedRoutes, password)
 
 method transactionWasSent*(self: Module, result: string) =
   self.view.transactionWasSent(result)

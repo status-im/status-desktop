@@ -150,8 +150,7 @@ Item {
                     try {
                         let response = JSON.parse(txResult)
                         if (!response.success) {
-                            if (Utils.isInvalidPasswordMessage(response.result)) {
-                                releaseEnsModal.setSendTxError()
+                            if (response.result.includes(Constants.walletSection.cancelledMessage)) {
                                 return
                             }
                             releaseEnsModal.sendingError.text = response.result

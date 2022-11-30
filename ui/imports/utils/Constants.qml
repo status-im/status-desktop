@@ -715,4 +715,8 @@ QtObject {
         StickersBuy,
         Bridge
     }
+
+    readonly property QtObject walletSection: QtObject {
+        readonly property string cancelledMessage: "cancelled"
+    }
 }

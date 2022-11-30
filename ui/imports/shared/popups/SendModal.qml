@@ -69,7 +69,6 @@ StatusDialog {
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
-        d.sendTxError = false
         if(!!popup.selectedAccount && !!assetSelector.selectedAsset) {
             popup.isLoading = true
             let amount = parseFloat(amountToSendInput.text) * Math.pow(10, assetSelector.selectedAsset.decimals)
@@ -78,11 +77,6 @@ StatusDialog {
                                         store.preferredChainIds, fees.selectedPriority, popup.sendType)
         }
     })
-
-    function setSendTxError() {
-        d.sendTxError = true
-        d.sendTxErrorString = qsTr("Wrong password")
-    }
 
     QtObject {
         id: d
@@ -102,8 +96,7 @@ StatusDialog {
         property string resolvedENSAddress
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
-        property bool sendTxError: false
-        property string sendTxErrorString
+        property var preferredChainIds: []
 
         property Timer waitTimer: Timer {
             interval: 1000
@@ -195,13 +188,14 @@ StatusDialog {
 
             Rectangle {
                 Layout.preferredWidth: parent.width
-                Layout.preferredHeight: assetAndAmmountSelector.height + Style.current.padding
+                Layout.preferredHeight: assetAndAmmountSelector.height + Style.current.halfPadding
                 color: Theme.palette.baseColor3
+                z: 100
 
                 layer.enabled: scrollView.contentY > 0
                 layer.effect: DropShadow {
-                    verticalOffset: 2
-                    radius: 16
+                    verticalOffset: 0
+                    radius: 8
                     samples: 17
                     color: Theme.palette.dropShadow
                 }
@@ -226,11 +220,11 @@ StatusDialog {
                         StatusListItemTag {
                             height: 22
                             width: childrenRect.width
-                            title: d.sendTxError ? d.sendTxErrorString : d.maxFiatBalance > 0 ? qsTr("Max: %1").arg(LocaleUtils.numberToLocaleString(d.maxFiatBalance)) : qsTr("No balances active")
+                            title: d.maxFiatBalance > 0 ? qsTr("Max: %1").arg(LocaleUtils.numberToLocaleString(d.maxFiatBalance)) : qsTr("No balances active")
                             closeButtonVisible: false
                             titleText.font.pixelSize: 12
-                            color: d.errorMode || d.sendTxError ? Theme.palette.dangerColor2 : Theme.palette.primaryColor3
-                            titleText.color: d.errorMode || d.sendTxError ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
+                            color: d.errorMode ? Theme.palette.dangerColor2 : Theme.palette.primaryColor3
+                            titleText.color: d.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
                         }
                     }
                     Item {
@@ -532,9 +526,7 @@ StatusDialog {
                 if (response.uuid !== d.uuid) return
 
                 if (!response.success) {
-                    if (Utils.isInvalidPasswordMessage(response.error)) {
-                        d.sendTxError = true
-                        d.sendTxErrorString = qsTr("Wrong password")
+                    if (response.error.includes(Constants.walletSection.cancelledMessage)) {
                         return
                     }
                     sendingError.text = response.error
