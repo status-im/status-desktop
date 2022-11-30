@@ -185,7 +185,6 @@ StatusSectionLayout {
                 onCurrentIndexChanged: {
                     root.backButtonName = (currentIndex === 1) ? qsTr("Overview") : "";
                 }
-                archiveSupportOptionVisible: root.rootStore.isCommunityHistoryArchiveSupportEnabled
                 editable: root.community.amISectionAdmin
 
                 onEdited: {

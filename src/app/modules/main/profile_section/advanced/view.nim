@@ -88,19 +88,6 @@ QtObject:
   proc toggleAutoMessage*(self: View) {.slot.} =
     self.delegate.toggleAutoMessage()
 
-  proc isCommunityHistoryArchiveSupportEnabledChanged*(self: View) {.signal.}
-  proc getIsCommunityHistoryArchiveSupportEnabled*(self: View): bool {.slot.} =
-    return self.delegate.isCommunityHistoryArchiveSupportEnabled()
-  QtProperty[bool] isCommunityHistoryArchiveSupportEnabled:
-    read = getIsCommunityHistoryArchiveSupportEnabled
-    notify = isCommunityHistoryArchiveSupportEnabledChanged
-
-  proc emitCommunityHistoryArchiveSupportEnabledSignal*(self: View) =
-    self.isCommunityHistoryArchiveSupportEnabledChanged()
-
-  proc toggleCommunityHistoryArchiveSupport*(self: View) {.slot.} =
-    self.delegate.toggleCommunityHistoryArchiveSupport()
-
   proc isDebugEnabledChanged*(self: View) {.signal.}
   proc getIsDebugEnabled*(self: View): bool {.slot.} =
     return self.delegate.isDebugEnabled()
