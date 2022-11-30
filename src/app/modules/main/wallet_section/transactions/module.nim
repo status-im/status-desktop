@@ -19,7 +19,6 @@ type TmpSendTransactionDetails = object
   tokenSymbol: string
   value: string
   uuid: string
-  priority: int
   selectedRoutes: string
 
 type
@@ -99,14 +98,12 @@ method setIsNonArchivalNode*(self: Module, isNonArchivalNode: bool) =
   self.view.setIsNonArchivalNode(isNonArchivalNode)
 
 method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string,
-    tokenSymbol: string, value: string, uuid: string,
-    priority: int, selectedRoutes: string) =
+    tokenSymbol: string, value: string, uuid: string, selectedRoutes: string) =
   self.tmpSendTransactionDetails.fromAddr = from_addr
   self.tmpSendTransactionDetails.toAddr = to_addr
   self.tmpSendTransactionDetails.tokenSymbol = tokenSymbol
   self.tmpSendTransactionDetails.value = value
   self.tmpSendTransactionDetails.uuid = uuid
-  self.tmpSendTransactionDetails.priority = priority
   self.tmpSendTransactionDetails.selectedRoutes = selectedRoutes
 
   if singletonInstance.userProfile.getIsKeycardUser():
@@ -142,8 +139,8 @@ method onUserAuthenticated*(self: Module, password: string) =
     self.view.transactionWasSent($response)
   else:
     self.controller.transfer(self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
-      self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid,
-      self.tmpSendTransactionDetails.priority, self.tmpSendTransactionDetails.selectedRoutes, password)
+      self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid, 
+      self.tmpSendTransactionDetails.selectedRoutes, password)
 
 method transactionWasSent*(self: Module, result: string) =
   self.view.transactionWasSent(result)
@@ -152,8 +149,8 @@ method transactionWasSent*(self: Module, result: string) =
 method suggestedFees*(self: Module, chainId: int): string = 
   return self.controller.suggestedFees(chainId)
 
-method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], priority: int, sendType: int): string =
-  return self.controller.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, priority, sendType)
+method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int): string =
+  return self.controller.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType)
 
 method getChainIdForChat*(self: Module): int =
   return self.controller.getChainIdForChat()

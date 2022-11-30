@@ -12,19 +12,13 @@ import "../controls"
 Rectangle {
     id: root
 
-    property alias selectedPriority: gasSelector.selectedPriority
-    property alias selectedGasEthValue: gasSelector.selectedGasEthValue
-    property alias selectedGasFiatValue: gasSelector.selectedGasFiatValue
-    property alias selectedTimeEstimate: gasSelector.selectedTimeEstimate
-    property alias estimatedGasFeesTime: gasSelector.estimatedGasFeesTime
     property alias isValid: gasValidator.isValid
 
+    property string gasFiatAmount
     property bool isLoading: false
     property var bestRoutes
     property var store
     property var selectedTokenSymbol
-    property bool advancedOrCustomMode
-    signal priorityChanged()
 
     radius: 13
     color: Theme.palette.indirectColor1
@@ -62,10 +56,10 @@ Rectangle {
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.padding
                     id: totalFeesAdvanced
-                    text: root.isLoading ? "..." : gasSelector.selectedGasFiatValue
+                    text: root.isLoading ? "..." : root.gasFiatAmount
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
-                    visible: root.advancedOrCustomMode && root.bestRoutes.length > 0
+                    visible: !!root.bestRoutes && root.bestRoutes !== undefined && root.bestRoutes.length > 0
                 }
             }
             GasSelector {
@@ -76,10 +70,8 @@ Rectangle {
                 currentCurrency: root.store.currencyStore.currentCurrency
                 currentCurrencySymbol: root.store.currencyStore.currentCurrencySymbol
                 visible: gasValidator.isValid && !root.isLoading
-                advancedOrCustomMode: root.advancedOrCustomMode
                 bestRoutes: root.bestRoutes
                 selectedTokenSymbol: root.selectedTokenSymbol
-                onSelectedPriorityChanged: root.priorityChanged()
             }
             GasValidator {
                 id: gasValidator

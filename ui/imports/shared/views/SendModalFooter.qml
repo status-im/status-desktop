@@ -14,7 +14,7 @@ Rectangle {
     id: footer
 
     property string maxFiatFees: "..."
-    property alias selectedTimeEstimate: estimatedTime.text
+    property alias totalTimeEstimate: estimatedTime.text
     property bool pending: true
     property alias nextButtonText: nextButton.text
 

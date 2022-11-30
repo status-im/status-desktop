@@ -31,7 +31,6 @@ StatusDialog {
 
     property alias modalHeader: modalHeader.text
 
-    property alias selectedPriority: fees.selectedPriority
     property var store: TransactionStore{}
     property var contactsStore: store.contactStore
     property var selectedAccount: store.currentAccount
@@ -63,7 +62,6 @@ StatusDialog {
                     assetSelector.selectedAsset.symbol,
                     amountToSendInput.text,
                     d.uuid,
-                    fees.selectedPriority,
                     JSON.stringify(popup.bestRoutes)
                     )
     }
@@ -74,7 +72,7 @@ StatusDialog {
             let amount = parseFloat(amountToSendInput.text) * Math.pow(10, assetSelector.selectedAsset.decimals)
             popup.store.suggestedRoutes(popup.selectedAccount.address, amount.toString(16), assetSelector.selectedAsset.symbol,
                                         store.disabledChainIdsFromList, store.disabledChainIdsToList,
-                                        store.preferredChainIds, fees.selectedPriority, popup.sendType)
+                                        store.preferredChainIds, popup.sendType)
         }
     })
 
@@ -97,6 +95,9 @@ StatusDialog {
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property var preferredChainIds: []
+        property string totalTimeEstimate
+        property string totalFeesInEth
+        property string totalFeesInFiat
 
         property Timer waitTimer: Timer {
             interval: 1000
@@ -459,7 +460,7 @@ StatusDialog {
                         interactive: popup.interactive
                         selectedAccount: popup.selectedAccount
                         amountToSend: isNaN(parseFloat(amountToSendInput.text)) ? 0 : parseFloat(amountToSendInput.text)
-                        requiredGasInEth: fees.selectedGasEthValue
+                        requiredGasInEth:d.totalFeesInEth
                         selectedAsset: assetSelector.selectedAsset
                         onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
                         visible: d.recipientReady && !!assetSelector.selectedAsset
@@ -476,13 +477,12 @@ StatusDialog {
                         anchors.right: parent.right
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
-                        visible: d.recipientReady && !!assetSelector.selectedAsset
+                        visible: d.recipientReady && !!assetSelector.selectedAsset && networkSelector.advancedOrCustomMode
                         selectedTokenSymbol: assetSelector.selectedAsset ? assetSelector.selectedAsset.symbol: ""
-                        advancedOrCustomMode: networkSelector.advancedOrCustomMode
                         isLoading: popup.isLoading
                         bestRoutes: popup.bestRoutes
                         store: popup.store
-                        onPriorityChanged: popup.recalculateRoutesAndFees()
+                        gasFiatAmount: d.totalFeesInFiat
                     }
                 }
             }
@@ -491,8 +491,8 @@ StatusDialog {
 
     footer: SendModalFooter {
         nextButtonText: popup.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
-        maxFiatFees: popup.isLoading ? "..." : fees.selectedGasFiatValue
-        selectedTimeEstimate: popup.isLoading? "..." : fees.selectedTimeEstimate
+        maxFiatFees: popup.isLoading ? "..." : "%1 %2".arg(LocaleUtils.numberToLocaleString(d.totalFeesInFiat)).arg(popup.store.currentCurrency.toUpperCase())
+        totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
         visible: d.isReady && !isNaN(amountToSendInput.text) && fees.isValid && !d.errorMode
         onNextButtonClicked: popup.sendTransaction()
@@ -512,7 +512,11 @@ StatusDialog {
                 return
             }
             popup.bestRoutes =  response.suggestedRoutes.best
-            fees.estimatedGasFeesTime = response.suggestedRoutes.gasTimeEstimates
+            let gasTimeEstimate = response.suggestedRoutes.gasTimeEstimate
+            d.totalTimeEstimate = popup.store.getLabelForEstimatedTxTime(gasTimeEstimate.totalTime)
+            d.totalFeesInEth = gasTimeEstimate.totalFeesInEth
+            d.totalFeesInFiat = parseFloat(popup.store.getFiatValue( gasTimeEstimate.totalFeesInEth, "ETH", popup.store.currentCurrency)) +
+                    parseFloat(popup.store.getFiatValue(gasTimeEstimate.totalTokenFees, fees.selectedTokenSymbol, popup.store.currentCurrency))
             popup.isLoading = false
         }
     }
