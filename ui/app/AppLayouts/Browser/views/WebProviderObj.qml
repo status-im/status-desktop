@@ -97,9 +97,7 @@ QtObject {
                 if(sendDialog.bestRoutes.length === 1) {
                     let path = sendDialog.bestRoutes[0]
                     let eip1559Enabled = path.gasFees.eip1559Enabled
-                    let maxFeePerGas = (sendDialog.selectedPriority === 0) ? path.gasFees.maxFeePerGasL:
-                                                                             (sendDialog.selectedPriority === 1) ? path.gasFees.maxFeePerGasM:
-                                                                                                                   path.gasFees.maxFeePerGasH
+                    let maxFeePerGas = path.gasFees.maxFeePerGasM
                     let trx = request.payload.params[0]
                     // TODO: use bignumber instead of floats
                     trx.value = RootStore.getEth2Hex(parseFloat(value))

@@ -114,13 +114,13 @@ QtObject:
     self.transactionSent(txResult)
 
   proc authenticateAndTransfer*(self: View, from_addr: string, to_addr: string, tokenSymbol: string,
-    value: string, uuid: string, priority: int, selectedRoutes: string) {.slot.} =
-      self.delegate.authenticateAndTransfer(from_addr, to_addr, tokenSymbol, value, uuid, priority, selectedRoutes)
+    value: string, uuid: string, selectedRoutes: string) {.slot.} =
+      self.delegate.authenticateAndTransfer(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes)
 
   proc suggestedFees*(self: View, chainId: int): string {.slot.} =
     return self.delegate.suggestedFees(chainId)
 
-  proc suggestedRoutes*(self: View, account: string, amount: string, token: string, disabledFromChainIDs: string, disabledToChainIDs: string, preferredChainIDs: string, priority: int, sendType: int): string {.slot.} =
+  proc suggestedRoutes*(self: View, account: string, amount: string, token: string, disabledFromChainIDs: string, disabledToChainIDs: string, preferredChainIDs: string, sendType: int): string {.slot.} =
     var parsedAmount = stint.u256("0")
     var seqPreferredChainIDs = seq[uint64] : @[]
     var seqDisabledFromChainIDs = seq[uint64] : @[]
@@ -149,7 +149,7 @@ QtObject:
     except Exception as e:
       discard
 
-    return self.delegate.suggestedRoutes(account, parsedAmount, token, seqDisabledFromChainIDs, seqDisabledToChainIDs, seqPreferredChainIDs, priority, sendType)
+    return self.delegate.suggestedRoutes(account, parsedAmount, token, seqDisabledFromChainIDs, seqDisabledToChainIDs, seqPreferredChainIDs, sendType)
   
   proc getChainIdForChat*(self: View): int {.slot.} =
     return self.delegate.getChainIdForChat()

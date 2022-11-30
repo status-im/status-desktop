@@ -519,8 +519,8 @@ QtObject {
         return walletSectionTransactions.estimateGas(from_addr, to, assetSymbol, value === "" ? "0.00" : value, chainId, data)
     }
 
-    function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid,  priority, selectedRoutes) {
-        walletSectionTransactions.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, priority, selectedRoutes)
+    function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes) {
+        walletSectionTransactions.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes)
     }
 
     function getAccountNameByAddress(address) {
@@ -540,8 +540,8 @@ QtObject {
         return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
     }
 
-    function suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, priority, sendType) {
-        walletSectionTransactions.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, priority, sendType)
+    function suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType) {
+        walletSectionTransactions.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType)
     }
 
     function resolveENS(value) {

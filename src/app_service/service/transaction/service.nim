@@ -279,7 +279,6 @@ QtObject:
     tokenSymbol: string,
     value: string,
     uuid: string,
-    priority: int,
     selectedRoutes: string,
     password: string,
   ) =
@@ -317,25 +316,18 @@ QtObject:
         var simpleTx = TransactionDataDto()
         var hopTx = TransactionDataDto()
         var txData = TransactionDataDto()
-        var maxFees: float = 0
         var gasFees: string = ""
-
-        case(priority):
-        of 0: maxFees = route.gasFees.maxFeePerGasL
-        of 1: maxFees = route.gasFees.maxFeePerGasM
-        of 2: maxFees = route.gasFees.maxFeePerGasH
-        else: maxFees = 0
 
         if( not route.gasFees.eip1559Enabled):
           gasFees = $route.gasFees.gasPrice
 
         if(isEthTx) :
           txData = ens_utils.buildTransaction(parseAddress(from_addr), eth2Wei(parseFloat(value), 18),
-  $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $maxFees)
+  $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
           txData.to = parseAddress(to_addr).some
         else:
           txData = ens_utils.buildTokenTransaction(parseAddress(from_addr), toAddress,
-  $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $maxFees)
+  $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
           txData.data = data
 
         var path = TransactionBridgeDto(bridgeName: route.bridgeName, chainID: route.fromNetwork.chainId)
@@ -387,7 +379,7 @@ QtObject:
   proc suggestedRoutesReady*(self: Service, suggestedRoutes: string) {.slot.} =
     self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedRoutes))
 
-  proc suggestedRoutes*(self: Service, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], priority: int, sendType: int): SuggestedRoutesDto =
+  proc suggestedRoutes*(self: Service, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int): SuggestedRoutesDto =
     let arg = GetSuggestedRoutesTaskArg(
       tptr: cast[ByteAddress](getSuggestedRoutesTask),
       vptr: cast[ByteAddress](self.vptr),
@@ -398,7 +390,6 @@ QtObject:
       disabledFromChainIDs: disabledFromChainIDs,
       disabledToChainIDs: disabledToChainIDs,
       preferredChainIDs: preferredChainIDs,
-      priority: priority,
       sendType: sendType
     )
     self.threadpool.start(arg)

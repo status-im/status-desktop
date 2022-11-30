@@ -219,4 +219,4 @@ type
   SuggestedRoutesDto* = ref object
     best*: seq[TransactionPathDto]
     candidates*: seq[TransactionPathDto]
-    gasTimeEstimates*: seq[Fees]
+    gasTimeEstimate*: Fees

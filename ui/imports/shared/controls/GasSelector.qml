@@ -17,89 +17,13 @@ Item {
     property string selectedTokenSymbol
     property string currentCurrency
     property string currentCurrencySymbol
-    property bool advancedOrCustomMode: false
 
     property var bestRoutes: []
-    property var estimatedGasFeesTime: []
-
-    property int selectedPriority: 1
-    property double selectedGasEthValue
-    property string selectedGasFiatValue
-    property string selectedTimeEstimate
-
     property var getGasEthValue: function () {}
     property var getFiatValue: function () {}
 
-    enum Priority {
-        SLOW, // 0
-        OPTIMAL, // 1
-        FAST // 2
-    }
-
-    enum EstimatedTime {
-        Unknown = 0,
-        LessThanOneMin,
-        LessThanThreeMins,
-        LessThanFiveMins,
-        MoreThanFiveMins
-    }
-
-    QtObject {
-        id: d
-        function getLabelForEstimatedTxTime(estimatedFlag) {
-            switch(estimatedFlag) {
-            case GasSelector.EstimatedTime.Unknown:
-                return qsTr("~ Unknown")
-            case GasSelector.EstimatedTime.LessThanOneMin :
-                return qsTr("< 1 minute")
-            case GasSelector.EstimatedTime.LessThanThreeMins :
-                return qsTr("< 3 minutes")
-            case GasSelector.EstimatedTime.LessThanFiveMins:
-                return qsTr("< 5 minutes")
-            default:
-                return qsTr("> 5 minutes")
-            }
-        }
-    }
-
     width: parent.width
-    height: visible ? (!advancedOrCustomMode ? selectorButtons.height  : advancedGasSelector.height) + Style.current.halfPadding : 0
-
-
-    Row {
-        id: selectorButtons
-        visible: !root.advancedOrCustomMode
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.halfPadding
-        spacing: 11
-
-        ButtonGroup {
-            buttons: gasPrioRepeater.children
-        }
-
-        Repeater {
-            id: gasPrioRepeater
-            model: root.estimatedGasFeesTime
-            GasSelectorButton {
-                objectName: "GasSelector_slowGasButton"
-                property double totalFeesInFiat: parseFloat(root.getFiatValue(modelData.totalFeesInEth, "ETH", currentCurrency)) +
-                                                 parseFloat(root.getFiatValue(modelData.totalTokenFees, root.selectedTokenSymbol, currentCurrency))
-                primaryText: index === 0 ? qsTr("Slow") : index === 1 ? qsTr("Optimal"):  qsTr("Fast")
-                timeText: index === selectedPriority ? d.getLabelForEstimatedTxTime(modelData.totalTime): qsTr("~ Unknown")
-                totalGasEthValue: modelData.totalFeesInEth
-                totalGasFiatValue: index === selectedPriority ? "%1 %2".arg(LocaleUtils.numberToLocaleString(totalFeesInFiat)).arg(root.currentCurrency.toUpperCase()): qsTr("...")
-                checked: index === selectedPriority
-                onCheckedChanged: {
-                    if(checked) {
-                        root.selectedPriority = index
-                        root.selectedGasEthValue = totalGasEthValue
-                        root.selectedGasFiatValue = totalGasFiatValue
-                        root.selectedTimeEstimate = timeText
-                    }
-                }
-            }
-        }
-    }
+    height: visible ? advancedGasSelector.height + Style.current.halfPadding : 0
 
     Column {
         id: advancedGasSelector
@@ -109,36 +33,8 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.rightMargin: 10
-        visible: root.advancedOrCustomMode
 
         spacing: Style.current.halfPadding
-
-        StatusSwitchTabBar {
-            id: tabBar
-            width: parent.width
-            anchors.horizontalCenter: parent.horizontalCenter
-            visible: root.advancedOrCustomMode
-            StatusSwitchTabButton {
-                text: qsTr("Slow")
-            }
-            StatusSwitchTabButton {
-                text: qsTr("Optimal")
-            }
-            StatusSwitchTabButton {
-                text: qsTr("Fast")
-            }
-
-            currentIndex: GasSelector.Priority.OPTIMAL
-
-            onCurrentIndexChanged:  {
-                root.selectedPriority = currentIndex
-                if(gasPrioRepeater.count === 3) {
-                    root.selectedGasFiatValue =  gasPrioRepeater.itemAt(currentIndex).totalGasFiatValue
-                    root.selectedGasEthValue =  gasPrioRepeater.itemAt(currentIndex).totalGasEthValue
-                    root.selectedTimeEstimate =  gasPrioRepeater.itemAt(currentIndex).timeText
-                }
-            }
-        }
 
         // Normal transaction
         Repeater {
@@ -151,9 +47,7 @@ Item {
                 title: qsTr("%1 transaction fee").arg(modelData.fromNetwork.chainName)
                 subTitle: "%1 eth".arg(LocaleUtils.numberToLocaleString(parseFloat(totalGasAmount)))
                 property string totalGasAmount : {
-                    let maxFees = (tabBar.currentIndex === GasSelector.Priority.SLOW) ? modelData.gasFees.maxFeePerGasL :
-                                                                                        (tabBar.currentIndex === GasSelector.Priority.OPTIMAL) ?
-                                                                                            modelData.gasFees.maxFeePerGasM : modelData.gasFees.maxFeePerGasH
+                    let maxFees = modelData.gasFees.maxFeePerGasM
                     let gasPrice = modelData.gasFees.eip1559Enabled ? maxFees : modelData.gasFees.gasPrice
                     return root.getGasEthValue(gasPrice , modelData.gasAmount)
                 }
@@ -184,7 +78,7 @@ Item {
                 title: qsTr("%1 -> %2 bridge").arg(modelData.fromNetwork.chainName).arg(modelData.toNetwork.chainName)
                 subTitle: "%1 %2".arg(LocaleUtils.numberToLocaleString(modelData.tokenFees)).arg(root.selectedTokenSymbol)
                 visible: modelData.bridgeName !== "Simple"
-                statusListItemSubTitle.width: 100//parent.width - Style.current.smallPadding
+                statusListItemSubTitle.width: 100
                 statusListItemSubTitle.elide: Text.ElideMiddle
                 components: [
                     StatusBaseText {

@@ -71,8 +71,8 @@ QtObject {
         return profileSectionStore.ensUsernamesStore.getGasEthValue(gweiValue, gasLimit)
     }
 
-    function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid,  priority, selectedRoutes) {
-        walletSectionTransactions.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, priority, selectedRoutes)
+    function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes) {
+        walletSectionTransactions.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes)
     }
 
     function suggestedFees(chainId) {
@@ -91,8 +91,8 @@ QtObject {
         return walletSectionTransactions.getChainIdForBrowser()
     }
 
-    function suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, priority, sendType) {
-        walletSectionTransactions.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, priority, sendType)
+    function suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType) {
+        walletSectionTransactions.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType)
     }
 
     function hex2Eth(value) {
@@ -145,6 +145,29 @@ QtObject {
             if(mainnetChainId !== chainId) {
                 addRemoveDisabledToChain(chainId, true)
             }
+        }
+    }
+
+    enum EstimatedTime {
+        Unknown = 0,
+        LessThanOneMin,
+        LessThanThreeMins,
+        LessThanFiveMins,
+        MoreThanFiveMins
+    }
+
+    function getLabelForEstimatedTxTime(estimatedFlag) {
+        switch(estimatedFlag) {
+        case TransactionStore.EstimatedTime.Unknown:
+            return qsTr("~ Unknown")
+        case TransactionStore.EstimatedTime.LessThanOneMin :
+            return qsTr("< 1 minute")
+        case TransactionStore.EstimatedTime.LessThanThreeMins :
+            return qsTr("< 3 minutes")
+        case TransactionStore.EstimatedTime.LessThanFiveMins:
+            return qsTr("< 5 minutes")
+        default:
+            return qsTr("> 5 minutes")
         }
     }
 }

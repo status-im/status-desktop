@@ -39,7 +39,6 @@ type
     disabledFromChainIDs: seq[uint64]
     disabledToChainIDs: seq[uint64]
     preferredChainIDs: seq[uint64]
-    priority: int
     sendType: int
 
 proc getGasEthValue*(gweiValue: float, gasLimit: uint64): float =
@@ -47,32 +46,19 @@ proc getGasEthValue*(gweiValue: float, gasLimit: uint64): float =
   let ethValue = parseFloat(service_conversion.wei2Eth(weiValue))
   return ethValue
 
-proc getFeesTotal*(paths: seq[TransactionPathDto]): seq[Fees] =
+proc getFeesTotal*(paths: seq[TransactionPathDto]): Fees =
+  var fees: Fees = Fees()
   if(paths.len == 0):
-    return @[]
+    return fees
 
-  var fees: seq[Fees] = @[Fees(), Fees(), Fees()]
   for path in paths:
-    var slowPrice = path.gasFees.gasPrice
     var optimalPrice = path.gasFees.gasPrice
-    var fastPrice = path.gasFees.gasPrice
     if path.gasFees.eip1559Enabled:
-      slowPrice = path.gasFees.maxFeePerGasL
       optimalPrice = path.gasFees.maxFeePerGasM
-      fastPrice = path.gasFees.maxFeePerGasH
 
-    fees[0].totalFeesInEth += getGasEthValue(slowPrice, path.gasAmount)
-    fees[1].totalFeesInEth += getGasEthValue(optimalPrice, path.gasAmount)
-    fees[2].totalFeesInEth += getGasEthValue(fastPrice, path.gasAmount)
-
-    fees[0].totalTokenFees += path.tokenFees
-    fees[1].totalTokenFees += path.tokenFees
-    fees[2].totalTokenFees += path.tokenFees
-
-    # keeping it same for all as path will change when priority changes changing the time needed and so on
-    fees[0].totalTime += path.estimatedTime
-    fees[1].totalTime += path.estimatedTime
-    fees[2].totalTime += path.estimatedTime
+    fees.totalFeesInEth += getGasEthValue(optimalPrice, path.gasAmount)
+    fees.totalTokenFees += path.tokenFees
+    fees.totalTime += path.estimatedTime
   return fees
 
 const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
@@ -80,13 +66,13 @@ const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
 
   try:
     let amountAsHex = "0x" & eth_utils.stripLeadingZeros(arg.amount.toHex)
-    let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, arg.preferredChainIDs, arg.priority, arg.sendType).result
+    let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, arg.preferredChainIDs, arg.sendType).result
 
     var bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
 
     # retry along with unpreferred chains incase no route is possible with preferred chains
     if(bestPaths.len == 0 and arg.preferredChainIDs.len > 0):
-      let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, @[], arg.priority, arg.sendType).result
+      let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, @[], arg.sendType).result
       bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
 
     bestPaths.sort(sortAsc[TransactionPathDto])
@@ -94,14 +80,14 @@ const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
       "suggestedRoutes": SuggestedRoutesDto(
         best: bestPaths,
         candidates: response["Candidates"].getElems().map(x => x.toTransactionPathDto()),
-        gasTimeEstimates: getFeesTotal(bestPaths)),
+        gasTimeEstimate: getFeesTotal(bestPaths)),
       "error": ""
     }
     arg.finish(output)
 
   except Exception as e:
     let output = %* {
-     "suggestedRoutes": SuggestedRoutesDto(best: @[], candidates: @[],gasTimeEstimates:  @[]),
+     "suggestedRoutes": SuggestedRoutesDto(best: @[], candidates: @[], gasTimeEstimate:  Fees()),
       "error": fmt"Error getting suggested routes: {e.msg}"
     }
     arg.finish(output)

@@ -175,9 +175,7 @@ Item {
                             if(bestRoutes.length === 1) {
                                 let path = bestRoutes[0]
                                 let eip1559Enabled = path.gasFees.eip1559Enabled
-                                let maxFeePerGas = (selectedPriority === 0) ? path.gasFees.maxFeePerGasL:
-                                                                              (selectedPriority === 1) ? path.gasFees.maxFeePerGasM:
-                                                                                                         path.gasFees.maxFeePerGasH
+                                let maxFeePerGas = path.gasFees.maxFeePerGasM
                                 root.store.stickersStore.authenticateAndBuy(packId,
                                                              selectedAccount.address,
                                                              path.gasAmount,

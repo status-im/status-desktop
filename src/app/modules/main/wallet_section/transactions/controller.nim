@@ -107,15 +107,15 @@ proc estimateGas*(self: Controller, from_addr: string, to: string, assetSymbol: 
     result = "0"
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol: string,
-    value: string, uuid: string, priority: int, selectedRoutes: string, password: string) =
-  self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, uuid, priority, selectedRoutes, password)
+    value: string, uuid: string, selectedRoutes: string, password: string) =
+  self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password)
 
 proc suggestedFees*(self: Controller, chainId: int): string = 
   let suggestedFees = self.transactionService.suggestedFees(chainId)
   return suggestedFees.toJson()
 
-proc suggestedRoutes*(self: Controller, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], priority: int, sendType: int): string =
-  let suggestedRoutes = self.transactionService.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, priority, sendType)
+proc suggestedRoutes*(self: Controller, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int): string =
+  let suggestedRoutes = self.transactionService.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType)
   return suggestedRoutes.toJson()
 
 proc getChainIdForChat*(self: Controller): int =
