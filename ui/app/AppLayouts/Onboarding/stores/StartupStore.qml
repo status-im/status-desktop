@@ -8,6 +8,8 @@ QtObject {
                                                         : null
     property var selectedLoginAccount: startupModuleInst ? startupModuleInst.selectedLoginAccount
                                                          : null
+    property var fetchingDataModel: startupModuleInst ? startupModuleInst.fetchingDataModel
+                                                         : null
 
     function backAction() {
         root.currentStartupState.backAction()

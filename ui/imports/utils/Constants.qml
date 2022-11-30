@@ -77,8 +77,8 @@ QtObject {
         readonly property string loginKeycardEmpty: "LoginKeycardEmpty"
         readonly property string loginNotKeycard: "LoginNotKeycard"
         readonly property string profileFetching: "ProfileFetching"
-        readonly property string profileFetchingCompleted: "ProfileFetchingCompleted"
-        readonly property string profileFetchingError: "ProfileFetchingError"
+        readonly property string profileFetchingSuccess: "ProfileFetchingSuccess"
+        readonly property string profileFetchingTimeout: "ProfileFetchingTimeout"
     }
 
     readonly property QtObject predefinedKeycardData: QtObject {
@@ -318,18 +318,18 @@ QtObject {
         readonly property int userImageHeight: 40
         readonly property int titleFontSize: 17
         readonly property QtObject profileFetching: QtObject {
+            readonly property int    timeout: 120 //2 mins (120 secs)
             readonly property int    titleFontSize: 22
-            readonly property string titleForSuccess: qsTr("Profile successfully fetched")
-            readonly property string titleForError: qsTr("Unable to fetch your profile")
-            readonly property int    descriptionFontSize: 15
-            readonly property string descriptionForError: qsTr("Sorry, we were unable to fetch your Status profile. If you are using Status on \nanother device, make sure Status is running and it is online and try again. ")
-            readonly property string descriptionForFetchingStarted: qsTr("Securely transferring data...")
-            readonly property string descriptionForFetchingInProgress: qsTr("This might take a while...")
+            readonly property int    entityFontSize: 15
+            readonly property int    entityProgressFontSize: 12
             readonly property string imgInProgress: "onboarding/profile_fetching_in_progress"
-            readonly property string imgError: "onboarding/profile_fetching_error"
-            readonly property string imgCompleted: "onboarding/profile_fetching_completed"
-            readonly property string tryAgainText: qsTr("Try again")
-            readonly property string createNewProfileText: qsTr("Create new Status profile")
+
+            readonly property QtObject entity: QtObject {
+                readonly property string profile: "profile"
+                readonly property string contacts: "contacts"
+                readonly property string communities: "communities"
+                readonly property string settings: "settings"
+            }
         }
     }
 
