@@ -176,6 +176,15 @@ proc setBloomLevel*(self: Service, bloomLevel: string): bool =
 
   return false
 
+proc getFleet*(self: Service): Fleet =
+  result = self.settingsService.getFleet()
+  if result == Fleet.Undefined:
+    let fleetFromNodeConfig = self.configuration.ClusterConfig.Fleet
+    result = parseEnum[Fleet](fleetFromNodeConfig)
+
+proc getFleetAsString*(self: Service): string =
+  result = $self.getFleet()
+
 proc setFleet*(self: Service, fleet: string): bool =
   if(not self.settingsService.saveFleet(fleet)):
     error "error saving fleet ", procName="setFleet"

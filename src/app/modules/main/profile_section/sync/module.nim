@@ -6,6 +6,7 @@ import view, controller, model, item
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/mailservers/service as mailservers_service
+import ../../../../../app_service/service/node_configuration/service as node_configuration_service
 
 export io_interface
 
@@ -23,12 +24,13 @@ type
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
   mailserversService: mailservers_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, mailserversService)
+  result.controller = controller.newController(result, events, settingsService, nodeConfigurationService, mailserversService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =

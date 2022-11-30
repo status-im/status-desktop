@@ -89,7 +89,7 @@ proc fetchBitsSet*(self: Controller) =
     self.nodeService.fetchBitsSet()
 
 proc getWakuVersion*(self: Controller): int =
-    var fleet = self.settingsService.getFleet()
+    var fleet = self.nodeConfigurationService.getFleet()
     let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test or fleet == StatusTest or fleet == StatusProd: 
       true 
     else:
