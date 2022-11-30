@@ -34,9 +34,6 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_ENABLE_COMMUNITY_ARCHIVE_FAILED) do(e:Args):
-    let args = ErrorArgs(e)
-    self.delegate.enableCommunityHistoryArchiveSupportFailed(args.msg)
   discard
 
 proc getFleet*(self: Controller): string =
@@ -60,25 +57,6 @@ proc setBloomLevel*(self: Controller, bloomLevel: string) =
     return
 
   self.delegate.onBloomLevelSet()
-
-method toggleCommunityHistoryArchiveSupport*(self: Controller) =
-  let enabled = self.nodeConfigurationService.isCommunityHistoryArchiveSupportEnabled()
-
-  if enabled:
-    if (not self.nodeConfigurationService.disableCommunityHistoryArchiveSupport()):
-      # in the future we may do a call from here to show a popup about this error
-      error "an error occurred, we couldn't enable community history archive support"
-      return
-  else:
-    if (not self.nodeConfigurationService.enableCommunityHistoryArchiveSupport()):
-      # in the future we may do a call from here to show a popup about this error
-      error "an error occurred, we couldn't disable community history archive support"
-      return
-
-  self.delegate.onCommunityHistoryArchiveSupportToggled()
-
-method isCommunityHistoryArchiveSupportEnabled*(self: Controller): bool =
-  return self.nodeConfigurationService.isCommunityHistoryArchiveSupportEnabled()
 
 proc getWakuV2LightClientEnabled*(self: Controller): bool =
   return self.nodeConfigurationService.getV2LightMode()

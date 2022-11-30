@@ -26,7 +26,6 @@ QtObject {
     property var discordImportTasks: root.communitiesModuleInst.discordImportTasks
     property string locale: localAppSettings.language
     property var advancedModule: profileSectionModule.advancedModule
-    property bool isCommunityHistoryArchiveSupportEnabled: advancedModule? advancedModule.isCommunityHistoryArchiveSupportEnabled : false
 
     // TODO: Could the backend provide directly 2 filtered models??
     //property var featuredCommunitiesModel: root.communitiesModuleInst.curatedFeaturedCommunities

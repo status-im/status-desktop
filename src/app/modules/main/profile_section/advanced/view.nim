@@ -5,7 +5,6 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      enableCommunityHistoryArchiveSupportFailedMsg*: string
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -17,19 +16,6 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
-
-  proc enableCommunityHistoryArchiveSupportFailedMsgChanged*(self: View) {.signal.}
-  proc getEnableCommunityHistoryArchiveSupportFailedMsg*(self: View): string {.slot.} =
-    return self.enableCommunityHistoryArchiveSupportFailedMsg
-  QtProperty[string] enableCommunityHistoryArchiveSupportFailedMsg:
-    read = getEnableCommunityHistoryArchiveSupportFailedMsg
-    notify = enableCommunityHistoryArchiveSupportFailedMsgChanged
-
-  proc setEnableCommunityHistoryArchiveSupportFailedMsg*(self: View, msg: string) {.slot.} =
-    self.enableCommunityHistoryArchiveSupportFailedMsg = msg
-    self.enableCommunityHistoryArchiveSupportFailedMsgChanged()
-
-  proc enableCommunityHistoryArchiveSupportFailed*(self: View) {.signal.}
 
   proc fleetChanged*(self: View) {.signal.}
   proc getFleet*(self: View): string {.slot.} =
@@ -101,19 +87,6 @@ QtObject:
 
   proc toggleAutoMessage*(self: View) {.slot.} =
     self.delegate.toggleAutoMessage()
-
-  proc isCommunityHistoryArchiveSupportEnabledChanged*(self: View) {.signal.}
-  proc getIsCommunityHistoryArchiveSupportEnabled*(self: View): bool {.slot.} =
-    return self.delegate.isCommunityHistoryArchiveSupportEnabled()
-  QtProperty[bool] isCommunityHistoryArchiveSupportEnabled:
-    read = getIsCommunityHistoryArchiveSupportEnabled
-    notify = isCommunityHistoryArchiveSupportEnabledChanged
-
-  proc emitCommunityHistoryArchiveSupportEnabledSignal*(self: View) =
-    self.isCommunityHistoryArchiveSupportEnabledChanged()
-
-  proc toggleCommunityHistoryArchiveSupport*(self: View) {.slot.} =
-    self.delegate.toggleCommunityHistoryArchiveSupport()
 
   proc isDebugEnabledChanged*(self: View) {.signal.}
   proc getIsDebugEnabled*(self: View): bool {.slot.} =

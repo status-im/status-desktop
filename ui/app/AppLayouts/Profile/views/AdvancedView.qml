@@ -134,22 +134,6 @@ SettingsContentBase {
                 }
             }
 
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Community History Archive Protocol")
-                isSwitch: true
-                switchChecked: root.advancedStore.isCommunityHistoryArchiveSupportEnabled
-                onClicked: {
-                    if (!root.advancedStore.isCommunityHistoryArchiveSupportEnabled) {
-                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.communityHistoryArchiveSupport
-                        confirmationPopup.open()
-                    } else {
-                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.communityHistoryArchiveSupport)
-                    }
-                }
-            }
-
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
@@ -537,17 +521,6 @@ SettingsContentBase {
 
             onCancelButtonClicked: {
                 close()
-            }
-        }
-
-        Connections {
-            target: advancedStore
-            function onEnableCommunityHistoryArchiveSupportFailed() {
-              if (root.advancedStore.enableCommunityHistoryArchiveSupportFailedMsg !== "") {
-                Global.openPopup(errorMessageDialogCmp, {
-                  errorMessage: root.advancedStore.enableCommunityHistoryArchiveSupportFailedMsg
-                })
-              }
             }
         }
 
