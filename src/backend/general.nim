@@ -55,14 +55,6 @@ proc getPasswordStrengthScore*(password: string, userInputs: seq[string]): RpcRe
     error "error", methodName = "getPasswordStrengthScore", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc enableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* []
-  result = core.callPrivateRPC("enableCommunityHistoryArchiveProtocol", payload)
-
-proc disableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* []
-  result = core.callPrivateRPC("disableCommunityHistoryArchiveProtocol", payload)
-
 proc generateImages*(imagePath: string, aX, aY, bX, bY: int): RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
     let response = status_go.generateImages(imagePath, aX, aY, bX, bY)

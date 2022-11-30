@@ -29,6 +29,11 @@ type
     settingsService: settings_service.Service
     events: EventEmitter
 
+# Forward declarations
+proc isCommunityHistoryArchiveSupportEnabled*(self: Service): bool
+proc enableCommunityHistoryArchiveSupport*(self: Service): bool
+
+
 proc delete*(self: Service) =
   discard
 
@@ -43,6 +48,14 @@ proc adaptNodeSettingsForTheAppNeed(self: Service) =
   self.configuration.KeyStoreDir = "./keystore"
   self.configuration.LogFile = "./geth.log"
   self.configuration.ShhextConfig.BackupDisabledDataDir = "./"
+
+  if (not self.isCommunityHistoryArchiveSupportEnabled):
+    # Force community archive support true on Desktop
+    # TODO those lines can be removed in the future once we are sure no one has used a legacy client where it is off
+    if (self.enableCommunityHistoryArchiveSupport()):
+      self.configuration.TorrentConfig.Enabled = true
+    else:
+      error "Setting Community History Archive On failed"
 
 proc init*(self: Service) =
   try:
@@ -70,28 +83,6 @@ proc saveConfiguration(self: Service, configuration: NodeConfigDto): bool =
     error "error saving node configuration "
     return false
   self.configuration = configuration
-  return true
-
-method enableCommunityHistoryArchiveSupport*(self: Service): bool =
-  try:
-    let response = status_node_config.enableCommunityHistoryArchiveSupport()
-    if(not response.error.isNil):
-      error "error enabling community history archive support: ", errDescription = response.error.message
-      return false
-
-    self.fetchNodeConfig()
-    return true
-  except Exception as e:
-    error "Error enabling community history archive support", msg = e.msg
-    self.events.emit(SIGNAL_ENABLE_COMMUNITY_ARCHIVE_FAILED, ErrorArgs(msg: e.msg))
-
-method disableCommunityHistoryArchiveSupport*(self: Service): bool =
-  let response = status_node_config.disableCommunityHistoryArchiveSupport()
-  if(not response.error.isNil):
-    error "error disabling community history archive support: ", errDescription = response.error.message
-    return false
-
-  self.fetchNodeConfig()
   return true
 
 proc getWakuVersion*(self: Service): int =
@@ -144,8 +135,16 @@ proc setWakuVersion*(self: Service, wakuVersion: int): bool =
   let newConfiguration = setWakuConfig(self.configuration, wakuVersion)
   return self.saveConfiguration(newConfiguration)
 
-method isCommunityHistoryArchiveSupportEnabled*(self: Service): bool =
+proc isCommunityHistoryArchiveSupportEnabled*(self: Service): bool =
   return self.configuration.TorrentConfig.Enabled
+
+proc enableCommunityHistoryArchiveSupport*(self: Service): bool =
+  let response = status_node_config.enableCommunityHistoryArchiveSupport()
+  if(not response.error.isNil):
+    error "error enabling community history archive support: ", errDescription = response.error.message
+    return false
+
+  return true
 
 proc setBloomFilterMode*(self: Service, bloomFilterMode: bool): bool =
   if(not self.settingsService.saveWakuBloomFilterMode(bloomFilterMode)):

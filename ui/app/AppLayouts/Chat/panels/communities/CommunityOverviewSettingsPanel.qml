@@ -31,7 +31,6 @@ StackLayout {
     property bool pinMessagesEnabled
     property bool encrypted
 
-    property bool archiveSupportOptionVisible: false
     property bool editable: false
     property bool owned: false
 
@@ -183,7 +182,6 @@ StackLayout {
             logoImageData: root.logoImageData
             bannerImageData: root.bannerImageData
             options {
-                archiveSupportOptionVisible: root.archiveSupportOptionVisible
                 archiveSupportEnabled: root.archiveSupportEnabled
                 requestToJoinEnabled: root.requestToJoinEnabled
                 pinMessagesEnabled: root.pinMessagesEnabled
