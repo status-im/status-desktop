@@ -170,6 +170,7 @@ SettingsContentBase {
             components: [
                 StatusSwitch {
                     id: showMessageLinksSwitch
+                    objectName: "MessagingView_showMessageLinksSwitch"
                     checked: previewableSites.anyWhitelisted || localAccountSensitiveSettings.displayChatImages
                     onToggled: {
                         if (!checked) {

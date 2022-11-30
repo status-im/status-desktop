@@ -38,7 +38,7 @@ class StatusAccountsScreen():
         account_obj = None
         [is_loaded, accountsList] = is_loaded_visible_and_enabled(SAccountsComponents.ACCOUNTS_POPUP.value)
         if is_loaded:
-            for child in getChildrenOfType(accountsList, "AccountMenuItemPanel"):
+            for child in get_children_of_type(accountsList, "AccountMenuItemPanel"):
                 if(child.label == account):
                     account_obj = child
                     found = True

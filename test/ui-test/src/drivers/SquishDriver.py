@@ -172,6 +172,10 @@ def scroll_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))
     squish.mouseWheel(obj, 206, 35, 0, -1, squish.Qt.ControlModifier)
 
+def reset_scroll_obj_by_name(objName: str):
+    obj = squish.waitForObject(getattr(names, objName))
+    obj.contentY = 0
+
 # execute do_fn until validation_fn returns True or timeout is reached
 def do_until_validation_with_timeout(do_fn, validation_fn, message: str, timeout_ms: int=_MAX_WAIT_OBJ_TIMEOUT * 2):
     start_time = time.time()

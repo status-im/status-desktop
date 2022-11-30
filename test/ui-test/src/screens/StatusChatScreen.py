@@ -374,24 +374,15 @@ class StatusChatScreen:
         last_message_obj = self.get_message_at_index(0)
         verify(bool(last_message_obj.isEdited), "Message is not marked as edited")
 
-    def verify_last_message_sent(self, message: str):
-        # Get the message text
-        # We don't search for StatusTextMessage_chatText directly, because there're 2 instances of it in a reply message
+    def get_last_message_text(self):
         last_message_obj = self.get_message_at_index(0)
-        text_message_obj = get_children_with_object_name(last_message_obj, ChatItems.STATUS_MESSAGE_TEXT_MESSAGE.value)[0]
-        text_edit_obj = get_children_with_object_name(text_message_obj, ChatItems.STATUS_TEXT_MESSAGE_CHAT_TEXT.value)[0]
-        verify(not is_null(text_edit_obj), "Checking last message sent: " + message)
-        verify_text_contains(str(text_edit_obj.text), str(message))
+        return last_message_obj.messageText
+
+    def verify_last_message_sent(self, message: str):
+        verify_text_contains(str(self.get_last_message_text()), str(message))
 
     def verify_last_message_sent_is_not(self, message: str):
-        last_message_obj = self.get_message_at_index(0)
-        text_message_objs = get_children_with_object_name(last_message_obj, ChatItems.STATUS_MESSAGE_TEXT_MESSAGE.value)
-        if len(text_message_objs) == 0:
-            passes("Success: No message was found")
-            return
-        text_edit_obj = get_children_with_object_name(text_message_objs[0], ChatItems.STATUS_TEXT_MESSAGE_CHAT_TEXT.value)[0]
-        verify(not is_null(text_edit_obj), "Checking last message sent: " + message)
-        verify_text_does_not_contain(str(text_edit_obj.text), str(message))
+        verify_text_does_not_contain(str(self.get_last_message_text()), str(message))
     
     # This method expects to have just one mention / link in the last chat message 
     def verify_last_message_sent_contains_mention(self, displayName: str, message: str):

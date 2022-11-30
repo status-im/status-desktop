@@ -207,7 +207,7 @@ def step(context):
     
 @Then("the GIF message is displayed")
 def step(context):
-    _statusChat.verify_last_message_sent("tenor.gif")
+    _statusChat.verify_last_message_sent("tenor.com")
     
 @Then("the image |any| is unfurled in the chat")
 def step(context: any, image_link: str):

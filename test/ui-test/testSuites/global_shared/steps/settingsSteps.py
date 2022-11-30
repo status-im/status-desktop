@@ -19,11 +19,7 @@ def step(context: any):
 @Given("the user opens the messaging settings")
 def step(context: any):
     the_user_opens_the_messaging_settings()
-    
-@Given("tenor GIFs preview is enabled")
-def step(context: any):
-    _settingsScreen.check_tenor_gif_preview_is_enabled()
-    
+
 @Given("the user activates wallet and opens the wallet section")
 def step(context: any):
     init_steps.the_user_activates_wallet_and_opens_the_wallet_section()
@@ -39,10 +35,19 @@ def step(context: any):
 @Given("the user opens the wallet settings")
 def step(context: any):
     the_user_opens_the_wallet_settings()
+
     
 #########################
 ### ACTIONS region:
 #########################
+
+@When("the user activates the link preview if it is deactivated")
+def step(context: any):
+    _settingsScreen.activate_link_preview_if_dectivated()
+
+@When("the user activates tenor GIFs preview")
+def step(context: any):
+    _settingsScreen.the_user_activates_tenor_gif_preview()
 
 @When("the user opens app settings screen")
 def step(context: any):
@@ -51,10 +56,6 @@ def step(context: any):
 @When("the user opens the messaging settings")
 def step(context: any):
     the_user_opens_the_messaging_settings()
-
-@When("the user activates link preview")
-def step(context: any):
-    _settingsScreen.activate_link_preview()
 
 @When("the user activates image unfurling")
 def step(context: any):
