@@ -5,6 +5,7 @@ import ../../../../core/eventemitter
 import ../../../../core/fleets/fleet_configuration
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/mailservers/service as mailservers_service
+import ../../../../../app_service/service/node_configuration/service as node_configuration_service
 
 logScope:
   topics = "profile-section-sync-module-controller"
@@ -14,16 +15,19 @@ type
     delegate: io_interface.AccessInterface
     events: EventEmitter
     settingsService: settings_service.Service
+    nodeConfigurationService: node_configuration_service.Service
     mailserversService: mailservers_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
   mailserversService: mailservers_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.settingsService = settingsService
+  result.nodeConfigurationService = nodeConfigurationService
   result.mailserversService = mailserversService
 
 proc delete*(self: Controller) =
@@ -38,11 +42,11 @@ proc getAllMailservers*(self: Controller): seq[tuple[name: string, nodeAddress: 
   return self.mailserversService.getAllMailservers()
 
 proc getPinnedMailserver*(self: Controller): string =
-  let fleet = self.settingsService.getFleet()
+  let fleet = self.nodeConfigurationService.getFleet()
   self.settingsService.getPinnedMailserver(fleet)
 
 proc pinMailserver*(self: Controller, mailserverID: string) =
-  let fleet = self.settingsService.getFleet()
+  let fleet = self.nodeConfigurationService.getFleet()
   discard self.settingsService.pinMailserver(mailserverID, fleet)
 
 proc saveNewMailserver*(self: Controller, name: string, nodeAddress: string) =

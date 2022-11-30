@@ -2,6 +2,7 @@ import json, typetraits, tables, sequtils
 
 type
   Fleet* {.pure.} = enum
+    Undefined = "",
     Prod = "eth.prod",
     Staging = "eth.staging",
     Test = "eth.test",

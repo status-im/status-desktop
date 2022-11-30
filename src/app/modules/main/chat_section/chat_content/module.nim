@@ -14,6 +14,7 @@ import messages/module as messages_module
 import users/module as users_module
 
 import ../../../../../app_service/service/settings/service as settings_service
+import ../../../../../app_service/service/node_configuration/service as node_configuration_service
 import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
@@ -39,7 +40,7 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.Service,
-  contactService: contact_service.Service, chatService: chat_service.Service,
+  nodeConfigurationService: node_configuration_service.Service, contactService: contact_service.Service, chatService: chat_service.Service,
   communityService: community_service.Service, messageService: message_service.Service, gifService: gif_service.Service,
   mailserversService: mailservers_service.Service):
   Module =
@@ -48,7 +49,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity,
-  isUsersListAvailable, settingsService, contactService, chatService, communityService, messageService)
+  isUsersListAvailable, settingsService, nodeConfigurationService, contactService, chatService, communityService, messageService)
   result.moduleLoaded = false
 
   result.inputAreaModule = input_area_module.newModule(result, sectionId, chatId, belongsToCommunity, chatService, communityService, gifService)

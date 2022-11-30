@@ -1,6 +1,7 @@
 import NimQml, chronicles, strutils, json, nimcrypto
 
 import ../settings/service as settings_service
+import ../node_configuration/service as node_configuration_service
 
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
@@ -25,6 +26,7 @@ QtObject:
         events*: EventEmitter
         threadpool: ThreadPool
         settingsService: settings_service.Service
+        nodeConfigurationService: node_configuration_service.Service
         bloomBitsSet: int
         peers*: seq[string]
         connected: bool
@@ -32,12 +34,13 @@ QtObject:
     proc delete*(self: Service) =
        self.QObject.delete
 
-    proc newService*(events: EventEmitter, threadpool: ThreadPool, settingsService: settings_service.Service): Service =
+    proc newService*(events: EventEmitter, threadpool: ThreadPool, settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service): Service =
         new(result, delete)
         result.QObject.setup
         result.events = events
         result.threadpool = threadpool
         result.settingsService = settingsService
+        result.nodeConfigurationService = nodeConfigurationService
         result.peers = @[]
         result.connected = false
 
@@ -77,7 +80,7 @@ QtObject:
                result.add(id)
 
     proc fetchPeers*(self: Service): seq[string] =
-        var fleet = self.settingsService.getFleet()
+        var fleet = self.nodeConfigurationService.getFleet()
         let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test or fleet == StatusTest or fleet == StatusProd:
             true 
         else:

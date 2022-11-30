@@ -142,6 +142,7 @@ proc newModule*[T](
     result,
     events,
     settingsService,
+    nodeConfigurationService,
     keychainService,
     accountsService,
     chatService,
@@ -330,6 +331,7 @@ method load*[T](
   self: Module[T],
   events: EventEmitter,
   settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
   contactsService: contacts_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -354,6 +356,7 @@ method load*[T](
       channelGroup.id,
       isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community,
       settingsService,
+      nodeConfigurationService,
       contactsService,
       chatService,
       communityService,
@@ -366,7 +369,7 @@ method load*[T](
     if(activeSectionId == channelGroupItem.id):
       activeSection = channelGroupItem
     
-    self.channelGroupModules[channelGroup.id].load(channelGroup, events, settingsService,
+    self.channelGroupModules[channelGroup.id].load(channelGroup, events, settingsService, nodeConfigurationService,
       contactsService, chatService, communityService, messageService, gifService, mailserversService)
 
   # Communities Portal Section
@@ -689,6 +692,7 @@ method communityJoined*[T](
   community: CommunityDto,
   events: EventEmitter,
   settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
   contactsService: contacts_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -706,6 +710,7 @@ method communityJoined*[T](
       community.id,
       isCommunity = true,
       settingsService,
+      nodeConfigurationService,
       contactsService,
       chatService,
       communityService,
@@ -714,7 +719,7 @@ method communityJoined*[T](
       mailserversService
     )
   let channelGroup = community.toChannelGroupDto()
-  self.channelGroupModules[community.id].load(channelGroup, events, settingsService, contactsService,
+  self.channelGroupModules[community.id].load(channelGroup, events, settingsService, nodeConfigurationService, contactsService,
     chatService, communityService, messageService, gifService, mailserversService)
 
   let communitySectionItem = self.createChannelGroupItem(channelGroup)

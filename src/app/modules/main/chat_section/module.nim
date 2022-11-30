@@ -15,6 +15,7 @@ import ../../../core/eventemitter
 import ../../../core/notifications/details as notification_details
 import ../../../../app_service/common/types
 import ../../../../app_service/service/settings/service as settings_service
+import ../../../../app_service/service/node_configuration/service as node_configuration_service
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
@@ -43,6 +44,7 @@ proc buildChatSectionUI(self: Module,
   channelGroup: ChannelGroupDto,
   events: EventEmitter,
   settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
   contactService: contact_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -57,6 +59,7 @@ proc newModule*(
     # channels: seq[ChatDto],
     isCommunity: bool,
     settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
     contactService: contact_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,
@@ -66,8 +69,8 @@ proc newModule*(
   ): Module =
   result = Module()
   result.delegate = delegate
-  result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, contactService,
-  chatService, communityService, messageService, gifService, mailserversService)
+  result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, nodeConfigurationService,
+  contactService, chatService, communityService, messageService, gifService, mailserversService)
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
@@ -96,6 +99,7 @@ proc amIMarkedAsAdminUser(self: Module, members: seq[ChatMember]): bool =
 
 proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsersListAvailable: bool, events: EventEmitter,
   settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
   contactService: contact_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -103,7 +107,7 @@ proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsers
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service) =
   self.chatContentModules[chatId] = chat_content_module.newModule(self, events, self.controller.getMySectionId(), chatId,
-    belongToCommunity, isUsersListAvailable, settingsService, contactService, chatService, communityService,
+    belongToCommunity, isUsersListAvailable, settingsService, nodeConfigurationService, contactService, chatService, communityService,
     messageService, gifService, mailserversService)
 
 proc removeSubmodule(self: Module, chatId: string) =
@@ -116,6 +120,7 @@ proc buildChatSectionUI(
     channelGroup: ChannelGroupDto,
     events: EventEmitter,
     settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
     contactService: contact_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,
@@ -165,7 +170,7 @@ proc buildChatSectionUI(
       notificationsCount, chatDto.muted, blocked, chatDto.active, chatDto.position,
       chatDto.categoryId, colorId, colorHash, onlineStatus = onlineStatus)
     self.view.chatsModel().appendItem(channelItem)
-    self.addSubmodule(chatDto.id, belongToCommunity, isUsersListAvailable, events, settingsService,
+    self.addSubmodule(chatDto.id, belongToCommunity, isUsersListAvailable, events, settingsService, nodeConfigurationService,
       contactService, chatService, communityService, messageService, gifService, mailserversService)
 
     # make the first channel which doesn't belong to any category active when load the app
@@ -195,7 +200,7 @@ proc buildChatSectionUI(
         active=false, chatDto.position)
       categoryChannels.add(channelItem)
       self.addSubmodule(chatDto.id, belongToCommunity=true, isUsersListAvailable=true, events,
-        settingsService, contactService, chatService, communityService, messageService, gifService,
+        settingsService, nodeConfigurationService, contactService, chatService, communityService, messageService, gifService,
         mailserversService)
 
       # in case there is no channels beyond categories,
@@ -258,6 +263,7 @@ method load*(
     channelGroup: ChannelGroupDto,
     events: EventEmitter,
     settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
     contactService: contact_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,
@@ -267,8 +273,8 @@ method load*(
   self.controller.init()
   self.view.load()
 
-  self.buildChatSectionUI(channelGroup, events, settingsService, contactService, chatService,
-    communityService, messageService, gifService, mailserversService)
+  self.buildChatSectionUI(channelGroup, events, settingsService, nodeConfigurationService,
+    contactService, chatService, communityService, messageService, gifService, mailserversService)
 
   if(not self.controller.isCommunity()):
     # we do this only in case of chat section (not in case of communities)
@@ -403,6 +409,7 @@ method addNewChat*(
     belongsToCommunity: bool,
     events: EventEmitter,
     settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
     contactService: contact_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,
@@ -437,8 +444,8 @@ method addNewChat*(
       chatDto.description, chatDto.chatType.int, amIChatAdmin, chatDto.timestamp.int, hasNotification, notificationsCount,
       chatDto.muted, blocked=false, active=false, chatDto.position, chatDto.categoryId, colorId, colorHash, chatDto.highlight,
       onlineStatus = onlineStatus)
-    self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
-                      communityService, messageService, gifService, mailserversService)
+    self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, nodeConfigurationService,
+                      contactService, chatService, communityService, messageService, gifService, mailserversService)
     self.chatContentModules[chatDto.id].load()
     self.view.chatsModel().appendItem(item)
     if setChatAsActive:
@@ -453,8 +460,8 @@ method addNewChat*(
       chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
       amIChatAdmin, chatDto.timestamp.int, hasNotification, notificationsCount, chatDto.muted, blocked=false, active=false,
       chatDto.position)
-    self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
-                      communityService, messageService, gifService, mailserversService)
+    self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, nodeConfigurationService,
+                      contactService, chatService, communityService, messageService, gifService, mailserversService)
     self.chatContentModules[chatDto.id].load()
     categoryItem.appendSubItem(channelItem)
     if setChatAsActive:
@@ -884,6 +891,7 @@ method addChatIfDontExist*(self: Module,
     belongsToCommunity: bool,
     events: EventEmitter,
     settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
     contactService: contact_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,
@@ -902,8 +910,9 @@ method addChatIfDontExist*(self: Module,
     elif (chat.chatType != ChatType.OneToOne):
       self.onChatRenamed(chat.id, chat.name)
     return
-  self.addNewChat(chat, belongsToCommunity, events, settingsService, contactService, chatService,
-    communityService, messageService, gifService, mailserversService, setChatAsActive)
+  self.addNewChat(chat, belongsToCommunity, events, settingsService, nodeConfigurationService,
+    contactService, chatService, communityService, messageService, gifService, mailserversService, 
+    setChatAsActive)
 
 method downloadMessages*(self: Module, chatId: string, filePath: string) =
   if(not self.chatContentModules.contains(chatId)):
