@@ -22,18 +22,6 @@ Item {
 
         property int timeout: Constants.onboarding.profileFetching.timeout
         property int counter: d.timeout
-
-        function getCurrTimerValue(){
-            let mins = "0"
-            let secs = "00"
-            if (d.counter > 0) {
-                mins = Math.floor(d.counter / 60)
-                let s = d.counter % 60
-                secs = (s < 10) ? "0" + s : s;
-            }
-
-            return "%1:%2".arg(mins).arg(secs)
-        }
     }
 
     ColumnLayout {
@@ -158,8 +146,7 @@ Item {
                 repeat: true
                 onTriggered: {
                     d.counter--
-                    let timerVal = d.getCurrTimerValue()
-                    if (timerVal === "0:00") {
+                    if (d.counter == 0) {
                         root.startupStore.doPrimaryAction()
                     }
                 }
@@ -186,7 +173,7 @@ Item {
             }
             PropertyChanges {
                 target: button
-                text: d.getCurrTimerValue()
+                text: Qt.formatTime(new Date(0, 0, 0, 0, 0, d.counter), "m:ss")
             }
             PropertyChanges {
                 target: d

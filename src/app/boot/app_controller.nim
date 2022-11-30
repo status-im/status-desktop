@@ -102,8 +102,9 @@ proc buildAndRegisterUserProfile(self: AppController)
 
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
-proc userLoggedIn*(self: AppController)
+proc userLoggedIn*(self: AppController): string
 proc logout*(self: AppController)
+proc finishAppLoading*(self: AppController)
 proc storeKeyPairForNewKeycardUser*(self: AppController)
 
 # Main Module Delegate Interface
@@ -162,7 +163,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     statusFoundation.threadpool, result.chatService, result.activityCenterService, result.messageService)
   result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, result.tokenService)
   result.bookmarkService = bookmark_service.newService(statusFoundation.events)
-  result.profileService = profile_service.newService(result.contactsService, result.settingsService)
+  result.profileService = profile_service.newService(statusFoundation.events, result.settingsService)
   result.stickersService = stickers_service.newService(
     statusFoundation.events,
     statusFoundation.threadpool,
@@ -314,6 +315,7 @@ proc load(self: AppController) =
   self.notificationsManager.init()
 
   self.settingsService.init()
+  self.profileService.init()
   self.nodeConfigurationService.init()
   self.mailserversService.init()
   self.contactsService.init()
@@ -356,10 +358,18 @@ proc load(self: AppController) =
     self.mailserversService,
   )
 
-proc userLoggedIn*(self: AppController) =
-  self.generalService.startMessenger()
+proc userLoggedIn*(self: AppController): string =
+  try:
+    self.generalService.startMessenger()
+    self.statusFoundation.userLoggedIn()
+    return ""
+  except Exception as e:
+    let errDescription = e.msg
+    error "error: ", errDescription
+    return errDescription
+
+proc finishAppLoading*(self: AppController) =
   self.load()
-  self.statusFoundation.userLoggedIn()
 
   # Once user is logged in and main module is loaded we need to check if it gets here importing mnemonic or not
   # and delete mnemonic in the first case.

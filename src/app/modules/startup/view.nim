@@ -6,6 +6,7 @@ import models/generated_account_model as gen_acc_model
 import models/generated_account_item as gen_acc_item
 import models/login_account_model as login_acc_model
 import models/login_account_item as login_acc_item
+import models/fetching_data_model as fetch_model
 
 type
   AppState* {.pure.} = enum
@@ -29,6 +30,8 @@ QtObject:
       appState: AppState
       keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
       remainingAttempts: int
+      fetchingDataModel: fetch_model.Model
+      fetchingDataModelVariant: QVariant
 
   proc delete*(self: View) =
     self.currentStartupStateVariant.delete
@@ -39,6 +42,10 @@ QtObject:
     self.selectedLoginAccountVariant.delete
     self.loginAccountsModel.delete
     self.loginAccountsModelVariant.delete
+    if not self.fetchingDataModel.isNil:
+      self.fetchingDataModel.delete
+    if not self.fetchingDataModelVariant.isNil:
+      self.fetchingDataModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -271,3 +278,23 @@ QtObject:
   proc destroyKeycardSharedModuleFlow*(self: View) {.signal.}
   proc emitDestroyKeycardSharedModuleFlow*(self: View) =
     self.destroyKeycardSharedModuleFlow()
+
+  proc fetchingDataModel*(self: View): fetch_model.Model =
+    return self.fetchingDataModel
+
+  proc fetchingDataModelChanged(self: View) {.signal.}
+  proc getFetchingDataModel(self: View): QVariant {.slot.} =
+    if self.fetchingDataModelVariant.isNil:
+      return newQVariant()
+    return self.fetchingDataModelVariant
+  QtProperty[QVariant] fetchingDataModel:
+    read = getFetchingDataModel
+    notify = fetchingDataModelChanged
+
+  proc createAndInitFetchingDataModel*(self: View, sections: seq[string]) =
+    if self.fetchingDataModel.isNil:
+      self.fetchingDataModel = fetch_model.newModel()
+    if self.fetchingDataModelVariant.isNil:
+      self.fetchingDataModelVariant = newQVariant(self.fetchingDataModel)
+    self.fetchingDataModel.init(sections)
+    self.fetchingDataModelChanged()

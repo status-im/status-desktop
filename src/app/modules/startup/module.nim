@@ -5,6 +5,7 @@ import view, controller
 import internal/[state, state_factory]
 import models/generated_account_item as gen_acc_item
 import models/login_account_item as login_acc_item
+import models/fetching_data_model as fetch_model
 import ../../global/global_singleton
 import ../../core/eventemitter
 
@@ -20,6 +21,11 @@ export io_interface
 
 logScope:
   topics = "startup-module"
+
+const FetchingFromWakuProfile = "profile"
+const FetchingFromWakuContacts = "contacts"
+const FetchingFromWakuCommunities = "communities"
+const FetchingFromWakuSettings = "settings"
 
 type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
@@ -280,6 +286,48 @@ method emitObtainingPasswordError*[T](self: Module[T], errorDescription: string,
 method emitObtainingPasswordSuccess*[T](self: Module[T], password: string) =
   self.view.emitObtainingPasswordSuccess(password)
 
+method finishAppLoading*[T](self: Module[T]) =
+  self.delegate.finishAppLoading()
+
+method checkFetchingStatusAndProceedWithAppLoading*[T](self: Module[T]) =
+  if self.view.fetchingDataModel().isEntityLoaded(FetchingFromWakuProfile):
+    self.delegate.finishAppLoading()
+    return
+  let currStateObj = self.view.currentStartupStateObj()
+  if currStateObj.isNil:
+    error "cannot resolve current state in order to resolve next state"
+    return
+  self.view.setCurrentStartupState(newProfileFetchingAnnouncementState(currStateObj.flowType(), nil))
+
+method onFetchingFromWakuMessageReceived*[T](self: Module[T], section: string, totalMessages: int, receivedMessageAtPosition: int) =
+  if self.view.fetchingDataModel().allMessagesLoaded():
+    return
+  let currStateObj = self.view.currentStartupStateObj()
+  if currStateObj.isNil:
+    error "cannot resolve current state for fetching data model update"
+    return
+  if currStateObj.flowType() != FlowType.FirstRunOldUserImportSeedPhrase and
+    currStateObj.flowType() != FlowType.FirstRunOldUserKeycardImport:
+      error "update fetching data model is out of context for the flow", flow=currStateObj.flowType()
+      return
+  if totalMessages > 0:
+    self.view.fetchingDataModel().updateTotalMessages(section, totalMessages)
+  if receivedMessageAtPosition > 0:
+    self.view.fetchingDataModel().receivedMessageAtPosition(section, receivedMessageAtPosition)
+  if self.view.fetchingDataModel().allMessagesLoaded():
+    self.view.setCurrentStartupState(newProfileFetchingSuccessState(currStateObj.flowType(), nil))
+
+proc prepareAndInitFetchingData[T](self: Module[T]) =
+  # fetching data from waku starts when messenger starts
+  const listOfEntitiesWeExpectToBeSynced = @[FetchingFromWakuProfile, FetchingFromWakuContacts, FetchingFromWakuCommunities,
+    FetchingFromWakuSettings]
+  self.view.createAndInitFetchingDataModel(listOfEntitiesWeExpectToBeSynced)
+
+proc logoutAndDisplayError[T](self: Module[T], error: string) =
+  self.delegate.logout()
+  self.moveToStartupState()
+  self.emitAccountLoginError(error)
+
 method onNodeLogin*[T](self: Module[T], error: string) =
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
@@ -287,21 +335,27 @@ method onNodeLogin*[T](self: Module[T], error: string) =
     quit() # quit the app
 
   if error.len == 0:
-    try:
-      self.delegate.userLoggedIn()
-    except Exception as e:
-      let errDescription = e.msg
-      error "error: ", errDescription
-      self.delegate.logout()
-      self.moveToStartupState()
-      self.emitAccountLoginError(errDescription)
-      return
-
-    if currStateObj.flowType() != FlowType.AppLogin:
-      self.controller.storeIdentityImage()
-    self.controller.cleanTmpData()
+    if currStateObj.flowType() == FlowType.FirstRunOldUserImportSeedPhrase or
+      currStateObj.flowType() == FlowType.FirstRunOldUserKeycardImport:
+        self.prepareAndInitFetchingData()
+        self.controller.connectToFetchingFromWakuEvents()
+        self.view.setCurrentStartupState(newProfileFetchingState(currStateObj.flowType(), nil))
+        self.moveToStartupState()
+        let err = self.delegate.userLoggedIn()
+        if err.len > 0:
+          self.logoutAndDisplayError(err)
+          return
+    else:
+      let err = self.delegate.userLoggedIn()
+      if err.len > 0:
+        self.logoutAndDisplayError(err)
+        return
+      self.delegate.finishAppLoading()
+      if currStateObj.flowType() != FlowType.AppLogin:
+        discard self.controller.storeIdentityImage()
+      self.controller.cleanTmpData()
   else:
-    self.view.setAppState(AppState.StartupState)
+    self.moveToStartupState()
     if currStateObj.flowType() == FlowType.AppLogin:
       self.emitAccountLoginError(error)
     else:

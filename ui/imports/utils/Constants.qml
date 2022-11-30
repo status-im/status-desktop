@@ -32,6 +32,7 @@ QtObject {
         readonly property string welcomeOldStatusUser: "WelcomeOldStatusUser"
         readonly property string userProfileCreate: "UserProfileCreate"
         readonly property string userProfileChatKey: "UserProfileChatKey"
+        readonly property string userProfileCreateSameChatKey: "UserProfileCreateSameChatKey"
         readonly property string userProfileCreatePassword: "UserProfileCreatePassword"
         readonly property string userProfileConfirmPassword: "UserProfileConfirmPassword"
         readonly property string userProfileImportSeedPhrase: "UserProfileImportSeedPhrase"
@@ -79,6 +80,7 @@ QtObject {
         readonly property string profileFetching: "ProfileFetching"
         readonly property string profileFetchingSuccess: "ProfileFetchingSuccess"
         readonly property string profileFetchingTimeout: "ProfileFetchingTimeout"
+        readonly property string profileFetchingAnnouncement: "ProfileFetchingAnnouncement"
     }
 
     readonly property QtObject predefinedKeycardData: QtObject {
@@ -317,6 +319,14 @@ QtObject {
         readonly property int userImageWidth: 40
         readonly property int userImageHeight: 40
         readonly property int titleFontSize: 17
+        readonly property int fontSize1: 22
+        readonly property int fontSize2: 17
+        readonly property int fontSize3: 15
+        readonly property int fontSize4: 12
+        readonly property int loginInfoHeight1: 24
+        readonly property int loginInfoHeight2: 44
+        readonly property int loginInfoHeight3: 66
+        readonly property int radius: 8
         readonly property QtObject profileFetching: QtObject {
             readonly property int    timeout: 120 //2 mins (120 secs)
             readonly property int    titleFontSize: 22

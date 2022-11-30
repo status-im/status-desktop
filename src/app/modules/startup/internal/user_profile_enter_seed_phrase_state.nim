@@ -19,12 +19,13 @@ method executeBackCommand*(self: UserProfileEnterSeedPhraseState, controller: Co
 method getNextPrimaryState*(self: UserProfileEnterSeedPhraseState, controller: Controller): State =
   if not self.successfulImport:
     return nil
-  if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
-    self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
+  if self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
     return createState(StateType.UserProfileCreate, self.flowType, self)
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
     if not self.correctKeycard:
       return createState(StateType.KeycardWrongKeycard, self.flowType, nil)
+  if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
+    return createState(StateType.UserProfileCreatePassword, self.flowType, self)
 
 method executePrimaryCommand*(self: UserProfileEnterSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.AppLogin:
@@ -34,9 +35,9 @@ method executePrimaryCommand*(self: UserProfileEnterSeedPhraseState, controller:
       controller.runLoadAccountFlow(controller.getSeedPhraseLength(), controller.getSeedPhrase(), pin = "", puk = "", 
         factoryReset = true)
   else:
-    if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
-      self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
-      self.successfulImport = controller.importMnemonic()
+    if self.flowType == FlowType.FirstRunNewUserImportSeedPhrase or
+      self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
+        self.successfulImport = controller.importMnemonic()
     else:
       self.successfulImport = controller.validMnemonic(controller.getSeedPhrase())
       if self.successfulImport:
