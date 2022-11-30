@@ -20,8 +20,38 @@ SplitView {
             SplitView.fillHeight: true
 
             startupStore: StartupStore {
+                id: startupStore
+
                 property QtObject currentStartupState: QtObject {
-                    property string stateType: comboBox.currentText
+                    property string stateType
+                }
+
+                property ListModel fetchingDataModel: ListModel {
+                    Component.onCompleted: append([
+                        {
+                        entity: Constants.onboarding.profileFetching.entity.profile,
+                        loadedMessages: 0,
+                        totalMessages: 0,
+                        icon: "profile"
+                    },
+                    {
+                        entity: Constants.onboarding.profileFetching.entity.contacts,
+                        loadedMessages: 0,
+                        totalMessages: 0,
+                        icon: "contact-book"
+                    },
+                    {
+                        entity: Constants.onboarding.profileFetching.entity.communities,
+                        loadedMessages: 0,
+                        totalMessages: 0,
+                        icon: "communities"
+                    },
+                    {
+                        entity: Constants.onboarding.profileFetching.entity.settings,
+                        loadedMessages: 0,
+                        totalMessages: 0,
+                        icon: "settings"
+                    }])
                 }
 
                 function doPrimaryAction() {
@@ -48,10 +78,38 @@ SplitView {
         }
     }
 
-    ComboBox {
-        id: comboBox
+    Pane {
+        SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
-        SplitView.preferredHeight: 100
-        model: [ Constants.startupState.profileFetching, Constants.startupState.profileFetchingCompleted, Constants.startupState.profileFetchingError, "none" ]
+
+        ProfileFetchingModelEditor {
+            anchors.fill: parent
+            model: startupStore.fetchingDataModel
+
+            onStateChanged: {
+                if (state === Constants.startupState.profileFetching) {
+                    for(let i = 0; i < startupStore.fetchingDataModel.rowCount(); i++) {
+                        startupStore.fetchingDataModel.setProperty(i, "totalMessages", 0)
+                        startupStore.fetchingDataModel.setProperty(i, "loadedMessages", 0)
+                    }
+                }
+                else if (state === Constants.startupState.profileFetchingSuccess) {
+                    for(let i = 0; i < startupStore.fetchingDataModel.rowCount(); i++) {
+                        let n = Math.ceil(Math.random() * 10) + 1
+                        startupStore.fetchingDataModel.setProperty(i, "totalMessages", n)
+                        startupStore.fetchingDataModel.setProperty(i, "loadedMessages", n)
+                    }
+                }
+                else if (state === Constants.startupState.profileFetchingTimeout) {
+                    for(let i = 0; i < startupStore.fetchingDataModel.rowCount(); i++) {
+                        let n = Math.ceil(Math.random() * 5)
+                        startupStore.fetchingDataModel.setProperty(i, "totalMessages", n + 5)
+                        startupStore.fetchingDataModel.setProperty(i, "loadedMessages", n)
+                    }
+                }
+
+                startupStore.currentStartupState.stateType = state
+            }
+        }
     }
 }
