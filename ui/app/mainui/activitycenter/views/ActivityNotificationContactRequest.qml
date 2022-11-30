@@ -17,13 +17,15 @@ ActivityNotificationMessage {
     maximumLineCount: 5
 
     ctaComponent: ContactRequestCta {
-        readonly property string senderId: notification.message.senderId
-        readonly property var contactDetails: Utils.getContactDetailsAsJson(senderId)
+        readonly property string senderId: notification ? notification.message.senderId : ""
+        readonly property var contactDetails: notification ?
+                        Utils.getContactDetailsAsJson(notification.message.senderId) :
+                        null
 
-        pending: notification.message.contactRequestState == Constants.contactRequestStatePending
-        accepted: notification.message.contactRequestState == Constants.contactRequestStateAccepted
-        dismissed: notification.message.contactRequestState == Constants.contactRequestStateDismissed
-        blocked: contactDetails.isBlocked
+        pending: notification && notification.message.contactRequestState == Constants.contactRequestStatePending
+        accepted: notification && notification.message.contactRequestState == Constants.contactRequestStateAccepted
+        dismissed: notification && notification.message.contactRequestState == Constants.contactRequestStateDismissed
+        blocked: contactDetails && contactDetails.isBlocked
         onAcceptClicked: root.store.contactsStore.acceptContactRequest(senderId)
         onDeclineClicked: root.store.contactsStore.dismissContactRequest(senderId)
         onProfileClicked: Global.openProfilePopup(senderId)

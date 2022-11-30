@@ -14,6 +14,9 @@ ActivityNotificationMessage {
     id: root
 
     badgeComponent: {
+        if (!notification)
+            return null
+
         switch (notification.chatType)
         {
         case Constants.chatType.communityChat:

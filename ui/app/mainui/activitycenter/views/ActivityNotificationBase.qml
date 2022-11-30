@@ -11,10 +11,10 @@ import utils 1.0
 Item {
     id: root
 
-    property int filteredIndex: 0
-    property var notification
-    property var store
-    property var activityCenterStore
+    /* required */ property int filteredIndex
+    /* required */ property var notification
+    /* required */ property var store
+    /* required */ property var activityCenterStore
 
     property alias bodyComponent: bodyLoader.sourceComponent
     property alias badgeComponent: badgeLoader.sourceComponent
@@ -31,8 +31,9 @@ Item {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.left: parent.left
-        messageTimestamp: notification.timestamp
-        previousMessageTimestamp: filteredIndex === 0 || !notification.previousTimestamp ? 0 : notification.previousTimestamp
+        messageTimestamp: notification ? notification.timestamp : 0
+        previousMessageTimestamp: !notification || filteredIndex === 0 || !notification.previousTimestamp ?
+                                        0 : notification.previousTimestamp
         visible: text !== ""
     }
 
@@ -60,8 +61,8 @@ Item {
             icon.width: 20
             icon.height: 20
             icon.name: "checkmark"
-            icon.color: root.notification.read ? icon.disabledColor : Theme.palette.primaryColor1
-            tooltip.text: !root.notification.read ? qsTr("Mark as Read") : qsTr("Mark as Unread")
+            icon.color: notification && notification.read ? icon.disabledColor : Theme.palette.primaryColor1
+            tooltip.text: notification && notification.read ? qsTr("Mark as Unread") : qsTr("Mark as Read")
             tooltip.orientation: StatusToolTip.Orientation.Left
             tooltip.x: -tooltip.width - Style.current.padding
             tooltip.y: 4
