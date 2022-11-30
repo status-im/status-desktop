@@ -21,8 +21,7 @@ method executePrimaryCommand*(self: UserProfileChatKeyState, controller: Control
 
 method getNextPrimaryState*(self: UserProfileChatKeyState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunNewUserNewKeys or
-    self.flowType == FlowType.FirstRunNewUserImportSeedPhrase or
-    self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
+    self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
       return createState(StateType.UserProfileCreatePassword, self.flowType, self)
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
     self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard  or

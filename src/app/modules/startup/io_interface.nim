@@ -145,9 +145,19 @@ method storeKeyPairForNewKeycardUser*(self: AccessInterface) {.base.} =
 method checkForStoringPasswordToKeychain*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onFetchingFromWakuMessageReceived*(self: AccessInterface, section: string, totalMessages: int, loadedMessages: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method finishAppLoading*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method checkFetchingStatusAndProceedWithAppLoading*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c
     c.startupDidLoad()
     c.userLoggedIn()
+    c.finishAppLoading()
     c.storeKeyPairForNewKeycardUser()

@@ -70,6 +70,10 @@ QtObject:
   proc getLoggedInAccount*(self: Service): AccountDto =
     return self.loggedInAccount
 
+  proc updateLoggedInAccount*(self: Service, displayName: string, images: seq[Image]) =
+    self.loggedInAccount.name = displayName
+    self.loggedInAccount.images = images
+
   proc getImportedAccount*(self: Service): GeneratedAccountDto =
     return self.importedAccount
 
@@ -85,6 +89,14 @@ QtObject:
 
   proc setDefaultWalletEmoji*(self: Service, emoji: string) =
     self.defaultWalletEmoji = emoji
+
+  proc connectToFetchingFromWakuEvents*(self: Service) =
+    self.events.on(SignalType.WakuBackedUpProfile.event) do(e: Args):
+      var receivedData = WakuBackedUpProfileSignal(e)
+      if receivedData.backedUpProfile.displayNameStored:
+        self.loggedInAccount.name = receivedData.backedUpProfile.displayName
+      if receivedData.backedUpProfile.imagesStored:
+        self.loggedInAccount.images = receivedData.backedUpProfile.images
 
   proc init*(self: Service) =
     try:

@@ -25,10 +25,16 @@ type AccountDto* = object
   colorId*: int
   kdfIterations*: int
 
+type WakuBackedUpProfileDto* = object
+  displayName*: string
+  displayNameStored*: bool
+  images*: seq[Image]
+  imagesStored*: bool
+
 proc isValid*(self: AccountDto): bool =
   result = self.name.len > 0 and self.keyUid.len > 0
 
-proc toImage(jsonObj: JsonNode): Image =
+proc toImage*(jsonObj: JsonNode): Image =
   result = Image()
   discard jsonObj.getProp("keyUid", result.keyUid)
   discard jsonObj.getProp("type", result.imgType)
@@ -60,3 +66,14 @@ proc contains*(accounts: seq[AccountDto], keyUid: string): bool =
     if (account.keyUid == keyUid):
       return true
   return false
+
+proc toWakuBackedUpProfileDto*(jsonObj: JsonNode): WakuBackedUpProfileDto =
+  result = WakuBackedUpProfileDto()
+  discard jsonObj.getProp("displayName", result.displayName)
+  discard jsonObj.getProp("displayNameStored", result.displayNameStored)
+  discard jsonObj.getProp("imagesStored", result.imagesStored)
+
+  var imagesObj: JsonNode
+  if(jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray):
+    for imgObj in imagesObj:
+      result.images.add(toImage(imgObj))

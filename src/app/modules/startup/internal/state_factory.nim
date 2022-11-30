@@ -48,6 +48,7 @@ include user_profile_chat_key_state
 include user_profile_confirm_password_state 
 include user_profile_create_password_state
 include user_profile_create_state 
+include user_profile_create_same_chat_key_state 
 include user_profile_enter_seed_phrase_state 
 include user_profile_import_seed_phrase_state 
 include welcome_state_new_user
@@ -69,6 +70,10 @@ include login_keycard_max_puk_retries_reached_state
 include login_keycard_max_pairing_slots_reached_state
 include login_keycard_empty_state
 include login_not_keycard_state
+include profile_fetching_state
+include profile_fetching_success_state
+include profile_fetching_timeout_state
+include profile_fetching_announcement_state
 
 proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State =
   if stateToBeCreated == StateType.AllowNotifications:
@@ -81,6 +86,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newWelcomeStateOldUser(flowType, backState)
   if stateToBeCreated == StateType.UserProfileCreate:
     return newUserProfileCreateState(flowType, backState) 
+  if stateToBeCreated == StateType.UserProfileCreateSameChatKey:
+    return newUserProfileCreateSameChatKeyState(flowType, backState) 
   if stateToBeCreated == StateType.UserProfileChatKey:
     return newUserProfileChatKeyState(flowType, backState)
   if stateToBeCreated == StateType.UserProfileCreatePassword:
@@ -171,6 +178,15 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newLoginKeycardEmptyState(flowType, backState)
   if stateToBeCreated == StateType.LoginNotKeycard:
     return newLoginNotKeycardState(flowType, backState)
+  if stateToBeCreated == StateType.ProfileFetching:
+    return newProfileFetchingState(flowType, backState)
+  if stateToBeCreated == StateType.ProfileFetchingSuccess:
+    return newProfileFetchingSuccessState(flowType, backState)
+  if stateToBeCreated == StateType.ProfileFetchingTimeout:
+    return newProfileFetchingTimeoutState(flowType, backState)
+  if stateToBeCreated == StateType.ProfileFetchingAnnouncement:
+    return newProfileFetchingAnnouncementState(flowType, backState)
+  
   
   error "No implementation available for state ", state=stateToBeCreated
 

@@ -3,8 +3,7 @@ import os, json, chronicles
 import ../../../backend/general as status_general
 import ../../../constants as app_constants
 
-import ../profile/dto/profile as profile_dto
-export profile_dto
+import ../accounts/dto/accounts
 
 logScope:
   topics = "general-app-service"
@@ -48,6 +47,6 @@ proc generateImages*(self: Service, image: string, aX: int, aY: int, bX: int, bY
       return
 
     for img in response.result:
-      result.add(profile_dto.toImage(img))
+      result.add(toImage(img))
   except Exception as e:
     error "error: ", procName="generateImages", errName = e.name, errDesription = e.msg

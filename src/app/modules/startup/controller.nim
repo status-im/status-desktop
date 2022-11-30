@@ -1,4 +1,4 @@
-import chronicles, strutils, os
+import Tables, chronicles, strutils, os
 import uuids
 import io_interface
 
@@ -79,6 +79,7 @@ proc newController*(delegate: io_interface.AccessInterface,
 # Forward declaration
 proc cleanTmpData*(self: Controller)
 proc storeMetadataForNewKeycardUser(self: Controller)
+proc storeIdentityImage*(self: Controller): seq[Image]
 
 proc disconnectKeychain*(self: Controller) =
   for id in self.keychainConnectionIds:
@@ -96,6 +97,15 @@ proc connectKeychain*(self: Controller) =
     self.tmpKeychainErrorOccurred = true
     self.delegate.emitObtainingPasswordError(args.errDescription, args.errType)
   self.keychainConnectionIds.add(handlerId)
+
+proc connectToFetchingFromWakuEvents*(self: Controller) =
+  self.accountsService.connectToFetchingFromWakuEvents()
+
+  var handlerId = self.events.onWithUUID(SignalType.WakuFetchingBackupProgress.event) do(e: Args):
+    var receivedData = WakuFetchingBackupProgressSignal(e)
+    for k, v in receivedData.fetchingBackupProgress:
+      self.delegate.onFetchingFromWakuMessageReceived(k, v.totalNumber, v.dataNumber)
+  self.connectionIds.add(handlerId)
 
 proc disconnect*(self: Controller) =
   self.disconnectKeychain()
@@ -145,6 +155,15 @@ proc init*(self: Controller) =
 
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
+
+proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
+  self.profileService.setDisplayName(self.tmpDisplayName)
+  let images = self.storeIdentityImage()
+  self.accountsService.updateLoggedInAccount(self.tmpDisplayName, images)
+  self.delegate.finishAppLoading()
+
+proc checkFetchingStatusAndProceedWithAppLoading*(self: Controller) =
+  self.delegate.checkFetchingStatusAndProceedWithAppLoading()
 
 proc getGeneratedAccounts*(self: Controller): seq[GeneratedAccountDto] =
   return self.accountsService.generatedAccounts()
@@ -272,12 +291,12 @@ proc storePasswordToKeychain(self: Controller) =
   let data = if self.tmpPassword.len > 0: self.tmpPassword else: self.tmpPin
   self.keychainService.storeData(account.name, data)
 
-proc storeIdentityImage*(self: Controller) =
+proc storeIdentityImage*(self: Controller): seq[Image] =
   if self.tmpProfileImageDetails.url.len == 0:
     return
   let account = self.accountsService.getLoggedInAccount()
   let image = singletonInstance.utils.formatImagePath(self.tmpProfileImageDetails.url)
-  self.profileService.storeIdentityImage(account.keyUid, image, self.tmpProfileImageDetails.x1, 
+  result = self.profileService.storeIdentityImage(account.keyUid, image, self.tmpProfileImageDetails.x1, 
   self.tmpProfileImageDetails.y1, self.tmpProfileImageDetails.x2, self.tmpProfileImageDetails.y2)
   self.tmpProfileImageDetails = ProfileImageDetails()
 
