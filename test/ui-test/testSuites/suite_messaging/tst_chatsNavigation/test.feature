@@ -1,7 +1,8 @@
 Feature: Status Desktop Chat Navigation
 
-    As a user I want to join seethe application reflect correctly
-    when I navigate trough chats list.
+    As a user, I want the 1-1 and group chat navigation 
+    to be ordered by chats that I was most recently active in first, 
+    so that recent chats are easy to navigate to.
 
     The feature start sequence is the following (setup on its own `bdd_hooks`):
     ** given A first time user lands on the status desktop and generates new key
@@ -16,14 +17,21 @@ Feature: Status Desktop Chat Navigation
         And the user marks the channel "test" as read
         # TODO find a way to validate that it worked
 
-    Scenario: The user sees chats sorted by most recent activity
-        When the user joins chat room "first-chat"
-        And the user joins chat room "second-chat"
-        And the user joins chat room "third-chat"
+    Scenario: The user join chats and sees chats in reversed order
+        Given the user has joined chats
+        | first-chat  |
+        | second-chat |
+        | third-chat  |
         Then the user chats are sorted accordingly
         | third-chat  |
         | second-chat |
         | first-chat  |
+
+    Scenario: After sending a message the user sees chats sorder by most recent activity
+        Given the user has joined chats
+        | first-chat  |
+        | second-chat |
+        | third-chat  |
         When the user switches to "second-chat" chat
         And the user sends a random chat message
         Then the random chat message is displayed
