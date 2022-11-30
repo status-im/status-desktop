@@ -182,7 +182,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.mailserversService = mailservers_service.newService(statusFoundation.events, statusFoundation.threadpool,
     result.settingsService, result.nodeConfigurationService, statusFoundation.fleetConfiguration)
   result.nodeService = node_service.newService(statusFoundation.events, statusFoundation.threadpool,
-  result.settingsService)
+  result.settingsService, result.nodeConfigurationService)
   result.gifService = gif_service.newService(result.settingsService)
   result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool,
     result.settingsService, result.walletAccountService, result.transactionService,
@@ -346,6 +346,7 @@ proc load(self: AppController) =
   self.mainModule.load(
     self.statusFoundation.events,
     self.settingsService,
+    self.nodeConfigurationService,
     self.contactsService,
     self.chatService,
     self.communityService,

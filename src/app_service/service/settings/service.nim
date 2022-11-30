@@ -329,14 +329,11 @@ QtObject:
     return true
 
   proc getFleetAsString*(self: Service): string =
-    if(self.settings.fleet.len == 0):
-      self.settings.fleet = DEFAULT_FLEET
-    return self.settings.fleet
+    result = self.settings.fleet
 
   proc getFleet*(self: Service): Fleet =
     let fleetAsString = self.getFleetAsString()
-    let fleet = parseEnum[Fleet](fleetAsString)
-    return fleet
+    return parseEnum[Fleet](fleetAsString)
 
   proc getCurrentUserStatus*(self: Service): CurrentUserStatus =
     self.settings.currentUserStatus
