@@ -17,16 +17,18 @@ ActivityNotificationBase {
 
     bodyComponent: RowLayout {
         height: 50
-        readonly property var community: root.store.getCommunityDetailsAsJson(notification.communityId)
+        readonly property var community: notification ? 
+                                root.store.getCommunityDetailsAsJson(notification.communityId) :
+                                null
 
         StatusSmartIdenticon {
             id: identicon
-            name: community.name
+            name: community ? community.name : ""
+            asset.color: community ? community.color : "black"
+            asset.name: community ? community.image : ""
             asset.width: 40
             asset.height: 40
-            asset.color: community.color
             asset.letterSize: width / 2.4
-            asset.name: community.image
             asset.isImage: true
             Layout.alignment: Qt.AlignVCenter
             Layout.leftMargin: Style.current.padding
@@ -41,15 +43,17 @@ ActivityNotificationBase {
         }
 
         CommunityBadge {
-            communityName: community.name
-            communityImage: community.image
-            communityColor: community.color
+            communityName: community ? community.name : ""
+            communityImage: community ? community.image : ""
+            communityColor: community ? community.color : "black"
             onCommunityNameClicked: root.store.setActiveCommunity(notification.communityId)
             Layout.alignment: Qt.AlignVCenter
         }
 
         StatusBaseText {
             text: {
+                if (!notification)
+                    return ""
                 if (notification.membershipStatus === Constants.activityCenterMembershipStatusPending)
                     return qsTr("pending")
                 if (notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted)
@@ -66,7 +70,8 @@ ActivityNotificationBase {
         }
     }
 
-    ctaComponent: notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted ? visitComponent : null
+    ctaComponent: notification && notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted ?
+                        visitComponent : null
 
     Component {
         id: visitComponent

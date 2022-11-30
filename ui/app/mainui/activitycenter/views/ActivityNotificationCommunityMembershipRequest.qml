@@ -16,23 +16,27 @@ import "../panels"
 ActivityNotificationMessage {
     id: root
 
-    readonly property var contactDetails: Utils.getContactDetailsAsJson(notification.author)
+    readonly property var contactDetails: notification ?
+                                            Utils.getContactDetailsAsJson(notification.author) : 
+                                            null
 
     messageDetails.messageText: qsTr("Wants to join")
-    messageDetails.sender.displayName: contactDetails.displayName
-    messageDetails.sender.secondaryName: contactDetails.localNickname
-    messageDetails.sender.profileImage.name: contactDetails.displayIcon
+    messageDetails.sender.displayName: contactDetails ? contactDetails.displayName : ""
+    messageDetails.sender.secondaryName: contactDetails ? contactDetails.localNickname : ""
+    messageDetails.sender.profileImage.name: contactDetails ? contactDetails.displayIcon : ""
     messageDetails.sender.profileImage.assetSettings.isImage: true
-    messageDetails.sender.profileImage.pubkey: notification.author
-    messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(notification.author)
-    messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(notification.author, false, true)
+    messageDetails.sender.profileImage.pubkey: notification ? notification.author : ""
+    messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(notification ? notification.author : "")
+    messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(notification ? notification.author : "", false, true)
 
     messageBadgeComponent: CommunityBadge {
-        readonly property var community: root.store.getCommunityDetailsAsJson(notification.communityId)
+        readonly property var community: notification ?
+                            root.store.getCommunityDetailsAsJson(notification.communityId) :
+                            null
 
-        communityName: community.name
-        communityImage: community.image
-        communityColor: community.color
+        communityName: community ? community.name : ""
+        communityImage: community ? community.image : ""
+        communityColor: community ? community.color : "black"
 
         onCommunityNameClicked: {
             root.store.setActiveCommunity(notification.communityId)
@@ -41,9 +45,9 @@ ActivityNotificationMessage {
     }
 
     ctaComponent: MembershipCta {
-        pending: notification.membershipStatus === Constants.activityCenterMembershipStatusPending
-        accepted: notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted
-        declined: notification.membershipStatus === Constants.activityCenterMembershipStatusDeclined
+        pending: notification && notification.membershipStatus === Constants.activityCenterMembershipStatusPending
+        accepted: notification && notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted
+        declined: notification && notification.membershipStatus === Constants.activityCenterMembershipStatusDeclined
         onAcceptRequestToJoinCommunity: root.store.acceptRequestToJoinCommunity(notification.id, notification.communityId)
         onDeclineRequestToJoinCommunity: root.store.declineRequestToJoinCommunity(notification.id, notification.communityId)
     }

@@ -12,28 +12,32 @@ import utils 1.0
 ActivityNotificationBase {
     id: root
 
-    readonly property string timestampString: new Date(notification.timestamp).toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
-    readonly property string timestampTooltipString: new Date(notification.timestamp).toLocaleString()
+    readonly property string timestampString: notification ?
+                new Date(notification.timestamp).toLocaleTimeString(Qt.locale(), Locale.ShortFormat) :
+                ""
+    readonly property string timestampTooltipString: notification ?
+                new Date(notification.timestamp).toLocaleString() :
+                ""
 
     property int maximumLineCount: 2
 
     signal messageClicked()
 
     property StatusMessageDetails messageDetails: StatusMessageDetails {
-        messageText: notification.message.messageText
-        amISender: notification.message.amISender
-        sender.id: notification.message.senderId
-        sender.displayName: notification.message.senderDisplayName
-        sender.secondaryName: notification.message.senderOptionalName
-        sender.trustIndicator: notification.message.senderTrustStatus
+        messageText: notification ? notification.message.messageText : ""
+        amISender: notification ? notification.message.amISender : false
+        sender.id: notification ? notification.message.senderId : ""
+        sender.displayName: notification ? notification.message.senderDisplayName : ""
+        sender.secondaryName: notification ? notification.message.senderOptionalName : ""
+        sender.trustIndicator: notification ? notification.message.senderTrustStatus : Constants.trustStatus.unknown
         sender.profileImage {
             width: 40
             height: 40
-            name: notification.message.senderIcon || ""
-            assetSettings.isImage: notification.message.senderIcon.startsWith("data")
-            pubkey: notification.message.senderId
-            colorId: Utils.colorIdForPubkey(notification.message.senderId)
-            colorHash: Utils.getColorHashAsJson(notification.message.senderId)
+            name: notification ? notification.message.senderIcon || "" : ""
+            assetSettings.isImage: notification ? notification.message.senderIcon.startsWith("data") : false
+            pubkey: notification ? notification.message.senderId : ""
+            colorId: Utils.colorIdForPubkey(notification ? notification.message.senderId : "")
+            colorHash: Utils.getColorHashAsJson(notification ? notification.message.senderId : "")
         }
     }
 
@@ -44,11 +48,13 @@ ActivityNotificationBase {
         closeActivityCenter()
         Global.openProfilePopup(notification.message.senderId)
     }
+
     bodyComponent: MouseArea {
+        height: messageRow.implicitHeight
         hoverEnabled: root.messageBadgeComponent
         cursorShape: Qt.PointingHandCursor
         onClicked: root.messageClicked()
-        height: messageRow.implicitHeight
+
         RowLayout {
             id: messageRow
             spacing: 8

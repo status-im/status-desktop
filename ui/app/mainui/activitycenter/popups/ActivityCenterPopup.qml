@@ -176,93 +176,110 @@ Popup {
             ]
         }
 
-        delegate: DelegateChooser {
-            role: "notificationType"
+        delegate: Loader {
+            width: listView.availableWidth
 
-            DelegateChoice {
-                roleValue: Constants.activityCenterNotificationTypeMention
+            property int filteredIndex: index
+            property var notification: model
 
-                ActivityNotificationMention {
-                    width: listView.availableWidth
-                    filteredIndex: index
-                    store: root.store
-                    activityCenterStore: root.activityCenterStore
-                    notification: model
-                    onCloseActivityCenter: root.close()
+            sourceComponent: {
+                switch (model.notificationType) {
+                    case Constants.activityCenterNotificationTypeMention:
+                        return mentionNotificationComponent
+                    case Constants.activityCenterNotificationTypeReply:
+                        return replyNotificationComponent
+                    case Constants.activityCenterNotificationTypeContactRequest:
+                        return contactRequestNotificationComponent
+                    case Constants.activityCenterNotificationTypeCommunityInvitation:
+                        return communityInvitationNotificationComponent
+                    case Constants.activityCenterNotificationTypeCommunityMembershipRequest:
+                        return membershipRequestNotificationComponent
+                    case Constants.activityCenterNotificationTypeCommunityRequest:
+                        return communityRequestNotificationComponent
+                    case Constants.activityCenterNotificationTypeCommunityKicked:
+                        return communityKickedNotificationComponent
+                    default:
+                        return null
                 }
             }
-            DelegateChoice {
-                roleValue: Constants.activityCenterNotificationTypeReply
+        }
+    }
 
-                ActivityNotificationReply {
-                    width: listView.availableWidth
-                    filteredIndex: index
-                    store: root.store
-                    activityCenterStore: root.activityCenterStore
-                    notification: model
-                    onCloseActivityCenter: root.close()
-                }
-            }
-            DelegateChoice {
-                roleValue: Constants.activityCenterNotificationTypeContactRequest
+    Component {
+        id: mentionNotificationComponent
 
-                ActivityNotificationContactRequest {
-                    width: listView.availableWidth
-                    filteredIndex: index
-                    store: root.store
-                    activityCenterStore: root.activityCenterStore
-                    notification: model
-                    onCloseActivityCenter: root.close()
-                }
-            }
-            DelegateChoice {
-                roleValue: Constants.activityCenterNotificationTypeCommunityInvitation
+        ActivityNotificationMention {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+        }
+    }
+    Component {
+        id: replyNotificationComponent
 
-                ActivityNotificationCommunityInvitation {
-                    width: listView.availableWidth
-                    filteredIndex: index
-                    store: root.store
-                    activityCenterStore: root.activityCenterStore
-                    notification: model
-                    onCloseActivityCenter: root.close()
-                }
-            }
-            DelegateChoice {
-                roleValue: Constants.activityCenterNotificationTypeCommunityMembershipRequest
+        ActivityNotificationReply {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+        }
+    }
+    Component {
+        id: contactRequestNotificationComponent
 
-                ActivityNotificationCommunityMembershipRequest {
-                    width: listView.availableWidth
-                    filteredIndex: index
-                    store: root.store
-                    activityCenterStore: root.activityCenterStore
-                    notification: model
-                    onCloseActivityCenter: root.close()
-                }
-            }
-            DelegateChoice {
-                roleValue: Constants.activityCenterNotificationTypeCommunityRequest
+        ActivityNotificationContactRequest {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+        }
+    }
+    Component {
+        id: communityInvitationNotificationComponent
 
-                ActivityNotificationCommunityRequest {
-                    width: listView.availableWidth
-                    filteredIndex: index
-                    store: root.store
-                    activityCenterStore: root.activityCenterStore
-                    notification: model
-                    onCloseActivityCenter: root.close()
-                }
-            }
-            DelegateChoice {
-                roleValue: Constants.activityCenterNotificationTypeCommunityKicked
+        ActivityNotificationCommunityInvitation {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+        }
+    }
+    Component {
+        id: membershipRequestNotificationComponent
 
-                ActivityNotificationCommunityKicked {
-                    width: listView.availableWidth
-                    filteredIndex: index
-                    store: root.store
-                    activityCenterStore: root.activityCenterStore
-                    notification: model
-                    onCloseActivityCenter: root.close()
-                }
-            }
+        ActivityNotificationCommunityMembershipRequest {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+        }
+    }
+    Component {
+        id: communityRequestNotificationComponent
+
+        ActivityNotificationCommunityRequest {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+        }
+    }
+    Component {
+        id: communityKickedNotificationComponent
+
+        ActivityNotificationCommunityKicked {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
         }
     }
 }

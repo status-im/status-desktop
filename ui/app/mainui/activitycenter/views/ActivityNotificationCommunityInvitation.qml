@@ -17,11 +17,13 @@ ActivityNotificationMessage {
     badgeComponent: CommunityBadge {
         id: communityBadge
 
-        readonly property var community: root.store.getCommunityDetailsAsJson(notification.message.communityId)
+        readonly property var community: notification ?
+                                    root.store.getCommunityDetailsAsJson(notification.message.communityId) :
+                                    null
 
-        communityName: community.name
-        communityImage: community.image
-        communityColor: community.color
+        communityName: community ? community.name : ""
+        communityImage: community ? community.image : ""
+        communityColor: community ? community.color : "black"
 
         onCommunityNameClicked: {
             root.store.setActiveCommunity(notification.message.communityId)
