@@ -34,7 +34,4 @@ QtObject {
     property bool isImage: false
     property int imgStatus
     property bool imgIsIdenticon: false
-
-    // crop
-    property rect cropRect
 }
