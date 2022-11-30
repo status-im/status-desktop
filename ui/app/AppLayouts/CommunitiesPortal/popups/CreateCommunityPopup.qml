@@ -450,9 +450,6 @@ StatusStackModal {
 
                 CommunityOptions {
                     id: options
-
-                    archiveSupportOptionVisible: root.store.isCommunityHistoryArchiveSupportEnabled
-                    archiveSupportEnabled: archiveSupportOptionVisible
                 }
 
                 Item {
