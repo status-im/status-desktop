@@ -3,6 +3,7 @@ import Tables
 import io_interface
 
 import ../../../../app_service/service/settings/service as settings_service
+import ../../../../app_service/service/node_configuration/service as node_configuration_service
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
@@ -25,6 +26,7 @@ type
     activeSubItemId: string
     events: EventEmitter
     settingsService: settings_service.Service
+    nodeConfigurationService: node_configuration_service.Service
     contactService: contact_service.Service
     chatService: chat_service.Service
     communityService: community_service.Service
@@ -33,8 +35,8 @@ type
     mailserversService: mailservers_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
-  settingsService: settings_service.Service, contactService: contact_service.Service,
-  chatService: chat_service.Service, communityService: community_service.Service,
+  settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service, 
+  contactService: contact_service.Service, chatService: chat_service.Service, communityService: community_service.Service,
   messageService: message_service.Service, gifService: gif_service.Service,
   mailserversService: mailservers_service.Service): Controller =
   result = Controller()
@@ -43,6 +45,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.isCommunitySection = isCommunity
   result.events = events
   result.settingsService = settingsService
+  result.nodeConfigurationService = nodeConfigurationService
   result.contactService = contactService
   result.chatService = chatService
   result.communityService = communityService
@@ -112,14 +115,14 @@ proc init*(self: Controller) =
     var args = ChatUpdateArgs(e)
     for chat in args.chats:
       let belongsToCommunity = chat.communityId.len > 0
-      self.delegate.addChatIfDontExist(chat, belongsToCommunity, self.events, self.settingsService,
+      self.delegate.addChatIfDontExist(chat, belongsToCommunity, self.events, self.settingsService, self.nodeConfigurationService,
         self.contactService, self.chatService, self.communityService, self.messageService, self.gifService,
         self.mailserversService, setChatAsActive = false)
 
   self.events.on(SIGNAL_CHAT_CREATED) do(e: Args):
     var args = CreatedChatArgs(e)
     let belongsToCommunity = args.chat.communityId.len > 0
-    self.delegate.addChatIfDontExist(args.chat, belongsToCommunity, self.events, self.settingsService,
+    self.delegate.addChatIfDontExist(args.chat, belongsToCommunity, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService, self.gifService,
       self.mailserversService, setChatAsActive = true)
 
@@ -127,7 +130,7 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
       let args = CommunityChatArgs(e)
       let belongsToCommunity = args.chat.communityId.len > 0
-      self.delegate.addChatIfDontExist(args.chat, belongsToCommunity, self.events, self.settingsService,
+      self.delegate.addChatIfDontExist(args.chat, belongsToCommunity, self.events, self.settingsService, self.nodeConfigurationService,
         self.contactService, self.chatService, self.communityService, self.messageService, self.gifService,
         self.mailserversService, setChatAsActive = true)
 
@@ -291,14 +294,14 @@ proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
 proc createPublicChat*(self: Controller, chatId: string) =
   let response = self.chatService.createPublicChat(chatId)
   if(response.success):
-    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService,
+    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService,
       self.gifService, self.mailserversService)
 
 proc createOneToOneChat*(self: Controller, communityID: string, chatId: string, ensName: string) =
   let response = self.chatService.createOneToOneChat(communityID, chatId, ensName)
   if(response.success):
-    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService,
+    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService,
       self.gifService, self.mailserversService)
 
@@ -321,7 +324,7 @@ proc clearChatHistory*(self: Controller, chatId: string) =
   self.chatService.clearChatHistory(chatId)
 
 proc getCurrentFleet*(self: Controller): string =
-  return self.settingsService.getFleetAsString()
+  return self.nodeConfigurationService.getFleetAsString()
 
 proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
   return self.contactService.getContactsByGroup(group)
@@ -368,14 +371,14 @@ proc makeAdmin*(self: Controller, communityID: string, chatId: string, pubKey: s
 proc createGroupChat*(self: Controller, communityID: string, groupName: string, pubKeys: seq[string]) =
   let response = self.chatService.createGroupChat(communityID, groupName, pubKeys)
   if(response.success):
-    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService,
+    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService,
       self.gifService, self.mailserversService)
 
 proc joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: string, adminPK: string) =
   let response = self.chatService.createGroupChatFromInvitation(groupName, chatId, adminPK)
   if(response.success):
-    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService,
+    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService,
       self.gifService, self.mailserversService)
 

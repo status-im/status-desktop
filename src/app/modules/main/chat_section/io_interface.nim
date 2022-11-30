@@ -1,6 +1,7 @@
 import NimQml
 
 import ../../../../app_service/service/settings/service as settings_service
+import ../../../../app_service/service/node_configuration/service as node_configuration_service
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
@@ -22,6 +23,7 @@ method load*(self: AccessInterface,
   channelGroup: ChannelGroupDto,
   events: EventEmitter,
   settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
   contactService: contact_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -72,6 +74,7 @@ method addChatIfDontExist*(self: AccessInterface,
     belongsToCommunity: bool,
     events: EventEmitter,
     settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
     contactService: contact_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,

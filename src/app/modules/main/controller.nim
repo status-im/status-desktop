@@ -7,6 +7,7 @@ import ../../core/eventemitter
 import ../../core/notifications/notifications_manager
 import ../../../app_service/common/types
 import ../../../app_service/service/settings/service as settings_service
+import ../../../app_service/service/node_configuration/service as node_configuration_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service as accounts_service
 import ../../../app_service/service/chat/service as chat_service
@@ -31,6 +32,7 @@ type
     delegate: io_interface.AccessInterface
     events: EventEmitter
     settingsService: settings_service.Service
+    nodeConfigurationService: node_configuration_service.Service
     keychainService: keychain_service.Service
     accountsService: accounts_service.Service
     chatService: chat_service.Service
@@ -50,6 +52,7 @@ proc setActiveSection*(self: Controller, sectionId: string)
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
   keychainService: keychain_service.Service,
   accountsService: accounts_service.Service,
   chatService: chat_service.Service,
@@ -66,6 +69,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.delegate = delegate
   result.events = events
   result.settingsService = settingsService
+  result.nodeConfigurationService = nodeConfigurationService
   result.keychainService = keychainService
   result.accountsService = accountsService
   result.chatService = chatService
@@ -110,6 +114,7 @@ proc init*(self: Controller) =
       args.community,
       self.events,
       self.settingsService,
+      self.nodeConfigurationService,
       self.contactsService,
       self.chatService,
       self.communityService,
@@ -125,6 +130,7 @@ proc init*(self: Controller) =
       args.community,
       self.events,
       self.settingsService,
+      self.nodeConfigurationService,
       self.contactsService,
       self.chatService,
       self.communityService,
@@ -144,6 +150,7 @@ proc init*(self: Controller) =
       args.community,
       self.events,
       self.settingsService,
+      self.nodeConfigurationService,
       self.contactsService,
       self.chatService,
       self.communityService,
@@ -161,6 +168,7 @@ proc init*(self: Controller) =
       args.community,
       self.events,
       self.settingsService,
+      self.nodeConfigurationService,
       self.contactsService,
       self.chatService,
       self.communityService,

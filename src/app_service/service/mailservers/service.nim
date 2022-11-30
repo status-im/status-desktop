@@ -108,7 +108,7 @@ QtObject:
     self.initMailservers()
     self.fetchMailservers()
 
-    let fleet = self.settingsService.getFleet()
+    let fleet = self.nodeConfigurationService.getFleet()
     if TEST_PEER_ENR != "":
       var found = false
       for mailserver in self.mailservers:
@@ -188,7 +188,7 @@ QtObject:
   proc initMailservers(self: Service) =
     let wakuVersion = self.nodeConfigurationService.getWakuVersion()
     let isWakuV2 = wakuVersion == WAKU_VERSION_2
-    let fleet = self.settingsService.getFleet()
+    let fleet = self.nodeConfigurationService.getFleet()
     let mailservers = self.fleetConfiguration.getMailservers(fleet, isWakuV2)
 
     for (name, nodeAddress) in mailservers.pairs():
@@ -214,7 +214,7 @@ QtObject:
 
   proc saveMailserver*(self: Service, name: string, nodeAddress: string): string =
     try:
-      let fleet = self.settingsService.getFleetAsString()
+      let fleet = self.nodeConfigurationService.getFleetAsString()
       let id = $genUUID()
 
       let response = status_mailservers.saveMailserver(id, name, nodeAddress, fleet)
@@ -231,7 +231,7 @@ QtObject:
 
   proc enableAutomaticSelection*(self: Service, value: bool) =
     if value:
-      let fleet = self.settingsService.getFleet()
+      let fleet = self.nodeConfigurationService.getFleet()
       discard self.settingsService.unpinMailserver(fleet)
     else:
       discard # TODO: handle pin mailservers in status-go (in progress)
@@ -244,5 +244,5 @@ QtObject:
       #mailserverWorker.start(task)
 
   proc onActiveMailserverResult*(self: Service, response: string) {.slot.} =
-    let fleet = self.settingsService.getFleet()
+    let fleet = self.nodeConfigurationService.getFleet()
     discard self.settingsService.pinMailserver(response, fleet)
