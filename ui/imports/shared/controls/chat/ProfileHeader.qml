@@ -27,7 +27,7 @@ Item {
     property bool isContact: false
     property bool isCurrentUser
     property bool userIsEnsVerified
-    property rect cropRect: undefined
+    property rect cropRect
 
     property int imageSize: ProfileHeader.ImageSize.Compact
     property bool displayNameVisible: true
@@ -83,7 +83,6 @@ Item {
                 imageWidth: d.getSize(36, 64, 160)
                 imageHeight: imageWidth
                 showRing: !root.userIsEnsVerified
-                cropRect: root.cropRect
             }
 
             StatusRoundButton {

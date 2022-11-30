@@ -20,8 +20,6 @@ Loader {
     property bool interactive: true
     property bool disabled: false
 
-    property rect cropRect: undefined
-
     property int colorId: Utils.colorIdForPubkey(pubkey)
     property var colorHash: Utils.getColorHashAsJson(pubkey)
 
@@ -36,7 +34,6 @@ Loader {
             name: root.image
             charactersLen: 2
             isImage: true
-            cropRect: root.cropRect
         }
         ringSettings {
             ringSpecModel: root.showRing ? root.colorHash : undefined
