@@ -121,10 +121,10 @@ Item {
             spacing: 12
             StatusBaseText {
                 Layout.alignment: Qt.AlignRight
-                Layout.maximumWidth: 70
+                Layout.maximumWidth: 100
                 font.pixelSize: 10
                 color: Theme.palette.baseColor1
-                text: selectedAccount.address
+                text: StatusQUtils.Utils.elideText(selectedAccount.address, 6, 4).toUpperCase()
                 elide: Text.ElideMiddle
             }
             Repeater {

@@ -193,8 +193,7 @@ Item {
                                 try {
                                     let response = JSON.parse(txResult)
                                     if (!response.success) {
-                                        if (Utils.isInvalidPasswordMessage(response.result)) {
-                                            buyStickersModal.setSendTxError()
+                                        if (response.result.includes(Constants.walletSection.cancelledMessage)) {
                                             return
                                         }
                                         buyStickersModal.sendingError.text = response.result

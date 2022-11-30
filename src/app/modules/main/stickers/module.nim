@@ -11,6 +11,8 @@ import ../../../../app_service/service/wallet_account/service as wallet_account_
 
 export io_interface
 
+const cancelledRequest* = "cancelled"
+
 # Shouldn't be public ever, user only within this module.
 type TmpBuyStickersTransactionDetails = object
   packId: string
@@ -101,21 +103,25 @@ method authenticateAndBuy*(self: Module, packId: string, address: string, gas: s
   ##################################
 
 method onUserAuthenticated*(self: Module, password: string) =
-  let responseTuple = self.controller.buy(
-    self.tmpBuyStickersTransactionDetails.packId,
-    self.tmpBuyStickersTransactionDetails.address,
-    self.tmpBuyStickersTransactionDetails.gas,
-    self.tmpBuyStickersTransactionDetails.gasPrice,
-    self.tmpBuyStickersTransactionDetails.maxPriorityFeePerGas,
-    self.tmpBuyStickersTransactionDetails.maxFeePerGas,
-    password,
-    self.tmpBuyStickersTransactionDetails.eip1559Enabled
-  )
-  let response = responseTuple.response
-  let success = responseTuple.success
-  if success:
-    self.view.stickerPacks.updateStickerPackInList(self.tmpBuyStickersTransactionDetails.packId, false, true)
-  self.view.transactionWasSent($(%*{"success": success, "result": response}))
+  if password.len == 0:
+    let response = %* {"success": false, "error": cancelledRequest}
+    self.view.transactionWasSent($response)
+  else:
+    let responseTuple = self.controller.buy(
+      self.tmpBuyStickersTransactionDetails.packId,
+      self.tmpBuyStickersTransactionDetails.address,
+      self.tmpBuyStickersTransactionDetails.gas,
+      self.tmpBuyStickersTransactionDetails.gasPrice,
+      self.tmpBuyStickersTransactionDetails.maxPriorityFeePerGas,
+      self.tmpBuyStickersTransactionDetails.maxFeePerGas,
+      password,
+      self.tmpBuyStickersTransactionDetails.eip1559Enabled
+    )
+    let response = responseTuple.response
+    let success = responseTuple.success
+    if success:
+      self.view.stickerPacks.updateStickerPackInList(self.tmpBuyStickersTransactionDetails.packId, false, true)
+    self.view.transactionWasSent($(%*{"success": success, "result": response}))
 
 method getInstalledStickerPacks*(self: Module): Table[string, StickerPackDto] =
   self.controller.getInstalledStickerPacks()
