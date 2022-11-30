@@ -69,23 +69,21 @@ Feature: Status Desktop Chat Basic Flows
         When the user clears chat history
         Then the chat is cleared
 
-	@mayfail
-	# TODO: Verification of gif sent fails. And also `tenor GIFs preview is enabled` step doesn't work. Review it.
     Scenario: The user can send a GIF
         Given the user opens app settings screen
         And the user opens the messaging settings
-        And tenor GIFs preview is enabled
-        When the user sends a GIF message
+        When the user activates the link preview if it is deactivated
+        And the user activates tenor GIFs preview
+        And the user opens the chat section
+        And the user sends a GIF message
         Then the GIF message is displayed
 
-    @mayfail
-	# TODO: It works standalone but when it runs as part of the sequence, the action of activates link preview doesn't work.
     Scenario Outline: The user can activate image unfurling
         Given the user sends a chat message "<image_url>"
 		And the image "<image_url>" is not unfurled in the chat
-		When the user opens app settings screen
+		And the user opens app settings screen
 		And the user opens the messaging settings
-		And the user activates link preview
+		When the user activates the link preview if it is deactivated
 		And the user activates image unfurling
 		And the user opens the chat section
 		Then the image "<image_url>" is unfurled in the chat

@@ -16,6 +16,7 @@ import string
 from wsgiref import validate
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
+from utils.ObjectAccess import *
 from .StatusMainScreen import MainScreenComponents
 from .StatusMainScreen import StatusMainScreen
 
@@ -48,6 +49,7 @@ class ENSScreen(Enum):
    
 class MessagingOptionScreen(Enum):
     ACTIVATE_OR_DEACTIVATE_LINK_PREVIEW: str = "displayMessageLinkPreviewItem"
+    LINK_PREVIEW_SWITCH: str = "linkPreviewSwitch"
     ACTIVATE_OR_DECTIVATE_IMAGE_UNFURLING: str = "imageUnfurlingItem"
     TENOR_GIFS_PREVIEW_SWITCH_ITEM: str = "tenorGifsPreviewSwitchItem"
     SCROLLVIEW: str = "settingsContentBase_ScrollView"
@@ -160,21 +162,26 @@ class SettingsScreen:
     def open_messaging_settings(self):
         click_obj_by_name(SidebarComponents.MESSAGING_ITEM.value)
 
-    def activate_link_preview(self):
+    # if link preview is activated do nothing
+    def activate_link_preview_if_dectivated(self):
         click_obj_by_name(SidebarComponents.MESSAGING_ITEM.value)
-        scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value, MessagingOptionScreen.ACTIVATE_OR_DEACTIVATE_LINK_PREVIEW.value)
-        click_obj_by_name(MessagingOptionScreen.ACTIVATE_OR_DEACTIVATE_LINK_PREVIEW.value)
+        # view can be scrolled down, we need to reset scroll
+        reset_scroll_obj_by_name(MessagingOptionScreen.SCROLLVIEW.value)
+        scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value, MessagingOptionScreen.LINK_PREVIEW_SWITCH.value)
+        switch = wait_and_get_obj(MessagingOptionScreen.LINK_PREVIEW_SWITCH.value)
+        if not switch.checked:
+            click_obj_by_name(MessagingOptionScreen.LINK_PREVIEW_SWITCH.value)
 
-    # Post condition: Messaging Settings and Link Preview are visible (@see open_messaging_settings and activate_link_preview)
+    # Post condition: Messaging Settings is active and Link Preview is activated (@see open_messaging_settings and activate_link_preview_if_dectivated)
     def activate_image_unfurling(self):
         scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value, MessagingOptionScreen.ACTIVATE_OR_DECTIVATE_IMAGE_UNFURLING.value)
         click_obj_by_name(MessagingOptionScreen.ACTIVATE_OR_DECTIVATE_IMAGE_UNFURLING.value)
 
-    # Post condition: Messaging Settings and Link Preview are visible (@see open_messaging_settings and activate_link_preview)
-    def check_tenor_gif_preview_is_enabled(self):
+    # Post condition: Messaging Settings is active and Link Preview is activated (@see open_messaging_settings and activate_link_preview_if_dectivated)
+    def the_user_activates_tenor_gif_preview(self):
+        click_obj_by_name(SidebarComponents.MESSAGING_ITEM.value)
         scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value, MessagingOptionScreen.TENOR_GIFS_PREVIEW_SWITCH_ITEM.value)
-        tenorSwitch = wait_and_get_obj(MessagingOptionScreen.TENOR_GIFS_PREVIEW_SWITCH_ITEM.value)
-        verify(tenorSwitch.enabled, "Tenor GIFs preview is enabled")
+        click_obj_by_name(MessagingOptionScreen.TENOR_GIFS_PREVIEW_SWITCH_ITEM.value)
 
     def toggle_test_networks(self):
         # needed cause if we do it immmediately the toggle doesn't work

@@ -89,6 +89,7 @@ generatedAccounts_ListView = {"container": statusDesktop_mainWindow, "objectName
 # Messaging Settings:
 settingsContentBase_ScrollView = {"container": statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
 displayMessageLinkPreviewItem = {"container": statusDesktop_mainWindow, "objectName": "displayMessageLinkPreviewsItem", "type": "StatusListItem"}
+linkPreviewSwitch = {"container": statusDesktop_mainWindow, "objectName": "MessagingView_showMessageLinksSwitch", "type": "StatusSwitch", "visible": True}
 imageUnfurlingItem = {"container": statusDesktop_mainWindow, "objectName": "imageUnfurlingItem", "type": "StatusListItem"}
 tenorGifsPreviewSwitchItem = {"container": statusDesktop_mainWindow, "objectName": "MessagingView_sitesListView_StatusListItem_tenor_gifs_subdomain", "type": "StatusListItem"}
 contacts_listItem_btn = {"container": statusDesktop_mainWindow, "objectName": "MessagingView_ContactsListItem_btn", "type": "StatusContactRequestsIndicatorListItem"}
