@@ -136,3 +136,10 @@ method discordImportProgressUpdated*(self: AccessInterface, communityId: string,
 
 method requestCancelDiscordCommunityImport*(self: AccessInterface, id: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method communityHistoryArchivesDownloadStarted*(self: AccessInterface, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityHistoryArchivesDownloadFinished*(self: AccessInterface, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+

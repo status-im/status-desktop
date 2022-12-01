@@ -74,6 +74,14 @@ proc init*(self: Controller) =
     let args = DiscordImportProgressArgs(e)
     self.delegate.discordImportProgressUpdated(args.communityId, args.communityName, args.communityImage, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped)
 
+  self.events.on(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_STARTED) do(e:Args):
+    let args = CommunityIdArgs(e)
+    self.delegate.communityHistoryArchivesDownloadStarted(args.communityId)
+
+  self.events.on(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_FINISHED) do(e:Args):
+    let args = CommunityIdArgs(e)
+    self.delegate.communityHistoryArchivesDownloadFinished(args.communityId)
+
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
 

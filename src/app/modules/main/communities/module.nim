@@ -252,6 +252,12 @@ method communityMuted*(self: Module, communityId: string, muted: bool) =
 method communityAccessRequested*(self: Module, communityId: string) =
   self.view.communityAccessRequested(communityId)
 
+method communityHistoryArchivesDownloadStarted*(self: Module, communityId: string) =
+  self.view.setDownloadingCommunityHistoryArchives(true)
+
+method communityHistoryArchivesDownloadFinished*(self: Module, communityId: string) =
+  self.view.setDownloadingCommunityHistoryArchives(false)
+
 method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[DiscordCategoryDto], channels: seq[DiscordChannelDto], oldestMessageTimestamp: int, errors: Table[string, DiscordImportError], errorsCount: int) =
 
   for filePath in errors.keys:
