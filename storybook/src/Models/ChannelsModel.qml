@@ -4,9 +4,9 @@ ListModel {
     Component.onCompleted:
         append([
                    {
-                       key: "wellcome",
+                       key: "welcome",
                        iconSource: ModelsData.tokens.inch,
-                       name: "#wellcome"
+                       name: "#welcome"
                    },
                    {
                        key: "general",

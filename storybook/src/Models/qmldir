@@ -5,3 +5,5 @@ UsersModel 1.0 UsersModel.qml
 TokensModel 1.0 TokensModel.qml
 CollectiblesModel 1.0 CollectiblesModel.qml
 ChannelsModel 1.0 ChannelsModel.qml
+PermissionsModel 1.0 PermissionsModel.qml
+TokensCollectiblesIconsModel 1.0 TokensCollectiblesIconsModel.qml
