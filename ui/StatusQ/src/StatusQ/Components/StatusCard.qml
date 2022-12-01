@@ -183,7 +183,7 @@ Rectangle {
                 id: basicInput
                 StatusBaseText {
                     id: secondaryLabel
-                    Layout.maximumWidth: root.width - 12
+                    Layout.maximumWidth: root.width - cardIcon.width - errorIcon.width - 24
                     elide: Text.ElideRight
                     font.pixelSize: 13
                     font.weight: Font.Medium

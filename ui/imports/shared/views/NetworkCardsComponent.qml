@@ -31,6 +31,7 @@ Item {
         }
     }
     property bool interactive: true
+    property bool showPreferredChains: false
     property var weiToEth: function(wei) {}
 
     property var reCalculateSuggestedRoute: function() {}
@@ -49,15 +50,18 @@ Item {
                 toNetworksRepeater.itemAt(i).routeOnNetwork = 0
             }
         }
+
+        function draw() {
+            canvas.clear()
+            canvas.requestPaint()
+        }
     }
+
+    onVisibleChanged: if(visible) d.draw()
+    onBestRoutesChanged: d.draw()
 
     width: 410
     height: visible ? networkCardsLayout.height : 0
-
-    onBestRoutesChanged: {
-        canvas.clear()
-        canvas.requestPaint()
-    }
 
     RowLayout {
         id: networkCardsLayout
@@ -131,12 +135,12 @@ Item {
                     objectName: model.chainId
                     property int routeOnNetwork: 0
                     property double amountToReceive: 0
+                    property bool preferred: store.preferredChainIds.includes(model.chainId)
                     primaryText: model.chainName
                     secondaryText: LocaleUtils.numberToLocaleString(amountToReceive)
-                    tertiaryText: ""
-                    // To-do preferred in not something that is supported yet
-                    state: root.errorMode ? "error" : "default"
-                    // opacity: preferred ? 1 : 0
+                    tertiaryText: state === "unpreferred"  ? qsTr("UNPREFERRED") : ""
+                    state: root.errorMode ? "error" : !preferred ? "unpreferred" : "default"
+                    opacity: preferred || showPreferredChains ? 1 : 0
                     cardIcon.source: Style.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
                     advancedMode: root.customMode
@@ -150,9 +154,20 @@ Item {
                             root.reCalculateSuggestedRoute()
                     }
                     onVisibleChanged: {
-                        if(visible)
+                        if(visible) {
                             disabled = store.disabledChainIdsToList.includes(model.chainId)
+                            preferred = store.preferredChainIds.includes(model.chainId)
+                        }
                     }
+                    onOpacityChanged: {
+                        if(opacity === 1) {
+                            disabled = store.disabledChainIdsToList.includes(model.chainId)
+                        } else {
+                            if(opacity === 0 && routeOnNetwork > 0)
+                                root.reCalculateSuggestedRoute()
+                        }
+                    }
+
                     // To-do needed for custom view
 //                    onAdvancedInputTextChanged: {
 //                        if(selectedNetwork && selectedNetwork.chainName === model.chainName)
@@ -217,11 +232,12 @@ Item {
                     fromN.routeOnNetwork += 1
                     toN.routeOnNetwork += 1
                     d.thereIsApossibleRoute = true
+                    let routeColor = toN.preferred ? '#627EEA' : Theme.palette.pinColor1
                     StatusQUtils.Utils.drawArrow(ctx, fromN.x + fromN.width,
                                                  fromN.y + fromN.cardIconPosition + yOffsetFrom,
                                                  toNetworksLayout.x + toN.x,
                                                  toN.y + toN.cardIconPosition + yOffsetTo,
-                                                 '#627EEA', xOffset)
+                                                 routeColor, xOffset)
                 }
             }
         }

@@ -83,6 +83,12 @@ const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
     let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, arg.preferredChainIDs, arg.priority, arg.sendType).result
 
     var bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
+
+    # retry along with unpreferred chains incase no route is possible with preferred chains
+    if(bestPaths.len == 0 and arg.preferredChainIDs.len > 0):
+      let response = eth.suggestedRoutes(arg.account, amountAsHex, arg.token, arg.disabledFromChainIDs, arg.disabledToChainIDs, @[], arg.priority, arg.sendType).result
+      bestPaths = response["Best"].getElems().map(x => x.toTransactionPathDto())
+
     bestPaths.sort(sortAsc[TransactionPathDto])
     let output = %*{
       "suggestedRoutes": SuggestedRoutesDto(

@@ -121,4 +121,30 @@ QtObject {
     function plainText(text) {
         return globalUtils.plainText(text)
     }
+
+    property var preferredChainIds: []
+
+    function addPreferredChain(chainID) {
+        if(!chainID)
+            return
+
+        if(preferredChainIds.includes(chainID))
+            return
+
+        preferredChainIds.push(chainID)
+    }
+
+    function getMainnetChainId() {
+        return networksModule.getMainnetChainId()
+    }
+
+    function addUnpreferredChainsToDisabledChains() {
+        let mainnetChainId = getMainnetChainId()
+        for(var i = 0; i < allNetworks.count; i++) {
+            let chainId = allNetworks.rowData(i, "chainId") * 1
+            if(mainnetChainId !== chainId) {
+                addRemoveDisabledToChain(chainId, true)
+            }
+        }
+    }
 }

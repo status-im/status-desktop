@@ -146,3 +146,6 @@ QtObject:
   QtProperty[QVariant] layer2Proxy:
     read = getLayer2Proxy
     notify = layer2ProxyChanged
+
+  proc getMainnetChainId*(self: View): int {.slot.} =
+    return self.layer1.getLayer1Network(self.areTestNetworksEnabled)
