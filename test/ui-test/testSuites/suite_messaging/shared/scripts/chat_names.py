@@ -7,7 +7,7 @@ chatView_lastChatText_Text = {"container": chatView_chatLogView_lastMsg_MessageV
 chatView_editMessageInputComponent = {"container": statusDesktop_mainWindow, "objectName": "editMessageInput", "type": "StatusChatInput", "visible": True}
 chatView_editMessageInputTextArea = {"container": chatView_editMessageInputComponent, "objectName": "messageInputField", "type": "TextArea", "visible": True}
 chatButtonsPanelConfirmDeleteMessageButton_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "chatButtonsPanelConfirmDeleteMessageButton", "type": "StatusButton"}
-mark_as_Read_StatusMenuItemDelegate = {"container": statusDesktop_mainWindow_overlay, "objectName": "chatMarkAsReadMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
+mark_as_Read_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "chatMarkAsReadMenuItem", "type": "StatusMenuItem", "visible": True}
 chat_Input_Stickers_Button = {"container": statusDesktop_mainWindow, "objectName": "statusChatInputStickersButton", "type": "StatusFlatRoundButton", "visible": True}
 chatView_SuggestionBoxPanel ={"container": statusDesktop_mainWindow, "objectName": "suggestionsBox", "type": "SuggestionBoxPanel"}
 chatView_suggestion_ListView ={"container": chatView_SuggestionBoxPanel, "objectName": "suggestionBoxList", "type": "StatusListView"}
@@ -22,9 +22,9 @@ chatView_unfurledLinkComponent_linkImage = {"container": chatView_log, "objectNa
 chatView_LinksMessageView_enableBtn = {"container": chatView_log, "objectName": "LinksMessageView_enableBtn", "type": "StatusFlatButton", "visible": True}
 
 # More options menu
-clearHistoryMenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "clearHistoryMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
-editNameAndImageMenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "editNameAndImageMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
-leaveChatMenuItem = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "deleteOrLeaveMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
+clearHistoryMenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "clearHistoryMenuItem", "type": "StatusMenuItem", "visible": True}
+editNameAndImageMenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "editNameAndImageMenuItem", "type": "StatusMenuItem", "visible": True}
+leaveChatMenuItem = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "deleteOrLeaveMenuItem", "type": "StatusMenuItem", "visible": True}
 
 # group chat edit popup
 groupChatEdit_main = {"container": statusDesktop_mainWindow_overlay, "objectName": "groupChatEdit_main", "type": "StatusDialog", "visible": True}

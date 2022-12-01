@@ -35,10 +35,10 @@ StatusModal {
 
         onClicked: contextMenu.popup(-contextMenu.width+width, height + 4)
 
-        StatusPopupMenu {
+        StatusMenu {
             id: contextMenu
             width: 230
-            StatusMenuItem {
+            StatusAction {
                 icon.name: "download"
                 text: qsTr("Access existing community")
                 onTriggered: {

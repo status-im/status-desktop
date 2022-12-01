@@ -247,20 +247,20 @@ Item {
         }
     }
 
-    StatusPopupMenu {
+    StatusMenu {
         id: imageEditMenu
 
-        StatusMenuItem {
+        StatusAction {
             text: qsTr("Upload a file")
-            icon.name: "download"
-            iconRotation: 180
+            assetSettings.name: "download"
+            assetSettings.rotation: 180
             onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
         }
 
-        StatusMenuItem {
+        StatusAction {
             text: qsTr("Remove image")
-            type: StatusMenuItem.Danger
-            icon.name: "delete"
+            type: StatusAction.Danger
+            assetSettings.name: "delete"
             onTriggered: root.icon = ""
         }
     }

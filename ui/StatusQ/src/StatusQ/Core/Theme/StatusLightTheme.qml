@@ -124,7 +124,7 @@ ThemePalette {
         property color backgroundColor: white
     }
 
-    property QtObject statusPopupMenu: QtObject {
+    property QtObject statusMenu: QtObject {
         property color backgroundColor: white
         property color hoverBackgroundColor: baseColor2
         property color separatorColor: baseColor2

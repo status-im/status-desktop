@@ -26,7 +26,7 @@ StatusListView {
     header: Rectangle {
         visible: root.isHeaderVisible
         z: 3 // Above delegate (z=1) and above section.delegate (z = 2)
-        color: Theme.palette.statusPopupMenu.backgroundColor
+        color: Theme.palette.statusMenu.backgroundColor
         width: root.width
         height: root.isHeaderVisible ? columnHeader.implicitHeight + 2 * columnHeader.anchors.topMargin : 0
         ColumnLayout {

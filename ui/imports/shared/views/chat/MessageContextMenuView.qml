@@ -15,7 +15,7 @@ import shared.status 1.0
 import shared.controls.chat 1.0
 import shared.controls.chat.menuItems 1.0
 
-StatusPopupMenu {
+StatusMenu {
     id: root
 
     property var store
@@ -196,7 +196,7 @@ StatusPopupMenu {
         visible: !root.isEmoji && !root.hideEmojiPicker && !pinnedPopup
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: copyImageAction
         text: qsTr("Copy image")
         onTriggered: {
@@ -209,7 +209,7 @@ StatusPopupMenu {
         enabled: root.isRightClickOnImage && !root.pinnedPopup
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: downloadImageAction
         text: qsTr("Download image")
         onTriggered: {
@@ -247,7 +247,7 @@ StatusPopupMenu {
         }
     }
 
-    StatusMenuItem {
+    StatusAction {
         text: qsTr("Verify Identity")
         icon.name: "checkmark-circle"
         enabled: root.isProfile && !root.isMe && root.isContact
@@ -260,7 +260,7 @@ StatusPopupMenu {
         }
     }
 
-    StatusMenuItem {
+    StatusAction {
          text: isVerificationRequestSent ||
             root.incomingVerificationStatus === Constants.verificationStatus.verified ?
             qsTr("ID Request Pending....") :
@@ -281,7 +281,7 @@ StatusPopupMenu {
         }
     }
 
-    StatusMenuItem {
+    StatusAction {
         text: qsTr("Rename")
         icon.name: "edit_pencil"
         enabled: root.isProfile && !root.isMe
@@ -292,7 +292,7 @@ StatusPopupMenu {
         }
     }
 
-    StatusMenuItem {
+    StatusAction {
         text: qsTr("Unblock User")
         icon.name: "remove-circle"
         enabled: root.isProfile && !root.isMe && root.isBlockedContact
@@ -303,16 +303,16 @@ StatusPopupMenu {
         visible: blockMenuItem.enabled || markUntrustworthyMenuItem.enabled || removeUntrustworthyMarkMenuItem.enabled
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: markUntrustworthyMenuItem
         text: qsTr("Mark as Untrustworthy")
         icon.name: "warning"
-        type: StatusMenuItem.Type.Danger
+        type: StatusAction.Type.Danger
         enabled: root.isProfile && !root.isMe && root.userTrustIsUnknown
         onTriggered: root.store.contactsStore.markUntrustworthy(root.selectedUserPublicKey)
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: removeUntrustworthyMarkMenuItem
         text: qsTr("Remove Untrustworthy Mark")
         icon.name: "warning"
@@ -320,16 +320,16 @@ StatusPopupMenu {
         onTriggered: root.store.contactsStore.removeTrustStatus(root.selectedUserPublicKey)
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: blockMenuItem
         text: qsTr("Block User")
         icon.name: "cancel"
-        type: StatusMenuItem.Type.Danger
+        type: StatusAction.Type.Danger
         enabled: root.isProfile && !root.isMe && !root.isBlockedContact
         onTriggered: Global.blockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: replyToMenuItem
         text: qsTr("Reply to")
         icon.name: "chat"
@@ -344,7 +344,7 @@ StatusPopupMenu {
                   !root.isRightClickOnImage)
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: editMessageAction
         text: qsTr("Edit message")
         onTriggered: {
@@ -360,7 +360,7 @@ StatusPopupMenu {
                  !root.isRightClickOnImage
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: copyMessageIdAction
         text: qsTr("Copy Message Id")
         icon.name: "chat"
@@ -371,7 +371,7 @@ StatusPopupMenu {
         }
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: pinAction
         text: {
             if (root.pinnedMessage) {
@@ -428,7 +428,7 @@ StatusPopupMenu {
                   pinAction.enabled)
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: deleteMessageAction
         enabled: root.isMyMessage &&
                  !root.isProfile &&
@@ -450,10 +450,10 @@ StatusPopupMenu {
             }
         }
         icon.name: "delete"
-        type: StatusMenuItem.Type.Danger
+        type: StatusAction.Type.Danger
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: jumpToAction
         enabled: root.pinnedPopup && !root.isProfile
         text: qsTr("Jump to")

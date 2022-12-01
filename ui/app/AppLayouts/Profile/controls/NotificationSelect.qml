@@ -41,27 +41,27 @@ Item {
         }
     }
 
-    StatusPopupMenu {
+    StatusMenu {
         id: selectMenu
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         width: parent.width
         clip: true
 
-        StatusMenuItem {
+        StatusAction {
             text: d.sendAlertsText
             onTriggered: {
                 root.sendAlertsClicked()
             }
         }
 
-        StatusMenuItem {
+        StatusAction {
             text: d.deliverQuietlyText
             onTriggered: {
                 root.deliverQuietlyClicked()
             }
         }
 
-        StatusMenuItem {
+        StatusAction {
             text: d.turnOffText
             onTriggered: {
                 root.turnOffClicked()

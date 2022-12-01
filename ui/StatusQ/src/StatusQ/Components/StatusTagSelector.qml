@@ -367,7 +367,7 @@ Item {
             anchors.fill: parent
             anchors.margins: 8
             visible: (root.sortedList.count > 0)
-            color: Theme.palette.statusPopupMenu.backgroundColor
+            color: Theme.palette.statusMenu.backgroundColor
             radius: 8
             layer.enabled: true
             layer.effect: DropShadow {

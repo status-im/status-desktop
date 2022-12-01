@@ -249,7 +249,7 @@ ColumnLayout {
                 implicitWidth: customHeaderText.width * 2
 
                 border.width: 2
-                color: Theme.palette.statusPopupMenu.hoverBackgroundColor
+                color: Theme.palette.statusMenu.hoverBackgroundColor
 
                 StatusBaseText {
                     id: customHeaderText
@@ -263,7 +263,7 @@ ColumnLayout {
                 implicitWidth: customHeaderText.width * 2
 
                 border.width: 2
-                color: Theme.palette.statusPopupMenu.hoverBackgroundColor
+                color: Theme.palette.statusMenu.hoverBackgroundColor
 
                 StatusBaseText {
                     id: customFooter

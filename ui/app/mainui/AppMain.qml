@@ -366,7 +366,7 @@ Item {
                     changeAppSectionBySectionId(model.id)
                 }
 
-                popupMenu: StatusPopupMenu {
+                popupMenu: StatusMenu {
                     id: communityContextMenu
 
                     property var chatCommunitySectionModule
@@ -379,7 +379,7 @@ Item {
 
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Invite People")
                         icon.name: "share-ios"
                         enabled: model.canManageUsers
@@ -390,7 +390,7 @@ Item {
                         }
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("View Community")
                         icon.name: "group-chat"
                         onTriggered: Global.openPopup(communityProfilePopup, {
@@ -402,10 +402,10 @@ Item {
 
                     StatusMenuSeparator {}
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Leave Community")
                         icon.name: "arrow-left"
-                        type: StatusMenuItem.Type.Danger
+                        type: StatusAction.Type.Danger
                         onTriggered: communityContextMenu.chatCommunitySectionModule.leaveCommunity()
                     }
                 }

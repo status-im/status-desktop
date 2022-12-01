@@ -167,7 +167,7 @@ Item {
         }
     }
 
-    StatusPopupMenu {
+    StatusMenu {
         id: adminPopupMenu
         enabled: communityData.amISectionAdmin
 
@@ -175,14 +175,14 @@ Item {
 
         onClosed: adminPopupMenu.showInviteButton = false
 
-        StatusMenuItem {
+        StatusAction {
             objectName: "createCommunityChannelBtn"
             text: qsTr("Create channel")
             icon.name: "channel"
             onTriggered: Global.openPopup(createChannelPopup)
         }
 
-        StatusMenuItem {
+        StatusAction {
             objectName: "createCommunityCategoryBtn"
             text: qsTr("Create category")
             icon.name: "channel-category"
@@ -193,7 +193,7 @@ Item {
             visible: invitePeopleBtn.enabled
         }
 
-        StatusMenuItem {
+        StatusAction {
             id: invitePeopleBtn
             text: qsTr("Invite people")
             icon.name: "share-ios"
@@ -253,15 +253,15 @@ Item {
                 categoryId: id
             })
 
-            popupMenu: StatusPopupMenu {
-                StatusMenuItem {
+            popupMenu: StatusMenu {
+                StatusAction {
                     text: qsTr("Create channel")
                     icon.name: "channel"
                     enabled: communityData.amISectionAdmin
                     onTriggered: Global.openPopup(createChannelPopup)
                 }
 
-                StatusMenuItem {
+                StatusAction {
                     text: qsTr("Create category")
                     icon.name: "channel-category"
                     enabled: communityData.amISectionAdmin
@@ -270,7 +270,7 @@ Item {
 
                 StatusMenuSeparator {}
 
-                StatusMenuItem {
+                StatusAction {
                     text: qsTr("Invite people")
                     icon.name: "share-ios"
                     enabled: communityData.canManageUsers
@@ -282,7 +282,7 @@ Item {
                 }
             }
 
-            categoryPopupMenu: StatusPopupMenu {
+            categoryPopupMenu: StatusMenu {
 
                 property var categoryItem
 
@@ -297,7 +297,7 @@ Item {
                     categoryItem = obj
                 }
 
-                StatusMenuItem {
+                StatusAction {
                     text: categoryItem.muted ? qsTr("Unmute category") : qsTr("Mute category")
                     icon.name: "notification"
                     onTriggered: {
@@ -309,7 +309,7 @@ Item {
                     }
                 }
 
-                StatusMenuItem {
+                StatusAction {
                     objectName: "editCategoryMenuItem"
                     enabled: communityData.amISectionAdmin
                     text: qsTr("Edit Category")
@@ -328,12 +328,12 @@ Item {
                     visible: communityData.amISectionAdmin
                 }
 
-                StatusMenuItem {
+                StatusAction {
                     objectName: "deleteCategoryMenuItem"
                     enabled: communityData.amISectionAdmin
                     text: qsTr("Delete Category")
                     icon.name: "delete"
-                    type: StatusMenuItem.Type.Danger
+                    type: StatusAction.Type.Danger
                     onTriggered: {
                         Global.openPopup(deleteCategoryConfirmationDialogComponent, {
                             title: qsTr("Delete %1 category").arg(categoryItem.name),

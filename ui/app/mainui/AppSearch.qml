@@ -41,7 +41,7 @@ Item {
 
     StatusSearchLocationMenu {
         id: searchPopupMenu
-        searchPopup: searchPopup
+        
         locationModel: appSearch.store.locationMenuModel
 
         onItemClicked: {
@@ -49,6 +49,22 @@ Item {
             searchPopup.forceActiveFocus()
             if(searchPopup.searchText !== "")
                 searchMessages(searchPopup.searchText)
+        }
+
+        onResetSearchSelection: {
+            searchPopup.resetSearchSelection()
+        }
+
+        onSetSearchSelection: {
+            searchPopup.setSearchSelection(text,
+                                            secondaryText,
+                                            imageSource,
+                                            isIdenticon,
+                                            iconName,
+                                            iconColor,
+                                            isUserIcon,
+                                            colorId,
+                                            colorHash)
         }
     }
 

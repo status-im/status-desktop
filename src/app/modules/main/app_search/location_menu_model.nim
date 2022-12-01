@@ -10,6 +10,7 @@ type
     IconName
     IconColor
     SubItems
+    HasSubItems
 
 QtObject:
   type
@@ -39,7 +40,8 @@ QtObject:
       ModelRole.ImageSource.int:"imageSource",
       ModelRole.IconName.int:"iconName",
       ModelRole.IconColor.int:"iconColor",
-      ModelRole.SubItems.int:"subItems"
+      ModelRole.SubItems.int:"subItems",
+      ModelRole.HasSubItems.int:"hasSubItems"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -65,6 +67,8 @@ QtObject:
       result = newQVariant(item.iconColor)
     of ModelRole.SubItems:
       result = newQVariant(item.subItems)
+    of ModelRole.HasSubItems:
+      result = newQVariant(not isNil(item.subItems) and item.subItems.rowCount(nil) > 0)
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

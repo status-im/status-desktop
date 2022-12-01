@@ -213,7 +213,7 @@ QtObject {
         property color hoverBackgroundColor
     }
 
-    property QtObject statusPopupMenu: QtObject {
+    property QtObject statusMenu: QtObject {
         property color backgroundColor
         property color hoverBackgroundColor
         property color separatorColor

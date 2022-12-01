@@ -113,8 +113,23 @@ StatusSectionLayout {
         }
         StatusSearchLocationMenu {
             id: searchPopupMenu
-            searchPopup: searchPopup
             locationModel: Models.optionsModel
+
+            onResetSearchSelection: {
+                searchPopup.resetSearchSelection()
+            }
+
+            onSetSearchSelection: {
+                searchPopup.setSearchSelection(text,
+                                               secondaryText,
+                                               imageSource,
+                                               isIdenticon,
+                                               iconName,
+                                               iconColor,
+                                               isUserIcon,
+                                               colorId,
+                                               colorHash)
+            }
         }
     }
 
@@ -134,21 +149,21 @@ StatusSectionLayout {
             chatInfoButton.asset.color: Theme.palette.miscColor6
             chatInfoButton.onClicked:  { chatInfoButtonClicked(); }
 
-            popupMenu: StatusPopupMenu {
+            popupMenu: StatusMenu {
 
-                StatusMenuItem {
+                StatusAction {
                     text: "Create channel"
                     icon.name: "channel"
                 }
 
-                StatusMenuItem {
+                StatusAction {
                     text: "Create category"
                     icon.name: "channel-category"
                 }
 
                 StatusMenuSeparator {}
 
-                StatusMenuItem {
+                StatusAction {
                     text: "Invite people"
                     icon.name: "share-ios"
                 }
@@ -178,7 +193,7 @@ StatusSectionLayout {
 
                 showCategoryActionButtons: true
 
-                categoryPopupMenu: StatusPopupMenu {
+                categoryPopupMenu: StatusMenu {
 
                     property string categoryId
 
@@ -186,72 +201,72 @@ StatusSectionLayout {
                         categoryId = id
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Mute Category"
                         icon.name: "notification"
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Mark as Read"
                         icon.name: "checkmark-circle"
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Edit Category"
                         icon.name: "edit"
                     }
 
                     StatusMenuSeparator {}
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Delete Category"
                         icon.name: "delete"
-                        type: StatusMenuItem.Type.Danger
+                        type: StatusAction.Type.Danger
                     }
                 }
 
-                chatListPopupMenu: StatusPopupMenu {
+                chatListPopupMenu: StatusMenu {
 
                     property string chatId
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Mute chat"
                         icon.name: "notification"
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Mark as Read"
                         icon.name: "checkmark-circle"
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Clear history"
                         icon.name: "close-circle"
                     }
 
                     StatusMenuSeparator {}
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Delete chat"
                         icon.name: "delete"
-                        type: StatusMenuItem.Type.Danger
+                        type: StatusAction.Type.Danger
                     }
                 }
 
-                popupMenu: StatusPopupMenu {
-                    StatusMenuItem {
+                popupMenu: StatusMenu {
+                    StatusAction {
                         text: "Create channel"
                         icon.name: "channel"
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Create category"
                         icon.name: "channel-category"
                     }
 
                     StatusMenuSeparator {}
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Invite people"
                         icon.name: "share-ios"
                     }

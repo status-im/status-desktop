@@ -32,7 +32,7 @@ QC.Popup {
     closePolicy: QC.Popup.CloseOnPressOutside | QC.Popup.CloseOnEscape
     background: Rectangle {
        id: border
-       color: Theme.palette.statusPopupMenu.backgroundColor
+       color: Theme.palette.statusMenu.backgroundColor
        radius: 8
        border.color: "transparent"
        layer.enabled: true

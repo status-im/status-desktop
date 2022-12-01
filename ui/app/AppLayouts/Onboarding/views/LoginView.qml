@@ -269,11 +269,9 @@ Item {
                 }
             }
 
-            StatusPopupMenu {
+            StatusMenu {
                 id: accountsPopup
-                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                 width: parent.width + Style.current.bigPadding
-                dim: false
 
                 SortFilterProxyModel {
                     id: proxyModel
@@ -285,46 +283,40 @@ Item {
                     }
                 }
 
-                Column {
-                    width: parent.width
+                Repeater {
+                    objectName: "LoginView_AccountsRepeater"
+                    model: proxyModel
 
-                    Repeater {
-                        objectName: "LoginView_AccountsRepeater"
-                        width: parent.width
-                        height: parent.height
-                        model: proxyModel
-
-                        delegate: AccountMenuItemPanel {
-                            label: model.username
-                            image: model.thumbnailImage
-                            colorId: model.colorId
-                            colorHash: model.colorHash
-                            keycardCreatedAccount: model.keycardCreatedAccount
-                            onClicked: {
-                                d.resetLogin()
-                                accountsPopup.close()
-                                const realIndex = proxyModel.mapToSource(index)
-                                root.startupStore.setSelectedLoginAccountByIndex(realIndex)
-                            }
+                    delegate: AccountMenuItemPanel {
+                        label: model.username
+                        image: model.thumbnailImage
+                        colorId: model.colorId
+                        colorHash: model.colorHash
+                        keycardCreatedAccount: model.keycardCreatedAccount
+                        onClicked: {
+                            d.resetLogin()
+                            accountsPopup.close()
+                            const realIndex = proxyModel.mapToSource(index)
+                            root.startupStore.setSelectedLoginAccountByIndex(realIndex)
                         }
                     }
+                }
 
-                    AccountMenuItemPanel {
-                        label: qsTr("Add new user")
-                        asset.name: "add"
-                        onClicked: {
-                            accountsPopup.close()
-                            root.startupStore.doTertiaryAction()
-                        }
+                AccountMenuItemPanel {
+                    label: qsTr("Add new user")
+                    asset.name: "add"
+                    onClicked: {
+                        accountsPopup.close()
+                        root.startupStore.doTertiaryAction()
                     }
+                }
 
-                    AccountMenuItemPanel {
-                        label: qsTr("Add existing Status user")
-                        asset.name: "wallet"
-                        onClicked: {
-                            accountsPopup.close()
-                            root.startupStore.doQuaternaryAction()
-                        }
+                AccountMenuItemPanel {
+                    label: qsTr("Add existing Status user")
+                    asset.name: "wallet"
+                    onClicked: {
+                        accountsPopup.close()
+                        root.startupStore.doQuaternaryAction()
                     }
                 }
             }

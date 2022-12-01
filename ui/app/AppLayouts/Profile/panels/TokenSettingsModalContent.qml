@@ -49,7 +49,7 @@ Item {
                     toggleVisibleClicked(chainId, address)
                 }
                 
-                StatusPopupMenu {
+                StatusMenu {
                     id: contextMenu
                     Action {
                         icon.name: "admin"

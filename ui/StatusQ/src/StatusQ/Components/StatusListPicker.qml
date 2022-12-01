@@ -238,7 +238,7 @@ Item {
         anchors.top: btn.bottom
         anchors.topMargin: 4
         visible: false
-        color: Theme.palette.statusPopupMenu.backgroundColor
+        color: Theme.palette.statusMenu.backgroundColor
         radius: 8
         layer.enabled: true
         layer.effect: DropShadow {
@@ -281,7 +281,7 @@ Item {
                 id: header
                 width: content.itemWidth
                 height: searchInput.height + 24
-                color: Theme.palette.statusPopupMenu.backgroundColor
+                color: Theme.palette.statusMenu.backgroundColor
                 z: 3 // Above delegate (z=1) and above section.delegate (z = 2)
 
                 StatusInput {

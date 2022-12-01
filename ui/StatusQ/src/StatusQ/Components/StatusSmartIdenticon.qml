@@ -19,7 +19,7 @@ Loader {
 
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
         initalAngleRad: 0
-        ringPxSize: Math.max(1.5, root.asset.width/ 24.0)
+        ringPxSize: root.asset.ringPxSize
         distinctiveColors: Theme.palette.identiconRingColors
     }
 
@@ -28,9 +28,12 @@ Loader {
 
     Component {
         id: roundedImage
+
         Item {
             width: root.asset.width
             height: root.asset.height
+
+
             StatusRoundedImage {
                 id: statusRoundImage
                 width: parent.width

@@ -11,7 +11,7 @@ import shared.controls.chat.menuItems 1.0
 import "../popups"
 import "../popups/community"
 
-StatusPopupMenu {
+StatusMenu {
     id: root
 
     property string currentFleet: ""
@@ -53,7 +53,7 @@ StatusPopupMenu {
         onTriggered: root.displayProfilePopup(root.chatId)
     }
 
-    StatusMenuItem {
+    StatusAction {
         text: root.amIChatAdmin ? qsTr("Add / remove from group") : qsTr("Add to group")
         icon.name: "add-to-dm"
         enabled: (root.chatType === Constants.chatType.privateGroupChat)
@@ -64,7 +64,7 @@ StatusPopupMenu {
         visible: root.chatType === Constants.chatType.oneToOne || root.chatType === Constants.chatType.privateGroupChat
     }
 
-    StatusMenuItem {
+    StatusAction {
         objectName: "editNameAndImageMenuItem"
         text: qsTr("Edit name and image")
         icon.name: "edit_pencil"
@@ -98,7 +98,7 @@ StatusPopupMenu {
         }
     }
 
-    StatusMenuItem {
+    StatusAction {
         objectName: "chatMarkAsReadMenuItem"
         text: qsTr("Mark as Read")
         icon.name: "checkmark-circle"
@@ -108,32 +108,32 @@ StatusPopupMenu {
     }
 
     //TODO uncomment when implemented
-//    StatusPopupMenu {
+//    StatusMenu {
 //        title: qsTr("Fetch messages")
 //        enabled: (root.chatType === Constants.chatType.oneToOne ||
 //                  root.chatType === Constants.chatType.privateGroupChat)
-//        StatusMenuItem {
+//        StatusAction {
 //            text: "Last 24 hours"
 //            onTriggered: {
 //                root.fetchMoreMessages();
 //            }
 //        }
 
-//        StatusMenuItem {
+//        StatusAction {
 //            text: "Last 2 days"
 //            onTriggered: {
 
 //            }
 //        }
 
-//        StatusMenuItem {
+//        StatusAction {
 //            text: "Last 3 days"
 //            onTriggered: {
 
 //            }
 //        }
 
-//        StatusMenuItem {
+//        StatusAction {
 //            text: "Last 7 days"
 //            onTriggered: {
 
@@ -141,7 +141,7 @@ StatusPopupMenu {
 //        }
 //    }
 
-    StatusMenuItem {
+    StatusAction {
         objectName: "clearHistoryMenuItem"
         text: qsTr("Clear History")
         icon.name: "close-circle"
@@ -150,7 +150,7 @@ StatusPopupMenu {
         }
     }
 
-    StatusMenuItem {
+    StatusAction {
         objectName: "editChannelMenuItem"
         text: qsTr("Edit Channel")
         icon.name: "edit"
@@ -188,7 +188,7 @@ StatusPopupMenu {
         }
     }
 
-    StatusMenuItem {
+    StatusAction {
         text: qsTr("Download")
         enabled: localAccountSensitiveSettings.downloadChannelMessagesEnabled
         icon.name: "download"
@@ -199,7 +199,7 @@ StatusPopupMenu {
         visible: deleteOrLeaveMenuItem.enabled
     }
 
-    StatusMenuItem {
+    StatusAction {
         objectName: "deleteOrLeaveMenuItem"
         id: deleteOrLeaveMenuItem
         text: {
@@ -216,7 +216,7 @@ StatusPopupMenu {
         icon.name: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? "delete" : "arrow-left"
         icon.width: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? 18 : 14
 
-        type: StatusMenuItem.Type.Danger
+        type: StatusAction.Type.Danger
         onTriggered: {
             if (root.chatType === Constants.chatType.privateGroupChat) {
                 root.leaveChat(root.chatId);

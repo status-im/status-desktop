@@ -88,7 +88,7 @@ StatusListItem {
         }
     ]
 
-    StatusPopupMenu {
+    StatusMenu {
         id: editDeleteMenu
         property string contactName
         property string contactAddress
@@ -104,7 +104,7 @@ StatusListItem {
             contactAddress = "";
             storeFavourite = false;
         }
-        StatusMenuItem {
+        StatusAction {
             text: qsTr("Edit")
             objectName: "editroot"
             assetSettings.name: "pencil-outline"
@@ -119,9 +119,9 @@ StatusListItem {
             }
         }
         StatusMenuSeparator { }
-        StatusMenuItem {
+        StatusAction {
             text: qsTr("Delete")
-            type: StatusMenuItem.Type.Danger
+            type: StatusAction.Type.Danger
             assetSettings.name: "delete"
             objectName: "deleteSavedAddress"
             onTriggered: {

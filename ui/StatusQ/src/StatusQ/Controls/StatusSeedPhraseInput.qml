@@ -196,14 +196,14 @@ Item {
         anchors.topMargin: 4
         visible: ((seedSuggestionsList.count > 0) && seedWordInput.input.edit.activeFocus)
         Rectangle {
-            id: statusPopupMenuBackgroundContent
+            id: statusMenuBackgroundContent
             anchors.fill: parent
-            color: Theme.palette.statusPopupMenu.backgroundColor
+            color: Theme.palette.statusMenu.backgroundColor
             radius: 8
             layer.enabled: true
             layer.effect: DropShadow {
                 anchors.fill: parent
-                source: statusPopupMenuBackgroundContent
+                source: statusMenuBackgroundContent
                 horizontalOffset: 0
                 verticalOffset: 4
                 radius: 12

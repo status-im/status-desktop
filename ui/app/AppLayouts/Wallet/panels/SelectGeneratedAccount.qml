@@ -95,7 +95,7 @@ StatusSelect {
             titleText.color: Theme.palette.indirectColor1
         }
     }
-    selectMenu.delegate: StatusListItem {
+    menuDelegate: StatusListItem {
         id: defaultListItem
         title: model.name
         asset.name: model.iconName

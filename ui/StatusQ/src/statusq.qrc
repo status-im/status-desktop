@@ -158,16 +158,15 @@
         <file>StatusQ/Popups/qmldir</file>
         <file>StatusQ/Popups/StatusColorDialog.qml</file>
         <file>StatusQ/Popups/StatusMenuHeadline.qml</file>
+        <file>StatusQ/Popups/StatusAction.qml</file>
         <file>StatusQ/Popups/StatusMenuItem.qml</file>
-        <file>StatusQ/Popups/StatusMenuItemDelegate.qml</file>
         <file>StatusQ/Popups/StatusMenuSeparator.qml</file>
         <file>StatusQ/Popups/StatusModal.qml</file>
         <file>StatusQ/Popups/StatusModalDivider.qml</file>
-        <file>StatusQ/Popups/StatusPopupMenu.qml</file>
+        <file>StatusQ/Popups/StatusMenu.qml</file>
         <file>StatusQ/Popups/StatusSearchLocationMenu.qml</file>
         <file>StatusQ/Popups/StatusSearchPopup.qml</file>
         <file>StatusQ/Popups/StatusSearchPopupMenuItem.qml</file>
-        <file>StatusQ/Popups/StatusSpellcheckingMenuItems.qml</file>
         <file>StatusQ/Popups/StatusStackModal.qml</file>
         <file>StatusQ/qmldir</file>
         <file>StatusQ/Components/StatusListPickerProxies.qml</file>
@@ -193,5 +192,6 @@
         <file>StatusQ/Core/StatusProfileImageSettings.qml</file>
         <file>StatusQ/Core/StatusRollArea.qml</file>
         <file>StatusQ/Popups/Dialog/StatusDialogBackground.qml</file>
+        <file>StatusQ/Popups/StatusMenuInstantiator.qml</file>
     </qresource>
 </RCC>

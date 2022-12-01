@@ -109,7 +109,7 @@ StackLayout {
 
                 implicitHeight: 1
                 visible: root.editable
-                color: Theme.palette.statusPopupMenu.separatorColor
+                color: Theme.palette.statusMenu.separatorColor
             }
 
             RowLayout {

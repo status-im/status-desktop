@@ -9,7 +9,7 @@ import shared.popups 1.0
 
 import utils 1.0
 
-// TODO: replace with StatusPopupMenu
+// TODO: replace with StatusMenu
 PopupMenu {
     id: browserSettingsMenu
 

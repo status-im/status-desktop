@@ -151,7 +151,7 @@ Item {
         }
     }
 
-    StatusPopupMenu {
+    StatusMenu {
         id: derivedAddressPopup
         width: _internal.popupWidth
         contentItem: Column {
@@ -234,7 +234,7 @@ Item {
                         background: Rectangle {
                             implicitWidth: stackLayout.width
                             implicitHeight: stackLayout.height
-                            color: Theme.palette.statusPopupMenu.backgroundColor
+                            color: Theme.palette.statusMenu.backgroundColor
                             radius: 8
                         }
                     }

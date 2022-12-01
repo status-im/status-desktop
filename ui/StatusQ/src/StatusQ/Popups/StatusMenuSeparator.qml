@@ -8,6 +8,6 @@ MenuSeparator {
     contentItem: Rectangle {
         implicitWidth: 176
         implicitHeight: 1
-        color: Theme.palette.statusPopupMenu.separatorColor
+        color: Theme.palette.statusMenu.separatorColor
     }
 }

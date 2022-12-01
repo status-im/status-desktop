@@ -97,7 +97,7 @@ StatusFloatingButtonsSelector {
         asset.bgColor: Theme.palette.indirectColor1
         onClicked: {
             changeSelectedAccount(model, index)
-            root.itemSelected(index)
+            root.selectItem(index)
         }
         visible: !root.visibleIndices.includes(index) && d.isWalletTypeAccepted(walletType, index)
     }

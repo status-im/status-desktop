@@ -51,6 +51,9 @@
         <file>assets/fonts/RobotoMono/RobotoMono-SemiBoldItalic.ttf</file>
         <file>assets/fonts/RobotoMono/RobotoMono-Thin.ttf</file>
         <file>assets/fonts/RobotoMono/RobotoMono-ThinItalic.ttf</file>
+        <file>assets/img/icons/statuses/automatic.svg</file>
+        <file>assets/img/icons/statuses/inactive.svg</file>
+        <file>assets/img/icons/statuses/online.svg</file>
         <file>assets/img/icons/bigger/browser.svg</file>
         <file>assets/img/icons/bigger/network.svg</file>
         <file>assets/img/icons/bigger/pause.svg</file>
