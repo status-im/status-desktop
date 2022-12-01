@@ -91,6 +91,9 @@ rpc(getPendingTransactionsByChainIDs, "wallet"):
 rpc(getWalletToken, "wallet"):
   discard
 
+rpc(startWallet, "wallet"):
+  discard
+
 rpc(getTransactionEstimatedTime, "wallet"):
   chainId: int
   maxFeePerGas: float
