@@ -81,28 +81,28 @@ StatusSectionLayout {
                     contextMenu.openHandler = originalOpenHandler
                     contextMenu.popup(-contextMenu.width + menuButton.width, menuButton.height + 4)
                 }
-                StatusPopupMenu {
+                StatusMenu {
                     id: contextMenu
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Mute Chat"
                         icon.name: "notification"
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Mark as Read"
                         icon.name: "checkmark-circle"
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Clear History"
                         icon.name: "close-circle"
                     }
 
                     StatusMenuSeparator {}
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Leave Chat"
                         icon.name: "arrow-left"
-                        type: StatusMenuItem.Type.Danger
+                        type: StatusAction.Type.Danger
                     }
                 }
             }
@@ -210,7 +210,7 @@ StatusSectionLayout {
                     }
                 }
 
-                popupMenu: StatusPopupMenu {
+                popupMenu: StatusMenu {
 
                     property string chatId
 
@@ -218,34 +218,34 @@ StatusSectionLayout {
                         chatId = id
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "View Profile"
                         icon.name: "group-chat"
                     }
 
                     StatusMenuSeparator {}
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Mute chat"
                         icon.name: "notification"
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Mark as Read"
                         icon.name: "checkmark-circle"
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Clear history"
                         icon.name: "close-circle"
                     }
 
                     StatusMenuSeparator {}
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: "Delete chat"
                         icon.name: "delete"
-                        type: StatusMenuItem.Type.Danger
+                        type: StatusAction.Type.Danger
                     }
                 }
             }

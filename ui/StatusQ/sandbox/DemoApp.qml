@@ -116,19 +116,19 @@ Rectangle {
                     }
                 }
 
-                popupMenu: StatusPopupMenu {
+                popupMenu: StatusMenu {
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Invite People")
                         icon.name: "share-ios"
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("View Community")
                         icon.name: "group"
                     }
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Edit Community")
                         icon.name: "edit"
                         enabled: false
@@ -136,10 +136,10 @@ Rectangle {
 
                     StatusMenuSeparator {}
 
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Leave Community")
                         icon.name: "arrow-left"
-                        type: StatusMenuItem.Type.Danger
+                        type: StatusAction.Type.Danger
                     }
                 }
             }

@@ -10,7 +10,7 @@ import shared.panels 1.0
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
-StatusPopupMenu {
+StatusMenu {
     id: root
 
     property var store
@@ -29,7 +29,7 @@ StatusPopupMenu {
     StatusMenuSeparator {
     }
 
-    StatusMenuItem {
+    StatusAction {
         objectName: "userStatusViewMyProfileAction"
         text: qsTr("View My Profile")
         icon.name: "profile"
@@ -42,14 +42,14 @@ StatusPopupMenu {
     StatusMenuSeparator {
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: alwaysOnlineAction
         objectName: "userStatusMenuAlwaysOnlineAction"
         text: qsTr("Always online")
-        icon.name: Style.svg("statuses/online")
-        assetSettings.isImage: true
-        icon.width: 12
-        icon.height: 12
+        assetSettings.name: "statuses/online"
+        assetSettings.width: 12
+        assetSettings.height: 12
+        assetSettings.color: "transparent"
         fontSettings.bold: root.store.userProfileInst.currentUserStatus === Constants.currentUserStatus.alwaysOnline
         onTriggered: {
             store.setCurrentUserStatus(Constants.currentUserStatus.alwaysOnline)
@@ -57,14 +57,14 @@ StatusPopupMenu {
         }
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: inactiveAction
         objectName: "userStatusMenuInactiveAction"
         text: qsTr("Inactive")
-        icon.name: Style.svg("statuses/inactive")
-        assetSettings.isImage: true
-        icon.width: 12
-        icon.height: 12
+        assetSettings.name: "statuses/inactive"
+        assetSettings.width: 12
+        assetSettings.height: 12
+        assetSettings.color: "transparent"
         fontSettings.bold: root.store.userProfileInst.currentUserStatus === Constants.currentUserStatus.inactive
         onTriggered: {
             store.setCurrentUserStatus(Constants.currentUserStatus.inactive)
@@ -72,12 +72,12 @@ StatusPopupMenu {
         }
     }
 
-    StatusMenuItem {
+    StatusAction {
         id: automaticAction
         objectName: "userStatusMenuAutomaticAction"
         text: qsTr("Set status automatically")
-        icon.name: Style.svg("statuses/automatic")
-        assetSettings.isImage: true
+        assetSettings.name: "statuses/automatic"
+        assetSettings.color: "transparent"
         fontSettings.bold: root.store.userProfileInst.currentUserStatus === Constants.currentUserStatus.automatic
         onTriggered: {
             store.setCurrentUserStatus(Constants.currentUserStatus.automatic)

@@ -7,6 +7,8 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
+import SortFilterProxyModel 0.2
+
 /*!
    \qmltype StatusModalFloatingButtonsSelector
    \inherits Row
@@ -40,7 +42,7 @@ import StatusQ.Popups 0.1
    For a list of components available see StatusQ.
 */
 Row {
-    id: floatingButtons
+    id: root
 
     /*!
        \qmlproperty repeater
@@ -63,7 +65,7 @@ Row {
         Can be used to assign delegate to the popupmenu
         \endqml
     */
-    property alias popupMenuDelegate: popupMenuSelectionRepeater.delegate
+    property alias popupMenuDelegate: popupMenuSelectionInstantiator.delegate
 
     /*!
        \qmlproperty model
@@ -87,9 +89,9 @@ Row {
     */
     property int currentIndex: 0
 
-    function itemSelected(index) {
-        visibleIndices = [0,1,index]
-        floatingButtons.currentIndex = index
+    function selectItem(index) {
+        visibleIndices = [0, 1, visibleIndices.length + index]
+        root.currentIndex = index
         popupMenu.close()
     }
 
@@ -97,16 +99,29 @@ Row {
     spacing: 12
     clip: true
 
+    SortFilterProxyModel {
+        id: menuModel
+
+        sourceModel: root.model
+
+        filters: [
+            ExpressionFilter {
+                enabled: root.visibleIndices.length > 0
+                expression: !root.visibleIndices.includes(index)
+            }
+        ]
+    }
+
     Repeater {
         id: itemSelectionRepeater
-        model: floatingButtons.model
+        model: root.model
     }
 
     Rectangle {
         width: button.width
         height: button.height
         radius: 8
-        visible: floatingButtons.model.count > 3
+        visible: root.model.count > 3
         color: Theme.palette.statusAppLayout.backgroundColor
         StatusButton {
             id: button
@@ -118,7 +133,7 @@ Row {
             normalColor: Theme.palette.baseColor3
             asset.name: "more"
             asset.bgColor: "transparent"
-            onClicked: popupMenu.popup(parent.x, y + height + 8)
+            onClicked: popupMenu.popup(parent.x + 4, y + height + 4)
         }
     }
 
@@ -128,15 +143,14 @@ Row {
         Layout.fillWidth: true
     }
 
-    StatusPopupMenu {
+    StatusMenu {
         id: popupMenu
-        width: layout.width
-        ColumnLayout {
-            id: layout
-            Repeater {
-                id: popupMenuSelectionRepeater
-                model: floatingButtons.model
-            }
+        width: implicitWidth
+
+        StatusMenuInstantiator {
+            id: popupMenuSelectionInstantiator
+            model: menuModel
+            menu: popupMenu
         }
     }
 }

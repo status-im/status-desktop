@@ -61,7 +61,7 @@
         <file>pages/StatusMacNotificationPage.qml</file>
         <file>pages/StatusPasswordStrengthIndicatorPage.qml</file>
         <file>pages/StatusPinInputPage.qml</file>
-        <file>pages/StatusPopupMenuPage.qml</file>
+        <file>pages/StatusMenuPage.qml</file>
         <file>pages/StatusSelectPage.qml</file>
         <file>pages/StatusTabBarButtonPage.qml</file>
         <file>pages/StatusTabBarIconButtonPage.qml</file>

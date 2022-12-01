@@ -40,27 +40,18 @@ Column {
         label: "Some label"
         model: commmonModel
 
-        selectMenu.delegate: StatusMenuItemDelegate {
-            statusPopupMenu: select
-            action: StatusMenuItem {
-                assetSettings.name: "filled-account"
-                text: name
-                onTriggered: {
-                    selectedItem.text = name
-                }
+        menuDelegate: StatusAction {
+            assetSettings.name: "filled-account"
+            text: name
+            onTriggered: {
+                selectedItem.text = name
             }
         }
 
-        selectedItemComponent: Item {
+        selectedItemComponent: StatusBaseText {
             id: selectedItem
-            anchors.fill: parent
-            property string text: ""
-
-            StatusBaseText {
-                text: selectedItem.text
-                anchors.centerIn: parent
-                color: Theme.palette.directColor1
-            }
+            Layout.alignment: Qt.AlignCenter
+            color: Theme.palette.directColor1
         }
     }
 }

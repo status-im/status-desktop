@@ -18,21 +18,21 @@ GridLayout {
         chatInfoButton.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
         chatInfoButton.asset.color: Theme.palette.miscColor6
 
-        popupMenu: StatusPopupMenu {
+        popupMenu: StatusMenu {
 
-            StatusMenuItem {
+            StatusAction {
                 text: "Create channel"
                 icon.name: "channel"
             }
 
-            StatusMenuItem {
+            StatusAction {
                 text: "Create category"
                 icon.name: "channel-category"
             }
 
             StatusMenuSeparator {}
 
-            StatusMenuItem {
+            StatusAction {
                 text: "Invite people"
                 icon.name: "share-ios"
             }

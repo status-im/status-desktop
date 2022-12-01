@@ -54,7 +54,7 @@ Row {
             contactContextMenu.popup(-contactContextMenu.width+menuButton.width, menuButton.height + 4)
         }
 
-        StatusPopupMenu {
+        StatusMenu {
             id: contactContextMenu
 
             onClosed: {
@@ -67,10 +67,10 @@ Row {
 
             StatusMenuSeparator {}
 
-            StatusMenuItem {
+            StatusAction {
                 text: qsTr("Decline and block")
                 icon.name: "cancel"
-                type: StatusMenuItem.Type.Danger
+                type: StatusAction.Type.Danger
                 onTriggered: root.blockClicked()
             }
         }

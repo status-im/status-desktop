@@ -12,7 +12,7 @@ import utils 1.0
 
 import "../stores"
 
-// TODO: replace with StatusPopupMenu
+// TODO: replace with StatusMenu
 Popup {
     id: popup
 

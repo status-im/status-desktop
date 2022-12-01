@@ -42,7 +42,7 @@ ItemDelegate {
 
     background: Rectangle {
         color: root.highlighted
-               ? Theme.palette.statusPopupMenu.hoverBackgroundColor
+               ? Theme.palette.statusMenu.hoverBackgroundColor
                : "transparent"
 
         MouseArea {

@@ -385,7 +385,7 @@ Pane {
                 highlighted: moreMenu.opened
                 onClicked: moreMenu.popup(-moreMenu.width + width, height + 4)
 
-                StatusPopupMenu {
+                StatusMenu {
                     id: moreMenu
                     width: 230
 
@@ -398,7 +398,7 @@ Pane {
                                                            popup => popup.closed.connect(d.reload))
                         }
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Verify Identity")
                         icon.name: "checkmark-circle"
                         enabled: d.isContact && !d.isBlocked &&
@@ -410,7 +410,7 @@ Pane {
                                                           popup => popup.accepted.connect(d.reload))
                         }
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("ID Request Pending...")
                         icon.name: "checkmark-circle"
                         enabled: d.isContact && !d.isBlocked && !d.isTrusted && d.isVerificationRequestSent
@@ -420,7 +420,7 @@ Pane {
                                                               popup => popup.closed.connect(d.reload))
                         }
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Rename")
                         icon.name: "edit_pencil"
                         onTriggered: {
@@ -429,7 +429,7 @@ Pane {
                                                               "%1 (%2)".arg(d.userDisplayName).arg(Utils.getElidedCompressedPk(root.publicKey)))
                         }
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Reverse Contact Rejection")
                         icon.name: "refresh"
                         enabled: d.contactDetails.removed
@@ -439,7 +439,7 @@ Pane {
                             d.reload()
                         }
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Copy Link to Profile")
                         icon.name: "copy"
                         onTriggered: {
@@ -447,7 +447,7 @@ Pane {
                             root.profileStore.copyToClipboard(d.linkToProfile)
                         }
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Unblock User")
                         icon.name: "remove-circle"
                         enabled: d.isBlocked
@@ -457,10 +457,10 @@ Pane {
                         }
                     }
                     StatusMenuSeparator {}
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Mark as Untrustworthy")
                         icon.name: "warning"
-                        type: StatusMenuItem.Type.Danger
+                        type: StatusAction.Type.Danger
                         enabled: d.contactDetails.trustStatus === Constants.trustStatus.unknown
                         onTriggered: {
                             moreMenu.close()
@@ -471,7 +471,7 @@ Pane {
                             d.reload()
                         }
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Remove Untrustworthy Mark")
                         icon.name: "warning"
                         enabled: d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy
@@ -481,30 +481,30 @@ Pane {
                             d.reload()
                         }
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Remove Identity Verification")
                         icon.name: "warning"
-                        type: StatusMenuItem.Type.Danger
+                        type: StatusAction.Type.Danger
                         enabled: d.isContact && d.isTrusted
                         onTriggered: {
                             moreMenu.close()
                             removeVerificationConfirmationDialog.open()
                         }
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Remove Contact")
                         icon.name: "remove-contact"
-                        type: StatusMenuItem.Type.Danger
+                        type: StatusAction.Type.Danger
                         enabled: d.isContact && !d.isBlocked
                         onTriggered: {
                             moreMenu.close()
                             removeContactConfirmationDialog.open()
                         }
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Cancel Contact Request")
                         icon.name: "cancel"
-                        type: StatusMenuItem.Type.Danger
+                        type: StatusAction.Type.Danger
                         enabled: !d.isContact && d.isContactRequestSent && !d.contactDetails.removed
                         onTriggered: {
                             moreMenu.close()
@@ -512,10 +512,10 @@ Pane {
                             d.reload()
                         }
                     }
-                    StatusMenuItem {
+                    StatusAction {
                         text: qsTr("Block User")
                         icon.name: "cancel"
-                        type: StatusMenuItem.Type.Danger
+                        type: StatusAction.Type.Danger
                         enabled: !d.isBlocked
                         onTriggered: {
                             moreMenu.close()
