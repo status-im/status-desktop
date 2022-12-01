@@ -23,6 +23,7 @@ Item {
     property string displayName
     property string pubkey
     property string icon
+    property url previewIcon: icon
     property int trustStatus
     property bool isContact: false
     property bool isCurrentUser
@@ -42,6 +43,10 @@ Item {
     signal clicked()
     signal editClicked()
 
+    Binding on previewIcon {
+        value: icon
+    }
+
     height: visible ? contentContainer.height : 0
     implicitHeight: contentContainer.implicitHeight
 
@@ -53,6 +58,34 @@ Item {
                 case ProfileHeader.ImageSize.Middle: return normal;
                 case ProfileHeader.ImageSize.Big: return big;
             }
+        }
+    }
+
+    Item {
+        id: tmpCroppedImageHelper
+
+        visible: false
+
+        Image {
+            id: tmpImage
+            mipmap: true
+        }
+
+        property var keepGrabResultAlive;
+
+        function setCroppedTmpIcon(source, x, y, width, height) {
+            tmpCroppedImageHelper.width = width
+            tmpCroppedImageHelper.height = height
+
+            tmpImage.x = -x
+            tmpImage.y = -y
+            tmpImage.source = source
+
+            tmpCroppedImageHelper.grabToImage(result => {
+                keepGrabResultAlive = result
+                root.previewIcon = result.url
+                tmpImage.source = ""
+            })
         }
     }
 
@@ -78,7 +111,7 @@ Item {
                 objectName: "ProfileHeader_userImage"
                 name: root.displayName
                 pubkey: root.pubkey
-                image: root.icon
+                image: root.previewIcon
                 interactive: false
                 imageWidth: d.getSize(36, 64, 160)
                 imageHeight: imageWidth
@@ -110,6 +143,9 @@ Item {
                 function tempIcon(image, aX, aY, bX, bY) {
                     root.icon = image
                     root.cropRect = Qt.rect(aX, aY, bX - aX, bY - aY)
+
+                    tmpCroppedImageHelper.setCroppedTmpIcon(
+                                image, aX, aY, bX - aX, bY - aY)
                 }
             }
         }
