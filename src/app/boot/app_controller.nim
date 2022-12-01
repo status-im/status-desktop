@@ -103,6 +103,7 @@ proc buildAndRegisterUserProfile(self: AppController)
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
 proc userLoggedIn*(self: AppController)
+proc logout*(self: AppController)
 proc storeKeyPairForNewKeycardUser*(self: AppController)
 
 # Main Module Delegate Interface
@@ -368,6 +369,9 @@ proc userLoggedIn*(self: AppController) =
 
   if not self.startupModule.isNil:
     self.startupModule.delete
+
+proc logout*(self: AppController) =
+  self.generalService.logout()
 
 proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) =
   var pubKey = self.settingsService.getPublicKey()

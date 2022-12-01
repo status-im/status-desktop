@@ -22,6 +22,14 @@ proc startMessenger*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = core.callPrivateRPC("startMessenger".prefix, payload)
 
+proc logout*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  try:
+    let response = status_go.logout()
+    result.result = Json.decode(response, JsonNode)
+  except RpcException as e:
+    error "error logging out", methodName = "logout", exception=e.msg
+    raise newException(RpcException, e.msg)
+
 proc generateSymKeyFromPassword*(password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [password]
   result = core.callPrivateRPC("waku_generateSymKeyFromPassword", payload)

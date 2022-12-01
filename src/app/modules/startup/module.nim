@@ -118,6 +118,9 @@ method moveToLoadingAppState*[T](self: Module[T]) =
 method moveToAppState*[T](self: Module[T]) =
   self.view.setAppState(AppState.MainAppState)
 
+method moveToStartupState*[T](self: Module[T]) =
+  self.view.setAppState(AppState.StartupState)
+
 method startUpUIRaised*[T](self: Module[T]) =
   self.view.startUpUIRaised()
 
@@ -284,7 +287,16 @@ method onNodeLogin*[T](self: Module[T], error: string) =
     quit() # quit the app
 
   if error.len == 0:
-    self.delegate.userLoggedIn()
+    try:
+      self.delegate.userLoggedIn()
+    except Exception as e:
+      let errDescription = e.msg
+      error "error: ", errDescription
+      self.delegate.logout()
+      self.moveToStartupState()
+      self.emitAccountLoginError(errDescription)
+      return
+
     if currStateObj.flowType() != FlowType.AppLogin:
       self.controller.storeIdentityImage()
     self.controller.cleanTmpData()
