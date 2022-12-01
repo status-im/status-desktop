@@ -28,6 +28,9 @@ method moveToLoadingAppState*(self: AccessInterface) {.base.} =
 method moveToAppState*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method moveToStartupState*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onBackActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
     

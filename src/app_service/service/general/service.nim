@@ -23,12 +23,10 @@ proc init*(self: Service) =
     createDir(app_constants.ROOTKEYSTOREDIR)
 
 proc startMessenger*(self: Service) =
-  try:
-    discard status_general.startMessenger()
-  except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-    return
+  discard status_general.startMessenger()
+
+proc logout*(self: Service) =
+  discard status_general.logout()
 
 proc getPasswordStrengthScore*(self: Service, password, userName: string): int =
   try:    
