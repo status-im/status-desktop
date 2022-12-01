@@ -39,6 +39,11 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     settings: SettingsDto
+    socialLinks: SocialLinks
+
+  # Forward declaration
+  proc fetchSocialLinks*(self: Service): SocialLinks
+
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -52,6 +57,8 @@ QtObject:
     try:
       let response = status_settings.getSettings()
       self.settings = response.result.toSettingsDto()
+
+      self.socialLinks = self.fetchSocialLinks()
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
@@ -822,7 +829,11 @@ QtObject:
     except Exception as e:
       error "error setting bio", errDesription = e.msg
 
+
   proc getSocialLinks*(self: Service): SocialLinks =
+    return self.socialLinks
+
+  proc fetchSocialLinks*(self: Service): SocialLinks =
     try:
       let response = status_settings.getSocialLinks()
 
@@ -845,6 +856,8 @@ QtObject:
 
       if(not response.error.isNil):
         error "error setting social links", errDescription = response.error.message
+
+      self.socialLinks = self.fetchSocialLinks()
 
       result = true
     except Exception as e:
