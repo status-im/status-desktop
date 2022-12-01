@@ -45,6 +45,7 @@ QtObject:
       discordImportCommunityName: string
       discordImportCommunityImage: string
       discordImportHasCommunityImage: bool
+      downloadingCommunityHistoryArchives: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -89,6 +90,7 @@ QtObject:
     result.discordImportTasksModel = newDiscordDiscordImportTasksModel()
     result.discordImportTasksModelVariant = newQVariant(result.discordImportTasksModel)
     result.observedItem = newActiveSection()
+    result.downloadingCommunityHistoryArchives = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -113,6 +115,20 @@ QtObject:
   QtProperty[int] discordOldestMessageTimestamp:
     read = getDiscordOldestMessageTimestamp
     notify = discordOldestMessageTimestampChanged
+
+  proc downloadingCommunityHistoryArchivesChanged*(self: View) {.signal.}
+
+  proc setDownloadingCommunityHistoryArchives*(self: View, flag: bool) {.slot.} =
+    if (self.downloadingCommunityHistoryArchives == flag): return
+    self.downloadingCommunityHistoryArchives = flag
+    self.downloadingCommunityHistoryArchivesChanged()
+
+  proc getDownloadingCommunityHistoryArchives*(self: View): bool {.slot.} =
+    return self.downloadingCommunityHistoryArchives
+
+  QtProperty[bool] downloadingCommunityHistoryArchives:
+    read = getDownloadingCommunityHistoryArchives
+    notify = downloadingCommunityHistoryArchivesChanged
 
   proc discordImportHasCommunityImageChanged*(self: View) {.signal.}
 

@@ -24,6 +24,7 @@ QtObject {
     property url discordImportCommunityImage: root.communitiesModuleInst.discordImportCommunityImage
     property bool discordImportHasCommunityImage: root.communitiesModuleInst.discordImportHasCommunityImage
     property var discordImportTasks: root.communitiesModuleInst.discordImportTasks
+    property bool downloadingCommunityHistoryArchives: root.communitiesModuleInst.downloadingCommunityHistoryArchives
     property string locale: localAppSettings.language
     property var advancedModule: profileSectionModule.advancedModule
 

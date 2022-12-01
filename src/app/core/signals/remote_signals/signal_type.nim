@@ -39,6 +39,7 @@ type SignalType* {.pure.} = enum
   HistoryArchivesSeeding = "community.historyArchivesSeeding"
   HistoryArchivesUnseeded = "community.historyArchivesUnseeded"
   HistoryArchiveDownloaded = "community.historyArchiveDownloaded"
+  DownloadingHistoryArchivesStarted = "community.downloadingHistoryArchivesStarted"
   DownloadingHistoryArchivesFinished = "community.downloadingHistoryArchivesFinished"
   UpdateAvailable = "update.available"
   DiscordCategoriesAndChannelsExtracted = "community.discordCategoriesAndChannelsExtracted"

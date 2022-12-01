@@ -652,6 +652,15 @@ Item {
                     }
                 }
 
+                
+                ModuleWarning {
+                    id: downloadingArchivesBanner
+                    Layout.fillWidth: true
+                    active: communitiesPortalLayoutContainer.communitiesStore.downloadingCommunityHistoryArchives
+                    type: ModuleWarning.Danger
+                    text: qsTr("Downloading message history archives, DO NOT CLOSE THE APP until this banner disappears.")
+                    closeBtnVisible: false
+                }
 
                 Component {
                     id: connectedBannerComponent
