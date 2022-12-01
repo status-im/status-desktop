@@ -111,6 +111,7 @@ SettingsContentBase {
             anchors.right: parent.right
             anchors.top: contactsTabBar.bottom
             currentIndex: contactsTabBar.currentIndex
+            anchors.topMargin: Style.current.padding
             // CONTACTS
             ColumnLayout {
                 Layout.fillWidth: true
@@ -127,7 +128,7 @@ SettingsContentBase {
                     id: verifiedContacts
                     Layout.fillWidth: true
                     title: qsTr("Identity Verified Contacts")
-                    visible: !noFriendsItem.visible
+                    visible: !noFriendsItem.visible && count > 0
                     contactsModel: root.contactsStore.myContactsModel
                     searchString: searchBox.text
                     onOpenContactContextMenu: function (publicKey, name, icon) {
@@ -143,7 +144,7 @@ SettingsContentBase {
                 ContactsListPanel {
                     id: mutualContacts
                     Layout.fillWidth: true
-                    visible: !noFriendsItem.visible
+                    visible: !noFriendsItem.visible && count > 0
                     title: qsTr("Contacts")
                     contactsModel: root.contactsStore.myContactsModel
                     searchString: searchBox.text
@@ -188,6 +189,7 @@ SettingsContentBase {
                     title: qsTr("Received")
                     searchString: searchBox.text
                     contactsStore: root.contactsStore
+                    visible: count > 0
                     onOpenContactContextMenu: function (publicKey, name, icon) {
                         root.openContextMenu(publicKey, name, icon)
                     }
@@ -218,6 +220,7 @@ SettingsContentBase {
                     title: qsTr("Sent")
                     searchString: searchBox.text
                     contactsStore: root.contactsStore
+                    visible: count > 0
                     onOpenContactContextMenu: function (publicKey, name, icon) {
                         root.openContextMenu(publicKey, name, icon)
                     }
