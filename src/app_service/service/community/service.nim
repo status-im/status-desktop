@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, std/algorithm, strformat, strutils, chronicles, json_serialization, sugar
+import NimQml, Tables, json, sequtils, std/sets, std/algorithm, strformat, strutils, chronicles, json_serialization, sugar
 
 import ./dto/community as community_dto
 
@@ -119,6 +119,8 @@ const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
 const SIGNAL_COMMUNITY_MUTED* = "communityMuted"
 const SIGNAL_CATEGORY_MUTED* = "categoryMuted"
 const SIGNAL_CATEGORY_UNMUTED* = "categoryUnmuted"
+const SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_STARTED* = "communityHistoryArchivesDownloadStarted"
+const SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_FINISHED* = "communityHistoryArchivesDownloadFinished"
 
 const SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED* = "discordCategoriesAndChannelsExtracted"
 const SIGNAL_DISCORD_COMMUNITY_IMPORT_FINISHED* = "discordCommunityImportFinished"
@@ -136,6 +138,7 @@ QtObject:
       curatedCommunities: Table[string, CuratedCommunity] # [community_id, CuratedCommunity]
       allCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
       myCommunityRequests*: seq[CommunityMembershipRequestDto]
+      historyArchiveDownloadTaskCommunityIds*: HashSet[string]
 
   # Forward declaration
   proc loadCommunityTags(self: Service): string
@@ -172,6 +175,7 @@ QtObject:
     result.curatedCommunities = initTable[string, CuratedCommunity]()
     result.allCommunities = initTable[string, CommunityDto]()
     result.myCommunityRequests = @[]
+    result.historyArchiveDownloadTaskCommunityIds = initHashSet[string]()
 
   proc doConnect(self: Service) =
     self.events.on(SignalType.CommunityFound.event) do(e: Args):
@@ -249,6 +253,28 @@ QtObject:
         warningsCount: receivedData.warningsCount,
         stopped: receivedData.stopped
       ))
+
+    self.events.on(SignalType.DownloadingHistoryArchivesStarted.event) do(e: Args):
+      var receivedData = HistoryArchivesSignal(e)
+      if receivedData.communityId notin self.historyArchiveDownloadTaskCommunityIds:
+        self.historyArchiveDownloadTaskCommunityIds.incl(receivedData.communityId)
+        self.events.emit(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_STARTED, CommunityIdArgs(communityId: receivedData.communityId))
+
+    self.events.on(SignalType.DownloadingHistoryArchivesFinished.event) do(e: Args):
+      var receivedData = HistoryArchivesSignal(e)
+      if receivedData.communityId in self.historyArchiveDownloadTaskCommunityIds:
+        self.historyArchiveDownloadTaskCommunityIds.excl(receivedData.communityId)
+
+        if self.historyArchiveDownloadTaskCommunityIds.len == 0:
+          # Right now we're only emitting this signal when all download tasks have been marked as finished
+          # so passing the `CommunityIdArgs` is not very useful because it'll always emit the latest community
+          # id that has finished. We'll handle signals related to individual communities in the future
+          # once we've figured out what this should look like in the UI
+          #
+          # TODO(pascal):
+          # Don't just emit this signal when all communities are done downloading history data,
+          # but implement a solution for individual updates
+          self.events.emit(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_FINISHED, CommunityIdArgs(communityId: receivedData.communityId))
 
   proc updateMissingFields(chatDto: var ChatDto, chat: ChatDto) =
     # This proc sets fields of `chatDto` which are available only for community channels.
