@@ -89,13 +89,20 @@ Control {
             id: scrollView
             visible: root.bio
             padding: 0
-            rightPadding: scrollBar.visible ? 16 : 0
+
+            Binding on rightPadding {
+                delayed: true
+                value: scrollBar.visible ? 16 : 0
+            }
+
             Layout.maximumHeight: 108
             Layout.fillWidth: true
             contentHeight: bioText.height
             ScrollBar.vertical: StatusScrollBar {
                 id: scrollBar
-                policy: bioText.height > scrollView.availableHeight ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+
+                policy: bioText.height > scrollView.availableHeight
+                        ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
             }
 
             StatusBaseText {
