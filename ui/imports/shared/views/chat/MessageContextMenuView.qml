@@ -61,7 +61,7 @@ StatusPopupMenu {
     readonly property bool isContact: {
         return root.selectedUserPublicKey !== "" && !!contactDetails.isContact
     }
-    readonly property bool isBlockedContact: (!!d.contactDetails && d.contactDetails.isBlocked) || false
+    readonly property bool isBlockedContact: (!!contactDetails && contactDetails.isBlocked) || false
 
     readonly property int outgoingVerificationStatus: {
         if (root.selectedUserPublicKey === "" || root.isMe || !root.isContact) {
@@ -97,12 +97,12 @@ StatusPopupMenu {
         if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
             return false
         }
-        return root.verificationStatus === Constants.verificationStatus.trusted ||
-            root.incomingVerificationStatus === Constants.verificationStatus.trusted
+        return root.outgoingVerificationStatus === Constants.verificationStatus.trusted ||
+                root.incomingVerificationStatus === Constants.verificationStatus.trusted
     }
 
-    readonly property bool userTrustIsUnknown: d.contactDetails && d.contactDetails.trustStatus === Constants.trustStatus.unknown
-    readonly property bool userIsUntrustworthy: d.contactDetails && d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy
+    readonly property bool userTrustIsUnknown: contactDetails && contactDetails.trustStatus === Constants.trustStatus.unknown
+    readonly property bool userIsUntrustworthy: contactDetails && contactDetails.trustStatus === Constants.trustStatus.untrustworthy
 
     property var emojiReactionsReactedByUser: []
 
@@ -138,24 +138,10 @@ StatusPopupMenu {
     onClosed: {
         // Reset selectedUserPublicKey so that associated properties get recalculated on re-open
         selectedUserPublicKey = ""
-        d.contactDetails = {}
     }
 
     width: Math.max(emojiContainer.visible ? emojiContainer.width : 0,
                     (root.isRightClickOnImage && !root.pinnedPopup) ? 176 : 230)
-
-    onAboutToShow: {
-        if (root.isProfile && root.selectedUserPublicKey !== "") {
-            d.contactDetails = Utils.getContactDetailsAsJson(root.selectedUserPublicKey)
-        } else {
-            d.contactDetails = {}
-        }
-    }
-
-    QtObject {
-        id: d
-        property var contactDetails: ({})
-    }
 
     Item {
         id: emojiContainer
@@ -193,11 +179,11 @@ StatusPopupMenu {
         displayName: root.selectedUserDisplayName
         pubkey: root.selectedUserPublicKey
         icon: root.selectedUserIcon
-        trustStatus: d.contactDetails && d.contactDetails.trustStatus ? d.contactDetails.trustStatus
-                                                                      : Constants.trustStatus.unknown
+        trustStatus: contactDetails && contactDetails.trustStatus ? contactDetails.trustStatus
+                                                                  : Constants.trustStatus.unknown
         isContact: root.isContact
         isCurrentUser: root.isMe
-        userIsEnsVerified: (!!d.contactDetails && d.contactDetails.ensVerified) || false
+        userIsEnsVerified: (!!contactDetails && contactDetails.ensVerified) || false
     }
 
     Item {
@@ -300,7 +286,7 @@ StatusPopupMenu {
         icon.name: "edit_pencil"
         enabled: root.isProfile && !root.isMe
         onTriggered: {
-            Global.openNicknamePopupRequested(root.selectedUserPublicKey, d.contactDetails.localNickname,
+            Global.openNicknamePopupRequested(root.selectedUserPublicKey, contactDetails.localNickname,
                                               "%1 (%2)".arg(root.selectedUserDisplayName).arg(Utils.getElidedCompressedPk(root.selectedUserPublicKey)))
             root.close()
         }

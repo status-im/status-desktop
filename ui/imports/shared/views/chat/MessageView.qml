@@ -466,7 +466,7 @@ Loader {
                 isEdited: root.isEdited
                 hasMention: root.hasMention
                 isPinned: root.pinnedMessage
-                pinnedBy: root.pinnedMessage && !root.isDiscordMessage ? Utils.getContactDetailsAsJson(root.messagePinnedBy).displayName : ""
+                pinnedBy: root.pinnedMessage && !root.isDiscordMessage ? Utils.getContactDetailsAsJson(root.messagePinnedBy, false).displayName : ""
                 hasExpired: root.isExpired
                 reactionsModel: root.reactionsModel
 
@@ -621,15 +621,15 @@ Loader {
                         assetSettings.isImage: root.isDiscordMessage || root.senderIcon.startsWith("data")
                         pubkey: root.senderId
                         colorId: Utils.colorIdForPubkey(root.senderId)
-                        colorHash: Utils.getColorHashAsJson(root.senderId, false, !root.isDiscordMessage)
-                        showRing: !root.isDiscordMessage
+                        colorHash: Utils.getColorHashAsJson(root.senderId, root.senderIsEnsVerified)
+                        showRing: !root.isDiscordMessage && !root.senderIsEnsVerified
                     }
                 }
 
                 replyDetails: StatusMessageDetails {
-                    messageText:  delegate.replyMessage ? delegate.replyMessage.messageText
-                                                          //: deleted message
-                                                        : qsTr("&lt;deleted&gt;")
+                    messageText: delegate.replyMessage ? delegate.replyMessage.messageText
+                                                         //: deleted message
+                                                       : qsTr("&lt;deleted&gt;")
                     contentType: delegate.replyMessage ? delegate.convertContentType(delegate.replyMessage.contentType) : 0
                     messageContent: {
                         if (!delegate.replyMessage)
@@ -646,7 +646,7 @@ Loader {
                     amISender: delegate.replyMessage && delegate.replyMessage.amISender
                     sender.id: delegate.replyMessage ? delegate.replyMessage.senderId : ""
                     sender.isContact: delegate.replyMessage && delegate.replyMessage.senderIsAdded
-                    sender.displayName:  delegate.replyMessage ? delegate.replyMessage.senderDisplayName: ""
+                    sender.displayName: delegate.replyMessage ? delegate.replyMessage.senderDisplayName: ""
                     sender.isEnsVerified: delegate.replyMessage && delegate.replyMessage.senderEnsVerified
                     sender.secondaryName: delegate.replyMessage ? delegate.replyMessage.senderOptionalName : ""
                     sender.profileImage {
@@ -654,10 +654,10 @@ Loader {
                         height: 20
                         name: delegate.replyMessage ? delegate.replyMessage.senderIcon : ""
                         assetSettings.isImage: delegate.replyMessage && (delegate.replyMessage.contentType === Constants.messageContentType.discordMessageType || delegate.replyMessage.senderIcon.startsWith("data"))
-                        showRing: delegate.replyMessage && delegate.replyMessage.contentType !== Constants.messageContentType.discordMessageType
+                        showRing: (delegate.replyMessage && delegate.replyMessage.contentType !== Constants.messageContentType.discordMessageType) && !sender.isEnsVerified
                         pubkey: delegate.replySenderId
                         colorId: Utils.colorIdForPubkey(delegate.replySenderId)
-                        colorHash: Utils.getColorHashAsJson(delegate.replySenderId, false, !root.isDiscordMessage)
+                        colorHash: Utils.getColorHashAsJson(delegate.replySenderId, sender.isEnsVerified)
                     }
                 }
 
@@ -703,6 +703,7 @@ Loader {
                     }
                 }
 
+                hasLinks: linkUrlsModel.count
                 linksComponent: Component {
                     LinksMessageView {
                         linksModel: linkUrlsModel

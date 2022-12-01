@@ -19,12 +19,12 @@ ActivityNotificationMessage {
     ctaComponent: ContactRequestCta {
         readonly property string senderId: notification ? notification.message.senderId : ""
         readonly property var contactDetails: notification ?
-                        Utils.getContactDetailsAsJson(notification.message.senderId) :
+                        Utils.getContactDetailsAsJson(notification.message.senderId, false) :
                         null
 
-        pending: notification && notification.message.contactRequestState == Constants.contactRequestStatePending
-        accepted: notification && notification.message.contactRequestState == Constants.contactRequestStateAccepted
-        dismissed: notification && notification.message.contactRequestState == Constants.contactRequestStateDismissed
+        pending: notification && notification.message.contactRequestState === Constants.contactRequestStatePending
+        accepted: notification && notification.message.contactRequestState === Constants.contactRequestStateAccepted
+        dismissed: notification && notification.message.contactRequestState === Constants.contactRequestStateDismissed
         blocked: contactDetails && contactDetails.isBlocked
         onAcceptClicked: root.store.contactsStore.acceptContactRequest(senderId)
         onDeclineClicked: root.store.contactsStore.dismissContactRequest(senderId)

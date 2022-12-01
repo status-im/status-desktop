@@ -198,7 +198,7 @@ Rectangle {
                 objectName: model.name
                 color: ListView.isCurrentItem ? Style.current.backgroundHover : Style.current.transparent
                 border.width: 0
-                width: parent.width
+                width: ListView.view.width
                 height: 42
                 radius: Style.current.radius
 

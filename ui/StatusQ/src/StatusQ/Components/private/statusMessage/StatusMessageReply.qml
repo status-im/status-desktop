@@ -1,6 +1,5 @@
 import QtQuick 2.14
 import QtQuick.Shapes 1.13
-import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1

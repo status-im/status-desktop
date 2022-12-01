@@ -97,7 +97,7 @@ Item {
                 asset.isImage: !!asset.name
                 asset.imgIsIdenticon: false
                 ringSettings {
-                    ringSpecModel: Utils.getColorHashAsJson(root.pubKey, true)
+                    ringSpecModel: Utils.getColorHashAsJson(root.pubKey)
                 }
             }
             StatusRoundButton {
@@ -198,7 +198,7 @@ Item {
                 asset.width: 44
                 asset.height: 44
                 asset.color: "transparent"
-                ringSettings { ringSpecModel: Utils.getColorHashAsJson(root.pubKey, true) }
+                ringSettings { ringSpecModel: Utils.getColorHashAsJson(root.pubKey) }
             }
         }
 

@@ -115,7 +115,7 @@ Item {
                 interactive: false
                 imageWidth: d.getSize(36, 64, 160)
                 imageHeight: imageWidth
-                showRing: !root.userIsEnsVerified
+                ensVerified: root.userIsEnsVerified
             }
 
             StatusRoundButton {

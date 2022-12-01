@@ -57,9 +57,9 @@ StatusModal {
 
                 delegate: StatusListItem {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    property var contactDetails: Utils.getContactDetailsAsJson(model.pubKey)
+                    readonly property var contactDetails: Utils.getContactDetailsAsJson(model.pubKey, false)
 
-                    property string displayName: contactDetails.displayName || popup.store.generateAlias(model.pubKey)
+                    readonly property string displayName: contactDetails.displayName || popup.store.generateAlias(model.pubKey)
                     asset.name: contactDetails.thumbnailImage
                     asset.isImage: true
                     title: displayName

@@ -535,15 +535,16 @@ QtObject {
                 isSyncing: false,
                 removed: false,
                 trustStatus: Constants.trustStatus.unknown,
-                verificationStatus: Constants.verificationStatus.unverified
+                verificationStatus: Constants.verificationStatus.unverified,
+                incomingVerificationStatus: Constants.verificationStatus.unverified
             }
         }
     }
 
-    function isEnsVerified(publicKey, getVerificationRequest=true) {
+    function isEnsVerified(publicKey) {
         if (publicKey === "" || !isChatKey(publicKey) )
             return
-        return getContactDetailsAsJson(publicKey, getVerificationRequest).ensVerified
+        return getContactDetailsAsJson(publicKey, false).ensVerified
     }
 
     function getEmojiHashAsJson(publicKey) {
@@ -554,10 +555,12 @@ QtObject {
         return JSON.parse(jsonObj)
     }
 
-    function getColorHashAsJson(publicKey, force=false, getVerificationRequest=true) {
-        if (publicKey === "" || !isChatKey(publicKey) )
+    function getColorHashAsJson(publicKey, skipEnsVerification=false) {
+        if (publicKey === "" || !isChatKey(publicKey))
             return
-        if (!force && isEnsVerified(publicKey, getVerificationRequest))
+        if (skipEnsVerification) // we know already the user is ENS verified -> no color ring
+            return
+        if (isEnsVerified(publicKey)) // ENS verified -> no color ring
             return
         let jsonObj = globalUtilsInst.getColorHashAsJson(publicKey)
         return JSON.parse(jsonObj)
@@ -571,7 +574,7 @@ QtObject {
     }
 
     function colorForColorId(colorId)  {
-        if (colorId < 0 || colorId >=  Theme.palette.userCustomizationColors.length) {
+        if (colorId < 0 || colorId >= Theme.palette.userCustomizationColors.length) {
             console.warn("Utils.colorForColorId : colorId is out of bounds")
             return StatusColors.colors['blue']
         }
