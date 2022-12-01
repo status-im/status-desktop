@@ -1,4 +1,4 @@
-import json, os, chronicles
+import json, os, chronicles, strutils
 import ../../constants as main_constants
 
 # set via `nim c` param `-d:INFURA_TOKEN:[token]`; should be set in CI/release builds
@@ -24,7 +24,18 @@ let OPENSEA_API_KEY_RESOLVED* =
   else:
     OPENSEA_API_KEY
 
-let DEFAULT_TORRENT_CONFIG_PORT* = 9025
+const DEFAULT_TORRENT_CONFIG_PORT = 9025
+let TORRENT_CONFIG_PORT* = if (existsEnv("PORT_SHIFT")):
+              DEFAULT_TORRENT_CONFIG_PORT + parseInt($getEnv("PORT_SHIFT"))
+            else:
+              DEFAULT_TORRENT_CONFIG_PORT
+
+const DEFAUL_WAKU_V2_PORT = 60000
+let WAKU_V2_PORT* = if (existsEnv("PORT_SHIFT")):
+              DEFAUL_WAKU_V2_PORT + parseInt($getEnv("PORT_SHIFT"))
+            else:
+              DEFAUL_WAKU_V2_PORT
+
 let DEFAULT_TORRENT_CONFIG_DATADIR* = joinPath(main_constants.defaultDataDir(), "data", "archivedata")
 let DEFAULT_TORRENT_CONFIG_TORRENTDIR* = joinPath(main_constants.defaultDataDir(), "data", "torrents")
 
@@ -293,11 +304,11 @@ var NODE_CONFIG* = %* {
   "WakuV2Config": {
     "Enabled": false,
     "Host": "0.0.0.0",
-    "Port": 0,
+    "Port": WAKU_V2_PORT,
     "LightClient": false,
     "PersistPeers": true,
     "EnableDiscV5": true,
-    "UDPPort": 0,
+    "UDPPort": WAKU_V2_PORT,
     "PeerExchange": true,
     "AutoUpdate": true,
   },
@@ -311,7 +322,7 @@ var NODE_CONFIG* = %* {
   "Networks": NETWORKS,
   "TorrentConfig": {
     "Enabled": true,
-    "Port": DEFAULT_TORRENT_CONFIG_PORT,
+    "Port": TORRENT_CONFIG_PORT,
     "DataDir": DEFAULT_TORRENT_CONFIG_DATADIR,
     "TorrentDir": DEFAULT_TORRENT_CONFIG_TORRENTDIR
   }
