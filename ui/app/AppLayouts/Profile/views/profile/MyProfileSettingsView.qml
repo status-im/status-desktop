@@ -32,7 +32,7 @@ ColumnLayout {
         property string displayName: descriptionPanel.displayName.text
         property string bio: descriptionPanel.bio.text
         property bool biomentricValue: biometricsSwitch.checked
-        property url profileLargeImage: profileHeader.icon
+        property url profileLargeImage: profileHeader.previewIcon
     }
 
     readonly property bool dirty: descriptionPanel.displayName.text !== profileStore.displayName ||
