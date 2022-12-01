@@ -317,12 +317,6 @@ QtObject:
 
     result["WakuConfig"]["Enabled"] = false.newJBool()
 
-    if existsEnv("WAKUV2_PORT"):
-      let wV2Port = parseInt($getEnv("WAKUV2_PORT"))
-      # Waku V2 config
-      result["WakuV2Config"]["Port"] = wV2Port.newJInt()
-      result["WakuV2Config"]["UDPPort"] = wV2Port.newJInt()
-
     if TEST_PEER_ENR != "":
       let testPeerENRArr = %* @[TEST_PEER_ENR]
       result["ClusterConfig"]["WakuNodes"] = %* testPeerENRArr
@@ -588,7 +582,7 @@ QtObject:
           "Enabled": false,
           "DataDir": DEFAULT_TORRENT_CONFIG_DATADIR,
           "TorrentDir": DEFAULT_TORRENT_CONFIG_TORRENTDIR,
-          "Port": DEFAULT_TORRENT_CONFIG_PORT
+          "Port": TORRENT_CONFIG_PORT
         },
         "Networks": NETWORKS,
         "OutputMessageCSVEnabled": output_csv
@@ -599,13 +593,6 @@ QtObject:
         let wV1Port = $getEnv("STATUS_PORT")
         # Waku V1 config
         nodeCfg["ListenAddr"] = newJString("0.0.0.0:" & wV1Port)
-      if existsEnv("WAKUV2_PORT"):
-        let wV2Port = parseInt($getEnv("WAKUV2_PORT"))
-        # Waku V2 config
-        nodeCfg.add("WakuV2Config", %* {
-          "Port": wV2Port,
-          "UDPPort": wV2Port,
-        })
 
       if TEST_PEER_ENR != "":
         nodeCfg["Rendezvous"] = newJBool(false)
