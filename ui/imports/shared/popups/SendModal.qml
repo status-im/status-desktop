@@ -75,7 +75,7 @@ StatusDialog {
             let amount = parseFloat(amountToSendInput.text) * Math.pow(10, assetSelector.selectedAsset.decimals)
             popup.store.suggestedRoutes(popup.selectedAccount.address, amount.toString(16), assetSelector.selectedAsset.symbol,
                                         store.disabledChainIdsFromList, store.disabledChainIdsToList,
-                                        d.preferredChainIds, fees.selectedPriority, popup.sendType)
+                                        store.preferredChainIds, fees.selectedPriority, popup.sendType)
         }
     })
 
@@ -102,7 +102,6 @@ StatusDialog {
         property string resolvedENSAddress
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
-        property var preferredChainIds: []
         property bool sendTxError: false
         property string sendTxErrorString
 
@@ -120,7 +119,7 @@ StatusDialog {
                     } else {
                         let chainColor = popup.store.allNetworks.getNetworkColor(splitWords[i])
                         if(!!chainColor) {
-                            d.addPreferredChain(popup.store.allNetworks.getNetworkChainId(splitWords[i]))
+                            store.addPreferredChain(popup.store.allNetworks.getNetworkChainId(splitWords[i]))
                              editedText += `<span style='color: %1'>%2</span>`.arg(chainColor).arg(splitWords[i])+':'
                         }
                     }
@@ -129,16 +128,6 @@ StatusDialog {
                 recipientSelector.input.text = editedText
                 popup.recalculateRoutesAndFees()
             }
-        }
-
-        function addPreferredChain(chainID) {
-            if(!chainID)
-                return
-
-            if(preferredChainIds.includes(chainID))
-                return
-
-            preferredChainIds.push(chainID)
         }
     }
 
@@ -153,6 +142,9 @@ StatusDialog {
     onSelectedAccountChanged: popup.recalculateRoutesAndFees()
 
     onOpened: {
+        store.addPreferredChain(popup.store.getMainnetChainId())
+        store.addUnpreferredChainsToDisabledChains()
+
         amountToSendInput.input.edit.forceActiveFocus()
 
         if(!!popup.preSelectedAsset) {

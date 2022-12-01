@@ -50,12 +50,17 @@ ColumnLayout {
                     wrapMode: Text.WordWrap
                 }
                 StatusButton {
+                    id: preferredToggleButton
                     Layout.alignment: Qt.AlignRight
                     Layout.preferredHeight: 22
-                    verticalPadding: 0
+                    verticalPadding: -1
+                    checkable: true
                     size: StatusBaseButton.Size.Small
-                    icon.name: "hide"
-                    text: qsTr("Show Unpreferred Networks")
+                    icon.name: checked ? "show" : "hide"
+                    icon.height: 16
+                    icon.width: 16
+                    text: checked ? qsTr("Hide Unpreferred Networks"): qsTr("Show Unpreferred Networks")
+                    onToggled: if(!checked) store.addUnpreferredChainsToDisabledChains()
                 }
             }
             StatusBaseText {
@@ -90,6 +95,7 @@ ColumnLayout {
                     reCalculateSuggestedRoute: function() {
                         root.reCalculateSuggestedRoute()
                     }
+                    showPreferredChains: preferredToggleButton.checked
                     bestRoutes: root.bestRoutes
                     weiToEth: root.weiToEth
                     interactive: root.interactive

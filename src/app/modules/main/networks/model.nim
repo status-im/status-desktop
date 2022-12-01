@@ -176,3 +176,9 @@ QtObject:
       if(item.getShortName() == toLowerAscii(shortName)):
         return item.getChainId()
     return 0
+
+  proc getLayer1Network*(self: Model, testNet: bool): int =
+    for item in self.items:
+      if item.getLayer() == 1 and item.getIsTest() == testNet:
+        return item.getChainId()
+    return 0

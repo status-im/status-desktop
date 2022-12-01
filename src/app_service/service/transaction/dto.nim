@@ -162,7 +162,6 @@ type
     tokenFees*: float
     bonderFees*: string
     cost*: float
-    preferred*: bool
     estimatedTime*: int
 
 proc `$`*(self: TransactionPathDto): string =
@@ -177,7 +176,6 @@ proc `$`*(self: TransactionPathDto): string =
     tokenFees:{self.tokenFees},
     bonderFees:{self.bonderFees},
     cost:{self.cost},
-    preferred:{self.preferred},
     estimatedTime:{self.estimatedTime}
   )"""
 
@@ -195,7 +193,6 @@ proc toTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result.amountOut = stint.fromHex(UInt256, jsonObj{"AmountOut"}.getStr)
   result.estimatedTime = jsonObj{"EstimatedTime"}.getInt
   discard jsonObj.getProp("GasAmount", result.gasAmount)
-  discard jsonObj.getProp("Preferred", result.preferred)
 
 proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result = TransactionPathDto()
@@ -211,7 +208,6 @@ proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result.amountOut = stint.u256(jsonObj{"amountOut"}.getStr)
   result.estimatedTime = jsonObj{"estimatedTime"}.getInt
   discard jsonObj.getProp("gasAmount", result.gasAmount)
-  discard jsonObj.getProp("preferred", result.preferred)
 
 type
   Fees* = ref object
