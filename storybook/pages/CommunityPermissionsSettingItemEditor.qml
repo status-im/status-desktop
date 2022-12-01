@@ -10,13 +10,13 @@ ColumnLayout {
 
     property string panelText
     property string name
-    property url icon
-    property double amount
+    property string icon
+    property string amountText
     property bool isAmountVisible: false
-    property bool isENS
-    property bool isENSVisible: false
     property bool isExpression: false
     property bool isAnd: true
+    property bool isImageSelectorVisible: true
+    property var iconsModel
 
     Label {
         Layout.fillWidth: true
@@ -25,13 +25,13 @@ ColumnLayout {
     }
 
     RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 50
-
         Rectangle {
-            border.color: 'gray'
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            id: image
+            visible: root.isImageSelectorVisible
+            border.color: 'lightgrey'
+            radius: 16
+            Layout.preferredHeight: 50
+            Layout.preferredWidth: 50
 
             Image {
                 anchors.fill: parent
@@ -49,10 +49,10 @@ ColumnLayout {
 
                     parent: root
                     anchors.centerIn: parent
-                    width: parent.width * 0.8
-                    height: parent.height * 0.8
+                    width: 200
+                    height: 250
 
-                    model: IconModel {}
+                    model: root.iconsModel
 
                     onSelected: {
                         root.icon = icon
@@ -61,38 +61,39 @@ ColumnLayout {
                 }
             }
         }
-    }
 
-    ColumnLayout {
-        Label {
-            Layout.fillWidth: true
-            text: "Type"
+        ColumnLayout {
+            Label {
+                Layout.fillWidth: true
+                text: "Type"
+            }
+            TextField {
+                background: Rectangle {
+                    radius: 16
+                    border.color: 'lightgrey'
+                }
+                Layout.fillWidth: true
+                text: root.name
+                onTextChanged: root.name = text
+            }
         }
-        TextField {
-            Layout.fillWidth: true
-            text: root.name
-            onTextChanged: root.name = text
-        }
-    }
 
-    ColumnLayout {
-        visible: root.isAmountVisible
-        Label {
-            Layout.fillWidth: true
-            text: "Amount"
+        ColumnLayout {
+            visible: root.isAmountVisible
+            Label {
+                Layout.fillWidth: true
+                text: "Amount"
+            }
+            TextField {
+                background: Rectangle {
+                    radius: 16
+                    border.color: 'lightgrey'
+                }
+                Layout.fillWidth: true
+                text: root.amountText
+                onTextChanged: root.amountText = text
+            }
         }
-        TextField {
-            Layout.fillWidth: true
-            text: root.amount
-            onTextChanged: root.amount = text
-        }
-    }
-
-    CheckBox {
-        visible: root.isENSVisible
-        text: "Is ENS name"
-        checked: root.isENS
-        onToggled: root.isENS = checked
     }
 
     Switch {
@@ -100,10 +101,5 @@ ColumnLayout {
         text: "OR -- AND"
         checked: root.isAnd
         onToggled: root.isAnd = checked
-    }
-
-    Button {
-        Layout.fillWidth: true
-        text: "Add"
     }
 }

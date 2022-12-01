@@ -1,12 +1,12 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
-import AppLayouts.Chat.panels.communities 1.0
+import AppLayouts.Chat.views.communities 1.0
 import AppLayouts.Chat.stores 1.0
-import StatusQ.Core.Theme 0.1
 
 import Storybook 1.0
 import Models 1.0
+import StatusQ.Core.Theme 0.1
 
 SplitView {
     Logs { id: logs }
@@ -19,15 +19,13 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
             color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
-            CommunityPermissionsSettingsPanel {
+            CommunityPermissionsView {
                 anchors {
                     fill: parent
-                    topMargin: 50
+                    margins: 50
                 }
                 store: CommunitiesStore {
-                    tokensModel: TokensModel {}
-                    collectiblesModel: CollectiblesModel {}
-                    channelsModel: ChannelsModel {}
+                    permissionsModel: PermissionsModel { id: mockedModel }
 
                     function editPermission(index) {
                         logs.logEvent("CommunitiesStore::editPermission - index: " + index)
@@ -53,4 +51,18 @@ SplitView {
             logsView.logText: logs.logText
         }
     }
+
+    Pane {
+        SplitView.minimumWidth: 300
+        SplitView.preferredWidth: 300
+
+        CommunityPermissionsSettingsPanelEditor {
+            anchors.fill: parent
+            model: mockedModel
+        }
+    }
 }
+
+
+
+

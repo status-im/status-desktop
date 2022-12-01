@@ -80,7 +80,7 @@ QtObject {
 
     // TODO: Replace to real data, now dummy model
     property var  channelsModel: ListModel {
-        ListElement { key: "wellcome"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "#welcome"}
+        ListElement { key: "welcome"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "#welcome"}
         ListElement { key: "general"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "#general"}
     }
 

@@ -22,6 +22,10 @@ ListModel {
          section: "Views"
     }
     ListElement {
+         title: "CommunityPermissionsView"
+         section: "Views"
+    }
+    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }
