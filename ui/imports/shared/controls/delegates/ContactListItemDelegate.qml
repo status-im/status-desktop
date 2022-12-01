@@ -28,6 +28,6 @@ StatusMemberListItem {
     asset.isLetterIdenticon: (asset.name === "")
     status: model.onlineStatus
     statusListItemIcon.badge.border.color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
-    ringSettings.ringSpecModel: hasEnsName ? undefined : Utils.getColorHashAsJson(model.pubKey, true)
+    ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey, hasEnsName)
     color: (sensor.containsMouse || highlighted) ? Theme.palette.baseColor2 : "transparent"
 }

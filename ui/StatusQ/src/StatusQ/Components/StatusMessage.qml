@@ -60,6 +60,7 @@ Control {
     property bool hasExpired: false
     property double timestamp: 0
     property var reactionsModel: []
+    property bool hasLinks
 
     property bool showHeader: true
     property bool isActiveMessage: false
@@ -346,7 +347,7 @@ Control {
                     }
                     Loader {
                         id: linksLoader
-                        active: !root.editMode
+                        active: !root.editMode && root.hasLinks
                         visible: active
                     }
                     Loader {

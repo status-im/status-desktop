@@ -93,7 +93,7 @@ MembersSelectorBase {
             if (resolvedPubKey === "")
                 return
 
-            const contactDetails = Utils.getContactDetailsAsJson(resolvedPubKey)
+            const contactDetails = Utils.getContactDetailsAsJson(resolvedPubKey, false)
 
             if (contactDetails.publicKey === root.rootStore.contactsStore.myPublicKey)
                 return;

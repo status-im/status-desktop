@@ -53,7 +53,10 @@ ActivityNotificationBase {
         height: messageRow.implicitHeight
         hoverEnabled: root.messageBadgeComponent
         cursorShape: Qt.PointingHandCursor
-        onClicked: root.messageClicked()
+        onClicked: {
+            root.activityCenterStore.switchTo(notification)
+            root.closeActivityCenter()
+        }
 
         RowLayout {
             id: messageRow

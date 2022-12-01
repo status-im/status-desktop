@@ -11,7 +11,7 @@ QtObject {
     /* required */ property var rootStore
 
     function openSendIDRequestPopup(publicKey, cb) {
-        const contactDetails = Utils.getContactDetailsAsJson(publicKey)
+        const contactDetails = Utils.getContactDetailsAsJson(publicKey, false)
         const popup = Global.openPopup(sendIDRequestPopupComponent, {
             userPublicKey: publicKey,
             userDisplayName: contactDetails.displayName,
@@ -74,7 +74,7 @@ QtObject {
     }
 
     function openContactRequestPopup(publicKey, cb) {
-        const contactDetails = Utils.getContactDetailsAsJson(publicKey)
+        const contactDetails = Utils.getContactDetailsAsJson(publicKey, false)
         const popupProperties = {
             userPublicKey: publicKey,
             userDisplayName: contactDetails.displayName,

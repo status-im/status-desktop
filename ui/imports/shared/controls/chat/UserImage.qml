@@ -16,12 +16,13 @@ Loader {
     property string name
     property string pubkey
     property string image
-    property bool showRing: true
+    property bool showRing: !ensVerified
     property bool interactive: true
     property bool disabled: false
+    property bool ensVerified: false
 
     property int colorId: Utils.colorIdForPubkey(pubkey)
-    property var colorHash: Utils.getColorHashAsJson(pubkey)
+    property var colorHash: Utils.getColorHashAsJson(pubkey, ensVerified)
 
     signal clicked()
 
@@ -30,7 +31,7 @@ Loader {
         asset {
             width: root.imageWidth
             height: root.imageHeight
-            color: Theme.palette.userCustomizationColors[root.colorId]
+            color: Utils.colorForColorId(root.colorId)
             name: root.image
             charactersLen: 2
             isImage: true

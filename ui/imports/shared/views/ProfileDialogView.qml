@@ -264,7 +264,7 @@ Pane {
                 interactive: false
                 imageWidth: 80
                 imageHeight: imageWidth
-                showRing: !d.contactDetails.ensVerified
+                ensVerified: d.contactDetails.ensVerified
             }
 
             ColumnLayout {

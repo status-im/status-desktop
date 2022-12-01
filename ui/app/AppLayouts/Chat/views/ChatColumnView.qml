@@ -52,9 +52,8 @@ Item {
     property bool stickersLoaded: false
     property Timer timer: Timer { }
     property var userList
-    property var contactDetails: Utils.getContactDetailsAsJson(root.activeChatId)
+    property var contactDetails: Utils.getContactDetailsAsJson(root.activeChatId, false)
     property bool isUserAdded: root.contactDetails.isAdded
-    property bool contactRequestReceived: root.contactDetails.requestReceived
 
     signal openAppSearch()
     signal openStickerPackPopup(string stickerPackId)
@@ -106,7 +105,7 @@ Item {
     // This function is called once `1:1` or `group` chat is created.
     function checkForCreateChatOptions(chatId) {
         if(root.rootStore.createChatStartSendTransactionProcess) {
-            if (Utils.getContactDetailsAsJson(chatId).ensVerified) {
+            if (root.contactDetails.ensVerified) {
                 Global.openPopup(cmpSendTransactionWithEns);
             } else {
                 Global.openPopup(cmpSendTransactionNoEns);

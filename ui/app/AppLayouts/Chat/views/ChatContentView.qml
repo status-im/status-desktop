@@ -207,7 +207,7 @@ ColumnLayout {
                         return
                     }
 
-                    if (Utils.getContactDetailsAsJson(chatContentModule.getMyChatId()).ensVerified) {
+                    if (Utils.isEnsVerified(chatContentModule.getMyChatId())) {
                         Global.openPopup(root.sendTransactionWithEnsModal)
                     } else {
                         Global.openPopup(root.sendTransactionNoEnsModal)

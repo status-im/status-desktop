@@ -142,12 +142,12 @@ Popup {
         delegate: Rectangle {
             id: rectangle
             objectName: "inputListRectangle_" + index
-            property variant myData: typeof modelData === "undefined" ? model : modelData
+            property var myData: typeof modelData === "undefined" ? model : modelData
             property string myText: popup.getText(myData)
             visible: searchBox.text === "" || myText.includes(searchBox.text)
             color: listView.currentIndex === index ? Style.current.backgroundHover : Style.current.transparent
             border.width: 0
-            width: parent.width
+            width: ListView.view.width
             height: visible ? 42 : 0
             radius: Style.current.radius
 

@@ -77,7 +77,7 @@ Item {
                 readonly property bool ensVerified: Utils.isEnsVerified(model.pubKey)
                 width: ListView.view.width
                 nickName: model.localNickname
-                userName: ensVerified ? model.ensName : model.displayName !== "" ? model.displayName : model.alias
+                userName: ensVerified ? model.ensName : model.displayName || model.alias
                 pubKey: ensVerified ? "" : Utils.getCompressedPk(model.pubKey)
                 isContact: model.isContact
                 isVerified: model.isVerified
@@ -88,7 +88,7 @@ Item {
                 asset.isLetterIdenticon: (asset.name === "")
                 asset.color: Utils.colorForColorId(model.colorId)
                 status: model.onlineStatus
-                ringSettings.ringSpecModel: ensVerified ? undefined : Utils.getColorHashAsJson(model.pubKey, true) // FIXME: use model.colorHash
+                ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey, ensVerified) // FIXME: use model.colorHash
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
                         // Set parent, X & Y positions for the messageContextMenu

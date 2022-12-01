@@ -89,7 +89,7 @@ Popup {
             onUninstallClicked: {
                 stickersModule.uninstall(packId)
                 stickerGrid.model = d.recentStickers
-                btnHistory.clicked()
+                btnHistory.clicked(null)
             }
             onBackClicked: {
                 stickerMarket.visible = false

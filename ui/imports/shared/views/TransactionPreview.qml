@@ -263,6 +263,7 @@ Item {
                 name: root.toAccount.name
                 pubkey: root.toAccount.pubKey
                 image: root.toAccount.icon
+                ensVerified: root.toAccount.ensVerified
             }
             SVGImage {
                 id: toInvalid
