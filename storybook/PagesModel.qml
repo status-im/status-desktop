@@ -54,6 +54,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "ContactsListAndSearch"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
