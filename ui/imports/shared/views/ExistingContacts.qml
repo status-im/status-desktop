@@ -13,6 +13,8 @@ import shared.stores 1.0
 // TODO move Contact into shared to get rid of that import
 import AppLayouts.Chat.controls 1.0
 
+import SortFilterProxyModel 0.2
+
 Item {
     id: root
 
@@ -46,9 +48,42 @@ Item {
         leftMargin: 0
         spacing: Style.current.padding
 
-        model: root.contactsStore.myContactsModel
+        model: SortFilterProxyModel {
+            sourceModel: root.contactsStore.myContactsModel
+            filters: [
+                ExpressionFilter {
+                    expression: {
+                        root.filterText
+                        root.hideCommunityMembers
+                        root.communityId
+
+                        if (root.pubKeys.indexOf(model.pubKey) > -1)
+                            return true
+
+                        if (!model.isContact || model.isBlocked)
+                            return false
+
+                        const filter = root.filterText.toLowerCase()
+                        const filterAccepted = root.filterText === ""
+                                             || root.matchesAlias(model.alias.toLowerCase(), filter)
+                                             || model.displayName.toLowerCase().includes(filter)
+                                             || model.ensName.toLowerCase().includes(filter)
+                                             || model.localNickname.toLowerCase().includes(filter)
+                                             || model.pubKey.toLowerCase().includes(filter)
+
+                        if (!filterAccepted)
+                            return false
+
+                        return !root.hideCommunityMembers ||
+                               !root.rootStore.communityHasMember(root.communityId, model.pubKey)
+                    }
+                }
+            ]
+        }
+
         delegate: StatusMemberListItem {
             width: contactListView.availableWidth
+
             pubKey: Utils.getCompressedPk(model.pubKey)
             isContact: model.isContact
             status: model.onlineStatus
@@ -65,28 +100,6 @@ Item {
             statusListItemIcon.badge.border.color: Theme.palette.baseColor4
             statusListItemIcon.badge.implicitHeight: 14 // 10 px + 2 px * 2 borders
             statusListItemIcon.badge.implicitWidth: 14 // 10 px + 2 px * 2 borders
-
-            visible: {
-                if (contactCheckbox.checked)
-                    return true
-
-                if (!model.isContact || model.isBlocked)
-                    return false
-
-                const filter = root.filterText.toLowerCase()
-                const filterAccepted = root.filterText === ""
-                                     || root.matchesAlias(model.alias.toLowerCase(), filter)
-                                     || model.displayName.toLowerCase().includes(filter)
-                                     || model.ensName.toLowerCase().includes(filter)
-                                     || model.localNickname.toLowerCase().includes(filter)
-                                     || model.pubKey.toLowerCase().includes(filter)
-
-                if (!filterAccepted)
-                    return false
-
-                return !root.hideCommunityMembers ||
-                       !root.rootStore.communityHasMember(root.communityId, model.pubKey)
-            }
 
             onClicked: {
                 root.contactClicked(model);
