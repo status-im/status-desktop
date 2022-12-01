@@ -95,10 +95,6 @@ type KeycardActivityArgs* = ref object of Args
   keycardNewName*: string
   keyPair*: KeyPairDto
 
-const CheckBalanceSlotExecuteIntervalInSeconds = 15 * 60 # 15 mins
-const CheckBalanceTimerIntervalInMilliseconds = 5000 # 5 sec
-const CheckHistoryIntervalInMilliseconds = 20 * 60 * 1000 # 20 mins
-
 include async_tasks
 include  ../../common/json_utils
 
@@ -120,9 +116,9 @@ QtObject:
     isHistoryFetchTimerAlreadyRunning: bool
 
   # Forward declaration
-  proc buildAllTokens(self: Service, calledFromTimerOrInit = false)
-  proc startBuildingTokensTimer(self: Service, resetTimeToNow = true)
-  proc startFetchingHistoryTimer(self: Service, resetTimeToNow = true)
+  proc buildAllTokens(self: Service)
+  proc checkRecentHistory*(self: Service)
+  proc startWallet(self: Service)
 
   proc delete*(self: Service) =
     self.closingApp = true
@@ -184,7 +180,9 @@ QtObject:
         account.relatedAccounts = accounts.filter(x => not account.derivedFrom.isEmptyOrWhitespace and (cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0))
         self.walletAccounts[account.address] = account
 
-      self.buildAllTokens(true)
+      self.buildAllTokens()
+      self.checkRecentHistory()
+      self.startWallet()
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
@@ -200,17 +198,10 @@ QtObject:
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
       case data.eventType:
-        of "recent-history-ready":
-          # run timer again...
-          self.startFetchingHistoryTimer()
-        of "non-archival-node-detected":
-          # run timer again...
-          self.startFetchingHistoryTimer()
-        of "fetching-history-error":
-          # run timer again...
-          self.startFetchingHistoryTimer()
-        else:
-          echo "Unhandled wallet signal: ", data.eventType
+        of "wallet-tick-reload":
+         self.checkRecentHistory()
+         self.buildAllTokens()
+        
 
   proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
     if not self.walletAccounts.hasKey(address):
@@ -231,14 +222,16 @@ QtObject:
       if(accounts[i].address == address):
         return i
 
-  proc checkRecentHistory*(self: Service, calledFromTimerOrInit = false) =
+  proc startWallet(self: Service) =
+    if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
+      return
 
-    # Since we don't have a way to re-run TimerTaskArg (to stop it and run again), we introduced some flags which will
-    # just ignore buildAllTokens in case that proc is called by some action in the time window between two successive calls
-    # initiated by TimerTaskArg.
-    if not calledFromTimerOrInit:
-      self.ignoreTimeInitiatedHistoryFetchBuild = true
+    discard backend.startWallet()
 
+  proc checkRecentHistory*(self: Service) =
+    if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
+      return
+    
     try:
       let addresses = self.getWalletAccounts().map(a => a.address)
       let chainIds = self.networkService.getNetworks().map(a => a.chainId)
@@ -450,32 +443,6 @@ QtObject:
       data.error = e.msg
     self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_DETAILS_FETCHED, data)
 
-  proc onStartBuildingTokensTimer*(self: Service, response: string) {.slot.} =
-    if ((now().toTime().toUnix() - self.timerStartTimeInSeconds) < CheckBalanceSlotExecuteIntervalInSeconds):
-      self.startBuildingTokensTimer(resetTimeToNow = false)
-      return
-
-    if self.ignoreTimeInitiatedTokensBuild:
-      self.ignoreTimeInitiatedTokensBuild = false
-      return
-
-    self.buildAllTokens(true)
-
-  proc startBuildingTokensTimer(self: Service, resetTimeToNow = true) =
-    if(self.closingApp):
-      return
-
-    if (resetTimeToNow):
-      self.timerStartTimeInSeconds = now().toTime().toUnix()
-
-    let arg = TimerTaskArg(
-      tptr: cast[ByteAddress](timerTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onStartBuildingTokensTimer",
-      timeoutInMilliseconds: CheckBalanceTimerIntervalInMilliseconds
-    )
-    self.threadpool.start(arg)
-
   proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
     try:
       let responseObj = response.parseJson
@@ -495,18 +462,9 @@ QtObject:
     except Exception as e:
       error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
 
-    # run timer again...
-    self.startBuildingTokensTimer()
-
-  proc buildAllTokens(self: Service, calledFromTimerOrInit = false) =
-    if(self.closingApp or not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
+  proc buildAllTokens(self: Service) =
+    if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
       return
-
-    # Since we don't have a way to re-run TimerTaskArg (to stop it and run again), we introduced some flags which will
-    # just ignore buildAllTokens in case that proc is called by some action in the time window between two successive calls
-    # initiated by TimerTaskArg.
-    if not calledFromTimerOrInit:
-      self.ignoreTimeInitiatedTokensBuild = true
 
     let arg = BuildTokensTaskArg(
       tptr: cast[ByteAddress](prepareTokensTask),
@@ -517,6 +475,8 @@ QtObject:
 
   proc onIsWalletEnabledChanged*(self: Service) {.slot.} =
     self.buildAllTokens()
+    self.checkRecentHistory()
+    self.startWallet()
 
   proc getNetworkCurrencyBalance*(self: Service, network: NetworkDto): float64 =
     for walletAccount in toSeq(self.walletAccounts.values):
@@ -652,27 +612,3 @@ QtObject:
     except Exception as e:
       error "error: ", procName="deleteKeycard", errName = e.name, errDesription = e.msg
       return "error: " & e.msg
-
-  proc onStartHistoryFetchingTimer*(self: Service, response: string) {.slot.} =
-    self.isHistoryFetchTimerAlreadyRunning = false
-    if self.ignoreTimeInitiatedHistoryFetchBuild:
-      self.ignoreTimeInitiatedHistoryFetchBuild = false
-      return
-
-    self.checkRecentHistory(true)
-
-  proc startFetchingHistoryTimer(self: Service, resetTimeToNow = true) =
-    if(self.closingApp or
-        not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled() or
-        self.isHistoryFetchTimerAlreadyRunning):
-      return
-
-    # TODO move this to status-go, because the 20 minutes timer leaves the app hanging when trying to leave
-    # self.isHistoryFetchTimerAlreadyRunning = true
-    # let arg = TimerTaskArg(
-    #   tptr: cast[ByteAddress](timerTask),
-    #   vptr: cast[ByteAddress](self.vptr),
-    #   slot: "onStartHistoryFetchingTimer",
-    #   timeoutInMilliseconds: CheckHistoryIntervalInMilliseconds
-    # )
-    # self.threadpool.start(arg)

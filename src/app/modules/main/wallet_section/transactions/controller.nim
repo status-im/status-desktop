@@ -62,8 +62,6 @@ proc init*(self: Controller) =
         let accounts = self.getWalletAccounts()
         let addresses = accounts.map(account => account.address)
         self.delegate.setHistoryFetchState(addresses, false)
-      else:
-        echo "Unhandled wallet signal: ", data.eventType
 
   self.events.on(SIGNAL_TRANSACTIONS_LOADED) do(e:Args):
     let args = TransactionsLoadedArgs(e)
@@ -86,9 +84,6 @@ proc init*(self: Controller) =
 
 proc checkPendingTransactions*(self: Controller): seq[TransactionDto] =
   return self.transactionService.checkPendingTransactions()
-
-proc checkRecentHistory*(self: Controller, calledFromTimerOrInit = false) =
-  self.walletAccountService.checkRecentHistory(calledFromTimerOrInit)
 
 proc getWalletAccounts*(self: Controller): seq[WalletAccountDto] =
   self.walletAccountService.getWalletAccounts()

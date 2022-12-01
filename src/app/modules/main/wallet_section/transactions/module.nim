@@ -58,7 +58,6 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  self.controller.checkRecentHistory(calledFromTimerOrInit = true)
   let accounts = self.getWalletAccounts()
 
   self.moduleLoaded = true
