@@ -41,6 +41,7 @@ type SignalType* {.pure.} = enum
   HistoryArchiveDownloaded = "community.historyArchiveDownloaded"
   DownloadingHistoryArchivesStarted = "community.downloadingHistoryArchivesStarted"
   DownloadingHistoryArchivesFinished = "community.downloadingHistoryArchivesFinished"
+  ImportingHistoryArchiveMessages = "community.importingHistoryArchiveMessages"
   UpdateAvailable = "update.available"
   DiscordCategoriesAndChannelsExtracted = "community.discordCategoriesAndChannelsExtracted"
   StatusUpdatesTimedout = "status.updates.timedout"

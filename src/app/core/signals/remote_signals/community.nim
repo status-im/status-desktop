@@ -130,6 +130,11 @@ proc downloadingHistoryArchivesStartedFromEvent*(T: type HistoryArchivesSignal, 
   result.communityId = event["event"]{"communityId"}.getStr()
   result.signalType = SignalType.DownloadingHistoryArchivesStarted
 
+proc importingHistoryArchiveMessagesFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+  result = HistoryArchivesSignal()
+  result.communityId = event["event"]{"communityId"}.getStr()
+  result.signalType = SignalType.ImportingHistoryArchiveMessages
+
 proc downloadingHistoryArchivesFinishedFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
   result = HistoryArchivesSignal()
   result.communityId = event["event"]{"communityId"}.getStr()
