@@ -192,10 +192,15 @@ QtObject:
               if self.contacts.hasKey(request.fromId):
                 self.contacts[request.fromId].trustStatus = TrustStatus.Trusted
                 self.contacts[request.fromId].verificationStatus = VerificationStatus.Trusted
-
               self.events.emit(SIGNAL_CONTACT_TRUSTED,
                 TrustArgs(publicKey: request.fromId, isUntrustworthy: false))
               self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: request.fromId))
+
+            if request.status == VerificationStatus.Canceled:
+              if self.contacts.hasKey(request.fromId):
+                self.contacts[request.fromId].verificationStatus = VerificationStatus.Canceled
+              self.events.emit(SIGNAL_CONTACT_VERIFICATION_CANCELLED, ContactArgs(contactId: request.fromId))
+
           else:
             self.events.emit(SIGNAL_CONTACT_VERIFICATION_ADDED, data)
 
@@ -664,9 +669,6 @@ QtObject:
   proc getReceivedVerificationRequests*(self: Service): seq[VerificationRequest] =
     result = toSeq(self.receivedIdentityRequests.values)
 
-  proc hasReceivedVerificationRequestFrom*(self: Service, fromId: string): bool =
-    result = self.receivedIdentityRequests.contains(fromId)
-
   proc sendVerificationRequest*(self: Service, publicKey: string, challenge: string) =
     try:
       let response = status_contacts.sendVerificationRequest(publicKey, challenge)
@@ -685,8 +687,15 @@ QtObject:
 
   proc cancelVerificationRequest*(self: Service, publicKey: string) =
     try:
-      let response = status_contacts.cancelVerificationRequest(publicKey)
-      if(not response.error.isNil):
+      var response = status_contacts.getVerificationRequestSentTo(publicKey)
+      if not response.error.isNil:
+        let msg = response.error.message
+        raise newException(RpcException, msg)
+
+      let request = response.result.toVerificationRequest()
+
+      response = status_contacts.cancelVerificationRequest(request.id)
+      if not response.error.isNil:
         let msg = response.error.message
         error "error sending contact verification request", msg
         return
@@ -694,7 +703,7 @@ QtObject:
       var contact = self.getContactById(publicKey)
       contact.verificationStatus = VerificationStatus.Unverified
       self.saveContact(contact)
-      
+
       self.events.emit(SIGNAL_CONTACT_VERIFICATION_CANCELLED, ContactArgs(contactId: publicKey))
     except Exception as e:
       error "Error canceling verification request", msg = e.msg

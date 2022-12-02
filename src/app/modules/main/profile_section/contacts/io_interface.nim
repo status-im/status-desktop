@@ -116,10 +116,10 @@ method contactRequestRejectionRemoved*(self: AccessInterface, publicKey: string)
 method getReceivedVerificationRequests*(self: AccessInterface): seq[VerificationRequest] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method hasReceivedVerificationRequestFrom*(self: AccessInterface, fromId: string): bool {.base.} =
+method onVerificationRequestDeclined*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onVerificationRequestDeclined*(self: AccessInterface, publicKey: string) {.base.} =
+method onVerificationRequestCanceled*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onVerificationRequestUpdatedOrAdded*(self: AccessInterface, VerificationRequest: VerificationRequest) {.base.} =

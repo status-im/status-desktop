@@ -140,7 +140,6 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("lastUpdatedLocally", result.lastUpdatedLocally)
   discard jsonObj.getProp("localNickname", result.localNickname)
   discard jsonObj.getProp("bio", result.bio)
-  
 
   result.requestState = ContactRequestState.None
   var requestState: int

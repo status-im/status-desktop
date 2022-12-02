@@ -47,23 +47,14 @@ QtObject {
     }
 
     function openIncomingIDRequestPopup(publicKey, cb) {
-        try {
-            const request = root.rootStore.profileSectionStore.contactsStore.getVerificationDetailsFromAsJson(publicKey)
-            const popupProperties = {
-                senderPublicKey: request.from,
-                senderDisplayName: request.displayName,
-                senderIcon: request.icon,
-                challengeText: request.challenge,
-                responseText: request.response,
-                messageTimestamp: request.requestedAt,
-                responseTimestamp: request.repliedAt
-            }
+        const popupProperties = {
+            contactsStore: root.rootStore.profileSectionStore.contactsStore,
+            publicKey: publicKey
+        }
 
-            const popup = Global.openPopup(contactVerificationRequestPopupComponent, popupProperties)
-            if (cb)
-                cb(popup)
-        } catch (e) {
-            console.error("Error getting or parsing verification data", e)
+        const popup = Global.openPopup(contactVerificationRequestPopupComponent, popupProperties)
+        if (cb) {
+            cb(popup)
         }
     }
 

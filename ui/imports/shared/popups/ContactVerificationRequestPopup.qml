@@ -14,18 +14,52 @@ import shared.views.chat 1.0
 StatusModal {
     id: root
 
-    property string senderPublicKey: ""
-    property string senderDisplayName: ""
-    property string senderIcon: ""
-    property string challengeText: ""
-    property string responseText: ""
-    property string messageTimestamp: ""
-    property string responseTimestamp: ""
+    property var contactsStore
+    property string publicKey
 
     signal verificationRefused(string senderPublicKey)
     signal responseSent(string senderPublicKey, string response)
 
-    header.title: qsTr("%1 is asking you to verify your identity").arg(root.senderDisplayName)
+    function updateContactDetails() {
+        try {
+            const request = root.contactsStore.getVerificationDetailsFromAsJson(root.publicKey)
+
+            if (request.requestStatus === Constants.verificationStatus.canceled) {
+                root.close()
+            }
+
+            d.senderPublicKey = request.from,
+            d.senderDisplayName = request.displayName
+            d.senderIcon = request.icon
+            d.challengeText = request.challenge
+            d.responseText = request.response
+            d.messageTimestamp = request.requestedAt
+            d.responseTimestamp = request.repliedAt
+        } catch (e) {
+            console.error("Error getting or parsing verification data", e)
+        }
+    }
+
+    Connections {
+        target: root.contactsStore.receivedContactRequestsModel
+        function onCountChanged() {
+            root.updateContactDetails()
+        }
+    }
+
+    QtObject {
+        id: d
+
+        property string senderPublicKey: ""
+        property string senderDisplayName: ""
+        property string senderIcon: ""
+        property string challengeText: ""
+        property string responseText: ""
+        property string messageTimestamp: ""
+        property string responseTimestamp: ""
+    }
+
+    header.title: qsTr("%1 is asking you to verify your identity").arg(d.senderDisplayName)
 
     x: Math.round(((parent ? parent.width : 0) - width) / 2)
     y: Math.round(((parent ? parent.height : 0) - height) / 2)
@@ -34,6 +68,7 @@ StatusModal {
     height: 230 + verificationMessage.height + verificationResponse.height
 
     onOpened: {
+        root.updateContactDetails()
         verificationResponse.input.edit.forceActiveFocus(Qt.MouseFocusReason)
     }
 
@@ -51,7 +86,7 @@ StatusModal {
             anchors.top: parent.top
             anchors.topMargin: Style.current.padding
             text: qsTr("%1 would like to verify your identity. Answer the question to prove your identity to %2")
-                    .arg(root.senderDisplayName).arg(root.senderDisplayName)
+                    .arg(d.senderDisplayName).arg(d.senderDisplayName)
             font.pixelSize: 15
         }
 
@@ -62,19 +97,19 @@ StatusModal {
             width: parent.width
             isMessage: true
             shouldRepeatHeader: true
-            messageTimestamp: root.messageTimestamp
-            senderId: root.senderPublicKey
-            senderDisplayName: root.senderDisplayName
-            senderIsEnsVerified: Utils.isEnsVerified(root.senderPublicKey)
-            senderIcon: root.senderIcon
-            messageText: root.challengeText
+            messageTimestamp: d.messageTimestamp
+            senderId: d.senderPublicKey
+            senderDisplayName: d.senderDisplayName
+            senderIsEnsVerified: d.senderPublicKey !== "" && Utils.isEnsVerified(d.senderPublicKey)
+            senderIcon: d.senderIcon
+            messageText: d.challengeText
             messageContentType: Constants.messageContentType.messageType
             placeholderMessage: true
         }
 
         StatusInput {
             id: verificationResponse
-            visible: !responseText
+            visible: !d.responseText
             anchors.top: verificationMessage.bottom
             anchors.topMargin: 5
             input.multiline: true
@@ -90,30 +125,30 @@ StatusModal {
 
         MessageView {
             id: responseMessage
-            visible: !!root.responseText
+            visible: !!d.responseText
             anchors.top: verificationMessage.bottom
             width: parent.width
             isMessage: true
             shouldRepeatHeader: true
-            messageTimestamp: root.responseTimestamp
+            messageTimestamp: d.responseTimestamp
             senderId: userProfile.pubKey
             senderDisplayName: userProfile.displayName
             senderIsEnsVerified: !!userProfile.preferredName
             senderIcon: userProfile.icon
-            messageText: root.responseText
+            messageText: d.responseText
             messageContentType: Constants.messageContentType.messageType
             placeholderMessage: true
         }
 
         StatusBaseText {
             id: responseSent
-            visible: !!root.responseText
+            visible: !!d.responseText
             width: parent.width
             color: Theme.palette.baseColor1
             wrapMode: Text.WordWrap
             anchors.top: responseMessage.bottom
             anchors.topMargin: 58
-            text: qsTr("Your answer has been sent to %1.").arg(root.senderDisplayName)
+            text: qsTr("Your answer has been sent to %1.").arg(d.senderDisplayName)
             font.pixelSize: 13
             horizontalAlignment: Text.AlignHCenter
         }
@@ -121,32 +156,32 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
-            visible: !root.responseText
+            visible: !d.responseText
             text: qsTr("Refuse Verification")
             onClicked: {
-                root.verificationRefused(root.senderPublicKey)
+                root.verificationRefused(d.senderPublicKey)
                 root.close();
             }
         },
         StatusButton {
             text: qsTr("Send Answer")
-            visible: !root.responseText
+            visible: !d.responseText
             enabled: verificationResponse.text !== ""
             onClicked: {
-                root.responseSent(root.senderPublicKey, Utils.escapeHtml(verificationResponse.text))
-                root.responseText = verificationResponse.text
-                root.responseTimestamp = Date.now()
+                root.responseSent(d.senderPublicKey, Utils.escapeHtml(verificationResponse.text))
+                d.responseText = verificationResponse.text
+                d.responseTimestamp = Date.now()
             }
         },
         StatusFlatButton {
-            visible: root.responseText
+            visible: d.responseText
             text: qsTr("Change answer")
             onClicked: {
-                root.responseText = ""
+                d.responseText = ""
             }
         },
         StatusButton {
-            visible: root.responseText
+            visible: d.responseText
             text: qsTr("Close")
             onClicked: root.close()
         }

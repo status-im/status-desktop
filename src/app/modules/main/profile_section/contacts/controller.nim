@@ -73,6 +73,10 @@ proc init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.onVerificationRequestDeclined(args.contactId)
 
+  self.events.on(SIGNAL_CONTACT_VERIFICATION_CANCELLED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.onVerificationRequestCanceled(args.contactId)
+
   self.events.on(SIGNAL_CONTACT_VERIFICATION_ADDED) do(e: Args):
     var args = VerificationRequestArgs(e)
     self.delegate.onVerificationRequestUpdatedOrAdded(args.verificationRequest)
@@ -161,5 +165,3 @@ proc getReceivedVerificationRequests*(self: Controller): seq[VerificationRequest
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
   return self.contactsService.getStatusForContactWithId(publicKey)
 
-proc hasReceivedVerificationRequestFrom*(self: Controller, fromId: string): bool =
-  self.contactsService.hasReceivedVerificationRequestFrom(fromId)
