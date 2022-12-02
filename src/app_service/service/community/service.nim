@@ -255,7 +255,7 @@ QtObject:
         stopped: receivedData.stopped
       ))
 
-    self.events.on(SignalType.DownloadingHistoryArchivesStarted.event) do(e: Args):
+    self.events.on(SignalType.ImportingHistoryArchiveMessages.event) do(e: Args):
       var receivedData = HistoryArchivesSignal(e)
       if receivedData.communityId notin self.historyArchiveDownloadTaskCommunityIds:
         self.historyArchiveDownloadTaskCommunityIds.incl(receivedData.communityId)

@@ -95,6 +95,7 @@ QtObject:
       of SignalType.HistoryArchiveDownloaded: HistoryArchivesSignal.historyArchiveDownloadedFromEvent(jsonSignal)
       of SignalType.DownloadingHistoryArchivesStarted: HistoryArchivesSignal.downloadingHistoryArchivesStartedFromEvent(jsonSignal)
       of SignalType.DownloadingHistoryArchivesFinished: HistoryArchivesSignal.downloadingHistoryArchivesFinishedFromEvent(jsonSignal)
+      of SignalType.ImportingHistoryArchiveMessages: HistoryArchivesSignal.importingHistoryArchiveMessagesFromEvent(jsonSignal)
       of SignalType.UpdateAvailable: UpdateAvailableSignal.fromEvent(jsonSignal)
       of SignalType.DiscordCategoriesAndChannelsExtracted: DiscordCategoriesAndChannelsExtractedSignal.fromEvent(jsonSignal)
       of SignalType.StatusUpdatesTimedout: StatusUpdatesTimedoutSignal.fromEvent(jsonSignal)
