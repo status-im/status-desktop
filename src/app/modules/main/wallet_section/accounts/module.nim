@@ -113,7 +113,7 @@ method refreshWalletAccounts*(self: Module) =
           x.walletType,
           x.isWallet,
           x.isChat,
-          x.getBalance(enabledChainIds),
+          x.getCurrencyBalance(enabledChainIds),
           x.emoji,
           x.derivedfrom,
         ))
@@ -128,7 +128,7 @@ method refreshWalletAccounts*(self: Module) =
       w.walletType,
       w.isWallet,
       w.isChat,
-      w.getBalance(enabledChainIds),
+      w.getCurrencyBalance(enabledChainIds),
       assets,
       w.emoji,
       w.derivedfrom,
