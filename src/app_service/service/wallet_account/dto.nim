@@ -114,6 +114,14 @@ proc getBalances*(self: WalletTokenDto, chainIds: seq[int]): seq[BalanceDto] =
     if self.balancesPerChain.hasKey(chainId):
       result.add(self.balancesPerChain[chainId])
 
+proc getBalance*(self: WalletTokenDto, chainIds: seq[int]): float64 =
+  var sum = 0.0
+  for chainId in chainIds:
+    if self.balancesPerChain.hasKey(chainId):
+      sum += self.balancesPerChain[chainId].balance
+  
+  return sum
+
 proc getCurrencyBalance*(self: WalletTokenDto, chainIds: seq[int]): float64 =
   var sum = 0.0
   for chainId in chainIds:
@@ -134,17 +142,6 @@ proc getVisible*(self: WalletTokenDto, chainIds: seq[int]): bool =
 
 proc getCurrencyBalance*(self: WalletAccountDto, chainIds: seq[int]): float64 =
   return self.tokens.map(t => t.getCurrencyBalance(chainIds)).foldl(a + b, 0.0)
-
-proc getBalance*(self: WalletTokenDto, chainIds: seq[int]): float64 =
-  var sum = 0.0
-  for chainId in chainIds:
-    if self.balancesPerChain.hasKey(chainId):
-      sum += self.balancesPerChain[chainId].balance
-  
-  return sum
-
-proc getBalance*(self: WalletAccountDto, chainIds: seq[int]): float64 =
-  return self.tokens.map(t => t.getBalance(chainIds)).foldl(a + b, 0.0)
 
 proc toBalanceDto*(jsonObj: JsonNode): BalanceDto =
   result = BalanceDto()
