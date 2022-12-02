@@ -70,8 +70,12 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
             Layout.preferredHeight: Constants.keycard.general.titleHeight
-            wrapMode: Text.WordWrap
-            text: qsTr("A factory reset will delete the key on this Keycard.\nAre you sure you want to do this?")
+            text: {
+                if (root.sharedKeycardModule.keyPairStoredOnKeycard.keyUid === userProfile.keyUid)
+                    return qsTr("Warning, this Keycard stores your main Status profile and\naccounts. A factory reset will permanently delete it.")
+
+                return qsTr("A factory reset will delete the key on this Keycard.\nAre you sure you want to do this?")
+            }
             font.pixelSize: Constants.keycard.general.fontSize2
             color: Theme.palette.dangerColor1
         }

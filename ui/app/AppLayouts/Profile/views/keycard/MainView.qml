@@ -117,7 +117,7 @@ ColumnLayout {
 
     StatusListItem {
         Layout.fillWidth: true
-        title: qsTr("Generate a seed phrase")
+        title: qsTr("Generate a new seed phrase")
         components: [
             StatusIcon {
                 icon: "tiny/chevron-right"

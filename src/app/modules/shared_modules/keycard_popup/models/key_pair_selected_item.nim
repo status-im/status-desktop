@@ -34,6 +34,14 @@ QtObject:
     self.keyPairSelectedItemLockedChanged()
     self.keyPairSelectedItemIconChanged()
 
+  proc getKeyUid*(self: KeyPairSelectedItem): string {.slot.} =
+    if(self.item.isNil):
+      return ""
+    return self.item.keyUid()
+  QtProperty[string] keyUid:
+    read = getKeyUid
+    notify = keyPairSelectedItemChanged
+
   proc getPubKey*(self: KeyPairSelectedItem): string {.slot.} =
     if(self.item.isNil):
       return ""

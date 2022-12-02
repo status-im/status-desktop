@@ -468,6 +468,7 @@ proc updateKeyPairItemIfDataAreKnown[T](self: Module[T], address: string, item: 
     var icon = ""
     if a.walletType == WalletTypeDefaultStatusAccount:
       icon = "wallet"
+    item.setKeyUid(a.keyUid)
     item.addAccount(a.name, a.path, a.address, a.emoji, a.color, icon, balance = 0.0)
     return true
   return false
