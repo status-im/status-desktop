@@ -63,7 +63,6 @@ var emoji_json = [
         "emoji_order": "5",
         "aliases": [],
         "aliases_ascii": [
-            ":D",
             ":-D",
             "=D"
         ]
@@ -76,7 +75,9 @@ var emoji_json = [
         "category": "people",
         "emoji_order": "6",
         "aliases": [],
-        "aliases_ascii": []
+        "aliases_ascii": [
+            ":D"
+	]
     },
     {
         "unicode": "1f605",
