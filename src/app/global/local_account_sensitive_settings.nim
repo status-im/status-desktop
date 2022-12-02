@@ -501,7 +501,8 @@ QtObject:
 
   proc showBrowserSelectorChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getShowBrowserSelector*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_SHOW_BROWSER_SELECTOR, newQVariant(DEFAULT_SHOW_BROWSER_SELECTOR))
+    # getSettingsProp[bool](self, LSS_KEY_SHOW_BROWSER_SELECTOR, newQVariant(DEFAULT_SHOW_BROWSER_SELECTOR)) # https://github.com/status-im/status-desktop/issues/8568
+    return false
   proc setShowBrowserSelector*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
     setSettingsProp(self, LSS_KEY_SHOW_BROWSER_SELECTOR, newQVariant(value)):
       self.showBrowserSelectorChanged()
@@ -514,7 +515,8 @@ QtObject:
 
   proc openLinksInStatusChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getOpenLinksInStatus*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_OPEN_LINKS_IN_STATUS, newQVariant(DEFAULT_OPEN_LINKS_IN_STATUS))
+    # getSettingsProp[bool](self, LSS_KEY_OPEN_LINKS_IN_STATUS, newQVariant(DEFAULT_OPEN_LINKS_IN_STATUS)) # https://github.com/status-im/status-desktop/issues/8568
+    return false
   proc setOpenLinksInStatus*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
     setSettingsProp(self, LSS_KEY_OPEN_LINKS_IN_STATUS, newQVariant(value)):
       self.openLinksInStatusChanged()
