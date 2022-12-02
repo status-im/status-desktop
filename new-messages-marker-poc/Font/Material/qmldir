@@ -1,0 +1,3 @@
+module Font.Material
+
+singleton Icons 1.0 Icons.qml

@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>MessagesView.qml</file>
+        <file>ChatInput.qml</file>
+        <file>ChatView.qml</file>
+        <file>AppController.qml</file>
+        <file>Model.qml</file>
+        <file>Font/Material/Icons.qml</file>
+        <file>Font/Material/materialdesignicons-webfont.ttf</file>
+        <file>Font/Material/qmldir</file>
+        <file>Core/qmldir</file>
+        <file>Core/IconButton.qml</file>
+        <file>delegates/MessageDelegate.qml</file>
+        <file>delegates/NewMessageMarkerDelegate.qml</file>
+        <file>ChatController.qml</file>
+    </qresource>
+</RCC>
