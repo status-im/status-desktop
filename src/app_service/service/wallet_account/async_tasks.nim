@@ -109,11 +109,11 @@ const timerTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
 
 type
   BuildTokensTaskArg = ref object of QObjectTaskArg
-    discard
+    accounts: seq[string]
 
 const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[BuildTokensTaskArg](argEncoded)
-  let response = backend.getWalletToken()
+  let response = backend.getWalletToken(arg.accounts)
   arg.finish(response.result)
 
 #################################################

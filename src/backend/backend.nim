@@ -89,7 +89,7 @@ rpc(getPendingTransactionsByChainIDs, "wallet"):
   chainIds: seq[int]
 
 rpc(getWalletToken, "wallet"):
-  discard
+  accounts: seq[string]
 
 rpc(startWallet, "wallet"):
   discard
