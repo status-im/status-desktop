@@ -116,7 +116,7 @@ QtObject:
     isHistoryFetchTimerAlreadyRunning: bool
 
   # Forward declaration
-  proc buildAllTokens(self: Service)
+  proc buildAllTokens(self: Service, accounts: seq[string])
   proc checkRecentHistory*(self: Service)
   proc startWallet(self: Service)
 
@@ -171,6 +171,9 @@ QtObject:
         x => x.toWalletAccountDto()
       ).filter(a => not a.isChat)
 
+  proc getAddresses(self: Service): seq[string] =
+    return toSeq(self.walletAccounts.keys())
+
   proc init*(self: Service) =
     signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
     
@@ -180,7 +183,7 @@ QtObject:
         account.relatedAccounts = accounts.filter(x => not account.derivedFrom.isEmptyOrWhitespace and (cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0))
         self.walletAccounts[account.address] = account
 
-      self.buildAllTokens()
+      self.buildAllTokens(self.getAddresses())
       self.checkRecentHistory()
       self.startWallet()
     except Exception as e:
@@ -199,8 +202,8 @@ QtObject:
       var data = WalletSignal(e)
       case data.eventType:
         of "wallet-tick-reload":
-         self.checkRecentHistory()
-         self.buildAllTokens()
+          self.buildAllTokens(self.getAddresses())
+          self.checkRecentHistory()
         
 
   proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
@@ -250,7 +253,7 @@ QtObject:
         newAccount.relatedAccounts = accounts.filter(x => cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0)
         break
     self.walletAccounts[newAccount.address] = newAccount
-    self.buildAllTokens()
+    self.buildAllTokens(@[newAccount.address])
     self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
   proc generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string, 
@@ -347,7 +350,7 @@ QtObject:
 
   proc updateCurrency*(self: Service, newCurrency: string) =
     discard self.settingsService.saveCurrency(newCurrency)
-    self.buildAllTokens()
+    self.buildAllTokens(self.getAddresses())
     self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
 
   proc toggleNetworkEnabled*(self: Service, chainId: int) =
@@ -454,15 +457,15 @@ QtObject:
         if(responseObj.getProp(wAddress, tokensArr)):
           tokens = map(tokensArr.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
         
-        tokens.sort(priorityTokenCmp)
-        self.walletAccounts[wAddress].tokens = tokens
-        data.accountsTokens[wAddress] = tokens
+          tokens.sort(priorityTokenCmp)
+          self.walletAccounts[wAddress].tokens = tokens
+          data.accountsTokens[wAddress] = tokens
 
       self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, data)
     except Exception as e:
       error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
 
-  proc buildAllTokens(self: Service) =
+  proc buildAllTokens(self: Service, accounts: seq[string]) =
     if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
       return
 
@@ -470,11 +473,12 @@ QtObject:
       tptr: cast[ByteAddress](prepareTokensTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAllTokensBuilt",
+      accounts: accounts
     )
     self.threadpool.start(arg)
 
   proc onIsWalletEnabledChanged*(self: Service) {.slot.} =
-    self.buildAllTokens()
+    self.buildAllTokens(self.getAddresses())
     self.checkRecentHistory()
     self.startWallet()
 
@@ -610,5 +614,5 @@ QtObject:
         return "(" & $response.error.code & ") " & response.error.message
       self.addNewAccountToLocalStore()
     except Exception as e:
-      error "error: ", procName="deleteKeycard", errName = e.name, errDesription = e.msg
+      error "error: ", procName="addWalletAccount", errName = e.name, errDesription = e.msg
       return "error: " & e.msg
