@@ -133,10 +133,6 @@ SplitView {
                         contactsStore: QtObject {
                             readonly property string myPublicKey: "0xdeadbeef"
 
-                            function hasReceivedVerificationRequestFrom(publicKey) {
-                                return false
-                            }
-
                             function joinPrivateChat(publicKey) {
                                 logs.logEvent("contactsStore::joinPrivateChat", ["publicKey"], arguments)
                             }

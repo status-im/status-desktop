@@ -115,10 +115,6 @@ QtObject {
         return JSON.parse(resp);
     }
 
-    function hasReceivedVerificationRequestFrom(pubKey) {
-        return root.contactsModule.hasReceivedVerificationRequestFrom(pubKey);
-    }
-
     function verifiedTrusted(pubKey) {
         root.contactsModule.verifiedTrusted(pubKey);
     }

@@ -257,10 +257,10 @@ method acceptVerificationRequest*(self: Module, publicKey: string, response: str
 method getReceivedVerificationRequests*(self: Module): seq[VerificationRequest] =
   self.controller.getReceivedVerificationRequests()
 
-method hasReceivedVerificationRequestFrom*(self: Module, fromId: string): bool =
-  result = self.controller.hasReceivedVerificationRequestFrom(fromId)
-
 method onVerificationRequestDeclined*(self: Module, publicKey: string) =
+  self.view.receivedContactRequestsModel.removeItemById(publicKey)
+
+method onVerificationRequestCanceled*(self: Module, publicKey: string) =
   self.view.receivedContactRequestsModel.removeItemById(publicKey)
 
 method onVerificationRequestUpdatedOrAdded*(self: Module, request: VerificationRequest) =

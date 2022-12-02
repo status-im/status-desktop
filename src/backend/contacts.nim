@@ -103,8 +103,8 @@ proc getReceivedVerificationRequests*(): RpcResponse[JsonNode] {.raises: [Except
   let payload = %* []
   result = callPrivateRPC("getReceivedVerificationRequests".prefix, payload)
 
-proc cancelVerificationRequest*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [pubkey]
+proc cancelVerificationRequest*(requestId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [requestId]
   result = callPrivateRPC("cancelVerificationRequest".prefix, payload)
 
 proc retractContactRequest*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =

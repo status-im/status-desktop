@@ -79,11 +79,11 @@ StatusMenu {
         return !root.isMe && root.selectedUserPublicKey !== "" &&
             root.store.contactsStore.hasPendingContactRequest(root.selectedUserPublicKey);
     }
-    readonly property bool hasReceivedVerificationRequestFrom: {
+    readonly property bool hasActiveReceivedVerificationRequestFrom: {
         if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
             return false
         }
-        return root.store.contactsStore.hasReceivedVerificationRequestFrom(root.selectedUserPublicKey)
+        return contactDetails.incomingVerificationStatus === Constants.verificationStatus.verifying
     }
     readonly property bool isVerificationRequestSent: {
         if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
@@ -254,7 +254,7 @@ StatusMenu {
         enabled: root.isProfile && !root.isMe && root.isContact
                                 && !root.isBlockedContact
                                 && root.outgoingVerificationStatus === Constants.verificationStatus.unverified
-                                && !root.hasReceivedVerificationRequestFrom
+                                && !root.hasActiveReceivedVerificationRequestFrom
         onTriggered: {
             Global.openSendIDRequestPopup(root.selectedUserPublicKey, null)
             root.close()
@@ -269,10 +269,10 @@ StatusMenu {
         icon.name: "checkmark-circle"
         enabled: root.isProfile && !root.isMe && root.isContact
                                 && !root.isBlockedContact && !root.isTrusted
-                                && (root.hasReceivedVerificationRequestFrom
+                                && (root.hasActiveReceivedVerificationRequestFrom
                                     || root.isVerificationRequestSent)
         onTriggered: {
-            if (hasReceivedVerificationRequestFrom) {
+            if (hasActiveReceivedVerificationRequestFrom) {
                 Global.openIncomingIDRequestPopup(root.selectedUserPublicKey, null)
             } else if (root.isVerificationRequestSent) {
                 Global.openOutgoingIDRequestPopup(root.selectedUserPublicKey, null)
