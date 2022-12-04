@@ -21,7 +21,7 @@ find_package(
   REQUIRED)
 
 file(GLOB_RECURSE QML_FILES "stubs/*.qml" "mocks/*.qml" "pages/*.qml"
-    "src/*.qml" "src/qmldir" "../ui/StatusQ/*.qml" "../ui/app/*.qml")
+    "src/*.qml" "src/qmldir" "../ui/StatusQ/*.qml" "../ui/app/*.qml" "../ui/imports/*.qml")
 file(GLOB_RECURSE JS_FILES "../ui/StatusQ/*.js" "../ui/app/*.js")
 
 set(PROJECT_LIB "${PROJECT_NAME}Lib")

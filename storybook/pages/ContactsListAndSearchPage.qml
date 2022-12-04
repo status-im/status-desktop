@@ -2,59 +2,16 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 
 import shared.controls 1.0
-import shared.stores 1.0
 
-import utils 1.0
+import StubDecorators 1.0
 
 Pane {
-    QtObject {
-        id: userProfileInst
-
-        Component.onCompleted: RootStore.userProfileInst = userProfileInst
-    }
-
-    QtObject {
-        id: chatSectionChatContentInputArea
-    }
-
-    QtObject {
-        id: mainModule
-
-        signal resolvedENS
-    }
-
-    QtObject {
-        id: globalUtilsInst
-
-        function isCompressedPubKey() {
-            return true
-        }
-
-        function getCompressedPk(publicKey) {
-            return "zx3sh" + publicKey
-        }
-
-        Component.onCompleted: Utils.globalUtilsInst = globalUtilsInst
-    }
-
-    QtObject {
-        id: mainModuleInst
-
-        function isCompressedPubKey() {
-            return true
-        }
-
-        function getContactDetailsAsJson() {
-            return JSON.stringify({
-                alias: "alias",
-                isAdded: false
-            })
-        }
-
-        Component.onCompleted: Utils.mainModuleInst = mainModuleInst
-    }
+    SharedRootStoreDecorator {}
+    UtilsDecorator { id: utilsDecorator }
 
     ContactsListAndSearch {
+        //inject mainModule (expected as context property)
+        property var mainModule: utilsDecorator.mainModule
         anchors.fill: parent
 
         community: ({ id: "communityId" })

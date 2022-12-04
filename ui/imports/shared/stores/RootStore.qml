@@ -9,12 +9,23 @@ QtObject {
 //    property var walletModelInst: !!walletModel ? walletModel : null
 //    property var profileModelInst: !!profileModel ? profileModel : null
 
-    property var profileSectionModuleInst: profileSectionModule
+    /// Contex properties wrappers ///
+    property var gifProvider:                       !!chatSectionChatContentInputArea ? chatSectionChatContentInputArea : null
+    property var walletSectionAccountsProvider:     !!walletSectionAccounts ? walletSectionAccounts : null
+    property var currentAccount:                    !!walletSectionCurrent ? walletSectionCurrent : null
+    property var walletTokensModule:                !!walletSectionAllTokens ? walletSectionAllTokens : null
+    property var history:                           !!walletSectionTransactions ? walletSectionTransactions : null
+    property var profileSectionModuleInst:          !!profileSectionModule ? profileSectionModule : null
+    property var walletSectionInst:                 !!walletSection ? walletSection : null
+    property var userProfileInst:                   !!userProfile ? userProfile : null
+    property var appSettings:                       !!localAppSettings ? localAppSettings : null
+    property var accountSensitiveSettings:          !!localAccountSensitiveSettings ? localAccountSensitiveSettings : null
+    property var networksModuleInst:                !!networksModule ? networksModule : null
+    property var globalUtilsInst:                   !!globalUtils ? globalUtils : null
+    property var walletSectionSavedAddressesInst:   !!walletSectionSavedAddresses ? walletSectionSavedAddresses : null
+    /// end of context propertyies wrappers ///
+
     property var privacyModule: profileSectionModuleInst.privacyModule
-    property var userProfileInst: !!userProfile ? userProfile : null
-    property var walletSectionInst: !!walletSection ? walletSection : null
-    property var appSettings: !!localAppSettings ? localAppSettings : null
-    property var accountSensitiveSettings: !!localAccountSensitiveSettings ? localAccountSensitiveSettings : null
     property real volume: !!accountSensitiveSettings ? accountSensitiveSettings.volume * 0.1 : 0.2
     property bool isWalletEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.isWalletEnabled : false
     property bool notificationSoundsEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.notificationSoundsEnabled : false
@@ -29,44 +40,42 @@ QtObject {
 //    property string gasEthValue: !!walletModelInst ? walletModelInst.gasView.getGasEthValue : "0"
 
     property CurrenciesStore currencyStore: CurrenciesStore { }
-    property string currentCurrency: walletSection.currentCurrency
+    property string currentCurrency: walletSectionInst.currentCurrency
 //    property string defaultCurrency: !!walletModelInst ? walletModelInst.balanceView.defaultCurrency : "0"
 //    property string fiatValue: !!walletModelInst ? walletModelInst.balanceView.getFiatValue : "0"
 //    property string cryptoValue: !!walletModelInst ? walletModelInst.balanceView.getCryptoValue : "0"
 
-    property var history: walletSectionTransactions
-    property var historyTransactions: walletSectionTransactions.model
+    property var historyTransactions: history.model
     property bool isNonArchivalNode:  history.isNonArchivalNode
 
-    property var currentAccount: walletSectionCurrent
     property var marketValueStore: TokenMarketValuesStore{}
 
     function getNetworkColor(chainId) {
-        return networksModule.all.getChainColor(chainId)
+        return networksModuleInst.all.getChainColor(chainId)
     }
 
     function getNetworkIcon(chainId) {
-        return networksModule.all.getIconUrl(chainId)
+        return networksModuleInst.all.getIconUrl(chainId)
     }
 
     function getNetworkShortName(chainId) {
-        return networksModule.all.getNetworkShortName(chainId)
+        return networksModuleInst.all.getNetworkShortName(chainId)
     }
 
     function getNetworkIconUrl(symbol) {
-        return networksModule.all.getNetworkIconUrl(symbol)
+        return networksModuleInst.all.getNetworkIconUrl(symbol)
     }
 
     function getNetworkName(symbol) {
-        return networksModule.all.getNetworkName(symbol)
+        return networksModuleInst.all.getNetworkName(symbol)
     }
 
     function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
-        return profileSectionModule.ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
+        return profileSectionModuleInst.ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
     }
 
     function hex2Dec(value) {
-        return globalUtils.hex2Dec(value)
+        return globalUtilsInst.hex2Dec(value)
     }
 
     readonly property var formationChars: (["*", "`", "~"])
@@ -90,36 +99,36 @@ QtObject {
     }
 
     function setNeverAskAboutUnfurlingAgain(value) {
-        localAccountSensitiveSettings.neverAskAboutUnfurlingAgain = value;
+        accountSensitiveSettings.neverAskAboutUnfurlingAgain = value;
     }
 
     function enableWallet() {
-        localAccountSensitiveSettings.isWalletEnabled = true;
+        accountSensitiveSettings.isWalletEnabled = true;
     }
 
     function setIsTenorWarningAccepted(value) {
-        localAccountSensitiveSettings.isTenorWarningAccepted = value;
+        accountSensitiveSettings.isTenorWarningAccepted = value;
     }
 
     function copyToClipboard(text) {
-        globalUtils.copyToClipboard(text)
+        globalUtilsInst.copyToClipboard(text)
     }
 
-    property var gifColumnA: chatSectionChatContentInputArea.gifColumnA
-    property var gifColumnB: chatSectionChatContentInputArea.gifColumnB
-    property var gifColumnC: chatSectionChatContentInputArea.gifColumnC
+    property var gifColumnA: gifProvider.gifColumnA
+    property var gifColumnB: gifProvider.gifColumnB
+    property var gifColumnC: gifProvider.gifColumnC
 
     function searchGifs(query) {
-        chatSectionChatContentInputArea.searchGifs(query)
+        gifProvider.searchGifs(query)
     }
 
     function getTrendingsGifs() {
-        chatSectionChatContentInputArea.getTrendingsGifs()
+        gifProvider.getTrendingsGifs()
     }
 
     function updateWhitelistedUnfurlingSites(hostname, whitelisted) {
         // no way to send update notification for individual array entries
-        let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
+        let settings = accountSensitiveSettings.whitelistedUnfurlingSites
 
         if (!settings)
             settings = {}
@@ -128,29 +137,29 @@ QtObject {
             return
 
         settings[hostname] = whitelisted
-        localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
+        accountSensitiveSettings.whitelistedUnfurlingSites = settings
         if(hostname === "media.tenor.com" && whitelisted === false)
             RootStore.setIsTenorWarningAccepted(false)
     }
 
     function getRecentsGifs() {
-        chatSectionChatContentInputArea.getRecentsGifs()
+        gifProvider.getRecentsGifs()
     }
 
     function getFavoritesGifs() {
-        return chatSectionChatContentInputArea.getFavoritesGifs()
+        return gifProvider.getFavoritesGifs()
     }
 
     function isFavorite(id) {
-        return chatSectionChatContentInputArea.isFavorite(id)
+        return gifProvider.isFavorite(id)
     }
 
     function toggleFavoriteGif(id, reload) {
-        chatSectionChatContentInputArea.toggleFavoriteGif(id, reload)
+        gifProvider.toggleFavoriteGif(id, reload)
     }
 
     function addToRecentsGif(id) {
-        chatSectionChatContentInputArea.addToRecentsGif(id)
+        gifProvider.addToRecentsGif(id)
     }
 
     function getPasswordStrengthScore(password) {
@@ -166,43 +175,43 @@ QtObject {
     }
 
     function hex2Eth(value) {
-        return globalUtils.hex2Eth(value)
+        return globalUtilsInst.hex2Eth(value)
     }
 
     function hex2Gwei(value) {
-        return globalUtils.hex2Gwei(value)
+        return globalUtilsInst.hex2Gwei(value)
     }
 
     function findTokenSymbolByAddress(address) {
-        return  walletSectionAllTokens.findTokenSymbolByAddress(address)
+        return  walletTokensModule.findTokenSymbolByAddress(address)
     }
 
     function getNameForSavedWalletAddress(address) {
-        return walletSectionSavedAddresses.getNameByAddress(address)
+        return walletSectionSavedAddressesInst.getNameByAddress(address)
     }
 
     function createOrUpdateSavedAddress(name, address, favourite) {
-        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite)
+        return walletSectionSavedAddressesInst.createOrUpdateSavedAddress(name, address, favourite)
     }
 
     function deleteSavedAddress(address) {
-        return walletSectionSavedAddresses.deleteSavedAddress(address)
+        return walletSectionSavedAddressesInst.deleteSavedAddress(address)
     }
 
     function getLatestBlockNumber() {
-        return walletSectionTransactions.getLastTxBlockNumber()
+        return history.getLastTxBlockNumber()
     }
 
     function getGasEthValue(gweiValue, gasLimit) {
-        return profileSectionModule.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
+        return profileSectionModuleInst.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
     }
 
     function getHistoricalDataForToken(symbol, currency) {
-        walletSectionAllTokens.getHistoricalDataForToken(symbol,currency)
+        walletTokensModule.getHistoricalDataForToken(symbol,currency)
     }
 
     // TODO: range until we optimize to cache the data and abuse the requests
     function fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum) {
-        walletSectionAllTokens.fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum)
+        walletTokensModule.fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum)
     }
 }

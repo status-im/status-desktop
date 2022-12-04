@@ -1,0 +1,15 @@
+AccountSensitiveSettings 1.0 AccountSensitiveSettings.qml
+ChatSectionChatContentInputArea 1.0 ChatSectionChatContentInputArea.qml
+GlobalUtils 1.0 GlobalUtils.qml
+LocalAccountSensitiveSettings 1.0 LocalAccountSensitiveSettings.qml
+LocalAppSettings 1.0 LocalAppSettings.qml
+MainModule 1.0 MainModule.qml
+NetworksModule 1.0 NetworksModule.qml
+ProfileSectionModule 1.0 ProfileSectionModule.qml
+UserProfile 1.0 UserProfile.qml
+WalletSection 1.0 WalletSection.qml
+WalletSectionAccounts 1.0 WalletSectionAccounts.qml
+WalletSectionAllTokens 1.0 WalletSectionAllTokens.qml
+WalletSectionCurrent 1.0 WalletSectionCurrent.qml
+WalletSectionSavedAddresses 1.0 WalletSectionSavedAddresses.qml
+WalletSectionTransactions 1.0 WalletSectionTransactions.qml

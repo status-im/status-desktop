@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import Storybook 1.0
+import StubDecorators 1.0
 
 import utils 1.0
 import shared.views 1.0
@@ -10,39 +11,12 @@ import shared.views 1.0
 SplitView {
     id: root
 
-    property bool globalUtilsReady: false
-    property bool mainModuleReady: false
+    UtilsDecorator {
+        globalUtils.getColorId: function(publicKey) { return colorId.value }
+        globalUtils.getCompressedPk: function(publicKey) { return "zx3sh" + publicKey }
+        globalUtils.isCompressedPubKey: function(publicKey) { return true }
 
-    // globalUtilsInst mock
-    QtObject {
-        function getEmojiHashAsJson(publicKey) {
-            return JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
-        }
-        function getColorId(publicKey) { return colorId.value }
-
-        function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
-
-        function getColorHashAsJson(publicKey) {
-            return JSON.stringify([{colorId: 0, segmentLength: 1},
-                                   {colorId: 19, segmentLength: 2}])
-        }
-
-        function isCompressedPubKey(publicKey) { return true }
-
-        Component.onCompleted: {
-            Utils.globalUtilsInst = this
-            root.globalUtilsReady = true
-
-        }
-        Component.onDestruction: {
-            root.globalUtilsReady = false
-            Utils.globalUtilsInst = {}
-        }
-    }
-
-    // mainModuleInst mock
-    QtObject {
-        function getContactDetailsAsJson(publicKey, getVerificationRequest) {
+        mainModule.getContactDetailsAsJson: function(publicKey, getVerificationRequest) {
             return JSON.stringify({ displayName: displayName.text || "Mock User Name",
                                       optionalName: optionalName.text,
                                       displayIcon: "",
@@ -69,14 +43,6 @@ SplitView {
                                       socialLinks: "" // TODO
                                   })
         }
-        Component.onCompleted: {
-            Utils.mainModuleInst = this
-            root.mainModuleReady = true
-        }
-        Component.onDestruction: {
-            root.mainModuleReady = false
-            Utils.mainModuleInst = {}
-        }
     }
 
     Logs { id: logs }
@@ -94,70 +60,66 @@ SplitView {
                 height: parent.height
                 clip: true
 
-                Loader {
-                    active: root.globalUtilsReady && root.mainModuleReady
+                ProfileDialogView {
                     width: parent.availableWidth
                     height: parent.availableHeight
+                    implicitWidth: 640
 
-                    sourceComponent: ProfileDialogView {
-                        implicitWidth: 640
+                    publicKey: switchOwnProfile.checked ? "0xdeadbeef" : "0xrandomguy"
 
-                        publicKey: switchOwnProfile.checked ? "0xdeadbeef" : "0xrandomguy"
+                    Component.onCompleted: {
+                        Global.appMain = root // FIXME this is here for the popups to work
+                    }
 
-                        Component.onCompleted: {
-                            Global.appMain = root // FIXME this is here for the popups to work
+                    profileStore: QtObject {
+                        readonly property string pubkey: "0xdeadbeef"
+                        readonly property string ensName: name.text
+
+                        function getQrCodeSource() {
+                            return ""
+                        }
+                        function copyToClipboard(text) {
+                            logs.logEvent("profileStore::copyToClipboard", ["text"], arguments)
+                        }
+                    }
+
+                    contactsStore: QtObject {
+                        readonly property string myPublicKey: "0xdeadbeef"
+
+                        function hasReceivedVerificationRequestFrom(publicKey) {
+                            return false
                         }
 
-                        profileStore: QtObject {
-                            readonly property string pubkey: "0xdeadbeef"
-                            readonly property string ensName: name.text
-
-                            function getQrCodeSource() {
-                                return ""
-                            }
-                            function copyToClipboard(text) {
-                                logs.logEvent("profileStore::copyToClipboard", ["text"], arguments)
-                            }
+                        function joinPrivateChat(publicKey) {
+                            logs.logEvent("contactsStore::joinPrivateChat", ["publicKey"], arguments)
                         }
 
-                        contactsStore: QtObject {
-                            readonly property string myPublicKey: "0xdeadbeef"
+                        function markUntrustworthy(publicKey) {
+                            logs.logEvent("contactsStore::markUntrustworthy", ["publicKey"], arguments)
+                        }
 
-                            function hasReceivedVerificationRequestFrom(publicKey) {
-                                return false
-                            }
+                        function removeContact(publicKey) {
+                            logs.logEvent("contactsStore::removeContact", ["publicKey"], arguments)
+                        }
 
-                            function joinPrivateChat(publicKey) {
-                                logs.logEvent("contactsStore::joinPrivateChat", ["publicKey"], arguments)
-                            }
+                        function acceptContactRequest(publicKey) {
+                            logs.logEvent("contactsStore::acceptContactRequest", ["publicKey"], arguments)
+                        }
 
-                            function markUntrustworthy(publicKey) {
-                                logs.logEvent("contactsStore::markUntrustworthy", ["publicKey"], arguments)
-                            }
+                        function dismissContactRequest(publicKey) {
+                            logs.logEvent("contactsStore::dismissContactRequest", ["publicKey"], arguments)
+                        }
 
-                            function removeContact(publicKey) {
-                                logs.logEvent("contactsStore::removeContact", ["publicKey"], arguments)
-                            }
+                        function removeTrustStatus(publicKey) {
+                            logs.logEvent("contactsStore::removeTrustStatus", ["publicKey"], arguments)
+                        }
 
-                            function acceptContactRequest(publicKey) {
-                                logs.logEvent("contactsStore::acceptContactRequest", ["publicKey"], arguments)
-                            }
+                        function removeContactRequestRejection(publicKey) {
+                            logs.logEvent("contactsStore::removeContactRequestRejection", ["publicKey"], arguments)
+                        }
 
-                            function dismissContactRequest(publicKey) {
-                                logs.logEvent("contactsStore::dismissContactRequest", ["publicKey"], arguments)
-                            }
-
-                            function removeTrustStatus(publicKey) {
-                                logs.logEvent("contactsStore::removeTrustStatus", ["publicKey"], arguments)
-                            }
-
-                            function removeContactRequestRejection(publicKey) {
-                                logs.logEvent("contactsStore::removeContactRequestRejection", ["publicKey"], arguments)
-                            }
-
-                            function verifiedUntrustworthy(publicKey) {
-                                logs.logEvent("contactsStore::verifiedUntrustworthy", ["publicKey"], arguments)
-                            }
+                        function verifiedUntrustworthy(publicKey) {
+                            logs.logEvent("contactsStore::verifiedUntrustworthy", ["publicKey"], arguments)
                         }
                     }
                 }

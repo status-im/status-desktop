@@ -6,61 +6,15 @@ import AppLayouts.Chat.views 1.0
 
 import Storybook 1.0
 import utils 1.0
+import StubDecorators 1.0
 
 SplitView {
     id: root
 
     Logs { id: logs }
 
-    property bool globalUtilsReady: false
-    property bool mainModuleReady: false
-
-    QtObject {
-        function isCompressedPubKey(publicKey) {
-            return true
-        }
-
-        function getCompressedPk(publicKey) {
-            return "123456789"
-        }
-
-        function getColorHashAsJson(publicKey) {
-            return JSON.stringify([{colorId: 0, segmentLength: 1},
-                                   {colorId: 19, segmentLength: 2}])
-        }
-
-        function getColorId(publicKey) {
-            return Math.floor(Math.random() * 10)
-        }
-
-        function isEnsVerified(publicKey)  {
-            return false
-        }
-
-        Component.onCompleted: {
-            Utils.globalUtilsInst = this
-            root.globalUtilsReady = true
-        }
-
-        Component.onDestruction: {
-            root.globalUtilsReady = false
-            Utils.globalUtilsInst = {}
-        }
-    }
-
-    QtObject {
-        function getContactDetailsAsJson() {
-            return JSON.stringify({ ensVerified: false })
-        }
-
-        Component.onCompleted: {
-            Utils.mainModuleInst = this
-            root.mainModuleReady = true
-        }
-        Component.onDestruction: {
-            root.mainModuleReady = false
-            Utils.mainModuleInst = {}
-        }
+    UtilsDecorator {
+        mainModule.getContactDetailsAsJson: function() { return JSON.stringify({ ensVerified: false }) }
     }
 
     QtObject {
@@ -71,7 +25,7 @@ SplitView {
 
             Component.onCompleted: {
                 for(let i=0; i < 20; i++) {
-                    append(d.createUserDict(i))
+                    append(modelEditor.getNewUser(i))
                 }
             }
         }
@@ -151,25 +105,8 @@ SplitView {
 
     QtObject {
         id: d
-
-        function createUserDict(seed: int) {
-            const pubKey = "0x%1".arg(seed)
-            return {
-                pubKey: pubKey,
-                displayName: seed%8 ? "user%1".arg(seed) : "",
-                localNickname: seed%3 ? "" : "nickname%1".arg(seed),
-                alias: "three word name(%1)".arg(pubKey),
-                isVerified: seed%3 ? false : true,
-                isUntrustworthy: seed%5 ? false : true,
-                isContact: true,
-                icon: "",
-                color: seed%2 ? "white" : "red",
-                onlineStatus: seed%2,
-            }
-        }
-
         function createMemberDict(seed: int) {
-            var member = createUserDict(seed)
+            var member = modelEditor.getNewUser(seed)
             member["isAdmin"] = seed === 0
             return member
         }
@@ -191,37 +128,27 @@ SplitView {
             currentIndex: selectorsSwitch.checked
 
             Item {
-                Loader {
-                    active: root.globalUtilsReady && root.mainModuleReady
-
+                MembersSelectorView {
                     anchors {
                         top: parent.top
                         left: parent.left
                         right: parent.right
                         margins: 64
                     }
-
-                    sourceComponent: MembersSelectorView {
-                        rootStore: rootStoreMock
-                    }
+                    rootStore: rootStoreMock
                 }
             }
 
             Item {
-                Loader {
-                    active: root.globalUtilsReady && root.mainModuleReady
-
+                MembersEditSelectorView {
                     anchors {
                         top: parent.top
                         left: parent.left
                         right: parent.right
                         margins: 64
                     }
-
-                    sourceComponent: MembersEditSelectorView {
-                        rootStore: rootStoreMock
-                        usersStore: usersStoreMock
-                    }
+                    rootStore: rootStoreMock
+                    usersStore: usersStoreMock
                 }
             }
         }
@@ -254,13 +181,14 @@ SplitView {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
 
-        MembersSelectorModelEditor {
+        UsersModelEditor {
+            id: modelEditor
             anchors.fill: parent
             model: contactsModel
 
             onRemoveClicked: contactsModel.remove(index, 1)
             onRemoveAllClicked: contactsModel.clear()
-            onAddClicked: contactsModel.append(d.createUserDict(contactsModel.count))
+            onAddClicked: contactsModel.append(modelEditor.getNewUser(contactsModel.count))
         }
     }
 }
