@@ -18,6 +18,7 @@ Item {
     signal declineClicked()
     signal blockClicked()
     signal profileClicked()
+    signal detailsClicked()
 
     implicitWidth: Math.max(textItem.width, buttons.width)
     implicitHeight: Math.max(textItem.height, buttons.height)
@@ -54,5 +55,6 @@ Item {
         onDeclineClicked: root.declineClicked()
         onProfileClicked: root.profileClicked()
         onBlockClicked: root.blockClicked()
+        onDetailsClicked: root.detailsClicked()
     }
 }

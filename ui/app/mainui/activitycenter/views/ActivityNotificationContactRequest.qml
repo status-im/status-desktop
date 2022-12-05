@@ -10,6 +10,7 @@ import shared.panels 1.0
 import utils 1.0
 
 import "../panels"
+import "../popups"
 
 ActivityNotificationMessage {
     id: root
@@ -32,6 +33,23 @@ ActivityNotificationMessage {
         onBlockClicked: {
             root.store.contactsStore.dismissContactRequest(senderId)
             root.store.contactsStore.blockContact(senderId)
+        }
+        onDetailsClicked: {
+            Global.openPopup(reviewContactRequestPopupComponent,
+                             {
+                                 messageDetails: root.messageDetails,
+                                 timestampString: root.timestampString,
+                                 timestampTooltipString: root.timestampTooltipString
+                             })
+        }
+    }
+
+    Component {
+        id: reviewContactRequestPopupComponent
+        ReviewContactRequestPopup {
+            id: reviewRequestPopup
+            onAccepted: root.store.contactsStore.acceptContactRequest(notification.message.senderId)
+            onDeclined: root.store.contactsStore.dismissContactRequest(notification.message.senderId)
         }
     }
 }
