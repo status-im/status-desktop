@@ -756,6 +756,17 @@ QtObject {
         return reg.test(msg)
     }
 
+    function addSocialLinkPrefix(link, type) {
+        const prefix = Constants.socialLinkPrefixesByType[type]
+        if (link.startsWith(prefix))
+            return link
+        return prefix + link
+    }
+
+    function stripSocialLinkPrefix(link, type) {
+        return link.replace(Constants.socialLinkPrefixesByType[type], "")
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)

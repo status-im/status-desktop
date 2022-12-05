@@ -6,7 +6,7 @@ type
     Twitter,
     PersonalSite,
     Github,
-    Youtbue,
+    Youtube,
     Discord,
     Telegram
 
@@ -15,13 +15,15 @@ type
     text*: string
     url*: string
     linkType: LinkType
+    icon*: string
 
-proc initSocialLinkItem*(text, url: string, linkType: LinkType): SocialLinkItem =
+proc initSocialLinkItem*(text, url: string, linkType: LinkType, icon: string = ""): SocialLinkItem =
   result = SocialLinkItem()
   result.uuid = $genUUID()
   result.text = text
   result.url = url
   result.linkType = linkType
+  result.icon = icon
 
 proc uuid*(self: SocialLinkItem): string {.inline.} =
   self.uuid

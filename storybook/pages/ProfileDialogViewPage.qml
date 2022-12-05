@@ -66,7 +66,17 @@ SplitView {
                                       verificationStatus: Constants.verificationStatus.unverified,
                                       incomingVerificationStatus: Constants.verificationStatus.unverified,
                                       bio: bio.text,
-                                      socialLinks: "" // TODO
+                                      socialLinks: JSON.stringify
+                                                   ([{
+                                                         text: "__twitter",
+                                                         url: "https://twitter.com/ethstatus",
+                                                         icon: "twitter"
+                                                    },
+                                                    {
+                                                         text: "__github",
+                                                         url: "https://github.com/status-im",
+                                                         icon: "github"
+                                                     }])
                                   })
         }
         Component.onCompleted: {

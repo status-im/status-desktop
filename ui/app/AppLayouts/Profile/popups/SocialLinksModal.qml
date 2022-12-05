@@ -81,7 +81,8 @@ StatusDialog {
 
                     Layout.fillWidth: true
                     linkType: model.linkType
-                    text: model.url
+                    text: Utils.stripSocialLinkPrefix(model.url, model.linkType)
+                    icon: model.icon
 
                     input.tabNavItem: {
                         if (index < staticLinksRepeater.count - 1) {
@@ -90,7 +91,7 @@ StatusDialog {
                         return customLinksRepeater.count ? customLinksRepeater.itemAt(0).focusItem : null
                     }
 
-                    onTextChanged: root.profileStore.updateLink(model.uuid, model.text, text)
+                    onTextChanged: root.profileStore.updateLink(model.uuid, model.text, Utils.addSocialLinkPrefix(text, linkType))
 
                     Component.onCompleted: if (index === 0) {
                                                input.edit.forceActiveFocus()
@@ -155,5 +156,4 @@ StatusDialog {
             }
         }
     }
-
 }

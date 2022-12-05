@@ -71,9 +71,10 @@ Item {
 
                 Layout.fillWidth: true
                 linkType: model.linkType
-                text: model.url
+                text: Utils.stripSocialLinkPrefix(model.url, model.linkType)
+                icon: model.icon
 
-                onTextChanged: root.socialLinkChanged(model.uuid, model.text, text)
+                onTextChanged: root.socialLinkChanged(model.uuid, model.text, Utils.addSocialLinkPrefix(text, model.linkType))
 
                 input.tabNavItem: {
                     if (index < socialLinksRepeater.count - 1) {

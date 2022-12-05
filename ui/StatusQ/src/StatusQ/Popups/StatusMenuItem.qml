@@ -61,9 +61,6 @@ MenuItem {
             readonly property bool isImage:  d.originalAssetSettings.isImage
             readonly property int imgStatus:  d.originalAssetSettings.imgStatus
             readonly property bool imgIsIdenticon:  d.originalAssetSettings.imgIsIdenticon
-
-            // crop
-            readonly property rect cropRect: d.originalAssetSettings.cropRect
         }
 
         readonly property StatusFontSettings fontSettings: d.isStatusSubMenu
