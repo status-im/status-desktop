@@ -18,7 +18,7 @@ StatusMemberListItem {
 
     pubKey: hasEnsName ? "" : Utils.getCompressedPk(model.pubKey)
     nickName: model.localNickname
-    userName: model.displayName || model.alias
+    userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
     isVerified: model.isVerified
     isUntrustworthy: model.isUntrustworthy
     isContact: model.isContact

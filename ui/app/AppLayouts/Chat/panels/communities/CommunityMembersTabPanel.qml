@@ -130,7 +130,7 @@ Item {
 
                 pubKey: model.ensName ? "" : Utils.getElidedCompressedPk(model.pubKey)
                 nickName: model.localNickname
-                userName: model.displayName
+                userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
                 status: model.onlineStatus
                 asset.color: Utils.colorForColorId(model.colorId)
                 asset.name: model.icon

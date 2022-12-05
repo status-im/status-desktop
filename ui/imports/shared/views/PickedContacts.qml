@@ -49,7 +49,8 @@ Item {
             pubKey: Utils.getCompressedPk(model.pubKey)
             isContact: model.isContact
             status: model.onlineStatus
-            userName: model.displayName
+            nickName: model.localNickname
+            userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
             asset.name: model.icon
             asset.isImage: asset.name !== ""
             asset.isLetterIdenticon: asset.name === ""

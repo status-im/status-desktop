@@ -89,7 +89,8 @@ Item {
             status: model.onlineStatus
             height: visible ? implicitHeight : 0
             color: sensor.containsMouse ? Style.current.backgroundHover : Style.current.transparent
-            userName: model.displayName
+            nickName: model.localNickname
+            userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
             asset.name: model.icon
             asset.isImage: (asset.name !== "")
             asset.isLetterIdenticon: (asset.name === "")

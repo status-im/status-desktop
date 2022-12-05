@@ -255,7 +255,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
       let contactDetails = self.controller.getContactDetails(member.id)
       result = initMemberItem(
         pubKey = member.id,
-        displayName = contactDetails.defaultDisplayName,
+        displayName = contactDetails.details.displayName,
         ensName = contactDetails.details.name,
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
@@ -280,7 +280,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
       let contactDetails = self.controller.getContactDetails(bannedMemberId)
       result = initMemberItem(
         pubKey = bannedMemberId,
-        displayName = contactDetails.defaultDisplayName,
+        displayName = contactDetails.details.displayName,
         ensName = contactDetails.details.name,
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
@@ -295,7 +295,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
       let contactDetails = self.controller.getContactDetails(requestDto.publicKey)
       result = initMemberItem(
         pubKey = requestDto.publicKey,
-        displayName = contactDetails.defaultDisplayName,
+        displayName = contactDetails.details.displayName,
         ensName = contactDetails.details.name,
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
@@ -311,7 +311,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
       let contactDetails = self.controller.getContactDetails(requestDto.publicKey)
       result = initMemberItem(
         pubKey = requestDto.publicKey,
-        displayName = contactDetails.defaultDisplayName,
+        displayName = contactDetails.details.displayName,
         ensName = contactDetails.details.name,
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
@@ -770,13 +770,11 @@ method getVerificationRequestFrom*[T](self: Module[T], publicKey: string): Verif
 
 method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerificationRequest: bool): string =
   let contact = self.controller.getContact(publicKey)
-  let (name, _, _) = self.controller.getContactNameAndImage(contact.id)
   var requestStatus = 0
   if getVerificationRequest:
     requestStatus = self.getVerificationRequestFrom(publicKey).status.int
   let jsonObj = %* {
-    "displayName": name,
-    "optionalName": self.controller.getContactDetails(contact.id).optionalName, # original display name, if renamed
+    "displayName": contact.displayName,
     "displayIcon": contact.image.thumbnail,
     "publicKey": contact.id,
     "name": contact.name,
@@ -835,7 +833,7 @@ method contactUpdated*[T](self: Module[T], publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.activeSection().updateMember(
     publicKey,
-    contactDetails.defaultDisplayName,
+    contactDetails.details.displayName,
     contactDetails.details.name,
     contactDetails.details.localNickname,
     contactDetails.details.alias,
