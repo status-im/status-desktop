@@ -116,6 +116,7 @@ ActivityNotificationBase {
                         elide: Text.ElideRight
                         font.pixelSize: 15
                         Layout.alignment: Qt.AlignVCenter
+                        Layout.fillWidth: true
                         Layout.maximumWidth: 400 // From designs, fixed value to align all possible CTAs
                     }
 

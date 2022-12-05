@@ -19,6 +19,7 @@ Row {
     signal declineClicked()
     signal blockClicked()
     signal profileClicked()
+    signal detailsClicked()
 
     StatusFlatRoundButton {
         id: declineBtn
@@ -63,6 +64,12 @@ Row {
 
             ViewProfileMenuItem {
                 onTriggered: root.profileClicked()
+            }
+
+            StatusAction {
+                text: qsTr("Details")
+                icon.name: "info"
+                onTriggered: root.detailsClicked()
             }
 
             StatusMenuSeparator {}
