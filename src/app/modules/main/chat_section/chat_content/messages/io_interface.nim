@@ -151,3 +151,13 @@ method onMailserverSynced*(self: AccessInterface, syncedFrom: int64) =
 
 method resendChatMessage*(self: AccessInterface, messageId: string): string =
   raise newException(ValueError, "No implementation available")
+
+method resetNewMessagesMarker*(self: AccessInterface) =
+  raise newException(ValueError, "No implementation available")
+
+method scrollToNewMessagesMarker*(self: AccessInterface) =
+  raise newException(ValueError, "No implementation available")
+
+method markAllMessagesRead*(self: AccessInterface) =
+  raise newException(ValueError, "No implementation available")
+

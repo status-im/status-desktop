@@ -129,7 +129,7 @@ proc buildChatSectionUI(
     mailserversService: mailservers_service.Service) =
   var selectedItemId = ""
   var selectedSubItemId = ""
-  
+
   # handle channels which don't belong to any category
   for chatDto in channelGroup.chats:
     if (chatDto.categoryId != ""):
@@ -350,11 +350,16 @@ method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
   # update view maintained by this module
   self.view.chatsModel().setActiveItemSubItem(itemId, subItemId)
   self.view.activeItemSubItemSet(item, subItem)
+
+  # update child modules
+  for chatId, chatContentModule in self.chatContentModules:
+    if chatId == self.controller.getActiveChatId():
+      chatContentModule.onMadeActive()
+    else:
+      chatContentModule.onMadeInactive()
+
   # notify parent module about active chat/channel
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
-  # update notifications caused by setting active chat/channel
-  if singletonInstance.localAccountSensitiveSettings.getActiveSection() == self.controller.getMySectionId():
-    self.controller.markAllMessagesRead(self.controller.getActiveChatId())
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
@@ -389,7 +394,6 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
   if(sectionId != self.controller.getMySectionId()):
     return
 
-  self.updateBadgeNotifications(self.controller.getActiveChatId(), hasUnreadMessages=false, unviewedMentionsCount=0)
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
 
 method chatsModel*(self: Module): chats_model.Model =
@@ -498,7 +502,7 @@ method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatD
   if (self.doesCatOrChatExist(cat.id)):
     return
   var categoryItem = initItem(cat.id, cat.name, icon="", color="", emoji="",
-    description="", ChatType.Unknown.int, amIChatAdmin=false, lastMessageTimestamp=(-1), hasUnreadMessages=false, 
+    description="", ChatType.Unknown.int, amIChatAdmin=false, lastMessageTimestamp=(-1), hasUnreadMessages=false,
     notificationsCount=0, muted=false, blocked=false, active=false, cat.position, cat.id)
   var categoryChannels: seq[SubItem]
   for chatDto in chats:
@@ -611,7 +615,7 @@ method createOneToOneChat*(self: Module, communityID: string, chatId: string, en
     self.controller.switchToOrCreateOneToOneChat(chatId, ensName)
     return
 
-  # Adding this call here we have the same as we had before (didn't inspect what are all cases when this 
+  # Adding this call here we have the same as we had before (didn't inspect what are all cases when this
   # `createOneToOneChat` is called), but I am sure that after checking all cases and inspecting them, this can be improved.
   self.switchToOrCreateOneToOneChat(chatId)
 
@@ -715,7 +719,7 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
   let trustStatus = contactDetails.details.trustStatus
   self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, trustStatus)
 
-method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string, 
+method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string,
     chatTypeMsgBelongsTo: ChatType, lastMessageTimestamp: int, unviewedMessagesCount: int, unviewedMentionsCount: int,
     message: MessageDto) =
   self.updateLastMessageTimestamp(chatIdMsgBelongsTo, lastMessageTimestamp)
@@ -729,12 +733,8 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   let chatDetails = self.controller.getChatDetails(chatIdMsgBelongsTo)
 
   # Badge notification
-  let messageBelongsToActiveSection = sectionIdMsgBelongsTo == self.controller.getMySectionId() and 
-    self.controller.getMySectionId() == self.delegate.getActiveSectionId()
-  let messageBelongsToActiveChat = self.controller.getActiveChatId() == chatIdMsgBelongsTo
-  if(not messageBelongsToActiveSection or not messageBelongsToActiveChat):
-    let hasUnreadMessages = (not chatDetails.muted and unviewedMessagesCount > 0) or unviewedMentionsCount > 0
-    self.updateBadgeNotifications(chatIdMsgBelongsTo, hasUnreadMessages, unviewedMentionsCount)
+  let showBadge = (not chatDetails.muted and unviewedMessagesCount > 0) or unviewedMentionsCount > 0
+  self.updateBadgeNotifications(chatIdMsgBelongsTo, showBadge, unviewedMentionsCount)
 
   if (chatDetails.muted):
     # No need to send a notification
@@ -765,9 +765,13 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
         notificationTitle.add(fmt" (#{chatDetails.name}, {categoryDetails.name})")
     else:
       discard
-      
+
+  let messageBelongsToActiveSection = sectionIdMsgBelongsTo == self.controller.getMySectionId() and
+    self.controller.getMySectionId() == self.delegate.getActiveSectionId()
+  let messageBelongsToActiveChat = self.controller.getActiveChatId() == chatIdMsgBelongsTo
+
   singletonInstance.globalEvents.showMessageNotification(notificationTitle, plainText, sectionIdMsgBelongsTo,
-    self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat, 
+    self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat,
     message.id, notificationType.int, chatTypeMsgBelongsTo == ChatType.OneToOne,
     chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
 
@@ -855,7 +859,7 @@ method editCommunity*(self: Module, name: string,
                         bannerJsonStr: string,
                         historyArchiveSupportEnabled: bool,
                         pinMessageAllMembersEnabled: bool) =
-  self.controller.editCommunity(name, description, introMessage, outroMessage, access, color, tags, logoJsonStr, 
+  self.controller.editCommunity(name, description, introMessage, outroMessage, access, color, tags, logoJsonStr,
                                 bannerJsonStr, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
 
 method exportCommunity*(self: Module): string =
@@ -919,7 +923,7 @@ method addChatIfDontExist*(self: Module,
       self.onChatRenamed(chat.id, chat.name)
     return
   self.addNewChat(chat, belongsToCommunity, events, settingsService, nodeConfigurationService,
-    contactService, chatService, communityService, messageService, gifService, mailserversService, 
+    contactService, chatService, communityService, messageService, gifService, mailserversService,
     setChatAsActive)
 
 method downloadMessages*(self: Module, chatId: string, filePath: string) =

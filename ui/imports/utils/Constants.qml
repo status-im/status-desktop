@@ -348,6 +348,7 @@ QtObject {
     }
 
     readonly property QtObject messageContentType: QtObject {
+        readonly property int newMessagesMarker: -3
         readonly property int fetchMoreMessagesButton: -2
         readonly property int chatIdentifier: -1
         readonly property int unknownContentType: 0

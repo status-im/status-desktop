@@ -121,6 +121,12 @@ proc init*(self: Controller) =
       return
     self.delegate.toggleReactionFromOthers(args.messageId, args.emojiId, args.reactionId, args.reactionFrom)
 
+  self.events.on(SIGNAL_MESSAGES_MARKED_AS_READ) do(e: Args):
+    let args = MessagesMarkedAsReadArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.markAllMessagesRead()
+
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.updateContactDetails(args.contactId)
@@ -264,6 +270,9 @@ proc setSearchedMessageId*(self: Controller, searchedMessageId: string) =
 
 proc clearSearchedMessageId*(self: Controller) =
   self.setSearchedMessageId("")
+
+proc getFirstUnseenMessageId*(self: Controller): string =
+  self.messageService.getFirstUnseenMessageIdFor(self.chatId)
 
 proc getLoadingMessagesPerPageFactor*(self: Controller): int =
   return self.loadingMessagesPerPageFactor

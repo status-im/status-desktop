@@ -95,6 +95,12 @@ QtObject:
   proc setMuted*(self: View, muted: bool) =
     self.chatDetails.setMuted(muted)
 
+  proc setActive*(self: View) =
+    self.chatDetails.setActive(true)
+
+  proc setInactive*(self: View) =
+    self.chatDetails.setActive(false)
+
   proc updateChatDetailsNameAndIcon*(self: View, name, icon: string) =
     self.chatDetails.setName(name)
     self.chatDetails.setIcon(icon)
@@ -129,11 +135,9 @@ QtObject:
     self.chatDetails.setEmoji(emoji)
     self.chatDetails.setColor(color)
     self.chatDetails.setIcon(icon)
-    self.chatDetailsChanged()
 
   proc updateChatDetailsName*(self: View, name: string) =
     self.chatDetails.setName(name)
-    self.chatDetailsChanged()
 
   proc onMutualContactChanged*(self: View, value: bool) =
     self.chatDetails.setIsMutualContact(value)

@@ -11,6 +11,7 @@ QtObject:
       modelVariant: QVariant
       initialMessagesLoaded: bool
       loadingHistoryMessagesInProgress: bool
+      messageSearchOngoing: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -24,6 +25,7 @@ QtObject:
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
     result.initialMessagesLoaded = false
+    result.messageSearchOngoing = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -64,7 +66,7 @@ QtObject:
       let messageItem = self.delegate.getMessageById(messageId)
       if messageItem == nil:
         return ""
-        
+
       jsonObj = messageItem.toJsonNode();
       if(jsonObj.isNil):
         return ""
@@ -75,7 +77,7 @@ QtObject:
 
   proc getChatId*(self: View): string {.slot.} =
     return self.delegate.getChatId()
-    
+
   proc getChatType*(self: View): int {.slot.} =
     return self.delegate.getChatType()
 
@@ -96,7 +98,7 @@ QtObject:
 
   proc initialMessagesLoadedChanged*(self: View) {.signal.}
 
-  proc getInitialMessagesLoaded*(self: View): bool {.slot.} =
+  proc getInitialMessagesLoaded(self: View): bool {.slot.} =
     return self.initialMessagesLoaded
 
   QtProperty[bool] initialMessagesLoaded:
@@ -164,10 +166,6 @@ QtObject:
   proc emitScrollToMessageSignal*(self: View, messageIndex: int) =
     self.scrollToMessage(messageIndex)
 
-  proc scrollMessagesUp(self: View) {.signal.}
-  proc emitScrollMessagesUpSignal*(self: View) =
-    self.scrollMessagesUp()
-
   proc requestMoreMessages(self: View) {.slot.} =
     self.delegate.requestMoreMessages()
 
@@ -190,4 +188,20 @@ QtObject:
       self.model.itemFailedResending(messageId, error)
       return
     self.model.itemSending(messageId)
-     
+
+  proc messageSearchOngoingChanged*(self: View) {.signal.}
+  proc getMessageSearchOngoing*(self: View): bool {.slot.} =
+    return self.messageSearchOngoing
+
+  QtProperty[bool] messageSearchOngoing:
+    read = getMessageSearchOngoing
+    notify = messageSearchOngoingChanged
+
+  proc setMessageSearchOngoing*(self: View, value: bool) =
+    self.messageSearchOngoing = value
+    self.messageSearchOngoingChanged()
+
+  proc addNewMessagesMarker*(self: View) {.slot.} =
+    if self.model.newMessagesMarkerIndex() == -1:
+      self.delegate.resetNewMessagesMarker()
+

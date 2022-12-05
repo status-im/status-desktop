@@ -20,6 +20,7 @@ QtObject:
     position: int
     isUntrustworthy: bool
     isContact: bool
+    active: bool
 
   proc delete*(self: ChatDetails) =
     self.QObject.delete
@@ -47,6 +48,7 @@ QtObject:
     self.position = position
     self.isUntrustworthy = isUntrustworthy
     self.isContact = isContact
+    self.active = false
 
   proc getId(self: ChatDetails): string {.slot.} =
     return self.id
@@ -188,3 +190,14 @@ QtObject:
   proc setIsUntrustworthy*(self: ChatDetails, value: bool) = # this is not a slot
     self.isUntrustworthy = value
     self.isUntrustworthyChanged()
+
+  proc activeChanged(self: ChatDetails) {.signal.}
+  proc isActive(self: ChatDetails): bool {.slot.} =
+    return self.active
+  QtProperty[bool] active:
+    read = isActive
+    notify = activeChanged
+
+  proc setActive*(self: ChatDetails, value: bool) =
+    self.active = value
+    self.activeChanged()

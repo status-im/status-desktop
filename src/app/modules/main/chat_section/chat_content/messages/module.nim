@@ -145,18 +145,18 @@ proc createChatIdentifierItem(self: Module): Item =
     resendError = ""
   )
 
-proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module): bool =
+proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module) =
   let searchedMessageId = self.controller.getSearchedMessageId()
   if(searchedMessageId.len > 0):
-    self.view.emitScrollMessagesUpSignal()
     let index = self.view.model().findIndexForMessageId(searchedMessageId)
-    self.controller.increaseLoadingMessagesPerPageFactor()
     if(index != -1):
       self.controller.clearSearchedMessageId()
       self.controller.resetLoadingMessagesPerPageFactor()
       self.view.emitScrollToMessageSignal(index)
-      return true
-  return false
+      self.view.setMessageSearchOngoing(false)
+    else:
+      self.controller.increaseLoadingMessagesPerPageFactor()
+      self.loadMoreMessages()
 
 method currentUserWalletContainsAddress(self: Module, address: string): bool =
   if (address.len == 0):
@@ -259,12 +259,12 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
     self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
     # Add new loaded messages
     self.view.model().appendItems(viewItems)
+    self.view.model().resetNewMessagesMarker()
 
-  if(not self.view.getInitialMessagesLoaded()):
-    self.view.initialMessagesAreLoaded()
+    # check if this loading was caused by the click on a messages from the app search result
+    self.checkIfMessageLoadedAndScrollToItIfItIs()
 
-  # check if this loading was caused by the click on a messages from the app search result
-  discard self.checkIfMessageLoadedAndScrollToItIfItIs()
+  self.view.initialMessagesAreLoaded()
 
 method messageAdded*(self: Module, message: MessageDto) =
   let sender = self.controller.getContactDetails(message.`from`)
@@ -282,12 +282,12 @@ method messageAdded*(self: Module, message: MessageDto) =
   let index = self.view.model().findIndexForMessageId(message.replace)
   if(index != -1):
     self.view.model().removeItem(message.replace)
-  
+
   # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
   # Now we just skip deleted messages
   if message.deleted or message.deletedForMe:
     return
-    
+
   var item = initItem(
     message.id,
     message.communityId,
@@ -328,9 +328,12 @@ method messageAdded*(self: Module, message: MessageDto) =
 
   self.view.model().insertItemBasedOnClock(item)
 
+method removeNewMessagesMarker*(self: Module)
+
 method onSendingMessageSuccess*(self: Module, message: MessageDto) =
   self.messageAdded(message)
   self.view.emitSendingMessageSuccessSignal()
+  self.removeNewMessagesMarker()
 
 method onSendingMessageError*(self: Module) =
   self.view.emitSendingMessageErrorSignal()
@@ -524,9 +527,16 @@ method switchToMessage*(self: Module, messageId: string) =
     self.controller.setSearchedMessageId(messageId)
 
 method scrollToMessage*(self: Module, messageId: string) =
+  if(messageId == ""):
+    return
+
+  let scrollAlreadyOngoing = len(self.controller.getSearchedMessageId()) > 0
+  if(scrollAlreadyOngoing):
+    return
+
+  self.view.setMessageSearchOngoing(true)
   self.controller.setSearchedMessageId(messageId)
-  if(not self.checkIfMessageLoadedAndScrollToItIfItIs()):
-    self.loadMoreMessages()
+  self.checkIfMessageLoadedAndScrollToItIfItIs()
 
 method requestMoreMessages*(self: Module) =
   self.controller.requestMoreMessages()
@@ -611,3 +621,18 @@ method onMailserverSynced*(self: Module, syncedFrom: int64) =
 
 method resendChatMessage*(self: Module, messageId: string): string =
   return self.controller.resendChatMessage(messageId)
+
+method resetNewMessagesMarker*(self: Module) =
+  self.view.model().setFirstUnseenMessageId(self.controller.getFirstUnseenMessageId())
+  self.view.model().resetNewMessagesMarker()
+
+method removeNewMessagesMarker*(self: Module) =
+  self.view.model().setFirstUnseenMessageId("")
+  self.view.model().resetNewMessagesMarker()
+
+method scrollToNewMessagesMarker*(self: Module) =
+  self.scrollToMessage(self.view.model().getFirstUnseenMessageId())
+
+method markAllMessagesRead*(self: Module) =
+  self.view.model().markAllAsSeen()
+

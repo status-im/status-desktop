@@ -252,4 +252,4 @@ proc downloadMessages*(self: Controller, messages: seq[message_item.Item], fileP
       "sender": message.senderDisplayName()
     })
 
-  writeFile(url_toLocalFile(filePath), $data) 
+  writeFile(url_toLocalFile(filePath), $data)

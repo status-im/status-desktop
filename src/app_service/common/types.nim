@@ -1,5 +1,6 @@
 type
   ContentType* {.pure.} = enum
+    NewMessagesMarker = -3
     FetchMoreMessagesButton = -2
     ChatIdentifier = -1
     Unknown = 0

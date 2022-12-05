@@ -117,3 +117,9 @@ method downloadMessages*(self: AccessInterface, filePath: string) =
 
 method onMutualContactChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onMadeActive*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onMadeInactive*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

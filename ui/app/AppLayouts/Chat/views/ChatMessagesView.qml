@@ -42,39 +42,63 @@ Item {
 
     property var messageContextMenu
 
-    property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
-    property int newMessages: 0
-
-    property int countOnStartUp: 0
     signal openStickerPackPopup(string stickerPackId)
     signal showReplyArea(string messageId, string author)
+
+    QtObject {
+        id: d
+
+        readonly property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
+        readonly property bool isMostRecentMessageInViewport: chatLogView.visibleArea.yPosition >= 0.999 - chatLogView.visibleArea.heightRatio
+        readonly property var chatDetails: chatContentModule.chatDetails
+
+        function markAllMessagesReadIfMostRecentMessageIsInViewport() {
+            if (!isMostRecentMessageInViewport) {
+                return
+            }
+
+            if (chatDetails.active && chatDetails.hasUnreadMessages && !messageStore.messageSearchOngoing) {
+                chatContentModule.markAllMessagesRead()
+            }
+        }
+
+        onIsMostRecentMessageInViewportChanged: markAllMessagesReadIfMostRecentMessageIsInViewport()
+    }
 
     Connections {
         target: root.messageStore.messageModule
 
         function onMessageSuccessfullySent() {
-            chatLogView.scrollToBottom(true)
+            chatLogView.positionViewAtBeginning()
         }
 
         function onSendingMessageFailed() {
             sendingMsgFailedPopup.open()
         }
 
-        function onScrollMessagesUp() {
-            chatLogView.positionViewAtEnd()
-        }
-
         function onScrollToMessage(messageIndex) {
-            chatLogView.positionViewAtIndex(messageIndex, ListView.Center);
-            chatLogView.itemAtIndex(messageIndex).startMessageFoundAnimation();
+            chatLogView.positionViewAtIndex(messageIndex, ListView.Center)
+            chatLogView.itemAtIndex(messageIndex).startMessageFoundAnimation()
         }
 
-        // Not Refactored Yet
-        //            onNewMessagePushed: {
-        //                if (!chatLogView.scrollToBottom()) {
-        //                    newMessages++
-        //                }
-        //            }
+        function onMessageSearchOngoingChanged() {
+            d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+        }
+    }
+
+    Connections {
+        target: d.chatDetails
+
+        function onActiveChanged() {
+            d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+        }
+
+        function onHasUnreadMessagesChanged() {
+            if (d.chatDetails.hasUnreadMessages && d.chatDetails.active && !d.isMostRecentMessageInViewport) {
+                // HACK: we call it later because messages model may not be yet propagated with unread messages when this signal is emitted
+                Qt.callLater(() => messageStore.addNewMessagesMarker())
+            }
+        }
     }
 
     Item {
@@ -120,33 +144,14 @@ Item {
             }
         }
 
-        function scrollToBottom(force, caller) {
-            if (!force && !chatLogView.atYEnd) {
-                // User has scrolled up, we don't want to scroll back
-                return false
-            }
-            if (caller && caller !== chatLogView.itemAtIndex(chatLogView.count - 1)) {
-                // If we have a caller, only accept its request if it's the last message
-                return false
-            }
-            // Call this twice and with a timer since the first scroll to bottom might have happened before some stuff loads
-            // meaning that the scroll will not actually be at the bottom on switch
-            // Add a small delay because images, even though they say they say they are loaed, they aren't shown yet
-            Qt.callLater(chatLogView.positionViewAtBeginning)
-            timer.setTimeout(function() {
-                Qt.callLater(chatLogView.positionViewAtBeginning)
-            }, 100);
-            return true
-        }
-
         model: messageStore.messagesModel
 
-        Component.onCompleted: chatLogView.scrollToBottom(true)
-
         onContentYChanged: {
-            scrollDownButton.visible = contentHeight - (scrollY + height) > 400
-            if(scrollY < 500) messageStore.loadMoreMessages()
+            scrollDownButton.visible = contentHeight - (d.scrollY + height) > 400
+            if(d.scrollY < 500) messageStore.loadMoreMessages()
         }
+
+        onCountChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
 
         ScrollBar.vertical: StatusScrollBar {
             visible: chatLogView.visibleArea.heightRatio < 1
@@ -160,18 +165,6 @@ Item {
             width: chatLogView.width
         }
 
-        //        Connections {
-        //            id: contentHeightConnection
-        //            enabled: true
-        //            target: chatLogView
-        //            onContentHeightChanged: {
-        //                chatLogView.checkHeaderHeight()
-        //            }
-        //            onHeightChanged: {
-        //                chatLogView.checkHeaderHeight()
-        //            }
-        //        }
-
         Timer {
             id: timer
         }
@@ -181,12 +174,14 @@ Item {
 
             readonly property int buttonPadding: 5
 
-            visible: false
-            height: 32
-            width: nbMessages.width + arrowImage.width + 2 * Style.current.halfPadding + (nbMessages.visible ? scrollDownButton.buttonPadding : 0)
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
+
+            visible: false
+            height: 32
+            width: arrowImage.width + 2 * Style.current.halfPadding
+
             background: Rectangle {
                 color: Style.current.buttonSecondaryColor
                 border.width: 0
@@ -194,31 +189,16 @@ Item {
             }
 
             onClicked: {
-                newMessages = 0
                 scrollDownButton.visible = false
-                chatLogView.scrollToBottom(true)
-            }
-
-            StyledText {
-                id: nbMessages
-                visible: newMessages > 0
-                width: visible ? implicitWidth : 0
-                text: newMessages
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                color: Style.current.pillButtonTextColor
-                font.pixelSize: 15
-                anchors.leftMargin: Style.current.halfPadding
+                chatLogView.positionViewAtBeginning()
             }
 
             StatusIcon {
                 id: arrowImage
+                anchors.centerIn: parent
                 width: 24
                 height: 24
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: nbMessages.right
                 icon: "arrow-down"
-                anchors.leftMargin: nbMessages.visible ? scrollDownButton.buttonPadding : 0
                 color: Style.current.pillButtonTextColor
             }
 
@@ -228,15 +208,6 @@ Item {
                 onPressed: mouse.accepted = false
             }
         }
-
-        //        Connections {
-        // Not Refactored Yet
-        //            target: root.rootStore.chatsModelInst
-
-        //            onAppReady: {
-        //                chatLogView.scrollToBottom(true)
-        //            }
-        //        }
 
         Connections {
             target: chatLogView.model || null
