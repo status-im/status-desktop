@@ -45,10 +45,13 @@ Control {
                 let links = JSON.parse(root.userSocialLinksJson)
                 for (let i=0; i<links.length; i++) {
                     let obj = links[i]
+                    const url = obj.url
+                    const type = textToType(obj.text)
                     socialLinksModel.append({
-                                                "text": obj.text,
-                                                "url": obj.url,
-                                                "linkType": textToType(obj.text)
+                                                "text": Utils.stripSocialLinkPrefix(url, type),
+                                                "url": url,
+                                                "linkType": type,
+                                                "icon": obj.icon
                                             })
                 }
             }
@@ -131,6 +134,7 @@ Control {
                     text: model.text
                     url: model.url
                     linkType: model.linkType
+                    icon: model.icon
                 }
             }
         }

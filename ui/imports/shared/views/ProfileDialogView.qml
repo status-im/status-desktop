@@ -311,9 +311,7 @@ Pane {
                             else
                                 result = d.contactDetails.optionalName // original display name
                         }
-                        if (result)
-                            return "(%1)".arg(result)
-                        return ""
+                        return result ? "(%1)".arg(result) : ""
                     }
                     visible: text
                 }

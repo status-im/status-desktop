@@ -9,6 +9,7 @@ StatusInput {
     id: root
 
     property int linkType
+    property string icon
 
     leftPadding: 18 // by design
 
@@ -22,15 +23,7 @@ StatusInput {
         return ""
     }
     input.asset {
-        name: {
-            if (linkType === Constants.socialLinkType.twitter) return "twitter"
-            if (linkType === Constants.socialLinkType.personalSite) return "language"
-            if (linkType === Constants.socialLinkType.github) return "github"
-            if (linkType === Constants.socialLinkType.youtube) return "youtube"
-            if (linkType === Constants.socialLinkType.discord) return "discord"
-            if (linkType === Constants.socialLinkType.telegram) return "telegram"
-            return ""
-        }
+        name: root.icon
         width: 20
         height: 20
     }

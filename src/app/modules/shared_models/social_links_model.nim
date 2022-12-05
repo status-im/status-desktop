@@ -9,11 +9,11 @@ proc toSocialLinkItems*(source: SocialLinks): seq[SocialLinkItem] =
     if (text == SOCIAL_LINK_TWITTER_ID): return LinkType.Twitter
     if (text == SOCIAL_LINK_PERSONAL_SITE_ID): return LinkType.PersonalSite
     if (text == SOCIAL_LINK_GITHUB_ID): return LinkType.Github
-    if (text == SOCIAL_LINK_YOUTUBE_ID): return LinkType.Youtbue
+    if (text == SOCIAL_LINK_YOUTUBE_ID): return LinkType.Youtube
     if (text == SOCIAL_LINK_DISCORD_ID): return LinkType.Discord
     if (text == SOCIAL_LINK_TELEGRAM_ID): return LinkType.Telegram
     return LinkType.Custom
-  result = map(source, x => initSocialLinkItem(x.text, x.url, textToType(x.text)))
+  result = map(source, x => initSocialLinkItem(x.text, x.url, textToType(x.text), x.icon))
 
 type
   ModelRole {.pure.} = enum
@@ -21,6 +21,7 @@ type
     Text
     Url
     LinkType
+    Icon
 
 QtObject:
   type
@@ -91,6 +92,7 @@ QtObject:
       ModelRole.Text.int: "text",
       ModelRole.Url.int: "url",
       ModelRole.LinkType.int: "linkType",
+      ModelRole.Icon.int: "icon"
     }.toTable
 
   method data(self: SocialLinksModel, index: QModelIndex, role: int): QVariant =
@@ -112,3 +114,5 @@ QtObject:
       result = newQVariant(item.url)
     of ModelRole.LinkType:
       result = newQVariant(item.linkType.int)
+    of ModelRole.Icon:
+      result = newQVariant(item.icon)

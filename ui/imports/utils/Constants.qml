@@ -543,6 +543,16 @@ QtObject {
         readonly property int telegram: 6
     }
 
+    readonly property var socialLinkPrefixesByType: [ // NB order must match the "socialLinkType" enum above
+        "",
+        "https://twitter.com/",
+        "",
+        "https://github.com/",
+        "https://www.youtube.com/",
+        "https://discordapp.com/users/",
+        "https://t.me/"
+    ]
+
     enum DiscordImportErrorCode {
         Unknown = 1,
         Warning = 2,
