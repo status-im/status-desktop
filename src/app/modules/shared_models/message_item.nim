@@ -128,6 +128,38 @@ proc initItem*(
       if attachment.contentType.contains("image"):
         result.messageAttachments.add(attachment.localUrl)
 
+proc initNewMessagesMarkerItem*(timestamp: int64): Item =
+  return initItem(
+    id = "",
+    communityId = "",
+    responseToMessageWithId = "",
+    senderId = "",
+    senderDisplayName = "",
+    senderOptionalName = "",
+    senderIcon = "",
+    amISender = false,
+    senderIsAdded = false,
+    outgoingStatus = "",
+    text = "",
+    image = "",
+    messageContainsMentions = false,
+    seen = true,
+    timestamp = timestamp,
+    clock = 0,
+    ContentType.NewMessagesMarker,
+    messageType = -1,
+    contactRequestState = 0,
+    sticker = "",
+    stickerPack = -1,
+    links = @[],
+    transactionParameters = newTransactionParametersItem("","","","","","",-1,""),
+    mentionedUsersPks = @[],
+    senderTrustStatus = TrustStatus.Unknown,
+    senderEnsVerified = false,
+    discordMessage = DiscordMessage(),
+    resendError = ""
+  )
+
 proc `$`*(self: Item): string =
   result = fmt"""Item(
     id: {$self.id},
@@ -245,6 +277,9 @@ proc sticker*(self: Item): string {.inline.} =
 
 proc seen*(self: Item): bool {.inline.} =
   self.seen
+
+proc `seen=`*(self: Item, value: bool) {.inline.} =
+  self.seen = value
 
 proc timestamp*(self: Item): int64 {.inline.} =
   self.timestamp

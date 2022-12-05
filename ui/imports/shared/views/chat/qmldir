@@ -8,3 +8,4 @@ MessageView 1.0 MessageView.qml
 NormalMessageView 1.0 NormalMessageView.qml
 ProfileHeaderContextMenuView 1.0 ProfileHeaderContextMenuView.qml
 TransactionBubbleView 1.0 TransactionBubbleView.qml
+NewMessagesMarker 1.0 NewMessagesMarker.qml

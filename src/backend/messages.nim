@@ -67,3 +67,8 @@ proc editMessage*(messageId: string, contentType: int, msg: string): RpcResponse
 
 proc resendChatMessage*(messageId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("reSendChatMessage".prefix, %* [messageId])
+
+proc firstUnseenMessageID*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chatId]
+  result = callPrivateRPC("firstUnseenMessageID".prefix, payload)
+

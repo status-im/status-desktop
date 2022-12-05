@@ -365,4 +365,12 @@ method onMutualContactChanged*(self: Module) =
   self.view.onMutualContactChanged(isContact)
 
 method contactTrustStatusChanged*(self: Module, publicKey: string, isUntrustworthy: bool) =
-    self.view.updateTrustStatus(isUntrustworthy)
+  self.view.updateTrustStatus(isUntrustworthy)
+
+method onMadeActive*(self: Module) =
+  self.messagesModule.resetNewMessagesMarker()
+  self.messagesModule.scrollToNewMessagesMarker()
+  self.view.setActive()
+
+method onMadeInactive*(self: Module) =
+  self.view.setInactive()

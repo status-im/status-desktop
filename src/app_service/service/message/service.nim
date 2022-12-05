@@ -657,6 +657,19 @@ QtObject:
 
     self.threadpool.start(arg)
 
+  proc getFirstUnseenMessageIdFor*(self: Service, chatId: string): string =
+    try:
+      let response = status_go.firstUnseenMessageID(chatId)
+
+      if(not response.error.isNil):
+        error "error getFirstUnseenMessageIdFor: ", errDescription = response.error.message
+
+      result = response.result.getStr()
+
+    except Exception as e:
+      error "error: ", procName = "getFirstUnseenMessageIdFor", errName = e.name,
+          errDesription = e.msg
+
   proc onAsyncGetLinkPreviewData*(self: Service, response: string) {.slot.} =
     self.events.emit(SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED, LinkPreviewDataArgs(response: response))
 

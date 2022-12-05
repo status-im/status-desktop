@@ -49,6 +49,7 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items*: seq[Item]
       allKeys: seq[int]
+      firstUnseenMessageId: string
 
   proc delete(self: Model) =
     self.items = @[]
@@ -65,6 +66,8 @@ QtObject:
     # all new added roles will be included here as well.
     for i in result.roleNames().keys:
       result.allKeys.add(i)
+
+    result.firstUnseenMessageId = ""
 
   proc `$`*(self: Model): string =
     result = "MessageModel:\n"
@@ -335,7 +338,7 @@ QtObject:
     if position + 1 < self.items.len:
       self.updateItemAtIndex(position + 1)
     self.countChanged()
-  
+
   proc replyDeleted*(self: Model, messageIndex: int) {.signal.}
 
   proc updateMessagesWithResponseTo(self: Model, messageId: string) =
@@ -440,13 +443,13 @@ QtObject:
     if(index < 0 or index >= self.items.len):
       return
     self.items[index].toJsonNode()
-  
+
   proc updateContactInReplies(self: Model, messageId: string) =
     for i in 0 ..< self.items.len:
       if (self.items[i].responseToMessageWithId == messageId):
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, @[ModelRole.ResponseToMessageWithId.int])
-        
+
   iterator modelContactUpdateIterator*(self: Model, contactId: string): Item =
     for i in 0 ..< self.items.len:
       yield self.items[i]
@@ -529,3 +532,63 @@ QtObject:
     if(ind == -1):
       return
     self.updateItemAtIndex(ind)
+
+  proc setFirstUnseenMessageId*(self: Model, messageId: string) =
+    self.firstUnseenMessageId = messageId
+
+  proc getFirstUnseenMessageId*(self: Model): string =
+    self.firstUnseenMessageId
+
+  proc newMessagesMarkerIndex*(self: Model): int =
+    result = -1
+    for i in countdown(self.items.len - 1, 0):
+      if self.items[i].contentType == ContentType.NewMessagesMarker:
+        return i
+
+  proc removeNewMessagesMarker(self: Model) =
+    let index = self.newMessagesMarkerIndex()
+    if index == -1:
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginRemoveRows(parentModelIndex, index, index)
+    self.items.delete(index)
+    self.endRemoveRows()
+    self.countChanged()
+
+# TODO: handle messages removal
+  proc resetNewMessagesMarker*(self: Model) =
+    self.removeNewMessagesMarker()
+    let messageId = self.firstUnseenMessageId
+    if messageId == "":
+      return
+
+    let index = self.findIndexForMessageId(messageId)
+    if index == -1:
+      return
+
+    let position = index + 1
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginInsertRows(parentModelIndex, position, position)
+    self.items.insert(initNewMessagesMarkerItem(self.items[index].timestamp), position)
+    self.endInsertRows()
+    self.countChanged()
+
+  proc getNewMessagesCount*(self: Model): int {.slot.} =
+    max(0, self.newMessagesMarkerIndex())
+  QtProperty[int]newMessagesCount:
+    read = getNewMessagesCount
+    notify = countChanged
+
+  proc markAllAsSeen*(self: Model) =
+    for i in 0 ..< self.items.len:
+      let item = self.items[i]
+      if not item.seen:
+        item.seen = true
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[ModelRole.Seen.int])

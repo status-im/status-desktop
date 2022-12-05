@@ -205,6 +205,8 @@ Loader {
 
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
+    asynchronous: true
+
     sourceComponent: {
         switch(messageContentType) {
         case Constants.messageContentType.chatIdentifier:
@@ -215,6 +217,8 @@ Loader {
             return privateGroupHeaderComponent
         case Constants.messageContentType.gapType:
             return gapComponent
+        case Constants.messageContentType.newMessagesMarker:
+            return newMessagesMarkerComponent
         default:
             return messageComponent
         }
@@ -900,6 +904,15 @@ Loader {
             onClosed: {
                 destroy()
             }
+        }
+    }
+
+    Component {
+        id: newMessagesMarkerComponent
+
+        NewMessagesMarker {
+            count: root.messageStore.newMessagesCount
+            timestamp: root.messageTimestamp
         }
     }
 }

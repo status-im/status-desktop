@@ -8,7 +8,9 @@ QtObject {
     property var messagesModel
     property var chatSectionModule
 
-    property var loadingHistoryMessagesInProgress: root.chatSectionModule? root.chatSectionModule.loadingHistoryMessagesInProgress : false
+    readonly property bool loadingHistoryMessagesInProgress: root.chatSectionModule? root.chatSectionModule.loadingHistoryMessagesInProgress : false
+    readonly property int newMessagesCount: messagesModel ? messagesModel.newMessagesCount : 0
+    readonly property bool messageSearchOngoing: messageModule ? messageModule.messageSearchOngoing : false
 
     onMessageModuleChanged: {
         if(!messageModule)
@@ -223,6 +225,12 @@ QtObject {
         if(!messageModule)
             return
         messageModule.leaveChat()
+    }
+
+    function addNewMessagesMarker() {
+         if(!messageModule)
+            return
+        messageModule.addNewMessagesMarker()
     }
 
     property bool playAnimation: {
