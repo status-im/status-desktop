@@ -108,6 +108,7 @@ MembersSelectorBase {
             }
 
             if (root.model.count === 0) {
+                root.suggestionsDialog.forceHide = true
                 Global.openContactRequestPopup(contactDetails.publicKey,
                                                popup => popup.closed.connect(root.rejected))
                 return

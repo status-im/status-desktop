@@ -19,6 +19,7 @@ Item {
 
     property alias suggestionsModel: suggestionsListView.model
     property alias suggestionsDelegate: suggestionsListView.delegate
+    property alias suggestionsDialog: suggestionsDialog
     property size suggestionsDelegateSize: Qt.size(344, 64)
 
     readonly property alias label: label
@@ -118,6 +119,8 @@ Item {
                                     }
                                 }
 
+                                onTextEdited: if (suggestionsDialog.forceHide) suggestionsDialog.forceHide = false;
+
                                 Keys.onPressed: {
                                     if (event.matches(StandardKey.Paste)) {
                                         event.accepted = true
@@ -210,10 +213,13 @@ Item {
 
     Popup {
         id: suggestionsDialog
+
+        property bool forceHide: false
+
         parent: scrollView
         x: Math.min(parent.width, parent.contentWidth)
         y: parent.height + Style.current.halfPadding
-        visible: edit.text !== ""
+        visible: edit.text !== "" && !forceHide
         padding: Style.current.halfPadding
         background: StatusDialogBackground {
             id: bg
