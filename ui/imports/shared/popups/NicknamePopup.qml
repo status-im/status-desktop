@@ -63,7 +63,7 @@ StatusModal {
                 validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
                 validators: [
                     StatusRegularExpressionValidator {
-                        validatorObj: RXValidator { regularExpression: /^[\w\d_-]*$/u }
+                        validatorObj: RXValidator { regularExpression: /^[\w\d_ -]*$/u }
                         validate: function (value) {
                             return validatorObj.test(value)
                         }
