@@ -29,8 +29,9 @@ StatusListItem {
     property string publicKey
     property string compressedPk // Needed for the tests + probably gonna be used more in the future
     property string iconSource
-    property bool isContact: false
+    property bool ensVerified
 
+    property bool isContact: false
     property bool isBlocked: false
     property bool isVerified: false
     property bool isUntrustworthy: false
@@ -51,16 +52,7 @@ StatusListItem {
     signal rejectionRemoved(string publicKey)
     signal textClicked(string publicKey)
 
-    readonly property var d: Utils.getContactDetailsAsJson(root.publicKey)
-
-    subTitle: {
-        if (d.ensVerified) {
-            if (d.localNickname)
-                return d.name
-            return ""
-        }
-        return Utils.getElidedCompressedPk(root.publicKey)
-    }
+    subTitle: root.ensVerified ? "" :  Utils.getElidedCompressedPk(root.publicKey)
 
     asset.width: 40
     asset.height: 40
@@ -71,7 +63,7 @@ StatusListItem {
     asset.isImage: asset.name.includes("data")
     asset.isLetterIdenticon: root.iconSource.toString() === ""
     ringSettings {
-        ringSpecModel: Utils.getColorHashAsJson(root.publicKey, d.ensVerified)
+        ringSpecModel: Utils.getColorHashAsJson(root.publicKey, root.ensVerified)
         ringPxSize: Math.max(asset.width / 24.0)
     }
 

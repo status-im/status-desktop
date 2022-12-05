@@ -51,6 +51,10 @@ Pane {
         readonly property string userDisplayName: contactDetails.displayName
         readonly property string userNickName: contactDetails.localNickname
         readonly property string prettyEnsName: contactDetails.name
+        readonly property string aliasName: contactDetails.alias
+        readonly property string mainDisplayName: ProfileUtils.displayName(userNickName, prettyEnsName, userDisplayName, aliasName)
+        readonly property string optionalDisplayName: ProfileUtils.displayName("", prettyEnsName, userDisplayName, aliasName)
+
         readonly property bool isContact: contactDetails.isContact
         readonly property bool isBlocked: contactDetails.isBlocked
 
@@ -171,7 +175,7 @@ Pane {
             size: StatusButton.Size.Small
             type: StatusBaseButton.Type.Danger
             text: qsTr("Block User")
-            onClicked: Global.blockContactRequested(root.publicKey, d.userDisplayName)
+            onClicked: Global.blockContactRequested(root.publicKey, d.mainDisplayName)
         }
     }
 
@@ -180,7 +184,7 @@ Pane {
         StatusButton {
             size: StatusButton.Size.Small
             text: qsTr("Unblock User")
-            onClicked: Global.unblockContactRequested(root.publicKey, d.userDisplayName)
+            onClicked: Global.unblockContactRequested(root.publicKey, d.mainDisplayName)
         }
     }
 
@@ -220,7 +224,7 @@ Pane {
 
     ConfirmationDialog {
         id: removeContactConfirmationDialog
-        header.title: qsTr("Remove contact '%1'").arg(d.userDisplayName)
+        header.title: qsTr("Remove contact '%1'").arg(d.mainDisplayName)
         confirmationText: qsTr("This will remove the user as a contact. Please confirm.")
         onConfirmButtonClicked: {
             root.contactsStore.removeContact(root.publicKey)
@@ -257,7 +261,7 @@ Pane {
                 Layout.alignment: Qt.AlignTop
                 objectName: "ProfileDialog_userImage"
                 name: root.dirty ? root.dirtyValues.displayName
-                                 : d.userDisplayName
+                                 : d.mainDisplayName
                 pubkey: root.publicKey
                 image: root.dirty ? root.dirtyValues.profileLargeImage
                                   : d.contactDetails.largeImage
@@ -285,7 +289,7 @@ Pane {
                         font.pixelSize: 22
                         elide: Text.ElideRight
                         text: root.dirty ? root.dirtyValues.displayName
-                                         : d.userDisplayName
+                                         : d.mainDisplayName
                     }
                     StatusContactVerificationIcons {
                         id: verificationIcons
@@ -303,17 +307,8 @@ Pane {
                     id: contactSecondaryName
                     font.pixelSize: 12
                     color: Theme.palette.baseColor1
-                    text: {
-                        let result = ""
-                        if (d.userNickName) {
-                            if (d.contactDetails.ensVerified && d.contactDetails.name)
-                                result = d.prettyEnsName
-                            else
-                                result = d.contactDetails.optionalName // original display name
-                        }
-                        return result ? "(%1)".arg(result) : ""
-                    }
-                    visible: text
+                    text: "(%1)".arg(d.optionalDisplayName)
+                    visible: !!d.userNickName
                 }
                 EmojiHash {
                     objectName: "ProfileDialog_userEmojiHash"
@@ -424,7 +419,7 @@ Pane {
                         onTriggered: {
                             moreMenu.close()
                             Global.openNicknamePopupRequested(root.publicKey, d.userNickName,
-                                                              "%1 (%2)".arg(d.userDisplayName).arg(Utils.getElidedCompressedPk(root.publicKey)))
+                                                              "%1 (%2)".arg(d.optionalDisplayName).arg(Utils.getElidedCompressedPk(root.publicKey)))
                         }
                     }
                     StatusAction {
@@ -451,7 +446,7 @@ Pane {
                         enabled: d.isBlocked
                         onTriggered: {
                             moreMenu.close()
-                            Global.unblockContactRequested(root.publicKey, d.userDisplayName)
+                            Global.unblockContactRequested(root.publicKey, d.mainDisplayName)
                         }
                     }
                     StatusMenuSeparator {}
@@ -517,7 +512,7 @@ Pane {
                         enabled: !d.isBlocked
                         onTriggered: {
                             moreMenu.close()
-                            Global.blockContactRequested(root.publicKey, d.userDisplayName)
+                            Global.blockContactRequested(root.publicKey, d.mainDisplayName)
                         }
                     }
                 }

@@ -75,8 +75,8 @@ method onNewMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
     let status = toOnlineStatus(statusUpdateDto.statusType)
     self.view.model().addItem(initMemberItem(
       pubKey = m.`from`,
-      displayName = contactDetails.defaultDisplayName,
-      ensName = contactDetails.details.name, # is it correct?
+      displayName = contactDetails.details.displayName,
+      ensName = contactDetails.details.name,
       localNickname = contactDetails.details.localNickname,
       alias = contactDetails.details.alias,
       icon = contactDetails.icon,
@@ -92,7 +92,7 @@ method contactNicknameChanged*(self: Module, publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.model().setName(
     publicKey,
-    contactDetails.defaultDisplayName,
+    contactDetails.details.displayName,
     contactDetails.details.name,
     contactDetails.details.localNickname
     )
@@ -106,7 +106,7 @@ method contactUpdated*(self: Module, publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.model().updateItem(
     pubKey = publicKey,
-    displayName = contactDetails.defaultDisplayName,
+    displayName = contactDetails.details.displayName,
     ensName = contactDetails.details.name,
     localNickname = contactDetails.details.localNickname,
     alias = contactDetails.details.alias,
@@ -144,7 +144,7 @@ method addChatMember*(self: Module,  member: ChatMember) =
 
   self.view.model().addItem(initMemberItem(
     pubKey = member.id,
-    displayName = contactDetails.defaultDisplayName,
+    displayName = contactDetails.details.displayName,
     ensName = contactDetails.details.name,
     localNickname = contactDetails.details.localNickname,
     alias = contactDetails.details.alias,
@@ -194,7 +194,7 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.model().updateItem(
     pubKey = publicKey,
-    displayName = contactDetails.defaultDisplayName,
+    displayName = contactDetails.details.displayName,
     ensName = contactDetails.details.name,
     localNickname = contactDetails.details.localNickname,
     alias = contactDetails.details.alias,

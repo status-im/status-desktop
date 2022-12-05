@@ -77,7 +77,7 @@ Item {
                 readonly property bool ensVerified: Utils.isEnsVerified(model.pubKey)
                 width: ListView.view.width
                 nickName: model.localNickname
-                userName: ensVerified ? model.ensName : model.displayName || model.alias
+                userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
                 pubKey: ensVerified ? "" : Utils.getCompressedPk(model.pubKey)
                 isContact: model.isContact
                 isVerified: model.isVerified

@@ -95,7 +95,8 @@ Item {
             id: panelDelegate
             width: ListView.view.width
             contactsStore: root.contactsStore
-            name: model.displayName
+            name: ProfileUtils.displayName(model.localNickname, model.ensName, model.displayName, model.alias)
+            ensVerified: !!model.ensName
             publicKey: model.pubKey
             compressedPk: Utils.getCompressedPk(model.pubKey)
             iconSource: model.icon

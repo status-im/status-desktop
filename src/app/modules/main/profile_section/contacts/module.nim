@@ -46,7 +46,10 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
 
   return initUserItem(
     pubKey = contact.id,
-    displayName = contactDetails.defaultDisplayName,
+    displayName = contactDetails.details.displayName,
+    ensName = contactDetails.details.name,
+    localNickname = contactDetails.details.localNickname,
+    alias = contactDetails.details.alias,
     icon = contactDetails.icon,
     colorId = contactDetails.colorId,
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),

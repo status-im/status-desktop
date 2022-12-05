@@ -7,3 +7,4 @@ singleton LocaleUtils 1.0 LocaleUtils.qml
 singleton SelectedMessage 1.0 SelectedMessage.qml
 singleton Style 1.0 Style.qml
 singleton Utils 1.0 Utils.qml
+singleton ProfileUtils 1.0 ProfileUtils.qml
