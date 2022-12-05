@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QIdentityProxyModel>
+#include <optional>
 
 class FigmaLinks;
 class FigmaLinksModel;
