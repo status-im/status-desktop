@@ -402,8 +402,8 @@ QtObject {
                 errorMessage: qsTr("Username must be at least 5 characters")
             },
             StatusRegularExpressionValidator {
-                regularExpression: /^[a-zA-Z0-9\-_]+$/
-                errorMessage: qsTr("Only letters, numbers, underscores and hyphens allowed")
+                regularExpression: /^[a-zA-Z0-9\-_ ]+$/
+                errorMessage: qsTr("Only letters, numbers, underscores, whitespaces and hyphens allowed")
             },
             // TODO: Create `StatusMaxLengthValidator` in StatusQ
             StatusValidator {
