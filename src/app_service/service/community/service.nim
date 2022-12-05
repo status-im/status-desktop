@@ -1311,10 +1311,11 @@ QtObject:
             return
           self.myCommunityRequests.delete(i)
           self.activityCenterService.parseACNotificationResponse(response)
+          self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED, Args())
+          return
 
         i.inc()
       
-      self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED, Args())
     except Exception as e:
       error "Error canceled request to join community", msg = e.msg
 
