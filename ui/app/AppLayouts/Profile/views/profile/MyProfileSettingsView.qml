@@ -35,7 +35,8 @@ ColumnLayout {
         property url profileLargeImage: profileHeader.previewIcon
     }
 
-    readonly property bool dirty: descriptionPanel.displayName.text !== profileStore.displayName ||
+    readonly property bool dirty: (!descriptionPanel.isEnsName &&
+                                   descriptionPanel.displayName.text !== profileStore.displayName) ||
                                   descriptionPanel.bio.text !== profileStore.bio ||
                                   profileStore.socialLinksDirty ||
                                   biometricsSwitch.checked !== biometricsSwitch.currentStoredValue ||
@@ -53,7 +54,8 @@ ColumnLayout {
     }
 
     function save() {
-        profileStore.setDisplayName(descriptionPanel.displayName.text)
+        if (!descriptionPanel.isEnsName)
+            profileStore.setDisplayName(descriptionPanel.displayName.text)
         profileStore.setBio(descriptionPanel.bio.text)
         profileStore.saveSocialLinks()
         if (profileHeader.icon === "") {
@@ -121,15 +123,20 @@ ColumnLayout {
     ProfileDescriptionPanel {
         id: descriptionPanel
 
-        Layout.fillWidth: true
+        readonly property bool isEnsName: profileStore.ensName
 
         function reevaluateSocialLinkInputs()  {
             socialLinksModel = null
             socialLinksModel = staticSocialLinksSubsetModel
         }
 
-        displayName.text: profileStore.displayName
-        displayName.validationMode: StatusInput.ValidationMode.Always
+        Layout.fillWidth: true
+
+        displayName.focus: !isEnsName
+        displayName.input.edit.readOnly: isEnsName
+        displayName.text: profileStore.ensName || profileStore.displayName
+        displayName.validationMode: isEnsName ? StatusInput.ValidationMode.None : StatusInput.ValidationMode.Always
+        displayName.validators: isEnsName ? [] : Constants.validators.displayName
         bio.text: profileStore.bio
         socialLinksModel: staticSocialLinksSubsetModel
 
