@@ -162,7 +162,6 @@ StatusStackModal {
                         Layout.topMargin: 8
                         Layout.alignment: Qt.AlignHCenter
                         horizontalAlignment: Qt.AlignHCenter
-                        linkColor: hoveredLink ? Qt.lighter(Theme.palette.primaryColor1) : Theme.palette.primaryColor1
                         text: qsTr("Export your Discord JSON data using %1")
                           .arg("<a href='https://github.com/Tyrrrz/DiscordChatExporter'>DiscordChatExporter</a>")
                         onLinkActivated: Global.openLink(link)
@@ -178,7 +177,6 @@ StatusStackModal {
                     StatusBaseText {
                         Layout.alignment: Qt.AlignHCenter
                         horizontalAlignment: Qt.AlignHCenter
-                        linkColor: hoveredLink ? Qt.lighter(Theme.palette.primaryColor1) : Theme.palette.primaryColor1
                         text: qsTr("Refer to this <a href='https://github.com/Tyrrrz/DiscordChatExporter/wiki'>wiki</a> if you have any queries")
                         onLinkActivated: Global.openLink(link)
                         HoverHandler {

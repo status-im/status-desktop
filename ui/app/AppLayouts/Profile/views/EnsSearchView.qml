@@ -5,6 +5,7 @@ import QtQuick.Controls 2.14
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Components 0.1
 
 import utils 1.0
 import shared 1.0
@@ -142,7 +143,6 @@ Item {
             color: Theme.palette.primaryColor1
 
             SVGImage {
-                id: imgIcon
                 visible: ensStatus === Constants.ens_taken
                 fillMode: Image.PreserveAspectFit
                 source: Style.svg("block-icon-white")
@@ -221,8 +221,6 @@ Item {
             type: StatusQControls.StatusRoundButton.Type.Secondary
             objectName: "ensNextButton"
             icon.name: "arrow-right"
-            icon.width: 18
-            icon.height: 14
             visible: valid
             onClicked: {
                 if(!valid) return;

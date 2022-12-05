@@ -28,4 +28,6 @@ import StatusQ.Core.Theme 0.1
 Text {
     font.family: Theme.palette.baseFont.name
     color: Theme.palette.directColor1
+    linkColor: hoveredLink ? Qt.lighter(Theme.palette.primaryColor1)
+                           : Theme.palette.primaryColor1
 }

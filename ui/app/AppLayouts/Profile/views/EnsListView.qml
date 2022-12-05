@@ -5,6 +5,7 @@ import QtQuick.Controls 2.14
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 
 import shared 1.0
 import shared.panels 1.0
@@ -17,30 +18,32 @@ import "../popups"
 
 Item {
     id: root
-    signal addBtnClicked()
-    signal selectEns(string username)
 
     property var ensUsernamesStore
 
     property int profileContentWidth
 
-    // Defaults to show message
-    property bool isMessage: true
-    property bool isEmoji: false
-    property bool isCurrentUser: false
-    property int contentType: 1
-    property string message: qsTr("Hey")
-    property string authorCurrentMsg: "0"
-    property string authorPrevMsg: "1"
-    property bool isText: true
-    property var clickMessage: function(){}
+    signal addBtnClicked()
+    signal selectEns(string username)
 
-    function shouldDisplayExampleMessage(){
-        return root.ensUsernamesStore.ensUsernamesModel.count > 0 &&
-                root.ensUsernamesStore.numOfPendingEnsUsernames() !== root.ensUsernamesStore.ensUsernamesModel &&
-                store.ensUsernamesStore.preferredUsername !== ""
+
+    QtObject {
+        id: d
+
+        function shouldDisplayExampleMessage(){
+            return root.ensUsernamesStore.ensUsernamesModel.count > 0 &&
+                    root.ensUsernamesStore.numOfPendingEnsUsernames() !== root.ensUsernamesStore.ensUsernamesModel &&
+                    store.ensUsernamesStore.preferredUsername !== ""
+        }
     }
-    anchors.fill: parent
+
+    Connections {
+        target: root.ensUsernamesStore.ensUsernamesModule
+        onUsernameConfirmed: {
+            messagesShownAs.updateVisibility()
+            chatSettingsLabel.visible = true
+        }
+    }
 
     Item {
         anchors.top: parent.top
@@ -122,11 +125,6 @@ Item {
                     anchors.leftMargin: Style.current.smallPadding
                 }
             }
-        }
-
-        ENSPopup {
-            id: ensPopup
-            ensUsernamesStore: root.ensUsernamesStore
         }
 
         StatusBaseText {
@@ -226,7 +224,7 @@ Item {
             width: childrenRect.width
             height: childrenRect.height
 
-            id: preferredUsername
+            id: primaryUsernameItem
             anchors.left: parent.left
             anchors.top: chatSettingsLabel.bottom
             anchors.topMargin: 24
@@ -253,94 +251,59 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                onClicked: ensPopup.open()
+                onClicked: {
+                    Global.openPopup(ensPopupComponent)
+                }
             }
         }
 
-        Item {
+        StatusMessage {
             id: messagesShownAs
-            visible: shouldDisplayExampleMessage()
-            anchors.top: !visible ? separator.bottom : preferredUsername.bottom
+
+            function updateVisibility() {
+//                visible = d.shouldDisplayExampleMessage()
+            }
+
+            Component.onCompleted: {
+                updateVisibility()
+            }
+
+            anchors.top: !visible ? separator.bottom : primaryUsernameItem.bottom
             anchors.topMargin: Style.current.padding * 2
 
-            UserImage {
-                id: chatImage
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.padding
-                anchors.top: parent.top
-                anchors.topMargin: 20
+            timestamp: new Date().getTime()
+            disableHover: true
+            hideQuickActions: true
+            profileClickable: false
 
-                image: root.ensUsernamesStore.icon
-
-                onClicked: root.parent.clickMessage(true, false, false, null, false, false, false)
-            }
-
-            UsernameLabel {
-                id: chatName
-                anchors.leftMargin: 20
-                anchors.top: parent.top
-                anchors.topMargin: 0
-                anchors.left: chatImage.right
-
-                displayName: "@" + (root.ensUsernamesStore.preferredUsername.replace(".stateofus.eth", ""))
-                localName: ""
-                amISender: true
-            }
-
-            Rectangle {
-                property int chatVerticalPadding: 7
-                property int chatHorizontalPadding: 12
-                id: chatBox
-                color: Style.current.secondaryBackground
-                height: 35
-                width:  80
-                radius: 16
-                anchors.left: chatImage.right
-                anchors.leftMargin: 8
-                anchors.top: chatImage.top
-
-                ChatTextView {
-                    id: chatText
-                    message: root.message
-                    anchors.top: parent.top
-                    anchors.topMargin: chatBox.chatVerticalPadding
-                    anchors.left: parent.left
-                    anchors.leftMargin: chatBox.chatHorizontalPadding
-                    width: parent.width
-                    anchors.right: parent.right
-                    store: root.store
-                }
-
-                RectangleCorner {}
-            }
-
-            ChatTimePanel {
-                id: chatTime
-                anchors.top: chatBox.bottom
-                anchors.topMargin: 4
-                anchors.bottomMargin: Style.current.padding
-                anchors.right: chatBox.right
-                anchors.rightMargin: Style.current.padding
-                timestamp: new Date().getTime()
-                visible: true
-            }
-
-            StatusBaseText {
-                anchors.top: chatTime.bottom
-                anchors.left: chatImage.left
-                anchors.topMargin: Style.current.padding
-                text: qsTr("You’re displaying your ENS username in chats")
-                font.pixelSize: 14
-                color: Theme.palette.baseColor1
+            messageDetails: StatusMessageDetails {
+                contentType: StatusMessage.ContentType.Text
+                messageText: qsTr("Hey!")
+                amISender: false
+                sender.displayName: root.ensUsernamesStore.preferredUsername
+                // displayName: "@" + (root.ensUsernamesStore.preferredUsername.replace(".stateofus.eth", ""))
+                sender.profileImage.assetSettings.isImage: true
+                sender.profileImage.name: root.ensUsernamesStore.icon
             }
         }
 
+        StatusBaseText {
+            anchors.top: messagesShownAs.bottom
+            anchors.left: messagesShownAs.left
+            anchors.topMargin: Style.current.padding
+            text: qsTr("You’re displaying your ENS username in chats")
+            font.pixelSize: 14
+            color: Theme.palette.baseColor1
+        }
+    }
 
-        Connections {
-            target: root.ensUsernamesStore.ensUsernamesModule
-            onUsernameConfirmed: {
-                messagesShownAs.visible = shouldDisplayExampleMessage()
-                chatSettingsLabel.visible = true
+    Component {
+        id: ensPopupComponent
+
+        ENSPopup {
+            ensUsernamesStore: root.ensUsernamesStore
+            onClosed: {
+                destroy()
             }
         }
     }
