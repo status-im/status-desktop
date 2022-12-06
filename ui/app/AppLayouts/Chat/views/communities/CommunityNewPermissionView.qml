@@ -7,10 +7,12 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
 
+import AppLayouts.Chat.helpers 1.0
 import utils 1.0
 import shared.panels 1.0
 
 import SortFilterProxyModel 0.2
+
 
 import "../../../Chat/controls/community"
 
@@ -75,13 +77,15 @@ StatusScrollView {
                 }
 
                 onAddToken: {
-                    const modelItem = store.getTokenByKey(key)
+                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+                                        store.tokensModel, key)
                     addItem(HoldingTypes.Type.Token, modelItem, amount, operator)
                     dropdown.close()
                 }
 
                 onAddCollectible: {
-                    const modelItem = store.getCollectibleByKey(key)
+                    const modelItem = CommunityPermissionsHelpers.getCollectibleByKey(
+                                        store.collectiblesModel, key)
                     addItem(HoldingTypes.Type.Collectible, modelItem, amount, operator)
                     dropdown.close()
                 }
@@ -96,7 +100,8 @@ StatusScrollView {
                 }
 
                 onUpdateToken: {
-                    const modelItem = store.getTokenByKey(key)
+                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+                                        store.tokensModel, key)
                     const name = modelItem.shortName ? modelItem.shortName : modelItem.name
                     const imageSource = modelItem.iconSource.toString()
 
@@ -105,7 +110,8 @@ StatusScrollView {
                 }
 
                 onUpdateCollectible: {
-                    const modelItem = store.getCollectibleByKey(key)
+                    const modelItem = CommunityPermissionsHelpers.getCollectibleByKey(
+                                        store.collectiblesModel, key)
                     const name = modelItem.name
                     const imageSource = modelItem.iconSource.toString()
 
