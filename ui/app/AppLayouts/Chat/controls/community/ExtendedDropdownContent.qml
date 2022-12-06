@@ -7,7 +7,10 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
 
+import shared.controls 1.0
 import shared.panels 1.0
+
+import SortFilterProxyModel 0.2
 
 Item {
     id: root
@@ -44,6 +47,19 @@ Item {
         property string currentItemName: ""
         property url currentItemSource: ""
 
+        readonly property SortFilterProxyModel filtered: SortFilterProxyModel {
+            id: collectiblesFilteredModel
+
+            sourceModel: root.store.collectiblesModel
+
+            filters: ExpressionFilter {
+                expression: {
+                    searcher.text
+                    return name.toLowerCase().includes(searcher.text.toLowerCase())
+                }
+            }
+        }
+
         function reset() {
             d.currentItemName = ""
             d.currentItemSource = ""
@@ -56,22 +72,49 @@ Item {
     state: d.listView_depth1_State
     states: [
         State {
-            name: d.thumbnailsViewState
-            PropertyChanges {target: contentLoader; sourceComponent: thumbnailsView}
-            PropertyChanges {target: d; isFilterOptionVisible: true}
-            PropertyChanges {target: d; currentModel: d.currentSubitems}
-        },
-        State {
             name: d.listView_depth1_State
-            PropertyChanges {target: contentLoader; sourceComponent: root.type === ExtendedDropdownContent.Type.Tokens ? tokensListView : collectiblesListView}
-            PropertyChanges {target: d; isFilterOptionVisible: false}
-            PropertyChanges {target: d; currentModel: root.type === ExtendedDropdownContent.Type.Tokens ? root.store.tokensModel : root.store.collectiblesModel}
+
+            PropertyChanges {
+                target: contentLoader
+                sourceComponent: root.type === ExtendedDropdownContent.Type.Tokens
+                                 ? tokensListView : collectiblesListView
+            }
+            PropertyChanges {
+                target: d
+                currentModel: root.type === ExtendedDropdownContent.Type.Tokens
+                              ? root.store.tokensModel : collectiblesFilteredModel//root.store.collectiblesModel
+                isFilterOptionVisible: false
+            }
+            PropertyChanges {
+                target: searcher
+                visible: type === ExtendedDropdownContent.Type.Collectibles
+            }
         },
         State {
             name: d.listView_depth2_State
-            PropertyChanges {target: contentLoader; sourceComponent: collectiblesListView}
-            PropertyChanges {target: d; isFilterOptionVisible: true }
-            PropertyChanges {target: d; currentModel: d.currentSubitems}
+
+            PropertyChanges {
+                target: contentLoader
+                sourceComponent: collectiblesListView
+            }
+            PropertyChanges {
+                target: d
+                currentModel: d.currentSubitems
+                isFilterOptionVisible: true
+            }
+        },
+        State {
+            name: d.thumbnailsViewState
+
+            PropertyChanges {
+                target: contentLoader
+                sourceComponent: thumbnailsView
+            }
+            PropertyChanges {
+                target: d
+                currentModel: d.currentSubitems
+                isFilterOptionVisible: true
+            }
         }
     ]
 
@@ -188,10 +231,29 @@ Item {
     }
 
     // List elements content
-    Loader {
-        id: contentLoader
 
+    ColumnLayout {
         anchors.fill: parent
+
+        SearchBox {
+            id: searcher
+
+            Layout.fillWidth: true
+
+            visible: false
+            topPadding: 0
+            bottomPadding: 0
+            minimumHeight: 36
+            maximumHeight: 36
+        }
+
+        Loader {
+            id: contentLoader
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+        }
     }
 
     Component {
@@ -219,7 +281,9 @@ Item {
             headerModel: ListModel {
                ListElement { key: "MINT"; icon: "add"; iconSize: 16; description: qsTr("Mint collectible"); rotation: 0; spacing: 8 }
             }
+
             model: d.currentModel
+
             onHeaderItemClicked: {
                 if(key === "MINT") console.log("TODO: Mint collectible")
             }
