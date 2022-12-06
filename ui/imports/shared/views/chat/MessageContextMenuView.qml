@@ -163,6 +163,7 @@ StatusMenu {
                     reactedByUser: !!root.emojiReactionsReactedByUser[model.emojiId]
                     onCloseModal: {
                         root.toggleReaction(root.messageId, emojiId)
+                        root.close()
                     }
                 }
             }
