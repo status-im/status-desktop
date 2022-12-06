@@ -89,30 +89,31 @@ MembersSelectorBase {
         enabled: root.visible
         target: root.rootStore.contactsStore.mainModuleInst
         onResolvedENS: {
-
-            if (resolvedPubKey === "")
+            if (resolvedPubKey === "") {
+                root.suggestionsDialog.forceHide = false
                 return
+            }
 
             const contactDetails = Utils.getContactDetailsAsJson(resolvedPubKey, false)
 
-            if (contactDetails.publicKey === root.rootStore.contactsStore.myPublicKey)
-                return;
-
-            if (contactDetails.isBlocked)
-                return;
+            if (contactDetails.publicKey === root.rootStore.contactsStore.myPublicKey ||
+                contactDetails.isBlocked) {
+                root.suggestionsDialog.forceHide = false
+                return
+            };
 
             if (contactDetails.isContact) {
-                if (d.addMember(contactDetails.publicKey, contactDetails.displayName))
-                    root.cleanup()
+                root.rootStore.mainModuleInst.switchTo(root.rootStore.getMySectionId(), contactDetails.publicKey)
                 return
             }
 
             if (root.model.count === 0) {
-                root.suggestionsDialog.forceHide = true
                 Global.openContactRequestPopup(contactDetails.publicKey,
                                                popup => popup.closed.connect(root.rejected))
                 return
             }
+
+            root.suggestionsDialog.forceHide = false
         }
     }
 }
