@@ -14,6 +14,25 @@ Item {
     signal removeAllClicked
     signal addClicked
 
+    function getNewUser(seed: int) {
+         const pubKey = "0x%1".arg(seed)
+         return {
+             pubKey: pubKey,
+             displayName: seed%8 ? "user%1".arg(seed) : "",
+             localNickname: seed%3 ? "" : "nickname%1".arg(seed),
+             alias: "three word name(%1)".arg(pubKey),
+             isVerified: seed%3 ? false : true,
+             isUntrustworthy: seed%5 ? false : true,
+             isContact: true,
+             icon: "",
+             color: seed%2 ? "white" : "red",
+             onlineStatus: seed%2,
+             isAdmin: seed%2 ? true : false,
+             ensName: "",
+             colorId: 7
+         }
+     }
+
     ColumnLayout {
         id: layout
 

@@ -71,7 +71,7 @@ SplitView {
 
             Component.onCompleted: {
                 for(let i=0; i < 20; i++) {
-                    append(d.createUserDict(i))
+                    append(usersModelEditor.getNewUser(i))
                 }
             }
         }
@@ -152,24 +152,8 @@ SplitView {
     QtObject {
         id: d
 
-        function createUserDict(seed: int) {
-            const pubKey = "0x%1".arg(seed)
-            return {
-                pubKey: pubKey,
-                displayName: seed%8 ? "user%1".arg(seed) : "",
-                localNickname: seed%3 ? "" : "nickname%1".arg(seed),
-                alias: "three word name(%1)".arg(pubKey),
-                isVerified: seed%3 ? false : true,
-                isUntrustworthy: seed%5 ? false : true,
-                isContact: true,
-                icon: "",
-                color: seed%2 ? "white" : "red",
-                onlineStatus: seed%2,
-            }
-        }
-
         function createMemberDict(seed: int) {
-            var member = createUserDict(seed)
+            var member = usersModelEditor.getNewUser(seed)
             member["isAdmin"] = seed === 0
             return member
         }
@@ -254,13 +238,14 @@ SplitView {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
 
-        MembersSelectorModelEditor {
+        UsersModelEditor {
+            id: usersModelEditor
             anchors.fill: parent
             model: contactsModel
 
             onRemoveClicked: contactsModel.remove(index, 1)
             onRemoveAllClicked: contactsModel.clear()
-            onAddClicked: contactsModel.append(d.createUserDict(contactsModel.count))
+            onAddClicked: contactsModel.append(usersModelEditor.getNewUser(contactsModel.count))
         }
     }
 }
