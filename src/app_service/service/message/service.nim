@@ -300,6 +300,11 @@ QtObject:
   proc initialMessagesFetched(self: Service, chatId: string): bool =
     return self.msgCursor.hasKey(chatId)
 
+  proc resetMessageCursor*(self: Service, chatId: string) =
+    if(not self.msgCursor.hasKey(chatId)):
+      return
+    self.msgCursor.del(chatId)
+
   proc getMessageCursor(self: Service, chatId: string): MessageCursor =
     if(not self.msgCursor.hasKey(chatId)):
       self.msgCursor[chatId] = initMessageCursor(value="", pending=false, mostRecent=false)

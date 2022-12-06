@@ -3,6 +3,7 @@ import NimQml, Tables, json, sequtils, std/sets, std/algorithm, strformat, strut
 import ./dto/community as community_dto
 
 import ../activity_center/service as activity_center_service
+import ../message/service as message_service
 import ../chat/service as chat_service
 
 import ../../../app/global/global_singleton
@@ -134,6 +135,7 @@ QtObject:
       events: EventEmitter
       chatService: chat_service.Service
       activityCenterService: activity_center_service.Service
+      messageService: message_service.Service
       communityTags: string # JSON string contraining tags map
       joinedCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
       curatedCommunities: Table[string, CuratedCommunity] # [community_id, CuratedCommunity]
@@ -163,7 +165,8 @@ QtObject:
       events: EventEmitter,
       threadpool: ThreadPool,
       chatService: chat_service.Service,
-      activityCenterService: activity_center_service.Service
+      activityCenterService: activity_center_service.Service,
+      messageService: message_service.Service
       ): Service =
     result = Service()
     result.QObject.setup
@@ -171,6 +174,7 @@ QtObject:
     result.threadpool = threadpool
     result.chatService = chatService
     result.activityCenterService = activityCenterService
+    result.messageService = messageService
     result.communityTags = newString(0)
     result.joinedCommunities = initTable[string, CommunityDto]()
     result.curatedCommunities = initTable[string, CuratedCommunity]()
@@ -671,6 +675,7 @@ QtObject:
         chatDto.id = fullChatId
         # TODO find a way to populate missing infos like the color
         self.chatService.updateOrAddChat(chatDto)
+        self.messageService.asyncLoadInitialMessagesForChat(fullChatId)
 
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
       self.events.emit(SIGNAL_COMMUNITY_SPECTATED, CommunityArgs(community: updatedCommunity, fromUserAction: true))
@@ -763,6 +768,9 @@ QtObject:
       let updatedCommunity = response.result["communities"][0].toCommunityDto()
       self.allCommunities[communityId] = updatedCommunity
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
+
+      for chat in updatedCommunity.chats:
+        self.messageService.resetMessageCursor(chat.id)
 
       # remove this from the joinedCommunities list
       self.joinedCommunities.del(communityId)
