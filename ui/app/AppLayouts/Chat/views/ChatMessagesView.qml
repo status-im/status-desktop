@@ -145,10 +145,7 @@ Item {
 
         onContentYChanged: {
             scrollDownButton.visible = contentHeight - (scrollY + height) > 400
-            let loadMore = scrollDownButton.visible && scrollY < 500
-            if(loadMore){
-                messageStore.loadMoreMessages()
-            }
+            if(scrollY < 500) messageStore.loadMoreMessages()
         }
 
         ScrollBar.vertical: StatusScrollBar {
