@@ -115,6 +115,29 @@ type
   ReloadMessagesArgs* = ref object of Args
     communityId*: string
 
+type
+  MessageCursor = ref object
+    value: string
+    pending: bool
+    mostRecent: bool
+
+proc getValue*(self: MessageCursor): string =
+    self.value
+
+proc setValue*(self: MessageCursor, value: string) =
+    if value == "" or value == self.value:
+      self.mostRecent = true
+    else:
+      self.value = value
+
+    self.pending = false
+
+proc setPending*(self: MessageCursor) =
+    self.pending = true
+
+proc isFetchable*(self: MessageCursor): bool =
+    return not (self.pending or self.mostRecent)
+
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
@@ -123,10 +146,8 @@ QtObject:
     tokenService: token_service.Service
     walletAccountService: wallet_account_service.Service
     networkService: network_service.Service
-    msgCursor: Table[string, string]
-    lastUsedMsgCursor: Table[string, string]
-    pinnedMsgCursor: Table[string, string]
-    lastUsedPinnedMsgCursor: Table[string, string]
+    msgCursor: Table[string, MessageCursor]
+    pinnedMsgCursor: Table[string, MessageCursor]
     numOfPinnedMessagesPerChat: Table[string, int] # [chat_id, num_of_pinned_messages]
 
   proc delete*(self: Service) =
@@ -148,10 +169,8 @@ QtObject:
     result.tokenService = tokenService
     result.walletAccountService = walletAccountService
     result.networkService = networkService
-    result.msgCursor = initTable[string, string]()
-    result.lastUsedMsgCursor = initTable[string, string]()
-    result.pinnedMsgCursor = initTable[string, string]()
-    result.lastUsedPinnedMsgCursor = initTable[string, string]()
+    result.msgCursor = initTable[string, MessageCursor]()
+    result.pinnedMsgCursor = initTable[string, MessageCursor]()
 
   proc removeMessageWithId(messages: var seq[MessageDto], msgId: string) =
     for i in 0..< messages.len:
@@ -192,7 +211,7 @@ QtObject:
       for msg in messages:
         if (msg.localChatId == chats[i].id):
           chatMessages.add(msg)
-      
+
       if chats[i].communityId.len == 0:
         chats[i].communityId = singletonInstance.userProfile.getPubKey()
 
@@ -251,25 +270,11 @@ QtObject:
       self.msgCursor.del(k)
 
     keys = @[]
-    for k in self.lastUsedMsgCursor.keys:
-      if k.startsWith(communityId):
-        keys.add(k)
-    for k in keys:
-      self.lastUsedMsgCursor.del(k)
-
-    keys = @[]
     for k in self.pinnedMsgCursor.keys:
       if k.startsWith(communityId):
         keys.add(k)
     for k in keys:
       self.pinnedMsgCursor.del(k)
-
-    keys = @[]
-    for k in self.lastUsedPinnedMsgCursor.keys:
-      if k.startsWith(communityId):
-        keys.add(k)
-    for k in keys:
-      self.lastUsedPinnedMsgCursor.del(k)
 
     self.events.emit(SIGNAL_RELOAD_MESSAGES, ReloadMessagesArgs(communityId: communityId))
 
@@ -317,21 +322,21 @@ QtObject:
   proc initialMessagesFetched(self: Service, chatId: string): bool =
     return self.msgCursor.hasKey(chatId)
 
-  proc getCurrentMessageCursor(self: Service, chatId: string): string =
+  proc getMessageCursor(self: Service, chatId: string): MessageCursor =
     if(not self.msgCursor.hasKey(chatId)):
-      self.msgCursor[chatId] = ""
+      self.msgCursor[chatId] = MessageCursor(value: "", pending: false, mostRecent: false)
     return self.msgCursor[chatId]
 
-  proc getCurrentPinnedMessageCursor(self: Service, chatId: string): string =
+  proc getPinnedMessageCursor(self: Service, chatId: string): MessageCursor =
     if(not self.pinnedMsgCursor.hasKey(chatId)):
-      self.pinnedMsgCursor[chatId] = ""
+      self.pinnedMsgCursor[chatId] = MessageCursor(value: "", pending: false, mostRecent: false)
 
     return self.pinnedMsgCursor[chatId]
 
   proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
     let networksDto = self.networkService.getNetworks()
     var token = newTokenDto(networksDto[0].nativeCurrencyName, networksDto[0].chainId, parseAddress(ZERO_ADDRESS), networksDto[0].nativeCurrencySymbol, networksDto[0].nativeCurrencyDecimals, true)
-    
+
     if message.transactionParameters.contract != "":
       for networkDto in networksDto:
         let tokenFound = self.tokenService.findTokenByAddress(networkDto, parseAddress(message.transactionParameters.contract))
@@ -340,7 +345,7 @@ QtObject:
 
         token = tokenFound
         break
-    
+
     let tokenStr = $(Json.encode(token))
     var weiStr = service_conversion.wei2Eth(message.transactionParameters.value, token.decimals)
     weiStr.trimZeros()
@@ -358,26 +363,13 @@ QtObject:
     var chatId: string
     discard responseObj.getProp("chatId", chatId)
 
-    if not self.msgCursor.hasKey(chatId):
-      self.msgCursor[chatId] = ""
-    if not self.lastUsedMsgCursor.hasKey(chatId):
-      self.lastUsedMsgCursor[chatId] = ""
-    if not self.pinnedMsgCursor.hasKey(chatId):
-      self.pinnedMsgCursor[chatId] = ""
-    if not self.lastUsedPinnedMsgCursor.hasKey(chatId):
-      self.lastUsedPinnedMsgCursor[chatId] = ""
-
-    # this is important case we don't want to fetch the same messages multiple times.
-    self.lastUsedMsgCursor[chatId] = self.msgCursor[chatId]
-    self.lastUsedPinnedMsgCursor[chatId] = self.pinnedMsgCursor[chatId]
+    let msgCursor = self.getMessageCursor(chatId)
+    let pinnedMsgCursor = self.getPinnedMessageCursor(chatId)
 
     # handling messages
-    var msgCursor: string
-    if(responseObj.getProp("messagesCursor", msgCursor)):
-      if(msgCursor.len > 0):
-        self.msgCursor[chatId] = msgCursor
-      else:
-        self.msgCursor[chatId] = self.lastUsedMsgCursor[chatId]
+    var msgCursorValue: string
+    if(responseObj.getProp("messagesCursor", msgCursorValue)):
+      msgCursor.setValue(msgCursorValue)
 
     var messagesArr: JsonNode
     var messages: seq[MessageDto]
@@ -385,12 +377,9 @@ QtObject:
       messages = map(messagesArr.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
 
     # handling pinned messages
-    var pinnedMsgCursor: string
-    if(responseObj.getProp("pinnedMessagesCursor", pinnedMsgCursor)):
-      if(pinnedMsgCursor.len > 0):
-        self.pinnedMsgCursor[chatId] = pinnedMsgCursor
-      else:
-        self.pinnedMsgCursor[chatId] = self.lastUsedPinnedMsgCursor[chatId]
+    var pinnedMsgCursorValue: string
+    if(responseObj.getProp("pinnedMessagesCursor", pinnedMsgCursorValue)):
+      pinnedMsgCursor.setValue(pinnedMsgCursorValue)
 
     var pinnedMsgArr: JsonNode
     var pinnedMessages: seq[PinnedMessageDto]
@@ -419,27 +408,30 @@ QtObject:
       error "empty chat id", procName="asyncLoadMoreMessagesForChat"
       return
 
-    var msgCursor = self.getCurrentMessageCursor(chatId)
-    if(self.lastUsedMsgCursor.hasKey(chatId) and msgCursor == self.lastUsedMsgCursor[chatId]):
-      msgCursor = CURSOR_VALUE_IGNORE
+    let msgCursor = self.getMessageCursor(chatId)
+    let msgCursorValue = if (msgCursor.isFetchable()): msgCursor.getValue() else: CURSOR_VALUE_IGNORE
 
-    var pinnedMsgCursor = self.getCurrentPinnedMessageCursor(chatId)
-    if(self.lastUsedPinnedMsgCursor.hasKey(chatId) and pinnedMsgCursor == self.lastUsedPinnedMsgCursor[chatId]):
-      pinnedMsgCursor = CURSOR_VALUE_IGNORE
+    let pinnedMsgCursor = self.getPinnedMessageCursor(chatId)
+    let pinnedMsgCursorValue = if (pinnedMsgCursor.isFetchable()): pinnedMsgCursor.getValue() else: CURSOR_VALUE_IGNORE
 
-    if(msgCursor == CURSOR_VALUE_IGNORE and pinnedMsgCursor == CURSOR_VALUE_IGNORE):
+    if(msgCursorValue == CURSOR_VALUE_IGNORE and pinnedMsgCursorValue == CURSOR_VALUE_IGNORE):
       # it's important to emit signal in case we are not fetching messages, so we can update the view appropriatelly.
       let data = MessagesLoadedArgs(chatId: chatId)
       self.events.emit(SIGNAL_MESSAGES_LOADED, data)
       return
+
+    if(msgCursorValue != CURSOR_VALUE_IGNORE):
+      msgCursor.setPending()
+    if (pinnedMsgCursorValue != CURSOR_VALUE_IGNORE):
+      pinnedMsgCursor.setPending()
 
     let arg = AsyncFetchChatMessagesTaskArg(
       tptr: cast[ByteAddress](asyncFetchChatMessagesTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncLoadMoreMessagesForChat",
       chatId: chatId,
-      msgCursor: msgCursor,
-      pinnedMsgCursor: pinnedMsgCursor,
+      msgCursor: msgCursorValue,
+      pinnedMsgCursor: pinnedMsgCursorValue,
       limit: if(limit <= MESSAGES_PER_PAGE_MAX): limit else: MESSAGES_PER_PAGE_MAX
     )
 
@@ -449,7 +441,7 @@ QtObject:
     if(self.initialMessagesFetched(chatId)):
       return
 
-    if(self.getCurrentMessageCursor(chatId).len > 0):
+    if(self.getMessageCursor(chatId).getValue().len > 0):
       return
 
     # we're here if initial messages are not loaded yet
