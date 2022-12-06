@@ -1,3 +1,4 @@
 singleton ModelsData 1.0 ModelsData.qml
 IconModel 1.0 IconModel.qml
 BannerModel 1.0 BannerModel.qml
+UsersModel 1.0 UsersModel.qml
