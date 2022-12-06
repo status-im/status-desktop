@@ -7,6 +7,8 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
 
+import AppLayouts.Chat.helpers 1.0
+
 
 StatusDropdown {
     id: root
@@ -301,7 +303,8 @@ StatusDropdown {
             readonly property string tokenKey: root.tokenKey
 
             onTokenKeyChanged: {
-                const modelItem = store.getTokenByKey(tokenKey)
+                const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+                                    store.tokensModel, tokenKey)
 
                 if (modelItem) {
                     tokensPanel.tokenName = modelItem.shortName
@@ -376,7 +379,8 @@ StatusDropdown {
             readonly property string collectibleKey: root.collectibleKey
 
             onCollectibleKeyChanged: {
-                const modelItem = store.getCollectibleByKey(collectibleKey)
+                const modelItem = CommunityPermissionsHelpers.getCollectibleByKey(
+                                    store.collectiblesModel, collectibleKey)
 
                 if (modelItem) {
                     collectiblesPanel.collectibleName = modelItem.name
