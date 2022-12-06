@@ -18,10 +18,15 @@ Item {
     property string username: ""
     property string walletAddress: "-"
     property string key: "-"
-    property var expiration: 0
 
     signal backBtnClicked();
     signal usernameReleased(username: string);
+
+    QtObject {
+        id: d
+
+        property int expirationTimestamp: 0
+    }
 
     StatusBaseText {
         id: sectionTitle
@@ -60,18 +65,21 @@ Item {
             walletAddressLbl.visible = true;
             keyLbl.visible = true;
             releaseBtn.visible = isStatus
-            releaseBtn.enabled = (Date.now() / 1000) > expirationTime && expirationTime > 0 &&
-                    root.ensUsernamesStore.preferredUsername != username
-                    releaseBtn.enabled = true
-            expiration = new Date(expirationTime * 1000).getTime()
+            removeButton.visible = true
+            releaseBtn.enabled = expirationTime > 0
+                                 && (Date.now() / 1000) > expirationTime
+                                 && root.ensUsernamesStore.preferredUsername !== username
+            d.expirationTimestamp = expirationTime * 1000
         }
         onLoading: {
             loadingImg.active = isLoading
-            if(!isLoading) return;
+            if (!isLoading)
+                return;
             walletAddressLbl.visible = false;
             keyLbl.visible = false;
             releaseBtn.visible = false;
-            expiration = 0;
+            removeButton.visible = false;
+            d.expirationTimestamp = 0;
         }
     }
 
@@ -171,30 +179,48 @@ Item {
         }
     }
 
-    StatusQControls.StatusButton {
-        id: releaseBtn
-        visible: false
-        enabled: false
+    RowLayout {
+        id: actionsLayout
+
         anchors.top: keyLbl.bottom
         anchors.topMargin: 24
         anchors.left: parent.left
         anchors.leftMargin: 24
-        text: qsTr("Release username")
-        onClicked: {
-            Global.openPopup(transactionDialogComponent)
+
+        StatusQControls.StatusButton {
+            id: removeButton
+            visible: false
+            type: StatusQControls.StatusBaseButton.Type.Danger
+            text: qsTr("Remove username")
+            onClicked: {
+                root.ensUsernamesStore.removeEnsUsername(root.username)
+                root.backBtnClicked()
+            }
+        }
+
+        StatusQControls.StatusButton {
+            id: releaseBtn
+            visible: false
+            enabled: false
+            text: qsTr("Release username")
+            onClicked: {
+                Global.openPopup(transactionDialogComponent)
+            }
         }
     }
 
     Text {
         visible: releaseBtn.visible && !releaseBtn.enabled
-        anchors.top: releaseBtn.bottom
+        anchors.top: actionsLayout.bottom
         anchors.topMargin: 2
         anchors.left: parent.left
         anchors.leftMargin: 24
-        text: qsTr("Username locked. You won't be able to release it until %1").arg(Utils.formatShortDateStr(new Date(expiration).toDateString()))
+        text: {
+            const formattedDate = Utils.formatShortDate(d.expirationTimestamp, localAccountSensitiveSettings.isDDMMYYDateFormat)
+            return qsTr("Username locked. You won't be able to release it until %1").arg(formattedDate)
+        }
         color: Style.current.darkGrey
     }
-
 
     StatusQControls.StatusButton {
         anchors.bottom: parent.bottom

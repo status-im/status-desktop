@@ -163,6 +163,19 @@ QtObject:
       return true
     return false
 
+  proc removeEnsUsername*(self: Service, username: string): bool = 
+    var newEnsUsernames = self.settings.ensUsernames
+    let index = newEnsUsernames.find(username)
+    if (index < 0):
+        return false
+    newEnsUsernames.delete(index)
+    let newEnsUsernamesAsJson = %* newEnsUsernames
+
+    if(self.saveSetting(KEY_ENS_USERNAMES, newEnsUsernamesAsJson)):
+      self.settings.ensUsernames = newEnsUsernames
+      return true
+    return false
+
   proc getEnsUsernames*(self: Service): seq[string] =
     return self.settings.ensUsernames
 

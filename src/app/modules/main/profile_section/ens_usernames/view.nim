@@ -91,6 +91,9 @@ QtObject:
     revertReason: string) =
     self.transactionCompleted(success, txHash, username, trxType, revertReason)
 
+  proc removeEnsUsername*(self: View, ensUsername: string): bool {.slot.} =
+    return self.delegate.removeEnsUsername(ensUsername)
+
   proc releaseEnsEstimate*(self: View, ensUsername: string, address: string): int {.slot.} =
     return self.delegate.releaseEnsEstimate(ensUsername, address)
 

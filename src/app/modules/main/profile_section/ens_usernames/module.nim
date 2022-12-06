@@ -177,6 +177,15 @@ method authenticateAndReleaseEns*(self: Module, ensUsername: string, address: st
   else:
     self.controller.authenticateUser()
 
+method removeEnsUsername*(self: Module, ensUsername: string): bool = 
+  if (not self.controller.removeEnsUsername(ensUsername)):
+    info "an error occurred removing ens username", methodName="removeEnsUsername"
+    return false
+  if (self.controller.getPreferredEnsUsername() == ensUsername):
+    self.controller.setPreferredName("")
+  self.view.model().removeItemByEnsUsername(ensUsername)
+  return true
+
 method releaseEns*(self: Module, password: string) =
   let response = self.controller.release(
     self.tmpSendEnsTransactionDetails.ensUsername,
@@ -205,8 +214,7 @@ method releaseEns*(self: Module, password: string) =
 
   var result: string
   if(responseObj.getProp("result", result)):
-    self.controller.setPreferredName("")
-    self.view.model().removeItemByEnsUsername(self.tmpSendEnsTransactionDetails.ensUsername)
+    let removed = self.removeEnsUsername(self.tmpSendEnsTransactionDetails.ensUsername)
     self.view.emitTransactionWasSentSignal(response)
 
 proc formatUsername(self: Module, ensUsername: string, isStatus: bool): string =

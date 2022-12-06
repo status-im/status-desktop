@@ -55,83 +55,6 @@ Item {
         width: profileContentWidth
         anchors.horizontalCenter: parent.horizontalCenter
 
-        Component {
-            id: statusENS
-            Item {
-                Text {
-                    id: usernameTxt
-                    text: username.substr(0, username.indexOf(".")) + " " + (isPending ? qsTr("(pending)") : "")
-                    color: Style.current.textColor
-                }
-
-                Text {
-
-                    anchors.top: usernameTxt.bottom
-                    anchors.topMargin: 2
-                    text: username.substr(username.indexOf("."))
-                    color: Theme.palette.baseColor1
-                }
-            }
-        }
-
-        Component {
-            id: normalENS
-            Item {
-                Text {
-                    id: usernameTxt
-                    text: username  + " " + (isPending ? qsTr("(pending)") : "")
-                    font.pixelSize: 16
-                    color: Theme.palette.directColor1
-                    anchors.top: parent.top
-                    anchors.topMargin: 5
-                }
-            }
-        }
-
-        Component {
-            id: ensDelegate
-            Item {
-                height: 45
-                anchors.left: parent.left
-                anchors.right: parent.right
-
-                MouseArea {
-                    enabled: !model.isPending
-                    anchors.fill: parent
-                    cursorShape:enabled ?  Qt.PointingHandCursor : Qt.ArrowCursor
-                    onClicked: selectEns(model.ensUsername)
-                }
-
-                Rectangle {
-                    id: circle
-                    width: 35
-                    height: 35
-                    radius: 35
-                    color: Theme.palette.primaryColor1
-
-                    StatusBaseText {
-                        text: "@"
-                        opacity: 0.7
-                        font.weight: Font.Bold
-                        font.pixelSize: 16
-                        color: Theme.palette.indirectColor1
-                        anchors.centerIn: parent
-                        verticalAlignment: Text.AlignVCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                }
-
-                Loader {
-                    sourceComponent: model.ensUsername.endsWith(".stateofus.eth") ? statusENS : normalENS
-                    property string username: model.ensUsername
-                    property bool isPending: model.isPending
-                    active: true
-                    anchors.left: circle.right
-                    anchors.leftMargin: Style.current.smallPadding
-                }
-            }
-        }
-
         StatusBaseText {
             id: sectionTitle
             text: qsTr("ENS usernames")
@@ -201,9 +124,36 @@ Item {
                 anchors.fill: parent
                 model: root.ensUsernamesStore.ensUsernamesModel
                 spacing: 10
-                delegate: ensDelegate
+                delegate: StatusListItem {
+                    readonly property int indexOfDomainStart: model.ensUsername.indexOf(".")
 
-                ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+                    width: ListView.view.width
+                    title: model.ensUsername.substr(0, indexOfDomainStart)
+                    subTitle: model.ensUsername.substr(indexOfDomainStart)
+                    titleAsideText: model.isPending ? qsTr("(pending)") : ""
+
+                    statusListItemTitle.font.pixelSize: 17
+                    statusListItemTitle.font.bold: true
+
+                    asset.isImage: false
+                    asset.isLetterIdenticon: true
+                    asset.bgColor: Theme.palette.primaryColor1
+                    asset.width: 40
+                    asset.height: 40
+
+                    components: [
+                        StatusIcon {
+                            icon: "chevron-down"
+                            rotation: 270
+                            color: Theme.palette.baseColor1
+                        }
+                    ]
+
+                    onClicked: {
+                        root.selectEns(model.ensUsername)
+                    }
+                }
+
             }
         }
 
@@ -306,4 +256,3 @@ Item {
         }
     }
 }
-
