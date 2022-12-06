@@ -38,13 +38,11 @@
 #include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
 #include <QtQml/QQmlNetworkAccessManagerFactory>
-#include <QtCore>
 #include <QClipboard>
 #include <QtGui/QPixmap>
 #include <QtGui/QImage>
 #include <QtGui/QColorSpace>
 #include <QtGui/QTextDocumentFragment>
-#include <QtCore/QFile>
 #include <QtCore/QUuid>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
@@ -97,7 +95,7 @@ void register_meta_types()
 }
 
 // jrainville: I'm not sure where to put this, but it works like so
-QTranslator *m_translator = new QTranslator();
+static QTranslator *m_translator = new QTranslator();
 
 class QMLNetworkAccessFactory : public QQmlNetworkAccessManagerFactory
 {
@@ -110,9 +108,7 @@ class QMLNetworkAccessFactory : public QQmlNetworkAccessManagerFactory
 
         }
 
-        QNetworkAccessManager* create(QObject* parent);
-
-        void setTmpPath(const char* path);
+        QNetworkAccessManager* create(QObject* parent) override;
 };
 
 QString QMLNetworkAccessFactory::tmpPath = "";
@@ -255,8 +251,9 @@ void dos_qguiapplication_clipboard_setImage(const char* text)
 
 void dos_qguiapplication_clipboard_setImageByUrl(const char* url)
 {
-    QNetworkAccessManager *manager = new QNetworkAccessManager();
-    QObject::connect(manager, &QNetworkAccessManager::finished, [](QNetworkReply *reply) {
+    auto manager = new QNetworkAccessManager;
+    manager->setAutoDeleteReplies(true);
+    QObject::connect(manager, &QNetworkAccessManager::finished, [manager](QNetworkReply *reply) {
         if(reply->error() == QNetworkReply::NoError) {
             QByteArray btArray = reply->readAll();
             QImage image;
@@ -265,8 +262,9 @@ void dos_qguiapplication_clipboard_setImageByUrl(const char* url)
             QGuiApplication::clipboard()->setImage(image);
         }
         else {
-            qDebug() << "clipboard_setImage:: Downloading image failed!";
+            qWarning() << "dos_qguiapplication_clipboard_setImageByUrl: Downloading image failed!";
         }
+        manager->deleteLater();
     });
 
     manager->get(QNetworkRequest(QUrl(url)));
@@ -278,7 +276,7 @@ void dos_qguiapplication_download_image(const char *imageSource, const char *fil
     QString fileL = QString(filePath).replace(QRegExp("^(file:/{2})|(qrc:/{2})|(http:/{2})"), "");
 
     // Get current Date/Time information to use in naming of the image file
-    QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_ hh-mm-ss");
+    QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss");
 
     // Extract the image data to be able to load and save into a QImage
     QByteArray btArray =  QString(imageSource).split("base64,")[1].toUtf8();
@@ -289,15 +287,15 @@ void dos_qguiapplication_download_image(const char *imageSource, const char *fil
 
 void dos_qguiapplication_download_imageByUrl(const char *url, const char *filePath)
 {
-
-    QNetworkAccessManager *manager = new QNetworkAccessManager();
-    QObject::connect(manager, &QNetworkAccessManager::finished, [filePath](QNetworkReply *reply) {
+    auto manager = new QNetworkAccessManager;
+    manager->setAutoDeleteReplies(true);
+    QObject::connect(manager, &QNetworkAccessManager::finished, [manager, filePath](QNetworkReply *reply) {
         if(reply->error() == QNetworkReply::NoError) {
             // Extract file path that can be used to save the image
             QString fileL = QString(filePath).replace(QRegExp("^(file:/{2})|(qrc:/{2})|(http:/{2})"), "");
 
             // Get current Date/Time information to use in naming of the image file
-            QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_ hh-mm-ss");
+            QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss");
 
             // Extract the image data to be able to load and save into a QImage
             QByteArray btArray = reply->readAll();
@@ -307,8 +305,9 @@ void dos_qguiapplication_download_imageByUrl(const char *url, const char *filePa
             image.save(QString(fileL) + "/image_" + dateTimeString + ".png");
         }
         else {
-            qDebug() << "download_image:: Downloading image failed!";
+            qWarning() << "dos_qguiapplication_download_imageByUrl: Downloading image failed!";
         }
+        manager->deleteLater();
     });
 
     manager->get(QNetworkRequest(QUrl(url)));
