@@ -10,7 +10,8 @@ type
     TotalCurrencyBalance
     EnabledNetworkCurrencyBalance
     EnabledNetworkBalance
-    NetworkVisible
+    VisibleForNetwork
+    VisibleForNetworkWithPositiveBalance
     Balances
     Description
     AssetWebsiteUrl
@@ -66,7 +67,8 @@ QtObject:
       ModelRole.TotalCurrencyBalance.int:"totalCurrencyBalance",
       ModelRole.EnabledNetworkCurrencyBalance.int:"enabledNetworkCurrencyBalance",
       ModelRole.EnabledNetworkBalance.int:"enabledNetworkBalance",
-      ModelRole.NetworkVisible.int:"networkVisible",
+      ModelRole.VisibleForNetwork.int:"visibleForNetwork",
+      ModelRole.VisibleForNetworkWithPositiveBalance.int:"visibleForNetworkWithPositiveBalance",
       ModelRole.Balances.int:"balances",
       ModelRole.Description.int:"description",
       ModelRole.AssetWebsiteUrl.int:"assetWebsiteUrl",
@@ -106,8 +108,10 @@ QtObject:
       result = newQVariant(item.getEnabledNetworkCurrencyBalance())
     of ModelRole.EnabledNetworkBalance:
       result = newQVariant(item.getEnabledNetworkBalance())
-    of ModelRole.NetworkVisible:
-      result = newQVariant(item.getNetworkVisible())
+    of ModelRole.VisibleForNetwork:
+      result = newQVariant(item.getVisibleForNetwork())
+    of ModelRole.VisibleForNetworkWithPositiveBalance:
+      result = newQVariant(item.getVisibleForNetworkWithPositiveBalance())
     of ModelRole.Balances:
       result = newQVariant(item.getBalances())
     of ModelRole.Description:
@@ -148,7 +152,8 @@ QtObject:
       of "totalCurrencyBalance": result = $item.getTotalCurrencyBalance()
       of "enabledNetworkCurrencyBalance": result = $item.getEnabledNetworkCurrencyBalance()
       of "enabledNetworkBalance": result = $item.getEnabledNetworkBalance()
-      of "networkVisible": result = $item.getNetworkVisible()
+      of "visibleForNetwork": result = $item.getVisibleForNetwork()
+      of "visibleForNetworkWithPositiveBalance": result = $item.getVisibleForNetworkWithPositiveBalance()
       of "description": result = $item.getDescription()
       of "assetWebsiteUrl": result = $item.getAssetWebsiteUrl()
       of "builtOn": result = $item.getBuiltOn()

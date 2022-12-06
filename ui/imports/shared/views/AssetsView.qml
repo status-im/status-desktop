@@ -36,7 +36,7 @@ Item {
             sourceModel: account.assets
             filters: [
                 ExpressionFilter {
-                    expression: networkVisible
+                    expression: visibleForNetworkWithPositiveBalance
                 }
             ]
         }

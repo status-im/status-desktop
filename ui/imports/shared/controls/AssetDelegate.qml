@@ -17,7 +17,7 @@ Item {
     anchors.right: parent.right
 
     anchors.left: parent.left
-    visible: networkVisible
+    visible: visibleForNetworkWithPositiveBalance
     height: visible ? 40 + 2 * Style.current.padding : 0
     
     Image {

@@ -45,7 +45,7 @@ Rectangle {
                 ExpressionFilter {
                     expression: {
                         var tokenSymbolByAddress = searchTokenSymbolByAddressFn(d.searchString)
-                        return networkVisible && (
+                        return visibleForNetwork && (
                             symbol.startsWith(d.searchString.toUpperCase()) || name.toUpperCase().startsWith(d.searchString.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
                         )
                     }
