@@ -31,7 +31,7 @@ QtObject {
     function numOfPendingEnsUsernames() {
         if(!root.ensUsernamesModule)
             return 0
-        ensUsernamesModule.numOfPendingEnsUsernames()
+        return ensUsernamesModule.numOfPendingEnsUsernames()
     }
 
     function ensDetails(ensUsername) {

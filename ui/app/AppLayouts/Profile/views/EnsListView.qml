@@ -26,21 +26,26 @@ Item {
     signal addBtnClicked()
     signal selectEns(string username)
 
+    Component.onCompleted: {
+        d.updateNumberOfPendingEnsUsernames()
+    }
 
     QtObject {
         id: d
 
-        function shouldDisplayExampleMessage(){
-            return root.ensUsernamesStore.ensUsernamesModel.count > 0 &&
-                    root.ensUsernamesStore.numOfPendingEnsUsernames() !== root.ensUsernamesStore.ensUsernamesModel &&
-                    store.ensUsernamesStore.preferredUsername !== ""
+        property int numOfPendingEnsUsernames: 0
+        readonly property bool hasConfirmedEnsUsernames: root.ensUsernamesStore.ensUsernamesModel.count > 0
+                                                         && numOfPendingEnsUsernames !== root.ensUsernamesStore.ensUsernamesModel.count
+
+        function updateNumberOfPendingEnsUsernames() {
+            numOfPendingEnsUsernames = root.ensUsernamesStore.numOfPendingEnsUsernames()
         }
     }
 
     Connections {
         target: root.ensUsernamesStore.ensUsernamesModule
         onUsernameConfirmed: {
-            messagesShownAs.updateVisibility()
+            d.updateNumberOfPendingEnsUsernames()
             chatSettingsLabel.visible = true
         }
     }
@@ -210,8 +215,7 @@ Item {
 
         StatusBaseText {
             id: chatSettingsLabel
-            visible: root.ensUsernamesStore.ensUsernamesModel.count > 0 &&
-                     root.ensUsernamesStore.numOfPendingEnsUsernames() != root.ensUsernamesStore.ensUsernamesModel.count
+            visible: d.hasConfirmedEnsUsernames
             text: qsTr("Chat settings")
             anchors.left: parent.left
             anchors.top: ensList.bottom
@@ -260,16 +264,11 @@ Item {
         StatusMessage {
             id: messagesShownAs
 
-            function updateVisibility() {
-//                visible = d.shouldDisplayExampleMessage()
-            }
-
-            Component.onCompleted: {
-                updateVisibility()
-            }
-
             anchors.top: !visible ? separator.bottom : primaryUsernameItem.bottom
             anchors.topMargin: Style.current.padding * 2
+
+            visible: d.hasConfirmedEnsUsernames
+                     && root.ensUsernamesStore.preferredUsername !== ""
 
             timestamp: new Date().getTime()
             disableHover: true
@@ -281,7 +280,6 @@ Item {
                 messageText: qsTr("Hey!")
                 amISender: false
                 sender.displayName: root.ensUsernamesStore.preferredUsername
-                // displayName: "@" + (root.ensUsernamesStore.preferredUsername.replace(".stateofus.eth", ""))
                 sender.profileImage.assetSettings.isImage: true
                 sender.profileImage.name: root.ensUsernamesStore.icon
             }

@@ -23,7 +23,6 @@ StatusDialog {
     implicitWidth: 400
 
     onApplied: {
-        console.log("applied!")
         ensUsernamesStore.setPrefferedEnsUsername(d.newUsername);
         close();
     }
