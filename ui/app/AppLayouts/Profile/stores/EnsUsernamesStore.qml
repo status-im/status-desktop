@@ -147,5 +147,11 @@ QtObject {
             return ""
         return ensUsernamesModule.getChainIdForEns()
     }
+
+    function removeEnsUsername(ensUsername) {
+        if(!root.ensUsernamesModule)
+            return ""
+        return ensUsernamesModule.removeEnsUsername(ensUsername)
+    }
 }
 

@@ -13,7 +13,6 @@ QtObject:
     # fields which may change during runtime
     ensName: string
     displayName: string
-    firstEnsName: string
     preferredName: string
     thumbnailImage: string
     largeImage: string
@@ -82,25 +81,6 @@ QtObject:
     read = getEnsName
     notify = nameChanged
 
-  # this is not a slot
-  proc setFirstEnsName*(self: UserProfile, name: string) =
-    if(self.firstEnsName == name):
-      return
-    self.firstEnsName = name
-    self.nameChanged()
-
-  proc getFirstEnsName*(self: UserProfile): string {.slot.} =
-    self.firstEnsName
-  QtProperty[string] firstEnsName:
-    read = getFirstEnsName
-    notify = nameChanged
-
-  proc getPrettyFirstEnsName*(self: UserProfile): string {.slot.} =
-    self.firstEnsName
-  QtProperty[string] prettyFirstEnsName:
-    read = getPrettyFirstEnsName
-    notify = nameChanged
-
 
   # this is not a slot
   proc setPreferredName*(self: UserProfile, name: string) =
@@ -137,8 +117,6 @@ QtObject:
   proc getName*(self: UserProfile): string {.slot.} =
     if(self.preferredName.len > 0):
       return self.getPrettyPreferredName()
-    elif(self.firstEnsName.len > 0):
-      return self.getPrettyFirstEnsName()
     elif(self.ensName.len > 0):
       return self.ensName
     elif(self.displayName.len > 0):

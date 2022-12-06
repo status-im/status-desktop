@@ -10,7 +10,7 @@ QtObject {
     property string name: userProfile.name // in case of ens returns pretty ens form
     property string username: userProfile.username
     property string displayName: userProfile.displayName
-    property string ensName: userProfile.preferredName || userProfile.firstEnsName || userProfile.ensName
+    property string ensName: userProfile.preferredName || userProfile.ensName
     property string profileLargeImage: userProfile.largeImage
     property string icon: userProfile.icon
     property bool userDeclinedBackupBanner: localAccountSensitiveSettings.userDeclinedBackupBanner

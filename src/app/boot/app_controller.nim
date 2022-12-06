@@ -405,7 +405,6 @@ proc buildAndRegisterUserProfile(self: AppController) =
   singletonInstance.userProfile.setDisplayName(displayName)
   singletonInstance.userProfile.setPreferredName(preferredName)
   singletonInstance.userProfile.setEnsName(firstEnsName)
-  singletonInstance.userProfile.setFirstEnsName(firstEnsName)
   singletonInstance.userProfile.setThumbnailImage(thumbnail)
   singletonInstance.userProfile.setLargeImage(large)
   singletonInstance.userProfile.setCurrentUserStatus(currentUserStatus.statusType.int)

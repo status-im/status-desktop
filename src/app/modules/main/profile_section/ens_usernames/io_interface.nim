@@ -49,6 +49,9 @@ method authenticateAndSetPubKey*(self: AccessInterface, ensUsername: string, add
   maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method removeEnsUsername*(self: AccessInterface, ensUsername: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method releaseEnsEstimate*(self: AccessInterface, ensUsername: string, address: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 

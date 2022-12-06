@@ -88,6 +88,9 @@ proc getSigningPhrase*(self: Controller): string =
 proc saveNewEnsUsername*(self: Controller, ensUsername: string): bool =
   return self.settingsService.saveNewEnsUsername(ensUsername)
 
+proc removeEnsUsername*(self: Controller, ensUsername: string): bool =
+  return self.settingsService.removeEnsUsername(ensUsername)
+
 proc getPreferredEnsUsername*(self: Controller): string =
   return self.settingsService.getPreferredName()
 
