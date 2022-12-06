@@ -17,12 +17,16 @@ endif()
 
 find_package(
   Qt5
-  COMPONENTS Core Quick QuickControls2 Test
+  COMPONENTS Core Quick QuickControls2 Test QuickTest Qml
   REQUIRED)
 
-file(GLOB_RECURSE QML_FILES "stubs/*.qml" "mocks/*.qml" "pages/*.qml"
-    "src/*.qml" "src/qmldir" "../ui/StatusQ/*.qml" "../ui/app/*.qml")
-file(GLOB_RECURSE JS_FILES "../ui/StatusQ/*.js" "../ui/app/*.js")
+file(GLOB_RECURSE CORE_QML_FILES "../ui/StatusQ/*.qml" "../ui/app/*.qml" "../ui/imports/*.qml")
+file(GLOB_RECURSE CORE_JS_FILES "../ui/StatusQ/*.js" "../ui/app/*.js")
+
+file(GLOB_RECURSE STORYBOOK_QML_FILES "stubs/*.qml" "mocks/*.qml" "pages/*.qml"
+    "src/*.qml" "src/qmldir")
+
+file(GLOB_RECURSE TEST_QML_FILES "qmlTests/*.qml")
 
 set(PROJECT_LIB "${PROJECT_NAME}Lib")
 
@@ -42,8 +46,9 @@ add_executable(
   ${PROJECT_NAME}
   main.cpp
   main.qml PagesModel.qml
-  ${QML_FILES}
-  ${JS_FILES}
+  ${CORE_QML_FILES}
+  ${CORE_JS_FILES}
+  ${STORYBOOK_QML_FILES}
   figma.json
 )
 
@@ -64,6 +69,15 @@ add_test(NAME SectionsDecoratorModelTest COMMAND SectionsDecoratorModelTest)
 add_executable(FigmaDecoratorModelTest tests/tst_FigmaDecoratorModel.cpp)
 target_link_libraries(FigmaDecoratorModelTest PRIVATE Qt5::Test ${PROJECT_LIB})
 add_test(NAME FigmaModelTest COMMAND FigmaModelTest)
+
+add_executable(QmlTests
+    qmlTests/main.cpp
+    ${TEST_QML_FILES})
+target_compile_definitions(QmlTests
+                           PRIVATE QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
+                           PRIVATE -DQUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qmlTests")
+target_link_libraries(QmlTests PRIVATE Qt5::QuickTest Qt5::Qml)
+add_test(NAME QmlTests COMMAND QmlTests)
 
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ/src")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/app")
