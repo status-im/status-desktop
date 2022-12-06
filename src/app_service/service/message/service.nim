@@ -16,6 +16,7 @@ import ./dto/reaction as reaction_dto
 import ../chat/dto/chat as chat_dto
 import ./dto/pinned_message_update as pinned_msg_update_dto
 import ./dto/removed_message as removed_msg_dto
+import ./message_cursor
 
 import ../../common/message as message_common
 import ../../common/conversion as service_conversion
@@ -114,29 +115,6 @@ type
 
   ReloadMessagesArgs* = ref object of Args
     communityId*: string
-
-type
-  MessageCursor = ref object
-    value: string
-    pending: bool
-    mostRecent: bool
-
-proc getValue*(self: MessageCursor): string =
-    self.value
-
-proc setValue*(self: MessageCursor, value: string) =
-    if value == "" or value == self.value:
-      self.mostRecent = true
-    else:
-      self.value = value
-
-    self.pending = false
-
-proc setPending*(self: MessageCursor) =
-    self.pending = true
-
-proc isFetchable*(self: MessageCursor): bool =
-    return not (self.pending or self.mostRecent)
 
 QtObject:
   type Service* = ref object of QObject
@@ -324,12 +302,12 @@ QtObject:
 
   proc getMessageCursor(self: Service, chatId: string): MessageCursor =
     if(not self.msgCursor.hasKey(chatId)):
-      self.msgCursor[chatId] = MessageCursor(value: "", pending: false, mostRecent: false)
+      self.msgCursor[chatId] = initMessageCursor(value="", pending=false, mostRecent=false)
     return self.msgCursor[chatId]
 
   proc getPinnedMessageCursor(self: Service, chatId: string): MessageCursor =
     if(not self.pinnedMsgCursor.hasKey(chatId)):
-      self.pinnedMsgCursor[chatId] = MessageCursor(value: "", pending: false, mostRecent: false)
+      self.pinnedMsgCursor[chatId] = initMessageCursor(value="", pending=false, mostRecent=false)
 
     return self.pinnedMsgCursor[chatId]
 
