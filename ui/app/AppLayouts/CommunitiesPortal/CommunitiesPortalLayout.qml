@@ -98,7 +98,7 @@ StatusSectionLayout {
             spacing: 18
 
             StatusBaseText {
-                text: qsTr("Find community")
+                text: qsTr("Discover Communities")
                 font.weight: Font.Bold
                 font.pixelSize: d.titlePixelSize
                 color: Theme.palette.directColor1

@@ -101,6 +101,7 @@ Item {
                 onClicked: root.baseAreaClicked()
                 width: contentWrapper.implicitWidth
                 height: contentWrapper.implicitHeight
+                hoverEnabled: true
 
                 Column {
                     id: contentWrapper
