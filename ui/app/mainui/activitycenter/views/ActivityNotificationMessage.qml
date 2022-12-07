@@ -15,44 +15,54 @@ ActivityNotificationBase {
     property var messageContextMenu
 
     signal activityCenterClose()
+    signal messageClicked()
 
-    bodyComponent: MessageView {
-        rootStore: root.store
-        messageStore: root.store.messageStore
-        messageContextMenu: root.messageContextMenu
+    bodyComponent: MouseArea {
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
+        onClicked: root.messageClicked()
+        height: messageView.implicitHeight
+        width: messageView.width
 
-        messageId: notification.id
-        senderDisplayName: notification.message.senderDisplayName
-        messageText: notification.message.messageText
-        senderId: notification.message.senderId
-        senderOptionalName: notification.message.senderOptionalName
-        senderIcon: notification.message.senderIcon
-        amISender: notification.message.amISender
-        messageImage: notification.message.messageImage
-        messageTimestamp: notification.timestamp
-        messageOutgoingStatus: notification.message.outgoingStatus
-        messageContentType: notification.message.contentType
-        senderTrustStatus: notification.message.senderTrustStatus
-        activityCenterMessage: true
-        activityCenterMessageRead: false
-        onImageClicked: Global.openImagePopup(image, root.messageContextMenu)
-        messageClickHandler: (sender, 
-                              point,
-                              isProfileClick,
-                              isSticker = false,
-                              isImage = false,
-                              image = null,
-                              isEmoji = false,
-                              ideEmojiPicker = false,
-                              isReply = false,
-                              isRightClickOnImage = false,
-                              imageSource = "") => {
-            if (isProfileClick) {
-                return Global.openProfilePopup(notification.message.senderId)
+        MessageView {
+            id: messageView
+            rootStore: root.store
+            messageStore: root.store.messageStore
+            messageContextMenu: root.messageContextMenu
+
+            messageId: notification.id
+            senderDisplayName: notification.message.senderDisplayName
+            messageText: notification.message.messageText
+            senderId: notification.message.senderId
+            senderOptionalName: notification.message.senderOptionalName
+            senderIcon: notification.message.senderIcon
+            amISender: notification.message.amISender
+            messageImage: notification.message.messageImage
+            messageTimestamp: notification.timestamp
+            messageOutgoingStatus: notification.message.outgoingStatus
+            messageContentType: notification.message.contentType
+            senderTrustStatus: notification.message.senderTrustStatus
+            activityCenterMessage: true
+            activityCenterMessageRead: false
+            onImageClicked: Global.openImagePopup(image, root.messageContextMenu)
+            messageClickHandler: (sender, 
+                                point,
+                                isProfileClick,
+                                isSticker = false,
+                                isImage = false,
+                                image = null,
+                                isEmoji = false,
+                                ideEmojiPicker = false,
+                                isReply = false,
+                                isRightClickOnImage = false,
+                                imageSource = "") => {
+                if (isProfileClick) {
+                    return Global.openProfilePopup(notification.message.senderId)
+                }
+
+                root.activityCenterStore.switchTo(notification)
+                root.activityCenterClose()
             }
-
-            root.activityCenterStore.switchTo(notification)
-            root.activityCenterClose()
         }
     }
 }
