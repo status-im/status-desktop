@@ -69,4 +69,9 @@ ActivityNotificationMessage {
             }
         }
     }
+
+    onMessageClicked: {
+        root.activityCenterStore.switchTo(notification)
+        root.closeActivityCenter()
+    }
 }
