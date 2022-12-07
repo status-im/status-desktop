@@ -22,6 +22,7 @@ Item {
     property bool headerButtonVisible: false
     property string headerButtonText: ""
     property int headerWidth: 0
+    property string previousPageName: ""
 
     readonly property Item contentItem: contentLoader.item
     readonly property size settingsDirtyToastMessageImplicitSize: 

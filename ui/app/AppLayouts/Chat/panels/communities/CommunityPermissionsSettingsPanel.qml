@@ -10,10 +10,12 @@ SettingsPageLayout {
     property var store: CommunitiesStore {}
     property int viewWidth: 560 // by design
 
-    property string previousPageName
-    function updateState() {
+    function navigateBack() {
         if (root.state === d.newPermissionViewState) {
-            root.state = d.welcomeViewState;
+            root.state = d.getInitialState()
+        }
+        else if(root.state === d.permissionsViewState) {
+            root.state = d.newPermissionViewState;
         }
     }
 
@@ -23,9 +25,13 @@ SettingsPageLayout {
         readonly property string welcomeViewState: "WELCOME"
         readonly property string newPermissionViewState: "NEWPERMISSION"
         readonly property string permissionsViewState: "PERMISSIONS"
+
+        function getInitialState() {
+            return root.store.permissionsModel.count > 0 ? d.permissionsViewState : d.welcomeViewState
+        }
     }
 
-    state: root.store.permissionsModel.count > 0 ? d.permissionsViewState : d.welcomeViewState
+    state: d.getInitialState()
     states: [
         State {
             name: d.welcomeViewState

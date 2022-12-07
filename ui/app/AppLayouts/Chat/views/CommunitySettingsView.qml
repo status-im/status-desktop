@@ -57,7 +57,7 @@ StatusSectionLayout {
     signal openLegacyPopupClicked // TODO: remove me when migration to new settings is done
 
     onBackButtonClicked: {
-        centerPanelContentLoader.item.children[d.currentIndex].updateState();
+        centerPanelContentLoader.item.children[d.currentIndex].navigateBack()
     }
 
     leftPanel: Item {
@@ -178,9 +178,6 @@ StatusSectionLayout {
                 encrypted: root.community.encrypted
                 requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
                 pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
-                onCurrentIndexChanged: {
-                    root.backButtonName = (currentIndex === 1) ? qsTr("Overview") : "";
-                }
                 editable: root.community.amISectionAdmin
 
                 onEdited: {
@@ -215,6 +212,7 @@ StatusSectionLayout {
                         privateKey: root.chatCommunitySectionModule.exportCommunity(root.communityId),
                     })
                 }
+                onPreviousPageNameChanged: root.backButtonName = previousPageName
             }
 
             CommunityMembersSettingsPanel {
@@ -234,10 +232,10 @@ StatusSectionLayout {
             }
 
             CommunityPermissionsSettingsPanel {
-                onStateChanged: {
-                    root.backButtonName = previousPageName;
-                }
+                onPreviousPageNameChanged: root.backButtonName = previousPageName
             }
+
+            onCurrentIndexChanged: root.backButtonName = centerPanelContentLoader.item.children[d.currentIndex].previousPageName
         }
     }
 
