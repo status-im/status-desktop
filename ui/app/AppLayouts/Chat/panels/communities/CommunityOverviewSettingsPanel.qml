@@ -30,11 +30,12 @@ StackLayout {
     property bool requestToJoinEnabled
     property bool pinMessagesEnabled
     property bool encrypted
+    property string previousPageName: (currentIndex === 1) ? qsTr("Overview") : ""
 
     property bool editable: false
     property bool owned: false
 
-    function updateState() {
+    function navigateBack() {
         if (editCommunityPage.dirty) {
             editCommunityPage.notifyDirty();
         } else {
