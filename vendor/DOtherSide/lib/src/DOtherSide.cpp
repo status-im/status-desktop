@@ -95,7 +95,9 @@ void register_meta_types()
 }
 
 // jrainville: I'm not sure where to put this, but it works like so
-static QTranslator *m_translator = new QTranslator();
+namespace {
+    QTranslator g_translator;
+}
 
 class QMLNetworkAccessFactory : public QQmlNetworkAccessManagerFactory
 {
@@ -251,9 +253,12 @@ void dos_qguiapplication_clipboard_setImage(const char* text)
 
 void dos_qguiapplication_clipboard_setImageByUrl(const char* url)
 {
-    auto manager = new QNetworkAccessManager;
-    manager->setAutoDeleteReplies(true);
-    QObject::connect(manager, &QNetworkAccessManager::finished, [manager](QNetworkReply *reply) {
+    static thread_local QNetworkAccessManager manager;
+    manager.setAutoDeleteReplies(true);
+
+    QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url)));
+
+    QObject::connect(reply, &QNetworkReply::finished, [reply]() {
         if(reply->error() == QNetworkReply::NoError) {
             QByteArray btArray = reply->readAll();
             QImage image;
@@ -264,10 +269,7 @@ void dos_qguiapplication_clipboard_setImageByUrl(const char* url)
         else {
             qWarning() << "dos_qguiapplication_clipboard_setImageByUrl: Downloading image failed!";
         }
-        manager->deleteLater();
     });
-
-    manager->get(QNetworkRequest(QUrl(url)));
 }
 
 void dos_qguiapplication_download_image(const char *imageSource, const char *filePath)
@@ -287,12 +289,15 @@ void dos_qguiapplication_download_image(const char *imageSource, const char *fil
 
 void dos_qguiapplication_download_imageByUrl(const char *url, const char *filePath)
 {
-    auto manager = new QNetworkAccessManager;
-    manager->setAutoDeleteReplies(true);
-    QObject::connect(manager, &QNetworkAccessManager::finished, [manager, filePath](QNetworkReply *reply) {
+    static thread_local QNetworkAccessManager manager;
+    manager.setAutoDeleteReplies(true);
+
+    QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url)));
+
+    QObject::connect(reply, &QNetworkReply::finished, [reply, path = QString(filePath)]() mutable {
         if(reply->error() == QNetworkReply::NoError) {
             // Extract file path that can be used to save the image
-            QString fileL = QString(filePath).replace(QRegExp("^(file:/{2})|(qrc:/{2})|(http:/{2})"), "");
+            path.replace(QRegExp("^(file:/{2})|(qrc:/{2})|(http:/{2})"), "");
 
             // Get current Date/Time information to use in naming of the image file
             QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss");
@@ -302,15 +307,12 @@ void dos_qguiapplication_download_imageByUrl(const char *url, const char *filePa
             QImage image;
             image.loadFromData(btArray);
             Q_ASSERT(!image.isNull());
-            image.save(QString(fileL) + "/image_" + dateTimeString + ".png");
+            image.save(path + "/image_" + dateTimeString + ".png");
         }
         else {
             qWarning() << "dos_qguiapplication_download_imageByUrl: Downloading image failed!";
         }
-        manager->deleteLater();
     });
-
-    manager->get(QNetworkRequest(QUrl(url)));
 }
 
 void dos_qguiapplication_delete()
@@ -415,11 +417,11 @@ void dos_qqmlapplicationengine_load_data(::DosQQmlApplicationEngine *vptr, const
 
 void dos_qguiapplication_load_translation(::DosQQmlApplicationEngine *vptr, const char* translationPackage, bool shouldRetranslate)
 {
-    if (!m_translator->isEmpty()) {
-        QGuiApplication::removeTranslator(m_translator);
+    if (!g_translator.isEmpty()) {
+        QGuiApplication::removeTranslator(&g_translator);
     }
-    if (m_translator->load(translationPackage)) {
-        bool success = QGuiApplication::installTranslator(m_translator);
+    if (g_translator.load(translationPackage)) {
+        bool success = QGuiApplication::installTranslator(&g_translator);
         auto engine = static_cast<QQmlApplicationEngine *>(vptr);
         if (shouldRetranslate) engine->retranslate();
     } else {

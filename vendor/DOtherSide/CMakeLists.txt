@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.2)
 
 project(DOtherSide)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 option(ENABLE_DOCS "Enable docs" ON)
 option(ENABLE_TESTS "Enable tests" ON)
 option(ENABLE_DYNAMIC_LIBS "Enable dynamic libraries" ON)
