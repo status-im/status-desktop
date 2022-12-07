@@ -396,11 +396,6 @@ proc buildAndRegisterUserProfile(self: AppController) =
     elif(img.imgType == "thumbnail"):
       thumbnail = img.uri
 
-  # loggedInAccount.name and displayName must be the same, if not, we are using loggedInAccount.name
-  if (loggedInAccount.name != displayName):
-    info "login account name and display name stored in settings differ"
-    displayName = loggedInAccount.name
-
   singletonInstance.userProfile.setFixedData(alias, loggedInAccount.keyUid, pubKey, loggedInAccount.keycardPairing.len > 0)
   singletonInstance.userProfile.setDisplayName(displayName)
   singletonInstance.userProfile.setPreferredName(preferredName)
