@@ -379,7 +379,7 @@ QtObject:
       error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent, useImportedAcc: bool) = 
+  proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent, displayName: string, useImportedAcc: bool) = 
     try:
       var keyUid = keycardData.keyUid
       var address = keycardData.masterKey.address
@@ -409,15 +409,6 @@ QtObject:
       let installationId = $genUUID()
       let alias = generateAliasFromPk(whisperPublicKey)
       
-      let openedAccounts = self.openedAccounts()
-      var displayName: string
-      for acc in openedAccounts:
-        if acc.keyUid == keyUid:
-          displayName = acc.name
-          break
-      if displayName.len == 0:
-        displayName = self.getLoggedInAccount().name
-
       var accountDataJson = %* {
         "name": alias,
         "display-name": displayName,
@@ -453,7 +444,7 @@ QtObject:
         "key-uid": keyUid,
         "public-key": whisperPublicKey,
         "name": alias,
-        "display-name": "",
+        "display-name": displayName,
         "address": whisperAddress,
         "eip1581-address": eip1581Address,
         "dapps-address":  walletAddress,

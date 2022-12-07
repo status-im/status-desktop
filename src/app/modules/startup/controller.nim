@@ -329,7 +329,7 @@ proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool) =
     self.delegate.moveToLoadingAppState()
     self.delegate.storeKeyPairForNewKeycardUser()
     self.storeMetadataForNewKeycardUser()
-    self.accountsService.setupAccountKeycard(KeycardEvent(), useImportedAcc = true)
+    self.accountsService.setupAccountKeycard(KeycardEvent(), self.tmpDisplayName, useImportedAcc = true)
     self.setupKeychain(storeToKeychain)
   else:
     error "an error ocurred while importing mnemonic"
@@ -341,7 +341,7 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool) =
   else:
     self.delegate.moveToLoadingAppState()
     self.delegate.storeKeyPairForNewKeycardUser()
-    self.accountsService.setupAccountKeycard(self.tmpKeycardEvent, useImportedAcc = false)
+    self.accountsService.setupAccountKeycard(self.tmpKeycardEvent, self.tmpDisplayName, useImportedAcc = false)
     self.setupKeychain(storeToKeychain)
 
 proc getOpenedAccounts*(self: Controller): seq[AccountDto] =
