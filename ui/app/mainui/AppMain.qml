@@ -1211,7 +1211,8 @@ Item {
                     property var modelData
                     property bool isCurrentItem: true
                     function filterAccepts(searchText) {
-                        return title.includes(searchText)
+                        const lowerCaseSearchText = searchText.toLowerCase()
+                        return title.toLowerCase().includes(lowerCaseSearchText) || label.toLowerCase().includes(lowerCaseSearchText)
                     }
 
                     title: modelData ? modelData.name : ""
