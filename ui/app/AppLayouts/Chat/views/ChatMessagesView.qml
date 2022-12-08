@@ -293,6 +293,7 @@ Item {
             messageImage: model.messageImage
             messageTimestamp: model.timestamp
             messageOutgoingStatus: model.outgoingStatus
+            resendError: model.resendError
             messageContentType: model.contentType
             pinnedMessage: model.pinned
             messagePinnedBy: model.pinnedBy

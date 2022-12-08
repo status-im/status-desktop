@@ -42,6 +42,7 @@ type
     senderTrustStatus: TrustStatus
     senderEnsVerified: bool
     messageAttachments: seq[string]
+    resendError: string
 
 proc initItem*(
     id,
@@ -70,7 +71,8 @@ proc initItem*(
     mentionedUsersPks: seq[string],
     senderTrustStatus: TrustStatus,
     senderEnsVerified: bool,
-    discordMessage: DiscordMessage
+    discordMessage: DiscordMessage,
+    resendError: string
     ): Item =
   result = Item()
   result.id = id
@@ -106,6 +108,7 @@ proc initItem*(
   result.senderTrustStatus = senderTrustStatus
   result.senderEnsVerified = senderEnsVerified
   result.messageAttachments = @[]
+  result.resendError = resendError
 
   if ContentType.DiscordMessage == contentType:
     if result.messageText == "":
@@ -137,6 +140,7 @@ proc `$`*(self: Item): string =
     senderIsAdded: {$self.senderIsAdded},
     seen: {$self.seen},
     outgoingStatus:{$self.outgoingStatus},
+    resendError:{$self.resendError},
     messageText:{self.messageText},
     messageContainsMentions:{self.messageContainsMentions},
     timestamp:{$self.timestamp},
@@ -211,6 +215,12 @@ proc outgoingStatus*(self: Item): string {.inline.} =
 
 proc `outgoingStatus=`*(self: Item, value: string) {.inline.} =
   self.outgoingStatus = value
+
+proc resendError*(self: Item): string {.inline.} =
+  self.resendError
+
+proc `resendError=`*(self: Item, value: string) {.inline.} =
+  self.resendError = value
 
 proc messageText*(self: Item): string {.inline.} =
   self.messageText
@@ -328,7 +338,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "isEdited": self.isEdited,
     "links": self.links,
     "mentionedUsersPks": self.mentionedUsersPks,
-    "senderEnsVerified": self.senderEnsVerified
+    "senderEnsVerified": self.senderEnsVerified,
+    "resendError": self.resendError
   }
 
 proc editMode*(self: Item): bool {.inline.} =

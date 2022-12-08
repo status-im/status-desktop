@@ -52,6 +52,7 @@ Loader {
     property string messageImage: ""
     property double messageTimestamp: 0 // We use double, because QML's int is too small
     property string messageOutgoingStatus: ""
+    property string resendError: ""
     property int messageContentType: Constants.messageContentType.messageType
     property bool pinnedMessage: false
     property string messagePinnedBy: ""
@@ -90,7 +91,7 @@ Loader {
     property double prevMsgTimestamp: prevMessageAsJsonObj ? prevMessageAsJsonObj.timestamp : 0
     property double nextMsgTimestamp: nextMessageAsJsonObj ? nextMessageAsJsonObj.timestamp : 0
 
-    property bool shouldRepeatHeader: ((messageTimestamp - prevMsgTimestamp) / 60 / 1000) > Constants.repeatHeaderInterval
+    property bool shouldRepeatHeader: ((messageTimestamp - prevMsgTimestamp) / 60 / 1000) > Constants.repeatHeaderInterval || isExpired
 
     property bool hasMention: false
 
@@ -108,7 +109,8 @@ Loader {
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
-    readonly property bool isExpired: (messageOutgoingStatus === "sending" && (Math.floor(messageTimestamp) + 180000) < Date.now()) || messageOutgoingStatus === "expired"
+    readonly property bool isExpired: (messageOutgoingStatus === Constants.sending && (Math.floor(messageTimestamp) + 180000) < Date.now()) || messageOutgoingStatus === Constants.expired
+    readonly property bool isSending: messageOutgoingStatus === Constants.sending && !isExpired
     property int statusAgeEpoch: 0
 
     signal imageClicked(var image)
@@ -468,6 +470,8 @@ Loader {
                 isPinned: root.pinnedMessage
                 pinnedBy: root.pinnedMessage && !root.isDiscordMessage ? Utils.getContactDetailsAsJson(root.messagePinnedBy, false).displayName : ""
                 hasExpired: root.isExpired
+                isSending: root.isSending
+                resendError: root.resendError
                 reactionsModel: root.reactionsModel
 
                 showHeader: root.senderId !== root.authorPrevMsg ||
@@ -575,6 +579,10 @@ Loader {
 
                 onStickerClicked: {
                     root.openStickerPackPopup(root.stickerPack);
+                }
+
+                onResendClicked: {
+                    root.messageStore.resendMessage(root.messageId)
                 }
 
                 mouseArea {

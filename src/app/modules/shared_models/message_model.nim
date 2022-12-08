@@ -42,6 +42,7 @@ type
     SenderTrustStatus
     SenderEnsVerified
     MessageAttachments
+    ResendError
 
 QtObject:
   type
@@ -98,6 +99,7 @@ QtObject:
       ModelRole.SenderIsAdded.int:"senderIsAdded",
       ModelRole.Seen.int:"seen",
       ModelRole.OutgoingStatus.int:"outgoingStatus",
+      ModelRole.ResendError.int:"resendError",
       ModelRole.MessageText.int:"messageText",
       ModelRole.MessageImage.int:"messageImage",
       ModelRole.MessageContainsMentions.int:"messageContainsMentions",
@@ -166,6 +168,8 @@ QtObject:
       result = newQVariant(item.seen)
     of ModelRole.OutgoingStatus:
       result = newQVariant(item.outgoingStatus)
+    of ModelRole.ResendError:
+      result = newQVariant(item.resendError)
     of ModelRole.MessageText:
       result = newQVariant(item.messageText)
     of ModelRole.MessageImage:
@@ -375,6 +379,9 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.OutgoingStatus.int])
 
+  proc itemSending*(self: Model, messageId: string) =
+    self.setOutgoingStatus(messageId, PARSED_TEXT_OUTGOING_STATUS_SENDING)
+
   proc itemSent*(self: Model, messageId: string) =
     self.setOutgoingStatus(messageId, PARSED_TEXT_OUTGOING_STATUS_SENT)
 
@@ -383,6 +390,14 @@ QtObject:
 
   proc itemExpired*(self: Model, messageId: string) =
     self.setOutgoingStatus(messageId, PARSED_TEXT_OUTGOING_STATUS_EXPIRED)
+
+  proc itemFailedResending*(self: Model, messageId: string, error: string) =
+    let ind = self.findIndexForMessageId(messageId)
+    if(ind == -1):
+      return
+    self.items[ind].resendError = error
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[ModelRole.ResendError.int])
 
   proc addReaction*(self: Model, messageId: string, emojiId: EmojiId, didIReactWithThisEmoji: bool,
     userPublicKey: string, userDisplayName: string, reactionId: string) =

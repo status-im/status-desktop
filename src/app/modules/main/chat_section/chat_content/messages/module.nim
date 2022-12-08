@@ -99,7 +99,8 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     mentionedUsersPks = @[],
     senderTrustStatus = TrustStatus.Unknown,
     senderEnsVerified = false,
-    DiscordMessage()
+    DiscordMessage(),
+    resendError = ""
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -140,7 +141,8 @@ proc createChatIdentifierItem(self: Module): Item =
     mentionedUsersPks = @[],
     senderTrustStatus = TrustStatus.Unknown,
     senderEnsVerified = false,
-    DiscordMessage()
+    DiscordMessage(),
+    resendError = ""
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module): bool =
@@ -220,7 +222,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         m.mentionedUsersPks(),
         sender.details.trustStatus,
         sender.details.ensVerified,
-        m.discordMessage
+        m.discordMessage,
+        resendError = ""
         )
 
       for r in reactions:
@@ -319,7 +322,8 @@ method messageAdded*(self: Module, message: MessageDto) =
     message.mentionedUsersPks,
     sender.details.trustStatus,
     sender.details.ensVerified,
-    message.discordMessage
+    message.discordMessage,
+    resendError = ""
   )
 
   self.view.model().insertItemBasedOnClock(item)
@@ -593,7 +597,8 @@ method getMessageById*(self: Module, messageId: string): message_item.Item =
       m.mentionedUsersPks(),
       sender.details.trustStatus,
       sender.details.ensVerified,
-      m.discordMessage
+      m.discordMessage,
+      resendError = ""
       )
     return item
   return nil
@@ -602,3 +607,6 @@ method onMailserverSynced*(self: Module, syncedFrom: int64) =
   let chatDto = self.controller.getChatDetails()
   if (not chatDto.hasMoreMessagesToRequest(syncedFrom)):
     self.view.model().removeItem(FETCH_MORE_MESSAGES_MESSAGE_ID)
+
+method resendChatMessage*(self: Module, messageId: string): string =
+  return self.controller.resendChatMessage(messageId)

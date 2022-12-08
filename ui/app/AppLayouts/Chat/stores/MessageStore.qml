@@ -210,19 +210,19 @@ QtObject {
     function requestMoreMessages() {
         if(!messageModule)
             return
-        return messageModule.requestMoreMessages();
+        return messageModule.requestMoreMessages()
     }
 
     function fillGaps(messageId) {
-         if(!messageModule)
+        if(!messageModule)
             return
-        return messageModule.fillGaps(messageId);
+        return messageModule.fillGaps(messageId)
     }
 
     function leaveChat() {
-         if(!messageModule)
+        if(!messageModule)
             return
-        messageModule.leaveChat();
+        messageModule.leaveChat()
     }
 
     property bool playAnimation: {
@@ -242,5 +242,11 @@ QtObject {
             return false
 
         return true
+    }
+
+    function resendMessage(messageId) {
+        if(!messageModule)
+            return
+        messageModule.resendMessage(messageId)
     }
 }

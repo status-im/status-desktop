@@ -22,6 +22,8 @@ Item {
     property string tertiaryDetail: sender.id
     property string resendText: ""
     property bool showResendButton: false
+    property bool showSendingLoader: false
+    property string resendError: ""
     property bool isContact: sender.isContact
     property int trustIndicator: sender.trustIndicator
     property bool amISender: false
@@ -119,6 +121,20 @@ Item {
                 anchors.fill: parent
                 onClicked: root.resendClicked()
             }
+        }
+        StatusBaseText {
+            verticalAlignment: Text.AlignVCenter
+            color: Theme.palette.baseColor1
+            font.pixelSize: Theme.tertiaryTextFontSize
+            text: qsTr("Failed to resend: %1").arg(resendError) // TODO replace this with the required design
+            visible: resendError && !!timestampText.text
+        }
+        StatusBaseText {
+            verticalAlignment: Text.AlignVCenter
+            color: Theme.palette.baseColor1
+            font.pixelSize: Theme.tertiaryTextFontSize
+            text: qsTr("Sending...") // TODO replace this with the required design
+            visible: showSendingLoader && !!timestampText.text
         }
     }
 }

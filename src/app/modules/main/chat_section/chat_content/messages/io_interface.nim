@@ -148,3 +148,6 @@ method getMessageById*(self: AccessInterface, messageId: string): message_item.I
 
 method onMailserverSynced*(self: AccessInterface, syncedFrom: int64) =
   raise newException(ValueError, "No implementation available")
+
+method resendChatMessage*(self: AccessInterface, messageId: string): string =
+  raise newException(ValueError, "No implementation available")

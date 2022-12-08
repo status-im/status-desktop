@@ -289,3 +289,6 @@ proc leaveChat*(self: Controller) =
 method checkEditedMessageForMentions*(self: Controller, chatId: string,
   editedMessage: MessageDto, oldMentions: seq[string]) =
   self.messageService.checkEditedMessageForMentions(chatId, editedMessage, oldMentions)
+
+method resendChatMessage*(self: Controller, messageId: string): string =
+  return self.messageService.resendChatMessage(messageId)

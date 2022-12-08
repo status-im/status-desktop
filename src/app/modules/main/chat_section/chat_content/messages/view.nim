@@ -183,3 +183,11 @@ QtObject:
 
   proc jumpToMessage*(self: View, messageId: string) {.slot.} =
     self.delegate.scrollToMessage(messageId)
+
+  proc resendMessage*(self: View, messageId: string) {.slot.} =
+    let error = self.delegate.resendChatMessage(messageId)
+    if (error != ""):
+      self.model.itemFailedResending(messageId, error)
+      return
+    self.model.itemSending(messageId)
+     

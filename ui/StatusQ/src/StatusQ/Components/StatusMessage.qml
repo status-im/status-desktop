@@ -58,6 +58,8 @@ Control {
     property bool isPinned: false
     property string pinnedBy: ""
     property bool hasExpired: false
+    property bool isSending: false
+    property string resendError: ""
     property double timestamp: 0
     property var reactionsModel: []
     property bool hasLinks
@@ -275,7 +277,9 @@ Control {
                         amISender: root.messageDetails.amISender
                         messageOriginInfo: root.messageDetails.messageOriginInfo
                         resendText: root.resendText
-                        showResendButton: root.hasExpired && root.messageDetails.amISender
+                        showResendButton: root.hasExpired && root.messageDetails.amISender && !editMode
+                        showSendingLoader: root.isSending && root.messageDetails.amISender && !editMode
+                        resendError: root.messageDetails.amISender && !editMode ? root.resendError : ""
                         onClicked: root.senderNameClicked(sender, mouse)
                         onResendClicked: root.resendClicked()
                         visible: root.showHeader && !editMode
@@ -371,17 +375,6 @@ Control {
                         cancelButtonText: root.cancelButtonText
                         onEditCancelled: root.editCancelled()
                         onEditCompleted: root.editCompleted(newMsgText)
-                    }
-                    StatusBaseText {
-                        color: Theme.palette.dangerColor1
-                        text: root.resendText
-                        font.pixelSize: 12
-                        visible: root.hasExpired && root.messageDetails.amISender && !root.timestamp && !editMode
-                        MouseArea {
-                            cursorShape: Qt.PointingHandCursor
-                            anchors.fill: parent
-                            onClicked: root.resendClicked()
-                        }
                     }
                     Loader {
                         active: root.reactionsModel.count > 0
