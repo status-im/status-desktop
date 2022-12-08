@@ -49,12 +49,12 @@ pipeline {
     /* Control output the filename */
     STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename(ext: 'dmg')}"
     /* Apple Team ID for Notarization */
-    MACOS_NOTARIZE_TEAM_ID = "DTX7Z4U3YA"
+    MACOS_NOTARIZE_TEAM_ID = "8B5X2M6H2Y"
   }
 
   stages {
     stage('Deps') {
-      steps { 
+      steps {
         sh 'make update'
         withCredentials([
           usernamePassword( /* For fetching HomeBrew bottles. */
