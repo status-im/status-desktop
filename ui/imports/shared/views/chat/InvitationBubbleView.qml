@@ -1,5 +1,5 @@
-import QtQuick 2.3
-import QtQuick.Dialogs 1.3
+import QtQuick 2.14
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import utils 1.0
@@ -12,11 +12,14 @@ import StatusQ.Components 0.1
 import shared.panels 1.0
 import shared.popups 1.0
 
-Item {
+Control {
     id: root
 
-    implicitHeight: loader.height
-    implicitWidth: loader.width
+    implicitWidth: 270 // by design
+    implicitHeight: !d.invitedCommunity ? 0 : Math.max(implicitBackgroundHeight + topInset + bottomInset,
+                                                       implicitContentHeight + verticalPadding)
+
+    padding: 1
 
     property var store
     property string communityId
@@ -73,160 +76,115 @@ Item {
         }
     }
 
-    Loader {
-        id: loader
+    background: Rectangle {
+        radius: d.radius
+        color: Style.current.background
+        border.color: Style.current.border
+        border.width: 1
+    }
 
-        active: !!d.invitedCommunity
+    contentItem: ColumnLayout {
+        spacing: 0
 
-        sourceComponent: Rectangle {
-            id: rectangleBubble
+        StatusBaseText {
+            id: title
 
-            width: 270
-            height: columnLayout.implicitHeight + border.width * 2
-            radius: d.radius
-            color: Style.current.background
-            border.color: Style.current.border
-            border.width: 1
+            Layout.fillWidth: true
+            Layout.leftMargin: d.margin
+            Layout.rightMargin: d.margin
+            Layout.topMargin: 8
+            Layout.bottomMargin: 8
+
+            text: d.invitedCommunity.verifed ? qsTr("Verified community invitation") : qsTr("Community invitation")
+            color: d.invitedCommunity.verifed ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+            font.weight: Font.Medium
+            font.pixelSize: 13
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: Style.current.separator
+        }
+
+        RowLayout {
+            id: communityDescriptionLayout
+
+            Layout.leftMargin: d.margin
+            Layout.rightMargin: d.margin
+            Layout.topMargin: 12
+            Layout.bottomMargin: 12
+
+            spacing: 12
+
+            StatusSmartIdenticon {
+                Layout.alignment: Qt.AlignTop
+                Layout.preferredWidth: 40
+                Layout.preferredHeight: 40
+
+                name: d.invitedCommunity.name
+
+                asset {
+                    width: 40
+                    height: 40
+                    name: d.invitedCommunity.image
+                    color: d.invitedCommunity.color
+                    isImage: true
+                }
+            }
 
             ColumnLayout {
-                id: columnLayout
-                anchors.fill: parent
-                anchors.margins: 1
+                spacing: 2
 
-                spacing: 0
-
-                ColumnLayout {
-                    id: invitationDescriptionLayout
-
-                    Layout.leftMargin: d.margin
-                    Layout.rightMargin: d.margin
-                    Layout.topMargin: 8
-                    Layout.bottomMargin: 8
-
-                    spacing: 4
-
-                    StatusBaseText {
-                        id: title
-
-                        Layout.fillWidth: true
-
-                        text: d.invitedCommunity.verifed ? qsTr("Verified community invitation") : qsTr("Community invitation")
-                        color: d.invitedCommunity.verifed ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
-                        font.weight: Font.Medium
-                        font.pixelSize: 13
-                    }
-
-                    StatusBaseText {
-                        id: invitedYou
-
-                        Layout.fillWidth: true
-
-                        visible: text != ""
-                        text: {
-                            // Not Refactored Yet
-                            return ""
-    //                        if (root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
-    //                            return isCurrentUser ?
-    //                                        qsTr("You invited %1 to join a community").arg(root.store.chatsModelInst.userNameOrAlias(root.store.chatsModelInst.channelView.activeChannel.id))
-    //                                      : qsTr("%1 invited you to join a community").arg(displayUserName)
-    //                        } else {
-    //                            return isCurrentUser ?
-    //                                        qsTr("You shared a community")
-    //                                      : qsTr("A community has been shared")
-    //                        }
-                        }
-                        wrapMode: Text.WordWrap
-                        font.pixelSize: 15
-                    }
-                }
-
-                Rectangle {
+                StatusBaseText {
                     Layout.fillWidth: true
-                    implicitHeight: 1
-                    color: Style.current.separator
+
+                    text: d.invitedCommunity.name
+                    font.weight: Font.Bold
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                    font.pixelSize: 17
+                    color: Theme.palette.directColor1
                 }
 
-                RowLayout {
-                    id: communityDescriptionLayout
-
-                    Layout.leftMargin: d.margin
-                    Layout.rightMargin: d.margin
-                    Layout.topMargin: 12
-                    Layout.bottomMargin: 12
-
-                    spacing: 12
-
-                    StatusSmartIdenticon {
-                        Layout.alignment: Qt.AlignTop
-                        Layout.preferredWidth: 40
-                        Layout.preferredHeight: 40
-
-                        name: d.invitedCommunity.name
-
-                        asset {
-                            width: 40
-                            height: 40
-                            name: d.invitedCommunity.image
-                            color: d.invitedCommunity.color
-                            isImage: true
-                        }
-                    }
-
-                    ColumnLayout {
-                        spacing: 2
-
-                        StatusBaseText {
-                            Layout.fillWidth: true
-
-                            text: d.invitedCommunity.name
-                            font.weight: Font.Bold
-                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                            font.pixelSize: 17
-                            color: Theme.palette.directColor1
-                        }
-
-                        StatusBaseText {
-                            Layout.fillWidth: true
-
-                            text: d.invitedCommunity.description
-                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                            font.pixelSize: 15
-                            color: Theme.palette.directColor1
-                        }
-
-                        StatusBaseText {
-                            Layout.fillWidth: true
-
-                            text: qsTr("%n member(s)", "", d.invitedCommunity.nbMembers)
-                            font.pixelSize: 13
-                            font.weight: Font.Medium
-                            color: Theme.palette.baseColor1
-                        }
-                    }
-                }
-
-                Rectangle {
+                StatusBaseText {
                     Layout.fillWidth: true
-                    implicitHeight: 1
-                    color: Style.current.separator
+
+                    text: d.invitedCommunity.description
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                    color: Theme.palette.directColor1
                 }
 
-                StatusFlatButton {
-                    id: joinBtn
-
+                StatusBaseText {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 44
 
-                    text: qsTr("Go to Community")
-                    radius: d.radius - 1 // We do -1, otherwise there's a gap between border and button
+                    text: qsTr("%n member(s)", "", d.invitedCommunity.nbMembers)
+                    font.pixelSize: 13
+                    font.weight: Font.Medium
+                    color: Theme.palette.baseColor1
+                }
+            }
+        }
 
-                    onClicked: {
-                        if (d.invitedCommunity.joined || d.invitedCommunity.spectated) {
-                            root.store.setActiveCommunity(communityId)
-                        } else {
-                            root.store.spectateCommunity(communityId, userProfile.name)
-                        }
-                    }
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: Style.current.separator
+        }
+
+        StatusFlatButton {
+            id: joinBtn
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: 44
+
+            text: qsTr("Go to Community")
+            radius: d.radius - 1 // We do -1, otherwise there's a gap between border and button
+
+            onClicked: {
+                if (d.invitedCommunity.joined || d.invitedCommunity.spectated) {
+                    root.store.setActiveCommunity(communityId)
+                } else {
+                    root.store.spectateCommunity(communityId, userProfile.name)
                 }
             }
         }
