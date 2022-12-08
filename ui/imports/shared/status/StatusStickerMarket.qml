@@ -197,13 +197,15 @@ Item {
                                         buyStickersModal.sendingError.text = response.result
                                         return buyStickersModal.sendingError.open()
                                     }
-                                    let url = `${buyStickersModal.store.getEtherscanLink()}/${response.result}`;
-                                    Global.displayToastMessage(qsTr("Transaction pending..."),
-                                                               qsTr("View on etherscan"),
-                                                               "",
-                                                               true,
-                                                               Constants.ephemeralNotificationType.normal,
-                                                               url)
+                                    for(var i=0; i<buyStickersModal.bestRoutes.length; i++) {
+                                        let url =  "%1/%2".arg(buyStickersModal.store.getEtherscanLink(buyStickersModal.bestRoutes[i].fromNetwork.chainId)).arg(response.result)
+                                        Global.displayToastMessage(qsTr("Transaction pending..."),
+                                                                   qsTr("View on etherscan"),
+                                                                   "",
+                                                                   true,
+                                                                   Constants.ephemeralNotificationType.normal,
+                                                                   url)
+                                    }
                                     buyStickersModal.close()
                                 } catch (e) {
                                     console.error('Error parsing the response', e)

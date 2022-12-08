@@ -71,8 +71,8 @@ method viewDidLoad*(self: Module) =
 method postMessage*(self: Module, payloadMethod: string, requestType: string, message: string) =
   self.controller.postMessage(payloadMethod, requestType, message)
 
-method onPostMessage*(self: Module, payloadMethod: string, result: string) =
-  self.view.postMessageResult(payloadMethod, result)
+method onPostMessage*(self: Module, payloadMethod: string, result: string, chainId: string) =
+  self.view.postMessageResult(payloadMethod, result, chainId)
 
 method ensResourceURL*(self: Module, ens: string, url: string): (string, string, string, string, bool) =
   return self.controller.ensResourceURL(ens, url)

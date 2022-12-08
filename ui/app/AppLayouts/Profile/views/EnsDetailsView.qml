@@ -154,14 +154,16 @@ Item {
                             releaseEnsModal.sendingError.text = response.result
                             return releaseEnsModal.sendingError.open()
                         }
-                        usernameReleased(username);
-                        let url = `${releaseEnsModal.store.getEtherscanLink()}/${response.result}`;
-                        Global.displayToastMessage(qsTr("Transaction pending..."),
-                                                   qsTr("View on etherscan"),
-                                                   "",
-                                                   true,
-                                                   Constants.ephemeralNotificationType.normal,
-                                                   url)
+                        for(var i=0; i<releaseEnsModal.bestRoutes.length; i++) {
+                            usernameReleased(username);
+                            let url =  "%1/%2".arg(releaseEnsModal.store.getEtherscanLink(releaseEnsModal.bestRoutes[i].fromNetwork.chainId)).arg(response.result)
+                            Global.displayToastMessage(qsTr("Transaction pending..."),
+                                                       qsTr("View on etherscan"),
+                                                       "",
+                                                       true,
+                                                       Constants.ephemeralNotificationType.normal,
+                                                       url)
+                        }
                     } catch (e) {
                         console.error('Error parsing the response', e)
                     }

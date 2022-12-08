@@ -60,14 +60,14 @@ Item {
     Component {
         id: transactionDialogComponent
         SendModal {
-            id: releaseEnsModal
+            id: connectEnsModal
             modalHeader: qsTr("Connect username with your pubkey")
             interactive: false
             sendType: Constants.SendType.ENSSetPubKey
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
             preSelectedAsset: {
-                let assetsList = releaseEnsModal.store.currentAccount.assets
+                let assetsList = connectEnsModal.store.currentAccount.assets
                 for(var i=0; i< assetsList.count;i++) {
                     if("ETH" === assetsList.rowData(i, "symbol"))
                         return {
@@ -105,21 +105,23 @@ Item {
                             if (response.result.includes(Constants.walletSection.cancelledMessage)) {
                                 return
                             }
-                            releaseEnsModal.sendingError.text = response.result
-                            return releaseEnsModal.sendingError.open()
+                            connectEnsModal.sendingError.text = response.result
+                            return connectEnsModal.sendingError.open()
                         }
-                        usernameUpdated(ensUsername.text);
-                        let url = `${releaseEnsModal.store.getEtherscanLink()}/${response.result}`;
-                        Global.displayToastMessage(qsTr("Transaction pending..."),
-                                                   qsTr("View on etherscan"),
-                                                   "",
-                                                   true,
-                                                   Constants.ephemeralNotificationType.normal,
-                                                   url)
+                        for(var i=0; i<connectEnsModal.bestRoutes.length; i++) {
+                            usernameUpdated(ensUsername.text);
+                            let url =  "%1/%2".arg(connectEnsModal.store.getEtherscanLink(connectEnsModal.bestRoutes[i].fromNetwork.chainId)).arg(response.result)
+                            Global.displayToastMessage(qsTr("Transaction pending..."),
+                                                       qsTr("View on etherscan"),
+                                                       "",
+                                                       true,
+                                                       Constants.ephemeralNotificationType.normal,
+                                                       url)
+                        }
                     } catch (e) {
                         console.error('Error parsing the response', e)
                     }
-                    releaseEnsModal.close()
+                    connectEnsModal.close()
                 }
             }
         }

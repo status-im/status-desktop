@@ -538,7 +538,7 @@ StatusDialog {
                 }
                 for(var i=0; i<popup.bestRoutes.length; i++) {
                     let txHash = response.result[popup.bestRoutes[i].fromNetwork.chainId]
-                    let url = `${popup.store.getEtherscanLink()}/${txHash}`
+                    let url =  "%1/%2".arg(popup.store.getEtherscanLink(popup.bestRoutes[i].fromNetwork.chainId)).arg(txHash)
                     Global.displayToastMessage(qsTr("Transaction pending..."),
                                                qsTr("View on etherscan"),
                                                "",

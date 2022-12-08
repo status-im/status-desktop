@@ -10,10 +10,9 @@ QtObject {
     property string defaultCurrency: walletSection.currentCurrency
     property string signingPhrase: walletSection.signingPhrase
     
-    function getEtherscanLink() {
-        return profileSectionModule.ensUsernamesModule.getEtherscanLink()
+    function getEtherscanLink(chainID) {
+        return networksModule.all.getBlockExplorerURL(chainID)
     }
-
 
     function switchAccountByAddress(address) {
         browserSectionCurrentAccount.switchAccountByAddress(address)

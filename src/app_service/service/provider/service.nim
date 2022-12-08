@@ -19,6 +19,7 @@ type
   OnPostMessageArgs* = ref object of Args
     payloadMethod*: string
     result*: string
+    chainId*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -55,6 +56,7 @@ QtObject:
     var data = OnPostMessageArgs()
     discard responseObj.getProp("payloadMethod", data.payloadMethod)
     discard responseObj.getProp("result", data.result)
+    discard responseObj.getProp("chainId", data.chainId)
     
     self.events.emit(PROVIDER_SIGNAL_ON_POST_MESSAGE, data)
 

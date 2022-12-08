@@ -191,9 +191,8 @@ StatusSectionLayout {
                 _internal.signingError.text = message
                 return _internal.signingError.open()
             }
-            showToastMessage: function(result) {
-                // TODO: WIP under PR https://github.com/status-im/status-desktop/pull/4274
-                let url = `${WalletStore.getEtherscanLink()}/${result}`;
+            showToastMessage: function(result, chainId) {
+                let url =  "%1/%2".arg(WalletStore.getEtherscanLink(chainId)).arg(result)
                 Global.displayToastMessage(qsTr("Transaction pending..."),
                                            qsTr("View on etherscan"),
                                            "",

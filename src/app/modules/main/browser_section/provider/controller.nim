@@ -41,7 +41,7 @@ proc getNetwork*(self: Controller): NetworkDto =
 proc init*(self: Controller) =
   self.events.on(PROVIDER_SIGNAL_ON_POST_MESSAGE) do(e:Args):
     let args = OnPostMessageArgs(e)
-    self.delegate.onPostMessage(args.payloadMethod, args.result)
+    self.delegate.onPostMessage(args.payloadMethod, args.result, args.chainId)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.delegate.updateNetwork(self.getNetwork())
