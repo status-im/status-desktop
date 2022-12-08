@@ -256,7 +256,7 @@ Item {
     Audio {
         id: sendMessageSound
         store: rootStore
-        track: Qt.resolvedUrl("../imports/assets/audio/send_message.wav")
+        source: "qrc:/imports/assets/audio/send_message.wav"
         Component.onCompleted: {
             Global.sendMessageSound = this;
         }
@@ -265,7 +265,7 @@ Item {
     Audio {
         id: notificationSound
         store: rootStore
-        track: Qt.resolvedUrl("../imports/assets/audio/notification.wav")
+        source: "qrc:/imports/assets/audio/notification.wav"
         Component.onCompleted: {
             Global.notificationSound = this;
         }
@@ -273,7 +273,7 @@ Item {
 
     Audio {
         id: errorSound
-        track: Qt.resolvedUrl("../imports/assets/audio/error.mp3")
+        source: "qrc:/imports/assets/audio/error.mp3"
         store: rootStore
         Component.onCompleted: {
             Global.errorSound = this;

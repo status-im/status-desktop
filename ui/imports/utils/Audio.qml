@@ -1,14 +1,13 @@
-import QtQuick 2.13
-import QtMultimedia 5.13
+import QtQuick 2.14
+import QtMultimedia 5.14 as T
 
-Audio {
+T.Audio {
     id: audio
 
     property var store
-    property string track: "error.mp3"
 
-    source: Qt.resolvedUrl("./../assets/audio" + track)
     audioRole: Audio.NotificationRole
     volume: store.volume
     muted: !store.notificationSoundsEnabled
+    onError: console.warn("Audio error:", errorString, "; code:", error)
 }
