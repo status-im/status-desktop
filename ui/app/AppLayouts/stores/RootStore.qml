@@ -66,8 +66,8 @@ QtObject {
 
 //    property MessageStore messageStore: MessageStore { }
 
-    property real volume: !!localAccountSensitiveSettings ? localAccountSensitiveSettings.volume * 0.01 : 0.5
-    property bool notificationSoundsEnabled: !!localAccountSensitiveSettings ? localAccountSensitiveSettings.notificationSoundsEnabled : false
+    property real volume: !!appSettings ? appSettings.volume * 0.01 : 0.5
+    property bool notificationSoundsEnabled: !!appSettings ? appSettings.notificationSoundsEnabled : true
 
     property var walletSectionTransactionsInst: walletSectionTransactions
 

@@ -13,17 +13,17 @@ QtObject {
     property var privacyModule: profileSectionModuleInst.privacyModule
     property var userProfileInst: !!userProfile ? userProfile : null
     property var walletSectionInst: !!walletSection ? walletSection : null
-    property var appSettings: !!localAppSettings ? localAppSettings : null
+    property var appSettingsInst: !!appSettings ? appSettings : null
     property var accountSensitiveSettings: !!localAccountSensitiveSettings ? localAccountSensitiveSettings : null
-    property real volume: !!accountSensitiveSettings ? accountSensitiveSettings.volume * 0.1 : 0.2
+    property real volume: !!appSettingsInst ? appSettingsInst.volume * 0.01 : 0.5
     property bool isWalletEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.isWalletEnabled : false
-    property bool notificationSoundsEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.notificationSoundsEnabled : false
+    property bool notificationSoundsEnabled: !!appSettingsInst ? appSettingsInst.notificationSoundsEnabled : true
     property bool neverAskAboutUnfurlingAgain: !!accountSensitiveSettings ? accountSensitiveSettings.neverAskAboutUnfurlingAgain : false
     property bool isGifWidgetEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.isGifWidgetEnabled : false
     property bool isTenorWarningAccepted: !!accountSensitiveSettings ? accountSensitiveSettings.isTenorWarningAccepted : false
     property bool displayChatImages: !!accountSensitiveSettings ? accountSensitiveSettings.displayChatImages : false
 
-    property string locale: !!appSettings ? appSettings.locale : ""
+    property string locale: Qt.locale().name
 //    property string signingPhrase: !!walletModelInst ? walletModelInst.utilsView.signingPhrase : ""
 //    property string gasPrice: !!walletModelInst ? walletModelInst.gasView.gasPrice : "0"
 //    property string gasEthValue: !!walletModelInst ? walletModelInst.gasView.getGasEthValue : "0"
