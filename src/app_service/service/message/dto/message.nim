@@ -21,6 +21,7 @@ const PARSED_TEXT_OUTGOING_STATUS_SENDING*   = "sending"
 const PARSED_TEXT_OUTGOING_STATUS_SENT*      = "sent"
 const PARSED_TEXT_OUTGOING_STATUS_DELIVERED* = "delivered"
 const PARSED_TEXT_OUTGOING_STATUS_EXPIRED* = "expired"
+const PARSED_TEXT_OUTGOING_STATUS_FAILED_RESENDING* = "failedResending"
 
 type ParsedText* = object
   `type`*: string

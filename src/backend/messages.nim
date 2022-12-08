@@ -64,3 +64,6 @@ proc deleteMessageAndSend*(messageID: string): RpcResponse[JsonNode] {.raises: [
 
 proc editMessage*(messageId: string, contentType: int, msg: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("editMessage".prefix, %* [{"id": messageId, "text": msg, "content-type": contentType}])
+
+proc resendChatMessage*(messageId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("reSendChatMessage".prefix, %* [messageId])

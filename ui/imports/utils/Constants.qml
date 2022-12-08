@@ -729,4 +729,11 @@ QtObject {
     readonly property QtObject walletSection: QtObject {
         readonly property string cancelledMessage: "cancelled"
     }
+
+    // Message outgoing status
+    readonly property string sending: "sending"
+    readonly property string sent: "sent"
+    readonly property string delivered: "delivered"
+    readonly property string expired: "expired"
+    readonly property string failedResending: "failedResending"
 }

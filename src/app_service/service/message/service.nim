@@ -788,3 +788,16 @@ proc checkEditedMessageForMentions*(self: Service, chatId: string, editedMessage
   if not oldMentions.contains(myPubKey) and editedMessage.mentionedUsersPks().contains(myPubKey):
     let data = MessageEditedArgs(chatId: chatId, message: editedMessage)
     self.events.emit(SIGNAL_MENTIONED_IN_EDITED_MESSAGE, data)
+
+proc resendChatMessage*(self: Service, messageId: string): string =
+  try:
+    let response = status_go.resendChatMessage(messageId)
+
+    if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, "Error resending chat message: " & error.message)
+
+    return
+  except Exception as e:
+    error "error: ", procName="resendChatMessage", errName = e.name, errDesription = e.msg
+    return fmt"{e.name}: {e.msg}"
