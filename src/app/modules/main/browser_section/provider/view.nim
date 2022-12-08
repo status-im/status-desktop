@@ -70,7 +70,7 @@ QtObject:
   proc getHost*(self: View, url: string): string {.slot.} =
     result = url_host(url)
 
-  proc postMessageResult*(self: View, payloadMethod: string, result: string) {.signal.}
+  proc postMessageResult*(self: View, payloadMethod: string, result: string, chainId: string) {.signal.}
 
   proc postMessage*(self: View, payloadMethod: string, requestType: string, message: string) {.slot.} =
     self.delegate.postMessage(payloadMethod, requestType, message)

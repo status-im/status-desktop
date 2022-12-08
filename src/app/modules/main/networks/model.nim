@@ -2,6 +2,8 @@ import NimQml, Tables, strutils, strformat
 
 import ./item
 
+const EXPLORER_TX_PREFIX* = "/tx/"
+
 type
   ModelRole* {.pure.} = enum
     ChainId = UserRole + 1,
@@ -182,3 +184,9 @@ QtObject:
       if item.getLayer() == 1 and item.getIsTest() == testNet:
         return item.getChainId()
     return 0
+
+  proc getBlockExplorerURL*(self: Model, chainId: int): string {.slot.} =
+    for item in self.items:
+      if(item.getChainId() == chainId):
+        return item.getBlockExplorerURL() & EXPLORER_TX_PREFIX
+    return ""

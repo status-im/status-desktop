@@ -53,8 +53,8 @@ QtObject {
         }
     }
 
-    function getEtherscanLink() {
-        return profileSectionModule.ensUsernamesModule.getEtherscanLink()
+    function getEtherscanLink(chainID) {
+        return networksModule.all.getBlockExplorerURL(chainID)
     }
 
     function copyToClipboard(text) {

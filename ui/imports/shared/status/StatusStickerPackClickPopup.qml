@@ -110,13 +110,16 @@ ModalPopup {
                                 buyStickersPackModal.sendingError.text = response.result
                                 return buyStickersPackModal.sendingError.open()
                             }
-                            let url = `${buyStickersPackModal.store.getEtherscanLink()}/${response.result}`;
-                            Global.displayToastMessage(qsTr("Transaction pending..."),
-                                                       qsTr("View on etherscan"),
-                                                       "",
-                                                       true,
-                                                       Constants.ephemeralNotificationType.normal,
-                                                       url)
+                            for(var i=0; i<buyStickersPackModal.bestRoutes.length; i++) {
+                                let txHash = response.result[buyStickersPackModal.bestRoutes[i].fromNetwork.chainId]
+                                let url =  "%1/%2".arg(buyStickersPackModal.store.getEtherscanLink(buyStickersPackModal.bestRoutes[i].fromNetwork.chainId)).arg(response.result)
+                                Global.displayToastMessage(qsTr("Transaction pending..."),
+                                                           qsTr("View on etherscan"),
+                                                           "",
+                                                           true,
+                                                           Constants.ephemeralNotificationType.normal,
+                                                           url)
+                            }
                             buyStickersPackModal.close()
                         } catch (e) {
                             console.error('Error parsing the response', e)

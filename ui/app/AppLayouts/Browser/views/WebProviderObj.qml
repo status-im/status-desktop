@@ -41,7 +41,7 @@ QtObject {
                 }
 
                 if (isTx) {
-                    showToastMessage(responseObj.result.result)
+                    showToastMessage(responseObj.result.result, chainId)
                 }
                 
             } catch (e) {

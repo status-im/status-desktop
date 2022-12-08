@@ -27,7 +27,7 @@ method postMessage*(self: AccessInterface, payloadMethod: string, requestType: s
 method ensResourceURL*(self: AccessInterface, ens: string, url: string): (string, string, string, string, bool) =
   raise newException(ValueError, "No implementation available")
 
-method onPostMessage*(self: AccessInterface, payloadMethod: string, result: string) {.base.} =
+method onPostMessage*(self: AccessInterface, payloadMethod: string, result: string, chainId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
