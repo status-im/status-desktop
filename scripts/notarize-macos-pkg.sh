@@ -35,8 +35,10 @@ OUT=$(xcrun_altool --notarize-app -f "${BUNDLE_PATH}" --primary-bundle-id "${MAC
 # Necessary to track notarization request progress.
 REQUEST_UUID=$(echo "${OUT}" | jq -r '."notarization-upload".RequestUUID')
 
-if [[ -z "${REQUEST_UUID}" ]]; then
+if [[ -z "${REQUEST_UUID}" ]] || [[ "${REQUEST_UUID}" == "null" ]]; then
     echo "\n!!! FAILURE: No notarization request UUID found." >&1
+    echo "Full output:"
+    echo "${OUT}"
     exit 1
 fi
 echo -e "\n### Request ID: ${REQUEST_UUID}"
