@@ -713,22 +713,7 @@ proc getRenderedText*(self: Service, parsedTextArray: seq[ParsedText]): string =
           result = result & self.renderInline(child)
         result = result & "</p>"
       of PARSED_TEXT_TYPE_BLOCKQUOTE:
-        var
-          blockquote = escape_html(parsedText.literal)
-          lines = toSeq(blockquote.split(NEW_LINE))
-        for i in 0..(lines.len - 1):
-          if i + 1 >= lines.len:
-            continue
-          if lines[i + 1] != "":
-            lines[i] = lines[i] & "<br/>"
-        blockquote = lines.join("")
-        result = result & fmt(
-          "<table class=\"blockquote\">" &
-            "<tr>" &
-              "<td class=\"quoteline\" valign=\"middle\"></td>" &
-              "<td>{blockquote}</td>" &
-            "</tr>" &
-          "</table>")
+        result = result & "<blockquote>" & escape_html(parsedText.literal) & "</blockquote>"
       of PARSED_TEXT_TYPE_CODEBLOCK:
         result = result & "<code>" & escape_html(parsedText.literal) & "</code>"
     result = result.strip()

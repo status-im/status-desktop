@@ -197,15 +197,6 @@ QtObject {
                     `del {` +
                         `text-decoration: line-through;` +
                     `}` +
-                    `table.blockquote td {` +
-                        `padding-left: 10px;` +
-                        `color: ${Theme.palette.baseColor1};` +
-                    `}` +
-                    `table.blockquote td.quoteline {` +
-                        `background-color: ${Theme.palette.baseColor1};` +
-                        `height: 100%;` +
-                        `padding-left: 0;` +
-                    `}` +
                     `.emoji {` +
                         `vertical-align: bottom;` +
                     `}` +
