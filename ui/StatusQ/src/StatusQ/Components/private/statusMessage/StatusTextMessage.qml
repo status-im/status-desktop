@@ -25,6 +25,7 @@ Item {
     QtObject {
         id: d
         property bool readMore: false
+        property bool isQuote: false
         readonly property bool veryLongChatText: chatText.length > 1000
         readonly property int showMoreHeight: showMoreButtonLoader.visible ? showMoreButtonLoader.height : 0
 
@@ -37,6 +38,8 @@ Item {
 
             let formattedMessage = Utils.linkifyAndXSS(root.messageDetails.messageText);
 
+            isQuote = (formattedMessage.startsWith("<blockquote>") && formattedMessage.endsWith("</blockquote>"));
+
             if (root.isEdited) {
                 const index = formattedMessage.endsWith("code>") ? formattedMessage.length : formattedMessage.length - 4;
                 const editedMessage = formattedMessage.slice(0, index)
@@ -45,7 +48,7 @@ Item {
                 return Utils.getMessageWithStyle(Emoji.parse(editedMessage), chatText.hoveredLink)
             }
 
-            if (root.convertToSingleLine)
+            if (root.convertToSingleLine || isQuote)
                 formattedMessage = Utils.convertToSingleLine(formattedMessage)
 
             if (root.stripHtmlTags)
@@ -62,6 +65,14 @@ Item {
         }
     }
 
+    Rectangle {
+        width: 1
+        height: chatText.height
+        radius: 8
+        visible: d.isQuote
+        color: Theme.palette.baseColor1
+    }
+
     TextEdit {
         id: chatText
         objectName: "StatusTextMessage_chatText"
@@ -72,12 +83,14 @@ Item {
 
         width: parent.width
         height: effectiveHeight + d.showMoreHeight / 2
+        anchors.left: parent.left
+        anchors.leftMargin: d.isQuote ? 8 : 0
         opacity: !showMoreOpacityMask.active && !horizontalOpacityMask.active ? 1 : 0
         clip: true
         text: d.text
         selectedTextColor: Theme.palette.directColor1
         selectionColor: Theme.palette.primaryColor3
-        color: Theme.palette.directColor1
+        color: d.isQuote ? Theme.palette.baseColor1 : Theme.palette.directColor1
         font.family: Theme.palette.baseFont.name
         font.pixelSize: Theme.primaryTextFontSize
         textFormat: Text.RichText
