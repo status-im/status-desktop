@@ -5,7 +5,6 @@ type
     Undefined = "",
     Prod = "eth.prod",
     Staging = "eth.staging",
-    Test = "eth.test",
     WakuV2Prod = "wakuv2.prod"
     WakuV2Test = "wakuv2.test"
     GoWakuTest = "go-waku.test"
@@ -17,10 +16,8 @@ type
     Mailservers = "mail",
     Rendezvous = "rendezvous",
     Whisper = "whisper",
-    Waku = "waku"
-    LibP2P = "libp2p"
-    Websocket = "websocket"
-    TCP_P2P_Waku = "tcp/p2p/waku"
+    Waku = "tcp/p2p/waku"
+    Websocket = "wss/p2p/waku"
 
   Meta* = object
     hostname*: string
@@ -64,7 +61,7 @@ proc getMailservers*(self: FleetConfiguration, fleet: Fleet, isWakuV2: bool): Ta
   # TODO: If using wakuV2, this assumes that Waku nodes in fleet.status.json are also store nodes.
   # Maybe it make senses to add a "waku-store" section in case we want to have separate node types?
   # Discuss with @iurimatias, @cammellos and Vac team
-  let fleetKey = if isWakuV2: $FleetNodes.TCP_P2P_Waku else: $FleetNodes.Mailservers
+  let fleetKey = if isWakuV2: $FleetNodes.Waku else: $FleetNodes.Mailservers
   if not self.fleet[$fleet].hasKey(fleetKey) :
     result = initTable[string,string]()
     return

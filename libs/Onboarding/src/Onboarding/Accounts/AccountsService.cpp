@@ -368,7 +368,7 @@ QJsonObject AccountsService::getDefaultNodeConfig(const QString& installationId)
         const auto envVarWakuV2Port = "WAKUV2_PORT";
 
         auto templateNodeConfigJsonStr = getDataFromFile(":/Status/StaticConfig/node-config.json").value();
-        auto fleetJson = getDataFromFile(":/Status/StaticConfig/fleets.json").value();
+        auto fleetJson = getDataFromFile(":/Status/StaticConfig/fleets_cpp.json").value();
         const auto infuraKey = qEnvironmentVariable(envVarInfuraToken, getDataFromFile(":/Status/StaticConfig/infura_key").value());
 
         auto templateDefaultNetworksJson = getDataFromFile(":/Status/StaticConfig/default-networks.json").value();
