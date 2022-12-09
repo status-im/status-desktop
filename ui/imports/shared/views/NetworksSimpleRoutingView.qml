@@ -20,6 +20,8 @@ RowLayout {
     property double amountToSend: 0
     property bool isLoading: false
     property bool isBridgeTx: false
+    property var selectedAsset
+    property var selectedAccount
     property var weiToEth: function(wei) {}
     property var reCalculateSuggestedRoute: function() {}
 
@@ -114,7 +116,8 @@ RowLayout {
                 rightPadding: 5
                 implicitWidth: 150
                 title: chainName
-                subTitle: root.weiToEth(balance)
+                subTitle: selectedAccount && selectedAccount!== undefined && selectedAsset!== undefined ?
+                              selectedAccount.getTokenBalanceOnChain(chainId, selectedAsset.symbol) : ""
                 statusListItemSubTitle.color: Theme.palette.primaryColor1
                 asset.width: 32
                 asset.height: 32
