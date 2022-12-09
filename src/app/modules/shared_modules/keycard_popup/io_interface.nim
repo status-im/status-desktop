@@ -103,12 +103,6 @@ method onKeycardResponse*(self: AccessInterface, keycardFlowType: string, keycar
 method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Path = "", txHash = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setUidOfAKeycardWhichNeedToBeProcessed*(self: AccessInterface, value: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method setKeyUidWhichNeedToBeProcessed*(self: AccessInterface, value: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method setPin*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -118,7 +112,7 @@ method setPuk*(self: AccessInterface, value: string) {.base.} =
 method setPassword*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setKeycarName*(self: AccessInterface, value: string) {.base.} =
+method setKeycardName*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setPairingCode*(self: AccessInterface, value: string) {.base.} =

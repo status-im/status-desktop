@@ -16,51 +16,33 @@ ColumnLayout {
     id: root
 
     property KeycardStore keycardStore
-    property string keycardUid: ""
+    property string keyUid: ""
 
     spacing: Constants.settingsSection.itemSpacing
 
     QtObject {
         id: d
         property bool collapsed: true
-        property string keyUid: ""
-
-        function resetKeycardDetails() {
-            let kcItem = root.keycardStore.getKeycardDetailsAsJson(root.keycardUid)
-            d.keyUid = kcItem.keyUid
-            keycardDetails.keycardName = kcItem.name
-            keycardDetails.keycardLocked = kcItem.locked
-            keycardDetails.keyPairType = kcItem.pairType
-            keycardDetails.keyPairIcon = kcItem.icon
-            keycardDetails.keyPairImage = kcItem.image
-            keycardDetails.keyPairAccounts = kcItem.accounts
-        }
     }
 
-    onKeycardUidChanged: {
-        d.resetKeycardDetails()
-    }
-
-    Connections {
-        target: root.keycardStore.keycardModule
-
-        onKeycardProfileChanged: {
-            if (keycardDetails.keyPairType === Constants.keycard.keyPairType.profile) {
-                d.resetKeycardDetails()
-            }
-        }
-
-        onKeycardDetailsChanged: {
-            if (kcUid === root.keycardUid) {
-                d.resetKeycardDetails()
-            }
-        }
-    }
-
-    KeycardItem {
-        id: keycardDetails
+    StatusListView {
         Layout.fillWidth: true
-        displayChevronComponent: false
+        Layout.preferredHeight: 250
+        spacing: Style.current.padding
+        model: root.keycardStore.keycardModule.keycardDetailsModel
+
+        delegate: KeycardItem {
+            width: ListView.view.width
+            displayChevronComponent: false
+
+            keycardName: model.name
+            keycardUid: model.keycardUid
+            keycardLocked: model.locked
+            keyPairType: model.pairType
+            keyPairIcon: model.icon
+            keyPairImage: model.image
+            keyPairAccounts: model.accounts
+        }
     }
 
     Item {
@@ -85,7 +67,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runRenameKeycardPopup(root.keycardUid, d.keyUid)
+            root.keycardStore.runRenameKeycardPopup(root.keyUid)
         }
     }
 
@@ -99,7 +81,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runChangePinPopup(root.keycardUid, d.keyUid)
+            root.keycardStore.runChangePinPopup(root.keyUid)
         }
     }
 
@@ -113,12 +95,12 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runCreateBackupCopyOfAKeycardPopup(root.keycardUid, d.keyUid)
+            root.keycardStore.runCreateBackupCopyOfAKeycardPopup(root.keyUid)
         }
     }
 
     StatusListItem {
-        visible: keycardDetails.keycardLocked
+        visible: root.keycardStore.keycardModule.keycardDetailsModel.anyOfItemsLocked
         Layout.fillWidth: true
         title: qsTr("Unlock Keycard")
         components: [
@@ -134,7 +116,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runUnlockKeycardPopupForKeycardWithUid(root.keycardUid, d.keyUid)
+            root.keycardStore.runUnlockKeycardPopupForKeycardWithUid(root.keyUid)
         }
     }
 
@@ -164,7 +146,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runCreatePukPopup(root.keycardUid, d.keyUid)
+            root.keycardStore.runCreatePukPopup(root.keyUid)
         }
     }
 
@@ -179,7 +161,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runCreateNewPairingCodePopup(root.keycardUid, d.keyUid)
+            root.keycardStore.runCreateNewPairingCodePopup(root.keyUid)
         }
     }
 }

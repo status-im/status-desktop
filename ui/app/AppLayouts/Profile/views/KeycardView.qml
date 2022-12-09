@@ -42,17 +42,18 @@ SettingsContentBase {
             readonly property int mainViewIndex: 0
             readonly property int detailsViewIndex: 1
 
-            property string observedKeycardUid: ""
+            property string observedKeyUid: ""
         }
 
         MainView {
             Layout.preferredWidth: root.contentWidth
             keycardStore: root.keycardStore
 
-            onDisplayKeycardDetails: {
-                d.observedKeycardUid = keycardUid
+            onDisplayKeycardsForKeypair: {
+                root.keycardStore.keycardModule.prepareKeycardDetailsModel(keyUid)
+                d.observedKeyUid = keyUid
                 root.profileSectionStore.backButtonName = root.mainSectionTitle
-                root.sectionTitle = keycardName
+                root.sectionTitle = keypairName
                 stackLayout.currentIndex = d.detailsViewIndex
             }
         }
@@ -60,7 +61,7 @@ SettingsContentBase {
         DetailsView {
             Layout.preferredWidth: root.contentWidth
             keycardStore: root.keycardStore
-            keycardUid: d.observedKeycardUid
+            keyUid: d.observedKeyUid
         }
 
         Connections {

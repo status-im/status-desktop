@@ -14,11 +14,10 @@ method executePrePrimaryStateCommand*(self: RenamingKeycardState, controller: Co
   if self.flowType == FlowType.RenameKeycard:
     let md = controller.getMetadataFromKeycard()
     let paths = md.walletAccounts.map(a => a.path)
-    self.success = controller.setKeycardName(controller.getUidOfAKeycardWhichNeedToBeProcessed(), 
-      controller.getKeycarName())
+    self.success = controller.updateKeycardName(controller.getKeycardUid(), controller.getKeycardName())
     if self.success:
-      controller.setNamePropForKeyPairStoredOnKeycard(controller.getKeycarName())
-      controller.runStoreMetadataFlow(controller.getKeycarName(), controller.getPin(), paths)
+      controller.setNamePropForKeyPairStoredOnKeycard(controller.getKeycardName())
+      controller.runStoreMetadataFlow(controller.getKeycardName(), controller.getPin(), paths)
 
 method getNextPrimaryState*(self: RenamingKeycardState, controller: Controller): State =
   if self.flowType == FlowType.RenameKeycard:

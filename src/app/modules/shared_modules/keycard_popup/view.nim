@@ -212,8 +212,8 @@ QtObject:
   proc setPassword*(self: View, value: string) {.slot.} =
     self.delegate.setPassword(value)
 
-  proc setKeycarName*(self: View, value: string) {.slot.} =
-    self.delegate.setKeycarName(value)
+  proc setKeycardName*(self: View, value: string) {.slot.} =
+    self.delegate.setKeycardName(value)
 
   proc setPairingCode*(self: View, value: string) {.slot.} =
     self.delegate.setPairingCode(value)
