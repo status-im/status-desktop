@@ -17,7 +17,7 @@ void SoundManager::playSound(const QUrl &soundUrl)
 {
     if (m_player->state() != QMediaPlayer::PlayingState)
     {
-        if (m_player->currentMedia().canonicalUrl() != soundUrl)
+        if (m_player->currentMedia().request().url() != soundUrl)
         {
             m_player->setMedia(soundUrl);
         }
@@ -28,7 +28,9 @@ void SoundManager::playSound(const QUrl &soundUrl)
 
 void SoundManager::setPlayerVolume(int volume)
 {
-    m_player->setVolume(volume);
+    m_player->setVolume(QAudio::convertVolume(volume / qreal(100.0),
+                                              QAudio::LogarithmicVolumeScale,
+                                              QAudio::LinearVolumeScale) * 100);
 }
 
 void SoundManager::stopPlayer()
