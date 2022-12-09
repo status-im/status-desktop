@@ -719,17 +719,17 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
 
   let chatDetails = self.controller.getChatDetails(chatIdMsgBelongsTo)
 
-  if (chatDetails.muted):
-    # No need to update the badge nor send a notification
-    return
-
   # Badge notification
   let messageBelongsToActiveSection = sectionIdMsgBelongsTo == self.controller.getMySectionId() and 
     self.controller.getMySectionId() == self.delegate.getActiveSectionId()
   let messageBelongsToActiveChat = self.controller.getActiveChatId() == chatIdMsgBelongsTo
   if(not messageBelongsToActiveSection or not messageBelongsToActiveChat):
-    let hasUnreadMessages = unviewedMessagesCount > 0
+    let hasUnreadMessages = (not chatDetails.muted and unviewedMessagesCount > 0) or unviewedMentionsCount > 0
     self.updateBadgeNotifications(chatIdMsgBelongsTo, hasUnreadMessages, unviewedMentionsCount)
+
+  if (chatDetails.muted):
+    # No need to update the badge nor send a notification
+    return
 
   # Prepare notification
   let myPK = singletonInstance.userProfile.getPubKey()
