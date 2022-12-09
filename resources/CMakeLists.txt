@@ -19,7 +19,7 @@ qt6_add_qml_module(${PROJECT_NAME}
     STATIC
     RESOURCES
         default-networks.json
-        fleets.json
+        fleets_cpp.json
         infura_key
         node-config.json
     RESOURCE_PREFIX ""

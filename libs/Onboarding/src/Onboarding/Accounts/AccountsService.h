@@ -13,7 +13,7 @@ namespace Status::Onboarding
  * \todo Refactor static dependencies
  *      :/resources/default-networks.json
  *      :/resources/node-config.json
- *      :/resources/fleets.json
+ *      :/resources/fleets_cpp.json
  *      :/resources/infura_key
  * \todo AccountsService
  * \todo Consider removing unneded states (first time account login, user)

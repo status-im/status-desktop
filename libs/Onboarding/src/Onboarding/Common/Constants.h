@@ -14,7 +14,6 @@ namespace Fleet
 {
 inline const auto Prod = u"eth.prod"_qs;
 inline const auto Staging = u"eth.staging"_qs;
-inline const auto Test = u"eth.test"_qs;
 inline const auto WakuV2Prod = u"wakuv2.prod"_qs;
 inline const auto WakuV2Test = u"wakuv2.test"_qs;
 inline const auto GoWakuTest = u"go-waku.test"_qs;
@@ -26,9 +25,8 @@ inline const auto Bootnodes = u"boot"_qs;
 inline const auto Mailservers = u"mail"_qs;
 inline const auto Rendezvous = u"rendezvous"_qs;
 inline const auto Whisper = u"whisper"_qs;
-inline const auto Waku = u"waku"_qs;
-inline const auto LibP2P = u"libp2p"_qs;
-inline const auto Websocket = u"websocket"_qs;
+inline const auto Waku = u"tcp/p2p/waku"_qs;
+inline const auto Websocket = u"wss/p2p/waku"_qs;
 } // namespace FleetNodes
 
 namespace General

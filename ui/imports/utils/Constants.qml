@@ -825,7 +825,6 @@ QtObject {
 
     readonly property string eth_prod: "eth.prod"
     readonly property string eth_staging: "eth.staging"
-    readonly property string eth_test: "eth.test"
     readonly property string waku_prod: "wakuv2.prod"
     readonly property string waku_test: "wakuv2.test"
     readonly property string status_test: "status.test"

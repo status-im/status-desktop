@@ -401,8 +401,6 @@ QtObject:
       return self.settings.pinnedMailserver.ethProd
     elif (fleet == Fleet.Staging):
       return self.settings.pinnedMailserver.ethStaging
-    elif (fleet == Fleet.Test):
-      return self.settings.pinnedMailserver.ethTest
     elif (fleet == Fleet.WakuV2Prod):
       return self.settings.pinnedMailserver.wakuv2Prod
     elif (fleet == Fleet.WakuV2Test):
@@ -423,8 +421,6 @@ QtObject:
         self.settings.pinnedMailserver.ethProd = mailserverID
       elif (fleet == Fleet.Staging):
         self.settings.pinnedMailserver.ethStaging = mailserverID
-      elif (fleet == Fleet.Test):
-        self.settings.pinnedMailserver.ethTest = mailserverID
       elif (fleet == Fleet.WakuV2Prod):
         self.settings.pinnedMailserver.wakuv2Prod = mailserverID
       elif (fleet == Fleet.WakuV2Test):

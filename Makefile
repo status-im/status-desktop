@@ -363,17 +363,15 @@ $(QRCODEGEN): | deps
 	+ cd vendor/QR-Code-generator/c && \
 	  $(MAKE) $(QRCODEGEN_MAKE_PARAMS) $(HANDLE_OUTPUT)
 
-FLEETS := fleets.json
-$(FLEETS):
-	echo -e $(BUILD_MSG) "Getting latest $(FLEETS)"
-	curl -s https://fleets.status.im/ \
-		| jq --indent 4 --sort-keys . \
-		> $(FLEETS)
+FLEETS_FILE := ./fleets.json
+$(FLEETS_FILE):
+	echo -e $(BUILD_MSG) "Getting latest $(FLEETS_FILE)"
+	curl -s https://fleets.status.im/ > $(FLEETS_FILE)
 
 fleets-remove:
-	rm -f $(FLEETS)
+	rm -f $(FLEETS_FILE)
 
-fleets-update: fleets-remove $(FLEETS)
+fleets-update: fleets-remove $(FLEETS_FILE)
 
 # When modifying files that are not tracked in UI_SOURCES (see below),
 # e.g. ui/shared/img/*.svg, REBUILD_UI=true can be supplied to `make` to ensure
@@ -545,7 +543,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp status.svg tmp/linux/dist/status.svg
 	cp status.svg tmp/linux/dist/usr/.
 	cp -R resources.rcc tmp/linux/dist/usr/.
-	cp -R $(FLEETS) tmp/linux/dist/usr/.
+	cp -R $(FLEETS_FILE) tmp/linux/dist/usr/.
 	mkdir -p tmp/linux/dist/usr/i18n
 	cp bin/i18n/* tmp/linux/dist/usr/i18n
 	mkdir -p tmp/linux/dist/usr/bin/StatusQ
@@ -605,7 +603,7 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp status.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
 	cp status-macos.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
-	cp -R $(FLEETS) $(MACOS_OUTER_BUNDLE)/Contents/
+	cp -R $(FLEETS_FILE) $(MACOS_OUTER_BUNDLE)/Contents/
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/i18n
 	cp bin/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/MacOS/StatusQ
@@ -675,7 +673,7 @@ $(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	rm -rf pkg/*.exe tmp/windows/dist
 	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n $(OUTPUT)/bin/StatusQ
 	cat windows-install.txt | unix2dos > $(OUTPUT)/INSTALL.txt
-	cp status.ico status.svg resources.rcc $(FLEETS) $(OUTPUT)/resources/
+	cp status.ico status.svg resources.rcc $(FLEETS_FILE) $(OUTPUT)/resources/
 	cp bin/i18n/* $(OUTPUT)/resources/i18n
 	cp cacert.pem $(OUTPUT)/bin/cacert.pem
 	cp bin/StatusQ/* $(OUTPUT)/bin/StatusQ

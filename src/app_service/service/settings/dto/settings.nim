@@ -72,7 +72,6 @@ type UpstreamConfig* = object
 type PinnedMailserver* = object
   ethProd*: string
   ethStaging*: string
-  ethTest*: string
   wakuv2Prod*: string
   wakuv2Test*: string
   goWakuTest*: string
@@ -143,7 +142,6 @@ proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   # we maintain pinned mailserver per fleet
   discard jsonObj.getProp("eth.prod", result.ethProd)
   discard jsonObj.getProp("eth.staging", result.ethStaging)
-  discard jsonObj.getProp("eth.test", result.ethTest)
   discard jsonObj.getProp("wakuv2.prod", result.wakuv2Prod)
   discard jsonObj.getProp("wakuv2.test", result.wakuv2Test)
   discard jsonObj.getProp("go-waku.test", result.goWakuTest)
@@ -217,7 +215,6 @@ proc pinnedMailserverToJsonNode*(mailserver: PinnedMailserver): JsonNode =
   return %*{
     "eth.prod": mailserver.ethProd,
     "eth.staging": mailserver.ethStaging,
-    "eth.test": mailserver.ethTest,
     "wakuv2.prod": mailserver.wakuv2Prod,
     "wakuv2.test": mailserver.wakuv2Test,
     "go-waku.test": mailserver.goWakuTest,
