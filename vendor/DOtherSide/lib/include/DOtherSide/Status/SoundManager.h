@@ -1,5 +1,4 @@
-#ifndef STATUS_SOUND_MANAGER_H
-#define STATUS_SOUND_MANAGER_H
+#pragma once
 
 #include <QObject>
 #include <QMediaPlayer>
@@ -10,29 +9,12 @@ namespace Status
     class SoundManager : public QObject
     {
         Q_OBJECT
-
+        Q_DISABLE_COPY_MOVE(SoundManager)
     public:
         /*!
          * Singleton instance.
          */
         static SoundManager &instance();
-
-        /*!
-         * Delete copy constructor.
-         */
-        SoundManager(const SoundManager &) = delete;
-        /*!
-         * Delete move constructor.
-         */
-        SoundManager(SoundManager &&) = delete;
-        /*!
-         * Delete copy asignment operator.
-         */
-        SoundManager &operator=(const SoundManager &) = delete;
-        /*!
-         * Delete move asignment operator.
-         */
-        SoundManager &operator=(SoundManager &&) = delete;
 
         /*!
          * Plays a sound with soundUrl.
@@ -60,5 +42,3 @@ namespace Status
         std::unique_ptr<QMediaPlayer> m_player;
     };
 }
-
-#endif
