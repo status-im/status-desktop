@@ -32,7 +32,6 @@ type
     connectionKeycardResponse: UUID
     tmpKeycardContainsMetadata: bool
     tmpCardMetadata: CardMetadata
-    tmpKeycardUidForProcessing: string
     tmpKeyUidForProcessing: string
     tmpPin: string
     tmpPinMatch: bool
@@ -173,12 +172,6 @@ proc containsMetadata*(self: Controller): bool =
 proc setContainsMetadata*(self: Controller, value: bool) =
   self.tmpKeycardContainsMetadata = value
 
-proc setUidOfAKeycardWhichNeedToBeProcessed*(self: Controller, value: string) =
-  self.tmpKeycardUidForProcessing = value
-
-proc getUidOfAKeycardWhichNeedToBeProcessed*(self: Controller): string =
-  return self.tmpKeycardUidForProcessing
-
 proc getKeyUidWhichNeedToBeProcessed*(self: Controller): string =
   self.tmpKeyUidForProcessing
 
@@ -233,10 +226,10 @@ proc setPassword*(self: Controller, value: string) =
 proc getPassword*(self: Controller): string =
   return self.tmpPassword
 
-proc setKeycarName*(self: Controller, value: string) =
+proc setKeycardName*(self: Controller, value: string) =
   self.tmpKeycardName = value
 
-proc getKeycarName*(self: Controller): string =
+proc getKeycardName*(self: Controller): string =
   return self.tmpKeycardName
 
 proc setPairingCode*(self: Controller, value: string) =
@@ -534,10 +527,10 @@ proc setCurrentKeycardStateToUnlocked*(self: Controller, keycardUid: string) =
   if not self.walletAccountService.setKeycardUnlocked(keycardUid):
     info "updating keycard unlocked state failed", keycardUid=keycardUid
 
-proc setKeycardName*(self: Controller, keycardUid: string, keycardName: string): bool =
+proc updateKeycardName*(self: Controller, keycardUid: string, keycardName: string): bool =
   if not serviceApplicable(self.walletAccountService):
     return false
-  if not self.walletAccountService.setKeycardName(keycardUid, keycardName):
+  if not self.walletAccountService.updateKeycardName(keycardUid, keycardName):
     info "updating keycard name failed", keycardUid=keycardUid
     return false
   return true

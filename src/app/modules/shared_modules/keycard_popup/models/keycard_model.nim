@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat
+import NimQml, Tables, strformat, sequtils, sugar
 import keycard_item
 
 export keycard_item
@@ -6,6 +6,7 @@ export keycard_item
 type
   ModelRole {.pure.} = enum
     PubKey = UserRole + 1
+    KeyUid
     KeycardUid
     Locked
     Name
@@ -62,6 +63,7 @@ QtObject:
   method roleNames(self: KeycardModel): Table[int, string] =
     {
       ModelRole.PubKey.int: "pubKey",
+      ModelRole.KeyUid.int: "keyUid",
       ModelRole.KeycardUid.int: "keycardUid",
       ModelRole.Locked.int: "locked",
       ModelRole.Name.int: "name",
@@ -82,6 +84,8 @@ QtObject:
     case enumRole:
     of ModelRole.PubKey:
       result = newQVariant(item.pubKey)
+    of ModelRole.KeyUid:
+      result = newQVariant(item.keyUid)
     of ModelRole.KeycardUid:
       result = newQVariant(item.keycardUid)
     of ModelRole.Locked:
@@ -99,9 +103,9 @@ QtObject:
     of ModelRole.DerivedFrom:
       result = newQVariant(item.derivedFrom)
 
-  proc getItemByKeycardUid*(self: KeycardModel, keycardUid: string): KeycardItem =
+  proc getItemForKeyUid*(self: KeycardModel, keyUid: string): KeycardItem =
     for i in 0 ..< self.items.len:
-      if(self.items[i].keycardUid == keycardUid):
+      if(self.items[i].keyUid == keyUid):
         return self.items[i]
     return nil
 
@@ -110,6 +114,13 @@ QtObject:
       if(self.items[i].pubKey == pubKey):
         return i
     return -1
+
+  proc isAnyOfItemsLockedChanged*(self:KeycardModel) {.signal.}
+  proc isAnyOfItemsLocked*(self: KeycardModel): bool {.slot.} =
+    return self.items.any(it => it.locked)  
+  QtProperty[bool] anyOfItemsLocked:
+    read = isAnyOfItemsLocked
+    notify = isAnyOfItemsLockedChanged
 
   proc setImage*(self: KeycardModel, pubKey: string, image: string) =
     let ind = self.findIndexForMember(pubKey)
@@ -125,6 +136,7 @@ QtObject:
         self.items[i].setLocked(locked)
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, @[ModelRole.Locked.int])
+        self.isAnyOfItemsLockedChanged()
 
   proc setName*(self: KeycardModel, keycardUid: string, name: string) =
     for i in 0 ..< self.items.len:

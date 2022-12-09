@@ -57,7 +57,7 @@ Item {
             onTextChanged: {
                 d.updateValidity()
                 if (d.entryValid) {
-                    root.sharedKeycardModule.setKeycarName(text)
+                    root.sharedKeycardModule.setKeycardName(text)
                 }
             }
 

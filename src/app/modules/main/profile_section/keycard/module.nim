@@ -1,4 +1,4 @@
-import NimQml, chronicles, json, marshal
+import NimQml, chronicles, json, marshal, sequtils, sugar, strutils
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -20,6 +20,11 @@ export io_interface
 
 logScope:
   topics = "profile-section-profile-module"
+
+type
+  BuildItemReason {.pure.} = enum
+    MainView
+    DetailsView
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -119,13 +124,11 @@ method runImportOrRestoreViaSeedPhrasePopup*(self: Module) =
 method runImportFromKeycardToAppPopup*(self: Module) =
   info "TODO: Import from Keycard to Status Desktop..."
 
-method runUnlockKeycardPopupForKeycardWithUid*(self: Module, keycardUid: string, keyUid: string) =
+method runUnlockKeycardPopupForKeycardWithUid*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
-  self.keycardSharedModule.setKeyUidWhichNeedToBeProcessed(keyUid)
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.UnlockKeycard)
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.UnlockKeycard, keyUid)
 
 method runDisplayKeycardContentPopup*(self: Module) =
   self.createSharedKeycardModule()
@@ -139,54 +142,49 @@ method runFactoryResetPopup*(self: Module) =
     return
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.FactoryReset)
 
-method runRenameKeycardPopup*(self: Module, keycardUid: string, keyUid: string) =
+method runRenameKeycardPopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.RenameKeycard, keyUid)
 
-method runChangePinPopup*(self: Module, keycardUid: string, keyUid: string) =
+method runChangePinPopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangeKeycardPin, keyUid)
 
-method runCreateBackupCopyOfAKeycardPopup*(self: Module, keycardUid: string, keyUid: string) =
+method runCreateBackupCopyOfAKeycardPopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  let item = self.view.keycardModel().getItemByKeycardUid(keycardUid)
+  let item = self.view.keycardModel().getItemForKeyUid(keyUid)
   self.keycardSharedModule.setKeyPairForCopy(item)
-  self.keycardSharedModule.setKeyUidWhichNeedToBeProcessed(keyUid)
-  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.CreateCopyOfAKeycard, keyUid)
 
-method runCreatePukPopup*(self: Module, keycardUid: string, keyUid: string) =
+method runCreatePukPopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangeKeycardPuk, keyUid)
 
-method runCreateNewPairingCodePopup*(self: Module, keycardUid: string, keyUid: string) =
+method runCreateNewPairingCodePopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.setUidOfAKeycardWhichNeedToBeProcessed(keycardUid)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangePairingCode, keyUid)
 
-proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPair: KeyPairDto): KeycardItem =
+proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPair: KeyPairDto, reason: BuildItemReason): 
+  KeycardItem =
   let findAccountByAccountAddress = proc(accounts: seq[WalletAccountDto], address: string): WalletAccountDto =
     for i in 0 ..< accounts.len:
-      if(accounts[i].address == address):
+      if cmpIgnoreCase(accounts[i].address, address) == 0:
         return accounts[i]
     return nil
 
   let isAccountInKnownAccounts = proc(knownAccounts: seq[WalletAccountDto], address: string): bool =
     for i in 0 ..< knownAccounts.len:
-      if(knownAccounts[i].address == address):
+      if cmpIgnoreCase(knownAccounts[i].address, address) == 0:
         return true
     return false
 
@@ -197,9 +195,11 @@ proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPa
       ## we should never be here cause we need to remove deleted accounts from the `keypairs` table and sync
       ## that state accross different app instances
       continue
-    if isAccountInKnownAccounts(knownAccounts, accAddr):
-      # if there are more then one keycard for a single keypair we don't want to add the same accounts addresses more than once
-      continue
+    if reason == BuildItemReason.MainView and 
+      (isAccountInKnownAccounts(knownAccounts, accAddr) or
+      not self.view.keycardModel().getItemForKeyUid(account.keyUid).isNil):
+        # if there are more then one keycard for a single keypair we don't want to add the same keypair more than once
+        continue
     knownAccounts.add(account)
   if knownAccounts.len == 0:
     return nil
@@ -225,57 +225,76 @@ proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPa
     item.addAccount(ka.name, ka.path, ka.address, ka.emoji, ka.color, icon = icon, balance = 0.0)
   return item
 
+proc areAllKnownKeycardsLockedForKeypair(self: Module, keyUid: string): bool =
+  let allKnownKeycards = self.controller.getAllKnownKeycards()
+  let keyUidRelatedKeycards = allKnownKeycards.filter(kp => kp.keyUid == keyUid)
+  if keyUidRelatedKeycards.len == 0:
+    return false
+  return keyUidRelatedKeycards.all(kp => kp.keycardLocked)
+
 proc buildKeycardList(self: Module) =
   let walletAccounts = self.controller.getWalletAccounts()
   var items: seq[KeycardItem]
   let migratedKeyPairs = self.controller.getAllMigratedKeyPairs()
   for kp in migratedKeyPairs:
-    let item = self.buildKeycardItem(walletAccounts, kp)
+    let item = self.buildKeycardItem(walletAccounts, kp, BuildItemReason.MainView)
     if item.isNil:
       continue
+    ## If all created keycards for certain keypair are locked, then we need to display that item as locked.
+    item.setLocked(self.areAllKnownKeycardsLockedForKeypair(item.keyUid()))
     items.add(item)
   self.view.setKeycardItems(items)
 
 method onLoggedInUserImageChanged*(self: Module) =
   self.view.keycardModel().setImage(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
-  self.view.emitKeycardProfileChangedSignal()
+  if self.view.keycardDetailsModel().isNil:
+    return
+  self.view.keycardDetailsModel().setImage(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
 
 method onNewKeycardSet*(self: Module, keyPair: KeyPairDto) =
   let walletAccounts = self.controller.getWalletAccounts()
-  let item = self.buildKeycardItem(walletAccounts, keyPair)
-  if item.isNil:
-    error "cannot build keycard item for key pair", keyUid=keyPair.keyUid
+  let mainViewItem = self.buildKeycardItem(walletAccounts, keyPair, BuildItemReason.MainView)
+  if not mainViewItem.isNil:
+    self.view.keycardModel().addItem(mainViewItem)
+  if self.view.keycardDetailsModel().isNil:
     return
-  self.view.keycardModel().addItem(item)
+  let detailsViewItem = self.buildKeycardItem(walletAccounts, keyPair, BuildItemReason.DetailsView)
+  if not detailsViewItem.isNil:
+    self.view.keycardDetailsModel().addItem(detailsViewItem)
 
 method onKeycardLocked*(self: Module, keycardUid: string) =
   self.view.keycardModel().setLocked(keycardUid, true)
-  self.view.emitKeycardDetailsChangedSignal(keycardUid)
+  if self.view.keycardDetailsModel().isNil:
+    return
+  self.view.keycardDetailsModel().setLocked(keycardUid, true)
 
 method onKeycardUnlocked*(self: Module, keycardUid: string) =
   self.view.keycardModel().setLocked(keycardUid, false)
-  self.view.emitKeycardDetailsChangedSignal(keycardUid)
+  if self.view.keycardDetailsModel().isNil:
+    return
+  self.view.keycardDetailsModel().setLocked(keycardUid, false)
 
 method onKeycardNameChanged*(self: Module, keycardUid: string, keycardNewName: string) =
   self.view.keycardModel().setName(keycardUid, keycardNewName)
-  self.view.emitKeycardDetailsChangedSignal(keycardUid)
+  if self.view.keycardDetailsModel().isNil:
+    return
+  self.view.keycardDetailsModel().setName(keycardUid, keycardNewName)
 
 method onKeycardUidUpdated*(self: Module, keycardUid: string, keycardNewUid: string) = 
   self.view.keycardModel().setKeycardUid(keycardUid, keycardNewUid)
-  self.view.emitKeycardUidChangedSignal(keycardUid, keycardNewUid)
+  if self.view.keycardDetailsModel().isNil:
+    return
+  self.view.keycardDetailsModel().setKeycardUid(keycardUid, keycardNewUid)
 
-method getKeycardDetailsAsJson*(self: Module, keycardUid: string): string =
-  let item = self.view.keycardModel().getItemByKeycardUid(keycardUid)
-  let jsonObj = %* {
-    "keycardUid": item.keycardUid,
-    "pubKey": item.pubkey,
-    "keyUid": item.keyUid,
-    "locked": item.locked,
-    "name": item.name,
-    "image": item.image,
-    "icon": item.icon,
-    "pairType": $item.pairType.int,
-    "derivedFrom": item.derivedFrom,
-    "accounts": $item.accounts
-  }
-  return $jsonObj
+method prepareKeycardDetailsModel*(self: Module, keyUid: string) =
+  let walletAccounts = self.controller.getWalletAccounts()
+  var items: seq[KeycardItem]
+  let allKnownKeycards = self.controller.getAllKnownKeycards()
+  for kp in allKnownKeycards:
+    if kp.keyUid != keyUid:
+      continue
+    let item = self.buildKeycardItem(walletAccounts, kp, BuildItemReason.DetailsView)
+    if item.isNil:
+      continue
+    items.add(item)
+  self.view.createModelAndSetKeycardDetailsItems(items)

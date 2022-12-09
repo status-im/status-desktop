@@ -22,8 +22,8 @@ QtObject {
         root.keycardModule.runImportFromKeycardToAppPopup()
     }
 
-    function runUnlockKeycardPopupForKeycardWithUid(keycardUid, keyUid) {
-        root.keycardModule.runUnlockKeycardPopupForKeycardWithUid(keycardUid, keyUid)
+    function runUnlockKeycardPopupForKeycardWithUid(keyUid) {
+        root.keycardModule.runUnlockKeycardPopupForKeycardWithUid(keyUid)
     }
 
     function runDisplayKeycardContentPopup() {
@@ -34,46 +34,27 @@ QtObject {
         root.keycardModule.runFactoryResetPopup()
     }
 
-    function runRenameKeycardPopup(keycardUid, keyUid) {
-        root.keycardModule.runRenameKeycardPopup(keycardUid, keyUid)
+    function runRenameKeycardPopup(keyUid) {
+        root.keycardModule.runRenameKeycardPopup(keyUid)
     }
 
-    function runChangePinPopup(keycardUid, keyUid) {
-        root.keycardModule.runChangePinPopup(keycardUid, keyUid)
+    function runChangePinPopup(keyUid) {
+        root.keycardModule.runChangePinPopup(keyUid)
     }
 
-    function runCreateBackupCopyOfAKeycardPopup(keycardUid, keyUid) {
-        root.keycardModule.runCreateBackupCopyOfAKeycardPopup(keycardUid, keyUid)
+    function runCreateBackupCopyOfAKeycardPopup(keyUid) {
+        root.keycardModule.runCreateBackupCopyOfAKeycardPopup(keyUid)
     }
 
-    function runCreatePukPopup(keycardUid, keyUid) {
-        root.keycardModule.runCreatePukPopup(keycardUid, keyUid)
+    function runCreatePukPopup(keyUid) {
+        root.keycardModule.runCreatePukPopup(keyUid)
     }
 
-    function runCreateNewPairingCodePopup(keycardUid, keyUid) {
-        root.keycardModule.runCreateNewPairingCodePopup(keycardUid, keyUid)
+    function runCreateNewPairingCodePopup(keyUid) {
+        root.keycardModule.runCreateNewPairingCodePopup(keyUid)
     }
 
-    function getKeycardDetailsAsJson(keycardUid) {
-        let jsonObj = root.keycardModule.getKeycardDetailsAsJson(keycardUid)
-        try {
-            let obj = JSON.parse(jsonObj)
-            return obj
-        }
-        catch (e) {
-            console.debug("error parsing keycard details for keycard uid: ", keycardUid, " error: ", e.message)
-            return {
-                keycardUid: keycardUid,
-                pubKey: "",
-                keyUid: "",
-                locked: false,
-                name: "",
-                image: "",
-                icon: "",
-                pairType: Constants.keycard.keyPairType.unknown,
-                derivedFrom: "",
-                accounts: [],
-            }
-        }
+    function prepareKeycardDetailsModel(keyUid) {
+        root.keycardModule.prepareKeycardDetailsModel(keyUid)
     }
 }

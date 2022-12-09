@@ -38,7 +38,7 @@ method runImportOrRestoreViaSeedPhrasePopup*(self: AccessInterface) {.base.} =
 method runImportFromKeycardToAppPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runUnlockKeycardPopupForKeycardWithUid*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
+method runUnlockKeycardPopupForKeycardWithUid*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runDisplayKeycardContentPopup*(self: AccessInterface) {.base.} =
@@ -47,19 +47,19 @@ method runDisplayKeycardContentPopup*(self: AccessInterface) {.base.} =
 method runFactoryResetPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runRenameKeycardPopup*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
+method runRenameKeycardPopup*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runChangePinPopup*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
+method runChangePinPopup*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runCreateBackupCopyOfAKeycardPopup*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
+method runCreateBackupCopyOfAKeycardPopup*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runCreatePukPopup*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
+method runCreatePukPopup*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runCreateNewPairingCodePopup*(self: AccessInterface, keycardUid: string, keyUid: string) {.base.} =
+method runCreateNewPairingCodePopup*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onLoggedInUserImageChanged*(self: AccessInterface) {.base.} =
@@ -80,7 +80,7 @@ method onKeycardNameChanged*(self: AccessInterface, keycardUid: string, keycardN
 method onKeycardUidUpdated*(self: AccessInterface, keycardUid: string, keycardNewUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getKeycardDetailsAsJson*(self: AccessInterface, keycardUid: string): string {.base.} =
+method prepareKeycardDetailsModel*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 

@@ -39,8 +39,10 @@ method resolveKeycardNextState*(self: ReadingKeycardState, keycardFlowType: stri
           nextState.stateType == StateType.NotKeycard or
           nextState.stateType == StateType.KeycardEmptyMetadata):
             return nextState
-        let kcUid = controller.getUidOfAKeycardWhichNeedToBeProcessed()
-        if kcUid.len > 0 and kcUid != keycardEvent.instanceUID:
-          return createState(StateType.WrongKeycard, self.flowType, nil)
+        let keyUid = controller.getKeyUidWhichNeedToBeProcessed()
+        if keyUid.len > 0:
+          if keyUid != keycardEvent.keyUid:
+            return createState(StateType.WrongKeycard, self.flowType, nil)
+          controller.setKeycardUid(keycardEvent.instanceUID)
   # this is used in case a keycard is inserted and we jump to the first meaningful screen
   return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)

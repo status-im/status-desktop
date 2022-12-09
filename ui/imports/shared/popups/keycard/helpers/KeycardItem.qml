@@ -15,6 +15,7 @@ StatusListItem {
 
     property bool displayChevronComponent: true
     property string keycardName: ""
+    property string keycardUid: ""
     property bool keycardLocked: false
     property int keyPairType: Constants.keycard.keyPairType.unknown
     property string keyPairIcon: ""
@@ -38,6 +39,9 @@ StatusListItem {
         }
         return t
     }
+    statusListItemSubTitle.text: !!root.keycardUid? "(%1)".arg(root.keycardUid) : ""
+    statusListItemSubTitle.font.pixelSize: 10
+    statusListItemSubTitle.visible: !!statusListItemSubTitle.text
 
     asset {
         width: root.keyPairIcon? 24 : 40

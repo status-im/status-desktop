@@ -154,6 +154,7 @@ StatusWindow {
             else if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
                 Global.mainModuleInst = mainModule
+                Global.userProfile = userProfile
                 if (Qt.platform.os === Constants.windows) {
                     windowsOsNotificationsConnection.enabled = true
                 }

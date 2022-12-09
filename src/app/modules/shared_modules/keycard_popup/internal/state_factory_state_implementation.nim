@@ -69,6 +69,17 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
         return createState(StateType.FactoryResetConfirmation, state.flowType, nil)
       if keycardEvent.error == ErrorPUKRetries:
         return createState(StateType.FactoryResetConfirmation, state.flowType, nil)
+    ##############################################
+    ## This part is here just to provide a first aid to one who run into setting custom pairing flow
+    ## since that flow is developed and available in `master` branch, but other flows are affected by
+    ## the cahnge made in that one.
+    ## That flow is not a subject of MVP and will be handled after MVP accross app properly,
+    ## issue: https://github.com/status-im/status-desktop/issues/8065
+    if keycardFlowType == ResponseTypeValueEnterPairing and 
+      keycardEvent.error.len > 0:
+      if keycardEvent.error == ErrorPairing:
+        return createState(StateType.FactoryResetConfirmation, state.flowType, nil)
+    ##############################################
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       if keycardEvent.error.len > 0:
         if keycardEvent.error == ErrorOk:
@@ -270,7 +281,10 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
           return createState(StateType.KeycardEmptyMetadata, state.flowType, nil)
       if keycardEvent.error.len == 0:
         return createState(StateType.ChangingKeycardPinSuccess, state.flowType, nil)
-      return createState(StateType.ChangingKeycardPinFailure, state.flowType, nil)
+      ## in all other cases if we fall through here, we assume it's changing pin failor, but that we not interfare with 
+      ## `nil` for `ensureState` we just do this `if` cause we can get here only from `ChangingKeycardPin` state.
+      if state.stateType == StateType.ChangingKeycardPin:
+        return createState(StateType.ChangingKeycardPinFailure, state.flowType, nil)
   
   if state.flowType == FlowType.ChangeKeycardPuk:
     if keycardFlowType == ResponseTypeValueEnterPIN and
@@ -301,7 +315,10 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
           return createState(StateType.KeycardEmptyMetadata, state.flowType, nil)
       if keycardEvent.error.len == 0:
         return createState(StateType.ChangingKeycardPukSuccess, state.flowType, nil)
-      return createState(StateType.ChangingKeycardPukFailure, state.flowType, nil)
+      ## in all other cases if we fall through here, we assume it's changing puk failor, but that we not interfare with 
+      ## `nil` for `ensureState` we just do this `if` cause we can get here only from `ChangingKeycardPuk` state.
+      if state.stateType == StateType.ChangingKeycardPuk:
+        return createState(StateType.ChangingKeycardPukFailure, state.flowType, nil)
   
   if state.flowType == FlowType.ChangePairingCode:
     if keycardFlowType == ResponseTypeValueEnterPIN and
@@ -332,7 +349,10 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
           return createState(StateType.KeycardEmptyMetadata, state.flowType, nil)
       if keycardEvent.error.len == 0:
         return createState(StateType.ChangingKeycardPairingCodeSuccess, state.flowType, nil)
-      return createState(StateType.ChangingKeycardPairingCodeFailure, state.flowType, nil)
+      ## in all other cases if we fall through here, we assume it's changing pairing code failor, but that we not interfare with 
+      ## `nil` for `ensureState` we just do this `if` cause we can get here only from `ChangingKeycardPairingCode` state.
+      if state.stateType == StateType.ChangingKeycardPairingCode:
+        return createState(StateType.ChangingKeycardPairingCodeFailure, state.flowType, nil)
 
   if state.flowType == FlowType.CreateCopyOfAKeycard:
     if isPredefinedKeycardDataFlagSet(controller.getKeycardData(), PredefinedKeycardData.CopyFromAKeycardPartDone):

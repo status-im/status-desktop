@@ -71,7 +71,8 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             Layout.preferredHeight: Constants.keycard.general.titleHeight
             text: {
-                if (root.sharedKeycardModule.keyPairStoredOnKeycard.keyUid === userProfile.keyUid)
+                // we need to check userProfile since factory reset flow is also available before user logs in the app
+                if (!!Global.userProfile && root.sharedKeycardModule.keyPairStoredOnKeycard.keyUid === Global.userProfile.keyUid)
                     return qsTr("Warning, this Keycard stores your main Status profile and\naccounts. A factory reset will permanently delete it.")
 
                 return qsTr("A factory reset will delete the key on this Keycard.\nAre you sure you want to do this?")

@@ -78,12 +78,6 @@ method setKeycardData*[T](self: Module[T], value: string) =
 method setRemainingAttempts*[T](self: Module[T], value: int) =
   self.view.setRemainingAttempts(value)
 
-method setUidOfAKeycardWhichNeedToBeProcessed*[T](self: Module[T], value: string) =
-  self.controller.setUidOfAKeycardWhichNeedToBeProcessed(value)
-
-method setKeyUidWhichNeedToBeProcessed*[T](self: Module[T], value: string) =
-  self.controller.setKeyUidWhichNeedToBeProcessed(value)
-
 method setPin*[T](self: Module[T], value: string) =
   self.controller.setPin(value)
 
@@ -93,8 +87,8 @@ method setPuk*[T](self: Module[T], value: string) =
 method setPassword*[T](self: Module[T], value: string) =
   self.controller.setPassword(value)
 
-method setKeycarName*[T](self: Module[T], value: string) =
-  self.controller.setKeycarName(value)
+method setKeycardName*[T](self: Module[T], value: string) =
+  self.controller.setKeycardName(value)
 
 method setPairingCode*[T](self: Module[T], value: string) =
   self.controller.setPairingCode(value)
@@ -397,6 +391,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.controller.readyToDisplayPopup()
     return
   if flowToRun == FlowType.UnlockKeycard:
+    self.controller.setKeyUidWhichNeedToBeProcessed(keyUid)
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
@@ -406,22 +401,26 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
   if flowToRun == FlowType.RenameKeycard:
+    self.controller.setKeyUidWhichNeedToBeProcessed(keyUid)
     self.prepareKeyPairForProcessing(keyUid)
     self.view.createKeyPairStoredOnKeycard()
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true) # we're firstly displaying the keycard content
     return
   if flowToRun == FlowType.ChangeKeycardPin:
+    self.controller.setKeyUidWhichNeedToBeProcessed(keyUid)
     self.prepareKeyPairForProcessing(keyUid)
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runChangePinFlow()
     return
   if flowToRun == FlowType.ChangeKeycardPuk:
+    self.controller.setKeyUidWhichNeedToBeProcessed(keyUid)
     self.prepareKeyPairForProcessing(keyUid)
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runChangePukFlow()
     return
   if flowToRun == FlowType.ChangePairingCode:
+    self.controller.setKeyUidWhichNeedToBeProcessed(keyUid)
     self.prepareKeyPairForProcessing(keyUid)
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runChangePairingFlow()
@@ -436,6 +435,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.controller.authenticateUser(keyUid)
     return
   if flowToRun == FlowType.CreateCopyOfAKeycard:
+    self.controller.setKeyUidWhichNeedToBeProcessed(keyUid)
     self.view.createKeyPairStoredOnKeycard()
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true)

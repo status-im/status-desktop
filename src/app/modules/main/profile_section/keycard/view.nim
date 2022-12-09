@@ -10,6 +10,8 @@ QtObject:
       delegate: io_interface.AccessInterface
       keycardModel: KeycardModel
       keycardModelVariant: QVariant
+      keycardDetailsModel: KeycardModel
+      keycardDetailsModelVariant: QVariant
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -17,6 +19,10 @@ QtObject:
       self.keycardModel.delete
     if not self.keycardModelVariant.isNil:
       self.keycardModelVariant.delete
+    if not self.keycardDetailsModel.isNil:
+      self.keycardDetailsModel.delete
+    if not self.keycardDetailsModelVariant.isNil:
+      self.keycardDetailsModelVariant.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
@@ -55,8 +61,8 @@ QtObject:
   proc runImportFromKeycardToAppPopup*(self: View) {.slot.} =
     self.delegate.runImportFromKeycardToAppPopup()
 
-  proc runUnlockKeycardPopupForKeycardWithUid*(self: View, keycardUid: string, keyUid: string) {.slot.} =
-    self.delegate.runUnlockKeycardPopupForKeycardWithUid(keycardUid, keyUid)
+  proc runUnlockKeycardPopupForKeycardWithUid*(self: View, keyUid: string) {.slot.} =
+    self.delegate.runUnlockKeycardPopupForKeycardWithUid(keyUid)
 
   proc runDisplayKeycardContentPopup*(self: View) {.slot.} =
     self.delegate.runDisplayKeycardContentPopup()
@@ -64,24 +70,23 @@ QtObject:
   proc runFactoryResetPopup*(self: View) {.slot.} =
     self.delegate.runFactoryResetPopup()
 
-  proc runRenameKeycardPopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
-    self.delegate.runRenameKeycardPopup(keycardUid, keyUid)
+  proc runRenameKeycardPopup*(self: View, keyUid: string) {.slot.} =
+    self.delegate.runRenameKeycardPopup(keyUid)
 
-  proc runChangePinPopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
-    self.delegate.runChangePinPopup(keycardUid, keyUid)
+  proc runChangePinPopup*(self: View, keyUid: string) {.slot.} =
+    self.delegate.runChangePinPopup(keyUid)
 
-  proc runCreateBackupCopyOfAKeycardPopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
-    self.delegate.runCreateBackupCopyOfAKeycardPopup(keycardUid, keyUid)
+  proc runCreateBackupCopyOfAKeycardPopup*(self: View, keyUid: string) {.slot.} =
+    self.delegate.runCreateBackupCopyOfAKeycardPopup(keyUid)
 
-  proc runCreatePukPopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
-    self.delegate.runCreatePukPopup(keycardUid, keyUid)
+  proc runCreatePukPopup*(self: View, keyUid: string) {.slot.} =
+    self.delegate.runCreatePukPopup(keyUid)
 
-  proc runCreateNewPairingCodePopup*(self: View, keycardUid: string, keyUid: string) {.slot.} =
-    self.delegate.runCreateNewPairingCodePopup(keycardUid, keyUid)
+  proc runCreateNewPairingCodePopup*(self: View, keyUid: string) {.slot.} =
+    self.delegate.runCreateNewPairingCodePopup(keyUid)
 
   proc keycardModel*(self: View): KeycardModel =
     return self.keycardModel
-
   proc keycardModelChanged(self: View) {.signal.}
   proc getKeycardModel(self: View): QVariant {.slot.} =
     if self.keycardModelVariant.isNil:
@@ -95,17 +100,24 @@ QtObject:
     self.keycardModel.setItems(items)
     self.keycardModelChanged()
 
-  proc getKeycardDetailsAsJson*(self: View, keycardUid: string): string {.slot.} =
-    return self.delegate.getKeycardDetailsAsJson(keycardUid)
-  
-  proc keycardProfileChanged(self: View) {.signal.}
-  proc emitKeycardProfileChangedSignal*(self: View) =
-    self.keycardProfileChanged()
-  
-  proc keycardUidChanged(self: View, oldKcUid: string, newKcUid: string) {.signal.}
-  proc emitKeycardUidChangedSignal*(self: View, oldKcUid: string, newKcUid: string) =
-    self.keycardUidChanged(oldKcUid, newKcUid)
+  proc keycardDetailsModel*(self: View): KeycardModel =
+    return self.keycardDetailsModel
+  proc keycardDetailsModelChanged(self: View) {.signal.}
+  proc getKeycardDetailsModel(self: View): QVariant {.slot.} =
+    if self.keycardDetailsModelVariant.isNil:
+      return newQVariant()
+    return self.keycardDetailsModelVariant
+  QtProperty[QVariant] keycardDetailsModel:
+    read = getKeycardDetailsModel
+    notify = keycardDetailsModelChanged
 
-  proc keycardDetailsChanged(self: View, kcUid: string) {.signal.}
-  proc emitKeycardDetailsChangedSignal*(self: View, kcUid: string) =
-    self.keycardDetailsChanged(kcUid)
+  proc createModelAndSetKeycardDetailsItems*(self: View, items: seq[KeycardItem]) =
+    if self.keycardDetailsModel.isNil:
+      self.keycardDetailsModel = newKeycardModel()
+    if self.keycardDetailsModelVariant.isNil:
+      self.keycardDetailsModelVariant = newQVariant(self.keycardDetailsModel)
+    self.keycardDetailsModel.setItems(items)
+    self.keycardDetailsModelChanged()
+
+  proc prepareKeycardDetailsModel*(self: View, keyUid: string) {.slot.} =
+    self.delegate.prepareKeycardDetailsModel(keyUid)

@@ -545,6 +545,14 @@ QtObject:
     except Exception as e:
       error "error: ", procName="addMigratedKeyPair", errName = e.name, errDesription = e.msg
 
+  proc getAllKnownKeycards*(self: Service): seq[KeyPairDto] = 
+    try:
+      let response = backend.getAllKnownKeycards()
+      if self.responseHasNoErrors("getAllKnownKeycards", response):
+        return map(response.result.getElems(), proc(x: JsonNode): KeyPairDto = toKeyPairDto(x))
+    except Exception as e:
+      error "error: ", procName="getAllKnownKeycards", errName = e.name, errDesription = e.msg
+
   proc getAllMigratedKeyPairs*(self: Service): seq[KeyPairDto] = 
     try:
       let response = backend.getAllMigratedKeyPairs()
@@ -561,14 +569,14 @@ QtObject:
     except Exception as e:
       error "error: ", procName="getMigratedKeyPairByKeyUid", errName = e.name, errDesription = e.msg
 
-  proc setKeycardName*(self: Service, keycardUid: string, name: string): bool =
+  proc updateKeycardName*(self: Service, keycardUid: string, name: string): bool =
     try:
       let response = backend.setKeycardName(keycardUid, name)
-      result = self.responseHasNoErrors("setKeycardName", response)
+      result = self.responseHasNoErrors("updateKeycardName", response)
       if result:
         self.events.emit(SIGNAL_KEYCARD_NAME_CHANGED, KeycardActivityArgs(keycardUid: keycardUid, keycardNewName: name))
     except Exception as e:
-      error "error: ", procName="setKeycardName", errName = e.name, errDesription = e.msg
+      error "error: ", procName="updateKeycardName", errName = e.name, errDesription = e.msg
 
   proc setKeycardLocked*(self: Service, keycardUid: string): bool =
     try:

@@ -21,7 +21,7 @@ ColumnLayout {
 
     property KeycardStore keycardStore
 
-    signal displayKeycardDetails(string keycardUid, string keycardName)
+    signal displayKeycardsForKeypair(string keyUid, string keypairName)
 
     spacing: Constants.settingsSection.itemSpacing
 
@@ -70,10 +70,10 @@ ColumnLayout {
         text: qsTr("Your Keycard(s)")
     }
 
-    ListView {
+    StatusListView {
         visible: !d.noKeycardsSet
         Layout.fillWidth: true
-        Layout.preferredHeight: 200
+        Layout.preferredHeight: 250
         spacing: Style.current.padding
         model: root.keycardStore.keycardModule.keycardModel
 
@@ -88,7 +88,7 @@ ColumnLayout {
             keyPairAccounts: model.accounts
 
             onKeycardSelected: {
-                root.displayKeycardDetails(model.keycardUid, model.name)
+                root.displayKeycardsForKeypair(model.keyUid, model.name)
             }
         }
     }

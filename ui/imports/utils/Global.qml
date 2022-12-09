@@ -13,6 +13,7 @@ QtObject {
 
     property var globalUtilsInst: typeof globalUtils !== "undefined" ? globalUtils : null
     property var mainModuleInst
+    property var userProfile
     property var privacyModuleInst
     property var toastMessage
     property var pinnedMessagesPopup

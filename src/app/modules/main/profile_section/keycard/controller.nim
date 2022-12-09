@@ -72,5 +72,8 @@ proc init*(self: Controller) =
 proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
   return self.walletAccountService.getAllMigratedKeyPairs()
 
+proc getAllKnownKeycards*(self: Controller): seq[KeyPairDto] =
+  return self.walletAccountService.getAllKnownKeycards()
+
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.fetchAccounts()
