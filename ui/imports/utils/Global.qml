@@ -12,8 +12,8 @@ QtObject {
     property int settingsSubsection: Constants.settingsSubsection.profile
 
     property var globalUtilsInst: typeof globalUtils !== "undefined" ? globalUtils : null
-    property var mainModuleInst
     property var userProfile
+    property var mainModuleInst: typeof mainModule !== "undefined" ? mainModule : null
     property var privacyModuleInst
     property var toastMessage
     property var pinnedMessagesPopup

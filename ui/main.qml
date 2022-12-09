@@ -126,7 +126,7 @@ StatusWindow {
 
     Connections {
         id: windowsOsNotificationsConnection
-        enabled: false
+        enabled: Qt.platform.os === Constants.windows
         target: Global.mainModuleInst
         function onDisplayWindowsOsNotification(title, message) {
             systemTray.showMessage(title, message)
@@ -155,9 +155,6 @@ StatusWindow {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
                 Global.mainModuleInst = mainModule
                 Global.userProfile = userProfile
-                if (Qt.platform.os === Constants.windows) {
-                    windowsOsNotificationsConnection.enabled = true
-                }
 
                 loader.sourceComponent = app
 

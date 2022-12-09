@@ -128,9 +128,13 @@ Item {
     */
     function statesInitialization() {
         d.currentPinIndex = 0
-        repeater.itemAt(d.currentPinIndex).innerState = "NEXT"
+        let item = repeater.itemAt(d.currentPinIndex)
+        if (item)
+            item.innerState = "NEXT"
         for (var i = 1; i < root.pinLen; i++) {
-            repeater.itemAt(i).innerState = "EMPTY"
+            let item = repeater.itemAt(i)
+            if (item)
+                item.innerState = "EMPTY"
         }
         inputText.text = ""
     }
