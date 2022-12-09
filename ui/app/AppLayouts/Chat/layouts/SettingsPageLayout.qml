@@ -79,7 +79,7 @@ Item {
             bottomMargin: 16
         }
         active: root.dirty
-        flickable: root.contentItem
+        flickable: root.dirty ? root.contentItem : null
         saveChangesButtonEnabled: !!root.contentItem && !!root.contentItem.saveChangesButtonEnabled
         onResetChangesClicked: root.resetChangesClicked()
         onSaveChangesClicked: root.saveChangesClicked()
