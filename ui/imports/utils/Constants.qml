@@ -369,6 +369,12 @@ QtObject {
         readonly property int responseToMessageWithId: 262 // ModelRole.ResponseToMessageWithId
     }
 
+    readonly property QtObject contactModelRoles: QtObject {
+        readonly property int pubKey: 257 // ModelRole.PubKey
+        readonly property int incomingVerificationStatus: 271 // ModelRole.IncomingVerificationStatus
+        readonly property int outgoingVerificationStatus: 272 // ModelRole.OutgoingVerificationStatus
+    }
+
     readonly property QtObject trustStatus: QtObject {
         readonly property int unknown: 0
         readonly property int trusted: 1

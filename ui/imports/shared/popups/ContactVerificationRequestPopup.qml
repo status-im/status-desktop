@@ -20,7 +20,7 @@ StatusModal {
     signal verificationRefused(string senderPublicKey)
     signal responseSent(string senderPublicKey, string response)
 
-    function updateContactDetails() {
+    function updateVerificationDetails() {
         try {
             const request = root.contactsStore.getVerificationDetailsFromAsJson(root.publicKey)
 
@@ -42,8 +42,10 @@ StatusModal {
 
     Connections {
         target: root.contactsStore.receivedContactRequestsModel
-        function onCountChanged() {
-            root.updateContactDetails()
+
+        function onItemChanged(pubKey) {
+            if (pubKey === root.publicKey)
+                root.updateVerificationDetails()
         }
     }
 
@@ -68,7 +70,7 @@ StatusModal {
     height: 230 + verificationMessage.height + verificationResponse.height
 
     onOpened: {
-        root.updateContactDetails()
+        root.updateVerificationDetails()
         verificationResponse.input.edit.forceActiveFocus(Qt.MouseFocusReason)
     }
 
@@ -77,7 +79,7 @@ StatusModal {
         anchors.right: parent.right
         anchors.leftMargin: Style.current.padding
         anchors.rightMargin: Style.current.padding
-        
+
         StatusBaseText {
             id: description
             width: parent.width
