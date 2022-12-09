@@ -67,7 +67,7 @@ StatusDialog {
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
-        if(!!popup.selectedAccount && !!assetSelector.selectedAsset) {
+        if(!!popup.selectedAccount && !!assetSelector.selectedAsset && d.recipientReady) {
             popup.isLoading = true
             let amount = parseFloat(amountToSendInput.text) * Math.pow(10, assetSelector.selectedAsset.decimals)
             popup.store.suggestedRoutes(popup.selectedAccount.address, amount.toString(16), assetSelector.selectedAsset.symbol,
@@ -113,7 +113,8 @@ StatusDialog {
                     } else {
                         let chainColor = popup.store.allNetworks.getNetworkColor(splitWords[i])
                         if(!!chainColor) {
-                            store.addPreferredChain(popup.store.allNetworks.getNetworkChainId(splitWords[i]))
+                            if(!isBridgeTx)
+                                store.addPreferredChain(popup.store.allNetworks.getNetworkChainId(splitWords[i]))
                              editedText += `<span style='color: %1'>%2</span>`.arg(chainColor).arg(splitWords[i])+':'
                         }
                     }
@@ -136,8 +137,10 @@ StatusDialog {
     onSelectedAccountChanged: popup.recalculateRoutesAndFees()
 
     onOpened: {
-        store.addPreferredChain(popup.store.getMainnetChainId())
-        store.addUnpreferredChainsToDisabledChains()
+        if(!isBridgeTx) {
+            store.addPreferredChain(popup.store.getMainnetChainId())
+            store.addUnpreferredChainsToDisabledChains()
+        }
 
         amountToSendInput.input.edit.forceActiveFocus()
 

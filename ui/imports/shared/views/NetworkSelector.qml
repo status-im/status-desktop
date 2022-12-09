@@ -80,6 +80,8 @@ Item {
                 amountToSend: root.amountToSend
                 isLoading: root.isLoading
                 store: root.store
+                selectedAsset: root.selectedAsset
+                selectedAccount: root.selectedAccount
                 weiToEth: function(wei) {
                     return "%1 %2".arg(LocaleUtils.numberToLocaleString(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)))).arg(selectedAsset.symbol)
                 }
@@ -107,6 +109,7 @@ Item {
                 bestRoutes: root.bestRoutes
                 isLoading: root.isLoading
                 interactive: root.interactive
+                isBridgeTx: root.isBridgeTx
                 weiToEth: function(wei) {
                     return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
                 }
@@ -132,6 +135,7 @@ Item {
                 bestRoutes: root.bestRoutes
                 isLoading: root.isLoading
                 interactive: root.interactive
+                isBridgeTx: root.isBridgeTx
                 weiToEth: function(wei) {
                     return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
                 }

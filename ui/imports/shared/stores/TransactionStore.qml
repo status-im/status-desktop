@@ -27,7 +27,8 @@ QtObject {
 
     function addRemoveDisabledFromChain(chainID, isDisabled) {
         if(isDisabled) {
-            disabledChainIdsFromList.push(chainID)
+            if(!root.disabledChainIdsFromList.includes(chainID))
+                disabledChainIdsFromList.push(chainID)
         }
         else {
             for(var i = 0; i < disabledChainIdsFromList.length;i++) {
@@ -40,7 +41,8 @@ QtObject {
 
     function addRemoveDisabledToChain(chainID, isDisabled) {
         if(isDisabled) {
-            root.disabledChainIdsToList.push(chainID)
+            if(!root.disabledChainIdsToList.includes(chainID))
+                root.disabledChainIdsToList.push(chainID)
         }
         else {
             for(var i = 0; i < root.disabledChainIdsToList.length;i++) {

@@ -25,6 +25,7 @@ ColumnLayout {
     property bool errorMode: networksLoader.item ? networksLoader.item.errorMode : false
     property var weiToEth: function(wei) {}
     property bool interactive: true
+    property bool isBridgeTx: false
 
     signal reCalculateSuggestedRoute()
 
@@ -61,6 +62,7 @@ ColumnLayout {
                     icon.width: 16
                     text: checked ? qsTr("Hide Unpreferred Networks"): qsTr("Show Unpreferred Networks")
                     onToggled: if(!checked) store.addUnpreferredChainsToDisabledChains()
+                    visible: !isBridgeTx
                 }
             }
             StatusBaseText {
