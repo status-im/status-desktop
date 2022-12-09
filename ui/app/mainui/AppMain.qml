@@ -639,6 +639,8 @@ Item {
                             result += "</a>"
                             return result
                         }
+
+                        return ""
                     }
                     onLinkActivated: Global.openPopup(communitiesPortalLayoutContainer.discordImportProgressPopup)
                     progressValue: progress
@@ -1339,10 +1341,19 @@ Item {
         }
     }
 
+    Connections {
+        target: appMain.rootStore.mainModuleInst
+        function onActiveSectionChanged() {
+            rootDropAreaPanel.activeChatType = appMain.rootStore.mainModuleInst.getCommunitySectionModule().activeItem.type
+        }
+    }
+
     DropAreaPanel {
+        id: rootDropAreaPanel
         width: appMain.width
         height: appMain.height
-        activeChatType: chatCommunitySectionModule && chatCommunitySectionModule.activeItem.type
+        activeChatType: appMain.rootStore.mainModuleInst.getCommunitySectionModule() ? appMain.rootStore.mainModuleInst.getCommunitySectionModule().activeItem.type
+                                                                                     : 0
         enabled: !drag.source && (
                                 // in chat view
                                 (appMain.rootStore.mainModuleInst.activeSection.sectionType === Constants.appSection.chat &&

@@ -108,7 +108,7 @@ StatusWindow {
 
     Action {
         shortcut: "Ctrl+W"
-        enabled: loader.item && !!loader.item.appLayout? loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.browser
+        enabled: loader.item && !!loader.item.appLayout && loader.item.appLayout.appView ? loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.browser
                              : true
         onTriggered: {
             applicationWindow.visible = false;
