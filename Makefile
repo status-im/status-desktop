@@ -113,7 +113,7 @@ endif
 
 ifeq ($(detected_OS),Darwin)
 BOTTLES_DIR := $(shell pwd)/bottles
-BOTTLES := $(addprefix $(BOTTLES_DIR)/,hunspell openssl@1.1 pcre)
+BOTTLES := $(addprefix $(BOTTLES_DIR)/,openssl@1.1 pcre)
 
 $(BOTTLES): | $(BOTTLES_DIR)
 	echo -e "\e[92mFetching:\e[39m $(notdir $@) bottle"
@@ -159,9 +159,6 @@ ifneq ($(detected_OS),Windows)
    # Fix for failures due to 'can't allocate code signature data for'
    NIM_PARAMS += --passL:"-headerpad_max_install_names"
    NIM_PARAMS += --passL:"-F$(QT5_LIBDIR)"
-
-   HUNSPELL := bottles/hunspell/lib/libhunspell-1.7.a
-   NIM_PARAMS += --passL:"$(HUNSPELL)"
 
    export QT5_LIBDIR
   else
