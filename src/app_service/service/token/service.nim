@@ -107,8 +107,6 @@ QtObject:
     try:
       hexAddressValue = fromHex(Address, address)
     except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
       return ""
 
     for _, tokens in self.tokens:
