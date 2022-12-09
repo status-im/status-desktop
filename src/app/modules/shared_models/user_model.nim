@@ -39,6 +39,7 @@ QtObject:
     result.setup
 
   proc countChanged(self: Model) {.signal.}
+  proc itemChanged(self: Model, pubKey: string) {.signal.}
 
   proc setItems*(self: Model, items: seq[UserItem]) =
     self.beginResetModel()
@@ -51,6 +52,7 @@ QtObject:
       result &= fmt"""User Model:
       [{i}]:({$self.items[i]})
       """
+
   proc getCount*(self: Model): int {.slot.} =
     self.items.len
   QtProperty[int]count:
@@ -138,6 +140,9 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
+    for item in items:
+      self.itemChanged(item.pubKey)
+
   proc addItem*(self: Model, item: UserItem) =
     # we need to maintain online contact on top, that means
     # if we add an item online status we add it as the last online item (before the first offline item)
@@ -158,6 +163,7 @@ QtObject:
     self.items.insert(item, position)
     self.endInsertRows()
     self.countChanged()
+    self.itemChanged(item.pubKey)
 
   proc clear*(self: Model) =
      self.beginResetModel()
@@ -176,9 +182,12 @@ QtObject:
     defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, index, index)
+    let pubKey = self.items[index].pubKey
     self.items.delete(index)
     self.endRemoveRows()
     self.countChanged()
+
+    self.itemChanged(pubKey)
 
 # TODO: rename to `containsItem`
   proc isContactWithIdAdded*(self: Model, id: string): bool =
@@ -200,6 +209,7 @@ QtObject:
       ModelRole.EnsName.int,
       ModelRole.LocalNickname.int,
       ])
+    self.itemChanged(pubKey)
 
   proc setIcon*(self: Model, pubKey: string, icon: string) =
     let ind = self.findIndexByPubKey(pubKey)
@@ -210,6 +220,7 @@ QtObject:
 
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.Icon.int])
+    self.itemChanged(pubKey)
 
   proc updateItem*(
       self: Model,
@@ -241,7 +252,8 @@ QtObject:
       ModelRole.Icon.int,
       ModelRole.IsUntrustworthy.int,
     ])
-  
+    self.itemChanged(pubKey)
+
   proc updateName*(
     self: Model,
     pubKey: string,
@@ -257,7 +269,8 @@ QtObject:
     self.dataChanged(index, index, @[
       ModelRole.DisplayName.int
     ])
-  
+    self.itemChanged(pubKey)
+
   proc updateIncomingRequestStatus*(
       self: Model,
       pubKey: string,
@@ -273,6 +286,7 @@ QtObject:
     self.dataChanged(index, index, @[
       ModelRole.IncomingVerificationStatus.int
     ])
+    self.itemChanged(pubKey)
 
   proc updateTrustStatus*(self: Model, pubKey: string, isUntrustworthy: bool) =
     let ind = self.findIndexByPubKey(pubKey)
@@ -283,6 +297,7 @@ QtObject:
     let last = self.createIndex(ind, 0, nil)
     self.items[ind].isUntrustworthy = isUntrustworthy
     self.dataChanged(first, last, @[ModelRole.IsUntrustworthy.int])
+    self.itemChanged(pubKey)
 
   proc setOnlineStatus*(self: Model, pubKey: string,
       onlineStatus: OnlineStatus) =
