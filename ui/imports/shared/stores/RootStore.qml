@@ -34,9 +34,11 @@ QtObject {
 //    property string fiatValue: !!walletModelInst ? walletModelInst.balanceView.getFiatValue : "0"
 //    property string cryptoValue: !!walletModelInst ? walletModelInst.balanceView.getCryptoValue : "0"
 
-    property var history: walletSectionTransactions
+    property var history: typeof walletSectionTransactions !== "undefined" ? walletSectionTransactions
+                                                                          : null
     property var historyTransactions: walletSectionTransactions.model
-    property bool isNonArchivalNode:  history.isNonArchivalNode
+    property bool isNonArchivalNode: history ? history.isNonArchivalNode
+                                             : false
 
     property var currentAccount: walletSectionCurrent
     property var marketValueStore: TokenMarketValuesStore{}
@@ -105,16 +107,23 @@ QtObject {
         globalUtils.copyToClipboard(text)
     }
 
-    property var gifColumnA: chatSectionChatContentInputArea.gifColumnA
-    property var gifColumnB: chatSectionChatContentInputArea.gifColumnB
-    property var gifColumnC: chatSectionChatContentInputArea.gifColumnC
+    property var chatSectionChatContentInputAreaInst: typeof chatSectionChatContentInputArea !== "undefined" ? chatSectionChatContentInputArea
+                                                                                                             : null
+    property var gifColumnA: chatSectionChatContentInputAreaInst ? chatSectionChatContentInputArea.gifColumnA
+                                                                 : null
+    property var gifColumnB: chatSectionChatContentInputAreaInst ? chatSectionChatContentInputArea.gifColumnB
+                                                                 : null
+    property var gifColumnC: chatSectionChatContentInputAreaInst ? chatSectionChatContentInputArea.gifColumnC
+                                                                 : null
 
     function searchGifs(query) {
-        chatSectionChatContentInputArea.searchGifs(query)
+        if (chatSectionChatContentInputAreaInst)
+            chatSectionChatContentInputAreaInst.searchGifs(query)
     }
 
     function getTrendingsGifs() {
-        chatSectionChatContentInputArea.getTrendingsGifs()
+        if (chatSectionChatContentInputAreaInst)
+            chatSectionChatContentInputAreaInst.getTrendingsGifs()
     }
 
     function updateWhitelistedUnfurlingSites(hostname, whitelisted) {
@@ -134,23 +143,28 @@ QtObject {
     }
 
     function getRecentsGifs() {
-        chatSectionChatContentInputArea.getRecentsGifs()
+        if (chatSectionChatContentInputAreaInst)
+            chatSectionChatContentInputAreaInst.getRecentsGifs()
     }
 
     function getFavoritesGifs() {
-        return chatSectionChatContentInputArea.getFavoritesGifs()
+        return chatSectionChatContentInputAreaInst ? chatSectionChatContentInputAreaInst.getFavoritesGifs()
+                                                   : null
     }
 
     function isFavorite(id) {
-        return chatSectionChatContentInputArea.isFavorite(id)
+        return chatSectionChatContentInputAreaInst ? chatSectionChatContentInputAreaInst.isFavorite(id)
+                                                   : null
     }
 
     function toggleFavoriteGif(id, reload) {
-        chatSectionChatContentInputArea.toggleFavoriteGif(id, reload)
+        if (chatSectionChatContentInputAreaInst)
+            chatSectionChatContentInputAreaInst.toggleFavoriteGif(id, reload)
     }
 
     function addToRecentsGif(id) {
-        chatSectionChatContentInputArea.addToRecentsGif(id)
+        if (chatSectionChatContentInputAreaInst)
+            chatSectionChatContentInputAreaInst.addToRecentsGif(id)
     }
 
     function getPasswordStrengthScore(password) {
