@@ -60,12 +60,12 @@ Item {
 
         StatusAddressPanel {
             objectName: "addressPanel"
-            address: currentAccount.mixedcaseAddress
-
+            value: currentAccount.ens || currentAccount.mixedcaseAddress
+            ens: !!currentAccount.ens
             autHideCopyIcon: true
             expanded: false
 
-            onDoCopy: (address) => root.store.copyToClipboard(address)
+            onDoCopy: () => root.store.copyToClipboard(currentAccount.mixedcaseAddress)
         }
     }
 }

@@ -174,12 +174,23 @@ QtObject:
   proc getAddresses(self: Service): seq[string] =
     return toSeq(self.walletAccounts.keys())
 
+  proc setEnsName(self: Service, account: WalletAccountDto) =
+    let chainId = self.networkService.getNetworkForEns().chainId
+    try:
+      let nameResponse = backend.getName(chainId, account.address)
+      account.ens = nameResponse.result.getStr
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return
+
   proc init*(self: Service) =
     signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
     
     try:
       let accounts = self.fetchAccounts()
       for account in accounts:
+        self.setEnsName(account)
         account.relatedAccounts = accounts.filter(x => not account.derivedFrom.isEmptyOrWhitespace and (cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0))
         self.walletAccounts[account.address] = account
 
@@ -250,6 +261,7 @@ QtObject:
     for account in accounts:
       if not self.walletAccounts.haskey(account.address):
         newAccount = account
+        self.setEnsName(newAccount)
         newAccount.relatedAccounts = accounts.filter(x => cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0)
         break
     self.walletAccounts[newAccount.address] = newAccount

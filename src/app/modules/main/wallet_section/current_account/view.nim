@@ -28,6 +28,7 @@ QtObject:
       emoji: string
       derivedfrom: string
       relatedAccounts: compact_model.Model
+      ens: string
 
   proc setup(self: View) =
     self.QObject.setup
@@ -142,6 +143,15 @@ QtObject:
     read = getEmoji
     notify = emojiChanged
 
+  proc getEns(self: View): QVariant {.slot.} =
+    return newQVariant(self.ens)
+
+  proc ensChanged(self: View) {.signal.}
+
+  QtProperty[QVariant] ens:
+    read = getEns
+    notify = ensChanged
+
   proc getDerivedfrom(self: View): QVariant {.slot.} =
     return newQVariant(self.derivedfrom)
 
@@ -202,6 +212,9 @@ QtObject:
     if(self.derivedfrom != dto.derivedfrom):
       self.derivedfrom = dto.derivedfrom
       self.derivedfromChanged()
+    if(self.ens != dto.ens):
+      self.ens = dto.ens
+      self.ensChanged()
     # Set related accounts
     let relatedAccounts = compact_model.newModel()
     relatedAccounts.setItems(
