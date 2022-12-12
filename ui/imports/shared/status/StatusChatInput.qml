@@ -831,6 +831,9 @@ Rectangle {
     }
 
     function validateImages(imagePaths) {
+        if (!imagePaths || !imagePaths.length) {
+            return []
+        }
         // needed because imageArea.imageSource is not a normal js array
         const existing = (imageArea.imageSource || []).map(x => x.toString())
         let validImages = Utils.deduplicate(existing.concat(imagePaths))
@@ -897,7 +900,7 @@ Rectangle {
         ]
         onAccepted: {
             imageBtn.highlighted = false
-            let validImages = validateImages(imageDialog.fileUrlsAndSources)
+            let validImages = validateImages(imageDialog.fileUrls)
             if (validImages.length > 0) {
                 control.showImageArea(validImages)
             }
