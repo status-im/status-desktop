@@ -728,7 +728,7 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
     self.updateBadgeNotifications(chatIdMsgBelongsTo, hasUnreadMessages, unviewedMentionsCount)
 
   if (chatDetails.muted):
-    # No need to update the badge nor send a notification
+    # No need to send a notification
     return
 
   # Prepare notification
