@@ -488,7 +488,7 @@ Item {
                     name: model.icon.length > 0? "" : model.name
                     icon.name: model.icon
                     icon.source: model.image
-                    tooltip.text: model.name
+                    tooltip.text: Utils.translatedSectionName(model.sectionType, model.name)
                     checked: model.active
                     badge.value: model.notificationsCount
                     badge.visible: model.hasNotification

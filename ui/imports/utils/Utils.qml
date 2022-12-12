@@ -776,6 +776,26 @@ QtObject {
         return link.replace(Constants.socialLinkPrefixesByType[type], "")
     }
 
+    // handle translations for section names coming from app_sections_config.nim
+    function translatedSectionName(sectionType, fallback) {
+        switch(sectionType) {
+        case Constants.appSection.chat:
+            return qsTr("Messages")
+        case Constants.appSection.wallet:
+            return qsTr("Wallet")
+        case Constants.appSection.browser:
+            return qsTr("Browser")
+        case Constants.appSection.profile:
+            return qsTr("Settings")
+        case Constants.appSection.node:
+            return qsTr("Node Management")
+        case Constants.appSection.communitiesPortal:
+            return qsTr("Communities Portal")
+        default:
+            return fallback
+        }
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)

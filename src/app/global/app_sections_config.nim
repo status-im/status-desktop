@@ -1,4 +1,4 @@
-const CHAT_SECTION_NAME* = "Chat"
+const CHAT_SECTION_NAME* = "Messages"
 const CHAT_SECTION_ICON* = "chat"
 
 const COMMUNITIESPORTAL_SECTION_ID* = "communitiesPortal"
