@@ -17,6 +17,8 @@ import shared.popups 1.0
 import mainui 1.0
 import AppLayouts.Onboarding 1.0
 
+import StatusQ.Core.Theme 0.1
+
 StatusWindow {
     property bool appIsReady: false
 
@@ -174,6 +176,8 @@ StatusWindow {
                 startupOnboarding.visible = false
 
                 Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
+                Style.changeFontSize(localAccountSensitiveSettings.fontSize)
+                Theme.updateFontSize(localAccountSensitiveSettings.fontSize)
             }
         }
     }
