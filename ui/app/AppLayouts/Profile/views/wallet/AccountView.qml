@@ -76,7 +76,7 @@ Item {
                     }
                 }
                 StatusAddressPanel {
-                    address: walletStore.currentAccount.address
+                    value: walletStore.currentAccount.address
 
                     font.weight: Font.Normal
 

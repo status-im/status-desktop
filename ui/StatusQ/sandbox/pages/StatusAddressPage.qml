@@ -39,7 +39,7 @@ Item {
 
         StatusBaseText { text: `StatusAddressPanel\nfont.pixelSize: 13, copyable, no frame`}
         StatusAddressPanel {
-            address: "0xDC2c4826f6C56F61C1b9cC6Bb531d0Fe45402fC9"
+            value: "0xDC2c4826f6C56F61C1b9cC6Bb531d0Fe45402fC9"
 
             font.pixelSize: 13
             font.weight: Font.Normal
@@ -52,7 +52,7 @@ Item {
         StatusBaseText { text: `StatusAddressPanel\ncompact; width ${simpleAddressPanel.width}px ${simpleAddressPanel.height}px`}
         StatusAddressPanel {
             id: simpleAddressPanel
-            address: "0xd8593DEACe2f44dF35dd23fD2BAFC2daeC2ae033"
+            value: "0xd8593DEACe2f44dF35dd23fD2BAFC2daeC2ae033"
             showCopy: false
             expanded: false
             onDoCopy: copyAction.text = address
@@ -61,20 +61,20 @@ Item {
 
         StatusBaseText { text: "StatusAddressPanel\ncopy-icon, non-expandable" }
         StatusAddressPanel {
-            address: "0xDd5A0755e99D66a583253372B569231968A6CF7b"
+            value: "0xDd5A0755e99D66a583253372B569231968A6CF7b"
             onDoCopy: copyAction.text = address
         }
 
         StatusBaseText { text: "StatusAddressPanel\ncopy hiden" }
         StatusAddressPanel {
-            address: "0xd2D44C2A1E78975506e474Ecdc7E4F272D7e9A6c"
+            value: "0xd2D44C2A1E78975506e474Ecdc7E4F272D7e9A6c"
             autHideCopyIcon: true
             onDoCopy: copyAction.text = address
             expandable: true
         }
         StatusBaseText { text: "StatusAddressPanel\ncopy hiden, non-expandable" }
         StatusAddressPanel {
-            address: "0xd2a44BA31E78975506e474Ecdc7E4F272D7F3BC5"
+            value: "0xd2a44BA31E78975506e474Ecdc7E4F272D7F3BC5"
             autHideCopyIcon: true
             expanded: false
             onDoCopy: copyAction.text = address

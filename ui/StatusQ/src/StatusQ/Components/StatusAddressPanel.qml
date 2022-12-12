@@ -11,7 +11,7 @@ import StatusQ.Controls 0.1
     \inherits Item
     \inqmlmodule StatusQ.Components
     \since StatusQ.Components 0.1
-    \brief Show an address as defined efined in design https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=4222%3A178403 and https://www.figma.com/file/h2Ab3k4wy1Y7SFHEvbcZZx/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop-(Copy)?node-id=1009%3A106451
+    \brief Show an address/ens as defined in design https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=4222%3A178403 and https://www.figma.com/file/h2Ab3k4wy1Y7SFHEvbcZZx/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop-(Copy)?node-id=1009%3A106451
 
     Panel's components:
       - Address: displays the rquired \c address property
@@ -34,7 +34,7 @@ import StatusQ.Controls 0.1
     Usage example:
     \qml
         StatusAddressPanel {
-            address: currentAccount.mixedcaseAddress
+            value: currentAccount.mixedcaseAddress
 
             autHideCopyIcon: true
             expanded: false
@@ -47,16 +47,17 @@ import StatusQ.Controls 0.1
 Item {
     id: root
 
-    /*required*/ property string address: ""
+    /*required*/ property string value: ""
     property bool showCopy: true
     property bool autHideCopyIcon: false
     property alias showFrame: frameRect.visible
     property bool expandable: false
     property bool expanded: true
+    property bool ens: false
 
     property alias font: statusAddress.font
 
-    signal doCopy(string address)
+    signal doCopy(string value)
 
     implicitWidth: frameLayout.implicitWidth
     implicitHeight: frameLayout.implicitHeight
@@ -97,6 +98,7 @@ Item {
                 StatusBaseText {
                     text: "0x"
 
+                    visible: !root.ens
                     Layout.alignment: Qt.AlignVCenter
 
                     font: statusAddress.font
@@ -106,9 +108,9 @@ Item {
                 StatusBaseText {
                     id: statusAddress
 
-                    text: root.address.replace("0x", "").replace("0X", "")
+                    text: root.value.replace("0x", "").replace("0X", "")
 
-                    Layout.preferredWidth: expanded ? implicitWidth : (implicitWidth * 0.25).toFixed()
+                    Layout.preferredWidth: root.expanded || root.ens ? implicitWidth : (implicitWidth * 0.25).toFixed()
                     Layout.alignment: Qt.AlignVCenter
 
                     font.family: Theme.palette.monoFont.name
@@ -140,7 +142,7 @@ Item {
                     cursorShape: Qt.ArrowCursor
                     preventStealing: true
 
-                    onClicked: root.doCopy(root.address)
+                    onClicked: root.doCopy(root.value)
                     z: frameRect.z + 1
                 }
 

@@ -57,6 +57,7 @@ type
     emoji*: string
     derivedfrom*: string
     relatedAccounts*: seq[WalletAccountDto]
+    ens*: string
 
 proc newDto*(
   name: string,
