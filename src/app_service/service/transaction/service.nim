@@ -315,6 +315,7 @@ QtObject:
       for route in routes:
         var simpleTx = TransactionDataDto()
         var hopTx = TransactionDataDto()
+        var cbridgeTx = TransactionDataDto()
         var txData = TransactionDataDto()
         var gasFees: string = ""
 
@@ -333,7 +334,7 @@ QtObject:
         var path = TransactionBridgeDto(bridgeName: route.bridgeName, chainID: route.fromNetwork.chainId)
         if(route.bridgeName == "Simple"):
           path.simpleTx = txData
-        else:
+        elif(route.bridgeName == "Hop"):
           hopTx = txData
           hopTx.chainID =  route.toNetwork.chainId.some
           hopTx.symbol = tokenSymbol.some
@@ -341,6 +342,13 @@ QtObject:
           hopTx.amount = route.amountIn.some
           hopTx.bonderFee = route.bonderFees.some
           path.hopTx = hopTx
+        else:
+          cbridgeTx = txData
+          cbridgeTx.chainID =  route.toNetwork.chainId.some
+          cbridgeTx.symbol = tokenSymbol.some
+          cbridgeTx.recipient = parseAddress(to_addr).some
+          cbridgeTx.amount = route.amountIn.some
+          path.cbridgeTx = cbridgeTx
 
         paths.add(path)
 
