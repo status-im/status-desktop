@@ -4,10 +4,10 @@
 <context>
     <name>AppMain</name>
     <message numerus="yes">
-        <location filename="../app/mainui/AppMain.qml" line="611"/>
-        <location filename="../app/mainui/AppMain.qml" line="620"/>
-        <location filename="../app/mainui/AppMain.qml" line="611"/>
-        <location filename="../app/mainui/AppMain.qml" line="620"/>
+        <location filename="../app/mainui/AppMain.qml" line="627"/>
+        <location filename="../app/mainui/AppMain.qml" line="636"/>
+        <location filename="../app/mainui/AppMain.qml" line="627"/>
+        <location filename="../app/mainui/AppMain.qml" line="636"/>
         <source>%n issue(s)</source>
         <translation>
             <numerusform>%n issue</numerusform>
@@ -147,8 +147,8 @@
 <context>
     <name>InvitationBubbleView</name>
     <message numerus="yes">
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="200"/>
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="200"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="156"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="156"/>
         <source>%n member(s)</source>
         <translation>
             <numerusform>%n member</numerusform>
@@ -230,8 +230,8 @@
 <context>
     <name>LoginView</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1077"/>
-        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1077"/>
+        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1069"/>
+        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1069"/>
         <source>%n attempt(s) remaining</source>
         <translation>
             <numerusform>%n attempt remaining</numerusform>
@@ -242,8 +242,8 @@
 <context>
     <name>MainView</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="59"/>
-        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="59"/>
+        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="32"/>
+        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="32"/>
         <source>%n DApp(s) connected</source>
         <translation>
             <numerusform>%n DApp connected</numerusform>
@@ -287,8 +287,8 @@
 <context>
     <name>PinnedMessagesPopup</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Chat/popups/PinnedMessagesPopup.qml" line="33"/>
-        <location filename="../app/AppLayouts/Chat/popups/PinnedMessagesPopup.qml" line="33"/>
+        <location filename="../app/AppLayouts/Chat/popups/PinnedMessagesPopup.qml" line="30"/>
+        <location filename="../app/AppLayouts/Chat/popups/PinnedMessagesPopup.qml" line="30"/>
         <source>%n message(s)</source>
         <translation>
             <numerusform>%n message</numerusform>
@@ -335,8 +335,8 @@
 <context>
     <name>Utils</name>
     <message numerus="yes">
-        <location filename="../imports/utils/Utils.qml" line="375"/>
-        <location filename="../imports/utils/Utils.qml" line="375"/>
+        <location filename="../imports/utils/Utils.qml" line="379"/>
+        <location filename="../imports/utils/Utils.qml" line="379"/>
         <source>Password needs to be %n character(s) or more</source>
         <translation>
             <numerusform>Password needs to be %n character or more</numerusform>
