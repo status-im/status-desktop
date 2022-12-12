@@ -19,22 +19,17 @@ import "../stores"
 SettingsContentBase {
     id: appearanceView
 
-    property AppearanceStore appearanceStore
+    property int currentFontSize: 2
+    signal fontSizeChanged(int value)
 
-    property var systemPalette
+    property int currentZoom: 2
+    signal zoomChanged(int value)
 
-    function updateTheme(theme) {
-        localAppSettings.theme = theme
-        Style.changeTheme(theme, systemPalette.isCurrentSystemThemeDark())
-    }
+    property int currentTheme: 0
+    signal themeChanged(string value)
 
-    function updateFontSize(fontSize) {
-        Style.changeFontSize(fontSize)
-        Theme.updateFontSize(fontSize)
-    }
-
-    Component.onCompleted: {
-        appearanceView.updateFontSize(localAccountSensitiveSettings.fontSize)
+    function setZoom(value) {
+            zoomSlider.value = value
     }
 
     Item {
@@ -107,15 +102,9 @@ SettingsContentBase {
                 ListElement { name: qsTr("XXL"); value: Theme.FontSizeXXL }
             }
 
-            value: localAccountSensitiveSettings.fontSize
+            value: currentFontSize
 
-            onCurrentValueChanged: {
-                const fontSize = currentValue
-                if (localAccountSensitiveSettings.fontSize !== fontSize) {
-                    localAccountSensitiveSettings.fontSize = fontSize
-                    appearanceView.updateFontSize(fontSize)
-                }
-            }
+            onCurrentValueChanged: appearanceView.fontSizeChanged(currentValue)
         }
 
         StatusSectionHeadline {
@@ -129,17 +118,7 @@ SettingsContentBase {
 
         StatusQ.StatusLabeledSlider {
             id: zoomSlider
-            readonly property int initialValue: {
-                let scaleFactorStr = appearanceView.appearanceStore.readTextFile(uiScaleFilePath)
-                if (scaleFactorStr === "") {
-                    return 100
-                }
-                let scaleFactor = parseFloat(scaleFactorStr)
-                if (isNaN(scaleFactor)) {
-                    return 100
-                }
-                return scaleFactor * 100
-            }
+
             anchors.top: labelZoom.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
@@ -147,24 +126,9 @@ SettingsContentBase {
             to: 200
             stepSize: 50
             model: [ qsTr("50%"), qsTr("100%"), qsTr("150%"), qsTr("200%") ]
-            value: initialValue
-            onValueChanged: {
-                if (value !== initialValue) {
-                    appearanceView.appearanceStore.writeTextFile(uiScaleFilePath, value / 100.0)
-                }
-            }
-            onPressedChanged: {
-                if (!pressed && value !== initialValue) {
-                    confirmAppRestartModal.open()
-                }
-            }
 
-            ConfirmAppRestartModal {
-                id: confirmAppRestartModal
-                onClosed: {
-                    zoomSlider.value = zoomSlider.initialValue
-                }
-            }
+            value: currentZoom
+            onValueChanged: { zoomChanged(value) }
         }
 
         Rectangle {
@@ -199,36 +163,27 @@ SettingsContentBase {
                 Layout.preferredHeight: implicitHeight
                 image.source: Style.png("appearance-light")
                 control.text: qsTr("Light")
-                control.checked: localAppSettings.theme === Universal.Light
-                onRadioCheckedChanged: {
-                    if (checked) {
-                        appearanceView.updateTheme(Universal.Light)
-                    }
-                }
+
+                control.checked: currentTheme === 0
+                onRadioCheckedChanged: { themeChanged(0) }
             }
 
             StatusImageRadioButton {
                 Layout.preferredWidth: parent.width/3 - parent.spacing
                 image.source: Style.png("appearance-dark")
                 control.text: qsTr("Dark")
-                control.checked: localAppSettings.theme === Universal.Dark
-                onRadioCheckedChanged: {
-                    if (checked) {
-                        appearanceView.updateTheme(Universal.Dark)
-                    }
-                }
+
+                control.checked: currentTheme === 1
+                onRadioCheckedChanged: { themeChanged(1) }
             }
 
             StatusImageRadioButton {
                 Layout.preferredWidth: parent.width/3 - parent.spacing
                 image.source: Style.png("appearance-system")
                 control.text: qsTr("System")
-                control.checked: localAppSettings.theme === Universal.System
-                onRadioCheckedChanged: {
-                    if (checked) {
-                        appearanceView.updateTheme(Universal.System)
-                    }
-                }
+
+                control.checked: currentTheme === 2
+                onRadioCheckedChanged: { themeChanged(2) }
             }
         }
     }

@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Controls.Universal 2.12
 import QtQuick.Layouts 1.13
 
 import utils 1.0
@@ -12,6 +13,7 @@ import "views"
 
 import StatusQ.Layout 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 StatusSectionLayout {
     id: root
@@ -153,13 +155,52 @@ StatusSectionLayout {
             }
 
             AppearanceView {
+                id: appearanceView
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                appearanceStore: root.store.appearanceStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.appearance)
                 contentWidth: d.contentWidth
-                systemPalette: root.systemPalette
+                currentFontSize: localAccountSensitiveSettings.fontSize
+                currentTheme: localAppSettings.theme
+
+                readonly property int initialZoomValue: {
+                    let scaleFactorStr = root.store.appearanceStore.readTextFile(uiScaleFilePath)
+                    if (scaleFactorStr === "") {
+                        return 100
+                    }
+                    let scaleFactor = parseFloat(scaleFactorStr)
+                    if (isNaN(scaleFactor)) {
+                        return 100
+                    }
+                    return scaleFactor * 100
+                }
+
+                currentZoom: initialZoomValue
+
+                onFontSizeChanged: (value) => {
+                    Style.changeFontSize(value)
+                    Theme.updateFontSize(value)
+                }
+
+                onZoomChanged: (value) => {
+                    if (value !== initialZoomValue) {
+                        root.store.appearanceStore.writeTextFile(uiScaleFilePath, value / 100.0)
+                        confirmAppRestartModal.open()
+                    }
+                }
+
+                onThemeChanged: (value) => {
+                    let current = Universal.System
+                    if (value == 0) {
+                        current = Universal.Light;
+                    } else if (value == 1) {
+                        current = Universal.Dark;
+                    }
+                    localAppSettings.theme = current
+                    Style.changeTheme(current, root.systemPalette.isCurrentSystemThemeDark())
+                }
+
             }
 
             LanguageView {
@@ -259,5 +300,13 @@ StatusSectionLayout {
             }
         }
     } // Item
+
+    ConfirmAppRestartModal {
+        id: confirmAppRestartModal
+        onClosed: {
+            root.store.appearanceStore.writeTextFile(uiScaleFilePath, appearanceView.currentZoom / 100.0)
+            appearanceView.setZoom(appearanceView.currentZoom)
+        }
+    }
 
 } // StatusAppTwoPanelLayout

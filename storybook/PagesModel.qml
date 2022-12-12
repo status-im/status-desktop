@@ -77,4 +77,8 @@ ListModel {
         title: "LanguageCurrencySettings"
         section: "Settings"
     }
+    ListElement {
+        title: "AppearanceView"
+        section: "Settings"
+    }
 }
