@@ -14,7 +14,8 @@ OnboardingBasePage {
 
     property var startupStore: StartupStore {}
 
-    backButtonVisible: root.startupStore.currentStartupState.displayBackButton
+    backButtonVisible: root.startupStore.currentStartupState ? root.startupStore.currentStartupState.displayBackButton
+                                                             : false
 
     onBackClicked: {
         root.startupStore.backAction()

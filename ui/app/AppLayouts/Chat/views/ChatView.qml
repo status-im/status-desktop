@@ -121,7 +121,7 @@ StatusSectionLayout {
                 let chatContentModule = root.rootStore.currentChatContentModule()
                 if (!chatContentModule || !chatContentModule.usersModule) {
                     // New communities have no chats, so no chatContentModule
-                    return 0
+                    return null
                 }
                 return chatContentModule.usersModule.model
             }

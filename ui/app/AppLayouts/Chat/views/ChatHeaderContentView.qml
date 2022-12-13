@@ -20,7 +20,7 @@ Item {
     property alias searchButton: searchButton
 
     property var rootStore
-    property var chatContentModule: root.rootStore.currentChatContentModule()
+    property var chatContentModule: root.rootStore.currentChatContentModule() || null
     property var emojiPopup
     property int padding: Style.current.halfPadding
 
@@ -287,8 +287,8 @@ Item {
                 }
             }
             asset.name: chatContentModule? chatContentModule.chatDetails.icon : ""
-            asset.isImage: chatContentModule.chatDetails.icon !== ""
-            asset.isLetterIdenticon: chatContentModule.chatDetails.icon === ""
+            asset.isImage: chatContentModule && chatContentModule.chatDetails.icon !== ""
+            asset.isLetterIdenticon: chatContentModule && chatContentModule.chatDetails.icon === ""
             ringSettings.ringSpecModel: chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
                                             Utils.getColorHashAsJson(chatContentModule.chatDetails.id) : ""
             asset.color: chatContentModule?
