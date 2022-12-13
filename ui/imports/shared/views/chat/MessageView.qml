@@ -395,6 +395,7 @@ Loader {
             StatusMessage {
                 id: delegate
                 Layout.fillWidth: true
+
                 function convertContentType(value) {
                     switch (value) {
                     case Constants.messageContentType.messageType:
@@ -468,7 +469,13 @@ Loader {
                 isEdited: root.isEdited
                 hasMention: root.hasMention
                 isPinned: root.pinnedMessage
-                pinnedBy: root.pinnedMessage && !root.isDiscordMessage ? Utils.getContactDetailsAsJson(root.messagePinnedBy, false).displayName : ""
+                pinnedBy: {
+                    if (!root.pinnedMessage || root.isDiscordMessage)
+                        return ""
+                    const contact = Utils.getContactDetailsAsJson(root.messagePinnedBy, false)
+                    const ensName = contact.ensVerified ? contact.name : ""
+                    return ProfileUtils.displayName(contact.localNickname, ensName, contact.displayName, contact.alias)
+                }
                 hasExpired: root.isExpired
                 isSending: root.isSending
                 resendError: root.resendError

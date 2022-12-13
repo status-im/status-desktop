@@ -77,7 +77,7 @@ Pane {
         readonly property string linkToProfile: {
             let user = ""
             if (d.isCurrentUser)
-                user = root.profileStore.ensName
+                user = root.profileStore.preferredName
             else
                 user = contactDetails.name
             if (!user)

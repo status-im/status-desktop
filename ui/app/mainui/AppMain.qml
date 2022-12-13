@@ -443,7 +443,7 @@ Item {
                 identicon.asset.charactersLen: 2
                 identicon.asset.color: Utils.colorForPubkey(appMain.rootStore.userProfileInst.pubKey)
                 identicon.ringSettings.ringSpecModel: Utils.getColorHashAsJson(appMain.rootStore.userProfileInst.pubKey,
-                                                                               appMain.rootStore.userProfileInst.ensName)
+                                                                               appMain.rootStore.userProfileInst.preferredName)
 
                 badge.visible: true
                 badge.anchors {

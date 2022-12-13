@@ -452,6 +452,7 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.senderIcon = updatedContact.icon
       item.senderIsAdded = updatedContact.details.added
       item.senderTrustStatus = updatedContact.details.trustStatus
+      item.senderEnsVerified = updatedContact.details.ensVerified
     if(item.messageContainsMentions):
       let (m, _, err) = self.controller.getMessageDetails(item.id)
       if(err.len == 0):

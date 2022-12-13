@@ -116,6 +116,9 @@ method contactUpdated*(self: Module, publicKey: string) =
     isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,
   )
 
+method userProfileUpdated*(self: Module) =
+  self.contactUpdated(singletonInstance.userProfile.getPubKey())
+
 method loggedInUserImageChanged*(self: Module) =
   self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
 

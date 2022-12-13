@@ -194,7 +194,7 @@ StatusModal {
                 //        text = qsTr("Pending")
                 //    }
                } else {
-                   error = root.store.communitiesModuleInst.requestToJoinCommunity(root.communityId, root.store.userProfileInst.ensName)
+                   error = root.store.communitiesModuleInst.requestToJoinCommunity(root.communityId, root.store.userProfileInst.preferredName)
                }
 
                if (error) {

@@ -98,7 +98,7 @@ StatusModal {
             messageTimestamp: root.responseTimestamp
             senderId: userProfile.pubKey
             senderDisplayName: userProfile.displayName
-            senderIsEnsVerified: !!userProfile.ensName
+            senderIsEnsVerified: !!userProfile.preferredName
             senderIcon: userProfile.icon
             messageText: root.responseText
             messageContentType: Constants.messageContentType.messageType

@@ -123,7 +123,7 @@ ColumnLayout {
     ProfileDescriptionPanel {
         id: descriptionPanel
 
-        readonly property bool isEnsName: profileStore.ensName
+        readonly property bool isEnsName: profileStore.preferredName
 
         function reevaluateSocialLinkInputs()  {
             socialLinksModel = null
@@ -134,8 +134,8 @@ ColumnLayout {
 
         displayName.focus: !isEnsName
         displayName.input.edit.readOnly: isEnsName
-        displayName.text: profileStore.ensName || profileStore.displayName
-        displayName.validationMode: isEnsName ? StatusInput.ValidationMode.None : StatusInput.ValidationMode.Always
+        displayName.text: profileStore.name
+        displayName.validationMode: StatusInput.ValidationMode.Always
         displayName.validators: isEnsName ? [] : Constants.validators.displayName
         bio.text: profileStore.bio
         socialLinksModel: staticSocialLinksSubsetModel

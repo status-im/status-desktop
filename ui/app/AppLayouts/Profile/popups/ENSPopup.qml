@@ -27,10 +27,22 @@ StatusDialog {
         close();
     }
 
+    footer: StatusDialogFooter {
+        rightButtons: ObjectModel {
+            StatusButton {
+                enabled: d.newUsername !== root.ensUsernamesStore.preferredUsername
+                text: qsTr("Apply")
+                onClicked: {
+                    root.applied()
+                }
+            }
+        }
+    }
+
     QtObject {
         id: d
 
-        property string newUsername: ""
+        property string newUsername: root.ensUsernamesStore.preferredUsername
     }
 
     ColumnLayout {

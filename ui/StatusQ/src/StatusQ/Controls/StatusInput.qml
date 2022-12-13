@@ -258,7 +258,7 @@ Item {
         This function validates the text input's text.
     */
 
-    function validate(force) {
+    function validate(force = false) {
         if (!force && !statusBaseInput.dirty && validationMode === StatusInput.ValidationMode.OnlyWhenDirty) {
             return
         }
@@ -364,6 +364,14 @@ Item {
     implicitHeight: inputLayout.implicitHeight
 
     Component.onCompleted: {
+        validate()
+    }
+
+    onValidatorsChanged: {
+        validate()
+    }
+
+    onValidationModeChanged: {
         validate()
     }
 

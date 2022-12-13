@@ -31,6 +31,9 @@ method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUp
 method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method userProfileUpdated*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method loggedInUserImageChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

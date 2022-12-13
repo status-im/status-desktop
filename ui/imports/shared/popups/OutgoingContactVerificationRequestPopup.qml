@@ -75,7 +75,7 @@ StatusDialog {
             senderId: userProfile.pubKey
             senderDisplayName: userProfile.name
             senderIcon: userProfile.icon
-            senderIsEnsVerified: !!userProfile.ensName
+            senderIsEnsVerified: !!userProfile.preferredName
             messageText: root.verificationChallenge
             messageContentType: Constants.messageContentType.messageType
             placeholderMessage: true

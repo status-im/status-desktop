@@ -421,7 +421,7 @@ QtObject {
                 const userCanJoin = userCanJoin(communityId)
                 // TODO find what to do when you can't join
                 if (userCanJoin) {
-                    requestToJoinCommunity(communityId, userProfileInst.ensName)
+                    requestToJoinCommunity(communityId, userProfileInst.preferredName)
                 }
             }
             return result
