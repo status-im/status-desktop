@@ -106,6 +106,7 @@ QtObject:
 
   proc initialMessagesAreLoaded*(self: View) = # this is not a slot
     if (self.initialMessagesLoaded):
+      echo "oof"
       return
     self.initialMessagesLoaded = true
     self.initialMessagesLoadedChanged()
