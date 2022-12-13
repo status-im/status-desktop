@@ -259,7 +259,7 @@ Popup {
 
                 RowLayout {
                     id: stickersRowLayout
-                    width: inputScrollView.availableWidth
+                    width: installedStickersSV.availableWidth
                     spacing: Style.current.padding
 
                     Repeater {

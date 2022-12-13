@@ -4,8 +4,10 @@ QtObject {
     id: root
 
     property var startupModuleInst: startupModule
-    property var currentStartupState: startupModuleInst.currentStartupState
-    property var selectedLoginAccount: startupModuleInst.selectedLoginAccount
+    property var currentStartupState: startupModuleInst ? startupModuleInst.currentStartupState
+                                                        : null
+    property var selectedLoginAccount: startupModuleInst ? startupModuleInst.selectedLoginAccount
+                                                         : null
 
     function backAction() {
         root.currentStartupState.backAction()
