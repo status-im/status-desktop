@@ -174,7 +174,7 @@ ColumnLayout {
             let processedButtons = 0;
 
             while (!itemAt(currentIndex).enabled) {
-                if (++processedButtons == count) {
+                if (++processedButtons === count) {
                     currentIndex = -1;
                     break;
                 }
@@ -183,7 +183,6 @@ ColumnLayout {
         }
 
         StatusTabButton {
-            enabled: localAccountSensitiveSettings.communitiesEnabled
             width: enabled ? implicitWidth : 0
             text: qsTr("Communities")
             onEnabledChanged: showcaseTabBar.validateCurrentIndex()

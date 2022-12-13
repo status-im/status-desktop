@@ -25,10 +25,12 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         contentWidth: contentItem.width
+        contentHeight: contentItem.height
 
         Item {
             id: contentItem
             width: profileContentWidth
+            height: childrenRect.height
 
             Image {
                 id: image
