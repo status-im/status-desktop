@@ -7,15 +7,13 @@ import StatusQ.Controls 0.1
 
 import utils 1.0
 
-Flickable {
+StatusScrollView {
     id: root
 
     property int viewWidth: 560 // by design
 
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height + mainLayout.anchors.topMargin
-    clip: true
-    flickableDirection: Flickable.AutoFlickIfNeeded
 
     ColumnLayout {
         id: mainLayout
