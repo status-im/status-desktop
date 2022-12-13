@@ -10,7 +10,7 @@ import utils 1.0
 
 import AppLayouts.Chat.controls.community 1.0
 
-Flickable {
+StatusScrollView {
     id: root
 
     property var store
@@ -18,8 +18,6 @@ Flickable {
 
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height + mainLayout.anchors.topMargin
-    clip: true
-    flickableDirection: Flickable.AutoFlickIfNeeded
 
     ColumnLayout {
         id: mainLayout

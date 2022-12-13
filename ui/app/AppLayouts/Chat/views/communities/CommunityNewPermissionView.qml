@@ -14,7 +14,7 @@ import SortFilterProxyModel 0.2
 
 import "../../../Chat/controls/community"
 
-Flickable {
+StatusScrollView {
     id: root
 
     property var store
@@ -30,8 +30,6 @@ Flickable {
 
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
-    clip: true
-    flickableDirection: Flickable.AutoFlickIfNeeded
 
     ColumnLayout {
         id: mainLayout
