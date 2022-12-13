@@ -47,21 +47,21 @@ Rectangle {
         }
 
         StatusFlatButton {
-            id: buySellBtn
-            icon.name: "token"
-            text: qsTr("Buy / Sell")
-            onClicked: function () {
-                Global.openPopup(buySellModal);
-            }
-        }
-
-        StatusFlatButton {
             id: bridgeBtn
             icon.name: "bridge"
             text: qsTr("Bridge")
             onClicked: function () {
                 sendModal.isBridgeTx = true
                 sendModal.open()
+            }
+        }
+        
+        StatusFlatButton {
+            id: buySellBtn
+            icon.name: "token"
+            text: qsTr("Buy")
+            onClicked: function () {
+                Global.openPopup(buySellModal);
             }
         }
     }
