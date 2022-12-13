@@ -97,6 +97,7 @@ QtObject:
   proc initialMessagesLoadedChanged*(self: View) {.signal.}
 
   proc getInitialMessagesLoaded*(self: View): bool {.slot.} =
+    echo "wow"
     return self.initialMessagesLoaded
 
   QtProperty[bool] initialMessagesLoaded:
