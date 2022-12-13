@@ -57,7 +57,6 @@ Item {
     ColumnLayout {
         id: titleRow
         width: root.contentWidth
-        height: childrenRect.height
         spacing: 0
         RowLayout {
             Layout.preferredWidth: (parent.width - Style.current.padding)
@@ -92,6 +91,8 @@ Item {
         anchors.topMargin: Style.current.padding
         padding: 0
         width: root.contentWidth
+        contentWidth: availableWidth
+        contentHeight: contentLayout.implicitHeight
 
         Column {
             id: contentLayout

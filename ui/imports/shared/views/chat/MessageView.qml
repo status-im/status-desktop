@@ -23,7 +23,7 @@ Loader {
     property var messageStore
     property var usersStore
     property var contactsStore
-    property var messageContextMenu
+    property var messageContextMenu: null
     property string channelEmoji
     property bool isActiveChannel: false
 
@@ -481,7 +481,7 @@ Loader {
                 disableHover: root.disableHover ||
                               (root.chatLogView && root.chatLogView.flickingVertically) ||
                               activityCenterMessage ||
-                              root.messageContextMenu.opened ||
+                              (root.messageContextMenu && root.messageContextMenu.opened) ||
                               !!Global.profilePopupOpened ||
                               !!Global.popupOpened
 
