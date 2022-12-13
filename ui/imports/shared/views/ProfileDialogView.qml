@@ -669,11 +669,11 @@ Pane {
                     StatusTabButton {
                         leftPadding: 0
                         width: implicitWidth
-                        text: qsTr("Tokens")
+                        text: qsTr("Assets")
                     }
                     StatusTabButton {
                         width: implicitWidth
-                        text: qsTr("NFTs")
+                        text: qsTr("Collectibles")
                     }
                     StatusTabButton {
                         width: implicitWidth
