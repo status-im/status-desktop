@@ -72,6 +72,7 @@ add_test(NAME FigmaModelTest COMMAND FigmaModelTest)
 
 add_executable(QmlTests
     qmlTests/main.cpp
+    qmlTests/src/TextUtils.cpp qmlTests/src/TextUtils.h
     ${TEST_QML_FILES})
 target_compile_definitions(QmlTests
                            PRIVATE QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
