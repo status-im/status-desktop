@@ -95,7 +95,7 @@ QtObject:
     return self.delegate.getNumberOfPinnedMessages()
 
   proc initialMessagesLoadedChanged*(self: View) {.signal.}
-
+ 
   proc getInitialMessagesLoaded*(self: View): bool {.slot.} =
     return self.initialMessagesLoaded
 
