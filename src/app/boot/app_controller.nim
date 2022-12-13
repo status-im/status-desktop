@@ -382,8 +382,8 @@ proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) =
 proc buildAndRegisterUserProfile(self: AppController) =
   let pubKey = self.settingsService.getPublicKey()
   let alias = self.settingsService.getName()
-  let preferredName = self.settingsService.getPreferredName()
-  var displayName = self.settingsService.getDisplayName()
+  var preferredName = self.settingsService.getPreferredName()
+  let displayName = self.settingsService.getDisplayName()
   let ensUsernames = self.settingsService.getEnsUsernames()
   let firstEnsName = if (ensUsernames.len > 0): ensUsernames[0] else: ""
   let currentUserStatus = self.settingsService.getCurrentUserStatus()
@@ -399,7 +399,6 @@ proc buildAndRegisterUserProfile(self: AppController) =
   singletonInstance.userProfile.setFixedData(alias, loggedInAccount.keyUid, pubKey, loggedInAccount.keycardPairing.len > 0)
   singletonInstance.userProfile.setDisplayName(displayName)
   singletonInstance.userProfile.setPreferredName(preferredName)
-  singletonInstance.userProfile.setEnsName(firstEnsName)
   singletonInstance.userProfile.setThumbnailImage(thumbnail)
   singletonInstance.userProfile.setLargeImage(large)
   singletonInstance.userProfile.setCurrentUserStatus(currentUserStatus.statusType.int)

@@ -108,6 +108,13 @@ proc setPreferredName*(self: Controller, preferredName: string) =
   else:
     info "an error occurred saving prefered ens username", methodName="setPreferredName"
 
+proc fixPreferredName*(self: Controller, ignoreCurrentValue: bool = false) =
+  if (not ignoreCurrentValue and singletonInstance.userProfile.getPreferredName().len > 0):
+    return
+  let ensUsernames = self.settingsService.getEnsUsernames()
+  let firstEnsName = if (ensUsernames.len > 0): ensUsernames[0] else: ""
+  self.setPreferredName(firstEnsName)
+
 proc getEnsRegisteredAddress*(self: Controller): string =
   return self.ensService.getEnsRegisteredAddress()
 

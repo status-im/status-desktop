@@ -182,7 +182,7 @@ method removeEnsUsername*(self: Module, ensUsername: string): bool =
     info "an error occurred removing ens username", methodName="removeEnsUsername"
     return false
   if (self.controller.getPreferredEnsUsername() == ensUsername):
-    self.controller.setPreferredName("")
+    self.controller.fixPreferredName(true)
   self.view.model().removeItemByEnsUsername(ensUsername)
   return true
 
@@ -228,14 +228,14 @@ method connectOwnedUsername*(self: Module, ensUsername: string, isStatus: bool) 
     info "an error occurred saving ens username", methodName="connectOwnedUsername"
     return
 
-  self.controller.setPreferredName(ensUsername)
+  self.controller.fixPreferredName()
   self.view.model().addItem(Item(ensUsername: ensUsername, isPending: false))
 
 method ensTransactionConfirmed*(self: Module, trxType: string, ensUsername: string, transactionHash: string) =
   if(not self.controller.saveNewEnsUsername(ensUsername)):
     info "an error occurred saving ens username", methodName="ensTransactionConfirmed"
     return
-
+  self.controller.fixPreferredName()
   if(self.view.model().containsEnsUsername(ensUsername)):
     self.view.model().updatePendingStatus(ensUsername, false)
   else:
@@ -312,6 +312,7 @@ method registerEns(self: Module, password: string) =
 
   var respResult: string
   if(responseObj.getProp("result", respResult) and responseObj{"success"}.getBool == true):
+    self.controller.fixPreferredName()
     self.view.model().addItem(Item(ensUsername: self.formatUsername(self.tmpSendEnsTransactionDetails.ensUsername, true), isPending: true))
   self.view.emitTransactionWasSentSignal(response)
 

@@ -57,6 +57,7 @@ const SIGNAL_CONTACT_REJECTION_REMOVED* = "contactRejectionRemoved"
 const SIGNAL_CONTACT_NICKNAME_CHANGED* = "contactNicknameChanged"
 const SIGNAL_CONTACTS_STATUS_UPDATED* = "contactsStatusUpdated"
 const SIGNAL_CONTACT_UPDATED* = "contactUpdated"
+const SIGNAL_LOGGEDIN_USER_NAME_CHANGED* = "loggedInUserNameChanged"
 const SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED* = "loggedInUserImageChanged"
 const SIGNAL_REMOVED_TRUST_STATUS* = "removedTrustStatus"
 const SIGNAL_CONTACT_UNTRUSTWORTHY* = "contactUntrustworthy"
@@ -217,7 +218,12 @@ QtObject:
     self.fetchContacts()
     self.doConnect()
 
+    signalConnect(singletonInstance.userProfile, "nameChanged()", self, "onLoggedInUserNameChange()", 2)
     signalConnect(singletonInstance.userProfile, "imageChanged()", self, "onLoggedInUserImageChange()", 2)
+
+  proc onLoggedInUserNameChange*(self: Service) {.slot.} =
+    let data = Args()
+    self.events.emit(SIGNAL_LOGGEDIN_USER_NAME_CHANGED, data)
 
   proc onLoggedInUserImageChange*(self: Service) {.slot.} =
     let data = Args()
@@ -307,9 +313,9 @@ QtObject:
       return ContactsDto(
         id: singletonInstance.userProfile.getPubKey(),
         displayName: singletonInstance.userProfile.getDisplayName(),
-        name: singletonInstance.userProfile.getEnsName(),
+        name: singletonInstance.userProfile.getPreferredName(),
         alias: singletonInstance.userProfile.getUsername(),
-        ensVerified: singletonInstance.userProfile.getEnsName().len > 0,
+        ensVerified: singletonInstance.userProfile.getPreferredName().len > 0,
         added: true,
         image: Images(
           thumbnail: singletonInstance.userProfile.getThumbnailImage(),
@@ -364,11 +370,10 @@ QtObject:
 
     return self.contactsStatus[publicKey]
 
-  proc getContactNameAndImageInternal(self: Service, publicKey: string):
+  proc getContactNameAndImageInternal(self: Service, contactDto: ContactsDto):
       tuple[name: string, optionalName: string, image: string, largeImage: string] =
     ## This proc should be used accross the app in order to have for the same contact
     ## same image and name displayed everywhere in the app.
-    let contactDto = self.getContactById(publicKey)
     result.name = contactDto.userDefaultDisplayName()
     result.optionalName = contactDto.userOptionalName()
     if(contactDto.image.thumbnail.len > 0):
@@ -378,7 +383,8 @@ QtObject:
 
   proc getContactNameAndImage*(self: Service, publicKey: string):
       tuple[name: string, image: string, largeImage: string] =
-    let tempRes = self.getContactNameAndImageInternal(publicKey)
+    let contactDto = self.getContactById(publicKey)
+    let tempRes = self.getContactNameAndImageInternal(contactDto)
     return (tempRes.name, tempRes.image, tempRes.largeImage)
 
   proc saveContact(self: Service, contact: ContactsDto) =
@@ -538,13 +544,14 @@ QtObject:
 
   proc getContactDetails*(self: Service, pubKey: string): ContactDetails =
     result = ContactDetails()
-    let (name, optionalName, icon, _) = self.getContactNameAndImageInternal(pubKey)
+    let contactDto = self.getContactById(pubKey)
+    let (name, optionalName, icon, _) = self.getContactNameAndImageInternal(contactDto)
     result.defaultDisplayName = name
     result.optionalName = optionalName
     result.icon = icon
     result.colorId = procs_from_visual_identity_service.colorIdOf(pubKey)
     result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
-    result.details = self.getContactById(pubKey)
+    result.details = contactDto
 
   proc markUntrustworthy*(self: Service, publicKey: string) =
     let response = status_contacts.markUntrustworthy(publicKey)

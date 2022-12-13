@@ -153,6 +153,9 @@ proc init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.updateContactDetails(args.contactId)
 
+  self.events.on(SIGNAL_LOGGEDIN_USER_NAME_CHANGED) do(e: Args):
+    self.delegate.updateContactDetails(singletonInstance.userProfile.getPubKey())
+
   self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
     self.delegate.updateContactDetails(singletonInstance.userProfile.getPubKey())
 

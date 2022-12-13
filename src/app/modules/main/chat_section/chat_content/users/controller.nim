@@ -75,6 +75,9 @@ proc init*(self: Controller) =
     let args = ContactArgs(e)
     self.delegate.contactUpdated(args.contactId)
 
+  self.events.on(SIGNAL_LOGGEDIN_USER_NAME_CHANGED) do(e: Args):
+    self.delegate.userProfileUpdated()
+
   self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
     self.delegate.loggedInUserImageChanged()
 

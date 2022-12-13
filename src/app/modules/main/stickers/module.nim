@@ -150,7 +150,7 @@ method sendSticker*(self: Module, channelId: string, replyTo: string, sticker: I
     channelId,
     replyTo,
     stickerDto,
-    singletonInstance.userProfile.getEnsName())
+    singletonInstance.userProfile.getPreferredName())
 
 method estimate*(self: Module, packId: string, address: string, price: string, uuid: string) =
   self.controller.estimate(packId, address, price, uuid)

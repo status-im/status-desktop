@@ -69,7 +69,7 @@ method sendChatMessage*(
     replyTo: string,
     contentType: int) =
   self.controller.sendChatMessage(msg, replyTo, contentType,
-    singletonInstance.userProfile.getEnsName())
+    singletonInstance.userProfile.getPreferredName())
 
 method requestAddressForTransaction*(self: Module, fromAddress: string, amount: string, tokenAddress: string) =
   self.controller.requestAddressForTransaction(fromAddress, amount, tokenAddress)
