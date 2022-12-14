@@ -52,7 +52,7 @@ QtObject:
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-    result.showBeforeGetStartedPopup = true
+    result.showBeforeGetStartedPopup = false
     result.appState = AppState.StartupState
     result.currentStartupState = newStateWrapper()
     result.currentStartupStateVariant = newQVariant(result.currentStartupState)
