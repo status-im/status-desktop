@@ -43,7 +43,10 @@ Item {
                 id: listItem
                 color: Theme.palette.statusListItem.backgroundColor
                 width: parent.width
-                asset.name: index == 0 ? "tiny/gas" : ""
+                asset.name: "tiny/gas"
+                asset.color: Theme.palette.directColor1
+                statusListItemIcon.active: true
+                statusListItemIcon.opacity: modelData.isFirstSimpleTx
                 title: qsTr("%1 transaction fee").arg(modelData.fromNetwork.chainName)
                 subTitle: "%1 eth".arg(LocaleUtils.numberToLocaleString(parseFloat(totalGasAmount)))
                 property string totalGasAmount : {
@@ -69,12 +72,16 @@ Item {
 
         // Bridge
         Repeater {
+            id: bridgeRepeater
             model: root.bestRoutes
-            StatusListItem {
+            delegate: StatusListItem {
                 id: listItem2
                 color: Theme.palette.statusListItem.backgroundColor
                 width: parent.width
-                asset.name: index == 0 ? "tiny/bridge" : ""
+                asset.name: "tiny/bridge"
+                asset.color: Theme.palette.directColor1
+                statusListItemIcon.active: true
+                statusListItemIcon.opacity: modelData.isFirstBridgeTx
                 title: qsTr("%1 -> %2 bridge").arg(modelData.fromNetwork.chainName).arg(modelData.toNetwork.chainName)
                 subTitle: "%1 %2".arg(LocaleUtils.numberToLocaleString(modelData.tokenFees)).arg(root.selectedTokenSymbol)
                 visible: modelData.bridgeName !== "Simple"

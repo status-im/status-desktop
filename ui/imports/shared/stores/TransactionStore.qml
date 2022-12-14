@@ -69,6 +69,10 @@ QtObject {
         return profileSectionStore.ensUsernamesStore.getFiatValue(balance, cryptoSymbol, fiatSymbol)
     }
 
+    function getCryptoValue(balance, cryptoSymbol, fiatSymbol) {
+        return profileSectionStore.ensUsernamesStore.getCryptoValue(balance, cryptoSymbol, fiatSymbol)
+    }
+
     function getGasEthValue(gweiValue, gasLimit) {
         return profileSectionStore.ensUsernamesStore.getGasEthValue(gweiValue, gasLimit)
     }

@@ -157,7 +157,7 @@ Item {
         \qmlproperty real StatusBaseInput::leftPadding
         This property sets the leftComponentLoader's left padding.
     */
-    property real leftPadding: leftComponentLoader.item ? 8 : 16
+    property real leftPadding: leftComponentLoader.item ? 6 : 16
     /*!
         \qmlproperty real StatusBaseInput::rightPadding
         This property sets the right padding.
@@ -308,7 +308,7 @@ Item {
                 spacing: 2
                 anchors {
                     fill: parent
-                    leftMargin: root.leftPadding ? root.leftPadding : leftComponentLoader.item ? 6 : 16
+                    leftMargin: root.leftPadding
                     rightMargin: root.rightPadding
                 }
 

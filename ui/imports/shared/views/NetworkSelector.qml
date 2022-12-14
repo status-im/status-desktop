@@ -28,6 +28,7 @@ Item {
     property bool interactive: true
     property bool isBridgeTx: false
     property bool showUnpreferredNetworks: advancedNetworkRoutingPage.showUnpreferredNetworks
+    property var toNetworksList: []
 
     signal reCalculateSuggestedRoute()
 
@@ -79,6 +80,7 @@ Item {
                 selectedAsset: root.selectedAsset
                 selectedAccount: root.selectedAccount
                 errorMode: root.errorMode
+                toNetworksList: root.toNetworksList
                 weiToEth: function(wei) {
                     return "%1 %2".arg(LocaleUtils.numberToLocaleString(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)))).arg(selectedAsset.symbol)
                 }

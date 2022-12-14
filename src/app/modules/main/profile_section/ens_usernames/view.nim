@@ -126,6 +126,9 @@ QtObject:
   proc getFiatValue*(self: View, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string {.slot.} =
     return self.delegate.getFiatValue(cryptoBalance, cryptoSymbol, fiatSymbol)
 
+  proc getCryptoValue*(self: View, fiatAmount: string, cryptoSymbol: string, fiatSymbol: string): string {.slot.} =
+    return self.delegate.getCryptoValue(fiatAmount, cryptoSymbol, fiatSymbol)
+
   proc getGasEthValue*(self: View, gweiValue: string, gasLimit: string): string {.slot.} =
     return self.delegate.getGasEthValue(gweiValue, gasLimit)
 

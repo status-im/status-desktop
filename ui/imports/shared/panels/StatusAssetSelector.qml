@@ -12,6 +12,7 @@ import StatusQ.Components 0.1
 import StatusQ.Core.Backpressure 1.0
 
 import shared.controls 1.0
+import utils 1.0
 
 Item {
     id: root
@@ -51,6 +52,7 @@ Item {
         property string iconSource: ""
         property string text: ""
         property string searchString
+        property bool isTokenSelected: !!root.selectedAsset
 
         readonly property var updateSearchText: Backpressure.debounce(root, 1000, function(inputText) {
             d.searchString = inputText
@@ -60,8 +62,8 @@ Item {
     StatusComboBox {
         id: comboBox
         objectName: "assetSelectorButton"
-        width: control.width
-        height: parent.height
+        width: d.isTokenSelected ? rowLayout.implicitWidth : 116
+        height: 34
 
         control.padding: 4
         control.popup.width: 342
@@ -86,30 +88,17 @@ Item {
 
         control.background: Rectangle {
             color: "transparent"
-            border.width: 1
-            border.color: comboBox.control.hovered ? Theme.palette.primaryColor2 : Theme.palette.directColor8
-            radius: 16
-            width: rowLayout.width
-            implicitHeight: 48
+            border.width: d.isTokenSelected ? 0 : 1
+            border.color: d.isTokenSelected ? "transparent" : Theme.palette.directColor7
+            radius: 12
         }
 
         contentItem: RowLayout {
             id: rowLayout
-            spacing: 8
-            StatusBaseText {
-                Layout.leftMargin: 8
-                Layout.alignment: Qt.AlignVCenter
-                font.pixelSize: 15
-                elide: Text.ElideRight
-                verticalAlignment: Text.AlignVCenter
-                color: !!root.selectedAsset ? Theme.palette.directColor1: Theme.palette.baseColor1
-                font.weight: Font.Medium
-                text: !!root.selectedAsset ? d.text : placeholderText
-            }
             StatusRoundedImage {
-                Layout.preferredWidth: 40
-                Layout.preferredHeight: 40
-                Layout.alignment: Qt.AlignVCenter
+                Layout.preferredWidth: 21
+                Layout.preferredHeight: 21
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                 visible: !!d.iconSource
                 image.source: d.iconSource
                 image.onStatusChanged: {
@@ -118,9 +107,34 @@ Item {
                     }
                 }
             }
-            Item {
-                width: 8
-                height: 0
+            StatusBaseText {
+                Layout.alignment: Qt.AlignVCenter
+                font.pixelSize: 28
+                elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+                color: Theme.palette.miscColor1
+                text: d.text
+                visible: d.isTokenSelected
+            }
+            StatusIcon {
+                Layout.leftMargin: -3
+                Layout.alignment: Qt.AlignVCenter
+                icon: "chevron-down"
+                width: 16
+                height: 16
+                color: Theme.palette.miscColor1
+                visible: d.isTokenSelected
+            }
+            StatusBaseText {
+                Layout.maximumWidth: comboBox.width - Style.current.padding
+                Layout.alignment: Qt.AlignCenter
+                visible: !d.isTokenSelected
+                font.pixelSize: 15
+                font.weight: Font.Medium
+                verticalAlignment: Text.AlignVCenter
+                color: Theme.palette.baseColor1
+                elide: Qt.ElideRight
+                text: placeholderText
             }
         }
 
@@ -215,11 +229,9 @@ Item {
             placeholderText: qsTr("Search for token or enter token address")
             onTextChanged: Qt.callLater(d.updateSearchText, text)
             input.clearable: true
-            leftPadding: 0
-            rightPadding: 0
             input.rightComponent: StatusIcon {
-                width: 24
-                height: 24
+                width: 16
+                height: 16
                 color: Theme.palette.baseColor1
                 icon: "search"
             }

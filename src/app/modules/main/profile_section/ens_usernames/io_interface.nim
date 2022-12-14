@@ -85,6 +85,10 @@ method getFiatValue*(self: AccessInterface, cryptoBalance: string, cryptoSymbol:
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getCryptoValue*(self: AccessInterface, fiatAmount: string, cryptoSymbol: string, fiatSymbol: string): string
+  {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getGasEthValue*(self: AccessInterface, gweiValue: string, gasLimit: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 

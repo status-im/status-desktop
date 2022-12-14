@@ -22,6 +22,7 @@ RowLayout {
     property bool isBridgeTx: false
     property var selectedAsset
     property var selectedAccount
+    property var toNetworksList: []
     property var weiToEth: function(wei) {}
     property var reCalculateSuggestedRoute: function() {}
     property bool errorMode: false
@@ -31,6 +32,7 @@ RowLayout {
         Layout.alignment: Qt.AlignTop
         radius: 8
         asset.name: "flash"
+        asset.color: Theme.palette.directColor1
     }
     ColumnLayout {
         Layout.alignment: Qt.AlignTop
@@ -61,13 +63,13 @@ RowLayout {
             ScrollBar.horizontal.policy: ScrollBar.AsNeeded
             clip: true
             visible: !root.isLoading ? root.isBridgeTx ? true : root.bestRoutes !== undefined ? root.bestRoutes.length > 0 : true : false
-            Row {
+            Column {
                 id: row
                 spacing: Style.current.padding
                 Repeater {
                     id: repeater
                     objectName: "networksList"
-                    model: isBridgeTx ? store.allNetworks : root.bestRoutes
+                    model: isBridgeTx ? store.allNetworks : root.toNetworksList
                     delegate: isBridgeTx ? networkItem : routeItem
                 }
             }
@@ -89,15 +91,15 @@ RowLayout {
     Component {
         id: routeItem
         StatusListItem {
-            objectName: modelData.toNetwork.chainName
+            objectName: modelData.chainName
             leftPadding: 5
             rightPadding: 5
-            implicitWidth: 126
-            title: modelData.toNetwork.chainName
+            implicitWidth: 410
+            title: modelData.chainName
             subTitle: {
-                let index  = store.lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined && lockedItem.chainID === modelData.toNetwork.chainId)
+                let index  = store.lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined && lockedItem.chainID === modelData.chainId)
                 if(!root.errorMode || index === -1)
-                    return root.weiToEth(modelData.amountIn)
+                    return root.weiToEth(modelData.amountOut)
                 else {
                     return root.weiToEth(parseInt(store.lockedInAmounts[index].value, 16))
                 }
@@ -105,7 +107,7 @@ RowLayout {
             statusListItemSubTitle.color: root.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
             asset.width: 32
             asset.height: 32
-            asset.name: Style.svg("tiny/" + modelData.toNetwork.iconUrl)
+            asset.name: Style.svg("tiny/" + modelData.iconUrl)
             asset.isImage: true
             color: "transparent"
         }
