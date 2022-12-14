@@ -5,121 +5,74 @@ import QtQml 2.14
 QtObject {
     id: root
 
-    property var applicationWindow
-    property var appMain
     property var dragArea
+    property var appMain
+    property var applicationWindow
     property bool popupOpened: false
     property int settingsSubsection: Constants.settingsSubsection.profile
 
-    property var globalUtilsInst: typeof globalUtils !== "undefined" ? globalUtils : null
     property var userProfile
-    property var mainModuleInst: typeof mainModule !== "undefined" ? mainModule : null
-    property var privacyModuleInst
-    property var toastMessage
     property var pinnedMessagesPopup
     property var communityProfilePopup
     property bool profilePopupOpened: false
-
-    property bool activityCenterPopupOpened: false
 
     property var sendMessageSound
     property var notificationSound
     property var errorSound
 
-    signal openImagePopup(var image, var contextMenu)
     signal openLinkInBrowser(string link)
     signal openChooseBrowserPopup(string link)
-    signal openDownloadModalRequested(bool available, string version, string url)
     signal settingsLoaded()
-    signal openBackUpSeedPopup()
     signal openCreateChatView()
     signal closeCreateChatView()
 
-    signal openProfilePopupRequested(string publicKey, var parentPopup)
-
-    signal openNicknamePopupRequested(string publicKey, string nickname, string subtitle)
-    signal nickNameChanged(string publicKey, string nickname)
-
     signal blockContactRequested(string publicKey, string contactName)
-    signal contactBlocked(string publicKey)
     signal unblockContactRequested(string publicKey, string contactName)
-    signal contactUnblocked(string publicKey)
 
-    signal openChangeProfilePicPopup(var cb)
     signal displayToastMessage(string title, string subTitle, string icon, bool loading, int ephNotifType, string url)
+
+    signal openPopupRequested(var popupComponent, var params);
+    signal openNicknamePopupRequested(string publicKey, string nickname, string subtitle)
+    signal openDownloadModalRequested(bool available, string version, string url)
+    signal openChangeProfilePicPopup(var cb)
+    signal openBackUpSeedPopup()
+    signal openImagePopup(var image, var contextMenu)
+    signal openProfilePopupRequested(string publicKey, var parentPopup)
     signal openEditDisplayNamePopup()
-    signal openActivityCenterPopupRequested
-
-    signal openContactRequestPopup(string publicKey, var cb)
-
-    signal openInviteFriendsToCommunityPopup(var community, var communitySectionModule, var cb)
-
+    signal openActivityCenterPopupRequested()
     signal openSendIDRequestPopup(string publicKey, var cb)
-
+    signal openContactRequestPopup(string publicKey, var cb)
+    signal openInviteFriendsToCommunityPopup(var community, var communitySectionModule, var cb)
     signal openIncomingIDRequestPopup(string publicKey, var cb)
-
     signal openOutgoingIDRequestPopup(string publicKey, var cb)
 
+    signal openLink(string link)
+
+    signal setNthEnabledSectionActive(int nthSection)
+    signal appSectionBySectionTypeChanged(int sectionType, int subsection)
+
     function openProfilePopup(publicKey, parentPopup) {
-        openProfilePopupRequested(publicKey, parentPopup)
+        root.openProfilePopupRequested(publicKey, parentPopup)
     }
 
     function openActivityCenterPopup() {
-        openActivityCenterPopupRequested()
+        root.openActivityCenterPopupRequested();
     }
 
     function openPopup(popupComponent, params = {}) {
-        const popup = popupComponent.createObject(root.appMain, params)
-        popup.open()
-        return popup
+        root.openPopupRequested(popupComponent, params);
     }
 
     function openDownloadModal(available, version, url){
-        openDownloadModalRequested(available, version, url);
+        root.openDownloadModalRequested(available, version, url);
     }
 
     function changeAppSectionBySectionType(sectionType, subsection = 0) {
-        if(!root.mainModuleInst)
-            return
-
-        mainModuleInst.setActiveSectionBySectionType(sectionType)
-        if (sectionType === Constants.appSection.profile) {
-            settingsSubsection = subsection;
-        }
-    }
-
-    function setNthEnabledSectionActive(nthSection) {
-        if(!root.mainModuleInst)
-            return
-        mainModuleInst.setNthEnabledSectionActive(nthSection)
-    }
-
-    function getProfileImage(pubkey, isCurrentUser, useLargeImage) {
-        if (isCurrentUser || (isCurrentUser === undefined && pubkey === userProfile.pubKey)) {
-            return userProfile.icon;
-        }
-
-        let contactDetails = Utils.getContactDetailsAsJson(pubkey)
-        return contactDetails.displayIcon
-    }
-
-    function openLink(link) {
-        // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
-        link = globalUtilsInst.plainText(link);
-        if (localAccountSensitiveSettings.showBrowserSelector) {
-            openChooseBrowserPopup(link);
-        } else {
-            if (localAccountSensitiveSettings.openLinksInStatus) {
-                changeAppSectionBySectionType(Constants.appSection.browser);
-                openLinkInBrowser(link);
-            } else {
-                Qt.openUrlExternally(link);
-            }
-        }
+        root.appSectionBySectionTypeChanged(sectionType, subsection);
     }
 
     function playErrorSound() {
-        if(errorSound)
-            errorSound.play();
+        if (root.errorSound)
+            root.errorSound.play();
     }
 }

@@ -142,7 +142,6 @@ Item {
 
         onOpenActivityCenterPopupRequested: {
             Global.openPopup(activityCenterPopupComponent)
-            Global.activityCenterPopupOpened = true
         }
 
         onOpenChangeProfilePicPopup: {
@@ -154,6 +153,43 @@ Item {
             appMain.rootStore.mainModuleInst.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url);
         }
         onOpenEditDisplayNamePopup: Global.openPopup(displayNamePopupComponent)
+
+        onOpenPopupRequested: {
+            const popup = popupComponent.createObject(appMain, params);
+            popup.open();
+            return popup;
+        }
+
+        onOpenLink: {
+            // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
+            link = appMain.rootStore.plainText(link);
+            if (appMain.rootStore.showBrowserSelector) {
+                Global.openChooseBrowserPopup(link);
+            } else {
+                if (appMain.rootStore.openLinksInStatus) {
+                    Global.changeAppSectionBySectionType(Constants.appSection.browser);
+                    Global.openLinkInBrowser(link);
+                } else {
+                    Qt.openUrlExternally(link);
+                }
+            }
+        }
+
+        onSetNthEnabledSectionActive: {
+            if(!appMain.rootStore.mainModuleInst)
+                return
+            appMain.rootStore.mainModuleInst.setNthEnabledSectionActive(nthSection)
+        }
+
+        onAppSectionBySectionTypeChanged: {
+            if(!appMain.rootStore.mainModuleInst)
+                return
+
+            appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(sectionType)
+            if (sectionType === Constants.appSection.profile) {
+                Global.settingsSubsection = subsection;
+            }
+        }
     }
 
     function changeAppSectionBySectionId(sectionId) {
@@ -1045,9 +1081,6 @@ Item {
                 height: appView.height - _buttonSize * 2
                 store: chatLayoutContainer.rootStore
                 activityCenterStore: appMain.activityCenterStore
-                onClosed: {
-                    Global.activityCenterPopupOpened = false
-                }
             }
         }
 
@@ -1057,7 +1090,6 @@ Item {
                 onEditDone: {
                     if (nickname !== newNickname) {
                         appMain.rootStore.contactStore.changeContactNickname(publicKey, newNickname)
-                        Global.nickNameChanged(publicKey, newNickname)
                     }
                     close()
                 }
@@ -1070,7 +1102,6 @@ Item {
             UnblockContactConfirmationDialog {
                 onUnblockButtonClicked: {
                     appMain.rootStore.contactStore.unblockContact(contactAddress)
-                    Global.contactUnblocked(contactAddress)
                     close()
                 }
                 onClosed: destroy()
@@ -1082,7 +1113,6 @@ Item {
             BlockContactConfirmationDialog {
                 onBlockButtonClicked: {
                     appMain.rootStore.contactStore.blockContact(contactAddress)
-                    Global.contactBlocked(contactAddress)
                     close()
                 }
                 onClosed: destroy()
@@ -1325,7 +1355,6 @@ Item {
         } catch (e) {
             console.error('Could not parse the whitelist for sites', e)
         }
-        Global.privacyModuleInst = appMain.rootStore.profileSectionStore.privacyStore.privacyModule
         Global.settingsLoaded()
     }
 
