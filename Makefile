@@ -295,7 +295,7 @@ $(UI_RESOURCES): $(UI_SOURCES) | check-qt-dir
 	rm -f ./resources.rcc
 	rm -f ./ui/resources.qrc
 	go run ui/generate-rcc.go -source=ui -output=ui/resources.qrc
-	rcc -binary $(RCC_PARAMS) ui/resources.qrc -o ./resources.rcc
+	$(QTDIR)/bin/rcc -binary $(RCC_PARAMS) ui/resources.qrc -o ./resources.rcc
 
 rcc: $(UI_RESOURCES)
 
@@ -305,7 +305,7 @@ QM_BINARIES := $(shell find ui/i18n -iname "*.ts" | sed 's/\.ts/\.qm/' | sed 's/
 $(QM_BINARIES): TS_FILE = $(shell echo $@ | sed 's/\.qm/\.ts/' | sed 's/bin/ui/')
 $(QM_BINARIES): $(TS_SOURCES) | check-qt-dir
 	mkdir -p bin/i18n
-	lrelease -removeidentical $(TS_FILE) -qm $@
+	$(QTDIR)/bin/lrelease -removeidentical $(TS_FILE) -qm $@
 
 compile-translations: $(QM_BINARIES)
 
