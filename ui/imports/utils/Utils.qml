@@ -511,37 +511,41 @@ QtObject {
     /* Validation section end */
 
     function getContactDetailsAsJson(publicKey, getVerificationRequest=true) {
-        let jsonObj = mainModuleInst.getContactDetailsAsJson(publicKey, getVerificationRequest)
+        const defaultValue = {
+            displayName: "",
+            displayIcon: "",
+            publicKey: publicKey,
+            name: "",
+            ensVerified: false,
+            alias: "",
+            lastUpdated: 0,
+            lastUpdatedLocally: 0,
+            localNickname: "",
+            thumbnailImage: "",
+            largeImage: "",
+            isContact: false,
+            isAdded: false,
+            isBlocked: false,
+            requestReceived: false,
+            isSyncing: false,
+            removed: false,
+            trustStatus: Constants.trustStatus.unknown,
+            verificationStatus: Constants.verificationStatus.unverified,
+            incomingVerificationStatus: Constants.verificationStatus.unverified
+        }
+
+        if (!mainModuleInst)
+            return defaultValue
+
+        const jsonObj = mainModuleInst.getContactDetailsAsJson(publicKey, getVerificationRequest)
+
         try {
-            let obj = JSON.parse(jsonObj)
-            return obj
+            return JSON.parse(jsonObj)
         }
         catch (e) {
             // This log is available only in debug mode, if it's annoying we can remove it
             console.warn("error parsing contact details for public key: ", publicKey, " error: ", e.message)
-
-            return {
-                displayName: "",
-                displayIcon: "",
-                publicKey: publicKey,
-                name: "",
-                ensVerified: false,
-                alias: "",
-                lastUpdated: 0,
-                lastUpdatedLocally: 0,
-                localNickname: "",
-                thumbnailImage: "",
-                largeImage: "",
-                isContact: false,
-                isAdded: false,
-                isBlocked: false,
-                requestReceived: false,
-                isSyncing: false,
-                removed: false,
-                trustStatus: Constants.trustStatus.unknown,
-                verificationStatus: Constants.verificationStatus.unverified,
-                incomingVerificationStatus: Constants.verificationStatus.unverified
-            }
+            return defaultValue
         }
     }
 
