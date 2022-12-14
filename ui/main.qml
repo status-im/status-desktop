@@ -124,15 +124,17 @@ StatusWindow {
         }
     }
 
+    //TODO remove direct backend access
     Connections {
         id: windowsOsNotificationsConnection
         enabled: Qt.platform.os === Constants.windows
-        target: Global.mainModuleInst
+        target: typeof mainModule !== "undefined" ? mainModule : null
         function onDisplayWindowsOsNotification(title, message) {
             systemTray.showMessage(title, message)
         }
     }
 
+    //TODO remove direct backend access
     Connections {
         target: startupModule
 
@@ -153,7 +155,6 @@ StatusWindow {
             }
             else if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
-                Global.mainModuleInst = mainModule
                 Global.userProfile = userProfile
 
                 loader.sourceComponent = app
@@ -202,6 +203,7 @@ StatusWindow {
         }
     }
 
+    //TODO remove direct backend access
 	Connections {
         target: singleInstance
 

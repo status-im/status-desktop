@@ -73,6 +73,9 @@ QtObject {
 
     property var savedAddressesModel: walletSectionSavedAddresses.model
 
+    readonly property bool showBrowserSelector: localAccountSensitiveSettings.showBrowserSelector
+    readonly property bool openLinksInStatus: localAccountSensitiveSettings.openLinksInStatus
+
     property var allNetworks: networksModule.all
 
     function getEtherscanLink() {
@@ -96,6 +99,10 @@ QtObject {
 
     function copyToClipboard(text) {
         globalUtils.copyToClipboard(text)
+    }
+
+    function plainText(text) {
+        return globalUtils.plainText(text);
     }
 
     function generateAlias(pk) {
