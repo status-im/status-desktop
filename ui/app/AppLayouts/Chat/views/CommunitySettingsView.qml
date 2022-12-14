@@ -45,12 +45,17 @@ StatusSectionLayout {
     readonly property string filteredSelectedTags: {
         if (!community || !community.tags)
             return "";
-
-        const json = JSON.parse(community.tags);
-        const tagsArray = json.map(tag => {
-            return tag.name;
-        });
-        return JSON.stringify(tagsArray);
+        try {
+            const json = JSON.parse(community.tags);
+            const tagsArray = json.map(tag => {
+                                           return tag.name;
+                                       });
+            return JSON.stringify(tagsArray);
+        }
+        catch (e) {
+            console.warn("Error parsing community tags: ", community.tags, " error: ", e.message)
+            return ""
+        }
     }
 
     signal backToCommunityClicked

@@ -73,12 +73,6 @@ SettingsContentBase {
             onDestroyKeycardSharedModuleFlow: {
                 keycardPopup.active = false
             }
-
-            onKeycardUidChanged: {
-                if (d.observedKeycardUid === oldKcUid) {
-                    d.observedKeycardUid = newKcUid
-                }
-            }
         }
 
         Loader {

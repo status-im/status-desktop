@@ -38,29 +38,29 @@ MenuItem {
             readonly property int letterSize: 11
 
             //icon
-            readonly property string name:  d.originalAssetSettings.name
-            readonly property url source:  d.originalAssetSettings.source
-            readonly property real width:  d.originalAssetSettings.width
-            readonly property real height:  d.originalAssetSettings.height
-            readonly property color color: d.originalAssetSettings.color
-            readonly property color hoverColor:  d.originalAssetSettings.hoverColor
-            readonly property color disabledColor:  d.originalAssetSettings.disabledColor
-            readonly property int rotation:  d.originalAssetSettings.rotation
-            readonly property bool isLetterIdenticon:  d.originalAssetSettings.isLetterIdenticon
-            readonly property int charactersLen:  d.originalAssetSettings.charactersLen
-            readonly property string emoji:  d.originalAssetSettings.emoji
-            readonly property string emojiSize:  d.originalAssetSettings.emojiSize
+            readonly property string name: d.originalAssetSettings ? d.originalAssetSettings.name : d.defaultAssetSettings.name
+            readonly property url source: d.originalAssetSettings ? d.originalAssetSettings.source : d.defaultAssetSettings.source
+            readonly property real width:  d.originalAssetSettings ? d.originalAssetSettings.width : d.defaultAssetSettings.width
+            readonly property real height: d.originalAssetSettings ? d.originalAssetSettings.height : d.defaultAssetSettings.height
+            readonly property color color: d.originalAssetSettings ? d.originalAssetSettings.color : d.defaultAssetSettings.color
+            readonly property color hoverColor: d.originalAssetSettings ? d.originalAssetSettings.hoverColor : d.defaultAssetSettings.hoverColor
+            readonly property color disabledColor: d.originalAssetSettings ? d.originalAssetSettings.disabledColor : d.defaultAssetSettings.disabledColor
+            readonly property int rotation: d.originalAssetSettings ? d.originalAssetSettings.rotation : d.defaultAssetSettings.rotation
+            readonly property bool isLetterIdenticon: d.originalAssetSettings ? d.originalAssetSettings.isLetterIdenticon : d.defaultAssetSettings.isLetterIdenticon
+            readonly property int charactersLen: d.originalAssetSettings ? d.originalAssetSettings.charactersLen : d.defaultAssetSettings.charactersLen
+            readonly property string emoji: d.originalAssetSettings ? d.originalAssetSettings.emoji : d.defaultAssetSettings.emoji
+            readonly property string emojiSize: d.originalAssetSettings ? d.originalAssetSettings.emojiSize : d.defaultAssetSettings.emojiSize
 
             //icon b
-            readonly property real bgWidth:  d.originalAssetSettings.bgWidth
-            readonly property real bgHeight:  d.originalAssetSettings.bgHeight
-            readonly property int bgRadius:  d.originalAssetSettings.bgRadius
-            readonly property color bgColor:  d.originalAssetSettings.bgColor
+            readonly property real bgWidth: d.originalAssetSettings ? d.originalAssetSettings.bgWidth : d.defaultAssetSettings.bgWidth
+            readonly property real bgHeight: d.originalAssetSettings ? d.originalAssetSettings.bgHeight : d.defaultAssetSettings.bgHeight
+            readonly property int bgRadius: d.originalAssetSettings ? d.originalAssetSettings.bgRadius : d.defaultAssetSettings.bgRadius
+            readonly property color bgColor: d.originalAssetSettings ? d.originalAssetSettings.bgColor : d.defaultAssetSettings.bgColor
 
             //image
-            readonly property bool isImage:  d.originalAssetSettings.isImage
-            readonly property int imgStatus:  d.originalAssetSettings.imgStatus
-            readonly property bool imgIsIdenticon:  d.originalAssetSettings.imgIsIdenticon
+            readonly property bool isImage: d.originalAssetSettings ? d.originalAssetSettings.isImage : d.defaultAssetSettings.isImage
+            readonly property int imgStatus: d.originalAssetSettings ? d.originalAssetSettings.imgStatus : d.defaultAssetSettings.imgStatus
+            readonly property bool imgIsIdenticon: d.originalAssetSettings ? d.originalAssetSettings.imgIsIdenticon : d.defaultAssetSettings.imgIsIdenticon
         }
 
         readonly property StatusFontSettings fontSettings: d.isStatusSubMenu
@@ -132,9 +132,9 @@ MenuItem {
         color: !root.enabled ? Theme.palette.baseColor1
                              : d.isStatusDangerAction ? Theme.palette.dangerColor1 : Theme.palette.directColor1
 
-        font.pixelSize: d.fontSettings.pixelSize
-        font.bold: d.fontSettings.bold
-        font.italic: d.fontSettings.italic
+        font.pixelSize: d.fontSettings ? d.fontSettings.pixelSize : d.defaultFontSettings.pixelSize
+        font.bold: d.fontSettings ? d.fontSettings.bold : d.defaultFontSettings.bold
+        font.italic: d.fontSettings ? d.fontSettings.italic : d.defaultFontSettings.italic
         elide: Text.ElideRight
     }
 

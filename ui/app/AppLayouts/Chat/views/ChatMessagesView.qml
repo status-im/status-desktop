@@ -239,8 +239,8 @@ Item {
         //        }
 
         Connections {
-            target: chatLogView.model
-            onDataChanged: {
+            target: chatLogView.model || null
+            function onDataChanged(topLeft, bottomRight, roles) {
                 if (roles.indexOf(Constants.messageModelRoles.responseToMessageWithId) !== -1) {
                     let item = chatLogView.itemAtIndex(topLeft.row)
                     if (item) {
@@ -249,7 +249,7 @@ Item {
                 }
             }
 
-            onReplyDeleted: {
+            function onReplyDeleted(messageIndex) {
                 let item = chatLogView.itemAtIndex(messageIndex)
                 if (item) {
                     item.replyDeleted()

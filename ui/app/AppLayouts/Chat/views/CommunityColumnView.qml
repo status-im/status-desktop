@@ -218,6 +218,7 @@ Item {
         width: parent.width
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        contentWidth: communityChatListAndCategories.implicitWidth
         contentHeight: communityChatListAndCategories.height
                        + bannerColumn.height
                        + Style.current.bigPadding
