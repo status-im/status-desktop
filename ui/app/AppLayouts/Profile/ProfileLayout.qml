@@ -26,23 +26,27 @@ StatusSectionLayout {
 
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     onBackButtonClicked: {
-        switch (profileContainer.currentIndex) {
+        switch (Global.settingsSubsection) {
         case Constants.settingsSubsection.contacts:
             Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging)
             break;
         case Constants.settingsSubsection.wallet:
-            walletView.resetStack();
+            walletView.item.resetStack()
             break;
         case Constants.settingsSubsection.keycard:
-            keycardView.handleBackAction();
+            keycardView.item.handleBackAction()
             break;
         }
+    }
+
+    Component.onCompleted: {
+        profileContainer.currentIndex = -1
+        profileContainer.currentIndex = Qt.binding(() => Global.settingsSubsection)
     }
 
     QtObject {
         id: d
 
-        readonly property int topMargin: 0
         readonly property int bottomMargin: 56
         readonly property int leftMargin: 64
         readonly property int rightMargin: 64
@@ -51,10 +55,8 @@ StatusSectionLayout {
     }
 
     leftPanel: LeftTabView {
-        id: leftTab
         store: root.store
         anchors.fill: parent
-        anchors.topMargin: d.topMargin
         onMenuItemClicked: {
             if (profileContainer.currentItem.dirty) {
                 event.accepted = true;
@@ -63,40 +65,39 @@ StatusSectionLayout {
         }
     }
 
-    centerPanel: Item {
+    centerPanel: StackLayout {
+        id: profileContainer
+
+        readonly property var currentItem: (currentIndex >= 0 && currentIndex < children.length) ? children[currentIndex].item : null
+
         anchors.fill: parent
+        anchors.bottomMargin: d.bottomMargin
+        anchors.leftMargin: d.leftMargin
+        anchors.rightMargin: d.rightMargin
 
-        StackLayout {
-            id: profileContainer
+        currentIndex: Global.settingsSubsection
 
-            readonly property var currentItem: (currentIndex >= 0 && currentIndex < children.length) ? children[currentIndex] : null
+        onCurrentIndexChanged: {
+            if (!children[currentIndex].active)
+                children[currentIndex].active = true
 
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: d.bottomMargin
-            anchors.leftMargin: d.leftMargin
-            anchors.rightMargin: d.rightMargin
+            root.store.backButtonName = ""
 
-            currentIndex: Global.settingsSubsection
-
-            onCurrentIndexChanged: {
-                if(visibleChildren[0] === ensContainer){
-                    ensContainer.goToStart();
-                }
-                if (currentIndex === 1) {
-                    root.store.backButtonName = root.store.getNameForSubsection(Constants.settingsSubsection.messaging);
-                }
-                else if (currentIndex === Constants.settingsSubsection.keycard) {
-                    keycardView.handleBackAction();
-                }
-                else {
-                    root.store.backButtonName = "";
-                }
+            if (currentIndex === Constants.settingsSubsection.ensUsernames) {
+                ensContainer.item.goToStart()
+            } else if (currentIndex === Constants.settingsSubsection.contacts) {
+                root.store.backButtonName = root.store.getNameForSubsection(Constants.settingsSubsection.messaging)
+            } else if (currentIndex === Constants.settingsSubsection.wallet) {
+                walletView.item.resetStack()
+            } else if (currentIndex === Constants.settingsSubsection.keycard) {
+                keycardView.item.handleBackAction()
             }
+        }
 
-            MyProfileView {
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: MyProfileView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
@@ -107,31 +108,43 @@ StatusSectionLayout {
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth
             }
+        }
 
-            ContactsView {
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: ContactsView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 contactsStore: root.store.contactsStore
                 sectionTitle: qsTr("Contacts")
                 contentWidth: d.contentWidth
             }
+        }
 
-            EnsView {
+        Loader {
+            id: ensContainer
+            active: false
+            asynchronous: true
+            sourceComponent: EnsView {
                 // TODO: we need to align structure for the entire this part using `SettingsContentBase` as root component
                 // TODO: handle structure for this subsection to match style used in onther sections
                 // using `SettingsContentBase` component as base.
-                id: ensContainer
+
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-
                 ensUsernamesStore: root.store.ensUsernamesStore
                 contactsStore: root.store.contactsStore
                 stickersStore: root.store.stickersStore
 
                 profileContentWidth: d.contentWidth
             }
+        }
 
-            MessagingView {
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: MessagingView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 advancedStore: root.store.advancedStore
@@ -140,9 +153,13 @@ StatusSectionLayout {
                 contactsStore: root.store.contactsStore
                 contentWidth: d.contentWidth
             }
+        }
 
-            WalletView {
-                id: walletView
+        Loader {
+            id: walletView
+            active: false
+            asynchronous: true
+            sourceComponent: WalletView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 rootStore: root.store
@@ -151,8 +168,13 @@ StatusSectionLayout {
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.wallet)
                 contentWidth: d.contentWidth
             }
+            onLoaded: root.store.backButtonName = ""
+        }
 
-            AppearanceView {
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: AppearanceView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
@@ -161,8 +183,12 @@ StatusSectionLayout {
                 contentWidth: d.contentWidth
                 systemPalette: root.systemPalette
             }
+        }
 
-            LanguageView {
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: LanguageView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
@@ -171,8 +197,12 @@ StatusSectionLayout {
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.language)
                 contentWidth: d.contentWidth
             }
+        }
 
-            NotificationsView {
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: NotificationsView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
@@ -181,8 +211,12 @@ StatusSectionLayout {
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.notifications)
                 contentWidth: d.contentWidth
             }
+        }
 
-            DevicesView {
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: DevicesView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
@@ -190,8 +224,12 @@ StatusSectionLayout {
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.devicesSettings)
                 contentWidth: d.contentWidth
             }
+        }
 
-            BrowserView {
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: BrowserView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
@@ -200,8 +238,12 @@ StatusSectionLayout {
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.browserSettings)
                 contentWidth: d.contentWidth
             }
+        }
 
-            AdvancedView {
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: AdvancedView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
@@ -209,8 +251,12 @@ StatusSectionLayout {
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.advanced)
                 contentWidth: d.contentWidth
             }
+        }
 
-            AboutView {
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: AboutView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.about)
@@ -231,11 +277,15 @@ StatusSectionLayout {
 
                     function openLink(url) {
                         Global.openLink(url)
-                 }
+                    }
                 }
             }
+        }
 
-            CommunitiesView {
+        Loader {
+            active: false
+            asynchronous: true
+            sourceComponent: CommunitiesView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
@@ -245,9 +295,13 @@ StatusSectionLayout {
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
                 contentWidth: d.contentWidth
             }
+        }
 
-            KeycardView {
-                id: keycardView
+        Loader {
+            id: keycardView
+            active: false
+            asynchronous: true
+            sourceComponent: KeycardView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
@@ -259,6 +313,5 @@ StatusSectionLayout {
                 contentWidth: d.contentWidth
             }
         }
-    } // Item
-
-} // StatusAppTwoPanelLayout
+    }
+}
