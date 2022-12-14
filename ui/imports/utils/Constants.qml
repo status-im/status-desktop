@@ -375,6 +375,14 @@ QtObject {
         readonly property int outgoingVerificationStatus: 272 // ModelRole.OutgoingVerificationStatus
     }
 
+    readonly property QtObject contactRequestStatus: QtObject {
+        readonly property int none: 0
+        readonly property int incomingPending: 1
+        readonly property int incomingRejected: 2
+        readonly property int outgoingPending: 3
+        readonly property int outgoingRejected: 4
+    }
+
     readonly property QtObject trustStatus: QtObject {
         readonly property int unknown: 0
         readonly property int trusted: 1

@@ -1,4 +1,7 @@
 import QtQuick 2.13
+
+import SortFilterProxyModel 0.2
+
 import utils 1.0
 
 QtObject {
@@ -11,10 +14,37 @@ QtObject {
 
     property string myPublicKey: userProfile.pubKey
 
-    property var myContactsModel: contactsModule.myMutualContactsModel
-    property var blockedContactsModel: contactsModule.blockedContactsModel
-    property var receivedContactRequestsModel: contactsModule.receivedContactRequestsModel
-    property var sentContactRequestsModel: contactsModule.sentContactRequestsModel
+    property var allContactsModel: contactsModule.contactsModel
+
+    property var mutualContactsModel: SortFilterProxyModel {
+        sourceModel: root.allContactsModel
+        filters: ExpressionFilter { expression: model.isContact }
+    }
+
+    property var blockedContactsModel: SortFilterProxyModel {
+        sourceModel: root.allContactsModel
+        filters: ExpressionFilter { expression: model.isBlocked }
+    }
+
+    property var receivedRequestsModel: SortFilterProxyModel {
+        sourceModel: root.allContactsModel
+        filters: ExpressionFilter { expression: _filterReceivedRequests(model) }
+    }
+
+    property var sentRequestsModel: SortFilterProxyModel {
+        sourceModel: root.allContactsModel
+        filters: ExpressionFilter { expression: _filterSentRequests(model) }
+    }
+
+    function _filterReceivedRequests(contact) {
+        return contact.contactRequestStatus === Constants.contactRequestStatus.incomingPending ||
+               contact.incomingVerificationStatus === Constants.verificationStatus.verifying
+    }
+
+    function _filterSentRequests(contact) {
+        return contact.contactRequestStatus === Constants.contactRequestStatus.outgoingPending ||
+               contact.outgoingVerificationStatus === Constants.verificationStatus.verifying
+    }
 
     // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
 //    property var receivedButRejectedContactRequestsModel: contactsModule.receivedButRejectedContactRequestsModel
@@ -33,15 +63,15 @@ QtObject {
     }
 
     function isMyMutualContact(pubKey) {
-       return root.contactsModule.isMyMutualContact(pubKey)
+       return root.allContactsModel.isMyMutualContact(pubKey)
     }
 
     function isBlockedContact(pubKey) {
-       return root.contactsModule.isBlockedContact(pubKey)
+       return root.allContactsModel.isBlockedContact(pubKey)
     }
 
     function hasPendingContactRequest(pubKey) {
-       return root.contactsModule.hasPendingContactRequest(pubKey)
+       return root.allContactsModel.hasPendingContactRequest(pubKey)
     }
 
     function joinPrivateChat(pubKey) {

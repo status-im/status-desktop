@@ -21,7 +21,7 @@ type
     IsVerified
     IsUntrustworthy
     IsBlocked
-    ContactRequest
+    ContactRequestStatus
     IncomingVerificationStatus
     OutgoingVerificationStatus
     IsAdmin
@@ -86,7 +86,7 @@ QtObject:
       ModelRole.IsVerified.int: "isVerified",
       ModelRole.IsUntrustworthy.int: "isUntrustworthy",
       ModelRole.IsBlocked.int: "isBlocked",
-      ModelRole.ContactRequest.int: "contactRequest",
+      ModelRole.ContactRequestStatus.int: "contactRequestStatus",
       ModelRole.IncomingVerificationStatus.int: "incomingVerificationStatus",
       ModelRole.OutgoingVerificationStatus.int: "outgoingVerificationStatus",
       ModelRole.IsAdmin.int: "isAdmin",
@@ -131,8 +131,8 @@ QtObject:
       result = newQVariant(item.isUntrustworthy)
     of ModelRole.IsBlocked:
       result = newQVariant(item.isBlocked)
-    of ModelRole.ContactRequest:
-      result = newQVariant(item.contactRequest.int)
+    of ModelRole.ContactRequestStatus:
+      result = newQVariant(item.contactRequestStatus.int)
     of ModelRole.IncomingVerificationStatus:
       result = newQVariant(item.incomingVerificationStatus.int)
     of ModelRole.OutgoingVerificationStatus:
@@ -166,7 +166,7 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-  proc isContactWithIdAdded*(self: Model, id: string): bool =
+  proc containsItem*(self: Model, id: string): bool =
     return self.findIndexForMember(id) != -1
 
   proc setName*(self: Model, pubKey: string, displayName: string,

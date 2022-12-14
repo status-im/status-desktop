@@ -38,7 +38,7 @@ Item {
         cellHeight: 2 * Style.current.xlPadding + Style.current.halfPadding
 
         model: SortFilterProxyModel {
-            sourceModel: root.contactsStore.myContactsModel
+            sourceModel: root.contactsStore.mutualContactsModel
             filters: [
                 ExpressionFilter { expression: root.pubKeys.indexOf(model.pubKey) > -1 }
             ]

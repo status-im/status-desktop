@@ -151,7 +151,7 @@ SettingsContentBase {
             objectName: "MessagingView_ContactsListItem_btn"
             Layout.fillWidth: true
             title: qsTr("Contacts, Requests, and Blocked Users")
-            requestsCount: root.contactsStore.receivedContactRequestsModel.count
+            requestsCount: root.contactsStore.receivedRequestsModel.count
             onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
                                                                    Constants.settingsSubsection.contacts)
         }

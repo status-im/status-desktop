@@ -82,17 +82,7 @@ Pane {
         }
 
         readonly property var conns: Connections {
-            target: root.contactsStore.myContactsModel
-
-            function onItemChanged(pubKey) {
-                if (pubKey === root.publicKey)
-                    d.reload()
-            }
-        }
-
-        // FIXME: use myContactsModel for identity verification
-        readonly property var conns2: Connections {
-            target: root.contactsStore.receivedContactRequestsModel
+            target: root.contactsStore.allContactsModel
 
             function onItemChanged(pubKey) {
                 if (pubKey === root.publicKey)

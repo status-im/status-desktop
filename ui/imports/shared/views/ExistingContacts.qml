@@ -49,7 +49,7 @@ Item {
         spacing: Style.current.padding
 
         model: SortFilterProxyModel {
-            sourceModel: root.contactsStore.myContactsModel
+            sourceModel: root.contactsStore.mutualContactsModel
             filters: [
                 ExpressionFilter {
                     expression: {

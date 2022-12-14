@@ -257,7 +257,7 @@ proc members*(self: SectionItem): member_model.Model {.inline.} =
   self.membersModel
 
 proc hasMember*(self: SectionItem, pubkey: string): bool =
-  self.membersModel.isContactWithIdAdded(pubkey)
+  self.membersModel.containsItem(pubkey)
 
 proc setOnlineStatusForMember*(self: SectionItem, pubKey: string,
     onlineStatus: OnlineStatus) =

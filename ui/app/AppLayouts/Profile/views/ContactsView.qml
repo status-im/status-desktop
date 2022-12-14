@@ -84,10 +84,10 @@ SettingsContentBase {
                 id: pendingRequestsBtn
                 objectName: "ContactsView_PendingRequest_Button"
                 width: implicitWidth
-                enabled: root.contactsStore.receivedContactRequestsModel.count > 0 ||
-                         root.contactsStore.sentContactRequestsModel.count > 0
+                enabled: root.contactsStore.receivedRequestsModel.count > 0 ||
+                         root.contactsStore.sentRequestsModel.count > 0
                 text: qsTr("Pending Requests")
-                badge.value: root.contactsStore.receivedContactRequestsModel.count
+                badge.value: root.contactsStore.receivedRequestsModel.count
             }
             // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
             //            StatusTabButton {
@@ -129,7 +129,7 @@ SettingsContentBase {
                     Layout.fillWidth: true
                     title: qsTr("Identity Verified Contacts")
                     visible: !noFriendsItem.visible && count > 0
-                    contactsModel: root.contactsStore.myContactsModel
+                    contactsModel: root.contactsStore.mutualContactsModel
                     searchString: searchBox.text
                     onOpenContactContextMenu: function (publicKey, name, icon) {
                         root.openContextMenu(publicKey, name, icon)
@@ -146,7 +146,7 @@ SettingsContentBase {
                     Layout.fillWidth: true
                     visible: !noFriendsItem.visible && count > 0
                     title: qsTr("Contacts")
-                    contactsModel: root.contactsStore.myContactsModel
+                    contactsModel: root.contactsStore.mutualContactsModel
                     searchString: searchBox.text
                     contactsStore: root.contactsStore
                     onOpenContactContextMenu: function (publicKey, name, icon) {
@@ -163,7 +163,7 @@ SettingsContentBase {
                     id: noFriendsItem
                     Layout.fillWidth: true
                     Layout.preferredHeight: visible ?  (root.contentHeight - (2*searchBox.height) - contactsTabBar.height - contactsTabBar.anchors.topMargin) : 0
-                    visible: root.contactsStore.myContactsModel.count === 0
+                    visible: root.contactsStore.mutualContactsModel.count === 0
                     NoFriendsRectangle {
                         anchors.centerIn: parent
                         text: qsTr("You don’t have any contacts yet")
@@ -193,7 +193,7 @@ SettingsContentBase {
                     onOpenContactContextMenu: function (publicKey, name, icon) {
                         root.openContextMenu(publicKey, name, icon)
                     }
-                    contactsModel: root.contactsStore.receivedContactRequestsModel
+                    contactsModel: root.contactsStore.receivedRequestsModel
                     panelUsage: Constants.contactsPanelUsage.receivedContactRequest
 
                     onSendMessageActionTriggered: {
@@ -224,7 +224,7 @@ SettingsContentBase {
                     onOpenContactContextMenu: function (publicKey, name, icon) {
                         root.openContextMenu(publicKey, name, icon)
                     }
-                    contactsModel: root.contactsStore.sentContactRequestsModel
+                    contactsModel: root.contactsStore.sentRequestsModel
                     panelUsage: Constants.contactsPanelUsage.sentContactRequest
                 }
             }

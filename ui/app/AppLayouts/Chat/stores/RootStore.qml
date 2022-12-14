@@ -21,7 +21,7 @@ QtObject {
     property string createChatStickerUrl: ""
 
     property var membershipRequestPopup
-    property var contactsModel: root.contactsStore.myContactsModel
+    property var contactsModel: root.contactsStore.mutualContactsModel
 
     // Important:
     // Each `ChatLayout` has its own chatCommunitySectionModule

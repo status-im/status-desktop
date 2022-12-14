@@ -73,7 +73,7 @@ Column {
             badge.value: {
                 switch (model.subsection) {
                     case Constants.settingsSubsection.messaging:
-                        return root.contactsStore.receivedContactRequestsModel.count
+                        return root.contactsStore.receivedRequestsModel.count
                     default: return ""
                 }
             }

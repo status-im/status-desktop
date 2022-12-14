@@ -2,7 +2,7 @@ import strformat
 import ../../../app_service/common/types
 
 type
-  ContactRequest* {.pure.} = enum
+  ContactRequestStatus* {.pure.} = enum
     None = 0
     IncomingPending
     IncomingRejected
@@ -32,7 +32,7 @@ type
     isVerified: bool
     isUntrustworthy: bool
     isBlocked: bool
-    contactRequest: ContactRequest
+    contactRequestStatus: ContactRequestStatus
     incomingVerificationStatus: VerificationRequestStatus
     outgoingVerificationStatus: VerificationRequestStatus
 
@@ -50,7 +50,7 @@ proc setup*(self: UserItem,
   isVerified: bool,
   isUntrustworthy: bool,
   isBlocked: bool,
-  contactRequest: ContactRequest,
+  contactRequestStatus: ContactRequestStatus,
   incomingVerificationStatus: VerificationRequestStatus,
   outgoingVerificationStatus: VerificationRequestStatus,
   ) =
@@ -67,7 +67,7 @@ proc setup*(self: UserItem,
   self.isVerified = isVerified
   self.isUntrustworthy = isUntrustworthy
   self.isBlocked = isBlocked
-  self.contactRequest = contactRequest
+  self.contactRequestStatus = contactRequestStatus
   self.incomingVerificationStatus = incomingVerificationStatus
   self.outgoingVerificationStatus = outgoingVerificationStatus
 
@@ -86,7 +86,7 @@ proc initUserItem*(
     isVerified: bool,
     isUntrustworthy: bool,
     isBlocked: bool,
-    contactRequest: ContactRequest = ContactRequest.None,
+    contactRequestStatus: ContactRequestStatus = ContactRequestStatus.None,
     incomingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
     outgoingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
     ): UserItem =
@@ -105,7 +105,7 @@ proc initUserItem*(
     isVerified = isVerified,
     isUntrustworthy = isUntrustworthy,
     isBlocked = isBlocked,
-    contactRequest = contactRequest,
+    contactRequestStatus = contactRequestStatus,
     incomingVerificationStatus = incomingVerificationStatus,
     outgoingVerificationStatus = outgoingVerificationStatus)
 
@@ -124,7 +124,7 @@ proc `$`*(self: UserItem): string =
     isVerified: {self.isVerified},
     isUntrustworthy: {self.isUntrustworthy},
     isBlocked: {self.isBlocked},
-    contactRequest: {$self.contactRequest.int},
+    contactRequestStatus: {$self.contactRequestStatus.int},
     incomingVerificationStatus: {$self.incomingVerificationStatus.int},
     outgoingVerificationStatus: {$self.outgoingVerificationStatus.int},
     ]"""
@@ -204,11 +204,11 @@ proc isBlocked*(self: UserItem): bool {.inline.} =
 proc `isBlocked=`*(self: UserItem, value: bool) {.inline.} =
   self.isBlocked = value
 
-proc contactRequest*(self: UserItem): ContactRequest {.inline.} =
-  self.contactRequest
+proc contactRequestStatus*(self: UserItem): ContactRequestStatus {.inline.} =
+  self.contactRequestStatus
 
-proc `contactRequest=`*(self: UserItem, value: ContactRequest) {.inline.} =
-  self.contactRequest = value
+proc `contactRequestStatus=`*(self: UserItem, value: ContactRequestStatus) {.inline.} =
+  self.contactRequestStatus = value
 
 proc incomingVerificationStatus*(self: UserItem): VerificationRequestStatus {.inline.} =
   self.incomingVerificationStatus

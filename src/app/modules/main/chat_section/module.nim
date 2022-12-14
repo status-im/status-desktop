@@ -699,7 +699,7 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
   if (contactDetails.details.isContactRequestReceived() and
     not contactDetails.details.isContactRequestSent() and
     not contactDetails.details.isBlocked() and
-    not self.view.contactRequestsModel().isContactWithIdAdded(publicKey)):
+    not self.view.contactRequestsModel().containsItem(publicKey)):
       let item = self.createItemFromPublicKey(publicKey)
       self.view.contactRequestsModel().addItem(item)
       self.updateParentBadgeNotifications()

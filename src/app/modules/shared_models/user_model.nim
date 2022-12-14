@@ -18,7 +18,7 @@ type
     IsVerified
     IsUntrustworthy
     IsBlocked
-    ContactRequest
+    ContactRequestStatus
     IncomingVerificationStatus
     OutgoingVerificationStatus
 
@@ -77,7 +77,7 @@ QtObject:
       ModelRole.IsVerified.int: "isVerified",
       ModelRole.IsUntrustworthy.int: "isUntrustworthy",
       ModelRole.IsBlocked.int: "isBlocked",
-      ModelRole.ContactRequest.int: "contactRequest",
+      ModelRole.ContactRequestStatus.int: "contactRequestStatus",
       ModelRole.IncomingVerificationStatus.int: "incomingVerificationStatus",
       ModelRole.OutgoingVerificationStatus.int: "outgoingVerificationStatus",
     }.toTable
@@ -119,8 +119,8 @@ QtObject:
       result = newQVariant(item.isUntrustworthy)
     of ModelRole.IsBlocked:
       result = newQVariant(item.isBlocked)
-    of ModelRole.ContactRequest:
-      result = newQVariant(item.contactRequest.int)
+    of ModelRole.ContactRequestStatus:
+      result = newQVariant(item.contactRequestStatus.int)
     of ModelRole.IncomingVerificationStatus:
       result = newQVariant(item.incomingVerificationStatus.int)
     of ModelRole.OutgoingVerificationStatus:
@@ -189,9 +189,32 @@ QtObject:
 
     self.itemChanged(pubKey)
 
-# TODO: rename to `containsItem`
-  proc isContactWithIdAdded*(self: Model, id: string): bool =
+  proc addOrUpdateItem*(self: Model, item: UserItem) =
+    let ind = self.findIndexByPubKey(item.pubKey)
+    if ind != -1:
+      self.removeItemWithIndex(ind)
+    self.addItem(item)
+
+  proc containsItem*(self: Model, id: string): bool =
     return self.findIndexByPubKey(id) != -1
+
+  proc isMyMutualContact*(self: Model, pubKey: string): bool {.slot.} =
+    let ind = self.findIndexByPubKey(pubKey)
+    if ind == -1:
+      return false
+    return self.items[ind].isContact
+
+  proc isBlockedContact*(self: Model, pubKey: string): bool {.slot.} =
+    let ind = self.findIndexByPubKey(pubKey)
+    if ind == -1:
+      return false
+    return self.items[ind].isBlocked
+
+  proc hasPendingContactRequest*(self: Model, pubKey: string): bool {.slot.} =
+    let ind = self.findIndexByPubKey(pubKey)
+    if ind == -1:
+      return false
+    return self.items[ind].contactRequestStatus == ContactRequestStatus.OutgoingPending
 
   proc setName*(self: Model, pubKey: string, displayName: string,
       ensName: string, localNickname: string) =

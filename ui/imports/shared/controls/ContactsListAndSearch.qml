@@ -142,7 +142,7 @@ Item {
                     searchResults.loading = false;
                     noContactsRect.visible = pubKey === ""  &&
                             ensUsername.text === "" &&
-                            root.contactsStore.myContactsModel.count === 0 &&
+                            root.contactsStore.mutualContactsModel.count === 0 &&
                             !profileNotFoundMessage.visible
                 }
             }

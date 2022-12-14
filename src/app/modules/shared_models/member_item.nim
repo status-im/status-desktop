@@ -26,7 +26,7 @@ proc initMemberItem*(
   isVerified: bool,
   isUntrustworthy: bool = false,
   isBlocked: bool = false,
-  contactRequest: ContactRequest = ContactRequest.None,
+  contactRequestStatus: ContactRequestStatus = ContactRequestStatus.None,
   incomingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
   outgoingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
   isAdmin: bool = false,
@@ -51,7 +51,7 @@ proc initMemberItem*(
     isVerified = isVerified,
     isUntrustworthy = isUntrustworthy,
     isBlocked = isBlocked,
-    contactRequest = contactRequest,
+    contactRequestStatus = contactRequestStatus,
     incomingVerificationStatus = incomingVerificationStatus,
     outgoingVerificationStatus = outgoingVerificationStatus
   )
@@ -71,7 +71,7 @@ proc `$`*(self: MemberItem): string =
     isVerified: {self.isVerified},
     isUntrustworthy: {self.isUntrustworthy},
     isBlocked: {self.isBlocked},
-    contactRequest: {$self.contactRequest.int},
+    contactRequestStatus: {$self.contactRequestStatus.int},
     incomingVerificationStatus: {$self.incomingVerificationStatus.int},
     outgoingVerificationStatus: {$self.outgoingVerificationStatus.int},
     isAdmin: {self.isAdmin},

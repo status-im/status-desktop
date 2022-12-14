@@ -86,7 +86,7 @@ Item {
     StatusComboBox {
         id: comboBox
         label: ""
-        model: root.contactsStore.myContactsModel
+        model: root.contactsStore.mutualContactsModel
         width: parent.width
         visible: !root.readOnly
 

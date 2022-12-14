@@ -63,7 +63,7 @@ Item {
                 }
 
                 contactsStore: QtObject {
-                    readonly property ListModel myContactsModel: ListModel {
+                    readonly property ListModel mutualContactsModel: ListModel {
                         Component.onCompleted: {
                             const keys = []
 

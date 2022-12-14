@@ -60,7 +60,7 @@ Pane {
         community: ({ id: "communityId" })
 
         contactsStore: QtObject {
-            readonly property ListModel myContactsModel: ListModel {
+            readonly property ListModel mutualContactsModel: ListModel {
                 ListElement {
                     pubKey: "0x02342342342"
                     isContact: true

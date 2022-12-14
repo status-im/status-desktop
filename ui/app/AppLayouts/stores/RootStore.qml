@@ -62,7 +62,7 @@ QtObject {
     property var contactStore: profileSectionStore.contactsStore
     property var privacyStore: profileSectionStore.privacyStore
     property var messagingStore: profileSectionStore.messagingStore
-    property bool hasAddedContacts: contactStore.myContactsModel.count > 0
+    property bool hasAddedContacts: contactStore.mutualContactsModel.count > 0
 
 //    property MessageStore messageStore: MessageStore { }
 

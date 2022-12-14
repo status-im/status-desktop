@@ -67,7 +67,7 @@ method getModuleAsVariant*(self: Module): QVariant =
 
 method onNewMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
   for m in messages:
-    if(self.view.model().isContactWithIdAdded(m.`from`)):
+    if(self.view.model().containsItem(m.`from`)):
       continue
 
     let contactDetails = self.controller.getContactDetails(m.`from`)
@@ -124,12 +124,12 @@ method addChatMember*(self: Module,  member: ChatMember) =
     return
 
   if not member.joined:
-    if self.view.model().isContactWithIdAdded(member.id):
+    if self.view.model().containsItem(member.id):
       # Member is no longer joined
       self.view.model().removeItemById(member.id)
     return
 
-  if self.view.model().isContactWithIdAdded(member.id):
+  if self.view.model().containsItem(member.id):
     return
 
   let isMe = member.id == singletonInstance.userProfile.getPubKey()

@@ -25,7 +25,7 @@ StatusSectionLayout {
     id: root
 
     property var contactsStore
-    property bool hasAddedContacts: root.contactsStore.myContactsModel.count > 0
+    property bool hasAddedContacts: root.contactsStore.mutualContactsModel.count > 0
 
     property RootStore rootStore
 

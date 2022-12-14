@@ -99,7 +99,7 @@ SplitView {
                 }
 
                 contactsStore: QtObject {
-                    readonly property ListModel myContactsModel: ListModel {
+                    readonly property ListModel mutualContactsModel: ListModel {
                         Component.onCompleted: {
                             for (let i = 0; i < 20; i++) {
                                 const key = `pub_key_${i}`

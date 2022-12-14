@@ -41,7 +41,7 @@ StatusModal {
     }
 
     Connections {
-        target: root.contactsStore.receivedContactRequestsModel
+        target: root.contactsStore.allContactsModel
 
         function onItemChanged(pubKey) {
             if (pubKey === root.publicKey)

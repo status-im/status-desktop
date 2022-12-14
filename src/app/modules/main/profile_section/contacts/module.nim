@@ -59,9 +59,10 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
 proc buildModel(self: Module, model: Model, group: ContactsGroup) =
   var items: seq[UserItem]
   let contacts =  self.controller.getContacts(group)
-  for c in contacts:
-    let item = self.createItemFromPublicKey(c.id)
-    items.add(item)
+  for contact in contacts:
+    if singletonInstance.userProfile.getPubKey() != contact.id:
+      let item = self.createItemFromPublicKey(contact.id)
+      items.add(item)
 
   model.addItems(items)
 
@@ -73,23 +74,7 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  self.buildModel(self.view.myMutualContactsModel(), ContactsGroup.MyMutualContacts)
-  self.buildModel(self.view.blockedContactsModel(), ContactsGroup.BlockedContacts)
-  self.buildModel(self.view.receivedContactRequestsModel(), ContactsGroup.IncomingPendingContactRequests)
-  self.buildModel(self.view.sentContactRequestsModel(), ContactsGroup.OutgoingPendingContactRequests)
-  # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-  # self.buildModel(self.view.receivedButRejectedContactRequestsModel(), ContactsGroup.IncomingRejectedContactRequests)
-  # self.buildModel(self.view.sentButRejectedContactRequestsModel(), ContactsGroup.IncomingRejectedContactRequests)
-  
-  let receivedVerificationRequests = self.controller.getReceivedVerificationRequests()
-  var receivedVerificationRequestItems: seq[UserItem] = @[]
-  for receivedVerificationRequest in receivedVerificationRequests:
-    if receivedVerificationRequest.status == VerificationStatus.Verifying or
-        receivedVerificationRequest.status == VerificationStatus.Verified:
-      let contactItem = self.createItemFromPublicKey(receivedVerificationRequest.fromID)
-      contactItem.incomingVerificationStatus = VerificationRequestStatus(receivedVerificationRequest.status)
-      receivedVerificationRequestItems.add(contactItem)
-  self.view.receivedContactRequestsModel().addItems(receivedVerificationRequestItems)
+  self.buildModel(self.view.contactsModel(), ContactsGroup.AllKnownContacts)
 
   self.moduleLoaded = true
   self.delegate.contactsModuleDidLoad()
@@ -124,77 +109,54 @@ method changeContactNickname*(self: Module, publicKey: string, nickname: string)
 method removeContactRequestRejection*(self: Module, publicKey: string) =
   self.controller.removeContactRequestRejection(publicKey)
 
-proc addItemToAppropriateModel(self: Module, item: UserItem) =
-  if(singletonInstance.userProfile.getPubKey() == item.pubKey):
+proc addOrUpdateItem(self: Module, publicKey: string) =
+  if singletonInstance.userProfile.getPubKey() == publicKey:
     return
-  let contact = self.controller.getContact(item.pubKey())
-  if(contact.isContactRemoved()):
-    return
-  elif(contact.isBlocked()):
-    self.view.blockedContactsModel().addItem(item)
-  elif(contact.isContact()):
-    self.view.myMutualContactsModel().addItem(item)
-  else:
-    if(contact.isContactRequestReceived() and not contact.isContactRequestSent()):
-      self.view.receivedContactRequestsModel().addItem(item)
-    elif(contact.isContactRequestSent() and not contact.isContactRequestReceived()):
-      self.view.sentContactRequestsModel().addItem(item)
-    # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-    # elif(contact.isContactRequestReceived() and contact.isReceivedContactRequestRejected()):
-    #   self.view.receivedButRejectedContactRequestsModel().addItem(item)
-    # elif(contact.isContactRequestSent() and contact.isSentContactRequestRejected()):
-    #   self.view.sentButRejectedContactRequestsModel().addItem(item)
 
-proc removeItemWithPubKeyFromAllModels(self: Module, publicKey: string) =
-  self.view.myMutualContactsModel().removeItemById(publicKey)
-  self.view.receivedContactRequestsModel().removeItemById(publicKey)
-  self.view.sentContactRequestsModel().removeItemById(publicKey)
-  # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-  # self.view.receivedButRejectedContactRequestsModel().removeItemById(publicKey)
-  # self.view.sentButRejectedContactRequestsModel().removeItemById(publicKey)
-  self.view.blockedContactsModel().removeItemById(publicKey)
+  let item =  self.createItemFromPublicKey(publicKey)
+  self.view.contactsModel().addOrUpdateItem(item)
 
-method removeIfExistsAndAddToAppropriateModel*(self: Module, publicKey: string) =
-  self.removeItemWithPubKeyFromAllModels(publicKey)
-  let item = self.createItemFromPublicKey(publicKey)
-  self.addItemToAppropriateModel(item)
+proc removeItem(self: Module, publicKey: string) =
+  self.view.contactsModel().removeItemById(publicKey)
 
 method contactAdded*(self: Module, publicKey: string) =
-  self.removeIfExistsAndAddToAppropriateModel(publicKey)
+  self.addOrUpdateItem(publicKey)
 
 method contactBlocked*(self: Module, publicKey: string) =
-  self.removeIfExistsAndAddToAppropriateModel(publicKey)
+  self.addOrUpdateItem(publicKey)
 
 method contactUnblocked*(self: Module, publicKey: string) =
-  self.removeIfExistsAndAddToAppropriateModel(publicKey)
+  self.addOrUpdateItem(publicKey)
 
 method contactRemoved*(self: Module, publicKey: string) =
-  self.removeIfExistsAndAddToAppropriateModel(publicKey)
+  self.addOrUpdateItem(publicKey)
 
 method contactRequestRejectionRemoved*(self: Module, publicKey: string) =
-  self.removeIfExistsAndAddToAppropriateModel(publicKey)
+  self.addOrUpdateItem(publicKey)
 
 method contactUpdated*(self: Module, publicKey: string) =
-  self.removeIfExistsAndAddToAppropriateModel(publicKey)
+  self.addOrUpdateItem(publicKey)
+
+method onVerificationRequestDeclined*(self: Module, publicKey: string) =
+  self.addOrUpdateItem(publicKey)
+
+method onVerificationRequestCanceled*(self: Module, publicKey: string) =
+  self.addOrUpdateItem(publicKey)
+
+method onVerificationRequestUpdatedOrAdded*(self: Module, request: VerificationRequest) =
+  self.addOrUpdateItem(request.fromID)
 
 method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto]) =
   for s in statusUpdates:
     let status = toOnlineStatus(s.statusType)
-    self.view.myMutualContactsModel().setOnlineStatus(s.publicKey, status)
+    self.view.contactsModel().setOnlineStatus(s.publicKey, status)
 
 method contactNicknameChanged*(self: Module, publicKey: string) =
   let (name, _, _) = self.controller.getContactNameAndImage(publicKey)
-  self.view.myMutualContactsModel().updateName(publicKey, name)
-  self.view.receivedContactRequestsModel().updateName(publicKey, name)
-  self.view.sentContactRequestsModel().updateName(publicKey, name)
-  # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-  # self.view.receivedButRejectedContactRequestsModel().updateName(publicKey, name)
-  # self.view.sentButRejectedContactRequestsModel().updateName(publicKey, name)
-  self.view.blockedContactsModel().updateName(publicKey, name)
+  self.view.contactsModel().updateName(publicKey, name)
 
 method contactTrustStatusChanged*(self: Module, publicKey: string, isUntrustworthy: bool) =
-  self.view.myMutualContactsModel().updateTrustStatus(publicKey, isUntrustworthy)
-  self.view.blockedContactsModel().updateTrustStatus(publicKey, isUntrustworthy)
+  self.view.contactsModel().updateTrustStatus(publicKey, isUntrustworthy)
 
 method markUntrustworthy*(self: Module, publicKey: string): void =
   self.controller.markUntrustworthy(publicKey)
@@ -253,24 +215,3 @@ method acceptVerificationRequest*(self: Module, publicKey: string, response: str
 
 method getReceivedVerificationRequests*(self: Module): seq[VerificationRequest] =
   self.controller.getReceivedVerificationRequests()
-
-method onVerificationRequestDeclined*(self: Module, publicKey: string) =
-  self.view.receivedContactRequestsModel.removeItemById(publicKey)
-
-method onVerificationRequestCanceled*(self: Module, publicKey: string) =
-  self.view.receivedContactRequestsModel.removeItemById(publicKey)
-
-method onVerificationRequestUpdatedOrAdded*(self: Module, request: VerificationRequest) =
-  let item =  self.createItemFromPublicKey(request.fromID)
-  item.incomingVerificationStatus = VerificationRequestStatus(request.status)
-  if (self.view.receivedContactRequestsModel.containsItemWithPubKey(request.fromID)):
-    if request.status != VerificationStatus.Verifying and
-        request.status != VerificationStatus.Verified:
-      self.view.receivedContactRequestsModel.removeItemById(request.fromID)
-      return
-    self.view.receivedContactRequestsModel.updateIncomingRequestStatus(
-      item.pubKey,
-      item.incomingVerificationStatus
-    )
-    return
-  self.view.receivedContactRequestsModel.addItem(item)

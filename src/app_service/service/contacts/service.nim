@@ -72,7 +72,7 @@ const SIGNAL_CONTACT_VERIFICATION_UPDATED* = "contactVerificationRequestUpdated"
 type
   ContactsGroup* {.pure.} = enum
     AllKnownContacts
-    MyMutualContacts    
+    MyMutualContacts
     IncomingPendingContactRequests
     OutgoingPendingContactRequests
     IncomingRejectedContactRequests
