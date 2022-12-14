@@ -122,6 +122,12 @@ QtObject {
         return ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
     }
 
+    function getCryptoValue(balance, cryptoSymbol, fiatSymbol) {
+        if(!root.ensUsernamesModule)
+            return ""
+        return ensUsernamesModule.getCryptoValue(balance, cryptoSymbol, fiatSymbol)
+    }
+
     function getGasEthValue(gweiValue, gasLimit) {
         if(!root.ensUsernamesModule)
             return ""

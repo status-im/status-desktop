@@ -60,7 +60,7 @@ StatusDialog {
                     popup.selectedAccount.address,
                     recipientAddress,
                     assetSelector.selectedAsset.symbol,
-                    amountToSendInput.text,
+                    amountToSendInput.cryptoValueToSend,
                     d.uuid,
                     JSON.stringify(popup.bestRoutes)
                     )
@@ -69,7 +69,7 @@ StatusDialog {
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
         if(!!popup.selectedAccount && !!assetSelector.selectedAsset && d.recipientReady) {
             popup.isLoading = true
-            let amount = parseFloat(amountToSendInput.text) * Math.pow(10, assetSelector.selectedAsset.decimals)
+            let amount = Math.round(parseFloat(amountToSendInput.cryptoValueToSend) * Math.pow(10, assetSelector.selectedAsset.decimals))
             popup.store.suggestedRoutes(popup.selectedAccount.address, amount.toString(16), assetSelector.selectedAsset.symbol,
                                         store.disabledChainIdsFromList, store.disabledChainIdsToList,
                                         store.preferredChainIds, popup.sendType, store.lockedInAmounts)
@@ -78,13 +78,15 @@ StatusDialog {
 
     QtObject {
         id: d
-        readonly property double maxFiatBalance: assetSelector.selectedAsset ? assetSelector.selectedAsset.totalBalance: 0
+        readonly property double maxFiatBalance: !!assetSelector.selectedAsset ? (amountToSendInput.cryptoFiatFlipped ?
+                                                                                    assetSelector.selectedAsset.totalCurrencyBalance :
+                                                                                    assetSelector.selectedAsset.totalBalance): 0
         onMaxFiatBalanceChanged: {
-            floatValidator.top = maxFiatBalance
-            amountToSendInput.validate()
+            amountToSendInput.floatValidator.top = maxFiatBalance
+            amountToSendInput.input.validate()
         }
-        readonly property bool isReady: amountToSendInput.valid && !amountToSendInput.pending && recipientReady
-        readonly property bool errorMode: popup.isLoading || !isReady ? false : (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0) || networkSelector.errorMode || isNaN(amountToSendInput.text)
+        readonly property bool isReady: amountToSendInput.input.valid && !amountToSendInput.input.pending && recipientReady
+        readonly property bool errorMode: popup.isLoading || !isReady ? false : (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0) || networkSelector.errorMode || isNaN(amountToSendInput.input.text)
         readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending
         property bool isAddressValid: Utils.isValidAddress(popup.addressText)
         property bool isENSValid: false
@@ -97,6 +99,7 @@ StatusDialog {
         property string totalTimeEstimate
         property string totalFeesInEth
         property string totalFeesInFiat
+        property double totalAmountToReceive: 0
 
         property Timer waitTimer: Timer {
             interval: 1500
@@ -124,14 +127,14 @@ StatusDialog {
             store.setDefaultPreferredDisabledChains()
         }
 
-        amountToSendInput.input.edit.forceActiveFocus()
+        amountToSendInput.input.input.edit.forceActiveFocus()
 
         if(!!popup.preSelectedAsset) {
             assetSelector.selectedAsset = popup.preSelectedAsset
         }
 
         if(!!popup.preDefinedAmountToSend) {
-            amountToSendInput.text = popup.preDefinedAmountToSend
+            amountToSendInput.input.text = popup.preDefinedAmountToSend
         }
 
         if(!!popup.preSelectedRecipient) {
@@ -190,63 +193,30 @@ StatusDialog {
                     anchors.leftMargin: Style.current.xlPadding
                     anchors.rightMargin: Style.current.xlPadding
                     z: 1
+                    spacing: 16
 
-                    Row {
-                        spacing: 16
+                    RowLayout {
+                        width: parent.width
+                        spacing: 8
                         StatusBaseText {
                             id: modalHeader
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                             text: popup.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
-                            font.pixelSize: 15
+                            font.pixelSize: 28
+                            lineHeight: 38
+                            lineHeightMode: Text.FixedHeight
+                            font.letterSpacing: -0.4
                             color: Theme.palette.directColor1
-                        }
-                        StatusListItemTag {
-                            bgColor: d.errorMode ? Theme.palette.dangerColor2 : Theme.palette.primaryColor3
-                            height: 22
-                            width: childrenRect.width
-                            title: d.maxFiatBalance > 0 ? qsTr("Max: %1").arg(LocaleUtils.numberToLocaleString(d.maxFiatBalance)) : qsTr("No balances active")
-                            closeButtonVisible: false
-                            titleText.font.pixelSize: 12
-                            titleText.color: d.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
-                        }
-                    }
-                    Item {
-                        width: parent.width
-                        height: amountToSendInput.height
-                        AmountInputWithCursor {
-                            id: amountToSendInput
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
-                            anchors.leftMargin: -Style.current.padding
-                            width: parent.width - assetSelector.width
-                            placeholderText: assetSelector.selectedAsset ? "%1 %2".arg(LocaleUtils.numberToLocaleString(0, 2)).arg(assetSelector.selectedAsset.symbol) : LocaleUtils.numberToLocaleString(0, 2)
-                            input.edit.color: d.errorMode ? Theme.palette.dangerColor1 : Theme.palette.directColor1
-                            input.edit.readOnly: !popup.interactive
-                            validators: [
-                                StatusFloatValidator{
-                                    id: floatValidator
-                                    bottom: 0
-                                    top: d.maxFiatBalance
-                                    errorMessage: ""
-                                }
-                            ]
-                            Keys.onReleased: {
-                                let amount = amountToSendInput.text.trim()
-
-                                if (!Utils.containsOnlyDigits(amount) || isNaN(amount)) {
-                                    return
-                                }
-                                popup.recalculateRoutesAndFees()
-                            }
+                            Layout.maximumWidth: contentWidth
                         }
                         StatusAssetSelector {
                             id: assetSelector
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.right: parent.right
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignTop | Qt.AlignLeft
                             enabled: popup.interactive
                             assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : []
                             defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")
-                            placeholderText: popup.isBridgeTx ? qsTr("Select token to bridge") : qsTr("Select token to send")
+                            placeholderText: qsTr("Select token")
                             getCurrencyBalanceString: function (currencyBalance) {
                                 return "%1 %2".arg(Utils.toLocaleString(currencyBalance.toFixed(2), popup.store.locale, {"currency": true})).arg(popup.store.currentCurrency.toUpperCase())
                             }
@@ -260,59 +230,48 @@ StatusDialog {
                                 return ""
                             }
                             onSelectedAssetChanged: {
-                                if (!assetSelector.selectedAsset) {
-                                    return
-                                }
-                                if (amountToSendInput.text === "" || isNaN(amountToSendInput.text)) {
+                                if (!assetSelector.selectedAsset || !!amountToSendInput.input.text || isNaN(amountToSendInput.input.text)) {
                                     return
                                 }
                                 popup.recalculateRoutesAndFees()
                             }
                         }
-                    }
-                    StatusInput {
-                        id: txtFiatBalance
-                        anchors.left: parent.left
-                        anchors.leftMargin: -12
-                        leftPadding: 0
-                        rightPadding: 0
-                        font.weight: Font.Medium
-                        font.pixelSize: 13
-                        input.placeholderFont.pixelSize: 13
-                        input.leftPadding: 0
-                        input.rightPadding: 0
-                        input.topPadding: 0
-                        input.bottomPadding: 0
-                        input.edit.padding: 0
-                        input.background.color: "transparent"
-                        input.background.border.width: 0
-                        input.edit.color: txtFiatBalance.input.edit.activeFocus ? Theme.palette.directColor1 : Theme.palette.baseColor1
-                        input.edit.readOnly: true
-                        text: {
-                            if(!!assetSelector.selectedAsset) {
-                                let fiatValue = popup.store.getFiatValue(amountToSendInput.text, assetSelector.selectedAsset.symbol, popup.store.currentCurrency)
-                                return parseFloat(fiatValue) === 0 ? LocaleUtils.numberToLocaleString(parseFloat(fiatValue), 2) : LocaleUtils.numberToLocaleString(parseFloat(fiatValue))
-                            }
-                            return LocaleUtils.numberToLocaleString(0, 2)
-                        }
-                        input.implicitHeight: Style.current.bigPadding
-                        implicitWidth: txtFiatBalance.input.edit.contentWidth + 50
-                        input.rightComponent: StatusBaseText {
-                            id: currencyText
-                            text: popup.store.currentCurrency.toUpperCase()
-                            font.pixelSize: 13
-                            color: Theme.palette.directColor5
-                        }
-                        Keys.onReleased: {
-                            let balance = txtFiatBalance.text.trim()
-                            if (balance === "" || isNaN(balance)) {
-                                return
-                            }
-                            // To-Do Not refactored yet
-                            // amountToSendInput.text = root.getCryptoValue(balance, popup.store.currentCurrency, assetSelector.selectedAsset.symbol)
+                        StatusListItemTag {
+                            Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                            Layout.preferredHeight: 22
+                            title: d.maxFiatBalance > 0 ? qsTr("Max: %1").arg(LocaleUtils.numberToLocaleString(d.maxFiatBalance)) : qsTr("No balances active")
+                            closeButtonVisible: false
+                            titleText.font.pixelSize: 12
+                            bgColor: d.errorMode ? Theme.palette.dangerColor2 : Theme.palette.primaryColor3
+                            titleText.color: d.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
                         }
                     }
-
+                    RowLayout {
+                        width: parent.width
+                        AmountToSend {
+                            id: amountToSendInput
+                            Layout.fillWidth:true
+                            isBridgeTx: popup.isBridgeTx
+                            interactive: popup.interactive
+                            store: popup.store
+                            selectedAsset: assetSelector.selectedAsset
+                            errorMode: d.errorMode
+                            maxFiatBalance: d.maxFiatBalance
+                            onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
+                        }
+                        AmountToReceive {
+                            id: amountToReceive
+                            Layout.alignment: Qt.AlignRight
+                            Layout.fillWidth:true
+                            visible: popup.bestRoutes !== undefined && popup.bestRoutes.length > 0
+                            store: popup.store
+                            isLoading: popup.isLoading
+                            selectedAsset: assetSelector.selectedAsset
+                            isBridgeTx: popup.isBridgeTx
+                            amountToReceive: d.totalAmountToReceive
+                            cryptoFiatFlipped: amountToSendInput.cryptoFiatFlipped
+                        }
+                    }
                     TokenListView {
                         id: tokenListRect
                         anchors.left: parent.left
@@ -336,7 +295,7 @@ StatusDialog {
 
             StatusScrollView {
                 id: scrollView
-                topPadding: 0
+                topPadding: 12
                 Layout.fillHeight: true
                 Layout.preferredWidth: parent.width
                 contentHeight: layout.height + Style.current.padding
@@ -441,7 +400,7 @@ StatusDialog {
                         store: popup.store
                         interactive: popup.interactive
                         selectedAccount: popup.selectedAccount
-                        amountToSend: isNaN(parseFloat(amountToSendInput.text)) ? 0 : parseFloat(amountToSendInput.text)
+                        amountToSend: isNaN(parseFloat(amountToSendInput.cryptoValueToSend)) ? 0 : parseFloat(amountToSendInput.cryptoValueToSend)
                         requiredGasInEth:d.totalFeesInEth
                         selectedAsset: assetSelector.selectedAsset
                         onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
@@ -476,7 +435,7 @@ StatusDialog {
         maxFiatFees: popup.isLoading ? "..." : "%1 %2".arg(LocaleUtils.numberToLocaleString(d.totalFeesInFiat)).arg(popup.store.currentCurrency.toUpperCase())
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: d.isReady && !isNaN(amountToSendInput.text) && fees.isValid && !d.errorMode
+        visible: d.isReady && !isNaN(amountToSendInput.cryptoValueToSend) && fees.isValid && !d.errorMode
         onNextButtonClicked: popup.sendTransaction()
     }
 
@@ -499,6 +458,8 @@ StatusDialog {
             d.totalFeesInEth = gasTimeEstimate.totalFeesInEth
             d.totalFeesInFiat = parseFloat(popup.store.getFiatValue( gasTimeEstimate.totalFeesInEth, "ETH", popup.store.currentCurrency)) +
                     parseFloat(popup.store.getFiatValue(gasTimeEstimate.totalTokenFees, fees.selectedTokenSymbol, popup.store.currentCurrency))
+            d.totalAmountToReceive = popup.store.getWei2Eth(response.suggestedRoutes.amountToReceive, assetSelector.selectedAsset.decimals)
+            networkSelector.toNetworksList = response.suggestedRoutes.toNetworks
             popup.isLoading = false
         }
     }

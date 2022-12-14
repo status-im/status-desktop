@@ -164,7 +164,8 @@ type
     cost*: float
     estimatedTime*: int
     amountInLocked*: bool
-
+    isFirstSimpleTx*: bool
+    isFirstBridgeTx*: bool
 
 proc `$`*(self: TransactionPathDto): string =
   return fmt"""TransactionPath(
@@ -179,7 +180,9 @@ proc `$`*(self: TransactionPathDto): string =
     bonderFees:{self.bonderFees},
     cost:{self.cost},
     estimatedTime:{self.estimatedTime},
-    amountInLocked:{self.amountInLocked}
+    amountInLocked:{self.amountInLocked},
+    isFirstSimpleTx:{self.isFirstSimpleTx},
+    isFirstBridgeTx:{self.isFirstBridgeTx}
   )"""
 
 proc toTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
@@ -197,6 +200,8 @@ proc toTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result.estimatedTime = jsonObj{"EstimatedTime"}.getInt
   discard jsonObj.getProp("GasAmount", result.gasAmount)
   discard jsonObj.getProp("AmountInLocked", result.amountInLocked)
+  result.isFirstSimpleTx = false
+  result.isFirstBridgeTx = false
 
 proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result = TransactionPathDto()
@@ -220,7 +225,15 @@ type
     totalTime*: int
 
 type
+  SendToNetwork* = ref object
+    chainId*: int
+    chainName*: string
+    iconUrl*: string
+    amountOut*: UInt256
+
+type
   SuggestedRoutesDto* = ref object
     best*: seq[TransactionPathDto]
-    candidates*: seq[TransactionPathDto]
     gasTimeEstimate*: Fees
+    amountToReceive*: UInt256
+    toNetworks*: seq[SendToNetwork]

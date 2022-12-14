@@ -339,6 +339,20 @@ method getFiatValue*(self: Module, cryptoBalance: string, cryptoSymbol: string, 
   let value = floatCryptoBalance * price
   return fmt"{value}"
 
+method getCryptoValue*(self: Module, fiatAmount: string, cryptoSymbol: string, fiatSymbol: string): string =
+  var fiatAmountBalance: float = 0
+  try:
+    fiatAmountBalance = parseFloat(fiatAmount)
+  except ValueError:
+    return "0.00"
+
+  if (fiatAmount == "" or cryptoSymbol == "" or fiatSymbol == ""):
+    return "0.00"
+
+  let price = self.controller.getPrice(cryptoSymbol, fiatSymbol)
+  let value = fiatAmountBalance / price
+  return fmt"{value}"
+
 method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): string {.slot.} =
   var gasLimitInt:int
 

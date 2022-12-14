@@ -800,6 +800,17 @@ QtObject {
         }
     }
 
+    function getFontSizeBasedOnLetterCount(text) {
+        if(text.length >= 12)
+            return 18
+        if(text.length >= 10)
+            return 24
+        if(text.length > 6)
+            return 28
+        else
+            return 34
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)

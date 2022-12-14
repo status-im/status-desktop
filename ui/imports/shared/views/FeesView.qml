@@ -36,6 +36,7 @@ Rectangle {
             Layout.alignment: Qt.AlignTop
             radius: 8
             asset.name: "fees"
+            asset.color: Theme.palette.directColor1
         }
         Column {
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter

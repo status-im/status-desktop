@@ -62,6 +62,39 @@ proc getFeesTotal*(paths: seq[TransactionPathDto]): Fees =
     fees.totalTime += path.estimatedTime
   return fees
 
+proc getTotalAmountToReceive*(paths: seq[TransactionPathDto]): UInt256 =
+  var totalAmountToReceive: UInt256 = stint.u256(0)
+  for path in paths:
+    totalAmountToReceive += path.amountOut
+
+  return totalAmountToReceive
+
+proc getToNetworksList*(paths: seq[TransactionPathDto]): seq[SendToNetwork] =
+  var networkMap: Table[int, SendToNetwork] = initTable[int, SendToNetwork]()
+  for path in paths:
+    if(networkMap.hasKey(path.toNetwork.chainId)):
+      networkMap[path.toNetwork.chainId].amountOut = networkMap[path.toNetwork.chainId].amountOut + path.amountOut
+    else:
+      networkMap[path.toNetwork.chainId] = SendToNetwork(chainId: path.toNetwork.chainId, chainName: path.toNetwork.chainName, iconUrl: path.toNetwork.iconURL, amountOut: path.amountOut)
+  return toSeq(networkMap.values)
+
+proc addFirstSimpleBridgeTxFlag(paths: seq[TransactionPathDto]) : seq[TransactionPathDto] =
+  let txPaths = paths
+  var firstSimplePath: bool = false
+  var firstBridgePath: bool = false
+
+  for path in txPaths:
+    if path.bridgeName == "Simple":
+      if not firstSimplePath:
+        firstSimplePath = true
+        path.isFirstSimpleTx = true
+    else:
+      if not firstBridgePath:
+        firstBridgePath = false
+        path.isFirstBridgeTx = true
+
+  return txPaths
+
 const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetSuggestedRoutesTaskArg](argEncoded)
 
@@ -86,16 +119,17 @@ const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
     bestPaths.sort(sortAsc[TransactionPathDto])
     let output = %*{
       "suggestedRoutes": SuggestedRoutesDto(
-        best: bestPaths,
-        candidates: response["Candidates"].getElems().map(x => x.toTransactionPathDto()),
-        gasTimeEstimate: getFeesTotal(bestPaths)),
+        best: addFirstSimpleBridgeTxFlag(bestPaths),
+        gasTimeEstimate: getFeesTotal(bestPaths),
+        amountToReceive: getTotalAmountToReceive(bestPaths),
+        toNetworks: getToNetworksList(bestPaths)),
       "error": ""
     }
     arg.finish(output)
 
   except Exception as e:
     let output = %* {
-     "suggestedRoutes": SuggestedRoutesDto(best: @[], candidates: @[], gasTimeEstimate:  Fees()),
+     "suggestedRoutes": SuggestedRoutesDto(best: @[], gasTimeEstimate:  Fees(), amountToReceive: stint.u256(0), toNetworks: @[]),
       "error": fmt"Error getting suggested routes: {e.msg}"
     }
     arg.finish(output)

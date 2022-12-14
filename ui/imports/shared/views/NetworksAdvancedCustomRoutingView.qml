@@ -37,6 +37,7 @@ ColumnLayout {
             Layout.alignment: Qt.AlignTop
             radius: 8
             asset.name: "flash"
+            asset.color: Theme.palette.directColor1
         }
         ColumnLayout {
             Layout.alignment: Qt.AlignTop
