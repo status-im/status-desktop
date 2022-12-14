@@ -472,7 +472,7 @@ method load*[T](
 
   # Set active section on app start
   # If section is profile then open chat by default
-  if activeSection.sectionType == SectionType.ProfileSettings:
+  if activeSection.isEmpty() or activeSection.sectionType == SectionType.ProfileSettings:
     self.setActiveSection(self.view.model().getItemBySectionType(SectionType.Chat))
   else:
     self.setActiveSection(activeSection)
