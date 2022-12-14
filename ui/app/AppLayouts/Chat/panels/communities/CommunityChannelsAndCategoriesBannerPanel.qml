@@ -17,7 +17,7 @@ Rectangle {
     signal addMembersClicked()
     signal addCategoriesClicked()
 
-    height: childrenRect.height + Style.current.padding
+    implicitHeight: childrenRect.height + Style.current.padding
     anchors.left: parent.left
     anchors.leftMargin: Style.current.padding
     anchors.right: parent.right

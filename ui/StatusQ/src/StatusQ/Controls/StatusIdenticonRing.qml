@@ -62,7 +62,7 @@ Item {
         ringPxSize: 1.5
     }
 
-    visible: settings.ringSpecModel !== undefined
+    visible: settings && settings.ringSpecModel !== undefined
 
     Loader {
         anchors.fill: parent

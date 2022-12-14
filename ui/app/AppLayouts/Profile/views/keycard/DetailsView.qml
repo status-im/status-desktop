@@ -100,7 +100,8 @@ ColumnLayout {
     }
 
     StatusListItem {
-        visible: root.keycardStore.keycardModule.keycardDetailsModel.anyOfItemsLocked
+        visible: typeof root.keycardStore.keycardModule.keycardDetailsModel !== "undefined"
+                 && root.keycardStore.keycardModule.keycardDetailsModel.anyOfItemsLocked
         Layout.fillWidth: true
         title: qsTr("Unlock Keycard")
         components: [

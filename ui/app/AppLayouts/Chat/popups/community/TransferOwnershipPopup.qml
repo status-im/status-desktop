@@ -1,30 +1,36 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.14
+import QtQml.Models 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 import shared.controls 1.0
 import shared 1.0
 
-StatusModal {
+StatusDialog {
     id: root
 
     property string privateKey
     property var store
 
-    header.title: qsTr("Transfer ownership")
-    padding: 16
+    title: qsTr("Transfer ownership")
+    padding: Style.current.padding
+
+    width: 480
 
     ColumnLayout {
-        anchors.fill: parent
+        id: layout
+        anchors.left: parent.left
+        anchors.right: parent.right
 
-        spacing: 16
+        spacing: Style.current.padding
 
         StatusInput {
             id: pKeyInput
@@ -75,12 +81,14 @@ StatusModal {
         }
     }
 
-    leftButtons: [
-        StatusBackButton {
-            onClicked: {
-                root.close()
+    footer: StatusDialogFooter {
+        leftButtons: ObjectModel {
+            StatusBackButton {
+                onClicked: {
+                    root.close()
+                }
             }
         }
-    ]
+    }
 }
 

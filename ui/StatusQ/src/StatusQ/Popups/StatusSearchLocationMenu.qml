@@ -72,7 +72,7 @@ StatusMenu {
                     assetSettings.name: !!model.imageSource ? !!model.imageSource : model.iconName
                     assetSettings.isImage: !!model.imageSource
                     assetSettings.isLetterIdenticon: !model.imageSource && !model.iconName
-                    assetSettings.imgIsIdenticon: model.isIdenticon
+                    assetSettings.imgIsIdenticon: false
                     onTriggered: {
                         root.resetSearchSelection()
                         root.setSearchSelection(text,
@@ -96,13 +96,13 @@ StatusMenu {
                     readonly property string parentIconName: model.iconName
                     readonly property string parentImageSource: model.imageSource
                     readonly property string parentIdenticonColor: !!model.iconColor ? model.iconColor : defaultIconColor
-                    readonly property bool parentIsIdenticon: model.isIdenticon
+                    readonly property bool parentIsIdenticon: false
 
                     title: model.title
                     assetSettings.name: !!model.iconName ? model.iconName : model.imageSource
                     assetSettings.color: !!model.iconColor ? model.iconColor : defaultIconColor
                     assetSettings.isImage: !!model.imageSource
-                    assetSettings.imgIsIdenticon: model.isIdenticon
+                    assetSettings.imgIsIdenticon: false
                     assetSettings.isLetterIdenticon: !model.imageSource && !model.iconName
 
                     StatusMenuInstantiator {
@@ -134,7 +134,7 @@ StatusMenu {
                                     root.setSearchSelection(model.text,
                                                             "",
                                                             model.imageSource,
-                                                            model.isIdenticon,
+                                                            false,
                                                             model.iconName,
                                                             model.iconColor,
                                                             model.isUserIcon,
