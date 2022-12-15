@@ -168,8 +168,16 @@ QtObject:
         for c in receivedData.contacts:
           let localContact = self.getContactById(c.id)
           var receivedContact = c
+
           receivedContact.localNickname = localContact.localNickname
           self.saveContact(receivedContact)
+
+          # Check if the contact request was sent by us and if it was approved by the recipient
+          if localContact.added and not localContact.hasAddedUs and receivedContact.hasAddedUs:
+            singletonInstance.globalEvents.showAcceptedContactRequest(
+              "Contact request accepted",
+              fmt "{receivedContact.displayName} accepted your contact request",
+              receivedContact.id)
 
           let data = ContactArgs(contactId: c.id)
           self.events.emit(SIGNAL_CONTACT_UPDATED, data)

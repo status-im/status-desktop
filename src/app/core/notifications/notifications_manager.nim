@@ -83,6 +83,8 @@ QtObject:
       self, "onMyRequestToJoinCommunityRejected(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "meMentionedIconBadgeNotification(int)",
       self, "onMeMentionedIconBadgeNotification(int)", 2)
+    signalConnect(singletonInstance.globalEvents, "showAcceptedContactRequest(QString, QString, QString)", 
+      self, "onShowAcceptedContactRequest(QString, QString, QString)", 2)
 
     self.notificationSetUp = true
 
@@ -141,6 +143,11 @@ QtObject:
   proc onShowNewContactRequestNotification*(self: NotificationsManager, title: string, message: string, 
     sectionId: string) {.slot.} =
     let details = NotificationDetails(notificationType: NotificationType.NewContactRequest, sectionId: sectionId)
+    self.processNotification(title, message, details)
+
+  proc onShowAcceptedContactRequest*(self: NotificationsManager, title: string, message: string, 
+    sectionId: string) {.slot.} =
+    let details = NotificationDetails(notificationType: NotificationType.AcceptedContactRequest, sectionId: sectionId)
     self.processNotification(title, message, details)
 
   proc onNewCommunityMembershipRequestNotification*(self: NotificationsManager, title: string, message: string, 
@@ -202,6 +209,7 @@ QtObject:
         data.message = "You have a new message"
       elif(self.settingsService.getNotificationMessagePreview() == PREVIEW_NAME_ONLY):
         data.message = "You have a new message"
+
       let identifier = $(details.toJsonNode())
       debug "Add OS notification", title=data.title, message=data.message, identifier=identifier
       self.showOSNotification(data.title, data.message, identifier)  
