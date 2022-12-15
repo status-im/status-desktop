@@ -31,4 +31,7 @@ QtObject:
   proc myRequestToJoinCommunityRejected*(self: GlobalEvents, title: string, message: string, 
     sectionId: string) {.signal.}
 
+  proc showAcceptedContactRequest*(self: GlobalEvents, title: string, message: string, 
+    sectionId: string) {.signal.}
+
   proc meMentionedIconBadgeNotification*(self: GlobalEvents, allMentions: int) {.signal.}

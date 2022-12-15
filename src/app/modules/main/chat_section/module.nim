@@ -720,6 +720,12 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
     message: MessageDto) =
   self.updateLastMessageTimestamp(chatIdMsgBelongsTo, lastMessageTimestamp)
 
+  # Any type of message coming from ourselves should never be shown as notification
+  # and no need in badge notification update
+  let myPK = singletonInstance.userProfile.getPubKey()
+  if myPK == message.from:
+    return
+
   let chatDetails = self.controller.getChatDetails(chatIdMsgBelongsTo)
 
   # Badge notification
@@ -735,12 +741,12 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
     return
 
   # Prepare notification
-  let myPK = singletonInstance.userProfile.getPubKey()
   var notificationType = notification_details.NotificationType.NewMessage
   if(message.isPersonalMention(myPK)):
     notificationType = notification_details.NotificationType.NewMessageWithPersonalMention
   elif(message.isGlobalMention()):
     notificationType = notification_details.NotificationType.NewMessageWithGlobalMention
+
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let renderedMessageText = self.controller.getRenderedText(message.parsedText)
   let plainText = singletonInstance.utils.plainText(renderedMessageText)
@@ -752,7 +758,6 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
     of ChatType.PrivateGroupChat:
       notificationTitle.add(fmt" ({chatDetails.name})")
     of ChatType.CommunityChat:
-      let communityDetails = self.controller.getCommunityDetails(chatDetails.communityId)
       if (chatDetails.categoryId.len == 0):
         notificationTitle.add(fmt" (#{chatDetails.name})")
       else:
