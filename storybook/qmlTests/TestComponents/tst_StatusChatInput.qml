@@ -464,6 +464,164 @@ Item {
         }
     }
 
+    TestCase {
+        id: statusChatInputMentions
+        name: "StatusChatInputMentions"
+        when: windowShown
+
+        property StatusChatInput controlUnderTest: null
+
+        function init() {
+            Utils.globalUtilsInst = globalUtilsMock
+            controlUnderTest = createTemporaryObject(componentUnderTest, root)
+        }
+
+        //Scenario: Mention behaves like a single character when moving cursor by keyboard
+        //Given the user has contact <mention>
+        //And typed message <textInput>
+        //And has placed cursor at mention <initialPosition>
+        //When the user hits <key>
+        //The cursor moves to <expectedPosition>
+        //Example:
+        //| textInput       | mention | initialPosition | key   | expectedPosition |
+        //| Hello @JohnDoe! |         | 6               | right | 7                |
+        //| Hello @JohnDoe! |         | 14              | left  | 13               |
+        //| Hello @JohnDoe! | JohnDoe | 6               | right | 14               |
+        //| Hello @JohnDoe! | JohnDoe | 14              | left  | 6                |
+        function test_mention_is_skipped_by_cursor_data() {
+            return [
+                        {tag: "MoveRightNoMention", textInput: "Hello @JohnDoe!", mention: "", initialPosition: 6, key: Qt.Key_Right, expectedPosition: 7},
+                        {tag: "MoveLeftNoMention", textInput: "Hello @JohnDoe!", mention: "", initialPosition: 14, key: Qt.Key_Left, expectedPosition: 13},
+                        {tag: "MoveRightWithMention", textInput: "Hello @JohnDoe!", mention: "JohnDoe", initialPosition: 6, key: Qt.Key_Right, expectedPosition: 14},
+                        {tag: "MoveLeftWithMention", textInput: "Hello @JohnDoe!", mention: "JohnDoe", initialPosition: 14, key: Qt.Key_Left, expectedPosition: 6}
+                    ]
+        }
+
+        function test_mention_is_skipped_by_cursor(data) {
+            if(data.mention !== "") {
+                testHelper.when_the_user_has_contact(controlUnderTest, data.mention, (contact) => {})
+            }
+            testHelper.when_text_is_typed(statusChatInputMentions,
+                                          data.textInput, (typedText) => {})
+            controlUnderTest.textInput.cursorPosition = data.initialPosition
+            compare(controlUnderTest.textInput.cursorPosition, data.initialPosition)
+
+            keyClick(data.key)
+            compare(controlUnderTest.textInput.cursorPosition, data.expectedPosition)
+        }
+
+        //Scenario: Mention behaves like a single character when selecting by keyboard
+        //Given the user has contact <mention>
+        //And typed message <textInput>
+        //And has placed cursor at mention <initialPosition>
+        //When the user hits <key> holding Shift
+        //The selected text is <expectedSelection>
+        //Example:
+        //| textInput       | mention | initialPosition | key   | expectedSelection     |
+        //| Hello @JohnDoe! |         | 6               | right | @                     |
+        //| Hello @JohnDoe! |         | 14              | left  | e                     |
+        //| Hello @JohnDoe! | JohnDoe | 6               | right | @JohnDoe              |
+        //| Hello @JohnDoe! | JohnDoe | 14              | left  | @JohnDoe              |
+        function test_mention_is_selected_by_keyboard_data() {
+            return [
+                        {tag: "SelectRightNoMention", textInput: "Hello @JohnDoe!", mention: "", initialPosition: 6, key: Qt.Key_Right, expectedSelection: "@"},
+                        {tag: "SelectLeftNoMention", textInput: "Hello @JohnDoe!", mention: "", initialPosition: 14, key: Qt.Key_Left, expectedSelection: "e"},
+                        {tag: "SelectRightWithMention", textInput: "Hello @JohnDoe!", mention: "JohnDoe", initialPosition: 6, key: Qt.Key_Right, expectedSelection: "@JohnDoe"},
+                        {tag: "SelectLeftWithMention", textInput: "Hello @JohnDoe!", mention: "JohnDoe", initialPosition: 14, key: Qt.Key_Left, expectedSelection: "@JohnDoe"}
+                    ]
+        }
+
+        function test_mention_is_selected_by_keyboard(data) {
+            if(data.mention !== "") {
+                testHelper.when_the_user_has_contact(controlUnderTest, data.mention, (contact) => {})
+            }
+            testHelper.when_text_is_typed(statusChatInputMentions,
+                                          data.textInput, (typedText) => {})
+            controlUnderTest.textInput.cursorPosition = data.initialPosition
+            compare(controlUnderTest.textInput.cursorPosition, data.initialPosition)
+
+            keyClick(data.key, Qt.ShiftModifier)
+            compare(controlUnderTest.textInput.selectedText, data.expectedSelection)
+        }
+
+        //Scenario: Clicking mention will select the mention
+        //Given the user has contact JohnDoe
+        //And has typed message Hello @JohnDoe!
+        //When the user clicks @JohnDoe text
+        //Then the text @JohnDoe is selected
+        function test_mention_click_is_selecting_mention() {
+            testHelper.when_the_user_has_contact(controlUnderTest, "JohnDoe", (contact) => {})
+            testHelper.when_text_is_typed(statusChatInputMentions,
+                                          "Hello @JohnDoe!", (typedText) => {})
+            controlUnderTest.textInput.cursorPosition = 6
+            const cursorRectangle = controlUnderTest.textInput.cursorRectangle
+
+            mouseClick(controlUnderTest.textInput, cursorRectangle.x + 5, controlUnderTest.textInput.height / 2)
+            compare(controlUnderTest.textInput.selectedText,
+                    "@JohnDoe")
+        }
+
+        //Scenario: Mention cannot be invalidated by user actions
+        //Given the user has contact JohnDoe
+        //And has typed message Hello @JohnDoe!
+        //When the user is performing <actions>
+        //And hits enter
+        //Then the mention is still valid
+        //And can be replaced with publicKey
+        //Example:
+        //|Action|
+        //|The space after mention is deleted and mention suggestion is closed key left|
+        //|The space after mention is deleted and mention suggestion is closed key "S"|
+
+        function test_mention_cannot_be_invalidated() {
+            testHelper.when_the_user_has_contact(controlUnderTest, "JohnDoe", (contact) => {})
+            testHelper.when_text_is_typed(statusChatInputMentions,
+                                          "Hello @JohnDoe!", (typedText) => {})
+            controlUnderTest.textInput.cursorPosition = 15
+
+            keyClick(Qt.Key_Backspace)
+            compare(controlUnderTest.textInput.getText(0, controlUnderTest.textInput.length), "Hello @JohnDoe!")
+
+            keyClick(Qt.Key_Left)
+            compare(controlUnderTest.textInput.getText(0, controlUnderTest.textInput.length), "Hello @JohnDoe !")
+
+            var plainTextWithPubKey = TextUtils.htmlToPlainText(controlUnderTest.getTextWithPublicKeys())
+            compare(plainTextWithPubKey, "Hello @0x0JohnDoe !")
+
+            controlUnderTest.textInput.cursorPosition = 15
+            keyClick(Qt.Key_Backspace)
+            compare(controlUnderTest.textInput.getText(0, controlUnderTest.textInput.length), "Hello @JohnDoe!")
+
+            keyClick(Qt.Key_S)
+            plainTextWithPubKey = TextUtils.htmlToPlainText(controlUnderTest.getTextWithPublicKeys())
+            compare(plainTextWithPubKey, "Hello @0x0JohnDoe s!")
+        }
+
+        //Scenario: User can remove mention by replacing a larger selected text section with a letter
+        //Given the user has contact JohnDoe
+        //And has typed "Hello @JohnDoe!"
+        //And has selected "lo @JohnDoe !"
+        //And has typed "s"
+        //Then the text is "Hells"
+        //And the mention is removed
+        function test_mention_is_deleted_with_large_selection() {
+            testHelper.when_the_user_has_contact(controlUnderTest, "JohnDoe", (contact) => {})
+            testHelper.when_text_is_typed(statusChatInputMentions,
+                                          "Hello @JohnDoe!", (typedText) => {})
+            controlUnderTest.textInput.select(3, 16)
+            compare(controlUnderTest.textInput.selectedText,
+                    "lo @JohnDoe !")
+
+            keyClick(Qt.Key_S)
+            compare(controlUnderTest.textInput.getText(0, controlUnderTest.textInput.length),
+                    "Hels")
+
+            const plainTextWithPubKey = TextUtils.htmlToPlainText(controlUnderTest.getTextWithPublicKeys())
+            compare(plainTextWithPubKey,
+                    "Hels")
+        }
+    }
+
     QtObject {
         id: testHelper
 

@@ -12,6 +12,8 @@ import shared.stores 1.0
 SplitView {
     id: root
 
+    Logs { id: logs }
+
     QtObject {
         id: globalUtilsMock
 
@@ -90,7 +92,21 @@ SplitView {
                 usersStore: QtObject {
                     readonly property var usersModel: fakeUsersModel
                 }
+                onSendMessage: {
+                    logs.logEvent("StatusChatInput::sendMessage", ["MessageWithPk"], [chatInput.getTextWithPublicKeys()])
+                    logs.logEvent("StatusChatInput::sendMessage", ["PlainText"], [globalUtilsMock.globalUtils.plainText(chatInput.getTextWithPublicKeys())])
+                    logs.logEvent("StatusChatInput::sendMessage", ["RawText"], [chatInput.textInput.text])
+                }
             }
+        }
+
+        LogsAndControlsPanel {
+            id: logsAndControlsPanel
+
+            SplitView.minimumHeight: 100
+            SplitView.preferredHeight: 200
+
+            logsView.logText: logs.logText
         }
     }
 
