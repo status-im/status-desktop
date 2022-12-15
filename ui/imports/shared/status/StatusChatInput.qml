@@ -437,7 +437,7 @@ Rectangle {
             return emojiSuggestions.listView.decrementCurrentIndex()
         }
 
-        isColonPressed = (event.key === Qt.Key_Colon) && (event.modifiers & Qt.ShiftModifier);
+        isColonPressed = event.key === Qt.Key_Colon;
 
         if (suggestionsBox.visible) {
             let aliasName = suggestionsBox.formattedPlainTextFilter;
