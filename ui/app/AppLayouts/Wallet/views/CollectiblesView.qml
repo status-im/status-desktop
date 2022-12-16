@@ -16,7 +16,7 @@ import "collectibles"
 Item {
     id: root
     width: parent.width
-    signal collectibleClicked()
+    signal collectibleClicked(string collectionSlug, int collectibleId)
 
     Loader {
         id: contentLoader
@@ -24,10 +24,28 @@ Item {
         height: parent.height
 
         sourceComponent: {
-            if (RootStore.collectionList.count === 0) {
+            if (!RootStore.collections.collectionsLoaded)
+            {
+                return loading
+            } else if (RootStore.collections.count === 0) {
                 return empty;
             }
             return loaded;
+        }
+    }
+
+    Component {
+        id: loading
+
+        Item {
+            id: loadingIndicator
+            height: 164
+            StatusLoadingIndicator {
+                width: 20
+                height: 20
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
         }
     }
 
@@ -57,8 +75,9 @@ Item {
                 Repeater {
                     objectName: "collectionsRepeater"
                     id: collectionsRepeater
-                    model: RootStore.collectionList
+                    model: RootStore.collections
                     delegate: StatusExpandableItem {
+                        id: collectionDelegate
                         anchors.left: parent.left
                         anchors.right: parent.right
                         primaryText: model.name
@@ -66,17 +85,19 @@ Item {
                         asset.isImage: true
                         type: StatusExpandableItem.Type.Secondary
                         expandableComponent:  CollectibleCollectionView {
-                            slug: model.slug
                             collectionImageUrl: model.imageUrl
+                            collectiblesLoaded: model.collectiblesLoaded
+                            collectiblesModel: model.collectiblesModel
                             anchors.left: parent.left
                             anchors.right: parent.right
                             onCollectibleClicked: {
-                                root.collectibleClicked();
+                                RootStore.selectCollectible(model.slug, collectibleId)
+                                root.collectibleClicked(model.slug, collectibleId);
                             }
                         }
                         onExpandedChanged: {
                             if(expanded) {
-                               RootStore.fetchCollectionCollectiblesList(model.slug)
+                               RootStore.fetchCollectibles(model.slug)
                             }
                         }
                     }

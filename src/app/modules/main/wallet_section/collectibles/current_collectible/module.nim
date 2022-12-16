@@ -5,12 +5,8 @@ import ../../../../../global/global_singleton
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 import ../../../../../../app_service/service/collectible/service as collectible_service
+import ../../../../../../app_service/service/collectible/dto as collectible_dto
 import ../../../../../../app_service/service/network/dto as network_dto
-import ../collectibles/module as collectibles_module
-import ../collections/module as collections_module
-
-import ../collections/item as collection_item
-import ../collectibles/item as collectible_item
 
 export io_interface
 
@@ -20,26 +16,22 @@ type
     view: View
     controller: Controller
     moduleLoaded: bool
-    currentAccountIndex: int
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
-  collectibleService: collectible_service.Service,
-  collectionsModule: collections_module.AccessInterface,
-  collectiblesModule: collectibles_module.AccessInterface,
+  collectibleService: collectible_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
-  result.controller = newController(result, collectibleService, collectiblesModule, collectionsModule)
+  result.controller = newController(result, collectibleService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
   self.view.delete
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionCollectibleCurrent", newQVariant(self.view))
-
+  singletonInstance.engine.setRootContextProperty("walletSectionCurrentCollectible", newQVariant(self.view))
   self.controller.init()
   self.view.load()
 
@@ -50,8 +42,11 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.currentCollectibleModuleDidLoad()
 
-method update*(self: Module, slug: string, id: int) =
-  self.controller.update(slug, id)
+method setCurrentAddress*(self: Module, network: network_dto.NetworkDto, address: string) =
+  self.controller.setCurrentAddress(network, address)
 
-method setData*(self: Module, collection: collection_item.Item, collectible: collectible_item.Item, network: network_dto.NetworkDto) =
+method update*(self: Module, collectionSlug: string, id: int) =
+  self.controller.update(collectionSlug, id)
+
+method setData*(self: Module, collection: collectible_dto.CollectionDto, collectible: collectible_dto.CollectibleDto, network: network_dto.NetworkDto) =
   self.view.setData(collection, collectible, network)

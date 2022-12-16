@@ -1,10 +1,10 @@
 type
-  GetCollectionsTaskArg = ref object of QObjectTaskArg
+  FetchCollectionsTaskArg = ref object of QObjectTaskArg
     chainId*: int
     address*: string
 
-const getCollectionsTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[GetCollectionsTaskArg](argEncoded)
+const fetchCollectionsTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchCollectionsTaskArg](argEncoded)
   let output = %* {
     "chainId": arg.chainId,
     "address": arg.address,
@@ -15,18 +15,18 @@ const getCollectionsTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.}
     output["collections"] = response.result
   except Exception as e:
     let errDesription = e.msg
-    error "error getCollectionsTaskArg: ", errDesription
+    error "error fetchCollectionsTaskArg: ", errDesription
   arg.finish(output)
 
 type
-  GetCollectiblesTaskArg = ref object of QObjectTaskArg
+  FetchCollectiblesTaskArg = ref object of QObjectTaskArg
     chainId*: int
     address*: string
     collectionSlug: string
     limit: int
 
-const getCollectiblesTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[GetCollectiblesTaskArg](argEncoded)
+const fetchCollectiblesTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchCollectiblesTaskArg](argEncoded)
   let output = %* {
     "chainId": arg.chainId,
     "address": arg.address,
@@ -38,5 +38,5 @@ const getCollectiblesTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.
     output["collectibles"] = response.result
   except Exception as e:
     let errDesription = e.msg
-    error "error getCollectiblesTaskArg: ", errDesription
+    error "error fetchCollectiblesTaskArg: ", errDesription
   arg.finish(output)

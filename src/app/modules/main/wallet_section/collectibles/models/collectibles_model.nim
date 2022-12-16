@@ -1,6 +1,6 @@
 import NimQml, Tables, strutils, strformat
 
-import ./item, ./trait_model
+import ./collectibles_item, ./collectible_trait_model
 
 type
   ModelRole {.pure.} = enum
@@ -96,13 +96,7 @@ QtObject:
       result = newQVariant(traits)
 
   proc setItems*(self: Model, items: seq[Item]) =
-    self.beginResetModel()
-    self.items = items
-    self.endResetModel()
-    self.countChanged()
-
-  proc getItemByID*(self: Model, id: int): Item = 
-    for item in self.items:
-      if(item.getId() == id):
-        return item
-    return initItem()
+      self.beginResetModel()
+      self.items = items
+      self.endResetModel()
+      self.countChanged()

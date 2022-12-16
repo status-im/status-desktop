@@ -2,11 +2,9 @@ import NimQml, sequtils, sugar
 
 import ./io_interface
 import ../../../../../../app_service/service/network/dto as network_dto
-import ../collections/model as collections_model
-import ../collectibles/model as collectibles_model
-import ../collections/item as collection_item
-import ../collectibles/item as collectible_item
-import ../collectibles/trait_model
+import ../../../../../../app_service/service/collectible/dto as collectible_dto
+import ../models/collectible_trait_item
+import ../models/collectible_trait_model
 
 QtObject:
   type
@@ -175,10 +173,10 @@ QtObject:
     read = getStats
     notify = statsChanged
 
-  proc update*(self: View, slug: string, id: int) {.slot.} =
-    self.delegate.update(slug, id)
+  proc update*(self: View, collectionSlug: string, id: int) {.slot.} =
+    self.delegate.update(collectionSlug, id)
 
-  proc setData*(self: View, collection: collection_item.Item, collectible: collectible_item.Item, network: network_dto.NetworkDto) =
+  proc setData*(self: View, collection: collectible_dto.CollectionDto, collectible: collectible_dto.CollectibleDto, network: network_dto.NetworkDto) =
     if (self.networkName != network.chainName):
       self.networkName = network.chainName
       self.networkNameChanged()
@@ -191,40 +189,41 @@ QtObject:
       self.networkIconUrl = network.iconURL
       self.networkIconUrlChanged()
 
-    if (self.collectionName != collection.getName()):
-      self.collectionName = collection.getName()
+    if (self.collectionName != collection.name):
+      self.collectionName = collection.name
       self.collectionNameChanged()
 
-    if (self.collectionImageUrl != collection.getImageUrl()):
-      self.collectionImageUrl = collection.getImageUrl()
+    if (self.collectionImageUrl != collection.imageUrl):
+      self.collectionImageUrl = collection.imageUrl
       self.collectionImageUrlChanged()
     
-    if (self.name != collectible.getName()):
-      self.name = collectible.getName()
+    if (self.name != collectible.name):
+      self.name = collectible.name
       self.nameChanged()
 
-    let idString = $collectible.getId()
+    let idString = $collectible.id
     if (self.id != idString):
       self.id = idString
       self.idChanged()
 
-    if (self.description != collectible.getDescription()):
-      self.description = collectible.getDescription()
+    if (self.description != collectible.description):
+      self.description = collectible.description
       self.descriptionChanged()
 
-    if (self.backgroundColor != collectible.getBackgroundColor()):
-      self.backgroundColor = collectible.getBackgroundColor()
+    let backgroundColor = if (collectible.backgroundColor == ""): "transparent" else: ("#" & collectible.backgroundColor)
+    if (self.backgroundColor != backgroundColor):
+      self.backgroundColor = backgroundColor
       self.backgroundColorChanged()
 
-    if (self.imageUrl != collectible.getImageUrl()):
-      self.imageUrl = collectible.getImageUrl()
+    if (self.imageUrl != collectible.imageUrl):
+      self.imageUrl = collectible.imageUrl
       self.imageUrlChanged()
 
-    self.propertiesModel.setItems(collectible.getProperties())
+    self.propertiesModel.setItems(collectible.properties.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)))
     self.propertiesChanged()
 
-    self.rankingsModel.setItems(collectible.getRankings())
+    self.rankingsModel.setItems(collectible.rankings.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)))
     self.rankingsChanged()
 
-    self.statsModel.setItems(collectible.getStats())
+    self.statsModel.setItems(collectible.statistics.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)))
     self.statsChanged()

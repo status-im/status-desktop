@@ -1,27 +1,23 @@
+import sequtils, Tables
 import io_interface
 
 import ../../../../../../app_service/service/collectible/service as collectible_service
-import ../collectibles/module as collectibles_module
-import ../collections/module as collections_module
+import ../../../../../../app_service/service/network/dto as network_dto
 
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     collectibleService: collectible_service.Service
-    collectiblesModule: collectibles_module.AccessInterface
-    collectionsModule: collections_module.AccessInterface
+    network: network_dto.NetworkDto
+    address: string
 
 proc newController*(
   delegate: io_interface.AccessInterface,
   collectibleService: collectible_service.Service,
-  collectiblesModule: collectibles_module.AccessInterface,
-  collectionsModule: collections_module.AccessInterface
 ): Controller =
   result = Controller()
   result.delegate = delegate
   result.collectibleService = collectibleService
-  result.collectiblesModule = collectiblesModule
-  result.collectionsModule = collectionsModule
 
 proc delete*(self: Controller) =
   discard
@@ -29,5 +25,10 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   discard
 
-proc update*(self: Controller, slug: string, id: int) =
-  self.delegate.setData(self.collectionsModule.getCollection(slug), self.collectiblesModule.getCollectible(slug, id), self.collectibleService.getNetwork())
+method setCurrentAddress*(self: Controller, network: network_dto.NetworkDto, address: string) =
+  self.network = network
+  self.address = address
+
+proc update*(self: Controller, collectionSlug: string, id: int) =
+  let collection = self.collectibleService.getCollection(self.network.chainId, self.address, collectionSlug)
+  self.delegate.setData(collection.collection, collection.collectibles[id], self.network)

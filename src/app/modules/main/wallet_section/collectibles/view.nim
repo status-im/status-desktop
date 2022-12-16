@@ -1,7 +1,8 @@
 import NimQml
 
-import ./model
-import ./item
+import ./models/collections_model
+import ./models/collections_item as collections_item
+import ./models/collectibles_item as collectibles_item
 import ./io_interface
 
 QtObject:
@@ -35,8 +36,14 @@ QtObject:
     read = getModel
     notify = modelChanged
 
-  proc setItems*(self: View, items: seq[Item]) =
-    self.model.setItems(items)
+  proc setCollections*(self: View, collections: seq[collections_item.Item]) =
+    self.model.setItems(collections)
 
-  proc getCollection*(self: View, slug: string): Item =
-    return self.model.getItemBySlug(slug)
+  proc setCollectibles*(self: View, collectionsSlug: string, collectibles: seq[collectibles_item.Item]) =
+    self.model.updateCollectionCollectibles(collectionsSlug, collectibles)
+
+  proc fetchCollections*(self: View) {.slot.} =
+    self.delegate.fetchCollections()
+
+  proc fetchCollectibles*(self: View, collectionSlug: string) {.slot.} =
+    self.delegate.fetchCollectibles(collectionSlug)
