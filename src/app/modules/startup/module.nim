@@ -371,3 +371,6 @@ method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurr
 
 method storeKeyPairForNewKeycardUser*[T](self: Module[T]) =
   self.delegate.storeKeyPairForNewKeycardUser()
+
+method checkForStoringPasswordToKeychain*[T](self: Module[T]) =
+  self.controller.checkForStoringPasswordToKeychain()

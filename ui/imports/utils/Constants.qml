@@ -686,10 +686,6 @@ QtObject {
     readonly property string ens_connected: "connected"
     readonly property string ens_connected_dkey: "connected-different-key"
 
-    readonly property string storeToKeychainValueStore: "store"
-    readonly property string storeToKeychainValueNotNow: "notNow"
-    readonly property string storeToKeychainValueNever: "never"
-
     // WARNING: Remove later. Moved to StatusQ.
     readonly property string editLabel: ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
 

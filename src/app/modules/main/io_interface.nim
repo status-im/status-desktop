@@ -35,9 +35,6 @@ method load*(
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method checkForStoringPassword*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method calculateProfileSectionHasNotification*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -82,9 +79,6 @@ method getActiveSectionId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method communitiesModuleDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method offerToStorePassword*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method emitStoringPasswordError*(self: AccessInterface, errorDescription: string) {.base.} =

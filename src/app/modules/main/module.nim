@@ -557,12 +557,6 @@ method networksModuleDidLoad*[T](self: Module[T]) =
 method viewDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
-method checkForStoringPassword*[T](self: Module[T]) =
-  self.controller.checkForStoringPassword()
-
-method offerToStorePassword*[T](self: Module[T]) =
-  self.view.offerToStorePassword()
-
 method storePassword*[T](self: Module[T], password: string) =
   self.controller.storePassword(password)
 

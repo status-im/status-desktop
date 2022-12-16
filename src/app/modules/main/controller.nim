@@ -299,22 +299,6 @@ proc isConnected*(self: Controller): bool =
 proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
   return self.chatService.getChannelGroups()
 
-proc checkForStoringPassword*(self: Controller) =
-  # This proc is called once user is logged in irrespective he is logged in
-  # through the onboarding or login view.
-
-  # This is MacOS only feature
-  if(not defined(macosx)):
-    return
-
-  let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-  if (value == LS_VALUE_STORE or value == LS_VALUE_NEVER):
-    return
-
-  # We are here if stored "storeToKeychain" property for the logged in user
-  # is either empty or set to "NotNow".
-  self.delegate.offerToStorePassword()
-
 proc storePassword*(self: Controller, password: string) =
   let account = self.accountsService.getLoggedInAccount()
 

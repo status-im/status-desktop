@@ -24,9 +24,8 @@ StatusModal {
 
     function onChangePasswordResponse(success, errorMsg) {
         if (success) {
-            if (Qt.platform.os === "osx" && localAccountSettings.storeToKeychainValue !== Constants.storeToKeychainValueNever) {
-                localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store;
-                root.privacyStore.storeToKeyChain(d.passwordProcessing);
+            if (Qt.platform.os === "osx" && localAccountSettings.storeToKeychainValue !== Constants.keychain.storedValue.never) {
+                localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.notNow;
             }
             passwordChanged()
         }
@@ -86,7 +85,7 @@ StatusModal {
         StatusButton {
             id: submitBtn
             objectName: "changePasswordModalSubmitButton"
-            text: qsTr("Change Password")
+            text: qsTr("Change password and restart Status")
             enabled: !submitBtn.loading && view.ready
 
             property Timer sim: Timer {

@@ -468,3 +468,19 @@ proc storeMetadataForNewKeycardUser(self: Controller) =
   ## Stores metadata, default Status account only, to the keycard for a newly created keycard user.
   let paths = @[account_constants.PATH_DEFAULT_WALLET]
   self.runStoreMetadataFlow(self.getDisplayName(), self.getPin(), paths)
+
+proc checkForStoringPasswordToKeychain*(self: Controller) =
+  # This proc is called once user is logged in irrespective he is logged in
+  # through the onboarding or login view. 
+  # This is MacOS only feature
+  if not defined(macosx):
+    return
+
+  let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
+  if (value == LS_VALUE_STORE or value == LS_VALUE_NEVER):
+    return
+
+  # We are here if stored "storeToKeychain" property for the logged in user
+  # is either empty or set to "NotNow".
+  singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_STORE)
+  self.storePasswordToKeychain()
