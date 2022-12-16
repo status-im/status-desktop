@@ -116,6 +116,7 @@ Pane {
     Component {
         id: btnEditProfileComponent
         StatusButton {
+            objectName: "editProfileButton"
             size: StatusButton.Size.Small
             text: qsTr("Edit Profile")
             enabled: !root.readOnly

@@ -72,13 +72,17 @@ def step(context, password: str):
 def step(context, password: str):
     _welcomeScreen.type_confirm_password(password)
     
+@When("the user lands on the signed in app")
+def step(context):
+    the_user_lands_on_the_signed_in_app()
+    
 #########################
 ### VERIFICATIONS region:
 #########################
 
 @Then("the user lands on the signed in app")
 def step(context):
-    init_steps.the_user_lands_on_the_signed_in_app()
+    the_user_lands_on_the_signed_in_app()
       
 @Then("the invalid seed text is visible")
 def step(context):
@@ -99,3 +103,6 @@ def step(context):
 ########################################################################### 
 def the_user_inputs_username(username: str):
     _welcomeScreen.input_username(username)
+    
+def the_user_lands_on_the_signed_in_app():
+    init_steps.the_user_lands_on_the_signed_in_app()

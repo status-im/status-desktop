@@ -35,7 +35,29 @@ def step(context: any):
 @Given("the user opens the wallet settings")
 def step(context: any):
     the_user_opens_the_wallet_settings()
-
+    
+@Given("the user opens the profile settings")
+def step(context: any):
+    the_user_opens_the_profile_settings()
+    
+@Given("the user's display name is \"|any|\"")
+def step(context, display_name: str):
+    if "popup" in context.userData["scenario_name"]:
+        the_user_display_name_in_profile_popup_is(display_name)
+    else:
+        the_user_display_name_is(display_name)        
+    
+@Given("the user's bio is empty")
+def step(context):
+    _settingsScreen.verify_bio("")
+    
+@Given("the user's social links are empty")
+def step(context):
+    _settingsScreen.verify_social_links(None)
+    
+@Given("the user opens own profile popup")
+def step(context: any):
+    the_user_opens_own_profile_popup()
     
 #########################
 ### ACTIONS region:
@@ -120,19 +142,19 @@ def step(context: any):
 
 @When("the user opens the profile settings")
 def step(context: any):
-    _settingsScreen.open_profile_settings()
+    the_user_opens_the_profile_settings()
 
 @When("the user sets display name to \"|any|\"")
-def step(context, display_name):
+def step(context, display_name): 
     _settingsScreen.set_display_name(display_name)
     
 @When("the user backs up the wallet seed phrase")
 def step(context):
     _settingsScreen.check_backup_seed_phrase_workflow()
     
-@When("the user sets display links to twitter: \"|any|\", personal site: \"|any|\", \"|any|\": \"|any|\"")
-def step(context, twitter, personal_site, custom_link_name, custom_link):
-    _settingsScreen.set_social_links(twitter, personal_site, custom_link_name, custom_link)
+@When("the user sets social links to:")
+def step(context):
+    _settingsScreen.set_social_links(context.table)
     
 @When("the user sets bio to \"|any|\"")
 def step(context, bio):
@@ -149,14 +171,6 @@ def step(context: any):
 @When("the users switches state to automatic")
 def step(context: any):
     _statusMain.set_user_state_to_automatic()
-    
-@When("the user opens own profile popup")
-def step(context: any):
-    _statusMain.open_own_profile_popup()
-    
-@When("in profile popup the user sets display name to \"|any|\"")
-def step(context, display_name):
-    _statusMain.set_profile_popup_display_name(display_name)
 
 @When("the user changes the password from |any| to |any|")
 def step(context: any, oldPassword: str, newPassword: str):
@@ -165,6 +179,14 @@ def step(context: any, oldPassword: str, newPassword: str):
 @When("the user sends a contact request to the chat key \"|any|\" with the reason \"|any|\"")
 def step(context: any, chat_key: str, reason: str):
     _settingsScreen.add_contact_by_chat_key(chat_key, reason)
+    
+@When("the user opens own profile popup")
+def step(context: any):
+    the_user_opens_own_profile_popup()
+
+@When("the user navigates to edit profile")
+def step(context: any):
+    _statusMain.navigate_to_edit_profile()
 
 #########################
 ### VERIFICATIONS region:
@@ -186,25 +208,20 @@ def step(context, new_name: str, new_color: str):
 def step(context: any):
     _settingsScreen.verify_the_app_is_closed()
 
-@Then("the user's display name should be \"|any|\"")
-def step(context, display_name):
-    _settingsScreen.verify_display_name(display_name)
+@Then("the user's display name is \"|any|\"")
+def step(context, display_name: str):
+    if "popup" in context.userData["scenario_name"]:
+        the_user_display_name_in_profile_popup_is(display_name)
+    else:
+        the_user_display_name_is(display_name)
 
-@Then("the user's bio should be empty")
-def step(context):
-    _settingsScreen.verify_bio("")
-
-@Then("the user's bio should be \"|any|\"")
+@Then("the user's bio is \"|any|\"")
 def step(context, bio):
     _settingsScreen.verify_bio(bio)
 
-@Then("the user's social links should be empty")
+@Then("the user's social links are:")
 def step(context):
-    _settingsScreen.verify_social_links("", "", "", "")
-
-@Then("the user's social links should be: \"|any|\", personal site: \"|any|\", \"|any|\": \"|any|\"")
-def step(context, twitter, personal_site, custom_link_name, custom_link):
-    _settingsScreen.verify_social_links(twitter, personal_site, custom_link_name, custom_link)
+    _settingsScreen.verify_social_links(context.table)
 
 @Then("the application displays |any| as the selected language")
 def step(context, native):
@@ -228,10 +245,6 @@ def step(context: any):
 def step(context: any):
     _statusMain.user_is_set_to_automatic()   
 
-@Then("in profile popup the user's display name should be \"|any|\"")
-def step(context, display_name):
-    _statusMain.verify_profile_popup_display_name(display_name)
-
 @Then("the contact request for chat key \"|any|\" is present in the pending requests tab")
 def step(context, chat_key: str):
     _settingsScreen.verify_contact_request(chat_key)
@@ -251,3 +264,15 @@ def the_user_activates_wallet():
     
 def the_user_opens_the_wallet_settings():
     wallet_init_steps.the_user_opens_the_wallet_settings()
+        
+def the_user_opens_the_profile_settings():
+    _settingsScreen.open_profile_settings()
+    
+def the_user_display_name_is(display_name: str):
+    _settingsScreen.verify_display_name(display_name)
+    
+def the_user_display_name_in_profile_popup_is(display_name: str):
+    _statusMain.verify_profile_popup_display_name(display_name)
+    
+def the_user_opens_own_profile_popup():
+    _statusMain.open_own_profile_popup()

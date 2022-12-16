@@ -46,12 +46,8 @@ class MainScreenComponents(Enum):
 
 class ProfilePopup(Enum):
     USER_IMAGE = "ProfileHeader_userImage"
-    DISPLAY_NAME = "ProfileHeader_displayName"
-    DISPLAY_NAME_EDIT_ICON = "ProfileHeader_displayNameEditIcon"
-
-class DisplayNamePopup(Enum):
-    DISPLAY_NAME_INPUT = "DisplayNamePopup_displayNameInput"
-    DISPLAY_NAME_OK_BUTTON = "DisplayNamePopup_okButton"
+    DISPLAY_NAME = "ProfilePopup_displayName"
+    EDIT_PROFILE_BUTTON = "ProfilePopup_editButton"
     
 class ChatNamePopUp(Enum):
     CHAT_NAME_TEXT = "chat_name_PlaceholderText"
@@ -196,12 +192,6 @@ class StatusMainScreen:
 
     def verify_profile_popup_display_name(self, display_name: str):
         verify_text_matching(ProfilePopup.DISPLAY_NAME.value, display_name)
-
-    def set_profile_popup_display_name(self, display_name: str):
-        click_obj_by_name(ProfilePopup.DISPLAY_NAME_EDIT_ICON.value)
-        name_changed = setText(DisplayNamePopup.DISPLAY_NAME_INPUT.value, display_name)
-        verify(name_changed, "set display name")
-        click_obj_by_name(DisplayNamePopup.DISPLAY_NAME_OK_BUTTON.value)
         
     def click_escape(self):
         press_escape(MainScreenComponents.MAIN_WINDOW.value)        
@@ -236,3 +226,6 @@ class StatusMainScreen:
         click_obj_by_name(MainScreenComponents.SETTINGS_BUTTON.value)
         myProfileSettingsObject = wait_and_get_obj(MainScreenComponents.PROFILE_SETTINGS_VIEW.value)
         image_present("profiletestimage", True, 95, 100, 183, True, myProfileSettingsObject)
+        
+    def navigate_to_edit_profile(self):
+        click_obj_by_name(ProfilePopup.EDIT_PROFILE_BUTTON.value)

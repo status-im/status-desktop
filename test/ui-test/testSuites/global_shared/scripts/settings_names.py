@@ -52,17 +52,27 @@ messaging_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objec
 
 
 # Profile Settings:
-displayName_StatusInput = {"container": mainWindow_ScrollView_2, "objectName": "displayNameInput", "type": "StatusInput", "visible": True}
+displayName_StatusInput = {"container": statusDesktop_mainWindow, "objectName": "displayNameInput", "type": "StatusInput", "visible": True}
 displayName_TextEdit = {"container": displayName_StatusInput, "type": "TextEdit", "unnamed": 1, "visible": True}
-bio_StatusInput = {"container": mainWindow_ScrollView_2, "objectName": "bioInput", "type": "StatusInput", "visible": True}
+bio_StatusInput = {"container": statusDesktop_mainWindow, "objectName": "bioInput", "type": "StatusInput", "visible": True}
 bio_TextEdit = {"container": bio_StatusInput, "type": "TextEdit", "unnamed": 1, "visible": True}
-twitter_StaticSocialLinkInput = {"container": mainWindow_ScrollView_2, "objectName": "__twitter-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
-personalSite_StaticSocialLinkInput = {"container": mainWindow_ScrollView_2, "objectName": "__personal_site-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
-addMoreSocialLinks_StatusIconTextButton = {"container": mainWindow_ScrollView_2, "objectName": "addMoreSocialLinksButton", "type": "StatusIconTextButton", "visible": True}
+twitter_StaticSocialLinkInput = {"container": statusDesktop_mainWindow, "objectName": "__twitter-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
+twitter_TextEdit = {"container": twitter_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
+personalSite_StaticSocialLinkInput = {"container": statusDesktop_mainWindow, "objectName": "__personal_site-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
+personalSite_TextEdit = {"container": personalSite_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
+addMoreSocialLinks_StatusIconTextButton = {"container": statusDesktop_mainWindow, "objectName": "addMoreSocialLinksButton", "type": "StatusIconTextButton", "visible": True}
 twitter_popup_StaticSocialLinkInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "__twitter-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
 twitter_popup_TextEdit = {"container": twitter_popup_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 personalSite_popup_StaticSocialLinkInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "__personal_site-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
 personalSite_popup_TextEdit = {"container": personalSite_popup_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
+github_popup_StaticSocialLinkInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "__github-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
+github_popup_TextEdit = {"container": github_popup_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
+youtube_popup_StaticSocialLinkInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "__youtube-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
+youtube_popup_TextEdit = {"container": youtube_popup_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
+discord_popup_StaticSocialLinkInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "__discord-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
+discord_popup_TextEdit = {"container": discord_popup_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
+telegram_popup_StaticSocialLinkInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "__telegram-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
+telegram_popup_TextEdit = {"container": telegram_popup_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 customLink_popup_StatusInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "hyperlinkInput", "type": "StatusInput", "visible": True}
 customLink_popup_TextEdit = {"container": customLink_popup_StatusInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 customUrl_popup_StatusInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "urlInput", "type": "StatusInput", "visible": True}

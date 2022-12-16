@@ -31,6 +31,7 @@ userContextMenu_ViewMyProfileAction = {"container": statusDesktop_mainWindow_ove
 # popups
 modal_Close_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "modalCloseButtonRectangle", "type": "Rectangle", "visible": True}
 delete_Channel_ConfirmationDialog_DeleteButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "deleteChatConfirmationDialogDeleteButton", "type": "StatusButton"}
+closeButton_StatusHeaderAction = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerActionsCloseButton", "type": "StatusFlatRoundButton", "visible": True}
 
 # Main Window - chat related:
 mainWindow_statusChatNavBarListView_ListView = {"container": statusDesktop_mainWindow, "objectName": "statusChatNavBarListView", "type": "ListView", "visible": True}
@@ -48,8 +49,5 @@ startChat_Btn = {"container": statusDesktop_mainWindow_overlay, "objectName": "s
 
 # My Profile Popup
 ProfileHeader_userImage = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileHeader_userImage", "type": "UserImage", "visible": True}
-ProfileHeader_displayName = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileHeader_displayName", "type": "StyledText", "visible": True}
-ProfileHeader_displayNameEditIcon = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileHeader_displayNameEditIcon", "type": "SVGImage", "visible": True}
-DisplayNamePopup_displayNameInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "DisplayNamePopup_displayNameInput", "type": "TextEdit", "visible": True}
-DisplayNamePopup_okButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "DisplayNamePopup_okButton", "type": "StatusButton", "visible": True}
-
+ProfilePopup_displayName = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialog_displayName", "type": "StatusBaseText", "visible": True}
+ProfilePopup_editButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "editProfileButton", "type": "StatusButton", "visible": True}

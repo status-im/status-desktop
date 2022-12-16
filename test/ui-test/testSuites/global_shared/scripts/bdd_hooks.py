@@ -9,6 +9,7 @@ from steps.commonInitSteps import context_init
 @OnScenarioStart
 def hook(context):
     context_init(context, testSettings)
+    context.userData["scenario_name"] = context._data["title"]
 
 @OnScenarioEnd
 def hook(context):
