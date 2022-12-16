@@ -77,5 +77,7 @@ QtObject:
     let temporaryModelIDs = self.temporaryModel.getItemIds()
     let membersAdded = filter(temporaryModelIDs, id => not modelIDs.contains(id))
     let membersRemoved = filter(modelIDs, id => not temporaryModelIDs.contains(id))
-    self.delegate.addGroupMembers(membersAdded)
-    self.delegate.removeGroupMembers(membersRemoved)
+    if (membersAdded.len > 0):
+      self.delegate.addGroupMembers(membersAdded)
+    if (membersRemoved.len > 0):
+      self.delegate.removeGroupMembers(membersRemoved)
