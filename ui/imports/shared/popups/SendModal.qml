@@ -217,9 +217,7 @@ StatusDialog {
                             assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : []
                             defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")
                             placeholderText: qsTr("Select token")
-                            getCurrencyBalanceString: function (currencyBalance) {
-                                return "%1 %2".arg(Utils.toLocaleString(currencyBalance.toFixed(2), popup.store.locale, {"currency": true})).arg(popup.store.currentCurrency.toUpperCase())
-                            }
+                            currentCurrencySymbol: RootStore.currencyStore.currentCurrencySymbol
                             tokenAssetSourceFn: function (symbol) {
                                 return symbol ? Style.png("tokens/%1".arg(symbol)) : defaultToken
                             }
@@ -228,6 +226,9 @@ StatusDialog {
                                     return popup.selectedAccount.findTokenSymbolByAddress(address)
                                 }
                                 return ""
+                            }
+                            getNetworkIcon: function(chainId){
+                                return RootStore.getNetworkIcon(chainId)
                             }
                             onSelectedAssetChanged: {
                                 if (!assetSelector.selectedAsset || !!amountToSendInput.input.text || isNaN(amountToSendInput.input.text)) {
@@ -284,6 +285,9 @@ StatusDialog {
                                 return popup.selectedAccount.findTokenSymbolByAddress(address)
                             }
                             return ""
+                        }
+                        getNetworkIcon: function(chainId){
+                            return RootStore.getNetworkIcon(chainId)
                         }
                         onTokenSelected: {
                             assetSelector.userSelectedToken = selectedToken.symbol

@@ -14,23 +14,29 @@ import StatusQ.Core.Backpressure 1.0
 import shared.controls 1.0
 import utils 1.0
 
+import utils 1.0
+
+import "../controls"
+
 Item {
     id: root
 
     property var assets
     property var selectedAsset
-    property string defaultToken: ""
-    property string userSelectedToken: ""
+    property string defaultToken
+    property string userSelectedToken
+    property string currentCurrencySymbol
+    property string placeholderText
+
     property var tokenAssetSourceFn: function (symbol) {
         return ""
     }
     property var searchTokenSymbolByAddressFn: function (address) {
         return ""
     }
-
-    // Define this in the usage to get balance in currency selected by user
-    property var getCurrencyBalanceString: function (currencyBalance) { return "" }
-    property string placeholderText
+    property var getNetworkIcon: function(chainId){
+        return ""
+    }
 
     function resetInternal() {
         assets = null
@@ -66,9 +72,9 @@ Item {
         height: 34
 
         control.padding: 4
-        control.popup.width: 342
+        control.popup.width: 492
         control.popup.height: 416
-        control.popup.x: width - control.popup.width
+        control.popup.x: -root.x
         
         popupContentItemObjectName: "assetSelectorList"
 
@@ -140,74 +146,15 @@ Item {
 
         control.indicator: null
 
-        delegate: StatusItemDelegate {
-            width: comboBox.control.popup.width
-            highlighted: index === comboBox.control.highlightedIndex
-            padding: 16
+        delegate: TokenBalancePerChainDelegate {
             objectName: "AssetSelector_ItemDelegate_" + symbol
-            onClicked: {
-                // WARNING: Wrong ComboBox value processing. Check `StatusAccountSelector` for more info.
-                root.userSelectedToken = symbol
-                root.selectedAsset = {name: name, symbol: symbol, totalBalance: totalBalance, totalCurrencyBalance: totalCurrencyBalance, balances: balances, decimals: decimals}
-            }
-
-            // WARNING: Wrong ComboBox value processing. Check `StatusAccountSelector` for more info.
-            Component.onCompleted: {
-                if (symbol === userSelectedToken)
-                    root.selectedAsset = { name: name, symbol: symbol, totalBalance: totalBalance, totalCurrencyBalance: totalCurrencyBalance, balances: balances, decimals: decimals}
-            }
-
-            contentItem: RowLayout {
-                spacing: 0
-
-                StatusRoundedImage {
-                    image.source: root.tokenAssetSourceFn(symbol.toUpperCase())
-                    image.onStatusChanged: {
-                        if (image.status === Image.Error) {
-                            image.source = defaultToken
-                        }
-                    }
-                }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    Layout.leftMargin: 12
-                    spacing: 0
-
-                    RowLayout {
-                        Layout.fillWidth: true
-
-                        StatusBaseText {
-                            Layout.fillWidth: true
-                            text: symbol.toUpperCase()
-                            font.pixelSize: 15
-                            color: Theme.palette.directColor1
-                        }
-                        StatusBaseText {
-                            Layout.fillWidth: true
-                            horizontalAlignment: Text.AlignRight
-                            font.pixelSize: 15
-                            text: parseFloat(totalBalance).toLocaleCurrencyString(Qt.locale(), symbol)
-                        }
-                    }
-                    RowLayout {
-                        Layout.fillWidth: true
-                        StatusBaseText {
-                            Layout.fillWidth: true
-                            elide: Text.ElideRight
-                            text: name
-                            color: Theme.palette.baseColor1
-                            font.pixelSize: 15
-                        }
-                        StatusBaseText {
-                            Layout.fillWidth: true
-                            horizontalAlignment: Text.AlignRight
-                            font.pixelSize: 15
-                            text: getCurrencyBalanceString(totalCurrencyBalance)
-                            color: Theme.palette.baseColor1
-                        }
-                    }
-                }
+            width: comboBox.control.popup.width
+            currentCurrencySymbol: root.currentCurrencySymbol
+            getNetworkIcon: root.getNetworkIcon
+            onTokenSelected: {
+                userSelectedToken = selectedToken.symbol
+                selectedAsset = selectedToken
+                comboBox.control.popup.close()
             }
         }
 
