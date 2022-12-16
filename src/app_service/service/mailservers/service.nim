@@ -42,6 +42,8 @@ const SIGNAL_ACTIVE_MAILSERVER_CHANGED* = "activeMailserverChanged"
 const SIGNAL_MAILSERVER_AVAILABLE* = "mailserverAvailable"
 const SIGNAL_MAILSERVER_NOT_WORKING* = "mailserverNotWorking"
 const SIGNAL_MAILSERVER_SYNCED* = "mailserverSynced"
+const SIGNAL_MAILSERVER_HISTORY_REQUEST_STARTED* = "historyRequestStarted"
+const SIGNAL_MAILSERVER_HISTORY_REQUEST_COMPLETED* = "historyRequestCompleted"
 
 const requestMoreMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[RequestMoreMessagesTaskArg](argEncoded)
@@ -171,10 +173,12 @@ QtObject:
     self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
       let h = HistoryRequestStartedSignal(e)
       info "history request started", numBatches=h.numBatches
+      self.events.emit(SIGNAL_MAILSERVER_HISTORY_REQUEST_STARTED, Args())
 
     self.events.on(SignalType.HistoryRequestCompleted.event) do(e: Args):
       let h = HistoryRequestCompletedSignal(e)
       info "history request completed"
+      self.events.emit(SIGNAL_MAILSERVER_HISTORY_REQUEST_COMPLETED, Args())
 
     self.events.on(SignalType.HistoryRequestFailed.event) do(e: Args):
       let h = HistoryRequestFailedSignal(e)

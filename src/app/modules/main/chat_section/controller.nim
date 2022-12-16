@@ -233,14 +233,11 @@ proc init*(self: Controller) =
     let args = ContactsStatusUpdatedArgs(e)
     self.delegate.contactsStatusUpdated(args.statusUpdates)
 
-  self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
+  self.events.on(SIGNAL_MAILSERVER_HISTORY_REQUEST_STARTED) do(e: Args):
     self.delegate.setLoadingHistoryMessagesInProgress(true)
 
-  self.events.on(SignalType.HistoryRequestCompleted.event) do(e:Args):
+  self.events.on(SIGNAL_MAILSERVER_HISTORY_REQUEST_COMPLETED) do(e:Args):
     self.delegate.setLoadingHistoryMessagesInProgress(false)
-
-  self.events.on(SignalType.HistoryRequestFailed.event) do(e:Args):
-    discard
 
 proc getMySectionId*(self: Controller): string =
   return self.sectionId
