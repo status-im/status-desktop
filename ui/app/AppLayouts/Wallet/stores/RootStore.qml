@@ -31,9 +31,8 @@ QtObject {
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 
-    property var collectionList: walletSectionCollectiblesCollections.model
-    property var collectibleLists: walletSectionCollectiblesCollectibles.model
-    property var currentCollectible: walletSectionCollectibleCurrent
+    property var collections: walletSectionCollectibles.model
+    property var currentCollectible: walletSectionCurrentCollectible
 
     property var savedAddresses: walletSectionSavedAddresses.model
 
@@ -158,12 +157,8 @@ QtObject {
         return globalUtils.hex2Dec(value)
     }
 
-    function fetchCollectionCollectiblesList(slug) {
-        walletSectionCollectiblesCollectibles.fetch(slug)
-    }
-
-    function getCollectionCollectiblesList(slug) {
-        return walletSectionCollectiblesCollectibles.getModelForCollection(slug)
+    function fetchCollectibles(slug) {
+        walletSectionCollectibles.fetchCollectibles(slug)
     }
 
     function getCollectionMaxValue(traitType, value, maxValue, collectionIndex) {
@@ -176,7 +171,7 @@ QtObject {
     }
 
     function selectCollectible(slug, id) {
-        walletSectionCollectibleCurrent.update(slug, id)
+        walletSectionCurrentCollectible.update(slug, id)
     }
 
     function createOrUpdateSavedAddress(name, address, favourite) {

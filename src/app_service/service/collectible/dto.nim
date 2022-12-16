@@ -1,7 +1,7 @@
 import json, Tables, strformat, strutils
 
 
-type TraitType* {.pure.} = enum
+type CollectibleTraitType* {.pure.} = enum
   Properties = 0,
   Rankings = 1,
   Statistics = 2
@@ -14,13 +14,13 @@ type CollectionDto* = ref object
     ownedAssetCount*: int
     trait*: Table[string, CollectionTrait]
 
-type Trait* = ref object
+type CollectibleTrait* = ref object
     traitType*, value*, displayType*, maxValue*: string
 
 type CollectibleDto* = ref object
     id*: int
     name*, description*, permalink*, imageThumbnailUrl*, imageUrl*, address*, backgroundColor*: string
-    properties*, rankings*, statistics*: seq[Trait]
+    properties*, rankings*, statistics*: seq[CollectibleTrait]
 
 proc isNumeric(s: string): bool =
   try:
@@ -50,21 +50,21 @@ proc toCollectionDto*(jsonCollection: JsonNode): CollectionDto =
         trait: getCollectionTraits(jsonCollection)
     )
 
-proc getTrait*(jsonAsset: JsonNode, traitType: TraitType): seq[Trait] =
-    var traitList: seq[Trait] = @[]
+proc getTrait*(jsonAsset: JsonNode, traitType: CollectibleTraitType): seq[CollectibleTrait] =
+    var traitList: seq[CollectibleTrait] = @[]
     case traitType:
-        of TraitType.Properties:
+        of CollectibleTraitType.Properties:
             for index in jsonAsset{"traits"}.items:
                 if((index{"display_type"}.getStr != "number") and (index{"display_type"}.getStr != "boost_percentage") and (index{"display_type"}.getStr != "boost_number") and not isNumeric(index{"value"}.getStr)):
-                    traitList.add(Trait(traitType: index{"trait_type"}.getStr, value: index{"value"}.getStr, displayType: index{"display_type"}.getStr, maxValue: index{"max_value"}.getStr))
-        of TraitType.Rankings:
+                    traitList.add(CollectibleTrait(traitType: index{"trait_type"}.getStr, value: index{"value"}.getStr, displayType: index{"display_type"}.getStr, maxValue: index{"max_value"}.getStr))
+        of CollectibleTraitType.Rankings:
             for index in jsonAsset{"traits"}.items:
                 if(index{"display_type"}.getStr != "number" and (index{"display_type"}.getStr != "boost_percentage") and (index{"display_type"}.getStr != "boost_number") and isNumeric(index{"value"}.getStr)):
-                    traitList.add(Trait(traitType: index{"trait_type"}.getStr, value: index{"value"}.getStr, displayType: index{"display_type"}.getStr, maxValue: index{"max_value"}.getStr))
-        of TraitType.Statistics:
+                    traitList.add(CollectibleTrait(traitType: index{"trait_type"}.getStr, value: index{"value"}.getStr, displayType: index{"display_type"}.getStr, maxValue: index{"max_value"}.getStr))
+        of CollectibleTraitType.Statistics:
             for index in jsonAsset{"traits"}.items:
                 if(index{"display_type"}.getStr == "number" and (index{"display_type"}.getStr != "boost_percentage") and (index{"display_type"}.getStr != "boost_number") and isNumeric(index{"value"}.getStr)):
-                    traitList.add(Trait(traitType: index{"trait_type"}.getStr, value: index{"value"}.getStr, displayType: index{"display_type"}.getStr, maxValue: index{"max_value"}.getStr))
+                    traitList.add(CollectibleTrait(traitType: index{"trait_type"}.getStr, value: index{"value"}.getStr, displayType: index{"display_type"}.getStr, maxValue: index{"max_value"}.getStr))
     return traitList
 
 proc toCollectibleDto*(jsonAsset: JsonNode): CollectibleDto =
@@ -77,7 +77,7 @@ proc toCollectibleDto*(jsonAsset: JsonNode): CollectibleDto =
         imageUrl: jsonAsset{"image_url"}.getStr,
         address: jsonAsset{"asset_contract"}{"address"}.getStr,
         backgroundColor: jsonAsset{"background_color"}.getStr,
-        properties: getTrait(jsonAsset, TraitType.Properties),
-        rankings: getTrait(jsonAsset, TraitType.Rankings),
-        statistics: getTrait(jsonAsset, TraitType.Statistics)
+        properties: getTrait(jsonAsset, CollectibleTraitType.Properties),
+        rankings: getTrait(jsonAsset, CollectibleTraitType.Rankings),
+        statistics: getTrait(jsonAsset, CollectibleTraitType.Statistics)
     )

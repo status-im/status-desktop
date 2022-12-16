@@ -1,28 +1,5 @@
 import strformat
-
-type
-  Trait* = object
-    traitType, value, displayType, maxValue: string
-
-proc getTraitType*(self: Trait): string =
-  return self.traitType
-
-proc getValue*(self: Trait): string =
-  return self.value
-
-proc getDisplayType*(self: Trait): string =
-  return self.displayType
-
-proc getMaxValue*(self: Trait): string =
-  return self.maxValue
-
-proc initTrait*(
-  traitType, value, displayType, maxValue: string
-): Trait =
-  result.traitType = traitType
-  result.value = value
-  result.displayType = displayType
-  result.maxValue = maxValue
+import ./collectible_trait_item
 
 type
   Item* = object
@@ -32,9 +9,9 @@ type
     backgroundColor: string
     description: string
     permalink: string
-    properties: seq[Trait]
-    rankings: seq[Trait]
-    stats: seq[Trait]
+    properties: seq[CollectibleTrait]
+    rankings: seq[CollectibleTrait]
+    stats: seq[CollectibleTrait]
 
 proc initItem*(
   id: int,
@@ -43,9 +20,9 @@ proc initItem*(
   backgroundColor: string,
   description: string,
   permalink: string,
-  properties: seq[Trait],
-  rankings: seq[Trait],
-  stats: seq[Trait]
+  properties: seq[CollectibleTrait],
+  rankings: seq[CollectibleTrait],
+  stats: seq[CollectibleTrait]
 ): Item =
   result.id = id
   result.name = name
@@ -88,11 +65,11 @@ proc getDescription*(self: Item): string =
 proc getPermalink*(self: Item): string =
   return self.permalink
 
-proc getProperties*(self: Item): seq[Trait] =
+proc getProperties*(self: Item): seq[CollectibleTrait] =
   return self.properties
 
-proc getRankings*(self: Item): seq[Trait] =
+proc getRankings*(self: Item): seq[CollectibleTrait] =
   return self.rankings
 
-proc getStats*(self: Item): seq[Trait] =
+proc getStats*(self: Item): seq[CollectibleTrait] =
   return self.stats

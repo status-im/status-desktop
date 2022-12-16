@@ -11,24 +11,15 @@ import utils 1.0
 
 Item {
     id: root
+
+    property string collectionImageUrl: ""
+    property bool collectiblesLoaded: false
+    property var collectiblesModel
+
     width: parent.width
     height: contentLoader.height
 
-    property string slug: ""
-    property bool collectiblesLoaded: false
-    property string collectionImageUrl: ""
-    property int collectionIndex: -1
-    signal collectibleClicked()
-
-    Connections {
-        target: walletSectionCollectiblesCollectibles
-        onItemsLoaded: function(collectionSlug) {
-            if (collectionSlug !== slug) {
-                return
-            }
-            root.collectiblesLoaded = true;
-        }
-    }
+    signal collectibleClicked(int collectibleId)
 
     Loader {
         id: contentLoader
@@ -39,8 +30,7 @@ Item {
         sourceComponent: {
             if (!root.collectiblesLoaded) {
                 return loading
-            }
-            if (RootStore.getCollectionCollectiblesList(root.slug).count == 0) {
+            } else if (root.collectiblesModel.count === 0) {
                 return empty
             }
             return loaded
@@ -115,8 +105,7 @@ Item {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: {
-                            RootStore.selectCollectible(root.slug, model.id)
-                            root.collectibleClicked();
+                            root.collectibleClicked(model.id);
                         }
                     }
                 }
@@ -124,7 +113,7 @@ Item {
 
             Repeater {
                 objectName: "collectiblesRepeater"
-                model: RootStore.getCollectionCollectiblesList(root.slug)
+                model: root.collectiblesModel
                 delegate: collectibleDelegate
             }
         }

@@ -1,6 +1,6 @@
 import NimQml, Tables, strutils, strformat
 
-import ./item
+import ./collectible_trait_item
 
 type
   ModelRole {.pure.} = enum
@@ -12,7 +12,7 @@ type
 QtObject:
   type
     TraitModel* = ref object of QAbstractListModel
-      items: seq[Trait]
+      items: seq[CollectibleTrait]
 
   proc delete(self: TraitModel) =
     self.items = @[]
@@ -69,7 +69,7 @@ QtObject:
     of ModelRole.MaxValue:
       result = newQVariant(item.getMaxValue())
 
-  proc setItems*(self: TraitModel, items: seq[Trait]) =
+  proc setItems*(self: TraitModel, items: seq[CollectibleTrait]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
