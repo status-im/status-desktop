@@ -10,7 +10,6 @@ QtObject:
       model: Model
       modelVariant: QVariant
       initialMessagesLoaded: bool
-      loadingHistoryMessagesInProgress: bool
       messageSearchOngoing: bool
 
   proc delete*(self: View) =
@@ -110,21 +109,6 @@ QtObject:
       return
     self.initialMessagesLoaded = true
     self.initialMessagesLoadedChanged()
-
-  proc loadingHistoryMessagesInProgressChanged*(self: View) {.signal.}
-
-  proc getLoadingHistoryMessagesInProgress*(self: View): bool {.slot.} =
-    return self.loadingHistoryMessagesInProgress
-
-  QtProperty[bool] loadingHistoryMessagesInProgress:
-    read = getLoadingHistoryMessagesInProgress
-    notify = loadingHistoryMessagesInProgressChanged
-
-  proc setLoadingHistoryMessagesInProgress*(self: View, value: bool) = # this is not a slot
-    if (value == self.loadingHistoryMessagesInProgress):
-      return
-    self.loadingHistoryMessagesInProgress = value
-    self.loadingHistoryMessagesInProgressChanged()
 
   proc loadMoreMessages*(self: View) {.slot.} =
     self.delegate.loadMoreMessages()
