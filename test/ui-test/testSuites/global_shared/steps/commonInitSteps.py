@@ -26,7 +26,7 @@ _aut_name = "aut_name"
 _status_data_folder = "status_data_folder_path"
 _fixtures_root = "fixtures_root"
 _search_images = "search_images"
-_scenario_name = "scenario_name"
+_feature_name = "feature_name"
     
 def context_init(context, testSettings, screenshot_on_fail = True):
     # With this property it is enabled that every test failure will cause Squish to take a screenshot of the desktop when the failure occurred
@@ -39,7 +39,7 @@ def context_init(context, testSettings, screenshot_on_fail = True):
     context.userData[_fixtures_root] = os.path.join(os.path.dirname(__file__), _status_fixtures_folder_path)
     context.userData[_search_images] = os.path.join(os.path.dirname(__file__), _status_shared_images_path)
 
-    context.userData[_scenario_name] = context._data["title"]
+    context.userData[_feature_name] = context._data["title"]
 
     base_path = os.path.join(os.path.dirname(__file__))
     split_path = base_path.split("/")

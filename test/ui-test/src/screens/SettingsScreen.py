@@ -80,12 +80,16 @@ class WalletSettingsScreen(Enum):
 class ProfileSettingsScreen(Enum):
     DISPLAY_NAME: str = "displayName_TextEdit"
     BIO: str = "bio_TextEdit"
-    TWITTER_SOCIAL_LINK: str = "twitter_StaticSocialLinkInput"
-    PERSONAL_SITE_SOCIAL_LINK: str = "personalSite_StaticSocialLinkInput"
+    TWITTER_SOCIAL_LINK: str = "twitter_TextEdit"
+    PERSONAL_SITE_SOCIAL_LINK: str = "personalSite_TextEdit"
     OPEN_SOCIAL_LINKS_DIALOG: str = "addMoreSocialLinks_StatusIconTextButton"
-    CLOSE_SOCIAL_LINKS_DIALOG: str = "modal_Close_Button"
+    CLOSE_SOCIAL_LINKS_DIALOG: str = "closeButton_StatusHeaderAction"
     TWITTER_SOCIAL_LINK_IN_DIALOG: str = "twitter_popup_TextEdit"
     PERSONAL_SITE_LINK_IN_DIALOG: str = "personalSite_popup_TextEdit"
+    GITHUB_SOCIAL_LINK_IN_DIALOG: str = "github_popup_TextEdit"
+    YOUTUBE_SOCIAL_LINK_IN_DIALOG: str = "youtube_popup_TextEdit"
+    DISCORD_SOCIAL_LINK_IN_DIALOG: str = "discord_popup_TextEdit"
+    TELEGRAM_SOCIAL_LINK_IN_DIALOG: str = "telegram_popup_TextEdit"
     CUSTOM_LINK_IN_DIALOG: str = "customLink_popup_TextEdit"
     CUSTOM_URL_IN_DIALOG: str = "customUrl_popup_TextEdit"
     CHANGE_PASSWORD_BUTTON: str = "change_password_button"
@@ -279,32 +283,83 @@ class SettingsScreen:
         click_obj_by_name(SettingsScreenComponents.SAVE_BUTTON.value)
         self.verify_bio(bio)
 
-    def set_social_links(self, twitter, personal_site, custom_link_name, custom_link: str):
+    def set_social_links(self, table):
+        
+        twitter = ""
+        personal_site = ""
+        github = ""
+        youtube = ""
+        discord = ""
+        telegram = ""
+        custom_link_text = ""
+        custom_link = ""
+        
+        if table is not None:
+            verify_equals(8, len(table)) # Expecting 8 as social media link fields to verify
+            twitter = table[0][0]
+            personal_site = table[1][0]
+            github = table[2][0]
+            youtube = table[3][0]
+            discord = table[4][0]
+            telegram = table[5][0]
+            custom_link_text = table[6][0]
+            custom_link = table[7][0]       
+        
         click_obj_by_name(ProfileSettingsScreen.OPEN_SOCIAL_LINKS_DIALOG.value)
 
         click_obj_by_name(ProfileSettingsScreen.TWITTER_SOCIAL_LINK_IN_DIALOG.value)
-        verify(type(ProfileSettingsScreen.TWITTER_SOCIAL_LINK_IN_DIALOG.value, twitter), "set twitter")
-
+        verify(setText(ProfileSettingsScreen.TWITTER_SOCIAL_LINK_IN_DIALOG.value, twitter), "set twitter")
         click_obj_by_name(ProfileSettingsScreen.PERSONAL_SITE_LINK_IN_DIALOG.value)
-        verify(type(ProfileSettingsScreen.PERSONAL_SITE_LINK_IN_DIALOG.value, personal_site), "set personal site")
-
+        verify(setText(ProfileSettingsScreen.PERSONAL_SITE_LINK_IN_DIALOG.value, personal_site), "set personal site")
+        click_obj_by_name(ProfileSettingsScreen.GITHUB_SOCIAL_LINK_IN_DIALOG.value)
+        verify(setText(ProfileSettingsScreen.GITHUB_SOCIAL_LINK_IN_DIALOG.value, github), "set github")
+        click_obj_by_name(ProfileSettingsScreen.YOUTUBE_SOCIAL_LINK_IN_DIALOG.value)
+        verify(setText(ProfileSettingsScreen.YOUTUBE_SOCIAL_LINK_IN_DIALOG.value, youtube), "set youtube")
+        click_obj_by_name(ProfileSettingsScreen.DISCORD_SOCIAL_LINK_IN_DIALOG.value)
+        verify(setText(ProfileSettingsScreen.DISCORD_SOCIAL_LINK_IN_DIALOG.value, discord), "set discord")
+        click_obj_by_name(ProfileSettingsScreen.TELEGRAM_SOCIAL_LINK_IN_DIALOG.value)
+        verify(setText(ProfileSettingsScreen.TELEGRAM_SOCIAL_LINK_IN_DIALOG.value, telegram), "set telegram")
         click_obj_by_name(ProfileSettingsScreen.CUSTOM_LINK_IN_DIALOG.value)
-        verify(type(ProfileSettingsScreen.CUSTOM_LINK_IN_DIALOG.value, custom_link_name), "set custom link name")
-
+        verify(setText(ProfileSettingsScreen.CUSTOM_LINK_IN_DIALOG.value, custom_link_text), "set custom link name")
         click_obj_by_name(ProfileSettingsScreen.CUSTOM_URL_IN_DIALOG.value)
-        verify(type(ProfileSettingsScreen.CUSTOM_URL_IN_DIALOG.value, custom_link), "set custom link url")
+        verify(setText(ProfileSettingsScreen.CUSTOM_URL_IN_DIALOG.value, custom_link), "set custom link url")
 
         click_obj_by_name(ProfileSettingsScreen.CLOSE_SOCIAL_LINKS_DIALOG.value)
         click_obj_by_name(SettingsScreenComponents.SAVE_BUTTON.value)
 
-    def verify_social_links(self, twitter, personal_site, custom_link_name, custom_link: str):
+    def verify_social_links(self, table):
+        
+        twitter = ""
+        personal_site = ""
+        github = ""
+        youtube = ""
+        discord = ""
+        telegram = ""
+        custom_link_text = ""
+        custom_link = ""
+        
+        if table is not None:
+            verify_equals(8, len(table)) # Expecting 8 as social media link fields to verify
+            twitter = table[0][0]
+            personal_site = table[1][0]
+            github = table[2][0]
+            youtube = table[3][0]
+            discord = table[4][0]
+            telegram = table[5][0]
+            custom_link_text = table[6][0]
+            custom_link = table[7][0]       
+        
         verify_text_matching(ProfileSettingsScreen.TWITTER_SOCIAL_LINK.value, twitter)
         verify_text_matching(ProfileSettingsScreen.PERSONAL_SITE_SOCIAL_LINK.value, personal_site)
 
         click_obj_by_name(ProfileSettingsScreen.OPEN_SOCIAL_LINKS_DIALOG.value)
         verify_text_matching(ProfileSettingsScreen.TWITTER_SOCIAL_LINK_IN_DIALOG.value, twitter)
         verify_text_matching(ProfileSettingsScreen.PERSONAL_SITE_LINK_IN_DIALOG.value, personal_site)
-        verify_text_matching(ProfileSettingsScreen.CUSTOM_LINK_IN_DIALOG.value, custom_link_name)
+        verify_text_matching(ProfileSettingsScreen.GITHUB_SOCIAL_LINK_IN_DIALOG.value, github)
+        verify_text_matching(ProfileSettingsScreen.YOUTUBE_SOCIAL_LINK_IN_DIALOG.value, youtube)
+        verify_text_matching(ProfileSettingsScreen.DISCORD_SOCIAL_LINK_IN_DIALOG.value, discord)
+        verify_text_matching(ProfileSettingsScreen.TELEGRAM_SOCIAL_LINK_IN_DIALOG.value, telegram)
+        verify_text_matching(ProfileSettingsScreen.CUSTOM_LINK_IN_DIALOG.value, custom_link_text)
         verify_text_matching(ProfileSettingsScreen.CUSTOM_URL_IN_DIALOG.value, custom_link)
         click_obj_by_name(ProfileSettingsScreen.CLOSE_SOCIAL_LINKS_DIALOG.value)
 

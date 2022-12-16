@@ -55,6 +55,7 @@ Item {
 
         StatusFlatRoundButton {
             id: closeButton
+            objectName: "headerActionsCloseButton"
 
             Layout.fillHeight: true
             Layout.preferredHeight: d.buttonSize

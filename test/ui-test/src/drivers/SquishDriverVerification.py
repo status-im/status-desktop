@@ -20,15 +20,15 @@ def verify_screen(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
 
 def verify_object_enabled(objName: str, timeout: int=_MIN_WAIT_OBJ_TIMEOUT, condition: bool=True):
     result = is_loaded_visible_and_enabled(objName, timeout)
-    test.verify(result[0] == condition, "object not enabled")
+    test.verify(result[0] == condition, "Checking if object enabled")
 
 def verify_text_matching(objName: str, text: str):
-    test.verify(is_text_matching(objName, text), "text does not match")
+    test.verify(is_text_matching(objName, text), "Checking if text matches")
 
 def verify_text_matching_insensitive(obj, text: str):
-    test.verify(is_text_matching_insensitive(obj, text), "text does not match")
+    test.verify(is_text_matching_insensitive(obj, text), "Checking if test matches insensitive")
 
-def verify_equal(result: object, expected: object, msg: str = "objects are not equal"):
+def verify_equal(result: object, expected: object, msg: str = "Checking if objects are equal"):
     test.verify(result == expected, msg)
 
 def verify(result: bool, msg: str):

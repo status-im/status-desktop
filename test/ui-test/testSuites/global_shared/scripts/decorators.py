@@ -9,7 +9,7 @@ def verify_screenshot(func, obj: Dict[str, Any] = mainWindow_RighPanel):
         context = args[0]
         func(*args, **kwargs)
         
-        scenario = context.userData["scenario_name"].lower().replace(" ", "_")
+        scenario = context.userData["feature_name"].lower().replace(" ", "_")
         step = context.userData["step_name"].lower().replace(" ", "_")
         filename = f"{step}_{'_'.join(args[1:])}"
         path = os.path.join(scenario, filename)
