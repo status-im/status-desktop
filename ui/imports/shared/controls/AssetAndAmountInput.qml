@@ -30,6 +30,7 @@ Item {
     property bool isValid: false
     property string validationError
     property var formattedInputValue
+    property var getNetworkIcon: function(chainId){ return ""}
 
     height: inputAmount.height + (inputAmount.validationError ? -16 - inputAmount.validationErrorTopMargin : 0) + txtFiatBalance.height + txtFiatBalance.anchors.topMargin
     anchors.right: parent.right
@@ -166,9 +167,6 @@ Item {
          anchors.right: parent.right
          anchors.rightMargin: Style.current.smallPadding
          defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")
-         getCurrencyBalanceString: function (currencyBalance) {
-             return Utils.toLocaleString(currencyBalance.toFixed(2), RootStore.locale, {"currency": true}) + " " + root.currentCurrency.toUpperCase()
-         }
          tokenAssetSourceFn: function (symbol) {
              return symbol ? Style.png("tokens/" + symbol) : defaultToken
          }
@@ -178,6 +176,7 @@ Item {
              }
              return ""
          }
+         getNetworkIcon: root.getNetworkIcon
          onSelectedAssetChanged: {
              if (!selectAsset.selectedAsset) {
                  return

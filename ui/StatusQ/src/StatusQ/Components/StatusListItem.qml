@@ -77,6 +77,7 @@ Rectangle {
     property alias statusListItemComponentsSlot: statusListItemComponentsSlot
     property alias statusListItemTagsSlot: statusListItemTagsSlot
     property alias statusListItemInlineTagsSlot: statusListItemTagsSlotInline
+    property alias statusListItemLabel: statusListItemLabel
 
     signal clicked(string itemId, var mouse)
     signal titleClicked(string titleId)
@@ -361,16 +362,16 @@ Rectangle {
             ScrollView {
                 visible: tagsRepeater.count > 0
                 anchors.top: statusListItemTertiaryTitle.bottom
-                anchors.topMargin: visible? 8 : 0
+                anchors.topMargin: visible ? 8 : 0
                 width: parent.width
-                height: visible? contentHeight + 12 : contentHeight
+                height: visible ? contentHeight : 0
                 clip: true
 
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
                 Row {
                     id: statusListItemTagsSlotInline
-                    spacing: 10
+                    spacing: tagsRepeater.count > 0 ? 10 : 0
 
                     Repeater {
                         id: tagsRepeater

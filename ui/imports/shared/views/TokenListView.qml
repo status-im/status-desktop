@@ -5,6 +5,7 @@ import SortFilterProxyModel 0.2
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
 
 import utils 1.0
 
@@ -19,6 +20,7 @@ Rectangle {
     property var searchTokenSymbolByAddressFn: function (address) {
         return ""
     }
+    property var getNetworkIcon: function(chainId){}
 
     QtObject {
         id: d
@@ -52,15 +54,11 @@ Rectangle {
                 }
             ]
         }
-        delegate: TokenDelegate {
-            objectName: "SendModal_AssetView_TokenListItem_" + symbol
-            readonly property string balance: enabledNetworkBalance // Needed for the tests
-            currentCurrencySymbol: root.currentCurrencySymbol
+        delegate: TokenBalancePerChainDelegate {
             width: ListView.view.width
-            onClicked: {
-                tokenSelected({name: name, symbol: symbol, totalBalance: totalBalance, totalCurrencyBalance: totalCurrencyBalance, balances: balances, decimals: decimals})
-            }
-            color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
+            currentCurrencySymbol: root.currentCurrencySymbol
+            getNetworkIcon: root.getNetworkIcon
+            onTokenSelected: root.tokenSelected(selectedToken)
         }
         headerPositioning: ListView.OverlayHeader
         header: Rectangle {
