@@ -110,9 +110,6 @@ QtObject:
 
   proc openStoreToKeychainPopup*(self: View) {.signal.}
 
-  proc offerToStorePassword*(self: View) =
-    self.openStoreToKeychainPopup()
-
   proc storePassword*(self: View, password: string) {.slot.} =
     self.delegate.storePassword(password)
 

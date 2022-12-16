@@ -300,8 +300,7 @@ proc startupDidLoad*(self: AppController) =
 
 proc mainDidLoad*(self: AppController) =
   self.startupModule.moveToAppState()
-
-  self.mainModule.checkForStoringPassword()
+  self.startupModule.checkForStoringPasswordToKeychain()
 
 proc start*(self: AppController) =
   self.keycardService.init()
