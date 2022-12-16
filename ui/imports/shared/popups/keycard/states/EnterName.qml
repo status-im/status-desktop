@@ -4,6 +4,7 @@ import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Controls 0.1
 
 import utils 1.0
@@ -22,12 +23,31 @@ Item {
         property bool entryValid: false
 
         function updateValidity() {
-            d.entryValid = keycardName.text.trim().length > 0 && keycardName.text !== root.sharedKeycardModule.keyPairStoredOnKeycard.name
+            d.entryValid = root.sharedKeycardModule.keyPairForProcessing.name.trim().length > 0
+            if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard) {
+                d.entryValid = d.entryValid && root.sharedKeycardModule.keyPairForProcessing.name !== root.sharedKeycardModule.getNameFromKeycard()
+            }
             root.validation(d.entryValid)
         }
     }
 
     Component.onCompleted: {
+        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase) {
+            if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterKeycardName) {
+                if (root.sharedKeycardModule.keyPairForProcessing.name.trim() !== "") {
+                    d.updateValidity()
+                    return
+                }
+
+                let color = Constants.preDefinedWalletAccountColors[Math.floor(Math.random() * Constants.preDefinedWalletAccountColors.length)]
+                let emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
+                root.sharedKeycardModule.keyPairForProcessing.observedAccount.name = "      "
+                root.sharedKeycardModule.keyPairForProcessing.observedAccount.color = color
+                root.sharedKeycardModule.keyPairForProcessing.observedAccount.emoji = emoji
+            }
+        }
+
+        d.updateValidity()
         keycardName.input.edit.forceActiveFocus()
     }
 
@@ -50,15 +70,12 @@ Item {
             Layout.preferredWidth: Constants.keycard.general.keycardNameInputWidth
             Layout.alignment: Qt.AlignCenter
             charLimit: Constants.keycard.general.keycardNameLength
-            placeholderText: qsTr("Keycard name")
-            text: root.sharedKeycardModule.keyPairStoredOnKeycard.name
+            text: root.sharedKeycardModule.keyPairForProcessing.name
             input.acceptReturn: true
 
             onTextChanged: {
+                root.sharedKeycardModule.keyPairForProcessing.name = text
                 d.updateValidity()
-                if (d.entryValid) {
-                    root.sharedKeycardModule.setKeycardName(text)
-                }
             }
 
             onKeyPressed: {
@@ -85,13 +102,14 @@ Item {
 
         KeyPairItem {
             Layout.preferredWidth: parent.width
-            keyPairType:  root.sharedKeycardModule.keyPairStoredOnKeycard.pairType
-            keyPairPubKey: root.sharedKeycardModule.keyPairStoredOnKeycard.pubKey
-            keyPairName: keycardName.text
-            keyPairIcon: root.sharedKeycardModule.keyPairStoredOnKeycard.icon
-            keyPairImage: root.sharedKeycardModule.keyPairStoredOnKeycard.image
-            keyPairDerivedFrom: root.sharedKeycardModule.keyPairStoredOnKeycard.derivedFrom
-            keyPairAccounts: root.sharedKeycardModule.keyPairStoredOnKeycard.accounts
+            keyPairType: root.sharedKeycardModule.keyPairForProcessing.pairType
+            keyPairPubKey: root.sharedKeycardModule.keyPairForProcessing.pubKey
+            keyPairName: root.sharedKeycardModule.keyPairForProcessing.name
+            keyPairIcon: root.sharedKeycardModule.keyPairForProcessing.icon
+            keyPairImage: root.sharedKeycardModule.keyPairForProcessing.image
+            keyPairDerivedFrom: root.sharedKeycardModule.keyPairForProcessing.derivedFrom
+            keyPairAccounts: root.sharedKeycardModule.keyPairForProcessing.accounts
+            keyPairCardLocked: root.sharedKeycardModule.keyPairForProcessing.locked
         }
     }
 
@@ -101,9 +119,25 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterKeycardName
             PropertyChanges {
                 target: title
-                text: qsTr("Rename this Keycard")
+                text: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard) {
+                        qsTr("Rename this Keycard")
+                    }
+
+                    return qsTr("Name this Keycard")
+                }
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
+            }
+            PropertyChanges {
+                target: keycardName
+                placeholderText: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.renameKeycard) {
+                        return qsTr("Keycard name")
+                    }
+
+                    return qsTr("What would you like this Keycard to be called?")
+                }
             }
         }
     ]

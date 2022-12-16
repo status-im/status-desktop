@@ -74,6 +74,10 @@ type StateType* {.pure.} = enum
   CopyingKeycard = "CopyingKeycard"
   CopyingKeycardFailure = "CopyingKeycardFailure"
   CopyingKeycardSuccess = "CopyingKeycardSuccess"
+  ManageKeycardAccounts = "ManageKeycardAccounts"
+  CreatingAccountNewSeedPhrase = "CreatingAccountNewSeedPhrase"
+  CreatingAccountNewSeedPhraseSuccess = "CreatingAccountNewSeedPhraseSuccess"
+  CreatingAccountNewSeedPhraseFailure = "CreatingAccountNewSeedPhraseFailure"
 
 
 ## This is the base class for all state we may have in onboarding/login flow.

@@ -23,8 +23,6 @@ method getNextSecondaryState*(self: BiometricsPinInvalidState, controller: Contr
 
 method executeCancelCommand*(self: BiometricsPinInvalidState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
-    controller.setPassword("")
-    controller.setPin("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: BiometricsPinInvalidState, keycardFlowType: string, keycardEvent: KeycardEvent, 

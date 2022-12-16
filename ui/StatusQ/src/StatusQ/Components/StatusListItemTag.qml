@@ -9,12 +9,14 @@ Control {
 
     property alias titleText: titleText
     property string title: ""
+    property bool tagClickable: false
     property bool closeButtonVisible: true
     property color bgColor: Theme.palette.primaryColor3
     property color bgBorderColor: "transparent"
     property int bgRadius: 15
 
     signal clicked(var mouse)
+    signal tagClicked(var mouse)
 
     property StatusAssetSettings asset: StatusAssetSettings {
         height: 20
@@ -43,6 +45,14 @@ Control {
         color: root.bgColor
         radius: root.bgRadius
         border.color: root.bgBorderColor
+
+        MouseArea {
+            anchors.fill: parent
+            enabled: root.tagClickable
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.tagClicked(mouse)
+        }
     }
     contentItem: RowLayout {
         id: layout

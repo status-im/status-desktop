@@ -375,7 +375,7 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool) =
 proc getOpenedAccounts*(self: Controller): seq[AccountDto] =
   return self.accountsService.openedAccounts()
 
-proc getSelectedLoginAccount(self: Controller): AccountDto =
+proc getSelectedLoginAccount*(self: Controller): AccountDto =
   let openedAccounts = self.getOpenedAccounts()
   for acc in openedAccounts:
     if(acc.keyUid == self.tmpSelectedLoginAccountKeyUid):
@@ -424,11 +424,6 @@ proc loginAccountKeycard*(self: Controller) =
 proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =
   let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)
   return acc.keyUid
-
-proc seedPhraseRefersToSelectedKeyPair*(self: Controller, seedPhrase: string): bool =
-  let selectedAccount = self.getSelectedLoginAccount()
-  let accFromSP = self.accountsService.createAccountFromMnemonic(seedPhrase)
-  return selectedAccount.keyUid == accFromSP.keyUid
 
 proc getLastReceivedKeycardData*(self: Controller): tuple[flowType: string, flowEvent: KeycardEvent] =
   return self.keycardService.getLastReceivedKeycardData()

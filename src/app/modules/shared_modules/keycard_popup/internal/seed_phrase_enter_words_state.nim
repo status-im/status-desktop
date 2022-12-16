@@ -11,13 +11,17 @@ proc delete*(self: SeedPhraseEnterWordsState) =
   self.State.delete
 
 method executePrePrimaryStateCommand*(self: SeedPhraseEnterWordsState, controller: Controller) =
-  let mnemonic = controller.getMnemonic()
-  controller.setSeedPhrase(mnemonic)
-  controller.storeSeedPhraseToKeycard(mnemonic.split(" ").len, mnemonic)
+  if self.flowType == FlowType.SetupNewKeycard:
+    let mnemonic = controller.getProfileMnemonic()
+    controller.setSeedPhrase(mnemonic)
+    controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
+  elif self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+    controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
 
 method executeCancelCommand*(self: SeedPhraseEnterWordsState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycard:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: SeedPhraseEnterWordsState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
@@ -27,5 +31,15 @@ method resolveKeycardNextState*(self: SeedPhraseEnterWordsState, keycardFlowType
   if self.flowType == FlowType.SetupNewKeycard:
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.keyUid.len > 0:
-        controller.removeMnemonic()
+        controller.removeProfileMnemonic()
         return createState(StateType.MigratingKeyPair, self.flowType, nil)
+  if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+      keycardEvent.keyUid.len > 0:
+        controller.setKeycardUid(keycardEvent.instanceUID)
+        var item = newKeyPairItem(keyUid = keycardEvent.keyUid)
+        item.setIcon("keycard")
+        item.setPairType(KeyPairType.SeedImport.int)
+        item.addAccount(newKeyPairAccountItem())
+        controller.setKeyPairForProcessing(item)
+        return createState(StateType.EnterKeycardName, self.flowType, nil)

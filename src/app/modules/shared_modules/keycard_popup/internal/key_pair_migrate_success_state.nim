@@ -10,7 +10,8 @@ proc delete*(self: KeyPairMigrateSuccessState) =
 
 method executePrePrimaryStateCommand*(self: KeyPairMigrateSuccessState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
+    let profileMigrated = controller.getSelectedKeyPairIsProfile()
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
-    if controller.getSelectedKeyPairIsProfile():
+    if profileMigrated:
       info "restart the app because of successfully migrated profile keypair"
       quit() # quit the app

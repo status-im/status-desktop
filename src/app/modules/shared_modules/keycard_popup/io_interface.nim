@@ -49,6 +49,7 @@ type FlowType* {.pure.} = enum
   General = "General"
   FactoryReset = "FactoryReset"
   SetupNewKeycard = "SetupNewKeycard"
+  SetupNewKeycardNewSeedPhrase = "SetupNewKeycardNewSeedPhrase"
   Authentication = "Authentication"
   UnlockKeycard = "UnlockKeycard"
   DisplayKeycardContent = "DisplayKeycardContent"
@@ -115,6 +116,9 @@ method setPassword*(self: AccessInterface, value: string) {.base.} =
 method setKeycardName*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getNameFromKeycard*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setPairingCode*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -136,16 +140,16 @@ method getSeedPhrase*(self: AccessInterface): string {.base.} =
 method validSeedPhrase*(self: AccessInterface, value: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setKeyPairForCopy*(self: AccessInterface, item: KeyPairItem) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method setSelectedKeyPair*(self: AccessInterface, item: KeyPairItem) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setKeyPairStoredOnKeycard*(self: AccessInterface, cardMetadata: CardMetadata) {.base.} =
+method getKeyPairForProcessing*(self: AccessInterface): KeyPairItem {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setNamePropForKeyPairStoredOnKeycard*(self: AccessInterface, name: string) {.base.} =
+method updateKeyPairForProcessing*(self: AccessInterface, cardMetadata: CardMetadata) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setKeyPairForProcessing*(self: AccessInterface, item: KeyPairItem) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method migratingProfileKeyPair*(self: AccessInterface): bool {.base.} =

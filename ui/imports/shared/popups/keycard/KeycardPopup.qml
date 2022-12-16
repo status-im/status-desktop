@@ -10,15 +10,17 @@ StatusModal {
     id: root
 
     property var sharedKeycardModule
+    property var emojiPopup
 
     width: Constants.keycard.general.popupWidth
-    anchors.centerIn: parent
     closePolicy: d.disablePopupClose? Popup.NoAutoClose : Popup.CloseOnEscape
 
     header.title: {
         switch (root.sharedKeycardModule.currentState.flowType) {
         case Constants.keycardSharedFlow.setupNewKeycard:
             return qsTr("Set up a new Keycard with an existing account")
+        case Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase:
+            return qsTr("Create a new Keycard account with a new seed phrase")
         case Constants.keycardSharedFlow.factoryReset:
             return qsTr("Factory reset a Keycard")
         case Constants.keycardSharedFlow.authentication:
@@ -80,6 +82,7 @@ StatusModal {
             }
 
             sharedKeycardModule: root.sharedKeycardModule
+            emojiPopup: root.emojiPopup
             onPrimaryButtonEnabledChanged: d.primaryButtonEnabled = primaryButtonEnabled
         }
     }

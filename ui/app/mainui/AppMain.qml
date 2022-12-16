@@ -1362,6 +1362,7 @@ Item {
         id: keycardPopup
         active: false
         sourceComponent: KeycardPopup {
+            anchors.centerIn: parent
             sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModule
         }
 

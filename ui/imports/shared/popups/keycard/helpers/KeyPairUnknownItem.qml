@@ -20,35 +20,12 @@ Rectangle {
     property string keyPairIcon: ""
     property string keyPairImage: ""
     property string keyPairDerivedFrom: ""
-    property string keyPairAccounts: ""
+    property var keyPairAccounts
 
     color: Theme.palette.baseColor2
     radius: Style.current.halfPadding
     implicitWidth: 448
     implicitHeight: 198
-
-    Component.onCompleted: {
-        if (root.keyPairAccounts === "") {
-            // should never be here, as it's not possible to have keypair item without at least a single account
-            console.debug("accounts list is empty for selecting keycard pair")
-            return
-        }
-        let obj = JSON.parse(root.keyPairAccounts)
-        if (obj.error) {
-            console.debug("error parsing accounts for selecting keycard pair, error: ", obj.error)
-            return
-        }
-
-        for (var i=0; i<obj.length; i++) {
-            accountsListModel.append({"path": obj[i].Field1, "address": obj[i].Field2, "balance": obj[i].Field6})
-        }
-
-        accounts.model = accountsListModel
-    }
-
-    ListModel {
-        id: accountsListModel
-    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -96,6 +73,7 @@ Rectangle {
             Layout.bottomMargin: Style.current.padding
             clip: true
             spacing: Style.current.halfPadding * 0.5
+            model: root.keyPairAccounts
 
             delegate: Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -117,7 +95,7 @@ Rectangle {
                             padding: 0
                             StatusBaseText {
                                 id: address
-                                text: StatusQUtils.Utils.elideText(model.address, 6, 4)
+                                text: StatusQUtils.Utils.elideText(model.account.address, 6, 4)
                                 wrapMode: Text.WordWrap
                                 font.pixelSize: Constants.keycard.general.fontSize2
                                 color: Theme.palette.directColor1
@@ -130,13 +108,13 @@ Rectangle {
                                 icon.width: 16
                                 icon.height: 16
                                 onClicked: {
-                                    Qt.openUrlExternally("https://etherscan.io/address/%1".arg(model.address))
+                                    Qt.openUrlExternally("https://etherscan.io/address/%1".arg(model.account.address))
                                 }
                             }
                         }
 
                         StatusBaseText {
-                            text: model.path
+                            text: model.account.path
                             wrapMode: Text.WordWrap
                             font.pixelSize: Constants.keycard.general.fontSize2
                             color: Theme.palette.baseColor1
@@ -153,10 +131,10 @@ Rectangle {
                         text: {
                             if (Global.appMain) {
                                 return "%1%2".arg(SharedStore.RootStore.currencyStore.currentCurrencySymbol)
-                                .arg(Utils.toLocaleString(model.balance.toFixed(2), appSettings.locale, {"model.currency": true}))
+                                .arg(Utils.toLocaleString(model.account.balance.toFixed(2), appSettings.locale, {"model.account.currency": true}))
                             }
                             // without language/model refactor no way to read currency symbol or `appSettings.locale` before user logs in
-                            return "$%1".arg(Utils.toLocaleString(model.balance.toFixed(2), localAppSettings.language, {"model.currency": true}))
+                            return "$%1".arg(Utils.toLocaleString(model.account.balance.toFixed(2), localAppSettings.language, {"model.account.currency": true}))
                         }
                         wrapMode: Text.WordWrap
                         font.pixelSize: Constants.keycard.general.fontSize2

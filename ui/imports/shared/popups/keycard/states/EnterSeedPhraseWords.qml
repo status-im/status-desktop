@@ -76,7 +76,11 @@ Item {
             placeholderText: qsTr("Enter word")
             validators: [
                 StatusValidator {
-                    validate: function (t) { return (d.seedPhrase[d.wordNumbers[0]] === word0.text); }
+                    validate: function (t) {
+                        if (!d.seedPhrase || d.seedPhrase.length === 0 || word0.text.length === 0)
+                            return false
+                        return (d.seedPhrase[d.wordNumbers[0]] === word0.text)
+                    }
                     errorMessage: (word0.text.length) > 0 ? qsTr("This word doesn’t match") : ""
                 }
             ]
@@ -107,7 +111,11 @@ Item {
             placeholderText: qsTr("Enter word")
             validators: [
                 StatusValidator {
-                    validate: function (t) { return (d.seedPhrase[d.wordNumbers[1]] === word1.text); }
+                    validate: function (t) {
+                        if (!d.seedPhrase || d.seedPhrase.length === 0 || word1.text.length === 0)
+                            return false
+                        return (d.seedPhrase[d.wordNumbers[1]] === word1.text)
+                    }
                     errorMessage: (word1.text.length) > 0 ? qsTr("This word doesn’t match") : ""
                 }
             ]
@@ -138,7 +146,11 @@ Item {
             placeholderText: qsTr("Enter word")
             validators: [
                 StatusValidator {
-                    validate: function (t) { return (d.seedPhrase[d.wordNumbers[2]] === word2.text); }
+                    validate: function (t) {
+                        if (!d.seedPhrase || d.seedPhrase.length === 0 || word2.text.length === 0)
+                            return false
+                        return (d.seedPhrase[d.wordNumbers[2]] === word2.text)
+                    }
                     errorMessage: (word2.text.length) > 0 ? qsTr("This word doesn’t match") : ""
                 }
             ]

@@ -9,10 +9,11 @@ proc delete*(self: KeycardNotEmptyState) =
   self.State.delete
 
 method executePrePrimaryStateCommand*(self: KeycardNotEmptyState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycard:
-    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
-    controller.runGetMetadataFlow(resolveAddress = true)
-    return
+  if self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
+      controller.runGetMetadataFlow(resolveAddress = true)
+      return
   if self.flowType == FlowType.CreateCopyOfAKeycard:
     let hideKeypair = not isPredefinedKeycardDataFlagSet(controller.getKeycardData(), PredefinedKeycardData.CopyFromAKeycardPartDone)
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = hideKeypair))
@@ -20,6 +21,7 @@ method executePrePrimaryStateCommand*(self: KeycardNotEmptyState, controller: Co
 
 method executeCancelCommand*(self: KeycardNotEmptyState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 

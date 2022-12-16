@@ -27,5 +27,4 @@ method getNextPrimaryState*(self: EnterBiometricsPasswordState, controller: Cont
 
 method executeCancelCommand*(self: EnterBiometricsPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
-    controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

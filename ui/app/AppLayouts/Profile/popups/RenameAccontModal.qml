@@ -79,6 +79,7 @@ StatusModal {
             anchors.top: selectedColor.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
+            model: Constants.preDefinedWalletAccountColors
             titleText: qsTr("color").toUpperCase()
             selectedColor: currentAccount.color
             selectedColorIndex: {

@@ -22,8 +22,6 @@ method getNextSecondaryState*(self: BiometricsReadyToSignState, controller: Cont
 
 method executeCancelCommand*(self: BiometricsReadyToSignState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
-    controller.setPassword("")
-    controller.setPin("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method resolveKeycardNextState*(self: BiometricsReadyToSignState, keycardFlowType: string, keycardEvent: KeycardEvent, 

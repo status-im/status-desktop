@@ -1,16 +1,11 @@
 import NimQml, Tables, strformat
 import key_pair_item
 
+export key_pair_item
+
 type
   ModelRole {.pure.} = enum
-    PubKey = UserRole + 1
-    Locked
-    Name
-    Image
-    Icon
-    PairType
-    Accounts
-    DerivedFrom
+    KeyPair = UserRole + 1
 
 QtObject:
   type
@@ -52,14 +47,7 @@ QtObject:
 
   method roleNames(self: KeyPairModel): Table[int, string] =
     {
-      ModelRole.PubKey.int: "pubKey",
-      ModelRole.Locked.int: "locked",
-      ModelRole.Name.int: "name",
-      ModelRole.Image.int: "image",
-      ModelRole.Icon.int: "icon",
-      ModelRole.PairType.int: "pairType",
-      ModelRole.Accounts.int: "accounts",
-      ModelRole.DerivedFrom.int: "derivedFrom"
+      ModelRole.KeyPair.int: "keyPair",
     }.toTable
 
   method data(self: KeyPairModel, index: QModelIndex, role: int): QVariant =
@@ -70,25 +58,11 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
     case enumRole:
-    of ModelRole.PubKey:
-      result = newQVariant(item.pubKey)
-    of ModelRole.Locked:
-      result = newQVariant(item.locked)
-    of ModelRole.Name:
-      result = newQVariant(item.name)
-    of ModelRole.Image:
-      result = newQVariant(item.image)
-    of ModelRole.Icon:
-      result = newQVariant(item.icon)
-    of ModelRole.PairType:
-      result = newQVariant(item.pairType.int)
-    of ModelRole.Accounts:
-      result = newQVariant(item.accounts)
-    of ModelRole.DerivedFrom:
-      result = newQVariant(item.derivedFrom)
+    of ModelRole.KeyPair:
+      result = newQVariant(item)
 
   proc findItemByPublicKey*(self: KeyPairModel, publicKey: string): KeyPairItem =
     for i in 0 ..< self.items.len:
-      if(self.items[i].pubKey == publicKey):
+      if(self.items[i].getPubKey() == publicKey):
         return self.items[i]
     return nil

@@ -15,8 +15,9 @@ method executePreBackStateCommand*(self: RepeatPinState, controller: Controller)
 method executePreSecondaryStateCommand*(self: RepeatPinState, controller: Controller) =
   if not controller.getPinMatch():
     return
-  if self.flowType == FlowType.SetupNewKeycard:
-    controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())
+  if self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+      controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())
   if self.flowType == FlowType.UnlockKeycard:
     controller.storePinToKeycard(controller.getPin(), "")      
 
@@ -28,6 +29,7 @@ method getNextSecondaryState*(self: RepeatPinState, controller: Controller): Sta
 
 method executeCancelCommand*(self: RepeatPinState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.ChangeKeycardPin:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
@@ -42,6 +44,12 @@ method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, k
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorLoadingKeys:
         controller.setKeycardUidTheSelectedKeypairIsMigratedTo(keycardEvent.instanceUID)
+        return createState(StateType.PinSet, self.flowType, nil)
+  if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+    if keycardFlowType == ResponseTypeValueEnterMnemonic and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorLoadingKeys:
+        controller.buildSeedPhrasesFromIndexes(keycardEvent.seedPhraseIndexes)
         return createState(StateType.PinSet, self.flowType, nil)
   if self.flowType == FlowType.UnlockKeycard:
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.GetMetadata:
@@ -59,7 +67,7 @@ method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, k
         return createState(StateType.PinSet, self.flowType, nil)
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.LoadAccount:
       if keycardFlowType == ResponseTypeValueKeycardFlowResult:
-        if controller.getKeyUidWhichNeedToBeProcessed() != keycardEvent.keyUid:
+        if controller.getKeyPairForProcessing().getKeyUid() != keycardEvent.keyUid:
           error "load account keyUid and keyUid being unlocked do not match"
           controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
           return

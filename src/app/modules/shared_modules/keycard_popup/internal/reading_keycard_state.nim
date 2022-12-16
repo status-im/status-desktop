@@ -39,7 +39,7 @@ method resolveKeycardNextState*(self: ReadingKeycardState, keycardFlowType: stri
           nextState.stateType == StateType.NotKeycard or
           nextState.stateType == StateType.KeycardEmptyMetadata):
             return nextState
-        let keyUid = controller.getKeyUidWhichNeedToBeProcessed()
+        let keyUid = controller.getKeyPairForProcessing().getKeyUid()
         if keyUid.len > 0:
           if keyUid != keycardEvent.keyUid:
             return createState(StateType.WrongKeycard, self.flowType, nil)
