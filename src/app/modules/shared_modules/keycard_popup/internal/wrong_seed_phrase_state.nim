@@ -17,7 +17,7 @@ method executePrePrimaryStateCommand*(self: WrongSeedPhraseState, controller: Co
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = false))
     sleep(500) # just to shortly remove text on the UI side
     self.verifiedSeedPhrase = controller.validSeedPhrase(controller.getSeedPhrase()) and
-      controller.seedPhraseRefersToSelectedKeyPair(controller.getSeedPhrase())
+      controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getSelectedKeyPairDto().keyUid
     if self.verifiedSeedPhrase:
       controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
     else:
@@ -26,7 +26,7 @@ method executePrePrimaryStateCommand*(self: WrongSeedPhraseState, controller: Co
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = false))
     sleep(500) # just to shortly remove text on the UI side
     self.verifiedSeedPhrase = controller.validSeedPhrase(controller.getSeedPhrase()) and
-      controller.seedPhraseRefersToKeyPairBeingProcessed(controller.getSeedPhrase())
+      controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getKeyPairForProcessing().getKeyUid()
     if self.verifiedSeedPhrase:
       controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
     else:
@@ -35,7 +35,7 @@ method executePrePrimaryStateCommand*(self: WrongSeedPhraseState, controller: Co
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = false))
     sleep(500) # just to shortly remove text on the UI side
     self.verifiedSeedPhrase = controller.validSeedPhrase(controller.getSeedPhrase()) and
-      controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getKeyUidWhichNeedToBeProcessed()
+      controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getKeyPairForProcessing().getKeyUid()
     if self.verifiedSeedPhrase:
       controller.runGetMetadataFlow()
     else:

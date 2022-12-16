@@ -20,7 +20,7 @@ StatusListItem {
     property int keyPairType: Constants.keycard.keyPairType.unknown
     property string keyPairIcon: ""
     property string keyPairImage: ""
-    property string keyPairAccounts: ""
+    property var keyPairAccounts
 
     signal keycardSelected()
 
@@ -63,23 +63,23 @@ StatusListItem {
         ringPxSize: Math.max(asset.width / 24.0)
     }
 
-    tagsModel: ListModel{}
+    tagsModel: root.keyPairAccounts
 
     tagsDelegate: StatusListItemTag {
-        bgColor: model.color
+        bgColor: model.account.color
         bgRadius: 6
         height: Style.current.bigPadding
         closeButtonVisible: false
         asset {
-            emoji: model.emoji
+            emoji: model.account.emoji
             emojiSize: Emoji.size.verySmall
-            isLetterIdenticon: !!model.emoji
-            name: model.icon
+            isLetterIdenticon: !!model.account.emoji
+            name: model.account.icon
             color: Theme.palette.indirectColor1
             width: 16
             height: 16
         }
-        title: model.name
+        title: model.account.name
         titleText.font.pixelSize: 12
         titleText.color: Theme.palette.indirectColor1
     }
@@ -94,24 +94,6 @@ StatusListItem {
 
     onClicked: {
         root.keycardSelected()
-    }
-
-    onKeyPairAccountsChanged: {
-        tagsModel.clear()
-        if (root.keyPairAccounts === "") {
-            // should never be here, as it's not possible to have keypair item without at least a single account
-            console.warn("accounts list is empty for selecting keycard pair")
-            return
-        }
-        let obj = JSON.parse(root.keyPairAccounts)
-        if (obj.error) {
-            console.warn("error parsing accounts for selecting keycard pair, error: ", obj.error)
-            return
-        }
-
-        for (var i=0; i<obj.length; i++) {
-            tagsModel.append({"name": obj[i].Field0, "color": obj[i].Field4, "emoji": obj[i].Field3, "icon": obj[i].Field5})
-        }
     }
 
     QtObject {

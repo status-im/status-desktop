@@ -35,13 +35,13 @@ ColumnLayout {
             width: ListView.view.width
             displayChevronComponent: false
 
-            keycardName: model.name
-            keycardUid: model.keycardUid
-            keycardLocked: model.locked
-            keyPairType: model.pairType
-            keyPairIcon: model.icon
-            keyPairImage: model.image
-            keyPairAccounts: model.accounts
+            keycardName: model.keycard.name
+            keycardUid: model.keycard.keycardUid
+            keycardLocked: model.keycard.locked
+            keyPairType: model.keycard.pairType
+            keyPairIcon: model.keycard.icon
+            keyPairImage: model.keycard.image
+            keyPairAccounts: model.keycard.accounts
         }
     }
 
@@ -100,13 +100,14 @@ ColumnLayout {
     }
 
     StatusListItem {
-        visible: typeof root.keycardStore.keycardModule.keycardDetailsModel !== "undefined"
-                 && root.keycardStore.keycardModule.keycardDetailsModel.anyOfItemsLocked
+        visible: root.keycardStore.keycardModule.keycardDetailsModel?
+                     root.keycardStore.keycardModule.keycardDetailsModel.lockedItemsCount > 0 : false
         Layout.fillWidth: true
         title: qsTr("Unlock Keycard")
         components: [
             StatusBadge {
-                value: 1 //always set to 1 if keycard is locked
+                value: root.keycardStore.keycardModule.keycardDetailsModel?
+                           root.keycardStore.keycardModule.keycardDetailsModel.lockedItemsCount : 0
                 border.width: 4
                 border.color: Theme.palette.dangerColor1
                 color: Theme.palette.dangerColor1
@@ -153,6 +154,7 @@ ColumnLayout {
 
     StatusListItem {
         visible: !d.collapsed
+        enabled: false // This is post MVP feature, issue #8065
         Layout.fillWidth: true
         title: qsTr("Create a new pairing code")
         components: [

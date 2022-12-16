@@ -253,6 +253,7 @@ StatusSectionLayout {
 
                 profileSectionStore: root.store
                 keycardStore: root.store.keycardStore
+                emojiPopup: root.emojiPopup
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.keycard)
                 mainSectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.keycard)
                 contentWidth: d.contentWidth

@@ -10,10 +10,12 @@ proc delete*(self: PinSetState) =
   
 method getNextPrimaryState*(self: PinSetState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycard:
-    if controller.isMnemonicBackedUp() or not controller.getSelectedKeyPairIsProfile():
+    if controller.isProfileMnemonicBackedUp() or not controller.getSelectedKeyPairIsProfile():
       return createState(StateType.EnterSeedPhrase, self.flowType, nil)
     else:
       return createState(StateType.SeedPhraseDisplay, self.flowType, nil)
+  if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+    return createState(StateType.SeedPhraseDisplay, self.flowType, nil)
   if self.flowType == FlowType.UnlockKeycard:
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.GetMetadata:
       if controller.getValidPuk():
@@ -23,5 +25,7 @@ method getNextPrimaryState*(self: PinSetState, controller: Controller): State =
       return createState(StateType.UnlockKeycardSuccess, self.flowType, nil)
 
 method executeCancelCommand*(self: PinSetState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycard:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.UnlockKeycard:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

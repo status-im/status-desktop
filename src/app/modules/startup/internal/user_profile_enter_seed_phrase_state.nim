@@ -29,7 +29,7 @@ method getNextPrimaryState*(self: UserProfileEnterSeedPhraseState, controller: C
 method executePrimaryCommand*(self: UserProfileEnterSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.AppLogin:
     self.successfulImport = controller.validMnemonic(controller.getSeedPhrase()) and
-      controller.seedPhraseRefersToSelectedKeyPair(controller.getSeedPhrase())
+      controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getSelectedLoginAccount().keyUid
     if self.successfulImport:
       controller.runLoadAccountFlow(controller.getSeedPhraseLength(), controller.getSeedPhrase(), pin = "", puk = "", 
         factoryReset = true)

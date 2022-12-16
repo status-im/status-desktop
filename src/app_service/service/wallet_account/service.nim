@@ -503,6 +503,8 @@ QtObject:
 
   proc getCurrencyBalanceForAddress*(self: Service, address: string): float64 =
     let chainIds = self.networkService.getNetworks().map(n => n.chainId)
+    if not self.walletAccounts.hasKey(address):
+      return
     return self.walletAccounts[address].getCurrencyBalance(chainIds)
 
   proc getTotalCurrencyBalance*(self: Service): float64 =
