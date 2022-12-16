@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick 2.13
 
 import StatusQ.Controls.Validators 0.1
+import StatusQ.Core.Theme 0.1
 
 QtObject {
 
@@ -89,7 +90,7 @@ QtObject {
         readonly property int wrongSeedPhrase: 4
         readonly property int wrongPassword: 8
         readonly property int offerPukForUnlock: 16
-        readonly property int useUnlockLabelForLockedState: 32
+        readonly property int disableSeedPhraseForUnlock: 32
         readonly property int useGeneralMessageForLockedState: 64
         readonly property int maxPUKReached: 128
         readonly property int copyFromAKeycardPartDone: 256
@@ -99,6 +100,7 @@ QtObject {
         readonly property string general: "General"
         readonly property string factoryReset: "FactoryReset"
         readonly property string setupNewKeycard: "SetupNewKeycard"
+        readonly property string setupNewKeycardNewSeedPhrase: "SetupNewKeycardNewSeedPhrase"
         readonly property string authentication: "Authentication"
         readonly property string unlockKeycard: "UnlockKeycard"
         readonly property string displayKeycardContent: "DisplayKeycardContent"
@@ -178,6 +180,10 @@ QtObject {
         readonly property string copyingKeycard: "CopyingKeycard"
         readonly property string copyingKeycardFailure: "CopyingKeycardFailure"
         readonly property string copyingKeycardSuccess: "CopyingKeycardSuccess"
+        readonly property string manageKeycardAccounts: "ManageKeycardAccounts"
+        readonly property string creatingAccountNewSeedPhrase: "CreatingAccountNewSeedPhrase"
+        readonly property string creatingAccountNewSeedPhraseSuccess: "CreatingAccountNewSeedPhraseSuccess"
+        readonly property string creatingAccountNewSeedPhraseFailure: "CreatingAccountNewSeedPhraseFailure"
     }
 
     readonly property QtObject keycardAnimations: QtObject {
@@ -751,4 +757,17 @@ QtObject {
     readonly property string delivered: "delivered"
     readonly property string expired: "expired"
     readonly property string failedResending: "failedResending"
+
+    readonly property var preDefinedWalletAccountColors:[ StatusColors.colors['black'],
+        StatusColors.colors['grey'],
+        StatusColors.colors['blue2'],
+        StatusColors.colors['purple'],
+        StatusColors.colors['cyan'],
+        StatusColors.colors['violet'],
+        StatusColors.colors['red2'],
+        StatusColors.colors['yellow'],
+        StatusColors.colors['green2'],
+        StatusColors.colors['moss'],
+        StatusColors.colors['brown'],
+        StatusColors.colors['brown2'] ]
 }

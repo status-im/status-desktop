@@ -115,8 +115,11 @@ method runSetupKeycardPopup*(self: Module) =
     return
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycard)
 
-method runGenerateSeedPhrasePopup*(self: Module) =
-  info "TODO: Generate a seed phrase..."
+method runCreateNewKeycardWithNewSeedPhrasePopup*(self: Module) =
+  self.createSharedKeycardModule()
+  if self.keycardSharedModule.isNil:
+    return
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycardNewSeedPhrase)
 
 method runImportOrRestoreViaSeedPhrasePopup*(self: Module) =
   info "TODO: Import or restore via a seed phrase..."
@@ -158,8 +161,6 @@ method runCreateBackupCopyOfAKeycardPopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  let item = self.view.keycardModel().getItemForKeyUid(keyUid)
-  self.keycardSharedModule.setKeyPairForCopy(item)
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.CreateCopyOfAKeycard, keyUid)
 
 method runCreatePukPopup*(self: Module, keyUid: string) =
@@ -204,25 +205,25 @@ proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPa
   if knownAccounts.len == 0:
     return nil
   var item = initKeycardItem(keycardUid = keyPair.keycardUid,
-    pubKey = knownAccounts[0].publicKey,
     keyUid = keyPair.keyUid,
+    pubKey = knownAccounts[0].publicKey,
     locked = keyPair.keycardLocked,
     name = keyPair.keycardName,
     derivedFrom = knownAccounts[0].derivedfrom)
   for ka in knownAccounts:
     var icon = ""
     if ka.walletType == WalletTypeDefaultStatusAccount:
-      item.setPairType(KeyPairType.Profile)
+      item.setPairType(KeyPairType.Profile.int)
       item.setPubKey(singletonInstance.userProfile.getPubKey())
       item.setImage(singletonInstance.userProfile.getIcon())
       icon = "wallet"
     if ka.walletType == WalletTypeSeed:
-      item.setPairType(KeyPairType.SeedImport)
+      item.setPairType(KeyPairType.SeedImport.int)
       item.setIcon("keycard")
     if ka.walletType == WalletTypeKey:
-      item.setPairType(KeyPairType.PrivateKeyImport)
+      item.setPairType(KeyPairType.PrivateKeyImport.int)
       item.setIcon("keycard")
-    item.addAccount(ka.name, ka.path, ka.address, ka.emoji, ka.color, icon = icon, balance = 0.0)
+    item.addAccount(newKeyPairAccountItem(ka.name, ka.path, ka.address, ka.publicKey, ka.emoji, ka.color, icon = icon, balance = 0.0))
   return item
 
 proc areAllKnownKeycardsLockedForKeypair(self: Module, keyUid: string): bool =
@@ -241,7 +242,7 @@ proc buildKeycardList(self: Module) =
     if item.isNil:
       continue
     ## If all created keycards for certain keypair are locked, then we need to display that item as locked.
-    item.setLocked(self.areAllKnownKeycardsLockedForKeypair(item.keyUid()))
+    item.setLocked(self.areAllKnownKeycardsLockedForKeypair(item.getKeyUid()))
     items.add(item)
   self.view.setKeycardItems(items)
 

@@ -15,6 +15,7 @@ SettingsContentBase {
 
     property ProfileSectionStore profileSectionStore
     property KeycardStore keycardStore
+    property var emojiPopup
     property string mainSectionTitle: ""
 
     titleRowComponentLoader.sourceComponent: StatusButton {
@@ -79,7 +80,9 @@ SettingsContentBase {
             id: keycardPopup
             active: false
             sourceComponent: KeycardPopup {
+                anchors.centerIn: parent
                 sharedKeycardModule: root.keycardStore.keycardModule.keycardSharedModule
+                emojiPopup: root.emojiPopup
             }
 
             onLoaded: {

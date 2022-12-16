@@ -18,5 +18,4 @@ method getNextSecondaryState*(self: BiometricsPasswordFailedState, controller: C
 
 method executeCancelCommand*(self: BiometricsPasswordFailedState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
-    controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

@@ -16,7 +16,7 @@ proc buildKeypairAndAddToMigratedKeypairs(self: CopyingKeycardState, controller:
   var keyPairDto = KeyPairDto(keycardUid: controller.getDestinationKeycardUid(),
     keycardName: cardMetadata.name,
     keycardLocked: false,
-    keyUid: controller.getKeyUidWhichNeedToBeProcessed(),
+    keyUid: controller.getKeyPairForProcessing().getKeyUid(),
     accountsAddresses: addresses)
   controller.addMigratedKeyPair(keyPairDto)
 

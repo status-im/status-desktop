@@ -80,15 +80,15 @@ ColumnLayout {
         delegate: KeycardItem {
             width: ListView.view.width
 
-            keycardName: model.name
-            keycardLocked: model.locked
-            keyPairType: model.pairType
-            keyPairIcon: model.icon
-            keyPairImage: model.image
-            keyPairAccounts: model.accounts
+            keycardName: model.keycard.name
+            keycardLocked: model.keycard.locked
+            keyPairType: model.keycard.pairType
+            keyPairIcon: model.keycard.icon
+            keyPairImage: model.keycard.image
+            keyPairAccounts: model.keycard.accounts
 
             onKeycardSelected: {
-                root.displayKeycardsForKeypair(model.keyUid, model.name)
+                root.displayKeycardsForKeypair(model.keycard.keyUid, model.keycard.name)
             }
         }
     }
@@ -117,7 +117,7 @@ ColumnLayout {
 
     StatusListItem {
         Layout.fillWidth: true
-        title: qsTr("Generate a new seed phrase")
+        title: qsTr("Create a new Keycard account with a new seed phrase")
         components: [
             StatusIcon {
                 icon: "tiny/chevron-right"
@@ -125,7 +125,7 @@ ColumnLayout {
             }
         ]
         onClicked: {
-            root.keycardStore.runGenerateSeedPhrasePopup()
+            root.keycardStore.runCreateNewKeycardWithNewSeedPhrasePopup()
         }
     }
 

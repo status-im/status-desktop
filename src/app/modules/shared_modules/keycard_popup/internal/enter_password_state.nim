@@ -30,5 +30,4 @@ method executePreSecondaryStateCommand*(self: EnterPasswordState, controller: Co
 
 method executeCancelCommand*(self: EnterPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
-    controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

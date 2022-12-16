@@ -11,6 +11,7 @@ proc delete*(self: PinVerifiedState) =
 method getNextPrimaryState*(self: PinVerifiedState, controller: Controller): State =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.CreateCopyOfAKeycard:
@@ -25,6 +26,7 @@ method getNextPrimaryState*(self: PinVerifiedState, controller: Controller): Sta
 method executeCancelCommand*(self: PinVerifiedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or

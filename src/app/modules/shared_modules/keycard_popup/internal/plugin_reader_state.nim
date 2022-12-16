@@ -16,6 +16,7 @@ method executePreBackStateCommand*(self: PluginReaderState, controller: Controll
 method executeCancelCommand*(self: PluginReaderState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.DisplayKeycardContent or

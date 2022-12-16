@@ -288,6 +288,7 @@ case of Keycard try recovering using PUK or reinstall the app and try login with
         id: keycardPopup
         active: false
         sourceComponent: KeycardPopup {
+            anchors.centerIn: parent
             sharedKeycardModule: root.startupStore.startupModuleInst.keycardSharedModule
         }
 

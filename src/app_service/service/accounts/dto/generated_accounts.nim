@@ -1,6 +1,6 @@
 {.used.}
 
-import json
+import Tables, json
 
 import ../../../common/account_constants
 
@@ -18,6 +18,7 @@ type DerivedAccounts* = object
   defaultWallet*: DerivedAccountDetails
   eip1581*: DerivedAccountDetails
   encryption*: DerivedAccountDetails
+  derivations*: Table[string, DerivedAccountDetails] # used to keep all derivations even for custom paths
 
 type GeneratedAccountDto* = object
   id*: string
@@ -47,6 +48,7 @@ proc toDerivedAccountDetails(jsonObj: JsonNode, derivationPath: string):
 proc toDerivedAccounts*(jsonObj: JsonNode): DerivedAccounts =
   result = DerivedAccounts()
   for derivationPath, derivedObj in jsonObj:
+    result.derivations[derivationPath] = toDerivedAccountDetails(derivedObj, derivationPath)
     if(derivationPath == PATH_WHISPER):
       result.whisper = toDerivedAccountDetails(derivedObj, derivationPath)
     elif(derivationPath == PATH_WALLET_ROOT):
@@ -56,7 +58,7 @@ proc toDerivedAccounts*(jsonObj: JsonNode): DerivedAccounts =
     elif(derivationPath == PATH_EIP_1581):
       result.eip1581 = toDerivedAccountDetails(derivedObj, derivationPath)
     elif(derivationPath == PATH_ENCRYPTION):
-      result.encryption = toDerivedAccountDetails(derivedObj, derivationPath)      
+      result.encryption = toDerivedAccountDetails(derivedObj, derivationPath)
 
 proc toGeneratedAccountDto*(jsonObj: JsonNode): GeneratedAccountDto =
   result = GeneratedAccountDto()

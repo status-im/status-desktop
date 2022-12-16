@@ -10,7 +10,8 @@ proc delete*(self: MaxPairingSlotsReachedState) =
 
 method getNextPrimaryState*(self: MaxPairingSlotsReachedState, controller: Controller): State =
   if self.flowType == FlowType.FactoryReset or
-    self.flowType == FlowType.SetupNewKeycard:
+    self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
       return createState(StateType.FactoryResetConfirmation, self.flowType, self)
   if self.flowType == FlowType.Authentication or
     self.flowType == FlowType.DisplayKeycardContent or
@@ -19,12 +20,14 @@ method getNextPrimaryState*(self: MaxPairingSlotsReachedState, controller: Contr
     self.flowType == FlowType.ChangeKeycardPuk or
     self.flowType == FlowType.ChangePairingCode or
     self.flowType == FlowType.CreateCopyOfAKeycard:
-      controller.runSharedModuleFlow(FlowType.UnlockKeycard)
-  return nil
+      controller.runSharedModuleFlow(FlowType.UnlockKeycard, controller.getKeyPairForProcessing().getKeyUid())
+  if self.flowType == FlowType.UnlockKeycard:
+    return createState(StateType.EnterSeedPhrase, self.flowType, self)
 
 method executeCancelCommand*(self: MaxPairingSlotsReachedState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.DisplayKeycardContent or

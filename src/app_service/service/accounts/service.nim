@@ -496,6 +496,13 @@ QtObject:
     except Exception as e:
       error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
 
+  proc createAccountFromMnemonic*(self: Service, mnemonic: string, paths: seq[string]): GeneratedAccountDto =
+    try:
+      let response = status_account.createAccountFromMnemonicAndDeriveAccountsForPaths(mnemonic, paths)
+      return toGeneratedAccountDto(response.result)
+    except Exception as e:
+      error "error: ", procName="createAccountFromMnemonicAndDeriveAccountsForPaths", errName = e.name, errDesription = e.msg
+
   proc createAccountFromMnemonic*(self: Service, mnemonic: string, includeEncryption = false, includeWhisper = false,
     includeRoot = false, includeDefaultWallet = false, includeEip1581 = false): GeneratedAccountDto =
     if mnemonic.len == 0:
@@ -512,11 +519,7 @@ QtObject:
       paths.add(PATH_DEFAULT_WALLET)
     if includeEip1581:
       paths.add(PATH_EIP_1581)
-    try:
-      let response = status_account.createAccountFromMnemonicAndDeriveAccountsForPaths(mnemonic, paths)
-      return toGeneratedAccountDto(response.result)
-    except Exception as e:
-      error "error: ", procName="createAccountFromMnemonicAndDeriveAccountsForPaths", errName = e.name, errDesription = e.msg
+    return self.createAccountFromMnemonic(mnemonic, paths)    
 
   proc importMnemonic*(self: Service, mnemonic: string): string =
     if mnemonic.len == 0:

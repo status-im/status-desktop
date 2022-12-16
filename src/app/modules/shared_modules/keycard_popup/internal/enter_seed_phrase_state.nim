@@ -13,21 +13,21 @@ proc delete*(self: EnterSeedPhraseState) =
 method executePrePrimaryStateCommand*(self: EnterSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
     self.verifiedSeedPhrase = controller.validSeedPhrase(controller.getSeedPhrase()) and
-      controller.seedPhraseRefersToSelectedKeyPair(controller.getSeedPhrase())
+      controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getSelectedKeyPairDto().keyUid
     if self.verifiedSeedPhrase:
       controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
     else:
       controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
   if self.flowType == FlowType.CreateCopyOfAKeycard:
     self.verifiedSeedPhrase = controller.validSeedPhrase(controller.getSeedPhrase()) and
-      controller.seedPhraseRefersToKeyPairBeingProcessed(controller.getSeedPhrase())
+      controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getKeyPairForProcessing().getKeyUid()
     if self.verifiedSeedPhrase:
       controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
     else:
       controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
   if self.flowType == FlowType.UnlockKeycard:
     self.verifiedSeedPhrase = controller.validSeedPhrase(controller.getSeedPhrase()) and
-      controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getKeyUidWhichNeedToBeProcessed()
+      controller.getKeyUidForSeedPhrase(controller.getSeedPhrase()) == controller.getKeyPairForProcessing().getKeyUid()
     if self.verifiedSeedPhrase:
       controller.runGetMetadataFlow()
     else:

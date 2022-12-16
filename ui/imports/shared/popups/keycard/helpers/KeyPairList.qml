@@ -15,12 +15,16 @@ Item {
 
     signal keyPairSelected()
 
+    QtObject {
+        id: d
+        readonly property string profilePairTypeValue: Constants.keycard.keyPairType.profile
+    }
+
     SortFilterProxyModel {
         id: proxyModel
         sourceModel: root.keyPairModel
-        filters: ValueFilter {
-            roleName: "pairType"
-            value: Constants.keycard.keyPairType.profile
+        filters: ExpressionFilter {
+            expression: model.keyPair.pairType == d.profilePairTypeValue
             inverted: !root.filterProfilePair
         }
     }
@@ -37,13 +41,13 @@ Item {
             buttonGroup: root.buttonGroup
             usedAsSelectOption: true
 
-            keyPairType: model.pairType
-            keyPairPubKey: model.pubKey
-            keyPairName: model.name
-            keyPairIcon: model.icon
-            keyPairImage: model.image
-            keyPairDerivedFrom: model.derivedFrom
-            keyPairAccounts: model.accounts
+            keyPairType: model.keyPair.pairType
+            keyPairPubKey: model.keyPair.pubKey
+            keyPairName: model.keyPair.name
+            keyPairIcon: model.keyPair.icon
+            keyPairImage: model.keyPair.image
+            keyPairDerivedFrom: model.keyPair.derivedFrom
+            keyPairAccounts: model.keyPair.accounts
 
             onKeyPairSelected: {
                 root.keyPairSelected()

@@ -146,6 +146,7 @@ QtObject:
       debug "keycardCancelFlow", currentFlow=self.currentFlow.int, response=response
 
   proc generateRandomPUK*(self: Service): string =
+    randomize()
     for i in 0 ..< PUKLengthForStatusApp:
       result = result & $rand(0 .. 9)
 
