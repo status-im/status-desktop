@@ -824,8 +824,6 @@ method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid
     return
   
   if(reason == STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile):
-    let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
-    self.setActiveSection(item)
     self.view.emitDisplayUserProfileSignal(publicKey)
   else:
     self.view.emitResolvedENSSignal(publicKey, address, uuid)
