@@ -38,7 +38,8 @@ ListView {
 
     clip: true
     boundsBehavior: Flickable.StopAtBounds
-    maximumFlickVelocity: 2000
+    maximumFlickVelocity: 1000000
+    flickDeceleration: 1000000
     synchronousDrag: true
 
     ScrollBar.horizontal: StatusScrollBar {

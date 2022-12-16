@@ -52,7 +52,8 @@ Flickable {
     implicitWidth: contentWidth + leftPadding + rightPadding
     implicitHeight: contentHeight + topPadding + bottomPadding
     boundsBehavior: Flickable.StopAtBounds
-    maximumFlickVelocity: 2000
+    maximumFlickVelocity: 1000000
+    flickDeceleration: 1000000
     synchronousDrag: true
 
     ScrollBar.horizontal: StatusScrollBar {
