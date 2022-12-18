@@ -51,7 +51,7 @@ Item {
 
         readonly property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
         readonly property bool isMostRecentMessageInViewport: chatLogView.visibleArea.yPosition >= 0.999 - chatLogView.visibleArea.heightRatio
-        readonly property var chatDetails: chatContentModule.chatDetails
+        readonly property var chatDetails: chatContentModule.chatDetails || null
 
         function markAllMessagesReadIfMostRecentMessageIsInViewport() {
             if (!isMostRecentMessageInViewport) {

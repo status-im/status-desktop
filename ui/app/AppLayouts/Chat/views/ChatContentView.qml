@@ -179,7 +179,7 @@ ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: Style.current.smallPadding
 
-                enabled: root.activeSectionData.joined
+                enabled: root.activeSectionData.joined && !root.activeSectionData.amIBanned
 
                 store: root.rootStore
                 usersStore: root.usersStore
@@ -199,7 +199,7 @@ ColumnLayout {
                 }
 
                 Binding on chatInputPlaceholder {
-                    when: !root.activeSectionData.joined
+                    when: !root.activeSectionData.joined || root.activeSectionData.amIBanned
                     value: qsTr("You need to join this community to send messages")
                 }
 

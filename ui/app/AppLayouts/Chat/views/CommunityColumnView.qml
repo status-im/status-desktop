@@ -106,11 +106,14 @@ Item {
         anchors.topMargin: 8
         anchors.bottomMargin: Style.current.halfPadding
         anchors.horizontalCenter: parent.horizontalCenter
+        enabled: !root.communityData.amIBanned
 
-        visible: !communityData.joined
+        visible: !communityData.joined || root.communityData.amIBanned
 
         text: {
+            if (root.communityData.amIBanned) return qsTr("You were banned from community")
             if (invitationPending) return qsTr("Membership request pending...")
+
             return root.communityData.access === Constants.communityChatOnRequestAccess ?
                     qsTr("Request to join") : qsTr("Join Community")
         }
