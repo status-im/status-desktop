@@ -1,6 +1,7 @@
 import strformat
 import ./member_model, ./member_item
 import ../main/communities/models/[pending_request_item, pending_request_model]
+import ../../global/global_singleton
 
 import ../../../app_service/common/types
 
@@ -279,6 +280,9 @@ proc updateMember*(
 
 proc bannedMembers*(self: SectionItem): member_model.Model {.inline.} =
   self.bannedMembersModel
+
+proc amIBanned*(self: SectionItem): bool {.inline.} =
+  self.bannedMembersModel.isContactWithIdAdded(singletonInstance.userProfile.getPubKey())
 
 proc pendingMemberRequests*(self: SectionItem): member_model.Model {.inline.} =
   self.pendingMemberRequestsModel
