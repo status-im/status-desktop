@@ -83,7 +83,7 @@ QtObject:
     read = getCount
     notify = countChanged
 
-  method rowCount(self: Model, index: QModelIndex = nil): int =
+  method rowCount*(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
   method roleNames(self: Model): Table[int, string] =
@@ -248,45 +248,47 @@ QtObject:
       elif clock == self.items[i].clock: # break ties by message id
         if id > self.items[i].id:
           return i
-    return 0
+    return self.items.len
 
   proc filterExistingItems(self: Model, items: seq[Item]): seq[Item] =
     for item in items:
       if(self.findIndexForMessageId(item.id) < 0):
         result &= item
 
-  proc prependItems*(self: Model, items: seq[Item]) =
-    let itemsToAppend = self.filterExistingItems(items)
-    if(itemsToAppend.len == 0):
+  proc insertItemBasedOnClock*(self: Model, item: Item) =
+    if(self.findIndexForMessageId(item.id) != -1):
       return
 
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
-    let first = 0
-    let last = itemsToAppend.len - 1
-    self.beginInsertRows(parentModelIndex, first, last)
-    self.items = itemsToAppend & self.items
+    let position = self.findIndexBasedOnClockToInsertTo(item.clock, item.id)
+
+    self.beginInsertRows(parentModelIndex, position, position)
+    self.items.insert(item, position)
     self.endInsertRows()
+
+    if position > 0:
+      self.updateItemAtIndex(position - 1)
+    if position + 1 < self.items.len:
+      self.updateItemAtIndex(position + 1)
     self.countChanged()
+
+  proc prependItems*(self: Model, items: seq[Item]) =
+    let itemsToAppend = self.filterExistingItems(items)
+    if(itemsToAppend.len == 0):
+      return
+
+    for item in items:
+      self.insertItemBasedOnClock(item)
 
   proc appendItems*(self: Model, items: seq[Item]) =
     let itemsToAppend = self.filterExistingItems(items)
     if(itemsToAppend.len == 0):
       return
 
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    let first = self.items.len
-    let last = first + itemsToAppend.len - 1
-    self.beginInsertRows(parentModelIndex, first, last)
-    self.items.add(itemsToAppend)
-    self.endInsertRows()
-
-    if first > 0:
-      self.updateItemAtIndex(first - 1)
-    self.countChanged()
+    for item in items:
+      self.insertItemBasedOnClock(item)
 
   proc appendItem*(self: Model, item: Item) =
     if(self.findIndexForMessageId(item.id) != -1):
@@ -318,25 +320,6 @@ QtObject:
 
     if self.items.len > 1:
       self.updateItemAtIndex(1)
-    self.countChanged()
-
-  proc insertItemBasedOnClock*(self: Model, item: Item) =
-    if(self.findIndexForMessageId(item.id) != -1):
-      return
-
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    let position = self.findIndexBasedOnClockToInsertTo(item.clock, item.id)
-
-    self.beginInsertRows(parentModelIndex, position, position)
-    self.items.insert(item, position)
-    self.endInsertRows()
-
-    if position > 0:
-      self.updateItemAtIndex(position - 1)
-    if position + 1 < self.items.len:
-      self.updateItemAtIndex(position + 1)
     self.countChanged()
 
   proc replyDeleted*(self: Model, messageIndex: int) {.signal.}
