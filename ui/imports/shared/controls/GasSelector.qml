@@ -70,6 +70,36 @@ Item {
             }
         }
 
+        // Approval transaction
+        Repeater {
+            model: root.bestRoutes
+            StatusListItem {
+                id: listItem
+                color: Theme.palette.statusListItem.backgroundColor
+                width: parent.width
+                asset.name: "tiny/checkmark"
+                asset.color: Theme.palette.directColor1
+                statusListItemIcon.active: true
+                statusListItemIcon.opacity: modelData.isFirstSimpleTx
+                title: qsTr("Approve %1 %2 Bridge").arg(modelData.fromNetwork.chainName).arg(root.selectedTokenSymbol)
+                subTitle: "%1 eth".arg(LocaleUtils.numberToLocaleString(modelData.approvalGasFees))
+                statusListItemSubTitle.width: listItem.width/2 - Style.current.smallPadding
+                statusListItemSubTitle.elide: Text.ElideMiddle
+                statusListItemSubTitle.wrapMode: Text.NoWrap
+                visible: modelData.approvalRequired
+                components: [
+                    StatusBaseText {
+                        Layout.alignment: Qt.AlignRight
+                        text: "%1%2".arg(currentCurrencySymbol).arg(LocaleUtils.numberToLocaleString(parseFloat(root.getFiatValue(modelData.approvalGasFees, "ETH", root.currentCurrency))))
+                        font.pixelSize: 15
+                        color: Theme.palette.baseColor1
+                        width: listItem.width/2 - Style.current.padding
+                        elide: Text.ElideRight
+                    }
+                ]
+            }
+        }
+
         // Bridge
         Repeater {
             id: bridgeRepeater
