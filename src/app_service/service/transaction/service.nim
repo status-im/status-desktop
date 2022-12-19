@@ -1,4 +1,5 @@
 import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm, math
+
 import ../../../backend/transactions as transactions
 import ../../../backend/backend
 import ../../../backend/eth
@@ -20,6 +21,7 @@ import ./dto as transaction_dto
 import ./cryptoRampDto
 import ../eth/utils as eth_utils
 import ../../common/conversion
+
 
 export transaction_dto
 
@@ -273,6 +275,26 @@ QtObject:
 
         if( not route.gasFees.eip1559Enabled):
           gasFees = $route.gasFees.gasPrice
+
+        if route.approvalRequired:
+          let approve = Approve(
+            to: parseAddress(route.approvalContractAddress),
+            value: route.approvalAmountRequired,
+          )
+          data = ERC20_procS.toTable["approve"].encodeAbi(approve)
+          txData = ens_utils.buildTokenTransaction(
+            parseAddress(from_addr),
+            toAddress,
+            $route.gasAmount,
+            gasFees,
+            route.gasFees.eip1559Enabled,
+            $route.gasFees.maxPriorityFeePerGas,
+            $route.gasFees.maxFeePerGasM
+          )
+          txData.data = data
+          var path = TransactionBridgeDto(bridgeName: "Simple", chainID: route.fromNetwork.chainId)
+          path.simpleTx = txData
+          paths.add(path)
 
         if(isEthTx) :
           txData = ens_utils.buildTransaction(parseAddress(from_addr), eth2Wei(parseFloat(value), 18),
