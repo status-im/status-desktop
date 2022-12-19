@@ -13,11 +13,11 @@ import StatusQ.Core.Theme 0.1
 ColumnLayout {
     id: balancedExceededError
 
-    property bool transferPossible: false
     property double amountToSend: 0
     property bool isLoading: true
+    property int errorType: Constants.NoError
 
-    visible: !balancedExceededError.transferPossible || isLoading
+    visible: balancedExceededError.errorType !== Constants.NoError || isLoading
 
     StatusIcon {
         Layout.preferredHeight: 20
@@ -35,12 +35,14 @@ ColumnLayout {
         visible: isLoading
     }
     StatusBaseText {
+        Layout.fillWidth: true
         Layout.alignment: Qt.AlignHCenter
         font.pixelSize: 13
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         color: Theme.palette.dangerColor1
-        text: isLoading ? qsTr("Calculating fees") : qsTr("Balance exceeded")
+        text: isLoading ? qsTr("Calculating fees") : balancedExceededError.errorType === Constants.SendAmountExceedsBalance ?
+                              qsTr("Balance exceeded") : balancedExceededError.errorType === Constants.NoRoute ? qsTr("No route found") : ""
         wrapMode: Text.WordWrap
     }
 }

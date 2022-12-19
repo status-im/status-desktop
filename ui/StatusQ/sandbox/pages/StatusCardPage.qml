@@ -25,11 +25,14 @@ Item {
                 id: card
                 Layout.alignment: Qt.AlignVCenter
                 primaryText: "Mainnet"
-                secondaryText: state === "unavailable" ? "No Gas" : "75"
+                secondaryText: state === "unavailable" ? "No Gas" : "75,0000000"
                 tertiaryText: state === "unpreferred"  ? "UNPREFERRED" : "BALANCE: " + 250
                 cardIconName: "status"
-                advancedInputText: "75"
+                advancedInputText: "75,0000000"
                 disabledText: "Disabled"
+                onCardLocked: locked = isLocked
+                disableText: "Disable"
+                enableText: "Enable"
             }
 
             StatusComboBox {
@@ -87,6 +90,9 @@ Item {
                         advancedMode: card.advancedMode
                         advancedInputText: tokensToSend
                         disabledText: "Disabled"
+                        onCardLocked: locked = isLocked
+                        disableText: "Disable"
+                        enableText: "Enable"
                     }
                 }
             }
@@ -106,6 +112,9 @@ Item {
                         advancedMode: card.advancedMode
                         advancedInputText: tokensToReceive
                         disabledText: "Disabled"
+                        onCardLocked: locked = isLocked
+                        disableText: "Disable"
+                        enableText: "Enable"
                     }
                 }
             }

@@ -26,6 +26,7 @@ RowLayout {
     property var weiToEth: function(wei) {}
     property var reCalculateSuggestedRoute: function() {}
     property bool errorMode: false
+    property int errorType: Constants.NoError
     spacing: 10
 
     StatusRoundIcon {
@@ -62,7 +63,7 @@ RowLayout {
             ScrollBar.vertical.policy: ScrollBar.AlwaysOff
             ScrollBar.horizontal.policy: ScrollBar.AsNeeded
             clip: true
-            visible: !root.isLoading ? root.isBridgeTx ? true : root.bestRoutes !== undefined ? root.bestRoutes.length > 0 : true : false
+            visible: !root.isLoading ? root.isBridgeTx ? true : root.errorType === Constants.NoError : false
             Column {
                 id: row
                 spacing: Style.current.padding
@@ -78,9 +79,9 @@ RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Style.current.bigPadding
-            transferPossible: root.bestRoutes !== undefined ? root.bestRoutes.length > 0 : true
             amountToSend: root.amountToSend
             isLoading: root.isLoading
+            errorType: root.errorType
         }
     }
 

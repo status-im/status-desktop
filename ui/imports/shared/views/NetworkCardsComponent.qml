@@ -10,6 +10,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
+import "../controls"
+
 Item {
     id: root
 
@@ -21,11 +23,13 @@ Item {
     property bool customMode: false
     property double amountToSend: 0
     property double requiredGasInEth: 0
-    property bool errorMode: !d.thereIsApossibleRoute || d.customAmountToSend > root.amountToSend
+    property bool errorMode: d.customAmountToSend > root.amountToSend
     property bool interactive: true
     property bool showPreferredChains: false
     property var weiToEth: function(wei) {}
     property var reCalculateSuggestedRoute: function() {}
+    property int errorType: Constants.NoError
+    property bool isLoading
 
     QtObject {
         id: d
@@ -38,6 +42,7 @@ Item {
                 fromNetworksRepeater.itemAt(i).routeOnNetwork = 0
                 toNetworksRepeater.itemAt(i).amountToReceive = 0
                 toNetworksRepeater.itemAt(i).routeOnNetwork = 0
+                toNetworksRepeater.itemAt(i).bentLine = 0
             }
         }
 
@@ -72,6 +77,8 @@ Item {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             spacing: 12
             StatusBaseText {
+                Layout.maximumWidth: 100
+                elide: Text.ElideRight
                 font.pixelSize: 10
                 color: Theme.palette.baseColor1
                 text: qsTr("Your Balances").toUpperCase()
@@ -90,7 +97,7 @@ Item {
                     primaryText: model.chainName
                     secondaryText: (parseFloat(tokenBalanceOnChain) === 0 && root.amountToSend !== 0) ?
                                        qsTr("No Balance") : !hasGas ? qsTr("No Gas") : advancedInputText
-                    tertiaryText: qsTr("BALANCE: ") + LocaleUtils.numberToLocaleString(parseFloat(tokenBalanceOnChain))
+                    tertiaryText: root.errorMode && parseFloat(advancedInputText) !== 0 && advancedInput.valid ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: ") + LocaleUtils.numberToLocaleString(parseFloat(tokenBalanceOnChain))
                     locked: store.lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined && lockedItem.chainID ===  model.chainId) !== -1
                     preCalculatedAdvancedText: {
                         let index  = store.lockedInAmounts.findIndex(lockedItem => lockedItem!== undefined && lockedItem.chainID === model.chainId)
@@ -99,9 +106,14 @@ Item {
                         }
                         else return LocaleUtils.numberToLocaleString(fromNetwork.amountToSend)
                     }
-                    state: tokenBalanceOnChain === 0 || !hasGas ? "unavailable" : root.errorMode ? "error" : "default"
+                    maxAdvancedValue: parseFloat(tokenBalanceOnChain)
+                    state: tokenBalanceOnChain === 0 || !hasGas ?
+                               "unavailable" :
+                               (root.errorMode || !advancedInput.valid) && (parseFloat(advancedInputText) !== 0) ? "error" : "default"
                     cardIcon.source: Style.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
+                    disableText:  qsTr("Disable")
+                    enableText: qsTr("Enable")
                     advancedMode: root.customMode
                     disabled: store.disabledChainIdsFromList.includes(model.chainId)
                     clickable: root.interactive
@@ -116,17 +128,24 @@ Item {
                             disabled = store.disabledChainIdsFromList.includes(model.chainId)
                     }
                     onCardLocked: {
+
                         store.addLockedInAmount(model.chainId, advancedInputText, root.selectedAsset.decimals, isLocked)
-                        locked = store.lockedInAmounts.length > 0 && store.lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined &&  lockedItem.chainID ===  model.chainId) !== -1
                         d.calculateCustomAmounts()
-                        if(!locked || d.customAmountToSend <= root.amountToSend)
+                        if(!locked || (d.customAmountToSend <= root.amountToSend && advancedInput.valid))
                             root.reCalculateSuggestedRoute()
                     }
                 }
             }
         }
+        BalanceExceeded {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignVCenter
+            amountToSend: root.amountToSend
+            isLoading: root.isLoading
+            errorType: root.errorType
+        }
         ColumnLayout {
-            id: toMainNetworksLayout
+            id: toNetworksLayout
             Layout.alignment: Qt.AlignRight | Qt.AlignTop
             spacing: 12
             StatusBaseText {
@@ -137,46 +156,45 @@ Item {
                 text: StatusQUtils.Utils.elideText(selectedAccount.address, 6, 4).toUpperCase()
                 elide: Text.ElideMiddle
             }
-            Column {
-                id: toNetworksLayout
-                spacing: root.customMode ? 26 : 12
-                Repeater {
-                    id: toNetworksRepeater
-                    model: root.allNetworks
-                    StatusCard {
-                        id: toCard
-                        objectName: model.chainId
-                        property int routeOnNetwork: 0
-                        property double amountToReceive: 0
-                        property bool preferred: store.preferredChainIds.includes(model.chainId)
-                        primaryText: model.chainName
-                        secondaryText: LocaleUtils.numberToLocaleString(amountToReceive)
-                        tertiaryText: state === "unpreferred"  ? qsTr("UNPREFERRED") : ""
-                        state: root.errorMode ? "error" : !preferred ? "unpreferred" : "default"
-                        opacity: preferred || showPreferredChains ? 1 : 0
-                        cardIcon.source: Style.svg(model.iconUrl)
-                        disabledText: qsTr("Disabled")
-                        disabled: store.disabledChainIdsToList.includes(model.chainId)
-                        clickable: root.interactive
-                        onClicked: {
-                            store.addRemoveDisabledToChain(model.chainId, disabled)
-                            // only recalculate if the a best route was disabled
-                            if(root.bestRoutes.length === 0 || routeOnNetwork !== 0 || !disabled)
+            Repeater {
+                id: toNetworksRepeater
+                model: root.allNetworks
+                StatusCard {
+                    id: toCard
+                    objectName: model.chainId
+                    property int routeOnNetwork: 0
+                    property int bentLine: 0
+                    property double amountToReceive: 0
+                    property bool preferred: store.preferredChainIds.includes(model.chainId)
+                    primaryText: model.chainName
+                    secondaryText: LocaleUtils.numberToLocaleString(amountToReceive)
+                    tertiaryText: state === "unpreferred"  ? qsTr("UNPREFERRED") : ""
+                    state: !preferred ? "unpreferred" : "default"
+                    opacity: preferred || showPreferredChains ? 1 : 0
+                    cardIcon.source: Style.svg(model.iconUrl)
+                    disabledText: qsTr("Disabled")
+                    disableText:  qsTr("Disable")
+                    enableText: qsTr("Enable")
+                    disabled: store.disabledChainIdsToList.includes(model.chainId)
+                    clickable: root.interactive
+                    onClicked: {
+                        store.addRemoveDisabledToChain(model.chainId, disabled)
+                        // only recalculate if the a best route was disabled
+                        if((root.bestRoutes !== undefined && root.bestRoutes.length === 0) || routeOnNetwork !== 0 || !disabled)
+                            root.reCalculateSuggestedRoute()
+                    }
+                    onVisibleChanged: {
+                        if(visible) {
+                            disabled = store.disabledChainIdsToList.includes(model.chainId)
+                            preferred = store.preferredChainIds.includes(model.chainId)
+                        }
+                    }
+                    onOpacityChanged: {
+                        if(opacity === 1) {
+                            disabled = store.disabledChainIdsToList.includes(model.chainId)
+                        } else {
+                            if(opacity === 0 && routeOnNetwork > 0)
                                 root.reCalculateSuggestedRoute()
-                        }
-                        onVisibleChanged: {
-                            if(visible) {
-                                disabled = store.disabledChainIdsToList.includes(model.chainId)
-                                preferred = store.preferredChainIds.includes(model.chainId)
-                            }
-                        }
-                        onOpacityChanged: {
-                            if(opacity === 1) {
-                                disabled = store.disabledChainIdsToList.includes(model.chainId)
-                            } else {
-                                if(opacity === 0 && routeOnNetwork > 0)
-                                    root.reCalculateSuggestedRoute()
-                            }
                         }
                     }
                 }
@@ -228,20 +246,21 @@ Item {
                     }
                 }
                 if(toN !== null && fromN !== null) {
-                    yOffsetFrom = toN.objectName === fromN.objectName  && toN.routeOnNetwork !== 0 ? toN.routeOnNetwork * 10 : 0
-                    yOffsetTo = toN.routeOnNetwork * 10
-                    xOffset = toN.routeOnNetwork * 10
+                    yOffsetFrom = toN.objectName === fromN.objectName  && toN.routeOnNetwork !== 0 ? toN.routeOnNetwork * 16 : 0
+                    yOffsetTo = toN.routeOnNetwork * 16
+                    xOffset = (fromN.y - toN.y > 0 ? -1 : 1) * toN.bentLine * 16
                     let amountToSend = weiToEth(bestRoutes[i].amountIn)
                     let amountToReceive = weiToEth(bestRoutes[i].amountOut)
                     fromN.amountToSend = amountToSend
                     toN.amountToReceive += amountToReceive
                     fromN.routeOnNetwork += 1
                     toN.routeOnNetwork += 1
+                    toN.bentLine = toN.objectName !== fromN.objectName
                     d.thereIsApossibleRoute = true
                     let routeColor = root.errorMode ? Theme.palette.dangerColor1 : toN.preferred ? '#627EEA' : Theme.palette.pinColor1
                     StatusQUtils.Utils.drawArrow(ctx, fromN.x + fromN.width,
                                                  fromN.y + fromN.cardIconPosition + yOffsetFrom,
-                                                 toMainNetworksLayout.x + toN.x,
+                                                 toNetworksLayout.x + toN.x,
                                                  toNetworksLayout.y + toN.y + toN.cardIconPosition + yOffsetTo,
                                                  routeColor, xOffset)
                 }

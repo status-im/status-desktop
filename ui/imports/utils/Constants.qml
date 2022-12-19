@@ -725,6 +725,12 @@ QtObject {
         Bridge
     }
 
+    enum ErrorType {
+        SendAmountExceedsBalance,
+        NoRoute,
+        NoError
+    }
+
     readonly property QtObject walletSection: QtObject {
         readonly property string cancelledMessage: "cancelled"
     }
