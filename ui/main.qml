@@ -128,7 +128,7 @@ StatusWindow {
     Connections {
         id: windowsOsNotificationsConnection
         enabled: Qt.platform.os === Constants.windows
-        target: typeof mainModule !== "undefined" ? mainModule : null
+        target: Qt.platform.os === Constants.windows && typeof mainModule !== "undefined" ? mainModule : null
         function onDisplayWindowsOsNotification(title, message) {
             systemTray.showMessage(title, message)
         }
