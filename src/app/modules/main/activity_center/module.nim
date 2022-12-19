@@ -98,7 +98,8 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     contactDetails.details.trustStatus,
     contactDetails.details.ensVerified,
     message.discordMessage,
-    resendError = ""
+    resendError = "",
+    message.mentioned
     ))
 
 method convertToItems*(

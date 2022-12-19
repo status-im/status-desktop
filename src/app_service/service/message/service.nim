@@ -703,10 +703,18 @@ proc renderInline(self: Service, parsedText: ParsedText): string =
       result = fmt(" <strong><em>{value}</em></strong> ")
     of PARSED_TEXT_CHILD_TYPE_MENTION:
       var id = value
-      if isCompressedPubKey(id):
-        id = status_accounts.decompressPk(id).result
-      let contactDto = self.contactService.getContactById(id)
-      result = fmt("<a href=\"//{id}\" class=\"mention\">{contactDto.userDefaultDisplayName()}</a>")
+      if isSystemMention(id):
+        var tag = id
+        for pair in SystemTagMapping:
+          if pair[1] == "@" & id:
+            tag = pair[0]
+            break
+        result = fmt("<a href=\"\" class=\"mention\">{tag}</a>")
+      else:
+        if isCompressedPubKey(id):
+          id = status_accounts.decompressPk(id).result
+        let contactDto = self.contactService.getContactById(id)
+        result = fmt("<a href=\"//{id}\" class=\"mention\">{contactDto.userDefaultDisplayName()}</a>")
     of PARSED_TEXT_CHILD_TYPE_STATUS_TAG:
       result = fmt("<a href=\"#{value}\" class=\"status-tag\">#{value}</a>")
     of PARSED_TEXT_CHILD_TYPE_DEL:

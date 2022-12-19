@@ -1,5 +1,6 @@
 import sequtils, strutils, sugar, re
 import ../service/contacts/dto/contacts
+from conversion import SystemTagMapping
 
 proc replaceMentionsWithPubKeys*(allKnownContacts: seq[ContactsDto], message: string): string =
   let aliasPattern = re(r"(@[A-z][a-z]+ [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
@@ -10,6 +11,10 @@ proc replaceMentionsWithPubKeys*(allKnownContacts: seq[ContactsDto], message: st
   let ensMentions = findAll(message, ensPattern)
   let nameMentions = findAll(message, namePattern)
   var updatedMessage = message
+
+  # replace system tag with system ID
+  for pair in SystemTagMapping:
+    updatedMessage = updatedMessage.replaceWord(pair[0], pair[1])
 
   # In the following lines we're free to compare to `x.userDefaultDisplayName()` cause that's actually what we're displaying
   # in the mentions suggestion list.

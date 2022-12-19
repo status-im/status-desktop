@@ -276,7 +276,7 @@ Item {
             linkUrls: model.links
             messageAttachments: model.messageAttachments
             transactionParams: model.transactionParameters
-            hasMention: model.mentionedUsersPks.split(" ").includes(root.rootStore.userProfileInst.pubKey)
+            hasMention: model.mentioned
 
             gapFrom: model.gapFrom
             gapTo: model.gapTo

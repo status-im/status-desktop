@@ -57,6 +57,10 @@ QtObject:
   QtProperty[bool] amISender:
     read = amISender
 
+  proc mentioned*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.mentioned
+  QtProperty[bool] mentioned:
+    read = mentioned
+
   proc senderIcon*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.senderIcon
   QtProperty[string] senderIcon:
     read = senderIcon

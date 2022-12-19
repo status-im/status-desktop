@@ -100,7 +100,8 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     senderTrustStatus = TrustStatus.Unknown,
     senderEnsVerified = false,
     DiscordMessage(),
-    resendError = ""
+    resendError = "",
+    mentioned = false
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -142,7 +143,8 @@ proc createChatIdentifierItem(self: Module): Item =
     senderTrustStatus = TrustStatus.Unknown,
     senderEnsVerified = false,
     DiscordMessage(),
-    resendError = ""
+    resendError = "",
+    mentioned = false
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module) =
@@ -223,7 +225,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         sender.details.trustStatus,
         sender.details.ensVerified,
         m.discordMessage,
-        resendError = ""
+        resendError = "",
+        m.mentioned
         )
 
       for r in reactions:
@@ -323,7 +326,8 @@ method messageAdded*(self: Module, message: MessageDto) =
     sender.details.trustStatus,
     sender.details.ensVerified,
     message.discordMessage,
-    resendError = ""
+    resendError = "",
+    message.mentioned
   )
 
   self.view.model().insertItemBasedOnClock(item)
@@ -609,7 +613,8 @@ method getMessageById*(self: Module, messageId: string): message_item.Item =
       sender.details.trustStatus,
       sender.details.ensVerified,
       m.discordMessage,
-      resendError = ""
+      resendError = "",
+      m.mentioned
       )
     return item
   return nil
