@@ -424,12 +424,8 @@ QtObject:
     if(self.initialMessagesFetched(chatId)):
       return
 
-    if(self.getMessageCursor(chatId).getValue().len > 0):
-      return
-
     # we're here if initial messages are not loaded yet
     self.asyncLoadMoreMessagesForChat(chatId)
-
 
   proc addReaction*(self: Service, chatId: string, messageId: string, emojiId: int) =
     try:
