@@ -35,6 +35,7 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 	run-linux \
 	run-macos \
 	run-windows \
+	tests-nim-linux \
 	status-go \
 	status-keycard-go \
 	statusq-sanity-checker \
@@ -641,6 +642,10 @@ run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\e[92mRunning:\e[39m bin/nim_status_client.exe"
 	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe
+
+tests-nim-linux: | check-qt-dir
+	LD_LIBRARY_PATH="$(QT5_LIBDIR)" \
+	$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r test/nim/message_model_test.nim
 
 statusq-sanity-checker:
 	cmake -Bui/StatusQ/build -Sui/StatusQ && cmake --build ui/StatusQ/build --target SanityChecker
