@@ -190,6 +190,7 @@ ColumnLayout {
                 isActiveChannel: root.isActiveChannel
                 anchors.bottom: parent.bottom
                 chatType: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown
+                suggestions.suggestionFilter.addSystemSuggestions: chatType == Constants.chatType.communityChat
 
                 Binding on chatInputPlaceholder {
                     when: root.isBlocked

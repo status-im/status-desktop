@@ -4,6 +4,8 @@ import json, strutils
 
 include ../../../common/json_utils
 
+from ../../../common/conversion import SystemTagMapping
+
 const PARSED_TEXT_TYPE_PARAGRAPH* = "paragraph"
 const PARSED_TEXT_TYPE_BLOCKQUOTE* = "blockquote"
 const PARSED_TEXT_TYPE_CODEBLOCK* = "codeblock"
@@ -108,6 +110,7 @@ type MessageDto* = object
   deleted*: bool
   deletedForMe*: bool
   transactionParameters*: TransactionParameters
+  mentioned*: bool
 
 proc toParsedText*(jsonObj: JsonNode): ParsedText =
   result = ParsedText()
@@ -213,6 +216,7 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   discard jsonObj.getProp("editedAt", result.editedAt)
   discard jsonObj.getProp("deleted", result.deleted)
   discard jsonObj.getProp("deletedForMe", result.deletedForMe)
+  discard jsonObj.getProp("mentioned", result.mentioned)
 
   var quotedMessageObj: JsonNode
   if(jsonObj.getProp("quotedMessage", quotedMessageObj)):
@@ -259,7 +263,13 @@ proc isPersonalMention*(self: MessageDto, publicKey: string): bool =
   return false
 
 proc isGlobalMention*(self: MessageDto): bool =
-  # TODO: we should check here if message contains global mention.
+  for pText in self.parsedText:
+    for child in pText.children:
+      if child.type == PARSED_TEXT_CHILD_TYPE_MENTION:
+        for pair in SystemTagMapping:
+          if child.literal.contains(pair[1]):
+            return true
+
   return false
 
 proc mentionedUsersPks*(self: MessageDto): seq[string] =

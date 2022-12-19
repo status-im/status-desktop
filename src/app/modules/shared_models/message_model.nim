@@ -43,6 +43,7 @@ type
     SenderEnsVerified
     MessageAttachments
     ResendError
+    Mentioned
 
 QtObject:
   type
@@ -103,6 +104,7 @@ QtObject:
       ModelRole.Seen.int:"seen",
       ModelRole.OutgoingStatus.int:"outgoingStatus",
       ModelRole.ResendError.int:"resendError",
+      ModelRole.Mentioned.int:"mentioned",
       ModelRole.MessageText.int:"messageText",
       ModelRole.MessageImage.int:"messageImage",
       ModelRole.MessageContainsMentions.int:"messageContainsMentions",
@@ -173,6 +175,8 @@ QtObject:
       result = newQVariant(item.outgoingStatus)
     of ModelRole.ResendError:
       result = newQVariant(item.resendError)
+    of ModelRole.Mentioned:
+      result = newQVariant(item.mentioned)
     of ModelRole.MessageText:
       result = newQVariant(item.messageText)
     of ModelRole.MessageImage:

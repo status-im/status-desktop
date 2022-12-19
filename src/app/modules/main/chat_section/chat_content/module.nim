@@ -198,7 +198,8 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     contactDetails.details.trustStatus,
     contactDetails.details.ensVerified,
     m.discordMessage,
-    resendError = ""
+    resendError = "",
+    m.mentioned
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy

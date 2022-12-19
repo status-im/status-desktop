@@ -3,8 +3,15 @@ from web3 import Address, fromHex
 
 const CompressedKeyChars* = {'0'..'9', 'A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u','v','w','x','y','z'}
 
+const SystemMentionChars* = {'0'..'9', 'x'}
+
+const SystemTagMapping* = [("@everyone", "@0x00001")]
+
 proc isCompressedPubKey*(strPubKey: string): bool =
   return strPubKey.startsWith("zQ3") and allCharsInSet(strPubKey, CompressedKeyChars)
+
+proc isSystemMention*(mention: string) : bool =
+  mention.startsWith("0x") and allCharsInSet(mention, SystemMentionChars)
 
 proc parseAddress*(strAddress: string): Address =
   var hexAddressValue: Address

@@ -43,6 +43,7 @@ type
     senderEnsVerified: bool
     messageAttachments: seq[string]
     resendError: string
+    mentioned: bool
 
 proc initItem*(
     id,
@@ -72,7 +73,8 @@ proc initItem*(
     senderTrustStatus: TrustStatus,
     senderEnsVerified: bool,
     discordMessage: DiscordMessage,
-    resendError: string
+    resendError: string,
+    mentioned: bool
     ): Item =
   result = Item()
   result.id = id
@@ -109,6 +111,7 @@ proc initItem*(
   result.senderEnsVerified = senderEnsVerified
   result.messageAttachments = @[]
   result.resendError = resendError
+  result.mentioned = mentioned
 
   if ContentType.DiscordMessage == contentType:
     if result.messageText == "":
@@ -157,7 +160,8 @@ proc initNewMessagesMarkerItem*(timestamp: int64): Item =
     senderTrustStatus = TrustStatus.Unknown,
     senderEnsVerified = false,
     discordMessage = DiscordMessage(),
-    resendError = ""
+    resendError = "",
+    mentioned = false
   )
 
 proc `$`*(self: Item): string =
@@ -401,3 +405,8 @@ proc gapTo*(self: Item): int64 {.inline.} =
 proc `gapTo=`*(self: Item, value: int64) {.inline.} =
   self.gapTo = value
 
+proc mentioned*(self: Item): bool {.inline.} =
+  self.mentioned
+
+proc `mentioned=`*(self: Item, value: bool) {.inline.} =
+  self.mentioned = value
