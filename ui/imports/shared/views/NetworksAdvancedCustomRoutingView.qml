@@ -27,6 +27,7 @@ ColumnLayout {
     property bool interactive: true
     property bool isBridgeTx: false
     property bool showUnpreferredNetworks: preferredToggleButton.checked
+    property int errorType: Constants.NoError
 
     signal reCalculateSuggestedRoute()
 
@@ -74,19 +75,9 @@ ColumnLayout {
                 text: qsTr("The networks where the receipient will receive tokens. Amounts calculated automatically for the lowest cost.")
                 wrapMode: Text.WordWrap
             }
-            BalanceExceeded {
-                id: balanceExceeded
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: Style.current.bigPadding
-                transferPossible: root.store.disabledChainIdsToList.length > 0 || root.store.disabledChainIdsFromList.length > 0 ? true : root.bestRoutes ? root.bestRoutes.length > 0 : false
-                amountToSend: root.amountToSend
-                isLoading: root.isLoading
-            }
             Loader {
                 id: networksLoader
                 Layout.topMargin: Style.current.padding
-                active: !balanceExceeded.visible
                 visible: active
                 sourceComponent: NetworkCardsComponent {
                     store: root.store
@@ -103,6 +94,8 @@ ColumnLayout {
                     bestRoutes: root.bestRoutes
                     weiToEth: root.weiToEth
                     interactive: root.interactive
+                    errorType: root.errorType
+                    isLoading: root.isLoading
                 }
             }
         }

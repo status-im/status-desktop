@@ -67,7 +67,7 @@ StatusDialog {
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
-        if(!!popup.selectedAccount && !!assetSelector.selectedAsset && d.recipientReady) {
+        if(!!popup.selectedAccount && !!assetSelector.selectedAsset && d.recipientReady && amountToSendInput.input.valid) {
             popup.isLoading = true
             let amount = Math.round(parseFloat(amountToSendInput.cryptoValueToSend) * Math.pow(10, assetSelector.selectedAsset.decimals))
             popup.store.suggestedRoutes(popup.selectedAccount.address, amount.toString(16), assetSelector.selectedAsset.symbol,
@@ -78,15 +78,13 @@ StatusDialog {
 
     QtObject {
         id: d
+        readonly property int errorType: !amountToSendInput.input.valid ? Constants.SendAmountExceedsBalance :
+                                                                          (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0 && !!amountToSendInput.input.text && recipientReady && !popup.isLoading) ?
+                                                                              Constants.NoRoute : Constants.NoError
         readonly property double maxFiatBalance: !!assetSelector.selectedAsset ? (amountToSendInput.cryptoFiatFlipped ?
                                                                                     assetSelector.selectedAsset.totalCurrencyBalance :
                                                                                     assetSelector.selectedAsset.totalBalance): 0
-        onMaxFiatBalanceChanged: {
-            amountToSendInput.floatValidator.top = maxFiatBalance
-            amountToSendInput.input.validate()
-        }
-        readonly property bool isReady: amountToSendInput.input.valid && !amountToSendInput.input.pending && recipientReady
-        readonly property bool errorMode: popup.isLoading || !isReady ? false : (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0) || networkSelector.errorMode || isNaN(amountToSendInput.input.text)
+        readonly property bool errorMode: popup.isLoading || !recipientReady ? false : errorType !== Constants.NoError || networkSelector.errorMode || isNaN(amountToSendInput.input.text)
         readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending
         property bool isAddressValid: Utils.isValidAddress(popup.addressText)
         property bool isENSValid: false
@@ -109,6 +107,11 @@ StatusDialog {
                 recipientSelector.input.text = result.formattedText
                 popup.recalculateRoutesAndFees()
             }
+        }
+
+        onErrorTypeChanged: {
+            if(errorType === Constants.SendAmountExceedsBalance)
+                bestRoutes = []
         }
     }
 
@@ -230,7 +233,7 @@ StatusDialog {
                                 return ""
                             }
                             onSelectedAssetChanged: {
-                                if (!assetSelector.selectedAsset || !!amountToSendInput.input.text || isNaN(amountToSendInput.input.text)) {
+                                if (!assetSelector.selectedAsset || !amountToSendInput.input.text || isNaN(amountToSendInput.input.text)) {
                                     return
                                 }
                                 popup.recalculateRoutesAndFees()
@@ -242,8 +245,8 @@ StatusDialog {
                             title: d.maxFiatBalance > 0 ? qsTr("Max: %1").arg(LocaleUtils.numberToLocaleString(d.maxFiatBalance)) : qsTr("No balances active")
                             closeButtonVisible: false
                             titleText.font.pixelSize: 12
-                            bgColor: d.errorMode ? Theme.palette.dangerColor2 : Theme.palette.primaryColor3
-                            titleText.color: d.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
+                            bgColor: amountToSendInput.input.valid ? Theme.palette.primaryColor3 : Theme.palette.dangerColor2
+                            titleText.color: amountToSendInput.input.valid ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
                         }
                     }
                     RowLayout {
@@ -253,10 +256,15 @@ StatusDialog {
                             Layout.fillWidth:true
                             isBridgeTx: popup.isBridgeTx
                             interactive: popup.interactive
-                            store: popup.store
                             selectedAsset: assetSelector.selectedAsset
-                            errorMode: d.errorMode
                             maxFiatBalance: d.maxFiatBalance
+                            currentCurrency: popup.store.currentCurrency
+                            getFiatValue: function(cryptoValue) {
+                                return popup.store.getFiatValue(cryptoValue, selectedAsset.symbol, currentCurrency)
+                            }
+                            getCryptoValue: function(fiatValue) {
+                                return popup.store.getFiatValue(fiatValue, selectedAsset.symbol, currentCurrency)
+                            }
                             onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
                         }
                         AmountToReceive {
@@ -405,7 +413,7 @@ StatusDialog {
                         selectedAsset: assetSelector.selectedAsset
                         onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
                         visible: d.recipientReady && !!assetSelector.selectedAsset
-
+                        errorType: d.errorType
                         isLoading: popup.isLoading
                         bestRoutes: popup.bestRoutes
                         isBridgeTx: popup.isBridgeTx
@@ -424,6 +432,7 @@ StatusDialog {
                         bestRoutes: popup.bestRoutes
                         store: popup.store
                         gasFiatAmount: d.totalFeesInFiat
+                        errorType: d.errorType
                     }
                 }
             }
@@ -435,7 +444,7 @@ StatusDialog {
         maxFiatFees: popup.isLoading ? "..." : "%1 %2".arg(LocaleUtils.numberToLocaleString(d.totalFeesInFiat)).arg(popup.store.currentCurrency.toUpperCase())
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: d.isReady && !isNaN(amountToSendInput.cryptoValueToSend) && fees.isValid && !d.errorMode
+        visible: d.recipientReady && !isNaN(amountToSendInput.cryptoValueToSend) && !d.errorMode
         onNextButtonClicked: popup.sendTransaction()
     }
 

@@ -12,13 +12,12 @@ import "../controls"
 Rectangle {
     id: root
 
-    property alias isValid: gasValidator.isValid
-
     property string gasFiatAmount
     property bool isLoading: false
     property var bestRoutes
     property var store
     property var selectedTokenSymbol
+    property int errorType: Constants.NoError
 
     radius: 13
     color: Theme.palette.indirectColor1
@@ -70,7 +69,7 @@ Rectangle {
                 getFiatValue: root.store.getFiatValue
                 currentCurrency: root.store.currencyStore.currentCurrency
                 currentCurrencySymbol: root.store.currencyStore.currentCurrencySymbol
-                visible: gasValidator.isValid && !root.isLoading
+                visible: root.errorType === Constants.NoError && !root.isLoading
                 bestRoutes: root.bestRoutes
                 selectedTokenSymbol: root.selectedTokenSymbol
             }
@@ -78,7 +77,7 @@ Rectangle {
                 id: gasValidator
                 width: parent.width
                 isLoading: root.isLoading
-                isValid: root.bestRoutes ? root.bestRoutes.length > 0 : true
+                errorType: root.errorType
             }
         }
     }

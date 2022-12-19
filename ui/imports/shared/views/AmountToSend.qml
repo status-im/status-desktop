@@ -13,16 +13,16 @@ ColumnLayout {
     id: root
 
     property alias input: amountToSendInput
-    property alias floatValidator: floatValidator
 
-    property var store
     property var selectedAsset
-    property bool errorMode
     property bool isBridgeTx: false
     property bool interactive: false
-    property double maxFiatBalance
+    property double maxFiatBalance: -1
     property bool cryptoFiatFlipped: false
     property string cryptoValueToSend: !cryptoFiatFlipped ? amountToSendInput.text : txtFiatBalance.text
+    property string currentCurrency
+    property var getFiatValue: function(cryptoValue) {}
+    property var getCryptoValue: function(fiatValue) {}
 
     signal reCalculateSuggestedRoute()
 
@@ -40,13 +40,13 @@ ColumnLayout {
         function getFiatValue(value) {
             if(!root.selectedAsset || !value)
                 return zeroString
-            let cryptoValue = root.store.getFiatValue(value, root.selectedAsset.symbol, root.store.currentCurrency)
+            let cryptoValue = root.getFiatValue(value)
             return formatValue(parseFloat(cryptoValue))
         }
         function getCryptoValue(value) {
             if(!root.selectedAsset || !value)
                 return zeroString
-            let cryptoValue = root.store.getCryptoValue(value, root.selectedAsset.symbol, root.store.currentCurrency)
+            let cryptoValue = root.getCryptoValue(value)
             return formatValue(parseFloat(cryptoValue))
         }
     }
@@ -55,6 +55,11 @@ ColumnLayout {
         if(!!root.selectedAsset) {
             txtFiatBalance.text = !cryptoFiatFlipped ? d.getFiatValue(amountToSendInput.text): d.getCryptoValue(amountToSendInput.text)
         }
+    }
+
+    onMaxFiatBalanceChanged: {
+        floatValidator.top = maxFiatBalance
+        input.validate()
     }
 
     StatusBaseText {
@@ -73,7 +78,7 @@ ColumnLayout {
             Layout.maximumWidth: 163
             Layout.preferredWidth: (!!text) ? input.edit.paintedWidth : textMetrics.advanceWidth
             placeholderText: d.zeroString
-            input.edit.color: root.errorMode ? Theme.palette.dangerColor1 : Theme.palette.directColor1
+            input.edit.color: input.valid ? Theme.palette.directColor1 : Theme.palette.dangerColor1
             input.edit.readOnly: !root.interactive
             validators: [
                 StatusFloatValidator {
@@ -99,7 +104,7 @@ ColumnLayout {
         }
         StatusBaseText {
             Layout.alignment: Qt.AlignVCenter
-            text: root.store.currentCurrency.toUpperCase()
+            text: root.currentCurrency.toUpperCase()
             font.pixelSize: amountToSendInput.input.edit.font.pixelSize
             color: Theme.palette.baseColor1
             visible: cryptoFiatFlipped
@@ -123,7 +128,7 @@ ColumnLayout {
             anchors.top: parent.top
             anchors.left: txtFiatBalance.right
             anchors.leftMargin: 4
-            text: !cryptoFiatFlipped ? root.store.currentCurrency.toUpperCase() : !!root.selectedAsset ? root.selectedAsset.symbol.toUpperCase() : ""
+            text: !cryptoFiatFlipped ? root.currentCurrency.toUpperCase() : !!root.selectedAsset ? root.selectedAsset.symbol.toUpperCase() : ""
             font.pixelSize: 13
             color: Theme.palette.directColor5
         }

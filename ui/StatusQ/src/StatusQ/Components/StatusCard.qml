@@ -1,9 +1,11 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.14
+import QtGraphicalEffects 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 
 /*!
    \qmltype StatusCard
@@ -26,6 +28,9 @@ import StatusQ.Controls 0.1
             tertiaryText: "BALANCE: " + 250
             cardIconName: "status"
             advancedMode: false
+            disableText: "Disable"
+            enableText: "enable"
+            maxAdvancedValue: 100
         }
    \endqml
    For a list of components available see StatusQ.
@@ -88,6 +93,16 @@ Rectangle {
     */
     property alias tertiaryText: tertiaryText.text
     /*!
+       \qmlproperty alias StatusCard::disableText
+       Used to set disable text in the StatusCard
+    */
+    property alias disableText: disableText.text
+    /*!
+       \qmlproperty alias StatusCard::enableText
+       Used to set enableText text in the StatusCard
+    */
+    property string enableText
+    /*!
        \qmlproperty alias StatusCard::advancedInputText
        Used to set text in the StatusInput in advancedMode
     */
@@ -138,7 +153,11 @@ Rectangle {
        This property exposes the card icon posistion to help draw the network routes
     */
     property real cardIconPosition: layout.y + cardIcon.y + cardIcon.height/2
-
+    /*!
+       \qmlproperty real StatusCard::maxAdvancedValue
+       This property holds the max value in the advanced input that can be entered by the user
+    */
+    property real maxAdvancedValue
     /*!
         \qmlsignal StatusCard::clicked
         This signal is emitted when the card is clicked
@@ -162,126 +181,178 @@ Rectangle {
     */
     state: "default"
 
-    implicitHeight: advancedInput.visible ? 90 : 76
-    implicitWidth: 128
+    implicitHeight: 90
+    implicitWidth: 160
     radius: 8
+    border.width: 1
+    border.color: Theme.palette.primaryColor2
+
+    // This is used to create a shadow around the rectangle when hovered
+    // it was needed to be done this way because it doesnt work with the
+    // main rect when it is transparent in its "default" state
+    Rectangle {
+        id: dummyRect
+        anchors.fill: parent
+        radius: root.radius
+        opacity: 0
+    }
+    DropShadow {
+        anchors.fill: dummyRect
+        verticalOffset: 0
+        horizontalOffset: 0
+        radius: 8
+        samples: 17
+        source: dummyRect
+        color: Theme.palette.dropShadow
+        visible: sensor.containsMouse
+        z: root.z - 1
+    }
 
     MouseArea {
+        id: sensor
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton
+        hoverEnabled: true
         enabled: root.clickable && root.state !== "unavailable"
         onClicked: {
-            disabled = !disabled
+            if(!advancedMode)
+                disabled = !disabled
             root.clicked()
         }
     }
 
-    RowLayout {
+    ColumnLayout {
         id: layout
+        spacing: 0
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.leftMargin: 8
         anchors.rightMargin: 8
         anchors.topMargin: 8
-        ColumnLayout {
-            Layout.maximumWidth: root.width - cardIcon.width - 24
+        RowLayout {
+            Layout.preferredWidth: layout.width
             StatusBaseText {
                 id: primaryText
-                Layout.maximumWidth: parent.width
+                Layout.maximumWidth: layout.width - cardIcon.width - 24
                 font.pixelSize: 15
                 font.weight: Font.Medium
                 elide: Text.ElideRight
+                lineHeight: 22
+                lineHeightMode: Text.FixedHeight
+                verticalAlignment: Text.AlignVCenter
             }
-            RowLayout {
-                id: basicInput
-                StatusBaseText {
-                    id: secondaryLabel
-                    Layout.maximumWidth: root.width - cardIcon.width - errorIcon.width - 24
-                    elide: Text.ElideRight
-                    font.pixelSize: 13
-                    font.weight: Font.Medium
-                }
-                StatusIcon {
-                    id: errorIcon
-                    width: 14
-                    height: 14
-                    Layout.alignment: Qt.AlignTop
-                    icon: "tiny/warning"
-                    color: Theme.palette.pinColor1
-                }
-            }
-
-            StatusInput {
-                id: advancedInput
-                property bool tempLock: false
-                implicitWidth: 80
-                maximumHeight: 32
-                topPadding: 0
-                bottomPadding: 0
-                leftPadding: 8
-                rightPadding: 5
-                input.edit.font.pixelSize: 13
-                input.edit.readOnly: disabled
-                input.rightComponent: Row {
-                    width: implicitWidth
-                    spacing: 4
-                    StatusFlatRoundButton {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 12
-                        height: 12
-                        icon.name: root.locked && advancedInput.tempLock ? "lock" : "unlock"
-                        icon.width: 12
-                        icon.height: 12
-                        icon.color: root.locked && advancedInput.tempLock? Theme.palette.primaryColor1 : Theme.palette.baseColor1
-                        type: StatusFlatRoundButton.Type.Secondary
-                        enabled: !disabled
-                        onClicked: {
-                            advancedInput.tempLock = !advancedInput.tempLock
-                            root.cardLocked(advancedInput.tempLock)
-                        }
-                    }
-                    StatusFlatRoundButton {
-                        width: 14
-                        height: 14
-                        icon.name: "clear"
-                        icon.width: 14
-                        icon.height: 14
-                        icon.color: Theme.palette.baseColor1
-                        type: StatusFlatRoundButton.Type.Secondary
-                        onClicked: advancedInput.input.edit.clear()
-                    }
-                }
-                text: root.preCalculatedAdvancedText
-                onTextChanged: {
-                    advancedInput.tempLock = false
-                    waitTimer.restart()
-                }
-                Timer {
-                    id: waitTimer
-                    interval: lockTimeout
-                    onTriggered: {
-                        advancedInput.tempLock = true
-                        if(!!advancedInput.text && root.preCalculatedAdvancedText !== advancedInput.text) {
-                            root.cardLocked(advancedInput.tempLock)
-                        }
-                    }
-                }
-            }
-            StatusBaseText {
-                id: tertiaryText
-                Layout.maximumWidth: root.width - 12
-                elide: Text.ElideRight
-                font.pixelSize: 10
+            StatusIcon {
+                id: cardIcon
+                Layout.alignment: Qt.AlignTop | Qt.AlignRight
+                Layout.preferredHeight: 16
+                Layout.preferredWidth: 16
+                mipmap: true
             }
         }
-        StatusIcon {
-            id: cardIcon
-            Layout.alignment: Qt.AlignTop | Qt.AlignRight
+        RowLayout {
+            id: basicInput
             Layout.preferredHeight: 32
-            Layout.preferredWidth: 32
-            mipmap: true
+            StatusBaseText {
+                id: secondaryLabel
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+                font.pixelSize: 13
+                lineHeight: 18
+                lineHeightMode: Text.FixedHeight
+                verticalAlignment: Text.AlignVCenter
+            }
+            StatusIcon {
+                id: errorIcon
+                Layout.alignment: Qt.AlignVCenter
+                width: 14
+                height: 14
+                icon: "tiny/warning"
+                color: Theme.palette.pinColor1
+            }
+        }
+        StatusInput {
+            id: advancedInput
+            property bool tempLock: false
+            Layout.preferredWidth: layout.width
+            maximumHeight: 32
+            topPadding: 0
+            bottomPadding: 0
+            leftPadding: 8
+            rightPadding: 5
+            input.edit.font.pixelSize: 13
+            input.edit.readOnly: disabled
+            input.background.radius: 4
+            input.background.color: input.edit.activeFocus ? "transparent" : Theme.palette.directColor8
+            input.background.border.color: input.edit.activeFocus ? Theme.palette.primaryColor2 : "transparent"
+            input.rightComponent: Row {
+                width: implicitWidth
+                spacing: 4
+                visible: root.state !== "error"
+                StatusFlatRoundButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 12
+                    height: 12
+                    icon.name: root.locked && advancedInput.tempLock ? "lock" : "unlock"
+                    icon.width: 12
+                    icon.height: 12
+                    icon.color: root.locked && advancedInput.tempLock ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+                    type: StatusFlatRoundButton.Type.Secondary
+                    enabled: !disabled
+                    onClicked: {
+                        advancedInput.tempLock = !advancedInput.tempLock
+                        root.locked = advancedInput.tempLock
+                        root.cardLocked(advancedInput.tempLock)
+                    }
+                }
+            }
+            validators: [
+                StatusFloatValidator {
+                    id: floatValidator
+                    bottom: 0
+                    top: root.maxAdvancedValue
+                    errorMessage: ""
+                }
+            ]
+            text: root.preCalculatedAdvancedText
+            onTextChanged: {
+                advancedInput.tempLock = false
+                waitTimer.restart()
+            }
+            Timer {
+                id: waitTimer
+                interval: lockTimeout
+                onTriggered: {
+                    advancedInput.tempLock = true
+                    if(!!advancedInput.text && root.preCalculatedAdvancedText !== advancedInput.text) {
+                        root.locked = advancedInput.tempLock
+                        root.cardLocked(advancedInput.tempLock)
+                    }
+                }
+            }
+        }
+        StatusBaseText {
+            id: tertiaryText
+            Layout.maximumWidth: layout.width
+            Layout.preferredHeight: 20
+            elide: Text.ElideRight
+            font.pixelSize: 10
+            lineHeight: 14
+            lineHeightMode: Text.FixedHeight
+            verticalAlignment: Text.AlignVCenter
+        }
+        StatusBaseText {
+            id: disableText
+            Layout.maximumWidth: layout.width
+            Layout.preferredHeight: 20
+            elide: Text.ElideRight
+            font.weight: Font.Medium
+            color: Theme.palette.primaryColor1
+            font.pixelSize: 13
+            lineHeight: 18
+            lineHeightMode: Text.FixedHeight
+            verticalAlignment: Text.AlignVCenter
         }
     }
 
@@ -294,7 +365,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: root
-                border.color: disabled ? "transparent" : Theme.palette.primaryColor2
+                border.color: Theme.palette.primaryColor2
             }
             PropertyChanges {
                 target: primaryText
@@ -306,7 +377,9 @@ Rectangle {
             }
             PropertyChanges {
                 target: secondaryLabel
-                color: disabled ? Theme.palette.directColor5: Theme.palette.primaryColor1
+                color: disabled ? sensor.containsMouse ?
+                                      Theme.palette.primaryColor1 :
+                                      Theme.palette.directColor5: Theme.palette.primaryColor1
             }
             PropertyChanges {
                 target: secondaryLabel
@@ -314,7 +387,11 @@ Rectangle {
             }
             PropertyChanges {
                 target: secondaryLabel
-                text: disabled ? disabledText : secondaryText
+                text: disabled ? sensor.containsMouse ? root.enableText : disabledText : secondaryText
+            } 
+            PropertyChanges {
+                target: secondaryLabel
+                font.weight: disabled && sensor.containsMouse ? Font.Medium : Font.Normal
             }
             PropertyChanges {
                 target: tertiaryText
@@ -322,7 +399,11 @@ Rectangle {
             }
             PropertyChanges {
                 target: tertiaryText
-                visible: tertiaryText.text
+                visible: advancedMode ? tertiaryText.text : (!sensor.containsMouse && tertiaryText.text) || disabled
+            }
+            PropertyChanges {
+                target: disableText
+                visible: sensor.containsMouse && !advancedMode && !disabled
             }
             PropertyChanges {
                 target: cardIcon
@@ -338,7 +419,8 @@ Rectangle {
             }
             PropertyChanges {
                 target: advancedInput
-                input.edit.color: Theme.palette.directColor1
+                input.edit.color: input.edit.activeFocus || !root.locked ?
+                                      Theme.palette.directColor1 : Theme.palette.directColor5
             }
             PropertyChanges {
                 target: basicInput
@@ -353,7 +435,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: root
-                border.color: disabled ? "transparent" : Theme.palette.primaryColor2
+                border.color: Theme.palette.primaryColor2
             }
             PropertyChanges {
                 target: primaryText
@@ -365,7 +447,9 @@ Rectangle {
             }
             PropertyChanges {
                 target: secondaryLabel
-                color: disabled ? Theme.palette.directColor5: Theme.palette.dangerColor1
+                color: disabled ? sensor.containsMouse ?
+                                      Theme.palette.primaryColor1 :
+                                      Theme.palette.directColor5: Theme.palette.dangerColor1
             }
             PropertyChanges {
                 target: secondaryLabel
@@ -373,7 +457,11 @@ Rectangle {
             }
             PropertyChanges {
                 target: secondaryLabel
-                text: disabled ? disabledText : secondaryText
+                text: disabled ? sensor.containsMouse ? root.enableText : disabledText : secondaryText
+            }
+            PropertyChanges {
+                target: secondaryLabel
+                font.weight: disabled && sensor.containsMouse ? Font.Medium : Font.Normal
             }
             PropertyChanges {
                 target: tertiaryText
@@ -381,7 +469,11 @@ Rectangle {
             }
             PropertyChanges {
                 target: tertiaryText
-                visible: tertiaryText.text
+                visible: advancedMode ? tertiaryText.text : (!sensor.containsMouse && tertiaryText.text) || disabled
+            }
+            PropertyChanges {
+                target: disableText
+                visible: sensor.containsMouse && !advancedMode && !disabled
             }
             PropertyChanges {
                 target: cardIcon
@@ -397,7 +489,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: advancedInput
-                input.edit.color: disabled ? Theme.palette.directColor5 : Theme.palette.dangerColor1
+                input.edit.color: Theme.palette.dangerColor1
             }
             PropertyChanges {
                 target: basicInput
@@ -412,7 +504,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: root
-                border.color: disabled ? "transparent": Theme.palette.pinColor2
+                border.color: Theme.palette.pinColor2
             }
             PropertyChanges {
                 target: primaryText
@@ -424,7 +516,9 @@ Rectangle {
             }
             PropertyChanges {
                 target: secondaryLabel
-                color: disabled ? Theme.palette.directColor5 : Theme.palette.pinColor1
+                color: disabled ? sensor.containsMouse ?
+                                      Theme.palette.primaryColor1 :
+                                      Theme.palette.directColor5 : Theme.palette.pinColor1
             }
             PropertyChanges {
                 target: secondaryLabel
@@ -432,15 +526,23 @@ Rectangle {
             }
             PropertyChanges {
                 target: secondaryLabel
-                text: disabled ? disabledText : secondaryText
+                text: disabled ? sensor.containsMouse ? root.enableText : disabledText : secondaryText
+            }
+            PropertyChanges {
+                target: secondaryLabel
+                font.weight: disabled && sensor.containsMouse ? Font.Medium : Font.Normal
             }
             PropertyChanges {
                 target: tertiaryText
-                color: disabled ? Theme.palette.directColor5 : Theme.palette.pinColor1
+                color: Theme.palette.pinColor1
             }
             PropertyChanges {
                 target: tertiaryText
-                visible: tertiaryText.text
+                visible: advancedMode ? tertiaryText.text : (!sensor.containsMouse && tertiaryText.text) || disabled
+            }
+            PropertyChanges {
+                target: disableText
+                visible: sensor.containsMouse && !advancedMode && !disabled
             }
             PropertyChanges {
                 target: cardIcon
@@ -456,7 +558,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: advancedInput
-                input.edit.color: Theme.palette.directColor1
+                input.edit.color: root.locked ? Theme.palette.directColor5 : Theme.palette.directColor1
             }
             PropertyChanges {
                 target: basicInput
@@ -494,12 +596,20 @@ Rectangle {
                 text: secondaryText
             }
             PropertyChanges {
+                target: secondaryLabel
+                font.weight: disabled && sensor.containsMouse ? Font.Medium : Font.Normal
+            }
+            PropertyChanges {
                 target: tertiaryText
                 color: Theme.palette.directColor5
             }
             PropertyChanges {
                 target: tertiaryText
-                visible: tertiaryText.text
+                visible: advancedMode ? tertiaryText.text : (!sensor.containsMouse && tertiaryText.text) || disabled
+            }
+            PropertyChanges {
+                target: disableText
+                visible: sensor.containsMouse && !advancedMode && !disabled
             }
             PropertyChanges {
                 target: cardIcon

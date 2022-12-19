@@ -13,12 +13,16 @@ import "../panels"
 Column {
     id: root
 
-    visible: !isValid || isLoading
-    spacing: 5
-
-    property alias errorMessage: txtValidationError.text
-    property bool isValid: true
+    property int errorType: Constants.NoError
     property bool isLoading: false
+
+    QtObject {
+        id: d
+        readonly property bool isValid: root.errorType === Constants.NoError
+    }
+
+    visible: !d.isValid || isLoading
+    spacing: 5
 
     StatusIcon {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -26,19 +30,20 @@ Column {
         width: 20
         icon: "cancel"
         color: Theme.palette.dangerColor1
-        visible: !isValid && !isLoading
+        visible: !d.isValid && !isLoading
     }
     StatusLoadingIndicator {
         anchors.horizontalCenter: parent.horizontalCenter
         width: 24
         height: 24
         color: Theme.palette.baseColor1
-        visible: isLoading && isValid
+        visible: isLoading && d.isValid
     }
     StyledText {
         id: txtValidationError
         anchors.horizontalCenter: parent.horizontalCenter
-        text: isLoading? qsTr("Calculating fees"): qsTr("Balance exceeded")
+        text: isLoading ? qsTr("Calculating fees"): errorType === Constants.SendAmountExceedsBalance ?
+                              qsTr("Balance exceeded") : qsTr("No route found")
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: 13
