@@ -58,6 +58,10 @@ ListModel {
          section: "Popups"
     }
     ListElement {
+         title: "InDropdown"
+         section: "Popups"
+    }
+    ListElement {
         title: "MembersSelector"
         section: "Components"
     }
