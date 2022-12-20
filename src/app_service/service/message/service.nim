@@ -156,6 +156,65 @@ QtObject:
         messages.delete(i)
         return
 
+  proc isChatCursorInitialized(self: Service, chatId: string): bool =
+    return self.msgCursor.hasKey(chatId)
+
+  proc resetMessageCursor*(self: Service, chatId: string) =
+    if(not self.msgCursor.hasKey(chatId)):
+      return
+    self.msgCursor.del(chatId)
+
+  proc initOrGetMessageCursor(self: Service, chatId: string): MessageCursor =
+    if(not self.msgCursor.hasKey(chatId)):
+      self.msgCursor[chatId] = initMessageCursor(value="", pending=false, mostRecent=false)
+    return self.msgCursor[chatId]
+
+  proc initOrGetPinnedMessageCursor(self: Service, chatId: string): MessageCursor =
+    if(not self.pinnedMsgCursor.hasKey(chatId)):
+      self.pinnedMsgCursor[chatId] = initMessageCursor(value="", pending=false, mostRecent=false)
+
+    return self.pinnedMsgCursor[chatId]
+
+  proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string, limit = MESSAGES_PER_PAGE) =
+    if (chatId.len == 0):
+      error "empty chat id", procName="asyncLoadMoreMessagesForChat"
+      return
+
+    let msgCursor = self.initOrGetMessageCursor(chatId)
+    let msgCursorValue = if (msgCursor.isFetchable()): msgCursor.getValue() else: CURSOR_VALUE_IGNORE
+
+    let pinnedMsgCursor = self.initOrGetPinnedMessageCursor(chatId)
+    let pinnedMsgCursorValue = if (pinnedMsgCursor.isFetchable()): pinnedMsgCursor.getValue() else: CURSOR_VALUE_IGNORE
+
+    if(msgCursorValue == CURSOR_VALUE_IGNORE and pinnedMsgCursorValue == CURSOR_VALUE_IGNORE):
+      # it's important to emit signal in case we are not fetching messages, so we can update the view appropriatelly.
+      let data = MessagesLoadedArgs(chatId: chatId)
+      self.events.emit(SIGNAL_MESSAGES_LOADED, data)
+      return
+
+    if(msgCursorValue != CURSOR_VALUE_IGNORE):
+      msgCursor.setPending()
+    if (pinnedMsgCursorValue != CURSOR_VALUE_IGNORE):
+      pinnedMsgCursor.setPending()
+
+    let arg = AsyncFetchChatMessagesTaskArg(
+      tptr: cast[ByteAddress](asyncFetchChatMessagesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncLoadMoreMessagesForChat",
+      chatId: chatId,
+      msgCursor: msgCursorValue,
+      pinnedMsgCursor: pinnedMsgCursorValue,
+      limit: if(limit <= MESSAGES_PER_PAGE_MAX): limit else: MESSAGES_PER_PAGE_MAX
+    )
+
+    self.threadpool.start(arg)
+
+  proc asyncLoadInitialMessagesForChat*(self: Service, chatId: string) =
+    if(self.isChatCursorInitialized(chatId)):
+      return
+
+    self.asyncLoadMoreMessagesForChat(chatId)
+
   proc handleMessagesUpdate(self: Service, chats: var seq[ChatDto], messages: var seq[MessageDto]) =
     # We included `chats` in this condition cause that's the form how `status-go` sends updates.
     # The first element from the `receivedData.chats` array contains details about the chat a messages received in
@@ -170,32 +229,44 @@ QtObject:
     # if (not chats[0].active):
     #   return
 
-    for msg in messages:
-      if(msg.editedAt > 0):
-        let data = MessageEditedArgs(chatId: msg.localChatId, message: msg)
-        self.events.emit(SIGNAL_MESSAGE_EDITED, data)
-
     for i in 0 ..< chats.len:
+      let chatId = chats[i].id
+
       if(chats[i].chatType == ChatType.Unknown):
-        error "error: new message with an unknown chat type received", chatId=chats[i].id
+        error "error: new message with an unknown chat type received", chatId=chatId
         continue
 
       # Ignore 1-1 chats for which we are not contact
-      if (chats[i].chatType == ChatType.OneToOne and not self.contactService.getContactById(chats[i].id).isContact):
+      if(chats[i].chatType == ChatType.OneToOne and not self.contactService.getContactById(chatId).isContact):
         continue
 
+      let currentChatCursor = self.initOrGetMessageCursor(chatId)
+      # Ignore messages update if chat haven't loaded any messages and try to load them from database instead
+      if(currentChatCursor.isEmpty()):
+        currentChatCursor.makeObsolete()
+        self.asyncLoadMoreMessagesForChat(chatId)
+        continue
 
       var chatMessages: seq[MessageDto]
       for msg in messages:
-        if (msg.localChatId == chats[i].id):
-          chatMessages.add(msg)
+        if(msg.localChatId != chatId):
+          continue
 
-      if chats[i].communityId.len == 0:
-        chats[i].communityId = singletonInstance.userProfile.getPubKey()
+        # Ignore messages older than current chat cursor
+        let msgCursorValue = initCursorValue(msg.id, msg.clock)
+        if(not currentChatCursor.isLessThan(msgCursorValue)):
+          currentChatCursor.makeObsolete()
+          continue
+
+        if(msg.editedAt > 0):
+          let data = MessageEditedArgs(chatId: msg.localChatId, message: msg)
+          self.events.emit(SIGNAL_MESSAGE_EDITED, data)
+
+        chatMessages.add(msg)
 
       let data = MessagesArgs(
-        sectionId: chats[i].communityId,
-        chatId: chats[i].id,
+        sectionId: if chats[i].communityId.len != 0: chats[i].communityId else: singletonInstance.userProfile.getPubKey(),
+        chatId: chatId,
         chatType: chats[i].chatType,
         lastMessageTimestamp: chats[i].timestamp.int,
         unviewedMessagesCount: chats[i].unviewedMessagesCount,
@@ -297,25 +368,6 @@ QtObject:
       var receivedData = DiscordCommunityImportFinishedSignal(e)
       self.handleMessagesReload(receivedData.communityId)
 
-  proc initialMessagesFetched(self: Service, chatId: string): bool =
-    return self.msgCursor.hasKey(chatId)
-
-  proc resetMessageCursor*(self: Service, chatId: string) =
-    if(not self.msgCursor.hasKey(chatId)):
-      return
-    self.msgCursor.del(chatId)
-
-  proc getMessageCursor(self: Service, chatId: string): MessageCursor =
-    if(not self.msgCursor.hasKey(chatId)):
-      self.msgCursor[chatId] = initMessageCursor(value="", pending=false, mostRecent=false)
-    return self.msgCursor[chatId]
-
-  proc getPinnedMessageCursor(self: Service, chatId: string): MessageCursor =
-    if(not self.pinnedMsgCursor.hasKey(chatId)):
-      self.pinnedMsgCursor[chatId] = initMessageCursor(value="", pending=false, mostRecent=false)
-
-    return self.pinnedMsgCursor[chatId]
-
   proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
     let networksDto = self.networkService.getNetworks()
     var token = newTokenDto(networksDto[0].nativeCurrencyName, networksDto[0].chainId, parseAddress(ZERO_ADDRESS), networksDto[0].nativeCurrencySymbol, networksDto[0].nativeCurrencyDecimals, true, "")
@@ -346,8 +398,8 @@ QtObject:
     var chatId: string
     discard responseObj.getProp("chatId", chatId)
 
-    let msgCursor = self.getMessageCursor(chatId)
-    let pinnedMsgCursor = self.getPinnedMessageCursor(chatId)
+    let msgCursor = self.initOrGetMessageCursor(chatId)
+    let pinnedMsgCursor = self.initOrGetPinnedMessageCursor(chatId)
 
     # handling messages
     var msgCursorValue: string
@@ -384,48 +436,6 @@ QtObject:
     reactions: reactions)
 
     self.events.emit(SIGNAL_MESSAGES_LOADED, data)
-
-
-  proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string, limit = MESSAGES_PER_PAGE) =
-    if (chatId.len == 0):
-      error "empty chat id", procName="asyncLoadMoreMessagesForChat"
-      return
-
-    let msgCursor = self.getMessageCursor(chatId)
-    let msgCursorValue = if (msgCursor.isFetchable()): msgCursor.getValue() else: CURSOR_VALUE_IGNORE
-
-    let pinnedMsgCursor = self.getPinnedMessageCursor(chatId)
-    let pinnedMsgCursorValue = if (pinnedMsgCursor.isFetchable()): pinnedMsgCursor.getValue() else: CURSOR_VALUE_IGNORE
-
-    if(msgCursorValue == CURSOR_VALUE_IGNORE and pinnedMsgCursorValue == CURSOR_VALUE_IGNORE):
-      # it's important to emit signal in case we are not fetching messages, so we can update the view appropriatelly.
-      let data = MessagesLoadedArgs(chatId: chatId)
-      self.events.emit(SIGNAL_MESSAGES_LOADED, data)
-      return
-
-    if(msgCursorValue != CURSOR_VALUE_IGNORE):
-      msgCursor.setPending()
-    if (pinnedMsgCursorValue != CURSOR_VALUE_IGNORE):
-      pinnedMsgCursor.setPending()
-
-    let arg = AsyncFetchChatMessagesTaskArg(
-      tptr: cast[ByteAddress](asyncFetchChatMessagesTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onAsyncLoadMoreMessagesForChat",
-      chatId: chatId,
-      msgCursor: msgCursorValue,
-      pinnedMsgCursor: pinnedMsgCursorValue,
-      limit: if(limit <= MESSAGES_PER_PAGE_MAX): limit else: MESSAGES_PER_PAGE_MAX
-    )
-
-    self.threadpool.start(arg)
-
-  proc asyncLoadInitialMessagesForChat*(self: Service, chatId: string) =
-    if(self.initialMessagesFetched(chatId)):
-      return
-
-    # we're here if initial messages are not loaded yet
-    self.asyncLoadMoreMessagesForChat(chatId)
 
   proc addReaction*(self: Service, chatId: string, messageId: string, emojiId: int) =
     try:

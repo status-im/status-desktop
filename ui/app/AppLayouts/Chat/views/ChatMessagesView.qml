@@ -50,6 +50,10 @@ Item {
         readonly property bool isMostRecentMessageInViewport: chatLogView.visibleArea.yPosition >= 0.999 - chatLogView.visibleArea.heightRatio
         readonly property var chatDetails: chatContentModule.chatDetails || null
 
+        readonly property var loadMoreMessagesIfScrollBelowThreshold: Backpressure.oneInTime(root, 500, function() {
+            if(scrollY < 500) messageStore.loadMoreMessages()
+        })
+
         function markAllMessagesReadIfMostRecentMessageIsInViewport() {
             if (!isMostRecentMessageInViewport || !chatLogView.visible) {
                 return
@@ -89,6 +93,7 @@ Item {
 
         function onActiveChanged() {
             d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+            d.loadMoreMessagesIfScrollBelowThreshold()
         }
 
         function onHasUnreadMessagesChanged() {
@@ -104,6 +109,17 @@ Item {
                 }
             } else {
                 Qt.callLater(() => messageStore.addNewMessagesMarker())
+            }
+        }
+    }
+
+    Connections {
+        target: root.rootStore
+        enabled: d.chatDetails && d.chatDetails.active
+
+        function onLoadingHistoryMessagesInProgressChanged() {
+            if(!root.rootStore.loadingHistoryMessagesInProgress) {
+                d.loadMoreMessagesIfScrollBelowThreshold()
             }
         }
     }
@@ -155,7 +171,7 @@ Item {
 
         onContentYChanged: {
             scrollDownButton.visible = contentHeight - (d.scrollY + height) > 400
-            if(d.scrollY < 500) messageStore.loadMoreMessages()
+            d.loadMoreMessagesIfScrollBelowThreshold()
         }
 
         onCountChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
