@@ -14,7 +14,7 @@ import "../popups"
 Item {
     id: root
     implicitWidth: 130
-    implicitHeight: childrenRect.height
+    implicitHeight: parent.height
 
     property var store
 
@@ -56,8 +56,9 @@ Item {
     }
 
     Row {
-        anchors.bottom: parent.bottom
         anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: Style.current.halfPadding
         spacing: Style.current.smallPadding
         visible: chainRepeater.count > 0
 

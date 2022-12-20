@@ -87,7 +87,7 @@ Item {
     }
 
     Connections {
-        target: d.chatDetails
+        target: !!d.chatDetails ? d.chatDetails : null
 
         function onActiveChanged() {
             d.markAllMessagesReadIfMostRecentMessageIsInViewport()

@@ -47,16 +47,16 @@ Popup {
 
     contentItem: StatusScrollView {
         id: scrollView
-        contentHeight: content.height
         width: root.width
         height: root.height
+        contentHeight: content.height
         padding: 0
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         Column {
             id: content
-            width: scrollView.availableWidth
+            width: childrenRect.width
             spacing: 4
 
             Repeater {

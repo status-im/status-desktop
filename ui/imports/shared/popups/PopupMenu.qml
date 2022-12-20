@@ -53,7 +53,7 @@ Menu {
         implicitHeight: 34
         font.pixelSize: 13
         font.weight: checked ? Font.Medium : Font.Normal
-        icon.color: popupMenuItem.action.asset.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.blue
+        icon.color: ((popupMenuItem.action.assetSettings !== undefined) && (popupMenuItem.action.assetSettings.color !== "#00000000")) ? popupMenuItem.action.assetSettings.color : Style.current.blue
         icon.source: this.subMenu ? subMenuIcons[subMenuIndex].source : popupMenuItem.action.icon.source
         icon.width: this.subMenu ? subMenuIcons[subMenuIndex].width : popupMenuItem.action.icon.width
         icon.height: this.subMenu ? subMenuIcons[subMenuIndex].height : popupMenuItem.action.icon.height
