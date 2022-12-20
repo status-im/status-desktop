@@ -91,7 +91,7 @@ Loader {
     property double prevMsgTimestamp: prevMessageAsJsonObj ? prevMessageAsJsonObj.timestamp : 0
     property double nextMsgTimestamp: nextMessageAsJsonObj ? nextMessageAsJsonObj.timestamp : 0
 
-    property bool shouldRepeatHeader: ((messageTimestamp - prevMsgTimestamp) / 60 / 1000) > Constants.repeatHeaderInterval || isExpired
+    property bool shouldRepeatHeader: d.getShouldRepeatHeader(messageTimestamp, prevMsgTimestamp, messageOutgoingStatus)
 
     property bool hasMention: false
 
@@ -109,7 +109,7 @@ Loader {
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
-    readonly property bool isExpired: (messageOutgoingStatus === Constants.sending && (Math.floor(messageTimestamp) + 180000) < Date.now()) || messageOutgoingStatus === Constants.expired
+    readonly property bool isExpired: d.getIsExpired(messageOutgoingStatus, messageTimestamp)
     readonly property bool isSending: messageOutgoingStatus === Constants.sending && !isExpired
     property int statusAgeEpoch: 0
 
@@ -181,7 +181,6 @@ Loader {
         root.item.startMessageFoundAnimation();
     }
     /////////////////////////////////////////////
-
 
     signal openStickerPackPopup(string stickerPackId)
     // Not Refactored Yet
@@ -268,6 +267,15 @@ Loader {
                 d.activeMessage = "";
                 return;
             }
+        }
+
+        function getShouldRepeatHeader(messageTimeStamp, prevMessageTimeStamp, messageOutgoingStatus) {
+            return ((messageTimeStamp - prevMessageTimeStamp) / 60 / 1000) > Constants.repeatHeaderInterval 
+                || d.getIsExpired(messageTimeStamp, messageOutgoingStatus)
+        }
+
+        function getIsExpired(messageTimeStamp, messageOutgoingStatus) {
+            return (messageOutgoingStatus === Constants.sending && (Math.floor(messageTimeStamp) + 180000) < Date.now()) || messageOutgoingStatus === Constants.expired
         }
     }
 
@@ -463,6 +471,15 @@ Loader {
                     root.messageStore.editMessage(root.messageId, root.messageContentType, interpretedMessage)
                 }
 
+                function nextMessageHasHeader() {
+                    if(!root.nextMessageAsJsonObj) {
+                        return false
+                    }
+                    return root.senderId !== root.nextMessageAsJsonObj.senderId ||
+                           d.getShouldRepeatHeader(root.nextMessageAsJsonObj.timeStamp, root.messageTimestamp, root.nextMessageAsJsonObj.outgoingStatus) ||
+                           root.nextMessageAsJsonObj.responseToMessageWithId !== ""
+                }
+
                 audioMessageInfoText: qsTr("Audio Message")
                 cancelButtonText: qsTr("Cancel")
                 saveButtonText: qsTr("Save")
@@ -500,7 +517,8 @@ Loader {
                 showHeader: root.senderId !== root.authorPrevMsg ||
                             root.shouldRepeatHeader || dateGroupLabel.visible || isAReply
                 isActiveMessage: d.isMessageActive
-
+                topPadding: showHeader ? Style.current.halfPadding : 2
+                bottomPadding: showHeader && nextMessageHasHeader() ? Style.current.halfPadding : 2
                 disableHover: root.disableHover ||
                               (root.chatLogView && root.chatLogView.flickingVertically) ||
                               activityCenterMessage ||
