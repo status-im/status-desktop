@@ -27,7 +27,22 @@ SplitView {
                 store: CommunitiesStore {
                     tokensModel: TokensModel {}
                     collectiblesModel: CollectiblesModel {}
-                    channelsModel: ChannelsModel {}
+                    channelsModel: ListModel {
+                        Component.onCompleted: {
+                            append([
+                                {
+                                    key: "welcome",
+                                    iconSource: ModelsData.tokens.inch,
+                                    name: "#welcome"
+                                },
+                                {
+                                    key: "general",
+                                    iconSource: ModelsData.tokens.inch,
+                                    name: "#general"
+                                }
+                            ])
+                        }
+                    }
 
                     function editPermission(index, holdings, permissions, channels, isPrivate) {
                         logs.logEvent("CommunitiesStore::editPermission - index: " + index)
@@ -39,6 +54,20 @@ SplitView {
 
                     function removePermission(index) {
                         logs.logEvent("CommunitiesStore::removePermission - index: " + index)
+                    }
+                }
+
+                rootStore: QtObject {
+                    readonly property QtObject chatCommunitySectionModule: QtObject {
+                        readonly property var model: ChannelsModel {}
+                    }
+
+                    readonly property QtObject mainModuleInst: QtObject {
+                        readonly property QtObject activeSection: QtObject {
+                            readonly property string name: "Socks"
+                            readonly property string image: ModelsData.icons.socks
+                            readonly property color color: "red"
+                        }
                     }
                 }
             }

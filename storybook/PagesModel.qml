@@ -10,6 +10,10 @@ ListModel {
          section: "Views"
     }
     ListElement {
+         title: "CommunityNewPermissionView"
+         section: "Views"
+    }
+    ListElement {
          title: "ProfileFetchingView"
          section: "Views"
     }
