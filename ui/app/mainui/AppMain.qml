@@ -1374,7 +1374,8 @@ Item {
     Connections {
         target: appMain.rootStore.mainModuleInst
         function onActiveSectionChanged() {
-            rootDropAreaPanel.activeChatType = appMain.rootStore.mainModuleInst.getCommunitySectionModule().activeItem.type
+            if (!!appMain.rootStore.mainModuleInst.getCommunitySectionModule())
+                rootDropAreaPanel.activeChatType = appMain.rootStore.mainModuleInst.getCommunitySectionModule().activeItem.type
         }
     }
 
