@@ -115,7 +115,8 @@ QtObject:
     downloadImage(content, path)
 
   proc downloadImageByUrl*(self: Utils, url: string, path: string) {.slot.} =
-    downloadImageByUrl(url, path)
+    let pathFormatted = self.formatImagePath(path)
+    downloadImageByUrl(url, pathFormatted)
 
   proc generateQRCodeSVG*(self: Utils, text: string, border: int = 0): string =
     var qr0: array[0..qrcodegen_BUFFER_LEN_MAX, uint8]

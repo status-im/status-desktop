@@ -470,10 +470,12 @@ StatusMenu {
         id: fileDialog
         title: qsTr("Please choose a directory")
         selectFolder: true
+        selectExisting : true
+        selectMultiple: false
         modality: Qt.NonModal
         onAccepted: {
             if (root.imageSource) {
-                root.store.downloadImageByUrl(root.imageSource, fileDialog.fileUrls)
+                root.store.downloadImageByUrl(root.imageSource, fileDialog.fileUrl)
             }
             fileDialog.close()
         }
