@@ -19,7 +19,9 @@ import "../../../Chat/controls/community"
 StatusScrollView {
     id: root
 
+    property var rootStore
     property var store
+
     property int viewWidth: 560 // by design
     property bool isEditState: false
     property bool dirty: {
@@ -65,6 +67,10 @@ StatusScrollView {
 
     QtObject {
         id: d
+
+        readonly property int dropdownHorizontalOffset: 4
+        readonly property int dropdownVerticalOffset: 1
+
         property int permissionType: PermissionTypes.Type.None
         property bool triggerDirtyTool: false // Trick: Used to force the reevaluation of dirty when an item of the list is updated
 
@@ -281,7 +287,7 @@ StatusScrollView {
 
             addButton.onClicked: {
                 dropdown.parent = tokensSelector.addButton
-                dropdown.x = tokensSelector.addButton.width + 4
+                dropdown.x = tokensSelector.addButton.width + d.dropdownHorizontalOffset
                 dropdown.y = 0
 
                 if (d.dirtyValues.holdingsModel && d.dirtyValues.holdingsModel.count === 0)
@@ -295,8 +301,8 @@ StatusScrollView {
                     return
 
                 dropdown.parent = item
-                dropdown.x = mouse.x + 4
-                dropdown.y = 1
+                dropdown.x = mouse.x + d.dropdownHorizontalOffset
+                dropdown.y = d.dropdownVerticalOffset
 
                 const modelItem = tokensSelector.itemsModel.get(index)
 
@@ -361,7 +367,8 @@ StatusScrollView {
             addButton.onClicked: {
                 permissionsDropdown.mode = PermissionsDropdown.Mode.Add
                 permissionsDropdown.parent = permissionsSelector.addButton
-                permissionsDropdown.x = permissionsSelector.addButton.width + 4
+                permissionsDropdown.x = permissionsSelector.addButton.width
+                        + d.dropdownHorizontalOffset
                 permissionsDropdown.y = 0
                 permissionsDropdown.open()
             }
@@ -372,8 +379,8 @@ StatusScrollView {
 
                 permissionsDropdown.mode = PermissionsDropdown.Mode.Update
                 permissionsDropdown.parent = item
-                permissionsDropdown.x = mouse.x + 4
-                permissionsDropdown.y = 1
+                permissionsDropdown.x = mouse.x + d.dropdownHorizontalOffset
+                permissionsDropdown.y = d.dropdownVerticalOffset
                 permissionsDropdown.open()
             }
         }
@@ -384,11 +391,105 @@ StatusScrollView {
             color: Style.current.separator
         }
         StatusItemSelector {
+            id: inSelector
+
             Layout.fillWidth: true
             icon: Style.svg("create-category")
             iconSize: 24
             title: qsTr("In")
             defaultItemText: qsTr("Example: `#general` channel")
+
+            useLetterIdenticons: !wholeCommunitySelected || !inDropdown.communityImage
+
+            property bool wholeCommunitySelected: false
+
+            ListModel {
+                id: inModelCommunity
+
+                readonly property string colorWorkaround: inDropdown.communityData.color
+
+                Component.onCompleted: {
+                    append({
+                        imageSource: inDropdown.communityData.image,
+                        text: inDropdown.communityData.name,
+                        operator: OperatorsUtils.Operators.None
+                    })
+
+                    setProperty(0, "color", colorWorkaround)
+                }
+            }
+
+            ListModel {
+                id: inModelChannels
+            }
+
+            InDropdown {
+                id: inDropdown
+
+                model: root.rootStore.chatCommunitySectionModule.model
+
+                readonly property var communityData: rootStore.mainModuleInst.activeSection
+
+                communityName: communityData.name
+                communityImage: communityData.image
+                communityColor: communityData.color
+
+                onChannelsSelected: {
+                    inModelChannels.clear()
+                    inSelector.itemsModel = 0
+                    inSelector.wholeCommunitySelected = false
+
+                    channels.map(channel => {
+                        inModelChannels.append({
+                            itemId: channel.itemId,
+                            text: "#" + channel.name,
+                            emoji: channel.emoji,
+                            color: channel.color,
+                            operator: OperatorsUtils.Operators.None
+                        })
+                    })
+
+                    inSelector.itemsModel = inModelChannels
+                    close()
+                }
+
+                onCommunitySelected: {
+                    inModelChannels.clear()
+                    inSelector.wholeCommunitySelected = true
+                    inSelector.itemsModel = inModelCommunity
+                    close()
+                }
+            }
+
+            function openInDropdown(parent, x, y) {
+                inDropdown.parent = parent
+                inDropdown.x = x
+                inDropdown.y = y
+
+                const selectedChannels = []
+
+                if (!inSelector.wholeCommunitySelected)
+                    for (let i = 0; i < inModelChannels.count; i++)
+                        selectedChannels.push(inModelChannels.get(i).itemId)
+
+                inDropdown.setSelectedChannels(selectedChannels)
+                inDropdown.open()
+            }
+
+            addButton.onClicked: {
+                inDropdown.acceptMode = InDropdown.AcceptMode.Add
+                openInDropdown(inSelector.addButton,
+                               inSelector.addButton.width + d.dropdownHorizontalOffset, 0)
+            }
+
+            onItemClicked: {
+                if (mouse.button !== Qt.LeftButton)
+                    return
+
+                inDropdown.acceptMode = InDropdown.AcceptMode.Update
+                openInDropdown(item, mouse.x + d.dropdownHorizontalOffset,
+                               d.dropdownVerticalOffset)
+            }
         }
         Separator {
             Layout.topMargin: 24

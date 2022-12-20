@@ -237,6 +237,7 @@ StatusSectionLayout {
             }
 
             CommunityPermissionsSettingsPanel {
+                rootStore: root.rootStore
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
             }
 

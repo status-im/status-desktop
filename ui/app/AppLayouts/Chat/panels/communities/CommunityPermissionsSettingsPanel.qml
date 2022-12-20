@@ -7,6 +7,7 @@ import AppLayouts.Chat.stores 1.0
 SettingsPageLayout {
     id: root
 
+    property var rootStore
     property var store: CommunitiesStore {}
     property int viewWidth: 560 // by design
 
@@ -133,6 +134,7 @@ SettingsPageLayout {
         CommunityNewPermissionView {
             id: newPermissionViewItem
             viewWidth: root.viewWidth
+            rootStore: root.rootStore
             store: root.store
             onPermissionCreated: root.state = d.permissionsViewState
             isEditState: root.state === d.editPermissionViewState
