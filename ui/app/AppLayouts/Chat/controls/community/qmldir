@@ -1,3 +1,6 @@
-HoldingsDropdown 1.0 HoldingsDropdown.qml
+CommunityCategoryListItem 1.0 CommunityCategoryListItem.qml
+CommunityListItem 1.0 CommunityListItem.qml
 HoldingTypes 1.0 HoldingTypes.qml
+HoldingsDropdown 1.0 HoldingsDropdown.qml
+InDropdown 1.0 InDropdown.qml
 PermissionItem 1.0 PermissionItem.qml
