@@ -10,7 +10,7 @@
   "KeyStoreDir": "./keystore",
   "IPFSDir": "./ipfs",
   "LogEnabled": true,
-  "LogFile": "./geth.log",
+  "LogFile": "geth.log",
   "LogLevel": "INFO",
   "MailserversConfig": {
     "Enabled": true
@@ -75,9 +75,6 @@
   "WalletConfig": {
     "Enabled": true,
     "OpenseaAPIKey": ""
-  },
-  "EnsConfig": {
-    "Enabled": true
   },
   "Networks": [],
   "TorrentConfig": {

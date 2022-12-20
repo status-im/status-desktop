@@ -359,6 +359,7 @@ QJsonArray getNodes(const QJsonObject& fleet, const QString& nodeType)
     return result;
 }
 
+/// Mirrors and in sync with getDefaultNodeConfig@service.nim
 QJsonObject AccountsService::getDefaultNodeConfig(const QString& installationId) const
 {
     try
@@ -391,22 +392,14 @@ QJsonObject AccountsService::getDefaultNodeConfig(const QString& installationId)
 
         QJsonObject nodeConfigJson = QJsonDocument::fromJson(nodeConfigJsonStr.toUtf8()).object();
 
-        QJsonObject clusterConfig = nodeConfigJson["ClusterConfig"].toObject();
-        QJsonObject fleetsJson = QJsonDocument::fromJson(fleetJson.toUtf8()).object()["fleets"].toObject();
+        auto clusterConfig = nodeConfigJson["ClusterConfig"].toObject();
+        auto fleetsJson = QJsonDocument::fromJson(fleetJson.toUtf8()).object()["fleets"].toObject();
         auto fleet = fleetsJson[Constants::Fleet::Prod].toObject();
         clusterConfig["Fleet"] = Constants::Fleet::Prod;
         clusterConfig["BootNodes"] = getNodes(fleet, Constants::FleetNodes::Bootnodes);
         clusterConfig["TrustedMailServers"] = getNodes(fleet, Constants::FleetNodes::Mailservers);
         clusterConfig["StaticNodes"] = getNodes(fleet, Constants::FleetNodes::Whisper);
         clusterConfig["RendezvousNodes"] = getNodes(fleet, Constants::FleetNodes::Rendezvous);
-        clusterConfig["DiscV5BootstrapNodes"] = QJsonArray();
-        clusterConfig["RelayNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
-        clusterConfig["StoreNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
-        clusterConfig["FilterNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
-        clusterConfig["LightpushNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
-
-        nodeConfigJson["ClusterConfig"] = clusterConfig;
-
         nodeConfigJson["NetworkId"] = defaultNetworksJson[0].toObject()["chainId"];
         nodeConfigJson["DataDir"] = "ethereum";
         auto upstreamConfig = nodeConfigJson["UpstreamConfig"].toObject();
@@ -417,6 +410,27 @@ QJsonObject AccountsService::getDefaultNodeConfig(const QString& installationId)
         shhextConfig["InstallationID"] = installationId;
         nodeConfigJson["ShhextConfig"] = shhextConfig;
         nodeConfigJson["Networks"] = defaultNetworksJson;
+        nodeConfigJson["NoDiscovery"] = true;
+        nodeConfigJson["Rendezvous"] = false;
+        QJsonArray dnsDiscoveryURL = {"enrtree://AOGECG2SPND25EEFMAJ5WF3KSGJNSGV356DSTL2YVLLZWIV6SAYBM@prod.nodes.status.im"};
+        clusterConfig["WakuNodes"] = dnsDiscoveryURL;
+        clusterConfig["DiscV5BootstrapNodes"] = dnsDiscoveryURL;
+
+        auto wakuv2Config = nodeConfigJson["WakuV2Config"].toObject();
+        wakuv2Config["EnableDiscV5"] = true;
+        wakuv2Config["DiscoveryLimit"] = 20;
+        wakuv2Config["Rendezvous"] = true;
+        wakuv2Config["Enabled"] = true;
+
+        wakuv2Config["Enabled"] = false;
+        nodeConfigJson["WakuV2Config"] = wakuv2Config;
+
+        clusterConfig["RelayNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
+        clusterConfig["StoreNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
+        clusterConfig["FilterNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
+        clusterConfig["LightpushNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
+
+        nodeConfigJson["ClusterConfig"] = clusterConfig;
 
         nodeConfigJson["KeyStoreDir"] = toQString(fs::relative(m_keyStoreDir, m_statusgoDataDir));
         return nodeConfigJson;

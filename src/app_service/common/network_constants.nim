@@ -316,9 +316,6 @@ var NODE_CONFIG* = %* {
     "Enabled": true,
     "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED
   },
-  "EnsConfig": {
-    "Enabled": true
-  },
   "Networks": NETWORKS,
   "TorrentConfig": {
     "Enabled": true,

@@ -207,7 +207,7 @@ TEST(WalletApi, TestGetTokens)
     auto networks = Wallet::getEthereumChains(false);
     ASSERT_GT(networks.size(), 0);
     auto mainNetIt =
-        std::find_if(networks.begin(), networks.end(), [](const auto& n) { return n.chainName == "Mainnet"; });
+        std::find_if(networks.begin(), networks.end(), [](const auto& n) { return n.chainName == "Ethereum Mainnet"; });
     ASSERT_NE(mainNetIt, networks.end());
     const auto& mainNet = *mainNetIt;
 
@@ -228,7 +228,7 @@ TEST(WalletApi, TestGetTokensBalancesForChainIDs)
     ASSERT_GT(networks.size(), 1);
 
     auto mainNetIt =
-        std::find_if(networks.begin(), networks.end(), [](const auto& n) { return n.chainName == "Mainnet"; });
+        std::find_if(networks.begin(), networks.end(), [](const auto& n) { return n.chainName == "Ethereum Mainnet"; });
     ASSERT_NE(mainNetIt, networks.end());
     const auto& mainNet = *mainNetIt;
 
@@ -288,7 +288,7 @@ TEST(WalletApi, TestGetTokensBalancesForChainIDs_WatchOnlyAccount)
     ASSERT_GT(networks.size(), 1);
 
     auto mainNetIt =
-        std::find_if(networks.begin(), networks.end(), [](const auto& n) { return n.chainName == "Mainnet"; });
+        std::find_if(networks.begin(), networks.end(), [](const auto& n) { return n.chainName == "Ethereum Mainnet"; });
     ASSERT_NE(mainNetIt, networks.end());
     const auto& mainNet = *mainNetIt;
 
@@ -369,11 +369,9 @@ TEST(WalletApi, TestGetBalanceHistory)
     auto networks = Wallet::getEthereumChains(false);
     ASSERT_GT(networks.size(), 0);
     auto mainNetIt =
-        std::find_if(networks.begin(), networks.end(), [](const auto& n) { return n.chainName == "Mainnet"; });
+        std::find_if(networks.begin(), networks.end(), [](const auto& n) { return n.chainName == "Ethereum Mainnet"; });
     ASSERT_NE(mainNetIt, networks.end());
     const auto& mainNet = *mainNetIt;
-
-    auto tokens = Wallet::getTokens(mainNet.chainId);
 
     const auto newAccountIt =
         std::find_if(updatedAccounts.begin(), updatedAccounts.end(), [newTestAccountName](const auto& a) {
@@ -397,7 +395,6 @@ TEST(WalletApi, TestGetBalanceHistory)
 
     for(const auto& historyInterval : testIntervals)
     {
-        // TODO: test also for `tokens.symbol`
         auto balanceHistory = Wallet::getBalanceHistory(
             mainNet.chainId, newAccount.address, mainNet.nativeCurrencySymbol.value(), historyInterval);
         ASSERT_TRUE(balanceHistory.size() > 0);
@@ -418,11 +415,102 @@ TEST(WalletApi, TestGetBalanceHistory)
         if(file.open(QIODevice::WriteOnly | QIODevice::Text))
         {
             QTextStream out(&file);
-            out << "Balance, Timestamp" << Qt::endl;
+            out << "Balance, Timestamp, Formatted Date" << Qt::endl;
             for(int i = 0; i < balanceHistory.size(); ++i)
             {
-                out << weiToEth(balanceHistory[i].value) << "," << balanceHistory[i].time.toSecsSinceEpoch()
-                    << Qt::endl;
+                out << weiToEth(balanceHistory[i].value) << "," << balanceHistory[i].time.toSecsSinceEpoch() << ","
+                    << balanceHistory[i].time.toString("dd.MM.yyyy hh:mm:ss") << Qt::endl;
+            }
+            file.close();
+        }
+    }
+}
+
+// TODO: this is a debugging test. Augment it with local Ganache environment to have a reliable integration test
+TEST(WalletApi, TestERC20GetBalanceHistory)
+{
+    ScopedTestAccount testAccount(test_info_->name());
+
+    // Add watch account
+    const auto newTestAccountName = u"test_watch_only-name"_qs;
+    // Goerli test account set
+    auto testWalletAddress = Accounts::EOAddress("0x586e3bd2c40b0f243162ea563a1f43ae9ef25ef9");
+    auto testNetworkName = QString("Goerli");
+    auto isTestNetworkForDev = true;
+    auto testToken = QString("USDC");
+    // Main net test account set
+    // auto testWalletAddress = Accounts::EOAddress("0x0182e671dfd5f7d21b13714cbe9f92d26b59eeb9");
+    // auto testNetwork = QString("Ethereum Mainnet");
+    // auto isTestNetworkForDev = false;
+    // auto testToken = QString("USDC");
+
+    Accounts::addAccountWatch(testWalletAddress, newTestAccountName, QColor("fuchsia"), u""_qs);
+    const auto updatedAccounts = Accounts::getAccounts();
+    ASSERT_EQ(updatedAccounts.size(), 3);
+
+    auto networks = Wallet::getEthereumChains(false);
+    ASSERT_GT(networks.size(), 0);
+
+    auto netIt = std::find_if(networks.begin(), networks.end(), [testNetworkName, isTestNetworkForDev](const auto& n) {
+        return n.chainName == testNetworkName && n.isTest == isTestNetworkForDev;
+    });
+    ASSERT_NE(netIt, networks.end());
+    const auto& net = *netIt;
+
+    auto tokens = Wallet::getTokens(net.chainId);
+    auto tokenIt =
+        std::find_if(tokens.begin(), tokens.end(), [testToken](const auto& t) { return t.symbol == testToken; });
+    ASSERT_NE(tokenIt, tokens.end());
+
+    const auto newAccountIt =
+        std::find_if(updatedAccounts.begin(), updatedAccounts.end(), [newTestAccountName](const auto& a) {
+            return a.name == newTestAccountName;
+        });
+    ASSERT_NE(newAccountIt, updatedAccounts.end());
+    const auto& newAccount = *newAccountIt;
+
+    auto testIntervals = {Wallet::BalanceHistoryTimeInterval::BalanceHistory7Hours,
+                          Wallet::BalanceHistoryTimeInterval::BalanceHistory1Month,
+                          Wallet::BalanceHistoryTimeInterval::BalanceHistory6Months,
+                          Wallet::BalanceHistoryTimeInterval::BalanceHistory1Year,
+                          Wallet::BalanceHistoryTimeInterval::BalanceHistoryAllTime};
+
+    std::map<Wallet::BalanceHistoryTimeInterval, QString> testIntervalsStrs{
+        {Wallet::BalanceHistoryTimeInterval::BalanceHistory7Hours, "7H"},
+        {Wallet::BalanceHistoryTimeInterval::BalanceHistory1Month, "1M"},
+        {Wallet::BalanceHistoryTimeInterval::BalanceHistory6Months, "6M"},
+        {Wallet::BalanceHistoryTimeInterval::BalanceHistory1Year, "1Y"},
+        {Wallet::BalanceHistoryTimeInterval::BalanceHistoryAllTime, "All"}};
+
+    for(const auto& historyInterval : testIntervals)
+    {
+        auto balanceHistory = Wallet::getBalanceHistory(net.chainId, newAccount.address, testToken, historyInterval);
+        ASSERT_TRUE(balanceHistory.size() > 0);
+
+        auto weiToEth = [](const StatusGo::Wallet::BigInt& wei) -> double {
+            StatusGo::Wallet::BigInt q; // wei / eth
+            StatusGo::Wallet::BigInt r; // wei % eth
+            auto weiD = StatusGo::Wallet::BigInt("1000000000000000000");
+            boost::multiprecision::divide_qr(wei, weiD, q, r);
+            StatusGo::Wallet::BigInt rSzabos; // r / szaboD
+            StatusGo::Wallet::BigInt qSzabos; // r % szaboD
+            auto szaboD = StatusGo::Wallet::BigInt("1000000000000");
+            boost::multiprecision::divide_qr(r, szaboD, qSzabos, rSzabos);
+            return q.convert_to<double>() + (qSzabos.convert_to<double>() / ((weiD / szaboD).convert_to<double>()));
+        };
+
+        auto fileInfo = QFileInfo(
+            QString("/tmp/StatusTests/balance/balance_history-%1.csv").arg(testIntervalsStrs[historyInterval]));
+        QFile file(fileInfo.absoluteFilePath());
+        QDir().mkpath(fileInfo.absolutePath());
+        if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QTextStream out(&file);
+            out << "Balance, Timestamp, Formatted Date" << Qt::endl;
+            for(int i = 0; i < balanceHistory.size(); ++i)
+            {
+                out << weiToEth(balanceHistory[i].value) << "," << balanceHistory[i].time.toSecsSinceEpoch() << ","
+                    << balanceHistory[i].time.toString("dd.MM.yyyy hh:mm:ss") << Qt::endl;
             }
             file.close();
         }
@@ -453,7 +541,7 @@ TEST(WalletApi, TestStartWallet)
     auto networks = Wallet::getEthereumChains(false);
     ASSERT_GT(networks.size(), 0);
     auto mainNetIt =
-        std::find_if(networks.begin(), networks.end(), [](const auto& n) { return n.chainName == "Mainnet"; });
+        std::find_if(networks.begin(), networks.end(), [](const auto& n) { return n.chainName == "Ethereum Mainnet"; });
     ASSERT_NE(mainNetIt, networks.end());
     const auto& mainNet = *mainNetIt;
 
@@ -463,14 +551,15 @@ TEST(WalletApi, TestStartWallet)
     QObject::connect(StatusGo::SignalsManager::instance(),
                      &StatusGo::SignalsManager::wallet,
                      testAccount.app(),
-                     [&walletTickReloadReceivedCount, &bhStartedReceivedCount, &bhEndedReceivedCount](QSharedPointer<StatusGo::EventData> data) {
+                     [&walletTickReloadReceivedCount, &bhStartedReceivedCount, &bhEndedReceivedCount](
+                         QSharedPointer<StatusGo::EventData> data) {
                          Wallet::Transfer::Event event = data->eventInfo();
                          if(event.type == Wallet::Transfer::Events::WalletTickReload)
-                            walletTickReloadReceivedCount++;
+                             walletTickReloadReceivedCount++;
                          else if(event.type == Wallet::Transfer::Events::EventBalanceHistoryUpdateStarted)
-                            bhStartedReceivedCount++;
+                             bhStartedReceivedCount++;
                          else if(event.type == Wallet::Transfer::Events::EventBalanceHistoryUpdateFinished)
-                            bhEndedReceivedCount++;
+                             bhEndedReceivedCount++;
                      });
 
     Wallet::startBalanceHistory();

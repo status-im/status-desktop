@@ -30,8 +30,6 @@ Item {
     QtObject {
         id: d
         property var marketValueStore : RootStore.marketValueStore
-        // TODO: Should be temporary until non native tokens are supported by balance history
-        property bool isNativeToken: typeof token !== "undefined" && token ? token.symbol === "ETH" : false
     }
 
     Connections {
@@ -112,11 +110,7 @@ Item {
 
             graphsModel: [
                     {text: qsTr("Price"), enabled: true, id: AssetsDetailView.GraphType.Price},
-                    {
-                        text: qsTr("Balance"),
-                        enabled: d.isNativeToken,
-                        id: AssetsDetailView.GraphType.Balance
-                    },
+                    {text: qsTr("Balance"), enabled: true, id: AssetsDetailView.GraphType.Balance},
                 ]
             defaultTimeRangeIndexShown: ChartStoreBase.TimeRange.All
             timeRangeModel: dataReady() && selectedStore.timeRangeTabsModel

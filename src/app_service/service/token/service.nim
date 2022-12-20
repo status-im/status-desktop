@@ -149,7 +149,7 @@ QtObject:
   proc fetchHistoricalBalanceForTokenAsJson*(self: Service, address: string, symbol: string, timeInterval: BalanceHistoryTimeInterval) =
     let networks = self.networkService.getNetworks()
     for network in networks:
-      if network.enabled and network.nativeCurrencySymbol == symbol:
+      if network.enabled:
         let arg = GetTokenBalanceHistoryDataTaskArg(
           tptr: cast[ByteAddress](getTokenBalanceHistoryDataTask),
           vptr: cast[ByteAddress](self.vptr),
