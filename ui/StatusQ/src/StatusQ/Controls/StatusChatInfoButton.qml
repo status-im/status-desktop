@@ -16,6 +16,8 @@ Button {
     property bool muted
     property int pinnedMessagesCount
 
+    property bool forceHideTypeIcon: false
+
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 36
         height: 36
@@ -77,7 +79,7 @@ Button {
                 spacing: 1
 
                 StatusIcon {
-                    visible: root.type !== StatusChatInfoButton.Type.OneToOneChat
+                    visible: root.type !== StatusChatInfoButton.Type.OneToOneChat && !forceHideTypeIcon
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 14
                     color: root.muted ? Theme.palette.baseColor1 : Theme.palette.directColor1
