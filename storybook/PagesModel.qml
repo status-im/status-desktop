@@ -74,6 +74,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusChatListAndCategories"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
