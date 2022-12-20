@@ -7,15 +7,43 @@ import StatusQ.Core.Theme 0.1
 CheckBox {
     id: root
 
+    /*!
+       \qmlproperty int StatusCheckBox::size
+       This property holds size type of the radio button.
+       Possible values are:
+       - Small
+       - Regular (default size)
+    */
+    property int size: StatusCheckBox.Size.Regular
+
+    enum Size {
+        Small,
+        Regular
+    }
+
     property bool leftSide: true
+
+    QtObject {
+        id: d
+
+        readonly property int indicatorSizeRegular: 18
+        readonly property int indicatorSizeSmall: 12
+
+        readonly property int indicatorIconWidthRegular: 11
+        readonly property int indicatorIconWidthSmall: 7
+
+        readonly property int indicatorIconHeightRegular: 8
+        readonly property int indicatorIconHeightSmall: 5
+    }
 
     font.family: Theme.palette.baseFont.name
 
     indicator: Rectangle {
         anchors.left: root.leftSide? parent.left : undefined
         anchors.right: !root.leftSide? parent.right : undefined
-        implicitWidth: 18
-        implicitHeight: 18
+        implicitWidth: size === StatusCheckBox.Size.Regular
+                       ? d.indicatorSizeRegular : d.indicatorSizeSmall
+        implicitHeight: implicitWidth
         x: !root.leftSide? root.rightPadding : root.leftPadding
         y: parent.height / 2 - height / 2
         radius: 2
@@ -24,8 +52,10 @@ CheckBox {
 
         StatusIcon {
             icon: "checkbox"
-            width: 11
-            height: 8
+            width: size === StatusCheckBox.Size.Regular
+                   ? d.indicatorIconWidthRegular : d.indicatorIconWidthSmall
+            height: size === StatusCheckBox.Size.Regular
+                    ? d.indicatorIconHeightRegular : d.indicatorIconHeightSmall
             anchors.centerIn: parent
             anchors.horizontalCenterOffset: 1
             color: Theme.palette.white
