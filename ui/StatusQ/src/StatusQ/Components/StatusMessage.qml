@@ -117,14 +117,6 @@ Control {
         })
     }
 
-    implicitWidth: messageLayout.implicitWidth
-                   + messageLayout.anchors.leftMargin
-                   + messageLayout.anchors.rightMargin
-
-    implicitHeight: messageLayout.implicitHeight
-                    + messageLayout.anchors.topMargin
-                    + messageLayout.anchors.bottomMargin
-
     hoverEnabled: (!root.isActiveMessage && !root.disableHover)
     background: Rectangle {
         color: {
@@ -151,6 +143,10 @@ Control {
     }
 
     contentItem: Item {
+
+        implicitWidth: messageLayout.implicitWidth
+        implicitHeight: messageLayout.implicitHeight
+
         Rectangle {
             anchors {
                 top: parent.top
@@ -212,8 +208,6 @@ Control {
         ColumnLayout {
             id: messageLayout
             anchors.fill: parent
-            anchors.topMargin: 2
-            anchors.bottomMargin: 2
             spacing: 2
 
             Loader {
