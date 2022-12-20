@@ -100,13 +100,23 @@ Rectangle {
        an image or an icon.
     */
     property bool useIcons: false
+
     property StatusAssetSettings asset: StatusAssetSettings {
         height: 20
         width: 20
         bgColor: "transparent"
         isImage: !root.useIcons
+        isLetterIdenticon: root.useLetterIdenticons
     }
     property int tagLeftPadding: 6
+
+    /*!
+       \qmlproperty bool StatusItemSelector::useLetterIdenticons
+       This property determines if letter identicons should be used. If set to
+       true, the model is expected to contain roles "color" and "emoji".
+    */
+    property bool useLetterIdenticons: false
+
     /*!
        \qmlsignal StatusItemSelector::itemClicked
        This signal is emitted when the item is clicked.
@@ -190,15 +200,20 @@ Rectangle {
                     }
                     StatusListItemTag {
                         title: model.text
-                        asset.name: model.imageSource
-                        asset.isImage: root.asset.isImage
-                        asset.bgColor: root.asset.bgColor
+
                         asset.height: root.asset.height
                         asset.width: root.asset.width
-                        leftPadding: root.tagLeftPadding
+                        asset.name: root.useLetterIdenticons ? model.text : model.imageSource
+                        asset.isImage: root.asset.isImage
+                        asset.bgColor: root.asset.bgColor
+                        asset.emoji: model.emoji ? model.emoji : ""
+                        asset.color: model.color ? model.color : ""
+                        asset.isLetterIdenticon: root.useLetterIdenticons
+                        //color: Theme.palette.primaryColor3
                         closeButtonVisible: false
                         titleText.color: Theme.palette.primaryColor1
                         titleText.font.pixelSize: 15
+                        leftPadding: root.tagLeftPadding
 
                         MouseArea {
                             anchors.fill: parent
