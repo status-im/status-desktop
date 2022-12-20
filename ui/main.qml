@@ -50,7 +50,14 @@ StatusWindow {
             visibility = Window.Windowed;
         }
 
-        if (geometry === undefined) {
+        if (geometry === undefined ||
+            // If the monitor setup of the user changed, it's possible that the old geometry now falls out of the monitor range
+            // In this case, we reset to the basic geometry
+            geometry.x > Screen.desktopAvailableWidth ||
+            geometry.y > Screen.desktopAvailableHeight ||
+            geometry.width > Screen.desktopAvailableWidth ||
+            geometry.height > Screen.desktopAvailableHeight)
+        {
             let screen = Qt.application.screens[0];
 
             geometry = Qt.rect(0,
