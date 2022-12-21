@@ -187,6 +187,9 @@ StatusScrollView {
             icon: Style.svg("contact_verified")
             title: qsTr("Who holds")
             defaultItemText: qsTr("Example: 10 SNT")
+            tagLeftPadding: 2
+            asset.height: 28
+            asset.width: asset.height
 
             property int editedIndex
             itemsModel: SortFilterProxyModel {
