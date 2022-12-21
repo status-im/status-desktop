@@ -100,6 +100,13 @@ Rectangle {
        an image or an icon.
     */
     property bool useIcons: false
+    property StatusAssetSettings asset: StatusAssetSettings {
+        height: 20
+        width: 20
+        bgColor: "transparent"
+        isImage: !root.useIcons
+    }
+    property int tagLeftPadding: 6
     /*!
        \qmlsignal StatusItemSelector::itemClicked
        This signal is emitted when the item is clicked.
@@ -184,9 +191,11 @@ Rectangle {
                     StatusListItemTag {
                         title: model.text
                         asset.name: model.imageSource
-                        asset.isImage: !root.useIcons
-                        asset.bgColor: "transparent"
-                        color: Theme.palette.primaryColor3
+                        asset.isImage: root.asset.isImage
+                        asset.bgColor: root.asset.bgColor
+                        asset.height: root.asset.height
+                        asset.width: root.asset.width
+                        leftPadding: root.tagLeftPadding
                         closeButtonVisible: false
                         titleText.color: Theme.palette.primaryColor1
                         titleText.font.pixelSize: 15
