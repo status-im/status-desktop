@@ -22,8 +22,7 @@ QtObject {
         if(!messageModule)
             return
 
-        if(!messageModule.initialMessagesLoaded ||
-            root.loadingHistoryMessagesInProgress? root.loadingHistoryMessagesInProgress : false)
+        if(!messageModule.initialMessagesLoaded)
             return
 
         messageModule.loadMoreMessages()
