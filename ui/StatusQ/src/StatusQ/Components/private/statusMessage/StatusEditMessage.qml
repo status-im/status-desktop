@@ -13,7 +13,7 @@ Item {
 
     property string cancelButtonText: ""
     property string saveButtonText: ""
-    property string msgText: ""
+    property string messageText: ""
 
     signal editCancelled()
     signal editCompleted(var newMsgText)
@@ -40,7 +40,7 @@ Item {
                 readonly property string messageText: input.text
                 width: parent.width
                 input.placeholderText: ""
-                input.text: msgText
+                input.text: root.messageText
                 maximumHeight: 40
             }
         }

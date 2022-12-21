@@ -370,7 +370,7 @@ Control {
                         Layout.rightMargin: 16
                         active: root.editMode
                         visible: active
-                        msgText: root.messageDetails.messageText
+                        messageText: root.messageDetails.messageText
                         saveButtonText: root.saveButtonText
                         cancelButtonText: root.cancelButtonText
                         onEditCancelled: root.editCancelled()
