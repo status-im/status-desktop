@@ -432,8 +432,9 @@ Loader {
                 readonly property bool isReply: root.responseToMessageWithId !== ""
     
                 property var replyMessage: getReplyMessage()
-
                 readonly property string replySenderId: replyMessage ? replyMessage.senderId : ""
+
+                property string originalMessageText: ""
 
                 function getReplyMessage() {
                     return root.messageStore && isReply
@@ -441,8 +442,19 @@ Loader {
                             : null
                 }
 
+                function editCancelledHandler() {
+                    root.messageStore.setEditModeOff(root.messageId)
+                }
+
                 function editCompletedHandler(newMessageText) {
+
+                    if (delegate.originalMessageText === newMessageText) {
+                        delegate.editCancelledHandler()
+                        return
+                    }
+
                     const message = root.rootStore.plainText(StatusQUtils.Emoji.deparse(newMessageText))
+
                     if (message.length <= 0)
                         return;
 
@@ -515,7 +527,7 @@ Loader {
                 messageAttachments: root.messageAttachments
 
                 onEditCancelled: {
-                    root.messageStore.setEditModeOff(root.messageId)
+                    delegate.editCancelledHandler()
                 }
 
                 onEditCompleted: {
@@ -719,6 +731,7 @@ Loader {
 
                     Component.onCompleted: {
                         parseMessage(root.messageText);
+                        delegate.originalMessageText = editTextInput.textInput.text
                     }
                 }
 
