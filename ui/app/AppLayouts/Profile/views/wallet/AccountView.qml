@@ -128,9 +128,9 @@ Item {
                 primaryText: qsTr("Related Accounts")
                 tagsModel: walletStore.currentAccount.relatedAccounts
                 tagsDelegate: StatusListItemTag {
-                    color: model.color
-                    height: 24
-                    radius: 6
+                    bgColor: model.color
+                    bgRadius: 6
+                    height: 50
                     closeButtonVisible: false
                     asset.emoji: model.emoji
                     asset.emojiSize: Emoji.size.verySmall

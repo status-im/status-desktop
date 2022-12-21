@@ -4,17 +4,16 @@ import QtQuick.Layouts 1.12
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-Rectangle {
+Control {
     id: root
-    implicitWidth: layout.width + layout.anchors.margins
-    implicitHeight: 30
-    color: Theme.palette.primaryColor3
-    radius: 15
 
     property alias titleText: titleText
-
     property string title: ""
     property bool closeButtonVisible: true
+    property color bgColor: Theme.palette.primaryColor3
+    property color bgBorderColor: "transparent"
+    property int bgRadius: 15
+
     signal clicked(var mouse)
 
     property StatusAssetSettings asset: StatusAssetSettings {
@@ -30,14 +29,27 @@ Rectangle {
         imgIsIdenticon: false
     }
 
-    RowLayout {
+    QtObject {
+        id: d
+        readonly property int commonMargin: 6
+        readonly property int minHeight: 30
+    }
+
+    leftPadding: d.commonMargin
+    rightPadding: d.commonMargin
+    spacing: d.commonMargin
+    implicitHeight: d.minHeight
+    background: Rectangle {
+        color: root.bgColor
+        radius: root.bgRadius
+        border.color: root.bgBorderColor
+    }
+    contentItem: RowLayout {
         id: layout
-        height: parent.height
-        anchors.margins: 6
+        spacing: root.spacing
 
         StatusSmartIdenticon {
             id: iconOrImage
-            Layout.leftMargin: 4
             asset: root.asset
             name: root.title
             active: root.asset.isLetterIdenticon ||
@@ -46,9 +58,11 @@ Rectangle {
 
         StatusBaseText {
             id: titleText
+            Layout.fillWidth: true
             color: Theme.palette.primaryColor1
             text: root.title
-            Layout.rightMargin: closeButtonVisible ? 0 : 5
+            Layout.rightMargin: closeButtonVisible ? 0 : d.commonMargin
+            elide: Text.ElideRight
         }
 
         StatusIcon {

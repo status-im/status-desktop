@@ -222,12 +222,12 @@ StatusDialog {
                             color: Theme.palette.directColor1
                         }
                         StatusListItemTag {
+                            bgColor: d.errorMode ? Theme.palette.dangerColor2 : Theme.palette.primaryColor3
                             height: 22
                             width: childrenRect.width
                             title: d.maxFiatBalance > 0 ? qsTr("Max: %1").arg(LocaleUtils.numberToLocaleString(d.maxFiatBalance)) : qsTr("No balances active")
                             closeButtonVisible: false
                             titleText.font.pixelSize: 12
-                            color: d.errorMode ? Theme.palette.dangerColor2 : Theme.palette.primaryColor3
                             titleText.color: d.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
                         }
                     }

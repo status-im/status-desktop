@@ -424,9 +424,9 @@ ColumnLayout {
             }
         }
         tagsDelegate: StatusListItemTag {
-            color: "blue"
+            bgColor: "blue"
+            bgRadius: 6
             height: 24
-            radius: 6
             closeButtonVisible: false
             asset.emoji: model.emoji
             asset.emojiSize: Emoji.size.verySmall
