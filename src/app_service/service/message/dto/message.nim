@@ -111,6 +111,7 @@ type MessageDto* = object
   deletedForMe*: bool
   transactionParameters*: TransactionParameters
   mentioned*: bool
+  replied*: bool
 
 proc toParsedText*(jsonObj: JsonNode): ParsedText =
   result = ParsedText()
@@ -217,6 +218,7 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   discard jsonObj.getProp("deleted", result.deleted)
   discard jsonObj.getProp("deletedForMe", result.deletedForMe)
   discard jsonObj.getProp("mentioned", result.mentioned)
+  discard jsonObj.getProp("replied", result.replied)
 
   var quotedMessageObj: JsonNode
   if(jsonObj.getProp("quotedMessage", quotedMessageObj)):
