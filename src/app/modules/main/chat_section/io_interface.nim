@@ -127,6 +127,9 @@ method onCommunityChannelEdited*(self: AccessInterface, chat: ChatDto) {.base.} 
 method onReorderChatOrCategory*(self: AccessInterface, chatOrCatId: string, position: int, newCategoryIdForChat: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onCommunityCategoryChannelChanged*(self: AccessInterface, chatId: string, newCategoryIdForChat: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onCommunityCategoryCreated*(self: AccessInterface, category: Category, chats: seq[ChatDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 

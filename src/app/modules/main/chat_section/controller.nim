@@ -173,6 +173,11 @@ proc init*(self: Controller) =
       let args = CommunityChatOrderArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onReorderChatOrCategory(args.chatId, args.position, args.categoryId)
+    
+    self.events.on(SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED) do(e:Args):
+      let args = CommunityChatOrderArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityCategoryChannelChanged(args.chatId, args.categoryId)
 
     self.events.on(SIGNAL_RELOAD_MESSAGES) do(e: Args):
       let args = ReloadMessagesArgs(e)
@@ -272,13 +277,11 @@ proc getCommunityCategoryDetails*(self: Controller, communityId: string, categor
 proc setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string) =
   self.activeItemId = itemId
   self.activeSubItemId = subItemId
-
   let chatId = self.getActiveChatId()
   if chatId != "":
     self.messageService.asyncLoadInitialMessagesForChat(chatId)
 
   # We need to take other actions here like notify status go that unviewed mentions count is updated and so...
-
   self.delegate.activeItemSubItemSet(self.activeItemId, self.activeSubItemId)
 
 proc removeCommunityChat*(self: Controller, itemId: string) =

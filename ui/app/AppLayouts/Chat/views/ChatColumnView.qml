@@ -166,16 +166,6 @@ Item {
         model: parentModule && parentModule.model
         delegate: delegateChooser
 
-        function isChatActive(myChatId) {
-            if(!myChatId || !root.isSectionActive)
-                return false
-
-            if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
-                return true
-
-            return false
-        }
-
         DelegateChooser {
             id: delegateChooser
             role: "type"
@@ -189,25 +179,15 @@ Item {
                         return subItems
                     }
                     delegate: Loader {
-                        property bool isActiveChannel: chatRepeater.isChatActive(model.itemId)
-
                         id: categoryChatLoader
                         // Channels are not loaded by default and only load when first put active
-                        active: false
+                        active: model.active
+                        visible: model.active
                         width: parent.width
-                        height: isActiveChannel ? parent.height : 0
+                        height: parent.height
 
-                        Connections {
-                            id: loaderConnections
-                            target: categoryChatLoader
-                            // First time this channel turns active, activate the Loader
-                            onIsActiveChannelChanged: {
-                                if (categoryChatLoader.isActiveChannel) {
-                                    categoryChatLoader.active = true
-                                    loaderConnections.enabled = false
-                                }
-                            }
-                        }
+                        // Removing the binding in order not to unload the content
+                        onStatusChanged: if (status == Loader.Ready) active = true
 
                         sourceComponent: ChatContentView {
                             visible: !root.rootStore.openCreateChat && isActiveChannel
@@ -221,7 +201,7 @@ Item {
                             sendTransactionWithEnsModal: cmpSendTransactionWithEns
                             stickersLoaded: root.stickersLoaded
                             isBlocked: model.blocked
-                            isActiveChannel: categoryChatLoader.isActiveChannel
+                            isActiveChannel: categoryChatLoader.visible
                             onOpenStickerPackPopup: {
                                 root.openStickerPackPopup(stickerPackId)
                             }
@@ -239,24 +219,15 @@ Item {
             }
             DelegateChoice { // In all other cases
                 delegate: Loader {
-                    property bool isActiveChannel: chatRepeater.isChatActive(model.itemId)
-
                     id: chatLoader
                     // Channels are not loaded by default and only load when first put active
-                    active: false
+                    active: model.active
+                    visible: model.active
                     width: parent.width
-                    height: isActiveChannel ? parent.height : 0
-                    Connections {
-                        id: defaultLoaderConnections
-                        target: chatLoader
-                        // First time this channel turns active, activate the Loader
-                        onIsActiveChannelChanged: {
-                            if (chatLoader.isActiveChannel) {
-                                chatLoader.active = true
-                                defaultLoaderConnections.enabled = false
-                            }
-                        }
-                    }
+                    height: parent.height
+
+                    // Removing the binding in order not to unload the content
+                    onStatusChanged: if (status == Loader.Ready) active = true
 
                     sourceComponent: ChatContentView {
                         visible: !root.rootStore.openCreateChat && isActiveChannel
@@ -270,7 +241,7 @@ Item {
                         sendTransactionWithEnsModal: cmpSendTransactionWithEns
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
-                        isActiveChannel: chatLoader.isActiveChannel
+                        isActiveChannel: chatLoader.visible
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
                         }

@@ -113,6 +113,7 @@ const SIGNAL_COMMUNITY_CATEGORY_EDITED* = "communityCategoryEdited"
 const SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED* = "communityCategoryNameEdited"
 const SIGNAL_COMMUNITY_CATEGORY_DELETED* = "communityCategoryDeleted"
 const SIGNAL_COMMUNITY_CATEGORY_REORDERED* = "communityCategoryReordered"
+const SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED* = "communityChannelCategoryChanged"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 const SIGNAL_COMMUNITY_MEMBER_REMOVED* = "communityMemberRemoved"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
@@ -380,19 +381,20 @@ QtObject:
     else:
       for category in community.categories:
         # id is present
-        if findIndexById(category.id, prev_community.categories) == -1:
+        let index = findIndexById(category.id, prev_community.categories)
+        if index == -1:
           continue
         # but something is different
-        for prev_category in prev_community.categories:
-          if(category.id == prev_category.id and category.position != prev_category.position):
-            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_REORDERED,
-              CommunityChatOrderArgs(
-                communityId: community.id,
-                categoryId: category.id,
-                position: category.position))
-          if(category.id == prev_category.id and category.name != prev_category.name):
-            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED,
-              CommunityCategoryArgs(communityId: community.id, category: category))
+        let prev_category = prev_community.categories[index]
+        if category.position != prev_category.position:
+          self.events.emit(SIGNAL_COMMUNITY_CATEGORY_REORDERED,
+            CommunityChatOrderArgs(
+              communityId: community.id,
+              categoryId: category.id,
+              position: category.position))
+        if category.name != prev_category.name:
+          self.events.emit(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED,
+            CommunityCategoryArgs(communityId: community.id, category: category))
 
     # channel was added
     if(community.chats.len > prev_community.chats.len):
@@ -416,24 +418,29 @@ QtObject:
     else:
       for chat in community.chats:
         # id is present
-        if findIndexById(chat.id, prev_community.chats) == -1:
+        let index = findIndexById(chat.id, prev_community.chats)
+        if index == -1:
           continue
         # but something is different
-        for prev_chat in prev_community.chats:
-          # Handle position changes
-          if(chat.id == prev_chat.id and (chat.position != prev_chat.position or chat.categoryId != prev_chat.categoryId)):
-            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
-            chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
+        let prev_chat = prev_community.chats[index]
+        # Handle position changes
+        if chat.position != prev_chat.position:
+          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
+          chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
 
-          # Handle name/description changes
-          if(chat.id == prev_chat.id and
-            (chat.name != prev_chat.name or chat.description != prev_chat.description or chat.color != prev_chat.color)):
-            var updatedChat = findChatById(chat.id, updatedChats)
-            updatedChat.updateMissingFields(chat)
-            self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
+        # Handle channel was added/removed to/from category
+        if chat.categoryId != prev_chat.categoryId:
+          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED, CommunityChatOrderArgs(communityId: community.id,
+          chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
 
-            let data = CommunityChatArgs(chat: updatedChat)
-            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
+        # Handle name/description changes
+        if chat.name != prev_chat.name or chat.description != prev_chat.description or chat.color != prev_chat.color:
+          var updatedChat = findChatById(chat.id, updatedChats)
+          updatedChat.updateMissingFields(chat)
+          self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
+
+          let data = CommunityChatArgs(chat: updatedChat)
+          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
 
     self.allCommunities[community.id] = community
     self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))

@@ -552,6 +552,13 @@ method setFirstChannelAsActive*(self: Module) =
     let subItem = item.subItems.getItemAtIndex(0)
     self.setActiveItemSubItem(item.id, subItem.id)
 
+method onCommunityCategoryChannelChanged*(self: Module, channelId: string, newCategoryIdForChat: string) =
+  if channelId == self.controller.getActiveChatId():
+    if newCategoryIdForChat.len > 0:
+      self.setActiveItemSubItem(newCategoryIdForChat, channelId)
+    else:
+      self.setActiveItemSubItem(channelId, "")
+
 method onReorderChatOrCategory*(self: Module, chatOrCatId: string, position: int, newCategoryIdForChat: string) =
   self.view.chatsModel().reorder(chatOrCatId, position, newCategoryIdForChat)
 
@@ -571,16 +578,18 @@ method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDt
     self.view.chatsModel().removeItemById(chatDto.id)
     categoryItem.subItems().removeItemById(chatDto.id)
 
+    let isActive = chatDto.id == self.controller.getActiveChatId()
+
     if chatDto.categoryId == cat.id:
       let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.icon,
         chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
         amIChatAdmin=true, chatDto.timestamp.int, hasNotification, notificationsCount, chatDto.muted, blocked=false,
-        active=false, chatDto.position)
+        active=isActive, chatDto.position)
       categoryItem.appendSubItem(channelItem)
     else:
       let channelItem = initItem(chatDto.id, chatDto.name, chatDto.icon,
         chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int, amIChatAdmin,
-        chatDto.timestamp.int, hasNotification, notificationsCount, chatDto.muted, blocked=false, active = false,
+        chatDto.timestamp.int, hasNotification, notificationsCount, chatDto.muted, blocked=false, active = isActive,
         chatDto.position, categoryId="")
       self.view.chatsModel().appendItem(channelItem)
 
