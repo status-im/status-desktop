@@ -1,6 +1,6 @@
 import NimQml
 import ../../../shared_models/message_model as pinned_msg_model
-import ../../../../../app_service/service/contacts/dto/contacts as contacts_dto
+import ../../../../../app_service/service/chat/dto/chat as chat_dto
 
 import io_interface
 import chat_details
@@ -128,13 +128,13 @@ QtObject:
   proc amIChatAdmin*(self: View): bool {.slot.} =
     return self.delegate.amIChatAdmin()
 
-  proc updateChatDetails*(self: View, name, description, emoji, color, icon: string, ignoreName: bool) =
-    if not ignoreName:
-      self.chatDetails.setName(name)
-    self.chatDetails.setDescription(description)
-    self.chatDetails.setEmoji(emoji)
-    self.chatDetails.setColor(color)
-    self.chatDetails.setIcon(icon)
+  proc updateChatDetails*(self: View, chatDto: ChatDto) =
+    if chatDto.chatType != ChatType.OneToOne:
+      self.chatDetails.setName(chatDto.name)
+      self.chatDetails.setIcon(chatDto.icon)
+    self.chatDetails.setDescription(chatDto.description)
+    self.chatDetails.setEmoji(chatDto.emoji)
+    self.chatDetails.setColor(chatDto.color)
 
   proc updateChatDetailsName*(self: View, name: string) =
     self.chatDetails.setName(name)

@@ -343,7 +343,7 @@ method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificati
   self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)
 
 method onChatEdited*(self: Module, chatDto: ChatDto) =
-  self.view.updateChatDetails(chatDto.name, chatDto.description, chatDto.emoji, chatDto.color, chatDto.icon, chatDto.chatType == ChatType.OneToOne)
+  self.view.updateChatDetails(chatDto)
   self.messagesModule.updateChatFetchMoreMessages()
   self.messagesModule.updateChatIdentifier()
 
