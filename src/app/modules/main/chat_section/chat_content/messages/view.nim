@@ -166,6 +166,12 @@ QtObject:
   proc jumpToMessage*(self: View, messageId: string) {.slot.} =
     self.delegate.scrollToMessage(messageId)
 
+  proc setEditModeOnAndScrollToLastMessage*(self: View, pubkey: string) {.slot.} =
+    let lastMessage = self.model.getLastItemFrom(pubKey)
+    if lastMessage != nil and lastMessage.id != "":
+      self.model.setEditModeOn(lastMessage.id)
+      self.jumpToMessage(lastMessage.id)
+
   proc resendMessage*(self: View, messageId: string) {.slot.} =
     let error = self.delegate.resendChatMessage(messageId)
     if (error != ""):

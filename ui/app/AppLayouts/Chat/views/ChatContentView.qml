@@ -250,6 +250,7 @@ ColumnLayout {
                 onUnblockChat: {
                     chatContentModule.unblockChat()
                 }
+                onKeyUpPress: messageStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
             }
         }
     }
