@@ -28,6 +28,7 @@ Rectangle {
     signal stickerSelected(string hashId, string packId, string url)
     signal sendMessage(var event)
     signal unblockChat()
+    signal keyUpPress()
 
     property var usersStore
     property var store
@@ -358,6 +359,10 @@ Rectangle {
         } else if (event.key === Qt.Key_Escape && control.isReply) {
             control.isReply = false
             event.accepted = true
+        } else if (event.key === Qt.Key_Up && getPlainText() == "") {
+            event.accepted = true
+            control.keyUpPress()
+            return 
         }
 
         const symbolPressed = event.text.length > 0 &&

@@ -354,6 +354,13 @@ QtObject:
     self.countChanged()
     self.updateMessagesWithResponseTo(messageId)
 
+  proc getLastItemFrom*(self: Model, pubkey: string): Item =
+    # last item == first time since we process messages in reverse order
+    for i in 0 ..< self.items.len:
+      if self.items[i].senderId == pubkey:
+        return self.items[i]
+
+
   proc getItemWithMessageId*(self: Model, messageId: string): Item =
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):

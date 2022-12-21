@@ -180,6 +180,12 @@ QtObject {
         messageModule.setEditModeOn(messageId)
     }
 
+    function setEditModeOnLastMessage(pubkey) {
+        if(!messageModule)
+            return
+        messageModule.setEditModeOnAndScrollToLastMessage(pubkey)
+    }
+
     function setEditModeOff(messageId) {
         if(!messageModule)
             return
