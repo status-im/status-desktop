@@ -100,6 +100,7 @@ Control{
                     spacing: content.spacing
 
                     StatusBaseText {
+                        id: operatorText
                         Layout.preferredHeight: d.flowRowHeight
                         visible: model.operator !== OperatorsUtils.Operators.None
                         Layout.alignment: Qt.AlignVCenter
@@ -110,6 +111,7 @@ Control{
                     }
                     StatusListItemTag {
                         Layout.preferredHeight: d.flowRowHeight
+                        Layout.maximumWidth: content.width - operatorText.width - spacing
                         leftPadding: 2
                         title: model.text
                         asset.name: model.imageSource
@@ -156,6 +158,7 @@ Control{
                     spacing: content.spacing
 
                     StatusBaseText {
+                        id: operatorInText
                         Layout.preferredHeight: d.flowRowHeight
                         visible: model.index !== 0
                         Layout.alignment: Qt.AlignVCenter
@@ -166,6 +169,7 @@ Control{
                     }
                     StatusListItemTag {
                         Layout.preferredHeight: d.flowRowHeight
+                        Layout.maximumWidth: (model.index !== 0) ? (content.width - operatorInText.width - spacing) : content.width
                         title: model.text
                         asset.name: model.imageSource
                         asset.isImage: true
