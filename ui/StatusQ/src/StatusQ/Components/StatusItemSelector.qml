@@ -148,11 +148,11 @@ Rectangle {
             Layout.fillWidth: true
             spacing: 6
             StatusListItemTag {
+                bgColor: Theme.palette.baseColor2
                 visible: !itemsModel || itemsModel.count === 0
                 title: root.defaultItemText
                 asset.name: root.defaultItemImageSource
                 asset.isImage: true
-                color: Theme.palette.baseColor2
                 closeButtonVisible: false
                 titleText.color: Theme.palette.baseColor1
                 titleText.font.pixelSize: 15

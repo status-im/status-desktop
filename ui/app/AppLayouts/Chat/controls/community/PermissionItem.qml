@@ -110,13 +110,13 @@ Control{
                     }
                     StatusListItemTag {
                         Layout.preferredHeight: d.flowRowHeight
+                        leftPadding: 2
                         title: model.text
                         asset.name: model.imageSource
                         asset.isImage: true
                         asset.bgColor: "transparent"
                         asset.height: 28
                         asset.width: asset.height
-                        color: Theme.palette.primaryColor3
                         closeButtonVisible: false
                         titleText.color: Theme.palette.primaryColor1
                         titleText.font.pixelSize: d.tagTextPixelSize
@@ -137,7 +137,6 @@ Control{
                 asset.name: root.permissionImageSource
                 asset.isImage: false
                 asset.bgColor: "transparent"
-                color: Theme.palette.primaryColor3
                 closeButtonVisible: false
                 titleText.color: Theme.palette.primaryColor1
                 titleText.font.pixelSize: d.tagTextPixelSize
@@ -171,7 +170,6 @@ Control{
                         asset.name: model.imageSource
                         asset.isImage: true
                         asset.bgColor: "transparent"
-                        color: Theme.palette.primaryColor3
                         closeButtonVisible: false
                         titleText.color: Theme.palette.primaryColor1
                         titleText.font.pixelSize: d.tagTextPixelSize

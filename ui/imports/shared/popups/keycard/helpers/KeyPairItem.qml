@@ -66,9 +66,9 @@ StatusListItem {
     tagsModel: ListModel{}
 
     tagsDelegate: StatusListItemTag {
-        color: model.color
+        bgColor: model.color
+        bgRadius: 6
         height: Style.current.bigPadding
-        radius: 6
         closeButtonVisible: false
         asset {
             emoji: model.emoji

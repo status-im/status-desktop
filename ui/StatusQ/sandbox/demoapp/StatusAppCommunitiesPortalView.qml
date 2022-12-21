@@ -62,10 +62,10 @@ StatusSectionLayout {
                     Repeater {
                         model: d.tagsModel
                         delegate: StatusListItemTag {
-                            border.color: Theme.palette.baseColor2
-                            color: "transparent"
+                            bgColor: "transparent"
+                            bgRadius: 36
+                            bgBorderColor: Theme.palette.baseColor2
                             height: 32
-                            radius: 36
                             closeButtonVisible: false
                             asset.emoji: model.emoji
                             asset.height: 32

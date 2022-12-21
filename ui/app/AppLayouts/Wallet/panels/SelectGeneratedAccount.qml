@@ -83,9 +83,9 @@ StatusSelect {
         border.width: 1
         border.color: Theme.palette.baseColor2
         tagsDelegate: StatusListItemTag {
-            color: model.color
+            bgColor: model.color
+            bgRadius: 6
             height: Style.current.bigPadding
-            radius: 6
             closeButtonVisible: false
             asset.emoji: model.emoji
             asset.emojiSize: Emoji.size.verySmall
@@ -104,9 +104,9 @@ StatusSelect {
         asset.bgColor: "transparent"
         asset.color: model.generatedModel ? Theme.palette.primaryColor1 : Theme.palette.directColor5
         tagsDelegate: StatusListItemTag {
-            color: model.color
+            bgColor: model.color
+            bgRadius: 6
             height: 24
-            radius: 6
             closeButtonVisible: false
             asset.emoji: model.emoji
             asset.emojiSize: Emoji.size.verySmall

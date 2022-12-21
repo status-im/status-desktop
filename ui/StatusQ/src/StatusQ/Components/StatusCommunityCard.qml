@@ -372,10 +372,10 @@ Rectangle {
                     Repeater {
                         model: root.categories
                         delegate: StatusListItemTag {
-                            border.color: Theme.palette.baseColor2
-                            color: "transparent"
+                            bgColor: "transparent"
+                            bgRadius: 20
+                            bgBorderColor: Theme.palette.baseColor2
                             height: 24
-                            radius: 20
                             closeButtonVisible: false
                             asset.emoji: model.emoji
                             asset.width: 24
