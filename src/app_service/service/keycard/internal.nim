@@ -42,6 +42,7 @@ type
     pukRetries*: int
     cardMetadata*: CardMetadata
     generatedWalletAccount*: GeneratedWalletAccount
+    generatedWalletAccounts*: seq[GeneratedWalletAccount]
     txSignature*: TransactionSignature
     eip1581Key*: KeyDetails
     encryptionKey*: KeyDetails
@@ -127,8 +128,12 @@ proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
   if(jsonObj.getProp(ResponseParamCardMeta, obj)):
     result.cardMetadata = toCardMetadata(obj)
   
-  if(jsonObj.getProp(ResponseParamExportedKey, obj)):
-    result.generatedWalletAccount = toGeneratedWalletAccount(obj)
+  if jsonObj.getProp(ResponseParamExportedKey, obj):
+    if obj.kind == JArray:
+      for o in obj:
+        result.generatedWalletAccounts.add(toGeneratedWalletAccount(o))
+    else:
+      result.generatedWalletAccount = toGeneratedWalletAccount(obj)
 
   if(jsonObj.getProp(ResponseParamTXSignature, obj)):
     result.txSignature = toTransactionSignature(obj)
