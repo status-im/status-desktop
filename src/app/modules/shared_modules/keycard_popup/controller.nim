@@ -420,11 +420,17 @@ proc runStoreMetadataFlow*(self: Controller, cardName: string, pin: string, wall
   self.cancelCurrentFlow()
   self.keycardService.startStoreMetadataFlow(cardName, pin, walletPaths)
 
-proc runDeriveAccountFlow*(self: Controller, bip44Path = "", pin = "") =
+proc runDeriveAccountFlow*(self: Controller, bip44Path: string, pin: string) =
   if not serviceApplicable(self.keycardService):
     return
   self.cancelCurrentFlow()
   self.keycardService.startExportPublicFlow(bip44Path, exportMasterAddr=true, exportPrivateAddr=false, pin)
+
+proc runDeriveAccountFlow*(self: Controller, bip44Paths: seq[string], pin: string) =
+  if not serviceApplicable(self.keycardService):
+    return
+  self.cancelCurrentFlow()
+  self.keycardService.startExportPublicFlow(bip44Paths, exportMasterAddr=true, exportPrivateAddr=false, pin)
 
 proc runAuthenticationFlow*(self: Controller, keyUid = "") =
   ## For signing a transaction  we need to provide a key uid of a keypair that an account we want to sign a transaction 

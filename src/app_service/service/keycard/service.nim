@@ -242,6 +242,8 @@ QtObject:
     self.startFlow(payload)
 
   proc startExportPublicFlow*(self: Service, path: string, exportMasterAddr = false, exportPrivateAddr = false, pin = "") =
+    ## Exports addresses for passed `path`. Result of this flow sets instance of `GeneratedWalletAccount` under
+    ## `generatedWalletAccount` property in `KeycardEvent`.
     if exportPrivateAddr and not path.startsWith(DefaultEIP1581Path):
       error "in order to export private address path must not be outside of eip1581 tree"
       return
@@ -253,6 +255,28 @@ QtObject:
     }
     if path.len > 0:
       payload[RequestParamBIP44Path] = %* path
+    if pin.len > 0:
+      payload[RequestParamPIN] = %* pin
+    self.currentFlow = KCSFlowType.ExportPublic
+    self.startFlow(payload)
+
+  proc startExportPublicFlow*(self: Service, paths: seq[string], exportMasterAddr = false, exportPrivateAddr = false, pin = "") =
+    ## Exports addresses for passed `path`. Result of this flow sets array of `GeneratedWalletAccount` under
+    ## `generatedWalletAccounts` property in `KeycardEvent`. The order of keys set in `generatedWalletAccounts` array
+    ## mathch the order of `paths` sent to this flow.
+    if exportPrivateAddr:
+      for p in paths:
+        if not p.startsWith(DefaultEIP1581Path):
+          error "one of paths in the list refers to a private address path which is not in eip1581 tree"
+          return
+
+    var payload = %* { 
+      RequestParamBIP44Path: DefaultBIP44Path,
+      RequestParamExportMasterAddress: exportMasterAddr,
+      RequestParamExportPrivate: exportPrivateAddr
+    }
+    if paths.len > 0:
+      payload[RequestParamBIP44Path] = %* paths
     if pin.len > 0:
       payload[RequestParamPIN] = %* pin
     self.currentFlow = KCSFlowType.ExportPublic
