@@ -46,7 +46,7 @@ logScope:
 include ../../common/json_utils
 include ../../common/mnemonics
 include internal
-include async_tasks
+include ../../common/async_tasks
 
 type
   KeycardArgs* = ref object of Args
@@ -63,16 +63,13 @@ QtObject:
     setPayloadForCurrentFlow: JsonNode
     doLogging: bool
 
-  proc setup(self: Service) =
-    self.QObject.setup
-
   proc delete*(self: Service) =
     self.closingApp = true
     self.QObject.delete
 
   proc newService*(events: EventEmitter, threadpool: ThreadPool): Service =
-    new(result)
-    result.setup()
+    new(result, delete)
+    result.QObject.setup
     result.events = events
     result.threadpool = threadpool
     result.closingApp = false

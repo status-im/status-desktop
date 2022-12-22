@@ -12,7 +12,7 @@ proc fromEvent*(T: type WakuFetchingBackupProgressSignal, event: JsonNode): Waku
   result = WakuFetchingBackupProgressSignal()
   result.fetchingBackupProgress = initTable[string, WakuFetchingBackupProgress]()
 
-  if event["event"]["fetchingBackedUpDataProgress"].kind == JObject:
+  if event["event"].hasKey("fetchingBackedUpDataProgress") and event["event"]{"fetchingBackedUpDataProgress"}.kind == JObject:
     for key in event["event"]["fetchingBackedUpDataProgress"].keys:
       let entity = event["event"]["fetchingBackedUpDataProgress"][key]
       var details = WakuFetchingBackupProgress()

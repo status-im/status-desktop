@@ -323,6 +323,13 @@ proc prepareAndInitFetchingData[T](self: Module[T]) =
     FetchingFromWakuSettings]
   self.view.createAndInitFetchingDataModel(listOfEntitiesWeExpectToBeSynced)
 
+proc delayStartingApp[T](self: Module[T]) =
+  ## In the following 2 cases:
+  ## - FlowType.FirstRunOldUserImportSeedPhrase
+  ## - FlowType.FirstRunOldUserKeycardImport
+  ## we want to delay app start just to be sure that messages from waku will be received
+  self.controller.connectToTimeoutEventAndStratTimer(timeoutInMilliseconds = 30000) # delay for 30 seconds
+
 proc logoutAndDisplayError[T](self: Module[T], error: string) =
   self.delegate.logout()
   self.moveToStartupState()
@@ -340,7 +347,7 @@ method onNodeLogin*[T](self: Module[T], error: string) =
         self.prepareAndInitFetchingData()
         self.controller.connectToFetchingFromWakuEvents()
         self.view.setCurrentStartupState(newProfileFetchingState(currStateObj.flowType(), nil))
-        self.moveToStartupState()
+        self.delayStartingApp()
         let err = self.delegate.userLoggedIn()
         if err.len > 0:
           self.logoutAndDisplayError(err)
