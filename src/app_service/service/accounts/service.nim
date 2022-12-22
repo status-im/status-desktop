@@ -93,10 +93,8 @@ QtObject:
   proc connectToFetchingFromWakuEvents*(self: Service) =
     self.events.on(SignalType.WakuBackedUpProfile.event) do(e: Args):
       var receivedData = WakuBackedUpProfileSignal(e)
-      if receivedData.backedUpProfile.displayNameStored:
-        self.loggedInAccount.name = receivedData.backedUpProfile.displayName
-      if receivedData.backedUpProfile.imagesStored:
-        self.loggedInAccount.images = receivedData.backedUpProfile.images
+      self.loggedInAccount.name = receivedData.backedUpProfile.displayName
+      self.loggedInAccount.images = receivedData.backedUpProfile.images
 
   proc init*(self: Service) =
     try:

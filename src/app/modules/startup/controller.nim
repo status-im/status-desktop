@@ -107,6 +107,12 @@ proc connectToFetchingFromWakuEvents*(self: Controller) =
       self.delegate.onFetchingFromWakuMessageReceived(k, v.totalNumber, v.dataNumber)
   self.connectionIds.add(handlerId)
 
+proc connectToTimeoutEventAndStratTimer*(self: Controller, timeoutInMilliseconds: int) =
+  var handlerId = self.events.onWithUUID(SIGNAL_GENERAL_TIMEOUT) do(e: Args):
+    self.delegate.moveToStartupState()
+  self.connectionIds.add(handlerId)
+  self.generalService.runTimer(timeoutInMilliseconds)
+
 proc disconnect*(self: Controller) =
   self.disconnectKeychain()
   for id in self.connectionIds:

@@ -27,9 +27,7 @@ type AccountDto* = object
 
 type WakuBackedUpProfileDto* = object
   displayName*: string
-  displayNameStored*: bool
   images*: seq[Image]
-  imagesStored*: bool
 
 proc isValid*(self: AccountDto): bool =
   result = self.name.len > 0 and self.keyUid.len > 0
@@ -70,8 +68,6 @@ proc contains*(accounts: seq[AccountDto], keyUid: string): bool =
 proc toWakuBackedUpProfileDto*(jsonObj: JsonNode): WakuBackedUpProfileDto =
   result = WakuBackedUpProfileDto()
   discard jsonObj.getProp("displayName", result.displayName)
-  discard jsonObj.getProp("displayNameStored", result.displayNameStored)
-  discard jsonObj.getProp("imagesStored", result.imagesStored)
 
   var imagesObj: JsonNode
   if(jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray):

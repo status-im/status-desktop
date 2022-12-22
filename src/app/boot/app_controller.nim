@@ -134,7 +134,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.globalUtilsVariant = newQVariant(singletonInstance.utils)  
 
   # Services
-  result.generalService = general_service.newService()
+  result.generalService = general_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.activityCenterService = activity_center_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.keycardService = keycard_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
