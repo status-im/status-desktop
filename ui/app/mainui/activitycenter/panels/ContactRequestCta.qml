@@ -9,6 +9,7 @@ import shared.panels 1.0
 Item {
     id: root
 
+    property bool isOutgoingRequest: false
     property bool pending: false
     property bool accepted: false
     property bool dismissed: false
@@ -27,10 +28,12 @@ Item {
         id: textItem
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        visible: !pending
+        visible: !buttons.visible
         text: {
             if (root.accepted) {
                 return qsTr("Accepted")
+            } else if (root.pending) {
+                return qsTr("Pending")
             } else if (root.dismissed) {
                 return blocked ? qsTr("Declined & Blocked") : qsTr("Declined")
             }
@@ -48,7 +51,7 @@ Item {
 
     AcceptRejectOptionsButtonsPanel {
         id: buttons
-        visible: pending
+        visible: pending && !isOutgoingRequest
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         onAcceptClicked: root.acceptClicked()
