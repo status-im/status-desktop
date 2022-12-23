@@ -2,7 +2,6 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as CoreUtils
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
@@ -110,7 +109,7 @@ ActivityNotificationBase {
                     Layout.fillWidth: true
 
                     StatusBaseText {
-                        text: CoreUtils.Utils.stripHtmlTags(root.messageDetails.messageText)
+                        text: Utils.unescapeHtml(root.messageDetails.messageText)
                         maximumLineCount: root.maximumLineCount
                         wrapMode: Text.Wrap
                         elide: Text.ElideRight

@@ -730,14 +730,21 @@ QtObject {
         return (str.length > maxLength) ? str.substr(0, maxLength-4) + '...' : str;
     }
 
-    function escapeHtml(unsafeStr)
-    {
+    function escapeHtml(unsafeStr) {
         return unsafeStr
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
+    }
+
+    function unescapeHtml(safeStr) {
+        return safeStr.replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&#039;/g, "'");
     }
 
     function isInvalidPasswordMessage(msg) {
