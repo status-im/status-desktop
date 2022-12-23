@@ -67,9 +67,10 @@ ColumnLayout {
                                      (profileHeader.cropRect.x + profileHeader.cropRect.width).toFixed(),
                                      (profileHeader.cropRect.y + profileHeader.cropRect.height).toFixed());
         }
-        if (biometricsSwitch.checked)
+
+        if (biometricsSwitch.checked && !biometricsSwitch.currentStoredValue)
             Global.openPopup(storePasswordModal)
-        else
+        else if (!biometricsSwitch.checked)
             localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.never;
 
         reset()
