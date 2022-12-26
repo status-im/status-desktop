@@ -13,11 +13,15 @@ proc delete*(self: ManageKeycardAccountsState) =
 method getNextPrimaryState*(self: ManageKeycardAccountsState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
     return createState(StateType.CreatingAccountNewSeedPhrase, self.flowType, nil)
+  if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
+    return createState(StateType.CreatingAccountOldSeedPhrase, self.flowType, nil)
 
 method executePreSecondaryStateCommand*(self: ManageKeycardAccountsState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
-    controller.getKeyPairForProcessing().addAccount(newKeyPairAccountItem())
+  if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
+      controller.getKeyPairForProcessing().addAccount(newKeyPairAccountItem())
 
 method executeCancelCommand*(self: ManageKeycardAccountsState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

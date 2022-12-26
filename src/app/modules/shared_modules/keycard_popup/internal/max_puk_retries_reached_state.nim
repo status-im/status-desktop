@@ -11,7 +11,8 @@ proc delete*(self: MaxPukRetriesReachedState) =
 method getNextPrimaryState*(self: MaxPukRetriesReachedState, controller: Controller): State =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
       return createState(StateType.FactoryResetConfirmation, self.flowType, self)
   if self.flowType == FlowType.Authentication or
     self.flowType == FlowType.DisplayKeycardContent or
@@ -28,6 +29,7 @@ method executeCancelCommand*(self: MaxPukRetriesReachedState, controller: Contro
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.DisplayKeycardContent or

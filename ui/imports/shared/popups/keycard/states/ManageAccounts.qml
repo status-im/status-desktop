@@ -71,8 +71,8 @@ Item {
 
     Connections {
         target: root.emojiPopup
-        enabled: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase &&
-                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.manageKeycardAccounts
+        enabled: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
+                 root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase
 
         function onEmojiSelected (emojiText, atCursor) {
             d.observedAccount.emoji = emojiText

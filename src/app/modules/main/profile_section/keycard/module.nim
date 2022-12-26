@@ -122,7 +122,10 @@ method runCreateNewKeycardWithNewSeedPhrasePopup*(self: Module) =
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycardNewSeedPhrase)
 
 method runImportOrRestoreViaSeedPhrasePopup*(self: Module) =
-  info "TODO: Import or restore via a seed phrase..."
+  self.createSharedKeycardModule()
+  if self.keycardSharedModule.isNil:
+    return
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycardOldSeedPhrase)
   
 method runImportFromKeycardToAppPopup*(self: Module) =
   info "TODO: Import from Keycard to Status Desktop..."

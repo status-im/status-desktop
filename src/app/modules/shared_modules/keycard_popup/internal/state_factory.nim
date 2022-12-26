@@ -48,6 +48,7 @@ include create_pairing_code_state
 include create_pin_state
 include create_puk_state
 include creating_account_new_seed_phrase_state
+include creating_account_old_seed_phrase_state
 include enter_biometrics_password_state
 include enter_keycard_name_state
 include enter_password_state
@@ -70,6 +71,8 @@ include keycard_copy_failure_state
 include keycard_copy_success_state
 include keycard_create_account_new_seed_phrase_failure_state
 include keycard_create_account_new_seed_phrase_success_state
+include keycard_create_account_old_seed_phrase_failure_state
+include keycard_create_account_old_seed_phrase_success_state
 include keycard_empty_metadata_state
 include keycard_empty_state
 include keycard_inserted_state
@@ -94,6 +97,7 @@ include renaming_keycard_state
 include repeat_pin_state
 include repeat_puk_state
 include same_keycard_state
+include seed_phrase_already_in_use_state
 include seed_phrase_display_state
 include seed_phrase_enter_words_state
 include select_existing_key_pair_state

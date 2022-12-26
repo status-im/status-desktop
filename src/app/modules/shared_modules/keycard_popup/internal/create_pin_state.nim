@@ -18,6 +18,7 @@ method executePreBackStateCommand*(self: CreatePinState, controller: Controller)
 method executeCancelCommand*(self: CreatePinState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.ChangeKeycardPin:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
@@ -25,6 +26,7 @@ method executeCancelCommand*(self: CreatePinState, controller: Controller) =
 method getNextSecondaryState*(self: CreatePinState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.ChangeKeycardPin:
       if controller.getPin().len == PINLengthForStatusApp:

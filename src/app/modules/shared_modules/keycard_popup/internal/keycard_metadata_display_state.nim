@@ -11,7 +11,8 @@ proc delete*(self: KeycardMetadataDisplayState) =
 method getNextPrimaryState*(self: KeycardMetadataDisplayState, controller: Controller): State =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
       return createState(StateType.FactoryResetConfirmationDisplayMetadata, self.flowType, self)
   if self.flowType == FlowType.DisplayKeycardContent:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
@@ -31,6 +32,7 @@ method executeCancelCommand*(self: KeycardMetadataDisplayState, controller: Cont
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.CreateCopyOfAKeycard:

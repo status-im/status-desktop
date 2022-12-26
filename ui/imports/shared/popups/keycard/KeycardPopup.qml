@@ -21,6 +21,8 @@ StatusModal {
             return qsTr("Set up a new Keycard with an existing account")
         case Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase:
             return qsTr("Create a new Keycard account with a new seed phrase")
+        case Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase:
+            return qsTr("Import or restore a Keycard via a seed phrase")
         case Constants.keycardSharedFlow.factoryReset:
             return qsTr("Factory reset a Keycard")
         case Constants.keycardSharedFlow.authentication:

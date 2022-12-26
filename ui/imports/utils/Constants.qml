@@ -99,6 +99,7 @@ QtObject {
         readonly property string factoryReset: "FactoryReset"
         readonly property string setupNewKeycard: "SetupNewKeycard"
         readonly property string setupNewKeycardNewSeedPhrase: "SetupNewKeycardNewSeedPhrase"
+        readonly property string setupNewKeycardOldSeedPhrase: "SetupNewKeycardOldSeedPhrase"
         readonly property string authentication: "Authentication"
         readonly property string unlockKeycard: "UnlockKeycard"
         readonly property string displayKeycardContent: "DisplayKeycardContent"
@@ -143,6 +144,7 @@ QtObject {
         readonly property string selectExistingKeyPair: "SelectExistingKeyPair"
         readonly property string enterSeedPhrase: "EnterSeedPhrase"
         readonly property string wrongSeedPhrase: "WrongSeedPhrase"
+        readonly property string seedPhraseAlreadyInUse: "SeedPhraseAlreadyInUse"
         readonly property string seedPhraseDisplay: "SeedPhraseDisplay"
         readonly property string seedPhraseEnterWords: "SeedPhraseEnterWords"
         readonly property string keyPairMigrateSuccess: "KeyPairMigrateSuccess"
@@ -182,6 +184,9 @@ QtObject {
         readonly property string creatingAccountNewSeedPhrase: "CreatingAccountNewSeedPhrase"
         readonly property string creatingAccountNewSeedPhraseSuccess: "CreatingAccountNewSeedPhraseSuccess"
         readonly property string creatingAccountNewSeedPhraseFailure: "CreatingAccountNewSeedPhraseFailure"
+        readonly property string creatingAccountOldSeedPhrase: "CreatingAccountOldSeedPhrase"
+        readonly property string creatingAccountOldSeedPhraseSuccess: "CreatingAccountOldSeedPhraseSuccess"
+        readonly property string creatingAccountOldSeedPhraseFailure: "CreatingAccountOldSeedPhraseFailure"
     }
 
     readonly property QtObject keycardAnimations: QtObject {

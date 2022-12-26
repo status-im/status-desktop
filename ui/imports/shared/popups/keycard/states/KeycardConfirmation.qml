@@ -112,6 +112,11 @@ Item {
                         return true
                     }
                 }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {
+                        return true
+                    }
+                }
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {
                         return true
@@ -135,6 +140,14 @@ Item {
                     }
                 }
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase) {
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {
+                        if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                            return keyPairForProcessingComponent
+                        }
+                        return unknownKeyPairCompontnt
+                    }
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {
                         if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
                             return keyPairForProcessingComponent

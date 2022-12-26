@@ -18,6 +18,7 @@ Item {
     Component.onCompleted: {
         if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
+                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard ||
                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard) {
             root.sharedKeycardModule.currentState.doPrimaryAction()
@@ -31,6 +32,7 @@ Item {
         readonly property bool copyFromAKeycardPartDone: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.copyFromAKeycardPartDone
         readonly property bool continuousProcessingAnimation: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
                                                               root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
+                                                              root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
                                                               root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard
     }
 
@@ -127,6 +129,7 @@ Item {
                 visible: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
+                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPin ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPuk ||
@@ -144,6 +147,7 @@ Item {
             Layout.alignment: Qt.AlignCenter
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: Constants.keycard.general.messageHeight
+            Layout.fillHeight: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseAlreadyInUse
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
         }
@@ -170,6 +174,15 @@ Item {
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure) {
+                        return true
+                    }
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseAlreadyInUse) {
                         return true
                     }
                 }
@@ -298,6 +311,21 @@ Item {
                     if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure) {
+                        return keyPairForProcessingComponent
+                    }
+                }
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay) {
+                        if (root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
+                            return keyPairForProcessingComponent
+                        }
+                        return unknownKeyPairCompontnt
+                    }
+
+                    if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure ||
+                            root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseAlreadyInUse) {
                         return keyPairForProcessingComponent
                     }
                 }
@@ -500,6 +528,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migratingKeyPair ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPin ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPuk ||
@@ -516,6 +545,9 @@ Item {
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase) {
                         return qsTr("Creating new account...")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase) {
+                        return qsTr("Setting a new Keycard...")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard) {
                         return qsTr("Renaming keycard...")
@@ -733,7 +765,8 @@ Item {
                         return qsTr("To migrate %1 on to this Keycard, you\nwill need to perform a factory reset first")
                         .arg(root.sharedKeycardModule.keyPairForProcessing.name)
                     }
-                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase) {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
+                            root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
                         return qsTr("To create a new account on to this Keycard, you\nwill need to perform a factory reset first")
                     }
                     if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard) {
@@ -756,12 +789,14 @@ Item {
                 target: title
                 text: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
                       root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
+                      root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase ||
                       root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard?
                           qsTr("Keycard locked and already stores keys") : qsTr("Keycard locked")
                 font.pixelSize: Constants.keycard.general.fontSize1
                 font.weight: Font.Bold
                 color: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
+                       root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase ||
                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard?
                            Theme.palette.directColor1 : Theme.palette.dangerColor1
             }
@@ -781,6 +816,7 @@ Item {
                     if (root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.useGeneralMessageForLockedState) {
                         if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
                                 root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
+                                root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase ||
                                 root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard)
                             return qsTr("The Keycard you have inserted is locked,\nyou will need to factory reset it before proceeding")
                         return qsTr("You will need to unlock it before proceeding")
@@ -796,6 +832,7 @@ Item {
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
+                       root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase ||
                        root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard?
                            Theme.palette.directColor1 : Theme.palette.dangerColor1
             }
@@ -854,6 +891,7 @@ Item {
             name: "processing-success"
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateSuccess ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetSuccess ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockKeycardSuccess ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameSuccess ||
@@ -869,9 +907,13 @@ Item {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess) {
                         return qsTr("New account successfully created")
                     }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess) {
+                        return qsTr("Keycard is ready to use!")
+                    }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetSuccess) {
                         if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
                                 root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
+                                root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase ||
                                 root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard)
                             return qsTr("Your Keycard has been reset")
                         return qsTr("Keycard successfully factory reset")
@@ -917,6 +959,7 @@ Item {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetSuccess) {
                         if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycard ||
                                 root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
+                                root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase ||
                                 root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.createCopyOfAKeycard)
                             return qsTr("You can now create a new key pair on this Keycard")
                         return qsTr("You can now use this Keycard as if it\nwas a brand new empty Keycard")
@@ -931,6 +974,7 @@ Item {
             name: "processing-failure"
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keyPairMigrateFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPukFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCodeFailure ||
@@ -943,6 +987,9 @@ Item {
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure) {
                         return qsTr("Creating new account failed")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure) {
+                        return qsTr("Setting a Keycard failed")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameFailure) {
                         return qsTr("Keycard renaming failed")
@@ -1153,6 +1200,27 @@ Item {
             PropertyChanges {
                 target: message
                 text: ""
+            }
+        },
+        State {
+            name: Constants.keycardSharedState.seedPhraseAlreadyInUse
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseAlreadyInUse
+            PropertyChanges {
+                target: title
+                text: ""
+            }
+            PropertyChanges {
+                target: image
+                source: ""
+                pattern: ""
+                visible: false
+            }
+            PropertyChanges {
+                target: message
+                text: qsTr("The seed phrase you entered is\ncurrently in use on this device")
+                font.pixelSize: Constants.keycard.general.fontSize1
+                font.weight: Font.Bold
+                color: Theme.palette.directColor1
             }
         }
     ]
