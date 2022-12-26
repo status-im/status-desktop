@@ -79,6 +79,7 @@ Rectangle {
 
         ListView {
             id: communityItemsListView
+            objectName: "statusCommunityMainNavBarListView"
 
             Layout.fillWidth: true
             Layout.fillHeight: true

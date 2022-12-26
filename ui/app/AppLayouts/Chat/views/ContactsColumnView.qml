@@ -54,6 +54,7 @@ Item {
             Layout.fillWidth: true
 
             StatusNavigationPanelHeadline {
+                objectName: "ContactsColumnView_MessagesHeadline"
                 Layout.alignment: Qt.AlignVCenter
                 text: qsTr("Messages")
             }
