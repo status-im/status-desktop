@@ -95,6 +95,7 @@ StatusDialog {
                     // Additional params
                     isInPinnedPopup: true
                     disableHover: !!root.messageToPin
+                    shouldRepeatHeader: true
                 }
 
                 MouseArea {
