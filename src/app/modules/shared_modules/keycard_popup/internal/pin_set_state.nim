@@ -16,6 +16,8 @@ method getNextPrimaryState*(self: PinSetState, controller: Controller): State =
       return createState(StateType.SeedPhraseDisplay, self.flowType, nil)
   if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
     return createState(StateType.SeedPhraseDisplay, self.flowType, nil)
+  if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
+    return createState(StateType.EnterKeycardName, self.flowType, nil)
   if self.flowType == FlowType.UnlockKeycard:
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.GetMetadata:
       if controller.getValidPuk():
@@ -27,5 +29,6 @@ method getNextPrimaryState*(self: PinSetState, controller: Controller): State =
 method executeCancelCommand*(self: PinSetState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.UnlockKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

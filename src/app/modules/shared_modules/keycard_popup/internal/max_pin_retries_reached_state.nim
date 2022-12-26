@@ -20,7 +20,8 @@ method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Control
     controller.runSharedModuleFlow(FlowType.UnlockKeycard)
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
       let currValue = extractPredefinedKeycardDataToNumber(controller.getKeycardData())
       if (currValue and PredefinedKeycardData.DisableSeedPhraseForUnlock.int) > 0:
         controller.runSharedModuleFlow(FlowType.UnlockKeycard)
@@ -40,6 +41,7 @@ method executeCancelCommand*(self: MaxPinRetriesReachedState, controller: Contro
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
       controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = false))
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

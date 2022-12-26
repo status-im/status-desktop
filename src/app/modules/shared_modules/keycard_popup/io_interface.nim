@@ -50,6 +50,7 @@ type FlowType* {.pure.} = enum
   FactoryReset = "FactoryReset"
   SetupNewKeycard = "SetupNewKeycard"
   SetupNewKeycardNewSeedPhrase = "SetupNewKeycardNewSeedPhrase"
+  SetupNewKeycardOldSeedPhrase = "SetupNewKeycardOldSeedPhrase"
   Authentication = "Authentication"
   UnlockKeycard = "UnlockKeycard"
   DisplayKeycardContent = "DisplayKeycardContent"
@@ -150,6 +151,9 @@ method updateKeyPairForProcessing*(self: AccessInterface, cardMetadata: CardMeta
   raise newException(ValueError, "No implementation available")
 
 method setKeyPairForProcessing*(self: AccessInterface, item: KeyPairItem) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method prepareKeyPairForProcessing*(self: AccessInterface, keyUid: string, keycardUid = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method migratingProfileKeyPair*(self: AccessInterface): bool {.base.} =

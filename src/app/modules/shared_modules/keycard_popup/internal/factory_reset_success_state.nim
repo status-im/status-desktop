@@ -14,8 +14,9 @@ method executePrePrimaryStateCommand*(self: FactoryResetSuccessState, controller
   elif self.flowType == FlowType.SetupNewKeycard:
     controller.setSelectedKeypairAsKeyPairForProcessing() # we need to update keypair for next state (e.g. if user run into factory reset for example)
     controller.runLoadAccountFlow()
-  elif self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
-    controller.runLoadAccountFlow()
+  elif self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
+      controller.runLoadAccountFlow()
   elif self.flowType == FlowType.CreateCopyOfAKeycard:
     controller.setMetadataFromKeycard(controller.getMetadataForKeycardCopy()) # we need to update keypair for next state
     controller.runLoadAccountFlow(seedPhraseLength = 0, seedPhrase = "", pin = controller.getPinForKeycardCopy())
@@ -23,6 +24,7 @@ method executePrePrimaryStateCommand*(self: FactoryResetSuccessState, controller
 method executeCancelCommand*(self: FactoryResetSuccessState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 

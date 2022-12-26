@@ -39,6 +39,7 @@ type StateType* {.pure.} = enum
   SelectExistingKeyPair = "SelectExistingKeyPair"
   EnterSeedPhrase = "EnterSeedPhrase"
   WrongSeedPhrase = "WrongSeedPhrase"
+  SeedPhraseAlreadyInUse = "SeedPhraseAlreadyInUse"
   SeedPhraseDisplay = "SeedPhraseDisplay"
   SeedPhraseEnterWords = "SeedPhraseEnterWords"
   KeyPairMigrateSuccess = "KeyPairMigrateSuccess"
@@ -78,6 +79,9 @@ type StateType* {.pure.} = enum
   CreatingAccountNewSeedPhrase = "CreatingAccountNewSeedPhrase"
   CreatingAccountNewSeedPhraseSuccess = "CreatingAccountNewSeedPhraseSuccess"
   CreatingAccountNewSeedPhraseFailure = "CreatingAccountNewSeedPhraseFailure"
+  CreatingAccountOldSeedPhrase = "CreatingAccountOldSeedPhrase"
+  CreatingAccountOldSeedPhraseSuccess = "CreatingAccountOldSeedPhraseSuccess"
+  CreatingAccountOldSeedPhraseFailure = "CreatingAccountOldSeedPhraseFailure"
 
 
 ## This is the base class for all state we may have in onboarding/login flow.

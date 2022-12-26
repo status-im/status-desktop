@@ -1,4 +1,4 @@
-import chronicles, strutils, os
+import chronicles, strutils, os, sequtils, sugar
 import uuids
 import io_interface
 
@@ -176,6 +176,9 @@ proc setContainsMetadata*(self: Controller, value: bool) =
 
 proc setKeyPairForProcessing*(self: Controller, item: KeyPairItem) =
   self.delegate.setKeyPairForProcessing(item)
+
+proc prepareKeyPairForProcessing*(self: Controller, keyUid: string) =
+  self.delegate.prepareKeyPairForProcessing(keyUid)
 
 proc getKeyPairForProcessing*(self: Controller): KeyPairItem =
   return self.delegate.getKeyPairForProcessing()
@@ -516,6 +519,11 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
     return
   return self.walletAccountService.fetchAccounts()
 
+proc isKeyPairAlreadyAdded*(self: Controller, keyUid: string): bool =
+  let walletAccounts = self.getWalletAccounts()
+  let accountsForKeyUid = walletAccounts.filter(a => a.keyUid == keyUid)
+  return accountsForKeyUid.len > 0
+
 proc getCurrencyBalanceForAddress*(self: Controller, address: string): float64 =
   if not serviceApplicable(self.walletAccountService):
     return
@@ -531,6 +539,11 @@ proc addMigratedKeyPair*(self: Controller, keyPair: KeyPairDto) =
 
 proc getAddingMigratedKeypairSuccess*(self: Controller): bool =
   return self.tmpAddingMigratedKeypairSuccess
+
+proc getMigratedKeyPairByKeyUid*(self: Controller, keyUid: string): seq[KeyPairDto] =
+  if not serviceApplicable(self.walletAccountService):
+    return
+  return self.walletAccountService.getMigratedKeyPairByKeyUid(keyUid)
 
 proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
   if not serviceApplicable(self.walletAccountService):
