@@ -57,8 +57,11 @@ proc handleCommunityOnlyConnections(self: Controller) =
     for community in args.communities:
       if (community.id != self.sectionId):
         continue
-      let membersPubKeys = community.members.map(x => x.id)
-      self.delegate.onChatMembersAddedOrRemoved(membersPubKeys)
+      # If we didn't join the community, all members in the list will have status
+      # joined=false. No need to try add them to the model
+      if community.isMember:
+        let membersPubKeys = community.members.map(x => x.id)
+        self.delegate.onChatMembersAddedOrRemoved(membersPubKeys)
 
   self.events.on(SIGNAL_COMMUNITY_MEMBER_REMOVED) do(e: Args):
     let args = CommunityMemberArgs(e)
@@ -160,12 +163,6 @@ proc getChatMembers*(self: Controller): seq[ChatMember] =
   if (self.belongsToCommunity):
     communityId = self.sectionId
   return self.chatService.getMembers(communityId, self.chatId)
-
-proc getChatMember*(self: Controller, id: string): ChatMember =
-  let members = self.getChatMembers()
-  for member in members:
-    if (member.id == id):
-      return member
 
 proc getMembersPublicKeys*(self: Controller): seq[string] =
   if(self.belongsToCommunity):
