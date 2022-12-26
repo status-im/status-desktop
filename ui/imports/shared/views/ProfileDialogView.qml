@@ -167,6 +167,7 @@ Pane {
     Component {
         id: btnSendContactRequestComponent
         StatusButton {
+            objectName: "profileDialog_sendContactRequestButton"
             size: StatusButton.Size.Small
             text: qsTr("Send Contact Request")
             onClicked: {

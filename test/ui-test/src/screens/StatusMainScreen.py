@@ -19,6 +19,7 @@ import time
 
 class MainScreenComponents(Enum):
     MAIN_WINDOW = "statusDesktop_mainWindow"
+    POPUP_OVERLAY = "statusDesktop_mainWindow_overlay"
     PUBLIC_CHAT_ICON = "mainWindow_public_chat_icon_StatusIcon"
     CHAT_NAVBAR_ICON = "navBarListView_Chat_navbar_StatusNavBarTabButton"
     COMMUNITY_PORTAL_BUTTON = "navBarListView_Communities_Portal_navbar_StatusNavBarTabButton"
@@ -229,3 +230,7 @@ class StatusMainScreen:
         
     def navigate_to_edit_profile(self):
         click_obj_by_name(ProfilePopup.EDIT_PROFILE_BUTTON.value)
+        
+    def close_popup(self):
+        # Click in the corner of the overlay to close the popup
+        click_obj_by_name_at_coordinates(MainScreenComponents.POPUP_OVERLAY.value, 1, 1)

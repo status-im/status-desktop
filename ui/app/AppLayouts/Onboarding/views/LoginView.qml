@@ -303,6 +303,7 @@ Item {
                 }
 
                 AccountMenuItemPanel {
+                    objectName: "LoginView_addNewUserItem"
                     label: qsTr("Add new user")
                     asset.name: "add"
                     onClicked: {

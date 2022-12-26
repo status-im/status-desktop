@@ -68,6 +68,10 @@ def a_first_time_user_lands_on_and_generates_new_key(context):
     a_first_time_user_lands_on(context)
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.agree_terms_conditions_and_generate_new_key()
+
+def a_user_lands_on_and_generates_new_key(context):
+    welcome_screen = StatusWelcomeScreen()
+    welcome_screen.generate_new_key()
     
 def a_first_time_user_lands_on_and_navigates_to_import_seed_phrase(context):
     filesMngr.erase_directory(context.userData[_status_data_folder])
@@ -79,9 +83,13 @@ def the_user_inputs_username(username: str):
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.input_username(username)
 
-def the_user_signs_up(user: str, password: str):        
+def the_user_signs_up(user: str, password: str):
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.input_username_and_password_and_finalize_sign_up(user, password)
+
+def the_user_signs_again_up(user: str, password: str):
+    welcome_screen = StatusWelcomeScreen()
+    welcome_screen.input_username_and_password_again_and_finalize_sign_up(user, password)
     
 def the_user_lands_on_the_signed_in_app():
     main_screen = StatusMainScreen()

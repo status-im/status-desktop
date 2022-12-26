@@ -96,11 +96,15 @@ def step(context):
 @When("the user sends a chat message \"|any|\"")
 def step(context, message):
     the_user_sends_a_chat_message(message)
-    
+
 @When("the user replies to the message at index |any| with \"|any|\"")
 def step(context, message_index, message):
     _statusChat.reply_to_message_at_index(message_index, message)
-    
+
+@When("the user opens the user profile from the message at index |any|")
+def step(context, message_index):
+    _statusChat.open_user_profile_from_message_at_index(message_index)
+
 @When("the user edits the message at index |any| and changes it to \"|any|\"" )
 def step(context, message_index, message):
     _statusChat.edit_message_at_index(message_index, message)

@@ -155,7 +155,6 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
-            id: btnCreateEdit
             enabled: d.validChatKey && messageInput.valid
             objectName: "SendContactRequestModal_Send_Button"
             text: qsTr("Send Contact Request")

@@ -62,6 +62,12 @@ class ContactsViewScreen(Enum):
     CONTACT_REQUEST_SEND_BUTTON: str = "contactRequest_Send_Button"
     CONTACT_REQUEST_PENDING_REQUEST_TAB_BUTTON: str = "contactRequest_PendingRequests_Button"
     SENT_REQUESTS_CONTACT_PANEL_LIST_VIEW: str = "sentRequests_contactListPanel_ListView"
+    RECEIVED_REQUESTS_CONTACT_PANEL_LIST_VIEW: str = "receivedRequests_contactListPanel_ListView"
+   
+class ProfilePopupScreen(Enum):
+    PROFILE_POPUP_SEND_CONTACT_REQUEST_BUTTON = "ProfilePopup_SendContactRequestButton"
+    SAY_WHO_YOU_ARE_INPUT: str = "ProfilePopup_SayWhoYouAre_TextEdit"
+    SEND_CONTACT_REQUEST_BUTTON: str = "ProfilePopup_SendContactRequest_Button"
 
 class WalletSettingsScreen(Enum):
     GENERATED_ACCOUNTS: str = "settings_Wallet_MainView_GeneratedAccounts"
@@ -165,6 +171,9 @@ class SettingsScreen:
     # Post condition: Messaging Settings is visible (@see StatusMainScreen.open_settings)
     def open_messaging_settings(self):
         click_obj_by_name(SidebarComponents.MESSAGING_ITEM.value)
+
+    def open_contacts_settings(self):
+        click_obj_by_name(MessagingOptionScreen.CONTACTS_BTN.value)
 
     # if link preview is activated do nothing
     def activate_link_preview_if_dectivated(self):
@@ -415,15 +424,20 @@ class SettingsScreen:
 
         click_obj_by_name(ChangePasswordMenu.CHANGE_PASSWORD_SUBMIT_BUTTON.value)
         click_obj_by_name(ChangePasswordMenu.CHANGE_PASSWORD_SUCCESS_MENU_SIGN_OUT_QUIT_BUTTON.value)
-        
+
     def add_contact_by_chat_key(self, chat_key: str, who_you_are: str):
-        click_obj_by_name(MessagingOptionScreen.CONTACTS_BTN.value)
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_CHAT_KEY_BTN.value)
         
         type(ContactsViewScreen.CONTACT_REQUEST_CHAT_KEY_INPUT.value, chat_key)
         type(ContactsViewScreen.CONTACT_REQUEST_SAY_WHO_YOU_ARE_INPUT.value, who_you_are)
         
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_SEND_BUTTON.value)
+
+    def send_contact_request_via_profile_popup(self, who_you_are: str):
+        click_obj_by_name(ProfilePopupScreen.PROFILE_POPUP_SEND_CONTACT_REQUEST_BUTTON.value)
+        type(ProfilePopupScreen.SAY_WHO_YOU_ARE_INPUT.value, who_you_are)
+        
+        click_obj_by_name(ProfilePopupScreen.SEND_CONTACT_REQUEST_BUTTON.value)
 
     def verify_contact_request(self, chat_key: str):
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_PENDING_REQUEST_TAB_BUTTON.value)
@@ -436,5 +450,15 @@ class SettingsScreen:
                 return
         contact_keys_tr = ", ".join(contact_keys)
         verify_failure(f'The list of pending contacts contains "{contact_keys_tr}"  but we wanted the key"{chat_key}"')
+
+    def verify_there_is_a_sent_contact_request(self):
+        click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_PENDING_REQUEST_TAB_BUTTON.value)
+        contact_list = get_obj(ContactsViewScreen.SENT_REQUESTS_CONTACT_PANEL_LIST_VIEW.value)
+        verify_equal(contact_list.count, 1, "Checking if there is exactly one pending contact request") 
+
+    def verify_there_is_a_received_contact_request(self):
+        click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_PENDING_REQUEST_TAB_BUTTON.value)
+        contact_list = get_obj(ContactsViewScreen.RECEIVED_REQUESTS_CONTACT_PANEL_LIST_VIEW.value)
+        verify_equal(contact_list.count, 1, "Checking if there is exactly one pending contact request") 
         
         
