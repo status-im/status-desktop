@@ -34,6 +34,9 @@ Item {
             case Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess:
             case Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure:
             case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
+            case Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess:
+            case Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure:
+            case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
             case Constants.keycardSharedState.keycardRenameSuccess:
             case Constants.keycardSharedState.keycardRenameFailure:
             case Constants.keycardSharedState.renamingKeycard:
@@ -68,6 +71,7 @@ Item {
             case Constants.keycardSharedState.copyingKeycard:
             case Constants.keycardSharedState.copyingKeycardSuccess:
             case Constants.keycardSharedState.copyingKeycardFailure:
+            case Constants.keycardSharedState.seedPhraseAlreadyInUse:
                 return initComponent
 
             case Constants.keycardSharedState.factoryResetConfirmation:

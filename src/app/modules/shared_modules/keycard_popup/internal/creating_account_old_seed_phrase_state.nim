@@ -1,16 +1,16 @@
 type
-  CreatingAccountNewSeedPhraseState* = ref object of State
+  CreatingAccountOldSeedPhraseState* = ref object of State
     paths: seq[string]
     addresses: seq[string]
 
-proc newCreatingAccountNewSeedPhraseState*(flowType: FlowType, backState: State): CreatingAccountNewSeedPhraseState =
-  result = CreatingAccountNewSeedPhraseState()
-  result.setup(flowType, StateType.CreatingAccountNewSeedPhrase, backState)
+proc newCreatingAccountOldSeedPhraseState*(flowType: FlowType, backState: State): CreatingAccountOldSeedPhraseState =
+  result = CreatingAccountOldSeedPhraseState()
+  result.setup(flowType, StateType.CreatingAccountOldSeedPhrase, backState)
 
-proc delete*(self: CreatingAccountNewSeedPhraseState) =
+proc delete*(self: CreatingAccountOldSeedPhraseState) =
   self.State.delete
 
-proc resolvePaths(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
+proc resolvePaths(self: CreatingAccountOldSeedPhraseState, controller: Controller) =
   let kpForPRocessing = controller.getKeyPairForProcessing()
   var i = 0
   for account in kpForPRocessing.getAccountsModel().getItems():
@@ -18,7 +18,7 @@ proc resolvePaths(self: CreatingAccountNewSeedPhraseState, controller: Controlle
     self.paths.add(account.getPath())
     i.inc
 
-proc findIndexForPath(self: CreatingAccountNewSeedPhraseState, path: string): int =
+proc findIndexForPath(self: CreatingAccountOldSeedPhraseState, path: string): int =
   var ind = -1
   for p in self.paths:
     ind.inc
@@ -26,7 +26,7 @@ proc findIndexForPath(self: CreatingAccountNewSeedPhraseState, path: string): in
       return ind
   return ind
 
-proc resolveAddresses(self: CreatingAccountNewSeedPhraseState, controller: Controller, keycardEvent: KeycardEvent): bool =
+proc resolveAddresses(self: CreatingAccountOldSeedPhraseState, controller: Controller, keycardEvent: KeycardEvent): bool =
   if keycardEvent.generatedWalletAccounts.len != self.paths.len:
     return false
   let kpForPRocessing = controller.getKeyPairForProcessing()
@@ -41,7 +41,7 @@ proc resolveAddresses(self: CreatingAccountNewSeedPhraseState, controller: Contr
     self.addresses.add(keycardEvent.generatedWalletAccounts[index].address)
   return true
 
-proc addAccountsToWallet(self: CreatingAccountNewSeedPhraseState, controller: Controller): bool =
+proc addAccountsToWallet(self: CreatingAccountOldSeedPhraseState, controller: Controller): bool =
   let kpForPRocessing = controller.getKeyPairForProcessing()
   for account in kpForPRocessing.getAccountsModel().getItems():
     if not controller.addWalletAccount(name = account.getName(), 
@@ -56,7 +56,7 @@ proc addAccountsToWallet(self: CreatingAccountNewSeedPhraseState, controller: Co
       return false
   return true
 
-proc doMigration(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
+proc doMigration(self: CreatingAccountOldSeedPhraseState, controller: Controller) =
   let kpForPRocessing = controller.getKeyPairForProcessing()
   var kpDto = KeyPairDto(keycardUid: controller.getKeycardUid(),
     keycardName: kpForPRocessing.getName(),
@@ -65,43 +65,43 @@ proc doMigration(self: CreatingAccountNewSeedPhraseState, controller: Controller
     keyUid: kpForPRocessing.getKeyUid())
   controller.addMigratedKeyPair(kpDto)
 
-proc runStoreMetadataFlow(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
+proc runStoreMetadataFlow(self: CreatingAccountOldSeedPhraseState, controller: Controller) =
   let kpForPRocessing = controller.getKeyPairForProcessing()
   controller.runStoreMetadataFlow(kpForPRocessing.getName(), controller.getPin(), self.paths)
 
-method executePrePrimaryStateCommand*(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+method executePrePrimaryStateCommand*(self: CreatingAccountOldSeedPhraseState, controller: Controller) =
+  if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
     self.resolvePaths(controller)
     controller.runDeriveAccountFlow(bip44Paths = self.paths, controller.getPin())
 
-method executePreSecondaryStateCommand*(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
+method executePreSecondaryStateCommand*(self: CreatingAccountOldSeedPhraseState, controller: Controller) =
   ## Secondary action is called after each async action during migration process, in this case after `addMigratedKeyPair`. 
-  if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+  if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
     if controller.getAddingMigratedKeypairSuccess():
       self.runStoreMetadataFlow(controller)
 
-method getNextSecondaryState*(self: CreatingAccountNewSeedPhraseState, controller: Controller): State =
-  if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+method getNextSecondaryState*(self: CreatingAccountOldSeedPhraseState, controller: Controller): State =
+  if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
     if not controller.getAddingMigratedKeypairSuccess():
-      return createState(StateType.CreatingAccountNewSeedPhraseFailure, self.flowType, nil)
+      return createState(StateType.CreatingAccountOldSeedPhraseFailure, self.flowType, nil)
 
-method resolveKeycardNextState*(self: CreatingAccountNewSeedPhraseState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: CreatingAccountOldSeedPhraseState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
   let state = ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
-  if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+  if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.ExportPublic:
         if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
           keycardEvent.error.len == 0:
             if not self.resolveAddresses(controller, keycardEvent):
-              return createState(StateType.CreatingAccountNewSeedPhraseFailure, self.flowType, nil)
+              return createState(StateType.CreatingAccountOldSeedPhraseFailure, self.flowType, nil)
             if not self.addAccountsToWallet(controller):
-              return createState(StateType.CreatingAccountNewSeedPhraseFailure, self.flowType, nil)
+              return createState(StateType.CreatingAccountOldSeedPhraseFailure, self.flowType, nil)
             self.doMigration(controller)
             return nil # returning nil, cause we need to remain in this state
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.StoreMetadata:
       if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
         keycardEvent.error.len == 0:
-          return createState(StateType.CreatingAccountNewSeedPhraseSuccess, self.flowType, nil)
-      return createState(StateType.CreatingAccountNewSeedPhraseFailure, self.flowType, nil)
+          return createState(StateType.CreatingAccountOldSeedPhraseSuccess, self.flowType, nil)
+      return createState(StateType.CreatingAccountOldSeedPhraseFailure, self.flowType, nil)

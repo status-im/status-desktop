@@ -12,6 +12,7 @@ method executeCancelCommand*(self: KeycardEmptyMetadataState, controller: Contro
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.CreateCopyOfAKeycard:
@@ -28,7 +29,8 @@ method executePrePrimaryStateCommand*(self: KeycardEmptyMetadataState, controlle
 method getNextPrimaryState*(self: KeycardEmptyMetadataState, controller: Controller): State =
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
       return createState(StateType.FactoryResetConfirmation, self.flowType, self)
   if self.flowType == FlowType.CreateCopyOfAKeycard:
     if isPredefinedKeycardDataFlagSet(controller.getKeycardData(), PredefinedKeycardData.CopyFromAKeycardPartDone):

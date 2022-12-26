@@ -22,6 +22,7 @@ QtObject {
         case Constants.keycardSharedState.changingKeycardPairingCode:
         case Constants.keycardSharedState.migratingKeyPair:
         case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
+        case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
         case Constants.keycardSharedState.copyingKeycard:
             return true
 
@@ -96,6 +97,34 @@ QtObject {
                     case Constants.keycardSharedState.factoryResetSuccess:
                     case Constants.keycardSharedState.pinVerified:
                     case Constants.keycardSharedState.keycardMetadataDisplay:
+                        return true
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.pluginReader:
+                    case Constants.keycardSharedState.readingKeycard:
+                    case Constants.keycardSharedState.insertKeycard:
+                    case Constants.keycardSharedState.keycardInserted:
+                    case Constants.keycardSharedState.recognizedKeycard:
+                    case Constants.keycardSharedState.keycardNotEmpty:
+                    case Constants.keycardSharedState.keycardEmptyMetadata:
+                    case Constants.keycardSharedState.notKeycard:
+                    case Constants.keycardSharedState.enterPin:
+                    case Constants.keycardSharedState.wrongPin:
+                    case Constants.keycardSharedState.createPin:
+                    case Constants.keycardSharedState.repeatPin:
+                    case Constants.keycardSharedState.maxPinRetriesReached:
+                    case Constants.keycardSharedState.maxPukRetriesReached:
+                    case Constants.keycardSharedState.maxPairingSlotsReached:
+                    case Constants.keycardSharedState.factoryResetConfirmation:
+                    case Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata:
+                    case Constants.keycardSharedState.factoryResetSuccess:
+                    case Constants.keycardSharedState.pinVerified:
+                    case Constants.keycardSharedState.keycardMetadataDisplay:
+                    case Constants.keycardSharedState.enterSeedPhrase:
+                    case Constants.keycardSharedState.seedPhraseAlreadyInUse:
                         return true
                     }
                     break
@@ -305,6 +334,7 @@ QtObject {
                 case Constants.keycardSharedState.readingKeycard:
                 case Constants.keycardSharedState.migratingKeyPair:
                 case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
+                case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
                 case Constants.keycardSharedState.renamingKeycard:
                 case Constants.keycardSharedState.changingKeycardPin:
                 case Constants.keycardSharedState.changingKeycardPuk:
@@ -385,6 +415,13 @@ QtObject {
                         return qsTr("Add another account")
                     }
                     break
+
+                case Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.manageKeycardAccounts:
+                        return qsTr("Add another account")
+                    }
+                    break
                 }
 
                 return ""
@@ -397,6 +434,7 @@ QtObject {
                 case Constants.keycardSharedState.readingKeycard:
                 case Constants.keycardSharedState.migratingKeyPair:
                 case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
+                case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
                 case Constants.keycardSharedState.renamingKeycard:
                 case Constants.keycardSharedState.changingKeycardPin:
                 case Constants.keycardSharedState.changingKeycardPuk:
@@ -432,6 +470,14 @@ QtObject {
                     break
 
                 case Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+
+                    case Constants.keycardSharedState.manageKeycardAccounts:
+                        return root.primaryButtonEnabled
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase:
                     switch (root.sharedKeycardModule.currentState.stateType) {
 
                     case Constants.keycardSharedState.manageKeycardAccounts:
@@ -550,6 +596,47 @@ QtObject {
                     case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
                     case Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess:
                     case Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure:
+                        return qsTr("Done")
+
+                    case Constants.keycardSharedState.manageKeycardAccounts:
+                        return qsTr("Finalise Keycard")
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.keycardNotEmpty:
+                        return qsTr("Check what is stored on this Keycard")
+
+                    case Constants.keycardSharedState.enterPin:
+                    case Constants.keycardSharedState.wrongPin:
+                        return qsTr("I don’t know the PIN")
+
+                    case Constants.keycardSharedState.factoryResetConfirmation:
+                    case Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata:
+                        return qsTr("Factory reset this Keycard")
+
+                    case Constants.keycardSharedState.keycardEmptyMetadata:
+                    case Constants.keycardSharedState.keycardMetadataDisplay:
+                    case Constants.keycardSharedState.factoryResetSuccess:
+                    case Constants.keycardSharedState.createPin:
+                    case Constants.keycardSharedState.repeatPin:
+                    case Constants.keycardSharedState.pinVerified:
+                    case Constants.keycardSharedState.pinSet:
+                    case Constants.keycardSharedState.enterKeycardName:
+                    case Constants.keycardSharedState.enterSeedPhrase:
+                        return qsTr("Next")
+
+                    case Constants.keycardSharedState.maxPinRetriesReached:
+                    case Constants.keycardSharedState.maxPukRetriesReached:
+                    case Constants.keycardSharedState.maxPairingSlotsReached:
+                        if (root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.disableSeedPhraseForUnlock)
+                            return qsTr("Unlock Keycard")
+                        return qsTr("Next")
+
+                    case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
+                    case Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess:
+                    case Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure:
                         return qsTr("Done")
 
                     case Constants.keycardSharedState.manageKeycardAccounts:
@@ -848,6 +935,7 @@ QtObject {
                 case Constants.keycardSharedState.readingKeycard:
                 case Constants.keycardSharedState.migratingKeyPair:
                 case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
+                case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
                 case Constants.keycardSharedState.renamingKeycard:
                 case Constants.keycardSharedState.changingKeycardPin:
                 case Constants.keycardSharedState.changingKeycardPuk:
@@ -889,6 +977,22 @@ QtObject {
                     case Constants.keycardSharedState.seedPhraseEnterWords:
                     case Constants.keycardSharedState.enterKeycardName:
                     case Constants.keycardSharedState.manageKeycardAccounts:
+                        return root.primaryButtonEnabled
+
+                    case Constants.keycardSharedState.createPin:
+                    case Constants.keycardSharedState.repeatPin:
+                        return false
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+
+                    case Constants.keycardSharedState.factoryResetConfirmation:
+                    case Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata:
+                    case Constants.keycardSharedState.enterKeycardName:
+                    case Constants.keycardSharedState.manageKeycardAccounts:
+                    case Constants.keycardSharedState.enterSeedPhrase:
                         return root.primaryButtonEnabled
 
                     case Constants.keycardSharedState.createPin:

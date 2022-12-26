@@ -57,9 +57,6 @@ proc newModule*[T](delegate: T,
   result.derivingAccountDetails.deriveAddressAfterAuthentication = false
   result.derivingAccountDetails.addressRequested = false
 
-## Forward declaration
-proc prepareKeyPairForProcessing[T](self: Module[T], keyUid: string, keycardUid = "")
-
 method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
@@ -132,8 +129,9 @@ method getMnemonic*[T](self: Module[T]): string =
     return
   if currStateObj.flowType() == FlowType.SetupNewKeycard:
     return self.controller.getProfileMnemonic()
-  if currStateObj.flowType() == FlowType.SetupNewKeycardNewSeedPhrase:
-    return self.controller.getSeedPhrase()
+  if currStateObj.flowType() == FlowType.SetupNewKeycardNewSeedPhrase or
+    currStateObj.flowType() == FlowType.SetupNewKeycardOldSeedPhrase:
+      return self.controller.getSeedPhrase()
 
 method setSeedPhrase*[T](self: Module[T], value: string) =
   self.controller.setSeedPhrase(value)
@@ -363,7 +361,7 @@ method setKeyPairForProcessing*[T](self: Module[T], item: KeyPairItem) =
     return
   self.view.setKeyPairForProcessing(item)
 
-proc prepareKeyPairForProcessing[T](self: Module[T], keyUid: string, keycardUid = "") =
+method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardUid = "") =
   var item = newKeyPairItem()
   let items = self.buildKeyPairsList(excludeAlreadyMigratedPairs = false)
   for it in items:
@@ -462,6 +460,10 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
   if flowToRun == FlowType.SetupNewKeycardNewSeedPhrase:
+    self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
+    self.controller.runLoadAccountFlow()
+    return
+  if flowToRun == FlowType.SetupNewKeycardOldSeedPhrase:
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runLoadAccountFlow()
     return

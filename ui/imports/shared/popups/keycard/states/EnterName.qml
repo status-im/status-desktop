@@ -32,7 +32,8 @@ Item {
     }
 
     Component.onCompleted: {
-        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase) {
+        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
+                root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
             if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterKeycardName) {
                 if (root.sharedKeycardModule.keyPairForProcessing.name.trim() !== "") {
                     d.updateValidity()

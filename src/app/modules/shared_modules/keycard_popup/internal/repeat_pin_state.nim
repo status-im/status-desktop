@@ -16,7 +16,8 @@ method executePreSecondaryStateCommand*(self: RepeatPinState, controller: Contro
   if not controller.getPinMatch():
     return
   if self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
       controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())
   if self.flowType == FlowType.UnlockKeycard:
     controller.storePinToKeycard(controller.getPin(), "")      
@@ -30,6 +31,7 @@ method getNextSecondaryState*(self: RepeatPinState, controller: Controller): Sta
 method executeCancelCommand*(self: RepeatPinState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.ChangeKeycardPin:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
@@ -50,6 +52,16 @@ method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, k
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorLoadingKeys:
         controller.buildSeedPhrasesFromIndexes(keycardEvent.seedPhraseIndexes)
+        return createState(StateType.PinSet, self.flowType, nil)
+  if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+      keycardEvent.keyUid.len > 0:
+        controller.setKeycardUid(keycardEvent.instanceUID)
+        var item = newKeyPairItem(keyUid = keycardEvent.keyUid)
+        item.setIcon("keycard")
+        item.setPairType(KeyPairType.SeedImport.int)
+        item.addAccount(newKeyPairAccountItem())
+        controller.setKeyPairForProcessing(item)
         return createState(StateType.PinSet, self.flowType, nil)
   if self.flowType == FlowType.UnlockKeycard:
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.GetMetadata:
