@@ -65,6 +65,7 @@ StatusModal {
 
         StatusInput {
             id: messageInput
+            input.edit.objectName: "ProfileSendContactRequestModal_sayWhoYouAreInput"
             Layout.fillWidth: true
             charLimit: d.maxMsgLength
             placeholderText: root.challengeText
@@ -82,6 +83,7 @@ StatusModal {
     }
 
     rightButtons: StatusButton {
+        objectName: "ProfileSendContactRequestModal_sendContactRequestButton"
         enabled: messageInput.valid
         text: root.buttonText
         onClicked: {

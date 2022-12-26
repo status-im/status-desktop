@@ -18,8 +18,8 @@ splashScreen = {"container": statusDesktop_mainWindow, "objectName": "splashScre
 mainWindow_StatusToolBar = {"container": statusDesktop_mainWindow, "objectName": "statusToolBar", "type": "StatusToolBar", "visible": True}
 main_toolBar_back_button = {"container": mainWindow_StatusToolBar, "objectName": "toolBarBackButton", "type": "StatusFlatButton", "visible": True}
 mainWindow_emptyChatPanelImage = {"container": statusDesktop_mainWindow, "objectName": "emptyChatPanelImage", "type": "Image", "visible": True}
+viewProfile_MenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "viewProfileMenuItem", "type": "StatusMenuItem", "visible": True}
 mainWindow_ContactsColumn_Messages_Headline = {"container": statusDesktop_mainWindow, "objectName": "ContactsColumnView_MessagesHeadline", "type": "StatusNavigationPanelHeadline"}
-
 
 # main right panel
 mainWindow_RighPanel= {"container": statusDesktop_mainWindow, "type": "ColumnLayout", "objectName": "mainRightView", "visible": True}
@@ -54,3 +54,4 @@ chatButtonsPanelConfirmDeleteMessageButton_StatusButton = {"container": statusDe
 ProfileHeader_userImage = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileHeader_userImage", "type": "UserImage", "visible": True}
 ProfilePopup_displayName = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileDialog_displayName", "type": "StatusBaseText", "visible": True}
 ProfilePopup_editButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "editProfileButton", "type": "StatusButton", "visible": True}
+ProfilePopup_SendContactRequestButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "profileDialog_sendContactRequestButton", "type": "StatusButton", "visible": True}

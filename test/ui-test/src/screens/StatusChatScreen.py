@@ -44,6 +44,7 @@ class ChatComponents(Enum):
     CHAT_LOG = "chatView_log"
     LAST_MESSAGE_TEXT = "chatView_lastChatText_Text"
     LAST_MESSAGE = "chatView_chatLogView_lastMsg_MessageView"
+    MESSAGE_DISPLAY_NAME = "StatusMessageHeader_DisplayName"
     MEMBERS_LISTVIEW = "chatView_chatMembers_ListView"
     CONFIRM_DELETE_MESSAGE_BUTTON = "chatButtonsPanelConfirmDeleteMessageButton_StatusButton"
     SUGGESTIONS_BOX = "chatView_SuggestionBoxPanel"
@@ -94,6 +95,9 @@ class ChatMessageHoverMenu(Enum):
     REPLY_TO_BUTTON = "replyToMessageButton"
     EDIT_BUTTON = "editMessageButton"
     DELETE_BUTTON = "chatDeleteMessageButton"
+
+class ProfileMenu(Enum):
+    VIEW_PROFILE_MENU_ITEM = "viewProfile_MenuItem"
     
 class Emoji(Enum):
     EMOJI_SUGGESTIONS_FIRST_ELEMENT = "emojiSuggestions_first_inputListRectangle"
@@ -200,6 +204,14 @@ class StatusChatScreen:
         move_mouse_over_object(found_reply_to_button)
         click_obj(found_reply_to_button)
         self.send_message(message)
+        
+    def open_user_profile_from_message_at_index(self, index: int):
+        message_object = self.get_message_at_index(index)
+        verify(not is_null(message_object), "Message to click on is loaded")
+        message_display_name = get_children_with_object_name(message_object, ChatComponents.MESSAGE_DISPLAY_NAME.value)[0]
+        verify(not is_null(message_display_name), "Message display name found")
+        right_click_obj(message_display_name)
+        click_obj_by_name(ProfileMenu.VIEW_PROFILE_MENU_ITEM.value)
     
     def edit_message_at_index(self, index: int, message: str):
         message_object_to_edit = wait_and_get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))

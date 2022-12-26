@@ -112,6 +112,10 @@ contactRequest_Send_Button = {"container": statusDesktop_mainWindow, "objectName
 contactRequest_PendingRequests_Button = {"container": statusDesktop_mainWindow, "objectName": "ContactsView_PendingRequest_Button", "type": "StatusTabButton"}
 sentRequests_ContactsListPanel = {"container": settingsContentBase_ScrollView, "objectName": "sentRequests_ContactsListPanel", "type": "ContactsListPanel"}
 sentRequests_contactListPanel_ListView = {"container": sentRequests_ContactsListPanel, "objectName": "ContactListPanel_ListView", "type": "StatusListView"}
+receivedRequests_ContactsListPanel = {"container": settingsContentBase_ScrollView, "objectName": "receivedRequests_ContactsListPanel", "type": "ContactsListPanel"}
+receivedRequests_contactListPanel_ListView = {"container": receivedRequests_ContactsListPanel, "objectName": "ContactListPanel_ListView", "type": "StatusListView"}
+ProfilePopup_SayWhoYouAre_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sayWhoYouAreInput", "type": "TextEdit"}
+ProfilePopup_SendContactRequest_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sendContactRequestButton", "type": "StatusButton"}
 
 # Communities Settings:
 settings_Communities_MainView_LeaveCommunityButtons = {"container": statusDesktop_mainWindow, "objectName":"CommunitiesListPanel_leaveCommunityPopupButton", "type": "StatusBaseButton", "visible": True}

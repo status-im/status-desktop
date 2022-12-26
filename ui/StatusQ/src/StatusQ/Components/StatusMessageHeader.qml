@@ -41,6 +41,7 @@ Item {
         spacing: 4
         StatusBaseText {
             id: primaryDisplayName
+            objectName: "StatusMessageHeader_DisplayName"
             verticalAlignment: Text.AlignVCenter
             Layout.bottomMargin: 2 // offset for the underline to stay vertically centered
             font.weight: Font.Medium

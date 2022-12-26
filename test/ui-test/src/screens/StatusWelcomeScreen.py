@@ -26,6 +26,8 @@ class AgreementPopUp(Enum):
 class SignUpComponents(Enum):
     NEW_TO_STATUS: str = "mainWindow_I_am_new_to_Status_StatusBaseText"
     GENERATE_NEW_KEYS: str = "keysMainView_PrimaryAction_Button"
+    ADD_NEW_USER_MENU_ITEM: str = "accountsView_addNewUser_MenuItem"
+    CHANGE_ACCOUNT_BTN = "loginView_changeAccountBtn"
     USERNAME_INPUT: str = "onboarding_DiplayName_Input"
     DETAILS_NEXT_BUTTON: str = "onboarding_DetailsView_NextButton"
     WELCOME_TO_STATUS: str = "mainWindow_Welcome_to_Status_StyledText"
@@ -79,7 +81,15 @@ class StatusWelcomeScreen:
         self.agree_terms_and_conditions()
         time.sleep(1)
         click_obj_by_name(SignUpComponents.GENERATE_NEW_KEYS.value)
-        
+
+    def generate_new_key(self):
+        self.open_accounts_selector_popup()
+        click_obj_by_name(SignUpComponents.ADD_NEW_USER_MENU_ITEM.value)
+        click_obj_by_name(SignUpComponents.GENERATE_NEW_KEYS.value)
+
+    def open_accounts_selector_popup(self):
+        return click_obj_by_name(SignUpComponents.CHANGE_ACCOUNT_BTN.value)
+
     def agree_terms_conditions_and_navigate_to_import_seed_phrase(self):
         self.agree_terms_and_conditions()
         click_obj_by_name(SeedPhraseComponents.IMPORT_A_SEED_TEXT.value)
