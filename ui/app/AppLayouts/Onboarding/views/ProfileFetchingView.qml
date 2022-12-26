@@ -24,6 +24,12 @@ Item {
         property int counter: d.timeout
     }
 
+    onStateChanged: {
+        if (root.startupStore.currentStartupState.stateType === Constants.startupState.profileFetching) {
+            d.counter = d.timeout
+        }
+    }
+
     ColumnLayout {
         anchors.centerIn: parent
         height: Constants.keycard.general.onboardingHeight

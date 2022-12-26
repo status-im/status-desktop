@@ -1,5 +1,6 @@
 import NimQml, os, json, chronicles
 
+import ../../../backend/mailservers as status_mailservers
 import ../../../backend/general as status_general
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
@@ -85,3 +86,11 @@ QtObject:
       self.events.emit(SIGNAL_GENERAL_TIMEOUT, Args())
     else:
       self.runTimer()  
+
+  proc fetchWakuMessages*(self: Service) =
+    try:
+      let response =  status_mailservers.requestAllHistoricMessages()
+      if(not response.error.isNil):
+        error "could not set display name"
+    except Exception as e:
+      error "error: ", procName="fetchWakuMessages", errName = e.name, errDesription = e.msg

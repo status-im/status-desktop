@@ -330,6 +330,14 @@ proc delayStartingApp[T](self: Module[T]) =
   ## we want to delay app start just to be sure that messages from waku will be received
   self.controller.connectToTimeoutEventAndStratTimer(timeoutInMilliseconds = 30000) # delay for 30 seconds
 
+method startAppAfterDelay*[T](self: Module[T]) =
+  let currStateObj = self.view.currentStartupStateObj()
+  if currStateObj.isNil:
+    error "cannot determine current startup state"
+    quit() # quit the app
+  self.view.setCurrentStartupState(newProfileFetchingState(currStateObj.flowType(), nil))
+  self.moveToStartupState()
+
 proc logoutAndDisplayError[T](self: Module[T], error: string) =
   self.delegate.logout()
   self.moveToStartupState()
@@ -346,7 +354,6 @@ method onNodeLogin*[T](self: Module[T], error: string) =
       currStateObj.flowType() == FlowType.FirstRunOldUserKeycardImport:
         self.prepareAndInitFetchingData()
         self.controller.connectToFetchingFromWakuEvents()
-        self.view.setCurrentStartupState(newProfileFetchingState(currStateObj.flowType(), nil))
         self.delayStartingApp()
         let err = self.delegate.userLoggedIn()
         if err.len > 0:

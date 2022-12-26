@@ -109,7 +109,7 @@ proc connectToFetchingFromWakuEvents*(self: Controller) =
 
 proc connectToTimeoutEventAndStratTimer*(self: Controller, timeoutInMilliseconds: int) =
   var handlerId = self.events.onWithUUID(SIGNAL_GENERAL_TIMEOUT) do(e: Args):
-    self.delegate.moveToStartupState()
+    self.delegate.startAppAfterDelay()
   self.connectionIds.add(handlerId)
   self.generalService.runTimer(timeoutInMilliseconds)
 
@@ -189,6 +189,9 @@ proc generateImage*(self: Controller, imageUrl: string, aX: int, aY: int, bX: in
     if(img.imgType == "large"):
       self.tmpProfileImageDetails = ProfileImageDetails(url: imageUrl, croppedImage: img.uri, x1: aX, y1: aY, x2: bX, y2: bY)
       return img.uri
+
+proc fetchWakuMessages*(self: Controller) = 
+  self.generalService.fetchWakuMessages()
 
 proc getCroppedProfileImage*(self: Controller): string =
   return self.tmpProfileImageDetails.croppedImage

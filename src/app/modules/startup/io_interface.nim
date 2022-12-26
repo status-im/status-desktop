@@ -154,6 +154,9 @@ method finishAppLoading*(self: AccessInterface) {.base.} =
 method checkFetchingStatusAndProceedWithAppLoading*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method startAppAfterDelay*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c
