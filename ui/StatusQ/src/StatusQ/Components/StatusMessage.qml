@@ -140,12 +140,6 @@ Control {
                 return Theme.palette.pinColor3;
             return "transparent";
         }
-    }
-
-    contentItem: Item {
-
-        implicitWidth: messageLayout.implicitWidth
-        implicitHeight: messageLayout.implicitHeight
 
         Rectangle {
             anchors {
@@ -168,6 +162,13 @@ Control {
             visible: root.hasMention
             color: Theme.palette.mentionColor1
         }
+    }
+
+    contentItem: Item {
+
+        implicitWidth: messageLayout.implicitWidth
+        implicitHeight: messageLayout.implicitHeight
+
 
         SequentialAnimation {
             id: messageFoundAnimation
