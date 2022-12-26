@@ -162,12 +162,18 @@ method addChatMember*(self: Module,  member: ChatMember) =
     ))
 
 method onChatMembersAdded*(self: Module,  ids: seq[string]) =
+  let members = self.controller.getChatMembers()
   for id in ids:
-    self.addChatMember(self.controller.getChatMember(id))
+    for member in members:
+      if (member.id == id):
+        self.addChatMember(member)
 
 method onChatUpdated*(self: Module,  chat: ChatDto) =
+  let members = self.controller.getChatMembers()
   for member in chat.members:
-    self.addChatMember(self.controller.getChatMember(member.id))
+    for existingMember in members:
+      if existingMember.id == member.id:
+        self.addChatMember(member)
 
   if chat.members.len > 0:
     let ids = self.view.model.getItemIds()
