@@ -431,7 +431,7 @@ StatusMenu {
 
     StatusAction {
         id: deleteMessageAction
-        enabled: root.isMyMessage &&
+        enabled: (root.isMyMessage || root.amIChatAdmin) &&
                  !root.isProfile &&
                  !root.isEmoji &&
                  !root.pinnedPopup &&

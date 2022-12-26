@@ -57,7 +57,7 @@ Item {
                 return
             }
 
-            if (chatDetails.active && chatDetails.hasUnreadMessages && !messageStore.messageSearchOngoing) {
+            if (chatDetails && chatDetails.active && chatDetails.hasUnreadMessages && !messageStore.messageSearchOngoing) {
                 chatContentModule.markAllMessagesRead()
             }
         }

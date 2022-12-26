@@ -46,6 +46,7 @@ Loader {
     property bool senderIsEnsVerified: false
     property string senderIcon: ""
     property bool amISender: false
+    property bool amIChatAdmin: messageStore && messageStore.amIChatAdmin()
     property bool senderIsAdded: false
     property int senderTrustStatus: Constants.trustStatus.unknown
     property string messageText: ""
@@ -133,7 +134,7 @@ Loader {
         }
 
         messageContextMenu.myPublicKey = userProfile.pubKey
-        messageContextMenu.amIChatAdmin = messageStore.amIChatAdmin()
+        messageContextMenu.amIChatAdmin = root.amIChatAdmin
         messageContextMenu.pinMessageAllowedForMembers = messageStore.pinMessageAllowedForMembers()
         messageContextMenu.chatType = messageStore.getChatType()
 
@@ -333,7 +334,7 @@ Loader {
             chatType: root.messageStore.getChatType()
             chatColor: root.messageStore.getChatColor()
             chatEmoji: root.channelEmoji
-            amIChatAdmin: root.messageStore.amIChatAdmin()
+            amIChatAdmin: root.amIChatAdmin
             chatIcon: {
                 if ((root.messageStore.getChatType() === Constants.chatType.privateGroupChat) &&
                      root.messageStore.getChatIcon() !== "") {
@@ -838,12 +839,11 @@ Loader {
                                 return false
 
                             const chatType = root.messageStore.getChatType();
-                            const amIChatAdmin = root.messageStore.amIChatAdmin();
                             const pinMessageAllowedForMembers = root.messageStore.pinMessageAllowedForMembers()
 
                             return chatType === Constants.chatType.oneToOne ||
-                                    chatType === Constants.chatType.privateGroupChat && amIChatAdmin ||
-                                    chatType === Constants.chatType.communityChat && (amIChatAdmin || pinMessageAllowedForMembers);
+                                    chatType === Constants.chatType.privateGroupChat && root.amIChatAdmin ||
+                                    chatType === Constants.chatType.communityChat && (root.amIChatAdmin || pinMessageAllowedForMembers);
 
                         }
                         sourceComponent: StatusFlatRoundButton {
@@ -884,9 +884,8 @@ Loader {
                                 return false;
                             if (!root.messageStore)
                                 return false;
-                            const isMyMessage = senderId !== "" && senderId === userProfile.pubKey;
                             const chatType = root.messageStore.getChatType();
-                            return isMyMessage &&
+                            return (root.amISender || root.amIChatAdmin) &&
                                     (messageContentType === Constants.messageContentType.messageType ||
                                      messageContentType === Constants.messageContentType.stickerType ||
                                      messageContentType === Constants.messageContentType.emojiType ||
