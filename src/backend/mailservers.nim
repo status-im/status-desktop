@@ -29,3 +29,6 @@ proc fillGaps*(chatId: string, messageIds: seq[string]): RpcResponse[JsonNode] {
   let payload = %*[chatId, messageIds]
   result = core.callPrivateRPC("fillGaps".prefix, payload)
   info "fillGaps", topics="mailserver-interaction", rpc_method="wakuext_fillGaps", chatId, messageIds, result
+
+proc requestAllHistoricMessages*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = core.callPrivateRPC("requestAllHistoricMessages".prefix)

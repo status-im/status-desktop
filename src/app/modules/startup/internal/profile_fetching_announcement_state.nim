@@ -11,7 +11,12 @@ proc delete*(self: ProfileFetchingAnnouncementState) =
 method executePrimaryCommand*(self: ProfileFetchingAnnouncementState, controller: Controller) =
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
     self.flowType == FlowType.FirstRunOldUserKeycardImport:
-      echo "TODO: Try to fetch profile again..."
+      controller.fetchWakuMessages()
+
+method getNextPrimaryState*(self: ProfileFetchingAnnouncementState, controller: Controller): State =
+  if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
+    self.flowType == FlowType.FirstRunOldUserKeycardImport:
+      return createState(StateType.ProfileFetching, self.flowType, nil)
 
 method getNextSecondaryState*(self: ProfileFetchingAnnouncementState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
