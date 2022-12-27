@@ -27,7 +27,8 @@ method getNextSecondaryState*(self: RecognizedKeycardState, controller: Controll
     return createState(StateType.EnterSeedPhrase, self.flowType, nil)
   if self.flowType == FlowType.UnlockKeycard:
     return createState(StateType.UnlockKeycardOptions, self.flowType, nil)
-  if self.flowType == FlowType.DisplayKeycardContent or
+  if self.flowType == FlowType.ImportFromKeycard or 
+    self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
     self.flowType == FlowType.ChangeKeycardPuk or

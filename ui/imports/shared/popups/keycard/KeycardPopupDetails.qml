@@ -23,6 +23,7 @@ QtObject {
         case Constants.keycardSharedState.migratingKeyPair:
         case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
         case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
+        case Constants.keycardSharedState.importingFromKeycard:
         case Constants.keycardSharedState.copyingKeycard:
             return true
 
@@ -124,7 +125,25 @@ QtObject {
                     case Constants.keycardSharedState.pinVerified:
                     case Constants.keycardSharedState.keycardMetadataDisplay:
                     case Constants.keycardSharedState.enterSeedPhrase:
-                    case Constants.keycardSharedState.seedPhraseAlreadyInUse:
+                        return true
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.importFromKeycard:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.pluginReader:
+                    case Constants.keycardSharedState.readingKeycard:
+                    case Constants.keycardSharedState.insertKeycard:
+                    case Constants.keycardSharedState.keycardInserted:
+                    case Constants.keycardSharedState.recognizedKeycard:
+                    case Constants.keycardSharedState.enterPin:
+                    case Constants.keycardSharedState.wrongPin:
+                    case Constants.keycardSharedState.notKeycard:
+                    case Constants.keycardSharedState.pinVerified:
+                    case Constants.keycardSharedState.maxPinRetriesReached:
+                    case Constants.keycardSharedState.maxPukRetriesReached:
+                    case Constants.keycardSharedState.maxPairingSlotsReached:
+                    case Constants.keycardSharedState.keycardMetadataDisplay:
                         return true
                     }
                     break
@@ -335,6 +354,7 @@ QtObject {
                 case Constants.keycardSharedState.migratingKeyPair:
                 case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
                 case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
+                case Constants.keycardSharedState.importingFromKeycard:
                 case Constants.keycardSharedState.renamingKeycard:
                 case Constants.keycardSharedState.changingKeycardPin:
                 case Constants.keycardSharedState.changingKeycardPuk:
@@ -420,6 +440,19 @@ QtObject {
                     switch (root.sharedKeycardModule.currentState.stateType) {
                     case Constants.keycardSharedState.manageKeycardAccounts:
                         return qsTr("Add another account")
+
+                    case Constants.keycardSharedState.seedPhraseAlreadyInUse:
+                        return qsTr("View accounts in Wallet")
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.importFromKeycard:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+                    case Constants.keycardSharedState.seedPhraseAlreadyInUse:
+                        return qsTr("View accounts in Wallet")
+
+                    case Constants.keycardSharedState.importingFromKeycardSuccess:
+                        return qsTr("View imported accounts in Wallet")
                     }
                     break
                 }
@@ -435,6 +468,7 @@ QtObject {
                 case Constants.keycardSharedState.migratingKeyPair:
                 case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
                 case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
+                case Constants.keycardSharedState.importingFromKeycard:
                 case Constants.keycardSharedState.renamingKeycard:
                 case Constants.keycardSharedState.changingKeycardPin:
                 case Constants.keycardSharedState.changingKeycardPuk:
@@ -637,10 +671,46 @@ QtObject {
                     case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
                     case Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess:
                     case Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure:
+                    case Constants.keycardSharedState.seedPhraseAlreadyInUse:
                         return qsTr("Done")
 
                     case Constants.keycardSharedState.manageKeycardAccounts:
                         return qsTr("Finalise Keycard")
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.importFromKeycard:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+
+                    case Constants.keycardSharedState.keycardEmpty:
+                    case Constants.keycardSharedState.keycardEmptyMetadata:
+                    case Constants.keycardSharedState.seedPhraseAlreadyInUse:
+                        return qsTr("Done")
+
+                    case Constants.keycardSharedState.keycardMetadataDisplay:
+                        return qsTr("Name accounts")
+
+                    case Constants.keycardSharedState.wrongPin:
+                        return qsTr("I don’t know the PIN")
+
+                    case Constants.keycardSharedState.pinVerified:
+                        return qsTr("Next")
+
+                    case Constants.keycardSharedState.maxPinRetriesReached:
+                    case Constants.keycardSharedState.maxPukRetriesReached:
+                    case Constants.keycardSharedState.maxPairingSlotsReached:
+                        return qsTr("Unlock Keycard")
+
+                    case Constants.keycardSharedState.manageKeycardAccounts:
+                        if (root.sharedKeycardModule.keyPairHelper.accounts.count === root.sharedKeycardModule.keyPairForProcessing.accounts.count) {
+                            return qsTr("Finalise import")
+                        }
+                        return qsTr("Next account")
+
+                    case Constants.keycardSharedState.importingFromKeycard:
+                    case Constants.keycardSharedState.importingFromKeycardSuccess:
+                    case Constants.keycardSharedState.importingFromKeycardFailure:
+                        return qsTr("Done")
                     }
                     break
 
@@ -936,6 +1006,7 @@ QtObject {
                 case Constants.keycardSharedState.migratingKeyPair:
                 case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
                 case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
+                case Constants.keycardSharedState.importingFromKeycard:
                 case Constants.keycardSharedState.renamingKeycard:
                 case Constants.keycardSharedState.changingKeycardPin:
                 case Constants.keycardSharedState.changingKeycardPuk:
@@ -998,6 +1069,14 @@ QtObject {
                     case Constants.keycardSharedState.createPin:
                     case Constants.keycardSharedState.repeatPin:
                         return false
+                    }
+                    break
+
+                case Constants.keycardSharedFlow.importFromKeycard:
+                    switch (root.sharedKeycardModule.currentState.stateType) {
+
+                    case Constants.keycardSharedState.manageKeycardAccounts:
+                        return root.primaryButtonEnabled
                     }
                     break
 

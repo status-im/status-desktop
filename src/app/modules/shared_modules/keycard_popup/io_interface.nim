@@ -51,6 +51,7 @@ type FlowType* {.pure.} = enum
   SetupNewKeycard = "SetupNewKeycard"
   SetupNewKeycardNewSeedPhrase = "SetupNewKeycardNewSeedPhrase"
   SetupNewKeycardOldSeedPhrase = "SetupNewKeycardOldSeedPhrase"
+  ImportFromKeycard = "ImportFromKeycard"
   Authentication = "Authentication"
   UnlockKeycard = "UnlockKeycard"
   DisplayKeycardContent = "DisplayKeycardContent"
@@ -147,7 +148,13 @@ method setSelectedKeyPair*(self: AccessInterface, item: KeyPairItem) {.base.} =
 method getKeyPairForProcessing*(self: AccessInterface): KeyPairItem {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getKeyPairHelper*(self: AccessInterface): KeyPairItem {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method updateKeyPairForProcessing*(self: AccessInterface, cardMetadata: CardMetadata) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateKeyPairHelper*(self: AccessInterface, cardMetadata: CardMetadata) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setKeyPairForProcessing*(self: AccessInterface, item: KeyPairItem) {.base.} =

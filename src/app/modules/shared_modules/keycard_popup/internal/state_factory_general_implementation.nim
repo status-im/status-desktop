@@ -77,6 +77,12 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newFactoryResetConfirmationState(flowType, backState)
   if stateToBeCreated == StateType.FactoryResetSuccess:
     return newFactoryResetSuccessState(flowType, backState)
+  if stateToBeCreated == StateType.ImportingFromKeycard:
+    return newImportingFromKeycardState(flowType, backState)
+  if stateToBeCreated == StateType.ImportingFromKeycardFailure:
+    return newImportingFromKeycardFailureState(flowType, backState)
+  if stateToBeCreated == StateType.ImportingFromKeycardSuccess:
+    return newImportingFromKeycardSuccessState(flowType, backState)
   if stateToBeCreated == StateType.InsertKeycard:
     return newInsertKeycardState(flowType, backState)
   if stateToBeCreated == StateType.KeyPairMigrateFailure:

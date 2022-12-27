@@ -102,6 +102,7 @@ QtObject {
         readonly property string setupNewKeycard: "SetupNewKeycard"
         readonly property string setupNewKeycardNewSeedPhrase: "SetupNewKeycardNewSeedPhrase"
         readonly property string setupNewKeycardOldSeedPhrase: "SetupNewKeycardOldSeedPhrase"
+        readonly property string importFromKeycard: "ImportFromKeycard"
         readonly property string authentication: "Authentication"
         readonly property string unlockKeycard: "UnlockKeycard"
         readonly property string displayKeycardContent: "DisplayKeycardContent"
@@ -189,6 +190,9 @@ QtObject {
         readonly property string creatingAccountOldSeedPhrase: "CreatingAccountOldSeedPhrase"
         readonly property string creatingAccountOldSeedPhraseSuccess: "CreatingAccountOldSeedPhraseSuccess"
         readonly property string creatingAccountOldSeedPhraseFailure: "CreatingAccountOldSeedPhraseFailure"
+        readonly property string importingFromKeycard: "ImportingFromKeycard"
+        readonly property string importingFromKeycardSuccess: "ImportingFromKeycardSuccess"
+        readonly property string importingFromKeycardFailure: "ImportingFromKeycardFailure"
     }
 
     readonly property QtObject keycardAnimations: QtObject {

@@ -17,7 +17,7 @@ import StatusQ.Core.Theme 0.1
    \qml
     StatusStepper {
         width: 400
-        title: "Account %1 of %2"
+        title: "Account %1 of %2".arg(completedSteps).arg(totalSteps)
         totalSteps: 6
         completedSteps: 1
     }
@@ -31,8 +31,7 @@ import StatusQ.Core.Theme 0.1
 Item {
     id: root
 
-    /// Expected formatted text with %1 place marker for completed steps and %2 place marker for total steps count.
-    property string title: ""
+    property alias title: title.text
     property int titleFontSize: 12
     property color titleColor: Theme.palette.baseColor1
     property int totalSteps: 1
@@ -59,11 +58,11 @@ Item {
         spacing: 8
 
         StatusBaseText {
+            id: title
             width: parent.width
             horizontalAlignment: Qt.AlignHCenter
             color: root.titleColor
             font.pixelSize: root.titleFontSize
-            text: root.title.arg(root.completedSteps).arg(root.totalSteps)
         }
 
         Row {

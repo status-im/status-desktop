@@ -65,7 +65,7 @@ Rectangle {
             wrapMode: Text.WordWrap
         }
 
-        ListView {
+        StatusListView {
             id: accounts
             Layout.fillWidth: true
             Layout.fillHeight: true

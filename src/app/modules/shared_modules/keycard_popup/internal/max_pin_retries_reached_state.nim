@@ -15,9 +15,10 @@ method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Control
     self.flowType == FlowType.ChangePairingCode or
     self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.runSharedModuleFlow(FlowType.UnlockKeycard, controller.getKeyPairForProcessing().getKeyUid())
-  if self.flowType == FlowType.DisplayKeycardContent:
-    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
-    controller.runSharedModuleFlow(FlowType.UnlockKeycard)
+  if self.flowType == FlowType.ImportFromKeycard or 
+    self.flowType == FlowType.DisplayKeycardContent:
+      controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
+      controller.runSharedModuleFlow(FlowType.UnlockKeycard)
   if self.flowType == FlowType.FactoryReset or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
@@ -39,6 +40,7 @@ method executeCancelCommand*(self: MaxPinRetriesReachedState, controller: Contro
     self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
   if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or

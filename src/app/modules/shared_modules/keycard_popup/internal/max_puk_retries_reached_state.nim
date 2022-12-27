@@ -14,7 +14,8 @@ method getNextPrimaryState*(self: MaxPukRetriesReachedState, controller: Control
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
       return createState(StateType.FactoryResetConfirmation, self.flowType, self)
-  if self.flowType == FlowType.Authentication or
+  if self.flowType == FlowType.ImportFromKeycard or 
+    self.flowType == FlowType.Authentication or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or
@@ -30,6 +31,7 @@ method executeCancelCommand*(self: MaxPukRetriesReachedState, controller: Contro
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
+    self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.DisplayKeycardContent or

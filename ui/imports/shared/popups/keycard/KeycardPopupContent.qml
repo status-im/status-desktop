@@ -37,6 +37,9 @@ Item {
             case Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess:
             case Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure:
             case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
+            case Constants.keycardSharedState.importingFromKeycardSuccess:
+            case Constants.keycardSharedState.importingFromKeycardFailure:
+            case Constants.keycardSharedState.importingFromKeycard:
             case Constants.keycardSharedState.keycardRenameSuccess:
             case Constants.keycardSharedState.keycardRenameFailure:
             case Constants.keycardSharedState.renamingKeycard:

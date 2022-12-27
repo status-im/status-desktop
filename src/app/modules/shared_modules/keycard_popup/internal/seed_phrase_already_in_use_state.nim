@@ -9,6 +9,18 @@ proc newSeedPhraseAlreadyInUseState*(flowType: FlowType, backState: State): Seed
 proc delete*(self: SeedPhraseAlreadyInUseState) =
   self.State.delete
 
+method executePrePrimaryStateCommand*(self: SeedPhraseAlreadyInUseState, controller: Controller) =
+  if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
+    self.flowType == FlowType.ImportFromKeycard:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+
+method executePreSecondaryStateCommand*(self: SeedPhraseAlreadyInUseState, controller: Controller) =
+  if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
+    self.flowType == FlowType.ImportFromKeycard:
+      controller.switchToWalletSection()
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+
 method executeCancelCommand*(self: SeedPhraseAlreadyInUseState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
+    self.flowType == FlowType.ImportFromKeycard:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)

@@ -10,6 +10,7 @@ proc delete*(self: KeycardEmptyState) =
 
 method executePrePrimaryStateCommand*(self: KeycardEmptyState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
@@ -22,6 +23,7 @@ method executePrePrimaryStateCommand*(self: KeycardEmptyState, controller: Contr
 
 method executeCancelCommand*(self: KeycardEmptyState, controller: Controller) =
   if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
