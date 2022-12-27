@@ -85,7 +85,7 @@ StatusModal {
         enabled: messageInput.valid
         text: root.buttonText
         onClicked: {
-            root.accepted(Utils.escapeHtml(messageInput.text));
+            root.accepted(messageInput.text);
             root.close();
         }
     }
