@@ -46,7 +46,7 @@ Item {
         StatusStepper {
             id: stepper
             width: 400
-            title: "Account %1 of %2"
+            title: "Account %1 of %2".arg(completedSteps).arg(totalSteps)
             totalSteps: totalSteps.value
             completedSteps: completedSteps.value
         }

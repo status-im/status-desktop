@@ -15,6 +15,21 @@ method getNextPrimaryState*(self: ManageKeycardAccountsState, controller: Contro
     return createState(StateType.CreatingAccountNewSeedPhrase, self.flowType, nil)
   if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
     return createState(StateType.CreatingAccountOldSeedPhrase, self.flowType, nil)
+  if self.flowType == FlowType.ImportFromKeycard:
+    let numOfProcessedAccounts = controller.getKeyPairForProcessing().getAccountsModel().getCount()
+    let totalNumOfAccountsToBeProcessed = controller.getKeyPairHelper().getAccountsModel().getCount()
+    if numOfProcessedAccounts < totalNumOfAccountsToBeProcessed:
+      let accountItem = controller.getKeyPairHelper().getAccountsModel().getItemAtIndex(numOfProcessedAccounts) # numOfProcessedAccounts is index of next acc which need to be processed
+      if accountItem.isNil:
+        # should never be here
+        return createState(StateType.ImportingFromKeycardFailure, self.flowType, nil)
+      controller.getKeyPairForProcessing().addAccount(newKeyPairAccountItem(name = "", 
+        path = accountItem.getPath(), 
+        address = accountItem.getAddress(),
+        pubKey = accountItem.getPubKey()
+      ))
+    elif numOfProcessedAccounts == totalNumOfAccountsToBeProcessed:
+      return createState(StateType.ImportingFromKeycard, self.flowType, nil)
 
 method executePreSecondaryStateCommand*(self: ManageKeycardAccountsState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
@@ -23,5 +38,6 @@ method executePreSecondaryStateCommand*(self: ManageKeycardAccountsState, contro
 
 method executeCancelCommand*(self: ManageKeycardAccountsState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
-    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
+    self.flowType == FlowType.ImportFromKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

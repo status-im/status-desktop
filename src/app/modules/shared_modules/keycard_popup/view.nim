@@ -12,6 +12,8 @@ QtObject:
       keyPairModel: KeyPairModel
       keyPairModelVariant: QVariant
       keyPairStoredOnKeycardIsKnown: bool
+      keyPairHelper: KeyPairItem
+      keyPairHelperVariant: QVariant
       keyPairForProcessing: KeyPairItem
       keyPairForProcessingVariant: QVariant
       keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
@@ -24,6 +26,10 @@ QtObject:
       self.keyPairModel.delete
     if not self.keyPairModelVariant.isNil:
       self.keyPairModelVariant.delete
+    if not self.keyPairHelper.isNil:
+      self.keyPairHelper.delete
+    if not self.keyPairHelperVariant.isNil:
+      self.keyPairHelperVariant.delete
     if not self.keyPairForProcessing.isNil:
       self.keyPairForProcessing.delete
     if not self.keyPairForProcessingVariant.isNil:
@@ -139,6 +145,21 @@ QtObject:
     if self.keyPairForProcessing.isNil:
       return
     self.keyPairForProcessing.setLocked(locked)
+
+  proc getKeyPairHelper*(self: View): KeyPairItem =
+    return self.keyPairHelper
+  proc getKeyPairHelperAsVariant*(self: View): QVariant {.slot.} =
+    if self.keyPairHelperVariant.isNil:
+      return newQVariant()
+    return self.keyPairHelperVariant
+  QtProperty[QVariant] keyPairHelper:
+    read = getKeyPairHelperAsVariant
+  proc setKeyPairHelper*(self: View, item: KeyPairItem) =
+    if self.keyPairHelper.isNil:
+      self.keyPairHelper = newKeyPairItem()
+    if self.keyPairHelperVariant.isNil:
+      self.keyPairHelperVariant = newQVariant(self.keyPairHelper)
+    self.keyPairHelper.setItem(item)
 
   proc setPin*(self: View, value: string) {.slot.} =
     self.delegate.setPin(value)

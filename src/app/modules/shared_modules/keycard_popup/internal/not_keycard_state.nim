@@ -13,6 +13,7 @@ method executeCancelCommand*(self: NotKeycardState, controller: Controller) =
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
+    self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.Authentication or
     self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.DisplayKeycardContent or

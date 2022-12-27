@@ -2,6 +2,8 @@ import chronicles, strutils, os, sequtils, sugar
 import uuids
 import io_interface
 
+import ../../../global/app_sections_config as conf
+import ../../../global/app_signals
 import ../../../global/global_singleton
 import ../../../core/signals/types
 import ../../../core/eventemitter
@@ -52,6 +54,7 @@ type
     tmpKeycardUid: string
     tmpAddingMigratedKeypairSuccess: bool
     tmpConvertingProfileSuccess: bool
+    tmpKeycardImportCardMetadata: CardMetadata
     tmpKeycardCopyCardMetadata: CardMetadata
     tmpKeycardCopyPin: string
     tmpKeycardCopyDestinationKeycardUid: string
@@ -159,6 +162,10 @@ proc init*(self: Controller) =
     self.delegate.onSecondaryActionClicked()
   self.connectionIds.add(handlerId)
 
+proc switchToWalletSection*(self: Controller) =
+  let data = ActiveSectionChatArgs(sectionId: conf.WALLET_SECTION_ID)
+  self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
+
 proc getKeycardData*(self: Controller): string =
   return self.delegate.getKeycardData()
 
@@ -182,6 +189,9 @@ proc prepareKeyPairForProcessing*(self: Controller, keyUid: string) =
 
 proc getKeyPairForProcessing*(self: Controller): KeyPairItem =
   return self.delegate.getKeyPairForProcessing()
+
+proc getKeyPairHelper*(self: Controller): KeyPairItem =
+  return self.delegate.getKeyPairHelper()
 
 proc setPin*(self: Controller, value: string) =
   self.tmpPin = value
@@ -361,6 +371,13 @@ proc setMetadataForKeycardCopy*(self: Controller, cardMetadata: CardMetadata) =
   self.tmpKeycardCopyCardMetadata = cardMetadata
   self.setMetadataFromKeycard(cardMetadata)
 
+proc getMetadataForKeycardImport*(self: Controller): CardMetadata =
+  return self.tmpKeycardImportCardMetadata
+
+proc setMetadataForKeycardImport*(self: Controller, cardMetadata: CardMetadata) =
+  self.tmpKeycardImportCardMetadata = cardMetadata
+  self.delegate.updateKeyPairHelper(cardMetadata)
+
 proc setPinForKeycardCopy*(self: Controller, value: string) =
   self.tmpKeycardCopyPin = value
 
@@ -393,11 +410,11 @@ proc runGetAppInfoFlow*(self: Controller, factoryReset = false) =
   self.cancelCurrentFlow()
   self.keycardService.startGetAppInfoFlow(factoryReset)
 
-proc runGetMetadataFlow*(self: Controller, resolveAddress = false) =
+proc runGetMetadataFlow*(self: Controller, resolveAddress = false, exportMasterAddr = false) =
   if not serviceApplicable(self.keycardService):
     return
   self.cancelCurrentFlow()
-  self.keycardService.startGetMetadataFlow(resolveAddress)
+  self.keycardService.startGetMetadataFlow(resolveAddress, exportMasterAddr)
 
 proc runChangePinFlow*(self: Controller) =
   if not serviceApplicable(self.keycardService):

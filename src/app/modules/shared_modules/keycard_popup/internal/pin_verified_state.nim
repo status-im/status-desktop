@@ -13,6 +13,7 @@ method getNextPrimaryState*(self: PinVerifiedState, controller: Controller): Sta
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
+    self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.CreateCopyOfAKeycard:
@@ -29,6 +30,7 @@ method executeCancelCommand*(self: PinVerifiedState, controller: Controller) =
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
+    self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.ChangeKeycardPin or

@@ -16,6 +16,7 @@ type
   WalletAccount* = object
     path*: string
     address*: string
+    publicKey*: string
 
   GeneratedWalletAccount* = object
     address*: string
@@ -68,6 +69,8 @@ proc toApplicationInfo(jsonObj: JsonNode): ApplicationInfo =
 proc toWalletAccount(jsonObj: JsonNode): WalletAccount =
   discard jsonObj.getProp(ResponseParamPath, result.path)
   discard jsonObj.getProp(ResponseParamAddress, result.address)
+  if jsonObj.getProp(ResponseParamPublicKey, result.publicKey):
+    result.publicKey = "0x" & result.publicKey
 
 proc toGeneratedWalletAccount(jsonObj: JsonNode): GeneratedWalletAccount =
   discard jsonObj.getProp(ResponseParamAddress, result.address)

@@ -23,6 +23,8 @@ StatusModal {
             return qsTr("Create a new Keycard account with a new seed phrase")
         case Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase:
             return qsTr("Import or restore a Keycard via a seed phrase")
+        case Constants.keycardSharedFlow.importFromKeycard:
+            return qsTr("Migrate account from Keycard to Status")
         case Constants.keycardSharedFlow.factoryReset:
             return qsTr("Factory reset a Keycard")
         case Constants.keycardSharedFlow.authentication:
@@ -78,6 +80,12 @@ StatusModal {
                     if (!root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
                         return Constants.keycard.general.popupBiggerHeight
                     }
+                }
+
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard &&
+                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.manageKeycardAccounts &&
+                        root.sharedKeycardModule.keyPairHelper.accounts.count > 1) {
+                    return Constants.keycard.general.popupBiggerHeight
                 }
 
                 return Constants.keycard.general.popupHeight

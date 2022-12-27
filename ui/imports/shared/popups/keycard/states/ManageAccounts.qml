@@ -6,9 +6,11 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 
 import utils 1.0
 import shared.popups 1.0
+import shared.stores 1.0 as SharedStore
 
 import "../helpers"
 
@@ -27,6 +29,9 @@ Item {
         property string emptyName: "      "
         property string accountNameToBeRemoved: ""
         property int accountIndexToBeRemoved: -1
+        property string observedImportingAccountShortAddress: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
+                                                                  StatusQUtils.Utils.elideText(root.sharedKeycardModule.keyPairHelper.observedAccount.address, 6, 4)
+                                                                : ""
 
         onObservedAccountChanged: {
             if (d.observedAccount.name.trim().length > 0) {
@@ -47,6 +52,7 @@ Item {
             let ind = d.evaluateColorIndex(d.observedAccount.color)
             colorSelection.selectedColorIndex = ind
             d.updateValidity()
+            accountName.input.edit.forceActiveFocus()
         }
 
         function updateValidity() {
@@ -72,7 +78,8 @@ Item {
     Connections {
         target: root.emojiPopup
         enabled: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardNewSeedPhrase ||
-                 root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase
+                 root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase ||
+                 root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard
 
         function onEmojiSelected (emojiText, atCursor) {
             d.observedAccount.emoji = emojiText
@@ -100,10 +107,95 @@ Item {
         anchors.rightMargin: Style.current.xlPadding
         spacing: Style.current.padding
 
+        StatusStepper {
+            id: stepper
+            Layout.preferredWidth: Constants.keycard.general.keycardNameInputWidth
+            Layout.alignment: Qt.AlignCenter
+            titleFontSize: Constants.keycard.general.fontSize2
+        }
+
         StatusBaseText {
             id: title
             Layout.alignment: Qt.AlignCenter
             font.weight: Font.Bold
+        }
+
+        Rectangle {
+            id: accountDetails
+            Layout.preferredWidth: Constants.keycard.general.keycardNameInputWidth
+            Layout.alignment: Qt.AlignCenter
+            height: Style.current.xlPadding * 2
+            color: "transparent"
+            border.color: Theme.palette.baseColor2
+            border.width: 1
+            radius: Style.current.halfPadding
+
+            RowLayout {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
+
+                ColumnLayout {
+                    StatusBaseText {
+                        text: d.observedImportingAccountShortAddress
+                        wrapMode: Text.WordWrap
+                        font.pixelSize: Constants.keycard.general.fontSize2
+                        color: Theme.palette.baseColor1
+                    }
+
+                    StatusBaseText {
+                        text: root.sharedKeycardModule.keyPairHelper.observedAccount.path
+                        wrapMode: Text.WordWrap
+                        font.pixelSize: Constants.keycard.general.fontSize2
+                        color: Theme.palette.baseColor1
+                    }
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: parent.height
+                }
+
+                ColumnLayout {
+                    StatusBaseText {
+                        text: {
+                            if (Global.appMain) {
+                                return "Balance: %1%2".arg(SharedStore.RootStore.currencyStore.currentCurrencySymbol)
+                                .arg(Utils.toLocaleString(root.sharedKeycardModule.keyPairHelper.observedAccount.balance.toFixed(2), appSettings.locale, {"model.account.currency": true}))
+                            }
+                            // without language/model refactor no way to read currency symbol or `appSettings.locale` before user logs in
+                            return "Balance: $%1".arg(Utils.toLocaleString(root.sharedKeycardModule.keyPairHelper.observedAccount.balance.toFixed(2), localAppSettings.language, {"model.account.currency": true}))
+                        }
+                        wrapMode: Text.WordWrap
+                        font.pixelSize: Constants.keycard.general.fontSize2
+                        color: Theme.palette.baseColor1
+                    }
+
+                    Row {
+                        padding: 0
+
+                        StatusBaseText {
+                            text: qsTr("View on Etherscan")
+                            wrapMode: Text.WordWrap
+                            font.pixelSize: Constants.keycard.general.fontSize2
+                            color: Theme.palette.baseColor1
+                        }
+
+                        StatusFlatRoundButton {
+                            height: 20
+                            width: 20
+                            icon.name: "external"
+                            icon.width: 16
+                            icon.height: 16
+                            onClicked: {
+                                Qt.openUrlExternally("https://etherscan.io/address/%1".arg(root.sharedKeycardModule.keyPairHelper.observedAccount.address))
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         StatusInput {
@@ -111,7 +203,13 @@ Item {
             Layout.preferredWidth: Constants.keycard.general.keycardNameInputWidth
             Layout.alignment: Qt.AlignCenter
             charLimit: Constants.keycard.general.keycardNameLength
-            placeholderText: qsTr("What would you like this account to be called?")
+            placeholderText: {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard) {
+                    return qsTr("What name should account %1 have?").arg(d.observedImportingAccountShortAddress)
+                }
+
+                return qsTr("What would you like this account to be called?")
+            }
             input.acceptReturn: true
             input.isIconSelectable: true
             input.leftPadding: Style.current.padding
@@ -153,11 +251,6 @@ Item {
             }
         }
 
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
-
         StatusBaseText {
             Layout.alignment: Qt.AlignLeft
             text: qsTr("Preview")
@@ -168,10 +261,12 @@ Item {
         KeyPairItem {
             Layout.preferredWidth: parent.width
             tagClickable: true
-            tagDisplayRemoveAccountButton: true
+            tagDisplayRemoveAccountButton: root.sharedKeycardModule.currentState.flowType !== Constants.keycardSharedFlow.importFromKeycard
             keyPairType: root.sharedKeycardModule.keyPairForProcessing.pairType
             keyPairPubKey: root.sharedKeycardModule.keyPairForProcessing.pubKey
-            keyPairName: root.sharedKeycardModule.keyPairForProcessing.name
+            keyPairName: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
+                             root.sharedKeycardModule.keyPairHelper.name
+                           : root.sharedKeycardModule.keyPairForProcessing.name
             keyPairIcon: root.sharedKeycardModule.keyPairForProcessing.icon
             keyPairImage: root.sharedKeycardModule.keyPairForProcessing.image
             keyPairDerivedFrom: root.sharedKeycardModule.keyPairForProcessing.derivedFrom
@@ -179,12 +274,17 @@ Item {
             keyPairCardLocked: root.sharedKeycardModule.keyPairForProcessing.locked
 
             onRemoveAccount: {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard)
+                    return
                 d.accountIndexToBeRemoved = index
                 d.accountNameToBeRemoved = name
                 confirmationPopup.open()
             }
 
             onAccountClicked: {
+                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard) {
+                    root.sharedKeycardModule.keyPairHelper.setAccountAtIndexAsObservedAccount(index)
+                }
                 root.sharedKeycardModule.keyPairForProcessing.setAccountAtIndexAsObservedAccount(index)
             }
         }
@@ -195,10 +295,29 @@ Item {
             name: Constants.keycardSharedState.manageKeycardAccounts
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.manageKeycardAccounts
             PropertyChanges {
+                target: stepper
+                visible: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard &&
+                         root.sharedKeycardModule.keyPairHelper.accounts.count > 1
+                totalSteps: root.sharedKeycardModule.keyPairHelper.accounts.count
+                completedSteps: root.sharedKeycardModule.keyPairForProcessing.accounts.count
+                title: qsTr("Account %1 of %2").arg(completedSteps).arg(totalSteps)
+            }
+            PropertyChanges {
                 target: title
-                text: qsTr("Name accounts")
+                text: {
+                    if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard) {
+                        return qsTr("Name account %1").arg(d.observedImportingAccountShortAddress)
+                    }
+
+                    return qsTr("Name accounts")
+                }
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
+            }
+            PropertyChanges {
+                target: accountDetails
+                visible: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard &&
+                         root.sharedKeycardModule.keyPairHelper.accounts.count > 1
             }
         }
     ]

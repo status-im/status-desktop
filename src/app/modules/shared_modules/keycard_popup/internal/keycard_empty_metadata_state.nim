@@ -13,6 +13,7 @@ method executeCancelCommand*(self: KeycardEmptyMetadataState, controller: Contro
     self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
+    self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.CreateCopyOfAKeycard:
@@ -20,6 +21,7 @@ method executeCancelCommand*(self: KeycardEmptyMetadataState, controller: Contro
 
 method executePrePrimaryStateCommand*(self: KeycardEmptyMetadataState, controller: Controller) =
   if self.flowType == FlowType.DisplayKeycardContent or
+    self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.RenameKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
   if self.flowType == FlowType.CreateCopyOfAKeycard:

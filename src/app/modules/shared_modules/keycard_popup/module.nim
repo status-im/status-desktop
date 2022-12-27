@@ -86,6 +86,9 @@ method setPassword*[T](self: Module[T], value: string) =
 method getKeyPairForProcessing*[T](self: Module[T]): KeyPairItem =
   return self.view.getKeyPairForProcessing()
 
+method getKeyPairHelper*[T](self: Module[T]): KeyPairItem =
+  return self.view.getKeyPairHelper()
+
 method getNameFromKeycard*[T](self: Module[T]): string =
   return self.controller.getMetadataFromKeycard().name
 
@@ -467,6 +470,10 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runLoadAccountFlow()
     return
+  if flowToRun == FlowType.ImportFromKeycard:
+    self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
+    self.controller.runGetMetadataFlow(resolveAddress = true, exportMasterAddr = true)
+    return
 
 method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =
   var paths: seq[string]
@@ -516,12 +523,17 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
       continue
     let balance = self.controller.getCurrencyBalanceForAddress(wa.address)
     result.knownKeyPair = false
-    result.item.addAccount(newKeyPairAccountItem(name = "", wa.path, wa.address, pubKey = "", emoji = "", color = self.generateRandomColor(), icon = "wallet", balance))
+    result.item.addAccount(newKeyPairAccountItem(name = "", wa.path, wa.address, pubKey = wa.publicKey, emoji = "", color = self.generateRandomColor(), icon = "wallet", balance))
 
 method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadata) =
   let(item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)
   self.view.setKeyPairStoredOnKeycardIsKnown(knownKeyPair)
   self.view.setKeyPairForProcessing(item)
+
+method updateKeyPairHelper*[T](self: Module[T], cardMetadata: CardMetadata) =
+  let(item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)
+  self.view.setKeyPairStoredOnKeycardIsKnown(knownKeyPair)
+  self.view.setKeyPairHelper(item)
 
 method onUserAuthenticated*[T](self: Module[T], password: string, pin: string) =
   if self.derivingAccountDetails.deriveAddressAfterAuthentication:
