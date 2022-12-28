@@ -74,20 +74,6 @@ Item {
         }
     }
 
-    Component {
-        id: keyPairForAuthenticationComponent
-        KeyPairItem {
-            keyPairType:  root.sharedKeycardModule.keyPairForAuthentication.pairType
-            keyPairPubKey: root.sharedKeycardModule.keyPairForAuthentication.pubKey
-            keyPairName: root.sharedKeycardModule.keyPairForAuthentication.name
-            keyPairIcon: root.sharedKeycardModule.keyPairForAuthentication.icon
-            keyPairImage: root.sharedKeycardModule.keyPairForAuthentication.image
-            keyPairDerivedFrom: root.sharedKeycardModule.keyPairForAuthentication.derivedFrom
-            keyPairAccounts: root.sharedKeycardModule.keyPairForAuthentication.accounts
-            keyPairCardLocked: root.sharedKeycardModule.keyPairForAuthentication.locked
-        }
-    }
-
     ColumnLayout {
         anchors.fill: parent
         anchors.topMargin: Style.current.xlPadding
@@ -192,8 +178,8 @@ Item {
                     }
                 }
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication &&
-                        !!root.sharedKeycardModule.keyPairForAuthentication &&
-                        root.sharedKeycardModule.keyPairForAuthentication.name !== "") {
+                        !!root.sharedKeycardModule.keyPairForProcessing &&
+                        root.sharedKeycardModule.keyPairForProcessing.name !== "") {
                     if(root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardInserted ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.insertKeycard ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.readingKeycard ||
@@ -349,7 +335,7 @@ Item {
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeycard) {
-                        return keyPairForAuthenticationComponent
+                        return keyPairForProcessingComponent
                     }
                 }
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.displayKeycardContent) {

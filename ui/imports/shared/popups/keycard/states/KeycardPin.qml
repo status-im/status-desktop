@@ -77,20 +77,6 @@ Item {
         }
     }
 
-    Component {
-        id: keyPairForAuthenticationComponent
-        KeyPairItem {
-            keyPairType:  root.sharedKeycardModule.keyPairForAuthentication.pairType
-            keyPairPubKey: root.sharedKeycardModule.keyPairForAuthentication.pubKey
-            keyPairName: root.sharedKeycardModule.keyPairForAuthentication.name
-            keyPairIcon: root.sharedKeycardModule.keyPairForAuthentication.icon
-            keyPairImage: root.sharedKeycardModule.keyPairForAuthentication.image
-            keyPairDerivedFrom: root.sharedKeycardModule.keyPairForAuthentication.derivedFrom
-            keyPairAccounts: root.sharedKeycardModule.keyPairForAuthentication.accounts
-            keyPairCardLocked: root.sharedKeycardModule.keyPairForAuthentication.locked
-        }
-    }
-
     ColumnLayout {
         anchors.fill: parent
         anchors.topMargin: Style.current.xlPadding
@@ -210,7 +196,7 @@ Item {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin) {
-                        return keyPairForAuthenticationComponent
+                        return keyPairForProcessingComponent
                     }
                 }
 
