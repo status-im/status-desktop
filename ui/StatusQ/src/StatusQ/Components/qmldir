@@ -46,3 +46,4 @@ StatusCard 0.1 StatusCard.qml
 StatusDatePicker 0.1 StatusDatePicker.qml
 StatusChart 0.1 StatusChart.qml
 StatusChartPanel 0.1 StatusChartPanel.qml
+StatusStepper 0.1 StatusStepper.qml
