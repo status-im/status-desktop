@@ -158,7 +158,7 @@ proc preStateActivities[T](self: Module[T], currFlowType: FlowType, nextStateTyp
       self.controller.setCurrentKeycardStateToLocked(flowEvent.instanceUID)
 
   if currFlowType == FlowType.Authentication:
-    self.view.setLockedPropForKeyPairForAuthentication(nextStateType == StateType.MaxPinRetriesReached)
+    self.view.setLockedPropForKeyPairForProcessing(nextStateType == StateType.MaxPinRetriesReached)
 
   if currFlowType == FlowType.UnlockKeycard:
     if nextStateType == StateType.UnlockKeycardOptions:
@@ -353,7 +353,7 @@ proc prepareKeyPairItemForAuthentication[T](self: Module[T], keyUid: string) =
   item.setImage("")
   item.setIcon("keycard")
   item.setPairType(KeyPairType.Unknown.int)
-  self.view.setKeyPairForAuthentication(item)
+  self.view.setKeyPairForProcessing(item)
 
 method setKeyPairForProcessing*[T](self: Module[T], item: KeyPairItem) =
   if item.isNil:
@@ -500,8 +500,9 @@ proc updateKeyPairItemIfDataAreKnown[T](self: Module[T], address: string, item: 
     return true
   return false
 
-method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadata) =
-  var item = newKeyPairItem(keyUid = "",
+proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardMetadata): 
+  tuple[item: KeyPairItem, knownKeyPair: bool] =
+  result.item = newKeyPairItem(keyUid = "",
     pubKey = "",
     locked = false,
     name = cardMetadata.name,
@@ -509,13 +510,16 @@ method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadat
     icon = "keycard",
     pairType = KeyPairType.Unknown,
     derivedFrom = "")
-  var knownKeyPair = true
+  result.knownKeyPair = true
   for wa in cardMetadata.walletAccounts:
-    if self.updateKeyPairItemIfDataAreKnown(wa.address, item):
+    if self.updateKeyPairItemIfDataAreKnown(wa.address, result.item):
       continue
     let balance = self.controller.getCurrencyBalanceForAddress(wa.address)
-    knownKeyPair = false
-    item.addAccount(newKeyPairAccountItem(name = "", wa.path, wa.address, pubKey = "", emoji = "", color = self.generateRandomColor(), icon = "wallet", balance))
+    result.knownKeyPair = false
+    result.item.addAccount(newKeyPairAccountItem(name = "", wa.path, wa.address, pubKey = "", emoji = "", color = self.generateRandomColor(), icon = "wallet", balance))
+
+method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadata) =
+  let(item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)
   self.view.setKeyPairStoredOnKeycardIsKnown(knownKeyPair)
   self.view.setKeyPairForProcessing(item)
 

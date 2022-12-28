@@ -12,8 +12,6 @@ QtObject:
       keyPairModel: KeyPairModel
       keyPairModelVariant: QVariant
       keyPairStoredOnKeycardIsKnown: bool
-      keyPairForAuthentication: KeyPairItem
-      keyPairForAuthenticationVariant: QVariant
       keyPairForProcessing: KeyPairItem
       keyPairForProcessingVariant: QVariant
       keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
@@ -26,10 +24,6 @@ QtObject:
       self.keyPairModel.delete
     if not self.keyPairModelVariant.isNil:
       self.keyPairModelVariant.delete
-    if not self.keyPairForAuthentication.isNil:
-      self.keyPairForAuthentication.delete
-    if not self.keyPairForAuthenticationVariant.isNil:
-      self.keyPairForAuthenticationVariant.delete
     if not self.keyPairForProcessing.isNil:
       self.keyPairForProcessing.delete
     if not self.keyPairForProcessingVariant.isNil:
@@ -127,23 +121,6 @@ QtObject:
   proc setKeyPairStoredOnKeycardIsKnown*(self: View, value: bool) =
     self.keyPairStoredOnKeycardIsKnown = value
 
-  proc getKeyPairForAuthentication*(self: View): QVariant {.slot.} =
-    if self.keyPairForAuthenticationVariant.isNil:
-      return newQVariant()
-    return self.keyPairForAuthenticationVariant
-  QtProperty[QVariant] keyPairForAuthentication:
-    read = getKeyPairForAuthentication
-  proc setKeyPairForAuthentication*(self: View, item: KeyPairItem) =
-    if self.keyPairForAuthentication.isNil:
-      self.keyPairForAuthentication = newKeyPairItem()
-    if self.keyPairForAuthenticationVariant.isNil:
-      self.keyPairForAuthenticationVariant = newQVariant(self.keyPairForAuthentication)
-    self.keyPairForAuthentication.setItem(item)
-  proc setLockedPropForKeyPairForAuthentication*(self: View, locked: bool) =
-    if self.keyPairForAuthentication.isNil:
-      return
-    self.keyPairForAuthentication.setLocked(locked)
-
   proc getKeyPairForProcessing*(self: View): KeyPairItem =
     return self.keyPairForProcessing
   proc getKeyPairForProcessingAsVariant*(self: View): QVariant {.slot.} =
@@ -158,6 +135,10 @@ QtObject:
     if self.keyPairForProcessingVariant.isNil:
       self.keyPairForProcessingVariant = newQVariant(self.keyPairForProcessing)
     self.keyPairForProcessing.setItem(item)
+  proc setLockedPropForKeyPairForProcessing*(self: View, locked: bool) =
+    if self.keyPairForProcessing.isNil:
+      return
+    self.keyPairForProcessing.setLocked(locked)
 
   proc setPin*(self: View, value: string) {.slot.} =
     self.delegate.setPin(value)
