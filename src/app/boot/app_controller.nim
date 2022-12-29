@@ -10,6 +10,7 @@ import ../../app_service/service/chat/service as chat_service
 import ../../app_service/service/community/service as community_service
 import ../../app_service/service/message/service as message_service
 import ../../app_service/service/token/service as token_service
+import ../../app_service/service/currency/service as currency_service
 import ../../app_service/service/transaction/service as transaction_service
 import ../../app_service/service/collectible/service as collectible_service
 import ../../app_service/service/wallet_account/service as wallet_account_service
@@ -67,6 +68,7 @@ type
     communityService: community_service.Service
     messageService: message_service.Service
     tokenService: token_service.Service
+    currencyService: currency_service.Service
     transactionService: transaction_service.Service
     collectibleService: collectible_service.Service
     walletAccountService: wallet_account_service.Service
@@ -160,6 +162,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.tokenService = token_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.networkService
   )
+  result.currencyService = currency_service.newService(result.tokenService, result.settingsService)
   result.collectibleService = collectible_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService)
   result.walletAccountService = wallet_account_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.settingsService, result.accountsService,
@@ -221,6 +224,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.communityService,
     result.messageService,
     result.tokenService,
+    result.currencyService,
     result.transactionService,
     result.collectibleService,
     result.walletAccountService,
@@ -273,6 +277,7 @@ proc delete*(self: AppController) =
   self.accountsService.delete
   self.chatService.delete
   self.communityService.delete
+  self.currencyService.delete
   self.tokenService.delete
   self.transactionService.delete
   self.collectibleService.delete
@@ -352,6 +357,7 @@ proc load(self: AppController) =
 
   self.networkService.init()
   self.tokenService.init()
+  self.currencyService.init()
   self.walletAccountService.init()
 
   # Apply runtime log level settings

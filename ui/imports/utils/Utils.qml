@@ -88,7 +88,11 @@ QtObject {
     }
 
     function toLocaleString(val, locale, options) {
-      return NumberPolyFill.toLocaleString(val, locale, options)
+        if (typeof(val) === "object") {
+            console.log("Wrong type for val: " + JSON.stringify(val))
+            return NaN
+        }
+        return NumberPolyFill.toLocaleString(val, locale, options)
     }
 
     function isOnlyEmoji(inputText) {

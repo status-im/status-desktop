@@ -22,6 +22,7 @@ import ../../../../app_service/service/general/service as general_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/keycard/service as keycard_service
 import ../../../../app_service/service/keychain/service as keychain_service
+import ../../../../app_service/service/token/service as token_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
@@ -79,7 +80,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   communityService: community_service.Service,
   networkService: network_service.Service,
   keycardService: keycard_service.Service,
-  keychainService: keychain_service.Service
+  keychainService: keychain_service.Service,
+  tokenService: token_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -98,7 +100,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.syncModule = sync_module.newModule(result, events, settingsService, nodeConfigurationService, mailserversService)
   result.notificationsModule = notifications_module.newModule(result, events, settingsService, chatService, contactsService)
   result.ensUsernamesModule = ens_usernames_module.newModule(
-    result, events, settingsService, ensService, walletAccountService, networkService
+    result, events, settingsService, ensService, walletAccountService, networkService, tokenService
   )
   result.communitiesModule = communities_module.newModule(result, communityService)
   result.keycardModule = keycard_module.newModule(result, events, keycardService, settingsService, privacyService, 

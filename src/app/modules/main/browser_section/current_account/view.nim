@@ -1,10 +1,11 @@
 import NimQml, sequtils, sugar
 
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ./io_interface
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
+import ../../../shared_models/currency_amount
 
+import ../../wallet_section/accounts/item as account_item
 
 QtObject:
   type
@@ -17,7 +18,7 @@ QtObject:
       publicKey: string
       walletType: string
       isChat: bool
-      currencyBalance: float64
+      currencyBalance: CurrencyAmount
       assets: token_model.Model
       emoji: string
 
@@ -140,27 +141,27 @@ QtObject:
   proc hasGas*(self: View, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.slot.} =
     return self.assets.hasGas(chainId, nativeGasSymbol, requiredGas)
 
-  proc getTokenBalanceOnChain*(self: View, chainId: int, tokenSymbol: string): string {.slot.} =
-    return self.assets.getTokenBalanceOnChain(chainId, tokenSymbol)
+#  proc getTokenBalanceOnChain*(self: View, chainId: int, tokenSymbol: string): QVariant {.slot.} =
+#    return newQVariant(self.assets.getTokenBalanceOnChain(chainId, tokenSymbol))
 
-proc setData*(self: View, dto: wallet_account_service.WalletAccountDto, chainIds: seq[int]) =
-    self.name = dto.name
+proc setData*(self: View, item: account_item.Item) =
+    self.name = item.getName()
     self.nameChanged()
-    self.address = dto.address
+    self.address = item.getAddress()
     self.addressChanged()
-    self.path = dto.path
+    self.path = item.getPath()
     self.pathChanged()
-    self.color = dto.color
+    self.color = item.getColor()
     self.colorChanged()
-    self.publicKey = dto.publicKey
+    self.publicKey = item.getPublicKey()
     self.publicKeyChanged()
-    self.walletType = dto.walletType
+    self.walletType = item.getWalletType()
     self.walletTypeChanged()
-    self.isChat = dto.isChat
+    self.isChat = item.getIsChat()
     self.isChatChanged()
-    self.currencyBalance = dto.getCurrencyBalance(chainIds)
+    self.currencyBalance = item.getCurrencyBalance()
     self.currencyBalanceChanged()
-    self.emoji = dto.emoji
+    self.emoji = item.getEmoji()
     self.emojiChanged()
 
 proc isAddressCurrentAccount*(self: View, address: string): bool =

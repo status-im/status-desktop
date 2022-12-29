@@ -131,10 +131,10 @@ Rectangle {
                         text: {
                             if (Global.appMain) {
                                 return "%1%2".arg(SharedStore.RootStore.currencyStore.currentCurrencySymbol)
-                                .arg(Utils.toLocaleString(model.account.balance.toFixed(2), appSettings.locale, {"model.account.currency": true}))
+                                .arg(Utils.toLocaleString(parseFloat(model.account.balance.amount).toFixed(2), appSettings.locale, {"model.account.currency": true}))
                             }
                             // without language/model refactor no way to read currency symbol or `appSettings.locale` before user logs in
-                            return "$%1".arg(Utils.toLocaleString(model.account.balance.toFixed(2), localAppSettings.language, {"model.account.currency": true}))
+                            return "$%1".arg(Utils.toLocaleString(parseFloat(model.account.balance.amount).toFixed(2), localAppSettings.language, {"model.account.currency": true}))
                         }
                         wrapMode: Text.WordWrap
                         font.pixelSize: Constants.keycard.general.fontSize2

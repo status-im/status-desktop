@@ -23,12 +23,12 @@ QtObject {
     property bool isTenorWarningAccepted: !!accountSensitiveSettings ? accountSensitiveSettings.isTenorWarningAccepted : false
     property bool displayChatImages: !!accountSensitiveSettings ? accountSensitiveSettings.displayChatImages : false
 
-    property string locale: Qt.locale().name
+    property var locale: Qt.locale(localAppSettings.language)
 //    property string signingPhrase: !!walletModelInst ? walletModelInst.utilsView.signingPhrase : ""
 //    property string gasPrice: !!walletModelInst ? walletModelInst.gasView.gasPrice : "0"
 //    property string gasEthValue: !!walletModelInst ? walletModelInst.gasView.getGasEthValue : "0"
 
-    property CurrenciesStore currencyStore: CurrenciesStore { }
+    property CurrenciesStore currencyStore: CurrenciesStore {}
     property string currentCurrency: walletSection.currentCurrency
 //    property string defaultCurrency: !!walletModelInst ? walletModelInst.balanceView.defaultCurrency : "0"
 //    property string fiatValue: !!walletModelInst ? walletModelInst.balanceView.getFiatValue : "0"

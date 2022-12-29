@@ -29,6 +29,7 @@ import ../../../app_service/service/chat/service as chat_service
 import ../../../app_service/service/community/service as community_service
 import ../../../app_service/service/message/service as message_service
 import ../../../app_service/service/token/service as token_service
+import ../../../app_service/service/currency/service as currency_service
 import ../../../app_service/service/transaction/service as transaction_service
 import ../../../app_service/service/collectible/service as collectible_service
 import ../../../app_service/service/wallet_account/service as wallet_account_service
@@ -109,6 +110,7 @@ proc newModule*[T](
   communityService: community_service.Service,
   messageService: message_service.Service,
   tokenService: token_service.Service,
+  currencyService: currency_service.Service,
   transactionService: transaction_service.Service,
   collectibleService: collectible_service.Service,
   walletAccountService: wallet_account_service.Service,
@@ -168,21 +170,22 @@ proc newModule*[T](
   # Submodules
   result.channelGroupModules = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule(
-    result, events, tokenService,
+    result, events, tokenService, currencyService,
     transactionService, collectible_service, walletAccountService,
     settingsService, savedAddressService, networkService, accountsService, keycardService
   )
   result.browserSectionModule = browser_section_module.newModule(
     result, events, bookmarkService, settingsService, networkService,
-    dappPermissionsService, providerService, walletAccountService
+    dappPermissionsService, providerService, walletAccountService,
+    tokenService, currencyService
   )
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
     devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService,
-    networkService, keycardService, keychainService
+    networkService, keycardService, keychainService, tokenService
   )
-  result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService)
+  result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService, tokenService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService)
   result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService)

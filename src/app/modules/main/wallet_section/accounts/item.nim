@@ -1,44 +1,50 @@
 import strformat
 import ../../../shared_models/token_model as token_model
+import ../../../shared_models/currency_amount
 import ./compact_model as compact_model
 
 type
   Item* = object
     name: string
     address: string
+    mixedCaseAddress: string
     path: string
     color: string
     publicKey: string
     walletType: string
     isWallet: bool
     isChat: bool
-    currencyBalance: float64
+    currencyBalance: CurrencyAmount
     assets: token_model.Model
     emoji: string
     derivedfrom: string
     relatedAccounts: compact_model.Model
     keyUid: string
     migratedToKeycard: bool
+    ens: string
 
 proc initItem*(
   name: string,
   address: string,
+  mixedCaseAddress: string,
   path: string,
   color: string,
   publicKey: string,
   walletType: string,
   isWallet: bool,
   isChat: bool,
-  currencyBalance: float64,
+  currencyBalance: CurrencyAmount,
   assets: token_model.Model,
   emoji: string,
   derivedfrom: string,
   relatedAccounts: compact_model.Model,
   keyUid: string,
-  migratedToKeycard: bool
+  migratedToKeycard: bool,
+  ens: string
 ): Item =
   result.name = name
   result.address = address
+  result.mixedCaseAddress = mixedCaseAddress
   result.path = path
   result.color = color
   result.publicKey = publicKey
@@ -52,11 +58,13 @@ proc initItem*(
   result.relatedAccounts = relatedAccounts
   result.keyUid = keyUid
   result.migratedToKeycard = migratedToKeycard
+  result.ens = ens
 
 proc `$`*(self: Item): string =
   result = fmt"""WalletAccountItem(
     name: {self.name},
     address: {self.address},
+    mixedCaseAddress: {self.mixedCaseAddress},
     path: {self.path},
     color: {self.color},
     publicKey: {self.publicKey},
@@ -69,7 +77,8 @@ proc `$`*(self: Item): string =
     derivedfrom: {self.derivedfrom},
     relatedAccounts: {self.relatedAccounts}
     keyUid: {self.keyUid},
-    migratedToKeycard: {self.migratedToKeycard}
+    migratedToKeycard: {self.migratedToKeycard},
+    ens: {self.ens}
     ]"""
 
 proc getName*(self: Item): string =
@@ -77,6 +86,9 @@ proc getName*(self: Item): string =
 
 proc getAddress*(self: Item): string =
   return self.address
+
+proc getMixedCaseAddress*(self: Item): string =
+  return self.mixedCaseAddress
 
 proc getPath*(self: Item): string =
   return self.path
@@ -99,7 +111,7 @@ proc getIsWallet*(self: Item): bool =
 proc getIsChat*(self: Item): bool =
   return self.isChat
 
-proc getCurrencyBalance*(self: Item): float64 =
+proc getCurrencyBalance*(self: Item): CurrencyAmount =
   return self.currencyBalance
 
 proc getAssets*(self: Item): token_model.Model =
@@ -116,3 +128,6 @@ proc getKeyUid*(self: Item): string =
 
 proc getMigratedToKeycard*(self: Item): bool =
   return self.migratedToKeycard
+
+proc getEns*(self: Item): string =
+  return self.ens

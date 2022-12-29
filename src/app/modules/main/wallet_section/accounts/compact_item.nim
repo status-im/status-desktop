@@ -1,5 +1,7 @@
 import strformat
 
+import ../../../shared_models/currency_amount
+
 type
   Item* = object
     name: string
@@ -10,7 +12,7 @@ type
     walletType: string
     isWallet: bool
     isChat: bool
-    currencyBalance: float64
+    currencyBalance: CurrencyAmount
     emoji: string
     derivedfrom: string
 
@@ -23,7 +25,7 @@ proc initItem*(
   walletType: string,
   isWallet: bool,
   isChat: bool,
-  currencyBalance: float64,
+  currencyBalance: CurrencyAmount,
   emoji: string,
   derivedfrom: string
 ): Item =
@@ -81,7 +83,7 @@ proc getIsWallet*(self: Item): bool =
 proc getIsChat*(self: Item): bool =
   return self.isChat
 
-proc getCurrencyBalance*(self: Item): float64 =
+proc getCurrencyBalance*(self: Item): CurrencyAmount =
   return self.currencyBalance
 
 proc getDerivedFrom*(self: Item): string =

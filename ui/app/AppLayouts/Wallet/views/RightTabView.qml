@@ -92,6 +92,7 @@ Item {
                     AssetsView {
                         account: RootStore.currentAccount
                         assetDetailsLaunched: stack.currentIndex === 2
+                        locale: RootStore.locale
                         onAssetClicked: {
                             assetDetailView.token = token
                             stack.currentIndex = 2

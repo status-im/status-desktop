@@ -47,7 +47,7 @@ Item {
         if (showBalanceForAssetSymbol == "" || minRequiredAssetBalance == 0 || !assetFound) {
             return root.isValid
         }
-        root.isValid = assetFound.totalBalance >= minRequiredAssetBalance
+        root.isValid = assetFound.totalBalance.amount >= minRequiredAssetBalance
         return root.isValid
     }
 
@@ -88,7 +88,7 @@ Item {
         if (!assetFound) {
             return
         }
-        txtAssetBalance.text = root.assetBalanceTextFn(assetFound.totalBalance)
+        txtAssetBalance.text = root.assetBalanceTextFn(assetFound.totalBalance.amount)
         txtAssetSymbol.text = " " + assetFound.symbol
     }
 

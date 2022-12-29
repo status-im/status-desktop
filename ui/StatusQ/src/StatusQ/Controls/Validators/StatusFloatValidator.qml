@@ -33,10 +33,10 @@ StatusValidator {
     property real bottom: qmlDoubleValidator.bottom
 
     /*!
-       \qmlproperty string StatusFloatValidator::locale
-       This property holds the name of the locale used to interpret the number.
+       \qmlproperty var StatusFloatValidator::locale
+       This property holds the locale used to interpret the number.
     */
-    property string locale
+    property var locale: Qt.locale()
 
     /*!
        \qmlproperty real StatusFloatValidator::top

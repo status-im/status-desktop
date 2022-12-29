@@ -22,6 +22,7 @@ Item {
     implicitHeight: visible ? accountSelectionTabBar.height + stackLayout.height + Style.current.bigPadding: 0
 
     property var store
+    property var locale
 
     signal contactSelected(string address, int type)
 
@@ -152,7 +153,7 @@ Item {
                     objectName: model.name
                     height: visible ? 64 : 0
                     title: !!model.name ? model.name : ""
-                    subTitle: "%1 %2".arg(LocaleUtils.numberToLocaleString(model.currencyBalance)).arg(store.currentCurrency.toUpperCase())
+                    subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance, root.locale)
                     asset.emoji: !!model.emoji ? model.emoji: ""
                     asset.color: model.color
                     asset.name: !model.emoji ? "filled-account": ""

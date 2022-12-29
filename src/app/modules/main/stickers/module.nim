@@ -8,6 +8,7 @@ import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/common/conversion as service_conversion
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../app_service/service/token/service as token_service
 
 export io_interface
 
@@ -40,12 +41,13 @@ proc newModule*(
   settingsService: settings_Service.Service,
   walletAccountService: wallet_account_service.Service,
   networkService: network_service.Service,
+  tokenService: token_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, stickersService, settingsService, walletAccountService, networkService)
+  result.controller = controller.newController(result, events, stickersService, settingsService, walletAccountService, networkService, tokenService)
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("stickersModule", result.viewVariant)

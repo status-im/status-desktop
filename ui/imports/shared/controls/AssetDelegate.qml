@@ -10,7 +10,7 @@ Item {
     id: assetDelegate
     objectName: symbol
 
-    property string locale: ""
+    property var locale
     property string currency: ""
     property string currencySymbol: ""
 
@@ -52,7 +52,7 @@ Item {
         anchors.leftMargin: Style.current.smallPadding
         font.pixelSize: 15
         color: Style.current.secondaryText
-        text: qsTr("%1 %2").arg(enabledNetworkBalance.toString()).arg(symbol)
+        text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkBalance, root.locale)
     }
 
     StyledText {
@@ -63,6 +63,6 @@ Item {
         anchors.rightMargin: 0
         font.pixelSize: 15
         font.strikeout: false
-        text: enabledNetworkCurrencyBalance.toLocaleCurrencyString(Qt.locale(), assetDelegate.currencySymbol)
+        text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkCurrencyBalance, root.locale)
     }
 }

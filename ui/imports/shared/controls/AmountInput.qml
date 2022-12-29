@@ -10,7 +10,7 @@ Input {
     id: root
 
     property int maximumLength: 10
-    property var locale: Qt.locale()
+    property var locale
 
     readonly property alias amount: d.amount
     readonly property bool valid: validationError.length === 0
@@ -40,7 +40,7 @@ Input {
         decimals: root.allowDecimals ? 100 : 0
         bottom: 0
         notation: DoubleValidator.StandardNotation
-        locale: root.locale.name
+        locale: root.locale
     }
 
     onTextChanged: {

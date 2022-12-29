@@ -291,6 +291,7 @@ StatusDropdown {
             tokenName: d.defaultTokenNameText
             amountText: d.tokenAmountText
             onAmountTextChanged: d.tokenAmountText = amountText
+            locale: root.store.locale
 
             readonly property real effectiveAmount: amountValid ? amount : 0
             onEffectiveAmountChanged: root.tokenAmount = effectiveAmount
@@ -343,6 +344,7 @@ StatusDropdown {
             collectibleName: d.defaultCollectibleNameText
             amountText: d.collectibleAmountText
             onAmountTextChanged: d.collectibleAmountText = amountText
+            locale: root.store.locale
 
             readonly property real effectiveAmount: amountValid ? amount : 0
             onEffectiveAmountChanged: root.collectibleAmount = effectiveAmount

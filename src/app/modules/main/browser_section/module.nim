@@ -14,6 +14,8 @@ import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/dapp_permissions/service as dapp_permissions_service
 import ../../../../app_service/service/provider/service as provider_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../app_service/service/token/service as token_service
+import ../../../../app_service/service/currency/service as currency_service
 
 export io_interface
 
@@ -36,7 +38,10 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
     networkService: network_service.Service,
     dappPermissionsService: dapp_permissions_service.Service,
     providerService: provider_service.Service,
-    walletAccountService: wallet_account_service.Service): Module =
+    walletAccountService: wallet_account_service.Service,
+    tokenService: token_service.Service,
+    currencyService: currency_service.Service
+): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
@@ -46,7 +51,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.providerModule = provider_module.newModule(result, events, settingsService, networkService, providerService)
   result.bookmarkModule = bookmark_module.newModule(result, events, bookmarkService)
   result.dappsModule = dapps_module.newModule(result, dappPermissionsService, walletAccountService)
-  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService)
+  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService)
 
 method delete*(self: Module) =
   self.view.delete

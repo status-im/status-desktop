@@ -23,17 +23,7 @@ type
     color*: string
     isCustom* {.dontSerialize.}: bool
     isVisible* {.dontSerialize.}: bool
-    description* :string
-    assetWebsiteUrl*: string
-    builtOn*: string
-    smartContractAddress*: string
-    marketCap*: string
-    highDay*: string
-    lowDay*: string
-    changePctHour*: string
-    changePctDay*: string
-    changePct24hour*: string
-    change24hour*: string
+    pegSymbol*: string
 
 proc newTokenDto*(
   name: string,
@@ -42,18 +32,8 @@ proc newTokenDto*(
   symbol: string,
   decimals: int,
   hasIcon: bool,
+  pegSymbol: string,
   isCustom: bool = false,
-  description: string = "",
-  assetWebsiteUrl: string = "",
-  builtOn: string = "",
-  smartContractAddress: string = "",
-  marketCap: string = "",
-  highDay: string = "",
-  lowDay: string = "",
-  changePctHour: string = "",
-  changePctDay: string = "",
-  changePct24hour: string = "",
-  change24hour: string = "",
 ): TokenDto =
   return TokenDto(
     name: name,
@@ -62,6 +42,7 @@ proc newTokenDto*(
     symbol: symbol,
     decimals: decimals,
     hasIcon: hasIcon,
+    pegSymbol: pegSymbol,
     isCustom: isCustom
   )
 
@@ -76,6 +57,7 @@ proc toTokenDto*(jsonObj: JsonNode, isVisible: bool, hasIcon: bool = false, isCu
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("decimals", result.decimals)
   discard jsonObj.getProp("color", result.color)
+  discard jsonObj.getProp("pegSymbol", result.pegSymbol)
   result.isVisible = isVisible
 
 proc addressAsString*(self: TokenDto): string =

@@ -1,11 +1,13 @@
-import NimQml, sequtils, sugar
+import NimQml, sequtils, sugar, json
 
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ./io_interface
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
+import ../../../shared_models/currency_amount
 import ../accounts/compact_model
 import ../accounts/compact_item
+
+import ../accounts/item as account_item
 
 const GENERATED = "generated"
 const GENERATED_FROM_IMPORTED = "generated from imported accounts"
@@ -14,7 +16,7 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      defaultAccount: wallet_account_service.WalletAccountDto
+      defaultAccount: account_item.Item
       name: string
       address: string
       mixedcaseAddress: string
@@ -23,7 +25,7 @@ QtObject:
       publicKey: string
       walletType: string
       isChat: bool
-      currencyBalance: float64
+      currencyBalance: CurrencyAmount
       assets: token_model.Model
       emoji: string
       derivedfrom: string
@@ -117,7 +119,7 @@ QtObject:
   proc currencyBalanceChanged(self: View) {.signal.}
   proc getCurrencyBalance*(self: View): QVariant {.slot.} =
     return newQVariant(self.currencyBalance)
-  proc setCurrencyBalance*(self: View, value: float) =
+  proc setCurrencyBalance*(self: View, value: CurrencyAmount) =
     self.currencyBalance = value
     self.currencyBalanceChanged()
   QtProperty[QVariant] currencyBalance:
@@ -173,66 +175,50 @@ QtObject:
   proc update(self: View, address: string, accountName: string, color: string, emoji: string) {.slot.} =
     self.delegate.update(address, accountName, color, emoji)
 
-  proc setDefaultWalletAccount*(self: View, default: wallet_account_service.WalletAccountDto) =
+  proc setDefaultWalletAccount*(self: View, default: account_item.Item) =
     self.defaultAccount = default
 
-  proc setData*(self: View, dto: wallet_account_service.WalletAccountDto, chainIds: seq[int]) =
-    if(self.name != dto.name):
-      self.name = dto.name
+  proc setData*(self: View, item: account_item.Item) =
+    if(self.name != item.getName()):
+      self.name = item.getName()
       self.nameChanged()
-    if(self.address != dto.address):
-      self.address = dto.address
+    if(self.address != item.getAddress()):
+      self.address = item.getAddress()
       self.addressChanged()
-    if(self.mixedcaseAddress != dto.mixedcaseAddress):
-      self.mixedcaseAddress = dto.mixedcaseAddress
+    if(self.mixedcaseAddress != item.getMixedCaseAddress()):
+      self.mixedcaseAddress = item.getMixedCaseAddress()
       self.mixedcaseAddressChanged()
-    if(self.path != dto.path):
-      self.path = dto.path
+    if(self.path != item.getPath()):
+      self.path = item.getPath()
       self.pathChanged()
-    if(self.color != dto.color):
-      self.color = dto.color
+    if(self.color != item.getColor()):
+      self.color = item.getColor()
       self.colorChanged()
-    if(self.publicKey != dto.publicKey):
-      self.publicKey = dto.publicKey
+    if(self.publicKey != item.getPublicKey()):
+      self.publicKey = item.getPublicKey()
       self.publicKeyChanged()
     # Check if the account is generated from default wallet account else change wallettype
-    if dto.walletType == GENERATED and dto.derivedfrom != self.defaultAccount.derivedfrom:
+    if item.getWalletType() == GENERATED and item.getDerivedfrom() != self.defaultAccount.getDerivedfrom():
         self.walletType = GENERATED_FROM_IMPORTED
         self.walletTypeChanged()
     else:
-      if(self.walletType != dto.walletType):
-        self.walletType = dto.walletType
+      if(self.walletType != item.getWalletType()):
+        self.walletType = item.getWalletType()
         self.walletTypeChanged()
-    if(self.isChat != dto.isChat):
-      self.isChat = dto.isChat
+    if(self.isChat != item.getIsChat()):
+      self.isChat = item.getIsChat()
       self.isChatChanged()
-    if(self.emoji != dto.emoji):
-      self.emoji = dto.emoji
+    if(self.emoji != item.getEmoji()):
+      self.emoji = item.getEmoji()
       self.emojiChanged()
-    if(self.derivedfrom != dto.derivedfrom):
-      self.derivedfrom = dto.derivedfrom
+    if(self.derivedfrom != item.getDerivedFrom()):
+      self.derivedfrom = item.getDerivedFrom()
       self.derivedfromChanged()
-    if(self.ens != dto.ens):
-      self.ens = dto.ens
+    if(self.ens != item.getEns()):
+      self.ens = item.getEns()
       self.ensChanged()
     # Set related accounts
-    let relatedAccounts = compact_model.newModel()
-    relatedAccounts.setItems(
-      dto.relatedAccounts.map(x => compact_item.initItem(
-          x.name,
-          x.address,
-          x.path,
-          x.color,
-          x.publicKey,
-          x.walletType,
-          x.isWallet,
-          x.isChat,
-          x.getCurrencyBalance(chainIds),
-          x.emoji,
-          x.derivedfrom
-        ))
-      )
-    self.relatedAccounts = relatedAccounts
+    self.relatedAccounts = item.getRelatedAccounts()
     self.relatedAccountsChanged()
 
   proc findTokenSymbolByAddress*(self: View, address: string): string {.slot.} =
@@ -241,5 +227,9 @@ QtObject:
   proc hasGas*(self: View, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.slot.} =
     return self.assets.hasGas(chainId, nativeGasSymbol, requiredGas)
 
-  proc getTokenBalanceOnChain*(self: View, chainId: int, tokenSymbol: string): string {.slot.} =
-    return self.assets.getTokenBalanceOnChain(chainId, tokenSymbol)
+  # Returning a QVariant from a slot with parameters other than "self" won't compile
+  #proc getTokenBalanceOnChain*(self: View, chainId: int, tokenSymbol: string): QVariant {.slot.} =
+  #  return newQVariant(self.assets.getTokenBalanceOnChain(chainId, tokenSymbol))
+
+  proc getTokenBalanceOnChainAsJson*(self: View, chainId: int, tokenSymbol: string): string {.slot.} =
+    return $self.assets.getTokenBalanceOnChain(chainId, tokenSymbol).toJsonNode()

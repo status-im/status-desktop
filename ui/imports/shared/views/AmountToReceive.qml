@@ -9,6 +9,7 @@ import utils 1.0
 ColumnLayout {
     id: root
 
+    property var locale
     property var store
     property var selectedAsset
     property bool isLoading: false
@@ -20,7 +21,7 @@ ColumnLayout {
         id: d
         function formatValue(value) {
             const precision = (value === 0 ? 2 : 0)
-            return LocaleUtils.numberToLocaleString(value, precision)
+            return LocaleUtils.numberToLocaleString(value, precision, root.locale)
         }
         readonly property string fiatValue: {
             if(!root.selectedAsset || !amountToReceive)
