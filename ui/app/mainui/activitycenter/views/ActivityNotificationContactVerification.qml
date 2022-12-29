@@ -15,26 +15,12 @@ import "../panels"
 ActivityNotificationMessage {
     id: root
 
-    readonly property bool isOutgoingRequest: notification && notification.message.senderId === root.store.contactsStore.myPublicKey
-    readonly property string contactId: notification ? isOutgoingRequest ? notification.chatId : notification.author : ""
-    readonly property var contactDetails: notification ? Utils.getContactDetailsAsJson(contactId, false) : null
-
     messageDetails.messageText: {
         if (!notification)
             return ""
 
         return root.isOutgoingRequest ? notification.repliedMessage.messageText : notification.message.messageText
     }
-    messageDetails.amISender: false
-    messageDetails.sender.id: contactId
-    messageDetails.sender.displayName: contactDetails ? contactDetails.displayName : ""
-    messageDetails.sender.secondaryName: contactDetails ? contactDetails.localNickname : ""
-    messageDetails.sender.trustIndicator: contactDetails ? contactDetails.trustStatus : 0
-    messageDetails.sender.profileImage.name: contactDetails ? contactDetails.displayIcon : ""
-    messageDetails.sender.profileImage.assetSettings.isImage: true
-    messageDetails.sender.profileImage.pubkey: contactId
-    messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(notification ? contactId : "")
-    messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(notification ? contactId : "", contactDetails.ensVerified)
 
     messageSubheaderComponent: StatusBaseText {
         text: {
