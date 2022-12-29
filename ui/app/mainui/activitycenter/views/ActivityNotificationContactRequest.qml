@@ -15,16 +15,11 @@ import "../popups"
 ActivityNotificationMessage {
     id: root
 
-    readonly property bool isOutgoingRequest: notification && notification.message.amISender
-    readonly property string contactId: notification ? isOutgoingRequest ? notification.chatId : notification.author : ""
-    readonly property var contactDetails: notification ? Utils.getContactDetailsAsJson(contactId, false) : null
-
     readonly property bool pending: notification && notification.message.contactRequestState === Constants.contactRequestStatePending
     readonly property bool accepted: notification && notification.message.contactRequestState === Constants.contactRequestStateAccepted
     readonly property bool dismissed: notification && notification.message.contactRequestState === Constants.contactRequestStateDismissed
 
     maximumLineCount: 5
-
     messageDetails.messageText: {
         if (isOutgoingRequest && contactDetails) {
             const status = accepted ? qsTr("accepted") : dismissed ? qsTr("dismissed") : qsTr("recieved")
@@ -37,17 +32,6 @@ ActivityNotificationMessage {
 
         return ""
     }
-    // TODO: unify with verification requests PR: https://github.com/status-im/status-desktop/pull/8246
-    messageDetails.amISender: false
-    messageDetails.sender.id: contactId
-    messageDetails.sender.displayName: contactDetails ? contactDetails.displayName : ""
-    messageDetails.sender.secondaryName: contactDetails ? contactDetails.localNickname : ""
-    messageDetails.sender.trustIndicator: contactDetails ? contactDetails.trustStatus : 0
-    messageDetails.sender.profileImage.name: contactDetails ? contactDetails.displayIcon : ""
-    messageDetails.sender.profileImage.assetSettings.isImage: true
-    messageDetails.sender.profileImage.pubkey: contactId
-    messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(notification ? contactId : "")
-    messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(notification ? contactId : "", contactDetails.ensVerified)
 
     messageSubheaderComponent: !isOutgoingRequest ? subheaderComponent : null
 

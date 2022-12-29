@@ -13,11 +13,12 @@ ActivityNotificationBase {
     id: root
 
     readonly property string timestampString: notification ?
-                new Date(notification.timestamp).toLocaleTimeString(Qt.locale(), Locale.ShortFormat) :
-                ""
+                new Date(notification.timestamp).toLocaleTimeString(Qt.locale(), Locale.ShortFormat) : ""
     readonly property string timestampTooltipString: notification ?
-                new Date(notification.timestamp).toLocaleString() :
-                ""
+                new Date(notification.timestamp).toLocaleString() : ""
+    readonly property bool isOutgoingRequest: notification && notification.message.amISender
+    readonly property string contactId: notification ? isOutgoingRequest ? notification.chatId : notification.author : ""
+    readonly property var contactDetails: notification ? Utils.getContactDetailsAsJson(contactId, false) : null
 
     property int maximumLineCount: 2
 
@@ -25,19 +26,19 @@ ActivityNotificationBase {
 
     property StatusMessageDetails messageDetails: StatusMessageDetails {
         messageText: notification ? notification.message.messageText : ""
-        amISender: notification ? notification.message.amISender : false
-        sender.id: notification ? notification.message.senderId : ""
-        sender.displayName: notification ? notification.message.senderDisplayName : ""
-        sender.secondaryName: notification ? notification.message.senderOptionalName : ""
-        sender.trustIndicator: notification ? notification.message.senderTrustStatus : Constants.trustStatus.unknown
+        amISender: false
+        sender.id: contactId
+        sender.displayName: contactDetails ? contactDetails.displayName : ""
+        sender.secondaryName: contactDetails ? contactDetails.localNickname : ""
+        sender.trustIndicator: contactDetails ? contactDetails.trustStatus : Constants.trustStatus.unknown
         sender.profileImage {
             width: 40
             height: 40
-            name: notification ? notification.message.senderIcon || "" : ""
-            assetSettings.isImage: notification ? notification.message.senderIcon.startsWith("data") : false
-            pubkey: notification ? notification.message.senderId : ""
-            colorId: Utils.colorIdForPubkey(notification ? notification.message.senderId : "")
-            colorHash: Utils.getColorHashAsJson(notification ? notification.message.senderId : "")
+            name: contactDetails ? contactDetails.displayIcon : ""
+            assetSettings.isImage: contactDetails && contactDetails.displayIcon.startsWith("data")
+            pubkey: contactId
+            colorId: Utils.colorIdForPubkey(contactId)
+            colorHash: Utils.getColorHashAsJson(contactId, contactDetails.ensVerified)
         }
     }
 
@@ -46,7 +47,7 @@ ActivityNotificationBase {
 
     function openProfilePopup() {
         closeActivityCenter()
-        Global.openProfilePopup(notification.message.senderId)
+        Global.openProfilePopup(contactId)
     }
 
     bodyComponent: MouseArea {
@@ -116,7 +117,6 @@ ActivityNotificationBase {
                         elide: Text.ElideRight
                         font.pixelSize: 15
                         Layout.alignment: Qt.AlignVCenter
-                        Layout.fillWidth: true
                         Layout.maximumWidth: 400 // From designs, fixed value to align all possible CTAs
                     }
 
