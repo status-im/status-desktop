@@ -1,11 +1,16 @@
-import NimQml, Tables, sequtils
+import NimQml, Tables, sequtils, sugar
 
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
+import ../../../../../app_service/service/token/service as token_service
+import ../../../../../app_service/service/currency/service as currency_service
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
+import ../../../shared_models/token_utils
+
+import ../../wallet_section/accounts/utils
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -28,57 +33,64 @@ proc newModule*(
   events: EventEmitter,
   walletAccountService: wallet_account_service.Service,
   networkService: network_service.Service,
+  tokenService: token_service.Service,
+  currencyService: currency_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
   result.currentAccountIndex = 0
   result.view = newView(result)
-  result.controller = newController(result, walletAccountService, networkService)
+  result.controller = newController(result, walletAccountService, networkService, tokenService, currencyService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
   self.view.delete
 
 proc setAssets(self: Module, tokens: seq[WalletTokenDto]) =
-  var items: seq[Item]
   let chainIds = self.controller.getChainIds()
   let enabledChainIds = self.controller.getEnabledChainIds()
 
-  for t in tokens:
-    let item = token_item.initItem(
-      t.name,
-      t.symbol,
-      t.getBalance(chainIds),
-      t.getCurrencyBalance(chainIds),
-      t.getBalance(enabledChainIds),
-      t.getCurrencyBalance(enabledChainIds),
-      t.getVisibleForNetwork(enabledChainIds),
-      t.getVisibleForNetworkWithPositiveBalance(enabledChainIds),
-      t.getBalances(enabledChainIds),
-      t.description,
-      t.assetWebsiteUrl,
-      t.builtOn,
-      t.getAddress(),
-      t.marketCap,
-      t.highDay,
-      t.lowDay,
-      t.changePctHour,
-      t.changePctDay,
-      t.changePct24hour,
-      t.change24hour,
-      t.currencyPrice,
-      t.decimals,
-    )
-    items.add(item)
+  let currency = self.controller.getCurrentCurrency()
+
+  let currencyFormat = self.controller.getCurrencyFormat(currency)
+
+  let items = tokens.map(t => walletTokenToItem(t, chainIds, enabledChainIds, currency, currencyFormat, self.controller.getCurrencyFormat(t.symbol)))
     
   self.view.getAssetsModel().setItems(items)
 
 method switchAccount*(self: Module, accountIndex: int) =
   self.currentAccountIndex = accountIndex
+
+  let keyPairMigrated = proc(migratedKeyPairs: seq[KeyPairDto], keyUid: string): bool =
+    for kp in migratedKeyPairs:
+      if kp.keyUid == keyUid:
+        return true
+    return false
+
   let walletAccount = self.controller.getWalletAccount(accountIndex)
+  let migratedKeyPairs = self.controller.getAllMigratedKeyPairs()
+  let currency = self.controller.getCurrentCurrency()
+
+  let chainIds = self.controller.getChainIds()
   let enabledChainIds = self.controller.getEnabledChainIds()
-  self.view.setData(walletAccount, enabledChainIds)
+
+  let tokenFormats = collect(initTable()):
+    for t in walletAccount.tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
+  
+  let currencyFormat = self.controller.getCurrencyFormat(currency)
+
+  let accountItem = walletAccountToItem(
+    walletAccount,
+    chainIds,
+    enabledChainIds,
+    currency,
+    keyPairMigrated(migratedKeyPairs, walletAccount.keyUid),
+    currencyFormat,
+    tokenFormats
+    )
+
+  self.view.setData(accountItem)
   self.setAssets(walletAccount.tokens)
 
 method load*(self: Module) =

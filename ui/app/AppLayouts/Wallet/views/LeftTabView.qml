@@ -82,7 +82,7 @@ Rectangle {
                 objectName: "walletLeftListAmountValue"
                 color: Style.current.textColor
                 text: {
-                    Utils.toLocaleString(parseFloat(RootStore.totalCurrencyBalance).toFixed(2), localAppSettings.language, {"currency": true}) + " " + RootStore.currentCurrency.toUpperCase()
+                    LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance, RootStore.currencyStore.locale)
                 }
                 selectByMouse: true
                 cursorVisible: true
@@ -117,7 +117,7 @@ Rectangle {
                 width: ListView.view.width
                 highlighted: RootStore.currentAccount.name === model.name
                 title: model.name
-                subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), RootStore.locale, {"model.currency": true}) + " " + RootStore.currentCurrency.toUpperCase()
+                subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance, RootStore.currencyStore.locale)
                 asset.emoji: !!model.emoji ? model.emoji: ""
                 asset.color: model.color
                 asset.name: !model.emoji ? "filled-account": ""

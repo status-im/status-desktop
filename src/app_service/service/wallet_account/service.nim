@@ -17,7 +17,6 @@ import ../../../backend/accounts as status_go_accounts
 import ../../../backend/backend as backend
 import ../../../backend/eth as status_go_eth
 import ../../../backend/transactions as status_go_transactions
-import ../../../backend/cache
 
 export dto, derived_address, key_pair_dto
 
@@ -101,7 +100,6 @@ include  ../../common/json_utils
 QtObject:
   type Service* = ref object of QObject
     closingApp: bool
-    ignoreTimeInitiatedTokensBuild: bool
     events: EventEmitter
     threadpool: ThreadPool
     settingsService: settings_service.Service
@@ -109,11 +107,7 @@ QtObject:
     tokenService: token_service.Service
     networkService: network_service.Service
     walletAccounts: OrderedTable[string, WalletAccountDto]
-    timerStartTimeInSeconds: int64
-    priceCache: TimedCache
     processedKeyPair: KeyPairDto
-    ignoreTimeInitiatedHistoryFetchBuild: bool
-    isHistoryFetchTimerAlreadyRunning: bool
 
   # Forward declaration
   proc buildAllTokens(self: Service, accounts: seq[string])
@@ -135,7 +129,6 @@ QtObject:
     new(result, delete)
     result.QObject.setup
     result.closingApp = false
-    result.ignoreTimeInitiatedTokensBuild = false
     result.events = events
     result.threadpool = threadpool
     result.settingsService = settingsService
@@ -143,27 +136,6 @@ QtObject:
     result.tokenService = tokenService
     result.networkService = networkService
     result.walletAccounts = initOrderedTable[string, WalletAccountDto]()
-    result.priceCache = newTimedCache()
-    result.ignoreTimeInitiatedHistoryFetchBuild = false
-    result.isHistoryFetchTimerAlreadyRunning = false
-
-  proc getPrice*(self: Service, crypto: string, fiat: string): float64 =
-    let cacheKey = crypto & fiat
-    if self.priceCache.isCached(cacheKey):
-      return parseFloat(self.priceCache.get(cacheKey))
-    var prices = initTable[string, float]()
-
-    try:
-      let response = backend.fetchPrices(@[crypto], fiat)
-      for (symbol, value) in response.result.pairs:
-        prices[symbol] = value.getFloat
-        self.priceCache.set(cacheKey, $value.getFloat)
-
-      return prices[crypto]
-    except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
-      return 0.0
 
   proc fetchAccounts*(self: Service): seq[WalletAccountDto] =
     let response = status_go_accounts.getAccounts()
@@ -360,6 +332,9 @@ QtObject:
 
     self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(account: accountDeleted))
 
+  proc getCurrency*(self: Service): string =
+    return self.settingsService.getCurrency()
+
   proc updateCurrency*(self: Service, newCurrency: string) =
     discard self.settingsService.saveCurrency(newCurrency)
     self.buildAllTokens(self.getAddresses())
@@ -472,7 +447,7 @@ QtObject:
           tokens.sort(priorityTokenCmp)
           self.walletAccounts[wAddress].tokens = tokens
           data.accountsTokens[wAddress] = tokens
-
+          self.tokenService.updateTokenPrices(tokens) # For efficiency. Will be removed when token info fetching gets moved to the tokenService
       self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, data)
     except Exception as e:
       error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
@@ -494,22 +469,28 @@ QtObject:
     self.checkRecentHistory()
     self.startWallet()
 
-  proc getNetworkCurrencyBalance*(self: Service, network: NetworkDto): float64 =
+  proc getCurrentCurrencyIfEmpty(self: Service, currency: string): string =
+    if currency != "":
+      return currency
+    else:
+      return self.getCurrency()
+
+  proc getNetworkCurrencyBalance*(self: Service, network: NetworkDto, currency: string = ""): float64 =
     for walletAccount in toSeq(self.walletAccounts.values):
-      result += walletAccount.getCurrencyBalance(@[network.chainId])
+      result += walletAccount.getCurrencyBalance(@[network.chainId], self.getCurrentCurrencyIfEmpty(currency))
        
   proc findTokenSymbolByAddress*(self: Service, address: string): string =
     return self.tokenService.findTokenSymbolByAddress(address)
 
-  proc getCurrencyBalanceForAddress*(self: Service, address: string): float64 =
+  proc getCurrencyBalanceForAddress*(self: Service, address: string, currency: string = ""): float64 =
     let chainIds = self.networkService.getNetworks().map(n => n.chainId)
     if not self.walletAccounts.hasKey(address):
       return
-    return self.walletAccounts[address].getCurrencyBalance(chainIds)
+    return self.walletAccounts[address].getCurrencyBalance(chainIds, self.getCurrentCurrencyIfEmpty(currency))
 
-  proc getTotalCurrencyBalance*(self: Service): float64 =
+  proc getTotalCurrencyBalance*(self: Service, currency: string = ""): float64 =
     let chainIds = self.networkService.getNetworks().filter(a => a.enabled).map(a => a.chainId)
-    return self.getWalletAccounts().map(a => a.getCurrencyBalance(chainIds)).foldl(a + b, 0.0)
+    return self.getWalletAccounts().map(a => a.getCurrencyBalance(chainIds, self.getCurrentCurrencyIfEmpty(currency))).foldl(a + b, 0.0)
 
   proc responseHasNoErrors(self: Service, procName: string, response: RpcResponse[JsonNode]): bool =
     var errMsg = ""

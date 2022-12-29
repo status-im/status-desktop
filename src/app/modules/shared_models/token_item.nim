@@ -1,16 +1,18 @@
 import strformat
 
 import ../../../app_service/service/wallet_account/dto
+import ./balance_item as balance_item
 import ./balance_model as balance_model
+import ./currency_amount
 
 type
   Item* = object
     name: string
     symbol: string
-    totalBalance: float
-    totalCurrencyBalance: float
-    enabledNetworkCurrencyBalance: float
-    enabledNetworkBalance: float
+    totalBalance: CurrencyAmount
+    totalCurrencyBalance: CurrencyAmount
+    enabledNetworkCurrencyBalance: CurrencyAmount
+    enabledNetworkBalance: CurrencyAmount
     visibleForNetwork: bool
     visibleForNetworkWithPositiveBalance: bool
     balances: balance_model.BalanceModel
@@ -18,38 +20,40 @@ type
     assetWebsiteUrl: string
     builtOn: string
     address: string
-    marketCap: string
-    highDay: string
-    lowDay: string
-    changePctHour: string
-    changePctDay: string
-    changePct24hour: string
-    change24hour: string
-    currencyPrice: float
+    marketCap: CurrencyAmount
+    highDay: CurrencyAmount
+    lowDay: CurrencyAmount
+    changePctHour: float64
+    changePctDay: float64
+    changePct24hour: float64
+    change24hour: float64
+    currencyPrice: CurrencyAmount
     decimals: int
+    pegSymbol: string
 
 proc initItem*(
   name, symbol: string,
-  totalBalance: float,
-  totalCurrencyBalance: float,
-  enabledNetworkBalance: float,
-  enabledNetworkCurrencyBalance: float,
+  totalBalance: CurrencyAmount,
+  totalCurrencyBalance: CurrencyAmount,
+  enabledNetworkBalance: CurrencyAmount,
+  enabledNetworkCurrencyBalance: CurrencyAmount,
   visibleForNetwork: bool,
   visibleForNetworkWithPositiveBalance: bool,
-  balances: seq[BalanceDto],
+  balances: seq[balance_item.Item],
   description: string,
   assetWebsiteUrl: string,
   builtOn: string,
   address: string,
-  marketCap: string,
-  highDay: string,
-  lowDay: string,
-  changePctHour: string,
-  changePctDay: string,
-  changePct24hour: string,
-  change24hour: string,
-  currencyPrice: float,
+  marketCap: CurrencyAmount,
+  highDay: CurrencyAmount,
+  lowDay: CurrencyAmount,
+  changePctHour: float64,
+  changePctDay: float64,
+  changePct24hour: float64,
+  change24hour: float64,
+  currencyPrice: CurrencyAmount,
   decimals: int,
+  pegSymbol: string,
 ): Item =
   result.name = name
   result.symbol = symbol
@@ -74,6 +78,7 @@ proc initItem*(
   result.change24hour = change24hour
   result.currencyPrice = currencyPrice
   result.decimals = decimals
+  result.pegSymbol = pegSymbol
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
@@ -98,6 +103,7 @@ proc `$`*(self: Item): string =
     change24hour: {self.change24hour},
     currencyPrice: {self.currencyPrice},
     decimals: {self.decimals},
+    pegSymbol: {self.pegSymbol},
     ]"""
 
 proc getName*(self: Item): string =
@@ -106,16 +112,16 @@ proc getName*(self: Item): string =
 proc getSymbol*(self: Item): string =
   return self.symbol
 
-proc getTotalBalance*(self: Item): float =
+proc getTotalBalance*(self: Item): CurrencyAmount =
   return self.totalBalance
 
-proc getTotalCurrencyBalance*(self: Item): float =
+proc getTotalCurrencyBalance*(self: Item): CurrencyAmount =
   return self.totalCurrencyBalance
 
-proc getEnabledNetworkBalance*(self: Item): float =
+proc getEnabledNetworkBalance*(self: Item): CurrencyAmount =
   return self.enabledNetworkBalance
 
-proc getEnabledNetworkCurrencyBalance*(self: Item): float =
+proc getEnabledNetworkCurrencyBalance*(self: Item): CurrencyAmount =
   return self.enabledNetworkCurrencyBalance
 
 proc getVisibleForNetwork*(self: Item): bool =
@@ -139,29 +145,32 @@ proc getBuiltOn*(self: Item): string =
 proc getAddress*(self: Item): string =
   return self.address
 
-proc getMarketCap*(self: Item): string =
+proc getMarketCap*(self: Item): CurrencyAmount =
   return self.marketCap
 
-proc getHighDay*(self: Item): string =
+proc getHighDay*(self: Item): CurrencyAmount =
   return self.highDay
 
-proc getLowDay*(self: Item): string =
+proc getLowDay*(self: Item): CurrencyAmount =
   return self.lowDay
 
-proc getChangePctHour*(self: Item): string =
+proc getChangePctHour*(self: Item): float64 =
   return self.changePctHour
 
-proc getChangePctDay*(self: Item): string =
+proc getChangePctDay*(self: Item): float64 =
   return self.changePctDay
 
-proc getChangePct24hour*(self: Item): string =
+proc getChangePct24hour*(self: Item): float64 =
   return self.changePct24hour
 
-proc getChange24hour*(self: Item): string =
+proc getChange24hour*(self: Item): float64 =
   return self.change24hour
 
-proc getCurrencyPrice*(self: Item): float =
+proc getCurrencyPrice*(self: Item): CurrencyAmount =
   return self.currencyPrice
 
 proc getDecimals*(self: Item): int =
   return self.decimals
+
+proc getPegSymbol*(self: Item): string =
+  return self.pegSymbol

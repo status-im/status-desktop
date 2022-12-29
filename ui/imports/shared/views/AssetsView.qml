@@ -18,6 +18,7 @@ Item {
 
     property var account
     property bool assetDetailsLaunched: false
+    property var locale
 
     signal assetClicked(var token)
 
@@ -43,8 +44,8 @@ Item {
 
         delegate: TokenDelegate {
             objectName: "AssetView_TokenListItem_" + symbol
-            readonly property string balance: enabledNetworkBalance // Needed for the tests
-            currentCurrencySymbol: RootStore.currencyStore.currentCurrencySymbol
+            locale: root.locale
+            readonly property string balance: "%1".arg(enabledNetworkBalance.amount) // Needed for the tests
             width: ListView.view.width
             onClicked: {
                 RootStore.getHistoricalDataForToken(symbol, RootStore.currencyStore.currentCurrency)

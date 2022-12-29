@@ -7,7 +7,7 @@ import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/ens/service as ens_service
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../app_service/service/token/dto
+import ../../../../../app_service/service/token/service as token_service
 import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 logScope:
@@ -23,11 +23,13 @@ type
     ensService: ens_service.Service
     networkService: network_service.Service
     walletAccountService: wallet_account_service.Service
+    tokenService: token_service.Service
 
 proc newController*(
   delegate: io_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.Service, ensService: ens_service.Service,
   walletAccountService: wallet_account_service.Service, networkService: network_service.Service,
+  tokenService: token_service.Service
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -36,6 +38,7 @@ proc newController*(
   result.ensService = ensService
   result.walletAccountService = walletAccountService
   result.networkService = networkService
+  result.tokenService = tokenService
 
 proc delete*(self: Controller) =
   discard
@@ -135,7 +138,7 @@ proc getCurrentCurrency*(self: Controller): string =
   return self.settingsService.getCurrency()
 
 proc getPrice*(self: Controller, crypto: string, fiat: string): float64 =
-  return self.walletAccountService.getPrice(crypto, fiat)
+  return self.tokenService.getTokenPrice(crypto, fiat)
 
 proc getStatusToken*(self: Controller): string =
   let token = self.ensService.getStatusToken()

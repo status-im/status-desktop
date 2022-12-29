@@ -14,8 +14,8 @@ import "../controls"
 Rectangle {
     id: root
 
+    property var locale
     property var assets: []
-    property string currentCurrencySymbol
     signal tokenSelected(var selectedToken)
     property var searchTokenSymbolByAddressFn: function (address) {
         return ""
@@ -56,7 +56,7 @@ Rectangle {
         }
         delegate: TokenBalancePerChainDelegate {
             width: ListView.view.width
-            currentCurrencySymbol: root.currentCurrencySymbol
+            locale: root.locale
             getNetworkIcon: root.getNetworkIcon
             onTokenSelected: root.tokenSelected(selectedToken)
         }

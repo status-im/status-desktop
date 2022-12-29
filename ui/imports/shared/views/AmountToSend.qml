@@ -14,10 +14,11 @@ ColumnLayout {
 
     property alias input: amountToSendInput
 
+    property var locale
     property var selectedAsset
     property bool isBridgeTx: false
     property bool interactive: false
-    property double maxFiatBalance: -1
+    property var maxFiatBalance
     property bool cryptoFiatFlipped: false
     property string cryptoValueToSend: !cryptoFiatFlipped ? amountToSendInput.text : txtFiatBalance.text
     property string currentCurrency
@@ -35,7 +36,7 @@ ColumnLayout {
         }
         function formatValue(value, precision) {
             const precisionVal = !!precision ? precision : (value === 0 ? 2 : 0)
-            return LocaleUtils.numberToLocaleString(value, precisionVal)
+            return LocaleUtils.numberToLocaleString(value, precisionVal, root.locale)
         }
         function getFiatValue(value) {
             if(!root.selectedAsset || !value)
@@ -58,7 +59,7 @@ ColumnLayout {
     }
 
     onMaxFiatBalanceChanged: {
-        floatValidator.top = maxFiatBalance
+        floatValidator.top = maxFiatBalance.amount
         input.validate()
     }
 
@@ -84,7 +85,7 @@ ColumnLayout {
                 StatusFloatValidator {
                     id: floatValidator
                     bottom: 0
-                    top: root.maxFiatBalance
+                    top: root.maxFiatBalance.amount
                     errorMessage: ""
                 }
             ]

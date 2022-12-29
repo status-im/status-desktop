@@ -22,6 +22,7 @@ Control {
     }
     property var getNetworkColor: function(chainId){}
     property var getNetworkIcon: function(chainId){}
+    property var formatBalance: function(balance){}
 
     topPadding: Style.current.padding
 
@@ -77,7 +78,7 @@ Control {
                 id: chainRepeater
                 model: balances ? balances : null
                 delegate: InformationTag {
-                    tagPrimaryLabel.text: model.balance
+                    tagPrimaryLabel.text: root.formatBalance(model.balance)
                     tagPrimaryLabel.color: root.getNetworkColor(model.chainId)
                     image.source: Style.svg("tiny/%1".arg(root.getNetworkIcon(model.chainId)))
                 }

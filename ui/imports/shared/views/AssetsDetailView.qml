@@ -58,14 +58,17 @@ Item {
         asset.name: token && token.symbol ? Style.png("tokens/%1".arg(token.symbol)) : ""
         asset.isImage: true
         primaryText: token ? token.name : ""
-        secondaryText: token ? `${token.enabledNetworkBalance} ${token.symbol}` : ""
-        tertiaryText: token ? "%1 %2".arg(Utils.toLocaleString(token.enabledNetworkCurrencyBalance.toFixed(2), RootStore.locale, {"currency": true})).arg(RootStore.currencyStore.currentCurrency.toUpperCase()) : ""
-        balances: token && token.balances ? token.balances :  null
+        secondaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkBalance, RootStore.locale) : ""
+        tertiaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkCurrencyBalance, RootStore.locale) : ""
+        balances: token && token.balances ? token.balances : null
         getNetworkColor: function(chainId){
             return RootStore.getNetworkColor(chainId)
         }
         getNetworkIcon: function(chainId){
             return RootStore.getNetworkIcon(chainId)
+        }
+        formatBalance: function(balance){
+            return LocaleUtils.currencyAmountToLocaleString(balance, RootStore.locale)
         }
     }
 
@@ -225,7 +228,7 @@ Item {
                                     fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
                                     padding: 8,
                                     callback: function(value, index, ticks) {
-                                        return LocaleUtils.numberToLocaleString(value)
+                                        return LocaleUtils.numberToLocaleString(value, -1, RootStore.locale)
                                     },
                                 }
                             }]
@@ -264,23 +267,23 @@ Item {
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Market Cap")
-                secondaryText: token && token.marketCap !== "" ? token.marketCap : "---"
+                secondaryText: token && token.marketCap ? LocaleUtils.currencyAmountToLocaleString(token.marketCap, RootStore.locale) : "---"
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day Low")
-                secondaryText: token && token.lowDay !== "" ? token.lowDay : "---"
+                secondaryText: token && token.lowDay ? LocaleUtils.currencyAmountToLocaleString(token.lowDay, RootStore.locale) : "---"
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day High")
-                secondaryText: token && token.highDay ? token.highDay : "---"
+                secondaryText: token && token.highDay ? LocaleUtils.currencyAmountToLocaleString(token.highDay, RootStore.locale) : "---"
             }
             Item {
                 Layout.fillWidth: true
             }
             InformationTile {
-                readonly property string changePctHour: token ? token.changePctHour : ""
+                readonly property string changePctHour: token ? token.changePctHour.toFixed(2) : ""
                 maxWidth: parent.width
                 primaryText: qsTr("Hour")
                 secondaryText: changePctHour ? "%1%".arg(changePctHour) : "---"
@@ -289,7 +292,7 @@ Item {
                                                                                                                          Theme.palette.successColor1
             }
             InformationTile {
-                readonly property string changePctDay: token ? token.changePctDay : ""
+                readonly property string changePctDay: token ? token.changePctDay.toFixed(2) : ""
                 maxWidth: parent.width
                 primaryText: qsTr("Day")
                 secondaryText: changePctDay ? "%1%".arg(changePctDay) : "---"
@@ -298,7 +301,7 @@ Item {
                                                                                                                        Theme.palette.successColor1
             }
             InformationTile {
-                readonly property string changePct24hour: token ? token.changePct24hour : ""
+                readonly property string changePct24hour: token ? token.changePct24hour.toFixed(2) : ""
                 maxWidth: parent.width
                 primaryText: qsTr("24 Hours")
                 secondaryText: changePct24hour ? "%1%".arg(changePct24hour) : "---"

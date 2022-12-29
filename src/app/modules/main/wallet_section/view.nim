@@ -1,13 +1,14 @@
 import NimQml
 
 import ./io_interface
+import ../../shared_models/currency_amount
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       currentCurrency: string
-      totalCurrencyBalance: float64
+      totalCurrencyBalance: CurrencyAmount
       signingPhrase: string
       isMnemonicBackedUp: bool
 
@@ -66,7 +67,7 @@ QtObject:
   proc switchAccountByAddress(self: View, address: string) {.slot.} =
     self.delegate.switchAccountByAddress(address)
 
-  proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: float64) =
+  proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: CurrencyAmount) =
     self.totalCurrencyBalance = totalCurrencyBalance
     self.totalCurrencyBalanceChanged()
 

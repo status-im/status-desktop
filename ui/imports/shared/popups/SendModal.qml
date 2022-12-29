@@ -81,9 +81,9 @@ StatusDialog {
         readonly property int errorType: !amountToSendInput.input.valid ? Constants.SendAmountExceedsBalance :
                                                                           (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0 && !!amountToSendInput.input.text && recipientReady && !popup.isLoading) ?
                                                                               Constants.NoRoute : Constants.NoError
-        readonly property double maxFiatBalance: !!assetSelector.selectedAsset ? (amountToSendInput.cryptoFiatFlipped ?
+        readonly property var maxFiatBalance: !!assetSelector.selectedAsset ? (amountToSendInput.cryptoFiatFlipped ?
                                                                                     assetSelector.selectedAsset.totalCurrencyBalance :
-                                                                                    assetSelector.selectedAsset.totalBalance): 0
+                                                                                    assetSelector.selectedAsset.totalBalance): undefined
         readonly property bool errorMode: popup.isLoading || !recipientReady ? false : errorType !== Constants.NoError || networkSelector.errorMode || isNaN(amountToSendInput.input.text)
         readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending
         property bool isAddressValid: Utils.isValidAddress(popup.addressText)
@@ -239,11 +239,12 @@ StatusDialog {
                                 }
                                 popup.recalculateRoutesAndFees()
                             }
+                            locale: popup.store.locale
                         }
                         StatusListItemTag {
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                             Layout.preferredHeight: 22
-                            title: d.maxFiatBalance > 0 ? qsTr("Max: %1").arg(LocaleUtils.numberToLocaleString(d.maxFiatBalance)) : qsTr("No balances active")
+                            title: d.maxFiatBalance && d.maxFiatBalance.amount > 0 ? qsTr("Max: %1").arg(LocaleUtils.currencyAmountToLocaleString(d.maxFiatBalance, popup.store.locale)) : qsTr("No balances active")
                             closeButtonVisible: false
                             titleText.font.pixelSize: 12
                             bgColor: amountToSendInput.input.valid ? Theme.palette.primaryColor3 : Theme.palette.dangerColor2
@@ -255,6 +256,7 @@ StatusDialog {
                         AmountToSend {
                             id: amountToSendInput
                             Layout.fillWidth:true
+                            locale: popup.store.locale
                             isBridgeTx: popup.isBridgeTx
                             interactive: popup.interactive
                             selectedAsset: assetSelector.selectedAsset
@@ -272,6 +274,7 @@ StatusDialog {
                             id: amountToReceive
                             Layout.alignment: Qt.AlignRight
                             Layout.fillWidth:true
+                            locale: popup.store.locale
                             visible: popup.bestRoutes !== undefined && popup.bestRoutes.length > 0
                             store: popup.store
                             isLoading: popup.isLoading
@@ -287,7 +290,7 @@ StatusDialog {
                         anchors.right: parent.right
                         visible: !assetSelector.selectedAsset
                         assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : []
-                        currentCurrencySymbol: RootStore.currencyStore.currentCurrencySymbol
+                        locale: popup.store.locale
                         searchTokenSymbolByAddressFn: function (address) {
                             if(popup.selectedAccount) {
                                 return popup.selectedAccount.findTokenSymbolByAddress(address)
@@ -400,6 +403,7 @@ StatusDialog {
                             d.waitTimer.restart()
                         }
                         visible: !d.recipientReady && !isBridgeTx && !!assetSelector.selectedAsset
+                        locale: popup.store.locale
                     }
 
                     NetworkSelector {
@@ -445,7 +449,7 @@ StatusDialog {
 
     footer: SendModalFooter {
         nextButtonText: popup.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
-        maxFiatFees: popup.isLoading ? "..." : "%1 %2".arg(LocaleUtils.numberToLocaleString(d.totalFeesInFiat)).arg(popup.store.currentCurrency.toUpperCase())
+        maxFiatFees: popup.isLoading ? "..." : "%1 %2".arg(LocaleUtils.numberToLocaleString(d.totalFeesInFiat, -1, popup.store.locale)).arg(popup.store.currentCurrency.toUpperCase())
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
         visible: d.recipientReady && !isNaN(amountToSendInput.cryptoValueToSend) && !d.errorMode

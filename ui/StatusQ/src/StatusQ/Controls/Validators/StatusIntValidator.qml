@@ -35,10 +35,10 @@ StatusValidator {
     property int bottom
 
     /*!
-       \qmlproperty string StatusIntValidator::locale
-       This property holds the name of the locale used to interpret the number.
+       \qmlproperty var StatusIntValidator::locale
+       This property holds the locale used to interpret the number.
     */
-    property string locale
+    property var locale: Qt.locale()
 
     /*!
        \qmlproperty string StatusIntValidator::top
@@ -48,7 +48,7 @@ StatusValidator {
 
     name: "intValidator"
     errorMessage: qsTr("Please enter a valid numeric value.")
-    validatorObj: IntValidator { bottom: root.bottom; locale: root.locale; top: root.top }
+    validatorObj: IntValidator { bottom: root.bottom; locale: root.locale.name; top: root.top }
 
     validate: function (t) {
         // Basic validation management

@@ -1,6 +1,6 @@
 import tables, NimQml, sequtils, sugar, chronicles
 
-import ./io_interface, ./view, ./item, ./controller
+import ./io_interface, ./view, ./item, ./controller, ./utils
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
@@ -9,6 +9,8 @@ import ../../../../../app_service/service/keycard/service as keycard_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/accounts/service as accounts_service
 import ../../../../../app_service/service/network/service as network_service
+import ../../../../../app_service/service/token/service as token_service
+import ../../../../../app_service/service/currency/service as currency_service
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
 import ../../../shared_modules/keycard_popup/module as keycard_shared_module
@@ -43,7 +45,9 @@ proc newModule*(
   keycardService: keycard_service.Service,
   walletAccountService: wallet_account_service.Service,
   accountsService: accounts_service.Service,
-  networkService: network_service.Service
+  networkService: network_service.Service,
+  tokenService: token_service.Service,
+  currencyService: currency_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -52,7 +56,7 @@ proc newModule*(
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
   result.view = newView(result)
-  result.controller = controller.newController(result, events, walletAccountService, accountsService, networkService)
+  result.controller = controller.newController(result, events, walletAccountService, accountsService, networkService, tokenService, currencyService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -70,73 +74,27 @@ method refreshWalletAccounts*(self: Module) =
 
   let walletAccounts = self.controller.getWalletAccounts()
   let migratedKeyPairs = self.controller.getAllMigratedKeyPairs()
+  let currency = self.controller.getCurrentCurrency()
 
   let chainIds = self.controller.getChainIds()
   let enabledChainIds = self.controller.getEnabledChainIds()
+  
+  let currencyFormat = self.controller.getCurrencyFormat(currency)
 
-  let items = walletAccounts.map(proc (w: WalletAccountDto): item.Item =
-    let assets = token_model.newModel()
-    assets.setItems(
-      w.tokens.map(t => token_item.initItem(
-          t.name,
-          t.symbol,
-          t.getBalance(chainIds),
-          t.getCurrencyBalance(chainIds),
-          t.getBalance(enabledChainIds),
-          t.getCurrencyBalance(enabledChainIds),
-          t.getVisibleForNetwork(enabledChainIds),
-          t.getVisibleForNetworkWithPositiveBalance(enabledChainIds),
-          t.getBalances(enabledChainIds),
-          t.description,
-          t.assetWebsiteUrl,
-          t.builtOn,
-          t.getAddress(),
-          t.marketCap,
-          t.highDay,
-          t.lowDay,
-          t.changePctHour,
-          t.changePctDay,
-          t.changePct24hour,
-          t.change24hour,
-          t.currencyPrice,
-          t.decimals,
-        ))
+  let items = walletAccounts.map(w => (block:
+    let tokenFormats = collect(initTable()):
+      for t in w.tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
+
+    walletAccountToItem(
+    w,
+    chainIds,
+    enabledChainIds,
+    currency,
+    keyPairMigrated(migratedKeyPairs, w.keyUid),
+    currencyFormat,
+    tokenFormats
     )
-
-    let relatedAccounts = compact_model.newModel()
-    relatedAccounts.setItems(
-      w.relatedAccounts.map(x => compact_item.initItem(
-          x.name,
-          x.address,
-          x.path,
-          x.color,
-          x.publicKey,
-          x.walletType,
-          x.isWallet,
-          x.isChat,
-          x.getCurrencyBalance(enabledChainIds),
-          x.emoji,
-          x.derivedfrom,
-        ))
-      )
-
-    result = initItem(
-      w.name,
-      w.address,
-      w.path,
-      w.color,
-      w.publicKey,
-      w.walletType,
-      w.isWallet,
-      w.isChat,
-      w.getCurrencyBalance(enabledChainIds),
-      assets,
-      w.emoji,
-      w.derivedfrom,
-      relatedAccounts,
-      w.keyUid,
-      keyPairMigrated(migratedKeyPairs, w.keyUid)
-    ))
+  ))
 
   self.view.setItems(items)
 

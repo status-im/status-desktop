@@ -4,15 +4,20 @@ import utils 1.0
 QtObject {
     id: root
 
+    property var locale: Qt.locale(localAppSettings.language)
+
     property string currentCurrency: walletSection.currentCurrency
-    property string currentCurrencySymbol: {
+    property int currentCurrencyModelIndex: {
         for (var i=0; i<currenciesModel.count; i++) {
             if (currenciesModel.get(i).key === currentCurrency) {
-                return currenciesModel.get(i).symbol;
+                return i;
             }
         }
-        return "";
+        return 0;
     }
+
+    property string currentCurrencySymbol: currenciesModel.get(currentCurrencyModelIndex).symbol
+
     property ListModel currenciesModel: ListModel {
        ListElement {
            key: "usd"
@@ -22,6 +27,7 @@ QtObject {
            category: ""
            imageSource: "../../assets/twemoji/svg/1f1fa-1f1f8.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -32,6 +38,7 @@ QtObject {
            category: ""
            imageSource: "../../assets/twemoji/svg/1f1ec-1f1e7.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -42,6 +49,7 @@ QtObject {
            category: ""
            imageSource: "../../assets/twemoji/svg/1f1ea-1f1fa.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -52,6 +60,7 @@ QtObject {
            category: ""
            imageSource: "../../assets/twemoji/svg/1f1f7-1f1fa.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -62,6 +71,7 @@ QtObject {
            category: ""
            imageSource: "../../assets/twemoji/svg/1f1f0-1f1f7.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -72,6 +82,7 @@ QtObject {
            category: qsTr("Tokens")
            imageSource: "../../../../imports/assets/png/tokens/ETH.png"
            selected: false
+           isToken: true
        }
 
        ListElement {
@@ -82,6 +93,7 @@ QtObject {
            category: qsTr("Tokens")
            imageSource: "../../../../imports/assets/png/tokens/WBTC.png"
            selected: false
+           isToken: true
        }
 
        ListElement {
@@ -92,6 +104,7 @@ QtObject {
            category: qsTr("Tokens")
            imageSource: "../../../../imports/assets/png/tokens/SNT.png"
            selected: false
+           isToken: true
        }
 
        ListElement {
@@ -102,6 +115,7 @@ QtObject {
            category: qsTr("Tokens")
            imageSource: "../../../../imports/assets/png/tokens/DAI.png"
            selected: false
+           isToken: true
        }
 
        ListElement {
@@ -112,6 +126,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e6-1f1ea.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -122,6 +137,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e6-1f1eb.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -132,6 +148,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e6-1f1f7.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -142,6 +159,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e6-1f1fa.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -152,6 +170,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e7-1f1e7.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -162,6 +181,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e7-1f1e9.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -172,6 +192,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e7-1f1ec.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -182,6 +203,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e7-1f1ed.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -192,6 +214,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e7-1f1f3.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -202,6 +225,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e7-1f1f4.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -212,6 +236,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e7-1f1f7.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -222,6 +247,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e7-1f1f9.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -232,6 +258,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e8-1f1e6.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -242,6 +269,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e8-1f1ed.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -252,6 +280,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e8-1f1f1.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -262,6 +291,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e8-1f1f3.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -282,6 +312,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e8-1f1f7.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -292,6 +323,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e8-1f1ff.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -302,6 +334,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e9-1f1f0.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -312,6 +345,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e9-1f1f4.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -322,6 +356,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ea-1f1ec.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -332,6 +367,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ea-1f1f9.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -342,6 +378,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ec-1f1ea.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -352,6 +389,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ec-1f1ed.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -362,6 +400,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ed-1f1f0.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -372,6 +411,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ed-1f1f7.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -382,6 +422,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ed-1f1fa.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -392,6 +433,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ee-1f1e9.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -402,6 +444,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ee-1f1f1.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -412,6 +455,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ee-1f1f3.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -422,6 +466,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ee-1f1f8.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -432,6 +477,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ef-1f1f2.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -442,6 +488,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ef-1f1f5.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -452,6 +499,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f0-1f1ea.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -462,6 +510,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f0-1f1fc.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -472,6 +521,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f0-1f1ff.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -482,6 +532,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f1-1f1f0.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -492,6 +543,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f2-1f1e6.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -502,6 +554,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f2-1f1e9.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -512,6 +565,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f2-1f1f7.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -522,6 +576,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f2-1f1fc.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -532,6 +587,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f2-1f1fd.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -542,6 +598,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f2-1f1fe.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -552,6 +609,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f2-1f1ff.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -562,6 +620,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f3-1f1e6.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -572,6 +631,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f3-1f1ec.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -582,6 +642,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f3-1f1f4.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -592,6 +653,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f3-1f1f5.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -602,6 +664,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f3-1f1ff.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -622,6 +685,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f5-1f1ea.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -632,6 +696,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f5-1f1ec.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -642,6 +707,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f5-1f1ed.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -652,6 +718,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f5-1f1f0.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -662,6 +729,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f5-1f1f1.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -672,6 +740,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f5-1f1fe.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -682,6 +751,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f6-1f1e6.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -692,6 +762,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f7-1f1f4.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -702,6 +773,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f7-1f1f8.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -712,6 +784,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f8-1f1e6.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -722,6 +795,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f8-1f1ea.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -732,6 +806,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f8-1f1ec.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -742,6 +817,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f9-1f1ed.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -752,6 +828,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f9-1f1f9.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -762,6 +839,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f9-1f1fc.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -772,6 +850,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f9-1f1ff.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -782,6 +861,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1f9-1f1f7.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -792,6 +872,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1fa-1f1e6.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -802,6 +883,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1fa-1f1ec.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -812,6 +894,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1fa-1f1fe.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -822,6 +905,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1fb-1f1ea.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -832,6 +916,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1fb-1f1f3.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -842,6 +927,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1ff-1f1e6.svg"
            selected: false
+           isToken: false
        }
     }
 

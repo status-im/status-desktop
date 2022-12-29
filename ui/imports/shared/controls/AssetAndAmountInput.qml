@@ -181,7 +181,7 @@ Item {
              if (!selectAsset.selectedAsset) {
                  return
              }
-             txtBalance.text = Utils.stripTrailingZeros(parseFloat(selectAsset.selectedAsset.balance).toFixed(4))
+             txtBalance.text = Utils.stripTrailingZeros(selectAsset.selectedAsset.balance.amount.toFixed(4))
              if (inputAmount.text === "" || isNaN(inputAmount.text)) {
                  return
              }

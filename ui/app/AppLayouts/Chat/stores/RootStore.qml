@@ -7,7 +7,7 @@ import shared.stores 1.0
 QtObject {
     id: root
 
-    property string locale: localAppSettings.language
+    property var locale: Qt.locale(localAppSettings.language)
 
     property var contactsStore
 
@@ -464,7 +464,7 @@ QtObject {
     property var accounts: walletSectionAccounts.model
     property var currentAccount: walletSectionCurrent
     property string currentCurrency: walletSection.currentCurrency
-    property CurrenciesStore currencyStore: CurrenciesStore { }
+    property CurrenciesStore currencyStore: CurrenciesStore {}
     property var allNetworks: networksModule.all
     property var savedAddressesModel: walletSectionSavedAddresses.model
 

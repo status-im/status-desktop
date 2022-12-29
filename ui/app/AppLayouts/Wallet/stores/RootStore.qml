@@ -22,12 +22,12 @@ QtObject {
     property var generatedAccounts: walletSectionAccounts.generated
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
-    property string locale: Qt.locale().name
+    property var locale: Qt.locale(appSettings.language)
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
 
     property var currencyStore: SharedStore.RootStore.currencyStore
     property string currentCurrency: currencyStore.currentCurrency
-    property string totalCurrencyBalance: walletSection.totalCurrencyBalance
+    property var totalCurrencyBalance: walletSection.totalCurrencyBalance
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 
