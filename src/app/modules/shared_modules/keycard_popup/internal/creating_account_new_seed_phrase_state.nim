@@ -11,9 +11,9 @@ proc delete*(self: CreatingAccountNewSeedPhraseState) =
   self.State.delete
 
 proc resolvePaths(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
-  let kpForPRocessing = controller.getKeyPairForProcessing()
+  let kpForProcessing = controller.getKeyPairForProcessing()
   var i = 0
-  for account in kpForPRocessing.getAccountsModel().getItems():
+  for account in kpForProcessing.getAccountsModel().getItems():
     account.setPath(PATH_WALLET_ROOT & "/" & $i)
     self.paths.add(account.getPath())
     i.inc
@@ -29,27 +29,27 @@ proc findIndexForPath(self: CreatingAccountNewSeedPhraseState, path: string): in
 proc resolveAddresses(self: CreatingAccountNewSeedPhraseState, controller: Controller, keycardEvent: KeycardEvent): bool =
   if keycardEvent.generatedWalletAccounts.len != self.paths.len:
     return false
-  let kpForPRocessing = controller.getKeyPairForProcessing()
-  for account in kpForPRocessing.getAccountsModel().getItems():
+  let kpForProcessing = controller.getKeyPairForProcessing()
+  for account in kpForProcessing.getAccountsModel().getItems():
     let index = self.findIndexForPath(account.getPath())
     if index == -1:
       ## should never be here
       return false
-    kpForPRocessing.setDerivedFrom(keycardEvent.masterKeyAddress)
+    kpForProcessing.setDerivedFrom(keycardEvent.masterKeyAddress)
     account.setAddress(keycardEvent.generatedWalletAccounts[index].address)
     account.setPubKey(keycardEvent.generatedWalletAccounts[index].publicKey)
     self.addresses.add(keycardEvent.generatedWalletAccounts[index].address)
   return true
 
 proc addAccountsToWallet(self: CreatingAccountNewSeedPhraseState, controller: Controller): bool =
-  let kpForPRocessing = controller.getKeyPairForProcessing()
-  for account in kpForPRocessing.getAccountsModel().getItems():
+  let kpForProcessing = controller.getKeyPairForProcessing()
+  for account in kpForProcessing.getAccountsModel().getItems():
     if not controller.addWalletAccount(name = account.getName(), 
       address = account.getAddress(), 
       path = account.getPath(), 
-      addressAccountIsDerivedFrom = kpForPRocessing.getDerivedFrom(), 
+      addressAccountIsDerivedFrom = kpForProcessing.getDerivedFrom(), 
       publicKey = account.getPubKey(), 
-      keyUid = kpForPRocessing.getKeyUid(), 
+      keyUid = kpForProcessing.getKeyUid(), 
       accountType = if account.getPath() == PATH_DEFAULT_WALLET: SEED else: GENERATED,
       color = account.getColor(), 
       emoji = account.getEmoji()):
@@ -57,17 +57,17 @@ proc addAccountsToWallet(self: CreatingAccountNewSeedPhraseState, controller: Co
   return true
 
 proc doMigration(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
-  let kpForPRocessing = controller.getKeyPairForProcessing()
+  let kpForProcessing = controller.getKeyPairForProcessing()
   var kpDto = KeyPairDto(keycardUid: controller.getKeycardUid(),
-    keycardName: kpForPRocessing.getName(),
+    keycardName: kpForProcessing.getName(),
     keycardLocked: false,
     accountsAddresses: self.addresses,
-    keyUid: kpForPRocessing.getKeyUid())
+    keyUid: kpForProcessing.getKeyUid())
   controller.addMigratedKeyPair(kpDto)
 
 proc runStoreMetadataFlow(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
-  let kpForPRocessing = controller.getKeyPairForProcessing()
-  controller.runStoreMetadataFlow(kpForPRocessing.getName(), controller.getPin(), self.paths)
+  let kpForProcessing = controller.getKeyPairForProcessing()
+  controller.runStoreMetadataFlow(kpForProcessing.getName(), controller.getPin(), self.paths)
 
 method executePrePrimaryStateCommand*(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
