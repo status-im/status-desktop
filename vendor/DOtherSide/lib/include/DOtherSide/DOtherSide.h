@@ -1018,6 +1018,8 @@ DOS_API void dos_qsettings_set_value(DosQSettings* vptr, const char* key,
     DosQVariant* value);
 DOS_API void dos_qsettings_remove(DosQSettings* vptr, const char* key);
 DOS_API void dos_qsettings_delete(DosQSettings* vptr);
+DOS_API void dos_qsettings_begin_group(DosQSettings* vptr, const char* group);
+DOS_API void dos_qsettings_end_group(DosQSettings* vptr);
 
 #pragma endregion
 
