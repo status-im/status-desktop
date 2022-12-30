@@ -749,6 +749,8 @@ method communityLeft*[T](self: Module[T], communityId: string) =
 
   self.view.model().removeItem(communityId)
 
+  singletonInstance.localAccountSensitiveSettings.removeSectionChatRecord(communityId)
+
   if (self.controller.getActiveSectionId() == communityId):
     let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
     self.setActiveSection(item)

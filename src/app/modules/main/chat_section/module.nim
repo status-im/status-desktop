@@ -129,6 +129,7 @@ proc buildChatSectionUI(
     mailserversService: mailservers_service.Service) =
   var selectedItemId = ""
   var selectedSubItemId = ""
+  let sectionLastOpenChat = singletonInstance.localAccountSensitiveSettings.getSectionLastOpenChat(self.controller.getMySectionId())
 
   # handle channels which don't belong to any category
   for chatDto in channelGroup.chats:
@@ -173,8 +174,9 @@ proc buildChatSectionUI(
     self.addSubmodule(chatDto.id, belongToCommunity, isUsersListAvailable, events, settingsService, nodeConfigurationService,
       contactService, chatService, communityService, messageService, gifService, mailserversService)
 
-    # make the first channel which doesn't belong to any category active when load the app
-    if(selectedItemId.len == 0):
+    # restore on a startup last open channel for the section or
+    # make the first channel which doesn't belong to any category active
+    if selectedItemId.len == 0 or chatDto.id == sectionLastOpenChat:
       selectedItemId = channelItem.id
 
   # handle categories and channels for each category
@@ -203,9 +205,10 @@ proc buildChatSectionUI(
         settingsService, nodeConfigurationService, contactService, chatService, communityService, messageService, gifService,
         mailserversService)
 
+      # restore on a startup last open channel in the category for the section or
       # in case there is no channels beyond categories,
-      # make the first channel of the first category active when load the app
-      if(selectedItemId.len == 0):
+      # make the first channel of the first category active
+      if selectedItemId.len == 0 or channelItem.id == sectionLastOpenChat:
         selectedItemId = cat.id
         selectedSubItemId = channelItem.id
 
@@ -331,10 +334,13 @@ method makeChatWithIdActive*(self: Module, chatId: string) =
 
   # here, in this step we have appropriate item and subitem assigned
   self.setActiveItemSubItem(item.BaseItem.id, subItemId)
+  singletonInstance.localAccountSensitiveSettings.setSectionLastOpenChat(self.controller.getMySectionId(), chatId)
 
 method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
+  let mySectionId = self.controller.getMySectionId()
   if (itemId == "" and subItemId == ""):
     self.view.activeItem().resetActiveItemData()
+    singletonInstance.localAccountSensitiveSettings.removeSectionChatRecord(mySectionId)
     return
 
   let item = self.view.chatsModel().getItemById(itemId)
@@ -358,8 +364,13 @@ method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
     else:
       chatContentModule.onMadeInactive()
 
+  let activeChatId = self.controller.getActiveChatId()
+
+  # save last open chat in settings for restore on the next app launch
+  singletonInstance.localAccountSensitiveSettings.setSectionLastOpenChat(mySectionId, activeChatId)
+
   # notify parent module about active chat/channel
-  self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
+  self.delegate.onActiveChatChange(mySectionId, activeChatId)
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
