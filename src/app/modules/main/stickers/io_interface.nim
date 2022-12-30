@@ -49,6 +49,9 @@ method estimate*(self: AccessInterface, packId: string, address: string, price: 
 method installStickerPack*(self: AccessInterface, packId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onStickerPackInstalled*(self: AccessInterface, packId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method uninstallStickerPack*(self: AccessInterface, packId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

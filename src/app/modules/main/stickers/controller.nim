@@ -107,6 +107,10 @@ proc init*(self: Controller) =
       return
     self.delegate.onUserAuthenticated(args.password)
 
+  self.events.on(SIGNAL_STICKER_PACK_INSTALLED) do(e: Args):
+    let args = StickerPackInstalledArgs(e)
+    self.delegate.onStickerPackInstalled(args.packId)
+
 proc buy*(self: Controller, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): tuple[response: string, success: bool] =
   self.stickerService.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 

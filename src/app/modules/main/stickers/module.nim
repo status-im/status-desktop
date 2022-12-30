@@ -137,6 +137,9 @@ method getNumInstalledStickerPacks*(self: Module): int =
 method installStickerPack*(self: Module, packId: string) =
   self.controller.installStickerPack(packId)
 
+method onStickerPackInstalled*(self: Module, packId: string) =
+  self.view.onStickerPackInstalled(packId)
+
 method uninstallStickerPack*(self: Module, packId: string) =
   self.controller.uninstallStickerPack(packId)
 

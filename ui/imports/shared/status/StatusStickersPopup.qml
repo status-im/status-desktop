@@ -82,9 +82,8 @@ Popup {
             stickerPacks: d.stickerPackList
             packId: stickerPackListView.selectedPackId
             onInstallClicked: {
+                //starts async task
                 stickersModule.install(packId)
-                stickerGrid.model = stickers
-                stickerPackListView.itemAt(index).clicked()
             }
             onUninstallClicked: {
                 stickersModule.uninstall(packId)
@@ -95,6 +94,19 @@ Popup {
                 stickerMarket.visible = false
                 footerContent.visible = true
                 stickersContainer.visible = true
+            }
+
+            Connections {
+                target: root.store.stickersModuleInst
+                function onStickerPackInstalled(packId) {
+                    const idx = stickersModule.stickerPacks.findIndexById(packId, false);
+                    if (idx === -1) {
+                        return
+                    }
+                    stickersModule.stickerPacks.findStickersById(packId)
+                    stickerGrid.model = stickersModule.stickerPacks.getFoundStickers()
+                    stickerPackListView.itemAt(idx).clicked()
+                }
             }
 
             Loader {
