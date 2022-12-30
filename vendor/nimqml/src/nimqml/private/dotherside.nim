@@ -371,6 +371,10 @@ proc dos_qsettings_remove(vptr: DosQSettings, key: cstring)
   {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qsettings_delete(vptr: DosQSettings) 
   {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qsettings_begin_group(vptr: DosQSettings, group: cstring) 
+  {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qsettings_end_group(vptr: DosQSettings) 
+  {.cdecl, dynlib: dynLibName, importc.}
 
 # QTimer
 proc dos_qtimer_create(): DosQTimer

@@ -28,3 +28,9 @@ proc setValue*(self: QSettings, key: string, value: QVariant) =
 
 proc remove*(self: QSettings, key: string) =
   dos_qsettings_remove(self.vptr, key)
+
+proc beginGroup*(self: QSettings, group: string) =
+  dos_qsettings_begin_group(self.vptr, group)
+
+proc endGroup*(self: QSettings) =
+  dos_qsettings_end_group(self.vptr)
