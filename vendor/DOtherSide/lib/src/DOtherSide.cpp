@@ -1580,6 +1580,25 @@ void dos_qsettings_delete(DosQSettings* vptr)
     if(qobject)
         qobject->deleteLater();
 }
+
+void dos_qsettings_begin_group(DosQSettings* vptr, const char* group)
+{
+    auto settings = static_cast<QSettings*>(vptr);
+    if(settings)
+    {
+        return settings->beginGroup(QString(group));
+    }
+}
+
+void dos_qsettings_end_group(DosQSettings* vptr)
+{
+    auto settings = static_cast<QSettings*>(vptr);
+    if(settings)
+    {
+        return settings->endGroup();
+    }
+}
+
 #pragma endregion
 
 #pragma region QTimer
