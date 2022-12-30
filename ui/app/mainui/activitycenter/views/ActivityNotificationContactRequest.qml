@@ -19,6 +19,16 @@ ActivityNotificationMessage {
     readonly property bool accepted: notification && notification.message.contactRequestState === Constants.contactRequestStateAccepted
     readonly property bool dismissed: notification && notification.message.contactRequestState === Constants.contactRequestStateDismissed
 
+    Connections {
+        target: root.isOutgoingRequest ? root.store.contactsStore.sentContactRequestsModel :
+                                         root.store.contactsStore.receivedContactRequestsModel
+
+        function onItemChanged(pubKey) {
+            if (pubKey === root.contactId)
+                root.updateContactDetails()
+        }
+    }
+
     maximumLineCount: 5
     messageDetails.messageText: {
         if (isOutgoingRequest && contactDetails) {
