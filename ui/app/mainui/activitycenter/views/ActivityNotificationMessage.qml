@@ -18,8 +18,8 @@ ActivityNotificationBase {
                 new Date(notification.timestamp).toLocaleString() : ""
     readonly property bool isOutgoingRequest: notification && notification.message.amISender
     readonly property string contactId: notification ? isOutgoingRequest ? notification.chatId : notification.author : ""
-    readonly property var contactDetails: notification ? Utils.getContactDetailsAsJson(contactId, false) : null
 
+    property var contactDetails: null
     property int maximumLineCount: 2
 
     signal messageClicked()
@@ -48,6 +48,21 @@ ActivityNotificationBase {
     function openProfilePopup() {
         closeActivityCenter()
         Global.openProfilePopup(contactId)
+    }
+
+    function updateContactDetails() {
+        contactDetails = notification ? Utils.getContactDetailsAsJson(contactId, false) : null
+    }
+
+    onContactIdChanged: root.updateContactDetails()
+
+    Connections {
+        target: root.store.contactsStore.myContactsModel
+
+        function onItemChanged(pubKey) {
+            if (pubKey === root.contactId)
+                root.updateContactDetails()
+        }
     }
 
     bodyComponent: MouseArea {

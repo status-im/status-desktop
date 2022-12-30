@@ -15,6 +15,16 @@ import "../panels"
 ActivityNotificationMessage {
     id: root
 
+    Connections {
+        target: root.isOutgoingRequest ? root.store.contactsStore.sentContactRequestsModel :
+                                         root.store.contactsStore.receivedContactRequestsModel
+
+        function onItemChanged(pubKey) {
+            if (pubKey === root.contactId)
+                root.updateContactDetails()
+        }
+    }
+
     messageDetails.messageText: {
         if (!notification)
             return ""
