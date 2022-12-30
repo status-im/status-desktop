@@ -53,6 +53,8 @@ const LSS_KEY_DOWNLOAD_CHANNEL_MESSAGES_ENABLED* = "downloadChannelMessagesEnabl
 const DEFAULT_DOWNLOAD_CHANNEL_MESSAGES_ENABLED = false
 const LSS_KEY_ACTIVE_SECTION* = "activeSection"
 const DEFAULT_ACTIVE_SECTION = ""
+const LAST_SECTION_CHAT = "LastSectionChat"
+const DEFAULT_ACTIVE_CHAT = ""
 const LSS_KEY_SHOW_BROWSER_SELECTOR* = "showBrowserSelector"
 const DEFAULT_SHOW_BROWSER_SELECTOR = true
 const LSS_KEY_OPEN_LINKS_IN_STATUS* = "openLinksInStatus"
@@ -149,6 +151,16 @@ QtObject:
     when T is bool:
       result = getSettingsPropBool(self, prop, default)
 
+  template getSettingsGroupProp[T](self: LocalAccountSensitiveSettings, group: string, prop: string, default: QVariant): untyped =
+    # This doesn't work in case of QVariant, such properties will be handled in a common way.
+    if(self.settings.isNil):
+      return
+
+    self.settings.beginGroup(group);
+    getSettingsProp[T](self, prop, default)
+    self.settings.endGroup();
+  
+
   template setSettingsProp(self: LocalAccountSensitiveSettings, prop: string, value: QVariant, signal: untyped) =
     if(self.settings.isNil):
       return
@@ -156,6 +168,30 @@ QtObject:
     self.settings.setValue(prop, value)
     signal
 
+  template setSettingsGroupProp(self: LocalAccountSensitiveSettings, group: string, key: string, value: QVariant) =
+    if(self.settings.isNil):
+      return
+
+    self.settings.beginGroup(group)
+    self.settings.setValue(key, value)
+    self.settings.endGroup()
+
+  proc removeSettingsGroupKey(self: LocalAccountSensitiveSettings, group: string, key: string) =
+    if(self.settings.isNil):
+      return
+
+    self.settings.beginGroup(group)
+    self.settings.remove(key)
+    self.settings.endGroup()
+
+  proc getSectionLastOpenChat*(self: LocalAccountSensitiveSettings, sectionId: string): string =
+    getSettingsGroupProp[string](self, LAST_SECTION_CHAT, sectionId, newQVariant(DEFAULT_ACTIVE_CHAT))
+
+  proc setSectionLastOpenChat*(self: LocalAccountSensitiveSettings, sectionId: string, value: string) =
+    self.setSettingsGroupProp(LAST_SECTION_CHAT, sectionId, newQVariant(value))
+    
+  proc removeSectionChatRecord*(self: LocalAccountSensitiveSettings, sectionId: string) =
+    self.removeSettingsGroupKey(LAST_SECTION_CHAT, sectionId)
 
   proc chatSplitViewChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getChatSplitView*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
@@ -497,7 +533,6 @@ QtObject:
     read = getActiveSection
     write = setActiveSection
     notify = activeSectionChanged
-
 
   proc showBrowserSelectorChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getShowBrowserSelector*(self: LocalAccountSensitiveSettings): bool {.slot.} =
