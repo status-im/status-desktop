@@ -67,6 +67,8 @@ QtObject:
 
   proc stickerPacksLoaded*(self: View) {.signal.}
 
+  proc stickerPackInstalled*(self: View, packId: string) {.signal.}
+
   proc packsLoadFailedChanged*(self: View) {.signal.}
 
   proc installedStickerPacksUpdated*(self: View) {.signal.}
@@ -87,8 +89,11 @@ QtObject:
 
   proc install*(self: View, packId: string) {.slot.} =
     self.delegate.installStickerPack(packId)
+
+  proc onStickerPackInstalled*(self:View, packId: string) =
     self.stickerPacks.updateStickerPackInList(packId, true, false)
     self.installedStickerPacksUpdated()
+    self.stickerPackInstalled(packId)
 
   proc resetBuyAttempt*(self: View, packId: string) {.slot.} =
     self.stickerPacks.updateStickerPackInList(packId, false, false)
