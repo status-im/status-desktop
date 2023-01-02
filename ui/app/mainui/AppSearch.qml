@@ -153,6 +153,6 @@ Item {
         acceptsTitleClick: function (titleId) {
             return Utils.isChatKey(titleId)
         }
-        onResultItemTitleClicked: Global.openProfilePopup(titleId)
+        onResultItemTitleClicked: Global.openProfilePopup(titleId, searchPopup)
     }
 }
