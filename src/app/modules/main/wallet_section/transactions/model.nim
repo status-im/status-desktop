@@ -248,5 +248,3 @@ QtObject:
       self.items = allTxs
       self.setItems(itemsWithDateHeaders)
       self.setHasMore(true)
-    else:
-      self.setHasMore(false)

@@ -1,4 +1,4 @@
-import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm, math
+import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm, math, random
 
 import ../../../backend/transactions as transactions
 import ../../../backend/backend
@@ -36,6 +36,7 @@ const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
 const SIGNAL_TRANSACTION_SENT* = "transactionSent"
 const SIGNAL_SUGGESTED_ROUTES_READY* = "suggestedRoutesReady"
 const SIGNAL_PENDING_TX_COMPLETED* = "pendingTransactionCompleted"
+const SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS* = "transactionsLoadingCompleteForAllNetworks"
 
 type
   EstimatedTime* {.pure.} = enum
@@ -78,6 +79,7 @@ QtObject:
     networkService: network_service.Service
     settingsService: settings_service.Service
     tokenService: token_service.Service
+    txCounter: Table[string, seq[int]]
 
   # Forward declaration
   proc checkPendingTransactions*(self: Service): seq[TransactionDto]
@@ -100,6 +102,7 @@ QtObject:
     result.networkService = networkService
     result.settingsService = settingsService
     result.tokenService = tokenService
+    result.txCounter = initTable[string, seq[int]]()
 
   proc doConnect*(self: Service) =
     self.events.on(SignalType.Wallet.event) do(e:Args):
@@ -200,6 +203,7 @@ QtObject:
   proc setTrxHistoryResult*(self: Service, historyJSON: string) {.slot.} =
     let historyData = parseJson(historyJSON)
     let address = historyData["address"].getStr
+    let chainID = historyData["chainId"].getInt
     let wasFetchMore = historyData["loadMore"].getBool
     var transactions: seq[TransactionDto] = @[]
     for tx in historyData["history"]["result"].getElems():
@@ -212,19 +216,34 @@ QtObject:
       wasFetchMore: wasFetchMore
     ))
 
+    # when requests for all networks are completed then set loading state as completed
+    if self.txCounter.hasKey(address):
+      var chainIDs = self.txCounter[address]
+      chainIDs.del(chainIDs.find(chainID))
+      self.txCounter[address] = chainIDs
+      if self.txCounter[address].len == 0:
+        self.txCounter.del(address)
+        self.events.emit(SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS, TransactionsLoadedArgs(address: address))
+
   proc loadTransactions*(self: Service, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
-    for networks in self.networkService.getNetworks():
-      let arg = LoadTransactionsTaskArg(
-        address: address,
-        tptr: cast[ByteAddress](loadTransactionsTask),
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "setTrxHistoryResult",
-        toBlock: toBlock,
-        limit: limit,
-        loadMore: loadMore,
-        chainId: networks.chainId,
-      )
-      self.threadpool.start(arg)
+    let networks = self.networkService.getNetworks()
+    if not self.txCounter.hasKey(address):
+      var networkChains: seq[int] = @[]
+      self.txCounter[address] = networkChains
+      for network in networks:
+        networkChains.add(network.chainId)
+        let arg = LoadTransactionsTaskArg(
+          address: address,
+          tptr: cast[ByteAddress](loadTransactionsTask),
+          vptr: cast[ByteAddress](self.vptr),
+          slot: "setTrxHistoryResult",
+          toBlock: toBlock,
+          limit: limit,
+          loadMore: loadMore,
+          chainId: network.chainId,
+        )
+        self.txCounter[address] = networkChains
+        self.threadpool.start(arg)
 
   proc transfer*(
     self: Service,
