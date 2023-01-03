@@ -731,12 +731,11 @@ QtObject {
     }
 
     function escapeHtml(unsafeStr) {
-        return unsafeStr
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+        return globalUtilsInst.escapeHtml(unsafeStr)
+    }
+
+    function plainText(text) {
+        return globalUtilsInst.plainText(text)
     }
 
     function isInvalidPasswordMessage(msg) {
