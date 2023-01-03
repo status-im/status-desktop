@@ -108,6 +108,24 @@ def step(context, community_category_name):
 def step(context, new_community_name, new_community_description, new_community_color):
     _statusCommunityScreen.edit_community(new_community_name, new_community_description, new_community_color)
 
+@When("the admin changes the community name to \"|any|\"")
+def step(context, new_community_name):
+    _statusCommunityScreen.open_edit_community_by_community_header()
+    _statusCommunityScreen.change_community_name(new_community_name)
+    _statusCommunityScreen.save_community_changes()
+
+@When("the admin changes the community description to \"|any|\"") 
+def step(context, new_community_description):
+    _statusCommunityScreen.open_edit_community_by_community_header()
+    _statusCommunityScreen.change_community_description(new_community_description)
+    _statusCommunityScreen.save_community_changes()
+
+@When("the admin changes the community color to \"|any|\"")
+def step(context, new_community_color):
+    _statusCommunityScreen.open_edit_community_by_community_header()
+    _statusCommunityScreen.change_community_color(new_community_color)
+    _statusCommunityScreen.save_community_changes()
+
 @When("the admin goes back to the community")
 def step(context):
     _statusCommunityScreen.go_back_to_community()
@@ -179,7 +197,19 @@ def step(context):
 @Then("the number of members is |any|")
 def step(context, amount):
     _statusCommunityScreen.verify_number_of_members(amount)
+    
+@Then("the community overview name is \"|any|\"")
+def step(context, name: str):
+    _statusCommunityScreen.verify_community_overview_name(name)
 
+@Then("the community overview description is \"|any|\"")
+def step(context, communityDescription: str):
+    _statusCommunityScreen.verify_community_overview_description(communityDescription)
+
+@Then("the community overview color is \"|any|\"")
+def step(context, color: str):
+    _statusCommunityScreen.verify_community_overview_color(color)
+    
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:
 ########################################################################### 
