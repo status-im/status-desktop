@@ -35,7 +35,7 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
     networkService: network_service.Service
-    tokens: Table[NetworkDto, seq[TokenDto]]
+    tokens: Table[int, seq[TokenDto]]
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -50,7 +50,7 @@ QtObject:
     result.events = events
     result.threadpool = threadpool
     result.networkService = networkService
-    result.tokens = initTable[NetworkDto, seq[TokenDto]]()
+    result.tokens = initTable[int, seq[TokenDto]]()
 
   proc init*(self: Service) =
     try:
@@ -58,8 +58,8 @@ QtObject:
     
       for network in networks:
         var found = false
-        for n in self.tokens.keys:
-          if n.chainId == network.chainId:
+        for chainId in self.tokens.keys:
+          if chainId == network.chainId:
             found = true
             break
 
@@ -67,14 +67,13 @@ QtObject:
         if found:
           continue
         
-        echo network.chainId
         let responseTokens = backend.getTokens(network.chainId)
         let default_tokens = map(
           responseTokens.result.getElems(), 
           proc(x: JsonNode): TokenDto = x.toTokenDto(network.enabled, hasIcon=true, isCustom=false)
         )
 
-        self.tokens[network] = default_tokens.filter(
+        self.tokens[network.chainId] = default_tokens.filter(
           proc(x: TokenDto): bool = x.chainId == network.chainId
         )
 
@@ -83,19 +82,16 @@ QtObject:
       error "error: ", errDesription
       return
 
-  proc getTokens*(self: Service): Table[NetworkDto, seq[TokenDto]] =
-    return self.tokens
-
   proc findTokenBySymbol*(self: Service, network: NetworkDto, symbol: string): TokenDto =
     try:
-      for token in self.tokens[network]:
+      for token in self.tokens[network.chainId]:
         if token.symbol == symbol:
           return token
     except Exception as e:
       error "Error finding token by symbol", msg = e.msg
     
   proc findTokenByAddress*(self: Service, network: NetworkDto, address: Address): TokenDto =
-    for token in self.tokens[network]:
+    for token in self.tokens[network.chainId]:
       if token.address == address:
         return token
 
