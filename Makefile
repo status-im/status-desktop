@@ -409,7 +409,7 @@ $(FCITX5_QT): | check-qt-dir deps
 			.. $(HANDLE_OUTPUT) && \
 		$(FCITX5_QT_BUILD_CMD)
 
-PRODUCTION_PARAMETERS := -d:production -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic]
+PRODUCTION_PARAMETERS := -d:production
 
 $(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
 $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop $(FCITX5_QT)

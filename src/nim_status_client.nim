@@ -52,17 +52,16 @@ proc prepareLogging() =
         except:
           logLoggingFailure(cstring(msg), getCurrentException())
 
-  # do not create log file
-  when not defined(production):
-    # log level can be overriden by LOG_LEVEL env parameter
-    let logLvl = try: parseEnum[LogLevel](getEnv("LOG_LEVEL"))
-                      except: NONE
+  let defaultLogLvl = if defined(production): LogLevel.INFO else: LogLevel.DEBUG
+  # default log level can be overriden by LOG_LEVEL env parameter
+  let logLvl = try: parseEnum[LogLevel](getEnv("LOG_LEVEL"))
+               except: defaultLogLvl
 
-    setLogLevel(logLvl)
+  setLogLevel(logLvl)
 
-    let formattedDate = now().format("yyyyMMdd'_'HHmmss")
-    let logFile = fmt"app_{formattedDate}.log"
-    discard defaultChroniclesStream.outputs[1].open(LOGDIR & logFile, fmAppend)
+  let formattedDate = now().format("yyyyMMdd'_'HHmmss")
+  let logFile = fmt"app_{formattedDate}.log"
+  discard defaultChroniclesStream.outputs[1].open(LOGDIR & logFile, fmAppend)
 
 proc setupRemoteSignalsHandling() =
   # Please note that this must use the `cdecl` calling convention because
