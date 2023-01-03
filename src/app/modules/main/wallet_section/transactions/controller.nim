@@ -48,20 +48,20 @@ proc init*(self: Controller) =
           # TODO find a way to use data.blockNumber
           self.loadTransactions(account, stint.fromHex(Uint256, "0x0"))
       of "recent-history-fetching":
-        self.delegate.setHistoryFetchState(data.accounts, true)
+        self.delegate.setHistoryFetchState(data.accounts, isFetching = true)
       of "recent-history-ready":
         for account in data.accounts:
           self.loadTransactions(account, stint.fromHex(Uint256, "0x0"))
-        self.delegate.setHistoryFetchState(data.accounts, false)
+        self.delegate.setHistoryFetchState(data.accounts, isFetching = false)
       of "non-archival-node-detected":
         let accounts = self.getWalletAccounts()
         let addresses = accounts.map(account => account.address)
-        self.delegate.setHistoryFetchState(addresses, false)
+        self.delegate.setHistoryFetchState(addresses, isFetching = false)
         self.delegate.setIsNonArchivalNode(true)
       of "fetching-history-error":
         let accounts = self.getWalletAccounts()
         let addresses = accounts.map(account => account.address)
-        self.delegate.setHistoryFetchState(addresses, false)
+        self.delegate.setHistoryFetchState(addresses, isFetching = false)
 
   self.events.on(SIGNAL_TRANSACTIONS_LOADED) do(e:Args):
     let args = TransactionsLoadedArgs(e)
@@ -81,6 +81,10 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_PENDING_TX_COMPLETED) do(e:Args):
     self.walletAccountService.checkRecentHistory()
+
+  self.events.on(SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS) do(e:Args):
+    let args = TransactionsLoadedArgs(e)
+    self.delegate.setHistoryFetchState(args.address, isFetching = false)
 
 proc checkPendingTransactions*(self: Controller): seq[TransactionDto] =
   return self.transactionService.checkPendingTransactions()
