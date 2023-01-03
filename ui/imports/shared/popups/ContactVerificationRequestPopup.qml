@@ -28,7 +28,7 @@ StatusModal {
                 root.close()
             }
 
-            d.senderPublicKey = request.from,
+            d.senderPublicKey = request.from
             d.senderDisplayName = request.displayName
             d.senderIcon = request.icon
             d.challengeText = request.challenge

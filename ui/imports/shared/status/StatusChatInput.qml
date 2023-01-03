@@ -365,10 +365,10 @@ Rectangle {
         } else if (event.key === Qt.Key_Escape && control.isReply) {
             control.isReply = false
             event.accepted = true
-        } else if (event.key === Qt.Key_Up && getPlainText() == "") {
+        } else if (event.key === Qt.Key_Up && messageInputField.length === 0) {
             event.accepted = true
             control.keyUpPress()
-            return 
+            return
         }
 
         const symbolPressed = event.text.length > 0 &&
@@ -458,8 +458,8 @@ Rectangle {
                 d.copyTextStart = messageInputField.cursorPosition
                 messageInputField.readOnly = true
 
-                const clipboardText = globalUtils.plainText(QClipboardProxy.text)
-                const copiedText = globalUtils.plainText(d.copiedTextPlain)
+                const clipboardText = Utils.plainText(QClipboardProxy.text)
+                const copiedText = Utils.plainText(d.copiedTextPlain)
                 if (copiedText === clipboardText) {
                     d.internalPaste = true
                 } else {
@@ -574,7 +574,7 @@ Rectangle {
 
         const deparsedEmoji = StatusQUtils.Emoji.deparse(textWithoutMention);
 
-        return globalUtils.plainText(deparsedEmoji)
+        return Utils.plainText(deparsedEmoji)
     }
 
     function removeMentions(currentText) {
@@ -717,9 +717,8 @@ Rectangle {
             insertInTextInput(d.copyTextStart, d.copiedTextFormatted)
             messageInputField.cursorPosition = d.copyTextStart + messageInputField.length - prevLength
             d.internalPaste = false
-        } else if (event.matches(StandardKey.Paste)) {
-            insertInTextInput(d.copyTextStart, QClipboardProxy.text)
-            messageInputField.cursorPosition = d.copyTextStart + QClipboardProxy.text.length
+        } else if (event.matches(StandardKey.Paste) && QClipboardProxy.hasText) {
+            messageInputField.insert(d.copyTextStart, "<div style='white-space: pre-wrap'>" + Utils.escapeHtml(QClipboardProxy.text) + "</div>") // preserve formatting
         }
 
         if (event.key !== Qt.Key_Escape) {
