@@ -18,6 +18,12 @@ const BLOOM_LEVEL_NORMAL* = "normal"
 const BLOOM_LEVEL_FULL* = "full"
 const BLOOM_LEVEL_LIGHT* = "light"
 
+const SIGNAL_NODE_LOG_LEVEL_UPDATE* = "nodeLogLevelUpdated"
+
+type
+  NodeLogLevelUpdatedArgs* = ref object of Args
+    logLevel*: LogLevel
+
 type
   ErrorArgs* = ref object of Args
     msg*: string
@@ -244,13 +250,20 @@ proc setV2LightMode*(self: Service, enabled: bool): bool =
   newConfiguration.WakuV2Config.LightClient = enabled
   return self.saveConfiguration(newConfiguration)
 
-proc getDebugLevel*(self: Service): string =
+proc getLogLevel(self: Service): string =
   return self.configuration.LogLevel
 
-proc setDebugLevel*(self: Service, logLevel: LogLevel): bool =
+proc isDebugEnabled*(self: Service): bool =
+  return self.getLogLevel() == $LogLevel.DEBUG
+
+proc setLogLevel*(self: Service, logLevel: LogLevel): bool =
   var newConfiguration = self.configuration
   newConfiguration.LogLevel = $logLevel
-  return self.saveConfiguration(newConfiguration)
+  if self.saveConfiguration(newConfiguration):
+    self.events.emit(SIGNAL_NODE_LOG_LEVEL_UPDATE, NodeLogLevelUpdatedArgs(logLevel: logLevel))
+    return true
+  else:
+    return false
 
 proc isV2LightMode*(self: Service): bool =
    return self.configuration.WakuV2Config.LightClient

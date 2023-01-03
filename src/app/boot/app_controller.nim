@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar, chronicles
+import NimQml, sequtils, sugar, chronicles, os
 
 import ../../app_service/service/general/service as general_service
 import ../../app_service/service/keychain/service as keychain_service
@@ -114,6 +114,15 @@ proc connect(self: AppController) =
   self.statusFoundation.events.once("nodeStopped") do(a: Args):
     # not sure, but maybe we should take some actions when node stops
     discard
+
+  # Handle runtime log level settings changes
+  if not existsEnv("LOG_LEVEL"):
+    self.statusFoundation.events.on(node_configuration_service.SIGNAL_NODE_LOG_LEVEL_UPDATE) do(a: Args):
+      let args = NodeLogLevelUpdatedArgs(a)
+      if args.logLevel == LogLevel.DEBUG:
+        setLogLevel(LogLevel.DEBUG)
+      elif defined(production):
+        setLogLevel(LogLevel.INFO)
 
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
@@ -342,6 +351,11 @@ proc load(self: AppController) =
   self.networkService.init()
   self.tokenService.init()
   self.walletAccountService.init()
+
+  # Apply runtime log level settings
+  if not existsEnv("LOG_LEVEL"):
+    if self.nodeConfigurationService.isDebugEnabled():
+      setLogLevel(LogLevel.DEBUG)
 
   # load main module
   self.mainModule.load(

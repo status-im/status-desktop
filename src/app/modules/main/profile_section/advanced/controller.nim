@@ -72,7 +72,7 @@ proc setWakuV2LightClientEnabled*(self: Controller, enabled: bool) =
 proc enableDeveloperFeatures*(self: Controller) =
   discard self.settingsService.saveTelemetryServerUrl(DEFAULT_TELEMETRY_SERVER_URL)
   discard self.settingsService.saveAutoMessageEnabled(true)
-  discard self.nodeConfigurationService.setDebugLevel(LogLevel.DEBUG)
+  discard self.nodeConfigurationService.setLogLevel(LogLevel.DEBUG)
 
   quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
@@ -104,14 +104,14 @@ proc isAutoMessageEnabled*(self: Controller): bool =
   return self.settingsService.autoMessageEnabled()
 
 proc isDebugEnabled*(self: Controller): bool =
-  return self.nodeConfigurationService.getDebugLevel() == $LogLevel.DEBUG
+  return self.nodeConfigurationService.isDebugEnabled()
   
 proc toggleDebug*(self: Controller) =
   var logLevel = LogLevel.DEBUG
   if(self.isDebugEnabled()):
     logLevel = LogLevel.INFO
 
-  if(not self.nodeConfigurationService.setDebugLevel(logLevel)):
+  if(not self.nodeConfigurationService.setLogLevel(logLevel)):
     # in the future we may do a call from here to show a popup about this error
     error "an error occurred, we couldn't toggle debug level"
     return
