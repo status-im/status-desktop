@@ -48,6 +48,7 @@ StatusModal {
 
         StatusInput {
             id: accountNameInput
+
             anchors.horizontalCenter: parent.horizontalCenter
             input.edit.objectName: "renameAccountNameInput"
             input.isIconSelectable: true
@@ -56,6 +57,9 @@ StatusModal {
             input.asset.emoji: currentAccount.emoji
             input.asset.color: currentAccount.color
             input.asset.name: !currentAccount.emoji ? "filled-account": ""
+
+            validationMode: StatusInput.ValidationMode.Always
+
             onIconClicked: {
                 popup.emojiPopup.open()
                 popup.emojiPopup.x = popup.x + accountNameInput.x + Style.current.padding
@@ -87,12 +91,12 @@ StatusModal {
                     if(model[i] === currentAccount.color)
                         return i
                 }
+                return -1
             }
             onSelectedColorChanged: {
                 if(selectedColor !== currentAccount.color) {
                     accountNameInput.input.asset.color = selectedColor
                 }
-
             }
         }
 
@@ -109,6 +113,8 @@ StatusModal {
             text: qsTr("Change Name")
 
             enabled: accountNameInput.text !== "" && accountNameInput.valid
+                        && (accountNameInput.text !== currentAccount.name
+                            || (accountColorInput.selectedColorIndex >= 0 && accountColorInput.selectedColor !== currentAccount.color))
 
             MessageDialog {
                 id: changeError
@@ -117,7 +123,7 @@ StatusModal {
                 standardButtons: StandardButton.Ok
             }
 
-            onClicked : {                
+            onClicked : {
                 if (!accountNameInput.valid) {
                      return
                  }
