@@ -31,7 +31,7 @@ Item {
             Component.onCompleted: setCropRect(Qt.rect(10, 0, sourceSize.width - 20, sourceSize.height))
         }
     }
-    
+
     Loader {
         id: testLoader
 
