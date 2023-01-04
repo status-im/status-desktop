@@ -219,12 +219,14 @@ QtObject:
     self.currentFlow = KCSFlowType.GetAppInfo
     self.startFlow(payload)
 
-  proc startGetMetadataFlow*(self: Service, resolveAddress: bool, exportMasterAddr = false) =
+  proc startGetMetadataFlow*(self: Service, resolveAddress: bool, exportMasterAddr = false, pin = "") =
     var payload = %* { }
     if resolveAddress:
       payload[RequestParamResolveAddr] = %* resolveAddress
     if exportMasterAddr:
       payload[RequestParamExportMasterAddress] = %* exportMasterAddr
+    if pin.len > 0:
+      payload[RequestParamPIN] = %* pin
     self.currentFlow = KCSFlowType.GetMetadata
     self.startFlow(payload)
 

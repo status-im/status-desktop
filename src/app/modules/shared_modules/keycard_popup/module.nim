@@ -1,4 +1,4 @@
-import NimQml, random, strutils, marshal, chronicles
+import NimQml, random, strutils, marshal, sequtils, sugar, chronicles
 
 import io_interface
 import view, controller
@@ -7,6 +7,8 @@ import models/[key_pair_model, key_pair_item]
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 
+import ../../../../app_service/common/utils
+import ../../../../app_service/service/keycard/constants
 import ../../../../app_service/service/keycard/service as keycard_service
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/privacy/service as privacy_service
@@ -62,8 +64,16 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
+proc init[T](self: Module[T]) =
+  if not self.initialized:
+    self.initialized = true
+    self.controller.init()
+
 method getModuleAsVariant*[T](self: Module[T]): QVariant =
   return self.viewVariant
+
+method getPin*[T](self: Module[T]): string =
+  return self.controller.getPin()
 
 method getKeycardData*[T](self: Module[T]): string =
   return self.view.getKeycardData()
@@ -125,15 +135,19 @@ method checkRepeatedKeycardPukWhileTyping*[T](self: Module[T], puk: string): boo
     self.controller.setPukMatch(match)
     return match
 
-method getMnemonic*[T](self: Module[T]): string =
+method getCurrentFlowType*[T](self: Module[T]): FlowType =
   let currStateObj = self.view.currentStateObj()
   if currStateObj.isNil:
     error "sm_cannot resolve current state in order to determine mnemonic"
-    return
-  if currStateObj.flowType() == FlowType.SetupNewKeycard:
+    return FlowType.General
+  return currStateObj.flowType()
+
+method getMnemonic*[T](self: Module[T]): string =
+  let flowType = self.getCurrentFlowType()
+  if flowType == FlowType.SetupNewKeycard:
     return self.controller.getProfileMnemonic()
-  if currStateObj.flowType() == FlowType.SetupNewKeycardNewSeedPhrase or
-    currStateObj.flowType() == FlowType.SetupNewKeycardOldSeedPhrase:
+  if flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    flowType == FlowType.SetupNewKeycardOldSeedPhrase:
       return self.controller.getSeedPhrase()
 
 method setSeedPhrase*[T](self: Module[T], value: string) =
@@ -151,6 +165,30 @@ method migratingProfileKeyPair*[T](self: Module[T]): bool =
 method getSigningPhrase*[T](self: Module[T]): string =
   return self.controller.getSigningPhrase()
 
+proc preActionActivities[T](self: Module[T], currFlowType: FlowType, currStateType: StateType) =
+  if currStateType == StateType.ManageKeycardAccounts or
+    currStateType == StateType.CreatePin or
+    currStateType == StateType.RepeatPin or
+    currStateType == StateType.CreatePuk or
+    currStateType == StateType.RepeatPuk or
+    currStateType == StateType.EnterPuk or
+    currStateType == StateType.WrongPuk:
+      self.view.setDisablePopup(false)
+      return
+  if currStateType == StateType.EnterPin or
+    currStateType == StateType.CreatePin or
+    currStateType == StateType.RepeatPin or
+    currStateType == StateType.WrongPin:
+      let disable = self.controller.getPin().len == PINLengthForStatusApp
+      self.view.setDisablePopup(disable)
+      return
+  if currStateType == StateType.CreatePuk or
+    currStateType == StateType.RepeatPuk:
+      let disable = self.controller.getPUK().len == PUKLengthForStatusApp
+      self.view.setDisablePopup(disable)
+      return
+  self.view.setDisablePopup(true)
+
 proc preStateActivities[T](self: Module[T], currFlowType: FlowType, nextStateType: StateType) =
   if nextStateType == StateType.MaxPinRetriesReached or
     nextStateType == StateType.MaxPukRetriesReached or
@@ -158,7 +196,7 @@ proc preStateActivities[T](self: Module[T], currFlowType: FlowType, nextStateTyp
     nextStateType == StateType.UnlockKeycardOptions:
       ## in case the card is locked on another device, we're updating its state in the DB
       let (_, flowEvent) = self.controller.getLastReceivedKeycardData()
-      self.controller.setCurrentKeycardStateToLocked(flowEvent.instanceUID)
+      self.controller.setCurrentKeycardStateToLocked(flowEvent.keyUid, flowEvent.instanceUID)
 
   if currFlowType == FlowType.Authentication:
     self.view.setLockedPropForKeyPairForProcessing(nextStateType == StateType.MaxPinRetriesReached)
@@ -185,12 +223,89 @@ proc reEvaluateKeyPairForProcessing[T](self: Module[T], currFlowType: FlowType, 
         keycardUid = flowEvent.instanceUID
       self.prepareKeyPairForProcessing(self.getKeyPairForProcessing().getKeyUid(), keycardUid)
 
+proc handleKeycardSyncing[T](self: Module[T]) =
+  if not self.controller.keycardSyncingInProgress():
+    return
+  let kcsFlowType = self.controller.getCurrentKeycardServiceFlow()
+  if kcsFlowType == KCSFlowType.GetMetadata:
+    let (eventType, flowEvent) = self.controller.getLastReceivedKeycardData()
+    if flowEvent.keyUid != self.controller.getKeyUidWhichIsBeingSyncing():
+      self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+      return
+    if eventType == ResponseTypeValueKeycardFlowResult and flowEvent.error.len == 0:
+      var kpDto = KeyPairDto(keycardUid: flowEvent.instanceUID,
+        keycardName: flowEvent.cardMetadata.name,
+        keycardLocked: false,
+        accountsAddresses: @[],
+        keyUid: flowEvent.keyUid)
+      let alreadySetKeycards = self.controller.getAllKnownKeycards().filter(kp => kp.keycardUid == flowEvent.instanceUID)
+      if alreadySetKeycards.len == 1:
+        var accountsToRemove = alreadySetKeycards[0].accountsAddresses
+        let appAccounts = self.controller.getWalletAccounts()
+        var activeValidPathsToStoreToAKeycard: seq[string]
+        for appAcc in appAccounts:
+          if appAcc.keyUid != flowEvent.keyUid:
+            continue
+          activeValidPathsToStoreToAKeycard.add(appAcc.path)
+          var index = -1
+          var found = false
+          for acc in accountsToRemove:
+            index.inc
+            if cmpIgnoreCase(acc, appAcc.address) == 0:
+              found = true
+              break
+          if found and index > -1:
+            # if account address which is present in the wallet is still present in accounts addresses of a keycard, 
+            # then it needs to be present in `keypairs` table in db, so remove it from the list
+            accountsToRemove.delete(index)
+          else:
+            # we store to db only accounts we haven't stored before, accounts which are already on a keycard (in metadata)
+            # we assume they are already in the db
+            kpDto.accountsAddresses.add(appAcc.address)
+        if accountsToRemove.len > 0:
+          self.controller.removeMigratedAccountsForKeycard(kpDto.keyUid, kpDto.keycardUid, accountsToRemove)
+        if kpDto.accountsAddresses.len > 0:
+          self.controller.addMigratedKeyPair(kpDto)
+        # if all accounts are removed from the app, there is no point in storing empty accounts list to a keycard, cause in that case
+        # keypair which is on that keycard won't be known to the app, that means keypair was removed from the app
+        if activeValidPathsToStoreToAKeycard.len > 0:
+          ##  we need to store paths to a keycard if the num of paths in the app and on a keycard is diffrent
+          ## or if the paths are different
+          var storeToKeycard = activeValidPathsToStoreToAKeycard.len != flowEvent.cardMetadata.walletAccounts.len
+          if not storeToKeycard:
+            for wa in flowEvent.cardMetadata.walletAccounts:
+              if not utils.arrayContains(activeValidPathsToStoreToAKeycard, wa.path):
+                storeToKeycard = true
+                break
+          if storeToKeycard:
+            self.controller.runStoreMetadataFlow(flowEvent.cardMetadata.name, self.controller.getPin(), activeValidPathsToStoreToAKeycard)
+            return
+      elif alreadySetKeycards.len > 1:
+        error "it's impossible to have more then one keycard with the same uid", keycarUid=flowEvent.instanceUID
+  self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+
+method syncKeycardBasedOnAppState*[T](self: Module[T], keyUid: string, pin: string) =
+  ## This method must not be called directly. If you want to initiate keycard syncing please emit
+  ## `SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC` signal
+  if pin.len != PINLengthForStatusApp:
+    debug "cannot sync with the pin which doesn't meet app expectations"
+    return
+  if keyUid.len == 0:
+    debug "cannot sync with the empty keyUid"
+    return
+  self.init()
+  self.controller.setKeyUidWhichIsBeingSyncing(keyUid)
+  self.controller.setPin(pin)
+  self.controller.setKeycardSyncingInProgress(true)
+  self.controller.runGetMetadataFlow(resolveAddress = true, exportMasterAddr = true, pin)
+
 method onBackActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStateObj()
   if currStateObj.isNil:
     error "sm_cannot resolve current state"
     return
   debug "sm_back_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  self.preActionActivities(currStateObj.flowType(), currStateObj.stateType())
   currStateObj.executePreBackStateCommand(self.controller)
   let backState = currStateObj.getBackState()
   self.preStateActivities(backState.flowType(), backState.stateType())
@@ -205,6 +320,7 @@ method onCancelActionClicked*[T](self: Module[T]) =
     error "sm_cannot resolve current state"
     return
   debug "sm_cancel_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  self.preActionActivities(currStateObj.flowType(), currStateObj.stateType())
   currStateObj.executeCancelCommand(self.controller)
     
 method onPrimaryActionClicked*[T](self: Module[T]) =
@@ -213,6 +329,7 @@ method onPrimaryActionClicked*[T](self: Module[T]) =
     error "sm_cannot resolve current state"
     return
   debug "sm_primary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  self.preActionActivities(currStateObj.flowType(), currStateObj.stateType())
   currStateObj.executePrePrimaryStateCommand(self.controller)
   let nextState = currStateObj.getNextPrimaryState(self.controller)
   if nextState.isNil:
@@ -229,6 +346,7 @@ method onSecondaryActionClicked*[T](self: Module[T]) =
     error "sm_cannot resolve current state"
     return
   debug "sm_secondary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  self.preActionActivities(currStateObj.flowType(), currStateObj.stateType())
   currStateObj.executePreSecondaryStateCommand(self.controller)
   let nextState = currStateObj.getNextSecondaryState(self.controller)
   if nextState.isNil:
@@ -240,6 +358,9 @@ method onSecondaryActionClicked*[T](self: Module[T]) =
   debug "sm_secondary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
 
 method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEvent: KeycardEvent) =
+  if self.controller.keycardSyncingInProgress():
+    self.handleKeycardSyncing()
+    return
   if self.derivingAccountDetails.deriveAddressAfterAuthentication and
     self.derivingAccountDetails.addressRequested:
       # clearing...
@@ -390,9 +511,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
     error "sm_cannot run an general flow"
     return
-  if not self.initialized:
-    self.initialized = true
-    self.controller.init()
+  self.init()
   if flowToRun == FlowType.FactoryReset:
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runGetMetadataFlow(resolveAddress = true)
@@ -449,6 +568,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.controller.runChangePairingFlow()
     return
   if flowToRun == FlowType.AuthenticateAndDeriveAccountAddress:
+    self.prepareKeyPairForProcessing(keyUid) ## needed for keycard sync
     self.derivingAccountDetails = DerivingAccountDetails(
       keyUid: keyUid,
       path: bip44Path,
@@ -517,6 +637,10 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
     icon = "keycard",
     pairType = KeyPairType.Unknown,
     derivedFrom = "")
+  let currKp = self.getKeyPairForProcessing()
+  if not currKp.isNil:
+    result.item.setKeyUid(currKp.getKeyUid())
+    result.item.setPubKey(currKp.getPubKey())
   result.knownKeyPair = true
   for wa in cardMetadata.walletAccounts:
     if self.updateKeyPairItemIfDataAreKnown(wa.address, result.item):
@@ -539,10 +663,11 @@ method onUserAuthenticated*[T](self: Module[T], password: string, pin: string) =
   if self.derivingAccountDetails.deriveAddressAfterAuthentication:
     self.derivingAccountDetails.addressRequested = true
     self.controller.setPassword(password)
+    self.controller.setPin(pin) # we need to keep it in case new acc is added we need to sync accounts on the Keycard 
     self.controller.runDeriveAccountFlow(self.derivingAccountDetails.path, pin)
     return
-  let currStateObj = self.view.currentStateObj()
-  if not currStateObj.isNil and currStateObj.flowType() == FlowType.SetupNewKeycard:
+  let flowType = self.getCurrentFlowType()
+  if flowType == FlowType.SetupNewKeycard:
     self.controller.setPassword(password)
     self.onSecondaryActionClicked()
 
@@ -580,4 +705,3 @@ method keychainObtainedDataSuccess*[T](self: Module[T], data: string) =
       self.controller.enterKeycardPin(data)
     else:
       self.view.setCurrentState(newBiometricsPinInvalidState(FlowType.Authentication, nil))
-

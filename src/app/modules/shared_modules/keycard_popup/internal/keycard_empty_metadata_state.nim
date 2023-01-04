@@ -14,13 +14,15 @@ method executeCancelCommand*(self: KeycardEmptyMetadataState, controller: Contro
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.ImportFromKeycard or
+    self.flowType == FlowType.UnlockKeycard or
     self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.RenameKeycard or
     self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
 method executePrePrimaryStateCommand*(self: KeycardEmptyMetadataState, controller: Controller) =
-  if self.flowType == FlowType.DisplayKeycardContent or
+  if self.flowType == FlowType.UnlockKeycard or 
+    self.flowType == FlowType.DisplayKeycardContent or
     self.flowType == FlowType.ImportFromKeycard or
     self.flowType == FlowType.RenameKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)

@@ -94,6 +94,7 @@ type
     nodeSectionModule: node_section_module.AccessInterface
     networksModule: networks_module.AccessInterface
     keycardSharedModule: keycard_shared_module.AccessInterface
+    keycardSharedModuleKeycardSyncPurpose: keycard_shared_module.AccessInterface
     moduleLoaded: bool
     statusUrlCommunityToSpectate: string
 
@@ -209,6 +210,8 @@ method delete*[T](self: Module[T]) =
   self.networksModule.delete
   if not self.keycardSharedModule.isNil:
     self.keycardSharedModule.delete
+  if not self.keycardSharedModuleKeycardSyncPurpose.isNil:
+    self.keycardSharedModuleKeycardSyncPurpose.delete
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
@@ -982,6 +985,19 @@ method runAuthenticationPopup*[T](self: Module[T], keyUid: string) =
   if self.keycardSharedModule.isNil:
     return
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.Authentication, keyUid)
+
+method onSharedKeycarModuleKeycardSyncPurposeTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
+  if not self.keycardSharedModuleKeycardSyncPurpose.isNil:
+    self.keycardSharedModuleKeycardSyncPurpose.delete
+    self.keycardSharedModuleKeycardSyncPurpose = nil
+
+method tryKeycardSync*[T](self: Module[T], keyUid: string, pin: string) =
+  self.keycardSharedModuleKeycardSyncPurpose = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER, 
+    self.events, self.keycardService, self.settingsService, self.privacyService, self.accountsService, 
+    self.walletAccountService, self.keychainService)
+  if self.keycardSharedModuleKeycardSyncPurpose.isNil:
+    return
+  self.keycardSharedModuleKeycardSyncPurpose.syncKeycardBasedOnAppState(keyUid, pin)
 
 method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
   self.view.emitDisplayKeycardSharedModuleFlow()

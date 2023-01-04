@@ -231,6 +231,10 @@ rpc(addMigratedKeyPair, "accounts"):
   accountAddresses: seq[string]
   keyStoreDir: string
 
+rpc(removeMigratedAccountsForKeycard, "accounts"):
+  keycardUid: string
+  accountsToRemove: seq[string]
+
 rpc(getAllKnownKeycards, "accounts"):
   discard
 

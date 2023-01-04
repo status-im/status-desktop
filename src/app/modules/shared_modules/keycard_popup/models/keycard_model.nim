@@ -53,6 +53,16 @@ QtObject:
     self.countChanged()
     self.lockedItemsCountChanged()
 
+  proc removeItem*(self: KeycardModel, index: int) =
+    if (index < 0 or index >= self.items.len):
+      return
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginRemoveRows(parentModelIndex, index, index)
+    self.items.delete(index)
+    self.endRemoveRows()
+    self.countChanged()
+
   proc `$`*(self: KeycardModel): string =
     for i in 0 ..< self.items.len:
       result &= fmt"""KeycardModel:
@@ -84,6 +94,12 @@ QtObject:
         return self.items[i]
     return nil
 
+  proc getItemForKeycardUid*(self: KeycardModel, keycardUid: string): KeycardItem =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getKeycardUid() == keycardUid):
+        return self.items[i]
+    return nil
+
   proc findIndexForMember(self: KeycardModel, pubKey: string): int =
     for i in 0 ..< self.items.len:
       if(self.items[i].getPubKey() == pubKey):
@@ -96,12 +112,19 @@ QtObject:
       return
     self.items[ind].setImage(image)
 
-  proc setLocked*(self: KeycardModel, keycardUid: string, locked: bool) =
+  proc setLockedForKeycardWithKeycardUid*(self: KeycardModel, keycardUid: string, locked: bool) =
     for i in 0 ..< self.items.len:
       if(self.items[i].getKeycardUid() == keycardUid):
         self.items[i].setLocked(locked)
+        self.lockedItemsCountChanged()
 
-  proc setName*(self: KeycardModel, keycardUid: string, name: string) =
+  proc setLockedForKeycardsWithKeyUid*(self: KeycardModel, keyUid: string, locked: bool) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getKeyUid() == keyUid):
+        self.items[i].setLocked(locked)
+        self.lockedItemsCountChanged()
+
+  proc setNameForKeycardWithKeycardUid*(self: KeycardModel, keycardUid: string, name: string) =
     for i in 0 ..< self.items.len:
       if(self.items[i].getKeycardUid() == keycardUid):
         self.items[i].setName(name)
@@ -110,3 +133,27 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getKeycardUid() == keycardUid):
         self.items[i].setKeycardUid(keycardNewUid)
+
+  proc removeAccountsFromKeycardWithKeycardUid*(self: KeycardModel, keycardUid: string, accountsToRemove: seq[string], 
+    removeKeycardItemIfHasNoAccounts: bool) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getKeycardUid() == keycardUid):
+        for acc in accountsToRemove:
+          self.items[i].removeAccountByAddress(acc)
+        if removeKeycardItemIfHasNoAccounts and self.items[i].getAccountsModel().getCount() == 0:
+          self.removeItem(i)
+  
+  proc removeAccountsFromKeycardsWithKeyUid*(self: KeycardModel, keyUid: string, accountsToRemove: seq[string],
+    removeKeycardItemIfHasNoAccounts: bool) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getKeyUid() == keyUid):
+        for acc in accountsToRemove:
+          self.items[i].removeAccountByAddress(acc)
+        if removeKeycardItemIfHasNoAccounts and self.items[i].getAccountsModel().getCount() == 0:
+          self.removeItem(i)
+
+  proc updateDetailsForAddressForKeyPairsWithKeyUid*(self: KeycardModel, keyUid: string, accAddress: string, accName: string,
+    accColor: string, accEmoji: string) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getKeyUid() == keyUid):
+        self.items[i].updateDetailsForAccountWithAddressIfTheyAreSet(accAddress, accName, accColor, accEmoji)

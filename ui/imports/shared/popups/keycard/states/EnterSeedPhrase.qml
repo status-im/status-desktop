@@ -280,7 +280,7 @@ Item {
                     if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                         event.accepted = true
                         if (d.allEntriesValid) {
-                            d.sharedKeycardModule.currentState.doPrimaryAction()
+                            root.sharedKeycardModule.currentState.doPrimaryAction()
                             return
                         }
                     }

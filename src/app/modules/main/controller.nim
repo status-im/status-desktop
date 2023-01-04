@@ -26,6 +26,7 @@ logScope:
   topics = "main-module-controller"
 
 const UNIQUE_MAIN_MODULE_IDENTIFIER* = "MainModule"
+const UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER* = "MainModule-KeycardSyncPurpose"
 
 type
   Controller* = ref object of RootObj
@@ -270,6 +271,10 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED) do(e: Args):
     let args = SharedKeycarModuleFlowTerminatedArgs(e)
+    if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER:
+      self.delegate.onSharedKeycarModuleKeycardSyncPurposeTerminated(args.lastStepInTheCurrentFlow)
+      self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED, Args())
+      return
     if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_IDENTIFIER or 
       self.authenticateUserFlowRequestedBy.len == 0:
         return
@@ -292,6 +297,10 @@ proc init*(self: Controller) =
     let args = SharedKeycarModuleAuthenticationArgs(e)
     self.authenticateUserFlowRequestedBy = args.uniqueIdentifier
     self.delegate.runAuthenticationPopup(args.keyUid)
+
+  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC) do(e: Args):
+    let args = SharedKeycarModuleArgs(e)
+    self.delegate.tryKeycardSync(args.keyUid, args.pin)
 
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()

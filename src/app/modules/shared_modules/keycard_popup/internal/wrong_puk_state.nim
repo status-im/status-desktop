@@ -38,5 +38,5 @@ method resolveKeycardNextState*(self: WrongPukState, keycardFlowType: string, ke
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       if keycardEvent.error.len == 0:
         controller.setPukValid(true)
-        controller.updateKeycardUid(keycardEvent.instanceUID)
+        controller.updateKeycardUid(keycardEvent.keyUid, keycardEvent.instanceUID)
         return createState(StateType.UnlockKeycardSuccess, self.flowType, nil)

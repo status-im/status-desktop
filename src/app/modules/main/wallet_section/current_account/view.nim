@@ -18,6 +18,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       defaultAccount: account_item.Item
       name: string
+      keyUid: string
       address: string
       mixedcaseAddress: string
       path: string
@@ -56,6 +57,13 @@ QtObject:
   QtProperty[QVariant] name:
     read = getName
     notify = nameChanged
+
+  proc getKeyUid(self: View): QVariant {.slot.} =
+    return newQVariant(self.keyUid)
+  proc keyUidChanged(self: View) {.signal.}
+  QtProperty[QVariant] keyUid:
+    read = getKeyUid
+    notify = keyUidChanged
 
   proc getAddress(self: View): QVariant {.slot.} =
     return newQVariant(self.address)
@@ -182,6 +190,9 @@ QtObject:
     if(self.name != item.getName()):
       self.name = item.getName()
       self.nameChanged()
+    if(self.keyUid != item.getKeyUid()):
+      self.keyUid = item.getKeyUid()
+      self.keyUidChanged()
     if(self.address != item.getAddress()):
       self.address = item.getAddress()
       self.addressChanged()

@@ -11,7 +11,15 @@ QtObject {
     property var sharedKeycardModule
 
     property bool primaryButtonEnabled: false
-    readonly property bool disablePopupClose: {
+
+    // disables action buttons (back, cancel, primary, secondary) and close button (upper right "X" button) as well
+    readonly property bool disableActionPopupButtons: root.sharedKeycardModule.disablePopup
+
+    readonly property bool disablePopupClose: { // disables popup close button (upper right "X" button)
+        if (root.disableActionPopupButtons) {
+            return true
+        }
+
         switch (root.sharedKeycardModule.currentState.stateType) {
 
         case Constants.keycardSharedState.readingKeycard:
@@ -38,6 +46,7 @@ QtObject {
         StatusBackButton {
             id: backButton
             visible: root.sharedKeycardModule.currentState.displayBackButton
+            enabled: !root.disableActionPopupButtons
             height: Constants.keycard.general.footerButtonsHeight
             width: height
             onClicked: {
@@ -347,26 +356,7 @@ QtObject {
 
                 return false
             }
-            enabled: {
-                switch (root.sharedKeycardModule.currentState.stateType) {
-
-                case Constants.keycardSharedState.readingKeycard:
-                case Constants.keycardSharedState.migratingKeyPair:
-                case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
-                case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
-                case Constants.keycardSharedState.importingFromKeycard:
-                case Constants.keycardSharedState.renamingKeycard:
-                case Constants.keycardSharedState.changingKeycardPin:
-                case Constants.keycardSharedState.changingKeycardPuk:
-                case Constants.keycardSharedState.changingKeycardPairingCode:
-                case Constants.keycardSharedState.copyingKeycard:
-                    if (root.disablePopupClose) {
-                        return false
-                    }
-                }
-
-                return true
-            }
+            enabled: !root.disableActionPopupButtons
 
             onClicked: {
                 root.sharedKeycardModule.currentState.doCancelAction()
@@ -462,21 +452,8 @@ QtObject {
 
             visible: text !== ""
             enabled: {
-                switch (root.sharedKeycardModule.currentState.stateType) {
-
-                case Constants.keycardSharedState.readingKeycard:
-                case Constants.keycardSharedState.migratingKeyPair:
-                case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
-                case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
-                case Constants.keycardSharedState.importingFromKeycard:
-                case Constants.keycardSharedState.renamingKeycard:
-                case Constants.keycardSharedState.changingKeycardPin:
-                case Constants.keycardSharedState.changingKeycardPuk:
-                case Constants.keycardSharedState.changingKeycardPairingCode:
-                case Constants.keycardSharedState.copyingKeycard:
-                    if (root.disablePopupClose) {
-                        return false
-                    }
+                if (root.disableActionPopupButtons) {
+                    return false
                 }
 
                 switch (root.sharedKeycardModule.currentState.flowType) {
@@ -784,6 +761,7 @@ QtObject {
                     switch (root.sharedKeycardModule.currentState.stateType) {
 
                     case Constants.keycardSharedState.keycardEmpty:
+                    case Constants.keycardSharedState.keycardEmptyMetadata:
                     case Constants.keycardSharedState.keycardAlreadyUnlocked:
                     case Constants.keycardSharedState.wrongKeycard:
                     case Constants.keycardSharedState.unlockKeycardSuccess:
@@ -1000,21 +978,8 @@ QtObject {
             }
             visible: text !== ""
             enabled: {
-                switch (root.sharedKeycardModule.currentState.stateType) {
-
-                case Constants.keycardSharedState.readingKeycard:
-                case Constants.keycardSharedState.migratingKeyPair:
-                case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
-                case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
-                case Constants.keycardSharedState.importingFromKeycard:
-                case Constants.keycardSharedState.renamingKeycard:
-                case Constants.keycardSharedState.changingKeycardPin:
-                case Constants.keycardSharedState.changingKeycardPuk:
-                case Constants.keycardSharedState.changingKeycardPairingCode:
-                case Constants.keycardSharedState.copyingKeycard:
-                    if (root.disablePopupClose) {
-                        return false
-                    }
+                if (root.disableActionPopupButtons) {
+                    return false
                 }
 
                 switch (root.sharedKeycardModule.currentState.flowType) {

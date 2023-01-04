@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat
+import NimQml, Tables, strformat, strutils
 import key_pair_account_item
 
 export key_pair_account_item
@@ -72,6 +72,12 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
+  proc containsAccountAddress*(self: KeyPairAccountModel, address: string): bool =
+    for it in self.items:
+      if cmpIgnoreCase(it.getAddress(), address) == 0:
+        return true
+    return false
+
   proc getItemAtIndex*(self: KeyPairAccountModel, index: int): KeyPairAccountItem =
     if index < 0 or index >= self.items.len:
       return newKeyPairAccountItem()
@@ -86,3 +92,20 @@ QtObject:
     self.items.delete(index)
     self.endRemoveRows()
     self.countChanged()
+
+  proc removeItemByAddress*(self: KeyPairAccountModel, address: string) =
+    for i in 0 ..< self.items.len:
+      if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
+        self.removeItemAtIndex(i)
+        return
+
+  proc updateDetailsForAddressIfTheyAreSet*(self: KeyPairAccountModel, address, name, color, emoji: string) =
+    for i in 0 ..< self.items.len:
+      if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
+        if name.len > 0:
+          self.items[i].setName(name)
+        if color.len > 0:
+          self.items[i].setColor(color)
+        if emoji.len > 0:
+          self.items[i].setEmoji(emoji)
+        return
