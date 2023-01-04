@@ -17,8 +17,6 @@ import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
 logScope:
   topics = "startup-controller"
 
-const UNIQUE_STARTUP_MODULE_IDENTIFIER* = "SartupModule"
-
 type ProfileImageDetails = object
   url*: string
   croppedImage*: string

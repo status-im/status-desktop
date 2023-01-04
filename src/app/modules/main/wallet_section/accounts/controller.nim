@@ -51,7 +51,7 @@ proc init*(self: Controller) =
     let args = SharedKeycarModuleArgs(e)
     if args.uniqueIdentifier != UNIQUE_WALLET_SECTION_ACCOUNTS_MODULE_AUTH_IDENTIFIER:
       return
-    self.delegate.onUserAuthenticated(args.password)
+    self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED_AND_WALLET_ADDRESS_GENERATED) do(e: Args):
     let args = SharedKeycarModuleUserAuthenticatedAndWalletAddressGeneratedArgs(e)
@@ -65,6 +65,12 @@ proc init*(self: Controller) =
     if args.derivedAddresses.len > 0:
       derivedAddress = args.derivedAddresses[0]
     self.delegate.addressDetailsFetched(derivedAddress, args.error)
+
+  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED) do(e: Args):
+    let args = SharedKeycarModuleFlowTerminatedArgs(e)
+    if args.uniqueIdentifier != UNIQUE_WALLET_SECTION_ACCOUNTS_MODULE_IDENTIFIER:
+      return
+    self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
@@ -84,8 +90,8 @@ proc addAccountsFromSeed*(self: Controller, seedPhrase: string, password: string
 proc addWatchOnlyAccount*(self: Controller, address: string, accountName: string, color: string, emoji: string): string =
   return self.walletAccountService.addWatchOnlyAccount(address, accountName, color, emoji)
 
-proc deleteAccount*(self: Controller, address: string) =
-  self.walletAccountService.deleteAccount(address)
+proc deleteAccount*(self: Controller, address: string, keyPairMigratedToKeycard: bool) =
+  self.walletAccountService.deleteAccount(address, keyPairMigratedToKeycard)
 
 proc fetchDerivedAddressDetails*(self: Controller, address: string) =
   self.walletAccountService.fetchDerivedAddressDetails(address)
@@ -127,3 +133,7 @@ proc getCurrentCurrency*(self: Controller): string =
 
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.currencyService.getCurrencyFormat(symbol)
+
+proc getMigratedKeyPairByKeyUid*(self: Controller, keyUid: string): seq[KeyPairDto] =
+  return self.walletAccountService.getMigratedKeyPairByKeyUid(keyUid)
+

@@ -75,7 +75,7 @@ method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, k
           return createState(StateType.MaxPukRetriesReached, self.flowType, nil)
       if keycardFlowType == ResponseTypeValueKeycardFlowResult:
         controller.setPukValid(true)
-        controller.updateKeycardUid(keycardEvent.instanceUID)
+        controller.updateKeycardUid(keycardEvent.keyUid, keycardEvent.instanceUID)
         return createState(StateType.PinSet, self.flowType, nil)
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.LoadAccount:
       if keycardFlowType == ResponseTypeValueKeycardFlowResult:
@@ -89,5 +89,5 @@ method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, k
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.StoreMetadata:
       if keycardFlowType == ResponseTypeValueKeycardFlowResult and
         keycardEvent.instanceUID.len > 0:
-          controller.updateKeycardUid(keycardEvent.instanceUID)
+          controller.updateKeycardUid(keycardEvent.keyUid, keycardEvent.instanceUID)
           return createState(StateType.PinSet, self.flowType, nil)    

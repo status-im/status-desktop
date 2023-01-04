@@ -222,8 +222,8 @@ QtObject:
   proc addWatchOnlyAccount*(self: View, address: string, accountName: string, color: string, emoji: string): string {.slot.} =
     return self.delegate.addWatchOnlyAccount(address, accountName, color, emoji)
 
-  proc deleteAccount*(self: View, address: string) {.slot.} =
-    self.delegate.deleteAccount(address)
+  proc deleteAccount*(self: View, keyUid: string, address: string) {.slot.} =
+    self.delegate.deleteAccount(keyUid, address)
 
   proc getAccountNameByAddress*(self: View, address: string): string {.slot.} =
     return self.model.getAccountNameByAddress(address)

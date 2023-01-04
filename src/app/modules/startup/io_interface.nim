@@ -3,6 +3,7 @@ import ../../../app_service/service/accounts/service as accounts_service
 import models/login_account_item as login_acc_item
 from ../../../app_service/service/keycard/service import KeycardEvent, KeyDetails
 
+const UNIQUE_STARTUP_MODULE_IDENTIFIER* = "SartupModule"
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj

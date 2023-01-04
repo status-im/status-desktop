@@ -307,6 +307,8 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
         keycardEvent.error.len > 0:
           if keycardEvent.error == ErrorNoKeys:
             return createState(StateType.KeycardEmpty, state.flowType, nil)
+          if keycardEvent.error == ErrorNoData:
+            return createState(StateType.KeycardEmptyMetadata, state.flowType, nil)
 
   if state.flowType == FlowType.DisplayKeycardContent:
     controller.setKeyPairForProcessing(newKeyPairItem(keyUid = keycardEvent.keyUid)) # must set keypair in case of running some other flow which needs e.g. keyuid. like unlock flow

@@ -15,7 +15,7 @@ method executePrePrimaryStateCommand*(self: RenamingKeycardState, controller: Co
     let md = controller.getMetadataFromKeycard()
     let paths = md.walletAccounts.map(a => a.path)
     let name = controller.getKeyPairForProcessing().getName()
-    self.success = controller.updateKeycardName(controller.getKeycardUid(), name)
+    self.success = controller.updateKeycardName(controller.getKeyPairForProcessing().getKeyUid(), controller.getKeycardUid(), name)
     if self.success:
       controller.runStoreMetadataFlow(name, controller.getPin(), paths)
     else:

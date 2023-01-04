@@ -111,16 +111,17 @@ method load*[T](self: Module[T]) =
     self.setSelectedLoginAccount(items[0])
   self.delegate.startupDidLoad()
 
+proc isSharedKeycardModuleFlowRunning[T](self: Module[T]): bool =
+  return not self.keycardSharedModule.isNil
+
 method getKeycardSharedModule*[T](self: Module[T]): QVariant =
-  return self.keycardSharedModule.getModuleAsVariant()
+  if self.isSharedKeycardModuleFlowRunning():
+    return self.keycardSharedModule.getModuleAsVariant()
 
 proc createSharedKeycardModule[T](self: Module[T]) =
   self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_STARTUP_MODULE_IDENTIFIER, 
     self.events, self.keycardService, settingsService = nil, privacyService = nil, self.accountsService, 
     walletAccountService = nil, self.keychainService)
-
-proc isSharedKeycardModuleFlowRunning[T](self: Module[T]): bool =
-  return not self.keycardSharedModule.isNil
 
 method moveToLoadingAppState*[T](self: Module[T]) =
   self.view.setAppState(AppState.AppLoadingState)

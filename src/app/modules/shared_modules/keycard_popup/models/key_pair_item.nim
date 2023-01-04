@@ -181,12 +181,19 @@ QtObject:
   proc removeAccountAtIndex*(self: KeyPairItem, index: int) {.slot.} =
     self.accounts.removeItemAtIndex(index)
     self.setLastAccountAsObservedAccount()
+  proc removeAccountByAddress*(self: KeyPairItem, address: string) {.slot.} =
+    self.accounts.removeItemByAddress(address)
+    self.setLastAccountAsObservedAccount()
   proc addAccount*(self: KeyPairItem, item: KeyPairAccountItem) =
     self.accounts.addItem(item)
     self.setLastAccountAsObservedAccount()
   proc setAccounts*(self: KeyPairItem, items: seq[KeyPairAccountItem]) =
     self.accounts.setItems(items)
     self.setLastAccountAsObservedAccount()
+  proc containsAccountAddress*(self: KeyPairItem, address: string): bool =
+    return self.accounts.containsAccountAddress(address)
+  proc updateDetailsForAccountWithAddressIfTheyAreSet*(self: KeyPairItem, address, name, color, emoji: string) =
+    self.accounts.updateDetailsForAddressIfTheyAreSet(address, name, color, emoji)
 
   proc setItem*(self: KeyPairItem, item: KeyPairItem) =
     self.setKeyUid(item.getKeyUid())

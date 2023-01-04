@@ -7,6 +7,8 @@ import ../../../global/app_signals
 import ../../../global/global_singleton
 import ../../../core/signals/types
 import ../../../core/eventemitter
+import ../../startup/io_interface as startup_io
+import ../../../../app_service/common/utils
 import ../../../../app_service/common/account_constants
 import ../../../../app_service/service/keycard/service as keycard_service
 import ../../../../app_service/service/settings/service as settings_service
@@ -34,6 +36,7 @@ type
     connectionIds: seq[UUID]
     keychainConnectionIds: seq[UUID]
     connectionKeycardResponse: UUID
+    connectionKeycardSyncTerminatedSignal: UUID
     tmpKeycardContainsMetadata: bool
     tmpCardMetadata: CardMetadata
     tmpPin: string
@@ -49,6 +52,7 @@ type
     tmpSeedPhrase: string
     tmpSeedPhraseLength: int
     tmpKeyUidWhichIsBeingAuthenticating: string
+    tmpKeyUidWhichIsBeingSyncing: string
     tmpUsePinFromBiometrics: bool
     tmpOfferToStoreUpdatedPinToKeychain: bool
     tmpKeycardUid: string
@@ -58,6 +62,8 @@ type
     tmpKeycardCopyCardMetadata: CardMetadata
     tmpKeycardCopyPin: string
     tmpKeycardCopyDestinationKeycardUid: string
+    tmpKeycardSyncingInProgress: bool
+    tmpFlowData: SharedKeycarModuleFlowTerminatedArgs
 
 proc newController*(delegate: io_interface.AccessInterface,
   uniqueIdentifier: string,
@@ -87,6 +93,10 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.tmpUsePinFromBiometrics = false
   result.tmpAddingMigratedKeypairSuccess = false
   result.tmpConvertingProfileSuccess = false
+  result.tmpKeycardSyncingInProgress = false
+
+## Forward declaration:
+proc finishFlowTermination(self: Controller)
 
 proc serviceApplicable[T](service: T): bool =
   if not service.isNil:
@@ -114,6 +124,15 @@ proc connectKeycardReponseSignal(self: Controller) =
   self.connectionKeycardResponse = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
     let args = KeycardArgs(e)
     self.delegate.onKeycardResponse(args.flowType, args.flowEvent)
+
+proc disconnectKeycardSyncSignal(self: Controller) =
+  self.events.disconnect(self.connectionKeycardSyncTerminatedSignal)
+
+proc connectKeycardSyncSignal(self: Controller) =
+  self.connectionKeycardSyncTerminatedSignal = self.events.onWithUUID(SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED) do(e: Args):
+    self.disconnectKeycardSyncSignal()
+    self.connectKeycardReponseSignal()
+    self.finishFlowTermination()
 
 proc connectKeychainSignals*(self: Controller) =
   var handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e:Args):
@@ -248,7 +267,19 @@ proc getPairingCode*(self: Controller): string =
   return self.tmpPairingCode
 
 proc getKeyUidWhichIsBeingAuthenticating*(self: Controller): string =
-  self.tmpKeyUidWhichIsBeingAuthenticating
+  return self.tmpKeyUidWhichIsBeingAuthenticating
+
+proc getKeyUidWhichIsBeingSyncing*(self: Controller): string =
+  return self.tmpKeyUidWhichIsBeingSyncing
+
+proc setKeyUidWhichIsBeingSyncing*(self: Controller, value: string) =
+  self.tmpKeyUidWhichIsBeingSyncing = value
+
+proc keycardSyncingInProgress*(self: Controller): bool =
+  return self.tmpKeycardSyncingInProgress
+
+proc setKeycardSyncingInProgress*(self: Controller, value: bool) =
+  self.tmpKeycardSyncingInProgress = value
 
 proc setSelectedKeyPair*(self: Controller, isProfile: bool, paths: seq[string], keyPairDto: KeyPairDto) =
   if paths.len != keyPairDto.accountsAddresses.len:
@@ -410,11 +441,11 @@ proc runGetAppInfoFlow*(self: Controller, factoryReset = false) =
   self.cancelCurrentFlow()
   self.keycardService.startGetAppInfoFlow(factoryReset)
 
-proc runGetMetadataFlow*(self: Controller, resolveAddress = false, exportMasterAddr = false) =
+proc runGetMetadataFlow*(self: Controller, resolveAddress = false, exportMasterAddr = false, pin = "") =
   if not serviceApplicable(self.keycardService):
     return
   self.cancelCurrentFlow()
-  self.keycardService.startGetMetadataFlow(resolveAddress, exportMasterAddr)
+  self.keycardService.startGetMetadataFlow(resolveAddress, exportMasterAddr, pin)
 
 proc runChangePinFlow*(self: Controller) =
   if not serviceApplicable(self.keycardService):
@@ -491,7 +522,9 @@ proc readyToDisplayPopup*(self: Controller) =
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP, data)
 
 proc cleanTmpData(self: Controller) =
+  # we should not reset here `tmpKeycardSyncingInProgress` property
   self.tmpKeyUidWhichIsBeingAuthenticating = ""
+  self.tmpKeyUidWhichIsBeingSyncing = ""
   self.tmpAddingMigratedKeypairSuccess = false
   self.tmpConvertingProfileSuccess = false
   self.tmpCardMetadata = CardMetadata()
@@ -512,18 +545,40 @@ proc cleanTmpData(self: Controller) =
   self.setPinForKeycardCopy("")
   self.setDestinationKeycardUid("")
 
+proc finishFlowTermination(self: Controller) =
+  let data = self.tmpFlowData
+  self.tmpFlowData = nil
+  self.cleanTmpData()
+  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED, data)
+
 proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
+  let flowType = self.delegate.getCurrentFlowType()
   self.cancelCurrentFlow()
   let (_, flowEvent) = self.getLastReceivedKeycardData()
-  var data = SharedKeycarModuleFlowTerminatedArgs(uniqueIdentifier: self.uniqueIdentifier,
+  self.tmpFlowData = SharedKeycarModuleFlowTerminatedArgs(uniqueIdentifier: self.uniqueIdentifier,
     lastStepInTheCurrentFlow: lastStepInTheCurrentFlow)
   if lastStepInTheCurrentFlow:
     let exportedEncryptionPubKey = flowEvent.generatedWalletAccount.publicKey
-    data.password = if exportedEncryptionPubKey.len > 0: exportedEncryptionPubKey else: self.getPassword()
-    data.pin = self.getPin()
-    data.keyUid = flowEvent.keyUid
-  self.cleanTmpData()
-  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED, data)
+    self.tmpFlowData.password = if exportedEncryptionPubKey.len > 0: exportedEncryptionPubKey else: self.getPassword()
+    self.tmpFlowData.pin = self.getPin()
+    self.tmpFlowData.keyUid = flowEvent.keyUid
+
+  ## we're trying to sync a keycard state on popup close if:
+  ## - shared module is not run from the onboarding flow
+  ## - the keycard syncing is not already in progress
+  ## - the flow which is terminating is one of the flows which we need to perform a sync process for
+  ## - the pin is known
+  if self.uniqueIdentifier != startup_io.UNIQUE_STARTUP_MODULE_IDENTIFIER and 
+    not self.keycardSyncingInProgress() and 
+    not utils.arrayContains(FlowsWeShouldNotTryAKeycardSyncFor, flowType) and 
+    self.getPin().len == PINLengthForStatusApp and
+    flowEvent.keyUid.len > 0:
+      let dataForKeycardToSync = SharedKeycarModuleArgs(pin: self.getPin(), keyUid: flowEvent.keyUid)
+      self.disconnectKeycardReponseSignal()
+      self.connectKeycardSyncSignal()
+      self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC, dataForKeycardToSync)
+      return
+  self.finishFlowTermination()  
 
 proc authenticateUser*(self: Controller, keyUid = "") =
   self.disconnectKeycardReponseSignal()
@@ -554,6 +609,11 @@ proc addMigratedKeyPair*(self: Controller, keyPair: KeyPairDto) =
   let keystoreDir = self.accountsService.getKeyStoreDir()
   self.walletAccountService.addMigratedKeyPairAsync(keyPair, keystoreDir)
 
+proc removeMigratedAccountsForKeycard*(self: Controller, keyUid: string, keycardUid: string, accountsToRemove: seq[string]) =
+  if not serviceApplicable(self.walletAccountService):
+    return
+  self.walletAccountService.removeMigratedAccountsForKeycard(keyUid, keycardUid, accountsToRemove)
+
 proc getAddingMigratedKeypairSuccess*(self: Controller): bool =
   return self.tmpAddingMigratedKeypairSuccess
 
@@ -572,30 +632,30 @@ proc getAllKnownKeycards*(self: Controller): seq[KeyPairDto] =
     return
   return self.walletAccountService.getAllKnownKeycards()
 
-proc setCurrentKeycardStateToLocked*(self: Controller, keycardUid: string) =
+proc setCurrentKeycardStateToLocked*(self: Controller, keyUid: string, keycardUid: string) =
   if not serviceApplicable(self.walletAccountService):
     return
-  if not self.walletAccountService.setKeycardLocked(keycardUid):
-    info "updating keycard locked state failed", keycardUid=keycardUid
+  if not self.walletAccountService.setKeycardLocked(keyUid, keycardUid):
+    info "updating keycard locked state failed", keyUid=keyUid, keycardUid=keycardUid
 
-proc setCurrentKeycardStateToUnlocked*(self: Controller, keycardUid: string) =
+proc setCurrentKeycardStateToUnlocked*(self: Controller, keyUid: string, keycardUid: string) =
   if not serviceApplicable(self.walletAccountService):
     return
-  if not self.walletAccountService.setKeycardUnlocked(keycardUid):
-    info "updating keycard unlocked state failed", keycardUid=keycardUid
+  if not self.walletAccountService.setKeycardUnlocked(keyUid, keycardUid):
+    info "updating keycard unlocked state failed", keyUid=keyUid, keycardUid=keycardUid
 
-proc updateKeycardName*(self: Controller, keycardUid: string, keycardName: string): bool =
+proc updateKeycardName*(self: Controller, keyUid: string, keycardUid: string, keycardName: string): bool =
   if not serviceApplicable(self.walletAccountService):
     return false
-  if not self.walletAccountService.updateKeycardName(keycardUid, keycardName):
-    info "updating keycard name failed", keycardUid=keycardUid
+  if not self.walletAccountService.updateKeycardName(keyUid, keycardUid, keycardName):
+    info "updating keycard name failed", keyUid=keyUid, keycardUid=keycardUid, keycardName=keycardName
     return false
   return true
 
-proc updateKeycardUid*(self: Controller, keycardUid: string) =
+proc updateKeycardUid*(self: Controller, keyUid: string, keycardUid: string) =
   if not serviceApplicable(self.walletAccountService):
     return
-  self.setCurrentKeycardStateToUnlocked(self.tmpKeycardUid)
+  self.setCurrentKeycardStateToUnlocked(keyUid, self.tmpKeycardUid)
   if self.tmpKeycardUid != keycardUid:
     if not self.walletAccountService.updateKeycardUid(self.tmpKeycardUid, keycardUid):
       self.tmpKeycardUid = keycardUid

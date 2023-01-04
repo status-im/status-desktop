@@ -37,7 +37,10 @@ QtObject:
     self.delegate.viewDidLoad()
 
   proc getKeycardSharedModule(self: View): QVariant {.slot.} =
-    return self.delegate.getKeycardSharedModule()
+    let module = self.delegate.getKeycardSharedModule()
+    if not module.isNil:
+      return module
+    return newQVariant()
   QtProperty[QVariant] keycardSharedModule:
     read = getKeycardSharedModule
     

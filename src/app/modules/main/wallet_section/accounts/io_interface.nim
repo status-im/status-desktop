@@ -13,6 +13,9 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method syncKeycard*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method generateNewAccount*(self: AccessInterface, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -29,7 +32,7 @@ method addAccountsFromSeed*(self: AccessInterface, seedPhrase: string, password:
 method addWatchOnlyAccount*(self: AccessInterface, address: string, accountName: string, color: string, emoji: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deleteAccount*(self: AccessInterface, address: string) {.base.} =
+method deleteAccount*(self: AccessInterface, keyUid: string, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
@@ -56,7 +59,7 @@ method validSeedPhrase*(self: AccessInterface, value: string): bool {.base.} =
 method authenticateUser*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
+method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method authenticateUserAndDeriveAddressOnKeycardForPath*(self: AccessInterface, keyUid: string, derivationPath: string) {.base.} =
@@ -73,4 +76,7 @@ method onUserAuthenticatedAndWalletAddressGenerated*(self: AccessInterface, addr
   raise newException(ValueError, "No implementation available")
 
 method addressDetailsFetched*(self: AccessInterface, derivedAddress: DerivedAddressDto, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
   raise newException(ValueError, "No implementation available")

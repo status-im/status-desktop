@@ -7,6 +7,7 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      disablePopup: bool # used to disable popup after each action, to block users do multiple clikcs which the action is ongoing
       currentState: StateWrapper
       currentStateVariant: QVariant
       keyPairModel: KeyPairModel
@@ -43,16 +44,28 @@ QtObject:
     result.currentState = newStateWrapper()
     result.currentStateVariant = newQVariant(result.currentState)
     result.remainingAttempts = -1
+    result.disablePopup = false
 
     signalConnect(result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2)
     signalConnect(result.currentState, "cancelActionClicked()", result, "onCancelActionClicked()", 2)
     signalConnect(result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
     signalConnect(result.currentState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
 
+  proc diablePopupChanged*(self: View) {.signal.}
+  proc getDisablePopup*(self: View): bool {.slot.} =
+    return self.disablePopup
+  QtProperty[bool] disablePopup:
+    read = getDisablePopup
+    notify = diablePopupChanged
+  proc setDisablePopup*(self: View, value: bool) =
+    self.disablePopup = value
+    self.diablePopupChanged()
+
   proc currentStateObj*(self: View): State =
     return self.currentState.getStateObj()
 
   proc setCurrentState*(self: View, state: State) =
+    self.setDisablePopup(false)
     self.currentState.setStateObj(state)
   proc getCurrentState(self: View): QVariant {.slot.} =
     return self.currentStateVariant

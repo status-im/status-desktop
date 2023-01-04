@@ -2,6 +2,13 @@ import json
 
 include  ../../common/json_utils
 
+const KeycardUid = "keycard-uid"
+const KeycardName = "keycard-name"
+const KeycardLocked = "keycard-locked"
+const KeyUid = "key-uid"
+const AccountAddresses = "accounts-addresses"
+
+
 type KeyPairDto* = object
   keycardUid*: string
   keycardName*: string
@@ -11,12 +18,21 @@ type KeyPairDto* = object
 
 proc toKeyPairDto*(jsonObj: JsonNode): KeyPairDto =
   result = KeyPairDto()
-  discard jsonObj.getProp("keycard-uid", result.keycardUid)
-  discard jsonObj.getProp("keycard-name", result.keycardName)
-  discard jsonObj.getProp("keycard-locked", result.keycardLocked)
-  discard jsonObj.getProp("key-uid", result.keyUid)
+  discard jsonObj.getProp(KeycardUid, result.keycardUid)
+  discard jsonObj.getProp(KeycardName, result.keycardName)
+  discard jsonObj.getProp(KeycardLocked, result.keycardLocked)
+  discard jsonObj.getProp(KeyUid, result.keyUid)
   
   var jArr: JsonNode
-  if(jsonObj.getProp("accounts-addresses", jArr) and jArr.kind == JArray):
+  if(jsonObj.getProp(AccountAddresses, jArr) and jArr.kind == JArray):
     for addrObj in jArr:
       result.accountsAddresses.add(addrObj.getStr)
+
+proc toJsonNode*(self: KeyPairDto): JsonNode =
+  result = %* {
+    KeycardUid: self.keycardUid,
+    KeycardName: self.keycardName,
+    KeycardLocked: self.keycardLocked,
+    KeyUid: self.keyUid,
+    AccountAddresses: self.accountsAddresses
+  }
