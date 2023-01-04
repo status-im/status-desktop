@@ -325,7 +325,8 @@ proc getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, mentio
     if(chat.chatType == ChatType.CommunityChat):
       continue
 
-    result.unviewed += chat.unviewedMessagesCount
+    if not chat.muted:
+      result.unviewed += chat.unviewedMessagesCount
     result.mentions += chat.unviewedMentionsCount
 
 proc getNumOfNotificationsForCommunity*(self: Controller, communityId: string): tuple[unviewed:int, mentions:int] =
@@ -336,7 +337,8 @@ proc getNumOfNotificationsForCommunity*(self: Controller, communityId: string): 
     if(chat.communityId != communityId):
       continue
 
-    result.unviewed += chat.unviewedMessagesCount
+    if not chat.muted:
+      result.unviewed += chat.unviewedMessagesCount
     result.mentions += chat.unviewedMentionsCount
 
 proc setCurrentUserStatus*(self: Controller, status: StatusType) =
