@@ -89,8 +89,8 @@ proc runner(arg: TaskThreadArg) {.async.} =
     let
       parsed = parseJson(received)
       messageType = parsed{"$type"}.getStr
-    trace "[threadpool task thread] initiating task", messageType=messageType,
-      threadid=arg.id
+    debug "[threadpool task thread] initiating task", messageType=messageType,
+      threadid=arg.id, task=received
 
     try:
       let task = cast[Task](parsed{"tptr"}.getInt)
@@ -102,8 +102,8 @@ proc runner(arg: TaskThreadArg) {.async.} =
       error "[threadpool task thread] unknown message", message=received
 
     let noticeToPool = ThreadNotification(id: arg.id, notice: "done")
-    trace "[threadpool task thread] sending 'done' notice to pool",
-      threadid=arg.id
+    debug "[threadpool task thread] sending 'done' notice to pool",
+      threadid=arg.id, task=received
     await arg.chanSendToPool.send(noticeToPool.encode.safe)
 
   arg.chanRecvFromPool.close()
@@ -239,20 +239,22 @@ proc pool(arg: PoolThreadArg) {.async.} =
           threadsBusy.add tpl.id, (tpl.thr, tpl.chanSendToTask)
           await tpl.chanSendToTask.send(task.safe)
 
-  var allTaskThreads: seq[Thread[TaskThreadArg]] = @[]
+  var allTaskThreads = newSeq[tuple[id: int, thr: Thread[TaskThreadArg]]]()
 
   for tpl in threadsIdle:
     tpl.chanSendToTask.close()
-    allTaskThreads.add tpl.thr
-  for tpl in threadsBusy.values:
+    allTaskThreads.add (tpl.id, tpl.thr)
+  for id, tpl in threadsBusy.pairs:
     tpl.chanSendToTask.close()
-    allTaskThreads.add tpl.thr
+    allTaskThreads.add (id, tpl.thr)
 
   chanSendToMain.close()
   chanRecvFromMainOrTask.close()
 
   trace "[threadpool] waiting for all task threads to stop"
-  joinThreads(allTaskThreads)
+  for tpl in allTaskThreads:
+    debug "[threadpool] join thread", threadid=tpl.id
+    joinThread(tpl.thr)
 
 proc poolThread(arg: PoolThreadArg) {.thread.} =
   waitFor pool(arg)
