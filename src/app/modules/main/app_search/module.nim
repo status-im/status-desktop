@@ -236,7 +236,9 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
     if(m.`from` == singletonInstance.userProfile.getPubKey()):
       senderName = "You"
 
-    let renderedMessageText = self.controller.getRenderedText(m.parsedText)
+    let communityChats = self.controller.getCommunityById(chatDto.communityId).chats
+
+    let renderedMessageText = self.controller.getRenderedText(m.parsedText, communityChats)
     let colorHash = self.controller.getColorHash(m.`from`)
     let colorId = self.controller.getColorId(m.`from`)
 

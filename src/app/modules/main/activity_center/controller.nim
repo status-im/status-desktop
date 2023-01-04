@@ -6,6 +6,7 @@ import ../../../core/eventemitter
 import ../../../../app_service/service/activity_center/service as activity_center_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/message/service as message_service
+import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/eth/utils as eth_utils
 import ../../../../app_service/service/chat/service as chat_service
 
@@ -17,6 +18,7 @@ type
     contactsService: contacts_service.Service
     messageService: message_service.Service
     chatService: chat_service.Service
+    communityService: community_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -24,7 +26,8 @@ proc newController*(
     activityCenterService: activity_center_service.Service,
     contactsService: contacts_service.Service,
     messageService: message_service.Service,
-    chatService: chat_service.Service
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
     ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -33,6 +36,7 @@ proc newController*(
   result.contactsService = contactsService
   result.messageService = messageService
   result.chatService = chatService
+  result.communityService = communityService
 
 proc delete*(self: Controller) =
   discard
@@ -73,6 +77,9 @@ proc unreadActivityCenterNotificationsCount*(self: Controller): int =
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
    return self.contactsService.getContactDetails(contactId)
 
+proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
+  return self.communityService.getCommunityById(communityId)
+
 proc getActivityCenterNotifications*(self: Controller): seq[ActivityCenterNotificationDto] =
    return self.activityCenterService.getActivityCenterNotifications()
 
@@ -99,8 +106,8 @@ proc acceptActivityCenterNotifications*(self: Controller, notificationIds: seq[s
 proc dismissActivityCenterNotifications*(self: Controller, notificationIds: seq[string]): string =
    return self.activityCenterService.dismissActivityCenterNotifications(notificationIds)
 
-proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
-  return self.messageService.getRenderedText(parsedTextArray)
+proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]): string =
+  return self.messageService.getRenderedText(parsedTextArray, communityChats)
 
 proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
   let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)

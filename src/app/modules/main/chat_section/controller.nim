@@ -253,6 +253,9 @@ proc isCommunity*(self: Controller): bool =
 proc getMyCommunity*(self: Controller): CommunityDto =
   return self.communityService.getCommunityById(self.sectionId)
 
+proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
+  return self.communityService.getCommunityById(communityId)
+
 proc getCategories*(self: Controller, communityId: string): seq[Category] =
   return self.communityService.getCategories(communityId)
 
@@ -486,8 +489,8 @@ proc reorderCommunityCategories*(self: Controller, categoryId: string, position:
 proc reorderCommunityChat*(self: Controller, categoryId: string, chatId: string, position: int): string =
   self.communityService.reorderCommunityChat(self.sectionId, categoryId, chatId, position)
 
-proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
-  return self.messageService.getRenderedText(parsedTextArray)
+proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]): string =
+  return self.messageService.getRenderedText(parsedTextArray, communityChats)
 
 proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
   procs_from_visual_identity_service.colorHashOf(pubkey)

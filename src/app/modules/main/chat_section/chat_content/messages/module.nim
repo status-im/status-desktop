@@ -201,8 +201,10 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         continue
 
       let sender = self.controller.getContactDetails(message.`from`)
+      let chatDetails = self.controller.getChatDetails()
+      let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
 
-      let renderedMessageText = self.controller.getRenderedText(message.parsedText)
+      let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
       var transactionContract = message.transactionParameters.contract
       var transactionValue = message.transactionParameters.value
       var isCurrentUser = sender.isCurrentUser
@@ -250,7 +252,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         message.mentioned,
         message.quotedMessage.`from`,
         message.quotedMessage.text,
-        self.controller.getRenderedText(message.quotedMessage.parsedText),
+        self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
         message.quotedMessage.contentType,
         message.quotedMessage.deleted,
         message.quotedMessage.discordMessage,
@@ -301,8 +303,10 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
 
   for message in messages:
     let sender = self.controller.getContactDetails(message.`from`)
+    let chatDetails = self.controller.getChatDetails()
+    let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
 
-    let renderedMessageText = self.controller.getRenderedText(message.parsedText)
+    let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
 
     var transactionContract = message.transactionParameters.contract
     var transactionValue = message.transactionParameters.value
@@ -361,12 +365,11 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       message.mentioned,
       message.quotedMessage.`from`,
       message.quotedMessage.text,
-      self.controller.getRenderedText(message.quotedMessage.parsedText),
+      self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
       message.quotedMessage.contentType,
       message.quotedMessage.deleted,
       message.quotedMessage.discordMessage,
     )
-
     items.add(item)
 
   self.view.model().insertItemsBasedOnClock(items)
@@ -502,7 +505,9 @@ method updateContactDetails*(self: Module, contactId: string) =
     if(item.messageContainsMentions):
       let (message, _, err) = self.controller.getMessageDetails(item.id)
       if(err.len == 0):
-        item.messageText = self.controller.getRenderedText(message.parsedText)
+        let chatDetails = self.controller.getChatDetails()
+        let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+        item.messageText = self.controller.getRenderedText(message.parsedText, communityChats)
         item.messageContainsMentions = message.containsContactMentions()
 
 method deleteMessage*(self: Module, messageId: string) =
@@ -520,10 +525,12 @@ method onMessageEdited*(self: Module, message: MessageDto) =
     return
 
   let mentionedUsersPks = itemBeforeChange.mentionedUsersPks
+  let chatDetails = self.controller.getChatDetails()
+  let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
 
   self.view.model().updateEditedMsg(
     message.id,
-    self.controller.getRenderedText(message.parsedText),
+    self.controller.getRenderedText(message.parsedText, communityChats),
     message.text,
     message.contentType,
     message.containsContactMentions(),
@@ -604,8 +611,10 @@ method getMessageById*(self: Module, messageId: string): message_item.Item =
   let (message, _, err) = self.controller.getMessageDetails(messageId)
   if(err.len == 0):
     let sender = self.controller.getContactDetails(message.`from`)
+    let chatDetails = self.controller.getChatDetails()
+    let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
 
-    let renderedMessageText = self.controller.getRenderedText(message.parsedText)
+    let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
     var transactionContract = message.transactionParameters.contract
     var transactionValue = message.transactionParameters.value
     var isCurrentUser = sender.isCurrentUser
@@ -653,7 +662,7 @@ method getMessageById*(self: Module, messageId: string): message_item.Item =
       message.mentioned,
       message.quotedMessage.`from`,
       message.quotedMessage.text,
-      self.controller.getRenderedText(message.quotedMessage.parsedText),
+      self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
       message.quotedMessage.contentType,
       message.quotedMessage.deleted,
       message.quotedMessage.discordMessage

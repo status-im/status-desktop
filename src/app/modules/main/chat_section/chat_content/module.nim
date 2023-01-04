@@ -155,6 +155,8 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     return false
 
   let contactDetails = self.controller.getContactDetails(message.`from`)
+  let chatDetails = self.controller.getChatDetails()
+  let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
 
   var transactionContract = message.transactionParameters.contract
   var transactionValue = message.transactionParameters.value
@@ -174,7 +176,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     isCurrentUser,
     contactDetails.details.added,
     message.outgoingStatus,
-    self.controller.getRenderedText(message.parsedText),
+    self.controller.getRenderedText(message.parsedText, communityChats),
     message.text,
     message.image,
     message.containsContactMentions(),
@@ -203,7 +205,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     message.mentioned,
     message.quotedMessage.`from`,
     message.quotedMessage.text,
-    self.controller.getRenderedText(message.quotedMessage.parsedText),
+    self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
     message.quotedMessage.contentType,
     message.quotedMessage.deleted,
     message.quotedMessage.discordMessage,
@@ -340,7 +342,9 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
     if(item.messageContainsMentions):
       let (message, _, err) = self.controller.getMessageDetails(item.id)
       if(err.len == 0):
-        item.messageText = self.controller.getRenderedText(message.parsedText)
+        let chatDetails = self.controller.getChatDetails()
+        let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+        item.messageText = self.controller.getRenderedText(message.parsedText, communityChats)
         item.messageContainsMentions = message.containsContactMentions()
 
   if(self.controller.getMyChatId() == contactId):
