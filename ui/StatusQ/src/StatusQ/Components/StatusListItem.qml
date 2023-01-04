@@ -5,7 +5,6 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Animations 0.1
 import QtGraphicalEffects 1.14
 
 import "private"
@@ -139,7 +138,6 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: statusListItem.leftPadding
             anchors.verticalCenter: parent.verticalCenter
-            visible: !iconOrImageLoadingOverlay.visible
             asset: statusListItem.asset
             name: statusListItem.title
             active: statusListItem.asset.isLetterIdenticon ||
@@ -147,20 +145,7 @@ Rectangle {
                     !!statusListItem.asset.emoji
             badge.border.color: statusListItem.color
             ringSettings: statusListItem.ringSettings
-        }
-
-        Rectangle {
-            id: iconOrImageLoadingOverlay
-            visible: statusListItem.loading || statusListItem.loadingFailed
-            anchors.fill: iconOrImage
-            radius: width / 2
-            color: statusListItem.loadingFailed ? Theme.palette.dangerColor2 : Theme.palette.baseColor1
-
-            SkeletonAnimation {
-                anchors.fill: parent
-                mask: parent
-                visible: statusListItem.loading && !statusListItem.loadingFailed
-            }
+            loading: statusListItem.loading
         }
 
         Item {
@@ -182,29 +167,8 @@ Rectangle {
 
             height: childrenRect.height
 
-            Rectangle {
-                id: titleLoadingOverlay
-                visible: statusListItem.loading || statusListItem.loadingFailed
-                anchors {
-                    left: statusListItemTitle.left
-                    top: statusListItemTitle.top
-                    bottom: statusListItemTitle.bottom
-                }
-
-                width: Math.max(95, statusListItemTitle.width)
-                radius: 4
-                color: statusListItem.loadingFailed ? Theme.palette.dangerColor2 : Theme.palette.baseColor1
-
-                SkeletonAnimation {
-                    anchors.fill: parent
-                    mask: parent
-                    visible: statusListItem.loading && !statusListItem.loadingFailed
-                }
-            }
-
-            StatusBaseText {
+            StatusTextWithLoadingState {
                 id: statusListItemTitle
-                opacity: titleLoadingOverlay.visible ? 0 : 1
                 text: statusListItem.title
                 font.pixelSize: 15
                 height: visible ? contentHeight : 0
@@ -213,7 +177,7 @@ Rectangle {
                 anchors.top: bottomModel.length === 0 ? undefined:  parent.top
                 anchors.topMargin: bottomModel.length === 0 ? undefined : 20
                 width: Math.min(implicitWidth, parent.width)
-                color: {
+                customColor: {
                     if (!statusListItem.enabled) {
                         return Theme.palette.baseColor1
                     }
@@ -226,6 +190,7 @@ Rectangle {
                             return Theme.palette.dangerColor1
                     }
                 }
+                loading: statusListItem.loading
 
                 StatusIcon {
                     width: visible ? 12 : 0
@@ -258,7 +223,7 @@ Rectangle {
                 }
             }
 
-            StatusBaseText {
+            StatusTextWithLoadingState {
                 id: statusListItemTitleAsideText
                 anchors.left: statusListItemTitle.right
                 anchors.leftMargin: 4
@@ -267,8 +232,9 @@ Rectangle {
                 anchors.topMargin: bottomModel.length === 0 ? undefined : 20
                 text: statusListItem.titleAsideText
                 font.pixelSize: 10
-                color: Theme.palette.baseColor1
+                customColor: Theme.palette.baseColor1
                 visible: !!statusListItem.titleAsideText
+                loading: statusListItem.loading
             }
 
             Loader {
@@ -287,7 +253,7 @@ Rectangle {
                 width: parent.width
                 spacing: 4
 
-                StatusBaseText {
+                StatusTextWithLoadingState {
                     id: statusListItemSubTitle
                     objectName: "statusListItemSubTitle"
 
@@ -296,26 +262,26 @@ Rectangle {
 
                     text: statusListItem.subTitle
                     font.pixelSize: 15
-                    color: statusListItem.loadingFailed ? Theme.palette.dangerColor1
-                                                        : !statusListItem.enabled || !statusListItem.tertiaryTitle
-                                                          ? Theme.palette.baseColor1
-                                                          : Theme.palette.directColor1
+                    customColor: !statusListItem.enabled || !statusListItem.tertiaryTitle ?
+                                     Theme.palette.baseColor1 : Theme.palette.directColor1
                     visible: !!statusListItem.subTitle
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                    loading: statusListItem.loading
                 }
 
-                StatusBaseText {
+                StatusTextWithLoadingState {
                     id: dot
                     Layout.alignment: Qt.AlignVCenter
                     Layout.topMargin: -48
 
                     text: "."
                     font.pixelSize: 40
-                    color: Theme.palette.baseColor1
+                    customColor: Theme.palette.baseColor1
                     lineHeightMode: Text.FixedHeight
                     lineHeight: 24
 
                     visible: inlineTagModelRepeater.count > 0
+                    loading: statusListItem.loading
                 }
 
                 StatusScrollView {
@@ -340,16 +306,17 @@ Rectangle {
                 }
             }
 
-            StatusBaseText {
+            StatusTextWithLoadingState {
                 id: statusListItemTertiaryTitle
                 anchors.top: statusListItemSubtitleTagsRow.bottom
                 width: parent.width
                 height: visible ? contentHeight : 0
                 text: statusListItem.tertiaryTitle
-                color: Theme.palette.baseColor1
+                customColor: Theme.palette.baseColor1
                 font.pixelSize: 13
                 visible: !!statusListItem.tertiaryTitle
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                loading: statusListItem.loading
             }
 
             StatusListItemBadge {
@@ -397,7 +364,7 @@ Rectangle {
             }
         }
 
-        StatusBaseText {
+        StatusTextWithLoadingState {
             id: statusListItemLabel
             anchors.verticalCenter: bottomModel.length === 0 ? parent.verticalCenter : undefined
             anchors.top: bottomModel.length === 0 ? undefined:  parent.top
@@ -407,8 +374,9 @@ Rectangle {
 
             text: statusListItem.label
             font.pixelSize: 15
-            color: Theme.palette.baseColor1
+            customColor: Theme.palette.baseColor1
             visible: !!statusListItem.label
+            loading: statusListItem.loading
         }
 
         Row {

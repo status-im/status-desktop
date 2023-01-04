@@ -166,6 +166,9 @@ QtObject {
 
     property color statusFloatingButtonHighlight
 
+    property color statusLoadingHighlight
+    property color statusLoadingHighlight2
+
     property var userCustomizationColors: []
 
     property var identiconRingColors: []

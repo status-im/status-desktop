@@ -1,4 +1,0 @@
-module StatusQ.Animations
-
-SkeletonAnimation 0.1 SkeletonAnimation.qml
-SkeletonGradientStop 0.1 SkeletonGradientStop.qml
