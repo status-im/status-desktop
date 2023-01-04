@@ -2,18 +2,28 @@ project(DOtherSide)
 
 include(GNUInstallDirs)
 
+option(MONITORING "Tools for real-time inspection of the application." OFF)
+set(MONITORING_QML_ENTRY_POINT "" CACHE STRING "QML file intended to start the monitoring tool UI.")
+
 # Macro for merging common code between static and shared
 macro(add_target name type)
     find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets Network Multimedia REQUIRED)
 
-    file(GLOB_RECURSE HEADERS include/DOtherSide/*.h)
-    if(APPLE)
-        file(GLOB_RECURSE SOURCES src/*.cpp src/*.mm)
-    else()
-        file(GLOB_RECURSE SOURCES src/*.cpp)
+    file(GLOB HEADERS include/DOtherSide/*.h include/DOtherSide/Status/*.h)
+
+    file(GLOB SOURCES src/*.cpp src/Status/*.cpp)
+
+    if(MONITORING)
+        file(GLOB MONITORING_HEADERS include/DOtherSide/Status/Monitoring/*.h)
+        file(GLOB MONITORING_SOURCES src/Status/Monitoring/*.cpp)
     endif()
 
-    add_library(${name} ${type} ${SOURCES} ${HEADERS})
+    if(APPLE)
+        file(GLOB MM_FILES src/*.mm src/Status/*.mm)
+        list(APPEND SOURCES ${MM_FILES})
+    endif()
+
+    add_library(${name} ${type} ${SOURCES} ${HEADERS} ${MONITORING_SOURCES} ${MONITORING_HEADERS})
 
     if (WIN32)
         target_compile_definitions(${name} PRIVATE -DWIN32)
@@ -28,6 +38,11 @@ macro(add_target name type)
     target_compile_definitions(${name} PRIVATE $<$<CONFIG:Debug>:QT_QML_DEBUG>)
     if(DEFINED QML_DEBUG_PORT)
         target_compile_definitions(${name} PRIVATE QML_DEBUG_PORT=${QML_DEBUG_PORT})
+    endif()
+
+    if(MONITORING)
+        target_compile_definitions(${name} PRIVATE MONITORING)
+        target_compile_definitions(${name} PRIVATE MONITORING_QML_ENTRY_POINT="${MONITORING_QML_ENTRY_POINT}")
     endif()
 
     # for DOtherSide.pc
