@@ -147,6 +147,12 @@ else
  DOTHERSIDE_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
 endif
 
+MONITORING ?= false
+ifneq ($(MONITORING), false)
+ DOTHERSIDE_CMAKE_PARAMS := ${DOTHERSIDE_CMAKE_PARAMS} -DMONITORING:BOOL=ON -DMONITORING_QML_ENTRY_POINT:STRING="/../monitoring/Main.qml"
+endif
+
+
 # Qt5 dirs (we can't indent with tabs here)
 ifneq ($(detected_OS),Windows)
  QT5_LIBDIR := $(shell qmake -query QT_INSTALL_LIBS 2>/dev/null)

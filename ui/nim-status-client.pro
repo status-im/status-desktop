@@ -16,6 +16,7 @@ lupdate_only{
 SOURCES += $$files("$$PWD/*qmldir", true)
 SOURCES += $$files("$$PWD/*.qml", true)
 SOURCES += $$files("$$PWD/*.js", true)
+SOURCES += $$files("$$PWD/../monitoring/*.qml", true)
 }
 
 # Other *.ts files will be provided by Lokalise platform
@@ -28,6 +29,7 @@ OTHER_FILES += $$files("$$PWD/*qmldir", true)
 OTHER_FILES += $$files("$$PWD/*.qml", true)
 OTHER_FILES += $$files("$$PWD/*.js", true)
 OTHER_FILES += $$files("$$PWD/../src/*.nim", true)
+OTHER_FILES += $$files("$$PWD/../monitoring/*.qml", true)
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH = $$PWD/imports \
