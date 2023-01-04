@@ -156,8 +156,8 @@ proc resultItemClicked*(self: Controller, itemId: string) =
     messageId: itemDetails.messageId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
 
-proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
-  return self.messageService.getRenderedText(parsedTextArray)
+proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]): string =
+  return self.messageService.getRenderedText(parsedTextArray, communityChats)
 
 proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
   procs_from_visual_identity_service.colorHashOf(pubkey)

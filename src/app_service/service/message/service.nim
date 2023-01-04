@@ -680,7 +680,7 @@ QtObject:
     self.threadpool.start(arg)
 
 # See render-inline in status-mobile/src/status_im/ui/screens/chat/message/message.cljs
-proc renderInline(self: Service, parsedText: ParsedText): string =
+proc renderInline(self: Service, parsedText: ParsedText, communityChats: seq[ChatDto]): string =
   let value = escape_html(parsedText.literal)
     .multiReplace(("\r\n", "<br/>"))
     .multiReplace(("\n", "<br/>"))
@@ -712,7 +712,11 @@ proc renderInline(self: Service, parsedText: ParsedText): string =
         let contactDto = self.contactService.getContactById(id)
         result = fmt("<a href=\"//{id}\" class=\"mention\">{contactDto.userDefaultDisplayName()}</a>")
     of PARSED_TEXT_CHILD_TYPE_STATUS_TAG:
-      result = fmt("<a href=\"#{value}\" class=\"status-tag\">#{value}</a>")
+      result = fmt("<span>#{value}</span>")
+      for chat in communityChats:
+        if chat.name == value:
+          result = fmt("<a href=\"#{value}\" class=\"status-tag\">#{value}</a>")
+          break
     of PARSED_TEXT_CHILD_TYPE_DEL:
       result = fmt("<del>{value}</del>")
     of PARSED_TEXT_CHILD_TYPE_LINK:
@@ -721,13 +725,13 @@ proc renderInline(self: Service, parsedText: ParsedText): string =
       result = fmt(" {value} ")
 
 # See render-block in status-mobile/src/status_im/ui/screens/chat/message/message.cljs
-proc getRenderedText*(self: Service, parsedTextArray: seq[ParsedText]): string =
+proc getRenderedText*(self: Service, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]): string =
   for parsedText in parsedTextArray:
     case parsedText.type:
       of PARSED_TEXT_TYPE_PARAGRAPH:
         result = result & "<p>"
         for child in parsedText.children:
-          result = result & self.renderInline(child)
+          result = result & self.renderInline(child, communityChats)
         result = result & "</p>"
       of PARSED_TEXT_TYPE_BLOCKQUOTE:
         result = result & "<blockquote>" & escape_html(parsedText.literal) & "</blockquote>"

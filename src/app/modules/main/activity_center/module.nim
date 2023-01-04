@@ -12,6 +12,7 @@ import ../../../../app_service/service/activity_center/service as activity_cente
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/chat/service as chat_service
+import ../../../../app_service/service/community/service as community_service
 
 import ../../../global/app_sections_config as conf
 
@@ -31,7 +32,8 @@ proc newModule*(
     activityCenterService: activity_center_service.Service,
     contactsService: contacts_service.Service,
     messageService: message_service.Service,
-    chatService: chat_service.Service
+    chatService: chat_service.Service,
+    communityService: community_service.Service
     ): Module =
   result = Module()
   result.delegate = delegate
@@ -43,7 +45,8 @@ proc newModule*(
     activityCenterService,
     contactsService,
     messageService,
-    chatService
+    chatService,
+    communityService
   )
   result.moduleLoaded = false
 
@@ -70,6 +73,8 @@ method unreadActivityCenterNotificationsCount*(self: Module): int =
 
 proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: ChatDto): MessageItem =
   let contactDetails = self.controller.getContactDetails(message.`from`)
+  let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+
   return msg_item_qobj.newMessageItem(msg_item.initItem(
     message.id,
     chatDetails.communityId, # we don't received community id via `activityCenterNotifications` api call
@@ -81,7 +86,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     contactDetails.isCurrentUser,
     contactDetails.details.added,
     message.outgoingStatus,
-    self.controller.getRenderedText(message.parsedText),
+    self.controller.getRenderedText(message.parsedText, communityChats),
     message.text,
     message.image,
     message.containsContactMentions(),
@@ -103,7 +108,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     message.mentioned,
     message.quotedMessage.`from`,
     message.quotedMessage.text,
-    self.controller.getRenderedText( message.quotedMessage.parsedText),
+    self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
     message.quotedMessage.contentType,
     message.quotedMessage.deleted,
     message.quotedMessage.discordMessage,

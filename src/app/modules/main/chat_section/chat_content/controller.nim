@@ -189,6 +189,9 @@ proc getChatDetails*(self: Controller): ChatDto =
 proc getCommunityDetails*(self: Controller): CommunityDto =
   return self.communityService.getCommunityById(self.sectionId)
 
+proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
+  return self.communityService.getCommunityById(communityId)
+
 proc getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string, largeImage: string] =
   return self.chatService.getOneToOneChatNameAndImage(self.chatId)
 
@@ -235,8 +238,8 @@ proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
 proc getCurrentFleet*(self: Controller): string =
   return self.nodeConfigurationService.getFleetAsString()
 
-proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
-  return self.messageService.getRenderedText(parsedTextArray)
+proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]): string =
+  return self.messageService.getRenderedText(parsedTextArray, communityChats)
 
 proc getTransactionDetails*(self: Controller, message: MessageDto): (string,string) =
   return self.messageService.getTransactionDetails(message)

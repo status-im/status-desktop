@@ -771,7 +771,8 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
     notificationType = notification_details.NotificationType.NewMessageWithGlobalMention
 
   let contactDetails = self.controller.getContactDetails(message.`from`)
-  let renderedMessageText = self.controller.getRenderedText(message.parsedText)
+  let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+  let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
   let plainText = singletonInstance.utils.plainText(renderedMessageText)
   var notificationTitle = contactDetails.defaultDisplayName
 
