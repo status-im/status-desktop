@@ -173,7 +173,7 @@ method onChatUpdated*(self: Module,  chat: ChatDto) =
   for member in chat.members:
     for existingMember in members:
       if existingMember.id == member.id:
-        self.addChatMember(member)
+        self.addChatMember(existingMember)
 
   if chat.members.len > 0:
     let ids = self.view.model.getItemIds()
