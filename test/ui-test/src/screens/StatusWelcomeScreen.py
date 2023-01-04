@@ -77,6 +77,7 @@ class StatusWelcomeScreen:
 
     def agree_terms_conditions_and_generate_new_key(self):
         self.agree_terms_and_conditions()
+        time.sleep(1)
         click_obj_by_name(SignUpComponents.GENERATE_NEW_KEYS.value)
         
     def agree_terms_conditions_and_navigate_to_import_seed_phrase(self):
