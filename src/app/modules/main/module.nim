@@ -223,7 +223,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     mentionsCount = mentionsCount + receivedContactRequests.len
 
   let hasNotification = unviewedCount > 0 or mentionsCount > 0
-  let notificationsCount = mentionsCount # we need to add here number of requests
+  let notificationsCount = mentionsCount
   let active = self.getActiveSectionId() == c.id # We must pass on if the current item section is currently active to keep that property as it is
   result = initItem(
     c.id,

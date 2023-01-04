@@ -137,7 +137,7 @@ proc buildChatSectionUI(
       continue
 
     let hasNotification = not chatDto.muted and (chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0)
-    let notificationsCount = if (chatDto.muted): 0 else: chatDto.unviewedMentionsCount
+    let notificationsCount = chatDto.unviewedMentionsCount
 
     var chatName = chatDto.name
     var chatImage = ""
