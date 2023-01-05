@@ -129,9 +129,6 @@ Rectangle {
         property var copiedMentionsPos: []
         property int copyTextStart: 0
 
-        // set to true when pasted text comes from this component (was copied within this component)
-        property bool internalPaste: false
-
         property int leftOfMentionIndex: -1
         property int rightOfMentionIndex: -1
 
@@ -445,7 +442,7 @@ Rectangle {
                 const clipboardImage = QClipboardProxy.imageBase64
                 showImageArea([clipboardImage])
                 event.accepted = true
-            } else {
+            } else if (QClipboardProxy.hasText) {
                 messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
 
                 // cursor position must be stored in a helper property because setting readonly to true causes change
@@ -456,11 +453,34 @@ Rectangle {
                 const clipboardText = Utils.plainText(QClipboardProxy.text)
                 const copiedText = Utils.plainText(d.copiedTextPlain)
                 if (copiedText === clipboardText) {
-                    d.internalPaste = true
+                    if (d.copiedTextPlain.includes("@")) {
+                        d.copiedTextFormatted = d.copiedTextFormatted.replace(/span style="/g, "span style=\" text-decoration:none;")
+
+                        let lastFoundIndex = -1
+                        for (let j = 0; j < d.copiedMentionsPos.length; j++) {
+                            const name = d.copiedMentionsPos[j].name
+                            const indexOfName = d.copiedTextPlain.indexOf(name, lastFoundIndex)
+                            lastFoundIndex += name.length
+
+                            if (indexOfName === d.copiedMentionsPos[j].leftIndex + 1) {
+                                const mention = {
+                                    name: name,
+                                    pubKey: d.copiedMentionsPos[j].pubKey,
+                                    leftIndex: (d.copiedMentionsPos[j].leftIndex + d.copyTextStart - 1),
+                                    rightIndex: (d.copiedMentionsPos[j].leftIndex + d.copyTextStart + name.length)
+                                }
+                                mentionsPos.push(mention)
+                                d.sortMentions()
+                            }
+                        }
+                    }
+
+                    insertInTextInput(d.copyTextStart, d.copiedTextFormatted)
                 } else {
                     d.copiedTextPlain = ""
                     d.copiedTextFormatted = ""
                     d.copiedMentionsPos = []
+                    messageInputField.insert(d.copyTextStart, "<div style='white-space: pre-wrap'>" + Utils.escapeHtml(QClipboardProxy.text) + "</div>") // preserve formatting
                 }
             }
         }
@@ -683,44 +703,16 @@ Rectangle {
             d.leftOfMentionIndex = -1
         }
 
-        messageInputField.readOnly = false
-
-        if (d.internalPaste) {
-            if (d.copiedTextPlain.includes("@")) {
-                d.copiedTextFormatted = d.copiedTextFormatted.replace(/span style="/g, "span style=\" text-decoration:none;")
-
-                let lastFoundIndex = -1
-                for (let j = 0; j < d.copiedMentionsPos.length; j++) {
-                    const name = d.copiedMentionsPos[j].name
-                    const indexOfName = d.copiedTextPlain.indexOf(name, lastFoundIndex)
-                    lastFoundIndex += name.length
-
-                    if (indexOfName === d.copiedMentionsPos[j].leftIndex + 1) {
-                        const mention = {
-                            name: name,
-                            pubKey: d.copiedMentionsPos[j].pubKey,
-                            leftIndex: (d.copiedMentionsPos[j].leftIndex + d.copyTextStart - 1),
-                            rightIndex: (d.copiedMentionsPos[j].leftIndex + d.copyTextStart + name.length)
-                        }
-                        mentionsPos.push(mention)
-                        d.sortMentions()
-                    }
-                }
-            }
-
-            const prevLength = messageInputField.length
-            insertInTextInput(d.copyTextStart, d.copiedTextFormatted)
-            messageInputField.cursorPosition = d.copyTextStart + messageInputField.length - prevLength
-            d.internalPaste = false
-        } else if (event.matches(StandardKey.Paste) && QClipboardProxy.hasText) {
-            messageInputField.insert(d.copyTextStart, "<div style='white-space: pre-wrap'>" + Utils.escapeHtml(QClipboardProxy.text) + "</div>") // preserve formatting
-        }
-
         if (event.key !== Qt.Key_Escape) {
             emojiEvent = emojiHandler(event)
             if (!emojiEvent) {
                 emojiSuggestions.close()
             }
+        }
+
+        if (messageInputField.readOnly) {
+            messageInputField.readOnly = false;
+            messageInputField.cursorPosition = d.copyTextStart + QClipboardProxy.text.length;
         }
     }
 
