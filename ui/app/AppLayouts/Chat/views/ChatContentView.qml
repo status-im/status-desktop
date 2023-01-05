@@ -162,6 +162,7 @@ ColumnLayout {
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
             }
+            onEditModeChanged: if (!editModeOn) chatInput.forceInputActiveFocus()
         }
 
         Item {
