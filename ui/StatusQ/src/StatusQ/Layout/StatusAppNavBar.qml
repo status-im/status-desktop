@@ -24,11 +24,6 @@ Rectangle {
     property alias profileComponent: profileItemLoader.sourceComponent
 
     implicitWidth: 78
-    anchors {
-        fill: parent
-        topMargin: 48
-        bottomMargin: 24
-    }
 
     color: Theme.palette.statusAppNavBar.backgroundColor
 
@@ -45,7 +40,11 @@ Rectangle {
 
     ColumnLayout {
         id: layout
-        anchors.fill: parent
+        anchors {
+            fill: parent
+            topMargin: 48
+            bottomMargin: 24
+        }
 
         spacing: d.spacing
 
