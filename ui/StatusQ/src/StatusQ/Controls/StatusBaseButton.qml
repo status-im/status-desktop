@@ -33,11 +33,15 @@ Button {
     property color textColor
     property color disabledTextColor
     property color borderColor: "transparent"
+    property int textAlignment: Qt.AlignVCenter | Qt.AlignHCenter
+    property bool textFillWidth: false
 
     property int radius: size === StatusBaseButton.Size.Tiny ? 6 : 8
 
     property int size: StatusBaseButton.Size.Large
     property int type: StatusBaseButton.Type.Normal
+
+    property bool isRoundIcon: false
 
     QtObject {
         id: d
@@ -84,14 +88,35 @@ Button {
 
     contentItem: RowLayout {
         spacing: root.spacing
-        StatusIcon {
-            Layout.preferredWidth: visible ? root.icon.width : 0
-            Layout.preferredHeight: visible ? root.icon.height : 0
-            icon: root.icon.name
-            rotation: root.asset.rotation
-            opacity: !loading && root.icon.name !== ""
-            visible: root.icon.name !== ""
-            color: root.icon.color
+
+        Component {
+            id: baseIcon
+
+            StatusIcon {
+                icon: root.icon.name
+                rotation: root.asset.rotation
+                opacity: !root.loading && root.icon.name !== ""
+                color: root.icon.color
+            }
+        }
+
+        Component {
+            id: roundIcon
+
+            StatusRoundIcon {
+                asset.name: root.icon.name
+                asset.color: root.asset.color
+                asset.bgColor: root.asset.bgColor
+            }
+        }
+
+        Loader {
+            id: iconLoader
+
+            Layout.preferredWidth: active ? root.icon.width : 0
+            Layout.preferredHeight: active ? root.icon.height : 0
+            active: root.icon.name !== ""
+            sourceComponent: root.isRoundIcon ? roundIcon : baseIcon
         }
         StatusEmoji {
             Layout.preferredWidth: visible ? root.icon.width : 0
@@ -100,7 +125,8 @@ Button {
             emojiId: Emoji.iconId(root.asset.emoji, root.asset.emojiSize) || ""
         }
         StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+            Layout.alignment: root.textAlignment
+            Layout.fillWidth: root.textFillWidth
             opacity: !loading
             font: root.font
             text: root.text

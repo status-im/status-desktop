@@ -14,6 +14,8 @@ QtObject {
         'blue4': '#869EFF',
         'blue5': '#AAC6FF',
         'blue6': '#ECEFFC',
+        'blue7': '#09101C',
+        'blue8': '#6B6F76',
 
         'brown': '#8B3131',
         'brown2': '#9B832F',
@@ -26,7 +28,7 @@ QtObject {
         'graphite3': '#2C2C2C',
         'graphite4': '#373737',
         'graphite5': '#909090',
-        
+
         'green': '#4EBC60',
         'green2': '#7CDA00',
         'green3': '#60C370',

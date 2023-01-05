@@ -88,7 +88,7 @@ Item {
                 RootStore.switchAccount(newIndex)
 
             }
-            showSavedAddresses: function(showSavedAddresses) {
+            onShowSavedAddressesChanged: {
                 if(showSavedAddresses)
                     rightPanelStackView.replace(cmpSavedAddresses)
                 else
