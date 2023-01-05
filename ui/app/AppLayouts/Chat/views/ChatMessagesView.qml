@@ -44,6 +44,7 @@ Item {
 
     signal openStickerPackPopup(string stickerPackId)
     signal showReplyArea(string messageId, string author)
+    signal editModeChanged(bool editModeOn)
 
     QtObject {
         id: d
@@ -272,6 +273,7 @@ Item {
             sticker: model.sticker
             stickerPack: model.stickerPack
             editModeOn: model.editMode
+            onEditModeOnChanged: root.editModeChanged(editModeOn)
             isEdited: model.isEdited
             linkUrls: model.links
             messageAttachments: model.messageAttachments
