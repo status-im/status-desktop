@@ -115,7 +115,7 @@ StatusDialog {
                     }
                 }
                 input.asset.color: colorDialog.color.toString()
-                rightPadding: 6
+                leftPadding: 16
                 input.rightComponent: StatusRoundButton {
                     objectName: "StatusChannelPopup_emojiButton"
                     implicitWidth: 32
@@ -173,7 +173,7 @@ StatusDialog {
                     // contentColor: colorDialog.colorSelected ? Theme.palette.indirectColor1 : Theme.palette.baseColor1
                     text: colorDialog.colorSelected ?
                               colorDialog.color.toString().toUpperCase() :
-                              qsTr("Pick a color")
+                              qsTr("Pick a colour")
 
                     onClicked: colorDialog.open();
                     onTextChanged: {

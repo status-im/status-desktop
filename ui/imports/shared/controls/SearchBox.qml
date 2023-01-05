@@ -6,6 +6,4 @@ StatusInput {
     placeholderText: qsTr("Search")
     input.asset.name: "search"
     input.clearable: true
-    leftPadding: 0
-    rightPadding: 4
 }

@@ -14,16 +14,14 @@ StatusInput {
 
     leftPadding: 0
     rightPadding: 0
+    topPadding: 0
+    bottomPadding: 0
 
     placeholderText: ""
     input.edit.objectName: "amountInput"
     input.edit.cursorVisible: true
     input.edit.font.pixelSize: Utils.getFontSizeBasedOnLetterCount(text)
     input.placeholderFont.pixelSize: 34
-    input.leftPadding: 0
-    input.rightPadding: 0
-    input.topPadding: 0
-    input.bottomPadding: 0
     input.edit.padding: 0
     input.background.color: "transparent"
     input.background.border.width: 0
