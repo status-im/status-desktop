@@ -58,6 +58,8 @@ ThemePalette {
     miscColor11: getColor('brown2')
     miscColor12: getColor('green5')
 
+    dropShadow2: getColor('blue7', 0.02)
+
     statusFloatingButtonHighlight: getColor('blueHijab')
 
     statusLoadingHighlight: getColor('lightPattensBlue', 0.5)

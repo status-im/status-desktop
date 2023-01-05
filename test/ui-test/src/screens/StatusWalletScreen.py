@@ -9,12 +9,12 @@ from .StatusMainScreen import StatusMainScreen
 
 class Tokens(Enum):
     ETH: str = "ETH"
-    
+
 class SigningPhrasePopUp(Enum):
     OK_GOT_IT_BUTTON: str = "signPhrase_Ok_Button"
 
 class MainWalletScreen(Enum):
-    ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account"
+    ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account_Button"
     ACCOUNT_NAME: str = "mainWallet_Account_Name"
     ACCOUNT_ADDRESS_PANEL: str = "mainWallet_Address_Panel"
     SEND_BUTTON_FOOTER: str = "mainWallet_Footer_Send_Button"
@@ -28,7 +28,7 @@ class MainWalletScreen(Enum):
 
 class AssetView(Enum):
     LIST: str = "mainWallet_Assets_View_List"
-    
+
 class NetworkSelectorPopup(Enum):
     LAYER_1_REPEATER: str = "mainWallet_Network_Popup_Chain_Repeater_1"
 
@@ -57,7 +57,7 @@ class SendPopup(Enum):
     ASSET_SELECTOR: str = "mainWallet_Send_Popup_Asset_Selector"
     ASSET_LIST: str = "mainWallet_Send_Popup_Asset_List"
     HIGH_GAS_BUTTON: str = "mainWallet_Send_Popup_GasSelector_HighGas_Button"
-    
+
 class AddAccountPopup(Enum):
     SCROLL_BAR: str = "mainWallet_Add_Account_Popup_Main"
     PASSWORD_INPUT: str = "mainWallet_Add_Account_Popup_Password"
@@ -71,45 +71,45 @@ class AddAccountPopup(Enum):
     PRIVATE_KEY_INPUT: str = "mainWallet_Add_Account_Popup_Private_Key"
     ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account_Popup_Footer_Add_Account"
     SEED_PHRASE_INPUT_TEMPLATE: str = "mainWindow_Add_Account_Popup_Seed_Phrase_"
-    
+
 class SharedPopup(Enum):
     POPUP_CONTENT: str = "sharedPopup_Popup_Content"
     PASSWORD_INPUT: str = "sharedPopup_Password_Input"
     PRIMARY_BUTTON: str = "sharedPopup_Primary_Button"
-    
+
 class CollectiblesView(Enum):
-    COLLECTIONS_REPEATER: str =  "mainWallet_Collections_Repeater"  
-    COLLECTIBLES_REPEATER: str =  "mainWallet_Collectibles_Repeater"  
-    
+    COLLECTIONS_REPEATER: str =  "mainWallet_Collections_Repeater"
+    COLLECTIBLES_REPEATER: str =  "mainWallet_Collectibles_Repeater"
+
 class WalletTabBar(Enum):
     ASSET_TAB =  0
     COLLECTION_TAB =  1
-    ACTIVITY_TAB = 2   
+    ACTIVITY_TAB = 2
 
 class TransactionsView(Enum):
-    TRANSACTIONS_LISTVIEW: str =  "mainWallet_Transactions_List" 
+    TRANSACTIONS_LISTVIEW: str =  "mainWallet_Transactions_List"
     TRANSACTIONS_DETAIL_VIEW_HEADER: str =  "mainWallet_Transactions_Detail_View_Header"
 
 class StatusWalletScreen:
-    
+
     #####################################
     ### Screen actions region:
     #####################################
-    
+
     def accept_signing_phrase(self):
         click_obj_by_name(SigningPhrasePopUp.OK_GOT_IT_BUTTON.value)
-        
+
     def add_watch_only_account(self, account_name: str, address: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
-        
+
         type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-        
+
         click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
 
         click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
         time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_WATCH_ONLY.value)
-        
+
         type(AddAccountPopup.ADDRESS_INPUT.value, address)
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
 
@@ -117,26 +117,26 @@ class StatusWalletScreen:
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
 
         type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-                
+
         click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
         click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
         time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_PRIVATE_KEY.value)
-        
+
         type(AddAccountPopup.PRIVATE_KEY_INPUT.value, private_key)
-        
+
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
-        
+
         wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
         click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
-        
+
         time.sleep(1)
-    
+
     def import_seed_phrase(self, account_name: str, password: str, mnemonic: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
-        
+
         type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-        
+
         click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
         time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
@@ -155,41 +155,41 @@ class StatusWalletScreen:
 
         input_seed_phrase(AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value, words)
         time.sleep(1)
-        
+
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
-        
+
         wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
         click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
-        
+
         time.sleep(1)
-        
+
     def generate_new_account(self, account_name: str, password: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
-        
+
         type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-        
+
         time.sleep(1)
-        
+
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
-        
+
         time.sleep(1)
-        
+
         wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
         click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
         time.sleep(1)
-         
+
     def verify_account_name_is_present(self, account_name: str):
         verify_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name)
         type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
-        
+
     def send_transaction(self, account_name, amount, token, chain_name, password):
         list = get_obj(AssetView.LIST.value)
         squish.waitFor("list.count > 0", 60*1000*2)
         squish.waitFor("float(str(list.itemAtIndex(0).balance)) > 0", 60*1000*2)
 
         click_obj_by_name(MainWalletScreen.SEND_BUTTON_FOOTER.value)
-        
+
         self._click_repeater(SendPopup.HEADER_ACCOUNTS_LIST.value, account_name)
         time.sleep(1)
         type(SendPopup.AMOUNT_INPUT.value, amount)
@@ -201,9 +201,9 @@ class StatusWalletScreen:
             if(not squish.isNull(tokenObj) and tokenObj.objectName == "AssetSelector_ItemDelegate_" + token):
                 click_obj(asset_list.itemAtIndex(index))
                 break
-        
+
         click_obj_by_name(SendPopup.MY_ACCOUNTS_TAB.value)
-        
+
         accounts = get_obj(SendPopup.MY_ACCOUNTS_LIST.value)
         for index in range(accounts.count):
             if(accounts.itemAtIndex(index).objectName == account_name):
@@ -213,7 +213,7 @@ class StatusWalletScreen:
 
         scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
         time.sleep(1)
-        
+
         click_obj_by_name(SendPopup.SEND_BUTTON.value)
         wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
 
@@ -225,7 +225,7 @@ class StatusWalletScreen:
             if(repeater.itemAt(index).objectName == object_name):
                 click_obj(repeater.itemAt(index))
                 break
-    
+
     def add_saved_address(self, name: str, address: str):
         click_obj_by_name(MainWalletScreen.SAVED_ADDRESSES_BUTTON.value)
         click_obj_by_name(SavedAddressesScreen.ADD_BUTTON.value)
@@ -289,20 +289,20 @@ class StatusWalletScreen:
                 click_obj_by_name(MainWalletScreen.ACCOUNT_NAME.value)
                 time.sleep(2)
                 return
-        
+
         assert False, "network name not found"
-        
+
     def click_first_account(self):
         click_obj_by_name(MainWalletScreen.FIRST_ACCOUNT_ITEM.value)
 
-    
+
     #####################################
     ### Verifications region:
     #####################################
-             
+
     def verify_account_name_is_present(self, account_name: str):
         verify_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name)
-        
+
     def verify_positive_balance(self, symbol: str):
         time.sleep(5) # TODO: remove when it is faster @alaibe!
         list = get_obj(AssetView.LIST.value)
@@ -317,14 +317,14 @@ class StatusWalletScreen:
                         break
 
                     return
-                
+
             if not found:
                 verify_failure("Symbol " + symbol + " not found in the asset list")
             reset += 1
             time.sleep(5)
-        
+
         verify_failure("Balance was not positive")
-        
+
     def verify_saved_address_exists(self, name: str):
         list = wait_and_get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
         for index in range(list.count):
@@ -351,7 +351,7 @@ class StatusWalletScreen:
         # ephemeral_notification_list = get_obj(MainWalletScreen.EPHEMERAL_NOTIFICATION_LIST.value)
         # print(ephemeral_notification_list.itemAtIndex(0).objectName)
         # verify(str(ephemeral_notification_list.itemAtIndex(0).primaryText ) == "Transaction pending...", "Tx was not sent!")
-        
+
     def verify_collectibles_exist(self, account_name: str):
         tabbar = get_obj(MainWalletScreen.RIGHT_SIDE_TABBAR.value)
         click_obj(tabbar.itemAt(WalletTabBar.COLLECTION_TAB.value))
@@ -360,21 +360,21 @@ class StatusWalletScreen:
             collectionsRepeater.itemAt(0).expanded = True
         collectiblesRepeater = get_obj(CollectiblesView.COLLECTIBLES_REPEATER.value)
         verify(collectiblesRepeater.count > 0, "Collectibles not retrieved for the account")
-                    
+
     def verify_transactions_exist(self):
         tabbar = get_obj(MainWalletScreen.RIGHT_SIDE_TABBAR.value)
         click_obj(tabbar.itemAt(WalletTabBar.ACTIVITY_TAB.value))
 
         transaction_list_view = get_obj(TransactionsView.TRANSACTIONS_LISTVIEW.value)
-        
+
         squish.waitFor("transaction_list_view.count > 0", 60*1000)
         verify(transaction_list_view.count > 1, "Transactions not retrieved for the account")
-        
+
         transaction_item = transaction_list_view.itemAtIndex(1)
         transaction_detail_header = get_obj(TransactionsView.TRANSACTIONS_DETAIL_VIEW_HEADER.value)
-        
+
         click_obj(transaction_item)
-            
+
         verify_equal(transaction_item.item.cryptoValue, transaction_detail_header.cryptoValue)
         verify_equal(transaction_item.item.transferStatus, transaction_detail_header.transferStatus)
         verify_equal(transaction_item.item.shortTimeStamp, transaction_detail_header.shortTimeStamp)

@@ -104,6 +104,7 @@ QtObject {
     property color white: getColor('white')
 
     property color dropShadow: getColor('black', 0.12)
+    property color dropShadow2
     property color backdropColor: getColor('black', 0.4)
 
     function hoverColor(normalColor) {
