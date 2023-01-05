@@ -65,8 +65,11 @@ StatusDialog {
 
         StatusScrollView {
             Layout.minimumWidth: 300
-            Layout.preferredWidth: contentWidth
+            Layout.preferredWidth: contentWidth + 2 * padding
+
             Layout.fillHeight: true
+            Layout.preferredHeight: contentHeight + 2 * padding
+            Layout.maximumHeight: 400
 
             StatusBaseText {
                 id: messageContent
