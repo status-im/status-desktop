@@ -1,50 +1,61 @@
-#ifndef STATUSSYNTAXHIGHLIGHTER_H
-#define STATUSSYNTAXHIGHLIGHTER_H
+#pragma once
 
-#include <QSyntaxHighlighter>
-#include <QTextCharFormat>
+#include <QQmlParserStatus>
 #include <QRegularExpression>
+#include <QSyntaxHighlighter>
 
 class QQuickTextDocument;
+class QTextCharFormat;
 
-class StatusSyntaxHighlighter : public QSyntaxHighlighter
+class StatusSyntaxHighlighter : public QSyntaxHighlighter, public QQmlParserStatus
 {
     Q_OBJECT
 
+    Q_PROPERTY(QQuickTextDocument* quickTextDocument READ quickTextDocument WRITE setQuickTextDocument NOTIFY
+                   quickTextDocumentChanged REQUIRED)
+    Q_PROPERTY(QColor codeBackgroundColor READ codeBackgroundColor WRITE setCodeBackgroundColor NOTIFY
+                   codeBackgroundColorChanged REQUIRED)
+    Q_PROPERTY(QColor codeForegroundColor READ codeForegroundColor WRITE setCodeForegroundColor NOTIFY
+                   codeForegroundColorChanged REQUIRED)
+
+    Q_INTERFACES(QQmlParserStatus)
+
 public:
-    StatusSyntaxHighlighter(QTextDocument *parent = nullptr);
+    explicit StatusSyntaxHighlighter(QObject* parent = nullptr);
+
+    QQuickTextDocument* quickTextDocument() const;
+    void setQuickTextDocument(QQuickTextDocument* quickTextDocument);
 
 protected:
-    void highlightBlock(const QString &text) override;
+    void classBegin() override{};
+    void componentComplete() override;
+    void highlightBlock(const QString& text) override;
+
+signals:
+    void quickTextDocumentChanged();
+    void codeBackgroundColorChanged();
+    void codeForegroundColorChanged();
 
 private:
+    QQuickTextDocument* m_quicktextdocument{nullptr};
+
+    QColor m_codeBackgroundColor;
+    QColor codeBackgroundColor() const;
+    void setCodeBackgroundColor(const QColor& color);
+
+    QColor m_codeForegroundColor;
+    QColor codeForegroundColor() const;
+    void setCodeForegroundColor(const QColor& color);
+
     struct HighlightingRule
     {
         QRegularExpression pattern;
         QTextCharFormat format;
     };
-    QVector<HighlightingRule> highlightingRules;
+    QVector<HighlightingRule> highlightingRules{5};
 
     QTextCharFormat singlelineBoldFormat;
     QTextCharFormat singleLineItalicFormat;
-    QTextCharFormat singlelineCodeBlockFormat;
+    QTextCharFormat codeFormat;
     QTextCharFormat singleLineStrikeThroughFormat;
-    QTextCharFormat multiLineCodeBlockFormat;
 };
-
-class StatusSyntaxHighlighterHelper : public QObject {
-  Q_OBJECT
-  Q_PROPERTY(QQuickTextDocument *quickTextDocument READ quickTextDocument WRITE
-                 setQuickTextDocument NOTIFY quickTextDocumentChanged)
-public:
-  StatusSyntaxHighlighterHelper(QObject *parent = nullptr)
-      : QObject(parent), m_quicktextdocument(nullptr) {}
-  QQuickTextDocument *quickTextDocument() const;
-  void setQuickTextDocument(QQuickTextDocument *quickTextDocument);
-signals:
-  void quickTextDocumentChanged();
-
-private:
-  QQuickTextDocument *m_quicktextdocument;
-};
-#endif // STATUSSYNTAXHIGHLIGHTER_H

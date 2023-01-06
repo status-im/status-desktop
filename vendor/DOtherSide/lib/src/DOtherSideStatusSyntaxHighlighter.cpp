@@ -1,71 +1,103 @@
 #include "DOtherSide/DOtherSideStatusSyntaxHighlighter.h"
-#include <QQuickTextDocument>
-#include <Qt>
-#include <QBrush>
 
-StatusSyntaxHighlighter::StatusSyntaxHighlighter(QTextDocument *parent)
+#include <QQuickTextDocument>
+
+StatusSyntaxHighlighter::StatusSyntaxHighlighter(QObject* parent)
     : QSyntaxHighlighter(parent)
+{ }
+
+void StatusSyntaxHighlighter::componentComplete()
 {
     HighlightingRule rule;
 
-//BOLD
+    //BOLD
     singlelineBoldFormat.setFontWeight(QFont::Bold);
     rule.pattern = QRegularExpression(QStringLiteral("(\\*\\*(.*?)\\*\\*)|(\\_\\_(.*?)\\_\\_)"));
     rule.format = singlelineBoldFormat;
     highlightingRules.append(rule);
-//BOLD
+    //BOLD
 
-//ITALIC
+    //ITALIC
     singleLineItalicFormat.setFontItalic(true);
     rule.pattern = QRegularExpression(QStringLiteral("(\\*(.*?)\\*)|(\\_(.*?)\\_)"));
     rule.format = singleLineItalicFormat;
     highlightingRules.append(rule);
-//ITALIC
+    //ITALIC
 
-//CODE
-    singlelineCodeBlockFormat.setFontFamily("Roboto Mono");
-    singlelineCodeBlockFormat.setBackground(QBrush(Qt::lightGray));
-    rule.pattern = QRegularExpression(QStringLiteral("\\`(.*?)\\`"));
-    rule.format = singlelineCodeBlockFormat;
-    highlightingRules.append(rule);
-//CODE
-
-//STRIKETHROUGH
+    //STRIKETHROUGH
     singleLineStrikeThroughFormat.setFontStrikeOut(true);
     rule.pattern = QRegularExpression(QStringLiteral("\\~\\~(.*?)\\~\\~"));
     rule.format = singleLineStrikeThroughFormat;
     highlightingRules.append(rule);
-//STRIKETHROUGH
+    //STRIKETHROUGH
 
-//CODE BLOCK
-    multiLineCodeBlockFormat.setFontFamily("Roboto Mono");
-    multiLineCodeBlockFormat.setBackground(QBrush(Qt::lightGray));
-    rule.pattern = QRegularExpression(QStringLiteral("\\`\\`\\`(.*?)\\`\\`\\`"));
-    rule.format = multiLineCodeBlockFormat;
+    //CODE (`foo`)
+    codeFormat.setFontFamily(QStringLiteral("Roboto Mono"));
+    codeFormat.setBackground(m_codeBackgroundColor);
+    codeFormat.setForeground(m_codeForegroundColor);
+    rule.pattern = QRegularExpression(QStringLiteral("\\`{1}(.+)\\`{1}"),
+                                      // to not match single backtick pair inside a triple backtick block below
+                                      QRegularExpression::InvertedGreedinessOption);
+    rule.format = codeFormat;
     highlightingRules.append(rule);
-//CODE BLOCK
+    //CODE
+
+    //CODEBLOCK (```\nfoo\nbar```)
+    rule.pattern = QRegularExpression(QStringLiteral("\\`{3}(.+)\\`{3}"));
+    rule.format = codeFormat;
+    highlightingRules.append(rule);
+    //CODEBLOCK
 }
 
-void StatusSyntaxHighlighter::highlightBlock(const QString &text)
+void StatusSyntaxHighlighter::highlightBlock(const QString& text)
 {
-    for (const HighlightingRule &rule : qAsConst(highlightingRules)) {
-        QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
-        while (matchIterator.hasNext()) {
-            QRegularExpressionMatch match = matchIterator.next();
+    for(const HighlightingRule& rule : qAsConst(highlightingRules))
+    {
+        QRegularExpressionMatchIterator matchIterator =
+            rule.pattern.globalMatch(text, 0, QRegularExpression::PartialPreferCompleteMatch);
+        while(matchIterator.hasNext())
+        {
+            const QRegularExpressionMatch match = matchIterator.next();
             setFormat(match.capturedStart(), match.capturedLength(), rule.format);
         }
     }
-    setCurrentBlockState(0);
 }
 
-QQuickTextDocument *StatusSyntaxHighlighterHelper::quickTextDocument() const {
+QQuickTextDocument* StatusSyntaxHighlighter::quickTextDocument() const
+{
     return m_quicktextdocument;
 }
 
-void StatusSyntaxHighlighterHelper::setQuickTextDocument(
-        QQuickTextDocument *quickTextDocument) {
+void StatusSyntaxHighlighter::setQuickTextDocument(QQuickTextDocument* quickTextDocument)
+{
+    if(!quickTextDocument) return;
+    if(quickTextDocument == m_quicktextdocument) return;
+
     m_quicktextdocument = quickTextDocument;
-    if (m_quicktextdocument) {
-        new StatusSyntaxHighlighter(m_quicktextdocument->textDocument());
-    }
+    setDocument(m_quicktextdocument->textDocument());
+    emit quickTextDocumentChanged();
+}
+
+QColor StatusSyntaxHighlighter::codeBackgroundColor() const
+{
+    return m_codeBackgroundColor;
+}
+
+void StatusSyntaxHighlighter::setCodeBackgroundColor(const QColor& color)
+{
+    if(color == m_codeBackgroundColor) return;
+    m_codeBackgroundColor = color;
+    emit codeBackgroundColorChanged();
+}
+
+QColor StatusSyntaxHighlighter::codeForegroundColor() const
+{
+    return m_codeForegroundColor;
+}
+
+void StatusSyntaxHighlighter::setCodeForegroundColor(const QColor& color)
+{
+    if(color == m_codeForegroundColor) return;
+    m_codeForegroundColor = color;
+    emit codeForegroundColorChanged();
 }
