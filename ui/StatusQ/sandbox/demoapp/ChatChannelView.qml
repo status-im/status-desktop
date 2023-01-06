@@ -19,12 +19,6 @@ ListView {
         id: delegate
         width: ListView.view.width
 
-        audioMessageInfoText: "Audio Message"
-        cancelButtonText: "Cancel"
-        saveButtonText: "Save"
-        loadingImageText: "Loading image..."
-        errorLoadingImageText: "Error loading the image"
-        resendText: "Resend"
         pinnedMsgInfoText: "Pinned by"
 
         timestamp: model.timestamp

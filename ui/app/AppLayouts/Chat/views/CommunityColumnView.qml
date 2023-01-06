@@ -148,7 +148,7 @@ Item {
     Loader {
         id: membershipRequests
 
-        property int nbRequests: root.communityData.pendingRequestsToJoin.count || 0
+        readonly property int nbRequests: root.communityData.pendingRequestsToJoin.count || 0
 
         anchors.top: joinCommunityButton.visible ? joinCommunityButton.bottom : communityHeader.bottom
         anchors.topMargin: active ? 8 : 0

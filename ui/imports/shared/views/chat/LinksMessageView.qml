@@ -44,7 +44,6 @@ Column {
             id: linkMessageLoader
             property bool fetched: false
             property var linkData
-            property int linkWidth: linksRepeater.width
             readonly property string uuid: Utils.uuid()
 
             property bool loadingFailed: false

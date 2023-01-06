@@ -1,9 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Window 2.13
 import QtQuick.Layouts 1.13
-import QtQml.Models 2.13
-import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 
 import StatusQ.Core 0.1
@@ -206,7 +203,7 @@ Item {
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onPressed: mouse.accepted = false
+                acceptedButtons: Qt.NoButton
             }
         }
 
@@ -249,7 +246,6 @@ Item {
             isChatBlocked: root.isChatBlocked
             messageContextMenu: root.messageContextMenu
 
-            itemIndex: index
             messageId: model.id
             communityId: model.communityId
             responseToMessageWithId: model.responseToMessageWithId

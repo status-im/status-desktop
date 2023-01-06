@@ -66,11 +66,14 @@ ColumnLayout {
         }
     }
 
-    StatusBanner {
+    Loader {
         Layout.fillWidth: true
-        visible: root.isBlocked
-        type: StatusBanner.Type.Danger
-        statusText: qsTr("Blocked")
+        active: root.isBlocked
+        visible: active
+        sourceComponent: StatusBanner {
+            type: StatusBanner.Type.Danger
+            statusText: qsTr("Blocked")
+        }
     }
 
     MessageStore {
