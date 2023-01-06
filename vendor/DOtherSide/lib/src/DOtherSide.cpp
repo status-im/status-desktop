@@ -84,7 +84,7 @@ void register_meta_types()
 {
     qRegisterMetaType<QVector<int>>();
     qmlRegisterType<StatusWindow>("DotherSide", 0 , 1, "StatusWindow");
-    qmlRegisterType<StatusSyntaxHighlighterHelper>("DotherSide", 0 , 1, "StatusSyntaxHighlighter");
+    qmlRegisterType<StatusSyntaxHighlighter>("DotherSide", 0 , 1, "StatusSyntaxHighlighter");
     qmlRegisterSingletonType<QClipboardProxy>("DotherSide", 0 , 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
     qmlRegisterType<RXValidator>("DotherSide", 0, 1, "RXValidator");
     qqsfpm::registerTypes();
