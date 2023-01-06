@@ -53,7 +53,7 @@ Item {
         readonly property var chatDetails: chatContentModule.chatDetails
 
         function markAllMessagesReadIfMostRecentMessageIsInViewport() {
-            if (!isMostRecentMessageInViewport) {
+            if (!isMostRecentMessageInViewport || !chatLogView.visible) {
                 return
             }
 
@@ -94,8 +94,17 @@ Item {
         }
 
         function onHasUnreadMessagesChanged() {
-            if (d.chatDetails.hasUnreadMessages && d.chatDetails.active && !d.isMostRecentMessageInViewport) {
-                // HACK: we call it later because messages model may not be yet propagated with unread messages when this signal is emitted
+            if (!d.chatDetails.hasUnreadMessages) {
+                return
+            }
+
+            // HACK: we call `addNewMessagesMarker` later because messages model
+            // may not be yet propagated with unread messages when this signal is emitted
+            if (chatLogView.visible) {
+                if (!d.isMostRecentMessageInViewport) {
+                    Qt.callLater(() => messageStore.addNewMessagesMarker())
+                }
+            } else {
                 Qt.callLater(() => messageStore.addNewMessagesMarker())
             }
         }
@@ -152,6 +161,8 @@ Item {
         }
 
         onCountChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+
+        onVisibleChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
 
         ScrollBar.vertical: StatusScrollBar {
             visible: chatLogView.visibleArea.heightRatio < 1
