@@ -47,10 +47,6 @@ Rectangle {
     property var inputField
     property bool shouldHide: false
 
-    Timer {
-        id: timer
-    }
-
     onFormattedPlainTextFilterChanged: {
         // We need to callLater because the sort needs to happen before setting the index
         Qt.callLater(function () {
@@ -138,9 +134,6 @@ Rectangle {
                 event.accepted = false;
             }
         }
-        property int selectedIndex
-        property var selectedItem: selectedIndex == -1 ? null : model[selectedIndex]
-        signal suggestionClicked(var item)
 
         DelegateModelGeneralized {
             id: mentionsListDelegate
