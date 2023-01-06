@@ -250,6 +250,7 @@ Item {
             senderTrustStatus: model.senderTrustStatus
             amISender: model.amISender
             messageText: model.messageText
+            unparsedText: model.unparsedText
             messageImage: model.messageImage
             messageTimestamp: model.timestamp
             messageOutgoingStatus: model.outgoingStatus

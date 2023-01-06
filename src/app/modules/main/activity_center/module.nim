@@ -82,6 +82,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     contactDetails.details.added,
     message.outgoingStatus,
     self.controller.getRenderedText(message.parsedText),
+    message.text,
     message.image,
     message.containsContactMentions(),
     message.seen,

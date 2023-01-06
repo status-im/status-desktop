@@ -150,67 +150,68 @@ method currentUserWalletContainsAddress(self: Module, address: string): bool =
 
 proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: string, item: var pinned_msg_item.Item):
   bool =
-  let (m, reactions, err) = self.controller.getMessageDetails(messageId)
+  let (message, reactions, err) = self.controller.getMessageDetails(messageId)
   if(err.len > 0):
     return false
 
-  let contactDetails = self.controller.getContactDetails(m.`from`)
+  let contactDetails = self.controller.getContactDetails(message.`from`)
 
-  var transactionContract = m.transactionParameters.contract
-  var transactionValue = m.transactionParameters.value
+  var transactionContract = message.transactionParameters.contract
+  var transactionValue = message.transactionParameters.value
   var isCurrentUser = contactDetails.isCurrentUser
-  if(m.contentType.ContentType == ContentType.Transaction):
-    (transactionContract, transactionValue) = self.controller.getTransactionDetails(m)
-    if m.transactionParameters.fromAddress != "":
-      isCurrentUser = self.currentUserWalletContainsAddress(m.transactionParameters.fromAddress)
+  if(message.contentType.ContentType == ContentType.Transaction):
+    (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
+    if message.transactionParameters.fromAddress != "":
+      isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
   item = pinned_msg_item.initItem(
-    m.id,
-    m.communityId,
-    m.responseTo,
-    m.`from`,
+    message.id,
+    message.communityId,
+    message.responseTo,
+    message.`from`,
     contactDetails.defaultDisplayName,
     contactDetails.optionalName,
     contactDetails.icon,
     isCurrentUser,
     contactDetails.details.added,
-    m.outgoingStatus,
-    self.controller.getRenderedText(m.parsedText),
-    m.image,
-    m.containsContactMentions(),
-    m.seen,
-    timestamp = m.whisperTimestamp,
-    clock = m.clock,
-    m.contentType.ContentType,
-    m.messageType,
-    m.contactRequestState,
-    m.sticker.url,
-    m.sticker.pack,
-    m.links,
-    newTransactionParametersItem(m.transactionParameters.id,
-      m.transactionParameters.fromAddress,
-      m.transactionParameters.address,
+    message.outgoingStatus,
+    self.controller.getRenderedText(message.parsedText),
+    message.text,
+    message.image,
+    message.containsContactMentions(),
+    message.seen,
+    timestamp = message.whisperTimestamp,
+    clock = message.clock,
+    message.contentType.ContentType,
+    message.messageType,
+    message.contactRequestState,
+    message.sticker.url,
+    message.sticker.pack,
+    message.links,
+    newTransactionParametersItem(message.transactionParameters.id,
+      message.transactionParameters.fromAddress,
+      message.transactionParameters.address,
       transactionContract,
       transactionValue,
-      m.transactionParameters.transactionHash,
-      m.transactionParameters.commandState,
-      m.transactionParameters.signature),
-    m.mentionedUsersPks,
+      message.transactionParameters.transactionHash,
+      message.transactionParameters.commandState,
+      message.transactionParameters.signature),
+    message.mentionedUsersPks,
     contactDetails.details.trustStatus,
     contactDetails.details.ensVerified,
-    m.discordMessage,
+    message.discordMessage,
     resendError = "",
-    m.mentioned,
-    m.quotedMessage.`from`,
-    m.quotedMessage.text,
-    self.controller.getRenderedText(m.quotedMessage.parsedText),
-    m.quotedMessage.contentType,
-    m.quotedMessage.deleted,
+    message.mentioned,
+    message.quotedMessage.`from`,
+    message.quotedMessage.text,
+    self.controller.getRenderedText(message.quotedMessage.parsedText),
+    message.quotedMessage.contentType,
+    message.quotedMessage.deleted,
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy
 
   for r in reactions:
-    if(r.messageId == m.id):
+    if(r.messageId == message.id):
       var emojiIdAsEnum: pinned_msg_reaction_item.EmojiId
       if(pinned_msg_reaction_item.toEmojiIdAsEnum(r.emojiId, emojiIdAsEnum)):
         let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
@@ -318,8 +319,8 @@ method getCurrentFleet*(self: Module): string =
 method amIChatAdmin*(self: Module): bool =
   if(not self.controller.belongsToCommunity()):
     let chatDto = self.controller.getChatDetails()
-    for m in chatDto.members:
-      if (m.id == singletonInstance.userProfile.getPubKey() and m.admin):
+    for member in chatDto.members:
+      if (member.id == singletonInstance.userProfile.getPubKey() and member.admin):
         return true
     return false
   else:
@@ -336,10 +337,10 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
       item.senderIcon = updatedContact.icon
       item.senderTrustStatus = updatedContact.details.trustStatus
     if(item.messageContainsMentions):
-      let (m, _, err) = self.controller.getMessageDetails(item.id)
+      let (message, _, err) = self.controller.getMessageDetails(item.id)
       if(err.len == 0):
-        item.messageText = self.controller.getRenderedText(m.parsedText)
-        item.messageContainsMentions = m.containsContactMentions()
+        item.messageText = self.controller.getRenderedText(message.parsedText)
+        item.messageContainsMentions = message.containsContactMentions()
 
   if(self.controller.getMyChatId() == contactId):
     self.view.updateChatDetailsNameAndIcon(updatedContact.defaultDisplayName, updatedContact.icon)

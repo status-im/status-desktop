@@ -86,6 +86,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     senderIsAdded = false,
     outgoingStatus = "",
     text = "",
+    unparsedText = "",
     image = "",
     messageContainsMentions = false,
     seen = true,
@@ -134,6 +135,7 @@ proc createChatIdentifierItem(self: Module): Item =
     senderIsAdded,
     outgoingStatus = "",
     text = "",
+    unparsedText = "",
     image = "",
     messageContainsMentions = false,
     seen = true,
@@ -186,68 +188,69 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
   var viewItems: seq[Item]
 
   if(messages.len > 0):
-    for m in messages:
+    for message in messages:
       # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
       # Now we just skip deleted messages
-      if m.deleted or m.deletedForMe:
+      if message.deleted or message.deletedForMe:
         continue
 
-      let sender = self.controller.getContactDetails(m.`from`)
+      let sender = self.controller.getContactDetails(message.`from`)
 
-      let renderedMessageText = self.controller.getRenderedText(m.parsedText)
-      var transactionContract = m.transactionParameters.contract
-      var transactionValue = m.transactionParameters.value
+      let renderedMessageText = self.controller.getRenderedText(message.parsedText)
+      var transactionContract = message.transactionParameters.contract
+      var transactionValue = message.transactionParameters.value
       var isCurrentUser = sender.isCurrentUser
-      if(m.contentType.ContentType == ContentType.Transaction):
-        (transactionContract, transactionValue) = self.controller.getTransactionDetails(m)
-        if m.transactionParameters.fromAddress != "":
-          isCurrentUser = self.currentUserWalletContainsAddress(m.transactionParameters.fromAddress)
+      if(message.contentType.ContentType == ContentType.Transaction):
+        (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
+        if message.transactionParameters.fromAddress != "":
+          isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
       var item = initItem(
-        m.id,
-        m.communityId,
-        m.responseTo,
-        m.`from`,
+        message.id,
+        message.communityId,
+        message.responseTo,
+        message.`from`,
         sender.defaultDisplayName,
         sender.optionalName,
         sender.icon,
-        (isCurrentUser and m.contentType.ContentType != ContentType.DiscordMessage),
+        (isCurrentUser and message.contentType.ContentType != ContentType.DiscordMessage),
         sender.details.added,
-        m.outgoingStatus,
+        message.outgoingStatus,
         renderedMessageText,
-        m.image,
-        m.containsContactMentions(),
-        m.seen,
-        timestamp = m.whisperTimestamp,
-        clock = m.clock,
-        m.contentType.ContentType,
-        m.messageType,
-        m.contactRequestState,
-        sticker = m.sticker.url,
-        m.sticker.pack,
-        m.links,
-        newTransactionParametersItem(m.transactionParameters.id,
-          m.transactionParameters.fromAddress,
-          m.transactionParameters.address,
+        message.text,
+        message.image,
+        message.containsContactMentions(),
+        message.seen,
+        timestamp = message.whisperTimestamp,
+        clock = message.clock,
+        message.contentType.ContentType,
+        message.messageType,
+        message.contactRequestState,
+        sticker = message.sticker.url,
+        message.sticker.pack,
+        message.links,
+        newTransactionParametersItem(message.transactionParameters.id,
+          message.transactionParameters.fromAddress,
+          message.transactionParameters.address,
           transactionContract,
           transactionValue,
-          m.transactionParameters.transactionHash,
-          m.transactionParameters.commandState,
-          m.transactionParameters.signature),
-        m.mentionedUsersPks(),
+          message.transactionParameters.transactionHash,
+          message.transactionParameters.commandState,
+          message.transactionParameters.signature),
+        message.mentionedUsersPks(),
         sender.details.trustStatus,
         sender.details.ensVerified,
-        m.discordMessage,
+        message.discordMessage,
         resendError = "",
-        m.mentioned,
-        m.quotedMessage.`from`,
-        m.quotedMessage.text,
-        self.controller.getRenderedText(m.quotedMessage.parsedText),
-        m.quotedMessage.contentType,
-        m.quotedMessage.deleted,
+        message.mentioned,
+        message.quotedMessage.`from`,
+        message.quotedMessage.text,
+        self.controller.getRenderedText(message.quotedMessage.parsedText),
+        message.quotedMessage.contentType,
+        message.quotedMessage.deleted,
         )
 
       for r in reactions:
-        if(r.messageId == m.id):
+        if(r.messageId == message.id):
           var emojiIdAsEnum: EmojiId
           if(message_reaction_item.toEmojiIdAsEnum(r.emojiId, emojiIdAsEnum)):
             let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
@@ -258,16 +261,16 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
             error "wrong emoji id found when loading messages", methodName="newMessagesLoaded"
 
       for p in pinnedMessages:
-        if(p.message.id == m.id):
+        if(p.message.id == message.id):
           item.pinned = true
           item.pinnedBy = p.pinnedBy
 
-      if m.editedAt != 0:
+      if message.editedAt != 0:
         item.isEdited = true
 
-      if(m.contentType.ContentType == ContentType.Gap):
-        item.gapFrom = m.gapParameters.`from`
-        item.gapTo = m.gapParameters.to
+      if(message.contentType.ContentType == ContentType.Gap):
+        item.gapFrom = message.gapParameters.`from`
+        item.gapTo = message.gapParameters.to
 
       # messages are sorted from the most recent to the least recent one
       viewItems.add(item)
@@ -320,6 +323,7 @@ method messageAdded*(self: Module, message: MessageDto) =
     sender.details.added,
     message.outgoingStatus,
     renderedMessageText,
+    message.text,
     message.image,
     message.containsContactMentions(),
     message.seen,
@@ -455,8 +459,8 @@ method getChatIcon*(self: Module): string =
 method amIChatAdmin*(self: Module): bool =
   if(not self.controller.belongsToCommunity()):
     let chatDto = self.controller.getChatDetails()
-    for m in chatDto.members:
-      if (m.id == singletonInstance.userProfile.getPubKey() and m.admin):
+    for member in chatDto.members:
+      if (member.id == singletonInstance.userProfile.getPubKey() and member.admin):
         return true
     return false
   else:
@@ -483,10 +487,10 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.senderTrustStatus = updatedContact.details.trustStatus
       item.senderEnsVerified = updatedContact.details.ensVerified
     if(item.messageContainsMentions):
-      let (m, _, err) = self.controller.getMessageDetails(item.id)
+      let (message, _, err) = self.controller.getMessageDetails(item.id)
       if(err.len == 0):
-        item.messageText = self.controller.getRenderedText(m.parsedText)
-        item.messageContainsMentions = m.containsContactMentions()
+        item.messageText = self.controller.getRenderedText(message.parsedText)
+        item.messageContainsMentions = message.containsContactMentions()
 
 method deleteMessage*(self: Module, messageId: string) =
   self.controller.deleteMessage(messageId)
@@ -582,60 +586,61 @@ method getMessages*(self: Module): seq[message_item.Item] =
   return self.view.model().items
 
 method getMessageById*(self: Module, messageId: string): message_item.Item =
-  let (m, _, err) = self.controller.getMessageDetails(messageId)
+  let (message, _, err) = self.controller.getMessageDetails(messageId)
   if(err.len == 0):
-    let sender = self.controller.getContactDetails(m.`from`)
+    let sender = self.controller.getContactDetails(message.`from`)
 
-    let renderedMessageText = self.controller.getRenderedText(m.parsedText)
-    var transactionContract = m.transactionParameters.contract
-    var transactionValue = m.transactionParameters.value
+    let renderedMessageText = self.controller.getRenderedText(message.parsedText)
+    var transactionContract = message.transactionParameters.contract
+    var transactionValue = message.transactionParameters.value
     var isCurrentUser = sender.isCurrentUser
-    if(m.contentType.ContentType == ContentType.Transaction):
-      (transactionContract, transactionValue) = self.controller.getTransactionDetails(m)
-      if m.transactionParameters.fromAddress != "":
-        isCurrentUser = self.currentUserWalletContainsAddress(m.transactionParameters.fromAddress)
+    if(message.contentType.ContentType == ContentType.Transaction):
+      (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
+      if message.transactionParameters.fromAddress != "":
+        isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
     var item = initItem(
-      m.id,
-      m.communityId,
-      m.responseTo,
-      m.`from`,
+      message.id,
+      message.communityId,
+      message.responseTo,
+      message.`from`,
       sender.defaultDisplayName,
       sender.optionalName,
       sender.icon,
-      (isCurrentUser and m.contentType.ContentType != ContentType.DiscordMessage),
+      (isCurrentUser and message.contentType.ContentType != ContentType.DiscordMessage),
       sender.details.added,
-      m.outgoingStatus,
+      message.outgoingStatus,
       renderedMessageText,
-      m.image,
-      m.containsContactMentions(),
-      m.seen,
-      timestamp = m.whisperTimestamp,
-      clock = m.clock,
-      m.contentType.ContentType,
-      m.messageType,
-      m.contactRequestState,
-      sticker = m.sticker.url,
-      m.sticker.pack,
-      m.links,
-      newTransactionParametersItem(m.transactionParameters.id,
-        m.transactionParameters.fromAddress,
-        m.transactionParameters.address,
+      message.text,
+      message.image,
+      message.containsContactMentions(),
+      message.seen,
+      timestamp = message.whisperTimestamp,
+      clock = message.clock,
+      message.contentType.ContentType,
+      message.messageType,
+      message.contactRequestState,
+      sticker = message.sticker.url,
+      message.sticker.pack,
+      message.links,
+      newTransactionParametersItem(message.transactionParameters.id,
+        message.transactionParameters.fromAddress,
+        message.transactionParameters.address,
         transactionContract,
         transactionValue,
-        m.transactionParameters.transactionHash,
-        m.transactionParameters.commandState,
-        m.transactionParameters.signature),
-      m.mentionedUsersPks(),
+        message.transactionParameters.transactionHash,
+        message.transactionParameters.commandState,
+        message.transactionParameters.signature),
+      message.mentionedUsersPks(),
       sender.details.trustStatus,
       sender.details.ensVerified,
-      m.discordMessage,
+      message.discordMessage,
       resendError = "",
-      m.mentioned,
-      m.quotedMessage.`from`,
-      m.quotedMessage.text,
-      self.controller.getRenderedText(m.quotedMessage.parsedText),
-      m.quotedMessage.contentType,
-      m.quotedMessage.deleted,
+      message.mentioned,
+      message.quotedMessage.`from`,
+      message.quotedMessage.text,
+      self.controller.getRenderedText(message.quotedMessage.parsedText),
+      message.quotedMessage.contentType,
+      message.quotedMessage.deleted,
       )
     return item
   return nil

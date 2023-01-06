@@ -48,6 +48,7 @@ Loader {
     property bool senderIsAdded: false
     property int senderTrustStatus: Constants.trustStatus.unknown
     property string messageText: ""
+    property string unparsedText: ""
     property string messageImage: ""
     property double messageTimestamp: 0 // We use double, because QML's int is too small
     property string messageOutgoingStatus: ""
@@ -141,6 +142,7 @@ Loader {
         messageContextMenu.chatType = messageStore.getChatType()
 
         messageContextMenu.messageId = root.messageId
+        messageContextMenu.unparsedText = root.unparsedText
         messageContextMenu.messageSenderId = root.senderId
         messageContextMenu.messageContentType = root.messageContentType
         messageContextMenu.pinnedMessage = root.pinnedMessage

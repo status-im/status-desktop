@@ -20,6 +20,7 @@ type
     seen: bool
     outgoingStatus: string
     messageText: string
+    unparsedText: string
     messageImage: string
     messageContainsMentions: bool
     sticker: string
@@ -64,6 +65,7 @@ proc initItem*(
     senderIsAdded: bool,
     outgoingStatus,
     text,
+    unparsedText,
     image: string,
     messageContainsMentions,
     seen: bool,
@@ -100,7 +102,8 @@ proc initItem*(
   result.senderIcon = senderIcon
   result.seen = seen
   result.outgoingStatus = outgoingStatus
-  result.messageText = if ContentType.Image == contentType: "" else: text
+  result.messageText = if contentType == ContentType.Image : "" else: text
+  result.unparsedText = if contentType == ContentType.Image : "" else: unparsedText
   result.messageImage = image
   result.messageContainsMentions = messageContainsMentions
   result.timestamp = timestamp
@@ -131,9 +134,10 @@ proc initItem*(
   result.quotedMessageDeleted = quotedMessageDeleted
   result.quotedMessageFromIterator = 0
 
-  if ContentType.DiscordMessage == contentType:
+  if contentType == ContentType.DiscordMessage :
     if result.messageText == "":
       result.messageText = discordMessage.content
+      result.unparsedText = discordMessage.content
     result.senderId = discordMessage.author.id
     result.senderDisplayName = discordMessage.author.name
     result.senderIcon = discordMessage.author.localUrl
@@ -162,6 +166,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     senderIsAdded = false,
     outgoingStatus = "",
     text = "",
+    unparsedText = "",
     image = "",
     messageContainsMentions = false,
     seen = true,
@@ -201,6 +206,7 @@ proc `$`*(self: Item): string =
     outgoingStatus:{$self.outgoingStatus},
     resendError:{$self.resendError},
     messageText:{self.messageText},
+    unparsedText:{self.unparsedText},
     messageContainsMentions:{self.messageContainsMentions},
     timestamp:{$self.timestamp},
     contentType:{$self.contentType.int},
@@ -286,6 +292,12 @@ proc messageText*(self: Item): string {.inline.} =
 
 proc `messageText=`*(self: Item, value: string) {.inline.} =
   self.messageText = value
+
+proc unparsedText*(self: Item): string {.inline.} =
+  self.unparsedText
+
+proc `unparsedText=`*(self: Item, value: string) {.inline.} =
+  self.unparsedText = value
 
 proc messageImage*(self: Item): string {.inline.} =
   self.messageImage
@@ -383,6 +395,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "seen": self.seen,
     "outgoingStatus": self.outgoingStatus,
     "messageText": self.messageText,
+    "unparsedText": self.unparsedText,
     "messageImage": self.messageImage,
     "messageContainsMentions": self.messageContainsMentions,
     "sticker": self.sticker,
