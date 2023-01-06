@@ -34,53 +34,17 @@ Item {
     property var emojiPopup
     property var stickersPopup
 
-    // Not Refactored Yet
-    //property int chatGroupsListViewCount: 0
-    property bool isReply: false
-    property bool isImage: false
-    property bool isExtendedInput: isReply || isImage
-    property string contactToRemove: ""
     property bool isSectionActive: mainModule.activeSection.id === parentModule.getMySectionId()
     property string activeChatId: parentModule && parentModule.activeItem.id
     property string activeSubItemId: parentModule && parentModule.activeItem.activeSubItem.id
     property int chatsCount: parentModule && parentModule.model ? parentModule.model.count : 0
     property string activeChatType: parentModule && parentModule.activeItem.type
-    property string currentNotificationChatId
-    property string currentNotificationCommunityId
-    property var currentTime: 0
-    property var idMap: ({})
     property bool stickersLoaded: false
-    property Timer timer: Timer { }
-    property var userList
     property var contactDetails: Utils.getContactDetailsAsJson(root.activeChatId, false)
     property bool isUserAdded: root.contactDetails.isAdded
 
     signal openAppSearch()
     signal openStickerPackPopup(string stickerPackId)
-
-    // Not Refactored Yet
-//    function hideChatInputExtendedArea () {
-//        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
-//            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.hideExtendedArea()
-//    }
-
-    function showReplyArea() {
-        isReply = true;
-        isImage = false;
-        // Not Refactored Yet
-//        let replyMessageIndex = root.rootStore.chatsModelInst.messageView.messageList.getMessageIndex(SelectedMessage.messageId);
-//        if (replyMessageIndex === -1) return;
-//        let userName = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "userName")
-//        let message = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "message")
-//        let identicon = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "identicon")
-//        let image = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "image")
-//        let sticker = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker")
-//        let contentType = root.rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "contentType")
-
-        // Not Refactored Yet
-//        if(stackLayoutChatMessages.currentIndex >= 0 && stackLayoutChatMessages.currentIndex < stackLayoutChatMessages.children.length)
-//            stackLayoutChatMessages.children[stackLayoutChatMessages.currentIndex].chatInput.showReplyArea(userName, message, identicon, contentType, image, sticker)
-    }
 
     function requestAddressForTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
         amount =  globalUtils.eth2Wei(amount.toString(), tokenDecimals)
@@ -142,16 +106,6 @@ Item {
         root.rootStore.createChatStickerPackId = "";
     }
 
-    Timer {
-        interval: 60000; // 1 min
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            root.currentTime = Date.now()
-        }
-    }
-
     EmptyChatPanel {
         anchors.fill: parent
         visible: root.activeChatId === "" || root.chatsCount == 0
@@ -182,16 +136,12 @@ Item {
                         id: categoryChatLoader
                         // Channels are not loaded by default and only load when first put active
                         active: model.active
-                        visible: model.active
+                        visible: active
                         width: parent.width
                         height: parent.height
 
-                        // Removing the binding in order not to unload the content
-                        onStatusChanged: if (status == Loader.Ready) active = true
-
                         sourceComponent: ChatContentView {
                             visible: !root.rootStore.openCreateChat && isActiveChannel
-                            clip: true
                             rootStore: root.rootStore
                             contactsStore: root.contactsStore
                             emojiPopup: root.emojiPopup
@@ -222,16 +172,12 @@ Item {
                     id: chatLoader
                     // Channels are not loaded by default and only load when first put active
                     active: model.active
-                    visible: model.active
+                    visible: active
                     width: parent.width
                     height: parent.height
 
-                    // Removing the binding in order not to unload the content
-                    onStatusChanged: if (status == Loader.Ready) active = true
-
                     sourceComponent: ChatContentView {
                         visible: !root.rootStore.openCreateChat && isActiveChannel
-                        clip: true
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
                         emojiPopup: root.emojiPopup
@@ -261,9 +207,8 @@ Item {
     }
 
     ChatRequestMessagePanel {
-        Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-        Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        anchors.fill: parent
+        anchors.bottomMargin: Style.current.bigPadding
         isUserAdded: root.isUserAdded
         visible: root.activeChatType === Constants.chatType.oneToOne && !root.isUserAdded
         onAddContactClicked: {

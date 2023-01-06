@@ -2,7 +2,6 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
-import StatusQ.Core.Backpressure 1.0
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
@@ -444,8 +443,8 @@ Item {
                 if (!text)
                     return false;
 
-                if ((root.validationMode == StatusInput.ValidationMode.OnlyWhenDirty && statusBaseInput.dirty) ||
-                    root.validationMode == StatusInput.ValidationMode.Always)
+                if ((root.validationMode === StatusInput.ValidationMode.OnlyWhenDirty && statusBaseInput.dirty) ||
+                    root.validationMode === StatusInput.ValidationMode.Always)
                     return !statusBaseInput.valid;
 
                 return false;

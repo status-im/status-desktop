@@ -11,8 +11,6 @@ Item {
     property alias inputComponent: chatInputLoader.sourceComponent
     property alias active: chatInputLoader.active
 
-    property string cancelButtonText: ""
-    property string saveButtonText: ""
     property string messageText: ""
 
     signal editCancelled()
@@ -49,7 +47,7 @@ Item {
             spacing: 4
             StatusFlatButton {
                 id: cancelBtn
-                text: cancelButtonText
+                text: qsTr("Cancel")
                 size: StatusBaseButton.Size.Small
                 onClicked: {
                     editCancelled()
@@ -57,7 +55,7 @@ Item {
             }
             StatusButton {
                 id: saveBtn
-                text: saveButtonText
+                text: qsTr("Save")
                 size: StatusBaseButton.Size.Small
                 enabled: !!chatInputLoader.item && chatInputLoader.item.messageText.trim().length > 0
                 onClicked: {

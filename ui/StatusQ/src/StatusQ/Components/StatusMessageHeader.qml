@@ -20,7 +20,7 @@ Item {
     property alias timestamp: timestampText
 
     property string tertiaryDetail: sender.id
-    property string resendText: ""
+    property string resendText: qsTr("Resend")
     property bool showResendButton: false
     property bool showSendingLoader: false
     property string resendError: ""

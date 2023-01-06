@@ -714,9 +714,6 @@ QtObject {
     readonly property string ens_connected: "connected"
     readonly property string ens_connected_dkey: "connected-different-key"
 
-    // WARNING: Remove later. Moved to StatusQ.
-    readonly property string editLabel: ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
-
     readonly property string newBookmark: " "
 
     readonly property var ensState: {

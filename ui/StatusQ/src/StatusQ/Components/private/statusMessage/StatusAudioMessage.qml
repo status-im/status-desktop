@@ -10,7 +10,6 @@ import StatusQ.Core.Theme 0.1
 Rectangle {
     id: audioChatMessage
 
-    property string audioMessageInfoText: ""
     property bool isPreview: false
     property bool hovered: false
     property string audioSource: ""
@@ -43,7 +42,7 @@ Rectangle {
         StatusBaseText {
             Layout.alignment: Qt.AlignVCenter
             color: Theme.palette.baseColor1
-            text: audioMessageInfoText
+            text: qsTr("Audio Message")
             font.pixelSize: 13
         }
     }
@@ -68,7 +67,6 @@ Rectangle {
             } else {
                 audioMessage.play();
             }
-
         }
     }
     
