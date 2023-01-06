@@ -61,10 +61,6 @@ QtObject {
         globalUtils.copyToClipboard(text)
     }
 
-    function estimateGas(from_addr, to, assetSymbol, value, chainId, data) {
-        return walletSectionTransactions.estimateGas(from_addr, to, assetSymbol, value, chainId, data)
-    }
-
     function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
         return profileSectionStore.ensUsernamesStore.getFiatValue(balance, cryptoSymbol, fiatSymbol)
     }

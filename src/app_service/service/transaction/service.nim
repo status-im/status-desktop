@@ -224,54 +224,6 @@ QtObject:
       )
       self.threadpool.start(arg)
 
-  proc estimateGas*(
-    self: Service,
-    from_addr: string,
-    to: string,
-    assetSymbol: string,
-    value: string,
-    chainId: string,
-    data: string = "",
-  ): string {.slot.} =
-    var response: RpcResponse[JsonNode]
-    var success: bool
-    # TODO make this async
-    let network = self.networkService.getNetwork(parseInt(chainId))
-
-    if network.nativeCurrencySymbol == assetSymbol:
-      var tx = ens_utils.buildTransaction(
-        parseAddress(from_addr),
-        eth2Wei(parseFloat(value), 18),
-        data = data
-      )
-      tx.to = parseAddress(to).some
-      try:
-        response = eth.estimateGas(parseInt(chainId), %*[%tx])
-        let res = fromHex[int](response.result.getStr)
-        return $(%* { "result": res, "success": true })
-      except Exception as e:
-        error "Error estimating gas", msg = e.msg
-        return $(%* { "result": "-1", "success": false, "error": { "message": e.msg } })
-
-    let token = self.tokenService.findTokenBySymbol(network, assetSymbol)
-    if token == nil:
-      raise newException(ValueError, fmt"Could not find ERC-20 contract with symbol '{assetSymbol}' for the current network")
-
-    var tx = buildTokenTransaction(
-      parseAddress(from_addr),
-      token.address,
-    )
-          
-    let transfer = Transfer(to: parseAddress(to), value: conversion.eth2Wei(parseFloat(value), token.decimals))
-    let transferproc = ERC20_procS.toTable["transfer"]
-    try:
-      let gas = transferproc.estimateGas(parseInt(chainId), tx, transfer, success)
-      let res = fromHex[int](gas)
-      return $(%* { "result": res, "success": success })
-    except Exception as e:
-      error "Error estimating gas", msg = e.msg
-      return $(%* { "result": "-1", "success": false, "error": { "message": e.msg } })    
-
   proc transfer*(
     self: Service,
     from_addr: string,
