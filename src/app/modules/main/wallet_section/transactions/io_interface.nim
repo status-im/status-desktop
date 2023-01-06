@@ -37,9 +37,6 @@ method setHistoryFetchState*(self: AccessInterface, addresses: seq[string], isFe
 method setIsNonArchivalNode*(self: AccessInterface, isNonArchivalNode: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method estimateGas*(self: AccessInterface, from_addr: string, to: string, assetSymbol: string, value: string, data: string): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
