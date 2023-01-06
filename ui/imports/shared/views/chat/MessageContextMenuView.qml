@@ -31,6 +31,7 @@ StatusMenu {
 
     property int chatType: Constants.chatType.publicChat
     property string messageId: ""
+    property string unparsedText: ""
     property string messageSenderId: ""
     property int messageContentType: Constants.messageContentType.unknownContentType
     property string imageSource: ""
@@ -39,7 +40,7 @@ StatusMenu {
     property bool isRightClickOnImage: false
     property bool pinnedPopup: false
     property bool pinMessageAllowedForMembers: false
-    property bool isDebugEnabled: false
+    property bool isDebugEnabled: store.isDebugEnabled
     property bool isEmoji: false
     property bool isSticker: false
     property bool hideEmojiPicker: true
@@ -127,11 +128,6 @@ StatusMenu {
         }
         root.emojiReactionsReactedByUser = newEmojiReactions;
 
-        /* // copy link feature not ready yet
-        const numLinkUrls = root.linkUrls.split(" ").length
-        copyLinkMenu.enabled = numLinkUrls > 1
-        copyLinkAction.enabled = !!root.linkUrls && numLinkUrls === 1 && !isEmoji && !root.isProfile
-        */
         popup()
     }
 
@@ -362,12 +358,23 @@ StatusMenu {
     }
 
     StatusAction {
+        id: copyMessageMenuItem
+        text: qsTr("Copy message")
+        icon.name: "copy"
+        onTriggered: {
+            root.store.copyToClipboard(root.unparsedText)
+            close()
+        }
+        enabled: root.messageContentType === Constants.messageContentType.messageType
+    }
+
+    StatusAction {
         id: copyMessageIdAction
         text: qsTr("Copy Message Id")
-        icon.name: "chat"
+        icon.name: "copy"
         enabled: root.isDebugEnabled && !pinnedPopup
         onTriggered: {
-            root.store.copyToClipboard(SelectedMessage.messageId)
+            root.store.copyToClipboard(root.messageId)
             close()
         }
     }
@@ -425,6 +432,7 @@ StatusMenu {
                  (viewProfileAction.enabled ||
                   sendMessageMenuItem.enabled ||
                   replyToMenuItem.enabled ||
+                  copyMessageMenuItem.enabled ||
                   editMessageAction.enabled ||
                   pinAction.enabled)
     }

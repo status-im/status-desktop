@@ -21,6 +21,7 @@ type
     Seen
     OutgoingStatus
     MessageText
+    UnparsedText
     MessageImage
     MessageContainsMentions # Actually we don't need to exposed this to qml since we only used it as an improved way to
                             # check whether we need to update mentioned contact name or not.
@@ -114,6 +115,7 @@ QtObject:
       ModelRole.ResendError.int:"resendError",
       ModelRole.Mentioned.int:"mentioned",
       ModelRole.MessageText.int:"messageText",
+      ModelRole.UnparsedText.int:"unparsedText",
       ModelRole.MessageImage.int:"messageImage",
       ModelRole.MessageContainsMentions.int:"messageContainsMentions",
       ModelRole.Timestamp.int:"timestamp",
@@ -205,6 +207,8 @@ QtObject:
       result = newQVariant(item.quotedMessageDeleted)
     of ModelRole.MessageText:
       result = newQVariant(item.messageText)
+    of ModelRole.UnparsedText:
+      result = newQVariant(item.unparsedText)
     of ModelRole.MessageImage:
       result = newQVariant(item.messageImage)
     of ModelRole.MessageContainsMentions:
@@ -441,7 +445,7 @@ QtObject:
       if(self.items[i].pinnedBy == contactId):
         roles.add(ModelRole.PinnedBy.int)
       if(self.items[i].messageContainsMentions):
-        roles.add(@[ModelRole.MessageText.int, ModelRole.MessageContainsMentions.int])
+        roles.add(@[ModelRole.MessageText.int, ModelRole.UnparsedText.int, ModelRole.MessageContainsMentions.int])
 
       if (self.items[i].quotedMessageFrom == contactId):
         # If there is a quoted message whom the author changed, increase the iterator to force
@@ -496,6 +500,7 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[
       ModelRole.MessageText.int,
+      ModelRole.UnparsedText.int,
       ModelRole.MessageContainsMentions.int,
       ModelRole.IsEdited.int,
       ModelRole.Links.int,

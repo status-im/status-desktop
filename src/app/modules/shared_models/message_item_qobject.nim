@@ -97,6 +97,10 @@ QtObject:
   QtProperty[string] messageText:
     read = messageText
 
+  proc unparsedText*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.unparsedText
+  QtProperty[string] unparsedText:
+    read = unparsedText
+
   proc messageImage*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.messageImage
   QtProperty[string] messageImage:
     read = messageImage

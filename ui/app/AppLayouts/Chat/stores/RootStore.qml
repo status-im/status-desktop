@@ -155,6 +155,8 @@ QtObject {
 
     property var stickersModuleInst: stickersModule
 
+    property bool isDebugEnabled: advancedModule ? advancedModule.isDebugEnabled : false
+
     property var stickersStore: StickersStore {
         stickersModule: stickersModuleInst
     }
