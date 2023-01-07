@@ -23,9 +23,13 @@ logScope:
   topics = "startup-module"
 
 const FetchingFromWakuProfile = "profile"
+const FetchingFromWakuProfileIcon = "profile"
 const FetchingFromWakuContacts = "contacts"
+const FetchingFromWakuContactsIcon = "contact-book"
 const FetchingFromWakuCommunities = "communities"
+const FetchingFromWakuCommunitiesIcon = "communities"
 const FetchingFromWakuSettings = "settings"
+const FetchingFromWakuSettingsIcon = "settings"
 
 type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
@@ -319,8 +323,12 @@ method onFetchingFromWakuMessageReceived*[T](self: Module[T], section: string, t
 
 proc prepareAndInitFetchingData[T](self: Module[T]) =
   # fetching data from waku starts when messenger starts
-  const listOfEntitiesWeExpectToBeSynced = @[FetchingFromWakuProfile, FetchingFromWakuContacts, FetchingFromWakuCommunities,
-    FetchingFromWakuSettings]
+  const listOfEntitiesWeExpectToBeSynced = @[
+    (FetchingFromWakuProfile, FetchingFromWakuProfileIcon),
+    (FetchingFromWakuContacts, FetchingFromWakuContactsIcon),
+    (FetchingFromWakuCommunities, FetchingFromWakuCommunitiesIcon),
+    (FetchingFromWakuSettings, FetchingFromWakuSettingsIcon)
+  ]
   self.view.createAndInitFetchingDataModel(listOfEntitiesWeExpectToBeSynced)
 
 proc delayStartingApp[T](self: Module[T]) =
@@ -331,11 +339,12 @@ proc delayStartingApp[T](self: Module[T]) =
   self.controller.connectToTimeoutEventAndStratTimer(timeoutInMilliseconds = 30000) # delay for 30 seconds
 
 method startAppAfterDelay*[T](self: Module[T]) =
-  let currStateObj = self.view.currentStartupStateObj()
-  if currStateObj.isNil:
-    error "cannot determine current startup state"
-    quit() # quit the app
-  self.view.setCurrentStartupState(newProfileFetchingState(currStateObj.flowType(), nil))
+  if not self.view.fetchingDataModel().allMessagesLoaded():
+    let currStateObj = self.view.currentStartupStateObj()
+    if currStateObj.isNil:
+      error "cannot determine current startup state"
+      quit() # quit the app
+    self.view.setCurrentStartupState(newProfileFetchingState(currStateObj.flowType(), nil))
   self.moveToStartupState()
 
 proc logoutAndDisplayError[T](self: Module[T], error: string) =
