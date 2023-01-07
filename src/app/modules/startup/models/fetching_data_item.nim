@@ -1,17 +1,22 @@
 type
   Item* = ref object
     entity: string
+    icon: string
     trackOfLoadedMessages: seq[bool]
     totalMessages: int
 
-proc newItem*(entity: string, totalMessages: int = 0): Item =
+proc newItem*(entity: string, icon: string, totalMessages: int = 0): Item =
   result = Item()
   result.entity = entity
+  result.icon = icon
   result.trackOfLoadedMessages = @[]
   result.totalMessages = totalMessages
 
 proc entity*(self: Item): string =
   return self.entity
+
+proc icon*(self: Item): string =
+  return self.icon
 
 proc loadedMessages*(self: Item): int =
   if self.trackOfLoadedMessages.len == 0:

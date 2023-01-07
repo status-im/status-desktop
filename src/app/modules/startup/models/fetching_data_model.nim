@@ -5,6 +5,7 @@ import fetching_data_item
 type
   ModelRole {.pure.} = enum
     Entity = UserRole + 1
+    Icon
     LoadedMessages
     TotalMessages
 
@@ -39,6 +40,7 @@ QtObject:
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Entity.int:"entity",
+      ModelRole.Icon.int:"icon",
       ModelRole.LoadedMessages.int:"loadedMessages",
       ModelRole.TotalMessages.int:"totalMessages"
     }.toTable
@@ -56,6 +58,8 @@ QtObject:
     case enumRole:
     of ModelRole.Entity:
       result = newQVariant(item.entity())
+    of ModelRole.Icon:
+      result = newQVariant(item.icon())
     of ModelRole.LoadedMessages:
       result = newQVariant(item.loadedMessages())
     of ModelRole.TotalMessages:
@@ -67,10 +71,10 @@ QtObject:
         return i
     return -1
 
-  proc init*(self: Model, entities: seq[string]) =
+  proc init*(self: Model, entities: seq[tuple[entity: string, icon: string]]) =
     self.beginResetModel()
-    for s in entities:
-      self.items.add(newItem(s))
+    for e in entities:
+      self.items.add(newItem(e.entity, e.icon))
     self.endResetModel()
     self.countChanged()
 

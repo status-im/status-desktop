@@ -291,7 +291,7 @@ QtObject:
     read = getFetchingDataModel
     notify = fetchingDataModelChanged
 
-  proc createAndInitFetchingDataModel*(self: View, sections: seq[string]) =
+  proc createAndInitFetchingDataModel*(self: View, sections: seq[tuple[entity: string, icon: string]]) =
     if self.fetchingDataModel.isNil:
       self.fetchingDataModel = fetch_model.newModel()
     if self.fetchingDataModelVariant.isNil:
