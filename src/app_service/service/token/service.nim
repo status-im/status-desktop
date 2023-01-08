@@ -21,6 +21,14 @@ logScope:
 
 include async_tasks
 
+const ETHEREUM_SYMBOL = "ETH"
+const CRYPTO_SUB_UNITS_TO_FACTOR = {
+  "WEI": (ETHEREUM_SYMBOL, 1e-18),
+  "KWEI": (ETHEREUM_SYMBOL, 1e-15),
+  "MWEI": (ETHEREUM_SYMBOL, 1e-12),
+  "GWEI": (ETHEREUM_SYMBOL, 1e-9),
+}.toTable()
+
 # Signals which may be emitted by this service:
 const SIGNAL_TOKEN_HISTORICAL_DATA_LOADED* = "tokenHistoricalDataLoaded"
 const SIGNAL_BALANCE_HISTORY_DATA_READY* = "tokenBalanceHistoryDataReady"
@@ -130,26 +138,35 @@ QtObject:
   proc getTokenPriceCacheKey(crypto: string, fiat: string) : string =
     return renameSymbol(crypto) & renameSymbol(fiat)
 
+  proc getCryptoKeyAndFactor(crypto: string) : (string, float64) =
+    let cryptoKey = renameSymbol(crypto)
+    return CRYPTO_SUB_UNITS_TO_FACTOR.getOrDefault(cryptoKey, (cryptoKey, 1.0))
+
   proc isCachedTokenPriceRecent*(self: Service, crypto: string, fiat: string): bool =
-    let cacheKey = getTokenPriceCacheKey(crypto, fiat)
+    let (cryptoKey, _) = getCryptoKeyAndFactor(crypto)
+
+    let cacheKey = getTokenPriceCacheKey(cryptoKey, fiat)
     return self.priceCache.isCached(cacheKey)
 
   proc getCachedTokenPrice*(self: Service, crypto: string, fiat: string): float64 =
-    let cacheKey = getTokenPriceCacheKey(crypto, fiat)
+    let (cryptoKey, factor) = getCryptoKeyAndFactor(crypto)
+
+    let cacheKey = getTokenPriceCacheKey(cryptoKey, fiat)
     if self.priceCache.hasKey(cacheKey):
-      return self.priceCache.get(cacheKey)
+      return self.priceCache.get(cacheKey) * factor
     else:
       return 0.0
 
-  proc getTokenPrice*(self: Service, crypto: string, fiat: string, fetchIfNotAvailable: bool = true): float64 =
-    let cacheKey = getTokenPriceCacheKey(crypto, fiat)
+  proc getTokenPrice*(self: Service, crypto: string, fiat: string): float64 =
+    let fiatKey = renameSymbol(fiat)
+    let (cryptoKey, factor) = getCryptoKeyAndFactor(crypto)
+
+    let cacheKey = getTokenPriceCacheKey(cryptoKey, fiatKey)
     if self.priceCache.isCached(cacheKey):
-      return self.priceCache.get(cacheKey)
+      return self.priceCache.get(cacheKey) * factor
     var prices = initTable[string, Table[string, float]]()
 
     try:
-      let cryptoKey = renameSymbol(crypto)
-      let fiatKey = renameSymbol(fiat)
       let response = backend.fetchPrices(@[cryptoKey], @[fiatKey])
       for (symbol, pricePerCurrency) in response.result.pairs:
         prices[symbol] = initTable[string, float]()
@@ -157,7 +174,7 @@ QtObject:
           prices[symbol][currency] = price.getFloat
 
       self.updateCachedTokenPrice(cryptoKey, fiatKey, prices[cryptoKey][fiatKey])
-      return prices[cryptoKey][fiatKey]
+      return prices[cryptoKey][fiatKey] * factor
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription

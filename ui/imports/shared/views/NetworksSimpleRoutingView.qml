@@ -16,8 +16,9 @@ RowLayout {
     id: root
 
     property var store
+    property var locale
     property var bestRoutes
-    property double amountToSend: 0
+    property var amountToSend
     property bool isLoading: false
     property bool isBridgeTx: false
     property var selectedAsset
@@ -79,7 +80,7 @@ RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Style.current.bigPadding
-            amountToSend: root.amountToSend
+            amountToSend: root.amountToSend ? root.amountToSend.amount : 0.0
             isLoading: root.isLoading
             errorType: root.errorType
         }
@@ -98,12 +99,14 @@ RowLayout {
             implicitWidth: 410
             title: modelData.chainName
             subTitle: {
-                let index  = store.lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined && lockedItem.chainID === modelData.chainId)
+                let index = store.lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined && lockedItem.chainID === modelData.chainId)
+                var amountOut
                 if(!root.errorMode || index === -1)
-                    return root.weiToEth(modelData.amountOut)
+                    amountOut = root.weiToEth(modelData.amountOut)
                 else {
-                    return root.weiToEth(parseInt(store.lockedInAmounts[index].value, 16))
+                    amountOut = root.weiToEth(parseInt(store.lockedInAmounts[index].value, 16))
                 }
+                return LocaleUtils.currencyAmountToLocaleString(amountOut)
             }
             statusListItemSubTitle.color: root.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
             asset.width: 32
@@ -128,7 +131,7 @@ RowLayout {
                 title: chainName
                 property bool tokenBalanceOnChainValid: selectedAccount && selectedAccount !== undefined && selectedAsset !== undefined
                 property var tokenBalanceOnChain: tokenBalanceOnChainValid ? root.store.getTokenBalanceOnChain(selectedAccount, chainId, selectedAsset.symbol) : undefined
-                subTitle: tokenBalanceOnChain ? LocaleUtils.currencyAmountToLocaleString(tokenBalanceOnChain, root.store.locale) : "N/A"
+                subTitle: tokenBalanceOnChain ? LocaleUtils.currencyAmountToLocaleString(tokenBalanceOnChain) : "N/A"
                 statusListItemSubTitle.color: Theme.palette.primaryColor1
                 asset.width: 32
                 asset.height: 32

@@ -1,10 +1,15 @@
 import QtQuick 2.13
 import utils 1.0
+import "../../../app/AppLayouts/Profile/stores"
 
 QtObject {
     id: root
 
     property var locale: Qt.locale(localAppSettings.language)
+
+    // Some token+currency-related functions are implemented in the profileSectionModule.
+    // We should probably refactor this and move those functions to some Wallet module.
+    property ProfileSectionStore profileSectionStore: ProfileSectionStore {}
 
     property string currentCurrency: walletSection.currentCurrency
     property int currentCurrencyModelIndex: {
@@ -951,5 +956,33 @@ QtObject {
 
     function updateCurrency(newCurrency) {
         walletSection.updateCurrency(newCurrency)
+    }
+
+    function getCurrencyAmount(amount, symbol) {
+        let obj = JSON.parse((walletSection.getCurrencyAmountAsJson(amount, symbol)))
+        if (obj.error) {
+            console.error("Error parsing currency amount json object, amount: ", amount, ", symbol ", symbol, " error: ", obj.error)
+            return {amount: nan, symbol: symbol}
+        }
+        return obj
+    }
+
+    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
+        var amount = profileSectionModule.ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
+        return getCurrencyAmount(parseFloat(amount), fiatSymbol)
+    }
+
+    function getCryptoValue(balance, cryptoSymbol, fiatSymbol) {
+        var amount = profileSectionModule.ensUsernamesModule.getCryptoValue(balance, cryptoSymbol, fiatSymbol)
+        return getCurrencyAmount(parseFloat(amount), cryptoSymbol) 
+    }
+
+    function getGasEthValue(gweiValue, gasLimit) {
+        var amount = profileSectionModule.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
+        return getCurrencyAmount(parseFloat(amount), "ETH") 
+    }
+
+    function formatCurrencyAmount(currencyAmount) {
+        return LocaleUtils.currencyAmountToLocaleString(currencyAmount)
     }
 }

@@ -89,7 +89,7 @@ StatusFloatingButtonsSelector {
     popupMenuDelegate: StatusListItem {
         implicitWidth: 272
         title: name
-        subTitle: LocaleUtils.currencyAmountToLocaleString(currencyBalance, locale)
+        subTitle: LocaleUtils.currencyAmountToLocaleString(currencyBalance)
         asset.emoji: !!emoji ? emoji: ""
         asset.color: model.color
         asset.name: !emoji ? "filled-account": ""

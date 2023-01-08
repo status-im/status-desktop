@@ -2,6 +2,7 @@
 import QtQuick.Layouts 1.13
 
 import utils 1.0
+import shared.stores 1.0
 
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -17,10 +18,11 @@ Item {
     implicitHeight: visible ? tabBar.height + stackLayout.height + Style.current.xlPadding : 0
 
     property var store
+    property var currencyStore : store.currencyStore
     property var selectedAccount
     property var selectedAsset
-    property double amountToSend: 0
-    property double requiredGasInEth: 0
+    property var amountToSend
+    property var requiredGasInEth
     property var bestRoutes
     property bool isLoading: false
     property bool advancedOrCustomMode: (tabBar.currentIndex === 1) || (tabBar.currentIndex === 2)
@@ -78,13 +80,14 @@ Item {
                 amountToSend: root.amountToSend
                 isLoading: root.isLoading
                 store: root.store
+                locale: root.store.locale
                 selectedAsset: root.selectedAsset
                 selectedAccount: root.selectedAccount
                 errorMode: root.errorMode
                 errorType: root.errorType
                 toNetworksList: root.toNetworksList
                 weiToEth: function(wei) {
-                    return "%1 %2".arg(LocaleUtils.numberToLocaleString(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)))).arg(selectedAsset.symbol)
+                    return root.currencyStore.getCurrencyAmount(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)), selectedAsset.symbol)
                 }
                 reCalculateSuggestedRoute: function() {
                     root.reCalculateSuggestedRoute()
@@ -114,7 +117,10 @@ Item {
                 isBridgeTx: root.isBridgeTx
                 errorType: root.errorType
                 weiToEth: function(wei) {
-                    return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
+                    return root.currencyStore.getCurrencyAmount(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)), selectedAsset.symbol)
+                }
+                getCryptoCurrencyAmount: function(cryptoValue) {
+                    return selectedAsset ? root.currencyStore.getCurrencyAmount(parseFloat(cryptoValue), selectedAsset.symbol) : undefined
                 }
             }
         }

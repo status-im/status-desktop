@@ -11,13 +11,13 @@ import shared 1.0
 StatusListItem {
     id: root
 
+    property var locale
     property var modelData
     property string symbol
     property bool isIncoming
     property int transferStatus
-    property string currentCurrency
-    property string cryptoValue
-    property string fiatValue
+    property var cryptoValue
+    property var fiatValue
     property string networkIcon
     property string networkColor
     property string networkName
@@ -62,13 +62,13 @@ StatusListItem {
                 }
                 StatusBaseText {
                     id: cryptoValueText
-                    text: "%1 %2".arg(cryptoValue).arg(resolvedSymbol)
+                    text: LocaleUtils.currencyAmountToLocaleString(cryptoValue)
                     color: Theme.palette.directColor1
                 }
             }
             StatusBaseText {
                 Layout.alignment: Qt.AlignRight
-                text: "%1 %2".arg(fiatValue).arg(currentCurrency.toUpperCase())
+                text: LocaleUtils.currencyAmountToLocaleString(fiatValue)
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
             }

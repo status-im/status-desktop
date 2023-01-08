@@ -61,18 +61,6 @@ QtObject {
         globalUtils.copyToClipboard(text)
     }
 
-    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
-        return profileSectionStore.ensUsernamesStore.getFiatValue(balance, cryptoSymbol, fiatSymbol)
-    }
-
-    function getCryptoValue(balance, cryptoSymbol, fiatSymbol) {
-        return profileSectionStore.ensUsernamesStore.getCryptoValue(balance, cryptoSymbol, fiatSymbol)
-    }
-
-    function getGasEthValue(gweiValue, gasLimit) {
-        return profileSectionStore.ensUsernamesStore.getGasEthValue(gweiValue, gasLimit)
-    }
-
     function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes) {
         walletSectionTransactions.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes)
     }
@@ -233,7 +221,7 @@ QtObject {
     property var lockedInAmounts: []
 
     function addLockedInAmount(chainID, value, decimals, locked) {
-        let amount = Number.fromLocaleString(Qt.locale(), value) * Math.pow(10, decimals)
+        let amount = value * Math.pow(10, decimals)
         let index  = lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined && lockedItem.chainID === chainID)
         if(index === -1) {
             lockedInAmounts.push({"chainID": chainID, "value": amount.toString(16)})
@@ -253,18 +241,6 @@ QtObject {
             return undefined
         }
 
-        const jsonObj = selectedAccount.getTokenBalanceOnChainAsJson(chainId, tokenSymbol)
-        if (jsonObj === "") {
-            console.warn("failed to get balance, returned json is empty")
-            return undefined
-        }
-
-        const obj = JSON.parse(jsonObj)
-        if (obj.error) {
-            console.warn("failed to get balance, json parse error: ", obj.error)
-            return undefined
-        }
-
-        return obj
+        return JSON.parse(selectedAccount.getTokenBalanceOnChainAsJson(chainId, tokenSymbol))
     }
 }

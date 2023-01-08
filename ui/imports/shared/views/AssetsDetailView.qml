@@ -58,8 +58,8 @@ Item {
         asset.name: token && token.symbol ? Style.png("tokens/%1".arg(token.symbol)) : ""
         asset.isImage: true
         primaryText: token ? token.name : ""
-        secondaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkBalance, RootStore.locale) : ""
-        tertiaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkCurrencyBalance, RootStore.locale) : ""
+        secondaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkBalance) : ""
+        tertiaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkCurrencyBalance) : ""
         balances: token && token.balances ? token.balances : null
         getNetworkColor: function(chainId){
             return RootStore.getNetworkColor(chainId)
@@ -68,7 +68,7 @@ Item {
             return RootStore.getNetworkIcon(chainId)
         }
         formatBalance: function(balance){
-            return LocaleUtils.currencyAmountToLocaleString(balance, RootStore.locale)
+            return LocaleUtils.currencyAmountToLocaleString(balance)
         }
     }
 
@@ -228,7 +228,7 @@ Item {
                                     fontColor: (Theme.palette.name === "dark") ? '#909090' : '#939BA1',
                                     padding: 8,
                                     callback: function(value, index, ticks) {
-                                        return LocaleUtils.numberToLocaleString(value, -1, RootStore.locale)
+                                        return LocaleUtils.numberToLocaleString(value)
                                     },
                                 }
                             }]
@@ -267,17 +267,17 @@ Item {
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Market Cap")
-                secondaryText: token && token.marketCap ? LocaleUtils.currencyAmountToLocaleString(token.marketCap, RootStore.locale) : "---"
+                secondaryText: token && token.marketCap ? LocaleUtils.currencyAmountToLocaleString(token.marketCap) : "---"
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day Low")
-                secondaryText: token && token.lowDay ? LocaleUtils.currencyAmountToLocaleString(token.lowDay, RootStore.locale) : "---"
+                secondaryText: token && token.lowDay ? LocaleUtils.currencyAmountToLocaleString(token.lowDay) : "---"
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day High")
-                secondaryText: token && token.highDay ? LocaleUtils.currencyAmountToLocaleString(token.highDay, RootStore.locale) : "---"
+                secondaryText: token && token.highDay ? LocaleUtils.currencyAmountToLocaleString(token.highDay) : "---"
             }
             Item {
                 Layout.fillWidth: true

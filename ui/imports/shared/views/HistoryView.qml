@@ -17,6 +17,7 @@ import "../controls"
 ColumnLayout {
     id: historyView
 
+    property var locale
     property var account
     property int pageSize: 20 // number of transactions per page
     property bool isLoading: false
@@ -113,17 +114,18 @@ ColumnLayout {
     Component {
         id: transactionDelegate
         TransactionDelegate {
-            isIncoming: modelData !== undefined && !!modelData ? modelData.to === account.address: false
-            currentCurrency: RootStore.currentCurrency
-            cryptoValue: modelData !== undefined && !!modelData ? RootStore.hex2Eth(modelData.value) : ""
+            locale: historyView.locale
+            property bool modelDataValid: modelData !== undefined && !!modelData
+            isIncoming: modelDataValid ? modelData.to === account.address: false
+            cryptoValue: modelDataValid ? RootStore.getCurrencyAmount(RootStore.hex2Eth(modelData.value), resolvedSymbol) : ""
             fiatValue: RootStore.getFiatValue(cryptoValue, resolvedSymbol, RootStore.currentCurrency)
-            networkIcon: modelData !== undefined && !!modelData ? RootStore.getNetworkIcon(modelData.chainId) : ""
-            networkColor: modelData !== undefined && !!modelData ? RootStore.getNetworkColor(modelData.chainId) : ""
-            networkName: modelData !== undefined && !!modelData ? RootStore.getNetworkShortName(modelData.chainId) : ""
-            symbol: modelData !== undefined && !!modelData ? !!modelData.symbol ? modelData.symbol : RootStore.findTokenSymbolByAddress(modelData.contract) : ""
-            transferStatus: modelData !== undefined && !!modelData ? RootStore.hex2Dec(modelData.txStatus) : ""
-            shortTimeStamp: modelData !== undefined && !!modelData ? LocaleUtils.formatTime(modelData.timestamp * 1000, Locale.ShortFormat) : ""
-            savedAddressName: modelData !== undefined && !!modelData ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""
+            networkIcon: modelDataValid ? RootStore.getNetworkIcon(modelData.chainId) : ""
+            networkColor: modelDataValid ? RootStore.getNetworkColor(modelData.chainId) : ""
+            networkName: modelDataValid ? RootStore.getNetworkShortName(modelData.chainId) : ""
+            symbol: modelDataValid ? !!modelData.symbol ? modelData.symbol : RootStore.findTokenSymbolByAddress(modelData.contract) : ""
+            transferStatus: modelDataValid ? RootStore.hex2Dec(modelData.txStatus) : ""
+            shortTimeStamp: modelDataValid ? LocaleUtils.formatTime(modelData.timestamp * 1000, Locale.ShortFormat) : ""
+            savedAddressName: modelDataValid ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""
             onClicked: launchTransactionDetail(modelData)
         }
     }

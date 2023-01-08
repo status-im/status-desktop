@@ -46,7 +46,7 @@ Item {
                 font.pixelSize: 28
                 font.bold: true
                 color: Theme.palette.baseColor1
-                text: LocaleUtils.currencyAmountToLocaleString(root.currentAccount.currencyBalance, root.locale)
+                text: LocaleUtils.currencyAmountToLocaleString(root.currentAccount.currencyBalance)
             }
         }
 

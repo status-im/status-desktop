@@ -7,15 +7,18 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
+import shared.stores 1.0
+
 import "../controls"
 
 Rectangle {
     id: root
 
-    property string gasFiatAmount
+    property var gasFiatAmount
     property bool isLoading: false
     property var bestRoutes
     property var store
+    property var currencyStore: store.currencyStore
     property var selectedTokenSymbol
     property int errorType: Constants.NoError
 
@@ -56,7 +59,7 @@ Rectangle {
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.padding
                     id: totalFeesAdvanced
-                    text: root.isLoading ? "..." : root.gasFiatAmount
+                    text: root.isLoading ? "..." : LocaleUtils.currencyAmountToLocaleString(root.gasFiatAmount)
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
                     visible: !!root.bestRoutes && root.bestRoutes !== undefined && root.bestRoutes.length > 0
@@ -64,11 +67,12 @@ Rectangle {
             }
             GasSelector {
                 id: gasSelector
+                locale: root.store.locale
                 width: parent.width
-                getGasEthValue: root.store.getGasEthValue
-                getFiatValue: root.store.getFiatValue
-                currentCurrency: root.store.currencyStore.currentCurrency
-                currentCurrencySymbol: root.store.currencyStore.currentCurrencySymbol
+                getGasEthValue: root.currencyStore.getGasEthValue
+                getFiatValue: root.currencyStore.getFiatValue
+                getCurrencyAmount: root.currencyStore.getCurrencyAmount
+                currentCurrency: root.currencyStore.currentCurrency
                 visible: root.errorType === Constants.NoError && !root.isLoading
                 bestRoutes: root.bestRoutes
                 selectedTokenSymbol: root.selectedTokenSymbol
