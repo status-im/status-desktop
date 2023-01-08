@@ -1014,6 +1014,7 @@ Item {
                     sourceComponent: CreateChatView {
                         rootStore: chatLayoutContainer.rootStore
                         emojiPopup: statusEmojiPopup
+                        stickersPopup: statusStickersPopup
                     }
                 }
             }

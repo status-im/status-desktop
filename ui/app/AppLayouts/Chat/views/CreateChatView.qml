@@ -18,6 +18,7 @@ Page {
 
     property var rootStore
     property var emojiPopup: null
+    property var stickersPopup: null
 
     QtObject {
         id: d
@@ -153,6 +154,7 @@ Page {
                 visible: membersSelector.model.count > 0
                 chatType: membersSelector.model.count === 1? Constants.chatType.oneToOne : Constants.chatType.privateGroupChat
                 emojiPopup: root.emojiPopup
+                stickersPopup: root.stickersPopup
                 closeGifPopupAfterSelection: true
                 onSendTransactionCommandButtonClicked: {
                     root.rootStore.createChatStartSendTransactionProcess = true;
