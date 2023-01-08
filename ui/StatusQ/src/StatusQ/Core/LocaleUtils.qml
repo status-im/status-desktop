@@ -27,20 +27,28 @@ QtObject {
         return num.toLocaleString(locale, 'f', precision)
     }
 
-    function currencyAmountToLocaleString(currencyAmount, locale) {
-        if (!locale) {
-            console.log("Unspecified locale for: " + JSON.stringify(currencyAmount))
-            locale = Qt.locale()
+    function numberFromLocaleString(num, locale = null) {
+        locale = locale || Qt.locale()
+
+        return Number.fromLocaleString(locale, num)
+    }
+
+    function currencyAmountToLocaleString(currencyAmount, options = null, locale = null) {
+        locale = locale || Qt.locale()
+
+        if (!currencyAmount) {
+            return "N/A"
         }
         if (typeof(currencyAmount) !== "object") {
             console.log("Wrong type for currencyAmount: " + JSON.stringify(currencyAmount))
+            console.trace()
             return NaN
         }
         var amountStr = numberToLocaleString(currencyAmount.amount, currencyAmount.displayDecimals, locale)
         if (currencyAmount.stripTrailingZeroes) {
             amountStr = stripTrailingZeroes(amountStr, locale)
         }
-        if (currencyAmount.symbol) {
+        if (currencyAmount.symbol && !(options && options.onlyAmount)) {
             amountStr = "%1 %2".arg(amountStr).arg(currencyAmount.symbol)
         }
         return amountStr

@@ -1,3 +1,6 @@
+import ../../shared_models/currency_amount
+export CurrencyAmount
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -21,6 +24,9 @@ method updateCurrency*(self: AccessInterface, currency: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setTotalCurrencyBalance*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getCurrencyAmount*(self: AccessInterface, amount: float64, symbol: string): CurrencyAmount {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

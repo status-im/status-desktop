@@ -104,6 +104,7 @@ Item {
                         }
                     }
                     HistoryView {
+                        locale: RootStore.locale
                         account: RootStore.currentAccount
                         onLaunchTransactionDetail: {
                             transactionDetailView.transaction = transaction
@@ -127,6 +128,7 @@ Item {
             }
             TransactionDetailView {
                 id: transactionDetailView
+                locale: RootStore.locale
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 sendModal: root.sendModal

@@ -43,6 +43,9 @@ proc isMnemonicBackedUp*(self: Controller): bool =
 proc getCurrencyBalance*(self: Controller): CurrencyAmount =
   return currencyAmountToItem(self.walletAccountService.getTotalCurrencyBalance(), self.currencyService.getCurrencyFormat(self.getCurrency()))
 
+proc getCurrencyAmount*(self: Controller, amount: float64, symbol: string): CurrencyAmount =
+  return currencyAmountToItem(amount, self.currencyService.getCurrencyFormat(symbol))
+
 proc updateCurrency*(self: Controller, currency: string) =
   self.walletAccountService.updateCurrency(currency)
 

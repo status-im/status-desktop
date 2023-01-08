@@ -12,7 +12,7 @@ StatusListItem {
     id: root
     property var locale
     title: name
-    subTitle: LocaleUtils.currencyAmountToLocaleString(enabledNetworkBalance, root.locale)
+    subTitle: LocaleUtils.currencyAmountToLocaleString(enabledNetworkBalance)
     asset.name: symbol ? Style.png("tokens/" + symbol) : ""
     asset.isImage: true
     components: [
@@ -25,7 +25,7 @@ StatusListItem {
                 anchors.right: parent.right
                 font.pixelSize: 15
                 font.strikeout: false
-                text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkCurrencyBalance, root.locale)
+                text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkCurrencyBalance)
             }
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -35,7 +35,7 @@ StatusListItem {
                     font.pixelSize: 15
                     font.strikeout: false
                     color: valueColumn.textColor
-                    text: LocaleUtils.currencyAmountToLocaleString(currencyPrice, root.locale)
+                    text: LocaleUtils.currencyAmountToLocaleString(currencyPrice)
                 }
                 Rectangle {
                     width: 1

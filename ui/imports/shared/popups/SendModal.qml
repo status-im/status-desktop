@@ -33,6 +33,7 @@ StatusDialog {
 
     property var store: TransactionStore{}
     property var contactsStore: store.contactStore
+    property var currencyStore: store.currencyStore
     property var selectedAccount: store.currentAccount
     property var bestRoutes
     property string addressText
@@ -60,7 +61,7 @@ StatusDialog {
                     popup.selectedAccount.address,
                     recipientAddress,
                     assetSelector.selectedAsset.symbol,
-                    amountToSendInput.cryptoValueToSend,
+                    amountToSendInput.cryptoValueToSend.amount,
                     d.uuid,
                     JSON.stringify(popup.bestRoutes)
                     )
@@ -69,7 +70,7 @@ StatusDialog {
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
         if(!!popup.selectedAccount && !!assetSelector.selectedAsset && d.recipientReady && amountToSendInput.input.valid) {
             popup.isLoading = true
-            let amount = Math.round(parseFloat(amountToSendInput.cryptoValueToSend) * Math.pow(10, assetSelector.selectedAsset.decimals))
+            let amount = Math.round(amountToSendInput.cryptoValueToSend.amount * Math.pow(10, assetSelector.selectedAsset.decimals))
             popup.store.suggestedRoutes(popup.selectedAccount.address, amount.toString(16), assetSelector.selectedAsset.symbol,
                                         store.disabledChainIdsFromList, store.disabledChainIdsToList,
                                         store.preferredChainIds, popup.sendType, store.lockedInAmounts)
@@ -81,7 +82,7 @@ StatusDialog {
         readonly property int errorType: !amountToSendInput.input.valid ? Constants.SendAmountExceedsBalance :
                                                                           (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0 && !!amountToSendInput.input.text && recipientReady && !popup.isLoading) ?
                                                                               Constants.NoRoute : Constants.NoError
-        readonly property var maxFiatBalance: !!assetSelector.selectedAsset ? (amountToSendInput.cryptoFiatFlipped ?
+        readonly property var maxFiatBalance: !!assetSelector.selectedAsset ? (amountToSendInput.inputIsFiat ?
                                                                                     assetSelector.selectedAsset.totalCurrencyBalance :
                                                                                     assetSelector.selectedAsset.totalBalance): undefined
         readonly property bool errorMode: popup.isLoading || !recipientReady ? false : errorType !== Constants.NoError || networkSelector.errorMode || isNaN(amountToSendInput.input.text)
@@ -95,9 +96,9 @@ StatusDialog {
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
-        property string totalFeesInEth
-        property string totalFeesInFiat
-        property double totalAmountToReceive: 0
+        property var totalFeesInEth
+        property var totalFeesInFiat
+        property var totalAmountToReceive
 
         property Timer waitTimer: Timer {
             interval: 1500
@@ -156,6 +157,7 @@ StatusDialog {
     header: AccountsModalHeader {
         anchors.top: parent.top
         anchors.topMargin: -height - 18
+        locale: popup.store.locale
         model: popup.store.accounts
         selectedAccount: popup.selectedAccount
         changeSelectedAccount: function(newAccount, newIndex) {
@@ -244,7 +246,7 @@ StatusDialog {
                         StatusListItemTag {
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                             Layout.preferredHeight: 22
-                            title: d.maxFiatBalance && d.maxFiatBalance.amount > 0 ? qsTr("Max: %1").arg(LocaleUtils.currencyAmountToLocaleString(d.maxFiatBalance, popup.store.locale)) : qsTr("No balances active")
+                            title: d.maxFiatBalance && d.maxFiatBalance.amount > 0 ? qsTr("Max: %1").arg(LocaleUtils.currencyAmountToLocaleString(d.maxFiatBalance)) : qsTr("No balances active")
                             closeButtonVisible: false
                             titleText.font.pixelSize: 12
                             bgColor: amountToSendInput.input.valid ? Theme.palette.primaryColor3 : Theme.palette.dangerColor2
@@ -263,10 +265,16 @@ StatusDialog {
                             maxFiatBalance: d.maxFiatBalance
                             currentCurrency: popup.store.currentCurrency
                             getFiatValue: function(cryptoValue) {
-                                return popup.store.getFiatValue(cryptoValue, selectedAsset.symbol, currentCurrency)
+                                return selectedAsset ? popup.currencyStore.getFiatValue(cryptoValue, selectedAsset.symbol, currentCurrency) : undefined
                             }
                             getCryptoValue: function(fiatValue) {
-                                return popup.store.getFiatValue(fiatValue, selectedAsset.symbol, currentCurrency)
+                                return selectedAsset ? popup.currencyStore.getCryptoValue(fiatValue, selectedAsset.symbol, currentCurrency) : undefined
+                            }
+                            getFiatCurrencyAmount: function(fiatValue) {
+                                return popup.currencyStore.getCurrencyAmount(fiatValue, currentCurrency)
+                            }
+                            getCryptoCurrencyAmount: function(cryptoValue) {
+                                return selectedAsset ? popup.currencyStore.getCurrencyAmount(cryptoValue, selectedAsset.symbol) : undefined
                             }
                             onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
                         }
@@ -280,8 +288,12 @@ StatusDialog {
                             isLoading: popup.isLoading
                             selectedAsset: assetSelector.selectedAsset
                             isBridgeTx: popup.isBridgeTx
-                            amountToReceive: d.totalAmountToReceive
-                            cryptoFiatFlipped: amountToSendInput.cryptoFiatFlipped
+                            cryptoValueToReceive: d.totalAmountToReceive
+                            inputIsFiat: amountToSendInput.inputIsFiat
+                            currentCurrency: popup.store.currentCurrency
+                            getFiatValue: function(cryptoValue) {
+                                return popup.currencyStore.getFiatValue(cryptoValue, selectedAsset.symbol, currentCurrency)
+                            }
                         }
                     }
                     TokenListView {
@@ -416,8 +428,8 @@ StatusDialog {
                         store: popup.store
                         interactive: popup.interactive
                         selectedAccount: popup.selectedAccount
-                        amountToSend: isNaN(parseFloat(amountToSendInput.cryptoValueToSend)) ? 0 : parseFloat(amountToSendInput.cryptoValueToSend)
-                        requiredGasInEth:d.totalFeesInEth
+                        amountToSend: amountToSendInput.cryptoValueToSend
+                        requiredGasInEth: d.totalFeesInEth
                         selectedAsset: assetSelector.selectedAsset
                         onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
                         visible: d.recipientReady && !!assetSelector.selectedAsset
@@ -449,10 +461,10 @@ StatusDialog {
 
     footer: SendModalFooter {
         nextButtonText: popup.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
-        maxFiatFees: popup.isLoading ? "..." : "%1 %2".arg(LocaleUtils.numberToLocaleString(d.totalFeesInFiat, -1, popup.store.locale)).arg(popup.store.currentCurrency.toUpperCase())
+        maxFiatFees: popup.isLoading ? "..." : LocaleUtils.currencyAmountToLocaleString(d.totalFeesInFiat)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: d.recipientReady && !isNaN(amountToSendInput.cryptoValueToSend) && !d.errorMode
+        visible: d.recipientReady && amountToSendInput.cryptoValueToSend.amount > 0 && !d.errorMode
         onNextButtonClicked: popup.sendTransaction()
     }
 
@@ -472,10 +484,11 @@ StatusDialog {
             popup.bestRoutes =  response.suggestedRoutes.best
             let gasTimeEstimate = response.suggestedRoutes.gasTimeEstimate
             d.totalTimeEstimate = popup.store.getLabelForEstimatedTxTime(gasTimeEstimate.totalTime)
-            d.totalFeesInEth = gasTimeEstimate.totalFeesInEth
-            d.totalFeesInFiat = parseFloat(popup.store.getFiatValue( gasTimeEstimate.totalFeesInEth, "ETH", popup.store.currentCurrency)) +
-                    parseFloat(popup.store.getFiatValue(gasTimeEstimate.totalTokenFees, fees.selectedTokenSymbol, popup.store.currentCurrency))
-            d.totalAmountToReceive = popup.store.getWei2Eth(response.suggestedRoutes.amountToReceive, assetSelector.selectedAsset.decimals)
+            d.totalFeesInEth = popup.currencyStore.getCurrencyAmount(gasTimeEstimate.totalFeesInEth, "ETH")
+            let totalFeesInFiat = popup.currencyStore.getFiatValue( gasTimeEstimate.totalFeesInEth, "ETH", popup.store.currentCurrency).amount +
+                popup.currencyStore.getFiatValue(gasTimeEstimate.totalTokenFees, fees.selectedTokenSymbol, popup.store.currentCurrency).amount
+            d.totalFeesInFiat = popup.currencyStore.getCurrencyAmount(totalFeesInFiat, popup.store.currentCurrency)
+            d.totalAmountToReceive = popup.currencyStore.getCurrencyAmount(popup.store.getWei2Eth(response.suggestedRoutes.amountToReceive, assetSelector.selectedAsset.decimals), fees.selectedTokenSymbol)
             networkSelector.toNetworksList = response.suggestedRoutes.toNetworks
             popup.isLoading = false
         }

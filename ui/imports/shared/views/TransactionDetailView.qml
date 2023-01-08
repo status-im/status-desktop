@@ -18,6 +18,7 @@ import "../controls"
 Item {
     id: root
 
+    property var locale
     property var currentAccount: RootStore.currentAccount
     property var contactsStore
     property var transaction
@@ -57,18 +58,19 @@ Item {
                 objectName: "transactionDetailHeader"
                 width: parent.width
 
+                locale: root.locale
                 modelData: transaction
                 isIncoming: d.isIncoming
-                currentCurrency: RootStore.currentCurrency
-                cryptoValue: root.transaction !== undefined && !!root.transaction ? RootStore.hex2Eth(transaction.value): ""
-                fiatValue: root.transaction !== undefined && !!root.transaction ? RootStore.getFiatValue(cryptoValue, resolvedSymbol, RootStore.currentCurrency): ""
-                networkIcon: root.transaction !== undefined && !!root.transaction ? RootStore.getNetworkIcon(transaction.chainId): ""
-                networkColor: root.transaction !== undefined && !!root.transaction ? RootStore.getNetworkColor(transaction.chainId): ""
-                networkName: root.transaction !== undefined && !!root.transaction ? RootStore.getNetworkShortName(transaction.chainId): ""
-                symbol: root.transaction !== undefined && !!root.transaction ? RootStore.findTokenSymbolByAddress(transaction.contract): ""
-                transferStatus: root.transaction !== undefined && !!root.transaction ? RootStore.hex2Dec(transaction.txStatus): ""
-                shortTimeStamp: root.transaction !== undefined && !!root.transaction ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
-                savedAddressName: root.transaction !== undefined && !!root.transaction ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
+                property bool transactionValid: root.transaction !== undefined && !!root.transaction
+                cryptoValue: transactionValid ? RootStore.getCurrencyAmount(RootStore.hex2Eth(transaction.value), resolvedSymbol): undefined
+                fiatValue: transactionValid ? RootStore.getFiatValue(cryptoValue, resolvedSymbol, RootStore.currentCurrency): ""
+                networkIcon: transactionValid ? RootStore.getNetworkIcon(transaction.chainId): ""
+                networkColor: transactionValid ? RootStore.getNetworkColor(transaction.chainId): ""
+                networkName: transactionValid ? RootStore.getNetworkShortName(transaction.chainId): ""
+                symbol: transactionValid ? RootStore.findTokenSymbolByAddress(transaction.contract): ""
+                transferStatus: transactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
+                shortTimeStamp: transactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
+                savedAddressName: transactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
                 title: d.isIncoming ? qsTr("Received %1 %2 from %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.from) :
                                     qsTr("Sent %1 %2 to %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.to)
                 sensor.enabled: false
@@ -154,18 +156,19 @@ Item {
             spacing: 8
             TransactionDelegate {
                 width: parent.width
+                locale: root.locale
                 modelData: transaction
                 isIncoming: d.isIncoming
-                currentCurrency: RootStore.currentCurrency
-                cryptoValue: root.transaction !== undefined && !!root.transaction ? RootStore.hex2Eth(transaction.value): ""
+                property bool transactionValid: root.transaction !== undefined && !!root.transaction
+                cryptoValue: transactionValid ? RootStore.getCurrencyAmount(RootStore.hex2Eth(transaction.value), resolvedSymbol): ""
                 fiatValue: RootStore.getFiatValue(cryptoValue, resolvedSymbol, RootStore.currentCurrency)
-                networkIcon: root.transaction !== undefined && !!root.transaction ? RootStore.getNetworkIcon(transaction.chainId) : ""
-                networkColor: root.transaction !== undefined && !!root.transaction ? RootStore.getNetworkColor(transaction.chainId): ""
-                networkName: root.transaction !== undefined && !!root.transaction ? RootStore.getNetworkShortName(transaction.chainId): ""
-                symbol: root.transaction !== undefined && !!root.transaction ? RootStore.findTokenSymbolByAddress(transaction.contract): ""
-                transferStatus: root.transaction !== undefined && !!root.transaction ? RootStore.hex2Dec(transaction.txStatus): ""
-                shortTimeStamp: root.transaction !== undefined && !!root.transaction ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
-                savedAddressName: root.transaction !== undefined && !!root.transaction ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
+                networkIcon: transactionValid ? RootStore.getNetworkIcon(transaction.chainId) : ""
+                networkColor: transactionValid ? RootStore.getNetworkColor(transaction.chainId): ""
+                networkName: transactionValid ? RootStore.getNetworkShortName(transaction.chainId): ""
+                symbol: transactionValid ? RootStore.findTokenSymbolByAddress(transaction.contract): ""
+                transferStatus: transactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
+                shortTimeStamp: transactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
+                savedAddressName: transactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
                 title: d.isIncoming ? qsTr("Received %1 %2 from %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.from) :
                                       qsTr("Sent %1 %2 to %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.to)
                 sensor.enabled: false

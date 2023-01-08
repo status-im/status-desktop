@@ -100,6 +100,9 @@ method switchAccountByAddress*(self: Module, address: string) =
 method setTotalCurrencyBalance*(self: Module) =
   self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance())
 
+method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
+  return self.controller.getCurrencyAmount(amount, symbol)
+
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSection", newQVariant(self.view))
 

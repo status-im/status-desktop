@@ -153,7 +153,7 @@ Item {
                     objectName: model.name
                     height: visible ? 64 : 0
                     title: !!model.name ? model.name : ""
-                    subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance, root.locale)
+                    subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance)
                     asset.emoji: !!model.emoji ? model.emoji: ""
                     asset.color: model.color
                     asset.name: !model.emoji ? "filled-account": ""

@@ -63,10 +63,6 @@ QtObject {
         return networksModule.all.getNetworkName(symbol)
     }
 
-    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
-        return profileSectionModule.ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
-    }
-
     function hex2Dec(value) {
         return globalUtils.hex2Dec(value)
     }
@@ -207,8 +203,24 @@ QtObject {
         return walletSectionTransactions.getLastTxBlockNumber()
     }
 
+    function getCurrencyAmount(amount, symbol) {
+        return currencyStore.getCurrencyAmount(amount, symbol)
+    }
+
+    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
+        return currencyStore.getFiatValue(balance, cryptoSymbol, fiatSymbol)
+    }
+
+    function getCryptoValue(balance, cryptoSymbol, fiatSymbol) {
+        return currencyStore.getCryptoValue(balance, cryptoSymbol, fiatSymbol)
+    }
+
     function getGasEthValue(gweiValue, gasLimit) {
-        return profileSectionModule.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
+        return currencyStore.getGasEthValue(gweiValue, gasLimit)
+    }
+
+    function formatCurrencyAmount(currencyAmount) {
+        return currencyStore.formatCurrencyAmount(currencyAmount)
     }
 
     function getHistoricalDataForToken(symbol, currency) {

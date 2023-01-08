@@ -54,7 +54,7 @@ Item {
         anchors.leftMargin: Style.current.smallPadding
         font.pixelSize: 15
         color: Style.current.secondaryText
-        text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkBalance, root.locale)
+        text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkBalance)
     }
 
     StyledText {
@@ -65,6 +65,6 @@ Item {
         anchors.rightMargin: 0
         font.pixelSize: 15
         font.strikeout: false
-        text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkCurrencyBalance, root.locale)
+        text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkCurrencyBalance)
     }
 }

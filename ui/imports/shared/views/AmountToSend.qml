@@ -12,54 +12,54 @@ import utils 1.0
 ColumnLayout {
     id: root
 
-    property alias input: amountToSendInput
+    property alias input: topAmountToSendInput
 
     property var locale
     property var selectedAsset
     property bool isBridgeTx: false
     property bool interactive: false
     property var maxFiatBalance
-    property bool cryptoFiatFlipped: false
-    property string cryptoValueToSend: !cryptoFiatFlipped ? amountToSendInput.text : txtFiatBalance.text
+    property bool inputIsFiat: false
+    property var cryptoValueToSend
+    Binding {
+        target: root
+        property: "cryptoValueToSend"
+        value: root.selectedAsset, !inputIsFiat ? getCryptoCurrencyAmount(LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)) : getCryptoValue(fiatValueToSend ? fiatValueToSend.amount : 0.0)
+        delayed: true
+    }
+    property var fiatValueToSend
+    Binding {
+        target: root
+        property: "fiatValueToSend"
+        value: root.selectedAsset, inputIsFiat ? getFiatCurrencyAmount(LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)) : getFiatValue(cryptoValueToSend ? cryptoValueToSend.amount : 0.0)
+        delayed: true
+    }
     property string currentCurrency
     property var getFiatValue: function(cryptoValue) {}
     property var getCryptoValue: function(fiatValue) {}
+    property var getFiatCurrencyAmount: function(fiatValue) {}
+    property var getCryptoCurrencyAmount: function(cryptoValue) {}
 
     signal reCalculateSuggestedRoute()
 
     QtObject {
         id: d
-        readonly property string zeroString: formatValue(0, 2)
+        readonly property string zeroString: LocaleUtils.numberToLocaleString(0, 2)
         property Timer waitTimer: Timer {
             interval: 1000
             onTriggered: reCalculateSuggestedRoute()
         }
-        function formatValue(value, precision) {
-            const precisionVal = !!precision ? precision : (value === 0 ? 2 : 0)
-            return LocaleUtils.numberToLocaleString(value, precisionVal, root.locale)
-        }
-        function getFiatValue(value) {
-            if(!root.selectedAsset || !value)
-                return zeroString
-            let cryptoValue = root.getFiatValue(value)
-            return formatValue(parseFloat(cryptoValue))
-        }
-        function getCryptoValue(value) {
-            if(!root.selectedAsset || !value)
-                return zeroString
-            let cryptoValue = root.getCryptoValue(value)
-            return formatValue(parseFloat(cryptoValue))
-        }
-    }
 
-    onSelectedAssetChanged: {
-        if(!!root.selectedAsset) {
-            txtFiatBalance.text = !cryptoFiatFlipped ? d.getFiatValue(amountToSendInput.text): d.getCryptoValue(amountToSendInput.text)
+        function formatValue(value) {
+            if (!value) {
+                return zeroString
+            }
+            return LocaleUtils.currencyAmountToLocaleString(value)
         }
     }
 
     onMaxFiatBalanceChanged: {
-        floatValidator.top = maxFiatBalance.amount
+        floatValidator.top = maxFiatBalance ? maxFiatBalance.amount : 0.0
         input.validate()
     }
 
@@ -72,9 +72,11 @@ ColumnLayout {
         color: Theme.palette.directColor1
     }
     RowLayout {
+        id: topItem
+        property var topAmountToSend: !inputIsFiat ? cryptoValueToSend : fiatValueToSend
         Layout.alignment: Qt.AlignLeft
         AmountInputWithCursor {
-            id: amountToSendInput
+            id: topAmountToSendInput
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             Layout.maximumWidth: 163
             Layout.preferredWidth: (!!text) ? input.edit.paintedWidth : textMetrics.advanceWidth
@@ -91,45 +93,29 @@ ColumnLayout {
             ]
             TextMetrics {
                 id: textMetrics
-                text: amountToSendInput.placeholderText
-                font: amountToSendInput.input.placeholder.font
+                text: topAmountToSendInput.placeholderText
+                font: topAmountToSendInput.input.placeholder.font
             }
             Keys.onReleased: {
-                const amount = amountToSendInput.text.trim()
+                const amount = topAmountToSendInput.text.trim()
                 if (!Utils.containsOnlyDigits(amount) || isNaN(amount)) {
                     return
                 }
-                txtFiatBalance.text = !cryptoFiatFlipped ? d.getFiatValue(amount): d.getCryptoValue(amount)
                 d.waitTimer.restart()
             }
         }
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            text: root.currentCurrency.toUpperCase()
-            font.pixelSize: amountToSendInput.input.edit.font.pixelSize
-            color: Theme.palette.baseColor1
-            visible: cryptoFiatFlipped
-        }
     }
     Item {
-        id: fiatBalanceLayout
+        id: bottomItem
+        property var bottomAmountToSend: inputIsFiat ? cryptoValueToSend : fiatValueToSend
         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-        Layout.preferredWidth: txtFiatBalance.width + currencyText.width
-        Layout.preferredHeight: txtFiatBalance.height
+        Layout.preferredWidth: txtBottom.width
+        Layout.preferredHeight: txtBottom.height
         StatusBaseText {
-            id: txtFiatBalance
+            id: txtBottom
             anchors.top: parent.top
             anchors.left: parent.left
-            text: d.getFiatValue(amountToSendInput.text)
-            font.pixelSize: 13
-            color: Theme.palette.directColor5
-        }
-        StatusBaseText {
-            id: currencyText
-            anchors.top: parent.top
-            anchors.left: txtFiatBalance.right
-            anchors.leftMargin: 4
-            text: !cryptoFiatFlipped ? root.currentCurrency.toUpperCase() : !!root.selectedAsset ? root.selectedAsset.symbol.toUpperCase() : ""
+            text: d.formatValue(bottomItem.bottomAmountToSend)
             font.pixelSize: 13
             color: Theme.palette.directColor5
         }
@@ -137,13 +123,12 @@ ColumnLayout {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: {
-                cryptoFiatFlipped = !cryptoFiatFlipped
-                amountToSendInput.validate()
-                if(!!amountToSendInput.text) {
-                    const tempVal = Number.fromLocaleString(txtFiatBalance.text)
-                    txtFiatBalance.text = !!amountToSendInput.text ? amountToSendInput.text : d.zeroString
-                    amountToSendInput.text = tempVal
+                topAmountToSendInput.validate()
+                if(!!topAmountToSendInput.text) {
+                    topAmountToSendInput.text = LocaleUtils.currencyAmountToLocaleString(bottomItem.bottomAmountToSend, {onlyAmount: true})
                 }
+                inputIsFiat = !inputIsFiat
+                d.waitTimer.restart()
             }
         }
     }

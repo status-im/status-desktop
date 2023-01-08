@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, json
 
 import ./io_interface
 import ../../shared_models/currency_amount
@@ -74,6 +74,13 @@ QtObject:
   proc setCurrentCurrency*(self: View, currency: string) =
     self.currentCurrency = currency
     self.currentCurrencyChanged()
+
+# Returning a QVariant from a slot with parameters other than "self" won't compile
+#  proc getCurrencyAmount*(self: View, amount: float, symbol: string): QVariant {.slot.} =
+#    return newQVariant(self.delegate.getCurrencyAmount(amount, symbol))
+
+  proc getCurrencyAmountAsJson*(self: View, amount: float, symbol: string): string {.slot.} =
+    return $self.delegate.getCurrencyAmount(amount, symbol).toJsonNode()
 
   proc setData*(self: View, currency, signingPhrase: string, mnemonicBackedUp: bool) =
     self.currentCurrency = currency
