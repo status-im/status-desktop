@@ -236,7 +236,8 @@ ColumnLayout {
                         return
                     }
 
-                    if(root.rootStore.sendMessage(event,
+                    if(root.rootStore.sendMessage(chatContentModule.getMyChatId(),
+                                                  event,
                                                   chatInput.getTextWithPublicKeys(),
                                                   chatInput.isReply? chatInput.replyMessageId : "",
                                                   chatInput.fileUrlsAndSources

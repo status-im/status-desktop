@@ -90,7 +90,8 @@ Item {
         else if (root.rootStore.createChatInitMessage !== "" ||
                  root.rootStore.createChatFileUrls.length > 0) {
 
-            root.rootStore.sendMessage(Qt.Key_Enter,
+            root.rootStore.sendMessage(chatId,
+                                       Qt.Key_Enter,
                                        root.rootStore.createChatInitMessage,
                                        "",
                                        root.rootStore.createChatFileUrls

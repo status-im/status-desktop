@@ -100,8 +100,9 @@ QtObject {
         return msg
     }
 
-    function sendMessage(event, text, replyMessageId, fileUrlsAndSources) {
-        var chatContentModule = currentChatContentModule()
+    function sendMessage(chatId, event, text, replyMessageId, fileUrlsAndSources) {
+        chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
+        const chatContentModule = chatCommunitySectionModule.getChatContentModule()
         if (fileUrlsAndSources.length > 0){
             chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrlsAndSources));
         }
