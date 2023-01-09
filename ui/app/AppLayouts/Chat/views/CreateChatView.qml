@@ -25,7 +25,7 @@ Page {
 
         function createChat() {
             root.rootStore.createChatInitMessage = chatInput.textInput.text
-            root.rootStore.createChatFileUrls = chatInput.fileUrls
+            root.rootStore.createChatFileUrls = chatInput.fileUrlsAndSources
             membersSelector.createChat()
 
             membersSelector.cleanup()
