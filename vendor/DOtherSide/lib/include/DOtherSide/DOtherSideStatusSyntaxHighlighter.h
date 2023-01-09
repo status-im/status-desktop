@@ -12,11 +12,11 @@ class StatusSyntaxHighlighter : public QSyntaxHighlighter, public QQmlParserStat
     Q_OBJECT
 
     Q_PROPERTY(QQuickTextDocument* quickTextDocument READ quickTextDocument WRITE setQuickTextDocument NOTIFY
-                   quickTextDocumentChanged REQUIRED)
+                   quickTextDocumentChanged)
     Q_PROPERTY(QColor codeBackgroundColor READ codeBackgroundColor WRITE setCodeBackgroundColor NOTIFY
-                   codeBackgroundColorChanged REQUIRED)
+                   codeBackgroundColorChanged)
     Q_PROPERTY(QColor codeForegroundColor READ codeForegroundColor WRITE setCodeForegroundColor NOTIFY
-                   codeForegroundColorChanged REQUIRED)
+                   codeForegroundColorChanged)
 
     Q_INTERFACES(QQmlParserStatus)
 
