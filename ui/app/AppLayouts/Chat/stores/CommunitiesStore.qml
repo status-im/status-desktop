@@ -5,6 +5,8 @@ QtObject {
 
     readonly property bool isOwner: false
 
+    property var mintingModuleInst: mintingModule
+
     property var permissionsModel: ListModel {} // Backend permissions list object model assignment. Please check the current expected data in qml defined in `createPermissions` method
     property var permissionConflict: QtObject { // Backend conflicts object model assignment. Now mocked data.
         property bool exists: false
@@ -163,5 +165,16 @@ QtObject {
     function removePermission(index) {
         console.log("TODO: Remove permissions - backend call")
         root.permissionsModel.remove(index)
+    }
+
+    //MINTING
+
+    property var mintTokensModel: mintingModuleInst.tokensModel
+
+    function mintCollectible(address, name, symbol, description, supply,
+                             infiniteSupply, transferable, selfDestruct, network)
+    {
+        mintingModuleInst.mintCollectible(address, name, symbol, description, supply,
+                                          infiniteSupply, transferable, selfDestruct, network)
     }
 }

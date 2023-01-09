@@ -51,6 +51,7 @@ import ../../../app_service/service/devices/service as devices_service
 import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/ens/service as ens_service
+import ../../../app_service/service/community_tokens/service as tokens_service
 import ../../../app_service/service/network/service as network_service
 import ../../../app_service/service/general/service as general_service
 import ../../../app_service/service/keycard/service as keycard_service
@@ -132,6 +133,7 @@ proc newModule*[T](
   nodeService: node_service.Service,
   gifService: gif_service.Service,
   ensService: ens_service.Service,
+  tokensService: tokens_service.Service,
   networkService: network_service.Service,
   generalService: general_service.Service,
   keycardService: keycard_service.Service
@@ -187,7 +189,7 @@ proc newModule*[T](
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService, tokenService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService, communityService)
-  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService)
+  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, tokensService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)

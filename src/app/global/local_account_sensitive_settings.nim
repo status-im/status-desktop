@@ -10,6 +10,8 @@ const LSS_KEY_IS_WALLET_ENABLED* = "isExperimentalWalletEnabled"
 const DEFAULT_IS_WALLET_ENABLED = false
 const LSS_KEY_IS_COMMUNITY_PERMISSIONS_ENABLED* = "isExperimentalCommunityPermissionsEnabled"
 const DEFAULT_IS_COMMUNITY_PERMISSIONS_ENABLED = false
+const LSS_KEY_IS_COMMUNITY_TOKENS_ENABLED* = "isExperimentalCommunityTokensEnabled"
+const DEFAULT_IS_COMMUNITY_TOKENS_ENABLED = false
 const LSS_KEY_NODE_MANAGEMENT_ENABLED* = "nodeManagementEnabled"
 const DEFAULT_NODE_MANAGEMENT_ENABLED = false
 const LSS_KEY_IS_BROWSER_ENABLED* = "isExperimentalBrowserEnabled"
@@ -238,6 +240,18 @@ QtObject:
     read = getIsCommunityPermissionsEnabled
     write = setIsCommunityPermissionsEnabled
     notify = isCommunityPermissionsEnabledChanged
+
+  proc isCommunityTokensEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getIsCommunityTokensEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
+    getSettingsProp[bool](self, LSS_KEY_IS_COMMUNITY_TOKENS_ENABLED, newQVariant(DEFAULT_IS_COMMUNITY_TOKENS_ENABLED))
+  proc setIsCommunityTokensEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    setSettingsProp(self, LSS_KEY_IS_COMMUNITY_TOKENS_ENABLED, newQVariant(value)):
+      self.isCommunityTokensEnabledChanged()
+
+  QtProperty[bool] isCommunityTokensEnabled:
+    read = getIsCommunityTokensEnabled
+    write = setIsCommunityTokensEnabled
+    notify = isCommunityTokensEnabledChanged
 
   proc isWalletEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getIsWalletEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
