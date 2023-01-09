@@ -569,7 +569,7 @@ QtObject:
     defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, position, position)
-    self.items.insert(initNewMessagesMarkerItem(self.items[index].timestamp), position)
+    self.items.insert(initNewMessagesMarkerItem(self.items[index].clock, self.items[index].timestamp), position)
     self.endInsertRows()
     self.countChanged()
 
