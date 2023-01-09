@@ -131,7 +131,7 @@ proc initItem*(
       if attachment.contentType.contains("image"):
         result.messageAttachments.add(attachment.localUrl)
 
-proc initNewMessagesMarkerItem*(timestamp: int64): Item =
+proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
   return initItem(
     id = "",
     communityId = "",
@@ -148,7 +148,7 @@ proc initNewMessagesMarkerItem*(timestamp: int64): Item =
     messageContainsMentions = false,
     seen = true,
     timestamp = timestamp,
-    clock = 0,
+    clock = clock,
     ContentType.NewMessagesMarker,
     messageType = -1,
     contactRequestState = 0,

@@ -26,7 +26,7 @@ proc createTestMessageItem(id: string, clock: int64): Item =
     seen = true,
     timestamp = 0,
     clock = clock,
-    ContentType.NewMessagesMarker,
+    ContentType.Unknown,
     messageType = -1,
     contactRequestState = 0,
     sticker = "",
@@ -41,6 +41,8 @@ proc createTestMessageItem(id: string, clock: int64): Item =
     mentioned = false
   )
 
+let message0_chatIdentifier = createTestMessageItem("chat-identifier", 0)
+let message0_fetchMoreMessages = createTestMessageItem("fetch-more-messages", 0)
 let message1 = createTestMessageItem("0xa", 1)
 let message2 = createTestMessageItem("0xb", 2)
 let message3 = createTestMessageItem("0xc", 3)
@@ -48,12 +50,14 @@ let message4 = createTestMessageItem("0xd", 3)
 let message5 = createTestMessageItem("0xe", 4)
 
 template checkOrder(model: Model) =
-  require(model.items.len == 5)
+  require(model.items.len == 7)
   check(model.items[0].id == message5.id)
   check(model.items[1].id == message4.id)
   check(model.items[2].id == message3.id)
   check(model.items[3].id == message2.id)
   check(model.items[4].id == message1.id)
+  check(model.items[5].id == message0_fetchMoreMessages.id)
+  check(model.items[6].id == message0_chatIdentifier.id)
 
 suite "empty model":
   let model = newModel()
@@ -65,56 +69,60 @@ suite "empty model":
 suite "inserting new messages":
   setup:
     let model = newModel()
+    model.appendItem(message0_fetchMoreMessages)
+    model.appendItem(message0_chatIdentifier)
 
   test "insert same message twice":
     model.insertItemBasedOnClock(message1)
-    check(model.rowCount() == 1)
+    check(model.rowCount() == 3)
     model.insertItemBasedOnClock(message1)
-    check(model.rowCount() == 1)
+    check(model.rowCount() == 3)
 
   test "insert in order":
     model.insertItemBasedOnClock(message1)
-    check(model.rowCount() == 1)
-    model.insertItemBasedOnClock(message2)
-    check(model.rowCount() == 2)
-    model.insertItemBasedOnClock(message3)
     check(model.rowCount() == 3)
-    model.insertItemBasedOnClock(message4)
+    model.insertItemBasedOnClock(message2)
     check(model.rowCount() == 4)
-    model.insertItemBasedOnClock(message5)
+    model.insertItemBasedOnClock(message3)
     check(model.rowCount() == 5)
+    model.insertItemBasedOnClock(message4)
+    check(model.rowCount() == 6)
+    model.insertItemBasedOnClock(message5)
+    check(model.rowCount() == 7)
     checkOrder(model)
 
   test "insert out of order":
     model.insertItemBasedOnClock(message5)
-    check(model.rowCount() == 1)
-    model.insertItemBasedOnClock(message4)
-    check(model.rowCount() == 2)
-    model.insertItemBasedOnClock(message3)
     check(model.rowCount() == 3)
-    model.insertItemBasedOnClock(message2)
+    model.insertItemBasedOnClock(message4)
     check(model.rowCount() == 4)
-    model.insertItemBasedOnClock(message1)
+    model.insertItemBasedOnClock(message3)
     check(model.rowCount() == 5)
+    model.insertItemBasedOnClock(message2)
+    check(model.rowCount() == 6)
+    model.insertItemBasedOnClock(message1)
+    check(model.rowCount() == 7)
     checkOrder(model)
 
   test "insert out of order (randomly)":
     model.insertItemBasedOnClock(message3)
-    check(model.rowCount() == 1)
-    model.insertItemBasedOnClock(message1)
-    check(model.rowCount() == 2)
-    model.insertItemBasedOnClock(message4)
     check(model.rowCount() == 3)
-    model.insertItemBasedOnClock(message2)
+    model.insertItemBasedOnClock(message1)
     check(model.rowCount() == 4)
-    model.insertItemBasedOnClock(message5)
+    model.insertItemBasedOnClock(message4)
     check(model.rowCount() == 5)
+    model.insertItemBasedOnClock(message2)
+    check(model.rowCount() == 6)
+    model.insertItemBasedOnClock(message5)
+    check(model.rowCount() == 7)
     checkOrder(model)
 
 # assumption: each append sequence is already sorted
 suite "appending new messages":
   setup:
     let model = newModel()
+    model.appendItem(message0_fetchMoreMessages)
+    model.appendItem(message0_chatIdentifier)
 
   test "append empty model":
     model.appendItems(@[message5,
@@ -147,3 +155,142 @@ suite "appending new messages":
     model.appendItems(@[message4,
                         message2])
     checkOrder(model)
+
+suite "new messages marker":
+  setup:
+    let model = newModel()
+    model.appendItem(message0_fetchMoreMessages)
+    model.appendItem(message0_chatIdentifier)
+
+  test "set new messages marker":
+    model.appendItems(@[message1,
+                        message2])
+    require(model.items.len == 4)
+
+    # add new messages marker
+    model.setFirstUnseenMessageId(message2.id)
+    model.resetNewMessagesMarker()
+
+    require(model.items.len == 5)
+    check(model.items[0].id == message2.id)
+    check(model.items[1].contentType == ContentType.NewMessagesMarker)
+    check(model.items[2].id == message1.id)
+    check(model.items[3].id == message0_fetchMoreMessages.id)
+    check(model.items[4].id == message0_chatIdentifier.id)
+
+  test "remove new messages marker":
+    model.appendItems(@[message1,
+                        message2])
+    require(model.items.len == 4)
+
+    # add new messages marker
+    model.setFirstUnseenMessageId(message2.id)
+    model.resetNewMessagesMarker()
+    require(model.items.len == 5)
+
+    # remove new messages marker
+    model.setFirstUnseenMessageId("")
+    model.resetNewMessagesMarker()
+    require(model.items.len == 4)
+    check(model.items[0].id == message2.id)
+    check(model.items[1].id == message1.id)
+    check(model.items[2].id == message0_fetchMoreMessages.id)
+    check(model.items[3].id == message0_chatIdentifier.id)
+
+suite "simulations":
+  setup:
+    let model = newModel()
+    model.appendItem(message0_fetchMoreMessages)
+    model.appendItem(message0_chatIdentifier)
+
+  test "simulate messages loading":
+    # load first two messages
+    var loadedMessages: seq[Item]
+    loadedMessages.add(message5)
+    loadedMessages.add(message4)
+    model.removeItem(message0_fetchMoreMessages.id)
+    model.removeItem(message0_chatIdentifier.id)
+    loadedMessages.add(message0_fetchMoreMessages)
+    loadedMessages.add(message0_chatIdentifier)
+    model.appendItems(loadedMessages)
+
+    require(model.items.len == 4)
+    check(model.items[0].id == message5.id)
+    check(model.items[1].id == message4.id)
+    check(model.items[2].id == message0_fetchMoreMessages.id)
+    check(model.items[3].id == message0_chatIdentifier.id)
+
+    # set new messages marker
+    model.setFirstUnseenMessageId(message5.id)
+    model.resetNewMessagesMarker()
+
+    require(model.items.len == 5)
+    check(model.items[0].id == message5.id)
+    check(model.items[1].contentType == ContentType.NewMessagesMarker)
+    check(model.items[2].id == message4.id)
+    check(model.items[3].id == message0_fetchMoreMessages.id)
+    check(model.items[4].id == message0_chatIdentifier.id)
+
+    # load next two messages
+    loadedMessages = @[]
+    loadedMessages.add(message3)
+    loadedMessages.add(message2)
+    model.removeItem(message0_fetchMoreMessages.id)
+    model.removeItem(message0_chatIdentifier.id)
+    loadedMessages.add(message0_fetchMoreMessages)
+    loadedMessages.add(message0_chatIdentifier)
+    model.appendItems(loadedMessages)
+
+    require(model.items.len == 7)
+    check(model.items[0].id == message5.id)
+    check(model.items[1].contentType == ContentType.NewMessagesMarker)
+    check(model.items[2].id == message4.id)
+    check(model.items[3].id == message3.id)
+    check(model.items[4].id == message2.id)
+    check(model.items[5].id == message0_fetchMoreMessages.id)
+    check(model.items[6].id == message0_chatIdentifier.id)
+
+    # load last message
+    loadedMessages = @[]
+    loadedMessages.add(message1)
+    model.removeItem(message0_fetchMoreMessages.id)
+    model.removeItem(message0_chatIdentifier.id)
+    loadedMessages.add(message0_fetchMoreMessages)
+    loadedMessages.add(message0_chatIdentifier)
+    model.appendItems(loadedMessages)
+
+    require(model.items.len == 8)
+    check(model.items[0].id == message5.id)
+    check(model.items[1].contentType == ContentType.NewMessagesMarker)
+    check(model.items[2].id == message4.id)
+    check(model.items[3].id == message3.id)
+    check(model.items[4].id == message2.id)
+    check(model.items[5].id == message1.id)
+    check(model.items[6].id == message0_fetchMoreMessages.id)
+    check(model.items[7].id == message0_chatIdentifier.id)
+
+  test "simulate chat identifier update":
+    model.appendItems(@[message5,
+                        message4,
+                        message3,
+                        message2,
+                        message1])
+    checkOrder(model)
+
+    # set new messages marker
+    model.setFirstUnseenMessageId(message4.id)
+    model.resetNewMessagesMarker()
+
+    # update chat identifier
+    model.removeItem(message0_chatIdentifier.id)
+    model.appendItem(message0_chatIdentifier)
+
+    require(model.items.len == 8)
+    check(model.items[0].id == message5.id)
+    check(model.items[1].id == message4.id)
+    check(model.items[2].contentType == ContentType.NewMessagesMarker)
+    check(model.items[3].id == message3.id)
+    check(model.items[4].id == message2.id)
+    check(model.items[5].id == message1.id)
+    check(model.items[6].id == message0_fetchMoreMessages.id)
+    check(model.items[7].id == message0_chatIdentifier.id)
