@@ -132,7 +132,7 @@ ActivityNotificationBase {
                         elide: Text.ElideRight
                         font.pixelSize: 15
                         Layout.alignment: Qt.AlignVCenter
-                        Layout.maximumWidth: 400 // From designs, fixed value to align all possible CTAs
+                        Layout.maximumWidth: 350 // From designs, fixed value to align all possible CTAs
                     }
 
                     Loader {
