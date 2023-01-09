@@ -48,7 +48,17 @@ Column {
 
             property bool loadingFailed: false
 
+            property bool unfurle: true
+
             active: true
+
+            onUnfurleChanged: {
+                if (!unfurle) {
+                    active = unfurle
+                    linkMessageLoader.sourceComponent = undefined
+                    this.height = 0
+                }
+            }
 
             Connections {
                 target: localAccountSensitiveSettings
@@ -80,11 +90,11 @@ Column {
                         linkMessageLoader.loadingFailed = true
                         return
                     }
+
                     if (response.uuid !== linkMessageLoader.uuid) return
                     linkFetchConnections.enabled = false
 
                     if (!response.success) {
-                        console.error("could not get preview data")
                         linkMessageLoader.loadingFailed = true
                         return
                     }
@@ -267,7 +277,7 @@ Column {
                 objectName: "LinksMessageView_unfurledLinkComponent_linkImage"
                 container: root.container
                 source: linkData.thumbnailUrl
-                visible: linkData.thumbnailUrl.length
+                visible: isAnimated ? false : linkData.thumbnailUrl.length
                 readonly property int previewWidth: parseInt(linkData.width)
                 imageWidth: Math.min(300, previewWidth > 0 ? previewWidth : 300)
                 isCurrentUser: root.isCurrentUser
@@ -275,6 +285,16 @@ Column {
                 anchors.top: parent.top
                 playing: root.messageStore.playAnimation
                 isOnline: root.store.mainModuleInst.isOnline
+
+                onHeightChanged: {
+                    if (isAnimated) {
+                        if (height === 1) {
+                            unfurle = false
+                        } else {
+                            linkImage.visible = linkImage.imageAlias.status === Image.Ready
+                        }
+                    }
+                }
             }
 
             StatusBaseText {
