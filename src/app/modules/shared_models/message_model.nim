@@ -254,11 +254,6 @@ QtObject:
           return i
     return self.items.len
 
-  proc filterExistingItems(self: Model, items: seq[Item]): seq[Item] =
-    for item in items:
-      if(self.findIndexForMessageId(item.id) < 0):
-        result &= item
-
   proc insertItemBasedOnClock*(self: Model, item: Item) =
     if(self.findIndexForMessageId(item.id) != -1):
       return
@@ -278,53 +273,9 @@ QtObject:
       self.updateItemAtIndex(position + 1)
     self.countChanged()
 
-  proc prependItems*(self: Model, items: seq[Item]) =
-    let itemsToAppend = self.filterExistingItems(items)
-    if(itemsToAppend.len == 0):
-      return
-
+  proc insertItemsBasedOnClock*(self: Model, items: seq[Item]) =
     for item in items:
       self.insertItemBasedOnClock(item)
-
-  proc appendItems*(self: Model, items: seq[Item]) =
-    let itemsToAppend = self.filterExistingItems(items)
-    if(itemsToAppend.len == 0):
-      return
-
-    for item in items:
-      self.insertItemBasedOnClock(item)
-
-  proc appendItem*(self: Model, item: Item) =
-    if(self.findIndexForMessageId(item.id) != -1):
-      return
-
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    let position = self.items.len
-
-    self.beginInsertRows(parentModelIndex, position, position)
-    self.items.add(item)
-    self.endInsertRows()
-
-    if position > 0:
-      self.updateItemAtIndex(position - 1)
-    self.countChanged()
-
-  proc prependItem*(self: Model, item: Item) =
-    if(self.findIndexForMessageId(item.id) != -1):
-      return
-
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    self.beginInsertRows(parentModelIndex, 0, 0)
-    self.items.insert(item, 0)
-    self.endInsertRows()
-
-    if self.items.len > 1:
-      self.updateItemAtIndex(1)
-    self.countChanged()
 
   proc replyDeleted*(self: Model, messageIndex: int) {.signal.}
 
