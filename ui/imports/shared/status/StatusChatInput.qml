@@ -1356,6 +1356,8 @@ Rectangle {
 
                             StatusSyntaxHighlighter {
                                 quickTextDocument: messageInputField.textDocument
+                                codeBackgroundColor: Style.current.codeBackground
+                                codeForegroundColor: Style.current.textColor
                             }
                             MouseArea {
                                 anchors.fill: parent
