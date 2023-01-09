@@ -68,7 +68,7 @@ Theme {
     property color backgroundTertiary: tenPercentBlue
     property color pillButtonTextColor: secondaryText
     property color chatReplyCurrentUser: lightGrey
-    property color codeBackground: "#EEF2F5"
+    property color codeBackground: graphite2
     property color primarySelectionColor: "#b4c8ff"
     property color emojiReactionBackground: "#2d2823"
     property color emojiReactionBackgroundHovered: "#3a3632"
