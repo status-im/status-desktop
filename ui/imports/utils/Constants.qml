@@ -343,7 +343,7 @@ QtObject {
         readonly property int loginInfoHeight3: 66
         readonly property int radius: 8
         readonly property QtObject profileFetching: QtObject {
-            readonly property int    timeout: 120 //2 mins (120 secs)
+            readonly property int    timeout: 120 * 1000 //2 mins in milliseconds
             readonly property int    titleFontSize: 22
             readonly property int    entityFontSize: 15
             readonly property int    entityProgressFontSize: 12

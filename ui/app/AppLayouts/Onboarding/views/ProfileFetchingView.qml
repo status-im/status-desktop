@@ -20,13 +20,12 @@ Item {
     QtObject {
         id: d
 
-        property int timeout: Constants.onboarding.profileFetching.timeout
-        property int counter: d.timeout
+        property int counter: Constants.onboarding.profileFetching.timeout
     }
 
     onStateChanged: {
         if (root.startupStore.currentStartupState.stateType === Constants.startupState.profileFetching) {
-            d.counter = d.timeout
+            d.counter = Constants.onboarding.profileFetching.timeout
         }
     }
 
@@ -151,7 +150,7 @@ Item {
                 running: root.startupStore.currentStartupState.stateType === Constants.startupState.profileFetching
                 repeat: true
                 onTriggered: {
-                    d.counter--
+                    d.counter = d.counter - 1000 // decrease 1000 ms
                     if (d.counter == 0) {
                         root.startupStore.doPrimaryAction()
                     }
@@ -179,11 +178,15 @@ Item {
             }
             PropertyChanges {
                 target: button
-                text: Qt.formatTime(new Date(0, 0, 0, 0, 0, d.counter), "m:ss")
+                text: {
+                    let date = new Date(0)
+                    date.setTime(date.getTime() + d.counter)
+                    return Qt.formatTime(date, "m:ss")
+                }
             }
             PropertyChanges {
                 target: d
-                counter: d.timeout
+                counter: Constants.onboarding.profileFetching.timeout
             }
         },
         State {
