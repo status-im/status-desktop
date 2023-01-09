@@ -37,7 +37,8 @@ proc createTestMessageItem(id: string, clock: int64): Item =
     senderTrustStatus = TrustStatus.Unknown,
     senderEnsVerified = false,
     discordMessage = DiscordMessage(),
-    resendError = ""
+    resendError = "",
+    mentioned = false
   )
 
 let message1 = createTestMessageItem("0xa", 1)
