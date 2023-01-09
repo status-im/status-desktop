@@ -7,6 +7,8 @@ import utils 1.0
 QtObject {
     id: root
 
+    property var mintingModuleInst: mintingModule
+
     property var permissionsModel: ListModel {} // Backend permissions list object model asignement. Please check the current expected data in qml defined in `createPermissions` method
 
     // TODO: Replace to real data, now dummy model
@@ -164,5 +166,16 @@ QtObject {
     function removePermission(index) {
         console.log("TODO: Remove permissions - backend call")
         root.permissionsModel.remove(index)
+    }
+
+    //MINTING
+
+    property var mintTokensModel: mintingModuleInst.tokensModel
+
+    function mintCollectible(name, description, supply,
+                             transferable, selfDestruct, network)
+    {
+        mintingModuleInst.mintCollectible(name, description, supply,
+                                          transferable, selfDestruct, network)
     }
 }

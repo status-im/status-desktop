@@ -16,6 +16,8 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
+import AppLayouts.Chat.stores 1.0
+
 import "../panels/communities"
 import "../popups/community"
 import "../layouts"
@@ -28,7 +30,8 @@ StatusSectionLayout {
     // TODO: get this model from backend?
     property var settingsMenuModel: root.rootStore.communityPermissionsEnabled ? [{name: qsTr("Overview"), icon: "show"},
                                                                                  {name: qsTr("Members"), icon: "group-chat"},
-                                                                                 {name: qsTr("Permissions"), icon: "objects"}] :
+                                                                                 {name: qsTr("Permissions"), icon: "objects"},
+                                                                                 /*{name: qsTr("Tokens"), icon: "token"}*/] :
                                                                                    [{name: qsTr("Overview"), icon: "show"},
                                                                                  {name: qsTr("Members"), icon: "group-chat"}]
     // TODO: Next community settings options:
@@ -40,6 +43,7 @@ StatusSectionLayout {
     property var rootStore
     property var community
     property var chatCommunitySectionModule
+    property var communityStore: CommunitiesStore {}
     property bool hasAddedContacts: false
 
     readonly property string filteredSelectedTags: {
@@ -239,6 +243,14 @@ StatusSectionLayout {
             CommunityPermissionsSettingsPanel {
                 rootStore: root.rootStore
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
+            }
+
+            CommunityTokensPanel {
+                tokensModel: root.communityStore.mintTokensModel
+                onMintCollectible: {
+                    root.communityStore.mintCollectible(name, description, supply,
+                                                        transferable, selfDestruct, network)
+                }
             }
 
             onCurrentIndexChanged: root.backButtonName = centerPanelContentLoader.item.children[d.currentIndex].previousPageName
