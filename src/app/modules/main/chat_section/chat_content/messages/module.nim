@@ -21,7 +21,9 @@ logScope:
   topics = "messages-module"
 
 const CHAT_IDENTIFIER_MESSAGE_ID = "chat-identifier-message-id"
+const CHAT_IDENTIFIER_CLOCK = -2
 const FETCH_MORE_MESSAGES_MESSAGE_ID = "fetch-more_messages-message-id"
+const FETCH_MORE_MESSAGES_CLOCK = -1
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -61,8 +63,8 @@ method isLoaded*(self: Module): bool =
 
 method viewDidLoad*(self: Module) =
   if self.controller.getChatDetails().hasMoreMessagesToRequest():
-    self.view.model().appendItem(self.createFetchMoreMessagesItem())
-  self.view.model().appendItem(self.createChatIdentifierItem())
+    self.view.model().insertItemBasedOnClock(self.createFetchMoreMessagesItem())
+  self.view.model().insertItemBasedOnClock(self.createChatIdentifierItem())
 
   self.moduleLoaded = true
   self.delegate.messagesDidLoad()
@@ -88,7 +90,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     messageContainsMentions = false,
     seen = true,
     timestamp = 0,
-    clock = 0,
+    clock = FETCH_MORE_MESSAGES_CLOCK,
     ContentType.FetchMoreMessagesButton,
     messageType = -1,
     contactRequestState = 0,
@@ -131,7 +133,7 @@ proc createChatIdentifierItem(self: Module): Item =
     messageContainsMentions = false,
     seen = true,
     timestamp = 0,
-    clock = 0,
+    clock = CHAT_IDENTIFIER_CLOCK,
     ContentType.ChatIdentifier,
     messageType = -1,
     contactRequestState = 0,
@@ -261,7 +263,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
     self.view.model().removeItem(FETCH_MORE_MESSAGES_MESSAGE_ID)
     self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
     # Add new loaded messages
-    self.view.model().appendItems(viewItems)
+    self.view.model().insertItemsBasedOnClock(viewItems)
     self.view.model().resetNewMessagesMarker()
 
     # check if this loading was caused by the click on a messages from the app search result
@@ -508,13 +510,13 @@ method updateChatIdentifier*(self: Module) =
   # Delete the old ChatIdentifier message first
   self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
   # Add new loaded messages
-  self.view.model().appendItem(self.createChatIdentifierItem())
+  self.view.model().insertItemBasedOnClock(self.createChatIdentifierItem())
 
 method updateChatFetchMoreMessages*(self: Module) =
   self.view.model().removeItem(FETCH_MORE_MESSAGES_MESSAGE_ID)
 
   if (self.controller.getChatDetails().hasMoreMessagesToRequest()):
-    self.view.model().appendItem(self.createFetchMoreMessagesItem())
+    self.view.model().insertItemBasedOnClock(self.createFetchMoreMessagesItem())
 
 method getLinkPreviewData*(self: Module, link: string, uuid: string): string =
   return self.controller.getLinkPreviewData(link, uuid)

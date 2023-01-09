@@ -228,7 +228,7 @@ method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageD
 
   if(viewItems.len == 0):
     return
-  self.view.pinnedModel().prependItems(viewItems)
+  self.view.pinnedModel().insertItemsBasedOnClock(viewItems)
 
 method unpinMessage*(self: Module, messageId: string) =
   self.controller.unpinMessage(messageId)
@@ -241,7 +241,7 @@ method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string)
   if(not self.buildPinnedMessageItem(messageId, actionInitiatedBy, item)):
     return
 
-  self.view.pinnedModel().appendItem(item)
+  self.view.pinnedModel().insertItemBasedOnClock(item)
 
 method getMyChatId*(self: Module): string =
   self.controller.getMyChatId()
