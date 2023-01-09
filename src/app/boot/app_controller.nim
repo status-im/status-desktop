@@ -31,6 +31,7 @@ import ../../app_service/service/devices/service as devices_service
 import ../../app_service/service/mailservers/service as mailservers_service
 import ../../app_service/service/gif/service as gif_service
 import ../../app_service/service/ens/service as ens_service
+import ../../app_service/service/community_tokens/service as tokens_service
 import ../../app_service/common/account_constants
 
 import ../modules/startup/module as startup_module
@@ -95,6 +96,7 @@ type
     nodeService: node_service.Service
     gifService: gif_service.Service
     ensService: ens_service.Service
+    tokensService: tokens_service.Service
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -209,6 +211,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool,
     result.settingsService, result.walletAccountService, result.transactionService,
     result.networkService, result.tokenService)
+  result.tokensService = tokens_service.newService(statusFoundation.events, statusFoundation.threadpool,
+    result.networkService, result.transactionService)
   result.providerService = provider_service.newService(statusFoundation.events, statusFoundation.threadpool, result.ensService)
 
   # Modules
@@ -254,6 +258,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.nodeService,
     result.gifService,
     result.ensService,
+    result.tokensService,
     result.networkService,
     result.generalService,
     result.keycardService
@@ -309,6 +314,7 @@ proc delete*(self: AppController) =
   self.profileService.delete
   self.generalService.delete
   self.ensService.delete
+  self.tokensService.delete
   self.gifService.delete
   self.keycardService.delete
 
@@ -397,6 +403,7 @@ proc load(self: AppController) =
   self.aboutService.init()
   self.devicesService.init()
   self.ensService.init()
+  self.tokensService.init()
   self.gifService.init()
 
   # Accessible after user login

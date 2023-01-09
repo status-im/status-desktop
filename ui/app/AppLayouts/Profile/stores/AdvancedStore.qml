@@ -34,6 +34,7 @@ QtObject {
         readonly property string communityPermissions: "communityPermissions"
         readonly property string discordImportTool: "discordImportTool"
         readonly property string wakuV2StoreEnabled: "wakuV2StoreEnabled"
+        readonly property string communityTokens: "communityTokens"
     }
 
     function logDir() {
@@ -136,6 +137,9 @@ QtObject {
         }
         else if (feature === experimentalFeatures.discordImportTool) {
             localAccountSensitiveSettings.isDiscordImportToolEnabled = !localAccountSensitiveSettings.isDiscordImportToolEnabled
+        }
+        else if (feature === experimentalFeatures.communityTokens) {
+            localAccountSensitiveSettings.isCommunityTokensEnabled = !localAccountSensitiveSettings.isCommunityTokensEnabled
         }
     }
 }

@@ -21,7 +21,9 @@ import ../../../core/eventemitter
 import ../../../../app_service/common/types
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
+import ../../../../app_service/service/community_tokens/service as tokens_service
 import ../../../../app_service/service/chat/dto/chat
+import ./minting/module as minting_module
 
 export io_interface
 
@@ -38,6 +40,7 @@ type
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
+    mintingModule: minting_module.AccessInterface
 
 # Forward declaration
 method setCommunityTags*(self: Module, communityTags: string)
@@ -48,7 +51,8 @@ proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
     communityService: community_service.Service,
-    contactsService: contacts_service.Service): Module =
+    contactsService: contacts_service.Service,
+    tokensService: tokens_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
@@ -59,16 +63,19 @@ proc newModule*(
     communityService,
     contactsService,
   )
+  result.mintingModule = minting_module.newMintingModule(result, events, tokensService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
+  self.mintingModule.delete
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("communitiesModule", self.viewVariant)
   self.controller.init()
+  self.mintingModule.load()
   self.view.load()
 
 method isLoaded*(self: Module): bool =

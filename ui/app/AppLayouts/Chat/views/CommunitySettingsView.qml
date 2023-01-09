@@ -16,6 +16,8 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
+import AppLayouts.Chat.stores 1.0
+
 import "../panels/communities"
 import "../popups/community"
 import "../layouts"
@@ -26,11 +28,11 @@ StatusSectionLayout {
     notificationCount: activityCenterStore.unreadNotificationsCount
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     // TODO: get this model from backend?
-    property var settingsMenuModel: root.rootStore.communityPermissionsEnabled ? [{name: qsTr("Overview"), icon: "show"},
-                                                                                 {name: qsTr("Members"), icon: "group-chat"},
-                                                                                 {name: qsTr("Permissions"), icon: "objects"}] :
-                                                                                   [{name: qsTr("Overview"), icon: "show"},
-                                                                                 {name: qsTr("Members"), icon: "group-chat"}]
+    property var settingsMenuModel: [{name: qsTr("Overview"), icon: "show", enabled: true},
+                                     {name: qsTr("Members"), icon: "group-chat", enabled: true},
+                                     {name: qsTr("Permissions"), icon: "objects", enabled: root.rootStore.communityPermissionsEnabled},
+                                     {name: qsTr("Tokens"), icon: "token", enabled: root.rootStore.communityTokensEnabled}]
+
     // TODO: Next community settings options:
     //                        {name: qsTr("Tokens"), icon: "token"},
     //                        {name: qsTr("Airdrops"), icon: "airdrop"},
@@ -40,6 +42,7 @@ StatusSectionLayout {
     property var rootStore
     property var community
     property var chatCommunitySectionModule
+    property var communityStore: CommunitiesStore {}
     property bool hasAddedContacts: false
 
     readonly property string filteredSelectedTags: {
@@ -114,6 +117,8 @@ StatusSectionLayout {
                     asset.width: 24
                     selected: d.currentIndex === index
                     onClicked: d.currentIndex = index
+                    visible: modelData.enabled
+                    height: modelData.enabled ? implicitHeight : 0
                 }
             }
         }
@@ -241,6 +246,14 @@ StatusSectionLayout {
             CommunityPermissionsSettingsPanel {
                 rootStore: root.rootStore
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
+            }
+
+            CommunityTokensPanel {
+                tokensModel: root.communityStore.mintTokensModel
+                onMintCollectible: {
+                    root.communityStore.mintCollectible(address, name, symbol, description, supply,
+                                                        infiniteSupply, transferable, selfDestruct, network)
+                }
             }
 
             onCurrentIndexChanged: root.backButtonName = centerPanelContentLoader.item.children[d.currentIndex].previousPageName
