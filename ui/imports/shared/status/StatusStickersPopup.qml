@@ -220,11 +220,11 @@ Popup {
             }
         }
 
-        Row {
+        RowLayout {
             id: footerContent
             Layout.fillWidth: true
-            leftPadding: Style.current.padding / 2
-            rightPadding: Style.current.padding / 2
+            Layout.rightMargin: Style.current.padding / 2
+            Layout.leftMargin: Style.current.padding / 2
             spacing: Style.current.padding / 2
 
             StatusFlatRoundButton {
@@ -254,12 +254,11 @@ Popup {
             }
 
             StatusScrollView {
-                id: installedStickersSV
                 height: 40
+                Layout.fillWidth: true
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
                 RowLayout {
-                    id: stickersRowLayout
-                    width: installedStickersSV.availableWidth
                     spacing: Style.current.padding
 
                     Repeater {
