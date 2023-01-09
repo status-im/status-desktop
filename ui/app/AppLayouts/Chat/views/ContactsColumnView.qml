@@ -67,10 +67,10 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
                 icon.name: "public-chat"
                 icon.color: Theme.palette.directColor1
-                icon.height: editBtn.icon.height
-                icon.width: editBtn.icon.width
-                implicitWidth: editBtn.implicitWidth
-                implicitHeight: editBtn.implicitHeight
+                icon.height: startChatButton.icon.height
+                icon.width: startChatButton.icon.width
+                implicitWidth: startChatButton.implicitWidth
+                implicitHeight: startChatButton.implicitHeight
                 type: StatusRoundButton.Type.Tertiary
 
                 onClicked: Global.openPopup(publicChatPopupComponent)
@@ -84,7 +84,7 @@ Item {
             }
 
             StatusIconTabButton {
-                id: editBtn
+                id: startChatButton
                 Layout.alignment: Qt.AlignVCenter
                 objectName: "startChatButton"
                 icon.name: "edit"

@@ -156,6 +156,9 @@ Page {
                 emojiPopup: root.emojiPopup
                 stickersPopup: root.stickersPopup
                 closeGifPopupAfterSelection: true
+                usersStore: ({
+                    usersModel: membersSelector.model
+                })
                 onSendTransactionCommandButtonClicked: {
                     root.rootStore.createChatStartSendTransactionProcess = true;
                     membersSelector.createChat();
