@@ -145,7 +145,7 @@ Item {
             chart.chartType: 'line'
             chart.chartData: {
                 return {
-                    labels: graphDetail.labelsData,
+                    labels: RootStore.marketHistoryIsLoading ? [] : graphDetail.labelsData,
                     datasets: [{
                             xAxisId: 'x-axis-1',
                             yAxisId: 'y-axis-1',
@@ -153,7 +153,7 @@ Item {
                             borderColor: (Theme.palette.name === "dark") ? 'rgba(136, 176, 255, 1)' : 'rgba(67, 96, 223, 1)',
                             borderWidth: 3,
                             pointRadius: 0,
-                            data: graphDetail.dataRange,
+                            data: RootStore.marketHistoryIsLoading ? [] : graphDetail.dataRange,
                             parsing: false,
                         }]
                 }
@@ -234,6 +234,11 @@ Item {
                             }]
                     }
                 }
+            }
+
+            LoadingGraphView {
+                anchors.fill: chart
+                active: RootStore.marketHistoryIsLoading
             }
 
             TokenBalanceHistoryStore {

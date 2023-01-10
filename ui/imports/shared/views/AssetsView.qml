@@ -32,16 +32,31 @@ Item {
         id: assetListView
         objectName: "assetViewStatusListView"
         anchors.fill: parent
-        model: SortFilterProxyModel {
-            sourceModel: account.assets
-            filters: [
-                ExpressionFilter {
-                    expression: visibleForNetworkWithPositiveBalance
-                }
-            ]
-        }
+        model: RootStore.tokensLoading ? 25 : filteredModel
+        delegate: RootStore.tokensLoading ? loadingTokenDelegate : tokenDelegate
+        ScrollBar.vertical: StatusScrollBar {}
+    }
 
-        delegate: TokenDelegate {
+    SortFilterProxyModel {
+        id: filteredModel
+        sourceModel: account.assets
+        filters: [
+            ExpressionFilter {
+                expression: visibleForNetworkWithPositiveBalance
+            }
+        ]
+    }
+
+    Component {
+        id: loadingTokenDelegate
+        LoadingTokenDelegate {
+            width: ListView.view.width
+        }
+    }
+
+    Component {
+        id: tokenDelegate
+        TokenDelegate {
             objectName: "AssetView_TokenListItem_" + symbol
             readonly property string balance: "%1".arg(enabledNetworkBalance.amount) // Needed for the tests
             width: ListView.view.width
@@ -56,7 +71,5 @@ Item {
                     assetClicked(model)
             }
         }
-
-        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
     }
 }

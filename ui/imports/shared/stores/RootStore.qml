@@ -38,7 +38,7 @@ QtObject {
     property var historyTransactions: walletSectionTransactions.model
     property bool isNonArchivalNode: history ? history.isNonArchivalNode
                                              : false
-
+    property bool tokensLoading: walletSection.tokensLoading
     property var currentAccount: walletSectionCurrent
     property var marketValueStore: TokenMarketValuesStore{}
 
@@ -226,8 +226,13 @@ QtObject {
         walletSectionAllTokens.getHistoricalDataForToken(symbol,currency)
     }
 
+    property bool marketHistoryIsLoading: walletSectionAllTokens.marketHistoryIsLoading
+
     // TODO: range until we optimize to cache the data and abuse the requests
     function fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum) {
         walletSectionAllTokens.fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum)
     }
+
+    property bool balanceHistoryIsLoading: walletSectionAllTokens.balanceHistoryIsLoading
+
 }
