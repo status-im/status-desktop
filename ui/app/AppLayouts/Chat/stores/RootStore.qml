@@ -103,12 +103,15 @@ QtObject {
     function sendMessage(chatId, event, text, replyMessageId, fileUrlsAndSources) {
         chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
         const chatContentModule = chatCommunitySectionModule.getChatContentModule()
+        var result = false
+
         if (fileUrlsAndSources.length > 0){
-            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrlsAndSources));
+            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrlsAndSources))
+            result = true
         }
 
-        let msg = globalUtilsInst.plainText(StatusQUtils.Emoji.deparse(text))
-        if (msg.length > 0) {
+        let msg = globalUtils.plainText(StatusQUtils.Emoji.deparse(text))
+        if (msg.trim() !== "") {
             msg = interpretMessage(msg)
 
             chatContentModule.inputAreaModule.sendMessage(
@@ -120,9 +123,9 @@ QtObject {
             if (event)
                 event.accepted = true
 
-            return true
+            result = true
         }
-        return false
+        return result
     }
 
 
