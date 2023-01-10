@@ -75,7 +75,7 @@ ActivityNotificationBase {
             width: parent.width
             maximumLineCount: root.maximumLineCount
             messageDetails: root.messageDetails
-            timestamp: notification ? notification.timestamp : ""
+            timestamp: notification ? notification.timestamp : 0
             messageSubheaderComponent: root.messageSubheaderComponent
             messageBadgeComponent: root.messageBadgeComponent
             onOpenProfilePopup: root.openProfilePopup()

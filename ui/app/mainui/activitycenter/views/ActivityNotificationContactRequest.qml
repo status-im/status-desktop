@@ -72,8 +72,7 @@ ActivityNotificationMessage {
         onDetailsClicked: {
             Global.openPopup(reviewContactRequestPopupComponent, {
                 messageDetails: root.messageDetails,
-                timestampString: root.timestampString,
-                timestampTooltipString: root.timestampTooltipString
+                timestamp: notification ? notification.timestamp : 0
             })
         }
     }

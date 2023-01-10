@@ -18,17 +18,20 @@ StatusBaseText {
         if (messageTimestamp === 0)
             return ""
 
-        const currentMsgDate = new Date(messageTimestamp)
-        const prevMsgDate = new Date(previousMessageTimestamp)
-
-        if (prevMsgDate > 0 && currentMsgDate.getDay() <= prevMsgDate.getDay())
+        const msInADay = 86400000
+        const lastMessageInDays = Math.floor(previousMessageTimestamp / msInADay)
+        const currentMessageInDays = Math.floor(messageTimestamp / msInADay)
+        if(previousMessageTimestamp > 0 && currentMessageInDays <= lastMessageInDays)
             return ""
 
-        const now = new Date();
+        let date = new Date()
+        const currentYear = date.getFullYear()
+        date.setTime(messageTimestamp)
+
         // FIXME Qt6: replace with Intl.DateTimeFormat
-        const monthName = Qt.locale().standaloneMonthName(currentMsgDate.getMonth(), Locale.LongFormat)
-        if (now.getFullYear() > currentMsgDate.getFullYear())
-            return "%1 %2, %3".arg(monthName).arg(currentMsgDate.getDate()).arg(currentMsgDate.getFullYear())
-        return "%1, %2".arg(monthName).arg(currentMsgDate.getDate())
+        const monthName = Qt.locale().standaloneMonthName(date.getMonth(), Locale.LongFormat)
+        if (currentYear > date.getFullYear())
+            return "%1 %2, %3".arg(monthName).arg(date.getDate()).arg(date.getFullYear())
+        return "%1, %2".arg(monthName).arg(date.getDate())
     }
 }

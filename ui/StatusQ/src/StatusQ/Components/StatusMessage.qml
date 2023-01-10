@@ -63,9 +63,6 @@ Control {
     property StatusMessageDetails messageDetails: StatusMessageDetails {}
     property StatusMessageDetails replyDetails: StatusMessageDetails {}
 
-    property string timestampString: LocaleUtils.formatTime(timestamp, Locale.ShortFormat)
-    property string timestampTooltipString: LocaleUtils.formatDateTime(timestamp)
-
     signal clicked(var sender, var mouse)
     signal profilePictureClicked(var sender, var mouse)
     signal senderNameClicked(var sender, var mouse)
@@ -250,8 +247,7 @@ Control {
                             resendError: root.messageDetails.amISender && !editMode ? root.resendError : ""
                             onClicked: root.senderNameClicked(sender, mouse)
                             onResendClicked: root.resendClicked()
-                            timestamp.text: root.timestampString
-                            timestamp.tooltip.text: root.timestampTooltipString
+                            timestamp: root.timestamp
                             displayNameClickable: root.profileClickable
                         }
                     }
@@ -331,6 +327,7 @@ Control {
                         active: root.messageDetails.contentType === StatusMessage.ContentType.Invitation && !editMode
                         visible: active
                     }
+
                     Loader {
                         Layout.fillWidth: true
                         Layout.rightMargin: 16
