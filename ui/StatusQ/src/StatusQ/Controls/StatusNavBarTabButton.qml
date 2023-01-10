@@ -9,14 +9,6 @@ StatusIconTabButton {
     property alias tooltip: statusTooltip
     property Component popupMenu
 
-    signal clicked(var mouse)
-
-    onPopupMenuChanged: {
-        if (!!popupMenu) {
-            popupMenuSlot.sourceComponent = popupMenu
-        }
-    }
-
     StatusToolTip {
         id: statusTooltip
         visible: statusNavBarTabButton.hovered && !!statusTooltip.text
@@ -49,6 +41,8 @@ StatusIconTabButton {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
             if (mouse.button === Qt.RightButton) {
+                if (typeof popupMenuSlot.sourceComponent !== "undefined" && !popupMenuSlot.active)
+                    popupMenuSlot.active = true
                 if (popupMenuSlot.active) {
                     statusNavBarTabButton.highlighted = true
                     let btnWidth = statusNavBarTabButton.width
@@ -56,16 +50,18 @@ StatusIconTabButton {
                     return
                 }
             }
-            statusNavBarTabButton.clicked(mouse)
+            statusNavBarTabButton.clicked()
         }
     }
 
     Loader {
         id: popupMenuSlot
-        active: !!statusNavBarTabButton.popupMenu
+        sourceComponent: statusNavBarTabButton.popupMenu
+        active: false
         onLoaded: {
             popupMenuSlot.item.closeHandler = function () {
                 statusNavBarTabButton.highlighted = false
+                popupMenuSlot.active = false
             }
         }
     }
