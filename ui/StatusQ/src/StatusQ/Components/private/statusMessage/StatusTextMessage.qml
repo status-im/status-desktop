@@ -20,13 +20,12 @@ Item {
     signal linkActivated(string link)
 
     implicitWidth: chatText.implicitWidth
-    implicitHeight: chatText.effectiveHeight + d.showMoreHeight
+    implicitHeight: chatText.height + d.showMoreHeight / 2
 
     QtObject {
         id: d
         property bool readMore: false
         property bool isQuote: false
-        readonly property bool veryLongChatText: chatText.length > 1000
         readonly property int showMoreHeight: showMoreButtonLoader.visible ? showMoreButtonLoader.height : 0
 
         readonly property string text: {
@@ -77,8 +76,8 @@ Item {
         id: chatText
         objectName: "StatusTextMessage_chatText"
 
-        readonly property int effectiveHeight: d.veryLongChatText && !d.readMore
-                                               ? Math.min(chatText.implicitHeight, 200)
+        readonly property int effectiveHeight: showMoreButtonLoader.active && !d.readMore
+                                               ? 200
                                                : chatText.implicitHeight
 
         width: parent.width
@@ -86,7 +85,6 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: d.isQuote ? 8 : 0
         opacity: !showMoreOpacityMask.active && !horizontalOpacityMask.active ? 1 : 0
-        clip: true
         text: d.text
         selectedTextColor: Theme.palette.directColor1
         selectionColor: Theme.palette.primaryColor3
@@ -164,7 +162,7 @@ Item {
 
     Loader {
         id: showMoreButtonLoader
-        active: root.allowShowMore && d.veryLongChatText
+        active: root.allowShowMore && chatText.implicitHeight > 200
         visible: active
         anchors.verticalCenter: chatText.bottom
         anchors.horizontalCenter: parent.horizontalCenter
