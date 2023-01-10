@@ -437,12 +437,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(communityData.id))
                 width: parent.width
-                height: {
-                    // I dont know why, the binding doesn't work well if this isn't here
-                    item && item.height
-                    return active ? item.height : 0
-                }
-
+                height: item.height
                 sourceComponent: Component {
                     CommunityWelcomeBannerPanel {
                         activeCommunity: communityData
@@ -459,11 +454,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners.includes(communityData.id))
                 width: parent.width
-                height: {
-                    // I dont know why, the binding doesn't work well if this isn't here
-                    item && item.height
-                    return active ? item.height : 0
-                }
+                height: item.height
                 sourceComponent: Component {
                         CommunityChannelsAndCategoriesBannerPanel {
                             id: channelsAndCategoriesBanner
@@ -483,11 +474,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(communityData.id))
                 width: parent.width
-                height: {
-                    // I dont know why, the binding doesn't work well if this isn't here
-                    item && item.height
-                    return active ? item.height : 0
-                }
+                height: item.height
                 sourceComponent: Component {
                         BackUpCommuntyBannerPanel {
                             id: backupBanner
