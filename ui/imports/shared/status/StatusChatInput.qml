@@ -293,12 +293,12 @@ Rectangle {
         enabled: control.emojiPopupOpened
         target: emojiPopup
 
-        onEmojiSelected: function (text, atCursor) {
+        function onEmojiSelected(text, atCursor) {
             insertInTextInput(atCursor ? messageInputField.cursorPosition : messageInputField.length, text)
             emojiBtn.highlighted = false
             messageInputField.forceActiveFocus();
         }
-        onClosed: {
+        function onClosed() {
             emojiBtn.highlighted = false
             control.emojiPopupOpened = false
         }
@@ -308,12 +308,12 @@ Rectangle {
         enabled: control.stickersPopupOpened
         target: control.stickersPopup
 
-        onStickerSelected: {
+        function onStickerSelected(hashId, packId, url) {
             control.stickerSelected(hashId, packId, url)
             control.hideExtendedArea();
             messageInputField.forceActiveFocus();
         }
-        onClosed: {
+        function onClosed() {
             stickersBtn.highlighted = false
             control.stickersPopupOpened = false
         }
@@ -908,7 +908,7 @@ Rectangle {
         enabled: control.isActiveChannel
         target: Global.dragArea
         ignoreUnknownSignals: true
-        onDroppedOnValidScreen: (drop) => {
+        function onDroppedOnValidScreen(drop) {
                                     let validImages = validateImages(drop.urls)
                                     if (validImages.length > 0) {
                                         showImageArea(validImages)

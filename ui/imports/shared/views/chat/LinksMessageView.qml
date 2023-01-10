@@ -51,16 +51,16 @@ Column {
 
             Connections {
                 target: localAccountSensitiveSettings
-                onWhitelistedUnfurlingSitesChanged: {
+                function onWhitelistedUnfurlingSitesChanged() {
                     fetched = false
                     linkMessageLoader.sourceComponent = undefined
                     linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
                 }
-                onNeverAskAboutUnfurlingAgainChanged: {
+                function onNeverAskAboutUnfurlingAgainChanged() {
                     linkMessageLoader.sourceComponent = undefined
                     linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
                 }
-                onDisplayChatImagesChanged: {
+                function onDisplayChatImagesChanged() {
                     linkMessageLoader.sourceComponent = undefined
                     linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
                 }
@@ -106,7 +106,7 @@ Column {
                 id: linkCommunityFetchConnections
                 enabled: false
                 target: root.store.communitiesModuleInst
-                onCommunityAdded: {
+                function onCommunityAdded(communityId) {
                     if (communityId !== linkData.communityId) {
                         return
                     }
