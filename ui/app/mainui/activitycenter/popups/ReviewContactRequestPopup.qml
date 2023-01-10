@@ -17,8 +17,7 @@ StatusDialog {
     id: root
 
     property StatusMessageDetails messageDetails
-    property string timestampString
-    property string timestampTooltipString
+    property double timestamp: 0
 
     signal accepted
     signal declined
@@ -58,8 +57,7 @@ StatusDialog {
                 amISender: root.messageDetails.amISender
                 messageOriginInfo: root.messageDetails.messageOriginInfo
                 tertiaryDetail: Utils.getElidedCompressedPk(sender.id)
-                timestamp.text: root.timestampString
-                timestamp.tooltip.text: root.timestampTooltipString
+                timestamp: root.timestamp
             }
 
             RowLayout {

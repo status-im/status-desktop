@@ -25,9 +25,6 @@ RowLayout {
         }
     }
 
-    readonly property string timestampString: timestamp ? LocaleUtils.formatTime(timestamp, Locale.ShortFormat) : ""
-    readonly property string timestampTooltipString: timestamp ? LocaleUtils.formatDateTime(timestamp) : ""
-
     signal openProfilePopup()
 
     spacing: 8
@@ -64,8 +61,7 @@ RowLayout {
             amISender: root.messageDetails.amISender
             messageOriginInfo: root.messageDetails.messageOriginInfo
             tertiaryDetail: Utils.getElidedCompressedPk(sender.id)
-            timestamp.text: root.timestampString
-            timestamp.tooltip.text: root.timestampTooltipString
+            timestamp: root.timestamp
             onClicked: root.openProfilePopup()
         }
 

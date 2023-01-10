@@ -15,9 +15,7 @@ Item {
     property StatusMessageSenderDetails sender: StatusMessageSenderDetails { }
 
     property alias displayNameLabel: primaryDisplayName
-    property alias secondaryNameLabel: secondaryDisplayName
-    property alias tertiaryDetailsLabel: tertiaryDetailText
-    property alias timestamp: timestampText
+    property double timestamp: 0
 
     property string tertiaryDetail: sender.id
     property string resendText: qsTr("Resend")
@@ -110,6 +108,7 @@ Item {
         StatusTimeStampLabel {
             verticalAlignment: Text.AlignVCenter
             id: timestampText
+            timestamp: root.timestamp
         }
         StatusBaseText {
             verticalAlignment: Text.AlignVCenter
