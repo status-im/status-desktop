@@ -342,11 +342,6 @@ Rectangle {
 
     function onKeyPress(event) {
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
-            if (getPlainText().trim() === "") {
-                event.accepted = true;
-                return
-            }
-
             if (checkTextInsert()) {
                 event.accepted = true;
                 return
