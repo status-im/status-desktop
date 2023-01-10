@@ -1,3 +1,5 @@
+.pragma library
+
 var emojiCategories = [
     "time",
     "smileys-and-people",
