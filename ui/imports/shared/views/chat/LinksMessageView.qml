@@ -209,7 +209,7 @@ Column {
             Component.onCompleted: {
                 // putting this is onCompleted prevents automatic binding, where
                 // QML warns of a binding loop detected
-                this.sourceComponent = getSourceComponent()
+                this.sourceComponent = linkMessageLoader.getSourceComponent()
             }
         }
     }
