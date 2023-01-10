@@ -51,7 +51,7 @@ Item {
         readonly property var chatDetails: chatContentModule.chatDetails || null
 
         readonly property var loadMoreMessagesIfScrollBelowThreshold: Backpressure.oneInTime(root, 500, function() {
-            if(scrollY < 500) messageStore.loadMoreMessages()
+            if(scrollY < 1000) messageStore.loadMoreMessages()
         })
 
         function markAllMessagesReadIfMostRecentMessageIsInViewport() {
