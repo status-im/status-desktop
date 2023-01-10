@@ -27,6 +27,7 @@ QtObject {
     property var currencyStore: SharedStore.RootStore.currencyStore
     property string currentCurrency: currencyStore.currentCurrency
     property var totalCurrencyBalance: walletSection.totalCurrencyBalance
+    property bool tokensLoading: walletSection.tokensLoading
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 

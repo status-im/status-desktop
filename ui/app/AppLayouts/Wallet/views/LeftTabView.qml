@@ -103,10 +103,10 @@ Rectangle {
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
 
-            StyledTextEdit {
+            StyledTextEditWithLoadingState {
                 id: walletAmountValue
                 objectName: "walletLeftListAmountValue"
-                color: Style.current.textColor
+                customColor: Style.current.textColor
                 text: {
                     LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance)
                 }
@@ -116,6 +116,7 @@ Rectangle {
                 width: parent.width
                 font.weight: Font.Medium
                 font.pixelSize: 22
+                loading: RootStore.tokensLoading
             }
 
             StatusBaseText {
@@ -160,6 +161,7 @@ Rectangle {
                 asset.bgColor: Theme.palette.primaryColor3
                 statusListItemTitle.font.weight: Font.Medium
                 color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
+                statusListItemSubTitle.loading: RootStore.tokensLoading
                 onClicked: {
                     changeSelectedAccount(index)
                     showSavedAddresses = false

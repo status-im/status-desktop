@@ -30,3 +30,5 @@ AssetsDetailsHeader 1.0 AssetsDetailsHeader.qml
 InformationTag 1.0 InformationTag.qml
 TransactionDetailsHeader.qml 1.0 TransactionDetailsHeader.qml
 TokenDelegate 1.0 TokenDelegate.qml
+StyledTextEditWithLoadingState 1.0 StyledTextEditWithLoadingState.qml
+LoadingTokenDelegate 1.0 LoadingTokenDelegate.qml

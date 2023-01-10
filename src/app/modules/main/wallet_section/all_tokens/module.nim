@@ -60,11 +60,11 @@ method getHistoricalDataForToken*(self: Module, symbol: string, currency: string
   self.controller.getHistoricalDataForToken(symbol, currency, ALL_TIME_RANGE)
 
 method tokenHistoricalDataResolved*(self: Module, tokenDetails: string) =
-  self.view.tokenHistoricalDataReady(tokenDetails)
+  self.view.setTokenHistoricalDataReady(tokenDetails)
 
 
 method fetchHistoricalBalanceForTokenAsJson*(self: Module, address: string, symbol: string, timeIntervalEnum: int) =
   self.controller.fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum)
 
 method tokenBalanceHistoryDataResolved*(self: Module, balanceHistoryJson: string) =
-  self.view.tokenBalanceHistoryDataReady(balanceHistoryJson)
+  self.view.setTokenBalanceHistoryDataReady(balanceHistoryJson)

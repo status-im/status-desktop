@@ -40,12 +40,13 @@ Item {
                 font.bold: true
                 text: currentAccount.name
             }
-            StatusBaseText {
+            StatusTextWithLoadingState {
                 Layout.alignment: Qt.AlignVCenter
                 font.pixelSize: 28
                 font.bold: true
-                color: Theme.palette.baseColor1
+                customColor: Theme.palette.baseColor1
                 text: LocaleUtils.currencyAmountToLocaleString(root.currentAccount.currencyBalance)
+                loading: root.walletStore.tokensLoading
             }
         }
 

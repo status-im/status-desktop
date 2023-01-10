@@ -655,6 +655,8 @@ QtObject {
     readonly property string seedWalletType: "seed"
     readonly property string generatedWalletType: "generated"
 
+    readonly property string dummyText: "Dummy"
+
     readonly property string windows: "windows"
     readonly property string linux: "linux"
     readonly property string mac: "mac"
