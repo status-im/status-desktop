@@ -461,7 +461,7 @@ Loader {
                 topPadding: showHeader ? Style.current.halfPadding : 2
                 bottomPadding: showHeader && nextMessageHasHeader() ? Style.current.halfPadding : 2
                 disableHover: root.disableHover ||
-                              (root.chatLogView && root.chatLogView.flickingVertically) ||
+                              (root.chatLogView && root.chatLogView.moving) ||
                               (root.messageContextMenu && root.messageContextMenu.opened) ||
                               Global.profilePopupOpened ||
                               Global.popupOpened
