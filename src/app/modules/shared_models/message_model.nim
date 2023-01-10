@@ -3,19 +3,24 @@ import NimQml, Tables, json, sets, algorithm, sequtils, strutils, strformat, sug
 import message_item, message_reaction_item, message_transaction_parameters_item
 
 import ../../../app_service/service/message/dto/message# as message_dto
+import ../../../app_service/service/contacts/dto/contact_details
 
 type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
     PrevMsgTimestamp
     PrevMsgIndex
+    PrevMsgSenderId
+    PrevMsgContentType
     NextMsgIndex
+    NextMsgTimestamp
     CommunityId
     ResponseToMessageWithId
     SenderId
     SenderDisplayName
     SenderOptionalName
     SenderIcon
+    SenderColorHash
     AmISender
     SenderIsAdded
     Seen
@@ -50,9 +55,12 @@ type
     QuotedMessageParsedText
     QuotedMessageContentType
     QuotedMessageDeleted
-    QuotedMessageFromIterator
+    QuotedMessageAuthorName
     QuotedMessageAuthorDisplayName
-    QuotedMessageAuthorAvatar
+    QuotedMessageAuthorThumbnailImage
+    QuotedMessageAuthorEnsVerified
+    QuotedMessageAuthorIsContact
+    QuotedMessageAuthorColorHash
 
 QtObject:
   type
@@ -103,13 +111,17 @@ QtObject:
       ModelRole.Id.int:"id",
       ModelRole.PrevMsgTimestamp.int: "prevMsgTimestamp",
       ModelRole.PrevMsgIndex.int:"prevMsgIndex",
+      ModelRole.PrevMsgSenderId.int:"prevMsgSenderId",
+      ModelRole.PrevMsgContentType.int:"prevMsgContentType",
       ModelRole.NextMsgIndex.int:"nextMsgIndex",
+      ModelRole.NextMsgTimestamp.int:"nextMsgTimestamp",
       ModelRole.CommunityId.int:"communityId",
       ModelRole.ResponseToMessageWithId.int:"responseToMessageWithId",
       ModelRole.SenderId.int:"senderId",
       ModelRole.SenderDisplayName.int:"senderDisplayName",
       ModelRole.SenderOptionalName.int:"senderOptionalName",
       ModelRole.SenderIcon.int:"senderIcon",
+      ModelRole.SenderColorHash.int:"senderColorHash",
       ModelRole.AmISender.int:"amISender",
       ModelRole.SenderIsAdded.int:"senderIsAdded",
       ModelRole.Seen.int:"seen",
@@ -139,13 +151,16 @@ QtObject:
       ModelRole.SenderEnsVerified.int: "senderEnsVerified",
       ModelRole.MessageAttachments.int: "messageAttachments",
       ModelRole.QuotedMessageFrom.int: "quotedMessageFrom",
-      ModelRole.QuotedMessageFromIterator.int: "quotedMessageFromIterator",
       ModelRole.QuotedMessageText.int: "quotedMessageText",
       ModelRole.QuotedMessageParsedText.int: "quotedMessageParsedText",
       ModelRole.QuotedMessageContentType.int: "quotedMessageContentType",
       ModelRole.QuotedMessageDeleted.int: "quotedMessageDeleted",
+      ModelRole.QuotedMessageAuthorName.int: "quotedMessageAuthorName",
       ModelRole.QuotedMessageAuthorDisplayName.int: "quotedMessageAuthorDisplayName",
-      ModelRole.QuotedMessageAuthorAvatar.int: "quotedMessageAuthorAvatar",
+      ModelRole.QuotedMessageAuthorThumbnailImage.int: "quotedMessageAuthorThumbnailImage",
+      ModelRole.QuotedMessageAuthorEnsVerified.int: "quotedMessageAuthorEnsVerified",
+      ModelRole.QuotedMessageAuthorIsContact.int: "quotedMessageAuthorIsContact",
+      ModelRole.QuotedMessageAuthorColorHash.int: "quotedMessageAuthorColorHash",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -161,16 +176,34 @@ QtObject:
     case enumRole:
     of ModelRole.Id:
       result = newQVariant(item.id)
-    of PrevMsgTimestamp:
+    of ModelRole.PrevMsgTimestamp:
       if (index.row + 1 < self.items.len):
         let prevItem = self.items[index.row + 1]
         result = newQVariant(prevItem.timestamp)
       else:
         result = newQVariant(0)
+    of ModelRole.PrevMsgSenderId:
+      if (index.row + 1 < self.items.len):
+        let prevItem = self.items[index.row + 1]
+        result = newQVariant(prevItem.senderId)
+      else:
+        result = newQVariant("")
+    of ModelRole.PrevMsgContentType:
+      if (index.row + 1 < self.items.len):
+        let prevItem = self.items[index.row + 1]
+        result = newQVariant(prevItem.contentType.int)
+      else:
+        result = newQVariant(ContentType.Unknown.int)
     of ModelRole.PrevMsgIndex:
       result = newQVariant(index.row + 1)
     of ModelRole.NextMsgIndex:
       result = newQVariant(index.row - 1)
+    of ModelRole.NextMsgTimestamp:
+      if (index.row - 1 >= 0 and index.row - 1 < self.items.len):
+        let nextItem = self.items[index.row - 1]
+        result = newQVariant(nextItem.timestamp)
+      else:
+        result = newQVariant(0)
     of ModelRole.CommunityId:
       result = newQVariant(item.communityId)
     of ModelRole.ResponseToMessageWithId:
@@ -185,6 +218,8 @@ QtObject:
       result = newQVariant(item.senderOptionalName)
     of ModelRole.SenderIcon:
       result = newQVariant(item.senderIcon)
+    of ModelRole.SenderColorHash:
+      result = newQVariant(item.senderColorHash)
     of ModelRole.AmISender:
       result = newQVariant(item.amISender)
     of ModelRole.SenderIsAdded:
@@ -199,8 +234,6 @@ QtObject:
       result = newQVariant(item.mentioned)
     of ModelRole.QuotedMessageFrom:
       result = newQVariant(item.quotedMessageFrom)
-    of ModelRole.QuotedMessageFromIterator:
-      result = newQVariant(item.quotedMessageFromIterator)
     of ModelRole.QuotedMessageText:
       result = newQVariant(item.quotedMessageText)
     of ModelRole.QuotedMessageParsedText:
@@ -209,10 +242,18 @@ QtObject:
       result = newQVariant(item.quotedMessageContentType)
     of ModelRole.QuotedMessageDeleted:
       result = newQVariant(item.quotedMessageDeleted)
+    of ModelRole.QuotedMessageAuthorName:
+      result = newQVariant(item.quotedMessageAuthorDetails.details.name)
     of ModelRole.QuotedMessageAuthorDisplayName:
       result = newQVariant(item.quotedMessageAuthorDisplayName)
-    of ModelRole.QuotedMessageAuthorAvatar:
+    of ModelRole.QuotedMessageAuthorThumbnailImage:
       result = newQVariant(item.quotedMessageAuthorAvatar)
+    of ModelRole.QuotedMessageAuthorEnsVerified:
+      result = newQVariant(item.quotedMessageAuthorDetails.details.ensVerified)
+    of ModelRole.QuotedMessageAuthorIsContact:
+      result = newQVariant(item.quotedMessageAuthorDetails.details.isContact())
+    of ModelRole.QuotedMessageAuthorColorHash:
+      result = newQVariant(item.quotedMessageAuthorDetails.colorHash)
     of ModelRole.MessageText:
       result = newQVariant(item.messageText)
     of ModelRole.UnparsedText:
@@ -310,7 +351,7 @@ QtObject:
           self.dataChanged(index, index, @[
             ModelRole.QuotedMessageFrom.int,
             ModelRole.QuotedMessageAuthorDisplayName.int,
-            ModelRole.QuotedMessageAuthorAvatar.int,
+            ModelRole.QuotedMessageAuthorThumbnailImage.int,
             ModelRole.QuotedMessageText.int,
             ModelRole.QuotedMessageParsedText.int,
             ModelRole.QuotedMessageContentType.int,
@@ -372,11 +413,18 @@ QtObject:
         item.quotedMessageParsedText = ""
         item.quotedMessageFrom = ""
         item.quotedMessageDeleted = true
+        item.quotedMessageAuthorDetails = ContactDetails()
         self.dataChanged(ind, ind, @[
           ModelRole.QuotedMessageFrom.int,
           ModelRole.QuotedMessageParsedText.int,
           ModelRole.QuotedMessageContentType.int,
           ModelRole.QuotedMessageDeleted.int,
+          ModelRole.QuotedMessageAuthorName.int,
+          ModelRole.QuotedMessageAuthorDisplayName.int,
+          ModelRole.QuotedMessageAuthorThumbnailImage.int,
+          ModelRole.QuotedMessageAuthorEnsVerified.int,
+          ModelRole.QuotedMessageAuthorIsContact.int,
+          ModelRole.QuotedMessageAuthorColorHash.int
         ])
 
   proc removeItem*(self: Model, messageId: string) =
@@ -494,6 +542,7 @@ QtObject:
         roles = @[ModelRole.SenderDisplayName.int,
           ModelRole.SenderOptionalName.int,
           ModelRole.SenderIcon.int,
+          ModelRole.SenderColorHash.int,
           ModelRole.SenderIsAdded.int,
           ModelRole.SenderTrustStatus.int,
           ModelRole.SenderEnsVerified.int]
@@ -503,10 +552,12 @@ QtObject:
         roles.add(@[ModelRole.MessageText.int, ModelRole.UnparsedText.int, ModelRole.MessageContainsMentions.int])
 
       if (self.items[i].quotedMessageFrom == contactId):
-        # If there is a quoted message whom the author changed, increase the iterator to force
-        # the view to re-fetch the author's details
-        self.items[i].quotedMessageFromIterator = self.items[i].quotedMessageFromIterator + 1
-        roles.add(ModelRole.QuotedMessageFromIterator.int)
+        roles.add(@[ModelRole.QuotedMessageAuthorName.int,
+          ModelRole.QuotedMessageAuthorDisplayName.int,
+          ModelRole.QuotedMessageAuthorThumbnailImage.int,
+          ModelRole.QuotedMessageAuthorEnsVerified.int,
+          ModelRole.QuotedMessageAuthorIsContact.int,
+          ModelRole.QuotedMessageAuthorColorHash.int])
 
       if(roles.len > 0):
         let index = self.createIndex(i, 0, nil)

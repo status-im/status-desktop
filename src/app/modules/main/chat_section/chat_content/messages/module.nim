@@ -86,6 +86,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     senderDisplayName = "",
     senderOptionalName = "",
     senderIcon = "",
+    senderColorHash = "",
     amISender = false,
     senderIsAdded = false,
     outgoingStatus = "",
@@ -115,6 +116,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     quotedMessageContentType = -1,
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
+    quotedMessageAuthorDetails = ContactDetails()
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -122,11 +124,13 @@ proc createChatIdentifierItem(self: Module): Item =
   var chatName = chatDto.name
   var smallImage = ""
   var chatIcon = ""
+  var senderColorHash = ""
   var senderIsAdded = false
   if(chatDto.chatType == ChatType.OneToOne):
     let sender = self.controller.getContactDetails(chatDto.id)
     senderIsAdded = sender.details.added
     (chatName, smallImage, chatIcon) = self.controller.getOneToOneChatNameAndImage()
+    senderColorHash = sender.colorHash
 
   result = initItem(
     CHAT_IDENTIFIER_MESSAGE_ID,
@@ -136,6 +140,7 @@ proc createChatIdentifierItem(self: Module): Item =
     senderDisplayName = chatName,
     senderOptionalName = "",
     senderIcon = chatIcon,
+    senderColorHash = senderColorHash,
     amISender = false,
     senderIsAdded,
     outgoingStatus = "",
@@ -165,6 +170,7 @@ proc createChatIdentifierItem(self: Module): Item =
     quotedMessageContentType = -1,
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
+    quotedMessageAuthorDetails = ContactDetails()
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module) =
@@ -199,10 +205,16 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       # Now we just skip deleted messages
       if message.deleted or message.deletedForMe:
         continue
-
-      let sender = self.controller.getContactDetails(message.`from`)
       let chatDetails = self.controller.getChatDetails()
       let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+
+      let sender = self.controller.getContactDetails(message.`from`)
+      var quotedMessageAuthorDetails = ContactDetails()
+      if message.quotedMessage.`from` != "":
+        if(message.`from` == message.quotedMessage.`from`):
+          quotedMessageAuthorDetails = sender
+        else:
+          quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
 
       let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
       var transactionContract = message.transactionParameters.contract
@@ -220,6 +232,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         sender.defaultDisplayName,
         sender.optionalName,
         sender.icon,
+        sender.colorHash,
         (isCurrentUser and message.contentType.ContentType != ContentType.DiscordMessage),
         sender.details.added,
         message.outgoingStatus,
@@ -256,6 +269,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         message.quotedMessage.contentType,
         message.quotedMessage.deleted,
         message.quotedMessage.discordMessage,
+        quotedMessageAuthorDetails
         )
 
       for r in reactions:
@@ -305,6 +319,12 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
     let sender = self.controller.getContactDetails(message.`from`)
     let chatDetails = self.controller.getChatDetails()
     let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+    var quotedMessageAuthorDetails = ContactDetails()
+    if message.quotedMessage.`from` != "":
+      if(message.`from` == message.quotedMessage.`from`):
+        quotedMessageAuthorDetails = sender
+      else:
+        quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
 
     let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
 
@@ -333,6 +353,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       sender.defaultDisplayName,
       sender.optionalName,
       sender.icon,
+      sender.colorHash,
       (isCurrentUser and message.contentType.ContentType != ContentType.DiscordMessage),
       sender.details.added,
       message.outgoingStatus,
@@ -369,6 +390,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       message.quotedMessage.contentType,
       message.quotedMessage.deleted,
       message.quotedMessage.discordMessage,
+      quotedMessageAuthorDetails,
     )
     items.add(item)
 
@@ -499,9 +521,12 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.senderDisplayName = updatedContact.defaultDisplayName
       item.senderOptionalName = updatedContact.optionalName
       item.senderIcon = updatedContact.icon
+      item.senderColorHash = updatedContact.colorHash
       item.senderIsAdded = updatedContact.details.added
       item.senderTrustStatus = updatedContact.details.trustStatus
       item.senderEnsVerified = updatedContact.details.ensVerified
+    if(item.quotedMessageAuthorDetails.details.id == contactId):
+      item.quotedMessageAuthorDetails = updatedContact
     if(item.messageContainsMentions):
       let (message, _, err) = self.controller.getMessageDetails(item.id)
       if(err.len == 0):
@@ -615,6 +640,13 @@ method getMessageById*(self: Module, messageId: string): message_item.Item =
     let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
 
     let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
+    var quotedMessageAuthorDetails = ContactDetails()
+    if message.quotedMessage.`from` != "":
+      if(message.`from` == message.quotedMessage.`from`):
+        quotedMessageAuthorDetails = sender
+      else:
+        quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
+        
     var transactionContract = message.transactionParameters.contract
     var transactionValue = message.transactionParameters.value
     var isCurrentUser = sender.isCurrentUser
@@ -630,6 +662,7 @@ method getMessageById*(self: Module, messageId: string): message_item.Item =
       sender.defaultDisplayName,
       sender.optionalName,
       sender.icon,
+      sender.colorHash,
       (isCurrentUser and message.contentType.ContentType != ContentType.DiscordMessage),
       sender.details.added,
       message.outgoingStatus,
@@ -665,7 +698,8 @@ method getMessageById*(self: Module, messageId: string): message_item.Item =
       self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
       message.quotedMessage.contentType,
       message.quotedMessage.deleted,
-      message.quotedMessage.discordMessage
+      message.quotedMessage.discordMessage,
+      quotedMessageAuthorDetails,
       )
     return item
   return nil

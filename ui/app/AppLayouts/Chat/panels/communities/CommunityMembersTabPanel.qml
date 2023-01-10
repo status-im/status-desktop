@@ -138,7 +138,7 @@ Item {
                 asset.isLetterIdenticon: !model.icon
                 asset.width: 40
                 asset.height: 40
-                ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey, !!model.ensName)
+                ringSettings.ringSpecModel: model.colorHash
                 statusListItemIcon.badge.visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers)
 
                 onClicked: root.userProfileClicked(model.pubKey)

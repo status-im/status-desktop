@@ -93,6 +93,7 @@ proc createMemberItem(self: Module, memberId, requestId: string): MemberItem =
     alias = contactDetails.details.alias,
     icon = contactDetails.icon,
     colorId = contactDetails.colorId,
+    colorHash = contactDetails.colorHash,
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(memberId).statusType),
     isContact = contactDetails.details.isContact,
     isVerified = contactDetails.details.isContactVerified(),

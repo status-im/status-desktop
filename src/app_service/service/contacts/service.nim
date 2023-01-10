@@ -565,6 +565,8 @@ QtObject:
     result.colorId = procs_from_visual_identity_service.colorIdOf(pubKey)
     result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
     result.details = contactDto
+    if not contactDto.ensVerified:
+      result.colorHash = procs_from_visual_identity_service.getColorHashAsJson(pubKey) 
 
   proc markUntrustworthy*(self: Service, publicKey: string) =
     let response = status_contacts.markUntrustworthy(publicKey)

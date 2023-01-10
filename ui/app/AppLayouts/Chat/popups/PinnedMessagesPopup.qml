@@ -73,6 +73,7 @@ StatusDialog {
                     senderIsEnsVerified: model.senderEnsVerified
                     senderIsAdded: model.senderIsAdded
                     senderIcon: model.senderIcon
+                    senderColorHash: model.senderColorHash
                     senderTrustStatus: model.senderTrustStatus
                     amISender: model.amISender
                     messageText: model.messageText
@@ -84,6 +85,16 @@ StatusDialog {
                     messagePinnedBy: model.pinnedBy
                     linkUrls: model.links
                     transactionParams: model.transactionParameters
+                    quotedMessageText: model.quotedMessageParsedText
+                    quotedMessageFrom: model.quotedMessageFrom
+                    quotedMessageContentType: model.quotedMessageContentType
+                    quotedMessageDeleted: model.quotedMessageDeleted
+                    quotedMessageAuthorDetailsName: model.quotedMessageAuthorName
+                    quotedMessageAuthorDetailsDisplayName: model.quotedMessageAuthorDisplayName
+                    quotedMessageAuthorDetailsThumbnailImage: model.quotedMessageAuthorThumbnailImage
+                    quotedMessageAuthorDetailsEnsVerified: model.quotedMessageAuthorEnsVerified
+                    quotedMessageAuthorDetailsIsContact: model.quotedMessageAuthorIsContact
+                    quotedMessageAuthorDetailsColorHash: model.quotedMessageAuthorColorHash
 
                     // This is possible since we have all data loaded before we load qml.
                     // When we fetch messages to fulfill a gap we have to set them at once.

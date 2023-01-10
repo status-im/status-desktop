@@ -64,4 +64,21 @@ QtObject {
        This property provides the pixels size of the ring line.
     */
     property real ringPxSize
+
+    readonly property var normalizedRingSpecModel: {
+        if (typeof ringSpecModel !== "string") {
+            return ringSpecModel
+        }
+
+        if(!ringSpecModel) {
+            return undefined
+        }
+
+         try {
+            return JSON.parse(ringSpecModel)
+         } catch (e) {
+            console.log("StatusIdenticonRingSettings: ringSpecModel is not a valid JSON string")
+            return undefined
+         }
+    }
 }

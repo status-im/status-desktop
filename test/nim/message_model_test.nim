@@ -1,7 +1,7 @@
 import unittest
 
 import ../../../src/app_service/common/types
-import ../../../src/app_service/service/contacts/dto/contacts
+import ../../../src/app_service/service/contacts/dto/contact_details
 import ../../../src/app_service/service/message/dto/message
 
 import ../../../src/app/modules/shared_models/message_model
@@ -17,6 +17,7 @@ proc createTestMessageItem(id: string, clock: int64): Item =
     senderDisplayName = "",
     senderOptionalName = "",
     senderIcon = "",
+    senderColorHash = "",
     amISender = false,
     senderIsAdded = false,
     outgoingStatus = "",
@@ -46,6 +47,7 @@ proc createTestMessageItem(id: string, clock: int64): Item =
     quotedMessageContentType = -1,
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
+    quotedMessageAuthorDetails = ContactDetails(),
   )
 
 let message0_chatIdentifier = createTestMessageItem("chat-identifier", -2)

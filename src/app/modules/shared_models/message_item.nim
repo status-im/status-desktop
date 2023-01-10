@@ -1,6 +1,6 @@
 import json, strformat, strutils
 import ../../../app_service/common/types
-import ../../../app_service/service/contacts/dto/contacts
+import ../../../app_service/service/contacts/dto/contact_details
 import ../../../app_service/service/message/dto/message
 
 export types.ContentType
@@ -17,6 +17,7 @@ type
     amISender: bool
     senderIsAdded: bool
     senderIcon: string
+    senderColorHash: string
     seen: bool
     outgoingStatus: string
     messageText: string
@@ -52,8 +53,7 @@ type
     quotedMessageDeleted: bool
     quotedMessageAuthorDisplayName: string
     quotedMessageAuthorAvatar: string
-    # This is only used to update the author's details when author's details change
-    quotedMessageFromIterator: int
+    quotedMessageAuthorDetails: ContactDetails
 
 proc initItem*(
     id,
@@ -63,6 +63,7 @@ proc initItem*(
     senderDisplayName,
     senderOptionalName,
     senderIcon: string,
+    senderColorHash: string,
     amISender: bool,
     senderIsAdded: bool,
     outgoingStatus,
@@ -92,6 +93,7 @@ proc initItem*(
     quotedMessageContentType: int,
     quotedMessageDeleted: bool,
     quotedMessageDiscordMessage: DiscordMessage,
+    quotedMessageAuthorDetails: ContactDetails,
     ): Item =
   result = Item()
   result.id = id
@@ -103,6 +105,7 @@ proc initItem*(
   result.amISender = amISender
   result.senderIsAdded = senderIsAdded
   result.senderIcon = senderIcon
+  result.senderColorHash = senderColorHash
   result.seen = seen
   result.outgoingStatus = outgoingStatus
   result.messageText = if contentType == ContentType.Image : "" else: text
@@ -135,13 +138,16 @@ proc initItem*(
   result.quotedMessageParsedText = quotedMessageParsedText
   result.quotedMessageContentType = quotedMessageContentType
   result.quotedMessageDeleted = quotedMessageDeleted
-  result.quotedMessageFromIterator = 0
+  result.quotedMessageAuthorDetails = quotedMessageAuthorDetails
 
   if quotedMessageContentType == ContentType.DiscordMessage.int:
     result.quotedMessageAuthorDisplayName = quotedMessageDiscordMessage.author.name
     result.quotedMessageAuthorAvatar = quotedMessageDiscordMessage.author.localUrl
     if result.quotedMessageAuthorAvatar == "":
       result.quotedMessageAuthorAvatar = quotedMessageDiscordMessage.author.avatarUrl
+  else:
+    result.quotedMessageAuthorDisplayName = quotedMessageAuthorDetails.details.displayName
+    result.quotedMessageAuthorAvatar = quotedMessageAuthorDetails.details.image.thumbnail
 
   if contentType == ContentType.DiscordMessage:
 
@@ -172,6 +178,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     senderDisplayName = "",
     senderOptionalName = "",
     senderIcon = "",
+    senderColorHash = "",
     amISender = false,
     senderIsAdded = false,
     outgoingStatus = "",
@@ -201,6 +208,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     quotedMessageContentType = -1,
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
+    quotedMessageAuthorDetails = ContactDetails(),
   )
 
 proc `$`*(self: Item): string =
@@ -264,6 +272,12 @@ proc senderIcon*(self: Item): string {.inline.} =
 
 proc `senderIcon=`*(self: Item, value: string) {.inline.} =
   self.senderIcon = value
+
+proc senderColorHash*(self: Item): string {.inline.} =
+  self.senderColorHash
+
+proc `senderColorHash=`*(self: Item, value: string) {.inline.} =
+  self.senderColorHash = value
 
 proc amISender*(self: Item): bool {.inline.} =
   self.amISender
@@ -403,6 +417,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "amISender": self.amISender,
     "senderIsAdded": self.senderIsAdded,
     "senderIcon": self.senderIcon,
+    "senderColorHash": self.senderColorHash,
     "seen": self.seen,
     "outgoingStatus": self.outgoingStatus,
     "messageText": self.messageText,
@@ -491,11 +506,6 @@ proc quotedMessageDeleted*(self: Item): bool {.inline.} =
 proc `quotedMessageDeleted=`*(self: Item, value: bool) {.inline.} =
   self.quotedMessageDeleted = value
 
-proc quotedMessageFromIterator*(self: Item): int {.inline.} =
-  self.quotedMessageFromIterator
-proc `quotedMessageFromIterator=`*(self: Item, value: int) {.inline.} =
-  self.quotedMessageFromIterator = value
-
 proc quotedMessageAuthorDisplayName*(self: Item): string {.inline.} =
   self.quotedMessageAuthorDisplayName
 
@@ -507,3 +517,8 @@ proc quotedMessageAuthorAvatar*(self: Item): string {.inline.} =
 
 proc `quotedMessageAuthorAvatar=`*(self: Item, value: string) {.inline.} =
   self.quotedMessageAuthorAvatar = value
+  
+proc quotedMessageAuthorDetails*(self: Item): ContactDetails {.inline.} =
+  self.quotedMessageAuthorDetails
+proc `quotedMessageAuthorDetails=`*(self: Item, value: ContactDetails) {.inline.} =
+  self.quotedMessageAuthorDetails = value

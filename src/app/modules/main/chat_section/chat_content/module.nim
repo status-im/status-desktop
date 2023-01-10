@@ -157,6 +157,12 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let chatDetails = self.controller.getChatDetails()
   let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+  var quotedMessageAuthorDetails = ContactDetails()
+  if message.quotedMessage.`from` != "":
+    if(message.`from` == message.quotedMessage.`from`):
+      quotedMessageAuthorDetails = contactDetails
+    else:
+      quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
 
   var transactionContract = message.transactionParameters.contract
   var transactionValue = message.transactionParameters.value
@@ -173,6 +179,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     contactDetails.defaultDisplayName,
     contactDetails.optionalName,
     contactDetails.icon,
+    contactDetails.colorHash,
     isCurrentUser,
     contactDetails.details.added,
     message.outgoingStatus,
@@ -209,6 +216,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     message.quotedMessage.contentType,
     message.quotedMessage.deleted,
     message.quotedMessage.discordMessage,
+    quotedMessageAuthorDetails
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy

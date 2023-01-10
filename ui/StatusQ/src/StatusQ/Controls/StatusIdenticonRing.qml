@@ -62,7 +62,7 @@ Item {
         ringPxSize: 1.5
     }
 
-    visible: settings && settings.ringSpecModel !== undefined
+    visible: settings && typeof settings.normalizedRingSpecModel !== "undefined"
 
     Loader {
         anchors.fill: parent
@@ -79,23 +79,23 @@ Item {
             }
 
             function getSegmentsCount() {
-                if (typeof settings.ringSpecModel.rowCount !== "undefined") {
-                    return settings.ringSpecModel.rowCount()
+                if (typeof settings.normalizedRingSpecModel.rowCount !== "undefined") {
+                    return settings.normalizedRingSpecModel.rowCount()
                 }
-                if (typeof settings.ringSpecModel.count !== "undefined") {
-                    return settings.ringSpecModel.count
+                if (typeof settings.normalizedRingSpecModel.count !== "undefined") {
+                    return settings.normalizedRingSpecModel.count
                 }
-                return settings.ringSpecModel.length
+                return settings.normalizedRingSpecModel.length
             }
 
             function getSegment(i) {
-                if (typeof settings.ringSpecModel.rowCount !== "undefined") {
+                if (typeof settings.normalizedRingSpecModel.rowCount !== "undefined") {
                     return abstactItemModelWrapper.itemAt(i)
                 }
-                if (typeof settings.ringSpecModel.count !== "undefined") {
-                    return settings.ringSpecModel.get(i)
+                if (typeof settings.normalizedRingSpecModel.count !== "undefined") {
+                    return settings.normalizedRingSpecModel.get(i)
                 }
-                return settings.ringSpecModel[i]
+                return settings.normalizedRingSpecModel[i]
             }
 
             function totalRingUnits() {
@@ -109,7 +109,7 @@ Item {
 
             Repeater {
                 id: abstactItemModelWrapper
-                model: typeof settings.ringSpecModel.rowCount !== "undefined" ? settings.ringSpecModel : null
+                model: typeof settings.normalizedRingSpecModel.rowCount !== "undefined" ? settings.normalizedRingSpecModel : null
                 delegate: Item {
                     readonly property int segmentLength: model.segmentLength
                     readonly property int colorId: model.colorId
@@ -126,7 +126,7 @@ Item {
                 let arcPos = settings.initalAngleRad
                 context.reset()
 
-                if(settings.ringSpecModel) {
+                if(settings.normalizedRingSpecModel) {
                     for (let i=0; i < segmentsCount; i++) {
                         const segment = getSegment(i)
                         printArcSegment(context,
@@ -144,7 +144,7 @@ Item {
 
             Connections {
                 target: root.settings
-                function onRingSpecModelChanged() {
+                function onNormalizedRingSpecModelChanged() {
                     requestPaint()
                 }
             }
