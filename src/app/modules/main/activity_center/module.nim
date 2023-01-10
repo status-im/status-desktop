@@ -75,6 +75,13 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
 
+  var quotedMessageAuthorDetails = ContactDetails()
+  if message.quotedMessage.`from` != "":
+    if(message.`from` == message.quotedMessage.`from`):
+      quotedMessageAuthorDetails = contactDetails
+    else:
+      quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
+      
   return msg_item_qobj.newMessageItem(msg_item.initItem(
     message.id,
     chatDetails.communityId, # we don't received community id via `activityCenterNotifications` api call
@@ -83,6 +90,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     contactDetails.defaultDisplayName,
     contactDetails.optionalName,
     contactDetails.icon,
+    contactDetails.colorHash,
     contactDetails.isCurrentUser,
     contactDetails.details.added,
     message.outgoingStatus,
@@ -112,6 +120,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     message.quotedMessage.contentType,
     message.quotedMessage.deleted,
     message.quotedMessage.discordMessage,
+    quotedMessageAuthorDetails
     ))
 
 method convertToItems*(

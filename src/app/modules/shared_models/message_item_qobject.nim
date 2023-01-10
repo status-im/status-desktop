@@ -93,6 +93,10 @@ QtObject:
   QtProperty[string] senderIcon:
     read = senderIcon
 
+  proc senderColorHash*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.senderColorHash
+  QtProperty[string] senderColorHash:
+    read = senderColorHash
+
   proc seen*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.seen
   QtProperty[bool] seen:
     read = seen

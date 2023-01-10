@@ -262,6 +262,7 @@ Item {
             senderOptionalName: model.senderOptionalName
             senderIsEnsVerified: model.senderEnsVerified
             senderIcon: model.senderIcon
+            senderColorHash: model.senderColorHash
             senderIsAdded: model.senderIsAdded
             senderTrustStatus: model.senderTrustStatus
             amISender: model.amISender
@@ -287,22 +288,28 @@ Item {
             quotedMessageText: model.quotedMessageParsedText
             quotedMessageFrom: model.quotedMessageFrom
             quotedMessageContentType: model.quotedMessageContentType
-            quotedMessageFromIterator: model.quotedMessageFromIterator
             quotedMessageDeleted: model.quotedMessageDeleted
-
+            quotedMessageAuthorDetailsName: model.quotedMessageAuthorName
+            quotedMessageAuthorDetailsDisplayName: model.quotedMessageAuthorDisplayName
+            quotedMessageAuthorDetailsThumbnailImage: model.quotedMessageAuthorThumbnailImage
+            quotedMessageAuthorDetailsEnsVerified: model.quotedMessageAuthorEnsVerified
+            quotedMessageAuthorDetailsIsContact: model.quotedMessageAuthorIsContact
+            quotedMessageAuthorDetailsColorHash: model.quotedMessageAuthorColorHash
+            
             gapFrom: model.gapFrom
             gapTo: model.gapTo
 
-            // This is possible since we have all data loaded before we load qml.
-            // When we fetch messages to fulfill a gap we have to set them at once.
-            // Also one important thing here is that messages are set in descending order
-            // in terms of `timestamp` of a message, that means a message with the most
-            // recent time is added at index 0.
-            prevMessageIndex: model.prevMsgIndex
-            prevMessageAsJsonObj: messageStore.getMessageByIndexAsJson(model.prevMsgIndex)
-            prevMsgTimestamp: model.prevMsgTimestamp
-            nextMessageIndex: model.nextMsgIndex
-            nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(model.nextMsgIndex)
+             // This is possible since we have all data loaded before we load qml.
+             // When we fetch messages to fulfill a gap we have to set them at once.
+             // Also one important thing here is that messages are set in descending order
+             // in terms of `timestamp` of a message, that means a message with the most
+             // recent time is added at index 0.
+            prevMessageIndex: prevMsgIndex
+            prevMessageTimestamp: prevMsgTimestamp
+            prevMessageSenderId: prevMsgSenderId
+            prevMessageContentType: prevMsgContentType
+            nextMessageIndex: nextMsgIndex
+            nextMessageTimestamp: nextMsgTimestamp
 
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);

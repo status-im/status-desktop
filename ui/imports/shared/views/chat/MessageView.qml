@@ -42,6 +42,8 @@ Loader {
     property string senderOptionalName: ""
     property bool senderIsEnsVerified: false
     property string senderIcon: ""
+    //TODO: provide the sender color hash from nim model in case of ContactVerificationRequest, OngoingContactVerificationRequest or PinnedMessagesPopupremove
+    property var senderColorHash:  senderId != "" ? Utils.getColorHashAsJson(senderId, senderIsEnsVerified) : ""
     property bool amISender: false
     property bool amIChatAdmin: messageStore && messageStore.amIChatAdmin
     property bool senderIsAdded: false
@@ -66,7 +68,12 @@ Loader {
     property int quotedMessageContentType: Constants.messageContentType.messageType
     property int quotedMessageFromIterator: -1
     property bool quotedMessageDeleted: false
-    property var quotedMessageAuthorDetails: quotedMessageFromIterator >= 0 && Utils.getContactDetailsAsJson(quotedMessageFrom, false)
+    property string quotedMessageAuthorDetailsName: ""
+    property string quotedMessageAuthorDetailsDisplayName: ""
+    property string quotedMessageAuthorDetailsThumbnailImage: ""
+    property bool quotedMessageAuthorDetailsEnsVerified: false
+    property bool quotedMessageAuthorDetailsIsContact: false
+    property var quotedMessageAuthorDetailsColorHash
 
     // External behavior changers
     property bool isInPinnedPopup: false // The pinned popup limits the number of buttons shown
@@ -77,26 +84,18 @@ Loader {
     property int gapTo: 0
 
     property int prevMessageIndex: -1
+    property int prevMessageContentType: prevMessageAsJsonObj ? prevMessageAsJsonObj.contentType : Constants.messageContentType.unknownContentType
+    property double prevMessageTimestamp: prevMessageAsJsonObj ? prevMessageAsJsonObj.timestamp : 0
+    property string prevMessageSenderId: prevMessageAsJsonObj ? prevMessageAsJsonObj.senderId : ""
     property var prevMessageAsJsonObj
     property int nextMessageIndex: -1
+    property int nextMessageTimestamp: nextMessageAsJsonObj ? nextMessageAsJsonObj.timestamp : 0
     property var nextMessageAsJsonObj
 
     property bool editModeOn: false
     property bool isEdited: false
 
-    property string authorPrevMsg: {
-        if(!prevMessageAsJsonObj ||
-                // The system message for private groups appear as created by the group host, but it shouldn't
-                prevMessageAsJsonObj.contentType === Constants.messageContentType.systemMessagePrivateGroupType) {
-            return ""
-        }
-
-        return prevMessageAsJsonObj.senderId
-    }
-    property double prevMsgTimestamp: prevMessageAsJsonObj ? prevMessageAsJsonObj.timestamp : 0
-    property double nextMsgTimestamp: nextMessageAsJsonObj ? nextMessageAsJsonObj.timestamp : 0
-
-    property bool shouldRepeatHeader: d.getShouldRepeatHeader(messageTimestamp, prevMsgTimestamp, messageOutgoingStatus)
+    property bool shouldRepeatHeader: d.getShouldRepeatHeader(messageTimestamp, prevMessageTimestamp, messageOutgoingStatus)
 
     property bool hasMention: false
 
@@ -166,8 +165,8 @@ Loader {
             }
             messageContextMenu.messageSenderId = quotedMessageFrom
             messageContextMenu.selectedUserPublicKey = quotedMessageFrom
-            messageContextMenu.selectedUserDisplayName = quotedMessageAuthorDetails.displayName
-            messageContextMenu.selectedUserIcon = quotedMessageAuthorDetails.thumbnailImage
+            messageContextMenu.selectedUserDisplayName = quotedMessageAuthorDetailsDisplayName
+            messageContextMenu.selectedUserIcon = quotedMessageAuthorDetailsThumbnailImage
         }
 
         messageContextMenu.parent = sender;
@@ -283,7 +282,7 @@ Loader {
         id: fetchMoreMessagesButtonComponent
         FetchMoreMessagesButton {
             nextMessageIndex: root.nextMessageIndex
-            nextMsgTimestamp: root.nextMsgTimestamp
+            nextMsgTimestamp: root.nextMessageTimestamp
             onTimerTriggered: {
                 messageStore.requestMoreMessages();
             }
@@ -357,7 +356,7 @@ Loader {
                 Layout.topMargin: 16
                 Layout.bottomMargin: 16
                 messageTimestamp: root.messageTimestamp
-                previousMessageTimestamp: root.prevMessageIndex === -1 ? 0 : root.prevMsgTimestamp
+                previousMessageTimestamp: root.prevMessageIndex === -1 ? 0 : root.prevMessageTimestamp
                 visible: text !== ""
             }
 
@@ -456,8 +455,8 @@ Loader {
                 resendError: root.resendError
                 reactionsModel: root.reactionsModel
 
-                showHeader: root.senderId !== root.authorPrevMsg ||
-                            root.shouldRepeatHeader || dateGroupLabel.visible || isAReply
+                showHeader: root.shouldRepeatHeader || dateGroupLabel.visible || isAReply ||
+                            (root.prevMessageContentType !== Constants.messageContentType.systemMessagePrivateGroupType && root.senderId !== root.prevMessageSenderId)
                 isActiveMessage: d.isMessageActive
                 topPadding: showHeader ? Style.current.halfPadding : 2
                 bottomPadding: showHeader && nextMessageHasHeader() ? Style.current.halfPadding : 2
@@ -605,7 +604,7 @@ Loader {
                         assetSettings.isImage: root.isDiscordMessage || root.senderIcon.startsWith("data")
                         pubkey: root.senderId
                         colorId: Utils.colorIdForPubkey(root.senderId)
-                        colorHash: Utils.getColorHashAsJson(root.senderId, root.senderIsEnsVerified)
+                        colorHash: root.senderColorHash
                         showRing: !root.isDiscordMessage && !root.senderIsEnsVerified
                     }
                 }
@@ -637,19 +636,19 @@ Loader {
 
                     amISender: root.quotedMessageFrom === userProfile.pubKey
                     sender.id: root.quotedMessageFrom
-                    sender.isContact: quotedMessageAuthorDetails.isContact
-                    sender.displayName: root.quotedMessageContentType === Constants.messageContentType.discordMessageType ? quotedMessageAuthorDisplayName : quotedMessageAuthorDetails.displayName
-                    sender.isEnsVerified: quotedMessageAuthorDetails.ensVerified
-                    sender.secondaryName: quotedMessageAuthorDetails.name || ""
+                    sender.isContact: quotedMessageAuthorDetailsIsContact
+                    sender.displayName: quotedMessageAuthorDetailsDisplayName
+                    sender.isEnsVerified: quotedMessageAuthorDetailsEnsVerified
+                    sender.secondaryName: quotedMessageAuthorDetailsName || ""
                     sender.profileImage {
                         width: 20
                         height: 20
-                        name: root.quotedMessageContentType === Constants.messageContentType.discordMessageType ? quotedMessageAuthorAvatar : quotedMessageAuthorDetails.thumbnailImage
-                        assetSettings.isImage: quotedMessageAuthorDetails.thumbnailImage !== "" || quotedMessageAuthorAvatar != ""
+                        name: quotedMessageAuthorDetailsThumbnailImage
+                        assetSettings.isImage: quotedMessageAuthorDetailsThumbnailImage
                         showRing: (root.quotedMessageContentType !== Constants.messageContentType.discordMessageType) && !sender.isEnsVerified
                         pubkey: sender.id
                         colorId: Utils.colorIdForPubkey(sender.id)
-                        colorHash: Utils.getColorHashAsJson(sender.id, sender.isEnsVerified)
+                        colorHash: quotedMessageAuthorDetailsColorHash
                     }
                 }
 

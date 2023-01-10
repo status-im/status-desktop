@@ -88,7 +88,7 @@ Item {
                 asset.isLetterIdenticon: (asset.name === "")
                 asset.color: Utils.colorForColorId(model.colorId)
                 status: model.onlineStatus
-                ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey, ensVerified) // FIXME: use model.colorHash
+                ringSettings.ringSpecModel: model.colorHash
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
                         // Set parent, X & Y positions for the messageContextMenu
