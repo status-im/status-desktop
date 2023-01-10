@@ -13,8 +13,13 @@ Image {
     fillMode: Image.PreserveAspectFit
 
     onIconChanged: {
-        if (icon !== "") {
-            source = "../../assets/img/icons/" + icon + ".svg";
+        if(icon.startsWith("data:image/") || icon.startsWith("https://")) {
+            //raw image data
+            source = icon
+            objectName = "custom-icon"    
+        }
+        else if (icon !== "") {
+            source = "../../assets/img/icons/" + icon+ ".svg";
             objectName = icon + "-icon"
         }
     }
