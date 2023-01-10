@@ -59,82 +59,133 @@ Item {
                     root.clicked(this, mouse)
                 }
             }
-        }       
-        StatusBaseText {
-            id: messageOriginInfo
-            verticalAlignment: Text.AlignVCenter
-            visible: text
-            color: Theme.palette.baseColor1
-            font.pixelSize: Theme.asideTextFontSize
-            text: root.messageOriginInfo
         }
-        StatusContactVerificationIcons {
-            id: verificationIcons
-            visible: !root.amISender
-            isContact: root.isContact
-            trustIndicator: root.trustIndicator
+
+        Loader {
+            id: messageOriginInfoLoader
+            active: root.messageOriginInfo
+            asynchronous: true
+            sourceComponent: StatusBaseText {
+                id: messageOriginInfo
+                verticalAlignment: Text.AlignVCenter
+                color: Theme.palette.baseColor1
+                font.pixelSize: Theme.asideTextFontSize
+                text: root.messageOriginInfo
+            }
         }
-        StatusBaseText {
-            id: secondaryDisplayName
-            verticalAlignment: Text.AlignVCenter
-            visible: !root.amISender && !!root.sender.secondaryName
-            color: Theme.palette.baseColor1
-            font.pixelSize: Theme.asideTextFontSize
-            text: `(${root.sender.secondaryName})`
+
+        Loader {
+            id: verificationIconsLoader
+            active: !root.amISender
+            asynchronous: true
+            sourceComponent: StatusContactVerificationIcons {
+                id: verificationIcons
+                isContact: root.isContact
+                trustIndicator: root.trustIndicator
+            }
         }
-        StatusBaseText {
-            verticalAlignment: Text.AlignVCenter
-            visible: secondaryDisplayName.visible && tertiaryDetailText.visible
-            font.pixelSize: Theme.asideTextFontSize
-            color: Theme.palette.baseColor1
-            text: "•"
+
+        Loader {
+            id: secondaryDisplayNameLoader
+            active: !root.amISender && !!root.sender.secondaryName
+            asynchronous: true
+            sourceComponent: StatusBaseText {
+                id: secondaryDisplayName
+                verticalAlignment: Text.AlignVCenter
+                color: Theme.palette.baseColor1
+                font.pixelSize: Theme.asideTextFontSize
+                text: `(${root.sender.secondaryName})`
+            }
         }
-        StatusBaseText {
-            id: tertiaryDetailText
-            verticalAlignment: Text.AlignVCenter
-            visible: !root.amISender && root.messageOriginInfo === "" && text
-            font.pixelSize: Theme.asideTextFontSize
-            elide: Text.ElideMiddle
-            color: Theme.palette.baseColor1
-            text: root.tertiaryDetail ? Utils.elideText(root.tertiaryDetail, 5, 3) : ""
+
+        Loader {
+            id: dotLoader
+            sourceComponent: dotComponent
+            active: secondaryDisplayNameLoader.active && tertiaryDetailTextLoader.active
+            asynchronous: true
         }
-        StatusBaseText {
-            verticalAlignment: Text.AlignVCenter
-            visible: verificationIcons.width <= 0 || secondaryDisplayName.visible || root.amISender || tertiaryDetailText.visible
-            font.pixelSize: Theme.asideTextFontSize
-            color: Theme.palette.baseColor1
-            text: "•"
+
+        Loader {
+            id: tertiaryDetailTextLoader
+            active: !root.amISender && root.messageOriginInfo === ""
+            asynchronous: true
+            sourceComponent: StatusBaseText {
+                id: tertiaryDetailText
+                verticalAlignment: Text.AlignVCenter
+                font.pixelSize: Theme.asideTextFontSize
+                visible: text
+                elide: Text.ElideMiddle
+                color: Theme.palette.baseColor1
+                text: root.tertiaryDetail ? Utils.elideText(root.tertiaryDetail, 5, 3) : ""
+            }
         }
+
+        Loader {
+            id: secondDotLoader
+            sourceComponent: dotComponent
+            active: verificationIconsLoader.active && verificationIconsLoader.item.width <= 0 || secondaryDisplayNameLoader.active || root.amISender || tertiaryDetailTextLoader.active
+            asynchronous: true
+        }
+
         StatusTimeStampLabel {
             verticalAlignment: Text.AlignVCenter
             id: timestampText
             timestamp: root.timestamp
         }
-        StatusBaseText {
-            verticalAlignment: Text.AlignVCenter
-            color: Theme.palette.dangerColor1
-            font.pixelSize: Theme.tertiaryTextFontSize
-            text: root.resendText
-            visible: showResendButton && !!timestampText.text
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                onClicked: root.resendClicked()
+
+        Loader {
+            id: resendButtonLoader
+            active: showResendButton && !!timestampText.text
+            asynchronous: true
+            sourceComponent: StatusBaseText {
+                id: resendButton
+                verticalAlignment: Text.AlignVCenter
+                color: Theme.palette.dangerColor1
+                font.pixelSize: Theme.tertiaryTextFontSize
+                text: root.resendText
+                MouseArea {
+                    cursorShape: Qt.PointingHandCursor
+                    anchors.fill: parent
+                    onClicked: root.resendClicked()
+                }
             }
         }
-        StatusBaseText {
-            verticalAlignment: Text.AlignVCenter
-            color: Theme.palette.baseColor1
-            font.pixelSize: Theme.tertiaryTextFontSize
-            text: qsTr("Failed to resend: %1").arg(resendError) // TODO replace this with the required design
-            visible: resendError && !!timestampText.text
+
+        Loader {
+            id: resendErrorTextLoader
+            active: resendError && !!timestampText.text
+            asynchronous: true
+            sourceComponent: StatusBaseText {
+                id: resendErrorText
+                verticalAlignment: Text.AlignVCenter
+                color: Theme.palette.baseColor1
+                font.pixelSize: Theme.tertiaryTextFontSize
+                text: qsTr("Failed to resend: %1").arg(resendError) // TODO replace this with the required design
+            }
         }
-        StatusBaseText {
-            verticalAlignment: Text.AlignVCenter
-            color: Theme.palette.baseColor1
-            font.pixelSize: Theme.tertiaryTextFontSize
-            text: qsTr("Sending...") // TODO replace this with the required design
-            visible: showSendingLoader && !!timestampText.text
+
+        Loader {
+            id: sendingInProgressLoader
+            active: showSendingLoader && !!timestampText.text
+            asynchronous: true
+            sourceComponent: StatusBaseText {
+                id: sendingInProgress
+                verticalAlignment: Text.AlignVCenter
+                color: Theme.palette.baseColor1
+                font.pixelSize: Theme.tertiaryTextFontSize
+                text: qsTr("Sending...") // TODO replace this with the required design
+            }
+        }
+
+        Component {
+            id: dotComponent
+            StatusBaseText {
+                id: dot
+                verticalAlignment: Text.AlignVCenter
+                font.pixelSize: Theme.asideTextFontSize
+                color: Theme.palette.baseColor1
+                text: "•"
+            }
         }
     }
 }
