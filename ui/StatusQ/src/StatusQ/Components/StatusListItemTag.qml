@@ -71,7 +71,6 @@ Control {
             Layout.fillWidth: true
             color: Theme.palette.primaryColor1
             text: root.title
-            Layout.rightMargin: closeButtonVisible ? 0 : d.commonMargin
             elide: Text.ElideRight
         }
 
