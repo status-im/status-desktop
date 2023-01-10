@@ -21,6 +21,7 @@ StatusBaseText {
         if (prevMsgDate > 0 && currentMsgDate.getDay() === prevMsgDate.getDay())
             return "";
 
+        const now = new Date();
         // FIXME Qt6: replace with Intl.DateTimeFormat
         const monthName = Qt.locale().standaloneMonthName(currentMsgDate.getMonth(), Locale.LongFormat)
         if (now.getFullYear() > currentMsgDate.getFullYear())
