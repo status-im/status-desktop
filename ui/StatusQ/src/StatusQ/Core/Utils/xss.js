@@ -4,6 +4,7 @@
  * Most this code was copied from https://github.com/leizongmin/js-xss and slightly modifed
  * to work with JavaScript resource loading in QML.
  */
+.pragma library
 
 var defaultCSSFilter = new FilterCSS();
 

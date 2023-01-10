@@ -82,10 +82,9 @@ QtObject {
         return value.match(/<img class=\"emoji\" draggable=\"false\" alt=\"(.+?)\" src=\".+?\/StatusQ\/src\/assets\/twemoji\/.+?" width=\"[0-9]*\" height=\"[0-9]*\" style=\"(.+?)\" ?\/>/g, "$1");
     }
     function getEmojiUnicode(shortname) {
-        var _emoji;
-        EmojiJSON.emoji_json.forEach(function(emoji) {
-            if (emoji.shortname === shortname)
-                _emoji = emoji;
+
+        const _emoji = EmojiJSON.emoji_json.find(function(emoji) {
+            return (emoji.shortname === shortname)
         })
 
         if (_emoji !== undefined)
