@@ -36,6 +36,7 @@ type QuotedMessage* = object
   text*: string
   parsedText*: seq[ParsedText]
   contentType*: int
+  deleted*: bool
 
 type DiscordMessageAttachment* = object
   id*: string
@@ -164,6 +165,7 @@ proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   discard jsonObj.getProp("from", result.`from`)
   discard jsonObj.getProp("text", result.text)
   discard jsonObj.getProp("contentType", result.contentType)
+  discard jsonObj.getProp("deleted", result.deleted)
 
   var parsedTextArr: JsonNode
   if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
