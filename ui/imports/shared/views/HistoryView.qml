@@ -17,7 +17,6 @@ import "../controls"
 ColumnLayout {
     id: historyView
 
-    property var locale
     property var account
     property int pageSize: 20 // number of transactions per page
     property bool isLoading: false
@@ -114,7 +113,6 @@ ColumnLayout {
     Component {
         id: transactionDelegate
         TransactionDelegate {
-            locale: historyView.locale
             property bool modelDataValid: modelData !== undefined && !!modelData
             isIncoming: modelDataValid ? modelData.to === account.address: false
             cryptoValue: modelDataValid ? RootStore.getCurrencyAmount(RootStore.hex2Eth(modelData.value), resolvedSymbol) : ""

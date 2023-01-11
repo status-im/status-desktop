@@ -15,7 +15,6 @@ QtObject {
     property var mainModuleInst: mainModule
     property var walletSectionTransactionsInst: walletSectionTransactions
 
-    property var locale: Qt.locale(localAppSettings.language)
     property string currentCurrency: walletSection.currentCurrency
     property var allNetworks: networksModule.all
     property var accounts: walletSectionAccounts.model

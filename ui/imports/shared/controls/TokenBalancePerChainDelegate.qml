@@ -9,7 +9,6 @@ import utils 1.0
 StatusListItem {
     id: root
 
-    property var locale
     property var getNetworkIcon: function(chainId){
         return ""
     }

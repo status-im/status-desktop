@@ -22,7 +22,6 @@ Item {
     implicitHeight: visible ? accountSelectionTabBar.height + stackLayout.height + Style.current.bigPadding: 0
 
     property var store
-    property var locale
 
     signal contactSelected(string address, int type)
 

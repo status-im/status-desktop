@@ -54,7 +54,6 @@ Item {
             ColumnLayout {
                 WalletHeader {
                     Layout.fillWidth: true
-                    locale: RootStore.locale
                     currency: RootStore.currentCurrency
                     currentAccount: RootStore.currentAccount
                     store: root.store
@@ -92,7 +91,6 @@ Item {
                     AssetsView {
                         account: RootStore.currentAccount
                         assetDetailsLaunched: stack.currentIndex === 2
-                        locale: RootStore.locale
                         onAssetClicked: {
                             assetDetailView.token = token
                             stack.currentIndex = 2
@@ -104,7 +102,6 @@ Item {
                         }
                     }
                     HistoryView {
-                        locale: RootStore.locale
                         account: RootStore.currentAccount
                         onLaunchTransactionDetail: {
                             transactionDetailView.transaction = transaction
@@ -128,7 +125,6 @@ Item {
             }
             TransactionDetailView {
                 id: transactionDetailView
-                locale: RootStore.locale
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 sendModal: root.sendModal

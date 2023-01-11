@@ -98,7 +98,7 @@ StatusSectionLayout {
                     Repeater {
                         model: d.featuredCommunitiesModel
                         delegate: StatusCommunityCard {
-                            locale: "es"
+                            locale: Qt.locale("es")
                             communityId: model.communityId
                             loaded: model.available
                             logo: model.logo
@@ -136,7 +136,7 @@ StatusSectionLayout {
                     Repeater {
                         model: d.popularCommunitiesModel
                         delegate: StatusCommunityCard {
-                            locale: "es"
+                            locale: Qt.locale("es")
                             communityId: model.communityId
                             loaded: model.available
                             logo: model.logo

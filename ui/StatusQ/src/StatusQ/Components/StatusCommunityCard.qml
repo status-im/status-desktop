@@ -96,9 +96,8 @@ Rectangle {
     /*!
        \qmlproperty var StatusCommunityCard::locale
        This property holds the application locale used to give format to members number representation.
-       If not provided, default value is "en".
     */
-    property var locale: Qt.locale("en")
+    property var locale: Qt.locale()
     /*!
        \qmlproperty url StatusCommunityCard::banner
        This property holds the community banner image url.

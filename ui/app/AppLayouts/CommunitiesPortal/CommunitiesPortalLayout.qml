@@ -170,7 +170,6 @@ StatusSectionLayout {
                     padding: 0
                     bottomPadding: d.layoutBottomMargin
 
-                    locale: communitiesStore.locale
                     model: filteredCommunitiesModel
                     searchLayout: d.searchMode
 

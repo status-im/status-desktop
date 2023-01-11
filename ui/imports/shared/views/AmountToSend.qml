@@ -14,7 +14,6 @@ ColumnLayout {
 
     property alias input: topAmountToSendInput
 
-    property var locale
     property var selectedAsset
     property bool isBridgeTx: false
     property bool interactive: false

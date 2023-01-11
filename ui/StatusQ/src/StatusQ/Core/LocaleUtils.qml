@@ -40,7 +40,7 @@ QtObject {
             return "N/A"
         }
         if (typeof(currencyAmount) !== "object") {
-            console.log("Wrong type for currencyAmount: " + JSON.stringify(currencyAmount))
+            console.warn("Wrong type for currencyAmount: " + JSON.stringify(currencyAmount))
             console.trace()
             return NaN
         }

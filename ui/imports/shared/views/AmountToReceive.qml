@@ -10,7 +10,6 @@ import shared.stores 1.0
 ColumnLayout {
     id: root
 
-    property var locale
     property var store
     property var selectedAsset
     property bool isLoading: false

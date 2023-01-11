@@ -23,7 +23,7 @@ GridLayout {
     Repeater {
         model: Models.curatedCommunitiesModel
         delegate: StatusCommunityCard {
-            locale: "en"
+            locale: Qt.locale("en")
             communityId: model.communityId
             loaded: model.available
             logo: model.logo

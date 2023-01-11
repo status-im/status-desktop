@@ -204,12 +204,10 @@ Popup {
 
             AssetsView {
                 id: assetsTab
-                locale: RootStore.locale
                 account: WalletStore.dappBrowserAccount
             }
             HistoryView {
                 id: historyTab
-                locale: RootStore.locale
                 account: WalletStore.dappBrowserAccount
             }
         }

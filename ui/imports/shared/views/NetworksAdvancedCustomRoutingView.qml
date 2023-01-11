@@ -82,7 +82,6 @@ ColumnLayout {
                 visible: active
                 sourceComponent: NetworkCardsComponent {
                     store: root.store
-                    locale: root.store.locale
                     selectedAccount: root.selectedAccount
                     allNetworks: root.store.allNetworks
                     amountToSend: root.amountToSend

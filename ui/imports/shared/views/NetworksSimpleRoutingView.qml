@@ -16,7 +16,6 @@ RowLayout {
     id: root
 
     property var store
-    property var locale
     property var bestRoutes
     property var amountToSend
     property bool isLoading: false

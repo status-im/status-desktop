@@ -16,7 +16,6 @@ Item {
     id: root
 
     property var store
-    property var locale
     property var bestRoutes
     property var selectedAccount
     property var selectedAsset

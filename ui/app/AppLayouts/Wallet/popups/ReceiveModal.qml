@@ -59,7 +59,6 @@ StatusModal {
             root.selectedAccount = newAccount
         }
         showAllWalletTypes: true
-        locale: RootStore.locale
     }
 
     contentItem: Column {

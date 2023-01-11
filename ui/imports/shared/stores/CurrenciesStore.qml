@@ -5,8 +5,6 @@ import "../../../app/AppLayouts/Profile/stores"
 QtObject {
     id: root
 
-    property var locale: Qt.locale(localAppSettings.language)
-
     // Some token+currency-related functions are implemented in the profileSectionModule.
     // We should probably refactor this and move those functions to some Wallet module.
     property ProfileSectionStore profileSectionStore: ProfileSectionStore {}

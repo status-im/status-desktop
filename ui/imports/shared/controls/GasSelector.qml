@@ -21,7 +21,6 @@ Item {
     property var getGasEthValue: function () {}
     property var getFiatValue: function () {}
     property var getCurrencyAmount: function () {}
-    property var locale
 
     width: parent.width
     height: visible ? advancedGasSelector.height + Style.current.halfPadding : 0

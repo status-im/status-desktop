@@ -7,8 +7,6 @@ import shared.stores 1.0
 QtObject {
     id: root
 
-    property var locale: Qt.locale(localAppSettings.language)
-
     property var contactsStore
 
     property bool openCreateChat: false

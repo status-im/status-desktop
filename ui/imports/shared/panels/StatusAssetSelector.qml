@@ -27,7 +27,6 @@ Item {
     property string userSelectedToken
     property string currentCurrencySymbol
     property string placeholderText
-    property var locale
 
     property var tokenAssetSourceFn: function (symbol) {
         return ""
@@ -150,7 +149,6 @@ Item {
         delegate: TokenBalancePerChainDelegate {
             objectName: "AssetSelector_ItemDelegate_" + symbol
             width: comboBox.control.popup.width
-            locale: root.locale
             getNetworkIcon: root.getNetworkIcon
             onTokenSelected: {
                 userSelectedToken = selectedToken.symbol
