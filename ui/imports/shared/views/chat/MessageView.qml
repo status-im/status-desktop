@@ -115,7 +115,7 @@ Loader {
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
-    readonly property bool isExpired: d.getIsExpired(messageOutgoingStatus, messageTimestamp)
+    readonly property bool isExpired: d.getIsExpired(messageTimestamp, messageOutgoingStatus)
     readonly property bool isSending: messageOutgoingStatus === Constants.sending && !isExpired
 
     signal imageClicked(var image)
