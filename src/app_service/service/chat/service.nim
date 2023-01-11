@@ -187,8 +187,24 @@ QtObject:
     return -1
       
 
+  proc chatsWithCategoryHaveUnreadMessages*(self: Service, communityId: string, categoryId: string): bool =
+    if communityId == "" or categoryId == "":
+      return false
+
+    for chat in self.channelGroups[communityId].chats:
+      if chat.unviewedMentionsCount > 0 or chat.unviewedMentionsCount > 0:
+        return true
+    return false
+
   proc updateOrAddChat*(self: Service, chat: ChatDto) =
+    # status-go doesn't seem to preserve categoryIDs from chat
+    # objects received via new messages. So we rely on what we
+    # have in memory.
+    var categoryId = ""
+    if self.chats.hasKey(chat.id):
+      categoryId = self.chats[chat.id].categoryId
     self.chats[chat.id] = chat
+    self.chats[chat.id].categoryId = categoryId
     self.events.emit(SIGNAL_CHAT_ADDED_OR_UPDATED, ChatArgs(communityId: chat.communityId, chatId: chat.id))
 
     var channelGroupId = chat.communityId

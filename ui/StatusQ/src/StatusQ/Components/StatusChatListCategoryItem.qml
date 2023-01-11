@@ -19,6 +19,7 @@ StatusListItem {
     property bool showActionButtons: false
     property bool showMenuButton: showActionButtons
     property bool showAddButton: showActionButtons
+    property bool hasUnreadMessages: false
     property alias addButton: addButton
     property alias menuButton: menuButton
     property alias toggleButton: toggleButton
@@ -30,7 +31,7 @@ StatusListItem {
     color: sensor.containsMouse || highlighted ? Theme.palette.baseColor2 : "transparent"
 
     statusListItemTitle.color: Theme.palette.directColor4
-    statusListItemTitle.font.weight: Font.Medium
+    statusListItemTitle.font.weight: hasUnreadMessages ? Font.Bold : Font.Medium
 
     statusListItemComponentsSlot.spacing: 1
 

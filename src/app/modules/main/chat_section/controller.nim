@@ -89,6 +89,11 @@ proc init*(self: Controller) =
 
   self.events.on(message_service.SIGNAL_MESSAGES_MARKED_AS_READ) do(e: Args):
     let args = message_service.MessagesMarkedAsReadArgs(e)
+    # update chat entity in chat service
+    var chat = self.chatService.getChatById(args.chatId)
+    chat.unviewedMessagesCount = 0
+    chat.unviewedMentionsCount = 0
+    self.chatService.updateOrAddChat(chat)
     self.delegate.onMarkAllMessagesRead(args.chatId)
 
   self.events.on(chat_service.SIGNAL_CHAT_LEFT) do(e: Args):
@@ -270,6 +275,9 @@ proc getChatDetails*(self: Controller, chatId: string): ChatDto =
 
 proc getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[ChatDto] =
   return self.chatService.getChatsOfChatTypes(types)
+
+proc chatsWithCategoryHaveUnreadMessages*(self: Controller, communityId: string, categoryId: string): bool =
+  return self.chatService.chatsWithCategoryHaveUnreadMessages(communityId, categoryId)
 
 proc getCommunityDetails*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
