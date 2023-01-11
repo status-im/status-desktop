@@ -117,7 +117,7 @@ method type*(self: BaseItem): int {.inline base.} =
 method hasUnreadMessages*(self: BaseItem): bool {.inline base.} =
   self.hasUnreadMessages
 
-method `hasUnreadMessages=`*(self: var BaseItem, value: bool) {.inline base.} =
+method `hasUnreadMessages=`*(self: BaseItem, value: bool) {.inline base.} =
   self.hasUnreadMessages = value
 
 method lastMessageTimestamp*(self: BaseItem): int {.inline base.} =

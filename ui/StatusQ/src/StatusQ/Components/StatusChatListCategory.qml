@@ -15,6 +15,7 @@ Column {
     property string name: ""
     property bool opened: true
     property bool dragged: false
+    property bool hasUnreadMessages: false
 
     property alias statusChatListCategoryItem: statusChatListCategoryItem
     property alias showActionButtons: statusChatListCategoryItem.showActionButtons
@@ -37,6 +38,7 @@ Column {
         id: statusChatListCategoryItem
         title: statusChatListCategory.name
         opened: statusChatListCategory.opened
+        hasUnreadMessages: statusChatListCategory.hasUnreadMessages
         sensor.pressAndHoldInterval: 150
         propagateTitleClicks: true // title click is handled as a normal click (fallthru)
         showMenuButton: showActionButtons && !!statusChatListCategory.popupMenu

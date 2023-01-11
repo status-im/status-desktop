@@ -165,6 +165,7 @@ Item {
                         originalOrder: model.position
                         categoryId: model.itemId
                         name: model.name
+                        hasUnreadMessages: model.hasUnreadMessages
 
                         showActionButtons: root.showCategoryActionButtons
                         addButton.onClicked: root.categoryAddButtonClicked(model.itemId)
@@ -252,6 +253,7 @@ Item {
                             categoryId: draggable.chatListCategory.categoryId
                             name: draggable.chatListCategory.name
                             showActionButtons: draggable.chatListCategory.showActionButtons
+                            hasUnreadMessages: draggable.chatListCategory.hasUnreadMessages
 
                             chatList.model: draggable.chatListCategory.chatList.model
                         }

@@ -83,3 +83,6 @@ proc appendSubItem*(self: Item, item: SubItem) =
 
 proc setActiveSubItem*(self: Item, subItemId: string) =
   self.subItems.setActiveItem(subItemId)
+
+proc setHasUnreadMessages*(self: Item, value: bool) =
+  self.hasUnreadMessages = value

@@ -534,6 +534,9 @@ method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatD
     self.view.chatsModel().removeItemById(chatDto.id)
     categoryChannels.add(channelItem)
 
+    if chatDto.unviewedMessagesCount > 0:
+      categoryItem.setHasUnreadMessages(true)
+
   categoryItem.appendSubItems(categoryChannels)
   self.view.chatsModel().appendItem(categoryItem)
 
@@ -599,6 +602,8 @@ method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDt
         chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
         amIChatAdmin=true, chatDto.timestamp.int, hasNotification, notificationsCount, chatDto.muted, blocked=false,
         active=isActive, chatDto.position)
+      if chatDto.unviewedMessagesCount > 0:
+        categoryItem.setHasUnreadMessages(true)
       categoryItem.appendSubItem(channelItem)
     else:
       let channelItem = initItem(chatDto.id, chatDto.name, chatDto.icon,
@@ -671,6 +676,10 @@ method onChatUnmuted*(self: Module, chatId: string) =
 
 method onMarkAllMessagesRead*(self: Module, chatId: string) =
   self.updateBadgeNotifications(chatId, hasUnreadMessages=false, unviewedMentionsCount=0)
+  let chatDetails = self.controller.getChatDetails(chatId)
+  if chatDetails.categoryId != "":
+    let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(chatDetails.communityId, chatDetails.categoryId)
+    self.view.chatsModel().setCategoryHasUnreadMessages(chatDetails.categoryId, hasUnreadMessages)
 
 method markAllMessagesRead*(self: Module, chatId: string) =
   self.controller.markAllMessagesRead(chatId)
@@ -762,6 +771,9 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   if (chatDetails.muted):
     # No need to send a notification
     return
+
+  if chatDetails.categoryId != "":
+    self.view.chatsModel().setCategoryHasUnreadMessages(chatDetails.categoryId, true)
 
   # Prepare notification
   var notificationType = notification_details.NotificationType.NewMessage

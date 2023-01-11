@@ -228,6 +228,13 @@ QtObject:
       if(it.id == id):
         return it
 
+  proc setCategoryHasUnreadMessages*(self: Model, id: string, value: bool) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].hasUnreadMessages = value
+        self.dataChanged(index, index, @[ModelRole.HasUnreadMessages.int])
+
   proc getCategoryAndPosition*(self: Model, id: string): (string, int) =
     let item = self.getItemById(id)
     if (not item.isNil):
