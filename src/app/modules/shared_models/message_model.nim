@@ -77,6 +77,8 @@ QtObject:
       [{i}]:({$self.items[i]})
       """
 
+  proc resetNewMessagesMarker*(self: Model)
+  
   proc countChanged(self: Model) {.signal.}
   proc getCount(self: Model): int {.slot.} =
     self.items.len
@@ -297,6 +299,8 @@ QtObject:
     self.items.delete(ind)
     self.endRemoveRows()
 
+    self.resetNewMessagesMarker()
+
     if ind > 0 and ind < self.items.len:
       self.updateItemAtIndex(ind - 1)
     if ind + 1 < self.items.len:
@@ -503,7 +507,6 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-# TODO: handle messages removal
   proc resetNewMessagesMarker*(self: Model) =
     self.removeNewMessagesMarker()
     let messageId = self.firstUnseenMessageId
