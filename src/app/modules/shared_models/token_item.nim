@@ -18,13 +18,13 @@ type
     assetWebsiteUrl: string
     builtOn: string
     address: string
-    marketCap: string
-    highDay: string
-    lowDay: string
-    changePctHour: string
-    changePctDay: string
-    changePct24hour: string
-    change24hour: string
+    marketCap: float64
+    highDay: float64
+    lowDay: float64
+    changePctHour: float64
+    changePctDay: float64
+    changePct24hour: float64
+    change24hour: float64
     currencyPrice: float
     decimals: int
 
@@ -41,13 +41,13 @@ proc initItem*(
   assetWebsiteUrl: string,
   builtOn: string,
   address: string,
-  marketCap: string,
-  highDay: string,
-  lowDay: string,
-  changePctHour: string,
-  changePctDay: string,
-  changePct24hour: string,
-  change24hour: string,
+  marketCap: float64,
+  highDay: float64,
+  lowDay: float64,
+  changePctHour: float64,
+  changePctDay: float64,
+  changePct24hour: float64,
+  change24hour: float64,
   currencyPrice: float,
   decimals: int,
 ): Item =
@@ -139,25 +139,25 @@ proc getBuiltOn*(self: Item): string =
 proc getAddress*(self: Item): string =
   return self.address
 
-proc getMarketCap*(self: Item): string =
+proc getMarketCap*(self: Item): float64 =
   return self.marketCap
 
-proc getHighDay*(self: Item): string =
+proc getHighDay*(self: Item): float64 =
   return self.highDay
 
-proc getLowDay*(self: Item): string =
+proc getLowDay*(self: Item): float64 =
   return self.lowDay
 
-proc getChangePctHour*(self: Item): string =
+proc getChangePctHour*(self: Item): float64 =
   return self.changePctHour
 
-proc getChangePctDay*(self: Item): string =
+proc getChangePctDay*(self: Item): float64 =
   return self.changePctDay
 
-proc getChangePct24hour*(self: Item): string =
+proc getChangePct24hour*(self: Item): float64 =
   return self.changePct24hour
 
-proc getChange24hour*(self: Item): string =
+proc getChange24hour*(self: Item): float64 =
   return self.change24hour
 
 proc getCurrencyPrice*(self: Item): float =

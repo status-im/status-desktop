@@ -32,13 +32,13 @@ type
     description*: string
     assetWebsiteUrl*: string
     builtOn*: string
-    marketCap*: string
-    highDay*: string
-    lowDay*: string
-    changePctHour*: string
-    changePctDay*: string
-    changePct24hour*: string
-    change24hour*: string
+    marketCap*: float64
+    highDay*: float64
+    lowDay*: float64
+    changePctHour*: float64
+    changePctDay*: float64
+    changePct24hour*: float64
+    change24hour*: float64
     currencyPrice*: float64
 
 type
@@ -157,7 +157,7 @@ proc toBalanceDto*(jsonObj: JsonNode): BalanceDto =
   discard jsonObj.getProp("address", result.address)
   discard jsonObj.getProp("chainId", result.chainId)
 
-proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
+proc toWalletTokenDto*(jsonObj: JsonNode, currentCurrency: string): WalletTokenDto =
   result = WalletTokenDto()
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("symbol", result.symbol)
@@ -166,14 +166,16 @@ proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
   discard jsonObj.getProp("description", result.description)
   discard jsonObj.getProp("assetWebsiteUrl", result.assetWebsiteUrl)
   discard jsonObj.getProp("builtOn", result.builtOn)
-  discard jsonObj.getProp("marketCap", result.marketCap)
-  discard jsonObj.getProp("highDay", result.highDay)
-  discard jsonObj.getProp("lowDay", result.lowDay)
-  discard jsonObj.getProp("changePctHour", result.changePctHour)
-  discard jsonObj.getProp("changePctDay", result.changePctDay)
-  discard jsonObj.getProp("changePct24hour", result.changePct24hour)
-  discard jsonObj.getProp("change24hour", result.change24hour)
   discard jsonObj.getProp("currencyPrice", result.currencyPrice)
+
+  let marketValuesPerCurrency = jsonObj{"marketValuesPerCurrency"}{currentCurrency}
+  result.marketCap = marketValuesPerCurrency{"marketCap"}.getFloat
+  result.highDay = marketValuesPerCurrency{"highDay"}.getFloat
+  result.lowDay = marketValuesPerCurrency{"lowDay"}.getFloat
+  result.changePctHour = marketValuesPerCurrency{"changePctHour"}.getFloat
+  result.changePctDay = marketValuesPerCurrency{"changePctDay"}.getFloat
+  result.changePct24hour = marketValuesPerCurrency{"changePct24hour"}.getFloat
+  result.change24hour = marketValuesPerCurrency{"change24hour"}.getFloat
 
   var balancesPerChainObj: JsonNode
   if(jsonObj.getProp("balancesPerChain", balancesPerChainObj)):

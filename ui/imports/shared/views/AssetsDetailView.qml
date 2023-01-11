@@ -264,47 +264,47 @@ Item {
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Market Cap")
-                secondaryText: token && token.marketCap !== "" ? token.marketCap : "---"
+                secondaryText: token && token.marketCap !== "" ? LocaleUtils.numberToLocaleString(token.marketCap, 4) : "---"
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day Low")
-                secondaryText: token && token.lowDay !== "" ? token.lowDay : "---"
+                secondaryText: token && token.lowDay !== "" ? LocaleUtils.numberToLocaleString(token.lowDay, 4) : "---"
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day High")
-                secondaryText: token && token.highDay ? token.highDay : "---"
+                secondaryText: token && token.highDay ? LocaleUtils.numberToLocaleString(token.highDay, 4)  : "---"
             }
             Item {
                 Layout.fillWidth: true
             }
             InformationTile {
-                readonly property string changePctHour: token ? token.changePctHour : ""
+                readonly property string changePctHour: token ? LocaleUtils.numberToLocaleString(token.changePctHour, 2) : ""
                 maxWidth: parent.width
                 primaryText: qsTr("Hour")
                 secondaryText: changePctHour ? "%1%".arg(changePctHour) : "---"
-                secondaryLabel.color: Math.sign(Number(changePctHour)) === 0 ? Theme.palette.directColor1 :
-                                                                               Math.sign(Number(changePctHour)) === -1 ? Theme.palette.dangerColor1 :
-                                                                                                                         Theme.palette.successColor1
+                secondaryLabel.color: Math.sign(changePctHour) === 0 ? Theme.palette.directColor1 :
+                                      Math.sign(changePctHour) === -1 ? Theme.palette.dangerColor1 :
+                                                                        Theme.palette.successColor1
             }
             InformationTile {
-                readonly property string changePctDay: token ? token.changePctDay : ""
+                readonly property string changePctDay: token ? LocaleUtils.numberToLocaleString(token.changePctDay, 2) : ""
                 maxWidth: parent.width
                 primaryText: qsTr("Day")
                 secondaryText: changePctDay ? "%1%".arg(changePctDay) : "---"
-                secondaryLabel.color: Math.sign(Number(changePctDay)) === 0 ? Theme.palette.directColor1 :
-                                                                              Math.sign(Number(changePctDay)) === -1 ? Theme.palette.dangerColor1 :
-                                                                                                                       Theme.palette.successColor1
+                secondaryLabel.color: Math.sign(changePctDay) === 0 ? Theme.palette.directColor1 :
+                                      Math.sign(changePctDay) === -1 ? Theme.palette.dangerColor1 :
+                                                                       Theme.palette.successColor1
             }
             InformationTile {
-                readonly property string changePct24hour: token ? token.changePct24hour : ""
+                readonly property string changePct24hour: token ? LocaleUtils.numberToLocaleString(token.changePct24hour, 2) : ""
                 maxWidth: parent.width
                 primaryText: qsTr("24 Hours")
                 secondaryText: changePct24hour ? "%1%".arg(changePct24hour) : "---"
-                secondaryLabel.color: Math.sign(Number(changePct24hour)) === 0 ? Theme.palette.directColor1 :
-                                                                                 Math.sign(Number(changePct24hour)) === -1 ? Theme.palette.dangerColor1 :
-                                                                                                                             Theme.palette.successColor1
+                secondaryLabel.color: Math.sign(changePct24hour) === 0 ? Theme.palette.directColor1 :
+                                      Math.sign(changePct24hour) === -1 ? Theme.palette.dangerColor1 :
+                                                                          Theme.palette.successColor1
             }
         }
 
@@ -357,6 +357,7 @@ Item {
                         InformationTag {
                             id: website
                             Layout.alignment: detailsFlow.isOverflowing ? Qt.AlignLeft : Qt.AlignRight
+                            Layout.preferredWidth: tagPrimaryLabel.width + iconAsset.width + Style.current.bigPadding
                             iconAsset.icon: "browser"
                             tagPrimaryLabel.text: qsTr("Website")
                             controlBackground.color: Theme.palette.baseColor2
@@ -371,6 +372,7 @@ Item {
                         InformationTag {
                             id: smartContractAddress
                             Layout.alignment: detailsFlow.isOverflowing ? Qt.AlignLeft : Qt.AlignRight
+                            Layout.preferredWidth: tagPrimaryLabel.width + tagSecondaryLabel.width + image.width + Style.current.bigPadding
 
                             image.source: token  && token.builtOn !== "" ? Style.svg("tiny/" + RootStore.getNetworkIconUrl(token.builtOn)) : ""
                             tagPrimaryLabel.text: token && token.builtOn !== "" ? RootStore.getNetworkName(token.builtOn) : "---"

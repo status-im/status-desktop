@@ -467,7 +467,7 @@ QtObject:
         var tokensArr: JsonNode
         var tokens: seq[WalletTokenDto]
         if(responseObj.getProp(wAddress, tokensArr)):
-          tokens = map(tokensArr.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
+          tokens = map(tokensArr.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto(self.settingsService.getCurrency()))
         
           tokens.sort(priorityTokenCmp)
           self.walletAccounts[wAddress].tokens = tokens
