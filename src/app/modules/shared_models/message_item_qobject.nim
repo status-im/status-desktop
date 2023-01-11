@@ -42,6 +42,10 @@ QtObject:
   QtProperty[int] quotedMessageContentType:
     read = quotedMessageContentType
 
+  proc quotedMessageDeleted*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.quotedMessageDeleted
+  QtProperty[bool] quotedMessageDeleted:
+    read = quotedMessageDeleted
+
   proc senderId*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.senderId
   QtProperty[string] senderId:
     read = senderId

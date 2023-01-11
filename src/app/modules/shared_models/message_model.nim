@@ -48,6 +48,7 @@ type
     QuotedMessageText
     QuotedMessageParsedText
     QuotedMessageContentType
+    QuotedMessageDeleted
     QuotedMessageFromIterator
 
 QtObject:
@@ -137,7 +138,8 @@ QtObject:
       ModelRole.QuotedMessageFromIterator.int: "quotedMessageFromIterator",
       ModelRole.QuotedMessageText.int: "quotedMessageText",
       ModelRole.QuotedMessageParsedText.int: "quotedMessageParsedText",
-      ModelRole.QuotedMessageContentType.int: "quotedMessageContentType"
+      ModelRole.QuotedMessageContentType.int: "quotedMessageContentType",
+      ModelRole.QuotedMessageDeleted.int: "quotedMessageDeleted",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -199,6 +201,8 @@ QtObject:
       result = newQVariant(item.quotedMessageParsedText)
     of ModelRole.QuotedMessageContentType:
       result = newQVariant(item.quotedMessageContentType)
+    of ModelRole.QuotedMessageDeleted:
+      result = newQVariant(item.quotedMessageDeleted)
     of ModelRole.MessageText:
       result = newQVariant(item.messageText)
     of ModelRole.MessageImage:
@@ -299,7 +303,7 @@ QtObject:
     for item in items:
       self.insertItemBasedOnClock(item)
 
-
+  # Replied message was deleted
   proc updateMessagesWithResponseTo(self: Model, messageId: string) =
     for i in 0 ..< self.items.len:
       if(self.items[i].responseToMessageWithId == messageId):
@@ -308,7 +312,13 @@ QtObject:
         item.quotedMessageText = ""
         item.quotedMessageParsedText = ""
         item.quotedMessageFrom = ""
-        self.dataChanged(ind, ind, @[ModelRole.QuotedMessageFrom.int, ModelRole.QuotedMessageParsedText.int, ModelRole.QuotedMessageContentType.int])
+        item.quotedMessageDeleted = true
+        self.dataChanged(ind, ind, @[
+          ModelRole.QuotedMessageFrom.int,
+          ModelRole.QuotedMessageParsedText.int,
+          ModelRole.QuotedMessageContentType.int,
+          ModelRole.QuotedMessageDeleted.int,
+        ])
 
   proc removeItem*(self: Model, messageId: string) =
     let ind = self.findIndexForMessageId(messageId)

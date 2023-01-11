@@ -48,6 +48,7 @@ type
     quotedMessageText: string
     quotedMessageParsedText: string
     quotedMessageContentType: int
+    quotedMessageDeleted: bool
     # This is only used to update the author's details when author's details change
     quotedMessageFromIterator: int
 
@@ -84,7 +85,8 @@ proc initItem*(
     quotedMessageFrom: string,
     quotedMessageText: string,
     quotedMessageParsedText: string,
-    quotedMessageContentType: int
+    quotedMessageContentType: int,
+    quotedMessageDeleted: bool,
     ): Item =
   result = Item()
   result.id = id
@@ -126,6 +128,7 @@ proc initItem*(
   result.quotedMessageText = quotedMessageText
   result.quotedMessageParsedText = quotedMessageParsedText
   result.quotedMessageContentType = quotedMessageContentType
+  result.quotedMessageDeleted = quotedMessageDeleted
   result.quotedMessageFromIterator = 0
 
   if ContentType.DiscordMessage == contentType:
@@ -180,7 +183,8 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     quotedMessageFrom = "",
     quotedMessageText = "",
     quotedMessageParsedText = "",
-    quotedMessageContentType = -1
+    quotedMessageContentType = -1,
+    quotedMessageDeleted = false,
   )
 
 proc `$`*(self: Item): string =
@@ -403,6 +407,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "quotedMessageText": self.quotedMessageText,
     "quotedMessageParsedText": self.quotedMessageParsedText,
     "quotedMessageContentType": self.quotedMessageContentType,
+    "quotedMessageDeleted": self.quotedMessageDeleted,
   }
 
 proc editMode*(self: Item): bool {.inline.} =
@@ -454,6 +459,11 @@ proc quotedMessageContentType*(self: Item): int {.inline.} =
   self.quotedMessageContentType
 proc `quotedMessageContentType=`*(self: Item, value: int) {.inline.} =
   self.quotedMessageContentType = value
+
+proc quotedMessageDeleted*(self: Item): bool {.inline.} =
+  self.quotedMessageDeleted
+proc `quotedMessageDeleted=`*(self: Item, value: bool) {.inline.} =
+  self.quotedMessageDeleted = value
 
 proc quotedMessageFromIterator*(self: Item): int {.inline.} =
   self.quotedMessageFromIterator

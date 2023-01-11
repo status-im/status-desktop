@@ -107,7 +107,8 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     quotedMessageFrom = "",
     quotedMessageText = "",
     quotedMessageParsedText = "",
-    quotedMessageContentType = -1
+    quotedMessageContentType = -1,
+    quotedMessageDeleted = false,
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -154,7 +155,8 @@ proc createChatIdentifierItem(self: Module): Item =
     quotedMessageFrom = "",
     quotedMessageText = "",
     quotedMessageParsedText = "",
-    quotedMessageContentType = -1
+    quotedMessageContentType = -1,
+    quotedMessageDeleted = false,
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module) =
@@ -240,7 +242,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         m.quotedMessage.`from`,
         m.quotedMessage.text,
         self.controller.getRenderedText(m.quotedMessage.parsedText),
-        m.quotedMessage.contentType
+        m.quotedMessage.contentType,
+        m.quotedMessage.deleted,
         )
 
       for r in reactions:
@@ -345,7 +348,8 @@ method messageAdded*(self: Module, message: MessageDto) =
     message.quotedMessage.`from`,
     message.quotedMessage.text,
     self.controller.getRenderedText(message.quotedMessage.parsedText),
-    message.quotedMessage.contentType
+    message.quotedMessage.contentType,
+    message.quotedMessage.deleted,
   )
 
   self.view.model().insertItemBasedOnClock(item)
@@ -630,7 +634,8 @@ method getMessageById*(self: Module, messageId: string): message_item.Item =
       m.quotedMessage.`from`,
       m.quotedMessage.text,
       self.controller.getRenderedText(m.quotedMessage.parsedText),
-      m.quotedMessage.contentType
+      m.quotedMessage.contentType,
+      m.quotedMessage.deleted,
       )
     return item
   return nil

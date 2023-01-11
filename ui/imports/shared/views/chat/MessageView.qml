@@ -65,6 +65,7 @@ Loader {
     property string quotedMessageFrom: ""
     property int quotedMessageContentType: Constants.messageContentType.messageType
     property int quotedMessageFromIterator: -1
+    property bool quotedMessageDeleted: false
     property var quotedMessageAuthorDetails: quotedMessageFromIterator >= 0 && Utils.getContactDetailsAsJson(quotedMessageFrom, false)
 
     // External behavior changers
@@ -609,8 +610,15 @@ Loader {
                 }
 
                 replyDetails: StatusMessageDetails {
-                    messageText: root.quotedMessageText ? root.quotedMessageText
-                                                       : qsTr("Message deleted")
+                    messageText: {
+                        if (root.quotedMessageDeleted) {
+                            return qsTr("Message deleted")
+                        }
+                        if (!root.quotedMessageText) {
+                            return qsTr("Unknown message. Try fetching more messages")
+                        }
+                        return root.quotedMessageText
+                    }
                     contentType: delegate.convertContentType(root.quotedMessageContentType)
                     messageContent: {
                         if (contentType !== StatusMessage.ContentType.Sticker && contentType !== StatusMessage.ContentType.Image) {

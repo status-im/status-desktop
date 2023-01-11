@@ -271,6 +271,7 @@ Item {
             quotedMessageFrom: model.quotedMessageFrom
             quotedMessageContentType: model.quotedMessageContentType
             quotedMessageFromIterator: model.quotedMessageFromIterator
+            quotedMessageDeleted: model.quotedMessageDeleted
 
             gapFrom: model.gapFrom
             gapTo: model.gapTo

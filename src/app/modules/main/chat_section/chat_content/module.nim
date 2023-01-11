@@ -203,7 +203,8 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     m.quotedMessage.`from`,
     m.quotedMessage.text,
     self.controller.getRenderedText(m.quotedMessage.parsedText),
-    m.quotedMessage.contentType
+    m.quotedMessage.contentType,
+    m.quotedMessage.deleted,
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy

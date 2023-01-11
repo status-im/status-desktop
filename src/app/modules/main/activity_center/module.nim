@@ -103,7 +103,8 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     message.quotedMessage.`from`,
     message.quotedMessage.text,
     self.controller.getRenderedText( message.quotedMessage.parsedText),
-    message.quotedMessage.contentType
+    message.quotedMessage.contentType,
+    message.quotedMessage.deleted,
     ))
 
 method convertToItems*(
