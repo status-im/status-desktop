@@ -39,6 +39,16 @@ QtObject:
     read = getModel
     notify = modelChanged
 
+  proc chainIdChanged*(self: View) {.signal.}
+  proc chainId(self: View): int {.slot.} =
+    return self.delegate.getChainIdForEns()
+  QtProperty[int] chainId:
+    read = chainId
+    notify = chainIdChanged
+
+  proc emitChainIdChanged*(self: View) =
+    self.chainIdChanged()
+
   proc getEnsRegistry(self: View): string {.slot.} =
     return ENS_REGISTRY
 
@@ -53,27 +63,27 @@ QtObject:
     return self.delegate.numOfPendingEnsUsernames()
 
   proc loading(self: View, isLoading: bool) {.signal.}
-  proc detailsObtained(self: View, ensName: string, address: string, pubkey: string, isStatus: bool, expirationTime: int) {.signal.}
+  proc detailsObtained(self: View, chainId: int, ensName: string, address: string, pubkey: string, isStatus: bool, expirationTime: int) {.signal.}
 
-  proc fetchDetailsForEnsUsername*(self: View, ensUsername: string) {.slot.} =
+  proc fetchDetailsForEnsUsername*(self: View, chainId: int, ensUsername: string) {.slot.} =
     self.loading(true)
-    self.delegate.fetchDetailsForEnsUsername(ensUsername)
+    self.delegate.fetchDetailsForEnsUsername(chainId, ensUsername)
 
-  proc setDetailsForEnsUsername*(self: View, ensUsername: string, address: string, pubkey: string, isStatus: bool,
+  proc processObtainedEnsUsermesDetails*(self: View, chainId: int, ensUsername: string, address: string, pubkey: string, isStatus: bool,
     expirationTime: int) =
     self.loading(false)
-    self.detailsObtained(ensUsername, address, pubkey, isStatus, expirationTime)
+    self.detailsObtained(chainId, ensUsername, address, pubkey, isStatus, expirationTime)
 
   proc transactionWasSent(self: View, txResult: string) {.signal.}
   proc emitTransactionWasSentSignal*(self: View, txResult: string) =
     self.transactionWasSent(txResult)
 
-  proc setPubKeyGasEstimate*(self: View, ensUsername: string, address: string): int {.slot.} =
-    return self.delegate.setPubKeyGasEstimate(ensUsername, address)
+  proc setPubKeyGasEstimate*(self: View, chainId: int, ensUsername: string, address: string): int {.slot.} =
+    return self.delegate.setPubKeyGasEstimate(chainId, ensUsername, address)
 
-  proc authenticateAndSetPubKey*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string,
+  proc authenticateAndSetPubKey*(self: View, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
     maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.slot.} =
-    self.delegate.authenticateAndSetPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
+    self.delegate.authenticateAndSetPubKey(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
 
   proc getEtherscanLink*(self: View): string {.slot.} =
     return self.etherscanLink
@@ -91,15 +101,15 @@ QtObject:
     revertReason: string) =
     self.transactionCompleted(success, txHash, username, trxType, revertReason)
 
-  proc removeEnsUsername*(self: View, ensUsername: string): bool {.slot.} =
-    return self.delegate.removeEnsUsername(ensUsername)
+  proc removeEnsUsername*(self: View, chainId: int, ensUsername: string): bool {.slot.} =
+    return self.delegate.removeEnsUsername(chainId, ensUsername)
 
-  proc releaseEnsEstimate*(self: View, ensUsername: string, address: string): int {.slot.} =
-    return self.delegate.releaseEnsEstimate(ensUsername, address)
+  proc releaseEnsEstimate*(self: View, chainId: int, ensUsername: string, address: string): int {.slot.} =
+    return self.delegate.releaseEnsEstimate(chainId, ensUsername, address)
 
-  proc authenticateAndReleaseEns*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string,
+  proc authenticateAndReleaseEns*(self: View, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
     maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.slot.} =
-    self.delegate.authenticateAndReleaseEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
+    self.delegate.authenticateAndReleaseEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
 
   proc connectOwnedUsername*(self: View, ensUsername: string, isStatus: bool) {.slot.} =
     self.delegate.connectOwnedUsername(ensUsername, isStatus)
@@ -107,12 +117,12 @@ QtObject:
   proc getEnsRegisteredAddress*(self: View): string {.slot.} =
     return self.delegate.getEnsRegisteredAddress()
 
-  proc registerEnsGasEstimate*(self: View, ensUsername: string, address: string): int {.slot.} =
-    return self.delegate.registerEnsGasEstimate(ensUsername, address)
+  proc registerEnsGasEstimate*(self: View, chainId: int, ensUsername: string, address: string): int {.slot.} =
+    return self.delegate.registerEnsGasEstimate(chainId, ensUsername, address)
 
-  proc authenticateAndRegisterEns*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string,
+  proc authenticateAndRegisterEns*(self: View, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
     maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.slot.} =
-    self.delegate.authenticateAndRegisterEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
+    self.delegate.authenticateAndRegisterEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
 
   proc getSNTBalance*(self: View): string {.slot.} =
     return self.delegate.getSNTBalance()

@@ -59,6 +59,7 @@ const ensUsernameDetailsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
     expirationTime = ens_utils.getExpirationTime(arg.chainId, arg.ensUsername)
 
   let responseJson = %* {
+    "chainId": arg.chainId,
     "ensUsername": arg.ensUsername,
     "address": address,
     "pubkey": pubkey,

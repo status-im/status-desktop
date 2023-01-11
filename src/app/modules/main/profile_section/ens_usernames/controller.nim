@@ -50,7 +50,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_ENS_USERNAME_DETAILS_FETCHED) do(e:Args):
     let args = EnsUsernameDetailsArgs(e)
-    self.delegate.onDetailsForEnsUsername(args.ensUsername, args.address, args.pubkey, args.isStatus, args.expirationTime)
+    self.delegate.onDetailsForEnsUsername(args.chainId, args.ensUsername, args.address, args.pubkey, args.isStatus, args.expirationTime)
 
   self.events.on(SIGNAL_ENS_TRANSACTION_CONFIRMED) do(e:Args):
     let args = EnsTransactionArgs(e)
@@ -66,44 +66,50 @@ proc init*(self: Controller) =
       return
     self.delegate.onUserAuthenticated(args.password)
 
+proc getChainId*(self: Controller): int =
+  return self.networkService.getChainIdForEns()
+
+proc getNetwork*(self: Controller): NetworkDto =
+  return self.networkService.getNetworkForEns()
+
 proc checkEnsUsernameAvailability*(self: Controller, desiredEnsUsername: string, statusDomain: bool) =
   self.ensService.checkEnsUsernameAvailability(desiredEnsUsername, statusDomain)
 
-proc getMyPendingEnsUsernames*(self: Controller): seq[string] =
+proc getMyPendingEnsUsernames*(self: Controller): seq[EnsUsernameDto] =
   return self.ensService.getMyPendingEnsUsernames()
 
-proc getAllMyEnsUsernames*(self: Controller, includePendingEnsUsernames: bool): seq[string] =
+proc getAllMyEnsUsernames*(self: Controller, includePendingEnsUsernames: bool): seq[EnsUsernameDto] =
   return self.ensService.getAllMyEnsUsernames(includePendingEnsUsernames)
 
-proc fetchDetailsForEnsUsername*(self: Controller, ensUsername: string) =
-  self.ensService.fetchDetailsForEnsUsername(ensUsername)
+proc fetchDetailsForEnsUsername*(self: Controller, chainId: int, ensUsername: string) =
+  self.ensService.fetchDetailsForEnsUsername(chainId, ensUsername)
 
-proc setPubKeyGasEstimate*(self: Controller, ensUsername: string, address: string): int =
-  return self.ensService.setPubKeyGasEstimate(ensUsername, address)
+proc setPubKeyGasEstimate*(self: Controller, chainId: int, ensUsername: string, address: string): int =
+  return self.ensService.setPubKeyGasEstimate(chainId, ensUsername, address)
 
-proc setPubKey*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string,
+proc setPubKey*(self: Controller, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
-  return self.ensService.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
+  return self.ensService.setPubKey(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc getSigningPhrase*(self: Controller): string =
   return self.settingsService.getSigningPhrase()
 
-proc saveNewEnsUsername*(self: Controller, ensUsername: string): bool =
-  return self.settingsService.saveNewEnsUsername(ensUsername)
+proc addEnsUsername*(self: Controller, chainId: int, ensUsername: string): bool =
+  return self.ensService.add(chainId, ensUsername)
 
-proc removeEnsUsername*(self: Controller, ensUsername: string): bool =
-  return self.settingsService.removeEnsUsername(ensUsername)
+proc removeEnsUsername*(self: Controller, chainId: int, ensUsername: string): bool =
+  return self.ensService.remove(chainId, ensUsername)
 
 proc getPreferredEnsUsername*(self: Controller): string =
   return self.settingsService.getPreferredName()
 
-proc releaseEnsEstimate*(self: Controller, ensUsername: string, address: string): int =
-  return self.ensService.releaseEnsEstimate(ensUsername, address)
+proc releaseEnsEstimate*(self: Controller, chainId: int, ensUsername: string, address: string): int =
+  return self.ensService.releaseEnsEstimate(chainId, ensUsername, address)
 
-proc release*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string,
+proc release*(self: Controller, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool):
   string =
-  return self.ensService.release(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
+  return self.ensService.release(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc setPreferredName*(self: Controller, preferredName: string) =
   if(self.settingsService.savePreferredName(preferredName)):
@@ -112,21 +118,27 @@ proc setPreferredName*(self: Controller, preferredName: string) =
     info "an error occurred saving prefered ens username", methodName="setPreferredName"
 
 proc fixPreferredName*(self: Controller, ignoreCurrentValue: bool = false) =
+  # TODO: Remove this workaround and make proper prefferedName-chainId database storage
   if (not ignoreCurrentValue and singletonInstance.userProfile.getPreferredName().len > 0):
     return
-  let ensUsernames = self.settingsService.getEnsUsernames()
-  let firstEnsName = if (ensUsernames.len > 0): ensUsernames[0] else: ""
+  let ensUsernames = self.getAllMyEnsUsernames(false)
+  let currentChainId = self.getNetwork().chainId
+  var firstEnsName = ""
+  for ensUsername in ensUsernames:
+    if ensUsername.chainId == currentChainId:
+      firstEnsName = ensUsername.username
+      break
   self.setPreferredName(firstEnsName)
 
 proc getEnsRegisteredAddress*(self: Controller): string =
   return self.ensService.getEnsRegisteredAddress()
 
-proc registerEnsGasEstimate*(self: Controller, ensUsername: string, address: string): int =
-  return self.ensService.registerEnsGasEstimate(ensUsername, address)
+proc registerEnsGasEstimate*(self: Controller, chainId: int, ensUsername: string, address: string): int =
+  return self.ensService.registerEnsGasEstimate(chainId, ensUsername, address)
 
-proc registerEns*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string,
+proc registerEns*(self: Controller, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
-  return self.ensService.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
+  return self.ensService.registerEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc getSNTBalance*(self: Controller): string =
   return self.ensService.getSNTBalance()
@@ -149,9 +161,6 @@ proc getStatusToken*(self: Controller): string =
     "address": token.addressAsString()
   }
   return $jsonObj
-
-proc getNetwork*(self: Controller): NetworkDto =
-  return self.networkService.getNetworkForEns()
 
 proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_ENS_SECTION_TRANSACTION_MODULE_IDENTIFIER,

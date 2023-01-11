@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import utils 1.0
+import SortFilterProxyModel 0.2
 
 QtObject {
     id: root
@@ -8,9 +9,18 @@ QtObject {
 
     property var ensUsernamesModel: root.ensUsernamesModule ? ensUsernamesModule.model : []
 
+    readonly property QtObject currentChainEnsUsernamesModel: SortFilterProxyModel {
+        sourceModel: root.ensUsernamesModel
+        filters: ValueFilter {
+            roleName: "chainId"
+            value: root.chainId
+        }
+    }
+
     property string pubkey: userProfile.pubKey
     property string icon: userProfile.icon
     property string preferredUsername: userProfile.preferredName
+    readonly property string chainId: ensUsernamesModule.chainId
 
     property string username: userProfile.username
 
@@ -34,22 +44,22 @@ QtObject {
         return ensUsernamesModule.numOfPendingEnsUsernames()
     }
 
-    function ensDetails(ensUsername) {
+    function ensDetails(chainId, ensUsername) {
         if(!root.ensUsernamesModule)
             return ""
-        ensUsernamesModule.fetchDetailsForEnsUsername(ensUsername)
+        ensUsernamesModule.fetchDetailsForEnsUsername(chainId, ensUsername)
     }
 
-    function setPubKeyGasEstimate(ensUsername, address) {
+    function setPubKeyGasEstimate(chainId, ensUsername, address) {
         if(!root.ensUsernamesModule)
             return 0
-        return ensUsernamesModule.setPubKeyGasEstimate(ensUsername, address)
+        return ensUsernamesModule.setPubKeyGasEstimate(chainId, ensUsername, address)
     }
 
-    function authenticateAndSetPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled) {
+    function authenticateAndSetPubKey(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled) {
         if(!root.ensUsernamesModule)
             return ""
-        return ensUsernamesModule.authenticateAndSetPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
+        return ensUsernamesModule.authenticateAndSetPubKey(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
     }
 
     function getEtherscanLink() {
@@ -68,10 +78,10 @@ QtObject {
         globalUtils.copyToClipboard(value)
     }
 
-    function authenticateAndReleaseEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled) {
+    function authenticateAndReleaseEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled) {
         if(!root.ensUsernamesModule)
             return ""
-        return ensUsernamesModule.authenticateAndReleaseEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
+        return ensUsernamesModule.authenticateAndReleaseEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, eip1559Enabled)
     }
 
     function ensConnectOwnedUsername(name, isStatus) {
@@ -86,10 +96,10 @@ QtObject {
         return ensUsernamesModule.getEnsRegisteredAddress()
     }
 
-    function authenticateAndRegisterEns(ensUsername, address, gasLimit, gasPrice, tipLimit, overallLimit, eip1559Enabled) {
+    function authenticateAndRegisterEns(chainId, ensUsername, address, gasLimit, gasPrice, tipLimit, overallLimit, eip1559Enabled) {
         if(!root.ensUsernamesModule)
             return
-        ensUsernamesModule.authenticateAndRegisterEns(ensUsername, address, gasLimit, gasPrice, tipLimit, overallLimit, eip1559Enabled)
+        ensUsernamesModule.authenticateAndRegisterEns(chainId, ensUsername, address, gasLimit, gasPrice, tipLimit, overallLimit, eip1559Enabled)
     }
 
     function getEnsRegistry() {
@@ -148,16 +158,10 @@ QtObject {
         return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
     }
 
-    function getChainIdForEns() {
+    function removeEnsUsername(chainId, ensUsername) {
         if(!root.ensUsernamesModule)
             return ""
-        return ensUsernamesModule.getChainIdForEns()
-    }
-
-    function removeEnsUsername(ensUsername) {
-        if(!root.ensUsernamesModule)
-            return ""
-        return ensUsernamesModule.removeEnsUsername(ensUsername)
+        return ensUsernamesModule.removeEnsUsername(chainId, ensUsername)
     }
 }
 
