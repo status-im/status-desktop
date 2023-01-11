@@ -10,7 +10,6 @@ import utils 1.0
 
 StatusListItem {
     id: root
-    property var locale
     title: name
     subTitle: LocaleUtils.currencyAmountToLocaleString(enabledNetworkBalance)
     asset.name: symbol ? Style.png("tokens/" + symbol) : ""

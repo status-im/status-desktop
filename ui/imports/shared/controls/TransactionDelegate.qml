@@ -11,7 +11,6 @@ import shared 1.0
 StatusListItem {
     id: root
 
-    property var locale
     property var modelData
     property string symbol
     property bool isIncoming

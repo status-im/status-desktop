@@ -13,7 +13,6 @@ import SortFilterProxyModel 0.2
 StatusScrollView {
     id: root
 
-    property var locale
     property var model
     property bool searchLayout: false
 
@@ -64,7 +63,6 @@ StatusScrollView {
                 json: tags
             }
 
-            locale: root.locale
             communityId: model.id
             loaded: model.available
             logo: model.icon

@@ -18,7 +18,6 @@ import "../stores"
 Item {
     id: root
 
-    property var locale
     property string currency: ""
     property var currentAccount
     property var store

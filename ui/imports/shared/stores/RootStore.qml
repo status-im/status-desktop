@@ -23,7 +23,6 @@ QtObject {
     property bool isTenorWarningAccepted: !!accountSensitiveSettings ? accountSensitiveSettings.isTenorWarningAccepted : false
     property bool displayChatImages: !!accountSensitiveSettings ? accountSensitiveSettings.displayChatImages : false
 
-    property var locale: Qt.locale(localAppSettings.language)
 //    property string signingPhrase: !!walletModelInst ? walletModelInst.utilsView.signingPhrase : ""
 //    property string gasPrice: !!walletModelInst ? walletModelInst.gasView.gasPrice : "0"
 //    property string gasEthValue: !!walletModelInst ? walletModelInst.gasView.getGasEthValue : "0"

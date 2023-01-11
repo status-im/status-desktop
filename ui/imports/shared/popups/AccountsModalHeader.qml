@@ -18,7 +18,6 @@ import "../views"
 StatusFloatingButtonsSelector {
     id: root
 
-    property var locale
     property var selectedAccount
     // Expected signature: function(newAccount, newIndex)
     property var changeSelectedAccount: function(){}

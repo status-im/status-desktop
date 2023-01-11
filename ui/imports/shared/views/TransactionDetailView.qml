@@ -18,7 +18,6 @@ import "../controls"
 Item {
     id: root
 
-    property var locale
     property var currentAccount: RootStore.currentAccount
     property var contactsStore
     property var transaction
@@ -58,7 +57,6 @@ Item {
                 objectName: "transactionDetailHeader"
                 width: parent.width
 
-                locale: root.locale
                 modelData: transaction
                 isIncoming: d.isIncoming
                 property bool transactionValid: root.transaction !== undefined && !!root.transaction
@@ -156,7 +154,6 @@ Item {
             spacing: 8
             TransactionDelegate {
                 width: parent.width
-                locale: root.locale
                 modelData: transaction
                 isIncoming: d.isIncoming
                 property bool transactionValid: root.transaction !== undefined && !!root.transaction

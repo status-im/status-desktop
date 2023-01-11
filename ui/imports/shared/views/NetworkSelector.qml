@@ -80,7 +80,6 @@ Item {
                 amountToSend: root.amountToSend
                 isLoading: root.isLoading
                 store: root.store
-                locale: root.store.locale
                 selectedAsset: root.selectedAsset
                 selectedAccount: root.selectedAccount
                 errorMode: root.errorMode

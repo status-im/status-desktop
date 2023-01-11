@@ -12,7 +12,6 @@ Item {
     id: assetDelegate
     objectName: symbol
 
-    property var locale
     property string currency: ""
     property string currencySymbol: ""
 

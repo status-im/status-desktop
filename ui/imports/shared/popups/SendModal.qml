@@ -157,7 +157,6 @@ StatusDialog {
     header: AccountsModalHeader {
         anchors.top: parent.top
         anchors.topMargin: -height - 18
-        locale: popup.store.locale
         model: popup.store.accounts
         selectedAccount: popup.selectedAccount
         changeSelectedAccount: function(newAccount, newIndex) {
@@ -241,7 +240,6 @@ StatusDialog {
                                 }
                                 popup.recalculateRoutesAndFees()
                             }
-                            locale: popup.store.locale
                         }
                         StatusListItemTag {
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
@@ -258,7 +256,6 @@ StatusDialog {
                         AmountToSend {
                             id: amountToSendInput
                             Layout.fillWidth:true
-                            locale: popup.store.locale
                             isBridgeTx: popup.isBridgeTx
                             interactive: popup.interactive
                             selectedAsset: assetSelector.selectedAsset
@@ -282,7 +279,6 @@ StatusDialog {
                             id: amountToReceive
                             Layout.alignment: Qt.AlignRight
                             Layout.fillWidth:true
-                            locale: popup.store.locale
                             visible: popup.bestRoutes !== undefined && popup.bestRoutes.length > 0
                             store: popup.store
                             isLoading: popup.isLoading
@@ -302,7 +298,6 @@ StatusDialog {
                         anchors.right: parent.right
                         visible: !assetSelector.selectedAsset
                         assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : []
-                        locale: popup.store.locale
                         searchTokenSymbolByAddressFn: function (address) {
                             if(popup.selectedAccount) {
                                 return popup.selectedAccount.findTokenSymbolByAddress(address)
@@ -415,7 +410,6 @@ StatusDialog {
                             d.waitTimer.restart()
                         }
                         visible: !d.recipientReady && !isBridgeTx && !!assetSelector.selectedAsset
-                        locale: popup.store.locale
                     }
 
                     NetworkSelector {

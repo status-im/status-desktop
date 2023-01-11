@@ -67,7 +67,6 @@ Rectangle {
             }
             GasSelector {
                 id: gasSelector
-                locale: root.store.locale
                 width: parent.width
                 getGasEthValue: root.currencyStore.getGasEthValue
                 getFiatValue: root.currencyStore.getFiatValue
