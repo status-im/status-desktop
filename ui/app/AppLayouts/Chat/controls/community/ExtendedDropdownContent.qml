@@ -264,6 +264,7 @@ Item {
                 ListElement { key: "MINT"; icon: "add"; iconSize: 16; description: qsTr("Mint token"); rotation: 0; spacing: 8 }
                 ListElement { key: "IMPORT"; icon: "invite-users"; iconSize: 16; description: qsTr("Import existing token"); rotation: 180; spacing: 8 }
             }
+            isHeaderVisible: false  // TEMPORARILY hidden. These 2 header options will be implemented after MVP.
             model: d.currentModel
             onHeaderItemClicked: {
                 if(key === "MINT") console.log("TODO: Mint token")
