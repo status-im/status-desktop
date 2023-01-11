@@ -24,6 +24,9 @@ Item {
     property int headerWidth: 0
     property string previousPageName: ""
     property bool saveChangesButtonEnabled: !!root.contentItem && !!root.contentItem.saveChangesButtonEnabled
+    property alias saveChangesText: settingsDirtyToastMessage.saveChangesText
+    property alias cancelChangesText: settingsDirtyToastMessage.cancelChangesText
+    property alias changesDetectedText: settingsDirtyToastMessage.changesDetectedText
 
     readonly property Item contentItem: contentLoader.item
     readonly property size settingsDirtyToastMessageImplicitSize: 
