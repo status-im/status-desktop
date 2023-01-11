@@ -566,6 +566,11 @@ Item {
                     processConnected()
                 }
 
+                Component.onCompleted: {
+                    if (!isConnected)
+                        processConnected()
+                }
+
                 Connections {
                     target: rootStore.aboutModuleInst
                     onAppVersionFetched: {
