@@ -73,6 +73,7 @@ Item {
                     let eip1559Enabled = path.gasFees.eip1559Enabled
                     let maxFeePerGas = path.gasFees.maxFeePerGasM
                     root.ensUsernamesStore.authenticateAndRegisterEns(
+                                root.ensUsernamesStore.chainId,
                                 username,
                                 selectedAccount.address,
                                 path.gasAmount,

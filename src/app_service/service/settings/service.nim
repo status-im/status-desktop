@@ -153,32 +153,6 @@ QtObject:
       return true
     return false
 
-  proc saveNewEnsUsername*(self: Service, username: string): bool =
-    var newEnsUsernames = self.settings.ensUsernames
-    newEnsUsernames.add(username)
-    let newEnsUsernamesAsJson = %* newEnsUsernames
-
-    if(self.saveSetting(KEY_ENS_USERNAMES, newEnsUsernamesAsJson)):
-      self.settings.ensUsernames = newEnsUsernames
-      return true
-    return false
-
-  proc removeEnsUsername*(self: Service, username: string): bool = 
-    var newEnsUsernames = self.settings.ensUsernames
-    let index = newEnsUsernames.find(username)
-    if (index < 0):
-        return false
-    newEnsUsernames.delete(index)
-    let newEnsUsernamesAsJson = %* newEnsUsernames
-
-    if(self.saveSetting(KEY_ENS_USERNAMES, newEnsUsernamesAsJson)):
-      self.settings.ensUsernames = newEnsUsernames
-      return true
-    return false
-
-  proc getEnsUsernames*(self: Service): seq[string] =
-    return self.settings.ensUsernames
-
   proc saveKeyUid*(self: Service, value: string): bool =
     if(self.saveSetting(KEY_KEY_UID, value)):
       self.settings.keyUid = value

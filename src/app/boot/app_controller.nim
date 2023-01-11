@@ -422,8 +422,6 @@ proc buildAndRegisterUserProfile(self: AppController) =
   let alias = self.settingsService.getName()
   var preferredName = self.settingsService.getPreferredName()
   let displayName = self.settingsService.getDisplayName()
-  let ensUsernames = self.settingsService.getEnsUsernames()
-  let firstEnsName = if (ensUsernames.len > 0): ensUsernames[0] else: ""
   let currentUserStatus = self.settingsService.getCurrentUserStatus()
 
   let loggedInAccount = self.accountsService.getLoggedInAccount()

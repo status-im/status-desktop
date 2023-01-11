@@ -18,7 +18,7 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method ensUsernameAvailabilityChecked*(self: AccessInterface, availabilityStatus: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onDetailsForEnsUsername*(self: AccessInterface, ensUsername: string, address: string, pubkey: string,
+method onDetailsForEnsUsername*(self: AccessInterface, chainId: int, ensUsername: string, address: string, pubkey: string,
   isStatus: bool, expirationTime: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -39,23 +39,23 @@ method checkEnsUsernameAvailability*(self: AccessInterface, desiredEnsUsername: 
 method numOfPendingEnsUsernames*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method fetchDetailsForEnsUsername*(self: AccessInterface, ensUsername: string) {.base.} =
+method fetchDetailsForEnsUsername*(self: AccessInterface, chainId: int, ensUsername: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setPubKeyGasEstimate*(self: AccessInterface, ensUsername: string, address: string): int {.base.} =
+method setPubKeyGasEstimate*(self: AccessInterface, chainId: int,  ensUsername: string, address: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method authenticateAndSetPubKey*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string,
+method authenticateAndSetPubKey*(self: AccessInterface, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method removeEnsUsername*(self: AccessInterface, ensUsername: string): bool {.base.} =
+method removeEnsUsername*(self: AccessInterface, chainId: int, ensUsername: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method releaseEnsEstimate*(self: AccessInterface, ensUsername: string, address: string): int {.base.} =
+method releaseEnsEstimate*(self: AccessInterface, chainId: int, ensUsername: string, address: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method authenticateAndReleaseEns*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string,
+method authenticateAndReleaseEns*(self: AccessInterface, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -65,10 +65,10 @@ method connectOwnedUsername*(self: AccessInterface, ensUsername: string, isStatu
 method getEnsRegisteredAddress*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method registerEnsGasEstimate*(self: AccessInterface, ensUsername: string, address: string): int {.base.} =
+method registerEnsGasEstimate*(self: AccessInterface, chainId: int, ensUsername: string, address: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method authenticateAndRegisterEns*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string,
+method authenticateAndRegisterEns*(self: AccessInterface, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 

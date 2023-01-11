@@ -86,6 +86,7 @@ Item {
                     let path = bestRoutes[0]
                     let eip1559Enabled = path.gasFees.eip1559Enabled
                     root.ensUsernamesStore.authenticateAndSetPubKey(
+                                root.ensUsernamesStore.chainId,
                                 ensUsername.text + (isStatus ? ".stateofus.eth" : "" ),
                                 selectedAccount.address,
                                 path.gasAmount,

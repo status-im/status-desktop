@@ -16,11 +16,12 @@ Item {
     property var ensUsernamesStore
     property var contactsStore
     property string username: ""
+    property string chainId: ""
     property string walletAddress: "-"
     property string key: "-"
 
     signal backBtnClicked();
-    signal usernameReleased(username: string);
+    signal usernameReleased()
 
     QtObject {
         id: d
@@ -140,6 +141,7 @@ Item {
                     let eip1559Enabled = path.gasFees.eip1559Enabled
                     let maxFeePerGas = path.gasFees.maxFeePerGasM
                     root.ensUsernamesStore.authenticateAndReleaseEns(
+                                root.chainId,
                                 root.username,
                                 selectedAccount.address,
                                 path.gasAmount,
@@ -163,7 +165,7 @@ Item {
                             return releaseEnsModal.sendingError.open()
                         }
                         for(var i=0; i<releaseEnsModal.bestRoutes.length; i++) {
-                            usernameReleased(username);
+                            usernameReleased()
                             let url =  "%1/%2".arg(releaseEnsModal.store.getEtherscanLink(releaseEnsModal.bestRoutes[i].fromNetwork.chainId)).arg(response.result)
                             Global.displayToastMessage(qsTr("Transaction pending..."),
                                                        qsTr("View on etherscan"),
@@ -195,7 +197,7 @@ Item {
             type: StatusQControls.StatusBaseButton.Type.Danger
             text: qsTr("Remove username")
             onClicked: {
-                root.ensUsernamesStore.removeEnsUsername(root.username)
+                root.ensUsernamesStore.removeEnsUsername(root.chainId, root.username)
                 root.backBtnClicked()
             }
         }

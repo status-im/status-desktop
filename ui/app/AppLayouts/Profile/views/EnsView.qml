@@ -20,6 +20,7 @@ Item {
     property bool showSearchScreen: false
     property string addedUsername: ""
     property string selectedUsername: ""
+    property string selectedChainId: ""
 
     signal next(output: string)
     signal back()
@@ -292,8 +293,9 @@ Item {
             profileContentWidth: ensView.profileContentWidth
             onAddBtnClicked: next("search")
             onSelectEns: {
-                ensView.ensUsernamesStore.ensDetails(username)
-                selectedUsername = username;
+                ensView.ensUsernamesStore.ensDetails(chainId, username)
+                selectedUsername = username
+                selectedChainId = chainId
                 next("details")
             }
         }
@@ -305,10 +307,12 @@ Item {
             ensUsernamesStore: ensView.ensUsernamesStore
             contactsStore: ensView.contactsStore
             username: selectedUsername
-            onBackBtnClicked: back();
+            chainId: selectedChainId
+            onBackBtnClicked: back()
             onUsernameReleased: {
-                selectedUsername = username;
-                done(username);
+                selectedUsername = username
+                selectedChainId = chainId
+                done(username)
             }
         }
     }

@@ -23,7 +23,7 @@ Item {
     property int profileContentWidth
 
     signal addBtnClicked()
-    signal selectEns(string username)
+    signal selectEns(string username, string chainId)
 
     Component.onCompleted: {
         d.updateNumberOfPendingEnsUsernames()
@@ -121,7 +121,8 @@ Item {
             StatusListView {
                 id: lvEns
                 anchors.fill: parent
-                model: root.ensUsernamesStore.ensUsernamesModel
+                model: root.ensUsernamesStore.currentChainEnsUsernamesModel
+
                 spacing: 10
                 delegate: StatusListItem {
                     readonly property int indexOfDomainStart: model.ensUsername.indexOf(".")
@@ -149,7 +150,7 @@ Item {
                     ]
 
                     onClicked: {
-                        root.selectEns(model.ensUsername)
+                        root.selectEns(model.ensUsername, model.chainId)
                     }
                 }
 

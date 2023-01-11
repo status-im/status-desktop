@@ -25,6 +25,7 @@ const cancelledRequest* = "cancelled"
 
 # Shouldn't be public ever, use only within this module.
 type TmpSendEnsTransactionDetails = object
+  chainId: int
   ensUsername: string
   address: string
   gas: string
@@ -44,6 +45,7 @@ type
     controller: Controller
     moduleLoaded: bool
     tmpSendEnsTransactionDetails: TmpSendEnsTransactionDetails
+    events: EventEmitter
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface, events: EventEmitter,
@@ -58,6 +60,7 @@ proc newModule*(
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, settingsService, ensService, walletAccountService, networkService, tokenService)
   result.moduleLoaded = false
+  result.events = events
 
 method delete*(self: Module) =
   self.view.delete
@@ -70,6 +73,10 @@ method load*(self: Module) =
   let signingPhrase = self.controller.getSigningPhrase()
   let link = self.controller.getNetwork().blockExplorerUrl & "/tx/"
   self.view.load(link, signingPhrase)
+  
+  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
+    self.view.emitChainIdChanged()
+    self.controller.fixPreferredName(true)
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -77,12 +84,18 @@ method isLoaded*(self: Module): bool =
 method viewDidLoad*(self: Module) =
   # add registered ens usernames
   let registeredEnsUsernames = self.controller.getAllMyEnsUsernames(includePendingEnsUsernames = false)
-  for u in registeredEnsUsernames:
-    self.view.model().addItem(Item(ensUsername: u, isPending: false))
+  for dto in registeredEnsUsernames:
+    let item = Item(chainId: dto.chainId, 
+                    ensUsername: dto.username, 
+                    isPending: false)
+    self.view.model().addItem(item)
   # add pending ens usernames
   let pendingEnsUsernames = self.controller.getMyPendingEnsUsernames()
-  for u in pendingEnsUsernames:
-    self.view.model().addItem(Item(ensUsername: u, isPending: true))
+  for dto in pendingEnsUsernames:
+    let item = Item(chainId: dto.chainId, 
+                    ensUsername: dto.username, 
+                    isPending: true)
+    self.view.model().addItem(item)
 
   self.moduleLoaded = true
   self.delegate.ensUsernamesModuleDidLoad()
@@ -99,18 +112,20 @@ method ensUsernameAvailabilityChecked*(self: Module, availabilityStatus: string)
 method numOfPendingEnsUsernames*(self: Module): int =
   return self.controller.getMyPendingEnsUsernames().len
 
-method fetchDetailsForEnsUsername*(self: Module, ensUsername: string) =
-  self.controller.fetchDetailsForEnsUsername(ensUsername)
+method fetchDetailsForEnsUsername*(self: Module, chainId: int, ensUsername: string) =
+  self.controller.fetchDetailsForEnsUsername(chainId, ensUsername)
 
-method onDetailsForEnsUsername*(self: Module, ensUsername: string, address: string, pubkey: string, isStatus: bool,
+method onDetailsForEnsUsername*(self: Module, chainId: int, ensUsername: string, address: string, pubkey: string, isStatus: bool,
   expirationTime: int) =
-  self.view.setDetailsForEnsUsername(ensUsername, address, pubkey, isStatus, expirationTime)
+  self.view.processObtainedEnsUsermesDetails(chainId, ensUsername, address, pubkey, isStatus, expirationTime)
 
-method setPubKeyGasEstimate*(self: Module, ensUsername: string, address: string): int =
-  return self.controller.setPubKeyGasEstimate(ensUsername, address)
+method setPubKeyGasEstimate*(self: Module, chainId: int, ensUsername: string, address: string): int =
+  return self.controller.setPubKeyGasEstimate(chainId, ensUsername, address)
 
-method authenticateAndSetPubKey*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
+method authenticateAndSetPubKey*(self: Module, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) =
+
+  self.tmpSendEnsTransactionDetails.chainId = chainId
   self.tmpSendEnsTransactionDetails.ensUsername = ensUsername
   self.tmpSendEnsTransactionDetails.address = address
   self.tmpSendEnsTransactionDetails.gas = gas
@@ -130,6 +145,7 @@ method authenticateAndSetPubKey*(self: Module, ensUsername: string, address: str
 
 method setPubKey*(self: Module, password: string) =
   let response = self.controller.setPubKey(
+    self.tmpSendEnsTransactionDetails.chainId,
     self.tmpSendEnsTransactionDetails.ensUsername,
     self.tmpSendEnsTransactionDetails.address,
     self.tmpSendEnsTransactionDetails.gas,
@@ -154,14 +170,19 @@ method setPubKey*(self: Module, password: string) =
   
   var respResult: string
   if(responseObj.getProp("result", respResult)):
-    self.view.model().addItem(Item(ensUsername: self.tmpSendEnsTransactionDetails.ensUsername, isPending: true))
+    let item = Item(chainId: self.tmpSendEnsTransactionDetails.chainId, 
+                    ensUsername: self.tmpSendEnsTransactionDetails.ensUsername, 
+                    isPending: true)
+    self.view.model().addItem(item)
     self.view.emitTransactionWasSentSignal(response)
 
-method releaseEnsEstimate*(self: Module, ensUsername: string, address: string): int =
-  return self.controller.releaseEnsEstimate(ensUsername, address)
+method releaseEnsEstimate*(self: Module, chainId: int, ensUsername: string, address: string): int =
+  return self.controller.releaseEnsEstimate(chainId, ensUsername, address)
 
-method authenticateAndReleaseEns*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
+method authenticateAndReleaseEns*(self: Module, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) =
+
+  self.tmpSendEnsTransactionDetails.chainId = chainId
   self.tmpSendEnsTransactionDetails.ensUsername = ensUsername
   self.tmpSendEnsTransactionDetails.address = address
   self.tmpSendEnsTransactionDetails.gas = gas
@@ -179,17 +200,21 @@ method authenticateAndReleaseEns*(self: Module, ensUsername: string, address: st
   else:
     self.controller.authenticateUser()
 
-method removeEnsUsername*(self: Module, ensUsername: string): bool = 
-  if (not self.controller.removeEnsUsername(ensUsername)):
-    info "an error occurred removing ens username", methodName="removeEnsUsername"
-    return false
+method onEnsUsernameRemoved(self: Module, chainId: int, ensUsername: string) =
   if (self.controller.getPreferredEnsUsername() == ensUsername):
     self.controller.fixPreferredName(true)
-  self.view.model().removeItemByEnsUsername(ensUsername)
+  self.view.model().removeItemByEnsUsername(chainId, ensUsername)
+
+method removeEnsUsername*(self: Module, chainId: int, ensUsername: string): bool = 
+  if (not self.controller.removeEnsUsername(chainId, ensUsername)):
+    info "an error occurred removing ens username", methodName="removeEnsUsername", ensUsername, chainId
+    return false
+  self.onEnsUsernameRemoved(chainId, ensUsername)
   return true
 
 method releaseEns*(self: Module, password: string) =
   let response = self.controller.release(
+    self.tmpSendEnsTransactionDetails.chainId,
     self.tmpSendEnsTransactionDetails.ensUsername,
     self.tmpSendEnsTransactionDetails.address,
     self.tmpSendEnsTransactionDetails.gas,
@@ -216,7 +241,7 @@ method releaseEns*(self: Module, password: string) =
 
   var result: string
   if(responseObj.getProp("result", result)):
-    let removed = self.removeEnsUsername(self.tmpSendEnsTransactionDetails.ensUsername)
+    self.onEnsUsernameRemoved(self.tmpSendEnsTransactionDetails.chainId, self.tmpSendEnsTransactionDetails.ensUsername)
     self.view.emitTransactionWasSentSignal(response)
 
 proc formatUsername(self: Module, ensUsername: string, isStatus: bool): string =
@@ -225,38 +250,40 @@ proc formatUsername(self: Module, ensUsername: string, isStatus: bool): string =
     result = ensUsername & ens_utils.STATUS_DOMAIN
 
 method connectOwnedUsername*(self: Module, ensUsername: string, isStatus: bool) =
+  let chainId = self.getChainIdForEns()
   var ensUsername = self.formatUsername(ensUsername, isStatus)
-  if(not self.controller.saveNewEnsUsername(ensUsername)):
+  if(not self.controller.addEnsUsername(chainId, ensUsername)):
     info "an error occurred saving ens username", methodName="connectOwnedUsername"
     return
 
   self.controller.fixPreferredName()
-  self.view.model().addItem(Item(ensUsername: ensUsername, isPending: false))
+  self.view.model().addItem(Item(chainId: chainId, ensUsername: ensUsername, isPending: false))
 
 method ensTransactionConfirmed*(self: Module, trxType: string, ensUsername: string, transactionHash: string) =
-  if(not self.controller.saveNewEnsUsername(ensUsername)):
-    info "an error occurred saving ens username", methodName="ensTransactionConfirmed"
-    return
+  let chainId = self.getChainIdForEns()
   self.controller.fixPreferredName()
-  if(self.view.model().containsEnsUsername(ensUsername)):
-    self.view.model().updatePendingStatus(ensUsername, false)
+  if(self.view.model().containsEnsUsername(chainId, ensUsername)):
+    self.view.model().updatePendingStatus(chainId, ensUsername, false)
   else:
-    self.view.model().addItem(Item(ensUsername: ensUsername, isPending: false))
+    self.view.model().addItem(Item(chainId: chainId, ensUsername: ensUsername, isPending: false))
   self.view.emitTransactionCompletedSignal(true, transactionHash, ensUsername, trxType, "")
 
 method ensTransactionReverted*(self: Module, trxType: string, ensUsername: string, transactionHash: string,
-  revertReason: string) =
-  self.view.model().removeItemByEnsUsername(ensUsername)
+    revertReason: string) =
+  let chainId = self.getChainIdForEns()
+  self.view.model().removeItemByEnsUsername(chainId, ensUsername)
   self.view.emitTransactionCompletedSignal(false, transactionHash, ensUsername, trxType, revertReason)
 
 method getEnsRegisteredAddress*(self: Module): string =
   return self.controller.getEnsRegisteredAddress()
 
-method registerEnsGasEstimate*(self: Module, ensUsername: string, address: string): int =
-  return self.controller.registerEnsGasEstimate(ensUsername, address)
+method registerEnsGasEstimate*(self: Module, chainId: int, ensUsername: string, address: string): int =
+  return self.controller.registerEnsGasEstimate(chainId, ensUsername, address)
 
-method authenticateAndRegisterEns*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
+method authenticateAndRegisterEns*(self: Module, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool) =
+
+  self.tmpSendEnsTransactionDetails.chainId = chainId
   self.tmpSendEnsTransactionDetails.ensUsername = ensUsername
   self.tmpSendEnsTransactionDetails.address = address
   self.tmpSendEnsTransactionDetails.gas = gas
@@ -297,6 +324,7 @@ method authenticateAndRegisterEns*(self: Module, ensUsername: string, address: s
 
 method registerEns(self: Module, password: string) =
   let response = self.controller.registerEns(
+    self.tmpSendEnsTransactionDetails.chainId,
     self.tmpSendEnsTransactionDetails.ensUsername,
     self.tmpSendEnsTransactionDetails.address,
     self.tmpSendEnsTransactionDetails.gas,
@@ -314,8 +342,10 @@ method registerEns(self: Module, password: string) =
 
   var respResult: string
   if(responseObj.getProp("result", respResult) and responseObj{"success"}.getBool == true):
+    let ensUsername = self.formatUsername(self.tmpSendEnsTransactionDetails.ensUsername, true)
+    let item = Item(chainId: self.tmpSendEnsTransactionDetails.chainId, ensUsername: ensUsername, isPending: true)
     self.controller.fixPreferredName()
-    self.view.model().addItem(Item(ensUsername: self.formatUsername(self.tmpSendEnsTransactionDetails.ensUsername, true), isPending: true))
+    self.view.model().addItem(item)
   self.view.emitTransactionWasSentSignal(response)
 
 method getSNTBalance*(self: Module): string =
@@ -380,7 +410,7 @@ method getStatusToken*(self: Module): string =
   return self.controller.getStatusToken()
 
 method getChainIdForEns*(self: Module): int =
-  return self.controller.getNetwork().chainId
+  return self.controller.getChainId()
 
 method setPrefferedEnsUsername*(self: Module, ensUsername: string) =
   self.controller.setPreferredName(ensUsername)

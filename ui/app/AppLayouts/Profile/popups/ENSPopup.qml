@@ -72,8 +72,7 @@ StatusDialog {
             Layout.fillWidth: true
             Layout.fillHeight: true
             implicitHeight: contentHeight
-
-            model: root.ensUsernamesStore.ensUsernamesModel
+            model: root.ensUsernamesStore.currentChainEnsUsernamesModel
 
             delegate: RadioDelegate {
                 id: radioDelegate

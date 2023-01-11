@@ -96,11 +96,14 @@ proc toggleNetwork*(self: Service, chainId: int) =
   network.enabled = not network.enabled
   self.upsertNetwork(network)
 
-proc getNetworkForEns*(self: Service): NetworkDto =
+proc getChainIdForEns*(self: Service): int =
   if self.settingsService.areTestNetworksEnabled():
-    return self.getNetwork(Goerli)
+    return Goerli
+  return Mainnet
 
-  return self.getNetwork(Mainnet)
+proc getNetworkForEns*(self: Service): NetworkDto =
+  let chainId = self.getChainIdForEns()
+  return self.getNetwork(chainId)
 
 proc getNetworkForStickers*(self: Service): NetworkDto =
   if self.settingsService.areTestNetworksEnabled():
