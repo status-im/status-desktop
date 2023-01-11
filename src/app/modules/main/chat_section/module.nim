@@ -286,8 +286,11 @@ method load*(
     # we do this only in case of chat section (not in case of communities)
     self.initContactRequestsModel()
 
-  for cModule in self.chatContentModules.values:
+  let activeChatId = self.controller.getActiveChatId()
+  for chatId, cModule in self.chatContentModules:
     cModule.load()
+    if chatId == activeChatId:
+      cModule.onMadeActive()
 
 proc checkIfModuleDidLoad(self: Module) =
   if self.moduleLoaded:
@@ -357,14 +360,14 @@ method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
   self.view.chatsModel().setActiveItemSubItem(itemId, subItemId)
   self.view.activeItemSubItemSet(item, subItem)
 
-  # update child modules
+  let activeChatId = self.controller.getActiveChatId()
+
+  # # update child modules
   for chatId, chatContentModule in self.chatContentModules:
-    if chatId == self.controller.getActiveChatId():
+    if chatId == activeChatId:
       chatContentModule.onMadeActive()
     else:
       chatContentModule.onMadeInactive()
-
-  let activeChatId = self.controller.getActiveChatId()
 
   # save last open chat in settings for restore on the next app launch
   singletonInstance.localAccountSensitiveSettings.setSectionLastOpenChat(mySectionId, activeChatId)

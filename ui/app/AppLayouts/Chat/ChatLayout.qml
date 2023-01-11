@@ -20,8 +20,6 @@ StackLayout {
     signal importCommunityClicked()
     signal createCommunityClicked()
 
-    clip: true
-
     onCurrentIndexChanged: {
         Global.closeCreateChatView()
     }

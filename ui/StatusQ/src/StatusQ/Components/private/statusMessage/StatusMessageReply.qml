@@ -11,7 +11,6 @@ Item {
     id: root
 
     property StatusMessageDetails replyDetails
-    property string audioMessageInfoText: ""
     property bool profileClickable: true
 
     signal replyProfileClicked(var sender, var mouse)
@@ -59,7 +58,6 @@ Item {
         Item {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignTop
-            Layout.topMargin: 4
 
             implicitHeight: messageLayout.implicitHeight
             implicitWidth: messageLayout.implicitWidth
@@ -83,24 +81,20 @@ Item {
                             onClicked: replyProfileClicked(this, mouse)
                         }
                     }
-                    TextEdit {
+                    StatusBaseText {
                         Layout.alignment: Qt.AlignVCenter
                         color: Theme.palette.baseColor1
-                        selectionColor: Theme.palette.primaryColor3
-                        selectedTextColor: Theme.palette.directColor1
                         font.pixelSize: Theme.secondaryTextFontSize
                         font.weight: Font.Medium
-                        selectByMouse: true
-                        readOnly: true
                         text: replyDetails.amISender ? qsTr("You") : replyDetails.sender.displayName
                     }
                 }
+                // FIXME OPTIMIZE by using Loaders
                 StatusTextMessage {
                     objectName: "StatusMessage_replyDetails_textMessage"
                     Layout.fillWidth: true
                     textField.font.pixelSize: Theme.secondaryTextFontSize
                     textField.color: Theme.palette.baseColor1
-                    clip: true
                     visible: !!replyDetails.messageText && replyDetails.contentType !== StatusMessage.ContentType.Sticker
                     allowShowMore: false
                     stripHtmlTags: true
@@ -138,7 +132,6 @@ Item {
                         height: 22
                         isPreview: true
                         audioSource: replyDetails.messageContent
-                        audioMessageInfoText: root.audioMessageInfoText
                     }
                 }
             }
@@ -152,7 +145,6 @@ Item {
                 }
             }
         }
-
     }
 }
 

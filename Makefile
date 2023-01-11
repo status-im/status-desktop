@@ -646,7 +646,7 @@ run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe
 
-tests-nim-linux: | check-qt-dir
+tests-nim-linux: | $(DOTHERSIDE)
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)" \
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r test/nim/message_model_test.nim
 

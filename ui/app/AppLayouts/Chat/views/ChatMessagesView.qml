@@ -1,9 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Window 2.13
 import QtQuick.Layouts 1.13
-import QtQml.Models 2.13
-import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 
 import StatusQ.Core 0.1
@@ -51,10 +48,10 @@ Item {
 
         readonly property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
         readonly property bool isMostRecentMessageInViewport: chatLogView.visibleArea.yPosition >= 0.999 - chatLogView.visibleArea.heightRatio
-        readonly property var chatDetails: chatContentModule.chatDetails
+        readonly property var chatDetails: chatContentModule.chatDetails || null
 
         function markAllMessagesReadIfMostRecentMessageIsInViewport() {
-            if (!isMostRecentMessageInViewport) {
+            if (!isMostRecentMessageInViewport || !chatLogView.visible) {
                 return
             }
 
@@ -95,8 +92,17 @@ Item {
         }
 
         function onHasUnreadMessagesChanged() {
-            if (d.chatDetails.hasUnreadMessages && d.chatDetails.active && !d.isMostRecentMessageInViewport) {
-                // HACK: we call it later because messages model may not be yet propagated with unread messages when this signal is emitted
+            if (!d.chatDetails.hasUnreadMessages) {
+                return
+            }
+
+            // HACK: we call `addNewMessagesMarker` later because messages model
+            // may not be yet propagated with unread messages when this signal is emitted
+            if (chatLogView.visible) {
+                if (!d.isMostRecentMessageInViewport) {
+                    Qt.callLater(() => messageStore.addNewMessagesMarker())
+                }
+            } else {
                 Qt.callLater(() => messageStore.addNewMessagesMarker())
             }
         }
@@ -154,6 +160,8 @@ Item {
 
         onCountChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
 
+        onVisibleChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+
         ScrollBar.vertical: StatusScrollBar {
             visible: chatLogView.visibleArea.heightRatio < 1
         }
@@ -206,7 +214,7 @@ Item {
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onPressed: mouse.accepted = false
+                acceptedButtons: Qt.NoButton
             }
         }
 
@@ -249,7 +257,6 @@ Item {
             isChatBlocked: root.isChatBlocked
             messageContextMenu: root.messageContextMenu
 
-            itemIndex: index
             messageId: model.id
             communityId: model.communityId
             responseToMessageWithId: model.responseToMessageWithId

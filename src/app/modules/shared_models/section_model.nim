@@ -239,23 +239,7 @@ QtObject:
 
     self.items[index].muted = muted 
     let dataIndex = self.createIndex(index, 0, nil)
-    self.dataChanged(dataIndex, dataIndex, @[
-      ModelRole.Name.int,
-      ModelRole.Description.int,
-      ModelRole.Image.int,
-      ModelRole.Icon.int,
-      ModelRole.Color.int,
-      ModelRole.HasNotification.int,
-      ModelRole.NotificationsCount.int,
-      ModelRole.IsMember.int,
-      ModelRole.CanJoin.int,
-      ModelRole.Joined.int,
-      ModelRole.Muted.int, 
-      ModelRole.MembersModel.int,
-      ModelRole.PendingRequestsToJoinModel.int,
-      ModelRole.HistoryArchiveSupportEnabled.int,
-      ModelRole.BannedMembersModel.int
-      ])
+    self.dataChanged(dataIndex, dataIndex, @[ModelRole.Muted.int])
 
 
   proc editItem*(self: SectionModel, item: SectionItem) =
@@ -405,6 +389,7 @@ QtObject:
           "canManageUsers": item.canManageUsers,
           "canRequestAccess": item.canRequestAccess,
           "isMember": item.isMember,
+          "amIBanned": item.amIBanned,
           "access": item.access,
           "ensOnly": item.ensOnly,
           "nbMembers": item.members.getCount(),

@@ -1014,6 +1014,7 @@ Item {
                     sourceComponent: CreateChatView {
                         rootStore: chatLayoutContainer.rootStore
                         emojiPopup: statusEmojiPopup
+                        stickersPopup: statusStickersPopup
                     }
                 }
             }
@@ -1374,8 +1375,9 @@ Item {
     Connections {
         target: appMain.rootStore.mainModuleInst
         function onActiveSectionChanged() {
-            if (!!appMain.rootStore.mainModuleInst.getCommunitySectionModule())
-                rootDropAreaPanel.activeChatType = appMain.rootStore.mainModuleInst.getCommunitySectionModule().activeItem.type
+            let communitySectionModule = appMain.rootStore.mainModuleInst.getCommunitySectionModule()
+            if (communitySectionModule)
+                rootDropAreaPanel.activeChatType = communitySectionModule.activeItem.type
         }
     }
 

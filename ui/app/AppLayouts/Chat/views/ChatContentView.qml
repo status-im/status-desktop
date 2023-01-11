@@ -66,11 +66,14 @@ ColumnLayout {
         }
     }
 
-    StatusBanner {
+    Loader {
         Layout.fillWidth: true
-        visible: root.isBlocked
-        type: StatusBanner.Type.Danger
-        statusText: qsTr("Blocked")
+        active: root.isBlocked
+        visible: active
+        sourceComponent: StatusBanner {
+            type: StatusBanner.Type.Danger
+            statusText: qsTr("Blocked")
+        }
     }
 
     MessageStore {
@@ -179,7 +182,7 @@ ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: Style.current.smallPadding
 
-                enabled: root.activeSectionData.joined
+                enabled: root.activeSectionData.joined && !root.activeSectionData.amIBanned
 
                 store: root.rootStore
                 usersStore: root.usersStore
@@ -199,7 +202,7 @@ ColumnLayout {
                 }
 
                 Binding on chatInputPlaceholder {
-                    when: !root.activeSectionData.joined
+                    when: !root.activeSectionData.joined || root.activeSectionData.amIBanned
                     value: qsTr("You need to join this community to send messages")
                 }
 
@@ -233,7 +236,8 @@ ColumnLayout {
                         return
                     }
 
-                    if(root.rootStore.sendMessage(event,
+                    if(root.rootStore.sendMessage(chatContentModule.getMyChatId(),
+                                                  event,
                                                   chatInput.getTextWithPublicKeys(),
                                                   chatInput.isReply? chatInput.replyMessageId : "",
                                                   chatInput.fileUrlsAndSources

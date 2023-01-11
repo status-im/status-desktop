@@ -990,11 +990,11 @@ Rectangle {
         width: messageInput.width
         filter: messageInputField.text
         cursorPosition: messageInputField.cursorPosition
-        property: ["name", "nickname", "ensName", "alias"]
+        property: ["nickname", "ensName", "name", "alias"]
         inputField: messageInputField
         onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
             messageInputField.forceActiveFocus();
-            let name = item.name.replace("@", "")
+            const name = item[suggestionsBox.property.find(p => !!item[p])].replace("@", "")
             d.insertMention(name, item.publicKey, lastAtPosition, lastCursorPosition)
             suggestionsBox.suggestionsModel.clear()
         }
@@ -1356,6 +1356,8 @@ Rectangle {
 
                             StatusSyntaxHighlighter {
                                 quickTextDocument: messageInputField.textDocument
+                                codeBackgroundColor: Style.current.codeBackground
+                                codeForegroundColor: Style.current.textColor
                             }
                             MouseArea {
                                 anchors.fill: parent

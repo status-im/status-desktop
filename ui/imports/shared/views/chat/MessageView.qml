@@ -35,7 +35,6 @@ Loader {
     // without an explicit need to fetch those details via message store/module.
     property bool isChatBlocked: false
 
-    property int itemIndex: -1
     property string messageId: ""
     property string communityId: ""
     property string responseToMessageWithId: ""
@@ -66,8 +65,6 @@ Loader {
     property bool isInPinnedPopup: false // The pinned popup limits the number of buttons shown
     property bool disableHover: false // Used to force the HoverHandler to be active (useful for messages in popups)
     property bool placeholderMessage: false
-    property bool activityCenterMessage: false
-    property bool activityCenterMessageRead: true
 
     property int gapFrom: 0
     property int gapTo: 0
@@ -112,7 +109,6 @@ Loader {
 
     readonly property bool isExpired: d.getIsExpired(messageOutgoingStatus, messageTimestamp)
     readonly property bool isSending: messageOutgoingStatus === Constants.sending && !isExpired
-    property int statusAgeEpoch: 0
 
     signal imageClicked(var image)
 
@@ -128,8 +124,7 @@ Loader {
                                                isRightClickOnImage = false,
                                                imageSource = "") {
 
-        if (placeholderMessage || activityCenterMessage ||
-                !(root.rootStore.mainModuleInst.activeSection.joined || isProfileClick)) {
+        if (placeholderMessage || !(root.rootStore.mainModuleInst.activeSection.joined || isProfileClick)) {
             return
         }
 
@@ -174,34 +169,11 @@ Loader {
     signal showReplyArea(string messageId, string author)
 
 
-    //    function showReactionAuthors(fromAccounts, emojiId) {
-    //        return root.rootStore.showReactionAuthors(fromAccounts, emojiId)
-    //    }
-
     function startMessageFoundAnimation() {
         root.item.startMessageFoundAnimation();
     }
-    /////////////////////////////////////////////
 
     signal openStickerPackPopup(string stickerPackId)
-    // Not Refactored Yet
-    //    Connections {
-    //        enabled: (!placeholderMessage && !!root.rootStore)
-    //        target: !!root.rootStore ? root.rootStore.allContacts : null
-    //        onContactChanged: {
-    //            if (pubkey === fromAuthor) {
-    //                const img = appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage)
-    //                if (img) {
-    //                    profileImageSource = img
-    //                }
-    //            } else if (replyMessageIndex > -1 && pubkey === repliedMessageAuthorPubkey) {
-    //                const imgReply = appMain.getProfileImage(repliedMessageAuthorPubkey, repliedMessageAuthorIsCurrentUser, false)
-    //                if (imgReply) {
-    //                    repliedMessageUserImage = imgReply
-    //                }
-    //            }
-    //        }
-    //    }
 
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
@@ -251,7 +223,7 @@ Loader {
         property int unfurledLinksCount: 0
 
         property string activeMessage
-        readonly property bool isMessageActive: typeof activeMessage !== "undefined" && activeMessage === messageId
+        readonly property bool isMessageActive: d.activeMessage === root.messageId
 
         function setMessageActive(messageId, active) {
 
@@ -336,8 +308,8 @@ Loader {
             chatEmoji: root.channelEmoji
             amIChatAdmin: root.amIChatAdmin
             chatIcon: {
-                if ((root.messageStore.getChatType() === Constants.chatType.privateGroupChat) &&
-                     root.messageStore.getChatIcon() !== "") {
+                if (root.messageStore.getChatType() === Constants.chatType.privateGroupChat &&
+                        root.messageStore.getChatIcon() !== "") {
                     return root.messageStore.getChatIcon()
                 }
                 return root.senderIcon
@@ -481,12 +453,6 @@ Loader {
                            root.nextMessageAsJsonObj.responseToMessageWithId !== ""
                 }
 
-                audioMessageInfoText: qsTr("Audio Message")
-                cancelButtonText: qsTr("Cancel")
-                saveButtonText: qsTr("Save")
-                loadingImageText: qsTr("Loading image...")
-                errorLoadingImageText: qsTr("Error loading the image")
-                resendText: qsTr("Resend")
                 pinnedMsgInfoText: root.isDiscordMessage ? qsTr("Pinned") : qsTr("Pinned by")
                 reactionIcons: [
                     Style.svg("emojiReactions/heart"),
@@ -522,26 +488,19 @@ Loader {
                 bottomPadding: showHeader && nextMessageHasHeader() ? Style.current.halfPadding : 2
                 disableHover: root.disableHover ||
                               (root.chatLogView && root.chatLogView.flickingVertically) ||
-                              activityCenterMessage ||
                               (root.messageContextMenu && root.messageContextMenu.opened) ||
-                              !!Global.profilePopupOpened ||
-                              !!Global.popupOpened
+                              Global.profilePopupOpened ||
+                              Global.popupOpened
 
                 hideQuickActions: root.isChatBlocked ||
                                   root.placeholderMessage ||
-                                  root.activityCenterMessage ||
                                   root.isInPinnedPopup ||
                                   root.editModeOn ||
                                   !root.rootStore.mainModuleInst.activeSection.joined
 
                 hideMessage: d.isSingleImage && d.unfurledLinksCount === 1
 
-                overrideBackground: root.activityCenterMessage || root.placeholderMessage
-                overrideBackgroundColor: {
-                    if (root.activityCenterMessage && root.activityCenterMessageRead)
-                        return Utils.setColorAlpha(Style.current.blue, 0.1);
-                    return "transparent";
-                }
+                overrideBackground: root.placeholderMessage
                 profileClickable: !root.isDiscordMessage
                 messageAttachments: root.messageAttachments
 
@@ -628,7 +587,7 @@ Loader {
                 }
 
                 mouseArea {
-                    acceptedButtons: root.activityCenterMessage ? Qt.LeftButton : Qt.RightButton
+                    acceptedButtons: Qt.RightButton
                     enabled: !root.isChatBlocked &&
                              !root.placeholderMessage &&
                              delegate.contentType !== StatusMessage.ContentType.Image
@@ -711,46 +670,42 @@ Loader {
                     }
                 }
 
-                statusChatInput: StatusChatInput {
-                    id: editTextInput
-                    objectName: "editMessageInput"
+                statusChatInput: Component {
+                    StatusChatInput {
+                        id: editTextInput
+                        objectName: "editMessageInput"
 
-                    readonly property string messageText: editTextInput.textInput.text
+                        readonly property string messageText: editTextInput.textInput.text
 
-                    // TODO: Move this property and Escape handler to StatusChatInput
-                    property bool suggestionsOpened: false
+                        // TODO: Move this property and Escape handler to StatusChatInput
+                        property bool suggestionsOpened: false
 
-                    width: parent.width
+                        width: parent.width
 
-                    Keys.onEscapePressed: {
-                        if (!suggestionsOpened) {
-                            delegate.editCancelled()
+                        Keys.onEscapePressed: {
+                            if (!suggestionsOpened) {
+                                delegate.editCancelled()
+                            }
+                            suggestionsOpened = false
                         }
-                        suggestionsOpened = false
-                    }
 
-                    store: root.rootStore
-                    usersStore: root.usersStore
-                    emojiPopup: root.emojiPopup
-                    stickersPopup: root.stickersPopup
-                    messageContextMenu: root.messageContextMenu
+                        store: root.rootStore
+                        usersStore: root.usersStore
+                        emojiPopup: root.emojiPopup
+                        stickersPopup: root.stickersPopup
+                        messageContextMenu: root.messageContextMenu
 
-                    chatType: root.messageStore.getChatType()
-                    isEdit: true
+                        chatType: root.messageStore.getChatType()
+                        isEdit: true
 
-                    onSendMessage: {
-                        delegate.editCompletedHandler(editTextInput.textInput.text)
-                    }
-
-                    suggestions.onVisibleChanged: {
-                        if (suggestions.visible) {
-                            suggestionsOpened = true
+                        onSendMessage: {
+                            delegate.editCompletedHandler(editTextInput.textInput.text)
                         }
-                    }
 
-                    Component.onCompleted: {
-                        parseMessage(root.messageText);
-                        delegate.originalMessageText = editTextInput.textInput.text
+                        Component.onCompleted: {
+                            parseMessage(root.messageText);
+                            delegate.originalMessageText = editTextInput.textInput.text
+                        }
                     }
                 }
 
@@ -884,7 +839,6 @@ Loader {
                                 return false;
                             if (!root.messageStore)
                                 return false;
-                            const chatType = root.messageStore.getChatType();
                             return (root.amISender || root.amIChatAdmin) &&
                                     (messageContentType === Constants.messageContentType.messageType ||
                                      messageContentType === Constants.messageContentType.stickerType ||

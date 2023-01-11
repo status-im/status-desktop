@@ -343,7 +343,7 @@ QtObject {
         readonly property int loginInfoHeight3: 66
         readonly property int radius: 8
         readonly property QtObject profileFetching: QtObject {
-            readonly property int    timeout: 120 //2 mins (120 secs)
+            readonly property int    timeout: 120 * 1000 //2 mins in milliseconds
             readonly property int    titleFontSize: 22
             readonly property int    entityFontSize: 15
             readonly property int    entityProgressFontSize: 12
@@ -713,9 +713,6 @@ QtObject {
     readonly property string ens_already_connected: "already-connected"
     readonly property string ens_connected: "connected"
     readonly property string ens_connected_dkey: "connected-different-key"
-
-    // WARNING: Remove later. Moved to StatusQ.
-    readonly property string editLabel: ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
 
     readonly property string newBookmark: " "
 

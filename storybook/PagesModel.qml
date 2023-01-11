@@ -66,6 +66,10 @@ ListModel {
          section: "Popups"
     }
     ListElement {
+         title: "CommunityIntroDialog"
+         section: "Popups"
+    }
+    ListElement {
         title: "MembersSelector"
         section: "Components"
     }

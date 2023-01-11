@@ -100,13 +100,14 @@ QtObject {
         return msg
     }
 
-    function sendMessage(event, text, replyMessageId, fileUrlsAndSources) {
-        var chatContentModule = currentChatContentModule()
+    function sendMessage(chatId, event, text, replyMessageId, fileUrlsAndSources) {
+        chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
+        const chatContentModule = chatCommunitySectionModule.getChatContentModule()
         if (fileUrlsAndSources.length > 0){
             chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrlsAndSources));
         }
 
-        let msg = globalUtils.plainText(StatusQUtils.Emoji.deparse(text))
+        let msg = globalUtilsInst.plainText(StatusQUtils.Emoji.deparse(text))
         if (msg.length > 0) {
             msg = interpretMessage(msg)
 
@@ -301,11 +302,11 @@ QtObject {
     }
 
     function generateAlias(pk) {
-        return globalUtils.generateAlias(pk);
+        return globalUtilsInst.generateAlias(pk);
     }
 
     function plainText(text) {
-        return globalUtils.plainText(text)
+        return globalUtilsInst.plainText(text)
     }
 
     function removeCommunityChat(chatId) {
@@ -551,11 +552,11 @@ QtObject {
     }
 
     function getWei2Eth(wei) {
-        return globalUtils.wei2Eth(wei,18)
+        return globalUtilsInst.wei2Eth(wei,18)
     }
 
     function getEth2Wei(eth) {
-         return globalUtils.eth2Wei(eth, 18)
+         return globalUtilsInst.eth2Wei(eth, 18)
     }
 
     function switchAccount(newIndex) {
@@ -570,7 +571,7 @@ QtObject {
     }
 
     function hex2Eth(value) {
-        return globalUtils.hex2Eth(value)
+        return globalUtilsInst.hex2Eth(value)
     }
 
     readonly property Connections communitiesModuleConnections: Connections {
