@@ -140,9 +140,8 @@ Control {
 
     contentItem: Item {
 
-        implicitWidth: messageLayout.implicitWidth
+        implicitWidth: parent.width
         implicitHeight: messageLayout.implicitHeight
-
 
         SequentialAnimation {
             id: messageFoundAnimation
@@ -182,7 +181,8 @@ Control {
 
         ColumnLayout {
             id: messageLayout
-            anchors.fill: parent
+            width: parent.width
+            height: childrenRect.height
             spacing: 2
 
             Loader {
@@ -202,6 +202,7 @@ Control {
                 Layout.fillWidth: true
                 Layout.leftMargin: 16
                 Layout.rightMargin: 16
+                Layout.preferredHeight: childrenRect.height
                 spacing: 8
 
                 StatusSmartIdenticon {
@@ -226,6 +227,7 @@ Control {
                     spacing: 2
                     Layout.alignment: Qt.AlignTop
                     Layout.fillWidth: true
+                    Layout.preferredHeight: childrenRect.height
                     Layout.leftMargin: profileImage.visible ? 0 : root.messageDetails.sender.profileImage.assetSettings.width + parent.spacing
 
                     StatusPinMessageDetails {
@@ -253,7 +255,9 @@ Control {
                     }
                     Loader {
                         Layout.fillWidth: true
-                        active: !root.editMode && !!root.messageDetails.messageText && !root.hideMessage
+                        active: (!root.editMode && !!root.messageDetails.messageText && !root.hideMessage
+                        && ((root.messageDetails.contentType === StatusMessage.ContentType.Text)
+                        || (root.messageDetails.contentType === StatusMessage.ContentType.Emoji)))
                         visible: active
                         sourceComponent: StatusTextMessage {
                             objectName: "StatusMessage_textMessage"
