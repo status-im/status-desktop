@@ -29,6 +29,7 @@ type
     totalFees: CurrencyAmount
     maxTotalFees: CurrencyAmount
     symbol: string
+    loadingTransaction: bool
 
 proc initItem*(
   id: string,
@@ -56,7 +57,8 @@ proc initItem*(
   baseGasFees: CurrencyAmount,
   totalFees: CurrencyAmount,
   maxTotalFees: CurrencyAmount,
-  symbol: string
+  symbol: string,
+  loadingTransaction: bool = false
 ): Item =
   result.id = id
   result.typ = typ
@@ -84,6 +86,7 @@ proc initItem*(
   result.totalFees = totalFees
   result.maxTotalFees = maxTotalFees
   result.symbol = symbol
+  result.loadingTransaction = loadingTransaction
 
 proc initTimestampItem*(timestamp: int): Item =
   result.timestamp = timestamp
@@ -97,6 +100,20 @@ proc initTimestampItem*(timestamp: int): Item =
   result.baseGasFees = newCurrencyAmount()
   result.totalFees = newCurrencyAmount()
   result.maxTotalFees = newCurrencyAmount()
+
+proc initLoadingItem*(): Item =
+  result.timestamp = 0
+  result.gasPrice = newCurrencyAmount()
+  result.value = newCurrencyAmount()
+  result.chainId = 0
+  result.maxFeePerGas = newCurrencyAmount()
+  result.maxPriorityFeePerGas = newCurrencyAmount()
+  result.multiTransactionID = 0
+  result.isTimeStamp = false
+  result.baseGasFees = newCurrencyAmount()
+  result.totalFees = newCurrencyAmount()
+  result.maxTotalFees = newCurrencyAmount()
+  result.loadingTransaction = true
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
@@ -126,6 +143,7 @@ proc `$`*(self: Item): string =
     totalFees: {self.totalFees},
     maxTotalFees: {self.maxTotalFees},
     symbol: {self.symbol},
+    loadingTransaction: {self.loadingTransaction},
     ]"""
 
 proc getId*(self: Item): string =
@@ -205,3 +223,6 @@ proc  getMaxTotalFees*(self: Item): CurrencyAmount =
 
 proc  getSymbol*(self: Item): string =
   return self.symbol
+
+proc  getLoadingTransaction*(self: Item): bool =
+  return self.loadingTransaction

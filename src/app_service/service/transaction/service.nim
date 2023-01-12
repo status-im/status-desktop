@@ -70,6 +70,8 @@ type
     transactions*: seq[TransactionDto]
     address*: string
     wasFetchMore*: bool
+    allTxLoaded*: bool
+    tempLoadingTx*: int
 
 type
   TransactionSentArgs* = ref object of Args
@@ -96,6 +98,7 @@ QtObject:
     settingsService: settings_service.Service
     tokenService: token_service.Service
     txCounter: Table[string, seq[int]]
+    allTxLoaded: Table[string, bool]
 
   # Forward declaration
   proc loadTransactions*(self: Service, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false)
@@ -118,6 +121,7 @@ QtObject:
     result.settingsService = settingsService
     result.tokenService = tokenService
     result.txCounter = initTable[string, seq[int]]()
+    result.allTxLoaded = initTable[string, bool]()
 
   proc init*(self: Service) =
     signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
@@ -202,9 +206,15 @@ QtObject:
     let address = historyData["address"].getStr
     let chainID = historyData["chainId"].getInt
     let wasFetchMore = historyData["loadMore"].getBool
+    let allTxLoaded = historyData["allTxLoaded"].getBool
     var transactions: seq[TransactionDto] = @[]
-    for tx in historyData["history"]["result"].getElems():
+    for tx in historyData["history"].getElems():
       transactions.add(tx.toTransactionDto())
+
+    if self.allTxLoaded.hasKey(address):
+      self.allTxLoaded[address] = self.allTxLoaded[address] and allTxLoaded
+    else:
+      self.allTxLoaded[address] = allTxLoaded
 
     # emit event
     self.events.emit(SIGNAL_TRANSACTIONS_LOADED, TransactionsLoadedArgs(
@@ -214,16 +224,18 @@ QtObject:
     ))
 
     # when requests for all networks are completed then set loading state as completed
-    if self.txCounter.hasKey(address):
+    if self.txCounter.hasKey(address) and self.allTxLoaded.hasKey(address) :
       var chainIDs = self.txCounter[address]
       chainIDs.del(chainIDs.find(chainID))
       self.txCounter[address] = chainIDs
       if self.txCounter[address].len == 0:
         self.txCounter.del(address)
-        self.events.emit(SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS, TransactionsLoadedArgs(address: address))
+        self.events.emit(SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS, TransactionsLoadedArgs(address: address, allTxLoaded: self.allTxLoaded[address]))
 
   proc loadTransactions*(self: Service, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
     let networks = self.networkService.getNetworks()
+    self.allTxLoaded.del(address)
+
     if not self.txCounter.hasKey(address):
       var networkChains: seq[int] = @[]
       self.txCounter[address] = networkChains

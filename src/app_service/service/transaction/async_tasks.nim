@@ -17,16 +17,19 @@ type
     toBlock: Uint256
     limit: int
     loadMore: bool
+    allTxLoaded: bool
 
 const loadTransactionsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let
     arg = decode[LoadTransactionsTaskArg](argEncoded)
     limitAsHex = "0x" & eth_utils.stripLeadingZeros(arg.limit.toHex)
+    response = transactions.getTransfersByAddress(arg.chainId, arg.address, arg.toBlock, limitAsHex, arg.loadMore).result
     output = %*{
       "address": arg.address,
       "chainId": arg.chainId,
-      "history": transactions.getTransfersByAddress(arg.chainId, arg.address, arg.toBlock, limitAsHex, arg.loadMore),
+      "history": response,
       "loadMore": arg.loadMore,
+      "allTxLoaded": response.getElems().len < arg.limit
     }
   arg.finish(output)
 

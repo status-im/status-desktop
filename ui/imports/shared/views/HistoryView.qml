@@ -15,37 +15,32 @@ import "../stores"
 import "../controls"
 
 ColumnLayout {
-    id: historyView
+    id: root
 
     property var account
     property int pageSize: 20 // number of transactions per page
-    property bool isLoading: false
 
     signal launchTransactionDetail(var transaction)
 
     function fetchHistory() {
-        if (RootStore.isFetchingHistory(historyView.account.address)) {
-            isLoading = true
-        } else {
-            RootStore.loadTransactionsForAccount(historyView.account.address, pageSize)
+        if (!RootStore.isFetchingHistory(root.account.address)) {
+            d.isLoading = true
+            RootStore.loadTransactionsForAccount(root.account.address, pageSize)
         }
+    }
+
+    QtObject {
+        id: d
+        property bool isLoading: false
     }
 
     Connections {
         target: RootStore.history
         function onLoadingTrxHistoryChanged(isLoading: bool, address: string) {
-            if (historyView.account.address.toLowerCase() === address.toLowerCase()) {
-                historyView.isLoading = isLoading
+            if (root.account.address.toLowerCase() === address.toLowerCase()) {
+                d.isLoading = isLoading
             }
         }
-    }
-
-    Loader {
-        id: loadingImg
-        active: isLoading
-        sourceComponent: loadingImageComponent
-        Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-        Layout.rightMargin: Style.current.padding
     }
 
     StyledText {
@@ -60,7 +55,7 @@ ColumnLayout {
 
     StyledText {
         id: noTxs
-        visible: !isLoading && transactionListRoot.count === 0
+        visible: !d.isLoading && transactionListRoot.count === 0
         text: qsTr("No transactions found")
         font.pixelSize: Style.current.primaryTextFontSize
     }
@@ -76,26 +71,17 @@ ColumnLayout {
 
         model: RootStore.historyTransactions
         delegate: Loader {
-            width: parent.width
+            width: ListView.view.width
             sourceComponent: isTimeStamp ? dateHeader : transactionDelegate
             onLoaded:  {
                 item.modelData = model
             }
-        }       
+        }
+        footer: footerComp
 
         ScrollBar.vertical: StatusScrollBar {}
 
-        footer:  StatusButton {
-            id: loadMoreButton
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            text: qsTr("Load More")
-            // TODO: handle case when requested limit === transaction count -- there
-            // is currently no way to know that there are no more results
-            enabled: !isLoading && RootStore.historyTransactions.hasMore 
-            onClicked: fetchHistory()
-            loading: isLoading
-        }
+        onAtYEndChanged: if(atYEnd && RootStore.historyTransactions.hasMore) fetchHistory()
     }
 
     Component {
@@ -113,23 +99,51 @@ ColumnLayout {
     Component {
         id: transactionDelegate
         TransactionDelegate {
-            property bool modelDataValid: modelData !== undefined && !!modelData
+            property bool modelDataValid: !!modelData
             isIncoming: modelDataValid ? modelData.to === account.address: false
             cryptoValue: modelDataValid ? modelData.value : undefined
-            fiatValue: modelDataValid ? RootStore.getFiatValue(cryptoValue.amount, symbol, RootStore.currentCurrency) : undefined
+            fiatValue: modelDataValid  && !!cryptoValue ? RootStore.getFiatValue(cryptoValue.amount, symbol, RootStore.currentCurrency) : undefined
             networkIcon: modelDataValid ? RootStore.getNetworkIcon(modelData.chainId) : ""
             networkColor: modelDataValid ? RootStore.getNetworkColor(modelData.chainId) : ""
             networkName: modelDataValid ? RootStore.getNetworkShortName(modelData.chainId) : ""
-            symbol: modelDataValid ? modelData.symbol : ""
+            symbol: modelDataValid && !!modelData.symbol ? modelData.symbol : ""
             transferStatus: modelDataValid ? RootStore.hex2Dec(modelData.txStatus) : ""
             shortTimeStamp: modelDataValid ? LocaleUtils.formatTime(modelData.timestamp * 1000, Locale.ShortFormat) : ""
             savedAddressName: modelDataValid ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""
             onClicked: launchTransactionDetail(modelData)
+            loading: modelDataValid ? modelData.loadingTransaction : false
         }
     }
 
     Component {
-        id: loadingImageComponent
-        StatusLoadingIndicator {}
+        id: footerComp
+        ColumnLayout {
+            width: root.width
+            visible: !RootStore.historyTransactions.hasMore && transactionListRoot.count !== 0
+            spacing: 12
+            Rectangle {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.topMargin: Style.curent.padding
+                Layout.preferredWidth: parent.width - 100
+                Layout.preferredHeight: 1
+                color: Theme.palette.directColor8
+                visible: !RootStore.historyTransactions.hasMore
+            }
+            StatusBaseText {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
+                text: qsTr("You have reached the beginning of the activity for this account")
+                font.pixelSize: 13
+                color: Theme.palette.baseColor1
+                visible: !RootStore.historyTransactions.hasMore
+                horizontalAlignment: Text.AlignHCenter
+            }
+            StatusButton {
+                Layout.alignment: Qt.AlignHCenter
+                text: qsTr("Back to most recent transaction")
+                visible: !RootStore.historyTransactions.hasMore
+                onClicked: transactionListRoot.positionViewAtBeginning()
+            }
+        }
     }
 }
