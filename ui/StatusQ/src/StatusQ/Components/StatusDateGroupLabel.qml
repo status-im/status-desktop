@@ -15,11 +15,14 @@ StatusBaseText {
     horizontalAlignment: Text.AlignHCenter
 
     text: {
+        if (messageTimestamp === 0)
+            return ""
+
         const currentMsgDate = new Date(messageTimestamp)
         const prevMsgDate = new Date(previousMessageTimestamp)
 
         if (prevMsgDate > 0 && currentMsgDate.getDay() === prevMsgDate.getDay())
-            return "";
+            return ""
 
         const now = new Date();
         // FIXME Qt6: replace with Intl.DateTimeFormat
