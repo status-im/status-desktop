@@ -727,7 +727,7 @@ Loader {
 
                 quickActions: [
                     Loader {
-                        active: !root.isInPinnedPopup
+                        active: !root.isInPinnedPopup && delegate.hovered
                         sourceComponent: StatusFlatRoundButton {
                             width: d.chatButtonSize
                             height: d.chatButtonSize
@@ -741,7 +741,7 @@ Loader {
                         }
                     },
                     Loader {
-                        active: !root.isInPinnedPopup
+                        active: !root.isInPinnedPopup && delegate.hovered
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "replyToMessageButton"
                             width: d.chatButtonSize
@@ -758,7 +758,7 @@ Loader {
                         }
                     },
                     Loader {
-                        active: !root.isInPinnedPopup && root.isText && !root.editModeOn && root.amISender
+                        active: !root.isInPinnedPopup && root.isText && !root.editModeOn && root.amISender && delegate.hovered
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "editMessageButton"
@@ -774,6 +774,9 @@ Loader {
                     },
                     Loader {
                         active: {
+                            if(!delegate.hovered)
+                                return false;
+                                
                             if (!root.messageStore)
                                 return false
 
@@ -819,6 +822,8 @@ Loader {
                     },
                     Loader {
                         active: {
+                            if(!delegate.hovered)
+                                return false;
                             if (root.isInPinnedPopup)
                                 return false;
                             if (!root.messageStore)

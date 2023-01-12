@@ -23,7 +23,7 @@ Control {
         Invitation = 7
     }
 
-    property alias quickActions: quickActionsPanel.items
+    property list<Item> quickActions
     property var statusChatInput
     property alias linksComponent: linksLoader.sourceComponent
     property alias transcationComponent: transactionBubbleLoader.sourceComponent
@@ -365,13 +365,18 @@ Control {
             }
         }
 
-        StatusMessageQuickActions {
-            id: quickActionsPanel
+        Loader {
+            active: root.hovered && !root.hideQuickActions
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
             anchors.topMargin: -8
-            visible: root.hovered && !root.hideQuickActions
+            sourceComponent: Component {
+                StatusMessageQuickActions {
+                    id: quickActionsPanel
+                    items: root.quickActions
+                }
+            }
         }
     }
 
