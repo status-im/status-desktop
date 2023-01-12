@@ -70,12 +70,4 @@ method changeLanguage*(self: Module, language: string) =
 method onCurrentLanguageChanged*(self: Module, language: string) =
   self.view.setLanguage(language)
 
-method setIsDDMMYYDateFormat*(self: Module, isDDMMYYDateFormat: bool) =
-  if(isDDMMYYDateFormat != singletonInstance.localAccountSensitiveSettings.getIsDDMMYYDateFormat()):
-    singletonInstance.localAccountSensitiveSettings.setIsDDMMYYDateFormat(isDDMMYYDateFormat)
-
-method setIs24hTimeFormat*(self: Module, is24hTimeFormat: bool) =
-  if(is24hTimeFormat != singletonInstance.localAccountSensitiveSettings.getIs24hTimeFormat()):
-    singletonInstance.localAccountSensitiveSettings.setIs24hTimeFormat(is24hTimeFormat)
-
 

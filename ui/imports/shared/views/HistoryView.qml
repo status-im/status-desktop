@@ -103,7 +103,7 @@ ColumnLayout {
         StatusListItem {
             property var modelData
             height: 40
-            title: modelData !== undefined && !!modelData ? Utils.formatShortDate(modelData.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat) : ""
+            title: modelData !== undefined && !!modelData ? LocaleUtils.formatDate(modelData.timestamp * 1000, Locale.ShortFormat) : ""
             statusListItemTitle.color: Theme.palette.baseColor1
             color: Theme.palette.statusListItem.backgroundColor
             sensor.enabled: false
@@ -122,7 +122,7 @@ ColumnLayout {
             networkName: modelData !== undefined && !!modelData ? RootStore.getNetworkShortName(modelData.chainId) : ""
             symbol: modelData !== undefined && !!modelData ? !!modelData.symbol ? modelData.symbol : RootStore.findTokenSymbolByAddress(modelData.contract) : ""
             transferStatus: modelData !== undefined && !!modelData ? RootStore.hex2Dec(modelData.txStatus) : ""
-            shortTimeStamp: modelData !== undefined && !!modelData ? Utils.formatShortTime(modelData.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat) : ""
+            shortTimeStamp: modelData !== undefined && !!modelData ? LocaleUtils.formatTime(modelData.timestamp * 1000, Locale.ShortFormat) : ""
             savedAddressName: modelData !== undefined && !!modelData ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""
             onClicked: launchTransactionDetail(modelData)
         }

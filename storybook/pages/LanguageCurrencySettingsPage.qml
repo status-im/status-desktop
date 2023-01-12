@@ -23,8 +23,6 @@ SplitView {
 
             languageStore: LanguageStore {
                 property string currentLanguage: "en"
-                readonly property bool isDDMMYYDateFormat: true
-                readonly property bool is24hTimeFormat: true
 
                 readonly property ListModel languageModel: ListModel {
                     ListElement {
@@ -48,14 +46,6 @@ SplitView {
                 function changeLanguage(language) {
                     logs.logEvent("languageStore::changeLanguage", ["language"], arguments)
                     currentLanguage = language
-                }
-
-                function setIsDDMMYYDateFormat(isDDMMYYDateFormat) {
-                    logs.logEvent("languageStore::setIsDDMMYYDateFormat", ["isDDMMYYDateFormat"], arguments)
-                }
-
-                function setIs24hTimeFormat(is24hTimeFormat) {
-                    logs.logEvent("languageStore::setIs24hTimeFormat", ["is24hTimeFormat"], arguments)
                 }
             }
 

@@ -23,6 +23,8 @@ CheckBox {
 
     property bool leftSide: true
 
+    opacity: enabled ? 1.0 : 0.3
+
     QtObject {
         id: d
 
@@ -66,7 +68,6 @@ CheckBox {
     contentItem: StatusBaseText {
         text: root.text
         font: root.font
-        opacity: enabled ? 1.0 : 0.3
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.WordWrap
         width: parent.width

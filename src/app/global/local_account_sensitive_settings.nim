@@ -89,10 +89,6 @@ const LSS_KEY_COMPATIBILITY_MODE* = "compatibilityMode"
 const DEFAULT_COMPATIBILITY_MODE = true
 const LSS_KEY_STICKERS_ENS_ROPSTEN* = "stickersEnsRopsten"
 const DEFAULT_STICKERS_ENS_ROPSTEN = false
-const LSS_KEY_IS_DDMMYY_DATE_FORMAT* = "is_DDMMYY_date_format"
-const DEFAULT_IS_DDMMYY_DATE_FORMAT = false
-const LSS_KEY_IS_24H_TIME_FORMAT* = "is_24h_time_format"
-const DEFAULT_IS_24H_TIME_FORMAT = false
 const LSS_KEY_USER_DECLINED_BACKUP_BANNER* = "userDeclinedBackupBanner"
 const DEFAULT_USER_DECLINED_BACKUP_BANNER = false
 const LSS_KEY_IS_DISCORD_IMPORT_TOOL_ENABLED* = "isDiscordImportToolEnabled"
@@ -756,31 +752,6 @@ QtObject:
     write = setStickersEnsRopsten
     notify = stickersEnsRopstenChanged
 
-  proc isDDMMYYDateFormatChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIsDDMMYYDateFormat*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_DDMMYY_DATE_FORMAT, newQVariant(DEFAULT_IS_DDMMYY_DATE_FORMAT))
-  proc setIsDDMMYYDateFormat*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_DDMMYY_DATE_FORMAT, newQVariant(value)): 
-      self.isDDMMYYDateFormatChanged()
-
-  QtProperty[bool] isDDMMYYDateFormat:
-    read = getIsDDMMYYDateFormat
-    write = setIsDDMMYYDateFormat
-    notify = isDDMMYYDateFormatChanged
-
-  proc is24hTimeFormatChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIs24hTimeFormat*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_24H_TIME_FORMAT, newQVariant(DEFAULT_IS_24H_TIME_FORMAT))    
-
-  proc setIs24hTimeFormat*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_24H_TIME_FORMAT, newQVariant(value)):
-      self.is24hTimeFormatChanged()
-
-  QtProperty[bool] is24hTimeFormat:
-    read = getIs24hTimeFormat
-    write = setIs24hTimeFormat
-    notify = is24hTimeFormatChanged
-  
   proc userDeclinedBackupBannerChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getUserDeclinedBackupBanner*(self: LocalAccountSensitiveSettings): bool {.slot.} =
     getSettingsProp[bool](self, LSS_KEY_USER_DECLINED_BACKUP_BANNER, newQVariant(DEFAULT_USER_DECLINED_BACKUP_BANNER))
@@ -843,6 +814,4 @@ QtObject:
       of LSS_KEY_PDF_VIEWER_ENABLED: self.pdfViewerEnabledChanged()
       of LSS_KEY_COMPATIBILITY_MODE: self.compatibilityModeChanged()
       of LSS_KEY_STICKERS_ENS_ROPSTEN: self.stickersEnsRopstenChanged()
-      of LSS_KEY_IS_DDMMYY_DATE_FORMAT: self.isDDMMYYDateFormatChanged()
-      of LSS_KEY_IS_24H_TIME_FORMAT: self.is24hTimeFormatChanged()
       of LSS_KEY_USER_DECLINED_BACKUP_BANNER: self.userDeclinedBackupBannerChanged()

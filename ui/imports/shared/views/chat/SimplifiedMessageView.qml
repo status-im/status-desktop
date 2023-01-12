@@ -25,10 +25,8 @@ RowLayout {
         }
     }
 
-    readonly property string timestampString: timestamp !== 0 ?
-                new Date(timestamp).toLocaleTimeString(Qt.locale(), Locale.ShortFormat) : ""
-    readonly property string timestampTooltipString: timestamp !== 0 ?
-                new Date(timestamp).toLocaleString() : ""
+    readonly property string timestampString: timestamp ? LocaleUtils.formatTime(timestamp, Locale.ShortFormat) : ""
+    readonly property string timestampTooltipString: timestamp ? LocaleUtils.formatDateTime(timestamp) : ""
 
     signal openProfilePopup()
 

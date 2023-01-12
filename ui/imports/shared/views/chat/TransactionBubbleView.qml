@@ -1,4 +1,7 @@
 import QtQuick 2.3
+
+import StatusQ.Core 0.1
+
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
@@ -250,7 +253,7 @@ Item {
         StyledText {
             id: timeText
             color: Style.current.secondaryText
-            text: Utils.formatShortTime(messageTimestamp, RootStore.accountSensitiveSettings.is24hTimeFormat)
+            text: LocaleUtils.formatTime(messageTimestamp, Locale.ShortFormat)
             anchors.left: bubbleLoader.active ? bubbleLoader.right : undefined
             anchors.leftMargin: bubbleLoader.active ? 13 : 0
             anchors.right: bubbleLoader.active ? undefined : parent.right

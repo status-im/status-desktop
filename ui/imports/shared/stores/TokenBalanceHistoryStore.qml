@@ -1,5 +1,7 @@
 import QtQuick 2.13
 
+import StatusQ.Core 0.1
+
 import utils 1.0
 
 ChartStoreBase {
@@ -75,8 +77,8 @@ ChartStoreBase {
                 let dataEntry = response.historicalData[i]
 
                 let dateString = response.timeInterval == ChartStoreBase.TimeRange.Weekly || response.timeInterval == ChartStoreBase.TimeRange.Monthly
-                    ? Utils.getDayMonth(dataEntry.time * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat)
-                    : Utils.getMonthYear(dataEntry.time * 1000)
+                    ? LocaleUtils.getDayMonth(dataEntry.time * 1000)
+                    : LocaleUtils.getMonthYear(dataEntry.time * 1000)
                 tmpTimeRange.push(dateString)
 
                 tmpDataValues.push(parseFloat(globalUtils.wei2Eth(dataEntry.value, 18)))

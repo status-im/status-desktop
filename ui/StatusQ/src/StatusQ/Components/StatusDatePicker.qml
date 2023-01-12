@@ -27,10 +27,9 @@ StatusComboBox {
        \qmlproperty string StatusDatePicker::dateFormat
 
        This property specifies how the selected date will be displayed to the user.
-       By default it is current locale's short date format. For a list of available types
-       and formatting characters, see https://doc.qt.io/qt-5/qdate.html#toString-2
+       Either Locale.ShortFormat (default) or Locale.LongFormat
     */
-    property string dateFormat: Qt.locale().dateFormat(Locale.ShortFormat)
+    property int dateFormat: Locale.ShortFormat
 
     /*!
        \qmlproperty date StatusDatePicker::selectedDate
@@ -46,7 +45,7 @@ StatusComboBox {
     }
 
     control.delegate: null
-    control.displayText: root.selectedDate.toLocaleDateString(Qt.locale(), root.dateFormat)
+    control.displayText: LocaleUtils.formatDate(root.selectedDate, root.dateFormat)
     control.popup.horizontalPadding: 8
 
     control.popup.onAboutToShow: {

@@ -1,5 +1,7 @@
 import QtQuick 2.13
 
+import StatusQ.Core 0.1
+
 import utils 1.0
 
 ChartStoreBase {
@@ -12,8 +14,8 @@ ChartStoreBase {
             marketValues[i] = data[i].close;
 
             timeRanges[i] = range === ChartStoreBase.TimeRange.Weekly || range === ChartStoreBase.TimeRange.Monthly ?
-                        Utils.getDayMonth(data[i].time * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat):
-                        Utils.getMonthYear(data[i].time * 1000)
+                        LocaleUtils.getDayMonth(data[i].time * 1000):
+                        LocaleUtils.getMonthYear(data[i].time * 1000)
         }
 
         switch(range) {

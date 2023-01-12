@@ -3,7 +3,6 @@ Tracer 1.0 Tracer.qml
 singleton Backpressure 1.0 Backpressure/Backpressure.qml
 singleton Constants 1.0 Constants.qml
 singleton Global 1.0 Global.qml
-singleton LocaleUtils 1.0 LocaleUtils.qml
 singleton SelectedMessage 1.0 SelectedMessage.qml
 singleton Style 1.0 Style.qml
 singleton Utils 1.0 Utils.qml

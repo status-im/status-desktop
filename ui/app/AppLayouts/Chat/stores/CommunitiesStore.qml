@@ -1,6 +1,7 @@
 import QtQuick 2.0
 
 import AppLayouts.Chat.controls.community 1.0
+import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as SQ
 import utils 1.0
 

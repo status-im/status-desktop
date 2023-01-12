@@ -34,12 +34,6 @@ QtObject:
   QtProperty[QVariant] model:
     read = getModel
 
-  proc setIsDDMMYYDateFormat*(self: View, isDDMMYYDateFormat: bool) {.slot.} =
-    self.delegate.setIsDDMMYYDateFormat(isDDMMYYDateFormat)
-
-  proc setIs24hTimeFormat*(self: View, is24hTimeFormat: bool) {.slot.} =
-    self.delegate.setIs24hTimeFormat(is24hTimeFormat)
-
   proc changeLanguage*(self: View, language: string) {.slot.} =
     self.delegate.changeLanguage(language)
 

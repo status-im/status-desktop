@@ -67,7 +67,7 @@ Item {
                 networkName: root.transaction !== undefined && !!root.transaction ? RootStore.getNetworkShortName(transaction.chainId): ""
                 symbol: root.transaction !== undefined && !!root.transaction ? RootStore.findTokenSymbolByAddress(transaction.contract): ""
                 transferStatus: root.transaction !== undefined && !!root.transaction ? RootStore.hex2Dec(transaction.txStatus): ""
-                shortTimeStamp: root.transaction !== undefined && !!root.transaction ? Utils.formatShortTime(transaction.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat): ""
+                shortTimeStamp: root.transaction !== undefined && !!root.transaction ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
                 savedAddressName: root.transaction !== undefined && !!root.transaction ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
                 title: d.isIncoming ? qsTr("Received %1 %2 from %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.from) :
                                     qsTr("Sent %1 %2 to %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.to)
@@ -164,10 +164,10 @@ Item {
                 networkName: root.transaction !== undefined && !!root.transaction ? RootStore.getNetworkShortName(transaction.chainId): ""
                 symbol: root.transaction !== undefined && !!root.transaction ? RootStore.findTokenSymbolByAddress(transaction.contract): ""
                 transferStatus: root.transaction !== undefined && !!root.transaction ? RootStore.hex2Dec(transaction.txStatus): ""
-                shortTimeStamp: root.transaction !== undefined && !!root.transaction ? Utils.formatShortTime(transaction.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat): ""
+                shortTimeStamp: root.transaction !== undefined && !!root.transaction ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
                 savedAddressName: root.transaction !== undefined && !!root.transaction ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
                 title: d.isIncoming ? qsTr("Received %1 %2 from %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.from) :
-                                    qsTr("Sent %1 %2 to %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.to)
+                                      qsTr("Sent %1 %2 to %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.to)
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 border.width: 1
@@ -179,8 +179,8 @@ Item {
                     maxWidth: parent.width
                     primaryText: qsTr("Time")
                     secondaryText:  root.transaction !== undefined && !!root.transaction ? qsTr("%1 <font color=\"#939BA1\">on</font> %2").
-                                                                     arg(Utils.formatShortTime(transaction.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat)).
-                                                                     arg(Utils.formatShortDate(transaction.timestamp * 1000, RootStore.accountSensitiveSettings.is24hTimeFormat)): ""
+                                                                     arg(LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat)).
+                                                                     arg(LocaleUtils.formatDate(transaction.timestamp * 1000, Locale.ShortFormat)): ""
                 }
                 InformationTile {
                     maxWidth: parent.width

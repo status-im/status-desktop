@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.14
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
+import utils 1.0
+
 Item {
     id: root
 
@@ -30,7 +32,7 @@ Item {
         }
 
         StatusBaseText {
-            text: qsTr("%n missed message(s) since %1", "", count).arg(new Date(timestamp).toLocaleDateString())
+            text: qsTr("%n missed message(s) since %1", "", count).arg(LocaleUtils.formatDate(timestamp))
             color: Theme.palette.primaryColor1
             font.weight: Font.Bold
             font.pixelSize: 13
