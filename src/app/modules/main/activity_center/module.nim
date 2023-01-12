@@ -99,7 +99,11 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     contactDetails.details.ensVerified,
     message.discordMessage,
     resendError = "",
-    message.mentioned
+    message.mentioned,
+    message.quotedMessage.`from`,
+    message.quotedMessage.text,
+    self.controller.getRenderedText( message.quotedMessage.parsedText),
+    message.quotedMessage.contentType
     ))
 
 method convertToItems*(

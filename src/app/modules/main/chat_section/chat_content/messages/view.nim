@@ -58,19 +58,6 @@ QtObject:
       return ""
     return $jsonObj
 
-  proc getReplyMessageByIdAsJson*(self: View, messageId: string): string {.slot.} =
-    var jsonObj = self.model.getMessageByIdAsJson(messageId)
-    if(jsonObj.isNil):
-      # trying to get message from status-go
-      let messageItem = self.delegate.getMessageById(messageId)
-      if messageItem == nil:
-        return ""
-
-      jsonObj = messageItem.toJsonNode();
-      if(jsonObj.isNil):
-        return ""
-    return $jsonObj
-
   proc getSectionId*(self: View): string {.slot.} =
     return self.delegate.getSectionId()
 
@@ -158,10 +145,6 @@ QtObject:
 
   proc leaveChat*(self: View) {.slot.} =
     self.delegate.leaveChat()
-
-  proc refreshAMessageUserRespondedTo(self: View, msgId: string) {.signal.}
-  proc emitRefreshAMessageUserRespondedToSignal*(self: View, msgId: string) =
-    self.refreshAMessageUserRespondedTo(msgId)
 
   proc jumpToMessage*(self: View, messageId: string) {.slot.} =
     self.delegate.scrollToMessage(messageId)

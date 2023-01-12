@@ -103,7 +103,11 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     senderEnsVerified = false,
     DiscordMessage(),
     resendError = "",
-    mentioned = false
+    mentioned = false,
+    quotedMessageFrom = "",
+    quotedMessageText = "",
+    quotedMessageParsedText = "",
+    quotedMessageContentType = -1
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -146,7 +150,11 @@ proc createChatIdentifierItem(self: Module): Item =
     senderEnsVerified = false,
     DiscordMessage(),
     resendError = "",
-    mentioned = false
+    mentioned = false,
+    quotedMessageFrom = "",
+    quotedMessageText = "",
+    quotedMessageParsedText = "",
+    quotedMessageContentType = -1
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module) =
@@ -228,7 +236,11 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         sender.details.ensVerified,
         m.discordMessage,
         resendError = "",
-        m.mentioned
+        m.mentioned,
+        m.quotedMessage.`from`,
+        m.quotedMessage.text,
+        self.controller.getRenderedText(m.quotedMessage.parsedText),
+        m.quotedMessage.contentType
         )
 
       for r in reactions:
@@ -329,7 +341,11 @@ method messageAdded*(self: Module, message: MessageDto) =
     sender.details.ensVerified,
     message.discordMessage,
     resendError = "",
-    message.mentioned
+    message.mentioned,
+    message.quotedMessage.`from`,
+    message.quotedMessage.text,
+    self.controller.getRenderedText(message.quotedMessage.parsedText),
+    message.quotedMessage.contentType
   )
 
   self.view.model().insertItemBasedOnClock(item)
@@ -483,11 +499,12 @@ method onMessageEdited*(self: Module, message: MessageDto) =
     return
 
   let mentionedUsersPks = itemBeforeChange.mentionedUsersPks
-  let renderedMessageText = self.controller.getRenderedText(message.parsedText)
 
   self.view.model().updateEditedMsg(
     message.id,
-    renderedMessageText,
+    self.controller.getRenderedText(message.parsedText),
+    message.text,
+    message.contentType,
     message.containsContactMentions(),
     message.links,
     message.mentionedUsersPks
@@ -495,13 +512,6 @@ method onMessageEdited*(self: Module, message: MessageDto) =
 
   # ask service to send SIGNAL_MENTIONED_IN_EDITED_MESSAGE signal if there is a new user's mention
   self.controller.checkEditedMessageForMentions(self.getChatId(), message, mentionedUsersPks)
-
-  let messagesIds = self.view.model().findIdsOfTheMessagesWhichRespondedToMessageWithId(message.id)
-  for msgId in messagesIds:
-    # refreshing an item calling `self.view.model().refreshItemWithId(msgId)` doesn't work from some very weird reason
-    # and that would be the correct way of updating item instead sending this signal. We should check this once we refactor
-    # qml part.
-    self.view.emitRefreshAMessageUserRespondedToSignal(msgId)
 
 method onHistoryCleared*(self: Module) =
   self.view.model().clear()
@@ -616,7 +626,11 @@ method getMessageById*(self: Module, messageId: string): message_item.Item =
       sender.details.ensVerified,
       m.discordMessage,
       resendError = "",
-      m.mentioned
+      m.mentioned,
+      m.quotedMessage.`from`,
+      m.quotedMessage.text,
+      self.controller.getRenderedText(m.quotedMessage.parsedText),
+      m.quotedMessage.contentType
       )
     return item
   return nil

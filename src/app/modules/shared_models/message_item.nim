@@ -44,6 +44,12 @@ type
     messageAttachments: seq[string]
     resendError: string
     mentioned: bool
+    quotedMessageFrom: string
+    quotedMessageText: string
+    quotedMessageParsedText: string
+    quotedMessageContentType: int
+    # This is only used to update the author's details when author's details change
+    quotedMessageFromIterator: int
 
 proc initItem*(
     id,
@@ -74,7 +80,11 @@ proc initItem*(
     senderEnsVerified: bool,
     discordMessage: DiscordMessage,
     resendError: string,
-    mentioned: bool
+    mentioned: bool,
+    quotedMessageFrom: string,
+    quotedMessageText: string,
+    quotedMessageParsedText: string,
+    quotedMessageContentType: int
     ): Item =
   result = Item()
   result.id = id
@@ -112,6 +122,11 @@ proc initItem*(
   result.messageAttachments = @[]
   result.resendError = resendError
   result.mentioned = mentioned
+  result.quotedMessageFrom = quotedMessageFrom
+  result.quotedMessageText = quotedMessageText
+  result.quotedMessageParsedText = quotedMessageParsedText
+  result.quotedMessageContentType = quotedMessageContentType
+  result.quotedMessageFromIterator = 0
 
   if ContentType.DiscordMessage == contentType:
     if result.messageText == "":
@@ -161,7 +176,11 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     senderEnsVerified = false,
     discordMessage = DiscordMessage(),
     resendError = "",
-    mentioned = false
+    mentioned = false,
+    quotedMessageFrom = "",
+    quotedMessageText = "",
+    quotedMessageParsedText = "",
+    quotedMessageContentType = -1
   )
 
 proc `$`*(self: Item): string =
@@ -378,7 +397,12 @@ proc toJsonNode*(self: Item): JsonNode =
     "links": self.links,
     "mentionedUsersPks": self.mentionedUsersPks,
     "senderEnsVerified": self.senderEnsVerified,
-    "resendError": self.resendError
+    "resendError": self.resendError,
+    "mentioned": self.mentioned,
+    "quotedMessageFrom": self.quotedMessageFrom,
+    "quotedMessageText": self.quotedMessageText,
+    "quotedMessageParsedText": self.quotedMessageParsedText,
+    "quotedMessageContentType": self.quotedMessageContentType,
   }
 
 proc editMode*(self: Item): bool {.inline.} =
@@ -410,3 +434,28 @@ proc mentioned*(self: Item): bool {.inline.} =
 
 proc `mentioned=`*(self: Item, value: bool) {.inline.} =
   self.mentioned = value
+
+proc quotedMessageFrom*(self: Item): string {.inline.} =
+  self.quotedMessageFrom
+proc `quotedMessageFrom=`*(self: Item, value: string) {.inline.} =
+  self.quotedMessageFrom = value
+
+proc quotedMessageText*(self: Item): string {.inline.} =
+  self.quotedMessageText
+proc `quotedMessageText=`*(self: Item, value: string) {.inline.} =
+  self.quotedMessageText = value
+
+proc quotedMessageParsedText*(self: Item): string {.inline.} =
+  self.quotedMessageParsedText
+proc `quotedMessageParsedText=`*(self: Item, value: string) {.inline.} =
+  self.quotedMessageParsedText = value
+
+proc quotedMessageContentType*(self: Item): int {.inline.} =
+  self.quotedMessageContentType
+proc `quotedMessageContentType=`*(self: Item, value: int) {.inline.} =
+  self.quotedMessageContentType = value
+
+proc quotedMessageFromIterator*(self: Item): int {.inline.} =
+  self.quotedMessageFromIterator
+proc `quotedMessageFromIterator=`*(self: Item, value: int) {.inline.} =
+  self.quotedMessageFromIterator = value

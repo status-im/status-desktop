@@ -538,7 +538,7 @@ QtObject {
             incomingVerificationStatus: Constants.verificationStatus.unverified
         }
 
-        if (!mainModuleInst)
+        if (!mainModuleInst || !publicKey)
             return defaultValue
 
         const jsonObj = mainModuleInst.getContactDetailsAsJson(publicKey, getVerificationRequest)
