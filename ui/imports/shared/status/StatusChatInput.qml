@@ -1021,6 +1021,7 @@ Rectangle {
         gifSelected: function (event, url) {
             messageInputField.text += "\n" + url
             control.sendMessage(event)
+            control.isReply = false
             gifBtn.highlighted = false
             messageInputField.forceActiveFocus()
             if (control.closeGifPopupAfterSelection)
