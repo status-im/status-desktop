@@ -369,9 +369,15 @@ Item {
                             Layout.alignment: detailsFlow.isOverflowing ? Qt.AlignLeft : Qt.AlignRight
                             iconAsset.icon: "browser"
                             tagPrimaryLabel.text: qsTr("Website")
-                            controlBackground.color: Theme.palette.baseColor2
-                            controlBackground.border.color: "transparent"
                             visible: typeof token != "undefined" && token && token.assetWebsiteUrl !== ""
+                            customBackground: Component {
+                                Rectangle {
+                                    color: Theme.palette.baseColor2
+                                    border.width: 1
+                                    border.color: "transparent"
+                                    radius: 36
+                                }
+                            }
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
@@ -385,9 +391,15 @@ Item {
                             image.source: token  && token.builtOn !== "" ? Style.svg("tiny/" + RootStore.getNetworkIconUrl(token.builtOn)) : ""
                             tagPrimaryLabel.text: token && token.builtOn !== "" ? RootStore.getNetworkName(token.builtOn) : "---"
                             tagSecondaryLabel.text: token && token.address !== "" ? token.address : "---"
-                            controlBackground.color: Theme.palette.baseColor2
-                            controlBackground.border.color: "transparent"
                             visible: typeof token != "undefined" && token && token.builtOn !== "" && token.address !== ""
+                            customBackground: Component {
+                                Rectangle {
+                                    color: Theme.palette.baseColor2
+                                    border.width: 1
+                                    border.color: "transparent"
+                                    radius: 36
+                                }
+                            }
                         }
                     }
                 }

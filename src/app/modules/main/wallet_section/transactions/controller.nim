@@ -82,7 +82,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS) do(e:Args):
     let args = TransactionsLoadedArgs(e)
-    self.delegate.setHistoryFetchState(args.address, isFetching = false)
+    self.delegate.setHistoryFetchState(args.address, args.allTxLoaded, isFetching = false)
 
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     # TODO: Rebuild Transaction items

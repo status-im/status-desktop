@@ -281,7 +281,6 @@ Rectangle {
                     lineHeight: 24
 
                     visible: inlineTagModelRepeater.count > 0
-                    loading: statusListItem.loading
                 }
 
                 StatusScrollView {
