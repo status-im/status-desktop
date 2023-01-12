@@ -1,9 +1,11 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
+import StatusQ.Core 0.1
+import StatusQ.Popups 0.1
+
 import shared.stores 1.0
 import utils 1.0
-import StatusQ.Popups 0.1
 
 Item {
     id: appSearch
@@ -75,7 +77,7 @@ Item {
         searchOptionsPopupMenu: searchPopupMenu
         searchResults: appSearch.store.resultModel
         formatTimestampFn: function (ts) {
-            return Utils.formatLongDateTime(parseInt(ts, 10), RootStore.accountSensitiveSettings.isDDMMYYDateFormat, RootStore.accountSensitiveSettings.is24hTimeFormat)
+            return LocaleUtils.formatDateTime(parseInt(ts, 10))
         }
         onSearchTextChanged: {
             if (searchPopup.searchText !== "") {

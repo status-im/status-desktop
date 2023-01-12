@@ -156,7 +156,7 @@ Popup {
         hideReadNotifications: activityCenterStore.hideReadNotifications
         currentActivityCategory: root.currentActivityCategory
         onCategoryTriggered: root.currentActivityCategory = category
-        onMarkAllReadClicked: errorText = root.activityCenterStore.markAllActivityCenterNotificationsRead()
+        onMarkAllReadClicked: root.activityCenterStore.markAllActivityCenterNotificationsRead()
         onShowHideReadNotifications: activityCenterStore.hideReadNotifications = hideReadNotifications
     }
 

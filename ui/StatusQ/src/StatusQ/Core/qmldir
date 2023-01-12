@@ -14,3 +14,4 @@ StatusProfileImageSettings 0.1 StatusProfileImageSettings.qml
 StatusRollArea 0.1 StatusRollArea.qml
 StatusScrollView 0.1 StatusScrollView.qml
 StatusTooltipSettings 0.1 StatusTooltipSettings.qml
+singleton LocaleUtils 0.1 LocaleUtils.qml

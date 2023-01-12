@@ -3,6 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 
+import StatusQ.Core 0.1
+
 import utils 1.0
 import shared 1.0
 import shared.popups 1.0

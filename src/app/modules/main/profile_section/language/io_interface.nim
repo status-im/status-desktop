@@ -19,12 +19,6 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method changeLanguage*(self: AccessInterface, language: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setIsDDMMYYDateFormat*(self: AccessInterface, isDDMMYYDateFormat: bool) {.slot.} =
-  raise newException(ValueError, "No implementation available")
-
-method setIs24hTimeFormat*(self: AccessInterface, is24hTimeFormat: bool) {.slot.} =
-  raise newException(ValueError, "No implementation available")
-
 method onCurrentLanguageChanged*(self: AccessInterface, language: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

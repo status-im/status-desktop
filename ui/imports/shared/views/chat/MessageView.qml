@@ -6,7 +6,6 @@ import shared.panels 1.0
 import shared.status 1.0
 import shared.controls 1.0
 import shared.popups 1.0
-import shared.panels.chat 1.0
 import shared.views.chat 1.0
 import shared.controls.chat 1.0
 

@@ -218,7 +218,7 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         text: {
-            const formattedDate = Utils.formatShortDate(d.expirationTimestamp, localAccountSensitiveSettings.isDDMMYYDateFormat)
+            const formattedDate = LocaleUtils.formatDate(d.expirationTimestamp, Locale.ShortFormat)
             return qsTr("Username locked. You won't be able to release it until %1").arg(formattedDate)
         }
         color: Style.current.darkGrey

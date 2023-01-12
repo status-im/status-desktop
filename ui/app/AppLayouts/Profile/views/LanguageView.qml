@@ -46,20 +46,16 @@ SettingsContentBase {
         spacing: Constants.settingsSection.itemSpacing
         width: root.contentWidth
 
-        Item {
-            id: currency
+        RowLayout {
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
-            height: 38
             z: root.z + 2
 
             StatusBaseText {
                 text: qsTr("Set Display Currency")
-                anchors.left: parent.left
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
             }
+            Item { Layout.fillWidth: true }
             StatusListPicker {
                 id: currencyPicker
 
@@ -75,9 +71,6 @@ SettingsContentBase {
                 }
 
                 z: root.z + 2
-                width: 104
-                height: parent.height
-                anchors.right: parent.right
                 inputList: root.currencyStore.currenciesModel
                 printSymbol: true
                 placeholderSearchText: qsTr("Search Currencies")
@@ -92,23 +85,18 @@ SettingsContentBase {
             }
         }
 
-        Item {
-            id: language
+        RowLayout {
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
-            height: 38
             z: root.z + 1
 
             StatusBaseText {
                 text: qsTr("Language")
-                anchors.left: parent.left
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
             }
+            Item { Layout.fillWidth: true }
             StatusListPicker {
                 id: languagePicker
-
                 property string newKey
 
                 function descriptionForState(state) {
@@ -161,9 +149,6 @@ SettingsContentBase {
                 }
 
                 z: root.z + 1
-                width: 104
-                height: parent.height
-                anchors.right: parent.right
                 placeholderSearchText: qsTr("Search Languages")
                 maxPickerHeight: 350
 
@@ -175,7 +160,6 @@ SettingsContentBase {
                         //if (Qt.platform.os === Constants.linux) {
                             root.changeLanguage(key)
                             linuxConfirmationDialog.active = true
-                            linuxConfirmationDialog.item.newLocale = key
                             linuxConfirmationDialog.item.open()
                         // }
 
@@ -192,34 +176,6 @@ SettingsContentBase {
             Layout.bottomMargin: Style.current.padding
         }
 
-        // Date format options:
-        Column {
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-            spacing: Style.current.padding
-            StatusBaseText {
-                text: qsTr("Date Format")
-                anchors.left: parent.left
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
-            }
-
-            StatusRadioButton {
-                text: qsTr("DD/MM/YY")
-                font.pixelSize: 13
-                checked: root.languageStore.isDDMMYYDateFormat
-                onToggled: root.languageStore.setIsDDMMYYDateFormat(checked)
-            }
-
-            StatusRadioButton {
-                text: qsTr("MM/DD/YY")
-                font.pixelSize: 13
-                checked: !root.languageStore.isDDMMYYDateFormat
-                onToggled: root.languageStore.setIsDDMMYYDateFormat(!checked)
-            }
-        }
-
         // Time format options:
         Column {
             Layout.fillWidth: true
@@ -229,23 +185,24 @@ SettingsContentBase {
             spacing: Style.current.padding
             StatusBaseText {
                 text: qsTr("Time Format")
-                anchors.left: parent.left
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
             }
-
-            StatusRadioButton {
-                text: qsTr("24-Hour Time")
+            StatusCheckBox {
+                id: use24hDefault
+                text: qsTr("Use System Settings")
                 font.pixelSize: 13
-                checked: root.languageStore.is24hTimeFormat
-                onToggled: root.languageStore.setIs24hTimeFormat(checked)
+                checked: LocaleUtils.settings.timeFormatUsesDefaults
+                onToggled: {
+                    LocaleUtils.settings.timeFormatUsesDefaults = checked
+                    if (checked)
+                        LocaleUtils.settings.timeFormatUses24Hours = LocaleUtils.is24hTimeFormatDefault()
+                }
             }
-
-            StatusRadioButton {
-                text: qsTr("12-Hour Time")
+            StatusCheckBox {
+                text: qsTr("Use 24-Hour Time")
                 font.pixelSize: 13
-                checked: !root.languageStore.is24hTimeFormat
-                onToggled: root.languageStore.setIs24hTimeFormat(!checked)
+                enabled: !use24hDefault.checked
+                checked: LocaleUtils.settings.timeFormatUses24Hours
+                onToggled: LocaleUtils.settings.timeFormatUses24Hours = checked
             }
         }
 
@@ -254,13 +211,11 @@ SettingsContentBase {
             id: linuxConfirmationDialog
             active: false
             sourceComponent: ConfirmationDialog {
-                property string newLocale
-
                 header.title: qsTr("Change language")
                 confirmationText: qsTr("Display language has been changed. You must restart the application for changes to take effect.")
                 confirmButtonLabel: qsTr("Close the app now")
                 onConfirmButtonClicked: {
-                    loader.active = false
+                    linuxConfirmationDialog.active = false
                     Qt.quit()
                 }
             }

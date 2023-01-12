@@ -128,6 +128,7 @@
         <file>StatusQ/Core/Utils/qmldir</file>
         <file>StatusQ/Core/Utils/Utils.qml</file>
         <file>StatusQ/Core/qmldir</file>
+        <file>StatusQ/Core/LocaleUtils.qml</file>
         <file>StatusQ/Core/StatusAnimatedStack.qml</file>
         <file>StatusQ/Core/StatusBaseText.qml</file>
         <file>StatusQ/Core/StatusFontSettings.qml</file>

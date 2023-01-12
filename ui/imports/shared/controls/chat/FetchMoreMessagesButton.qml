@@ -1,5 +1,6 @@
 import QtQuick 2.13
 
+import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 
 import shared.panels 1.0
@@ -19,8 +20,7 @@ Item {
 
     QtObject {
         id: d
-         readonly property string formattedDate: nextMessageIndex > -1 ? Utils.formatLongDate(nextMsgTimestamp, RootStore.accountSensitiveSettings.isDDMMYYDateFormat) :
-                                                                         Utils.formatLongDate(undefined, RootStore.accountSensitiveSettings.isDDMMYYDateFormat)
+         readonly property string formattedDate: nextMessageIndex > -1 ? LocaleUtils.formatDate(nextMsgTimestamp) : LocaleUtils.formatDate()
     }
 
     Timer {
