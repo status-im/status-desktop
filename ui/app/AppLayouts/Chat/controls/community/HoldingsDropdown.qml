@@ -15,8 +15,8 @@ StatusDropdown {
 
     property var store
 
-    property string tokenKey: ""
-    property real tokenAmount: 0
+    property string assetKey: ""
+    property real assetAmount: 0
 
     property string collectibleKey: ""
     property real collectibleAmount: 1
@@ -25,24 +25,24 @@ StatusDropdown {
     property int ensType: EnsPanel.EnsType.Any
     property string ensDomainName: ""
 
-    signal addToken(string key, real amount)
+    signal addAsset(string key, real amount)
     signal addCollectible(string key, real amount)
     signal addEns(bool any, string customDomain)
 
-    signal updateToken(string key, real amount)
+    signal updateAsset(string key, real amount)
     signal updateCollectible(string key, real amount)
     signal updateEns(bool any, string customDomain)
 
     signal removeClicked
 
     function reset() {
-        d.currentHoldingType = HoldingTypes.Type.Token
-        d.tokenAmountText = ""
+        d.currentHoldingType = HoldingTypes.Type.Asset
+        d.assetAmountText = ""
         d.collectibleAmountText = ""
 
-        root.tokenKey = ""
+        root.assetKey = ""
         root.collectibleKey = ""
-        root.tokenAmount = 0
+        root.assetAmount = 0
         root.collectibleAmount = 1
         root.collectiblesSpecificAmount = false
         root.ensType = EnsPanel.EnsType.Any
@@ -87,7 +87,7 @@ StatusDropdown {
         id: d
 
         // Internal management properties and signals:
-        readonly property bool tokensReady: root.tokenAmount > 0 && root.tokenKey
+        readonly property bool assetsReady: root.assetAmount > 0 && root.assetKey
         readonly property bool collectiblesReady: root.collectibleAmount > 0 && root.collectibleKey
         readonly property bool ensReady: root.ensType === EnsPanel.EnsType.Any || d.ensDomainNameValid
 
@@ -96,12 +96,12 @@ StatusDropdown {
         readonly property string extendedState: "EXTENDED"
 
         property int holdingsTabMode: HoldingsTabs.Mode.Add
-        property int extendedDropdownType: ExtendedDropdownContent.Type.Tokens
+        property int extendedDropdownType: ExtendedDropdownContent.Type.Assets
 
-        property string tokenAmountText: ""
+        property string assetAmountText: ""
         property string collectibleAmountText: ""
 
-        property int currentHoldingType: HoldingTypes.Type.Token
+        property int currentHoldingType: HoldingTypes.Type.Asset
 
         property bool ensDomainNameValid: false
 
@@ -125,7 +125,7 @@ StatusDropdown {
         readonly property int backButtonHeight: 24
         readonly property int backButtonToContentSpace: 8
 
-        readonly property string defaultTokenNameText: qsTr("Choose token")
+        readonly property string defaultAssetNameText: qsTr("Choose asset")
         readonly property string defaultCollectibleNameText: qsTr("Choose collectible")
     }
 
@@ -209,9 +209,9 @@ StatusDropdown {
             id: holdingsTabs
 
             readonly property var holdingTypes: [
-                HoldingTypes.Type.Token, HoldingTypes.Type.Collectible, HoldingTypes.Type.Ens
+                HoldingTypes.Type.Asset, HoldingTypes.Type.Collectible, HoldingTypes.Type.Ens
             ]
-            readonly property var labels: [qsTr("Token"), qsTr("Collectible"), qsTr("ENS")]
+            readonly property var labels: [qsTr("Asset"), qsTr("Collectible"), qsTr("ENS")]
 
             readonly property bool extendedHeight:
                 d.currentHoldingType === HoldingTypes.Type.Collectible && collectiblesSpecificAmount ||
@@ -223,8 +223,8 @@ StatusDropdown {
 
             states: [
                 State {
-                    name: HoldingTypes.Type.Token
-                    PropertyChanges {target: holdingsTabs; sourceComponent: tokensLayout; addOrUpdateButtonEnabled: d.tokensReady}
+                    name: HoldingTypes.Type.Asset
+                    PropertyChanges {target: holdingsTabs; sourceComponent: assetsLayout; addOrUpdateButtonEnabled: d.assetsReady}
                 },
                 State {
                     name: HoldingTypes.Type.Collectible
@@ -258,52 +258,52 @@ StatusDropdown {
     }
 
     Component {
-        id: tokensLayout
+        id: assetsLayout
 
-        TokensPanel {
-            id: tokensPanel
+        AssetsPanel {
+            id: assetsPanel
 
-            tokenName: d.defaultTokenNameText
-            amountText: d.tokenAmountText
-            onAmountTextChanged: d.tokenAmountText = amountText
+            assetName: d.defaultAssetNameText
+            amountText: d.assetAmountText
+            onAmountTextChanged: d.assetAmountText = amountText
 
             readonly property real effectiveAmount: amountValid ? amount : 0
-            onEffectiveAmountChanged: root.tokenAmount = effectiveAmount
+            onEffectiveAmountChanged: root.assetAmount = effectiveAmount
 
             onPickerClicked: {
-                d.extendedDropdownType = ExtendedDropdownContent.Type.Tokens
+                d.extendedDropdownType = ExtendedDropdownContent.Type.Assets
                 statesStack.push(d.extendedState)
             }
 
-            readonly property string tokenKey: root.tokenKey
+            readonly property string assetKey: root.assetKey
 
-            onTokenKeyChanged: {
-                const modelItem = CommunityPermissionsHelpers.getTokenByKey(
-                                    store.tokensModel, tokenKey)
+            onAssetKeyChanged: {
+                const modelItem = CommunityPermissionsHelpers.getAssetByKey(
+                                    store.assetsModel, assetKey)
 
                 if (modelItem) {
-                    tokensPanel.tokenName = modelItem.shortName
-                    tokensPanel.tokenImage = modelItem.iconSource
+                    assetsPanel.assetName = modelItem.shortName
+                    assetsPanel.assetImage = modelItem.iconSource
                 } else {
-                    tokensPanel.tokenName = d.defaultTokenNameText
-                    tokensPanel.tokenImage = ""
+                    assetsPanel.assetName = d.defaultAssetNameText
+                    assetsPanel.assetImage = ""
                 }
             }
 
             Component.onCompleted: {
-                if (d.tokenAmountText.length === 0 && root.tokenAmount)
-                    tokensPanel.setAmount(root.tokenAmount)
+                if (d.assetAmountText.length === 0 && root.assetAmount)
+                    assetsPanel.setAmount(root.assetAmount)
             }
 
             Connections {
                 target: d
 
                 function onAddClicked() {
-                    root.addToken(root.tokenKey, root.tokenAmount)
+                    root.addAsset(root.assetKey, root.assetAmount)
                 }
 
                 function onUpdateClicked() {
-                    root.updateToken(root.tokenKey, root.tokenAmount)
+                    root.updateAsset(root.assetKey, root.assetAmount)
                 }
             }
         }
@@ -405,8 +405,8 @@ StatusDropdown {
             onItemClicked: {
                 statesStack.pop()
 
-                if(d.extendedDropdownType === ExtendedDropdownContent.Type.Tokens)
-                    root.tokenKey = key
+                if(d.extendedDropdownType === ExtendedDropdownContent.Type.Assets)
+                    root.assetKey = key
                 else
                     root.collectibleKey = key
             }

@@ -25,19 +25,19 @@ SplitView {
                     topMargin: 50
                 }
                 store: CommunitiesStore {
-                    tokensModel: TokensModel {}
+                    assetsModel: AssetsModel {}
                     collectiblesModel: CollectiblesModel {}
                     channelsModel: ListModel {
                         Component.onCompleted: {
                             append([
                                 {
                                     key: "welcome",
-                                    iconSource: ModelsData.tokens.inch,
+                                    iconSource: ModelsData.assets.inch,
                                     name: "#welcome"
                                 },
                                 {
                                     key: "general",
-                                    iconSource: ModelsData.tokens.inch,
+                                    iconSource: ModelsData.assets.inch,
                                     name: "#general"
                                 }
                             ])

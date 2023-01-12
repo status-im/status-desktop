@@ -33,7 +33,7 @@ QtObject {
                             "Software dev":"👩‍💻","Sports":"⚽️","Tech":"📱","Travel":"🗺","Vehicles":"🚕","Web3":"🌐"})
 
 
-    readonly property QtObject tokens: QtObject {
+    readonly property QtObject assets: QtObject {
         readonly property string socks: Style.png("tokens/SOCKS")
         readonly property string zrx: Style.png("tokens/ZRX")
         readonly property string inch: Style.png("tokens/CUSTOM-TOKEN")
