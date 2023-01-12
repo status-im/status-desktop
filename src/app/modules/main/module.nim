@@ -861,7 +861,7 @@ method displayWindowsOsNotification*[T](self: Module[T], title: string,
 method osNotificationClicked*[T](self: Module[T], details: NotificationDetails) =
   if(details.notificationType == NotificationType.NewContactRequest):
     self.controller.switchTo(details.sectionId, "", "")
-    self.view.emitOpenContactRequestsPopupSignal()
+    self.view.emitOpenActivityCenterSignal()
   elif(details.notificationType == NotificationType.JoinCommunityRequest):
     self.controller.switchTo(details.sectionId, "", "")
     self.view.emitOpenCommunityMembershipRequestsPopupSignal(details.sectionId)

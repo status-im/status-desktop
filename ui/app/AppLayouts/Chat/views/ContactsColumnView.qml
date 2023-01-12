@@ -127,21 +127,6 @@ Item {
             }
         }
 
-        // contact requests
-        StatusContactRequestsIndicatorListItem {
-            id: contactRequests
-            Layout.fillWidth: true
-            Layout.preferredHeight: visible ? implicitHeight : 0
-
-            readonly property int nbRequests: root.store.contactRequestsModel.count
-
-            visible: nbRequests > 0
-            title: qsTr("Contact requests")
-            requestsCount: nbRequests
-
-            onClicked: Global.openPopup(contactRequestsPopup)
-        }
-
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -309,16 +294,6 @@ Item {
         }
     }
 
-    Component {
-        id: contactRequestsPopup
-        ContactRequestsPopup {
-            store: root.store
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
     Connections {
         target: root.store
         function onImportingCommunityStateChanged(communityId, state, errorMsg) {
@@ -351,14 +326,6 @@ Item {
                                        loading,
                                        Constants.ephemeralNotificationType.normal,
                                        "")
-        }
-    }
-
-    Connections {
-        target: root.store.mainModuleInst
-
-        function onOpenContactRequestsPopup() {
-            Global.openPopup(contactRequestsPopup)
         }
     }
 }

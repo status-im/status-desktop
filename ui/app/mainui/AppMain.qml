@@ -74,6 +74,10 @@ Item {
         onActiveSectionChanged: {
             createChatView.opened = false
         }
+
+        onOpenActivityCenter: {
+            Global.openPopup(activityCenterPopupComponent)
+        }
     }
 
     Popups {

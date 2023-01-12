@@ -197,9 +197,9 @@ QtObject:
   proc emitResolvedENSSignal*(self: View, resolvedPubKey: string, resolvedAddress: string, uuid: string) =
     self.resolvedENS(resolvedPubKey, resolvedAddress, uuid)
 
-  proc openContactRequestsPopup*(self: View) {.signal.}
-  proc emitOpenContactRequestsPopupSignal*(self: View) =
-    self.openContactRequestsPopup()
+  proc openActivityCenter*(self: View) {.signal.}
+  proc emitOpenActivityCenterSignal*(self: View) =
+    self.openActivityCenter()
 
   proc openCommunityMembershipRequestsPopup*(self: View, sectionId: string) {.signal.}
   proc emitOpenCommunityMembershipRequestsPopupSignal*(self: View, sectionId: string) =
