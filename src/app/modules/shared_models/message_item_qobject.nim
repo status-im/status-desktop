@@ -26,6 +26,22 @@ QtObject:
   QtProperty[string] responseToMessageWithId:
     read = responseToMessageWithId
 
+  proc quotedMessageFrom*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.quotedMessageFrom
+  QtProperty[string] quotedMessageFrom:
+    read = quotedMessageFrom
+
+  proc quotedMessageText*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.quotedMessageText
+  QtProperty[string] quotedMessageText:
+    read = quotedMessageText
+
+  proc quotedMessageParsedText*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.quotedMessageParsedText
+  QtProperty[string] quotedMessageParsedText:
+    read = quotedMessageParsedText
+
+  proc quotedMessageContentType*(self: MessageItem): int {.slot.} = result = ?.self.messageItem.quotedMessageContentType
+  QtProperty[int] quotedMessageContentType:
+    read = quotedMessageContentType
+
   proc senderId*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.senderId
   QtProperty[string] senderId:
     read = senderId

@@ -37,7 +37,6 @@ Loader {
 
     property string messageId: ""
     property string communityId: ""
-    property string responseToMessageWithId: ""
 
     property string senderId: ""
     property string senderDisplayName: ""
@@ -60,6 +59,13 @@ Loader {
     property string linkUrls: ""
     property string messageAttachments: ""
     property var transactionParams
+
+    property string responseToMessageWithId: ""
+    property string quotedMessageText: ""
+    property string quotedMessageFrom: ""
+    property int quotedMessageContentType: Constants.messageContentType.messageType
+    property int quotedMessageFromIterator: -1
+    property var quotedMessageAuthorDetails: quotedMessageFromIterator >= 0 && Utils.getContactDetailsAsJson(quotedMessageFrom, false)
 
     // External behavior changers
     property bool isInPinnedPopup: false // The pinned popup limits the number of buttons shown
@@ -151,15 +157,15 @@ Loader {
         messageContextMenu.isSticker = isSticker
         messageContextMenu.hideEmojiPicker = hideEmojiPicker
 
-        if (isReply){
-            let obj = messageStore.getMessageByIdAsJson(responseToMessageWithId)
-            if(!obj)
+        if (isReply) {
+            if (!quotedMessageFrom) {
+                // The responseTo message was deleted so we don't eneble to right click the unaviable profile
                 return
-
-            messageContextMenu.messageSenderId = obj.senderId
-            messageContextMenu.selectedUserPublicKey = obj.senderId
-            messageContextMenu.selectedUserDisplayName = obj.senderDisplayName
-            messageContextMenu.selectedUserIcon = obj.senderIcon
+            }
+            messageContextMenu.messageSenderId = quotedMessageFrom
+            messageContextMenu.selectedUserPublicKey = quotedMessageFrom
+            messageContextMenu.selectedUserDisplayName = quotedMessageAuthorDetails.displayName
+            messageContextMenu.selectedUserIcon = quotedMessageAuthorDetails.thumbnailImage
         }
 
         messageContextMenu.parent = sender;
@@ -194,22 +200,6 @@ Loader {
         default:
             return messageComponent
         }
-    }
-
-    function updateReplyInfo() {
-        switch(messageContentType) {
-        case Constants.messageContentType.chatIdentifier:
-        case Constants.messageContentType.fetchMoreMessagesButton:
-        case Constants.messageContentType.systemMessagePrivateGroupType:
-        case Constants.messageContentType.gapType:
-            return
-        default:
-            item.updateReplyInfo()
-        }
-    }
-
-    function replyDeleted() {
-        item.replyDeleted()
     }
 
     QtObject {
@@ -359,14 +349,6 @@ Loader {
                 delegate.startMessageFoundAnimation();
             }
 
-            function updateReplyInfo() {
-                delegate.replyMessage = delegate.getReplyMessage()
-            }
-
-            function replyDeleted() {
-                delegate.replyMessage = null
-            }
-
             StatusDateGroupLabel {
                 id: dateGroupLabel
                 Layout.fillWidth: true
@@ -411,17 +393,8 @@ Loader {
 
                 readonly property int contentType: convertContentType(root.messageContentType)
                 readonly property bool isReply: root.responseToMessageWithId !== ""
-    
-                property var replyMessage: getReplyMessage()
-                readonly property string replySenderId: replyMessage ? replyMessage.senderId : ""
 
                 property string originalMessageText: ""
-
-                function getReplyMessage() {
-                    return root.messageStore && isReply
-                            ? root.messageStore.getReplyMessageByIdAsJson(root.responseToMessageWithId)
-                            : null
-                }
 
                 function editCancelledHandler() {
                     root.messageStore.setEditModeOff(root.messageId)
@@ -636,37 +609,38 @@ Loader {
                 }
 
                 replyDetails: StatusMessageDetails {
-                    messageText: delegate.replyMessage ? delegate.replyMessage.messageText
-                                                         //: deleted message
-                                                       : qsTr("&lt;deleted&gt;")
-                    contentType: delegate.replyMessage ? delegate.convertContentType(delegate.replyMessage.contentType) : 0
+                    messageText: root.quotedMessageText ? root.quotedMessageText
+                                                       : qsTr("Message deleted")
+                    contentType: delegate.convertContentType(root.quotedMessageContentType)
                     messageContent: {
-                        if (!delegate.replyMessage)
-                            return "";
+                        if (contentType !== StatusMessage.ContentType.Sticker && contentType !== StatusMessage.ContentType.Image) {
+                            return ""
+                        }
+                        let message = root.messageStore.getMessageByIdAsJson(responseToMessageWithId)
                         switch (contentType) {
                         case StatusMessage.ContentType.Sticker:
-                            return delegate.replyMessage.sticker;
+                            return message.sticker;
                         case StatusMessage.ContentType.Image:
-                            return delegate.replyMessage.messageImage;
+                            return message.messageImage;
                         }
                         return "";
                     }
 
-                    amISender: delegate.replyMessage && delegate.replyMessage.amISender
-                    sender.id: delegate.replyMessage ? delegate.replyMessage.senderId : ""
-                    sender.isContact: delegate.replyMessage && delegate.replyMessage.senderIsAdded
-                    sender.displayName: delegate.replyMessage ? delegate.replyMessage.senderDisplayName: ""
-                    sender.isEnsVerified: delegate.replyMessage && delegate.replyMessage.senderEnsVerified
-                    sender.secondaryName: delegate.replyMessage ? delegate.replyMessage.senderOptionalName : ""
+                    amISender: root.quotedMessageFrom === userProfile.pubKey
+                    sender.id: root.quotedMessageFrom
+                    sender.isContact: quotedMessageAuthorDetails.isContact
+                    sender.displayName: quotedMessageAuthorDetails.displayName
+                    sender.isEnsVerified: quotedMessageAuthorDetails.ensVerified
+                    sender.secondaryName: quotedMessageAuthorDetails.name || ""
                     sender.profileImage {
                         width: 20
                         height: 20
-                        name: delegate.replyMessage ? delegate.replyMessage.senderIcon : ""
-                        assetSettings.isImage: delegate.replyMessage && (delegate.replyMessage.contentType === Constants.messageContentType.discordMessageType || delegate.replyMessage.senderIcon.startsWith("data"))
-                        showRing: (delegate.replyMessage && delegate.replyMessage.contentType !== Constants.messageContentType.discordMessageType) && !sender.isEnsVerified
-                        pubkey: delegate.replySenderId
-                        colorId: Utils.colorIdForPubkey(delegate.replySenderId)
-                        colorHash: Utils.getColorHashAsJson(delegate.replySenderId, sender.isEnsVerified)
+                        name: quotedMessageAuthorDetails.thumbnailImage
+                        assetSettings.isImage: quotedMessageAuthorDetails.thumbnailImage !== ""
+                        showRing: (root.quotedMessageContentType !== Constants.messageContentType.discordMessageType) && !sender.isEnsVerified
+                        pubkey: sender.id
+                        colorId: Utils.colorIdForPubkey(sender.id)
+                        colorHash: Utils.getColorHashAsJson(sender.id, sender.isEnsVerified)
                     }
                 }
 

@@ -218,25 +218,6 @@ Item {
             }
         }
 
-        Connections {
-            target: chatLogView.model || null
-            function onDataChanged(topLeft, bottomRight, roles) {
-                if (roles.indexOf(Constants.messageModelRoles.responseToMessageWithId) !== -1) {
-                    let item = chatLogView.itemAtIndex(topLeft.row)
-                    if (item) {
-                        item.updateReplyInfo()
-                    }
-                }
-            }
-
-            function onReplyDeleted(messageIndex) {
-                let item = chatLogView.itemAtIndex(messageIndex)
-                if (item) {
-                    item.replyDeleted()
-                }
-            }
-        }
-
         delegate: MessageView {
             id: msgDelegate
 
@@ -286,6 +267,10 @@ Item {
             messageAttachments: model.messageAttachments
             transactionParams: model.transactionParameters
             hasMention: model.mentioned
+            quotedMessageText: model.quotedMessageParsedText
+            quotedMessageFrom: model.quotedMessageFrom
+            quotedMessageContentType: model.quotedMessageContentType
+            quotedMessageFromIterator: model.quotedMessageFromIterator
 
             gapFrom: model.gapFrom
             gapTo: model.gapTo

@@ -44,6 +44,11 @@ type
     MessageAttachments
     ResendError
     Mentioned
+    QuotedMessageFrom
+    QuotedMessageText
+    QuotedMessageParsedText
+    QuotedMessageContentType
+    QuotedMessageFromIterator
 
 QtObject:
   type
@@ -127,7 +132,12 @@ QtObject:
       ModelRole.MentionedUsersPks.int: "mentionedUsersPks",
       ModelRole.SenderTrustStatus.int: "senderTrustStatus",
       ModelRole.SenderEnsVerified.int: "senderEnsVerified",
-      ModelRole.MessageAttachments.int: "messageAttachments"
+      ModelRole.MessageAttachments.int: "messageAttachments",
+      ModelRole.QuotedMessageFrom.int: "quotedMessageFrom",
+      ModelRole.QuotedMessageFromIterator.int: "quotedMessageFromIterator",
+      ModelRole.QuotedMessageText.int: "quotedMessageText",
+      ModelRole.QuotedMessageParsedText.int: "quotedMessageParsedText",
+      ModelRole.QuotedMessageContentType.int: "quotedMessageContentType"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -179,6 +189,16 @@ QtObject:
       result = newQVariant(item.resendError)
     of ModelRole.Mentioned:
       result = newQVariant(item.mentioned)
+    of ModelRole.QuotedMessageFrom:
+      result = newQVariant(item.quotedMessageFrom)
+    of ModelRole.QuotedMessageFromIterator:
+      result = newQVariant(item.quotedMessageFromIterator)
+    of ModelRole.QuotedMessageText:
+      result = newQVariant(item.quotedMessageText)
+    of ModelRole.QuotedMessageParsedText:
+      result = newQVariant(item.quotedMessageParsedText)
+    of ModelRole.QuotedMessageContentType:
+      result = newQVariant(item.quotedMessageContentType)
     of ModelRole.MessageText:
       result = newQVariant(item.messageText)
     of ModelRole.MessageImage:
@@ -279,13 +299,16 @@ QtObject:
     for item in items:
       self.insertItemBasedOnClock(item)
 
-  proc replyDeleted*(self: Model, messageIndex: int) {.signal.}
 
   proc updateMessagesWithResponseTo(self: Model, messageId: string) =
     for i in 0 ..< self.items.len:
       if(self.items[i].responseToMessageWithId == messageId):
         let ind = self.createIndex(i, 0, nil)
-        self.replyDeleted(i)
+        var item = self.items[i]
+        item.quotedMessageText = ""
+        item.quotedMessageParsedText = ""
+        item.quotedMessageFrom = ""
+        self.dataChanged(ind, ind, @[ModelRole.QuotedMessageFrom.int, ModelRole.QuotedMessageParsedText.int, ModelRole.QuotedMessageContentType.int])
 
   proc removeItem*(self: Model, messageId: string) =
     let ind = self.findIndexForMessageId(messageId)
@@ -393,12 +416,6 @@ QtObject:
       return
     self.items[index].toJsonNode()
 
-  proc updateContactInReplies(self: Model, messageId: string) =
-    for i in 0 ..< self.items.len:
-      if (self.items[i].responseToMessageWithId == messageId):
-        let index = self.createIndex(i, 0, nil)
-        self.dataChanged(index, index, @[ModelRole.ResponseToMessageWithId.int])
-
   iterator modelContactUpdateIterator*(self: Model, contactId: string): Item =
     for i in 0 ..< self.items.len:
       yield self.items[i]
@@ -416,10 +433,15 @@ QtObject:
       if(self.items[i].messageContainsMentions):
         roles.add(@[ModelRole.MessageText.int, ModelRole.MessageContainsMentions.int])
 
+      if (self.items[i].quotedMessageFrom == contactId):
+        # If there is a quoted message whom the author changed, increase the iterator to force
+        # the view to re-fetch the author's details
+        self.items[i].quotedMessageFromIterator = self.items[i].quotedMessageFromIterator + 1
+        roles.add(ModelRole.QuotedMessageFromIterator.int)
+
       if(roles.len > 0):
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, roles)
-        self.updateContactInReplies(self.items[i].id)
 
   proc setEditModeOn*(self: Model, messageId: string)  =
     let ind = self.findIndexForMessageId(messageId)
@@ -445,6 +467,8 @@ QtObject:
       self: Model,
       messageId: string,
       updatedMsg: string,
+      updatedRawMsg: string,
+      contentType: int,
       messageContainsMentions: bool,
       links: seq[string],
       mentionedUsersPks: seq[string]
@@ -468,7 +492,18 @@ QtObject:
       ModelRole.MentionedUsersPks.int
       ])
 
-    self.updateContactInReplies(messageId)
+    # Update replied to messages if there are
+    for i in 0 ..< self.items.len:
+      if(self.items[i].responseToMessageWithId == messageId):
+        self.items[i].quotedMessageParsedText = updatedMsg
+        self.items[i].quotedMessageText = updatedRawMsg
+        self.items[i].quotedMessageContentType = contentType
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[
+          ModelRole.QuotedMessageText.int,
+          ModelRole.QuotedMessageParsedText.int,
+          ModelRole.QuotedMessageContentType.int,
+        ])  
 
   proc clear*(self: Model) =
     self.beginResetModel()
