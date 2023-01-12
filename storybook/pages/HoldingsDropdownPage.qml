@@ -25,11 +25,6 @@ Pane {
         }
 
         Button {
-            text: "AddWithOperators"
-            onClicked: openFlow(HoldingsDropdown.FlowType.AddWithOperators)
-        }
-
-        Button {
             text: "Update"
             onClicked: openFlow(HoldingsDropdown.FlowType.Update)
         }

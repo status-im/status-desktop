@@ -96,33 +96,19 @@ Control{
             Repeater {
                 model: root.holdingsListModel
 
-                RowLayout {
-                    spacing: content.spacing
-
-                    StatusBaseText {
-                        id: operatorText
-                        Layout.preferredHeight: d.flowRowHeight
-                        visible: model.operator !== OperatorsUtils.Operators.None
-                        Layout.alignment: Qt.AlignVCenter
-                        text: OperatorsUtils.setOperatorTextFormat(model.operator)
-                        font.pixelSize: d.itemTextPixelSize
-                        verticalAlignment: Text.AlignVCenter
-
-                    }
-                    StatusListItemTag {
-                        Layout.preferredHeight: d.flowRowHeight
-                        Layout.maximumWidth: content.width - operatorText.width - spacing
-                        leftPadding: 2
-                        title: model.text
-                        asset.name: model.imageSource
-                        asset.isImage: true
-                        asset.bgColor: "transparent"
-                        asset.height: 28
-                        asset.width: asset.height
-                        closeButtonVisible: false
-                        titleText.color: Theme.palette.primaryColor1
-                        titleText.font.pixelSize: d.tagTextPixelSize
-                    }
+                StatusListItemTag {
+                    height: d.flowRowHeight
+                    width: (implicitWidth > content.width) ? content.width : implicitWidth
+                    leftPadding: 2
+                    title: model.text
+                    asset.name: model.imageSource
+                    asset.isImage: true
+                    asset.bgColor: "transparent"
+                    asset.height: 28
+                    asset.width: asset.height
+                    closeButtonVisible: false
+                    titleText.color: Theme.palette.primaryColor1
+                    titleText.font.pixelSize: d.tagTextPixelSize
                 }
             }
 

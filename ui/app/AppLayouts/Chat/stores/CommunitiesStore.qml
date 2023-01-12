@@ -100,9 +100,8 @@ QtObject {
         // Setting HOLDINGS:
         for (var i = 0; i < holdings.count; i++ ) {
             var entry = holdings.get(i);
-             // roles: type, key, name, amount, imageSource, operator
+             // roles: type, key, name, amount, imageSource
             permission.holdingsListModel.push({
-                                                  operator: entry.operator,
                                                   type: entry.type,
                                                   key: entry.key,
                                                   name: entry.name,
