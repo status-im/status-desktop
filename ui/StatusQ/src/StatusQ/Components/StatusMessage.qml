@@ -143,8 +143,9 @@ Control {
 
     contentItem: Item {
 
-        implicitWidth: parent.width
+        implicitWidth: messageLayout.implicitWidth
         implicitHeight: messageLayout.implicitHeight
+
 
         SequentialAnimation {
             id: messageFoundAnimation
@@ -184,8 +185,7 @@ Control {
 
         ColumnLayout {
             id: messageLayout
-            width: parent.width
-            height: childrenRect.height
+            anchors.fill: parent
             spacing: 2
 
             Loader {
