@@ -437,7 +437,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(communityData.id))
                 width: parent.width
-                height: item.height
+
                 sourceComponent: Component {
                     CommunityWelcomeBannerPanel {
                         activeCommunity: communityData
@@ -454,7 +454,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners.includes(communityData.id))
                 width: parent.width
-                height: item.height
+
                 sourceComponent: Component {
                         CommunityChannelsAndCategoriesBannerPanel {
                             id: channelsAndCategoriesBanner
@@ -474,7 +474,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(communityData.id))
                 width: parent.width
-                height: item.height
+
                 sourceComponent: Component {
                         BackUpCommuntyBannerPanel {
                             id: backupBanner

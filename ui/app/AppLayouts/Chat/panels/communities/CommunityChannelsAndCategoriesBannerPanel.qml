@@ -17,7 +17,6 @@ Rectangle {
     signal addMembersClicked()
     signal addCategoriesClicked()
 
-    implicitHeight: childrenRect.height + Style.current.padding
     anchors.left: parent.left
     anchors.leftMargin: Style.current.padding
     anchors.right: parent.right
@@ -25,6 +24,12 @@ Rectangle {
     border.color: Style.current.border
     radius: 16
     color: Style.current.transparent
+
+    Component.onCompleted: {
+        // This way we are escaping binding loop warning caused by
+        // wordWrap of descriptionText
+        height = childrenRect.height + Style.current.padding
+    }
 
     Rectangle {
         width: 66
@@ -46,8 +51,8 @@ Rectangle {
 
     StatusFlatRoundButton {
         id: closeImg
-        implicitWidth: 32
-        implicitHeight: 32
+        width: 32
+        height: 32
         anchors.top: parent.top
         anchors.topMargin: 10
         anchors.right: parent.right
