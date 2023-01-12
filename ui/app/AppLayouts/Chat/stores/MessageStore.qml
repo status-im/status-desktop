@@ -12,6 +12,13 @@ QtObject {
     readonly property int newMessagesCount: messagesModel ? messagesModel.newMessagesCount : 0
     readonly property bool messageSearchOngoing: messageModule ? messageModule.messageSearchOngoing : false
 
+    readonly property bool amIChatAdmin: messageModule ? messageModule.amIChatAdmin : false
+    readonly property bool isPinMessageAllowedForMembers: messageModule ? messageModule.isPinMessageAllowedForMembers : false
+    readonly property string chatId: messageModule ? messageModule.getChatId() : ""
+    readonly property int chatType: messageModule ? messageModule.chatType : Constants.chatType.unknown
+    readonly property string chatColor: messageModule ? messageModule.chatColor : Style.current.blue
+    readonly property string chatIcon: messageModule ? messageModule.chatIcon : ""
+
     onMessageModuleChanged: {
         if(!messageModule)
             return
@@ -80,41 +87,6 @@ QtObject {
             return ""
 
         return messageModule.getChatId()
-    }
-
-    function getChatType () {
-        if(!messageModule)
-            return Constants.chatType.unknown
-
-        return messageModule.getChatType()
-    }
-
-    function getChatColor () {
-        if(!messageModule)
-            return Style.current.blue
-
-        return messageModule.getChatColor()
-    }
-
-    function getChatIcon () {
-        if(!messageModule)
-            return ""
-
-        return messageModule.getChatIcon()
-    }
-
-    function amIChatAdmin () {
-        if(!messageModule)
-            return false
-
-        return messageModule.amIChatAdmin()
-    }
-
-    function pinMessageAllowedForMembers() {
-        if(!messageModule)
-            return false
-
-        return messageModule.pinMessageAllowedForMembers()
     }
 
     function getNumberOfPinnedMessages () {

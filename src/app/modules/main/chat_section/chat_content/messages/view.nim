@@ -1,6 +1,7 @@
 import NimQml, json
 import ../../../../shared_models/message_model
 import ../../../../shared_models/message_item
+import ../../../../../../app_service/service/chat/dto/chat
 import io_interface
 
 QtObject:
@@ -11,6 +12,11 @@ QtObject:
       modelVariant: QVariant
       initialMessagesLoaded: bool
       messageSearchOngoing: bool
+      amIChatAdmin: bool
+      isPinMessageAllowedForMembers: bool
+      chatColor: string
+      chatIcon: string
+      chatType: int
 
   proc delete*(self: View) =
     self.model.delete
@@ -25,6 +31,12 @@ QtObject:
     result.modelVariant = newQVariant(result.model)
     result.initialMessagesLoaded = false
     result.messageSearchOngoing = false
+    result.amIChatAdmin = false
+    result.isPinMessageAllowedForMembers = false
+    result.chatColor = ""
+    result.chatIcon = ""
+    result.chatType = ChatType.Unknown.int
+
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -63,21 +75,6 @@ QtObject:
 
   proc getChatId*(self: View): string {.slot.} =
     return self.delegate.getChatId()
-
-  proc getChatType*(self: View): int {.slot.} =
-    return self.delegate.getChatType()
-
-  proc getChatColor*(self: View): string {.slot.} =
-    return self.delegate.getChatColor()
-
-  proc getChatIcon*(self: View): string {.slot.} =
-    return self.delegate.getChatIcon()
-
-  proc amIChatAdmin*(self: View): bool {.slot.} =
-    return self.delegate.amIChatAdmin()
-
-  proc pinMessageAllowedForMembers*(self: View): bool {.slot.} =
-    return self.delegate.pinMessageAllowedForMembers()
 
   proc getNumberOfPinnedMessages*(self: View): int {.slot.} =
     return self.delegate.getNumberOfPinnedMessages()
@@ -178,3 +175,62 @@ QtObject:
     if self.model.newMessagesMarkerIndex() == -1:
       self.delegate.resetNewMessagesMarker()
 
+  proc amIChatAdminChanged*(self: View) {.signal.}
+  proc getAmIChatAdmin*(self: View): bool {.slot.} =
+    return self.amIChatAdmin
+  
+  QtProperty[bool] amIChatAdmin:
+    read = getAmIChatAdmin
+    notify = amIChatAdminChanged
+  
+  proc setAmIChatAdmin*(self: View, value: bool) =
+    self.amIChatAdmin = value
+    self.amIChatAdminChanged()
+
+  proc isPinMessageAllowedForMembersChanged*(self: View) {.signal.}
+  proc getIsPinMessageAllowedForMembers*(self: View): bool {.slot.} =
+    return self.isPinMessageAllowedForMembers
+  
+  QtProperty[bool] isPinMessageAllowedForMembers:
+    read = getIsPinMessageAllowedForMembers
+    notify = isPinMessageAllowedForMembersChanged
+  
+  proc setIsPinMessageAllowedForMembers*(self: View, value: bool) =
+    self.isPinMessageAllowedForMembers = value
+    self.isPinMessageAllowedForMembersChanged()
+
+  proc chatColorChanged*(self: View) {.signal.}
+  proc getChatColor*(self: View): string {.slot.} =
+    return self.chatColor
+
+  QtProperty[string] chatColor:
+    read = getChatColor
+    notify = chatColorChanged
+  
+  proc setChatColor*(self: View, value: string) =
+    self.chatColor = value
+    self.chatColorChanged()
+
+  proc chatIconChanged*(self: View) {.signal.}
+  proc getChatIcon*(self: View): string {.slot.} =
+    return self.chatIcon
+
+  QtProperty[string] chatIcon:
+    read = getChatIcon
+    notify = chatIconChanged
+  
+  proc setChatIcon*(self: View, value: string) =
+    self.chatIcon = value
+    self.chatIconChanged()
+  
+  proc chatTypeChanged*(self: View) {.signal.}
+  proc getChatType*(self: View): int {.slot.} =
+    return self.chatType
+
+  QtProperty[int] chatType:
+    read = getChatType
+    notify = chatTypeChanged
+  
+  proc setChatType*(self: View, value: int) =
+    self.chatType = value
+    self.chatTypeChanged()

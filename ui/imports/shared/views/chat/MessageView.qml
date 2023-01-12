@@ -44,7 +44,7 @@ Loader {
     property bool senderIsEnsVerified: false
     property string senderIcon: ""
     property bool amISender: false
-    property bool amIChatAdmin: messageStore && messageStore.amIChatAdmin()
+    property bool amIChatAdmin: messageStore && messageStore.amIChatAdmin
     property bool senderIsAdded: false
     property int senderTrustStatus: Constants.trustStatus.unknown
     property string messageText: ""
@@ -138,8 +138,8 @@ Loader {
 
         messageContextMenu.myPublicKey = userProfile.pubKey
         messageContextMenu.amIChatAdmin = root.amIChatAdmin
-        messageContextMenu.pinMessageAllowedForMembers = messageStore.pinMessageAllowedForMembers()
-        messageContextMenu.chatType = messageStore.getChatType()
+        messageContextMenu.pinMessageAllowedForMembers = messageStore.isPinMessageAllowedForMembers
+        messageContextMenu.chatType = messageStore.chatType
 
         messageContextMenu.messageId = root.messageId
         messageContextMenu.unparsedText = root.unparsedText
@@ -296,14 +296,14 @@ Loader {
         ChannelIdentifierView {
             chatName: root.senderDisplayName
             chatId: root.messageStore.getChatId()
-            chatType: root.messageStore.getChatType()
-            chatColor: root.messageStore.getChatColor()
+            chatType: root.messageStore.chatType
+            chatColor: root.messageStore.chatColor
             chatEmoji: root.channelEmoji
             amIChatAdmin: root.amIChatAdmin
             chatIcon: {
-                if (root.messageStore.getChatType() === Constants.chatType.privateGroupChat &&
-                        root.messageStore.getChatIcon() !== "") {
-                    return root.messageStore.getChatIcon()
+                if (root.messageStore.chatType === Constants.chatType.privateGroupChat &&
+                        root.messageStore.chatIcon !== "") {
+                    return root.messageStore.chatIcon
                 }
                 return root.senderIcon
             }
@@ -679,7 +679,7 @@ Loader {
                         stickersPopup: root.stickersPopup
                         messageContextMenu: root.messageContextMenu
 
-                        chatType: root.messageStore.getChatType()
+                        chatType: root.messageStore.chatType
                         isEdit: true
 
                         onSendMessage: {
@@ -728,6 +728,7 @@ Loader {
                 quickActions: [
                     Loader {
                         active: !root.isInPinnedPopup && delegate.hovered
+                        visible: active
                         sourceComponent: StatusFlatRoundButton {
                             width: d.chatButtonSize
                             height: d.chatButtonSize
@@ -742,6 +743,7 @@ Loader {
                     },
                     Loader {
                         active: !root.isInPinnedPopup && delegate.hovered
+                        visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "replyToMessageButton"
                             width: d.chatButtonSize
@@ -780,14 +782,15 @@ Loader {
                             if (!root.messageStore)
                                 return false
 
-                            const chatType = root.messageStore.getChatType();
-                            const pinMessageAllowedForMembers = root.messageStore.pinMessageAllowedForMembers()
+                            const chatType = root.messageStore.chatType;
+                            const pinMessageAllowedForMembers = root.messageStore.isPinMessageAllowedForMembers
 
                             return chatType === Constants.chatType.oneToOne ||
                                     chatType === Constants.chatType.privateGroupChat && root.amIChatAdmin ||
                                     chatType === Constants.chatType.communityChat && (root.amIChatAdmin || pinMessageAllowedForMembers);
 
                         }
+                        visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "MessageView_toggleMessagePin"
                             width: d.chatButtonSize
@@ -835,6 +838,7 @@ Loader {
                                      messageContentType === Constants.messageContentType.imageType ||
                                      messageContentType === Constants.messageContentType.audioType);
                         }
+                        visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "chatDeleteMessageButton"
                             width: d.chatButtonSize
