@@ -68,21 +68,21 @@ Pane {
                 }
             }
 
-            readonly property ListModel tokensModel: ListModel {
+            readonly property ListModel assetsModel: ListModel {
                 ListElement {
-                    key: "socks"; iconSource: ""; name: "Unisocks"; shortName: "SOCKS"; category: "Community tokens"
+                    key: "socks"; iconSource: ""; name: "Unisocks"; shortName: "SOCKS"; category: "Community assets"
                 }
                 ListElement {
-                    key: "zrx"; iconSource: ""; name: "Ox"; shortName: "ZRX"; category: "Listed tokens"
+                    key: "zrx"; iconSource: ""; name: "Ox"; shortName: "ZRX"; category: "Listed assets"
                 }
                 ListElement {
-                    key: "1inch"; iconSource: ""; name: "1inch"; shortName: "ZRX"; category: "Listed tokens"
+                    key: "1inch"; iconSource: ""; name: "1inch"; shortName: "ZRX"; category: "Listed assets"
                 }
                 ListElement {
-                    key: "Aave"; iconSource: ""; name: "Aave"; shortName: "AAVE"; category: "Listed tokens"}
+                    key: "Aave"; iconSource: ""; name: "Aave"; shortName: "AAVE"; category: "Listed assets"}
 
                 ListElement {
-                    key: "Amp"; iconSource: ""; name: "Amp"; shortName: "AMP"; category: "Listed tokens"
+                    key: "Amp"; iconSource: ""; name: "Amp"; shortName: "AMP"; category: "Listed assets"
                 }
             }
         }

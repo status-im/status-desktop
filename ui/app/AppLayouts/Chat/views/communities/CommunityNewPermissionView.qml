@@ -216,10 +216,10 @@ StatusScrollView {
                     d.dirtyValues.holdingsModel.append({ type, key, name, amount, imageSource })
                 }
 
-                onAddToken: {
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
-                                        store.tokensModel, key)
-                    addItem(HoldingTypes.Type.Token, modelItem, amount)
+                onAddAsset: {
+                    const modelItem = CommunityPermissionsHelpers.getAssetByKey(
+                                        store.assetsModel, key)
+                    addItem(HoldingTypes.Type.Asset, modelItem, amount)
                     dropdown.close()
                 }
 
@@ -239,13 +239,13 @@ StatusScrollView {
                     dropdown.close()
                 }
 
-                onUpdateToken: {
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
-                                        store.tokensModel, key)
+                onUpdateAsset: {
+                    const modelItem = CommunityPermissionsHelpers.getAssetByKey(
+                                        store.assetsModel, key)
                     const name = modelItem.shortName ? modelItem.shortName : modelItem.name
                     const imageSource = modelItem.iconSource.toString()
 
-                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Token, key, name, amount, imageSource })
+                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Asset, key, name, amount, imageSource })
                     d.triggerDirtyTool = !d.triggerDirtyTool
                     dropdown.close()
                 }
@@ -295,9 +295,9 @@ StatusScrollView {
                 const modelItem = tokensSelector.itemsModel.get(index)
 
                 switch(modelItem.type) {
-                    case HoldingTypes.Type.Token:
-                        dropdown.tokenKey = modelItem.key
-                        dropdown.tokenAmount = modelItem.amount
+                    case HoldingTypes.Type.Asset:
+                        dropdown.assetKey = modelItem.key
+                        dropdown.assetAmount = modelItem.amount
                         break
                     case HoldingTypes.Type.Collectible:
                         dropdown.collectibleKey = modelItem.key

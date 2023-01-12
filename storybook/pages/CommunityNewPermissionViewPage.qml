@@ -12,7 +12,7 @@ Pane {
     CommunityNewPermissionView {
 
         store: CommunitiesStore {
-            readonly property var tokensModel: TokensModel {}
+            readonly property var assetsModel: AssetsModel {}
             readonly property var collectiblesModel: CollectiblesModel {}
             readonly property var channelsModel: ChannelsModel {}
 

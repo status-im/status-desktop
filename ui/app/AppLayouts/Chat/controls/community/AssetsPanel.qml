@@ -10,8 +10,8 @@ import shared.controls 1.0
 ColumnLayout {
     id: root
 
-    property alias tokenName: pickerButton.text
-    property url tokenImage
+    property alias assetName: pickerButton.text
+    property url assetImage
     property alias amountText: amountInput.text
     property alias amount: amountInput.amount
     readonly property bool amountValid: amountInput.valid && amountInput.text.length > 0
@@ -33,7 +33,7 @@ ColumnLayout {
         bgColor: Theme.palette.baseColor5
         contentColor: Theme.palette.directColor1
         font.pixelSize: 13
-        asset.name: root.tokenImage
+        asset.name: root.assetImage
 
         onClicked: pickerClicked()
     }

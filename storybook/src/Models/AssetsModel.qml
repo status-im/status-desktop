@@ -5,38 +5,38 @@ ListModel {
         append([
                    {
                        key: "socks",
-                       iconSource: ModelsData.tokens.socks,
+                       iconSource: ModelsData.assets.socks,
                        name: "Unisocks",
                        shortName: "SOCKS",
-                       category: "Community tokens"
+                       category: "Community assets"
                    },
                    {
                        key: "zrx",
-                       iconSource: ModelsData.tokens.zrx,
+                       iconSource: ModelsData.assets.zrx,
                        name: "Ox",
                        shortName: "ZRX",
-                       category: "Listed tokens"
+                       category: "Listed assets"
                    },
                    {
                        key: "1inch",
-                       iconSource: ModelsData.tokens.inch,
+                       iconSource: ModelsData.assets.inch,
                        name: "1inch",
                        shortName: "ZRX",
-                       category: "Listed tokens"
+                       category: "Listed assets"
                    },
                    {
                        key: "Aave",
-                       iconSource: ModelsData.tokens.aave,
+                       iconSource: ModelsData.assets.aave,
                        name: "Aave",
                        shortName: "AAVE",
-                       category: "Listed tokens"
+                       category: "Listed assets"
                    },
                    {
                        key: "Amp",
-                       iconSource: ModelsData.tokens.amp,
+                       iconSource: ModelsData.assets.amp,
                        name: "Amp",
                        shortName: "AMP",
-                       category: "Listed tokens"
+                       category: "Listed assets"
                    }
                ])
 }

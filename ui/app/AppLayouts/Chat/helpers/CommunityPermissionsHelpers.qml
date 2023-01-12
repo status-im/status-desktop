@@ -17,8 +17,8 @@ QtObject {
         }
     }
 
-    function getTokenByKey(tokensModel, key) {
-        return d.getByKey(tokensModel, key)
+    function getAssetByKey(assetsModel, key) {
+        return d.getByKey(assetsModel, key)
     }
 
     function getCollectibleByKey(collectiblesModel, key) {

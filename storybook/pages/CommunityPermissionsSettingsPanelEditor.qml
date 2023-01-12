@@ -61,7 +61,7 @@ Flickable {
                                 icon: model.imageSource
                                 amountText: model.amount
                                 isAmountVisible: true
-                                iconsModel: TokensCollectiblesIconsModel {}
+                                iconsModel: AssetsCollectiblesIconsModel {}
                                 onNameChanged: model.name = name
                                 onIconChanged: model.imageSource = icon
                                 onAmountTextChanged: model.amount = parseFloat(amountText)
@@ -75,7 +75,7 @@ Flickable {
                         icon: d.newImageSource
                         amountText: d.newAmount
                         isAmountVisible: true
-                        iconsModel: TokensCollectiblesIconsModel {}
+                        iconsModel: AssetsCollectiblesIconsModel {}
                         onNameChanged: d.newName = name
                         onIconChanged: d.newImageSource = icon
                         onAmountTextChanged: d.newAmount = parseFloat(amountText)
@@ -103,7 +103,7 @@ Flickable {
                                  panelText: "In [item " + model.index + "]"
                                  name: model.name
                                  icon: model.iconSource
-                                 iconsModel: TokensCollectiblesIconsModel {}
+                                 iconsModel: AssetsCollectiblesIconsModel {}
                                  onNameChanged: model.name = name
                                  onIconChanged: model.iconSource = icon
                              }
@@ -116,7 +116,7 @@ Flickable {
                         panelText: "New In item"
                         name: d.newChannelName
                         icon: d.newChannelIconSource
-                        iconsModel: TokensCollectiblesIconsModel {}
+                        iconsModel: AssetsCollectiblesIconsModel {}
                         onNameChanged: d.newChannelName = name
                         onIconChanged: d.newChannelIconSource = icon
                     }

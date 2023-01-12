@@ -4,9 +4,9 @@ import QtQuick 2.14
 
 ListModel {
     Component.onCompleted: append([
-                                      {image: ModelsData.tokens.socks},
-                                      {image: ModelsData.tokens.zrx},
-                                      {image: ModelsData.tokens.inch},
+                                      {image: ModelsData.assets.socks},
+                                      {image: ModelsData.assets.zrx},
+                                      {image: ModelsData.assets.inch},
                                       {image: ModelsData.collectibles.anniversary},
                                       {image: ModelsData.collectibles.cryptoKitties},
                                       {image: ModelsData.collectibles.kitty1},
