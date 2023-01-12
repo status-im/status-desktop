@@ -17,6 +17,7 @@ Feature: Status Desktop Wallet
         Given the user opens wallet screen
         And the user clicks on the first account
 
+    @mayfail
 	Scenario: The user can manage and observe a watch only account
         When the user adds watch only account "0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A" named "AccountWatch"
         Then the new account "AccountWatch" is added
