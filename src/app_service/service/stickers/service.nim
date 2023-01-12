@@ -374,7 +374,7 @@ QtObject:
       preferredUsername: string) =
     let response = status_chat.sendChatMessage(
         chatId,
-        "",
+        "Update to latest version to see a nice sticker here!",
         replyTo,
         ContentType.Sticker.int,
         preferredUsername,
