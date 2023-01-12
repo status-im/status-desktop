@@ -25,9 +25,9 @@ StatusDropdown {
     property int ensType: EnsPanel.EnsType.Any
     property string ensDomainName: ""
 
-    signal addToken(string key, real amount, int operator)
-    signal addCollectible(string key, real amount, int operator)
-    signal addEns(bool any, string customDomain, int operator)
+    signal addToken(string key, real amount)
+    signal addCollectible(string key, real amount)
+    signal addEns(bool any, string customDomain)
 
     signal updateToken(string key, real amount)
     signal updateCollectible(string key, real amount)
@@ -37,7 +37,6 @@ StatusDropdown {
 
     function reset() {
         d.currentHoldingType = HoldingTypes.Type.Token
-        d.operator = OperatorsUtils.Operators.None
         d.tokenAmountText = ""
         d.collectibleAmountText = ""
 
@@ -61,14 +60,11 @@ StatusDropdown {
     onClosed: root.reset()
 
     enum FlowType {
-        Add, AddWithOperators, Update
+        Add, Update
     }
 
     function openFlow(flowType) {
         switch (flowType) {
-            case HoldingsDropdown.FlowType.AddWithOperators:
-                statesStack.push(d.operatorsState)
-                break
             case HoldingsDropdown.FlowType.Add:
                 statesStack.push(d.addState)
                 break
@@ -95,7 +91,6 @@ StatusDropdown {
         readonly property bool collectiblesReady: root.collectibleAmount > 0 && root.collectibleKey
         readonly property bool ensReady: root.ensType === EnsPanel.EnsType.Any || d.ensDomainNameValid
 
-        readonly property string operatorsState: "OPERATORS"
         readonly property string addState: "ADD"
         readonly property string updateState: "UPDATE"
         readonly property string extendedState: "EXTENDED"
@@ -108,7 +103,6 @@ StatusDropdown {
 
         property int currentHoldingType: HoldingTypes.Type.Token
 
-        property int operator: OperatorsUtils.Operators.None
         property bool ensDomainNameValid: false
 
         signal addClicked
@@ -116,9 +110,6 @@ StatusDropdown {
 
         // By design values:
         readonly property int padding: 8
-
-        readonly property int operatorsWidth: 159
-        readonly property int operatorsHeight: 96
 
         readonly property int defaultWidth: 289
         readonly property int extendedContentHeight: 380
@@ -194,11 +185,6 @@ StatusDropdown {
 
         states: [
             State {
-                name: d.operatorsState
-                PropertyChanges {target: loader; sourceComponent: operatorsSelectorView}
-                PropertyChanges {target: root; width: d.operatorsWidth; height: d.operatorsHeight }
-            },
-            State {
                 name: d.addState
                 PropertyChanges {target: loader; sourceComponent: tabsView}
                 PropertyChanges {target: root; height: undefined} // use implicit height
@@ -214,17 +200,6 @@ StatusDropdown {
                 PropertyChanges {target: root; height: d.extendedContentHeight}
             }
         ]
-    }
-
-    Component {
-        id: operatorsSelectorView
-
-        OperatorsSelector {
-            onOperatorSelected: {
-                d.operator = operator
-                statesStack.push(d.addState)
-            }
-        }
     }
 
     Component {
@@ -324,7 +299,7 @@ StatusDropdown {
                 target: d
 
                 function onAddClicked() {
-                    root.addToken(root.tokenKey, root.tokenAmount, d.operator)
+                    root.addToken(root.tokenKey, root.tokenAmount)
                 }
 
                 function onUpdateClicked() {
@@ -368,7 +343,7 @@ StatusDropdown {
                 target: d
 
                 function onAddClicked() {
-                    root.addCollectible(root.collectibleKey, collectiblesPanel.getAmount(), d.operator)
+                    root.addCollectible(root.collectibleKey, collectiblesPanel.getAmount())
                 }
 
                 function onUpdateClicked() {
@@ -408,7 +383,7 @@ StatusDropdown {
                 target: d
 
                 function onAddClicked() {
-                    root.addEns(root.ensType === EnsPanel.EnsType.Any, root.ensDomainName, d.operator)
+                    root.addEns(root.ensType === EnsPanel.EnsType.Any, root.ensDomainName)
                 }
 
                 function onUpdateClicked() {

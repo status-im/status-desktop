@@ -61,16 +61,7 @@ Flickable {
                                 icon: model.imageSource
                                 amountText: model.amount
                                 isAmountVisible: true
-                                isExpression: model.operator !== OperatorsUtils.Operators.None
-                                isAnd: model.operator === OperatorsUtils.Operators.And
                                 iconsModel: TokensCollectiblesIconsModel {}
-                                onIsAndChanged: {
-                                    if(model.operator !== OperatorsUtils.Operators.None)
-                                    {
-                                        if(isAnd) model.operator = OperatorsUtils.Operators.And
-                                        else model.operator = OperatorsUtils.Operators.Or
-                                    }
-                                }
                                 onNameChanged: model.name = name
                                 onIconChanged: model.imageSource = icon
                                 onAmountTextChanged: model.amount = parseFloat(amountText)
@@ -85,7 +76,6 @@ Flickable {
                         amountText: d.newAmount
                         isAmountVisible: true
                         iconsModel: TokensCollectiblesIconsModel {}
-                        isExpression: false
                         onNameChanged: d.newName = name
                         onIconChanged: d.newImageSource = icon
                         onAmountTextChanged: d.newAmount = parseFloat(amountText)
@@ -97,7 +87,6 @@ Flickable {
                         text: "Add new holding"
                         onClicked: {
                             model.holdingsListModel.append([{
-                                                                operator: OperatorsUtils.Operators.And,
                                                                 type: 1,
                                                                 key: d.newName,
                                                                 name: d.newName,

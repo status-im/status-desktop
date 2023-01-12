@@ -30,7 +30,9 @@ QtObject {
             case OperatorsUtils.Operators.Or:
                 return root.orOperatorText
             case OperatorsUtils.Operators.None:
+            default:
                 return ""
+
         }
     }
 }
