@@ -1,4 +1,5 @@
 import NimQml, Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils, os, times, algorithm
+import locks
 import web3/[ethtypes, conversions]
 
 import ../settings/service as settings_service
@@ -116,8 +117,9 @@ QtObject:
     accountsService: accounts_service.Service
     tokenService: token_service.Service
     networkService: network_service.Service
-    walletAccounts: OrderedTable[string, WalletAccountDto]
     processedKeyPair: KeyPairDto
+    walletAccountsLock: Lock
+    walletAccounts {.guard: walletAccountsLock.}: OrderedTable[string, WalletAccountDto]
 
   # Forward declaration
   proc buildAllTokens(self: Service, accounts: seq[string])
@@ -145,16 +147,15 @@ QtObject:
     result.accountsService = accountsService
     result.tokenService = tokenService
     result.networkService = networkService
-    result.walletAccounts = initOrderedTable[string, WalletAccountDto]()
+    initLock(result.walletAccountsLock)
+    withLock result.walletAccountsLock:
+      result.walletAccounts = initOrderedTable[string, WalletAccountDto]()
 
   proc fetchAccounts*(self: Service): seq[WalletAccountDto] =
     let response = status_go_accounts.getAccounts()
     return response.result.getElems().map(
         x => x.toWalletAccountDto()
       ).filter(a => not a.isChat)
-
-  proc getAddresses(self: Service): seq[string] =
-    return toSeq(self.walletAccounts.keys())
 
   proc setEnsName(self: Service, account: WalletAccountDto) =
     let chainId = self.networkService.getNetworkForEns().chainId
@@ -166,6 +167,39 @@ QtObject:
       error "error: ", errDesription
       return
 
+  proc storeAccount*(self: Service, account: WalletAccountDto) =
+    withLock self.walletAccountsLock:
+      self.walletAccounts[account.address] = account
+
+  proc storeTokensForAccount*(self: Service, address: string, tokens: seq[WalletTokenDto]) =
+    withLock self.walletAccountsLock:
+      if self.walletAccounts.hasKey(address):
+        self.walletAccounts[address].tokens = tokens
+
+  proc removeAccount*(self: Service, address: string): WalletAccountDto =
+    result = WalletAccountDto()
+    withLock self.walletAccountsLock:
+      result = self.walletAccounts[address]
+      self.walletAccounts.del(address)
+
+  proc walletAccountsContainsAddress*(self: Service, address: string): bool =
+    withLock self.walletAccountsLock:
+      result = self.walletAccounts.hasKey(address)
+
+  proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
+    result = WalletAccountDto()
+    withLock self.walletAccountsLock:
+      if self.walletAccounts.hasKey(address):
+        result = self.walletAccounts[address]
+
+  proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
+    withLock self.walletAccountsLock:
+      result = toSeq(self.walletAccounts.values)
+
+  proc getAddresses(self: Service): seq[string] =
+    withLock self.walletAccountsLock:
+      result = toSeq(self.walletAccounts.keys())
+
   proc init*(self: Service) =
     signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
     
@@ -174,7 +208,7 @@ QtObject:
       for account in accounts:
         self.setEnsName(account)
         account.relatedAccounts = accounts.filter(x => not account.derivedFrom.isEmptyOrWhitespace and (cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0))
-        self.walletAccounts[account.address] = account
+        self.storeAccount(account)
 
       self.buildAllTokens(self.getAddresses())
       self.checkRecentHistory()
@@ -198,19 +232,11 @@ QtObject:
           self.buildAllTokens(self.getAddresses())
           self.checkRecentHistory()
         
-
-  proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
-    if not self.walletAccounts.hasKey(address):
-      return
-    return self.walletAccounts[address]
-
-  proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
-    return toSeq(self.walletAccounts.values)
-
   proc getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
-    if(accountIndex < 0 or accountIndex >= self.getWalletAccounts().len):
+    let accounts = self.getWalletAccounts()
+    if accountIndex < 0 or accountIndex >= accounts.len:
       return
-    return self.getWalletAccounts()[accountIndex]
+    return accounts[accountIndex]
 
   proc getIndex*(self: Service, address: string): int =
     let accounts = self.getWalletAccounts()
@@ -241,12 +267,12 @@ QtObject:
     let accounts = self.fetchAccounts()
     var newAccount = accounts[0]
     for account in accounts:
-      if not self.walletAccounts.haskey(account.address):
+      if not self.walletAccountsContainsAddress(account.address):
         newAccount = account
         self.setEnsName(newAccount)
         newAccount.relatedAccounts = accounts.filter(x => cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0)
         break
-    self.walletAccounts[newAccount.address] = newAccount
+    self.storeAccount(newAccount)
     self.buildAllTokens(@[newAccount.address])
     self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
@@ -352,8 +378,7 @@ QtObject:
         discard status_go_accounts.deleteAccountForMigratedKeypair(address)
       else:
         discard status_go_accounts.deleteAccount(address)
-      let accountDeleted = self.walletAccounts[address]
-      self.walletAccounts.del(address)
+      let accountDeleted = self.removeAccount(address)
       self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(account: accountDeleted))
     except Exception as e:
       error "error: ", procName="deleteAccount", errName = e.name, errDesription = e.msg    
@@ -377,10 +402,10 @@ QtObject:
     self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
   proc updateWalletAccount*(self: Service, address: string, accountName: string, color: string, emoji: string) =
-    if not self.walletAccounts.hasKey(address):
+    if not self.walletAccountsContainsAddress(address):
       error "account's address is not among known addresses: ", address=address
       return
-    var account = self.walletAccounts[address]
+    var account = self.getAccountByAddress(address)
     let res = self.addOrReplaceWalletAccount(accountName, account.address, account.path, account.derivedfrom, 
       account.publicKey, account.keyUid, account.walletType, color, emoji, account.isWallet, account.isChat)
     if res.len == 0:
@@ -460,17 +485,15 @@ QtObject:
     try:
       let responseObj = response.parseJson
       var data = TokensPerAccountArgs()
-      let walletAddresses = toSeq(self.walletAccounts.keys)
-      for wAddress in walletAddresses:
-        var tokensArr: JsonNode
-        var tokens: seq[WalletTokenDto]
-        if(responseObj.getProp(wAddress, tokensArr)):
-          tokens = map(tokensArr.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
-        
-          tokens.sort(priorityTokenCmp)
-          self.walletAccounts[wAddress].tokens = tokens
-          data.accountsTokens[wAddress] = tokens
-          self.tokenService.updateTokenPrices(tokens) # For efficiency. Will be removed when token info fetching gets moved to the tokenService
+      if responseObj.kind == JObject:
+        for wAddress, tokensDetailsObj in responseObj:
+          if tokensDetailsObj.kind == JArray:
+            var tokens: seq[WalletTokenDto]
+            tokens = map(tokensDetailsObj.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
+            tokens.sort(priorityTokenCmp)
+            data.accountsTokens[wAddress] = tokens
+            self.storeTokensForAccount(wAddress, tokens)
+            self.tokenService.updateTokenPrices(tokens) # For efficiency. Will be removed when token info fetching gets moved to the tokenService
       self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, data)
     except Exception as e:
       error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
@@ -500,7 +523,8 @@ QtObject:
       return self.getCurrency()
 
   proc getNetworkCurrencyBalance*(self: Service, network: NetworkDto, currency: string = ""): float64 =
-    for walletAccount in toSeq(self.walletAccounts.values):
+    let accounts = self.getWalletAccounts()
+    for walletAccount in accounts:
       result += walletAccount.getCurrencyBalance(@[network.chainId], self.getCurrentCurrencyIfEmpty(currency))
        
   proc findTokenSymbolByAddress*(self: Service, address: string): string =
@@ -508,13 +532,12 @@ QtObject:
 
   proc getCurrencyBalanceForAddress*(self: Service, address: string, currency: string = ""): float64 =
     let chainIds = self.networkService.getNetworks().map(n => n.chainId)
-    if not self.walletAccounts.hasKey(address):
-      return
-    return self.walletAccounts[address].getCurrencyBalance(chainIds, self.getCurrentCurrencyIfEmpty(currency))
+    return self.getAccountByAddress(address).getCurrencyBalance(chainIds, self.getCurrentCurrencyIfEmpty(currency))
 
   proc getTotalCurrencyBalance*(self: Service, currency: string = ""): float64 =
     let chainIds = self.networkService.getNetworks().filter(a => a.enabled).map(a => a.chainId)
-    return self.getWalletAccounts().map(a => a.getCurrencyBalance(chainIds, self.getCurrentCurrencyIfEmpty(currency))).foldl(a + b, 0.0)
+    let accounts = self.getWalletAccounts()
+    return accounts.map(a => a.getCurrencyBalance(chainIds, self.getCurrentCurrencyIfEmpty(currency))).foldl(a + b, 0.0)
 
   proc addMigratedKeyPairAsync*(self: Service, keyPair: KeyPairDto, keyStoreDir: string) =
     let arg = AddMigratedKeyPairTaskArg(
