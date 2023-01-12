@@ -48,6 +48,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
 # Forward declaration
 proc createChatIdentifierItem(self: Module): Item
 proc createFetchMoreMessagesItem(self: Module): Item
+proc setChatDetails(self: Module, chatDetails: ChatDto)
 
 method delete*(self: Module) =
   self.view.delete
@@ -62,10 +63,13 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  if self.controller.getChatDetails().hasMoreMessagesToRequest():
+  let chatDto = self.controller.getChatDetails()
+  if chatDto.hasMoreMessagesToRequest():
     self.view.model().insertItemBasedOnClock(self.createFetchMoreMessagesItem())
-  self.view.model().insertItemBasedOnClock(self.createChatIdentifierItem())
 
+  self.updateChatIdentifier()
+  self.view.setAmIChatAdmin(self.amIChatAdmin())
+  self.view.setIsPinMessageAllowedForMembers(self.pinMessageAllowedForMembers())
   self.moduleLoaded = true
   self.delegate.messagesDidLoad()
 
@@ -525,6 +529,8 @@ method onHistoryCleared*(self: Module) =
   self.view.model().clear()
 
 method updateChatIdentifier*(self: Module) =
+  let chatDto = self.controller.getChatDetails()
+  self.setChatDetails(chatDto)
   # Delete the old ChatIdentifier message first
   self.view.model().removeItem(CHAT_IDENTIFIER_MESSAGE_ID)
   # Add new loaded messages
@@ -667,3 +673,11 @@ method scrollToNewMessagesMarker*(self: Module) =
 method markAllMessagesRead*(self: Module) =
   self.view.model().markAllAsSeen()
 
+method updateCommunityDetails*(self: Module, community: CommunityDto) =
+  self.view.setAmIChatAdmin(community.admin)
+  self.view.setIsPinMessageAllowedForMembers(community.adminSettings.pinMessageAllMembersEnabled)
+
+proc setChatDetails(self: Module, chatDetails: ChatDto) =
+  self.view.setChatColor(chatDetails.color)
+  self.view.setChatIcon(chatDetails.icon)
+  self.view.setChatType(chatDetails.chatType.int)

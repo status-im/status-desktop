@@ -1,6 +1,7 @@
 import NimQml
 
 import ../../../../../../app_service/service/message/dto/[message, reaction, pinned_message]
+import ../../../../../../app_service/service/community/dto/community
 import ../../../../shared_models/message_item
 
 type
@@ -161,3 +162,5 @@ method scrollToNewMessagesMarker*(self: AccessInterface) =
 method markAllMessagesRead*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")
 
+method updateCommunityDetails*(self: AccessInterface, community: CommunityDto) =
+  raise newException(ValueError, "No implementation available")
