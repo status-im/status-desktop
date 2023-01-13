@@ -28,18 +28,59 @@ void Monitor::initialize(QQmlApplicationEngine* engine) {
     }, Qt::QueuedConnection);
 }
 
-QStringList Monitor::getContextPropertiesNames() const
+ContextPropertiesModel* Monitor::contexPropertiesModel()
 {
-    return m_contexPropertiesNames;
+    return &m_contexPropertiesModel;
 }
 
 void Monitor::addContextPropertyName(const QString &contextPropertyName)
 {
-    if (m_contexPropertiesNames.contains(contextPropertyName))
-        return;
+    m_contexPropertiesModel.addContextProperty(contextPropertyName);
+}
 
-    m_contexPropertiesNames << contextPropertyName;
-    emit contextPropertiesNamesChanged();
+bool Monitor::isModel(const QVariant &obj) const
+{
+    if (!obj.canConvert<QObject*>())
+        return false;
+
+    return qobject_cast<QAbstractItemModel*>(obj.value<QObject*>()) != nullptr;
+}
+
+QString Monitor::typeName(const QVariant &obj) const
+{
+    if (obj.canConvert<QObject*>())
+        return obj.value<QObject*>()->metaObject()->className();
+
+    return QString::fromUtf8(obj.typeName());
+}
+
+QJSValue Monitor::modelRoles(QAbstractItemModel *model) const
+{
+    if (model == nullptr)
+        return {};
+
+    QJSEngine *engine = qjsEngine(this);
+
+    if (engine == nullptr)
+        return {};
+
+    const auto& roleNames = model->roleNames();
+
+    QJSValue array = engine->newArray(roleNames.size());
+    QList<int> keys = roleNames.keys();
+
+    for (auto i = 0; i < keys.size(); i++) {
+        QJSValue item = engine->newObject();
+
+        auto key = keys.at(i);
+        item.setProperty(QStringLiteral("key"), key);
+        item.setProperty(QStringLiteral("name"),
+                         QString::fromUtf8(roleNames[key]));
+
+        array.setProperty(i, item);
+    }
+
+    return array;
 }
 
 Monitor& Monitor::instance()
