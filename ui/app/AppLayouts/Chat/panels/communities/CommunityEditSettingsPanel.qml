@@ -25,6 +25,8 @@ StatusScrollView {
     id: root
     objectName: "communityEditPanelScrollView"
 
+    implicitHeight: layout.implicitHeight
+
     property alias name: nameInput.text
     property alias description: descriptionTextInput.text
     property alias introMessage: introMessageTextInput.text
@@ -46,13 +48,12 @@ StatusScrollView {
 
     readonly property bool saveChangesButtonEnabled: true
 
-    implicitWidth: layout.implicitWidth
-    implicitHeight: layout.implicitHeight
-
     ColumnLayout {
         id: layout
 
-        width: root.availableWidth
+        width: 608
+        height: childrenRect.height
+
         spacing: 12
 
         CommunityNameInput {
