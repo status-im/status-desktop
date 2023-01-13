@@ -6,16 +6,12 @@ import StatusQ.Core.Utils 0.1 as CoreUtils
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
-import shared 1.0
+import shared.views.chat 1.0
 import utils 1.0
 
 ActivityNotificationBase {
     id: root
 
-    readonly property string timestampString: notification ?
-                new Date(notification.timestamp).toLocaleTimeString(Qt.locale(), Locale.ShortFormat) : ""
-    readonly property string timestampTooltipString: notification ?
-                new Date(notification.timestamp).toLocaleString() : ""
     readonly property bool isOutgoingRequest: notification && notification.message.amISender
     readonly property string contactId: notification ? isOutgoingRequest ? notification.chatId : notification.author : ""
 
@@ -66,7 +62,7 @@ ActivityNotificationBase {
     }
 
     bodyComponent: MouseArea {
-        height: messageRow.implicitHeight
+        height: messageView.implicitHeight
         hoverEnabled: root.messageBadgeComponent
         cursorShape: Qt.PointingHandCursor
         onClicked: {
@@ -74,74 +70,15 @@ ActivityNotificationBase {
             root.closeActivityCenter()
         }
 
-        RowLayout {
-            id: messageRow
-            spacing: 8
+        SimplifiedMessageView {
+            id: messageView
             width: parent.width
-
-            Item {
-                Layout.preferredWidth: root.messageDetails.sender.profileImage.assetSettings.width
-                Layout.preferredHeight: profileImage.height
-                Layout.alignment: Qt.AlignTop
-                Layout.leftMargin: Style.current.padding
-                Layout.topMargin: 2
-
-                StatusSmartIdenticon {
-                    id: profileImage
-                    name: root.messageDetails.sender.displayName
-                    asset: root.messageDetails.sender.profileImage.assetSettings
-                    ringSettings: root.messageDetails.sender.profileImage.ringSettings
-
-                    MouseArea {
-                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        acceptedButtons: Qt.LeftButton | Qt.RightButton
-                        anchors.fill: parent
-                        onClicked: root.openProfilePopup()
-                    }
-                }
-            }
-
-            ColumnLayout {
-                spacing: 2
-                Layout.alignment: Qt.AlignTop
-                Layout.fillWidth: true
-
-                StatusMessageHeader {
-                    sender: root.messageDetails.sender
-                    amISender: root.messageDetails.amISender
-                    messageOriginInfo: root.messageDetails.messageOriginInfo
-                    tertiaryDetail: Utils.getElidedCompressedPk(sender.id)
-                    timestamp.text: root.timestampString
-                    timestamp.tooltip.text: root.timestampTooltipString
-                    onClicked: root.openProfilePopup()
-                }
-
-                Loader {
-                    sourceComponent: root.messageSubheaderComponent
-                    Layout.fillWidth: true
-                }
-
-                RowLayout {
-                    spacing: 2
-                    Layout.fillWidth: true
-
-                    StatusBaseText {
-                        text: CoreUtils.Utils.stripHtmlTags(root.messageDetails.messageText)
-                        maximumLineCount: root.maximumLineCount
-                        wrapMode: Text.Wrap
-                        elide: Text.ElideRight
-                        font.pixelSize: 15
-                        Layout.alignment: Qt.AlignVCenter
-                        Layout.maximumWidth: 350 // From designs, fixed value to align all possible CTAs
-                    }
-
-                    Loader {
-                        sourceComponent: root.messageBadgeComponent
-                        Layout.alignment: Qt.AlignVCenter
-                        Layout.fillHeight: true
-                    }
-                }
-            }
+            maximumLineCount: root.maximumLineCount
+            messageDetails: root.messageDetails
+            timestamp: notification ? notification.timestamp : ""
+            messageSubheaderComponent: root.messageSubheaderComponent
+            messageBadgeComponent: root.messageBadgeComponent
+            onOpenProfilePopup: root.openProfilePopup()
         }
     }
 }
