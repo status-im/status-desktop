@@ -15,7 +15,6 @@ ColumnLayout {
     property alias amountText: amountInput.text
     property alias amount: amountInput.amount
     readonly property bool amountValid: amountInput.valid && amountInput.text.length > 0
-    property var locale
 
     signal pickerClicked
 
@@ -44,7 +43,5 @@ ColumnLayout {
 
         Layout.fillWidth: true
         Layout.topMargin: 8
-
-        locale: root.locale
     }
 }
