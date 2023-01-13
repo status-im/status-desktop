@@ -24,7 +24,6 @@ Item {
     property string imageData
 
     implicitHeight: layout.implicitHeight
-    implicitWidth: layout.implicitWidth
 
     ColumnLayout {
         id: layout
