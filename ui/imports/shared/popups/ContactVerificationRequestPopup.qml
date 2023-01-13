@@ -62,8 +62,8 @@ StatusModal {
         property string responseTimestamp: ""
     }
 
+    anchors.centerIn: parent
     header.title: qsTr("%1 is asking you to verify your identity").arg(d.senderDisplayName)
-    width: 480
 
     onOpened: {
         root.updateVerificationDetails()
@@ -71,11 +71,14 @@ StatusModal {
     }
 
     contentItem: StatusScrollView {
-        padding: Style.current.padding
+        padding: 0
+        contentWidth: 480
 
         ColumnLayout {
             id: contentColumn
-            width: root.width - Style.current.padding * 2
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: Style.current.bigPadding
             spacing: Style.current.padding
 
             StatusBaseText {
@@ -89,17 +92,16 @@ StatusModal {
                 Layout.topMargin: Style.current.padding
             }
 
-            MessageView {
+            SimplifiedMessageView {
                 id: verificationMessage
-                isMessage: true
-                amIChatAdmin: false
-                placeholderMessage: true
-                senderId: d.senderPublicKey
-                senderDisplayName: d.senderDisplayName
-                senderIsEnsVerified: d.senderPublicKey !== "" && Utils.isEnsVerified(d.senderPublicKey)
-                senderIcon: d.senderIcon
-                messageText: d.challengeText
-                messageContentType: Constants.messageContentType.messageType
+                timestamp: d.messageTimestamp
+                messageDetails.messageText: d.challengeText
+                messageDetails.sender.displayName: d.senderDisplayName
+                messageDetails.sender.profileImage.name: d.senderIcon
+                messageDetails.sender.profileImage.assetSettings.isImage: true
+                messageDetails.sender.profileImage.pubkey: d.senderPublicKey
+                messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(d.senderPublicKey)
+                messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(d.senderPublicKey, Utils.isEnsVerified(d.senderPublicKey))
                 Layout.fillWidth: true
             }
 
@@ -111,25 +113,21 @@ StatusModal {
                 minimumHeight: 152
                 maximumHeight: 152
                 input.verticalAlignment: TextEdit.AlignTop
-                leftPadding: 0
-                rightPadding: 0
                 charLimit: 280
                 Layout.fillWidth: true
             }
 
-            MessageView {
+            SimplifiedMessageView {
                 id: responseMessage
-                width: parent.width
                 visible: !!d.responseText
-                isMessage: true
-                amIChatAdmin: false
-                placeholderMessage: true
-                senderId: userProfile.pubKey
-                senderDisplayName: userProfile.displayName
-                senderIsEnsVerified: !!userProfile.preferredName
-                senderIcon: userProfile.icon
-                messageText: d.responseText
-                messageContentType: Constants.messageContentType.messageType
+                timestamp: d.responseTimestamp
+                messageDetails.messageText: d.responseText
+                messageDetails.sender.displayName: userProfile.displayName
+                messageDetails.sender.profileImage.name: userProfile.icon
+                messageDetails.sender.profileImage.assetSettings.isImage: true
+                messageDetails.sender.profileImage.pubkey: userProfile.pubKey
+                messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(userProfile.pubKey)
+                messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(userProfile.pubKey, !!userProfile.preferredName)
                 Layout.fillWidth: true
             }
 
