@@ -241,7 +241,6 @@ class StatusCommunityScreen:
     
     def open_edit_community_by_community_header(self):
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)
-        time.sleep(0.5) # wait for UI to load
         click_obj_by_name(CommunitySettingsComponents.EDIT_COMMUNITY_BUTTON.value)
         
     def change_community_name(self, new_community_name: str):
@@ -265,7 +264,6 @@ class StatusCommunityScreen:
     
     def save_community_changes(self):
         click_obj_by_name(CommunitySettingsComponents.SAVE_BUTTON.value)
-        time.sleep(0.5)
     
     def edit_community(self, new_community_name: str, new_community_description: str, new_community_color: str):
         self.open_edit_community_by_community_header()
