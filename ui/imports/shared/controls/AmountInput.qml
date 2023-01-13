@@ -10,7 +10,7 @@ Input {
     id: root
 
     property int maximumLength: 10
-    property var locale
+    property var locale: Qt.locale()
 
     readonly property alias amount: d.amount
     readonly property bool valid: validationError.length === 0
