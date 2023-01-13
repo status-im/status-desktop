@@ -289,79 +289,84 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 
   self.view.initialMessagesAreLoaded()
 
-method messageAdded*(self: Module, message: MessageDto) =
-  let sender = self.controller.getContactDetails(message.`from`)
+method messagesAdded*(self: Module, messages: seq[MessageDto]) =
+  var items: seq[Item]
 
-  let renderedMessageText = self.controller.getRenderedText(message.parsedText)
+  for message in messages:
+    let sender = self.controller.getContactDetails(message.`from`)
 
-  var transactionContract = message.transactionParameters.contract
-  var transactionValue = message.transactionParameters.value
-  var isCurrentUser = sender.isCurrentUser
-  if message.contentType.ContentType == ContentType.Transaction:
-    (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
-    if message.transactionParameters.fromAddress != "":
-      isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
-  # remove a message which has replace parameters filled
-  let index = self.view.model().findIndexForMessageId(message.replace)
-  if(index != -1):
-    self.view.model().removeItem(message.replace)
+    let renderedMessageText = self.controller.getRenderedText(message.parsedText)
 
-  # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
-  # Now we just skip deleted messages
-  if message.deleted or message.deletedForMe:
-    return
+    var transactionContract = message.transactionParameters.contract
+    var transactionValue = message.transactionParameters.value
+    var isCurrentUser = sender.isCurrentUser
+    if message.contentType.ContentType == ContentType.Transaction:
+      (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
+      if message.transactionParameters.fromAddress != "":
+        isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
+    # remove a message which has replace parameters filled
+    let index = self.view.model().findIndexForMessageId(message.replace)
+    if(index != -1):
+      self.view.model().removeItem(message.replace)
 
-  var item = initItem(
-    message.id,
-    message.communityId,
-    message.responseTo,
-    message.`from`,
-    sender.defaultDisplayName,
-    sender.optionalName,
-    sender.icon,
-    (isCurrentUser and message.contentType.ContentType != ContentType.DiscordMessage),
-    sender.details.added,
-    message.outgoingStatus,
-    renderedMessageText,
-    message.text,
-    message.image,
-    message.containsContactMentions(),
-    message.seen,
-    timestamp = message.whisperTimestamp,
-    clock = message.clock,
-    message.contentType.ContentType,
-    message.messageType,
-    message.contactRequestState,
-    sticker = message.sticker.url,
-    message.sticker.pack,
-    message.links,
-    newTransactionParametersItem(message.transactionParameters.id,
-                    message.transactionParameters.fromAddress,
-                    message.transactionParameters.address,
-                    transactionContract,
-                    transactionValue,
-                    message.transactionParameters.transactionHash,
-                    message.transactionParameters.commandState,
-                    message.transactionParameters.signature),
-    message.mentionedUsersPks,
-    sender.details.trustStatus,
-    sender.details.ensVerified,
-    message.discordMessage,
-    resendError = "",
-    message.mentioned,
-    message.quotedMessage.`from`,
-    message.quotedMessage.text,
-    self.controller.getRenderedText(message.quotedMessage.parsedText),
-    message.quotedMessage.contentType,
-    message.quotedMessage.deleted,
-  )
+    # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
+    # Now we just skip deleted messages
+    if message.deleted or message.deletedForMe:
+      return
 
-  self.view.model().insertItemBasedOnClock(item)
+    var item = initItem(
+      message.id,
+      message.communityId,
+      message.responseTo,
+      message.`from`,
+      sender.defaultDisplayName,
+      sender.optionalName,
+      sender.icon,
+      (isCurrentUser and message.contentType.ContentType != ContentType.DiscordMessage),
+      sender.details.added,
+      message.outgoingStatus,
+      renderedMessageText,
+      message.text,
+      message.image,
+      message.containsContactMentions(),
+      message.seen,
+      timestamp = message.whisperTimestamp,
+      clock = message.clock,
+      message.contentType.ContentType,
+      message.messageType,
+      message.contactRequestState,
+      sticker = message.sticker.url,
+      message.sticker.pack,
+      message.links,
+      newTransactionParametersItem(message.transactionParameters.id,
+                      message.transactionParameters.fromAddress,
+                      message.transactionParameters.address,
+                      transactionContract,
+                      transactionValue,
+                      message.transactionParameters.transactionHash,
+                      message.transactionParameters.commandState,
+                      message.transactionParameters.signature),
+      message.mentionedUsersPks,
+      sender.details.trustStatus,
+      sender.details.ensVerified,
+      message.discordMessage,
+      resendError = "",
+      message.mentioned,
+      message.quotedMessage.`from`,
+      message.quotedMessage.text,
+      self.controller.getRenderedText(message.quotedMessage.parsedText),
+      message.quotedMessage.contentType,
+      message.quotedMessage.deleted,
+    )
+
+    items.add(item)
+
+  self.view.model().insertItemsBasedOnClock(items)
 
 method removeNewMessagesMarker*(self: Module)
 
 method onSendingMessageSuccess*(self: Module, message: MessageDto) =
-  self.messageAdded(message)
+  self.messagesAdded(@[message])
   self.view.emitSendingMessageSuccessSignal()
   self.removeNewMessagesMarker()
 
