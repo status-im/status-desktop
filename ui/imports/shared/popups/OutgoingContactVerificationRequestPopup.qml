@@ -65,46 +65,54 @@ StatusDialog {
         }
     }
 
-    contentItem: ColumnLayout {
-        MessageView {
-            id: challengeMessage
-            Layout.fillWidth: true
-            isMessage: true
-            shouldRepeatHeader: true
-            messageTimestamp: root.verificationRequestedAt
-            senderId: userProfile.pubKey
-            senderDisplayName: userProfile.name
-            senderIcon: userProfile.icon
-            senderIsEnsVerified: !!userProfile.preferredName
-            messageText: root.verificationChallenge
-            messageContentType: Constants.messageContentType.messageType
-            placeholderMessage: true
-        }
-        MessageView {
-            id: responseMessage
-            visible: root.verificationResponse !== ""
-            Layout.fillWidth: true
-            isMessage: true
-            shouldRepeatHeader: true
-            messageTimestamp: root.verificationRepliedAt
-            senderId: root.userPublicKey
-            senderDisplayName: root.verificationResponseDisplayName
-            senderIcon: root.verificationResponseIcon
-            senderIsEnsVerified: Utils.isEnsVerified(root.userPublicKey)
-            messageText: root.verificationResponse
-            messageContentType: Constants.messageContentType.messageType
-            placeholderMessage: true
-        }
-        StatusBaseText {
-            id: waitingForText
-            visible: !root.verificationResponse
-            text: qsTr("Waiting for %1's response...").arg(root.verificationResponseDisplayName)
-            font.pixelSize: Style.current.additionalTextSize
-            horizontalAlignment : Text.AlignHCenter
-            Layout.alignment: Qt.AlignHCenter
-            Layout.fillWidth: true
-            wrapMode: Text.WordWrap
-            color: Theme.palette.baseColor1
+    contentItem: StatusScrollView {
+        padding: 0
+        contentWidth: 480
+
+        ColumnLayout {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: Style.current.bigPadding
+            spacing: Style.current.padding
+
+            SimplifiedMessageView {
+                id: challengeMessage
+                timestamp: root.verificationRequestedAt
+                messageDetails.messageText: root.verificationChallenge
+                messageDetails.sender.displayName: userProfile.name
+                messageDetails.sender.profileImage.name: userProfile.icon
+                messageDetails.sender.profileImage.assetSettings.isImage: true
+                messageDetails.sender.profileImage.pubkey: userProfile.pubKey
+                messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(userProfile.pubKey)
+                messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(userProfile.pubKey, !!userProfile.preferredName)
+                Layout.fillWidth: true
+            }
+
+            SimplifiedMessageView {
+                id: responseMessage
+                visible: root.verificationResponse !== ""
+                timestamp: root.verificationRepliedAt
+                messageDetails.messageText: root.verificationResponse
+                messageDetails.sender.displayName: root.verificationResponseDisplayName
+                messageDetails.sender.profileImage.name: root.verificationResponseIcon
+                messageDetails.sender.profileImage.assetSettings.isImage: true
+                messageDetails.sender.profileImage.pubkey: root.userPublicKey
+                messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(root.userPublicKey)
+                messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(root.userPublicKey, Utils.isEnsVerified(root.userPublicKey))
+                Layout.fillWidth: true
+            }
+
+            StatusBaseText {
+                id: waitingForText
+                visible: !root.verificationResponse
+                text: qsTr("Waiting for %1's response...").arg(root.verificationResponseDisplayName)
+                font.pixelSize: Style.current.additionalTextSize
+                horizontalAlignment : Text.AlignHCenter
+                Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+                color: Theme.palette.baseColor1
+            }
         }
     }
 }
