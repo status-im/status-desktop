@@ -143,6 +143,14 @@ suite "inserting multiple new messages":
                                     message1])
     checkOrder(model)
 
+  test "insert to model with only older messages":
+    model.insertItemBasedOnClock(message2)
+    model.insertItemBasedOnClock(message1)
+    model.insertItemsBasedOnClock(@[message5,
+                                    message4,
+                                    message3])
+    checkOrder(model)
+
   test "insert to model with newer and older messages":
     model.insertItemBasedOnClock(message5)
     model.insertItemBasedOnClock(message1)

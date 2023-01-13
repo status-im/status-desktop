@@ -1,4 +1,4 @@
-import NimQml, Tables, json, strutils, strformat
+import NimQml, Tables, json, sets, algorithm, sequtils, strutils, strformat, sugar
 
 import message_item, message_reaction_item, message_transaction_parameters_item
 
@@ -85,7 +85,7 @@ QtObject:
       """
 
   proc resetNewMessagesMarker*(self: Model)
-  
+
   proc countChanged(self: Model) {.signal.}
   proc getCount(self: Model): int {.slot.} =
     self.items.len
@@ -275,37 +275,59 @@ QtObject:
       if(self.items[i].responseToMessageWithId == messageId):
         result.add(self.items[i].id)
 
-  proc findIndexBasedOnClockToInsertTo(self: Model, clock: int64, id: string): int =
-    for i in 0 ..< self.items.len:
-      if clock > self.items[i].clock:
-        return i
-      elif clock == self.items[i].clock: # break ties by message id
-        if id > self.items[i].id:
-          return i
-    return self.items.len
+  # sort predicate - most recent clocks first, break ties by message id
+  proc isGreaterThan(lhsItem, rhsItem: Item): bool =
+    return lhsItem.clock > rhsItem.clock or
+           (lhsItem.clock == rhsItem.clock and lhsItem.id > rhsItem.id)
 
-  proc insertItemBasedOnClock*(self: Model, item: Item) =
-    if(self.findIndexForMessageId(item.id) != -1):
-      return
-
+  proc insertItems(self: Model, position: int, items: seq[Item]) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
-    let position = self.findIndexBasedOnClockToInsertTo(item.clock, item.id)
-
-    self.beginInsertRows(parentModelIndex, position, position)
-    self.items.insert(item, position)
+    self.beginInsertRows(parentModelIndex, position, position + items.len - 1)
+    self.items.insert(items, position)
     self.endInsertRows()
 
     if position > 0:
       self.updateItemAtIndex(position - 1)
-    if position + 1 < self.items.len:
-      self.updateItemAtIndex(position + 1)
+    if position + items.len - 1 < self.items.len:
+      self.updateItemAtIndex(position + items.len)
     self.countChanged()
 
+  proc filterExistingItems(self: Model, items: seq[Item]): seq[Item] =
+    let existingItems = toHashSet(self.items.map(x => x.id))
+    return items.filter(item => not existingItems.contains(item.id))
+
   proc insertItemsBasedOnClock*(self: Model, items: seq[Item]) =
-    for item in items:
-      self.insertItemBasedOnClock(item)
+    # remove existing items and sort by most recent
+    let sortCmp = proc(lhs, rhs: Item): int =
+      return if isGreaterThan(lhs, rhs): -1 else: 1
+    let newItems = sorted(self.filterExistingItems(items), sortCmp)
+
+    # bulk insert algorithm, "two-pointer" technique
+    var currentIdx = 0
+    var newIdx = 0
+    var numRows = 0
+
+    while currentIdx < self.items.len and newIdx < newItems.len:
+      let newItem = newItems[newIdx]
+      let currentItem = self.items[currentIdx]
+      if isGreaterThan(newItem, currentItem):
+        newIdx += 1
+        numRows += 1
+      else:
+        if numRows > 0:
+          self.insertItems(currentIdx, newItems[newIdx-numRows..newIdx-1])
+          numRows = 0
+        currentIdx += 1
+
+    if numRows > 0:
+      self.insertItems(currentIdx, newItems[newIdx-numRows..newIdx-1])
+    if newIdx < newItems.len:
+      self.insertItems(currentIdx, newItems[newIdx..newItems.len-1])
+
+  proc insertItemBasedOnClock*(self: Model, item: Item) =
+    self.insertItemsBasedOnClock(@[item])
 
   # Replied message was deleted
   proc updateMessagesWithResponseTo(self: Model, messageId: string) =
@@ -518,7 +540,7 @@ QtObject:
           ModelRole.QuotedMessageText.int,
           ModelRole.QuotedMessageParsedText.int,
           ModelRole.QuotedMessageContentType.int,
-        ])  
+        ])
 
   proc clear*(self: Model) =
     self.beginResetModel()
