@@ -31,13 +31,6 @@ type ParsedText* = object
   destination*: string
   children*: seq[ParsedText]
 
-type QuotedMessage* = object
-  `from`*: string
-  text*: string
-  parsedText*: seq[ParsedText]
-  contentType*: int
-  deleted*: bool
-
 type DiscordMessageAttachment* = object
   id*: string
   fileUrl*: string
@@ -60,6 +53,15 @@ type DiscordMessage* = object
   content*: string
   author*: DiscordMessageAuthor
   attachments*: seq[DiscordMessageAttachment]
+
+
+type QuotedMessage* = object
+  `from`*: string
+  text*: string
+  parsedText*: seq[ParsedText]
+  contentType*: int
+  deleted*: bool
+  discordMessage*: DiscordMessage
 
 type Sticker* = object
   hash*: string
@@ -172,6 +174,10 @@ proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
     for pTextObj in parsedTextArr:
       result.parsedText.add(toParsedText(pTextObj))
+
+  var discordMessageObj: JsonNode
+  if(jsonObj.getProp("discordMessage", discordMessageObj)):
+    result.discordMessage = toDiscordMessage(discordMessageObj)
 
 proc toSticker*(jsonObj: JsonNode): Sticker =
   result = Sticker()

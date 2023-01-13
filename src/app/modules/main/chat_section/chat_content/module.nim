@@ -206,6 +206,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     self.controller.getRenderedText(message.quotedMessage.parsedText),
     message.quotedMessage.contentType,
     message.quotedMessage.deleted,
+    message.quotedMessage.discordMessage,
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy
