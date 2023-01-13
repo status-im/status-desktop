@@ -45,6 +45,7 @@ proc createTestMessageItem(id: string, clock: int64): Item =
     quotedMessageParsedText = "",
     quotedMessageContentType = -1,
     quotedMessageDeleted = false,
+    quotedMessageDiscordMessage = DiscordMessage(),
   )
 
 let message0_chatIdentifier = createTestMessageItem("chat-identifier", -2)

@@ -50,6 +50,8 @@ type
     quotedMessageParsedText: string
     quotedMessageContentType: int
     quotedMessageDeleted: bool
+    quotedMessageAuthorDisplayName: string
+    quotedMessageAuthorAvatar: string
     # This is only used to update the author's details when author's details change
     quotedMessageFromIterator: int
 
@@ -89,6 +91,7 @@ proc initItem*(
     quotedMessageParsedText: string,
     quotedMessageContentType: int,
     quotedMessageDeleted: bool,
+    quotedMessageDiscordMessage: DiscordMessage,
     ): Item =
   result = Item()
   result.id = id
@@ -134,7 +137,14 @@ proc initItem*(
   result.quotedMessageDeleted = quotedMessageDeleted
   result.quotedMessageFromIterator = 0
 
-  if contentType == ContentType.DiscordMessage :
+  if quotedMessageContentType == ContentType.DiscordMessage.int:
+    result.quotedMessageAuthorDisplayName = quotedMessageDiscordMessage.author.name
+    result.quotedMessageAuthorAvatar = quotedMessageDiscordMessage.author.localUrl
+    if result.quotedMessageAuthorAvatar == "":
+      result.quotedMessageAuthorAvatar = quotedMessageDiscordMessage.author.avatarUrl
+
+  if contentType == ContentType.DiscordMessage:
+
     if result.messageText == "":
       result.messageText = discordMessage.content
       result.unparsedText = discordMessage.content
@@ -190,6 +200,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     quotedMessageParsedText = "",
     quotedMessageContentType = -1,
     quotedMessageDeleted = false,
+    quotedMessageDiscordMessage = DiscordMessage(),
   )
 
 proc `$`*(self: Item): string =
@@ -421,6 +432,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "quotedMessageParsedText": self.quotedMessageParsedText,
     "quotedMessageContentType": self.quotedMessageContentType,
     "quotedMessageDeleted": self.quotedMessageDeleted,
+    "quotedMessageAuthorDisplayName": self.quotedMessageAuthorDisplayName,
+    "quotedMessageAuthorAvatar": self.quotedMessageAuthorAvatar,
   }
 
 proc editMode*(self: Item): bool {.inline.} =
@@ -482,3 +495,15 @@ proc quotedMessageFromIterator*(self: Item): int {.inline.} =
   self.quotedMessageFromIterator
 proc `quotedMessageFromIterator=`*(self: Item, value: int) {.inline.} =
   self.quotedMessageFromIterator = value
+
+proc quotedMessageAuthorDisplayName*(self: Item): string {.inline.} =
+  self.quotedMessageAuthorDisplayName
+
+proc `quotedMessageAuthorDisplayName=`*(self: Item, value: string) {.inline.} =
+  self.quotedMessageAuthorDisplayName = value
+
+proc quotedMessageAuthorAvatar*(self: Item): string {.inline.} =
+  self.quotedMessageAuthorAvatar
+
+proc `quotedMessageAuthorAvatar=`*(self: Item, value: string) {.inline.} =
+  self.quotedMessageAuthorAvatar = value
