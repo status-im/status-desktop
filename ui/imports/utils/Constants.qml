@@ -777,4 +777,15 @@ QtObject {
         StatusColors.colors['moss'],
         StatusColors.colors['brown'],
         StatusColors.colors['brown2'] ]
+
+    readonly property QtObject appTranslatableConstants: QtObject {
+        readonly property string loginAccountsListAddNewUser: "LOGIN-ACCOUNTS-LIST-ADD-NEW-USER"
+        readonly property string loginAccountsListAddExistingUser: "LOGIN-ACCOUNTS-LIST-ADD-EXISTING-USER"
+    }
+
+    readonly property var appTranslationMap: ({})
+    Component.onCompleted: {
+        appTranslationMap[appTranslatableConstants.loginAccountsListAddNewUser] = qsTr("Add new user")
+        appTranslationMap[appTranslatableConstants.loginAccountsListAddExistingUser] = qsTr("Add existing Status user")
+    }
 }

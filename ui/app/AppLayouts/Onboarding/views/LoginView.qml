@@ -276,6 +276,10 @@ Item {
                 SortFilterProxyModel {
                     id: proxyModel
                     sourceModel: root.startupStore.startupModuleInst.loginAccountsModel
+                    sorters: StringSorter {
+                        roleName: "order"
+                        sortOrder: Qt.AscendingOrder
+                    }
                     filters: ValueFilter {
                         roleName: "keyUid"
                         value: root.startupStore.selectedLoginAccount.keyUid
@@ -283,41 +287,50 @@ Item {
                     }
                 }
 
+                onAboutToShow: {
+                    repeaterId.model = []
+                    repeaterId.model = proxyModel
+                }
+
                 Repeater {
+                    id: repeaterId
                     objectName: "LoginView_AccountsRepeater"
-                    model: proxyModel
 
                     delegate: AccountMenuItemPanel {
-                        label: model.username
+                        objectName: {
+                            if (model.username === Constants.appTranslatableConstants.loginAccountsListAddNewUser) {
+                                return "LoginView_addNewUserItem"
+                            }
+                            return ""
+                        }
+                        label: {
+                            if (model.username === Constants.appTranslatableConstants.loginAccountsListAddNewUser ||
+                                    model.username === Constants.appTranslatableConstants.loginAccountsListAddExistingUser) {
+                                return Constants.appTranslationMap[model.username]
+                            }
+                            return model.username
+                        }
                         image: model.thumbnailImage
-                        colorId: model.colorId
+                        asset.name: model.icon
+                        colorId: model.colorId > -1? model.colorId : ""
                         colorHash: model.colorHash
                         keycardCreatedAccount: model.keycardCreatedAccount
                         onClicked: {
-                            d.resetLogin()
-                            accountsPopup.close()
-                            const realIndex = proxyModel.mapToSource(index)
-                            root.startupStore.setSelectedLoginAccountByIndex(realIndex)
+                            if (model.username === Constants.appTranslatableConstants.loginAccountsListAddNewUser) {
+                                accountsPopup.close()
+                                root.startupStore.doTertiaryAction()
+                            }
+                            else if (model.username === Constants.appTranslatableConstants.loginAccountsListAddExistingUser) {
+                                accountsPopup.close()
+                                root.startupStore.doQuaternaryAction()
+                            }
+                            else {
+                                d.resetLogin()
+                                accountsPopup.close()
+                                const realIndex = proxyModel.mapToSource(index)
+                                root.startupStore.setSelectedLoginAccountByIndex(realIndex)
+                            }
                         }
-                    }
-                }
-
-                AccountMenuItemPanel {
-                    objectName: "LoginView_addNewUserItem"
-                    label: qsTr("Add new user")
-                    asset.name: "add"
-                    onClicked: {
-                        accountsPopup.close()
-                        root.startupStore.doTertiaryAction()
-                    }
-                }
-
-                AccountMenuItemPanel {
-                    label: qsTr("Add existing Status user")
-                    asset.name: "wallet"
-                    onClicked: {
-                        accountsPopup.close()
-                        root.startupStore.doQuaternaryAction()
                     }
                 }
             }
