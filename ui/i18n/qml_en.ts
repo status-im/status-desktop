@@ -4,10 +4,10 @@
 <context>
     <name>AppMain</name>
     <message numerus="yes">
-        <location filename="../app/mainui/AppMain.qml" line="627"/>
-        <location filename="../app/mainui/AppMain.qml" line="636"/>
-        <location filename="../app/mainui/AppMain.qml" line="627"/>
-        <location filename="../app/mainui/AppMain.qml" line="636"/>
+        <location filename="../app/mainui/AppMain.qml" line="672"/>
+        <location filename="../app/mainui/AppMain.qml" line="681"/>
+        <location filename="../app/mainui/AppMain.qml" line="672"/>
+        <location filename="../app/mainui/AppMain.qml" line="681"/>
         <source>%n issue(s)</source>
         <translation>
             <numerusform>%n issue</numerusform>
@@ -90,8 +90,8 @@
 <context>
     <name>CommunitySettingsView</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="82"/>
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="82"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="89"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="89"/>
         <source>%n member(s)</source>
         <translation>
             <numerusform>%n member</numerusform>
@@ -180,10 +180,10 @@
 <context>
     <name>KeycardPin</name>
     <message numerus="yes">
-        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="287"/>
-        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="322"/>
-        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="287"/>
-        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="322"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="274"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="309"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="274"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="309"/>
         <source>%n attempt(s) remaining</source>
         <translation>
             <numerusform>%n attempt remaining</numerusform>
@@ -230,8 +230,8 @@
 <context>
     <name>LoginView</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1069"/>
-        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1069"/>
+        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1070"/>
+        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1070"/>
         <source>%n attempt(s) remaining</source>
         <translation>
             <numerusform>%n attempt remaining</numerusform>
@@ -260,6 +260,18 @@
         <translation>
             <numerusform>%n network</numerusform>
             <numerusform>%n networks</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>NewMessagesMarker</name>
+    <message numerus="yes">
+        <location filename="../imports/shared/views/chat/NewMessagesMarker.qml" line="33"/>
+        <location filename="../imports/shared/views/chat/NewMessagesMarker.qml" line="33"/>
+        <source>%n missed message(s) since %1</source>
+        <translation>
+            <numerusform>%n missed message since %1</numerusform>
+            <numerusform>%n missed messages since %1</numerusform>
         </translation>
     </message>
 </context>
@@ -323,8 +335,8 @@
 <context>
     <name>StatusChatInfoButton</name>
     <message numerus="yes">
-        <location filename="../StatusQ/src/StatusQ/Controls/StatusChatInfoButton.qml" line="178"/>
-        <location filename="../StatusQ/src/StatusQ/Controls/StatusChatInfoButton.qml" line="178"/>
+        <location filename="../StatusQ/src/StatusQ/Controls/StatusChatInfoButton.qml" line="180"/>
+        <location filename="../StatusQ/src/StatusQ/Controls/StatusChatInfoButton.qml" line="180"/>
         <source>%Ln pinned message(s)</source>
         <translation>
             <numerusform>%Ln pinned message</numerusform>
@@ -335,8 +347,8 @@
 <context>
     <name>Utils</name>
     <message numerus="yes">
-        <location filename="../imports/utils/Utils.qml" line="379"/>
-        <location filename="../imports/utils/Utils.qml" line="379"/>
+        <location filename="../imports/utils/Utils.qml" line="383"/>
+        <location filename="../imports/utils/Utils.qml" line="383"/>
         <source>Password needs to be %n character(s) or more</source>
         <translation>
             <numerusform>Password needs to be %n character or more</numerusform>
