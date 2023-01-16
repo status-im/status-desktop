@@ -53,9 +53,12 @@ QtObject:
     var updateCache = true
     let pegSymbol = self.tokenService.getTokenPegSymbol(symbol)
     if pegSymbol != "":
-      var currencyFormat = self.getFiatCurrencyFormat(pegSymbol)
-      currencyFormat.symbol = symbol
-      result = currencyFormat
+      let currencyFormat = self.getFiatCurrencyFormat(pegSymbol)
+      result = CurrencyFormatDto(
+        symbol: symbol,
+        displayDecimals: currencyFormat.displayDecimals,
+        stripTrailingZeroes: currencyFormat.stripTrailingZeroes
+      )
       updateCache = true
     else:
       let price = self.tokenService.getCachedTokenPrice(symbol, DECIMALS_CALCULATION_CURRENCY)
