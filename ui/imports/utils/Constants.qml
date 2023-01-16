@@ -31,6 +31,7 @@ QtObject {
         readonly property string welcome: "Welcome"
         readonly property string welcomeNewStatusUser: "WelcomeNewStatusUser"
         readonly property string welcomeOldStatusUser: "WelcomeOldStatusUser"
+        readonly property string recoverOldUser: "RecoverOldUser"
         readonly property string userProfileCreate: "UserProfileCreate"
         readonly property string userProfileChatKey: "UserProfileChatKey"
         readonly property string userProfileCreateSameChatKey: "UserProfileCreateSameChatKey"

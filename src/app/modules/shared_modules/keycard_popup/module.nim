@@ -308,11 +308,12 @@ method onBackActionClicked*[T](self: Module[T]) =
   self.preActionActivities(currStateObj.flowType(), currStateObj.stateType())
   currStateObj.executePreBackStateCommand(self.controller)
   let backState = currStateObj.getBackState()
+  if backState.isNil:
+    return
   self.preStateActivities(backState.flowType(), backState.stateType())
   self.view.setCurrentState(backState)
   currStateObj.executePostBackStateCommand(self.controller)
   debug "sm_back_action - set state", setCurrFlow=backState.flowType(), newCurrState=backState.stateType()
-  currStateObj.delete()
 
 method onCancelActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStateObj()

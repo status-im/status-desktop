@@ -20,6 +20,7 @@ type StateType* {.pure.} = enum
   Welcome = "Welcome"
   WelcomeNewStatusUser = "WelcomeNewStatusUser"
   WelcomeOldStatusUser = "WelcomeOldStatusUser" 
+  RecoverOldUser = "RecoverOldUser" 
   UserProfileCreate = "UserProfileCreate" 
   UserProfileCreateSameChatKey = "UserProfileCreateSameChatKey" 
   UserProfileChatKey = "UserProfileChatKey" 
