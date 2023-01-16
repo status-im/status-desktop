@@ -91,7 +91,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     message.image,
     message.containsContactMentions(),
     message.seen,
-    timestamp = message.whisperTimestamp,
+    timestamp = message.timestamp,
     clock = message.clock,
     ContentType(message.contentType),
     message.messageType,
