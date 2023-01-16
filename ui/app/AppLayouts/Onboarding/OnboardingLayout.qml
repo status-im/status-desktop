@@ -38,6 +38,7 @@ OnboardingBasePage {
 
             case Constants.startupState.welcomeNewStatusUser:
             case Constants.startupState.welcomeOldStatusUser:
+            case Constants.startupState.recoverOldUser:
             case Constants.startupState.userProfileImportSeedPhrase:
             case Constants.startupState.profileFetchingAnnouncement:
             case Constants.startupState.userProfileCreateSameChatKey:

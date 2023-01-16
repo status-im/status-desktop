@@ -147,9 +147,10 @@ method onBackActionClicked*[T](self: Module[T]) =
   debug "back_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
   currStateObj.executeBackCommand(self.controller)
   let backState = currStateObj.getBackState()
+  if backState.isNil:
+    return
   self.view.setCurrentStartupState(backState)
   debug "back_action - set state", setCurrFlow=backState.flowType(), newCurrState=backState.stateType()
-  currStateObj.delete()    
     
 method onPrimaryActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStartupStateObj()

@@ -74,6 +74,7 @@ include profile_fetching_state
 include profile_fetching_success_state
 include profile_fetching_timeout_state
 include profile_fetching_announcement_state
+include recover_old_user_state
 
 proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State =
   if stateToBeCreated == StateType.AllowNotifications:
@@ -186,6 +187,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newProfileFetchingTimeoutState(flowType, backState)
   if stateToBeCreated == StateType.ProfileFetchingAnnouncement:
     return newProfileFetchingAnnouncementState(flowType, backState)
+  if stateToBeCreated == StateType.RecoverOldUser:
+    return newRecoverOldUserState(flowType, backState)
   
   
   error "No implementation available for state ", state=stateToBeCreated

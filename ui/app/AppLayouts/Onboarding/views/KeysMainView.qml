@@ -278,6 +278,38 @@ Item {
             }
             PropertyChanges {
                 target: txtTitle
+                text: qsTr("Sync to other device")
+            }
+            PropertyChanges {
+                target: txtDesc
+                text: qsTr("Get your data straight from your other device.")
+                height: Constants.onboarding.loginInfoHeight2
+            }
+            PropertyChanges {
+                target: button1
+                text: qsTr("Scan sync code")
+                enabled: false // TODO: we don't have the sync flow developed yet
+            }
+            PropertyChanges {
+                target: button2
+                text: qsTr("I don’t have other device")
+            }
+            PropertyChanges {
+                target: button3
+                text: ""
+            }
+        },
+        State {
+            name: Constants.startupState.recoverOldUser
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.recoverOldUser
+            PropertyChanges {
+                target: keysImg
+                Layout.preferredWidth: d.imgKeysWH
+                Layout.preferredHeight: d.imgKeysWH
+                source: Style.png("onboarding/keys")
+            }
+            PropertyChanges {
+                target: txtTitle
                 text: qsTr("Connect your keys")
             }
             PropertyChanges {
@@ -287,7 +319,7 @@ Item {
             }
             PropertyChanges {
                 target: button1
-                //                text: qsTr("Scan sync code")
+                text: ""
             }
             PropertyChanges {
                 target: button2
