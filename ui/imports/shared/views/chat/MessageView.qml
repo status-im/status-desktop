@@ -737,7 +737,7 @@ Loader {
                             tooltip.text: qsTr("Add reaction")
                             onClicked: {
                                 d.setMessageActive(root.messageId, true)
-                                root.messageClickHandler(this, Qt.point(mouse.x, mouse.y), false, false, false, null, true, false)
+                                root.messageClickHandler(delegate, mapToItem(delegate, mouse.x, mouse.y), false, false, false, null, true, false)
                             }
                         }
                     },
