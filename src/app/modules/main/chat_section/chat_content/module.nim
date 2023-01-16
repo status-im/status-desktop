@@ -179,7 +179,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     message.image,
     message.containsContactMentions(),
     message.seen,
-    timestamp = message.whisperTimestamp,
+    timestamp = message.timestamp,
     clock = message.clock,
     message.contentType.ContentType,
     message.messageType,
