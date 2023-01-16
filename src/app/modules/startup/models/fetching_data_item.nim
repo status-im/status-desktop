@@ -28,7 +28,7 @@ proc loadedMessages*(self: Item): int =
   return loadedMessages
 
 proc receivedMessageAtPosition*(self: Item, position: int) =
-  if position >= 1 or position <= self.totalMessages:
+  if position >= 1 and position <= self.totalMessages:
     self.trackOfLoadedMessages[position-1] = true
 
 proc totalMessages*(self: Item): int =
