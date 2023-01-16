@@ -7,6 +7,7 @@ import models/generated_account_item as gen_acc_item
 import models/login_account_item as login_acc_item
 import models/fetching_data_model as fetch_model
 import ../../global/global_singleton
+import ../../global/app_translatable_constants as atc
 import ../../core/eventemitter
 
 import ../../../app_service/service/keychain/service as keychain_service
@@ -95,19 +96,24 @@ method load*[T](self: Module[T]) =
   else:
     let openedAccounts = self.controller.getOpenedAccounts()
     var items: seq[login_acc_item.Item]
-    for acc in openedAccounts:
+    for i in 0..<openedAccounts.len:
+      let acc = openedAccounts[i]
       var thumbnailImage: string
       var largeImage: string
       self.extractImages(acc, thumbnailImage, largeImage)
-      items.add(login_acc_item.initItem(acc.name, thumbnailImage, largeImage, acc.keyUid, acc.colorHash, acc.colorId, 
-      acc.keycardPairing))
-    self.view.setLoginAccountsModelItems(items)
+      items.add(login_acc_item.initItem(order = i, acc.name, icon = "", thumbnailImage, largeImage, acc.keyUid, acc.colorHash, 
+        acc.colorId, acc.keycardPairing))
     # set the first account as slected one
     if items.len == 0:
       # we should never be here, since else block of `if (shouldStartWithOnboardingScreen)` 
       # ensures that `openedAccounts` is not empty array
       error "cannot run the app in login flow cause list of login accounts is empty"
       quit() # quit the app
+    items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_ADD_NEW_USER, icon = "add", 
+      thumbnailImage = "", largeImage = "", keyUid = ""))
+    items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_ADD_EXISTING_USER, icon = "wallet", 
+      thumbnailImage = "", largeImage = "", keyUid = ""))
+    self.view.setLoginAccountsModelItems(items)
     self.setSelectedLoginAccount(items[0])
   self.delegate.startupDidLoad()
 

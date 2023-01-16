@@ -5,7 +5,9 @@ import ../../shared_models/[color_hash_item, color_hash_model]
 
 type
   Item* = object
+    order: int
     name: string
+    icon: string
     thumbnailImage: string
     largeImage: string
     keyUid: string
@@ -14,10 +16,12 @@ type
     colorId: int
     keycardPairing: string
 
-proc initItem*(name, thumbnailImage, largeImage, keyUid: string, colorHash: seq[ColorHashSegment], colorId: int,
-  keycardPairing: string):
+proc initItem*(order: int, name, icon, thumbnailImage, largeImage, keyUid: string, colorHash: seq[ColorHashSegment] = @[], 
+  colorId: int = -1, keycardPairing: string = ""):
   Item =
+  result.order = order
   result.name = name
+  result.icon = icon
   result.thumbnailImage = thumbnailImage
   result.largeImage = largeImage
   result.keyUid = keyUid
@@ -27,8 +31,14 @@ proc initItem*(name, thumbnailImage, largeImage, keyUid: string, colorHash: seq[
   result.colorId = colorId
   result.keycardPairing = keycardPairing
 
+proc getOrder*(self: Item): int =
+  return self.order
+
 proc getName*(self: Item): string =
   return self.name
+
+proc getIcon*(self: Item): string =
+  return self.icon
 
 proc getThumbnailImage*(self: Item): string =
   return self.thumbnailImage
