@@ -1,4 +1,5 @@
 import steps.commonInitSteps as init_steps
+import steps.commonInitSteps as init_steps
 
 from screens.StatusMainScreen import StatusMainScreen
 from screens.SettingsScreen import SettingsScreen
@@ -78,6 +79,10 @@ def step(context: any):
 @When("the user opens the messaging settings")
 def step(context: any):
     the_user_opens_the_messaging_settings()
+    
+@When("the user opens the contacts settings")
+def step(context: any):
+    the_user_opens_the_contact_settings()
 
 @When("the user activates image unfurling")
 def step(context: any):
@@ -179,6 +184,10 @@ def step(context: any, oldPassword: str, newPassword: str):
 @When("the user sends a contact request to the chat key \"|any|\" with the reason \"|any|\"")
 def step(context: any, chat_key: str, reason: str):
     _settingsScreen.add_contact_by_chat_key(chat_key, reason)
+
+@When("the user sends a contact request with the reason \"|any|\"")
+def step(context: any, reason: str):
+    _settingsScreen.send_contact_request_via_profile_popup(reason)
     
 @When("the user opens own profile popup")
 def step(context: any):
@@ -187,6 +196,10 @@ def step(context: any):
 @When("the user navigates to edit profile")
 def step(context: any):
     _statusMain.navigate_to_edit_profile()
+
+@When("the user closes the popup")
+def step(context: any):
+    _statusMain.close_popup()
 
 #########################
 ### VERIFICATIONS region:
@@ -248,6 +261,14 @@ def step(context: any):
 @Then("the contact request for chat key \"|any|\" is present in the pending requests tab")
 def step(context, chat_key: str):
     _settingsScreen.verify_contact_request(chat_key)
+
+@Then("a contact request is present in the sent pending requests tab")
+def step(context):
+    _settingsScreen.verify_there_is_a_sent_contact_request()
+
+@Then("a contact request is present in the received pending requests tab")
+def step(context):
+    _settingsScreen.verify_there_is_a_received_contact_request()
     
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:
@@ -258,6 +279,9 @@ def the_user_opens_app_settings_screen():
     
 def the_user_opens_the_messaging_settings():
     _settingsScreen.open_messaging_settings()
+    
+def the_user_opens_the_contact_settings():
+    _settingsScreen.open_contacts_settings()
     
 def the_user_activates_wallet():
     wallet_init_steps.the_user_activates_wallet()

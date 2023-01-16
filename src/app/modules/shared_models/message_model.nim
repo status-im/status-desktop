@@ -1,4 +1,4 @@
-import NimQml, Tables, json, strutils, strformat
+import NimQml, Tables, json, sets, algorithm, sequtils, strutils, strformat, sugar
 
 import message_item, message_reaction_item, message_transaction_parameters_item
 
@@ -21,6 +21,7 @@ type
     Seen
     OutgoingStatus
     MessageText
+    UnparsedText
     MessageImage
     MessageContainsMentions # Actually we don't need to exposed this to qml since we only used it as an improved way to
                             # check whether we need to update mentioned contact name or not.
@@ -44,6 +45,12 @@ type
     MessageAttachments
     ResendError
     Mentioned
+    QuotedMessageFrom
+    QuotedMessageText
+    QuotedMessageParsedText
+    QuotedMessageContentType
+    QuotedMessageDeleted
+    QuotedMessageFromIterator
 
 QtObject:
   type
@@ -77,6 +84,8 @@ QtObject:
       [{i}]:({$self.items[i]})
       """
 
+  proc resetNewMessagesMarker*(self: Model)
+
   proc countChanged(self: Model) {.signal.}
   proc getCount(self: Model): int {.slot.} =
     self.items.len
@@ -106,6 +115,7 @@ QtObject:
       ModelRole.ResendError.int:"resendError",
       ModelRole.Mentioned.int:"mentioned",
       ModelRole.MessageText.int:"messageText",
+      ModelRole.UnparsedText.int:"unparsedText",
       ModelRole.MessageImage.int:"messageImage",
       ModelRole.MessageContainsMentions.int:"messageContainsMentions",
       ModelRole.Timestamp.int:"timestamp",
@@ -125,7 +135,13 @@ QtObject:
       ModelRole.MentionedUsersPks.int: "mentionedUsersPks",
       ModelRole.SenderTrustStatus.int: "senderTrustStatus",
       ModelRole.SenderEnsVerified.int: "senderEnsVerified",
-      ModelRole.MessageAttachments.int: "messageAttachments"
+      ModelRole.MessageAttachments.int: "messageAttachments",
+      ModelRole.QuotedMessageFrom.int: "quotedMessageFrom",
+      ModelRole.QuotedMessageFromIterator.int: "quotedMessageFromIterator",
+      ModelRole.QuotedMessageText.int: "quotedMessageText",
+      ModelRole.QuotedMessageParsedText.int: "quotedMessageParsedText",
+      ModelRole.QuotedMessageContentType.int: "quotedMessageContentType",
+      ModelRole.QuotedMessageDeleted.int: "quotedMessageDeleted",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -177,8 +193,22 @@ QtObject:
       result = newQVariant(item.resendError)
     of ModelRole.Mentioned:
       result = newQVariant(item.mentioned)
+    of ModelRole.QuotedMessageFrom:
+      result = newQVariant(item.quotedMessageFrom)
+    of ModelRole.QuotedMessageFromIterator:
+      result = newQVariant(item.quotedMessageFromIterator)
+    of ModelRole.QuotedMessageText:
+      result = newQVariant(item.quotedMessageText)
+    of ModelRole.QuotedMessageParsedText:
+      result = newQVariant(item.quotedMessageParsedText)
+    of ModelRole.QuotedMessageContentType:
+      result = newQVariant(item.quotedMessageContentType)
+    of ModelRole.QuotedMessageDeleted:
+      result = newQVariant(item.quotedMessageDeleted)
     of ModelRole.MessageText:
       result = newQVariant(item.messageText)
+    of ModelRole.UnparsedText:
+      result = newQVariant(item.unparsedText)
     of ModelRole.MessageImage:
       result = newQVariant(item.messageImage)
     of ModelRole.MessageContainsMentions:
@@ -245,94 +275,76 @@ QtObject:
       if(self.items[i].responseToMessageWithId == messageId):
         result.add(self.items[i].id)
 
-  proc findIndexBasedOnClockToInsertTo(self: Model, clock: int64, id: string): int =
-    for i in 0 ..< self.items.len:
-      if clock > self.items[i].clock:
-        return i
-      elif clock == self.items[i].clock: # break ties by message id
-        if id > self.items[i].id:
-          return i
-    return self.items.len
+  # sort predicate - most recent clocks first, break ties by message id
+  proc isGreaterThan(lhsItem, rhsItem: Item): bool =
+    return lhsItem.clock > rhsItem.clock or
+           (lhsItem.clock == rhsItem.clock and lhsItem.id > rhsItem.id)
+
+  proc insertItems(self: Model, position: int, items: seq[Item]) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginInsertRows(parentModelIndex, position, position + items.len - 1)
+    self.items.insert(items, position)
+    self.endInsertRows()
+
+    if position > 0:
+      self.updateItemAtIndex(position - 1)
+    if position + items.len - 1 < self.items.len:
+      self.updateItemAtIndex(position + items.len)
+    self.countChanged()
 
   proc filterExistingItems(self: Model, items: seq[Item]): seq[Item] =
-    for item in items:
-      if(self.findIndexForMessageId(item.id) < 0):
-        result &= item
+    let existingItems = toHashSet(self.items.map(x => x.id))
+    return items.filter(item => not existingItems.contains(item.id))
+
+  proc insertItemsBasedOnClock*(self: Model, items: seq[Item]) =
+    # remove existing items and sort by most recent
+    let sortCmp = proc(lhs, rhs: Item): int =
+      return if isGreaterThan(lhs, rhs): -1 else: 1
+    let newItems = sorted(self.filterExistingItems(items), sortCmp)
+
+    # bulk insert algorithm, "two-pointer" technique
+    var currentIdx = 0
+    var newIdx = 0
+    var numRows = 0
+
+    while currentIdx < self.items.len and newIdx < newItems.len:
+      let newItem = newItems[newIdx]
+      let currentItem = self.items[currentIdx]
+      if isGreaterThan(newItem, currentItem):
+        newIdx += 1
+        numRows += 1
+      else:
+        if numRows > 0:
+          self.insertItems(currentIdx, newItems[newIdx-numRows..newIdx-1])
+          numRows = 0
+        currentIdx += 1
+
+    if numRows > 0:
+      self.insertItems(currentIdx, newItems[newIdx-numRows..newIdx-1])
+    if newIdx < newItems.len:
+      self.insertItems(currentIdx, newItems[newIdx..newItems.len-1])
 
   proc insertItemBasedOnClock*(self: Model, item: Item) =
-    if(self.findIndexForMessageId(item.id) != -1):
-      return
+    self.insertItemsBasedOnClock(@[item])
 
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    let position = self.findIndexBasedOnClockToInsertTo(item.clock, item.id)
-
-    self.beginInsertRows(parentModelIndex, position, position)
-    self.items.insert(item, position)
-    self.endInsertRows()
-
-    if position > 0:
-      self.updateItemAtIndex(position - 1)
-    if position + 1 < self.items.len:
-      self.updateItemAtIndex(position + 1)
-    self.countChanged()
-
-  proc prependItems*(self: Model, items: seq[Item]) =
-    let itemsToAppend = self.filterExistingItems(items)
-    if(itemsToAppend.len == 0):
-      return
-
-    for item in items:
-      self.insertItemBasedOnClock(item)
-
-  proc appendItems*(self: Model, items: seq[Item]) =
-    let itemsToAppend = self.filterExistingItems(items)
-    if(itemsToAppend.len == 0):
-      return
-
-    for item in items:
-      self.insertItemBasedOnClock(item)
-
-  proc appendItem*(self: Model, item: Item) =
-    if(self.findIndexForMessageId(item.id) != -1):
-      return
-
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    let position = self.items.len
-
-    self.beginInsertRows(parentModelIndex, position, position)
-    self.items.add(item)
-    self.endInsertRows()
-
-    if position > 0:
-      self.updateItemAtIndex(position - 1)
-    self.countChanged()
-
-  proc prependItem*(self: Model, item: Item) =
-    if(self.findIndexForMessageId(item.id) != -1):
-      return
-
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    self.beginInsertRows(parentModelIndex, 0, 0)
-    self.items.insert(item, 0)
-    self.endInsertRows()
-
-    if self.items.len > 1:
-      self.updateItemAtIndex(1)
-    self.countChanged()
-
-  proc replyDeleted*(self: Model, messageIndex: int) {.signal.}
-
+  # Replied message was deleted
   proc updateMessagesWithResponseTo(self: Model, messageId: string) =
     for i in 0 ..< self.items.len:
       if(self.items[i].responseToMessageWithId == messageId):
         let ind = self.createIndex(i, 0, nil)
-        self.replyDeleted(i)
+        var item = self.items[i]
+        item.quotedMessageText = ""
+        item.quotedMessageParsedText = ""
+        item.quotedMessageFrom = ""
+        item.quotedMessageDeleted = true
+        self.dataChanged(ind, ind, @[
+          ModelRole.QuotedMessageFrom.int,
+          ModelRole.QuotedMessageParsedText.int,
+          ModelRole.QuotedMessageContentType.int,
+          ModelRole.QuotedMessageDeleted.int,
+        ])
 
   proc removeItem*(self: Model, messageId: string) =
     let ind = self.findIndexForMessageId(messageId)
@@ -345,6 +357,8 @@ QtObject:
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
     self.endRemoveRows()
+
+    self.resetNewMessagesMarker()
 
     if ind > 0 and ind < self.items.len:
       self.updateItemAtIndex(ind - 1)
@@ -438,12 +452,6 @@ QtObject:
       return
     self.items[index].toJsonNode()
 
-  proc updateContactInReplies(self: Model, messageId: string) =
-    for i in 0 ..< self.items.len:
-      if (self.items[i].responseToMessageWithId == messageId):
-        let index = self.createIndex(i, 0, nil)
-        self.dataChanged(index, index, @[ModelRole.ResponseToMessageWithId.int])
-
   iterator modelContactUpdateIterator*(self: Model, contactId: string): Item =
     for i in 0 ..< self.items.len:
       yield self.items[i]
@@ -459,12 +467,17 @@ QtObject:
       if(self.items[i].pinnedBy == contactId):
         roles.add(ModelRole.PinnedBy.int)
       if(self.items[i].messageContainsMentions):
-        roles.add(@[ModelRole.MessageText.int, ModelRole.MessageContainsMentions.int])
+        roles.add(@[ModelRole.MessageText.int, ModelRole.UnparsedText.int, ModelRole.MessageContainsMentions.int])
+
+      if (self.items[i].quotedMessageFrom == contactId):
+        # If there is a quoted message whom the author changed, increase the iterator to force
+        # the view to re-fetch the author's details
+        self.items[i].quotedMessageFromIterator = self.items[i].quotedMessageFromIterator + 1
+        roles.add(ModelRole.QuotedMessageFromIterator.int)
 
       if(roles.len > 0):
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, roles)
-        self.updateContactInReplies(self.items[i].id)
 
   proc setEditModeOn*(self: Model, messageId: string)  =
     let ind = self.findIndexForMessageId(messageId)
@@ -490,6 +503,8 @@ QtObject:
       self: Model,
       messageId: string,
       updatedMsg: string,
+      updatedRawMsg: string,
+      contentType: int,
       messageContainsMentions: bool,
       links: seq[string],
       mentionedUsersPks: seq[string]
@@ -507,13 +522,25 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[
       ModelRole.MessageText.int,
+      ModelRole.UnparsedText.int,
       ModelRole.MessageContainsMentions.int,
       ModelRole.IsEdited.int,
       ModelRole.Links.int,
       ModelRole.MentionedUsersPks.int
       ])
 
-    self.updateContactInReplies(messageId)
+    # Update replied to messages if there are
+    for i in 0 ..< self.items.len:
+      if(self.items[i].responseToMessageWithId == messageId):
+        self.items[i].quotedMessageParsedText = updatedMsg
+        self.items[i].quotedMessageText = updatedRawMsg
+        self.items[i].quotedMessageContentType = contentType
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[
+          ModelRole.QuotedMessageText.int,
+          ModelRole.QuotedMessageParsedText.int,
+          ModelRole.QuotedMessageContentType.int,
+        ])
 
   proc clear*(self: Model) =
     self.beginResetModel()
@@ -552,7 +579,6 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-# TODO: handle messages removal
   proc resetNewMessagesMarker*(self: Model) =
     self.removeNewMessagesMarker()
     let messageId = self.firstUnseenMessageId
@@ -569,7 +595,7 @@ QtObject:
     defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, position, position)
-    self.items.insert(initNewMessagesMarkerItem(self.items[index].timestamp), position)
+    self.items.insert(initNewMessagesMarkerItem(self.items[index].clock, self.items[index].timestamp), position)
     self.endInsertRows()
     self.countChanged()
 

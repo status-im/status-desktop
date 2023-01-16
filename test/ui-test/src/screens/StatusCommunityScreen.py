@@ -147,7 +147,17 @@ class StatusCommunityScreen:
 
     def verify_community_name(self, communityName: str):
         verify_text_matching(CommunityScreenComponents.COMMUNITY_HEADER_NAME_TEXT.value, communityName)
-
+        
+    def verify_community_overview_name(self, communityName: str):
+        verify_text_matching(CommunitySettingsComponents.COMMUNITY_NAME_TEXT.value, communityName)
+    
+    def verify_community_overview_description(self, communityDescription: str):
+        verify_text_matching(CommunitySettingsComponents.COMMUNITY_DESCRIPTION_TEXT.value, communityDescription)
+        
+    def verify_community_overview_color(self, communityColor: str):
+        obj = get_obj(CommunitySettingsComponents.COMMUNITY_LETTER_IDENTICON.value)
+        expect_true(obj.color.name == communityColor, "Community color was not changed correctly")    
+        
     def create_community_channel(self, communityChannelName: str, communityChannelDescription: str, method: str):
         if (method == CommunityCreateMethods.BOTTOM_MENU.value):
             click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON.value)
@@ -228,36 +238,40 @@ class StatusCommunityScreen:
                 verify_failure("Channel " + channel_name + " should be checked in category " + community_category_name)
         comma = ", "
         verify(len(split) == 0, "Channel(s) " + comma.join(split) + " should not be checked in category " + community_category_name)
-
-    def edit_community(self, new_community_name: str, new_community_description: str, new_community_color: str):
+    
+    def open_edit_community_by_community_header(self):
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)
         click_obj_by_name(CommunitySettingsComponents.EDIT_COMMUNITY_BUTTON.value)
-
+        
+    def change_community_name(self, new_community_name: str):
         # Select all text in the input before typing
         wait_for_object_and_type(CommunitySettingsComponents.EDIT_COMMUNITY_NAME_INPUT.value, "<Ctrl+a>")
         type(CommunitySettingsComponents.EDIT_COMMUNITY_NAME_INPUT.value, new_community_name)
-
+        
+    def change_community_description(self, new_community_description: str):
         wait_for_object_and_type(CommunitySettingsComponents.EDIT_COMMUNITY_DESCRIPTION_INPUT.value, "<Ctrl+a>")
         type(CommunitySettingsComponents.EDIT_COMMUNITY_DESCRIPTION_INPUT.value, new_community_description)
 
+    def change_community_color(self, new_community_color: str):
         scroll_obj_by_name(CommunitySettingsComponents.EDIT_COMMUNITY_SCROLL_VIEW.value)
-        time.sleep(1)
         scroll_obj_by_name(CommunitySettingsComponents.EDIT_COMMUNITY_SCROLL_VIEW.value)
-        time.sleep(1)
+        scroll_obj_by_name(CommunitySettingsComponents.EDIT_COMMUNITY_SCROLL_VIEW.value)
 
         click_obj_by_name(CommunitySettingsComponents.EDIT_COMMUNITY_COLOR_PICKER_BUTTON.value)
         wait_for_object_and_type(CommunityColorPanelComponents.HEX_COLOR_INPUT.value, "<Ctrl+a>")
         type(CommunityColorPanelComponents.HEX_COLOR_INPUT.value, new_community_color)
         click_obj_by_name(CommunityColorPanelComponents.SAVE_COLOR_BUTTON.value)
-
+    
+    def save_community_changes(self):
         click_obj_by_name(CommunitySettingsComponents.SAVE_BUTTON.value)
-        time.sleep(0.5)
+    
+    def edit_community(self, new_community_name: str, new_community_description: str, new_community_color: str):
+        self.open_edit_community_by_community_header()
 
-        # Validation
-        verify_text_matching(CommunitySettingsComponents.COMMUNITY_NAME_TEXT.value, new_community_name)
-        verify_text_matching(CommunitySettingsComponents.COMMUNITY_DESCRIPTION_TEXT.value, new_community_description)
-        obj = get_obj(CommunitySettingsComponents.COMMUNITY_LETTER_IDENTICON.value)
-        expect_true(obj.color.name == new_community_color, "Community color was not changed correctly")
+        self.change_community_name(new_community_name)
+        self.change_community_description(new_community_description)
+        self.change_community_color(new_community_color)
+        self.save_community_changes()
 
     def go_back_to_community(self):
         click_obj_by_name(CommunitySettingsComponents.BACK_TO_COMMUNITY_BUTTON.value)

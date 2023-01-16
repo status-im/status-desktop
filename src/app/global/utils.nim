@@ -140,6 +140,9 @@ QtObject:
   proc plainText*(self: Utils, text: string): string {.slot.} =
     result = plain_text(text)
 
+  proc escapeHtml*(self: Utils, text: string): string {.slot.} =
+    result = escape_html(text)
+
   proc getEmojiHashAsJson*(self: Utils, publicKey: string): string {.slot.} =
     procs_from_visual_identity_service.getEmojiHashAsJson(publicKey)
 

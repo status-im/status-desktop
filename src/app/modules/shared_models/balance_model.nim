@@ -1,6 +1,7 @@
 import NimQml, Tables, strutils, strformat
 
-import ../../../app_service/service/wallet_account/dto
+import balance_item
+import ./currency_amount
 
 type
   ModelRole {.pure.} = enum
@@ -11,7 +12,7 @@ type
 QtObject:
   type
     BalanceModel* = ref object of QAbstractListModel
-      items*: seq[BalanceDto]
+      items*: seq[Item]
 
   proc delete(self: BalanceModel) =
     self.items = @[]
@@ -63,7 +64,7 @@ QtObject:
     of ModelRole.Address:
       result = newQVariant(item.address)
     of ModelRole.Balance:
-      result = newQVariant($item.balance)
+      result = newQVariant(item.balance)
 
   proc rowData(self: BalanceModel, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -74,7 +75,7 @@ QtObject:
       of "address": result = $item.address
       of "balance": result = $item.balance
 
-  proc setItems*(self: BalanceModel, items: seq[BalanceDto]) =
+  proc setItems*(self: BalanceModel, items: seq[Item]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()

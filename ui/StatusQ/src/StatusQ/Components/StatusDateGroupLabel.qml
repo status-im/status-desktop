@@ -22,14 +22,6 @@ StatusBaseText {
             return "";
 
         const now = new Date();
-        if (now.getFullYear() == currentMsgDate.getFullYear() && now.getMonth() == currentMsgDate.getMonth() && now.getDate() == currentMsgDate.getDate())
-            return qsTr("Today");
-
-        const yesterday = new Date();
-        yesterday.setDate(now.getDate() - 1);
-        if (yesterday.getFullYear() == currentMsgDate.getFullYear() && yesterday.getMonth() == currentMsgDate.getMonth() && yesterday.getDate() == currentMsgDate.getDate())
-            return qsTr("Yesterday");
-
         // FIXME Qt6: replace with Intl.DateTimeFormat
         const monthName = Qt.locale().standaloneMonthName(currentMsgDate.getMonth(), Locale.LongFormat)
         if (now.getFullYear() > currentMsgDate.getFullYear())

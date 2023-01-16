@@ -1,4 +1,9 @@
 import json, strutils, stint, json_serialization, strformat
+
+import
+  web3/ethtypes, json_serialization
+from web3/conversions import `$`
+
 include  ../../common/json_utils
 import ../network/dto
 import ../../common/conversion as service_conversion
@@ -166,6 +171,10 @@ type
     amountInLocked*: bool
     isFirstSimpleTx*: bool
     isFirstBridgeTx*: bool
+    approvalRequired*: bool
+    approvalGasFees*: float
+    approvalAmountRequired*: UInt256
+    approvalContractAddress*: string
 
 proc `$`*(self: TransactionPathDto): string =
   return fmt"""TransactionPath(
@@ -183,6 +192,10 @@ proc `$`*(self: TransactionPathDto): string =
     amountInLocked:{self.amountInLocked},
     isFirstSimpleTx:{self.isFirstSimpleTx},
     isFirstBridgeTx:{self.isFirstBridgeTx}
+    approvalRequired:{self.approvalRequired},
+    approvalGasFees:{self.approvalGasFees},
+    approvalAmountRequired:{self.approvalAmountRequired},
+    approvalContractAddress:{self.approvalContractAddress},
   )"""
 
 proc toTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
@@ -202,6 +215,10 @@ proc toTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   discard jsonObj.getProp("AmountInLocked", result.amountInLocked)
   result.isFirstSimpleTx = false
   result.isFirstBridgeTx = false
+  discard jsonObj.getProp("ApprovalRequired", result.approvalRequired)
+  result.approvalAmountRequired = stint.fromHex(UInt256, jsonObj{"ApprovalAmountRequired"}.getStr)
+  result.approvalGasFees = parseFloat(jsonObj{"ApprovalGasFees"}.getStr)
+  discard jsonObj.getProp("ApprovalContractAddress", result.approvalContractAddress)
 
 proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result = TransactionPathDto()
@@ -217,6 +234,10 @@ proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result.amountOut = stint.u256(jsonObj{"amountOut"}.getStr)
   result.estimatedTime = jsonObj{"estimatedTime"}.getInt
   discard jsonObj.getProp("gasAmount", result.gasAmount)
+  discard jsonObj.getProp("approvalRequired", result.approvalRequired)
+  result.approvalAmountRequired = stint.u256(jsonObj{"approvalAmountRequired"}.getStr)
+  discard jsonObj.getProp("approvalGasFees", result.approvalGasFees)
+  discard jsonObj.getProp("approvalContractAddress", result.approvalContractAddress)
 
 type
   Fees* = ref object

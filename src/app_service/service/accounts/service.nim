@@ -70,6 +70,10 @@ QtObject:
   proc getLoggedInAccount*(self: Service): AccountDto =
     return self.loggedInAccount
 
+  proc updateLoggedInAccount*(self: Service, displayName: string, images: seq[Image]) =
+    self.loggedInAccount.name = displayName
+    self.loggedInAccount.images = images
+
   proc getImportedAccount*(self: Service): GeneratedAccountDto =
     return self.importedAccount
 
@@ -85,6 +89,12 @@ QtObject:
 
   proc setDefaultWalletEmoji*(self: Service, emoji: string) =
     self.defaultWalletEmoji = emoji
+
+  proc connectToFetchingFromWakuEvents*(self: Service) =
+    self.events.on(SignalType.WakuBackedUpProfile.event) do(e: Args):
+      var receivedData = WakuBackedUpProfileSignal(e)
+      self.loggedInAccount.name = receivedData.backedUpProfile.displayName
+      self.loggedInAccount.images = receivedData.backedUpProfile.images
 
   proc init*(self: Service) =
     try:
@@ -486,6 +496,13 @@ QtObject:
     except Exception as e:
       error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
 
+  proc createAccountFromMnemonic*(self: Service, mnemonic: string, paths: seq[string]): GeneratedAccountDto =
+    try:
+      let response = status_account.createAccountFromMnemonicAndDeriveAccountsForPaths(mnemonic, paths)
+      return toGeneratedAccountDto(response.result)
+    except Exception as e:
+      error "error: ", procName="createAccountFromMnemonicAndDeriveAccountsForPaths", errName = e.name, errDesription = e.msg
+
   proc createAccountFromMnemonic*(self: Service, mnemonic: string, includeEncryption = false, includeWhisper = false,
     includeRoot = false, includeDefaultWallet = false, includeEip1581 = false): GeneratedAccountDto =
     if mnemonic.len == 0:
@@ -502,11 +519,7 @@ QtObject:
       paths.add(PATH_DEFAULT_WALLET)
     if includeEip1581:
       paths.add(PATH_EIP_1581)
-    try:
-      let response = status_account.createAccountFromMnemonicAndDeriveAccountsForPaths(mnemonic, paths)
-      return toGeneratedAccountDto(response.result)
-    except Exception as e:
-      error "error: ", procName="createAccountFromMnemonicAndDeriveAccountsForPaths", errName = e.name, errDesription = e.msg
+    return self.createAccountFromMnemonic(mnemonic, paths)    
 
   proc importMnemonic*(self: Service, mnemonic: string): string =
     if mnemonic.len == 0:

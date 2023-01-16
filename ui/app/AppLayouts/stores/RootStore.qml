@@ -7,7 +7,7 @@ import "../Profile/stores"
 QtObject {
     id: root
 
-    property string locale: localAppSettings.language
+    property var locale: Qt.locale(localAppSettings.language)
 
     property var mainModuleInst: mainModule
     property var aboutModuleInst: aboutModule
@@ -111,9 +111,6 @@ QtObject {
 
     property string currentCurrency: walletSection.currentCurrency
     property string signingPhrase: walletSection.signingPhrase
-    function estimateGas(from_addr, to, assetSymbol, value, chainId, data) {
-        return walletSectionTransactions.estimateGas(from_addr, to, assetSymbol, value, chainId, data)
-    }
     function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
         return profileSectionStore.ensUsernamesStore.getFiatValue(balance, cryptoSymbol, fiatSymbol)
     }

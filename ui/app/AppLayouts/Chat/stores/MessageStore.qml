@@ -22,8 +22,7 @@ QtObject {
         if(!messageModule)
             return
 
-        if(!messageModule.initialMessagesLoaded ||
-            root.loadingHistoryMessagesInProgress? root.loadingHistoryMessagesInProgress : false)
+        if(!messageModule.initialMessagesLoaded)
             return
 
         messageModule.loadMoreMessages()
@@ -45,28 +44,6 @@ QtObject {
         if (obj.error) {
             // This log is available only in debug mode, if it's annoying we can remove it
             console.debug("getMessageByIdAsJson: Failed to parse message for index: ", id, " error: ", obj.error)
-            return false
-        }
-
-        return obj
-    }
-
-    function getReplyMessageByIdAsJson(messageId: string) {
-        if (!messageModule) {
-            console.warn("getReplyMessageByIdAsJson: Failed to parse message, because messageModule is not set")
-            return false
-        }
-
-        const jsonObj = messageModule.getReplyMessageByIdAsJson(messageId)
-        if (jsonObj === "") {
-            console.warn("getReplyMessageByIdAsJson: Failed to get message, returned json is empty")
-            return undefined
-        }
-
-        const obj = JSON.parse(jsonObj)
-        if (obj.error) {
-            // This log is available only in debug mode, if it's annoying we can remove it
-            console.debug("getReplyMessageByIdAsJson: Failed to parse message for index: ", messageId, " error: ", obj.error)
             return false
         }
 

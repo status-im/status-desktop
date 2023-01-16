@@ -1,9 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Window 2.13
 import QtQuick.Layouts 1.13
-import QtQml.Models 2.13
-import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 
 import StatusQ.Core 0.1
@@ -44,20 +41,21 @@ Item {
 
     signal openStickerPackPopup(string stickerPackId)
     signal showReplyArea(string messageId, string author)
+    signal editModeChanged(bool editModeOn)
 
     QtObject {
         id: d
 
         readonly property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
         readonly property bool isMostRecentMessageInViewport: chatLogView.visibleArea.yPosition >= 0.999 - chatLogView.visibleArea.heightRatio
-        readonly property var chatDetails: chatContentModule.chatDetails
+        readonly property var chatDetails: chatContentModule.chatDetails || null
 
         function markAllMessagesReadIfMostRecentMessageIsInViewport() {
-            if (!isMostRecentMessageInViewport) {
+            if (!isMostRecentMessageInViewport || !chatLogView.visible) {
                 return
             }
 
-            if (chatDetails.active && chatDetails.hasUnreadMessages && !messageStore.messageSearchOngoing) {
+            if (chatDetails && chatDetails.active && chatDetails.hasUnreadMessages && !messageStore.messageSearchOngoing) {
                 chatContentModule.markAllMessagesRead()
             }
         }
@@ -87,15 +85,24 @@ Item {
     }
 
     Connections {
-        target: d.chatDetails
+        target: !!d.chatDetails ? d.chatDetails : null
 
         function onActiveChanged() {
             d.markAllMessagesReadIfMostRecentMessageIsInViewport()
         }
 
         function onHasUnreadMessagesChanged() {
-            if (d.chatDetails.hasUnreadMessages && d.chatDetails.active && !d.isMostRecentMessageInViewport) {
-                // HACK: we call it later because messages model may not be yet propagated with unread messages when this signal is emitted
+            if (!d.chatDetails.hasUnreadMessages) {
+                return
+            }
+
+            // HACK: we call `addNewMessagesMarker` later because messages model
+            // may not be yet propagated with unread messages when this signal is emitted
+            if (chatLogView.visible) {
+                if (!d.isMostRecentMessageInViewport) {
+                    Qt.callLater(() => messageStore.addNewMessagesMarker())
+                }
+            } else {
                 Qt.callLater(() => messageStore.addNewMessagesMarker())
             }
         }
@@ -153,6 +160,8 @@ Item {
 
         onCountChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
 
+        onVisibleChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+
         ScrollBar.vertical: StatusScrollBar {
             visible: chatLogView.visibleArea.heightRatio < 1
         }
@@ -205,26 +214,7 @@ Item {
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onPressed: mouse.accepted = false
-            }
-        }
-
-        Connections {
-            target: chatLogView.model || null
-            function onDataChanged(topLeft, bottomRight, roles) {
-                if (roles.indexOf(Constants.messageModelRoles.responseToMessageWithId) !== -1) {
-                    let item = chatLogView.itemAtIndex(topLeft.row)
-                    if (item) {
-                        item.updateReplyInfo()
-                    }
-                }
-            }
-
-            function onReplyDeleted(messageIndex) {
-                let item = chatLogView.itemAtIndex(messageIndex)
-                if (item) {
-                    item.replyDeleted()
-                }
+                acceptedButtons: Qt.NoButton
             }
         }
 
@@ -248,7 +238,6 @@ Item {
             isChatBlocked: root.isChatBlocked
             messageContextMenu: root.messageContextMenu
 
-            itemIndex: index
             messageId: model.id
             communityId: model.communityId
             responseToMessageWithId: model.responseToMessageWithId
@@ -261,6 +250,7 @@ Item {
             senderTrustStatus: model.senderTrustStatus
             amISender: model.amISender
             messageText: model.messageText
+            unparsedText: model.unparsedText
             messageImage: model.messageImage
             messageTimestamp: model.timestamp
             messageOutgoingStatus: model.outgoingStatus
@@ -272,11 +262,17 @@ Item {
             sticker: model.sticker
             stickerPack: model.stickerPack
             editModeOn: model.editMode
+            onEditModeOnChanged: root.editModeChanged(editModeOn)
             isEdited: model.isEdited
             linkUrls: model.links
             messageAttachments: model.messageAttachments
             transactionParams: model.transactionParameters
             hasMention: model.mentioned
+            quotedMessageText: model.quotedMessageParsedText
+            quotedMessageFrom: model.quotedMessageFrom
+            quotedMessageContentType: model.quotedMessageContentType
+            quotedMessageFromIterator: model.quotedMessageFromIterator
+            quotedMessageDeleted: model.quotedMessageDeleted
 
             gapFrom: model.gapFrom
             gapTo: model.gapTo

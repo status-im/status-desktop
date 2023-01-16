@@ -157,12 +157,12 @@ Item {
         \qmlproperty real StatusBaseInput::leftPadding
         This property sets the leftComponentLoader's left padding.
     */
-    property real leftPadding: leftComponentLoader.item ? 6 : 16
+    property real leftPadding: leftComponentLoader.status === Loader.Ready && leftComponentLoader.item ? 6 : 16
     /*!
         \qmlproperty real StatusBaseInput::rightPadding
         This property sets the right padding.
     */
-    property real rightPadding: 16
+    property real rightPadding: rightComponentLoader.status === Loader.Ready && rightComponentLoader.item ? 6 : 16
     /*!
         \qmlproperty real StatusBaseInput::topPadding
         This property sets the top padding.
@@ -305,7 +305,7 @@ Item {
                 root.editClicked()
             }
             RowLayout {
-                spacing: 2
+                spacing: 8
                 anchors {
                     fill: parent
                     leftMargin: root.leftPadding
@@ -329,7 +329,6 @@ Item {
                     id: flick
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.leftMargin: !!leftComponentLoader.item ? 8 : 0
                     Layout.topMargin: root.topPadding
                     Layout.bottomMargin: root.bottomPadding
                     contentWidth: edit.paintedWidth
@@ -412,13 +411,13 @@ Item {
                             font.pixelSize: 15
                             wrapMode: root.multiline ? Text.WordWrap : Text.NoWrap
                             elide: StatusBaseText.ElideRight
-                            font.family: Theme.palette.baseFont.name
                             color: root.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
                         }
                     }
                 } // Flickable
 
                 Loader {
+                    id: rightComponentLoader
                     sourceComponent: {
                         if (root.rightComponent) return root.rightComponent
                         if (root.clearable) return clearButton

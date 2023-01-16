@@ -9,10 +9,10 @@ import StatusQ.Core 0.1
 import utils 1.0
 
 StatusListItem {
-    property string currentCurrencySymbol
-
+    id: root
+    property var locale
     title: name
-    subTitle: `${enabledNetworkBalance} ${symbol}`
+    subTitle: LocaleUtils.currencyAmountToLocaleString(enabledNetworkBalance, root.locale)
     asset.name: symbol ? Style.png("tokens/" + symbol) : ""
     asset.isImage: true
     components: [
@@ -25,7 +25,7 @@ StatusListItem {
                 anchors.right: parent.right
                 font.pixelSize: 15
                 font.strikeout: false
-                text: enabledNetworkCurrencyBalance.toLocaleCurrencyString(Qt.locale(), currentCurrencySymbol)
+                text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkCurrencyBalance, root.locale)
             }
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -35,7 +35,7 @@ StatusListItem {
                     font.pixelSize: 15
                     font.strikeout: false
                     color: valueColumn.textColor
-                    text: currencyPrice.toLocaleCurrencyString(Qt.locale(), currentCurrencySymbol)
+                    text: LocaleUtils.currencyAmountToLocaleString(currencyPrice, root.locale)
                 }
                 Rectangle {
                     width: 1
@@ -46,7 +46,7 @@ StatusListItem {
                     font.pixelSize: 15
                     font.strikeout: false
                     color: valueColumn.textColor
-                    text: changePct24hour !== "" ? "%1%".arg(changePct24hour) : "---"
+                    text: changePct24hour !== "" ? changePct24hour.toFixed(2) + "%" : "---"
                 }
             }
         }

@@ -92,6 +92,7 @@ Item {
                     AssetsView {
                         account: RootStore.currentAccount
                         assetDetailsLaunched: stack.currentIndex === 2
+                        locale: RootStore.locale
                         onAssetClicked: {
                             assetDetailView.token = token
                             stack.currentIndex = 2
@@ -137,8 +138,8 @@ Item {
         WalletFooter {
             id: footer
             Layout.fillWidth: true
-            Layout.leftMargin: -root.StackView.view.anchors.leftMargin
-            Layout.rightMargin: -root.StackView.view.anchors.rightMargin
+            Layout.leftMargin: !!root.StackView ? -root.StackView.view.anchors.leftMargin : 0
+            Layout.rightMargin: !!root.StackView ? -root.StackView.view.anchors.rightMargin : 0
             sendModal: root.sendModal
             walletStore: RootStore
         }

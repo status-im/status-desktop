@@ -16,14 +16,14 @@ Item {
     id: root
 
     property var store
-    property int type: ExtendedDropdownContent.Type.Tokens
+    property int type: ExtendedDropdownContent.Type.Assets
 
     readonly property bool canGoBack: root.state !== d.listView_depth1_State
 
     signal itemClicked(string key, string name, url iconSource)
 
     enum Type{
-        Tokens,
+        Assets,
         Collectibles
     }
 
@@ -76,13 +76,13 @@ Item {
 
             PropertyChanges {
                 target: contentLoader
-                sourceComponent: root.type === ExtendedDropdownContent.Type.Tokens
-                                 ? tokensListView : collectiblesListView
+                sourceComponent: root.type === ExtendedDropdownContent.Type.Assets
+                                 ? assetsListView : collectiblesListView
             }
             PropertyChanges {
                 target: d
-                currentModel: root.type === ExtendedDropdownContent.Type.Tokens
-                              ? root.store.tokensModel : collectiblesFilteredModel//root.store.collectiblesModel
+                currentModel: root.type === ExtendedDropdownContent.Type.Assets
+                              ? root.store.assetsModel : collectiblesFilteredModel//root.store.collectiblesModel
                 isFilterOptionVisible: false
             }
             PropertyChanges {
@@ -257,17 +257,18 @@ Item {
     }
 
     Component {
-        id: tokensListView
+        id: assetsListView
 
         ListDropdownContent {
             headerModel: ListModel {
-                ListElement { key: "MINT"; icon: "add"; iconSize: 16; description: qsTr("Mint token"); rotation: 0; spacing: 8 }
-                ListElement { key: "IMPORT"; icon: "invite-users"; iconSize: 16; description: qsTr("Import existing token"); rotation: 180; spacing: 8 }
+                ListElement { key: "MINT"; icon: "add"; iconSize: 16; description: qsTr("Mint asset"); rotation: 0; spacing: 8 }
+                ListElement { key: "IMPORT"; icon: "invite-users"; iconSize: 16; description: qsTr("Import existing asset"); rotation: 180; spacing: 8 }
             }
+            isHeaderVisible: false  // TEMPORARILY hidden. These 2 header options will be implemented after MVP.
             model: d.currentModel
             onHeaderItemClicked: {
-                if(key === "MINT") console.log("TODO: Mint token")
-                else if(key === "IMPORT") console.log("TODO: Import existing token")
+                if(key === "MINT") console.log("TODO: Mint asset")
+                else if(key === "IMPORT") console.log("TODO: Import existing asset")
             }
             onItemClicked: root.itemClicked(key, shortName, iconSource)
         }

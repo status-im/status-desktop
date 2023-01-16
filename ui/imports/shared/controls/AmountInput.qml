@@ -40,7 +40,7 @@ Input {
         decimals: root.allowDecimals ? 100 : 0
         bottom: 0
         notation: DoubleValidator.StandardNotation
-        locale: root.locale.name
+        locale: root.locale
     }
 
     onTextChanged: {

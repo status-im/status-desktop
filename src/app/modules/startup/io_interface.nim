@@ -3,6 +3,7 @@ import ../../../app_service/service/accounts/service as accounts_service
 import models/login_account_item as login_acc_item
 from ../../../app_service/service/keycard/service import KeycardEvent, KeyDetails
 
+const UNIQUE_STARTUP_MODULE_IDENTIFIER* = "SartupModule"
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -145,9 +146,22 @@ method storeKeyPairForNewKeycardUser*(self: AccessInterface) {.base.} =
 method checkForStoringPasswordToKeychain*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onFetchingFromWakuMessageReceived*(self: AccessInterface, section: string, totalMessages: int, loadedMessages: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method finishAppLoading*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method checkFetchingStatusAndProceedWithAppLoading*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method startAppAfterDelay*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c
     c.startupDidLoad()
     c.userLoggedIn()
+    c.finishAppLoading()
     c.storeKeyPairForNewKeycardUser()

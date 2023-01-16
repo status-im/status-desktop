@@ -1,8 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>StatusQ/Animations/qmldir</file>
-        <file>StatusQ/Animations/SkeletonAnimation.qml</file>
-        <file>StatusQ/Animations/SkeletonGradientStop.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusAudioMessage.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusEditMessage.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusImageMessage.qml</file>
@@ -194,5 +191,7 @@
         <file>StatusQ/Popups/Dialog/StatusDialogBackground.qml</file>
         <file>StatusQ/Popups/StatusMenuInstantiator.qml</file>
         <file>StatusQ/Core/Utils/OperatorsUtils.qml</file>
+        <file>StatusQ/Controls/StatusTextWithLoadingState.qml</file>
+        <file>StatusQ/Components/LoadingComponent.qml</file>
     </qresource>
 </RCC>

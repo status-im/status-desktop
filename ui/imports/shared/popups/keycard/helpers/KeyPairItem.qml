@@ -15,6 +15,8 @@ StatusListItem {
     property var sharedKeycardModule
     property ButtonGroup buttonGroup
     property bool usedAsSelectOption: false
+    property bool tagClickable: false
+    property bool tagDisplayRemoveAccountButton: false
 
     property int keyPairType: Constants.keycard.keyPairType.unknown
     property string keyPairPubKey: ""
@@ -22,10 +24,12 @@ StatusListItem {
     property string keyPairIcon: ""
     property string keyPairImage: ""
     property string keyPairDerivedFrom: ""
-    property string keyPairAccounts: ""
     property bool keyPairCardLocked: false
+    property var keyPairAccounts
 
     signal keyPairSelected()
+    signal removeAccount(int index, string name)
+    signal accountClicked(int index)
 
     color: root.keyPairCardLocked? Theme.palette.dangerColor3 : Theme.palette.baseColor2
     title: root.keyPairName
@@ -63,25 +67,35 @@ StatusListItem {
         ringPxSize: Math.max(asset.width / 24.0)
     }
 
-    tagsModel: ListModel{}
+    tagsModel: root.keyPairAccounts
 
     tagsDelegate: StatusListItemTag {
-        bgColor: model.color
-        bgRadius: 6
+        bgColor: model.account.color
         height: Style.current.bigPadding
-        closeButtonVisible: false
+        bgRadius: 6
+        tagClickable: root.tagClickable
+        closeButtonVisible: root.tagDisplayRemoveAccountButton?
+                                index > 0 : false
         asset {
-            emoji: model.emoji
+            emoji: model.account.emoji
             emojiSize: Emoji.size.verySmall
-            isLetterIdenticon: !!model.emoji
-            name: model.icon
+            isLetterIdenticon: !!model.account.emoji
+            name: model.account.icon
             color: Theme.palette.indirectColor1
             width: 16
             height: 16
         }
-        title: model.name
+        title: model.account.name
         titleText.font.pixelSize: 12
         titleText.color: Theme.palette.indirectColor1
+
+        onClicked: {
+            root.removeAccount(index, model.account.name)
+        }
+
+        onTagClicked: {
+            root.accountClicked(index)
+        }
     }
 
     components: [
@@ -99,23 +113,6 @@ StatusListItem {
             }
         }
     ]
-
-    Component.onCompleted: {
-        if (root.keyPairAccounts === "") {
-            // should never be here, as it's not possible to have keypair item without at least a single account
-            console.debug("accounts list is empty for selecting keycard pair")
-            return
-        }
-        let obj = JSON.parse(root.keyPairAccounts)
-        if (obj.error) {
-            console.debug("error parsing accounts for selecting keycard pair, error: ", obj.error)
-            return
-        }
-
-        for (var i=0; i<obj.length; i++) {
-            this.tagsModel.append({"name": obj[i].Field0, "color": obj[i].Field4, "emoji": obj[i].Field3, "icon": obj[i].Field5})
-        }
-    }
 
     QtObject {
         id: d

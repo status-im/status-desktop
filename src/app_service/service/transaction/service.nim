@@ -1,4 +1,5 @@
-import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm, math
+import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm, math, random
+
 import ../../../backend/transactions as transactions
 import ../../../backend/backend
 import ../../../backend/eth
@@ -21,6 +22,7 @@ import ./cryptoRampDto
 import ../eth/utils as eth_utils
 import ../../common/conversion
 
+
 export transaction_dto
 
 logScope:
@@ -34,6 +36,7 @@ const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
 const SIGNAL_TRANSACTION_SENT* = "transactionSent"
 const SIGNAL_SUGGESTED_ROUTES_READY* = "suggestedRoutesReady"
 const SIGNAL_PENDING_TX_COMPLETED* = "pendingTransactionCompleted"
+const SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS* = "transactionsLoadingCompleteForAllNetworks"
 
 type
   EstimatedTime* {.pure.} = enum
@@ -76,6 +79,7 @@ QtObject:
     networkService: network_service.Service
     settingsService: settings_service.Service
     tokenService: token_service.Service
+    txCounter: Table[string, seq[int]]
 
   # Forward declaration
   proc checkPendingTransactions*(self: Service): seq[TransactionDto]
@@ -98,6 +102,7 @@ QtObject:
     result.networkService = networkService
     result.settingsService = settingsService
     result.tokenService = tokenService
+    result.txCounter = initTable[string, seq[int]]()
 
   proc doConnect*(self: Service) =
     self.events.on(SignalType.Wallet.event) do(e:Args):
@@ -198,6 +203,7 @@ QtObject:
   proc setTrxHistoryResult*(self: Service, historyJSON: string) {.slot.} =
     let historyData = parseJson(historyJSON)
     let address = historyData["address"].getStr
+    let chainID = historyData["chainId"].getInt
     let wasFetchMore = historyData["loadMore"].getBool
     var transactions: seq[TransactionDto] = @[]
     for tx in historyData["history"]["result"].getElems():
@@ -210,67 +216,34 @@ QtObject:
       wasFetchMore: wasFetchMore
     ))
 
+    # when requests for all networks are completed then set loading state as completed
+    if self.txCounter.hasKey(address):
+      var chainIDs = self.txCounter[address]
+      chainIDs.del(chainIDs.find(chainID))
+      self.txCounter[address] = chainIDs
+      if self.txCounter[address].len == 0:
+        self.txCounter.del(address)
+        self.events.emit(SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS, TransactionsLoadedArgs(address: address))
+
   proc loadTransactions*(self: Service, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
-    for networks in self.networkService.getNetworks():
-      let arg = LoadTransactionsTaskArg(
-        address: address,
-        tptr: cast[ByteAddress](loadTransactionsTask),
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "setTrxHistoryResult",
-        toBlock: toBlock,
-        limit: limit,
-        loadMore: loadMore,
-        chainId: networks.chainId,
-      )
-      self.threadpool.start(arg)
-
-  proc estimateGas*(
-    self: Service,
-    from_addr: string,
-    to: string,
-    assetSymbol: string,
-    value: string,
-    chainId: string,
-    data: string = "",
-  ): string {.slot.} =
-    var response: RpcResponse[JsonNode]
-    var success: bool
-    # TODO make this async
-    let network = self.networkService.getNetwork(parseInt(chainId))
-
-    if network.nativeCurrencySymbol == assetSymbol:
-      var tx = ens_utils.buildTransaction(
-        parseAddress(from_addr),
-        eth2Wei(parseFloat(value), 18),
-        data = data
-      )
-      tx.to = parseAddress(to).some
-      try:
-        response = eth.estimateGas(parseInt(chainId), %*[%tx])
-        let res = fromHex[int](response.result.getStr)
-        return $(%* { "result": res, "success": true })
-      except Exception as e:
-        error "Error estimating gas", msg = e.msg
-        return $(%* { "result": "-1", "success": false, "error": { "message": e.msg } })
-
-    let token = self.tokenService.findTokenBySymbol(network, assetSymbol)
-    if token == nil:
-      raise newException(ValueError, fmt"Could not find ERC-20 contract with symbol '{assetSymbol}' for the current network")
-
-    var tx = buildTokenTransaction(
-      parseAddress(from_addr),
-      token.address,
-    )
-          
-    let transfer = Transfer(to: parseAddress(to), value: conversion.eth2Wei(parseFloat(value), token.decimals))
-    let transferproc = ERC20_procS.toTable["transfer"]
-    try:
-      let gas = transferproc.estimateGas(parseInt(chainId), tx, transfer, success)
-      let res = fromHex[int](gas)
-      return $(%* { "result": res, "success": success })
-    except Exception as e:
-      error "Error estimating gas", msg = e.msg
-      return $(%* { "result": "-1", "success": false, "error": { "message": e.msg } })    
+    let networks = self.networkService.getNetworks()
+    if not self.txCounter.hasKey(address):
+      var networkChains: seq[int] = @[]
+      self.txCounter[address] = networkChains
+      for network in networks:
+        networkChains.add(network.chainId)
+        let arg = LoadTransactionsTaskArg(
+          address: address,
+          tptr: cast[ByteAddress](loadTransactionsTask),
+          vptr: cast[ByteAddress](self.vptr),
+          slot: "setTrxHistoryResult",
+          toBlock: toBlock,
+          limit: limit,
+          loadMore: loadMore,
+          chainId: network.chainId,
+        )
+        self.txCounter[address] = networkChains
+        self.threadpool.start(arg)
 
   proc transfer*(
     self: Service,
@@ -315,11 +288,32 @@ QtObject:
       for route in routes:
         var simpleTx = TransactionDataDto()
         var hopTx = TransactionDataDto()
+        var cbridgeTx = TransactionDataDto()
         var txData = TransactionDataDto()
         var gasFees: string = ""
 
         if( not route.gasFees.eip1559Enabled):
           gasFees = $route.gasFees.gasPrice
+
+        if route.approvalRequired:
+          let approve = Approve(
+            to: parseAddress(route.approvalContractAddress),
+            value: route.approvalAmountRequired,
+          )
+          data = ERC20_procS.toTable["approve"].encodeAbi(approve)
+          txData = ens_utils.buildTokenTransaction(
+            parseAddress(from_addr),
+            toAddress,
+            $route.gasAmount,
+            gasFees,
+            route.gasFees.eip1559Enabled,
+            $route.gasFees.maxPriorityFeePerGas,
+            $route.gasFees.maxFeePerGasM
+          )
+          txData.data = data
+          var path = TransactionBridgeDto(bridgeName: "Simple", chainID: route.fromNetwork.chainId)
+          path.simpleTx = txData
+          paths.add(path)
 
         if(isEthTx) :
           txData = ens_utils.buildTransaction(parseAddress(from_addr), eth2Wei(parseFloat(value), 18),
@@ -333,7 +327,7 @@ QtObject:
         var path = TransactionBridgeDto(bridgeName: route.bridgeName, chainID: route.fromNetwork.chainId)
         if(route.bridgeName == "Simple"):
           path.simpleTx = txData
-        else:
+        elif(route.bridgeName == "Hop"):
           hopTx = txData
           hopTx.chainID =  route.toNetwork.chainId.some
           hopTx.symbol = tokenSymbol.some
@@ -341,6 +335,13 @@ QtObject:
           hopTx.amount = route.amountIn.some
           hopTx.bonderFee = route.bonderFees.some
           path.hopTx = hopTx
+        else:
+          cbridgeTx = txData
+          cbridgeTx.chainID =  route.toNetwork.chainId.some
+          cbridgeTx.symbol = tokenSymbol.some
+          cbridgeTx.recipient = parseAddress(to_addr).some
+          cbridgeTx.amount = route.amountIn.some
+          path.cbridgeTx = cbridgeTx
 
         paths.add(path)
 

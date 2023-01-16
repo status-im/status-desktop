@@ -197,6 +197,13 @@ QtObject:
     read = bannedMembers
     notify = bannedMembersChanged
 
+  proc amIBanned(self: ActiveSection): bool {.slot.} =
+    return self.item.amIBanned
+
+  QtProperty[bool] amIBanned:
+    read = amIBanned
+    notify = bannedMembersChanged
+
   proc pendingMemberRequests(self: ActiveSection): QVariant {.slot.} =
     if (self.item.id == ""):
       # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app

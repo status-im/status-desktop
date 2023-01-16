@@ -62,8 +62,7 @@ proc init*(self: Controller) =
     var args = MessagesArgs(e)
     if(self.chatId != args.chatId):
       return
-    for message in args.messages:
-      self.delegate.messageAdded(message)
+    self.delegate.messagesAdded(args.messages)
 
   self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
     let args = MessageSendingSuccess(e)

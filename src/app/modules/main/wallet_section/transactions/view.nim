@@ -75,8 +75,6 @@ QtObject:
 
     self.models[address].addNewTransactions(transactions, wasFetchMore)
 
-    self.setHistoryFetchState(address, false)
-
   proc setHistoryFetchStateForAccounts*(self: View, addresses: seq[string], isFetching: bool) =
     for address in addresses:
       self.setHistoryFetchState(address, isFetching)
@@ -104,9 +102,6 @@ QtObject:
   QtProperty[QVariant] isNonArchivalNode:
     read = getIsNonArchivalNode
     notify = isNonArchivalNodeChanged
-
-  proc estimateGas*(self: View, from_addr: string, to: string, assetSymbol: string, value: string, data: string): string {.slot.} =
-    result = self.delegate.estimateGas(from_addr, to, assetSymbol, value, data)
 
   proc transactionSent*(self: View, txResult: string) {.signal.}
 

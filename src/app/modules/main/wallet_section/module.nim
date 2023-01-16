@@ -16,6 +16,7 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/keycard/service as keycard_service
 import ../../../../app_service/service/token/service as token_service
+import ../../../../app_service/service/currency/service as currency_service
 import ../../../../app_service/service/transaction/service as transaction_service
 import ../../../../app_service/service/collectible/service as collectible_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
@@ -48,6 +49,7 @@ proc newModule*(
   delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   tokenService: token_service.Service,
+  currencyService: currency_service.Service,
   transactionService: transaction_service.Service,
   collectibleService: collectible_service.Service,
   walletAccountService: wallet_account_service.Service,
@@ -61,13 +63,13 @@ proc newModule*(
   result.delegate = delegate
   result.events = events
   result.moduleLoaded = false
-  result.controller = newController(result, settingsService, walletAccountService)
+  result.controller = newController(result, settingsService, walletAccountService, currencyService)
   result.view = newView(result)
 
-  result.accountsModule = accounts_module.newModule(result, events, keycardService, walletAccountService, accountsService, networkService)
+  result.accountsModule = accounts_module.newModule(result, events, keycardService, walletAccountService, accountsService, networkService, tokenService, currencyService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService, networkService)
-  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService)
+  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService)
   result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService, networkService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)

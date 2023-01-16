@@ -54,6 +54,7 @@ Item {
             Layout.fillWidth: true
 
             StatusNavigationPanelHeadline {
+                objectName: "ContactsColumnView_MessagesHeadline"
                 Layout.alignment: Qt.AlignVCenter
                 text: qsTr("Messages")
             }
@@ -66,10 +67,10 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
                 icon.name: "public-chat"
                 icon.color: Theme.palette.directColor1
-                icon.height: editBtn.icon.height
-                icon.width: editBtn.icon.width
-                implicitWidth: editBtn.implicitWidth
-                implicitHeight: editBtn.implicitHeight
+                icon.height: startChatButton.icon.height
+                icon.width: startChatButton.icon.width
+                implicitWidth: startChatButton.implicitWidth
+                implicitHeight: startChatButton.implicitHeight
                 type: StatusRoundButton.Type.Tertiary
 
                 onClicked: Global.openPopup(publicChatPopupComponent)
@@ -83,7 +84,7 @@ Item {
             }
 
             StatusIconTabButton {
-                id: editBtn
+                id: startChatButton
                 Layout.alignment: Qt.AlignVCenter
                 objectName: "startChatButton"
                 icon.name: "edit"
@@ -124,21 +125,6 @@ Item {
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.openAppSearch()
             }
-        }
-
-        // contact requests
-        StatusContactRequestsIndicatorListItem {
-            id: contactRequests
-            Layout.fillWidth: true
-            Layout.preferredHeight: visible ? implicitHeight : 0
-
-            readonly property int nbRequests: root.store.contactRequestsModel.count
-
-            visible: nbRequests > 0
-            title: qsTr("Contact requests")
-            requestsCount: nbRequests
-
-            onClicked: Global.openPopup(contactRequestsPopup)
         }
 
         Item {
@@ -308,16 +294,6 @@ Item {
         }
     }
 
-    Component {
-        id: contactRequestsPopup
-        ContactRequestsPopup {
-            store: root.store
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
     Connections {
         target: root.store
         function onImportingCommunityStateChanged(communityId, state, errorMsg) {
@@ -350,14 +326,6 @@ Item {
                                        loading,
                                        Constants.ephemeralNotificationType.normal,
                                        "")
-        }
-    }
-
-    Connections {
-        target: root.store.mainModuleInst
-
-        function onOpenContactRequestsPopup() {
-            Global.openPopup(contactRequestsPopup)
         }
     }
 }

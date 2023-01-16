@@ -232,6 +232,12 @@ method activateStatusDeepLink*(self: AccessInterface, statusDeepLink: string) {.
 method setCommunityIdToSpectate*(self: AccessInterface, commnityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method tryKeycardSync*(self: AccessInterface, keyUid: string, pin: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onSharedKeycarModuleKeycardSyncPurposeTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c

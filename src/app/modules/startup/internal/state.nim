@@ -21,6 +21,7 @@ type StateType* {.pure.} = enum
   WelcomeNewStatusUser = "WelcomeNewStatusUser"
   WelcomeOldStatusUser = "WelcomeOldStatusUser" 
   UserProfileCreate = "UserProfileCreate" 
+  UserProfileCreateSameChatKey = "UserProfileCreateSameChatKey" 
   UserProfileChatKey = "UserProfileChatKey" 
   UserProfileCreatePassword = "UserProfileCreatePassword" 
   UserProfileConfirmPassword = "UserProfileConfirmPassword"
@@ -66,6 +67,10 @@ type StateType* {.pure.} = enum
   LoginKeycardMaxPairingSlotsReached = "LoginKeycardMaxPairingSlotsReached"
   LoginKeycardEmpty = "LoginKeycardEmpty"
   LoginNotKeycard = "LoginNotKeycard"
+  ProfileFetching = "ProfileFetching"
+  ProfileFetchingSuccess = "ProfileFetchingSuccess"
+  ProfileFetchingTimeout = "ProfileFetchingTimeout"
+  ProfileFetchingAnnouncement = "ProfileFetchingAnnouncement"
 
 
 ## This is the base class for all state we may have in onboarding/login flow.

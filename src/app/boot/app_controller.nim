@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar, chronicles
+import NimQml, sequtils, sugar, chronicles, os
 
 import ../../app_service/service/general/service as general_service
 import ../../app_service/service/keychain/service as keychain_service
@@ -10,6 +10,7 @@ import ../../app_service/service/chat/service as chat_service
 import ../../app_service/service/community/service as community_service
 import ../../app_service/service/message/service as message_service
 import ../../app_service/service/token/service as token_service
+import ../../app_service/service/currency/service as currency_service
 import ../../app_service/service/transaction/service as transaction_service
 import ../../app_service/service/collectible/service as collectible_service
 import ../../app_service/service/wallet_account/service as wallet_account_service
@@ -67,6 +68,7 @@ type
     communityService: community_service.Service
     messageService: message_service.Service
     tokenService: token_service.Service
+    currencyService: currency_service.Service
     transactionService: transaction_service.Service
     collectibleService: collectible_service.Service
     walletAccountService: wallet_account_service.Service
@@ -102,8 +104,9 @@ proc buildAndRegisterUserProfile(self: AppController)
 
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
-proc userLoggedIn*(self: AppController)
+proc userLoggedIn*(self: AppController): string
 proc logout*(self: AppController)
+proc finishAppLoading*(self: AppController)
 proc storeKeyPairForNewKeycardUser*(self: AppController)
 
 # Main Module Delegate Interface
@@ -114,6 +117,15 @@ proc connect(self: AppController) =
   self.statusFoundation.events.once("nodeStopped") do(a: Args):
     # not sure, but maybe we should take some actions when node stops
     discard
+
+  # Handle runtime log level settings changes
+  if not existsEnv("LOG_LEVEL"):
+    self.statusFoundation.events.on(node_configuration_service.SIGNAL_NODE_LOG_LEVEL_UPDATE) do(a: Args):
+      let args = NodeLogLevelUpdatedArgs(a)
+      if args.logLevel == LogLevel.DEBUG:
+        setLogLevel(LogLevel.DEBUG)
+      elif defined(production):
+        setLogLevel(LogLevel.INFO)
 
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
@@ -133,7 +145,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.globalUtilsVariant = newQVariant(singletonInstance.utils)  
 
   # Services
-  result.generalService = general_service.newService()
+  result.generalService = general_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.activityCenterService = activity_center_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.keycardService = keycard_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
@@ -150,6 +162,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.tokenService = token_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.networkService
   )
+  result.currencyService = currency_service.newService(result.tokenService, result.settingsService)
   result.collectibleService = collectible_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService)
   result.walletAccountService = wallet_account_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.settingsService, result.accountsService,
@@ -162,7 +175,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     statusFoundation.threadpool, result.chatService, result.activityCenterService, result.messageService)
   result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, result.tokenService)
   result.bookmarkService = bookmark_service.newService(statusFoundation.events)
-  result.profileService = profile_service.newService(result.contactsService, result.settingsService)
+  result.profileService = profile_service.newService(statusFoundation.events, result.settingsService)
   result.stickersService = stickers_service.newService(
     statusFoundation.events,
     statusFoundation.threadpool,
@@ -211,6 +224,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.communityService,
     result.messageService,
     result.tokenService,
+    result.currencyService,
     result.transactionService,
     result.collectibleService,
     result.walletAccountService,
@@ -263,6 +277,7 @@ proc delete*(self: AppController) =
   self.accountsService.delete
   self.chatService.delete
   self.communityService.delete
+  self.currencyService.delete
   self.tokenService.delete
   self.transactionService.delete
   self.collectibleService.delete
@@ -314,6 +329,7 @@ proc load(self: AppController) =
   self.notificationsManager.init()
 
   self.settingsService.init()
+  self.profileService.init()
   self.nodeConfigurationService.init()
   self.mailserversService.init()
   self.contactsService.init()
@@ -341,7 +357,13 @@ proc load(self: AppController) =
 
   self.networkService.init()
   self.tokenService.init()
+  self.currencyService.init()
   self.walletAccountService.init()
+
+  # Apply runtime log level settings
+  if not existsEnv("LOG_LEVEL"):
+    if self.nodeConfigurationService.isDebugEnabled():
+      setLogLevel(LogLevel.DEBUG)
 
   # load main module
   self.mainModule.load(
@@ -356,10 +378,18 @@ proc load(self: AppController) =
     self.mailserversService,
   )
 
-proc userLoggedIn*(self: AppController) =
-  self.generalService.startMessenger()
+proc userLoggedIn*(self: AppController): string =
+  try:
+    self.generalService.startMessenger()
+    self.statusFoundation.userLoggedIn()
+    return ""
+  except Exception as e:
+    let errDescription = e.msg
+    error "error: ", errDescription
+    return errDescription
+
+proc finishAppLoading*(self: AppController) =
   self.load()
-  self.statusFoundation.userLoggedIn()
 
   # Once user is logged in and main module is loaded we need to check if it gets here importing mnemonic or not
   # and delete mnemonic in the first case.

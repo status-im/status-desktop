@@ -24,6 +24,9 @@ proc getAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc deleteAccount*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("accounts_deleteAccount", %* [address])
 
+proc deleteAccountForMigratedKeypair*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return core.callPrivateRPC("accounts_deleteAccountForMigratedKeypair", %* [address])
+
 proc saveAccount*(name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, accountType, color, emoji: string,
   walletDefaultAccount: bool, chatDefaultAccount: bool): 
   RpcResponse[JsonNode] {.raises: [Exception].} =
@@ -43,19 +46,6 @@ proc saveAccount*(name, address, path, addressAccountIsDerivedFrom, publicKey, k
     }]
   ]
   return core.callPrivateRPC("accounts_saveAccounts", payload)
-
-proc updateAccount*(name, address, publicKey, walletType, color, emoji: string) {.raises: [Exception].} =
-  discard core.callPrivateRPC("accounts_saveAccounts", %* [
-    [{
-      "emoji": emoji,
-      "color": color,
-      "name": name,
-      "address": address,
-      "public-key": publicKey,
-      "type": walletType,
-      "path": "m/44'/60'/0'/0/1" # <--- TODO: fix this. Derivation path is not supposed to change
-    }]
-  ])
 
 proc generateAddresses*(paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* {

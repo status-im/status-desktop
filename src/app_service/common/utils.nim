@@ -1,9 +1,12 @@
-import json, random, times, strutils, os, re, chronicles
+import json, random, times, strutils, sugar, os, re, chronicles
 import nimcrypto
 import signing_phrases
 
 const STATUS_DOMAIN* = ".stateofus.eth"
 const ETH_DOMAIN* = ".eth"
+
+proc arrayContains*[T](arr: seq[T], value: T): bool = 
+  return arr.any(x => x == value)
 
 proc hashPassword*(password: string): string =
   result = "0x" & $keccak_256.digest(password)

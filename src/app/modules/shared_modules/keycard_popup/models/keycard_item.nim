@@ -1,42 +1,51 @@
-import strformat
+import NimQml, strformat
 import key_pair_item
 
 export key_pair_item
 
-type
-  KeycardItem* = ref object of KeyPairItem
+QtObject:
+  type KeycardItem* = ref object of KeyPairItem
     keycardUid: string
 
-proc initKeycardItem*(
-    keycardUid = "",
-    pubKey = "",
-    keyUid = "",
-    locked = false,
-    name = "",
-    image = "",
-    icon = "",
-    pairType = KeyPairType.Unknown,
-    derivedFrom = ""
-    ): KeycardItem =
-  result = KeycardItem()
-  result.KeyPairItem.setup(pubKey, keyUid, locked, name, image, icon, pairType, derivedFrom)
-  result.keycardUid = keycardUid
+  proc delete*(self: KeycardItem) =
+      self.KeyPairItem.delete
 
-proc `$`*(self: KeycardItem): string =
-  result = fmt"""KeycardItem[
-    keycardUid: {self.keycardUid},
-    pubKey: {self.pubkey},
-    keyUid: {self.keyUid},
-    locked: {self.locked},
-    name: {self.name},
-    image: {self.image},
-    icon: {self.icon},
-    pairType: {$self.pairType},
-    derivedFrom: {self.derivedFrom},
-    accounts: {self.accounts}
-    ]"""
+  proc initKeycardItem*(
+      keycardUid = "",
+      keyUid = "",
+      pubKey = "",
+      locked = false,
+      name = "",
+      image = "",
+      icon = "",
+      pairType = KeyPairType.Unknown,
+      derivedFrom = ""
+      ): KeycardItem =
+    new(result, delete)
+    result.KeyPairItem.setup(keyUid, pubKey, locked, name, image, icon, pairType, derivedFrom)
+    result.keycardUid = keycardUid
 
-proc keycardUid*(self: KeycardItem): string {.inline.} =
-  self.keycardUid
-proc setKeycardUid*(self: KeycardItem, value: string) {.inline.} =
-  self.keycardUid = value
+  proc `$`*(self: KeycardItem): string =
+    result = fmt"""KeycardItem[
+      keycardUid: {self.keycardUid},
+      pubKey: {self.getPubKey()},
+      keyUid: {self.getKeyUid()},
+      locked: {self.getLocked()},
+      name: {self.getName()},
+      image: {self.getImage()},
+      icon: {self.getIcon()},
+      pairType: {$self.getPairType()},
+      derivedFrom: {self.getDerivedFrom()},
+      accounts: {self.getAccountsModel()}
+      ]"""
+
+  proc keycardUidChanged*(self: KeycardItem) {.signal.}
+  proc getKeycardUid*(self: KeycardItem): string {.slot.} =
+    return self.keycardUid
+  proc setKeycardUid*(self: KeycardItem, value: string) {.slot.} =
+    self.keycardUid = value
+    self.keycardUidChanged()
+  QtProperty[string] keycardUid:
+    read = getKeycardUid
+    write = setKeycardUid
+    notify = keycardUidChanged

@@ -24,7 +24,6 @@ Rectangle {
     property alias profileComponent: profileItemLoader.sourceComponent
 
     implicitWidth: 78
-    implicitHeight: layout.implicitHeight
 
     color: Theme.palette.statusAppNavBar.backgroundColor
 
@@ -41,7 +40,6 @@ Rectangle {
 
     ColumnLayout {
         id: layout
-
         anchors {
             fill: parent
             topMargin: 48
@@ -80,6 +78,7 @@ Rectangle {
 
         ListView {
             id: communityItemsListView
+            objectName: "statusCommunityMainNavBarListView"
 
             Layout.fillWidth: true
             Layout.fillHeight: true

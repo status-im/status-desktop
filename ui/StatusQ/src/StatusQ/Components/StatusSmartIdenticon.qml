@@ -23,8 +23,10 @@ Loader {
         distinctiveColors: Theme.palette.identiconRingColors
     }
 
-    sourceComponent: (root.asset.isLetterIdenticon || root.asset.name === "") ? letterIdenticon :
+    sourceComponent: root.loading ?  loadingComp : (root.asset.isLetterIdenticon || root.asset.name === "") ? letterIdenticon :
                      !root.asset.isImage ? roundedIcon : roundedImage
+
+    property bool loading: false
 
     Component {
         id: roundedImage
@@ -109,5 +111,15 @@ Loader {
         implicitHeight: 15
         implicitWidth: 15
         z: root.dZ
+    }
+
+    Component {
+        id: loadingComp
+        LoadingComponent {
+            anchors.centerIn: parent
+            radius: width/2
+            height: root.asset.height
+            width: root.asset.width
+        }
     }
 }

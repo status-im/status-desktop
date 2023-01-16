@@ -106,11 +106,14 @@ Item {
         anchors.topMargin: 8
         anchors.bottomMargin: Style.current.halfPadding
         anchors.horizontalCenter: parent.horizontalCenter
+        enabled: !root.communityData.amIBanned
 
-        visible: !communityData.joined
+        visible: !communityData.joined || root.communityData.amIBanned
 
         text: {
+            if (root.communityData.amIBanned) return qsTr("You were banned from community")
             if (invitationPending) return qsTr("Membership request pending...")
+
             return root.communityData.access === Constants.communityChatOnRequestAccess ?
                     qsTr("Request to join") : qsTr("Join Community")
         }
@@ -148,7 +151,7 @@ Item {
     Loader {
         id: membershipRequests
 
-        property int nbRequests: root.communityData.pendingRequestsToJoin.count || 0
+        readonly property int nbRequests: root.communityData.pendingRequestsToJoin.count || 0
 
         anchors.top: joinCommunityButton.visible ? joinCommunityButton.bottom : communityHeader.bottom
         anchors.topMargin: active ? 8 : 0
@@ -434,12 +437,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(communityData.id))
                 width: parent.width
-                height: {
-                    // I dont know why, the binding doesn't work well if this isn't here
-                    item && item.height
-                    return active ? item.height : 0
-                }
-
+                height: item.height
                 sourceComponent: Component {
                     CommunityWelcomeBannerPanel {
                         activeCommunity: communityData
@@ -456,11 +454,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners.includes(communityData.id))
                 width: parent.width
-                height: {
-                    // I dont know why, the binding doesn't work well if this isn't here
-                    item && item.height
-                    return active ? item.height : 0
-                }
+                height: item.height
                 sourceComponent: Component {
                         CommunityChannelsAndCategoriesBannerPanel {
                             id: channelsAndCategoriesBanner
@@ -480,11 +474,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(communityData.id))
                 width: parent.width
-                height: {
-                    // I dont know why, the binding doesn't work well if this isn't here
-                    item && item.height
-                    return active ? item.height : 0
-                }
+                height: item.height
                 sourceComponent: Component {
                         BackUpCommuntyBannerPanel {
                             id: backupBanner

@@ -34,10 +34,10 @@ method setTrxHistoryResult*(self: AccessInterface, transactions: seq[Transaction
 method setHistoryFetchState*(self: AccessInterface, addresses: seq[string], isFetching: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setIsNonArchivalNode*(self: AccessInterface, isNonArchivalNode: bool) {.base.} =
+method setHistoryFetchState*(self: AccessInterface, address: string, isFetching: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method estimateGas*(self: AccessInterface, from_addr: string, to: string, assetSymbol: string, value: string, data: string): string {.base.} =
+method setIsNonArchivalNode*(self: AccessInterface, isNonArchivalNode: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =

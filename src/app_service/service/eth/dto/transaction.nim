@@ -61,6 +61,7 @@ type TransactionBridgeDto* = object
   chainID*: int
   simpleTx*: TransactionDataDto
   hopTx*: TransactionDataDto
+  cbridgeTx*: TransactionDataDto
 
 proc `%`*(x: TransactionBridgeDto): JsonNode =
   result = newJobject()
@@ -68,3 +69,4 @@ proc `%`*(x: TransactionBridgeDto): JsonNode =
   result["chainID"] = %x.chainID
   result["simpleTx"] = %x.simpleTx
   result["hopTx"] = %x.hopTx
+  result["cbridgeTx"] = %x.cbridgeTx

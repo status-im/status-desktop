@@ -28,7 +28,7 @@ QtObject {
     property bool discordImportHasCommunityImage: root.communitiesModuleInst.discordImportHasCommunityImage
     property var discordImportTasks: root.communitiesModuleInst.discordImportTasks
     property bool downloadingCommunityHistoryArchives: root.communitiesModuleInst.downloadingCommunityHistoryArchives
-    property string locale: localAppSettings.language
+    property var locale: Qt.locale(localAppSettings.language)
     property var advancedModule: profileSectionModule.advancedModule
 
     // TODO: Could the backend provide directly 2 filtered models??

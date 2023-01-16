@@ -337,6 +337,7 @@ Item {
                     break;
                 }
             }
+            onLinkActivated: Global.openLink(link)
         }
     }
 

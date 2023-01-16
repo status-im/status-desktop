@@ -30,7 +30,7 @@ ColumnLayout {
         }
         property bool pathError: Utils.isInvalidPath(RootStore.derivedAddressesError)
         property bool derivationAddressLoading: RootStore.derivedAddressesLoading
-        property string defaultDerivationPath: "m/44'/60'/0'/0"
+        property string defaultDerivationPath: "m/44'/60'/0'/0/0"
     }
 
     spacing: 7

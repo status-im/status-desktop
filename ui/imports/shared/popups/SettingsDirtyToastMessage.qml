@@ -13,6 +13,9 @@ Rectangle {
 
     property bool active: false
     property bool saveChangesButtonEnabled: false
+    property alias saveChangesText: saveChangesButton.text
+    property alias cancelChangesText: cancelChangesButton.text
+    property alias changesDetectedText: changesDetectedTextItem.text
 
     property Flickable flickable: null
 
@@ -100,6 +103,7 @@ Rectangle {
         }
 
         StatusBaseText {
+            id: changesDetectedTextItem
             Layout.columnSpan: 2
             Layout.fillWidth: true
             padding: 8
@@ -109,6 +113,7 @@ Rectangle {
         }
 
         StatusButton {
+            id: cancelChangesButton
             text: qsTr("Cancel")
             enabled: root.active
             type: StatusBaseButton.Type.Danger

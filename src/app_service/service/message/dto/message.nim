@@ -35,6 +35,8 @@ type QuotedMessage* = object
   `from`*: string
   text*: string
   parsedText*: seq[ParsedText]
+  contentType*: int
+  deleted*: bool
 
 type DiscordMessageAttachment* = object
   id*: string
@@ -111,6 +113,7 @@ type MessageDto* = object
   deletedForMe*: bool
   transactionParameters*: TransactionParameters
   mentioned*: bool
+  replied*: bool
 
 proc toParsedText*(jsonObj: JsonNode): ParsedText =
   result = ParsedText()
@@ -160,8 +163,10 @@ proc toDiscordMessage*(jsonObj: JsonNode): DiscordMessage =
 
 proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   result = QuotedMessage()
-  discard jsonObj.getProp("from", result.from)
+  discard jsonObj.getProp("from", result.`from`)
   discard jsonObj.getProp("text", result.text)
+  discard jsonObj.getProp("contentType", result.contentType)
+  discard jsonObj.getProp("deleted", result.deleted)
 
   var parsedTextArr: JsonNode
   if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
@@ -217,6 +222,7 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   discard jsonObj.getProp("deleted", result.deleted)
   discard jsonObj.getProp("deletedForMe", result.deletedForMe)
   discard jsonObj.getProp("mentioned", result.mentioned)
+  discard jsonObj.getProp("replied", result.replied)
 
   var quotedMessageObj: JsonNode
   if(jsonObj.getProp("quotedMessage", quotedMessageObj)):

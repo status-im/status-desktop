@@ -12,6 +12,7 @@ import ../../../../../app_service/service/ens/service as ens_service
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/ens/utils as ens_utils
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../../app_service/service/token/service as token_service
 
 export io_interface
 
@@ -49,12 +50,13 @@ proc newModule*(
   settingsService: settings_service.Service, ensService: ens_service.Service,
   walletAccountService: wallet_account_service.Service,
   networkService: network_service.Service,
+  tokenService: token_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, ensService, walletAccountService, networkService)
+  result.controller = controller.newController(result, events, settingsService, ensService, walletAccountService, networkService, tokenService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =

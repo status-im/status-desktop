@@ -6,6 +6,7 @@ import QtQuick.Controls.Universal 2.12
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
 
 import shared 1.0
 import shared.panels 1.0
@@ -20,109 +21,248 @@ Item {
 
     property StartupStore startupStore
 
-    Item {
-        id: container
-        width: 425
-        height: 513
+    QtObject {
+        id: d
+        readonly property int infoWidth: 292
+        readonly property int infoHeight: 309
+        readonly property int infoMargin: 24
+        readonly property int infoTextWidth: d.infoWidth - 2 * d.infoMargin
+        readonly property int imgKeysWH: 160
+        readonly property int imgSeedPhraseWH: 257
+    }
+    ColumnLayout {
         anchors.centerIn: parent
+        height: Constants.keycard.general.onboardingHeight
+        spacing: Style.current.bigPadding
 
-        Item {
-            id: keysImgWrapperItem
-            width: 257
-            height: 257
-            anchors.horizontalCenter: parent.horizontalCenter
-            Image {
-                id: keysImg
-                width: 257
-                height: 257
-                anchors.bottom: parent.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                source: Style.png("onboarding/keys")
-                mipmap: true
-            }
+        Image {
+            id: keysImg
+            Layout.alignment: Qt.AlignHCenter
+            mipmap: true
         }
 
         StyledText {
             id: txtTitle
-            text: qsTr("intro-wizard-title1") // FIXME: translations
+            Layout.alignment: Qt.AlignHCenter
             font.bold: true
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: keysImgWrapperItem.bottom
-            anchors.topMargin: Style.current.padding
             font.letterSpacing: -0.2
-            font.pixelSize: 22
+            font.pixelSize: Constants.onboarding.fontSize1
         }
 
         StyledText {
             id: txtDesc
-            height: 44
-            anchors.right: parent.right
-            anchors.left: parent.left
-            anchors.top: txtTitle.bottom
-            anchors.topMargin: Style.current.padding
+            Layout.alignment: Qt.AlignHCenter
             color: Style.current.secondaryText
-            text: qsTr("a-set-of-keys-controls-your-account.-your-keys-live-on-your-device,-so-only-you-can-use-them.") // FIXME: translations
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            font.pixelSize: 15
+            font.pixelSize: Constants.onboarding.fontSize3
         }
 
-        ColumnLayout {
-            anchors.top: txtDesc.bottom
-            anchors.topMargin: 32
-            anchors.horizontalCenter: parent.horizontalCenter
+        Item {
+            id: spacer
+            Layout.preferredHeight: Style.current.padding
+            Layout.preferredWidth: 1
+        }
+
+        Row {
+            id: whatYouLoseGet
+            visible: root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileCreateSameChatKey
             spacing: Style.current.bigPadding
-            StatusButton {
-                id: button
-                objectName: "keysMainViewPrimaryActionButton"
-                enabled: (opacity > 0.1)
-                Layout.alignment: Qt.AlignHCenter
+            Layout.alignment: Qt.AlignHCenter
+
+            Rectangle {
+                width: d.infoWidth
+                height: d.infoHeight
+                radius: Constants.onboarding.radius
+                color: Theme.palette.baseColor5
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: d.infoMargin
+                    spacing: Style.current.bigPadding
+
+                    RowLayout {
+                        StyledText {
+                            text: qsTr("What you lose")
+                            font.pixelSize: Constants.onboarding.fontSize2
+                            font.bold: true
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 1
+                        }
+                        StatusEmoji {
+                            width: 24
+                            height: 24
+                            emojiId: "1f622"
+                        }
+                    }
+
+                    ColumnLayout {
+                        StyledText {
+                            text: qsTr("Chat history")
+                            font.pixelSize: Constants.onboarding.fontSize3
+                            font.bold: true
+                        }
+
+                        StyledText {
+                            Layout.preferredWidth: d.infoTextWidth
+                            text: qsTr("Past is in the past. Move on :)")
+                            font.pixelSize: Constants.onboarding.fontSize3
+                            wrapMode: Text.WordWrap
+                        }
+                    }
+
+                    ColumnLayout {
+                        StyledText {
+                            text: qsTr("Contacts")
+                            font.pixelSize: Constants.onboarding.fontSize3
+                            font.bold: true
+                        }
+
+                        StyledText {
+                            Layout.preferredWidth: d.infoTextWidth
+                            text: qsTr("You can add them back to your contact list")
+                            font.pixelSize: Constants.onboarding.fontSize3
+                            wrapMode: Text.WordWrap
+                        }
+                    }
+
+                    ColumnLayout {
+                        StyledText {
+                            text: qsTr("Community memberships")
+                            font.pixelSize: Constants.onboarding.fontSize3
+                            font.bold: true
+                        }
+
+                        StyledText {
+                            Layout.preferredWidth: d.infoTextWidth
+                            text: qsTr("You’ll need to rejoin communities")
+                            font.pixelSize: Constants.onboarding.fontSize3
+                            wrapMode: Text.WordWrap
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                width: d.infoWidth
+                height: d.infoHeight
+                radius: Constants.onboarding.radius
+                color: Theme.palette.baseColor5
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: d.infoMargin
+                    spacing: Style.current.bigPadding
+
+                    RowLayout {
+                        StyledText {
+                            text: qsTr("What you keep")
+                            font.pixelSize: Constants.onboarding.fontSize2
+                            font.bold: true
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 1
+                        }
+                        StatusEmoji {
+                            width: 24
+                            height: 24
+                            emojiId: "1f389"
+                        }
+                    }
+
+                    ColumnLayout {
+                        StyledText {
+                            text: qsTr("Chatkey")
+                            font.pixelSize: Constants.onboarding.fontSize3
+                            font.bold: true
+                        }
+
+                        StyledText {
+                            Layout.preferredWidth: d.infoTextWidth
+                            text: qsTr("Your contacts can still reach you just like before")
+                            font.pixelSize: Constants.onboarding.fontSize3
+                            wrapMode: Text.WordWrap
+                        }
+                    }
+
+                    ColumnLayout {
+                        StyledText {
+                            text: qsTr("Wallet accounts")
+                            font.pixelSize: Constants.onboarding.fontSize3
+                            font.bold: true
+                        }
+
+                        StyledText {
+                            Layout.preferredWidth: d.infoTextWidth
+                            text: qsTr("All your assets and collectibles are safe in your accounts")
+                            font.pixelSize: Constants.onboarding.fontSize3
+                            wrapMode: Text.WordWrap
+                        }
+                    }
+                }
+            }
+        }
+
+        StatusButton {
+            id: button1
+            objectName: "keysMainViewPrimaryActionButton"
+            Layout.alignment: Qt.AlignHCenter
+            visible: text !== ""
+            onClicked: {
+                root.startupStore.doPrimaryAction()
+            }
+        }
+
+        StatusBaseText {
+            id: button2
+            Layout.alignment: Qt.AlignHCenter
+            visible: text !== ""
+            color: Theme.palette.primaryColor1
+            font.pixelSize: Constants.onboarding.fontSize3
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onEntered: {
+                    parent.font.underline = true
+                }
+                onExited: {
+                    parent.font.underline = false
+                }
                 onClicked: {
-                    root.startupStore.doPrimaryAction()
+                    root.startupStore.doSecondaryAction()
                 }
             }
+        }
 
-            StatusBaseText {
-                id: keycardLink
-                Layout.alignment: Qt.AlignHCenter
-                color: Theme.palette.primaryColor1
-                font.pixelSize: 15
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onEntered: {
-                        parent.font.underline = true
-                    }
-                    onExited: {
-                        parent.font.underline = false
-                    }
-                    onClicked: {
-                        root.startupStore.doSecondaryAction()
-                    }
+        StatusBaseText {
+            id: button3
+            Layout.alignment: Qt.AlignHCenter
+            visible: text !== ""
+            color: Theme.palette.primaryColor1
+            font.pixelSize: Constants.onboarding.fontSize3
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onEntered: {
+                    parent.font.underline = true
+                }
+                onExited: {
+                    parent.font.underline = false
+                }
+                onClicked: {
+                    root.startupStore.doTertiaryAction()
                 }
             }
+        }
 
-            StatusBaseText {
-                id: seedLink
-                Layout.alignment: Qt.AlignHCenter
-                color: Theme.palette.primaryColor1
-                font.pixelSize: 15
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onEntered: {
-                        parent.font.underline = true
-                    }
-                    onExited: {
-                        parent.font.underline = false
-                    }
-                    onClicked: {
-                        root.startupStore.doTertiaryAction()
-                    }
-                }
-            }
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
         }
     }
 
@@ -132,8 +272,9 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.welcomeOldStatusUser
             PropertyChanges {
                 target: keysImg
-                width: 160
-                height: 160
+                Layout.preferredWidth: d.imgKeysWH
+                Layout.preferredHeight: d.imgKeysWH
+                source: Style.png("onboarding/keys")
             }
             PropertyChanges {
                 target: txtTitle
@@ -142,19 +283,18 @@ Item {
             PropertyChanges {
                 target: txtDesc
                 text: qsTr("Use your existing Status keys to login to this device.")
+                height: Constants.onboarding.loginInfoHeight2
             }
             PropertyChanges {
-                target: button
-//                text: qsTr("Scan sync code")
-                //TODO remove when sync code is implemented
-                opacity: 0.0
+                target: button1
+                //                text: qsTr("Scan sync code")
             }
             PropertyChanges {
-                 target: keycardLink
-                 text: qsTr("Login with Keycard")
-             }
+                target: button2
+                text: qsTr("Login with Keycard")
+            }
             PropertyChanges {
-                target: seedLink
+                target: button3
                 text: qsTr("Enter a seed phrase")
             }
         },
@@ -163,8 +303,9 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.welcomeNewStatusUser
             PropertyChanges {
                 target: keysImg
-                width: 160
-                height: 160
+                Layout.preferredWidth: d.imgKeysWH
+                Layout.preferredHeight: d.imgKeysWH
+                source: Style.png("onboarding/keys")
             }
             PropertyChanges {
                 target: txtTitle
@@ -173,19 +314,18 @@ Item {
             PropertyChanges {
                 target: txtDesc
                 text: qsTr("A set of keys controls your account. Your keys live on your\ndevice, so only you can use them.")
+                height: Constants.onboarding.loginInfoHeight2
             }
             PropertyChanges {
-                target: button
+                target: button1
                 text: qsTr("Generate new keys")
-                //TODO remove when sync code is implemented
-                opacity: 1.0
             }
             PropertyChanges {
-                target: keycardLink
+                target: button2
                 text: qsTr("Generate keys for a new Keycard")
             }
             PropertyChanges {
-                target: seedLink
+                target: button3
                 text: qsTr("Import a seed phrase")
             }
         },
@@ -193,39 +333,91 @@ Item {
             name: Constants.startupState.userProfileImportSeedPhrase
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileImportSeedPhrase
             PropertyChanges {
-                target: keysImg
-                width: 257
-                height: 257
-            }
-            PropertyChanges {
                 target: txtTitle
                 text: qsTr("Import a seed phrase")
             }
             PropertyChanges {
                 target: keysImg
-                width: 257
-                height: 257
+                Layout.preferredWidth: d.imgSeedPhraseWH
+                Layout.preferredHeight: d.imgSeedPhraseWH
                 source: Style.png("onboarding/seed-phrase")
             }
             PropertyChanges {
                 target: txtDesc
                 text: qsTr("Seed phrases are used to back up and restore your keys. Only use this option if you already have a seed phrase.")
-
+                height: Constants.onboarding.loginInfoHeight2
             }
             PropertyChanges {
-                target: button
+                target: button1
                 text: qsTr("Import a seed phrase")
-                //TODO remove when sync code is implemented
-                opacity: 1.0
             }
             PropertyChanges {
-                target: keycardLink
+                target: button2
                 text: qsTr("Import a seed phrase into a new Keycard")
             }
             PropertyChanges {
-                target: seedLink
+                target: button3
                 text: ""
+            }
+        },
+        State {
+            name: Constants.startupState.profileFetchingAnnouncement
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.profileFetchingAnnouncement
+            PropertyChanges {
+                target: keysImg
+                Layout.preferredWidth: d.imgKeysWH
+                Layout.preferredHeight: d.imgKeysWH
+                source: Style.png("onboarding/keys")
+            }
+            PropertyChanges {
+                target: txtTitle
+                text: qsTr("Unable to fetch your profile")
+            }
+            PropertyChanges {
+                target: txtDesc
+                text: qsTr("We cannot retrieve your profile data. If you have another device\nwith the Status profile, make sure that Status is running on the\nother device and that both devices are online.")
+                height: Constants.onboarding.loginInfoHeight3
+            }
+            PropertyChanges {
+                target: button1
+                text: qsTr("Try to fetch profile again")
+            }
+            PropertyChanges {
+                target: button2
+                text: qsTr("Create new profile with the same chatkey")
+            }
+            PropertyChanges {
+                target: button3
+                text: ""
+            }
+        },
+        State {
+            name: Constants.startupState.userProfileCreateSameChatKey
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileCreateSameChatKey
+            PropertyChanges {
+                target: keysImg
                 visible: false
+            }
+            PropertyChanges {
+                target: txtTitle
+                text: qsTr("Create a new profile with the same chatkey")
+            }
+            PropertyChanges {
+                target: txtDesc
+                text: qsTr("We cannot fetch your profile data, but you still can create a profile with a same\nchatkey, name and avatar so you contacts will be able to reach you. ")
+                height: Constants.onboarding.loginInfoHeight2
+            }
+            PropertyChanges {
+                target: button1
+                text: qsTr("Continue")
+            }
+            PropertyChanges {
+                target: button2
+                text: ""
+            }
+            PropertyChanges {
+                target: button3
+                text: ""
             }
         }
     ]

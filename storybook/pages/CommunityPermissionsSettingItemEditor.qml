@@ -13,8 +13,6 @@ ColumnLayout {
     property string icon
     property string amountText
     property bool isAmountVisible: false
-    property bool isExpression: false
-    property bool isAnd: true
     property bool isImageSelectorVisible: true
     property var iconsModel
 
@@ -94,12 +92,5 @@ ColumnLayout {
                 onTextChanged: root.amountText = text
             }
         }
-    }
-
-    Switch {
-        visible: root.isExpression
-        text: "OR -- AND"
-        checked: root.isAnd
-        onToggled: root.isAnd = checked
     }
 }

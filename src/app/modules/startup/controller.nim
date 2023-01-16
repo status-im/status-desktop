@@ -1,4 +1,4 @@
-import chronicles, strutils, os
+import Tables, chronicles, strutils, os
 import uuids
 import io_interface
 
@@ -16,8 +16,6 @@ import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 logScope:
   topics = "startup-controller"
-
-const UNIQUE_STARTUP_MODULE_IDENTIFIER* = "SartupModule"
 
 type ProfileImageDetails = object
   url*: string
@@ -79,6 +77,7 @@ proc newController*(delegate: io_interface.AccessInterface,
 # Forward declaration
 proc cleanTmpData*(self: Controller)
 proc storeMetadataForNewKeycardUser(self: Controller)
+proc storeIdentityImage*(self: Controller): seq[Image]
 
 proc disconnectKeychain*(self: Controller) =
   for id in self.keychainConnectionIds:
@@ -96,6 +95,21 @@ proc connectKeychain*(self: Controller) =
     self.tmpKeychainErrorOccurred = true
     self.delegate.emitObtainingPasswordError(args.errDescription, args.errType)
   self.keychainConnectionIds.add(handlerId)
+
+proc connectToFetchingFromWakuEvents*(self: Controller) =
+  self.accountsService.connectToFetchingFromWakuEvents()
+
+  var handlerId = self.events.onWithUUID(SignalType.WakuFetchingBackupProgress.event) do(e: Args):
+    var receivedData = WakuFetchingBackupProgressSignal(e)
+    for k, v in receivedData.fetchingBackupProgress:
+      self.delegate.onFetchingFromWakuMessageReceived(k, v.totalNumber, v.dataNumber)
+  self.connectionIds.add(handlerId)
+
+proc connectToTimeoutEventAndStratTimer*(self: Controller, timeoutInMilliseconds: int) =
+  var handlerId = self.events.onWithUUID(SIGNAL_GENERAL_TIMEOUT) do(e: Args):
+    self.delegate.startAppAfterDelay()
+  self.connectionIds.add(handlerId)
+  self.generalService.runTimer(timeoutInMilliseconds)
 
 proc disconnect*(self: Controller) =
   self.disconnectKeychain()
@@ -146,6 +160,15 @@ proc init*(self: Controller) =
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
 
+proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
+  self.profileService.setDisplayName(self.tmpDisplayName)
+  let images = self.storeIdentityImage()
+  self.accountsService.updateLoggedInAccount(self.tmpDisplayName, images)
+  self.delegate.finishAppLoading()
+
+proc checkFetchingStatusAndProceedWithAppLoading*(self: Controller) =
+  self.delegate.checkFetchingStatusAndProceedWithAppLoading()
+
 proc getGeneratedAccounts*(self: Controller): seq[GeneratedAccountDto] =
   return self.accountsService.generatedAccounts()
 
@@ -164,6 +187,9 @@ proc generateImage*(self: Controller, imageUrl: string, aX: int, aY: int, bX: in
     if(img.imgType == "large"):
       self.tmpProfileImageDetails = ProfileImageDetails(url: imageUrl, croppedImage: img.uri, x1: aX, y1: aY, x2: bX, y2: bY)
       return img.uri
+
+proc fetchWakuMessages*(self: Controller) = 
+  self.generalService.fetchWakuMessages()
 
 proc getCroppedProfileImage*(self: Controller): string =
   return self.tmpProfileImageDetails.croppedImage
@@ -272,12 +298,12 @@ proc storePasswordToKeychain(self: Controller) =
   let data = if self.tmpPassword.len > 0: self.tmpPassword else: self.tmpPin
   self.keychainService.storeData(account.name, data)
 
-proc storeIdentityImage*(self: Controller) =
+proc storeIdentityImage*(self: Controller): seq[Image] =
   if self.tmpProfileImageDetails.url.len == 0:
     return
   let account = self.accountsService.getLoggedInAccount()
   let image = singletonInstance.utils.formatImagePath(self.tmpProfileImageDetails.url)
-  self.profileService.storeIdentityImage(account.keyUid, image, self.tmpProfileImageDetails.x1, 
+  result = self.profileService.storeIdentityImage(account.keyUid, image, self.tmpProfileImageDetails.x1, 
   self.tmpProfileImageDetails.y1, self.tmpProfileImageDetails.x2, self.tmpProfileImageDetails.y2)
   self.tmpProfileImageDetails = ProfileImageDetails()
 
@@ -347,7 +373,7 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool) =
 proc getOpenedAccounts*(self: Controller): seq[AccountDto] =
   return self.accountsService.openedAccounts()
 
-proc getSelectedLoginAccount(self: Controller): AccountDto =
+proc getSelectedLoginAccount*(self: Controller): AccountDto =
   let openedAccounts = self.getOpenedAccounts()
   for acc in openedAccounts:
     if(acc.keyUid == self.tmpSelectedLoginAccountKeyUid):
@@ -396,11 +422,6 @@ proc loginAccountKeycard*(self: Controller) =
 proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =
   let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)
   return acc.keyUid
-
-proc seedPhraseRefersToSelectedKeyPair*(self: Controller, seedPhrase: string): bool =
-  let selectedAccount = self.getSelectedLoginAccount()
-  let accFromSP = self.accountsService.createAccountFromMnemonic(seedPhrase)
-  return selectedAccount.keyUid == accFromSP.keyUid
 
 proc getLastReceivedKeycardData*(self: Controller): tuple[flowType: string, flowEvent: KeycardEvent] =
   return self.keycardService.getLastReceivedKeycardData()

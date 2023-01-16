@@ -91,8 +91,8 @@ method setTrxHistoryResult*(self: Module, transactions: seq[TransactionDto], add
 method setHistoryFetchState*(self: Module, addresses: seq[string], isFetching: bool) =
   self.view.setHistoryFetchStateForAccounts(addresses, isFetching)
 
-method estimateGas*(self: Module, from_addr: string, to: string, assetSymbol: string, value: string, data: string): string =
-  result = self.controller.estimateGas(from_addr, to, assetSymbol, value, data)
+method setHistoryFetchState*(self: Module, address: string, isFetching: bool) =
+  self.view.setHistoryFetchState(address, isFetching)
 
 method setIsNonArchivalNode*(self: Module, isNonArchivalNode: bool) =
   self.view.setIsNonArchivalNode(isNonArchivalNode)

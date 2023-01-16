@@ -1,24 +1,21 @@
 import NimQml
 import io_interface
 import internal/[state, state_wrapper]
-import models/[key_pair_model, key_pair_item, key_pair_selected_item]
+import models/[key_pair_model, key_pair_item]
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      disablePopup: bool # used to disable popup after each action, to block users do multiple clikcs which the action is ongoing
       currentState: StateWrapper
       currentStateVariant: QVariant
       keyPairModel: KeyPairModel
       keyPairModelVariant: QVariant
-      selectedKeyPairItem: KeyPairSelectedItem
-      selectedKeyPairItemVariant: QVariant
       keyPairStoredOnKeycardIsKnown: bool
-      keyPairStoredOnKeycard: KeyPairSelectedItem
-      keyPairStoredOnKeycardVariant: QVariant
-      keyPairForAuthentication: KeyPairSelectedItem
-      keyPairForAuthenticationVariant: QVariant
-      keyPairForProcessing: KeyPairSelectedItem
+      keyPairHelper: KeyPairItem
+      keyPairHelperVariant: QVariant
+      keyPairForProcessing: KeyPairItem
       keyPairForProcessingVariant: QVariant
       keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
       remainingAttempts: int
@@ -30,18 +27,10 @@ QtObject:
       self.keyPairModel.delete
     if not self.keyPairModelVariant.isNil:
       self.keyPairModelVariant.delete
-    if not self.selectedKeyPairItem.isNil:
-      self.selectedKeyPairItem.delete
-    if not self.selectedKeyPairItemVariant.isNil:
-      self.selectedKeyPairItemVariant.delete
-    if not self.keyPairStoredOnKeycard.isNil:
-      self.keyPairStoredOnKeycard.delete
-    if not self.keyPairStoredOnKeycardVariant.isNil:
-      self.keyPairStoredOnKeycardVariant.delete
-    if not self.keyPairForAuthentication.isNil:
-      self.keyPairForAuthentication.delete
-    if not self.keyPairForAuthenticationVariant.isNil:
-      self.keyPairForAuthenticationVariant.delete
+    if not self.keyPairHelper.isNil:
+      self.keyPairHelper.delete
+    if not self.keyPairHelperVariant.isNil:
+      self.keyPairHelperVariant.delete
     if not self.keyPairForProcessing.isNil:
       self.keyPairForProcessing.delete
     if not self.keyPairForProcessingVariant.isNil:
@@ -55,16 +44,28 @@ QtObject:
     result.currentState = newStateWrapper()
     result.currentStateVariant = newQVariant(result.currentState)
     result.remainingAttempts = -1
+    result.disablePopup = false
 
     signalConnect(result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2)
     signalConnect(result.currentState, "cancelActionClicked()", result, "onCancelActionClicked()", 2)
     signalConnect(result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
     signalConnect(result.currentState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
 
+  proc diablePopupChanged*(self: View) {.signal.}
+  proc getDisablePopup*(self: View): bool {.slot.} =
+    return self.disablePopup
+  QtProperty[bool] disablePopup:
+    read = getDisablePopup
+    notify = diablePopupChanged
+  proc setDisablePopup*(self: View, value: bool) =
+    self.disablePopup = value
+    self.diablePopupChanged()
+
   proc currentStateObj*(self: View): State =
     return self.currentState.getStateObj()
 
   proc setCurrentState*(self: View, state: State) =
+    self.setDisablePopup(false)
     self.currentState.setStateObj(state)
   proc getCurrentState(self: View): QVariant {.slot.} =
     return self.currentStateVariant
@@ -120,34 +121,17 @@ QtObject:
     read = getKeyPairModel
     notify = keyPairModelChanged
 
-  proc createKeyPairStoredOnKeycard*(self: View) =
-    if self.keyPairStoredOnKeycard.isNil:
-      self.keyPairStoredOnKeycard = newKeyPairSelectedItem()
-    if self.keyPairStoredOnKeycardVariant.isNil:
-      self.keyPairStoredOnKeycardVariant = newQVariant(self.keyPairStoredOnKeycard)
-
   proc createKeyPairModel*(self: View, items: seq[KeyPairItem]) =
     if self.keyPairModel.isNil:
       self.keyPairModel = newKeyPairModel()
     if self.keyPairModelVariant.isNil:
       self.keyPairModelVariant = newQVariant(self.keyPairModel)
-    if self.selectedKeyPairItem.isNil:
-      self.selectedKeyPairItem = newKeyPairSelectedItem()
-    if self.selectedKeyPairItemVariant.isNil:
-      self.selectedKeyPairItemVariant = newQVariant(self.selectedKeyPairItem)
     self.keyPairModel.setItems(items)
     self.keyPairModelChanged()
 
-  proc getSelectedKeyPairItem*(self: View): QVariant {.slot.} =
-    if self.selectedKeyPairItemVariant.isNil:
-      return newQVariant()
-    return self.selectedKeyPairItemVariant
-  QtProperty[QVariant] selectedKeyPairItem:
-    read = getSelectedKeyPairItem
   proc setSelectedKeyPair*(self: View, publicKey: string) {.slot.} =
     let item = self.keyPairModel.findItemByPublicKey(publicKey)
     self.delegate.setSelectedKeyPair(item)
-    self.selectedKeyPairItem.setItem(item)
 
   proc getKeyPairStoredOnKeycardIsKnown*(self: View): bool {.slot.} =
     return self.keyPairStoredOnKeycardIsKnown
@@ -156,52 +140,39 @@ QtObject:
   proc setKeyPairStoredOnKeycardIsKnown*(self: View, value: bool) =
     self.keyPairStoredOnKeycardIsKnown = value
 
-  proc getKeyPairStoredOnKeycard*(self: View): QVariant {.slot.} =
-    if self.keyPairStoredOnKeycardVariant.isNil:
-      return newQVariant()
-    return self.keyPairStoredOnKeycardVariant
-  QtProperty[QVariant] keyPairStoredOnKeycard:
-    read = getKeyPairStoredOnKeycard
-  proc setKeyPairStoredOnKeycard*(self: View, item: KeyPairItem) =
-    self.keyPairStoredOnKeycard.setItem(item)
-  proc setNamePropForKeyPairStoredOnKeycard*(self: View, name: string) =
-    if self.keyPairStoredOnKeycard.isNil:
-      return
-    self.keyPairStoredOnKeycard.updateName(name)
-
-  proc createKeyPairForAuthentication*(self: View) =
-    if self.keyPairForAuthentication.isNil:
-      self.keyPairForAuthentication = newKeyPairSelectedItem()
-    if self.keyPairForAuthenticationVariant.isNil:
-      self.keyPairForAuthenticationVariant = newQVariant(self.keyPairForAuthentication)
-
-  proc getKeyPairForAuthentication*(self: View): QVariant {.slot.} =
-    if self.keyPairForAuthenticationVariant.isNil:
-      return newQVariant()
-    return self.keyPairForAuthenticationVariant
-  QtProperty[QVariant] keyPairForAuthentication:
-    read = getKeyPairForAuthentication
-  proc setKeyPairForAuthentication*(self: View, item: KeyPairItem) =
-    self.keyPairForAuthentication.setItem(item)
-  proc setLockedPropForKeyPairForAuthentication*(self: View, locked: bool) =
-    if self.keyPairForAuthentication.isNil:
-      return
-    self.keyPairForAuthentication.updateLockedState(locked)
-
-  proc createKeyPairForProcessing*(self: View) =
-    if self.keyPairForProcessing.isNil:
-      self.keyPairForProcessing = newKeyPairSelectedItem()
-    if self.keyPairForProcessingVariant.isNil:
-      self.keyPairForProcessingVariant = newQVariant(self.keyPairForProcessing)
-
-  proc getKeyPairForProcessing*(self: View): QVariant {.slot.} =
+  proc getKeyPairForProcessing*(self: View): KeyPairItem =
+    return self.keyPairForProcessing
+  proc getKeyPairForProcessingAsVariant*(self: View): QVariant {.slot.} =
     if self.keyPairForProcessingVariant.isNil:
       return newQVariant()
     return self.keyPairForProcessingVariant
   QtProperty[QVariant] keyPairForProcessing:
-    read = getKeyPairForProcessing
+    read = getKeyPairForProcessingAsVariant
   proc setKeyPairForProcessing*(self: View, item: KeyPairItem) =
+    if self.keyPairForProcessing.isNil:
+      self.keyPairForProcessing = newKeyPairItem()
+    if self.keyPairForProcessingVariant.isNil:
+      self.keyPairForProcessingVariant = newQVariant(self.keyPairForProcessing)
     self.keyPairForProcessing.setItem(item)
+  proc setLockedPropForKeyPairForProcessing*(self: View, locked: bool) =
+    if self.keyPairForProcessing.isNil:
+      return
+    self.keyPairForProcessing.setLocked(locked)
+
+  proc getKeyPairHelper*(self: View): KeyPairItem =
+    return self.keyPairHelper
+  proc getKeyPairHelperAsVariant*(self: View): QVariant {.slot.} =
+    if self.keyPairHelperVariant.isNil:
+      return newQVariant()
+    return self.keyPairHelperVariant
+  QtProperty[QVariant] keyPairHelper:
+    read = getKeyPairHelperAsVariant
+  proc setKeyPairHelper*(self: View, item: KeyPairItem) =
+    if self.keyPairHelper.isNil:
+      self.keyPairHelper = newKeyPairItem()
+    if self.keyPairHelperVariant.isNil:
+      self.keyPairHelperVariant = newQVariant(self.keyPairHelper)
+    self.keyPairHelper.setItem(item)
 
   proc setPin*(self: View, value: string) {.slot.} =
     self.delegate.setPin(value)
@@ -212,8 +183,8 @@ QtObject:
   proc setPassword*(self: View, value: string) {.slot.} =
     self.delegate.setPassword(value)
 
-  proc setKeycardName*(self: View, value: string) {.slot.} =
-    self.delegate.setKeycardName(value)
+  proc getNameFromKeycard*(self: View): string {.slot.} =
+    return self.delegate.getNameFromKeycard()
 
   proc setPairingCode*(self: View, value: string) {.slot.} =
     self.delegate.setPairingCode(value)

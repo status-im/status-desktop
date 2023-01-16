@@ -8,6 +8,7 @@ Item {
     id: root
 
     property var sharedKeycardModule
+    property var emojiPopup
     readonly property alias primaryButtonEnabled: d.primaryButtonEnabled
 
     objectName: "KeycardSharedPopupContent"
@@ -30,6 +31,15 @@ Item {
             case Constants.keycardSharedState.keyPairMigrateSuccess:
             case Constants.keycardSharedState.keyPairMigrateFailure:
             case Constants.keycardSharedState.migratingKeyPair:
+            case Constants.keycardSharedState.creatingAccountNewSeedPhraseSuccess:
+            case Constants.keycardSharedState.creatingAccountNewSeedPhraseFailure:
+            case Constants.keycardSharedState.creatingAccountNewSeedPhrase:
+            case Constants.keycardSharedState.creatingAccountOldSeedPhraseSuccess:
+            case Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure:
+            case Constants.keycardSharedState.creatingAccountOldSeedPhrase:
+            case Constants.keycardSharedState.importingFromKeycardSuccess:
+            case Constants.keycardSharedState.importingFromKeycardFailure:
+            case Constants.keycardSharedState.importingFromKeycard:
             case Constants.keycardSharedState.keycardRenameSuccess:
             case Constants.keycardSharedState.keycardRenameFailure:
             case Constants.keycardSharedState.renamingKeycard:
@@ -64,6 +74,7 @@ Item {
             case Constants.keycardSharedState.copyingKeycard:
             case Constants.keycardSharedState.copyingKeycardSuccess:
             case Constants.keycardSharedState.copyingKeycardFailure:
+            case Constants.keycardSharedState.seedPhraseAlreadyInUse:
                 return initComponent
 
             case Constants.keycardSharedState.factoryResetConfirmation:
@@ -108,6 +119,9 @@ Item {
 
             case Constants.keycardSharedState.enterKeycardName:
                 return enterNameComponent
+
+            case Constants.keycardSharedState.manageKeycardAccounts:
+                return manageAccountsComponent
 
             case Constants.keycardSharedState.createPairingCode:
                 return enterPairingCodeComponent
@@ -254,9 +268,17 @@ Item {
         EnterName {
             sharedKeycardModule: root.sharedKeycardModule
 
-            Component.onCompleted: {
-                d.primaryButtonEnabled = false
+            onValidation: {
+                d.primaryButtonEnabled = result
             }
+        }
+    }
+
+    Component {
+        id: manageAccountsComponent
+        ManageAccounts {
+            sharedKeycardModule: root.sharedKeycardModule
+            emojiPopup: root.emojiPopup
 
             onValidation: {
                 d.primaryButtonEnabled = result

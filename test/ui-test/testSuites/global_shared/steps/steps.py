@@ -79,6 +79,11 @@ def step(context: any, obj: str):
 def step(context, room):
     the_user_joins_chat_room(room)
 
+# TODO remove when we have a reliable local mailserver
+@When("the user waits |any| seconds")
+def step(context, amount):
+    time.sleep(2)
+
 @When("the user joins chats")
 def step(context):
     the_user_joins_chats(context)

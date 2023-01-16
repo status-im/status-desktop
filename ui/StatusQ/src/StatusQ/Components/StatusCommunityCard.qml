@@ -94,11 +94,11 @@ Rectangle {
     */
     property ListModel categories: ListModel {}
     /*!
-       \qmlproperty string StatusCommunityCard::locale
+       \qmlproperty var StatusCommunityCard::locale
        This property holds the application locale used to give format to members number representation.
        If not provided, default value is "en".
     */
-    property string locale: "en"
+    property var locale: Qt.locale("en")
     /*!
        \qmlproperty url StatusCommunityCard::banner
        This property holds the community banner image url.
@@ -148,14 +148,14 @@ Rectangle {
             const ks = 1000
             if(number > million) {
                 res = number / million
-                res = Number(number / million).toLocaleString(Qt.locale(root.locale), 'f', 1) + 'M'
+                res = Number(number / million).toLocaleString(root.locale, 'f', 1) + 'M'
             }
             else if(number > ks) {
                 res = number / ks
-                res = Number(number / ks).toLocaleString(Qt.locale(root.locale), 'f', 1) + 'K'
+                res = Number(number / ks).toLocaleString(root.locale, 'f', 1) + 'K'
             }
             else
-                res = Number(number).toLocaleString(Qt.locale(root.locale), 'f', 0)
+                res = Number(number).toLocaleString(root.locale, 'f', 0)
             return res
         }
     }

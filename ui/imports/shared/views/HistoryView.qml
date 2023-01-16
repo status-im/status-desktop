@@ -44,7 +44,7 @@ ColumnLayout {
         id: loadingImg
         active: isLoading
         sourceComponent: loadingImageComponent
-        Layout.alignment: Qt.AlignRight | Qt.AlignTop
+        Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
         Layout.rightMargin: Style.current.padding
     }
 
@@ -94,6 +94,7 @@ ColumnLayout {
             // is currently no way to know that there are no more results
             enabled: !isLoading && RootStore.historyTransactions.hasMore 
             onClicked: fetchHistory()
+            loading: isLoading
         }
     }
 

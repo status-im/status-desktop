@@ -23,32 +23,19 @@ Control {
         Invitation = 7
     }
 
-    property alias quickActions: quickActionsPanel.items
-    property alias statusChatInput: editComponent.inputComponent
+    property list<Item> quickActions
+    property var statusChatInput
     property alias linksComponent: linksLoader.sourceComponent
     property alias transcationComponent: transactionBubbleLoader.sourceComponent
     property alias invitationComponent: invitationBubbleLoader.sourceComponent
     property alias mouseArea: mouseArea
 
-    property string resendText: ""
-    property string cancelButtonText: ""
-    property string saveButtonText: ""
-    property string loadingImageText: ""
-    property string errorLoadingImageText: ""
-    property string audioMessageInfoText: ""
     property string pinnedMsgInfoText: ""
+
     property string messageAttachments: ""
-    property var reactionIcons: [
-        Emoji.iconSource("❤"),
-        Emoji.iconSource("👍"),
-        Emoji.iconSource("👎"),
-        Emoji.iconSource("🤣"),
-        Emoji.iconSource("😥"),
-        Emoji.iconSource("😠")
-    ]
+    property var reactionIcons: []
 
     property string messageId: ""
-    property bool isAppWindowActive: false
     property bool editMode: false
     property bool isAReply: false
     property bool isEdited: false
@@ -148,19 +135,9 @@ Control {
                 left: parent.left
             }
             width: 2
-            visible: root.isPinned
-            color: Theme.palette.pinColor1
-        }
-
-        Rectangle {
-            anchors {
-                top: parent.top
-                bottom: parent.bottom
-                left: parent.left
-            }
-            width: 2
-            visible: root.hasMention
-            color: Theme.palette.mentionColor1
+            visible: root.isPinned || root.hasMention
+            color: root.isPinned ? Theme.palette.pinColor1 : root.hasMention ? Theme.palette.mentionColor1
+                                                                             : "transparent" // not visible really
         }
     }
 
@@ -219,7 +196,6 @@ Control {
                     objectName: "StatusMessage_replyDetails"
                     replyDetails: root.replyDetails
                     profileClickable: root.profileClickable
-                    audioMessageInfoText: root.audioMessageInfoText
                     onReplyProfileClicked: root.replyProfileClicked(sender, mouse)
                     onMessageClicked: root.replyMessageClicked(mouse)
                 }
@@ -231,25 +207,21 @@ Control {
                 Layout.rightMargin: 16
                 spacing: 8
 
-                Item {
-                    implicitWidth: root.messageDetails.sender.profileImage.assetSettings.width
-                    implicitHeight: profileImage.visible ? profileImage.height : 0
+                StatusSmartIdenticon {
+                    id: profileImage
                     Layout.alignment: Qt.AlignTop
-                    StatusSmartIdenticon {
-                        id: profileImage
-                        active: root.showHeader
-                        visible: active
-                        name: root.messageDetails.sender.displayName
-                        asset: root.messageDetails.sender.profileImage.assetSettings
-                        ringSettings: root.messageDetails.sender.profileImage.ringSettings
+                    active: root.showHeader
+                    visible: active
+                    name: root.messageDetails.sender.displayName
+                    asset: root.messageDetails.sender.profileImage.assetSettings
+                    ringSettings: root.messageDetails.sender.profileImage.ringSettings
 
-                        MouseArea {
-                            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            acceptedButtons: Qt.LeftButton | Qt.RightButton
-                            anchors.fill: parent
-                            enabled: root.profileClickable
-                            onClicked: root.profilePictureClicked(this, mouse)
-                        }
+                    MouseArea {
+                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        anchors.fill: parent
+                        enabled: root.profileClickable
+                        onClicked: root.profilePictureClicked(this, mouse)
                     }
                 }
 
@@ -257,30 +229,31 @@ Control {
                     spacing: 2
                     Layout.alignment: Qt.AlignTop
                     Layout.fillWidth: true
+                    Layout.leftMargin: profileImage.visible ? 0 : root.messageDetails.sender.profileImage.assetSettings.width + parent.spacing
 
-                    Loader {
+                    StatusPinMessageDetails {
                         active: root.isPinned && !editMode
                         visible: active
-                        sourceComponent: StatusPinMessageDetails {
-                            pinnedMsgInfoText: root.pinnedMsgInfoText
-                            pinnedBy: root.pinnedBy
-                        }
+                        pinnedMsgInfoText: root.pinnedMsgInfoText
+                        pinnedBy: root.pinnedBy
                     }
-                    StatusMessageHeader {
+                    Loader {
                         Layout.fillWidth: true
-                        sender: root.messageDetails.sender
-                        amISender: root.messageDetails.amISender
-                        messageOriginInfo: root.messageDetails.messageOriginInfo
-                        resendText: root.resendText
-                        showResendButton: root.hasExpired && root.messageDetails.amISender && !editMode
-                        showSendingLoader: root.isSending && root.messageDetails.amISender && !editMode
-                        resendError: root.messageDetails.amISender && !editMode ? root.resendError : ""
-                        onClicked: root.senderNameClicked(sender, mouse)
-                        onResendClicked: root.resendClicked()
-                        visible: root.showHeader && !editMode
-                        timestamp.text: root.timestampString
-                        timestamp.tooltip.text: root.timestampTooltipString
-                        displayNameClickable: root.profileClickable
+                        active: root.showHeader && !editMode
+                        visible: active
+                        sourceComponent: StatusMessageHeader {
+                            sender: root.messageDetails.sender
+                            amISender: root.messageDetails.amISender
+                            messageOriginInfo: root.messageDetails.messageOriginInfo
+                            showResendButton: root.hasExpired && root.messageDetails.amISender && !editMode
+                            showSendingLoader: root.isSending && root.messageDetails.amISender && !editMode
+                            resendError: root.messageDetails.amISender && !editMode ? root.resendError : ""
+                            onClicked: root.senderNameClicked(sender, mouse)
+                            onResendClicked: root.resendClicked()
+                            timestamp.text: root.timestampString
+                            timestamp.tooltip.text: root.timestampTooltipString
+                            displayNameClickable: root.profileClickable
+                        }
                     }
                     Loader {
                         Layout.fillWidth: true
@@ -307,7 +280,7 @@ Control {
                     }
 
                     Loader {
-                        active: !!root.messageAttachments && !editMode
+                        active: root.messageAttachments && !editMode
                         visible: active
                         sourceComponent: Column {
                             spacing: 4
@@ -341,7 +314,6 @@ Control {
                         sourceComponent: StatusAudioMessage {
                             audioSource: root.messageDetails.messageContent
                             hovered: root.hovered
-                            audioMessageInfoText: root.audioMessageInfoText
                         }
                     }
                     Loader {
@@ -359,17 +331,17 @@ Control {
                         active: root.messageDetails.contentType === StatusMessage.ContentType.Invitation && !editMode
                         visible: active
                     }
-                    StatusEditMessage {
-                        id: editComponent
+                    Loader {
                         Layout.fillWidth: true
                         Layout.rightMargin: 16
                         active: root.editMode
                         visible: active
-                        messageText: root.messageDetails.messageText
-                        saveButtonText: root.saveButtonText
-                        cancelButtonText: root.cancelButtonText
-                        onEditCancelled: root.editCancelled()
-                        onEditCompleted: root.editCompleted(newMsgText)
+                        sourceComponent: StatusEditMessage {
+                            inputComponent: root.statusChatInput
+                            messageText: root.messageDetails.messageText
+                            onEditCancelled: root.editCancelled()
+                            onEditCompleted: root.editCompleted(newMsgText)
+                        }
                     }
                     Loader {
                         active: root.reactionsModel.count > 0
@@ -393,13 +365,18 @@ Control {
             }
         }
 
-        StatusMessageQuickActions {
-            id: quickActionsPanel
+        Loader {
+            active: root.hovered && !root.hideQuickActions
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top
             anchors.topMargin: -8
-            visible: root.hovered && !root.hideQuickActions
+            sourceComponent: Component {
+                StatusMessageQuickActions {
+                    id: quickActionsPanel
+                    items: root.quickActions
+                }
+            }
         }
     }
 

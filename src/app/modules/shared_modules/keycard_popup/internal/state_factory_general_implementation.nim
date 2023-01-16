@@ -55,6 +55,10 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newCreatePinState(flowType, backState)
   if stateToBeCreated == StateType.CreatePuk:
     return newCreatePukState(flowType, backState)
+  if stateToBeCreated == StateType.CreatingAccountNewSeedPhrase:
+    return newCreatingAccountNewSeedPhraseState(flowType, backState)
+  if stateToBeCreated == StateType.CreatingAccountOldSeedPhrase:
+    return newCreatingAccountOldSeedPhraseState(flowType, backState)
   if stateToBeCreated == StateType.EnterBiometricsPassword:
     return newEnterBiometricsPasswordState(flowType, backState)
   if stateToBeCreated == StateType.EnterKeycardName:
@@ -73,6 +77,12 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newFactoryResetConfirmationState(flowType, backState)
   if stateToBeCreated == StateType.FactoryResetSuccess:
     return newFactoryResetSuccessState(flowType, backState)
+  if stateToBeCreated == StateType.ImportingFromKeycard:
+    return newImportingFromKeycardState(flowType, backState)
+  if stateToBeCreated == StateType.ImportingFromKeycardFailure:
+    return newImportingFromKeycardFailureState(flowType, backState)
+  if stateToBeCreated == StateType.ImportingFromKeycardSuccess:
+    return newImportingFromKeycardSuccessState(flowType, backState)
   if stateToBeCreated == StateType.InsertKeycard:
     return newInsertKeycardState(flowType, backState)
   if stateToBeCreated == StateType.KeyPairMigrateFailure:
@@ -95,6 +105,14 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newCopyingKeycardFailureState(flowType, backState)
   if stateToBeCreated == StateType.CopyingKeycardSuccess:
     return newCopyingKeycardSuccessState(flowType, backState)
+  if stateToBeCreated == StateType.CreatingAccountNewSeedPhraseFailure:
+    return newCreatingAccountNewSeedPhraseFailureState(flowType, backState)
+  if stateToBeCreated == StateType.CreatingAccountNewSeedPhraseSuccess:
+    return newCreatingAccountNewSeedPhraseSuccessState(flowType, backState)
+  if stateToBeCreated == StateType.CreatingAccountOldSeedPhraseFailure:
+    return newCreatingAccountOldSeedPhraseFailureState(flowType, backState)
+  if stateToBeCreated == StateType.CreatingAccountOldSeedPhraseSuccess:
+    return newCreatingAccountOldSeedPhraseSuccessState(flowType, backState)
   if stateToBeCreated == StateType.KeycardInserted:
     return newKeycardInsertedState(flowType, backState)
   if stateToBeCreated == StateType.KeycardEmptyMetadata:
@@ -125,6 +143,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newMigratingKeyPairState(flowType, backState)
   if stateToBeCreated == StateType.NotKeycard:
     return newNotKeycardState(flowType, backState)
+  if stateToBeCreated == StateType.ManageKeycardAccounts:
+    return newManageKeycardAccountsState(flowType, backState)
   if stateToBeCreated == StateType.PinSet:
     return newPinSetState(flowType, backState)
   if stateToBeCreated == StateType.PinVerified:
@@ -147,6 +167,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newSameKeycardState(flowType, backState)
   if stateToBeCreated == StateType.SeedPhraseDisplay:
     return newSeedPhraseDisplayState(flowType, backState)
+  if stateToBeCreated == StateType.SeedPhraseAlreadyInUse:
+    return newSeedPhraseAlreadyInUseState(flowType, backState)
   if stateToBeCreated == StateType.SeedPhraseEnterWords:
     return newSeedPhraseEnterWordsState(flowType, backState)
   if stateToBeCreated == StateType.SelectExistingKeyPair:

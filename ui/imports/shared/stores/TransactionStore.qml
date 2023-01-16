@@ -8,14 +8,14 @@ import "../../../app/AppLayouts/Profile/stores"
 QtObject {
     id: root
 
-    property CurrenciesStore currencyStore: CurrenciesStore { }
+    property CurrenciesStore currencyStore: CurrenciesStore {}
     property ProfileSectionStore profileSectionStore: ProfileSectionStore {}
     property var contactStore: profileSectionStore.contactsStore
 
     property var mainModuleInst: mainModule
     property var walletSectionTransactionsInst: walletSectionTransactions
 
-    property string locale: localAppSettings.language
+    property var locale: Qt.locale(localAppSettings.language)
     property string currentCurrency: walletSection.currentCurrency
     property var allNetworks: networksModule.all
     property var accounts: walletSectionAccounts.model
@@ -59,10 +59,6 @@ QtObject {
 
     function copyToClipboard(text) {
         globalUtils.copyToClipboard(text)
-    }
-
-    function estimateGas(from_addr, to, assetSymbol, value, chainId, data) {
-        return walletSectionTransactions.estimateGas(from_addr, to, assetSymbol, value, chainId, data)
     }
 
     function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
@@ -249,5 +245,26 @@ QtObject {
                 lockedInAmounts.splice(index,1)
             }
         }
+    }
+
+    function getTokenBalanceOnChain(selectedAccount, chainId: int, tokenSymbol: string) {
+        if (!selectedAccount) {
+            console.warn("selectedAccount invalid")
+            return undefined
+        }
+
+        const jsonObj = selectedAccount.getTokenBalanceOnChainAsJson(chainId, tokenSymbol)
+        if (jsonObj === "") {
+            console.warn("failed to get balance, returned json is empty")
+            return undefined
+        }
+
+        const obj = JSON.parse(jsonObj)
+        if (obj.error) {
+            console.warn("failed to get balance, json parse error: ", obj.error)
+            return undefined
+        }
+
+        return obj
     }
 }

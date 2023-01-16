@@ -88,7 +88,11 @@ QtObject {
     }
 
     function toLocaleString(val, locale, options) {
-      return NumberPolyFill.toLocaleString(val, locale, options)
+        if (typeof(val) === "object") {
+            console.log("Wrong type for val: " + JSON.stringify(val))
+            return NaN
+        }
+        return NumberPolyFill.toLocaleString(val, locale, options)
     }
 
     function isOnlyEmoji(inputText) {
@@ -534,7 +538,7 @@ QtObject {
             incomingVerificationStatus: Constants.verificationStatus.unverified
         }
 
-        if (!mainModuleInst)
+        if (!mainModuleInst || !publicKey)
             return defaultValue
 
         const jsonObj = mainModuleInst.getContactDetailsAsJson(publicKey, getVerificationRequest)
@@ -731,12 +735,11 @@ QtObject {
     }
 
     function escapeHtml(unsafeStr) {
-        return unsafeStr
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+        return globalUtilsInst.escapeHtml(unsafeStr)
+    }
+
+    function plainText(text) {
+        return globalUtilsInst.plainText(text)
     }
 
     function isInvalidPasswordMessage(msg) {

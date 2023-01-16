@@ -93,8 +93,8 @@ endif
 
 
 check-qt-dir:
-ifeq ($(QTDIR),)
-	$(error Cannot find your Qt5 installation. Please run "$(MAKE) QTDIR=/path/to/your/Qt5/installation/prefix ...")
+ifeq ($(shell qmake -v 2>/dev/null),)
+	$(error Cannot find your Qt5 installation. Please make sure to export correct Qt installation binaries path to PATH env)
 endif
 
 check-pkg-target-linux:
@@ -147,13 +147,22 @@ else
  DOTHERSIDE_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
 endif
 
+MONITORING ?= false
+ifneq ($(MONITORING), false)
+ DOTHERSIDE_CMAKE_PARAMS := ${DOTHERSIDE_CMAKE_PARAMS} -DMONITORING:BOOL=ON -DMONITORING_QML_ENTRY_POINT:STRING="/../monitoring/Main.qml"
+endif
+
+
 # Qt5 dirs (we can't indent with tabs here)
 ifneq ($(detected_OS),Windows)
- QT5_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt5Core 2>/dev/null)
- QT5_LIBDIR := $(shell pkg-config --variable=libdir Qt5Core 2>/dev/null)
- ifeq ($(QT5_PCFILEDIR),)
-  QT5_PCFILEDIR := $(QTDIR)/lib/pkgconfig
-  QT5_LIBDIR := $(QTDIR)/lib
+ QT5_LIBDIR := $(shell qmake -query QT_INSTALL_LIBS 2>/dev/null)
+ QT5_QMLDIR := $(shell qmake -query QT_INSTALL_QML 2>/dev/null)
+ QT5_INSTALL_PREFIX := $(shell qmake -query QT_INSTALL_PREFIX 2>/dev/null)
+ QT5_PKGCONFIG_INSTALL_PREFIX := $(shell pkg-config --variable=prefix Qt5Core 2>/dev/null)
+ ifeq ($(QT5_INSTALL_PREFIX),$(QT5_PKGCONFIG_INSTALL_PREFIX))
+  QT5_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt5Core 2>/dev/null)
+ else
+  QT5_PCFILEDIR := $(QT5_LIBDIR)/pkgconfig
   # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
   ifeq ($(detected_OS),Darwin)
    NIM_PARAMS += -L:"-framework Foundation -framework AppKit -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication"
@@ -409,7 +418,7 @@ $(FCITX5_QT): | check-qt-dir deps
 			.. $(HANDLE_OUTPUT) && \
 		$(FCITX5_QT_BUILD_CMD)
 
-PRODUCTION_PARAMETERS := -d:production -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic]
+PRODUCTION_PARAMETERS := -d:production
 
 $(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
 $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop $(FCITX5_QT)
@@ -441,7 +450,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp $(STATUSKEYCARDGO) tmp/linux/dist/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"
-	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QTDIR)/qml -bundle-non-qt-libs
+	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs
 
 	# Qt plugins
 	cp $(FCITX5_QT) tmp/linux/dist/usr/plugins/platforminputcontexts/
@@ -643,7 +652,7 @@ run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe
 
-tests-nim-linux: | check-qt-dir
+tests-nim-linux: | $(DOTHERSIDE)
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)" \
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r test/nim/message_model_test.nim
 

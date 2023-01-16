@@ -23,5 +23,4 @@ method executePrePrimaryStateCommand*(self: WrongBiometricsPasswordState, contro
 
 method executeCancelCommand*(self: WrongBiometricsPasswordState, controller: Controller) =
   if self.flowType == FlowType.Authentication:
-    controller.setPassword("")
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

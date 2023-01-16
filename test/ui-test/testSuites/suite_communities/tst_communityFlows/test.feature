@@ -84,12 +84,25 @@ Feature: Status Desktop community
         When the admin deletes category named "test-category"
         Then the category named "test-category" is missing
 
-	@mayfail
-	# TODO: Weak. Sometimes passes sometimes fails (standalone or as part of the sequence). To analyze.
-	# Also TODO: Missing validation of description changed and color changed. Now validation only checks the new community name.
-    Scenario Outline: The admin edits a community
+    Scenario Outline: The admin edits a community name, description and color separately
+        When the admin changes the community name to "<new_community_name>"
+        Then the community overview name is "<new_community_name>"
+        When the admin goes back to the community
+        And the admin changes the community description to "<new_community_description>"
+        Then the community overview description is "<new_community_description>"
+        When the admin goes back to the community
+        And the admin changes the community color to "<new_community_color>"
+        Then the community overview color is "<new_community_color>"
+        Examples:
+            | new_community_name       | new_community_description  | new_community_color |
+            | myCommunityNamedChanged  | Cool new description 123   | #ff0000             |
+
+    Scenario Outline: The admin edits a community name, description and color
         When the admin renames the community to "<new_community_name>" and description to "<new_community_description>" and color to "<new_community_color>"
-        And the admin goes back to the community
+        Then the community overview name is "<new_community_name>"
+        And the community overview description is "<new_community_description>"
+        And the community overview color is "<new_community_color>"
+        When the admin goes back to the community
         Then the user lands on the community named "<new_community_name>"
         Examples:
             | new_community_name       | new_community_description  | new_community_color |

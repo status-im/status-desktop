@@ -82,9 +82,8 @@ Popup {
             stickerPacks: d.stickerPackList
             packId: stickerPackListView.selectedPackId
             onInstallClicked: {
+                //starts async task
                 stickersModule.install(packId)
-                stickerGrid.model = stickers
-                stickerPackListView.itemAt(index).clicked()
             }
             onUninstallClicked: {
                 stickersModule.uninstall(packId)
@@ -95,6 +94,19 @@ Popup {
                 stickerMarket.visible = false
                 footerContent.visible = true
                 stickersContainer.visible = true
+            }
+
+            Connections {
+                target: root.store.stickersModuleInst
+                function onStickerPackInstalled(packId) {
+                    const idx = stickersModule.stickerPacks.findIndexById(packId, false);
+                    if (idx === -1) {
+                        return
+                    }
+                    stickersModule.stickerPacks.findStickersById(packId)
+                    stickerGrid.model = stickersModule.stickerPacks.getFoundStickers()
+                    stickerPackListView.itemAt(idx).clicked()
+                }
             }
 
             Loader {
@@ -220,11 +232,11 @@ Popup {
             }
         }
 
-        Row {
+        RowLayout {
             id: footerContent
             Layout.fillWidth: true
-            leftPadding: Style.current.padding / 2
-            rightPadding: Style.current.padding / 2
+            Layout.rightMargin: Style.current.padding / 2
+            Layout.leftMargin: Style.current.padding / 2
             spacing: Style.current.padding / 2
 
             StatusFlatRoundButton {
@@ -254,12 +266,11 @@ Popup {
             }
 
             StatusScrollView {
-                id: installedStickersSV
                 height: 40
+                Layout.fillWidth: true
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
                 RowLayout {
-                    id: stickersRowLayout
-                    width: installedStickersSV.availableWidth
                     spacing: Style.current.padding
 
                     Repeater {

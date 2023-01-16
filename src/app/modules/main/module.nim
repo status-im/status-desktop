@@ -29,6 +29,7 @@ import ../../../app_service/service/chat/service as chat_service
 import ../../../app_service/service/community/service as community_service
 import ../../../app_service/service/message/service as message_service
 import ../../../app_service/service/token/service as token_service
+import ../../../app_service/service/currency/service as currency_service
 import ../../../app_service/service/transaction/service as transaction_service
 import ../../../app_service/service/collectible/service as collectible_service
 import ../../../app_service/service/wallet_account/service as wallet_account_service
@@ -93,6 +94,7 @@ type
     nodeSectionModule: node_section_module.AccessInterface
     networksModule: networks_module.AccessInterface
     keycardSharedModule: keycard_shared_module.AccessInterface
+    keycardSharedModuleKeycardSyncPurpose: keycard_shared_module.AccessInterface
     moduleLoaded: bool
     statusUrlCommunityToSpectate: string
 
@@ -109,6 +111,7 @@ proc newModule*[T](
   communityService: community_service.Service,
   messageService: message_service.Service,
   tokenService: token_service.Service,
+  currencyService: currency_service.Service,
   transactionService: transaction_service.Service,
   collectibleService: collectible_service.Service,
   walletAccountService: wallet_account_service.Service,
@@ -168,21 +171,22 @@ proc newModule*[T](
   # Submodules
   result.channelGroupModules = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule(
-    result, events, tokenService,
+    result, events, tokenService, currencyService,
     transactionService, collectible_service, walletAccountService,
     settingsService, savedAddressService, networkService, accountsService, keycardService
   )
   result.browserSectionModule = browser_section_module.newModule(
     result, events, bookmarkService, settingsService, networkService,
-    dappPermissionsService, providerService, walletAccountService
+    dappPermissionsService, providerService, walletAccountService,
+    tokenService, currencyService
   )
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
     devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService,
-    networkService, keycardService, keychainService
+    networkService, keycardService, keychainService, tokenService
   )
-  result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService)
+  result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService, tokenService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService)
   result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService)
@@ -206,6 +210,8 @@ method delete*[T](self: Module[T]) =
   self.networksModule.delete
   if not self.keycardSharedModule.isNil:
     self.keycardSharedModule.delete
+  if not self.keycardSharedModuleKeycardSyncPurpose.isNil:
+    self.keycardSharedModuleKeycardSyncPurpose.delete
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
@@ -223,7 +229,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     mentionsCount = mentionsCount + receivedContactRequests.len
 
   let hasNotification = unviewedCount > 0 or mentionsCount > 0
-  let notificationsCount = mentionsCount # we need to add here number of requests
+  let notificationsCount = mentionsCount
   let active = self.getActiveSectionId() == c.id # We must pass on if the current item section is currently active to keep that property as it is
   result = initItem(
     c.id,
@@ -855,7 +861,7 @@ method displayWindowsOsNotification*[T](self: Module[T], title: string,
 method osNotificationClicked*[T](self: Module[T], details: NotificationDetails) =
   if(details.notificationType == NotificationType.NewContactRequest):
     self.controller.switchTo(details.sectionId, "", "")
-    self.view.emitOpenContactRequestsPopupSignal()
+    self.view.emitOpenActivityCenterSignal()
   elif(details.notificationType == NotificationType.JoinCommunityRequest):
     self.controller.switchTo(details.sectionId, "", "")
     self.view.emitOpenCommunityMembershipRequestsPopupSignal(details.sectionId)
@@ -979,6 +985,19 @@ method runAuthenticationPopup*[T](self: Module[T], keyUid: string) =
   if self.keycardSharedModule.isNil:
     return
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.Authentication, keyUid)
+
+method onSharedKeycarModuleKeycardSyncPurposeTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
+  if not self.keycardSharedModuleKeycardSyncPurpose.isNil:
+    self.keycardSharedModuleKeycardSyncPurpose.delete
+    self.keycardSharedModuleKeycardSyncPurpose = nil
+
+method tryKeycardSync*[T](self: Module[T], keyUid: string, pin: string) =
+  self.keycardSharedModuleKeycardSyncPurpose = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER, 
+    self.events, self.keycardService, self.settingsService, self.privacyService, self.accountsService, 
+    self.walletAccountService, self.keychainService)
+  if self.keycardSharedModuleKeycardSyncPurpose.isNil:
+    return
+  self.keycardSharedModuleKeycardSyncPurpose.syncKeycardBasedOnAppState(keyUid, pin)
 
 method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
   self.view.emitDisplayKeycardSharedModuleFlow()

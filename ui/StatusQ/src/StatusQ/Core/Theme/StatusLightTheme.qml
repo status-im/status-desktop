@@ -60,6 +60,9 @@ ThemePalette {
 
     statusFloatingButtonHighlight: getColor('blueHijab')
 
+    statusLoadingHighlight: getColor('lightPattensBlue', 0.5)
+    statusLoadingHighlight2: indirectColor3
+
     userCustomizationColors: [
         "#2946C4",
         "#887AF9",

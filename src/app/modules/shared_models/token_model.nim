@@ -1,6 +1,7 @@
 import NimQml, Tables, strutils, strformat
 
 import ./token_item
+import ./currency_amount
 
 type
   ModelRole {.pure.} = enum
@@ -26,6 +27,7 @@ type
     Change24hour
     CurrencyPrice
     Decimals
+    PegSymbol
 
 QtObject:
   type
@@ -83,6 +85,7 @@ QtObject:
       ModelRole.Change24hour.int:"change24hour",
       ModelRole.CurrencyPrice.int:"currencyPrice",
       ModelRole.Decimals.int:"decimals",
+      ModelRole.PegSymbol.int:"pegSymbol",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -140,6 +143,8 @@ QtObject:
       result = newQVariant(item.getCurrencyPrice())
     of ModelRole.Decimals:
       result = newQVariant(item.getDecimals())
+    of ModelRole.PegSymbol:
+      result = newQVariant(item.getPegSymbol())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -167,6 +172,7 @@ QtObject:
       of "change24hour": result = $item.getChange24hour()
       of "currencyPrice": result = $item.getCurrencyPrice()
       of "decimals": result = $item.getDecimals()
+      of "pegSymbol": result = $item.getPegSymbol()
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
@@ -191,13 +197,12 @@ QtObject:
         if (balance.chainId != chainId):
           continue
 
-        if(balance.balance >= requiredGas):
+        if(balance.balance.getAmount() >= requiredGas):
           return true
 
     return false
 
-  proc getTokenBalanceOnChain*(self: Model, chainId: int, tokenSymbol: string): string =
-    var tokenBalance: float64 = 0.0
+  proc getTokenBalanceOnChain*(self: Model, chainId: int, tokenSymbol: string): CurrencyAmount =
     for item in self.items:
       if(item.getSymbol() != tokenSymbol):
         continue
@@ -206,6 +211,11 @@ QtObject:
         if (balance.chainId != chainId):
           continue
 
-        tokenBalance = balance.balance
+        return balance.balance
 
-    return $tokenBalance
+    return newCurrencyAmount(
+      0.0,
+      tokenSymbol,
+      0,
+      false
+    )

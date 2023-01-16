@@ -10,12 +10,12 @@ QtObject {
     property var permissionsModel: ListModel {} // Backend permissions list object model asignement. Please check the current expected data in qml defined in `createPermissions` method
 
     // TODO: Replace to real data, now dummy model
-    property var  tokensModel: ListModel {
-        ListElement {key: "socks"; iconSource: "qrc:imports/assets/png/tokens/SOCKS.png"; name: "Unisocks"; shortName: "SOCKS"; category: "Community tokens"}
-        ListElement {key: "zrx"; iconSource: "qrc:imports/assets/png/tokens/ZRX.png"; name: "Ox"; shortName: "ZRX"; category: "Listed tokens"}
-        ListElement {key: "1inch"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "1inch"; shortName: "ZRX"; category: "Listed tokens"}
-        ListElement {key: "Aave"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "Aave"; shortName: "AAVE"; category: "Listed tokens"}
-        ListElement {key: "Amp"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "Amp"; shortName: "AMP"; category: "Listed tokens"}
+    property var  assetsModel: ListModel {
+        ListElement {key: "socks"; iconSource: "qrc:imports/assets/png/tokens/SOCKS.png"; name: "Unisocks"; shortName: "SOCKS"; category: "Community assets"}
+        ListElement {key: "zrx"; iconSource: "qrc:imports/assets/png/tokens/ZRX.png"; name: "Ox"; shortName: "ZRX"; category: "Listed assets"}
+        ListElement {key: "1inch"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "1inch"; shortName: "ZRX"; category: "Listed assets"}
+        ListElement {key: "Aave"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "Aave"; shortName: "AAVE"; category: "Listed assets"}
+        ListElement {key: "Amp"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "Amp"; shortName: "AMP"; category: "Listed assets"}
     }
 
     // TODO: Replace to real data, now dummy model
@@ -100,9 +100,8 @@ QtObject {
         // Setting HOLDINGS:
         for (var i = 0; i < holdings.count; i++ ) {
             var entry = holdings.get(i);
-             // roles: type, key, name, amount, imageSource, operator
+             // roles: type, key, name, amount, imageSource
             permission.holdingsListModel.push({
-                                                  operator: entry.operator,
                                                   type: entry.type,
                                                   key: entry.key,
                                                   name: entry.name,
@@ -136,7 +135,7 @@ QtObject {
 
     function setHoldingsTextFormat(type, name, amount) {
         switch (type) {
-            case HoldingTypes.Type.Token:
+            case HoldingTypes.Type.Asset:
             case HoldingTypes.Type.Collectible:
                 return `${LocaleUtils.numberToLocaleString(amount)} ${name}`
             case HoldingTypes.Type.Ens:

@@ -11,7 +11,7 @@ _mainScreen = StatusMainScreen()
 
 @Given("A first time user lands on the status desktop and generates new key")
 def step(context):
-    init_steps.a_first_time_user_lands_on_and_generates_new_key(context)    
+    init_steps.a_first_time_user_lands_on_and_generates_new_key(context)
 
 @Given("A first time user lands on the status desktop and navigates to import seed phrase")
 def step(context):
@@ -48,9 +48,17 @@ def step(context, username):
 #########################
 ### ACTIONS region:
 ########################
+@When("the user lands on the status desktop and generates new key")
+def step(context):
+    init_steps.a_user_lands_on_and_generates_new_key(context)
+
 @When("the user signs up with username \"|any|\" and password \"|any|\"")
 def step(context, username, password):
     init_steps.the_user_signs_up(username, password)
+
+@When("the user signs up again with username \"|any|\" and password \"|any|\"")
+def step(context, username, password):
+    init_steps.the_user_signs_again_up(username, password)
     
 @When("the user inputs username \"|any|\"")
 def step(context, username):

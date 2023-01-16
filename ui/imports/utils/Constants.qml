@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick 2.13
 
 import StatusQ.Controls.Validators 0.1
+import StatusQ.Core.Theme 0.1
 
 QtObject {
 
@@ -32,6 +33,7 @@ QtObject {
         readonly property string welcomeOldStatusUser: "WelcomeOldStatusUser"
         readonly property string userProfileCreate: "UserProfileCreate"
         readonly property string userProfileChatKey: "UserProfileChatKey"
+        readonly property string userProfileCreateSameChatKey: "UserProfileCreateSameChatKey"
         readonly property string userProfileCreatePassword: "UserProfileCreatePassword"
         readonly property string userProfileConfirmPassword: "UserProfileConfirmPassword"
         readonly property string userProfileImportSeedPhrase: "UserProfileImportSeedPhrase"
@@ -77,8 +79,9 @@ QtObject {
         readonly property string loginKeycardEmpty: "LoginKeycardEmpty"
         readonly property string loginNotKeycard: "LoginNotKeycard"
         readonly property string profileFetching: "ProfileFetching"
-        readonly property string profileFetchingCompleted: "ProfileFetchingCompleted"
-        readonly property string profileFetchingError: "ProfileFetchingError"
+        readonly property string profileFetchingSuccess: "ProfileFetchingSuccess"
+        readonly property string profileFetchingTimeout: "ProfileFetchingTimeout"
+        readonly property string profileFetchingAnnouncement: "ProfileFetchingAnnouncement"
     }
 
     readonly property QtObject predefinedKeycardData: QtObject {
@@ -87,7 +90,7 @@ QtObject {
         readonly property int wrongSeedPhrase: 4
         readonly property int wrongPassword: 8
         readonly property int offerPukForUnlock: 16
-        readonly property int useUnlockLabelForLockedState: 32
+        readonly property int disableSeedPhraseForUnlock: 32
         readonly property int useGeneralMessageForLockedState: 64
         readonly property int maxPUKReached: 128
         readonly property int copyFromAKeycardPartDone: 256
@@ -97,6 +100,9 @@ QtObject {
         readonly property string general: "General"
         readonly property string factoryReset: "FactoryReset"
         readonly property string setupNewKeycard: "SetupNewKeycard"
+        readonly property string setupNewKeycardNewSeedPhrase: "SetupNewKeycardNewSeedPhrase"
+        readonly property string setupNewKeycardOldSeedPhrase: "SetupNewKeycardOldSeedPhrase"
+        readonly property string importFromKeycard: "ImportFromKeycard"
         readonly property string authentication: "Authentication"
         readonly property string unlockKeycard: "UnlockKeycard"
         readonly property string displayKeycardContent: "DisplayKeycardContent"
@@ -141,6 +147,7 @@ QtObject {
         readonly property string selectExistingKeyPair: "SelectExistingKeyPair"
         readonly property string enterSeedPhrase: "EnterSeedPhrase"
         readonly property string wrongSeedPhrase: "WrongSeedPhrase"
+        readonly property string seedPhraseAlreadyInUse: "SeedPhraseAlreadyInUse"
         readonly property string seedPhraseDisplay: "SeedPhraseDisplay"
         readonly property string seedPhraseEnterWords: "SeedPhraseEnterWords"
         readonly property string keyPairMigrateSuccess: "KeyPairMigrateSuccess"
@@ -176,6 +183,16 @@ QtObject {
         readonly property string copyingKeycard: "CopyingKeycard"
         readonly property string copyingKeycardFailure: "CopyingKeycardFailure"
         readonly property string copyingKeycardSuccess: "CopyingKeycardSuccess"
+        readonly property string manageKeycardAccounts: "ManageKeycardAccounts"
+        readonly property string creatingAccountNewSeedPhrase: "CreatingAccountNewSeedPhrase"
+        readonly property string creatingAccountNewSeedPhraseSuccess: "CreatingAccountNewSeedPhraseSuccess"
+        readonly property string creatingAccountNewSeedPhraseFailure: "CreatingAccountNewSeedPhraseFailure"
+        readonly property string creatingAccountOldSeedPhrase: "CreatingAccountOldSeedPhrase"
+        readonly property string creatingAccountOldSeedPhraseSuccess: "CreatingAccountOldSeedPhraseSuccess"
+        readonly property string creatingAccountOldSeedPhraseFailure: "CreatingAccountOldSeedPhraseFailure"
+        readonly property string importingFromKeycard: "ImportingFromKeycard"
+        readonly property string importingFromKeycardSuccess: "ImportingFromKeycardSuccess"
+        readonly property string importingFromKeycardFailure: "ImportingFromKeycardFailure"
     }
 
     readonly property QtObject keycardAnimations: QtObject {
@@ -317,19 +334,27 @@ QtObject {
         readonly property int userImageWidth: 40
         readonly property int userImageHeight: 40
         readonly property int titleFontSize: 17
+        readonly property int fontSize1: 22
+        readonly property int fontSize2: 17
+        readonly property int fontSize3: 15
+        readonly property int fontSize4: 12
+        readonly property int loginInfoHeight1: 24
+        readonly property int loginInfoHeight2: 44
+        readonly property int loginInfoHeight3: 66
+        readonly property int radius: 8
         readonly property QtObject profileFetching: QtObject {
+            readonly property int    timeout: 120 * 1000 //2 mins in milliseconds
             readonly property int    titleFontSize: 22
-            readonly property string titleForSuccess: qsTr("Profile successfully fetched")
-            readonly property string titleForError: qsTr("Unable to fetch your profile")
-            readonly property int    descriptionFontSize: 15
-            readonly property string descriptionForError: qsTr("Sorry, we were unable to fetch your Status profile. If you are using Status on \nanother device, make sure Status is running and it is online and try again. ")
-            readonly property string descriptionForFetchingStarted: qsTr("Securely transferring data...")
-            readonly property string descriptionForFetchingInProgress: qsTr("This might take a while...")
+            readonly property int    entityFontSize: 15
+            readonly property int    entityProgressFontSize: 12
             readonly property string imgInProgress: "onboarding/profile_fetching_in_progress"
-            readonly property string imgError: "onboarding/profile_fetching_error"
-            readonly property string imgCompleted: "onboarding/profile_fetching_completed"
-            readonly property string tryAgainText: qsTr("Try again")
-            readonly property string createNewProfileText: qsTr("Create new Status profile")
+
+            readonly property QtObject entity: QtObject {
+                readonly property string profile: "profile"
+                readonly property string contacts: "contacts"
+                readonly property string communities: "communities"
+                readonly property string settings: "settings"
+            }
         }
     }
 
@@ -689,9 +714,6 @@ QtObject {
     readonly property string ens_connected: "connected"
     readonly property string ens_connected_dkey: "connected-different-key"
 
-    // WARNING: Remove later. Moved to StatusQ.
-    readonly property string editLabel: ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
-
     readonly property string newBookmark: " "
 
     readonly property var ensState: {
@@ -741,4 +763,17 @@ QtObject {
     readonly property string delivered: "delivered"
     readonly property string expired: "expired"
     readonly property string failedResending: "failedResending"
+
+    readonly property var preDefinedWalletAccountColors:[ StatusColors.colors['black'],
+        StatusColors.colors['grey'],
+        StatusColors.colors['blue2'],
+        StatusColors.colors['purple'],
+        StatusColors.colors['cyan'],
+        StatusColors.colors['violet'],
+        StatusColors.colors['red2'],
+        StatusColors.colors['yellow'],
+        StatusColors.colors['green2'],
+        StatusColors.colors['moss'],
+        StatusColors.colors['brown'],
+        StatusColors.colors['brown2'] ]
 }

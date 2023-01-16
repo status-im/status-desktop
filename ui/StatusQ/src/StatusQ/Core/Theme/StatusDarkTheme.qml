@@ -62,6 +62,9 @@ ThemePalette {
 
     statusFloatingButtonHighlight: getColor('blue4', 0.3)
 
+    statusLoadingHighlight: getColor('white', 0.03)
+    statusLoadingHighlight2: getColor('white', 0.07)
+
     userCustomizationColors: [
         "#AAC6FF",
         "#887AF9",

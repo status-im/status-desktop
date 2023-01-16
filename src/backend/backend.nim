@@ -100,7 +100,7 @@ rpc(getTransactionEstimatedTime, "wallet"):
 
 rpc(fetchPrices, "wallet"):
   symbols: seq[string]
-  currency: string
+  currencies: seq[string]
 
 rpc(generateAccountWithDerivedPath, "accounts"):
   password: string
@@ -219,7 +219,7 @@ rpc(deleteDappPermissionsByNameAndAddress, "permissions"):
 
 rpc(fetchMarketValues, "wallet"):
   symbols: seq[string]
-  currency: string
+  currencies: seq[string]
 
 rpc(fetchTokenDetails, "wallet"):
   symbols: seq[string]
@@ -230,6 +230,10 @@ rpc(addMigratedKeyPair, "accounts"):
   keyUid: string
   accountAddresses: seq[string]
   keyStoreDir: string
+
+rpc(removeMigratedAccountsForKeycard, "accounts"):
+  keycardUid: string
+  accountsToRemove: seq[string]
 
 rpc(getAllKnownKeycards, "accounts"):
   discard
@@ -278,3 +282,9 @@ rpc(getBalanceHistory, "wallet"):
   chainId: int
   address: string
   timeInterval: int
+
+rpc(isCurrencyFiat, "wallet"):
+  code: string
+
+rpc(getFiatCurrencyMinorUnit, "wallet"):
+  code: string

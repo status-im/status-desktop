@@ -21,10 +21,9 @@ method executePrimaryCommand*(self: UserProfileConfirmPasswordState, controller:
     controller.storeGeneratedAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
     controller.storeImportedAccountAndLogin(storeToKeychain)
-  elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
-    ## This should not be the correct call for this flow, this is an issue, 
-    ## but since current implementation is like that and this is not a bug fixing issue, left as it is.
-    controller.storeImportedAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
     controller.storeKeycardAccountAndLogin(storeToKeychain)
+  elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
+    controller.storeImportedAccountAndLogin(storeToKeychain = false)
+
   

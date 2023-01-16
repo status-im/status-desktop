@@ -29,100 +29,99 @@ OnboardingBasePage {
         id: loader
         anchors.fill: parent
         sourceComponent: {
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.allowNotifications)
-            {
+            switch (root.startupStore.currentStartupState.stateType) {
+            case Constants.startupState.allowNotifications:
                 return allowNotificationsViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.welcome)
-            {
+
+            case Constants.startupState.welcome:
                 return welcomeViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.welcomeNewStatusUser ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.welcomeOldStatusUser ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileImportSeedPhrase)
-            {
+
+            case Constants.startupState.welcomeNewStatusUser:
+            case Constants.startupState.welcomeOldStatusUser:
+            case Constants.startupState.userProfileImportSeedPhrase:
+            case Constants.startupState.profileFetchingAnnouncement:
+            case Constants.startupState.userProfileCreateSameChatKey:
                 return keysMainViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileCreate ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileChatKey)
-            {
+
+            case Constants.startupState.userProfileCreate:
+            case Constants.startupState.userProfileChatKey:
                 return insertDetailsViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileCreatePassword)
-            {
+
+            case Constants.startupState.userProfileCreatePassword:
                 return createPasswordViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileConfirmPassword)
-            {
+
+            case Constants.startupState.userProfileConfirmPassword:
                 return confirmPasswordViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.biometrics)
-            {
+
+            case Constants.startupState.biometrics:
                 return touchIdAuthViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileEnterSeedPhrase)
-            {
+
+            case Constants.startupState.userProfileEnterSeedPhrase:
                 return seedPhraseInputViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.login ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginPlugin ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardInsertKeycard ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardInsertedKeycard ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardReadingKeycard ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardRecognizedKeycard ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEnterPin ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEnterPassword ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardPinVerified ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardWrongKeycard ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardWrongPin ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPinRetriesReached ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPukRetriesReached ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardMaxPairingSlotsReached ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEmpty ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.loginNotKeycard)
-            {
+
+            case Constants.startupState.login:
+            case Constants.startupState.loginPlugin:
+            case Constants.startupState.loginKeycardInsertKeycard:
+            case Constants.startupState.loginKeycardInsertedKeycard:
+            case Constants.startupState.loginKeycardReadingKeycard:
+            case Constants.startupState.loginKeycardRecognizedKeycard:
+            case Constants.startupState.loginKeycardEnterPin:
+            case Constants.startupState.loginKeycardEnterPassword:
+            case Constants.startupState.loginKeycardPinVerified:
+            case Constants.startupState.loginKeycardWrongKeycard:
+            case Constants.startupState.loginKeycardWrongPin:
+            case Constants.startupState.loginKeycardMaxPinRetriesReached:
+            case Constants.startupState.loginKeycardMaxPukRetriesReached:
+            case Constants.startupState.loginKeycardMaxPairingSlotsReached:
+            case Constants.startupState.loginKeycardEmpty:
+            case Constants.startupState.loginNotKeycard:
                 return loginViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardPluginReader ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardInsertKeycard ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardInsertedKeycard ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardReadingKeycard ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardRecognizedKeycard)
-            {
+
+            case Constants.startupState.keycardPluginReader:
+            case Constants.startupState.keycardInsertKeycard:
+            case Constants.startupState.keycardInsertedKeycard:
+            case Constants.startupState.keycardReadingKeycard:
+            case Constants.startupState.keycardRecognizedKeycard:
                 return keycardInitViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardCreatePin ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardRepeatPin ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardPinSet ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardEnterPin ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardWrongPin)
-            {
+
+            case Constants.startupState.keycardCreatePin:
+            case Constants.startupState.keycardRepeatPin:
+            case Constants.startupState.keycardPinSet:
+            case Constants.startupState.keycardEnterPin:
+            case Constants.startupState.keycardWrongPin:
                 return keycardPinViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardDisplaySeedPhrase)
-            {
+
+            case Constants.startupState.keycardDisplaySeedPhrase:
                 return seedphraseViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardEnterSeedPhraseWords)
-            {
+
+            case Constants.startupState.keycardEnterSeedPhraseWords:
                 return seedphraseWordsInputViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardNotEmpty ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardNotKeycard ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardEmpty ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardWrongKeycard ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardLocked ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardRecover ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPairingSlotsReached ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPinRetriesReached ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardMaxPukRetriesReached)
-            {
+
+            case Constants.startupState.keycardNotEmpty:
+            case Constants.startupState.keycardNotKeycard:
+            case Constants.startupState.keycardEmpty:
+            case Constants.startupState.keycardWrongKeycard:
+            case Constants.startupState.keycardLocked:
+            case Constants.startupState.keycardRecover:
+            case Constants.startupState.keycardMaxPairingSlotsReached:
+            case Constants.startupState.keycardMaxPinRetriesReached:
+            case Constants.startupState.keycardMaxPukRetriesReached:
                 return keycardStateViewComponent
-            }
-            if (root.startupStore.currentStartupState.stateType === Constants.startupState.keycardEnterPuk ||
-                    root.startupStore.currentStartupState.stateType === Constants.startupState.keycardWrongPuk)
-            {
+
+            case Constants.startupState.keycardEnterPuk:
+            case Constants.startupState.keycardWrongPuk:
                 return keycardPukViewComponent
+
+            case Constants.startupState.keycardWrongPuk:
+                return keycardPukViewComponent
+
+            case Constants.startupState.keycardWrongPuk:
+                return keycardPukViewComponent
+
+            case Constants.startupState.profileFetching:
+            case Constants.startupState.profileFetchingSuccess:
+            case Constants.startupState.profileFetchingTimeout:
+                return fetchingDataViewComponent
             }
 
             return undefined
@@ -278,10 +277,18 @@ case of Keycard try recovering using PUK or reinstall the app and try login with
         }
     }
 
+    Component {
+        id: fetchingDataViewComponent
+        ProfileFetchingView {
+            startupStore: root.startupStore
+        }
+    }
+
     Loader {
         id: keycardPopup
         active: false
         sourceComponent: KeycardPopup {
+            anchors.centerIn: parent
             sharedKeycardModule: root.startupStore.startupModuleInst.keycardSharedModule
         }
 

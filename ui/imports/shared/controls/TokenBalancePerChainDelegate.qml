@@ -8,14 +8,14 @@ import utils 1.0
 StatusListItem {
     id: root
 
-    property string currentCurrencySymbol
+    property var locale
     property var getNetworkIcon: function(chainId){
         return ""
     }
     signal tokenSelected(var selectedToken)
 
     title: name
-    label: enabledNetworkCurrencyBalance.toLocaleCurrencyString(Qt.locale(), root.currentCurrencySymbol)
+    label: LocaleUtils.currencyAmountToLocaleString(enabledNetworkCurrencyBalance, root.locale)
     asset.name: symbol ? Style.png("tokens/" + symbol) : ""
     asset.isImage: true
     asset.width: 32
@@ -34,14 +34,14 @@ StatusListItem {
             width: 16
             height: 16
             image.source: Style.svg("tiny/%1".arg(root.getNetworkIcon(chainId)))
-            visible: balance > 0
+            visible: balance.amount > 0
         }
     }
     Component {
         id: expandedItem
         StatusListItemTag {
             height: 16
-            title: balance
+            title: LocaleUtils.currencyAmountToLocaleString(balance, root.locale)
             titleText.font.pixelSize: 12
             closeButtonVisible: false
             bgColor: "transparent"
@@ -49,7 +49,7 @@ StatusListItem {
             asset.height: 16
             asset.isImage: true
             asset.name: Style.svg("tiny/%1".arg(root.getNetworkIcon(chainId)))
-            visible: balance > 0
+            visible: balance.amount > 0
         }
     }
 }

@@ -18,13 +18,14 @@ Page {
 
     property var rootStore
     property var emojiPopup: null
+    property var stickersPopup: null
 
     QtObject {
         id: d
 
         function createChat() {
             root.rootStore.createChatInitMessage = chatInput.textInput.text
-            root.rootStore.createChatFileUrls = chatInput.fileUrls
+            root.rootStore.createChatFileUrls = chatInput.fileUrlsAndSources
             membersSelector.createChat()
 
             membersSelector.cleanup()
@@ -153,7 +154,11 @@ Page {
                 visible: membersSelector.model.count > 0
                 chatType: membersSelector.model.count === 1? Constants.chatType.oneToOne : Constants.chatType.privateGroupChat
                 emojiPopup: root.emojiPopup
+                stickersPopup: root.stickersPopup
                 closeGifPopupAfterSelection: true
+                usersStore: ({
+                    usersModel: membersSelector.model
+                })
                 onSendTransactionCommandButtonClicked: {
                     root.rootStore.createChatStartSendTransactionProcess = true;
                     membersSelector.createChat();

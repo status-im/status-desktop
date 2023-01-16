@@ -23,7 +23,6 @@ SplitView {
             SplitView.fillHeight: true
 
             communitiesStore: CommunitiesStore {
-                readonly property string locale: ""
                 readonly property int unreadNotificationsCount: 42
                 readonly property string communityTags: ModelsData.communityTags
                 readonly property var curatedCommunitiesModel: SortFilterProxyModel {

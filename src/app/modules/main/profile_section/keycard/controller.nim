@@ -55,19 +55,29 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_KEYCARD_LOCKED) do(e: Args):
     let args = KeycardActivityArgs(e)
-    self.delegate.onKeycardLocked(args.keycardUid)
+    self.delegate.onKeycardLocked(args.keyPair.keyUid, args.keyPair.keycardUid)
 
   self.events.on(SIGNAL_KEYCARD_UNLOCKED) do(e: Args):
     let args = KeycardActivityArgs(e)
-    self.delegate.onKeycardUnlocked(args.keycardUid)
+    self.delegate.onKeycardUnlocked(args.keyPair.keyUid, args.keyPair.keycardUid)
 
   self.events.on(SIGNAL_KEYCARD_NAME_CHANGED) do(e: Args):
     let args = KeycardActivityArgs(e)
-    self.delegate.onKeycardNameChanged(args.keycardUid, args.keycardNewName)
+    self.delegate.onKeycardNameChanged(args.keyPair.keycardUid, args.keyPair.keycardName)
 
   self.events.on(SIGNAL_KEYCARD_UID_UPDATED) do(e: Args):
     let args = KeycardActivityArgs(e)
-    self.delegate.onKeycardUidUpdated(args.keycardUid, args.keycardNewUid)
+    self.delegate.onKeycardUidUpdated(args.oldKeycardUid, args.keyPair.keycardUid)
+
+  self.events.on(SIGNAL_KEYCARD_ACCOUNTS_REMOVED) do(e: Args):
+    let args = KeycardActivityArgs(e)
+    if not args.success:
+      return
+    self.delegate.onKeycardAccountsRemoved(args.keyPair.keyUid, args.keyPair.keycardUid, args.keyPair.accountsAddresses)
+
+  self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e: Args):
+    let args = WalletAccountUpdated(e)
+    self.delegate.onWalletAccountUpdated(args.account)
 
 proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
   return self.walletAccountService.getAllMigratedKeyPairs()

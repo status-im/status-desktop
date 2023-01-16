@@ -64,7 +64,9 @@ QtObject {
         'yellow': '#FFCA0F',
         'yellow2': '#EAD27B',
 
-        'blueHijab': '#CDF2FB'
+        'blueHijab': '#CDF2FB',
+
+        'lightPattensBlue': '#D7DEE4',
     }
 }
 

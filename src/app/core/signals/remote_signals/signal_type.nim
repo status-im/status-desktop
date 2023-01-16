@@ -47,6 +47,9 @@ type SignalType* {.pure.} = enum
   StatusUpdatesTimedout = "status.updates.timedout"
   DiscordCommunityImportFinished = "community.discordCommunityImportFinished"
   DiscordCommunityImportProgress = "community.discordCommunityImportProgress"
+  WakuFetchingBackupProgress = "waku.fetching.backup.progress"
+  WakuBackedUpProfile = "waku.backedup.profile"
+  WakuBackedUpSettings = "waku.backedup.settings"
   Unknown
 
 proc event*(self:SignalType):string =

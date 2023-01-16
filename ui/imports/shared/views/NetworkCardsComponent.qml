@@ -91,13 +91,14 @@ Item {
                     objectName: model.chainId
                     property double amountToSend: 0
                     property int routeOnNetwork: 0
-                    property string tokenBalanceOnChain: selectedAccount && selectedAccount!== undefined && selectedAsset!== undefined ? selectedAccount.getTokenBalanceOnChain(model.chainId, selectedAsset.symbol) : ""
+                    property bool tokenBalanceOnChainValid: selectedAccount && selectedAccount !== undefined && selectedAsset !== undefined
+                    property var tokenBalanceOnChain: tokenBalanceOnChainValid ? root.store.getTokenBalanceOnChain(selectedAccount, model.chainId, selectedAsset.symbol) : undefined
                     property var hasGas: selectedAccount.hasGas(model.chainId, model.nativeCurrencySymbol, requiredGasInEth)
 
                     primaryText: model.chainName
-                    secondaryText: (parseFloat(tokenBalanceOnChain) === 0 && root.amountToSend !== 0) ?
+                    secondaryText: (tokenBalanceOnChain.amount === 0) && root.amountToSend !== 0 ?
                                        qsTr("No Balance") : !hasGas ? qsTr("No Gas") : advancedInputText
-                    tertiaryText: root.errorMode && parseFloat(advancedInputText) !== 0 && advancedInput.valid ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: ") + LocaleUtils.numberToLocaleString(parseFloat(tokenBalanceOnChain))
+                    tertiaryText: root.errorMode && parseFloat(advancedInputText) !== 0 && advancedInput.valid ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: ") + LocaleUtils.currencyAmountToLocaleString(tokenBalanceOnChain, root.store.locale)
                     locked: store.lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined && lockedItem.chainID ===  model.chainId) !== -1
                     preCalculatedAdvancedText: {
                         let index  = store.lockedInAmounts.findIndex(lockedItem => lockedItem!== undefined && lockedItem.chainID === model.chainId)
@@ -106,8 +107,8 @@ Item {
                         }
                         else return LocaleUtils.numberToLocaleString(fromNetwork.amountToSend)
                     }
-                    maxAdvancedValue: parseFloat(tokenBalanceOnChain)
-                    state: tokenBalanceOnChain === 0 || !hasGas ?
+                    maxAdvancedValue: tokenBalanceOnChain.amount
+                    state: tokenBalanceOnChain.amount === 0 || !hasGas ?
                                "unavailable" :
                                (root.errorMode || !advancedInput.valid) && (parseFloat(advancedInputText) !== 0) ? "error" : "default"
                     cardIcon.source: Style.svg(model.iconUrl)

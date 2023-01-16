@@ -1,5 +1,6 @@
 import NimQml
 from ../../../../../app_service/service/wallet_account/service import KeyPairDto
+from ../../../../../app_service/service/wallet_account/service import WalletAccountDto
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -29,7 +30,7 @@ method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheC
 method runSetupKeycardPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runGenerateSeedPhrasePopup*(self: AccessInterface) {.base.} =
+method runCreateNewKeycardWithNewSeedPhrasePopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runImportOrRestoreViaSeedPhrasePopup*(self: AccessInterface) {.base.} =
@@ -68,16 +69,22 @@ method onLoggedInUserImageChanged*(self: AccessInterface) {.base.} =
 method onNewKeycardSet*(self: AccessInterface, keyPair: KeyPairDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardLocked*(self: AccessInterface, keycardUid: string) {.base.} =
+method onKeycardLocked*(self: AccessInterface, keyUid: string, keycardUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardUnlocked*(self: AccessInterface, keycardUid: string) {.base.} =
+method onKeycardUnlocked*(self: AccessInterface, keyUid: string, keycardUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onKeycardNameChanged*(self: AccessInterface, keycardUid: string, keycardNewName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onKeycardUidUpdated*(self: AccessInterface, keycardUid: string, keycardNewUid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardAccountsRemoved*(self: AccessInterface, keyUid: string, keycardUid: string, accountsToRemove: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onWalletAccountUpdated*(self: AccessInterface, account: WalletAccountDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method prepareKeycardDetailsModel*(self: AccessInterface, keyUid: string) {.base.} =

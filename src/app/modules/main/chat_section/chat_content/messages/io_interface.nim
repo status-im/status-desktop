@@ -44,7 +44,7 @@ method onPinMessage*(self: AccessInterface, messageId: string, actionInitiatedBy
 method onUnpinMessage*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method messageAdded*(self: AccessInterface, message: MessageDto) {.base.} =
+method messagesAdded*(self: AccessInterface, messages: seq[MessageDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onSendingMessageSuccess*(self: AccessInterface, message: MessageDto) {.base.} =

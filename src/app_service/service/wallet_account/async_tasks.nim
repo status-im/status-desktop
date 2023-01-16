@@ -91,19 +91,6 @@ const fetchDerivedAddressDetailsTask*: Task = proc(argEncoded: string) {.gcsafe,
   arg.finish(data)
 
 #################################################
-# Async timer
-#################################################
-
-type
-  TimerTaskArg = ref object of QObjectTaskArg
-    timeoutInMilliseconds: int
-
-const timerTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[TimerTaskArg](argEncoded)
-  sleep(arg.timeoutInMilliseconds)
-  arg.finish("")
-
-#################################################
 # Async building token
 #################################################
 
@@ -135,7 +122,37 @@ const addMigratedKeyPairTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
       arg.keyPair.accountsAddresses,
       arg.keyStoreDir
       )
-    arg.finish(response)
+    let success = responseHasNoErrors("addMigratedKeyPair", response)
+    let responseJson = %*{
+      "success": success,
+      "keyPair": arg.keyPair.toJsonNode()
+    }
+    arg.finish(responseJson)
   except Exception as e:
     error "error adding new keypair: ", message = e.msg  
+    arg.finish("")
+
+#################################################
+# Async add migrated keypair
+#################################################
+
+type
+  RemoveMigratedAccountsForKeycardTaskArg* = ref object of QObjectTaskArg
+    keyPair: KeyPairDto
+
+const removeMigratedAccountsForKeycardTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[RemoveMigratedAccountsForKeycardTaskArg](argEncoded)
+  try:
+    let response = backend.removeMigratedAccountsForKeycard(
+      arg.keyPair.keycardUid,
+      arg.keyPair.accountsAddresses
+      )
+    let success = responseHasNoErrors("removeMigratedAccountsForKeycard", response)
+    let responseJson = %*{
+      "success": success,
+      "keyPair": arg.keyPair.toJsonNode()
+    }
+    arg.finish(responseJson)
+  except Exception as e:
+    error "error remove accounts from keycard: ", message = e.msg  
     arg.finish("")

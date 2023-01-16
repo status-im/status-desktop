@@ -89,8 +89,10 @@ proc buildTransaction*(
   else:
     result.txType = "0x00"
 
-proc buildTokenTransaction*(source, contractAddress: Address, gas = "", gasPrice = "", isEIP1559Enabled = false,
-  maxPriorityFeePerGas = "", maxFeePerGas = ""): TransactionDataDto =
+proc buildTokenTransaction*(
+  source, contractAddress: Address, gas = "", gasPrice = "", isEIP1559Enabled = false,
+  maxPriorityFeePerGas = "", maxFeePerGas = ""
+): TransactionDataDto =
   result = buildTransaction(source, 0.u256, gas, gasPrice, isEIP1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
   result.to = contractAddress.some
 

@@ -19,6 +19,7 @@ import time
 
 class MainScreenComponents(Enum):
     MAIN_WINDOW = "statusDesktop_mainWindow"
+    POPUP_OVERLAY = "statusDesktop_mainWindow_overlay"
     PUBLIC_CHAT_ICON = "mainWindow_public_chat_icon_StatusIcon"
     CHAT_NAVBAR_ICON = "navBarListView_Chat_navbar_StatusNavBarTabButton"
     COMMUNITY_PORTAL_BUTTON = "navBarListView_Communities_Portal_navbar_StatusNavBarTabButton"
@@ -42,7 +43,7 @@ class MainScreenComponents(Enum):
     SPLASH_SCREEN = "splashScreen"
     TOOLBAR_BACK_BUTTON = "main_toolBar_back_button"
     LEAVE_CHAT_MENUITEM = "leaveChatMenuItem"
-    EMPTY_CHAT_PANEL_IMAGE = "mainWindow_emptyChatPanelImage"
+    CONTACTS_COLUMN_MESSAGES_HEADLINE = "mainWindow_ContactsColumn_Messages_Headline"
 
 class ProfilePopup(Enum):
     USER_IMAGE = "ProfileHeader_userImage"
@@ -58,13 +59,13 @@ class ChatNamePopUp(Enum):
 class StatusMainScreen:
 
     def __init__(self):
-        verify_screen(MainScreenComponents.EMPTY_CHAT_PANEL_IMAGE.value)
+        verify_screen(MainScreenComponents.CONTACTS_COLUMN_MESSAGES_HEADLINE.value)
         
     # Main screen is ready to interact with it (Splash screen animation not present and no banners on top of the screen)
     def is_ready(self):
         self.wait_for_splash_animation_ends()
         self.close_banners()
-        verify(is_displayed(MainScreenComponents.EMPTY_CHAT_PANEL_IMAGE.value), "Verifying if empty chat panel image is displayed")
+        verify(is_displayed(MainScreenComponents.CONTACTS_COLUMN_MESSAGES_HEADLINE.value), "Verifying if the Messages headline is displayed")
         
     def wait_for_splash_animation_ends(self, timeoutMSec: int = 10000):
         start = time.time()
@@ -229,3 +230,7 @@ class StatusMainScreen:
         
     def navigate_to_edit_profile(self):
         click_obj_by_name(ProfilePopup.EDIT_PROFILE_BUTTON.value)
+        
+    def close_popup(self):
+        # Click in the corner of the overlay to close the popup
+        click_obj_by_name_at_coordinates(MainScreenComponents.POPUP_OVERLAY.value, 1, 1)

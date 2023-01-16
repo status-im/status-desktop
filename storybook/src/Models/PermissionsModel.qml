@@ -35,19 +35,19 @@ ListModel {
         var holdings = []
         holdings.push({
                           operator: OperatorsUtils.Operators.None,
-                          type: HoldingTypes.Type.Token,
+                          type: HoldingTypes.Type.Asset,
                           key: "SOCKS",
                           name: "SOCKS",
                           amount: 1.2,
-                          imageSource: ModelsData.tokens.socks
+                          imageSource: ModelsData.assets.socks
                       });
         holdings.push({
                           operator: OperatorsUtils.Operators.Or,
-                          type: HoldingTypes.Type.Token,
+                          type: HoldingTypes.Type.Asset,
                           key: "ZRX",
                           name: "ZRX",
                           amount: 15,
-                          imageSource: ModelsData.tokens.zrx
+                          imageSource: ModelsData.assets.zrx
                       });
         holdings.push({
                           operator: OperatorsUtils.Operators.And,
@@ -76,7 +76,7 @@ ListModel {
                           key: "AMP",
                           name: "AMP",
                           amount: 11,
-                          imageSource: ModelsData.tokens.amp
+                          imageSource: ModelsData.assets.amp
                       });
         return holdings
     }
@@ -85,12 +85,12 @@ ListModel {
         var channels = []
         channels.push({
                           key: "help",
-                          iconSource: ModelsData.tokens.zrx,
+                          iconSource: ModelsData.assets.zrx,
                           name: "#help"
                       });
         channels.push({
                           key: "faq",
-                          iconSource: ModelsData.tokens.zrx,
+                          iconSource: ModelsData.assets.zrx,
                           name: "#faq"
                       });
         return channels
@@ -100,12 +100,12 @@ ListModel {
         var channels = []
         channels.push({
                           key: "welcome",
-                          iconSource: ModelsData.tokens.inch,
+                          iconSource: ModelsData.assets.inch,
                           name: "#welcome"
                       });
         channels.push({
                           key: "general",
-                          iconSource: ModelsData.tokens.inch,
+                          iconSource: ModelsData.assets.inch,
                           name: "#general"
                       });
         return channels

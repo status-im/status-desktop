@@ -16,6 +16,7 @@ type
   WalletAccount* = object
     path*: string
     address*: string
+    publicKey*: string
 
   GeneratedWalletAccount* = object
     address*: string
@@ -42,6 +43,7 @@ type
     pukRetries*: int
     cardMetadata*: CardMetadata
     generatedWalletAccount*: GeneratedWalletAccount
+    generatedWalletAccounts*: seq[GeneratedWalletAccount]
     txSignature*: TransactionSignature
     eip1581Key*: KeyDetails
     encryptionKey*: KeyDetails
@@ -67,6 +69,8 @@ proc toApplicationInfo(jsonObj: JsonNode): ApplicationInfo =
 proc toWalletAccount(jsonObj: JsonNode): WalletAccount =
   discard jsonObj.getProp(ResponseParamPath, result.path)
   discard jsonObj.getProp(ResponseParamAddress, result.address)
+  if jsonObj.getProp(ResponseParamPublicKey, result.publicKey):
+    result.publicKey = "0x" & result.publicKey
 
 proc toGeneratedWalletAccount(jsonObj: JsonNode): GeneratedWalletAccount =
   discard jsonObj.getProp(ResponseParamAddress, result.address)
@@ -127,8 +131,12 @@ proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
   if(jsonObj.getProp(ResponseParamCardMeta, obj)):
     result.cardMetadata = toCardMetadata(obj)
   
-  if(jsonObj.getProp(ResponseParamExportedKey, obj)):
-    result.generatedWalletAccount = toGeneratedWalletAccount(obj)
+  if jsonObj.getProp(ResponseParamExportedKey, obj):
+    if obj.kind == JArray:
+      for o in obj:
+        result.generatedWalletAccounts.add(toGeneratedWalletAccount(o))
+    else:
+      result.generatedWalletAccount = toGeneratedWalletAccount(obj)
 
   if(jsonObj.getProp(ResponseParamTXSignature, obj)):
     result.txSignature = toTransactionSignature(obj)

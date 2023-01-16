@@ -1,35 +1,35 @@
 import json, chronicles
 
-import ../contacts/service as contact_service
 import ../settings/service as settings_service
 import ../../../app/global/global_singleton
 
+import ../../../app/core/signals/types
+import ../../../app/core/eventemitter
+
 import ../../../backend/accounts as status_accounts
 
-import ./dto/profile as profile_dto
-
-export profile_dto
+import ../accounts/dto/accounts
 
 logScope:
   topics = "profile-service"
 
 type
   Service* = ref object of RootObj
-    contactService: contact_service.Service
+    events: EventEmitter
     settingsService: settings_service.Service
 
 proc delete*(self: Service) =
   discard
 
-proc newService*(contactService: contact_service.Service, settingsService: settings_service.Service): Service =
+proc newService*(events: EventEmitter, settingsService: settings_service.Service): Service =
   result = Service()
-  result.contactService = contactService
+  result.events = events
   result.settingsService = settingsService
 
 proc init*(self: Service) =
   discard
 
-proc storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int) =
+proc storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
   try:
     let response = status_accounts.storeIdentityImage(address, image, aX, aY, bX, bY)
     if(not response.error.isNil):
@@ -44,6 +44,7 @@ proc storeIdentityImage*(self: Service, address: string, image: string, aX: int,
 
     for img in response.result:
       let imageDto = toImage(img)
+      result.add(imageDto)
       if(imageDto.imgType == "large"):
         singletonInstance.userProfile.setLargeImage(imageDto.uri)
       elif(imageDto.imgType == "thumbnail"):

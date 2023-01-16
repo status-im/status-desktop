@@ -10,8 +10,6 @@ Loader {
     property string pinnedMsgInfoText: ""
     property string pinnedBy: ""
 
-    active: visible
-
     sourceComponent: Control {
         verticalPadding: 3
         leftPadding: 2

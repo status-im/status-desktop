@@ -23,6 +23,49 @@ type BalanceDto* = object
   chainId*: int
 
 type
+  TokenMarketValuesDto* = object
+    marketCap*: float64
+    highDay*: float64
+    lowDay*: float64
+    changePctHour*: float64
+    changePctDay*: float64
+    changePct24hour*: float64
+    change24hour*: float64
+    price*: float64
+
+proc newTokenMarketValuesDto*(
+  marketCap: float64,
+  highDay: float64,
+  lowDay: float64,
+  changePctHour: float64,
+  changePctDay: float64,
+  changePct24hour: float64,
+  change24hour: float64,
+  price: float64
+): TokenMarketValuesDto =
+  return TokenMarketValuesDto(
+    marketCap: marketCap,
+    highDay: highDay,
+    lowDay: lowDay,
+    changePctHour: changePctHour,
+    changePctDay: changePctDay,
+    changePct24hour: changePct24hour,
+    change24hour: change24hour,
+    price: price,
+  )
+
+proc toTokenMarketValuesDto*(jsonObj: JsonNode): TokenMarketValuesDto =
+  result = TokenMarketValuesDto()
+  discard jsonObj.getProp("marketCap", result.marketCap)
+  discard jsonObj.getProp("highDay", result.highDay)
+  discard jsonObj.getProp("lowDay", result.lowDay)
+  discard jsonObj.getProp("changePctHour", result.changePctHour)
+  discard jsonObj.getProp("changePctDay", result.changePctDay)
+  discard jsonObj.getProp("changePct24hour", result.changePct24hour)
+  discard jsonObj.getProp("change24hour", result.change24hour)
+  discard jsonObj.getProp("price", result.price)
+
+type
   WalletTokenDto* = object
     name*: string
     symbol*: string
@@ -32,14 +75,8 @@ type
     description*: string
     assetWebsiteUrl*: string
     builtOn*: string
-    marketCap*: string
-    highDay*: string
-    lowDay*: string
-    changePctHour*: string
-    changePctDay*: string
-    changePct24hour*: string
-    change24hour*: string
-    currencyPrice*: float64
+    pegSymbol*: string
+    marketValuesPerCurrency*: Table[string, TokenMarketValuesDto]
 
 type
   WalletAccountDto* = ref object of RootObj
@@ -123,11 +160,12 @@ proc getBalance*(self: WalletTokenDto, chainIds: seq[int]): float64 =
   
   return sum
 
-proc getCurrencyBalance*(self: WalletTokenDto, chainIds: seq[int]): float64 =
+proc getCurrencyBalance*(self: WalletTokenDto, chainIds: seq[int], currency: string): float64 =
   var sum = 0.0
+  let price = if self.marketValuesPerCurrency.hasKey(currency): self.marketValuesPerCurrency[currency].price else: 0.0
   for chainId in chainIds:
     if self.balancesPerChain.hasKey(chainId):
-      sum += self.balancesPerChain[chainId].getCurrencyBalance(self.currencyPrice)
+      sum += self.balancesPerChain[chainId].getCurrencyBalance(price)
   
   return sum
 
@@ -148,8 +186,8 @@ proc getVisibleForNetworkWithPositiveBalance*(self: WalletTokenDto, chainIds: se
   
   return false
 
-proc getCurrencyBalance*(self: WalletAccountDto, chainIds: seq[int]): float64 =
-  return self.tokens.map(t => t.getCurrencyBalance(chainIds)).foldl(a + b, 0.0)
+proc getCurrencyBalance*(self: WalletAccountDto, chainIds: seq[int], currency: string): float64 =
+  return self.tokens.map(t => t.getCurrencyBalance(chainIds, currency)).foldl(a + b, 0.0)
 
 proc toBalanceDto*(jsonObj: JsonNode): BalanceDto =
   result = BalanceDto()
@@ -166,14 +204,12 @@ proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
   discard jsonObj.getProp("description", result.description)
   discard jsonObj.getProp("assetWebsiteUrl", result.assetWebsiteUrl)
   discard jsonObj.getProp("builtOn", result.builtOn)
-  discard jsonObj.getProp("marketCap", result.marketCap)
-  discard jsonObj.getProp("highDay", result.highDay)
-  discard jsonObj.getProp("lowDay", result.lowDay)
-  discard jsonObj.getProp("changePctHour", result.changePctHour)
-  discard jsonObj.getProp("changePctDay", result.changePctDay)
-  discard jsonObj.getProp("changePct24hour", result.changePct24hour)
-  discard jsonObj.getProp("change24hour", result.change24hour)
-  discard jsonObj.getProp("currencyPrice", result.currencyPrice)
+  discard jsonObj.getProp("pegSymbol", result.pegSymbol)
+
+  var marketValuesPerCurrencyObj: JsonNode
+  if(jsonObj.getProp("marketValuesPerCurrency", marketValuesPerCurrencyObj)):
+    for currency, marketValuesObj in marketValuesPerCurrencyObj:
+      result.marketValuesPerCurrency[currency] = marketValuesObj.toTokenMarketValuesDto()
 
   var balancesPerChainObj: JsonNode
   if(jsonObj.getProp("balancesPerChain", balancesPerChainObj)):

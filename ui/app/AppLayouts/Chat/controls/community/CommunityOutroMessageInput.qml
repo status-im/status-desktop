@@ -10,8 +10,6 @@ import StatusQ.Controls.Validators 0.1
 StatusInput {
     id: root
 
-    leftPadding: 0
-    rightPadding: 0
     label: qsTr("Leaving community message")
     charLimit: 80
 

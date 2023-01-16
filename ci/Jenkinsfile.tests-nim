@@ -4,7 +4,12 @@ library 'status-jenkins-lib@v1.6.3'
 def isPRBuild = utils.isPRBuild()
 
 pipeline {
-  agent { label 'linux' }
+  agent {
+    docker {
+      label 'linux'
+      image 'statusteam/nim-status-client-build:1.1.5'
+    }
+  }
 
   parameters {
     choice(
@@ -13,7 +18,7 @@ pipeline {
       choices: ['0', '1', '2']
     )
   }
-  
+
   options {
     timestamps()
     /* Prevent Jenkins jobs from running forever */
@@ -43,20 +48,22 @@ pipeline {
   }
 
   stages {
-    stage('Check') {
-      steps { sh 'make tests-nim-linux' }
+    stage('Deps') {
+      steps {
+        sh 'make update'
+        sh 'make deps'
+      }
     }
 
-    stage('Upload') {
-      steps { script {
-        env.PKG_URL = "${currentBuild.absoluteUrl}/consoleText"
-      } }
+    stage('Tests') {
+      steps { sh 'make tests-nim-linux' }
     }
   }
 
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
+    always  { script { env.PKG_URL = "${currentBuild.absoluteUrl}/consoleText" } }
     cleanup { cleanWs() }
   }
 }

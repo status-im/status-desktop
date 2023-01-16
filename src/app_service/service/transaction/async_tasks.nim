@@ -26,7 +26,7 @@ const loadTransactionsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.}
       "address": arg.address,
       "chainId": arg.chainId,
       "history": transactions.getTransfersByAddress(arg.chainId, arg.address, arg.toBlock, limitAsHex, arg.loadMore),
-      "loadMore": arg.loadMore
+      "loadMore": arg.loadMore,
     }
   arg.finish(output)
 

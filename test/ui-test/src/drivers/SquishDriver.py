@@ -124,6 +124,11 @@ def click_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))
     squish.mouseClick(obj, squish.Qt.LeftButton)
 
+# It executes the click action into the given object at particular coordinates:
+def click_obj_by_name_at_coordinates(objName: str, x: int, y: int):
+    obj = squish.waitForObject(getattr(names, objName))
+    squish.mouseClick(obj, x, y, squish.Qt.LeftButton)
+
 def click_obj_by_attr(attr: str):
     obj = squish.waitForObject(attr)
     squish.mouseClick(obj, squish.Qt.LeftButton)

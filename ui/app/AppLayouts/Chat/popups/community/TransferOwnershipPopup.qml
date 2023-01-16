@@ -39,8 +39,6 @@ StatusDialog {
 
             readonly property string elidedPkey: Utils.getElidedCommunityPK(root.privateKey)
 
-            leftPadding: 0
-            rightPadding: 0
             label: qsTr("Community private key")
 
             input.text: elidedPkey

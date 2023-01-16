@@ -61,16 +61,7 @@ Flickable {
                                 icon: model.imageSource
                                 amountText: model.amount
                                 isAmountVisible: true
-                                isExpression: model.operator !== OperatorsUtils.Operators.None
-                                isAnd: model.operator === OperatorsUtils.Operators.And
-                                iconsModel: TokensCollectiblesIconsModel {}
-                                onIsAndChanged: {
-                                    if(model.operator !== OperatorsUtils.Operators.None)
-                                    {
-                                        if(isAnd) model.operator = OperatorsUtils.Operators.And
-                                        else model.operator = OperatorsUtils.Operators.Or
-                                    }
-                                }
+                                iconsModel: AssetsCollectiblesIconsModel {}
                                 onNameChanged: model.name = name
                                 onIconChanged: model.imageSource = icon
                                 onAmountTextChanged: model.amount = parseFloat(amountText)
@@ -84,8 +75,7 @@ Flickable {
                         icon: d.newImageSource
                         amountText: d.newAmount
                         isAmountVisible: true
-                        iconsModel: TokensCollectiblesIconsModel {}
-                        isExpression: false
+                        iconsModel: AssetsCollectiblesIconsModel {}
                         onNameChanged: d.newName = name
                         onIconChanged: d.newImageSource = icon
                         onAmountTextChanged: d.newAmount = parseFloat(amountText)
@@ -97,7 +87,6 @@ Flickable {
                         text: "Add new holding"
                         onClicked: {
                             model.holdingsListModel.append([{
-                                                                operator: OperatorsUtils.Operators.And,
                                                                 type: 1,
                                                                 key: d.newName,
                                                                 name: d.newName,
@@ -114,7 +103,7 @@ Flickable {
                                  panelText: "In [item " + model.index + "]"
                                  name: model.name
                                  icon: model.iconSource
-                                 iconsModel: TokensCollectiblesIconsModel {}
+                                 iconsModel: AssetsCollectiblesIconsModel {}
                                  onNameChanged: model.name = name
                                  onIconChanged: model.iconSource = icon
                              }
@@ -127,7 +116,7 @@ Flickable {
                         panelText: "New In item"
                         name: d.newChannelName
                         icon: d.newChannelIconSource
-                        iconsModel: TokensCollectiblesIconsModel {}
+                        iconsModel: AssetsCollectiblesIconsModel {}
                         onNameChanged: d.newChannelName = name
                         onIconChanged: d.newChannelIconSource = icon
                     }

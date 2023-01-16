@@ -352,6 +352,16 @@ StatusWindow {
                         selected: viewLoader.source.toString().includes(title)
                         onClicked: mainPageView.page(title, true);
                     }
+                    StatusNavigationListItem {
+                        title: "StatusStepper"
+                        selected: viewLoader.source.toString().includes(title)
+                        onClicked: mainPageView.page(title);
+                    }
+                    StatusNavigationListItem {
+                        title: "LoadingStates"
+                        selected: viewLoader.source.toString().includes(title)
+                        onClicked: mainPageView.control(title);
+                    }
                 }
             }
 

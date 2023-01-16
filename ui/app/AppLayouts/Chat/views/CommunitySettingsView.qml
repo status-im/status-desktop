@@ -43,19 +43,21 @@ StatusSectionLayout {
     property bool hasAddedContacts: false
 
     readonly property string filteredSelectedTags: {
-        if (!community || !community.tags)
-            return "";
-        try {
-            const json = JSON.parse(community.tags);
-            const tagsArray = json.map(tag => {
-                                           return tag.name;
-                                       });
-            return JSON.stringify(tagsArray);
+        var tagsArray = []
+        if (community && community.tags) {
+            try {
+                const json = JSON.parse(community.tags)
+                if (!!json) {
+                    tagsArray = json.map(tag => {
+                                             return tag.name
+                                         })
+                }
+            }
+            catch (e) {
+                console.warn("Error parsing community tags: ", community.tags, " error: ", e.message)
+            }
         }
-        catch (e) {
-            console.warn("Error parsing community tags: ", community.tags, " error: ", e.message)
-            return ""
-        }
+        return JSON.stringify(tagsArray);
     }
 
     signal backToCommunityClicked

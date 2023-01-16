@@ -18,6 +18,7 @@ import "../views"
 StatusFloatingButtonsSelector {
     id: root
 
+    property var locale
     property var selectedAccount
     // Expected signature: function(newAccount, newIndex)
     property var changeSelectedAccount: function(){}
@@ -88,7 +89,7 @@ StatusFloatingButtonsSelector {
     popupMenuDelegate: StatusListItem {
         implicitWidth: 272
         title: name
-        subTitle: currencyBalance
+        subTitle: LocaleUtils.currencyAmountToLocaleString(currencyBalance, locale)
         asset.emoji: !!emoji ? emoji: ""
         asset.color: model.color
         asset.name: !emoji ? "filled-account": ""

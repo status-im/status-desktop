@@ -65,6 +65,8 @@ SettingsPageLayout {
     }
 
     saveChangesButtonEnabled: true
+    saveChangesText: qsTr("Update permission")
+    cancelChangesText: qsTr("Revert changes")
     state: d.getInitialState()
     states: [
         State {

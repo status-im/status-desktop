@@ -10,6 +10,10 @@ type
   ObtainMarketStickerPacksTaskArg = ref object of QObjectTaskArg
     chainId*: int
     running*: ByteAddress # pointer to threadpool's `.running` Atomic[bool]
+  InstallStickerPackTaskArg = ref object of QObjectTaskArg
+    packId*: string
+    chainId*: int
+    hasKey*: bool
 
 proc getMarketStickerPacks*(running: var Atomic[bool], chainId: int): 
     tuple[stickers: Table[string, StickerPackDto], error: string] =
@@ -50,4 +54,22 @@ const obtainMarketStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, ni
   for packId, stickerPack in marketStickerPacks.pairs:
     packs.add(stickerPack)
   let tpl: tuple[packs: seq[StickerPackDto], error: string] = (packs, error)
+  arg.finish(tpl)
+
+const installStickerPackTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[InstallStickerPackTaskArg](argEncoded)
+  if not arg.hasKey:
+    arg.finish(false)
+    return
+  var installed = false
+  try:
+    let installResponse = status_stickers.install(arg.chainId, arg.packId)
+    if installResponse.error == nil:
+      installed = true
+    else:
+      let err = Json.decode($installResponse.error, RpcError)
+      error "Error installing stickers", message = err.message
+  except RpcException:
+    error "Error installing stickers", message = getCurrentExceptionMsg()
+  let tpl: tuple[packId: string, installed: bool] = (arg.packId, installed)
   arg.finish(tpl)

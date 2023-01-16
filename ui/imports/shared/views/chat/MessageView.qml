@@ -35,10 +35,8 @@ Loader {
     // without an explicit need to fetch those details via message store/module.
     property bool isChatBlocked: false
 
-    property int itemIndex: -1
     property string messageId: ""
     property string communityId: ""
-    property string responseToMessageWithId: ""
 
     property string senderId: ""
     property string senderDisplayName: ""
@@ -46,9 +44,11 @@ Loader {
     property bool senderIsEnsVerified: false
     property string senderIcon: ""
     property bool amISender: false
+    property bool amIChatAdmin: messageStore && messageStore.amIChatAdmin()
     property bool senderIsAdded: false
     property int senderTrustStatus: Constants.trustStatus.unknown
     property string messageText: ""
+    property string unparsedText: ""
     property string messageImage: ""
     property double messageTimestamp: 0 // We use double, because QML's int is too small
     property string messageOutgoingStatus: ""
@@ -61,12 +61,18 @@ Loader {
     property string messageAttachments: ""
     property var transactionParams
 
+    property string responseToMessageWithId: ""
+    property string quotedMessageText: ""
+    property string quotedMessageFrom: ""
+    property int quotedMessageContentType: Constants.messageContentType.messageType
+    property int quotedMessageFromIterator: -1
+    property bool quotedMessageDeleted: false
+    property var quotedMessageAuthorDetails: quotedMessageFromIterator >= 0 && Utils.getContactDetailsAsJson(quotedMessageFrom, false)
+
     // External behavior changers
     property bool isInPinnedPopup: false // The pinned popup limits the number of buttons shown
     property bool disableHover: false // Used to force the HoverHandler to be active (useful for messages in popups)
     property bool placeholderMessage: false
-    property bool activityCenterMessage: false
-    property bool activityCenterMessageRead: true
 
     property int gapFrom: 0
     property int gapTo: 0
@@ -109,9 +115,8 @@ Loader {
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
-    readonly property bool isExpired: d.getIsExpired(messageOutgoingStatus, messageTimestamp)
+    readonly property bool isExpired: d.getIsExpired(messageTimestamp, messageOutgoingStatus)
     readonly property bool isSending: messageOutgoingStatus === Constants.sending && !isExpired
-    property int statusAgeEpoch: 0
 
     signal imageClicked(var image)
 
@@ -127,17 +132,17 @@ Loader {
                                                isRightClickOnImage = false,
                                                imageSource = "") {
 
-        if (placeholderMessage || activityCenterMessage ||
-                !(root.rootStore.mainModuleInst.activeSection.joined || isProfileClick)) {
+        if (placeholderMessage || !(root.rootStore.mainModuleInst.activeSection.joined || isProfileClick)) {
             return
         }
 
         messageContextMenu.myPublicKey = userProfile.pubKey
-        messageContextMenu.amIChatAdmin = messageStore.amIChatAdmin()
+        messageContextMenu.amIChatAdmin = root.amIChatAdmin
         messageContextMenu.pinMessageAllowedForMembers = messageStore.pinMessageAllowedForMembers()
         messageContextMenu.chatType = messageStore.getChatType()
 
         messageContextMenu.messageId = root.messageId
+        messageContextMenu.unparsedText = root.unparsedText
         messageContextMenu.messageSenderId = root.senderId
         messageContextMenu.messageContentType = root.messageContentType
         messageContextMenu.pinnedMessage = root.pinnedMessage
@@ -155,15 +160,15 @@ Loader {
         messageContextMenu.isSticker = isSticker
         messageContextMenu.hideEmojiPicker = hideEmojiPicker
 
-        if (isReply){
-            let obj = messageStore.getMessageByIdAsJson(responseToMessageWithId)
-            if(!obj)
+        if (isReply) {
+            if (!quotedMessageFrom) {
+                // The responseTo message was deleted so we don't eneble to right click the unaviable profile
                 return
-
-            messageContextMenu.messageSenderId = obj.senderId
-            messageContextMenu.selectedUserPublicKey = obj.senderId
-            messageContextMenu.selectedUserDisplayName = obj.senderDisplayName
-            messageContextMenu.selectedUserIcon = obj.senderIcon
+            }
+            messageContextMenu.messageSenderId = quotedMessageFrom
+            messageContextMenu.selectedUserPublicKey = quotedMessageFrom
+            messageContextMenu.selectedUserDisplayName = quotedMessageAuthorDetails.displayName
+            messageContextMenu.selectedUserIcon = quotedMessageAuthorDetails.thumbnailImage
         }
 
         messageContextMenu.parent = sender;
@@ -173,34 +178,11 @@ Loader {
     signal showReplyArea(string messageId, string author)
 
 
-    //    function showReactionAuthors(fromAccounts, emojiId) {
-    //        return root.rootStore.showReactionAuthors(fromAccounts, emojiId)
-    //    }
-
     function startMessageFoundAnimation() {
         root.item.startMessageFoundAnimation();
     }
-    /////////////////////////////////////////////
 
     signal openStickerPackPopup(string stickerPackId)
-    // Not Refactored Yet
-    //    Connections {
-    //        enabled: (!placeholderMessage && !!root.rootStore)
-    //        target: !!root.rootStore ? root.rootStore.allContacts : null
-    //        onContactChanged: {
-    //            if (pubkey === fromAuthor) {
-    //                const img = appMain.getProfileImage(userPubKey, isCurrentUser, useLargeImage)
-    //                if (img) {
-    //                    profileImageSource = img
-    //                }
-    //            } else if (replyMessageIndex > -1 && pubkey === repliedMessageAuthorPubkey) {
-    //                const imgReply = appMain.getProfileImage(repliedMessageAuthorPubkey, repliedMessageAuthorIsCurrentUser, false)
-    //                if (imgReply) {
-    //                    repliedMessageUserImage = imgReply
-    //                }
-    //            }
-    //        }
-    //    }
 
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
@@ -223,22 +205,6 @@ Loader {
         }
     }
 
-    function updateReplyInfo() {
-        switch(messageContentType) {
-        case Constants.messageContentType.chatIdentifier:
-        case Constants.messageContentType.fetchMoreMessagesButton:
-        case Constants.messageContentType.systemMessagePrivateGroupType:
-        case Constants.messageContentType.gapType:
-            return
-        default:
-            item.updateReplyInfo()
-        }
-    }
-
-    function replyDeleted() {
-        item.replyDeleted()
-    }
-
     QtObject {
         id: d
 
@@ -250,7 +216,7 @@ Loader {
         property int unfurledLinksCount: 0
 
         property string activeMessage
-        readonly property bool isMessageActive: typeof activeMessage !== "undefined" && activeMessage === messageId
+        readonly property bool isMessageActive: d.activeMessage === root.messageId
 
         function setMessageActive(messageId, active) {
 
@@ -333,10 +299,10 @@ Loader {
             chatType: root.messageStore.getChatType()
             chatColor: root.messageStore.getChatColor()
             chatEmoji: root.channelEmoji
-            amIChatAdmin: root.messageStore.amIChatAdmin()
+            amIChatAdmin: root.amIChatAdmin
             chatIcon: {
-                if ((root.messageStore.getChatType() === Constants.chatType.privateGroupChat) &&
-                     root.messageStore.getChatIcon() !== "") {
+                if (root.messageStore.getChatType() === Constants.chatType.privateGroupChat &&
+                        root.messageStore.getChatIcon() !== "") {
                     return root.messageStore.getChatIcon()
                 }
                 return root.senderIcon
@@ -386,14 +352,6 @@ Loader {
                 delegate.startMessageFoundAnimation();
             }
 
-            function updateReplyInfo() {
-                delegate.replyMessage = delegate.getReplyMessage()
-            }
-
-            function replyDeleted() {
-                delegate.replyMessage = null
-            }
-
             StatusDateGroupLabel {
                 id: dateGroupLabel
                 Layout.fillWidth: true
@@ -438,17 +396,8 @@ Loader {
 
                 readonly property int contentType: convertContentType(root.messageContentType)
                 readonly property bool isReply: root.responseToMessageWithId !== ""
-    
-                property var replyMessage: getReplyMessage()
-                readonly property string replySenderId: replyMessage ? replyMessage.senderId : ""
 
                 property string originalMessageText: ""
-
-                function getReplyMessage() {
-                    return root.messageStore && isReply
-                            ? root.messageStore.getReplyMessageByIdAsJson(root.responseToMessageWithId)
-                            : null
-                }
 
                 function editCancelledHandler() {
                     root.messageStore.setEditModeOff(root.messageId)
@@ -480,12 +429,6 @@ Loader {
                            root.nextMessageAsJsonObj.responseToMessageWithId !== ""
                 }
 
-                audioMessageInfoText: qsTr("Audio Message")
-                cancelButtonText: qsTr("Cancel")
-                saveButtonText: qsTr("Save")
-                loadingImageText: qsTr("Loading image...")
-                errorLoadingImageText: qsTr("Error loading the image")
-                resendText: qsTr("Resend")
                 pinnedMsgInfoText: root.isDiscordMessage ? qsTr("Pinned") : qsTr("Pinned by")
                 reactionIcons: [
                     Style.svg("emojiReactions/heart"),
@@ -521,26 +464,19 @@ Loader {
                 bottomPadding: showHeader && nextMessageHasHeader() ? Style.current.halfPadding : 2
                 disableHover: root.disableHover ||
                               (root.chatLogView && root.chatLogView.flickingVertically) ||
-                              activityCenterMessage ||
                               (root.messageContextMenu && root.messageContextMenu.opened) ||
-                              !!Global.profilePopupOpened ||
-                              !!Global.popupOpened
+                              Global.profilePopupOpened ||
+                              Global.popupOpened
 
                 hideQuickActions: root.isChatBlocked ||
                                   root.placeholderMessage ||
-                                  root.activityCenterMessage ||
                                   root.isInPinnedPopup ||
                                   root.editModeOn ||
                                   !root.rootStore.mainModuleInst.activeSection.joined
 
                 hideMessage: d.isSingleImage && d.unfurledLinksCount === 1
 
-                overrideBackground: root.activityCenterMessage || root.placeholderMessage
-                overrideBackgroundColor: {
-                    if (root.activityCenterMessage && root.activityCenterMessageRead)
-                        return Utils.setColorAlpha(Style.current.blue, 0.1);
-                    return "transparent";
-                }
+                overrideBackground: root.placeholderMessage
                 profileClickable: !root.isDiscordMessage
                 messageAttachments: root.messageAttachments
 
@@ -627,7 +563,7 @@ Loader {
                 }
 
                 mouseArea {
-                    acceptedButtons: root.activityCenterMessage ? Qt.LeftButton : Qt.RightButton
+                    acceptedButtons: Qt.RightButton
                     enabled: !root.isChatBlocked &&
                              !root.placeholderMessage &&
                              delegate.contentType !== StatusMessage.ContentType.Image
@@ -676,80 +612,84 @@ Loader {
                 }
 
                 replyDetails: StatusMessageDetails {
-                    messageText: delegate.replyMessage ? delegate.replyMessage.messageText
-                                                         //: deleted message
-                                                       : qsTr("&lt;deleted&gt;")
-                    contentType: delegate.replyMessage ? delegate.convertContentType(delegate.replyMessage.contentType) : 0
+                    messageText: {
+                        if (root.quotedMessageDeleted) {
+                            return qsTr("Message deleted")
+                        }
+                        if (!root.quotedMessageText) {
+                            return qsTr("Unknown message. Try fetching more messages")
+                        }
+                        return root.quotedMessageText
+                    }
+                    contentType: delegate.convertContentType(root.quotedMessageContentType)
                     messageContent: {
-                        if (!delegate.replyMessage)
-                            return "";
+                        if (contentType !== StatusMessage.ContentType.Sticker && contentType !== StatusMessage.ContentType.Image) {
+                            return ""
+                        }
+                        let message = root.messageStore.getMessageByIdAsJson(responseToMessageWithId)
                         switch (contentType) {
                         case StatusMessage.ContentType.Sticker:
-                            return delegate.replyMessage.sticker;
+                            return message.sticker;
                         case StatusMessage.ContentType.Image:
-                            return delegate.replyMessage.messageImage;
+                            return message.messageImage;
                         }
                         return "";
                     }
 
-                    amISender: delegate.replyMessage && delegate.replyMessage.amISender
-                    sender.id: delegate.replyMessage ? delegate.replyMessage.senderId : ""
-                    sender.isContact: delegate.replyMessage && delegate.replyMessage.senderIsAdded
-                    sender.displayName: delegate.replyMessage ? delegate.replyMessage.senderDisplayName: ""
-                    sender.isEnsVerified: delegate.replyMessage && delegate.replyMessage.senderEnsVerified
-                    sender.secondaryName: delegate.replyMessage ? delegate.replyMessage.senderOptionalName : ""
+                    amISender: root.quotedMessageFrom === userProfile.pubKey
+                    sender.id: root.quotedMessageFrom
+                    sender.isContact: quotedMessageAuthorDetails.isContact
+                    sender.displayName: quotedMessageAuthorDetails.displayName
+                    sender.isEnsVerified: quotedMessageAuthorDetails.ensVerified
+                    sender.secondaryName: quotedMessageAuthorDetails.name || ""
                     sender.profileImage {
                         width: 20
                         height: 20
-                        name: delegate.replyMessage ? delegate.replyMessage.senderIcon : ""
-                        assetSettings.isImage: delegate.replyMessage && (delegate.replyMessage.contentType === Constants.messageContentType.discordMessageType || delegate.replyMessage.senderIcon.startsWith("data"))
-                        showRing: (delegate.replyMessage && delegate.replyMessage.contentType !== Constants.messageContentType.discordMessageType) && !sender.isEnsVerified
-                        pubkey: delegate.replySenderId
-                        colorId: Utils.colorIdForPubkey(delegate.replySenderId)
-                        colorHash: Utils.getColorHashAsJson(delegate.replySenderId, sender.isEnsVerified)
+                        name: quotedMessageAuthorDetails.thumbnailImage
+                        assetSettings.isImage: quotedMessageAuthorDetails.thumbnailImage !== ""
+                        showRing: (root.quotedMessageContentType !== Constants.messageContentType.discordMessageType) && !sender.isEnsVerified
+                        pubkey: sender.id
+                        colorId: Utils.colorIdForPubkey(sender.id)
+                        colorHash: Utils.getColorHashAsJson(sender.id, sender.isEnsVerified)
                     }
                 }
 
-                statusChatInput: StatusChatInput {
-                    id: editTextInput
-                    objectName: "editMessageInput"
+                statusChatInput: Component {
+                    StatusChatInput {
+                        id: editTextInput
+                        objectName: "editMessageInput"
 
-                    readonly property string messageText: editTextInput.textInput.text
+                        readonly property string messageText: editTextInput.textInput.text
 
-                    // TODO: Move this property and Escape handler to StatusChatInput
-                    property bool suggestionsOpened: false
+                        // TODO: Move this property and Escape handler to StatusChatInput
+                        property bool suggestionsOpened: false
 
-                    width: parent.width
+                        width: parent.width
 
-                    Keys.onEscapePressed: {
-                        if (!suggestionsOpened) {
-                            delegate.editCancelled()
+                        Keys.onEscapePressed: {
+                            if (!suggestionsOpened) {
+                                delegate.editCancelled()
+                            }
+                            suggestionsOpened = false
                         }
-                        suggestionsOpened = false
-                    }
 
-                    store: root.rootStore
-                    usersStore: root.usersStore
-                    emojiPopup: root.emojiPopup
-                    stickersPopup: root.stickersPopup
-                    messageContextMenu: root.messageContextMenu
+                        store: root.rootStore
+                        usersStore: root.usersStore
+                        emojiPopup: root.emojiPopup
+                        stickersPopup: root.stickersPopup
+                        messageContextMenu: root.messageContextMenu
 
-                    chatType: root.messageStore.getChatType()
-                    isEdit: true
+                        chatType: root.messageStore.getChatType()
+                        isEdit: true
 
-                    onSendMessage: {
-                        delegate.editCompletedHandler(editTextInput.textInput.text)
-                    }
-
-                    suggestions.onVisibleChanged: {
-                        if (suggestions.visible) {
-                            suggestionsOpened = true
+                        onSendMessage: {
+                            delegate.editCompletedHandler(editTextInput.textInput.text)
                         }
-                    }
 
-                    Component.onCompleted: {
-                        parseMessage(root.messageText);
-                        delegate.originalMessageText = editTextInput.textInput.text
+                        Component.onCompleted: {
+                            parseMessage(root.messageText);
+                            delegate.originalMessageText = editTextInput.textInput.text
+                        }
                     }
                 }
 
@@ -787,7 +727,7 @@ Loader {
 
                 quickActions: [
                     Loader {
-                        active: !root.isInPinnedPopup
+                        active: !root.isInPinnedPopup && delegate.hovered
                         sourceComponent: StatusFlatRoundButton {
                             width: d.chatButtonSize
                             height: d.chatButtonSize
@@ -801,7 +741,7 @@ Loader {
                         }
                     },
                     Loader {
-                        active: !root.isInPinnedPopup
+                        active: !root.isInPinnedPopup && delegate.hovered
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "replyToMessageButton"
                             width: d.chatButtonSize
@@ -818,7 +758,7 @@ Loader {
                         }
                     },
                     Loader {
-                        active: !root.isInPinnedPopup && root.isText && !root.editModeOn && root.amISender
+                        active: !root.isInPinnedPopup && root.isText && !root.editModeOn && root.amISender && delegate.hovered
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "editMessageButton"
@@ -834,16 +774,18 @@ Loader {
                     },
                     Loader {
                         active: {
+                            if(!delegate.hovered)
+                                return false;
+                                
                             if (!root.messageStore)
                                 return false
 
                             const chatType = root.messageStore.getChatType();
-                            const amIChatAdmin = root.messageStore.amIChatAdmin();
                             const pinMessageAllowedForMembers = root.messageStore.pinMessageAllowedForMembers()
 
                             return chatType === Constants.chatType.oneToOne ||
-                                    chatType === Constants.chatType.privateGroupChat && amIChatAdmin ||
-                                    chatType === Constants.chatType.communityChat && (amIChatAdmin || pinMessageAllowedForMembers);
+                                    chatType === Constants.chatType.privateGroupChat && root.amIChatAdmin ||
+                                    chatType === Constants.chatType.communityChat && (root.amIChatAdmin || pinMessageAllowedForMembers);
 
                         }
                         sourceComponent: StatusFlatRoundButton {
@@ -880,13 +822,13 @@ Loader {
                     },
                     Loader {
                         active: {
+                            if(!delegate.hovered)
+                                return false;
                             if (root.isInPinnedPopup)
                                 return false;
                             if (!root.messageStore)
                                 return false;
-                            const isMyMessage = senderId !== "" && senderId === userProfile.pubKey;
-                            const chatType = root.messageStore.getChatType();
-                            return isMyMessage &&
+                            return (root.amISender || root.amIChatAdmin) &&
                                     (messageContentType === Constants.messageContentType.messageType ||
                                      messageContentType === Constants.messageContentType.stickerType ||
                                      messageContentType === Constants.messageContentType.emojiType ||

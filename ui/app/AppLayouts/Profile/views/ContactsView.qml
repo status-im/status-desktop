@@ -185,6 +185,7 @@ SettingsContentBase {
                 }
                 ContactsListPanel {
                     id: receivedRequests
+                    objectName: "receivedRequests_ContactsListPanel"
                     Layout.fillWidth: true
                     title: qsTr("Received")
                     searchString: searchBox.text

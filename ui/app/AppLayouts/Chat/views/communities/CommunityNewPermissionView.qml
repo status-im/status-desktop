@@ -52,7 +52,7 @@ StatusScrollView {
 
     property int permissionIndex
 
-    // roles: type, key, name, amount, imageSource, operator
+    // roles: type, key, name, amount, imageSource
     property var holdingsModel: ListModel {}
 
     // roles: key, text, imageSource
@@ -109,8 +109,7 @@ StatusScrollView {
                             name: item.name,
                             shortName: item.shortName,
                             amount: item.amount,
-                            imageSource: item.imageSource,
-                            operator: item.operator
+                            imageSource: item.imageSource
                         }
                     }
                     else {
@@ -119,8 +118,7 @@ StatusScrollView {
                             key: item.key,
                             name: item.name,
                             amount: item.amount,
-                            imageSource: item.imageSource,
-                            operator: item.operator
+                            imageSource: item.imageSource
                         }
                     }
                     d.dirtyValues.holdingsModel.append(initItem)
@@ -151,12 +149,11 @@ StatusScrollView {
                         const item1 = root.holdingsModel.get(i)
                         for(let j = 0; j < d.dirtyValues.holdingsModel.count; j++) {
                             let item2 = d.dirtyValues.holdingsModel.get(j)
-                            // key, name, shortName, amount, operator
+                            // key, name, shortName, amount
                             if((item1.key === item2.key) &&
                                (item1.name === item2.name) &&
                                (item1.shortName === item2.shortName) &&
-                               (item1.amount === item2.amount) &&
-                               (item1.operator === item2.operator)) {
+                               (item1.amount === item2.amount)) {
                                 equals = equals + 1
                             }
                         }
@@ -211,25 +208,25 @@ StatusScrollView {
                 id: dropdown
                 store: root.store
 
-                function addItem(type, item, amount, operator) {
+                function addItem(type, item, amount) {
                     const key = item.key
                     const name = item.shortName ? item.shortName : item.name
                     const imageSource = item.iconSource.toString()
 
-                    d.dirtyValues.holdingsModel.append({ type, key, name, amount, imageSource, operator })
+                    d.dirtyValues.holdingsModel.append({ type, key, name, amount, imageSource })
                 }
 
-                onAddToken: {
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
-                                        store.tokensModel, key)
-                    addItem(HoldingTypes.Type.Token, modelItem, amount, operator)
+                onAddAsset: {
+                    const modelItem = CommunityPermissionsHelpers.getAssetByKey(
+                                        store.assetsModel, key)
+                    addItem(HoldingTypes.Type.Asset, modelItem, amount)
                     dropdown.close()
                 }
 
                 onAddCollectible: {
                     const modelItem = CommunityPermissionsHelpers.getCollectibleByKey(
                                         store.collectiblesModel, key)
-                    addItem(HoldingTypes.Type.Collectible, modelItem, amount, operator)
+                    addItem(HoldingTypes.Type.Collectible, modelItem, amount)
                     dropdown.close()
                 }
 
@@ -238,17 +235,17 @@ StatusScrollView {
                     const name = any ? "" : customDomain
                     const icon = Style.svg("ensUsernames")
 
-                    d.dirtyValues.holdingsModel.append({type: HoldingTypes.Type.Ens, key, name, amount: 1, imageSource: icon, operator })
+                    d.dirtyValues.holdingsModel.append({type: HoldingTypes.Type.Ens, key, name, amount: 1, imageSource: icon })
                     dropdown.close()
                 }
 
-                onUpdateToken: {
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
-                                        store.tokensModel, key)
+                onUpdateAsset: {
+                    const modelItem = CommunityPermissionsHelpers.getAssetByKey(
+                                        store.assetsModel, key)
                     const name = modelItem.shortName ? modelItem.shortName : modelItem.name
                     const imageSource = modelItem.iconSource.toString()
 
-                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Token, key, name, amount, imageSource })
+                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Asset, key, name, amount, imageSource })
                     d.triggerDirtyTool = !d.triggerDirtyTool
                     dropdown.close()
                 }
@@ -276,11 +273,6 @@ StatusScrollView {
 
                 onRemoveClicked: {
                     d.dirtyValues.holdingsModel.remove(tokensSelector.editedIndex)
-
-                    if (d.dirtyValues.holdingsModel && d.dirtyValues.holdingsModel.count) {
-                        d.dirtyValues.holdingsModel.set(0, { operator: OperatorsUtils.Operators.None})
-                    }
-
                     dropdown.close()
                 }
             }
@@ -289,11 +281,7 @@ StatusScrollView {
                 dropdown.parent = tokensSelector.addButton
                 dropdown.x = tokensSelector.addButton.width + d.dropdownHorizontalOffset
                 dropdown.y = 0
-
-                if (d.dirtyValues.holdingsModel && d.dirtyValues.holdingsModel.count === 0)
-                    dropdown.openFlow(HoldingsDropdown.FlowType.Add)
-                else
-                    dropdown.openFlow(HoldingsDropdown.FlowType.AddWithOperators)
+                dropdown.openFlow(HoldingsDropdown.FlowType.Add)
             }
 
             onItemClicked: {
@@ -307,9 +295,9 @@ StatusScrollView {
                 const modelItem = tokensSelector.itemsModel.get(index)
 
                 switch(modelItem.type) {
-                    case HoldingTypes.Type.Token:
-                        dropdown.tokenKey = modelItem.key
-                        dropdown.tokenAmount = modelItem.amount
+                    case HoldingTypes.Type.Asset:
+                        dropdown.assetKey = modelItem.key
+                        dropdown.assetAmount = modelItem.amount
                         break
                     case HoldingTypes.Type.Collectible:
                         dropdown.collectibleKey = modelItem.key

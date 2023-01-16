@@ -37,7 +37,10 @@ QtObject:
     self.delegate.viewDidLoad()
 
   proc getKeycardSharedModule(self: View): QVariant {.slot.} =
-    return self.delegate.getKeycardSharedModule()
+    let module = self.delegate.getKeycardSharedModule()
+    if not module.isNil:
+      return module
+    return newQVariant()
   QtProperty[QVariant] keycardSharedModule:
     read = getKeycardSharedModule
     
@@ -52,8 +55,8 @@ QtObject:
   proc runSetupKeycardPopup*(self: View) {.slot.} =
     self.delegate.runSetupKeycardPopup()
 
-  proc runGenerateSeedPhrasePopup*(self: View) {.slot.} =
-    self.delegate.runGenerateSeedPhrasePopup()
+  proc runCreateNewKeycardWithNewSeedPhrasePopup*(self: View) {.slot.} =
+    self.delegate.runCreateNewKeycardWithNewSeedPhrasePopup()
 
   proc runImportOrRestoreViaSeedPhrasePopup*(self: View) {.slot.} =
     self.delegate.runImportOrRestoreViaSeedPhrasePopup()

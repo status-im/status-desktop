@@ -6,9 +6,12 @@ from web3/conversions import `$`
 import ../../../backend/backend as backend
 
 import ../network/service as network_service
+import ../wallet_account/dto as wallet_account_dto
+import ../../../app/global/global_singleton
 
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
+import ../../../backend/cache
 import ./dto
 
 export dto
@@ -36,6 +39,9 @@ QtObject:
     threadpool: ThreadPool
     networkService: network_service.Service
     tokens: Table[int, seq[TokenDto]]
+    priceCache: TimedCache
+
+  proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64)
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -51,6 +57,7 @@ QtObject:
     result.threadpool = threadpool
     result.networkService = networkService
     result.tokens = initTable[int, seq[TokenDto]]()
+    result.priceCache = newTimedCache()
 
   proc init*(self: Service) =
     try:
@@ -63,7 +70,6 @@ QtObject:
             found = true
             break
 
-        
         if found:
           continue
         
@@ -81,6 +87,12 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
       return
+
+  proc updateTokenPrices*(self: Service, tokens: seq[WalletTokenDto]) =
+    # Use data fetched by walletAccountService to update local price cache
+    for token in tokens:
+      for currency, marketValues in token.marketValuesPerCurrency:
+        self.updateCachedTokenPrice(token.symbol, currency, marketValues.price)
 
   proc findTokenBySymbol*(self: Service, network: NetworkDto, symbol: string): TokenDto =
     try:
@@ -111,6 +123,49 @@ QtObject:
           return token.symbol
     return ""
 
+# Token
+  proc renameSymbol(symbol: string) : string =
+    return toUpperAscii(symbol)
+
+  proc getTokenPriceCacheKey(crypto: string, fiat: string) : string =
+    return renameSymbol(crypto) & renameSymbol(fiat)
+
+  proc getTokenPrice*(self: Service, crypto: string, fiat: string, fetchIfNotAvailable: bool = true): float64 =
+    let cacheKey = getTokenPriceCacheKey(crypto, fiat)
+    if self.priceCache.isCached(cacheKey) or (self.priceCache.hasKey(cacheKey) and not fetchIfNotAvailable):
+      return parseFloat(self.priceCache.get(cacheKey))
+    elif not fetchIfNotAvailable:
+      return 0.0
+    var prices = initTable[string, Table[string, float]]()
+
+    try:
+      let cryptoKey = renameSymbol(crypto)
+      let fiatKey = renameSymbol(fiat)
+      let response = backend.fetchPrices(@[cryptoKey], @[fiatKey])
+      for (symbol, pricePerCurrency) in response.result.pairs:
+        for (currency, price) in pricePerCurrency.pairs:
+          prices[symbol][currency] = price.getFloat
+
+      self.updateCachedTokenPrice(cryptoKey, fiatKey, prices[cryptoKey][fiatKey])
+      return prices[cryptoKey][fiatKey]
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return 0.0
+  
+  proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64) =
+    let cacheKey = getTokenPriceCacheKey(crypto, fiat)
+    self.priceCache.set(cacheKey, $price)
+  
+  proc getTokenPegSymbol*(self: Service, symbol: string): string = 
+    for _, tokens in self.tokens:
+      for token in tokens:
+        if token.symbol == symbol:
+          return token.pegSymbol
+    
+    return ""
+
+# History Data
   proc tokenHistoricalDataResolved*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
@@ -118,17 +173,6 @@ QtObject:
       return
 
     self.events.emit(SIGNAL_TOKEN_HISTORICAL_DATA_LOADED, TokenHistoricalDataArgs(
-      result: response
-    ))
-
-  proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.} =
-    # TODO
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      info "blance history response is not a json object"
-      return
-
-    self.events.emit(SIGNAL_BALANCE_HISTORY_DATA_READY, TokenBalanceHistoryDataArgs(
       result: response
     ))
 
@@ -142,6 +186,18 @@ QtObject:
       range: range
     )
     self.threadpool.start(arg)
+
+# Historical Balance
+  proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.} =
+    # TODO
+    let responseObj = response.parseJson
+    if (responseObj.kind != JObject):
+      info "blance history response is not a json object"
+      return
+
+    self.events.emit(SIGNAL_BALANCE_HISTORY_DATA_READY, TokenBalanceHistoryDataArgs(
+      result: response
+    ))
 
   proc fetchHistoricalBalanceForTokenAsJson*(self: Service, address: string, symbol: string, timeInterval: BalanceHistoryTimeInterval) =
     let networks = self.networkService.getNetworks()

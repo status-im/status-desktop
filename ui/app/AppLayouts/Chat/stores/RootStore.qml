@@ -7,7 +7,7 @@ import shared.stores 1.0
 QtObject {
     id: root
 
-    property string locale: localAppSettings.language
+    property var locale: Qt.locale(localAppSettings.language)
 
     property var contactsStore
 
@@ -100,14 +100,18 @@ QtObject {
         return msg
     }
 
-    function sendMessage(event, text, replyMessageId, fileUrlsAndSources) {
-        var chatContentModule = currentChatContentModule()
+    function sendMessage(chatId, event, text, replyMessageId, fileUrlsAndSources) {
+        chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
+        const chatContentModule = chatCommunitySectionModule.getChatContentModule()
+        var result = false
+
         if (fileUrlsAndSources.length > 0){
-            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrlsAndSources));
+            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrlsAndSources))
+            result = true
         }
 
         let msg = globalUtils.plainText(StatusQUtils.Emoji.deparse(text))
-        if (msg.length > 0) {
+        if (msg.trim() !== "") {
             msg = interpretMessage(msg)
 
             chatContentModule.inputAreaModule.sendMessage(
@@ -119,9 +123,9 @@ QtObject {
             if (event)
                 event.accepted = true
 
-            return true
+            result = true
         }
-        return false
+        return result
     }
 
 
@@ -150,6 +154,8 @@ QtObject {
     property string communityTags: communitiesModule.tags
 
     property var stickersModuleInst: stickersModule
+
+    property bool isDebugEnabled: advancedModule ? advancedModule.isDebugEnabled : false
 
     property var stickersStore: StickersStore {
         stickersModule: stickersModuleInst
@@ -301,11 +307,11 @@ QtObject {
     }
 
     function generateAlias(pk) {
-        return globalUtils.generateAlias(pk);
+        return globalUtilsInst.generateAlias(pk);
     }
 
     function plainText(text) {
-        return globalUtils.plainText(text)
+        return globalUtilsInst.plainText(text)
     }
 
     function removeCommunityChat(chatId) {
@@ -460,7 +466,7 @@ QtObject {
     property var accounts: walletSectionAccounts.model
     property var currentAccount: walletSectionCurrent
     property string currentCurrency: walletSection.currentCurrency
-    property CurrenciesStore currencyStore: CurrenciesStore { }
+    property CurrenciesStore currencyStore: CurrenciesStore {}
     property var allNetworks: networksModule.all
     property var savedAddressesModel: walletSectionSavedAddresses.model
 
@@ -551,11 +557,11 @@ QtObject {
     }
 
     function getWei2Eth(wei) {
-        return globalUtils.wei2Eth(wei,18)
+        return globalUtilsInst.wei2Eth(wei,18)
     }
 
     function getEth2Wei(eth) {
-         return globalUtils.eth2Wei(eth, 18)
+         return globalUtilsInst.eth2Wei(eth, 18)
     }
 
     function switchAccount(newIndex) {
@@ -570,7 +576,7 @@ QtObject {
     }
 
     function hex2Eth(value) {
-        return globalUtils.hex2Eth(value)
+        return globalUtilsInst.hex2Eth(value)
     }
 
     readonly property Connections communitiesModuleConnections: Connections {

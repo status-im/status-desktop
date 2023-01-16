@@ -13,8 +13,12 @@ proc delete*(self: EnterKeycardNameState) =
 method getNextPrimaryState*(self: EnterKeycardNameState, controller: Controller): State =
   if self.flowType == FlowType.RenameKeycard:
     return createState(StateType.RenamingKeycard, self.flowType, nil)
+  if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
+      return createState(StateType.ManageKeycardAccounts, self.flowType, self)
 
 method executeCancelCommand*(self: EnterKeycardNameState, controller: Controller) =
-  if self.flowType == FlowType.RenameKeycard:
-    controller.setPassword("")
-    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+  if self.flowType == FlowType.RenameKeycard or
+    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
+      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

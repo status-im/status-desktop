@@ -48,20 +48,20 @@ proc init*(self: Controller) =
           # TODO find a way to use data.blockNumber
           self.loadTransactions(account, stint.fromHex(Uint256, "0x0"))
       of "recent-history-fetching":
-        self.delegate.setHistoryFetchState(data.accounts, true)
+        self.delegate.setHistoryFetchState(data.accounts, isFetching = true)
       of "recent-history-ready":
         for account in data.accounts:
           self.loadTransactions(account, stint.fromHex(Uint256, "0x0"))
-        self.delegate.setHistoryFetchState(data.accounts, false)
+        self.delegate.setHistoryFetchState(data.accounts, isFetching = false)
       of "non-archival-node-detected":
         let accounts = self.getWalletAccounts()
         let addresses = accounts.map(account => account.address)
-        self.delegate.setHistoryFetchState(addresses, false)
+        self.delegate.setHistoryFetchState(addresses, isFetching = false)
         self.delegate.setIsNonArchivalNode(true)
       of "fetching-history-error":
         let accounts = self.getWalletAccounts()
         let addresses = accounts.map(account => account.address)
-        self.delegate.setHistoryFetchState(addresses, false)
+        self.delegate.setHistoryFetchState(addresses, isFetching = false)
 
   self.events.on(SIGNAL_TRANSACTIONS_LOADED) do(e:Args):
     let args = TransactionsLoadedArgs(e)
@@ -82,6 +82,10 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_PENDING_TX_COMPLETED) do(e:Args):
     self.walletAccountService.checkRecentHistory()
 
+  self.events.on(SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS) do(e:Args):
+    let args = TransactionsLoadedArgs(e)
+    self.delegate.setHistoryFetchState(args.address, isFetching = false)
+
 proc checkPendingTransactions*(self: Controller): seq[TransactionDto] =
   return self.transactionService.checkPendingTransactions()
 
@@ -99,12 +103,6 @@ proc getMigratedKeyPairByKeyUid*(self: Controller, keyUid: string): seq[KeyPairD
 
 proc loadTransactions*(self: Controller, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
   self.transactionService.loadTransactions(address, toBlock, limit, loadMore)
-
-proc estimateGas*(self: Controller, from_addr: string, to: string, assetSymbol: string, value: string, data: string): string =
-  try:
-    result = self.transactionService.estimateGas(from_addr, to, assetSymbol, value, data)
-  except Exception as e:
-    result = "0"
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol: string,
     value: string, uuid: string, selectedRoutes: string, password: string) =

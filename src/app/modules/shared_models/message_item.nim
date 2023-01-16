@@ -20,6 +20,7 @@ type
     seen: bool
     outgoingStatus: string
     messageText: string
+    unparsedText: string
     messageImage: string
     messageContainsMentions: bool
     sticker: string
@@ -44,6 +45,13 @@ type
     messageAttachments: seq[string]
     resendError: string
     mentioned: bool
+    quotedMessageFrom: string
+    quotedMessageText: string
+    quotedMessageParsedText: string
+    quotedMessageContentType: int
+    quotedMessageDeleted: bool
+    # This is only used to update the author's details when author's details change
+    quotedMessageFromIterator: int
 
 proc initItem*(
     id,
@@ -57,6 +65,7 @@ proc initItem*(
     senderIsAdded: bool,
     outgoingStatus,
     text,
+    unparsedText,
     image: string,
     messageContainsMentions,
     seen: bool,
@@ -74,7 +83,12 @@ proc initItem*(
     senderEnsVerified: bool,
     discordMessage: DiscordMessage,
     resendError: string,
-    mentioned: bool
+    mentioned: bool,
+    quotedMessageFrom: string,
+    quotedMessageText: string,
+    quotedMessageParsedText: string,
+    quotedMessageContentType: int,
+    quotedMessageDeleted: bool,
     ): Item =
   result = Item()
   result.id = id
@@ -88,7 +102,8 @@ proc initItem*(
   result.senderIcon = senderIcon
   result.seen = seen
   result.outgoingStatus = outgoingStatus
-  result.messageText = if ContentType.Image == contentType: "" else: text
+  result.messageText = if contentType == ContentType.Image : "" else: text
+  result.unparsedText = if contentType == ContentType.Image : "" else: unparsedText
   result.messageImage = image
   result.messageContainsMentions = messageContainsMentions
   result.timestamp = timestamp
@@ -112,10 +127,17 @@ proc initItem*(
   result.messageAttachments = @[]
   result.resendError = resendError
   result.mentioned = mentioned
+  result.quotedMessageFrom = quotedMessageFrom
+  result.quotedMessageText = quotedMessageText
+  result.quotedMessageParsedText = quotedMessageParsedText
+  result.quotedMessageContentType = quotedMessageContentType
+  result.quotedMessageDeleted = quotedMessageDeleted
+  result.quotedMessageFromIterator = 0
 
-  if ContentType.DiscordMessage == contentType:
+  if contentType == ContentType.DiscordMessage :
     if result.messageText == "":
       result.messageText = discordMessage.content
+      result.unparsedText = discordMessage.content
     result.senderId = discordMessage.author.id
     result.senderDisplayName = discordMessage.author.name
     result.senderIcon = discordMessage.author.localUrl
@@ -131,7 +153,7 @@ proc initItem*(
       if attachment.contentType.contains("image"):
         result.messageAttachments.add(attachment.localUrl)
 
-proc initNewMessagesMarkerItem*(timestamp: int64): Item =
+proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
   return initItem(
     id = "",
     communityId = "",
@@ -144,11 +166,12 @@ proc initNewMessagesMarkerItem*(timestamp: int64): Item =
     senderIsAdded = false,
     outgoingStatus = "",
     text = "",
+    unparsedText = "",
     image = "",
     messageContainsMentions = false,
     seen = true,
     timestamp = timestamp,
-    clock = 0,
+    clock = clock,
     ContentType.NewMessagesMarker,
     messageType = -1,
     contactRequestState = 0,
@@ -161,7 +184,12 @@ proc initNewMessagesMarkerItem*(timestamp: int64): Item =
     senderEnsVerified = false,
     discordMessage = DiscordMessage(),
     resendError = "",
-    mentioned = false
+    mentioned = false,
+    quotedMessageFrom = "",
+    quotedMessageText = "",
+    quotedMessageParsedText = "",
+    quotedMessageContentType = -1,
+    quotedMessageDeleted = false,
   )
 
 proc `$`*(self: Item): string =
@@ -178,6 +206,7 @@ proc `$`*(self: Item): string =
     outgoingStatus:{$self.outgoingStatus},
     resendError:{$self.resendError},
     messageText:{self.messageText},
+    unparsedText:{self.unparsedText},
     messageContainsMentions:{self.messageContainsMentions},
     timestamp:{$self.timestamp},
     contentType:{$self.contentType.int},
@@ -263,6 +292,12 @@ proc messageText*(self: Item): string {.inline.} =
 
 proc `messageText=`*(self: Item, value: string) {.inline.} =
   self.messageText = value
+
+proc unparsedText*(self: Item): string {.inline.} =
+  self.unparsedText
+
+proc `unparsedText=`*(self: Item, value: string) {.inline.} =
+  self.unparsedText = value
 
 proc messageImage*(self: Item): string {.inline.} =
   self.messageImage
@@ -360,6 +395,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "seen": self.seen,
     "outgoingStatus": self.outgoingStatus,
     "messageText": self.messageText,
+    "unparsedText": self.unparsedText,
     "messageImage": self.messageImage,
     "messageContainsMentions": self.messageContainsMentions,
     "sticker": self.sticker,
@@ -378,7 +414,13 @@ proc toJsonNode*(self: Item): JsonNode =
     "links": self.links,
     "mentionedUsersPks": self.mentionedUsersPks,
     "senderEnsVerified": self.senderEnsVerified,
-    "resendError": self.resendError
+    "resendError": self.resendError,
+    "mentioned": self.mentioned,
+    "quotedMessageFrom": self.quotedMessageFrom,
+    "quotedMessageText": self.quotedMessageText,
+    "quotedMessageParsedText": self.quotedMessageParsedText,
+    "quotedMessageContentType": self.quotedMessageContentType,
+    "quotedMessageDeleted": self.quotedMessageDeleted,
   }
 
 proc editMode*(self: Item): bool {.inline.} =
@@ -410,3 +452,33 @@ proc mentioned*(self: Item): bool {.inline.} =
 
 proc `mentioned=`*(self: Item, value: bool) {.inline.} =
   self.mentioned = value
+
+proc quotedMessageFrom*(self: Item): string {.inline.} =
+  self.quotedMessageFrom
+proc `quotedMessageFrom=`*(self: Item, value: string) {.inline.} =
+  self.quotedMessageFrom = value
+
+proc quotedMessageText*(self: Item): string {.inline.} =
+  self.quotedMessageText
+proc `quotedMessageText=`*(self: Item, value: string) {.inline.} =
+  self.quotedMessageText = value
+
+proc quotedMessageParsedText*(self: Item): string {.inline.} =
+  self.quotedMessageParsedText
+proc `quotedMessageParsedText=`*(self: Item, value: string) {.inline.} =
+  self.quotedMessageParsedText = value
+
+proc quotedMessageContentType*(self: Item): int {.inline.} =
+  self.quotedMessageContentType
+proc `quotedMessageContentType=`*(self: Item, value: int) {.inline.} =
+  self.quotedMessageContentType = value
+
+proc quotedMessageDeleted*(self: Item): bool {.inline.} =
+  self.quotedMessageDeleted
+proc `quotedMessageDeleted=`*(self: Item, value: bool) {.inline.} =
+  self.quotedMessageDeleted = value
+
+proc quotedMessageFromIterator*(self: Item): int {.inline.} =
+  self.quotedMessageFromIterator
+proc `quotedMessageFromIterator=`*(self: Item, value: int) {.inline.} =
+  self.quotedMessageFromIterator = value

@@ -50,6 +50,8 @@ type
     packID*: string
     transactionType*: string
     revertReason*: string
+  StickerPackInstalledArgs* = ref object of Args
+    packId*: string
 
 # Signals which may be emitted by this service:
 const SIGNAL_STICKER_PACK_LOADED* = "stickerPackLoaded"
@@ -58,6 +60,7 @@ const SIGNAL_ALL_STICKER_PACKS_LOAD_FAILED* = "allStickerPacksLoadFailed"
 const SIGNAL_STICKER_GAS_ESTIMATED* = "stickerGasEstimated"
 const SIGNAL_STICKER_TRANSACTION_CONFIRMED* = "stickerTransactionConfirmed"
 const SIGNAL_STICKER_TRANSACTION_REVERTED* = "stickerTransactionReverted"
+const SIGNAL_STICKER_PACK_INSTALLED* = "stickerPackInstalled"
 
 QtObject:
   type Service* = ref object of QObject
@@ -329,21 +332,33 @@ QtObject:
       for stickerJson in recentResponse.result:
         result = stickerJson.toStickerDto() & result
     except RpcException:
-      error "Error obtaining installed stickers", message = getCurrentExceptionMsg()
+      error "Error getting recent stickers", message = getCurrentExceptionMsg()
 
   proc getNumInstalledStickerPacks*(self: Service): int =
     try:
       let installedResponse = status_stickers.installed()
       return installedResponse.result.len
     except RpcException:
-      error "Error obtaining installed stickers", message = getCurrentExceptionMsg()
+      error "Error getting installed stickers number", message = getCurrentExceptionMsg()
     return 0
 
   proc installStickerPack*(self: Service, packId: string) =
-    let chainId = self.networkService.getNetworkForStickers().chainId
-    if not self.marketStickerPacks.hasKey(packId):
-      return
-    let installResponse = status_stickers.install(chainId, packId)
+    let arg = InstallStickerPackTaskArg(
+      tptr: cast[ByteAddress](installStickerPackTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onStickerPackInstalled",
+      chainId: self.networkService.getNetworkForStickers().chainId,
+      packId: packId,
+      hasKey: self.marketStickerPacks.hasKey(packId)
+    )
+    self.threadpool.start(arg)
+
+  proc onStickerPackInstalled*(self: Service, installedPackJson: string) {.slot.} =
+    let installedPack = Json.decode(installedPackJson, tuple[packId: string, installed: bool])
+    if installedPack.installed:
+      self.events.emit(SIGNAL_STICKER_PACK_INSTALLED, StickerPackInstalledArgs(
+        packId: installedPack.packId
+      ))
     
   proc uninstallStickerPack*(self: Service, packId: string) =
     try:

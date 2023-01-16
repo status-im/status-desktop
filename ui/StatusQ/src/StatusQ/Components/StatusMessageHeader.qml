@@ -20,7 +20,7 @@ Item {
     property alias timestamp: timestampText
 
     property string tertiaryDetail: sender.id
-    property string resendText: ""
+    property string resendText: qsTr("Resend")
     property bool showResendButton: false
     property bool showSendingLoader: false
     property string resendError: ""
@@ -41,6 +41,7 @@ Item {
         spacing: 4
         StatusBaseText {
             id: primaryDisplayName
+            objectName: "StatusMessageHeader_DisplayName"
             verticalAlignment: Text.AlignVCenter
             Layout.bottomMargin: 2 // offset for the underline to stay vertically centered
             font.weight: Font.Medium

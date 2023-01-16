@@ -26,6 +26,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       packs*: seq[StickerPackView]
       packIdToRetrieve*: int
+      foundStickers*: QVariant
 
   proc setup(self: StickerPackList) = self.QAbstractListModel.setup
 
@@ -122,6 +123,18 @@ QtObject:
   proc getStickers*(self: StickerPackList): QVariant {.slot.} =
     let packInfo = self.packs[self.packIdToRetrieve]
     result = newQVariant(packInfo.stickers)
+
+  # We cannot return QVariant from the proc which has arguments.
+  # First findStickersById has to be called, then getFoundStickers
+  proc findStickersById*(self: StickerPackList, packId: string) {.slot.} =
+    self.foundStickers = newQVariant()
+    for item in self.packs:
+      if(item.pack.id == packId):
+        self.foundStickers = newQVariant(item.stickers)
+        break
+
+  proc getFoundStickers*(self: StickerPackList): QVariant {.slot.} =
+    return self.foundStickers
 
   proc rowData*(self: StickerPackList, row: int, data: string): string {.slot.} =
     if row < 0 or (row > self.packs.len - 1):

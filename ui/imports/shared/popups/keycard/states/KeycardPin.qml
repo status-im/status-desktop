@@ -64,29 +64,16 @@ Item {
     }
 
     Component {
-        id: keyPairComponent
+        id: keyPairForProcessingComponent
         KeyPairItem {
-            keyPairType:  root.sharedKeycardModule.selectedKeyPairItem.pairType
-            keyPairPubKey: root.sharedKeycardModule.selectedKeyPairItem.pubKey
-            keyPairName: root.sharedKeycardModule.selectedKeyPairItem.name
-            keyPairIcon: root.sharedKeycardModule.selectedKeyPairItem.icon
-            keyPairImage: root.sharedKeycardModule.selectedKeyPairItem.image
-            keyPairDerivedFrom: root.sharedKeycardModule.selectedKeyPairItem.derivedFrom
-            keyPairAccounts: root.sharedKeycardModule.selectedKeyPairItem.accounts
-        }
-    }
-
-    Component {
-        id: keyPairForAuthenticationComponent
-        KeyPairItem {
-            keyPairType:  root.sharedKeycardModule.keyPairForAuthentication.pairType
-            keyPairPubKey: root.sharedKeycardModule.keyPairForAuthentication.pubKey
-            keyPairName: root.sharedKeycardModule.keyPairForAuthentication.name
-            keyPairIcon: root.sharedKeycardModule.keyPairForAuthentication.icon
-            keyPairImage: root.sharedKeycardModule.keyPairForAuthentication.image
-            keyPairDerivedFrom: root.sharedKeycardModule.keyPairForAuthentication.derivedFrom
-            keyPairAccounts: root.sharedKeycardModule.keyPairForAuthentication.accounts
-            keyPairCardLocked: root.sharedKeycardModule.keyPairForAuthentication.locked
+            keyPairType:  root.sharedKeycardModule.keyPairForProcessing.pairType
+            keyPairPubKey: root.sharedKeycardModule.keyPairForProcessing.pubKey
+            keyPairName: root.sharedKeycardModule.keyPairForProcessing.name
+            keyPairIcon: root.sharedKeycardModule.keyPairForProcessing.icon
+            keyPairImage: root.sharedKeycardModule.keyPairForProcessing.image
+            keyPairDerivedFrom: root.sharedKeycardModule.keyPairForProcessing.derivedFrom
+            keyPairAccounts: root.sharedKeycardModule.keyPairForProcessing.accounts
+            keyPairCardLocked: root.sharedKeycardModule.keyPairForProcessing.locked
         }
     }
 
@@ -202,14 +189,14 @@ Item {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.repeatPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.pinSet) {
-                        return keyPairComponent
+                        return keyPairForProcessingComponent
                     }
                 }
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPin ||
                             root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongKeychainPin) {
-                        return keyPairForAuthenticationComponent
+                        return keyPairForProcessingComponent
                     }
                 }
 
