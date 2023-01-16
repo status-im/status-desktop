@@ -11,7 +11,7 @@ import ../../../app/global/global_singleton
 
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
-import ../../../backend/cache
+import ../../common/cache
 import ./dto
 
 export dto
@@ -39,7 +39,7 @@ QtObject:
     threadpool: ThreadPool
     networkService: network_service.Service
     tokens: Table[int, seq[TokenDto]]
-    priceCache: TimedCache
+    priceCache: TimedCache[float64]
 
   proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64)
 
@@ -57,7 +57,7 @@ QtObject:
     result.threadpool = threadpool
     result.networkService = networkService
     result.tokens = initTable[int, seq[TokenDto]]()
-    result.priceCache = newTimedCache()
+    result.priceCache = newTimedCache[float64]()
 
   proc init*(self: Service) =
     try:
@@ -130,12 +130,21 @@ QtObject:
   proc getTokenPriceCacheKey(crypto: string, fiat: string) : string =
     return renameSymbol(crypto) & renameSymbol(fiat)
 
+  proc isCachedTokenPriceRecent*(self: Service, crypto: string, fiat: string): bool =
+    let cacheKey = getTokenPriceCacheKey(crypto, fiat)
+    return self.priceCache.isCached(cacheKey)
+
+  proc getCachedTokenPrice*(self: Service, crypto: string, fiat: string): float64 =
+    let cacheKey = getTokenPriceCacheKey(crypto, fiat)
+    if self.priceCache.hasKey(cacheKey):
+      return self.priceCache.get(cacheKey)
+    else:
+      return 0.0
+
   proc getTokenPrice*(self: Service, crypto: string, fiat: string, fetchIfNotAvailable: bool = true): float64 =
     let cacheKey = getTokenPriceCacheKey(crypto, fiat)
-    if self.priceCache.isCached(cacheKey) or (self.priceCache.hasKey(cacheKey) and not fetchIfNotAvailable):
-      return parseFloat(self.priceCache.get(cacheKey))
-    elif not fetchIfNotAvailable:
-      return 0.0
+    if self.priceCache.isCached(cacheKey):
+      return self.priceCache.get(cacheKey)
     var prices = initTable[string, Table[string, float]]()
 
     try:
@@ -143,6 +152,7 @@ QtObject:
       let fiatKey = renameSymbol(fiat)
       let response = backend.fetchPrices(@[cryptoKey], @[fiatKey])
       for (symbol, pricePerCurrency) in response.result.pairs:
+        prices[symbol] = initTable[string, float]()
         for (currency, price) in pricePerCurrency.pairs:
           prices[symbol][currency] = price.getFloat
 
@@ -155,7 +165,7 @@ QtObject:
   
   proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64) =
     let cacheKey = getTokenPriceCacheKey(crypto, fiat)
-    self.priceCache.set(cacheKey, $price)
+    self.priceCache.set(cacheKey, price)
   
   proc getTokenPegSymbol*(self: Service, symbol: string): string = 
     for _, tokens in self.tokens:
