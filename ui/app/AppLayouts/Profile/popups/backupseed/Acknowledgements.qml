@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.12
 
 import shared.panels 1.0
@@ -32,6 +33,8 @@ ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: -parent.anchors.margins
                 anchors.bottomMargin: -parent.anchors.bottomMargin
+
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOn
 
                 clip: false
 
