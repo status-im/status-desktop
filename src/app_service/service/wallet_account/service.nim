@@ -124,6 +124,7 @@ QtObject:
   # Forward declaration
   proc buildAllTokens(self: Service, accounts: seq[string])
   proc checkRecentHistory*(self: Service)
+  proc checkConnected(self: Service)
   proc startWallet(self: Service)
 
   proc delete*(self: Service) =
@@ -231,6 +232,8 @@ QtObject:
         of "wallet-tick-reload":
           self.buildAllTokens(self.getAddresses())
           self.checkRecentHistory()
+        of "wallet-tick-check-connected":
+          self.checkConnected()
         
   proc getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
     let accounts = self.getWalletAccounts()
@@ -249,6 +252,19 @@ QtObject:
       return
 
     discard backend.startWallet()
+
+  proc checkConnected(self: Service) =
+    if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
+      return
+    
+    try:
+      # TODO: add event for UI (Waiting for design)
+      discard backend.checkConnected()
+    except Exception as e:
+      let errDescription = e.msg
+      error "error: ", errDescription
+      return
+
 
   proc checkRecentHistory*(self: Service) =
     if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
