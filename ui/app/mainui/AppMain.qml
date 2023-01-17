@@ -52,6 +52,8 @@ Item {
     // set from main.qml
     property var sysPalette
 
+    property var activePopupComponents: []
+
     signal closeProfilePopup()
 
     Connections {
@@ -158,8 +160,21 @@ Item {
         onOpenEditDisplayNamePopup: Global.openPopup(displayNamePopupComponent)
 
         onOpenPopupRequested: {
+            if (activePopupComponents.includes(popupComponent)) {
+                return;
+            }
+
             const popup = popupComponent.createObject(appMain, params);
             popup.open();
+
+            activePopupComponents.push(popupComponent);
+
+            popup.closed.connect(() => {
+                const removeIndex = activePopupComponents.indexOf(popupComponent);
+                if (removeIndex !== -1) {
+                    activePopupComponents.splice(removeIndex, 1);
+                }
+            })
             return popup;
         }
 
