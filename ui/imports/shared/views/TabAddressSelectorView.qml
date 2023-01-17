@@ -215,7 +215,7 @@ Item {
                             id: contactsLabel
                             font.pixelSize: 15
                             color: Theme.palette.directColor1
-                            text: store.hex2Eth(value)
+                            text: LocaleUtils.currencyAmountToLocaleString(value)
                         }
                     ]
                     onClicked: contactSelected(title, RecipientSelector.Type.Address)

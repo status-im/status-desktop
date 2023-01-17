@@ -1,12 +1,13 @@
-import NimQml, stint, json
+import NimQml, stint, json, sequtils, sugar
 
-import ./io_interface, ./view, ./controller
+import ./io_interface, ./view, ./controller, ./item, ./utils
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
+import ../../../../../app_service/service/currency/service as currency_service
 
 export io_interface
 
@@ -39,11 +40,12 @@ proc newModule*(
   transactionService: transaction_service.Service,
   walletAccountService: wallet_account_service.Service,
   networkService: network_service.Service,
+  currencyService: currency_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
-  result.controller = controller.newController(result, events, transactionService, walletAccountService, networkService)
+  result.controller = controller.newController(result, events, transactionService, walletAccountService, networkService, currencyService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -58,13 +60,35 @@ method load*(self: Module) =
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
+proc getResolvedSymbol*(self: Module, transaction: TransactionDto): string =
+  if transaction.symbol != "":
+    result = transaction.symbol
+  else:
+    let contractSymbol = self.controller.findTokenSymbolByAddress(transaction.contract)
+    if contractSymbol != "":
+      result = contractSymbol
+    else:
+      result = "ETH"
+
+proc transactionsToItems(self: Module, transactions: seq[TransactionDto]) : seq[Item] =
+  let gweiFormat = self.controller.getCurrencyFormat("Gwei")
+  let ethFormat = self.controller.getCurrencyFormat("ETH")
+
+  transactions.map(t => (block:
+    let resolvedSymbol = self.getResolvedSymbol(t)
+    transactionToItem(t, resolvedSymbol, self.controller.getCurrencyFormat(resolvedSymbol), ethFormat, gweiFormat)
+  ))
+
+proc setPendingTx(self: Module) =
+  self.view.setPendingTx(self.transactionsToItems(self.controller.checkPendingTransactions()))
+
 method viewDidLoad*(self: Module) =
   let accounts = self.getWalletAccounts()
 
   self.moduleLoaded = true
   self.delegate.transactionsModuleDidLoad()
 
-  self.view.setPendingTx(self.controller.checkPendingTransactions())
+  self.setPendingTx()
 
 method switchAccount*(self: Module, accountIndex: int) =
   let walletAccount = self.controller.getWalletAccount(accountIndex)
@@ -86,7 +110,7 @@ method loadTransactions*(self: Module, address: string, toBlock: string = "0x0",
   self.controller.loadTransactions(address, toBlockParsed, txLimit, loadMore)
 
 method setTrxHistoryResult*(self: Module, transactions: seq[TransactionDto], address: string, wasFetchMore: bool) =
-  self.view.setTrxHistoryResult(transactions, address, wasFetchMore)
+  self.view.setTrxHistoryResult(self.transactionsToItems(transactions), address, wasFetchMore)
 
 method setHistoryFetchState*(self: Module, addresses: seq[string], isFetching: bool) =
   self.view.setHistoryFetchStateForAccounts(addresses, isFetching)
@@ -144,7 +168,7 @@ method onUserAuthenticated*(self: Module, password: string) =
 
 method transactionWasSent*(self: Module, result: string) =
   self.view.transactionWasSent(result)
-  self.view.setPendingTx(self.controller.checkPendingTransactions())
+  self.setPendingTx()
 
 method suggestedFees*(self: Module, chainId: int): string = 
   return self.controller.suggestedFees(chainId)

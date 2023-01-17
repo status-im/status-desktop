@@ -2,7 +2,6 @@ import NimQml, Tables, strutils, strformat, sequtils, tables, sugar, algorithm, 
 
 import ./item
 import ../../../../../app_service/service/eth/utils as eth_service_utils
-import ../../../../../app_service/service/transaction/dto
 
 type
   ModelRole {.pure.} = enum
@@ -197,41 +196,12 @@ QtObject:
     if result == 0:
       result = cmp(x.getNonce(), y.getNonce())
 
-  proc addNewTransactions*(self: Model, transactions: seq[TransactionDto], wasFetchMore: bool) =
+  proc addNewTransactions*(self: Model, transactions: seq[Item], wasFetchMore: bool) =
     let existingTxIds = self.items.map(tx => tx.getId())
-    let hasNewTxs = transactions.len > 0 and transactions.any(tx => not existingTxIds.contains(tx.id))
+    let hasNewTxs = transactions.len > 0 and transactions.any(tx => not existingTxIds.contains(tx.getId()))
 
     if hasNewTxs or not wasFetchMore:
-      let newTxItems = transactions.map(t => initItem(
-        t.id,
-        t.typeValue,
-        t.address,
-        t.blockNumber,
-        t.blockHash,
-        toInt(t.timestamp),
-        t.gasPrice,
-        t.gasLimit,
-        t.gasUsed,
-        t.nonce,
-        t.txStatus,
-        t.value,
-        t.fromAddress,
-        t.to,
-        t.contract,
-        t.chainId,
-        t.maxFeePerGas,
-        t.maxPriorityFeePerGas,
-        t.input,
-        t.txHash,
-        t.multiTransactionID,
-        false,
-        t.baseGasFees,
-        t.totalFees,
-        t.maxTotalFees,
-        t.symbol
-      ))
-
-      var allTxs = self.items.concat(newTxItems)
+      var allTxs = self.items.concat(transactions)
       allTxs.sort(cmpTransactions, SortOrder.Descending)
       eth_service_utils.deduplicate(allTxs, tx => tx.getTxHash())
 
@@ -241,7 +211,7 @@ QtObject:
       for tx in allTxs:
         let durationInDays =  (tempTimeStamp.toTimeInterval() - fromUnix(tx.getTimestamp()).toTimeInterval()).days
         if(durationInDays != 0):
-          itemsWithDateHeaders.add(initItem("", "", "", "", "",  tx.getTimestamp(), "", "", "", "", "", "", "", "", "", 0, "", "", "", "", 0, true, "", "", "", ""))
+          itemsWithDateHeaders.add(initTimestampItem(tx.getTimestamp()))
         itemsWithDateHeaders.add(tx)
         tempTimeStamp = fromUnix(tx.getTimestamp())
 

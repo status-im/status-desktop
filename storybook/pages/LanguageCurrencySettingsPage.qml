@@ -50,7 +50,7 @@ SplitView {
             }
 
             currencyStore: QtObject {
-                property string currentCurrency: "usd"
+                property string currentCurrency: "USD"
                 property string currentCurrencySymbol: "$"
 
                 readonly property ListModel currenciesModel: ListModel {

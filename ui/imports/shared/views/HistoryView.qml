@@ -115,12 +115,12 @@ ColumnLayout {
         TransactionDelegate {
             property bool modelDataValid: modelData !== undefined && !!modelData
             isIncoming: modelDataValid ? modelData.to === account.address: false
-            cryptoValue: modelDataValid ? RootStore.getCurrencyAmount(RootStore.hex2Eth(modelData.value), resolvedSymbol) : ""
-            fiatValue: RootStore.getFiatValue(cryptoValue, resolvedSymbol, RootStore.currentCurrency)
+            cryptoValue: modelDataValid ? modelData.value : undefined
+            fiatValue: modelDataValid ? RootStore.getFiatValue(cryptoValue.amount, symbol, RootStore.currentCurrency) : undefined
             networkIcon: modelDataValid ? RootStore.getNetworkIcon(modelData.chainId) : ""
             networkColor: modelDataValid ? RootStore.getNetworkColor(modelData.chainId) : ""
             networkName: modelDataValid ? RootStore.getNetworkShortName(modelData.chainId) : ""
-            symbol: modelDataValid ? !!modelData.symbol ? modelData.symbol : RootStore.findTokenSymbolByAddress(modelData.contract) : ""
+            symbol: modelDataValid ? modelData.symbol : ""
             transferStatus: modelDataValid ? RootStore.hex2Dec(modelData.txStatus) : ""
             shortTimeStamp: modelDataValid ? LocaleUtils.formatTime(modelData.timestamp * 1000, Locale.ShortFormat) : ""
             savedAddressName: modelDataValid ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""

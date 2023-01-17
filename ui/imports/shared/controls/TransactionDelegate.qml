@@ -21,16 +21,15 @@ StatusListItem {
     property string networkColor
     property string networkName
     property string shortTimeStamp
-    property string resolvedSymbol: root.symbol != "" ? root.symbol : "ETH"
     property string savedAddressName
 
     state: "normal"
     asset.isImage: true
-    asset.name: Style.png("tokens/%1".arg(resolvedSymbol))
+    asset.name: root.symbol ? Style.png("tokens/%1".arg(root.symbol)) : ""
     title: modelData !== undefined && !!modelData ?
-               isIncoming ? qsTr("Receive %1").arg(resolvedSymbol) : !!savedAddressName ?
-                            qsTr("Send %1 to %2").arg(resolvedSymbol).arg(savedAddressName) :
-                            qsTr("Send %1 to %2").arg(resolvedSymbol).arg(Utils.compactAddress(modelData.to, 4)): ""
+               isIncoming ? qsTr("Receive %1").arg(root.symbol) : !!savedAddressName ?
+                            qsTr("Send %1 to %2").arg(root.symbol).arg(savedAddressName) :
+                            qsTr("Send %1 to %2").arg(root.symbol).arg(Utils.compactAddress(modelData.to, 4)): ""
     subTitle: shortTimeStamp
     inlineTagModel: 1
     inlineTagDelegate: InformationTag {

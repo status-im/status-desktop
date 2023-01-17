@@ -3,6 +3,7 @@ import io_interface
 import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../../app_service/service/currency/service as currency_service
 import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 import ../../../../core/[main]
@@ -17,6 +18,7 @@ type
     transactionService: transaction_service.Service
     networkService: network_service.Service
     walletAccountService: wallet_account_service.Service
+    currencyService: currency_service.Service
 
 # Forward declaration
 proc loadTransactions*(self: Controller, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false)
@@ -28,6 +30,7 @@ proc newController*(
   transactionService: transaction_service.Service,
   walletAccountService: wallet_account_service.Service,
   networkService: network_service.Service,
+  currencyService: currency_service.Service,
 ): Controller =
   result = Controller()
   result.events = events
@@ -35,6 +38,7 @@ proc newController*(
   result.transactionService = transactionService
   result.walletAccountService = walletAccountService
   result.networkService = networkService
+  result.currencyService = currencyService
 
 proc delete*(self: Controller) =
   discard
@@ -133,3 +137,9 @@ proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_TRANSACTION_MODULE_IDENTIFIER,
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
+
+proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
+  return self.currencyService.getCurrencyFormat(symbol)
+
+proc findTokenSymbolByAddress*(self: Controller, address: string): string =
+  return self.walletAccountService.findTokenSymbolByAddress(address)
