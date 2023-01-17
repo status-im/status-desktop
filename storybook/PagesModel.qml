@@ -50,6 +50,10 @@ ListModel {
          section: "Panels"
     }
     ListElement {
+         title: "PermissionQualificationPanel"
+         section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
