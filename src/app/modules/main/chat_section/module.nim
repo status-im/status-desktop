@@ -388,7 +388,6 @@ method getChatContentModule*(self: Module, chatId: string): QVariant =
 proc updateParentBadgeNotifications(self: Module) =
   var (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
   if(not self.controller.isCommunity()):
-    sectionNotificationCount += self.view.contactRequestsModel().getCount()
     sectionHasUnreadMessages = sectionHasUnreadMessages or sectionNotificationCount > 0
   self.delegate.onNotificationsUpdated(self.controller.getMySectionId(), sectionHasUnreadMessages, sectionNotificationCount)
 
