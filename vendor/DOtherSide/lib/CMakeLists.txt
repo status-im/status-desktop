@@ -20,7 +20,8 @@ macro(add_target name type)
 
     if(APPLE)
         file(GLOB MM_FILES src/*.mm src/Status/*.mm)
-        list(APPEND SOURCES ${MM_FILES})
+        #prepend items because .mm files need build priority to override cpp impl
+        list(INSERT SOURCES 0 ${MM_FILES})
     endif()
 
     add_library(${name} ${type} ${SOURCES} ${HEADERS} ${MONITORING_SOURCES} ${MONITORING_HEADERS})
