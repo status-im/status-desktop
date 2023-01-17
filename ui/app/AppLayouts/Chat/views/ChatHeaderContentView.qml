@@ -26,6 +26,10 @@ Item {
 
     signal searchButtonClicked()
 
+    function addRemoveGroupMember() {
+        root.state = d.stateMembersSelectorContent
+    }
+
     QtObject {
         id: d
 
@@ -231,7 +235,7 @@ Item {
                                 )
                 }
                 onAddRemoveGroupMember: {
-                    root.state = d.stateMembersSelectorContent
+                    root.addRemoveGroupMember()
                 }
                 onFetchMoreMessages: {
                     messageStore.requestMoreMessages();

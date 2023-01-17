@@ -38,6 +38,7 @@ Item {
     signal openAppSearch()
     signal importCommunityClicked()
     signal createCommunityClicked()
+    signal addRemoveGroupMemberClicked()
 
     // main layout
     ColumnLayout {
@@ -232,6 +233,9 @@ Item {
                                 groupColor,
                                 groupImage
                             )
+                        }
+                        onAddRemoveGroupMember: {
+                            root.addRemoveGroupMemberClicked()
                         }
                     }
                 }
