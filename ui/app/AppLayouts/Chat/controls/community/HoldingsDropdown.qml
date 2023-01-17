@@ -22,16 +22,15 @@ StatusDropdown {
     property real collectibleAmount: 1
     property bool collectiblesSpecificAmount: false
 
-    property int ensType: EnsPanel.EnsType.Any
     property string ensDomainName: ""
 
     signal addAsset(string key, real amount)
     signal addCollectible(string key, real amount)
-    signal addEns(bool any, string customDomain)
+    signal addEns(string domain)
 
     signal updateAsset(string key, real amount)
     signal updateCollectible(string key, real amount)
-    signal updateEns(bool any, string customDomain)
+    signal updateEns(string domain)
 
     signal removeClicked
 
@@ -45,7 +44,6 @@ StatusDropdown {
         root.assetAmount = 0
         root.collectibleAmount = 1
         root.collectiblesSpecificAmount = false
-        root.ensType = EnsPanel.EnsType.Any
         root.ensDomainName = ""
 
         statesStack.clear()
@@ -89,7 +87,7 @@ StatusDropdown {
         // Internal management properties and signals:
         readonly property bool assetsReady: root.assetAmount > 0 && root.assetKey
         readonly property bool collectiblesReady: root.collectibleAmount > 0 && root.collectibleKey
-        readonly property bool ensReady: root.ensType === EnsPanel.EnsType.Any || d.ensDomainNameValid
+        readonly property bool ensReady: d.ensDomainNameValid
 
         readonly property string addState: "ADD"
         readonly property string updateState: "UPDATE"
@@ -215,7 +213,7 @@ StatusDropdown {
 
             readonly property bool extendedHeight:
                 d.currentHoldingType === HoldingTypes.Type.Collectible && collectiblesSpecificAmount ||
-                d.currentHoldingType === HoldingTypes.Type.Ens && root.ensType === EnsPanel.EnsType.CustomSubdomain
+                d.currentHoldingType === HoldingTypes.Type.Ens
 
             implicitHeight: extendedHeight
                             ? (mode === HoldingsTabs.Mode.Add ? d.tabsAddModeExtendedHeight : d.tabsUpdateModeExtendedHeight)
@@ -372,9 +370,6 @@ StatusDropdown {
         id: ensLayout
 
         EnsPanel {
-            ensType: root.ensType
-            onEnsTypeChanged: root.ensType = ensType
-
             domainName: root.ensDomainName
             onDomainNameChanged: root.ensDomainName = domainName
             onDomainNameValidChanged: d.ensDomainNameValid = domainNameValid
@@ -383,11 +378,11 @@ StatusDropdown {
                 target: d
 
                 function onAddClicked() {
-                    root.addEns(root.ensType === EnsPanel.EnsType.Any, root.ensDomainName)
+                    root.addEns(root.ensDomainName)
                 }
 
                 function onUpdateClicked() {
-                    root.updateEns(root.ensType === EnsPanel.EnsType.Any, root.ensDomainName)
+                    root.updateEns(root.ensDomainName)
                 }
             }
         }

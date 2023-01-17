@@ -231,11 +231,10 @@ StatusScrollView {
                 }
 
                 onAddEns: {
-                    const key = any ? "EnsAny" : "EnsCustom"
-                    const name = any ? "" : customDomain
+                    const key = "ENS"
                     const icon = Style.svg("profile/ensUsernames")
 
-                    d.dirtyValues.holdingsModel.append({type: HoldingTypes.Type.Ens, key, name, amount: 1, imageSource: icon })
+                    d.dirtyValues.holdingsModel.append({type: HoldingTypes.Type.Ens, key, name: domain, amount: 1, imageSource: icon })
                     dropdown.close()
                 }
 
@@ -262,11 +261,10 @@ StatusScrollView {
                 }
 
                 onUpdateEns: {
-                    const key = any ? "EnsAny" : "EnsCustom"
-                    const name = any ? "" : customDomain
+                    const key = "ENS"
                     const icon = Style.svg("profile/ensUsernames")
 
-                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Ens, key, name: name, amount: 1, imageSource: icon })
+                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Ens, key, name: domain, amount: 1, imageSource: icon })
                     d.triggerDirtyTool = !d.triggerDirtyTool
                     dropdown.close()
                 }
@@ -305,8 +303,6 @@ StatusScrollView {
                         dropdown.collectiblesSpecificAmount = modelItem.amount !== 1
                         break
                     case HoldingTypes.Type.Ens:
-                        dropdown.ensType = modelItem.name ? EnsPanel.EnsType.CustomSubdomain
-                                                          : EnsPanel.EnsType.Any
                         dropdown.ensDomainName = modelItem.name
                         break
                     default:

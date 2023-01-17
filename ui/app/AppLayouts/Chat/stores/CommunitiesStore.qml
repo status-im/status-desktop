@@ -140,10 +140,12 @@ QtObject {
             case HoldingTypes.Type.Collectible:
                 return `${LocaleUtils.numberToLocaleString(amount)} ${name}`
             case HoldingTypes.Type.Ens:
-                if (name)
-                    return qsTr("ENS username on '%1' domain").arg(name)
-                else
+                if (name === "*.eth")
                     return qsTr("Any ENS username")
+                if (name.startsWith("*."))
+                    return qsTr("ENS username on '%1' domain").arg(name.substring(2))
+
+                return qsTr("ENS username '%1'").arg(name)
             default:
                 return ""
         }
