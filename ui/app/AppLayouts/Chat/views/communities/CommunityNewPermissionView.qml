@@ -1,4 +1,5 @@
 import QtQuick 2.14
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
@@ -13,6 +14,7 @@ import shared.panels 1.0
 
 import SortFilterProxyModel 0.2
 
+import AppLayouts.Chat.panels.communities 1.0
 
 import "../../../Chat/controls/community"
 
@@ -515,6 +517,18 @@ StatusScrollView {
                 onToggled: d.dirtyValues.isPrivateDirty = (root.isPrivate !== checked)
             }
         }
+
+        PermissionQualificationPanel {
+            Layout.fillWidth: true
+            Layout.topMargin: 24
+
+            visible: d.dirtyValues.holdingsModel.count > 0
+
+            qualifyingAddresses: 200234
+            knownAddresses: 663026
+            unknownAddresses: 396720
+        }
+
         StatusButton {
             visible: !root.isEditState
             Layout.topMargin: 24
