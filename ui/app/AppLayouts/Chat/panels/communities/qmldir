@@ -1,3 +1,4 @@
+CommunityPermissionsSettingsPanel 1.0 CommunityPermissionsSettingsPanel.qml
 CommunityProfilePopupInviteFriendsPanel 1.0 CommunityProfilePopupInviteFriendsPanel.qml
 CommunityProfilePopupInviteMessagePanel 1.0 CommunityProfilePopupInviteMessagePanel.qml
-CommunityPermissionsSettingsPanel 1.0 CommunityPermissionsSettingsPanel.qml
+PermissionQualificationPanel 1.0 PermissionQualificationPanel.qml
