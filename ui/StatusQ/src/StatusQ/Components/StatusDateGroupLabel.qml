@@ -21,7 +21,7 @@ StatusBaseText {
         const currentMsgDate = new Date(messageTimestamp)
         const prevMsgDate = new Date(previousMessageTimestamp)
 
-        if (prevMsgDate > 0 && currentMsgDate.getDay() === prevMsgDate.getDay())
+        if (prevMsgDate > 0 && currentMsgDate.getDay() <= prevMsgDate.getDay())
             return ""
 
         const now = new Date();
