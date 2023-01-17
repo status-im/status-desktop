@@ -292,6 +292,31 @@ QtObject:
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
+    # Update replied to messages if there are
+    # We update replies before adding, since we do not need to update the new items, they should already be up to date
+    for i in 0 ..< self.items.len:
+      var oldItem = self.items[i]
+      if oldItem.responseToMessageWithId == "" or oldItem.quotedMessageFrom != "":
+        continue
+      for newItem in items:
+        if oldItem.responseToMessageWithId == newItem.id:
+          oldItem.quotedMessageFrom = newItem.senderId
+          oldItem.quotedMessageAuthorDisplayName = newItem.senderDisplayName
+          oldItem.quotedMessageAuthorAvatar = newItem.senderIcon
+          oldItem.quotedMessageParsedText = newItem.messageText
+          oldItem.quotedMessageText = newItem.unparsedText
+          oldItem.quotedMessageContentType = newItem.contentType.int
+          let index = self.createIndex(i, 0, nil)
+          self.dataChanged(index, index, @[
+            ModelRole.QuotedMessageFrom.int,
+            ModelRole.QuotedMessageAuthorDisplayName.int,
+            ModelRole.QuotedMessageAuthorAvatar.int,
+            ModelRole.QuotedMessageText.int,
+            ModelRole.QuotedMessageParsedText.int,
+            ModelRole.QuotedMessageContentType.int,
+          ])
+
+
     self.beginInsertRows(parentModelIndex, position, position + items.len - 1)
     self.items.insert(items, position)
     self.endInsertRows()
