@@ -233,7 +233,7 @@ StatusScrollView {
                 onAddEns: {
                     const key = any ? "EnsAny" : "EnsCustom"
                     const name = any ? "" : customDomain
-                    const icon = Style.svg("ensUsernames")
+                    const icon = Style.svg("profile/ensUsernames")
 
                     d.dirtyValues.holdingsModel.append({type: HoldingTypes.Type.Ens, key, name, amount: 1, imageSource: icon })
                     dropdown.close()
@@ -264,7 +264,7 @@ StatusScrollView {
                 onUpdateEns: {
                     const key = any ? "EnsAny" : "EnsCustom"
                     const name = any ? "" : customDomain
-                    const icon = Style.svg("ensUsernames")
+                    const icon = Style.svg("profile/ensUsernames")
 
                     d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Ens, key, name: name, amount: 1, imageSource: icon })
                     d.triggerDirtyTool = !d.triggerDirtyTool

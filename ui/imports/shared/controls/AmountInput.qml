@@ -34,13 +34,13 @@ Input {
         property real amount: 0
     }
 
-    validator:  DoubleValidator {
+    validator: DoubleValidator {
         id: doubleValidator
 
         decimals: root.allowDecimals ? 100 : 0
         bottom: 0
         notation: DoubleValidator.StandardNotation
-        locale: root.locale
+        locale: root.locale.name
     }
 
     onTextChanged: {
