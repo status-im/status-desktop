@@ -77,6 +77,9 @@ rpc(deleteSavedAddress, "wakuext"):
 rpc(getSavedAddresses, "wallet"):
   discard
 
+rpc(checkConnected, "wallet"):
+  discard
+
 rpc(getTokens, "wallet"):
   chainId: int
 
