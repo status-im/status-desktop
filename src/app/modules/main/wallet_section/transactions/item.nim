@@ -1,4 +1,5 @@
 import strformat
+import ../../../shared_models/currency_amount
 
 type
   Item* = object
@@ -8,25 +9,25 @@ type
     blockNumber: string
     blockHash: string
     timestamp: int
-    gasPrice: string
-    gasLimit: string
-    gasUsed: string
+    gasPrice: CurrencyAmount
+    gasLimit: int
+    gasUsed: int
     nonce: string
     txStatus: string
-    value: string
+    value: CurrencyAmount
     fro: string
     to: string
     contract: string
     chainId: int
-    maxFeePerGas: string
-    maxPriorityFeePerGas: string
+    maxFeePerGas: CurrencyAmount
+    maxPriorityFeePerGas: CurrencyAmount
     input: string
     txHash: string
     multiTransactionID: int
     isTimeStamp: bool
-    baseGasFees: string
-    totalFees: string
-    maxTotalFees: string
+    baseGasFees: CurrencyAmount
+    totalFees: CurrencyAmount
+    maxTotalFees: CurrencyAmount
     symbol: string
 
 proc initItem*(
@@ -36,25 +37,25 @@ proc initItem*(
   blockNumber: string,
   blockHash: string,
   timestamp: int,
-  gasPrice: string,
-  gasLimit: string,
-  gasUsed: string,
+  gasPrice: CurrencyAmount,
+  gasLimit: int,
+  gasUsed: int,
   nonce: string,
   txStatus: string,
-  value: string,
+  value: CurrencyAmount,
   fro: string,
   to: string,
   contract: string,
   chainId: int,
-  maxFeePerGas: string,
-  maxPriorityFeePerGas: string,
+  maxFeePerGas: CurrencyAmount,
+  maxPriorityFeePerGas: CurrencyAmount,
   input: string,
   txHash: string,
   multiTransactionID: int,
   isTimeStamp: bool,
-  baseGasFees: string,
-  totalFees: string,
-  maxTotalFees: string,
+  baseGasFees: CurrencyAmount,
+  totalFees: CurrencyAmount,
+  maxTotalFees: CurrencyAmount,
   symbol: string
 ): Item =
   result.id = id
@@ -83,6 +84,19 @@ proc initItem*(
   result.totalFees = totalFees
   result.maxTotalFees = maxTotalFees
   result.symbol = symbol
+
+proc initTimestampItem*(timestamp: int): Item =
+  result.timestamp = timestamp
+  result.gasPrice = newCurrencyAmount()
+  result.value = newCurrencyAmount()
+  result.chainId = 0
+  result.maxFeePerGas = newCurrencyAmount()
+  result.maxPriorityFeePerGas = newCurrencyAmount()
+  result.multiTransactionID = 0
+  result.isTimeStamp = true
+  result.baseGasFees = newCurrencyAmount()
+  result.totalFees = newCurrencyAmount()
+  result.maxTotalFees = newCurrencyAmount()
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
@@ -132,13 +146,13 @@ proc getBlockHash*(self: Item): string =
 proc getTimestamp*(self: Item): int =
   return self.timestamp
 
-proc getGasPrice*(self: Item): string =
+proc getGasPrice*(self: Item): CurrencyAmount =
   return self.gasPrice
 
-proc getGasLimit*(self: Item): string =
+proc getGasLimit*(self: Item): int =
   return self.gasLimit
 
-proc getGasUsed*(self: Item): string =
+proc getGasUsed*(self: Item): int =
   return self.gasUsed
 
 proc getNonce*(self: Item): string =
@@ -147,7 +161,7 @@ proc getNonce*(self: Item): string =
 proc getTxStatus*(self: Item): string =
   return self.txStatus
 
-proc getValue*(self: Item): string =
+proc getValue*(self: Item): CurrencyAmount =
   return self.value
 
 proc getfrom*(self: Item): string =
@@ -162,10 +176,10 @@ proc getContract*(self: Item): string =
 proc getChainId*(self: Item): int =
   return self.chainId
 
-proc getMaxFeePerGas*(self: Item): string =
+proc getMaxFeePerGas*(self: Item): CurrencyAmount =
   return self.maxFeePerGas
 
-proc getMaxPriorityFeePerGas*(self: Item): string =
+proc getMaxPriorityFeePerGas*(self: Item): CurrencyAmount =
   return self.maxPriorityFeePerGas
 
 proc  getInput*(self: Item): string =
@@ -180,13 +194,13 @@ proc  getMultiTransactionID*(self: Item): int =
 proc  getIsTimeStamp*(self: Item): bool =
   return self.isTimeStamp
 
-proc  getBaseGasFees*(self: Item): string =
+proc  getBaseGasFees*(self: Item): CurrencyAmount =
   return self.baseGasFees
 
-proc  getTotalFees*(self: Item): string =
+proc  getTotalFees*(self: Item): CurrencyAmount =
   return self.totalFees
 
-proc  getMaxTotalFees*(self: Item): string =
+proc  getMaxTotalFees*(self: Item): CurrencyAmount =
   return self.maxTotalFees  
 
 proc  getSymbol*(self: Item): string =

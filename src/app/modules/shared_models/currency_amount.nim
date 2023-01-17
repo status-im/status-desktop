@@ -26,6 +26,9 @@ QtObject:
     result.displayDecimals = displayDecimals
     result.stripTrailingZeroes = stripTrailingZeroes
 
+  proc newCurrencyAmount*: CurrencyAmount =
+    result = newCurrencyAmount(0.0, "", 0, true)
+
   proc `$`*(self: CurrencyAmount): string =
     result = fmt"""CurrencyAmount(
       amount: {self.amount},

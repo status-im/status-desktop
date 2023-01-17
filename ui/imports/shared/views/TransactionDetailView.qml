@@ -22,15 +22,15 @@ Item {
     property var contactsStore
     property var transaction
     property var sendModal
-
+    readonly property bool isTransactionValid: transaction !== undefined && !!transaction
 
     QtObject {
         id: d
-        readonly property bool isIncoming: root.transaction !== undefined && !!root.transaction ? root.transaction.to === currentAccount.address : false
-        readonly property string savedAddressNameTo: root.transaction !== undefined && !!root.transaction ? d.getNameForSavedWalletAddress(transaction.to) : ""
-        readonly property string savedAddressNameFrom: root.transaction !== undefined && !!root.transaction ? d.getNameForSavedWalletAddress(transaction.from): ""
-        readonly property string from: root.transaction !== undefined && !!root.transaction ? !!savedAddressNameFrom ? savedAddressNameFrom : Utils.compactAddress(transaction.from, 4): ""
-        readonly property string to: root.transaction !== undefined && !!root.transaction ? !!savedAddressNameTo ? savedAddressNameTo : Utils.compactAddress(transaction.to, 4): ""
+        readonly property bool isIncoming: root.isTransactionValid ? root.transaction.to === currentAccount.address : false
+        readonly property string savedAddressNameTo: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.to) : ""
+        readonly property string savedAddressNameFrom: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.from): ""
+        readonly property string from: root.isTransactionValid ? !!savedAddressNameFrom ? savedAddressNameFrom : Utils.compactAddress(transaction.from, 4): ""
+        readonly property string to: root.isTransactionValid ? !!savedAddressNameTo ? savedAddressNameTo : Utils.compactAddress(transaction.to, 4): ""
 
         function getNameForSavedWalletAddress(address) {
             return RootStore.getNameForSavedWalletAddress(address)
@@ -59,18 +59,17 @@ Item {
 
                 modelData: transaction
                 isIncoming: d.isIncoming
-                property bool transactionValid: root.transaction !== undefined && !!root.transaction
-                cryptoValue: transactionValid ? RootStore.getCurrencyAmount(RootStore.hex2Eth(transaction.value), resolvedSymbol): undefined
-                fiatValue: transactionValid ? RootStore.getFiatValue(cryptoValue, resolvedSymbol, RootStore.currentCurrency): ""
-                networkIcon: transactionValid ? RootStore.getNetworkIcon(transaction.chainId): ""
-                networkColor: transactionValid ? RootStore.getNetworkColor(transaction.chainId): ""
-                networkName: transactionValid ? RootStore.getNetworkShortName(transaction.chainId): ""
-                symbol: transactionValid ? RootStore.findTokenSymbolByAddress(transaction.contract): ""
-                transferStatus: transactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
-                shortTimeStamp: transactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
-                savedAddressName: transactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
-                title: d.isIncoming ? qsTr("Received %1 %2 from %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.from) :
-                                    qsTr("Sent %1 %2 to %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.to)
+                cryptoValue: root.isTransactionValid ? transaction.value : undefined
+                fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue.amount, symbol, RootStore.currentCurrency): undefined
+                networkIcon: root.isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId): ""
+                networkColor: root.isTransactionValid ? RootStore.getNetworkColor(transaction.chainId): ""
+                networkName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId): ""
+                symbol: root.isTransactionValid ? transaction.symbol : ""
+                transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
+                shortTimeStamp: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
+                savedAddressName: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
+                title: d.isIncoming ? qsTr("Received %1 from %2").arg(LocaleUtils.currencyAmountToLocaleString(cryptoValue)).arg(d.from) :
+                                    qsTr("Sent %1 to %2").arg(LocaleUtils.currencyAmountToLocaleString(cryptoValue)).arg(d.to)
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 state: "big"
@@ -80,9 +79,9 @@ Item {
                 width: parent.width
 
                 name: d.isIncoming ? d.savedAddressNameFrom : d.savedAddressNameTo
-                address:  root.transaction !== undefined && !!root.transaction ? d.isIncoming ? transaction.from : transaction.to : ""
+                address:  root.isTransactionValid ? d.isIncoming ? transaction.from : transaction.to : ""
                 title: d.isIncoming ? d.from : d.to
-                subTitle:  root.transaction !== undefined && !!root.transaction ? d.isIncoming ? !!d.savedAddressNameFrom ? Utils.compactAddress(transaction.from, 4) : "" : !!d.savedAddressNameTo ? Utils.compactAddress(transaction.to, 4) : "": ""
+                subTitle:  root.isTransactionValid ? d.isIncoming ? !!d.savedAddressNameFrom ? Utils.compactAddress(transaction.from, 4) : "" : !!d.savedAddressNameTo ? Utils.compactAddress(transaction.to, 4) : "": ""
                 store: RootStore
                 contactsStore: root.contactsStore
                 onOpenSendModal: root.sendModal.open(address);
@@ -129,7 +128,7 @@ Item {
                 statusListItemTitle.color: Theme.palette.baseColor1
 
                 title: qsTr("Data" )
-                subTitle: root.transaction !== undefined && !!root.transaction ? root.transaction.input : ""
+                subTitle: root.isTransactionValid ? root.transaction.input : ""
                 components: [
                     CopyToClipBoardButton {
                         icon.width: 15
@@ -156,18 +155,17 @@ Item {
                 width: parent.width
                 modelData: transaction
                 isIncoming: d.isIncoming
-                property bool transactionValid: root.transaction !== undefined && !!root.transaction
-                cryptoValue: transactionValid ? RootStore.getCurrencyAmount(RootStore.hex2Eth(transaction.value), resolvedSymbol): ""
-                fiatValue: RootStore.getFiatValue(cryptoValue, resolvedSymbol, RootStore.currentCurrency)
-                networkIcon: transactionValid ? RootStore.getNetworkIcon(transaction.chainId) : ""
-                networkColor: transactionValid ? RootStore.getNetworkColor(transaction.chainId): ""
-                networkName: transactionValid ? RootStore.getNetworkShortName(transaction.chainId): ""
-                symbol: transactionValid ? RootStore.findTokenSymbolByAddress(transaction.contract): ""
-                transferStatus: transactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
-                shortTimeStamp: transactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
-                savedAddressName: transactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
-                title: d.isIncoming ? qsTr("Received %1 %2 from %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.from) :
-                                      qsTr("Sent %1 %2 to %3").arg(cryptoValue).arg(resolvedSymbol).arg(d.to)
+                cryptoValue: root.isTransactionValid ? transaction.value: undefined
+                fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue.amount, symbol, RootStore.currentCurrency): undefined
+                networkIcon: root.isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId) : ""
+                networkColor: root.isTransactionValid ? RootStore.getNetworkColor(transaction.chainId): ""
+                networkName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId): ""
+                symbol: root.isTransactionValid ? transaction.symbol : ""
+                transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
+                shortTimeStamp: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
+                savedAddressName: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
+                title: d.isIncoming ? qsTr("Received %1 from %2").arg(LocaleUtils.currencyAmountToLocaleString(cryptoValue)).arg(d.from) :
+                                    qsTr("Sent %1 to %2").arg(LocaleUtils.currencyAmountToLocaleString(cryptoValue)).arg(d.to)
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 border.width: 1
@@ -186,7 +184,7 @@ Item {
                     maxWidth: parent.width
                     primaryText: qsTr("Confirmations")
                     secondaryText: {
-                        if(root.transaction !== undefined && !!root.transaction )
+                        if(root.isTransactionValid)
                             return Math.abs(RootStore.getLatestBlockNumber() - RootStore.hex2Dec(root.transaction.blockNumber))
                         else
                             return ""
@@ -195,7 +193,7 @@ Item {
                 InformationTile {
                     maxWidth: parent.width
                     primaryText: qsTr("Nonce")
-                    secondaryText: root.transaction !== undefined && !!root.transaction ? RootStore.hex2Dec(root.transaction.nonce) : ""
+                    secondaryText: root.isTransactionValid ? RootStore.hex2Dec(root.transaction.nonce) : ""
                 }
             }
         }
@@ -212,23 +210,29 @@ Item {
                     id: baseFee
                     maxWidth: parent.width
                     primaryText: qsTr("Base fee")
-                    secondaryText: root.transaction !== undefined && !!root.transaction ?  qsTr("%1 Gwei").arg(RootStore.hex2Gwei(root.transaction.baseGasFees)) : ""
+                    secondaryText: root.isTransactionValid ?  qsTr("%1").arg(LocaleUtils.currencyAmountToLocaleString(root.transaction.baseGasFees)) : ""
                 }
                 InformationTile {
                     maxWidth: parent.width
                     primaryText: qsTr("Tip")
-                    secondaryText: root.transaction !== undefined && !!root.transaction ?  qsTr("%1 Gwei <font color=\"#939BA1\">&#8226; Max: %2 Gwei</font>").
-                                                                    arg(RootStore.hex2Gwei(root.transaction.maxPriorityFeePerGas)).
-                                                                    arg(RootStore.hex2Gwei(root.transaction.maxFeePerGas)) : ""
+                    secondaryText: root.isTransactionValid ?    "%1 <font color=\"%2\">&#8226; ".
+                                                                    arg(LocaleUtils.currencyAmountToLocaleString(root.transaction.maxPriorityFeePerGas)).
+                                                                    arg(Theme.palette.baseColor1) +
+                                                                qsTr("Max: %1").
+                                                                    arg(LocaleUtils.currencyAmountToLocaleString(root.transaction.maxFeePerGas)) +
+                                                                "</font>" : ""
                     secondaryLabel.textFormat: Text.RichText
                 }
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Total fee")
-                secondaryText: root.transaction !== undefined && !!root.transaction ? qsTr("%1 Gwei <font color=\"#939BA1\">&#8226; Max: %2 Gwei</font>").
-                                                                arg(Utils.stripTrailingZeros(RootStore.hex2Gwei(root.transaction.totalFees))).
-                                                                arg(Utils.stripTrailingZeros(RootStore.hex2Gwei(root.transaction.maxTotalFees))) : ""
+                secondaryText: root.isTransactionValid ?    "%1 <font color=\"%2\">&#8226; ".
+                                                                arg(LocaleUtils.currencyAmountToLocaleString(root.transaction.totalFees)).
+                                                                arg(Theme.palette.baseColor1) +
+                                                            qsTr("Max: %1").
+                                                                arg(LocaleUtils.currencyAmountToLocaleString(root.transaction.maxTotalFees)) +
+                                                            "</font>" : ""
                 secondaryLabel.textFormat: Text.RichText
             }
         }

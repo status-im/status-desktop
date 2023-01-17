@@ -46,7 +46,7 @@ QtObject:
       )
     return self.fiatCurrencyFormatCache[symbol]
 
-  proc getTokenCurrencyFormat(self: Service, symbol: string): CurrencyFormatDto =
+  proc getTokenCurrencyFormat(self: Service, symbol: string, allowFetching: bool): CurrencyFormatDto =
     if self.tokenCurrencyFormatCache.isCached(symbol):
       return self.tokenCurrencyFormatCache.get(symbol)
 
@@ -61,19 +61,21 @@ QtObject:
       )
       updateCache = true
     else:
-      let price = self.tokenService.getCachedTokenPrice(symbol, DECIMALS_CALCULATION_CURRENCY)
+      let price = (if allowFetching: self.tokenService.getTokenPrice(symbol, DECIMALS_CALCULATION_CURRENCY) else :
+        self.tokenService.getCachedTokenPrice(symbol, DECIMALS_CALCULATION_CURRENCY))
       result = CurrencyFormatDto(
         symbol: symbol,
         displayDecimals: getTokenDisplayDecimals(price),
         stripTrailingZeroes: true
       )
-      updateCache = self.tokenService.isCachedTokenPriceRecent(symbol, DECIMALS_CALCULATION_CURRENCY)
+      updateCache = (if allowFetching: true else:
+        self.tokenService.isCachedTokenPriceRecent(symbol, DECIMALS_CALCULATION_CURRENCY))
 
     if updateCache:
       self.tokenCurrencyFormatCache.set(symbol, result)
 
-  proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
+  proc getCurrencyFormat*(self: Service, symbol: string, allowFetching: bool = true): CurrencyFormatDto =
     if self.isCurrencyFiat(symbol):
       return self.getFiatCurrencyFormat(symbol)
     else:
-      return self.getTokenCurrencyFormat(symbol)
+      return self.getTokenCurrencyFormat(symbol, allowFetching)

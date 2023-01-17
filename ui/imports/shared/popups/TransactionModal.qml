@@ -13,6 +13,8 @@ ModalPopup {
   property var transaction
   title: qsTr("Transaction Details")
 
+  readonly property bool isTransactionValid: transaction !== undefined
+
   Item {
     id: confirmations
     anchors.left: parent.left
@@ -26,7 +28,7 @@ ModalPopup {
     StyledText {
       id: confirmationsCount
       text: {
-          if(transaction !== undefined)
+          if(popup.isTransactionValid)
               return RootStore.getLatestBlockNumber() - RootStore.hex2Dec(transaction.blockNumber) + qsTr(" confirmation(s)")
           else
               return ""
@@ -75,7 +77,7 @@ ModalPopup {
 
     StyledText {
       id: valueBlock
-      text: transaction !== undefined ? RootStore.hex2Dec(transaction.blockNumber) : ""
+      text: popup.isTransactionValid ? RootStore.hex2Dec(transaction.blockNumber) : ""
       font.pixelSize: 14
       anchors.left: labelBlock.right
       anchors.leftMargin: Style.current.padding
@@ -102,7 +104,7 @@ ModalPopup {
 
     Address {
       id: valueHash
-      text: transaction !== undefined ? transaction.id : ""
+      text: popup.isTransactionValid ? transaction.id : ""
       width: 160
       maxWidth: parent.width - labelHash.width - Style.current.padding
       color: Style.current.textColor
@@ -130,7 +132,7 @@ ModalPopup {
 
     Address {
       id: valueFrom
-      text: transaction !== undefined ? transaction.from: ""
+      text: popup.isTransactionValid ? transaction.from: ""
       color: Style.current.textColor
       width: 160
       font.pixelSize: 14
@@ -157,7 +159,7 @@ ModalPopup {
 
     Address {
       id: valueTo
-      text: transaction !== undefined ? transaction.to: ""
+      text: popup.isTransactionValid ? transaction.to: ""
       color: Style.current.textColor
       width: 160
       font.pixelSize: 14
@@ -184,7 +186,7 @@ ModalPopup {
 
     StyledText {
       id: valueGasLimit
-      text: transaction !== undefined ? RootStore.hex2Dec(transaction.gasLimit): ""
+      text: popup.isTransactionValid ? LocaleUtils.currencyAmountToLocaleString(transaction.gasLimit): ""
       font.pixelSize: 14
       anchors.left: labelGasLimit.right
       anchors.leftMargin: Style.current.padding
@@ -209,7 +211,7 @@ ModalPopup {
 
     StyledText {
       id: valueGasPrice
-      text: transaction !== undefined ? RootStore.hex2Eth(transaction.gasPrice): ""
+      text: popup.isTransactionValid ? LocaleUtils.currencyAmountToLocaleString(transaction.gasPrice): ""
       font.pixelSize: 14
       anchors.left: labelGasPrice.right
       anchors.leftMargin: Style.current.padding
@@ -234,7 +236,7 @@ ModalPopup {
 
     StyledText {
       id: valueGasUsed
-      text: transaction !== undefined ? RootStore.hex2Dec(transaction.gasUsed): ""
+      text: popup.isTransactionValid ? LocaleUtils.currencyAmountToLocaleString(transaction.gasUsed): ""
       font.pixelSize: 14
       anchors.left: labelGasUsed.right
       anchors.leftMargin: Style.current.padding
@@ -259,7 +261,7 @@ ModalPopup {
 
     StyledText {
       id: valueNonce
-      text: transaction !== undefined ? RootStore.hex2Dec(transaction.nonce) : ""
+      text: popup.isTransactionValid ? RootStore.hex2Dec(transaction.nonce) : ""
       font.pixelSize: 14
       anchors.left: labelNonce.right
       anchors.leftMargin: Style.current.padding

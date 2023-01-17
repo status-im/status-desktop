@@ -9,16 +9,26 @@ QtObject {
     // We should probably refactor this and move those functions to some Wallet module.
     property ProfileSectionStore profileSectionStore: ProfileSectionStore {}
 
-    property string currentCurrency: walletSection.currentCurrency
-    property int currentCurrencyModelIndex: {
+    function getModelIndexForKey(key) {
         for (var i=0; i<currenciesModel.count; i++) {
-            if (currenciesModel.get(i).key === currentCurrency) {
+            if (currenciesModel.get(i).key === key) {
                 return i;
             }
         }
         return 0;
     }
 
+    function getModelIndexForShortName(shortName) {
+        for (var i=0; i<currenciesModel.count; i++) {
+            if (currenciesModel.get(i).shortName === shortName) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    property string currentCurrency: walletSection.currentCurrency
+    property int currentCurrencyModelIndex: getModelIndexForShortName(currentCurrency)
     property string currentCurrencySymbol: currenciesModel.get(currentCurrencyModelIndex).symbol
 
     property ListModel currenciesModel: ListModel {
@@ -939,7 +949,7 @@ QtObject {
     function updateCurrenciesModel() {
         var isSelected = false
         for(var i = 0; i < currenciesModel.count; i++) {
-            if(root.currentCurrency === root.currenciesModel.get(i).key) {
+            if(root.currentCurrency === root.currenciesModel.get(i).shortName) {
                 root.currenciesModel.get(i).selected = isSelected = true
             }
             else {
@@ -952,8 +962,10 @@ QtObject {
             root.currenciesModel.get(0).selected = true
     }
 
-    function updateCurrency(newCurrency) {
-        walletSection.updateCurrency(newCurrency)
+    function updateCurrency(newCurrenyKey) {
+        let index = getModelIndexForKey(newCurrenyKey)
+        let shortName = root.currenciesModel.get(index).shortName
+        walletSection.updateCurrency(shortName)
     }
 
     function getCurrencyAmount(amount, symbol) {
