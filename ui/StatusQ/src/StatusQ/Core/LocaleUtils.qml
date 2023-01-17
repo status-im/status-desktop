@@ -44,13 +44,26 @@ QtObject {
             console.trace()
             return NaN
         }
-        var amountStr = numberToLocaleString(currencyAmount.amount, currencyAmount.displayDecimals, locale)
-        if (currencyAmount.stripTrailingZeroes) {
-            amountStr = stripTrailingZeroes(amountStr, locale)
+
+        var amountStr
+        let minAmount = 10**-currencyAmount.displayDecimals
+        if (currencyAmount.amount > 0 && currencyAmount.amount < minAmount && !(options && options.onlyAmount))
+        {
+            // Handle amounts smaller than resolution
+            amountStr = "<%1".arg(numberToLocaleString(minAmount, currencyAmount.displayDecimals, locale))
+        } else {
+            // Normal formatting
+            amountStr = numberToLocaleString(currencyAmount.amount, currencyAmount.displayDecimals, locale)
+            if (currencyAmount.stripTrailingZeroes) {
+                amountStr = stripTrailingZeroes(amountStr, locale)
+            }
         }
+
+        // Add symbol
         if (currencyAmount.symbol && !(options && options.onlyAmount)) {
             amountStr = "%1 %2".arg(amountStr).arg(currencyAmount.symbol)
         }
+
         return amountStr
     }
 
