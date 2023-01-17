@@ -148,6 +148,9 @@ StatusSectionLayout {
             onCreateCommunityClicked: {
                 root.createCommunityClicked();
             }
+            onAddRemoveGroupMemberClicked: {
+                headerContent.addRemoveGroupMember()
+            }
         }
     }
 
