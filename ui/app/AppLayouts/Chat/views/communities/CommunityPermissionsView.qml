@@ -10,6 +10,7 @@ import utils 1.0
 import shared.popups 1.0
 
 import AppLayouts.Chat.controls.community 1.0
+import AppLayouts.Chat.helpers 1.0
 
 StatusScrollView {
     id: root
@@ -23,6 +24,10 @@ StatusScrollView {
     QtObject {
         id: d
         property int permissionIndexToRemove
+
+        function holdingsTextFormat(type, name, amount) {
+            return CommunityPermissionsHelpers.setHoldingsTextFormat(type, name, amount)
+        }
     }
 
     contentWidth: mainLayout.width
@@ -47,7 +52,8 @@ StatusScrollView {
 
                     proxyRoles: ExpressionRole {
                         name: "text"
-                        expression: root.store.setHoldingsTextFormat(model.type, model.name, model.amount)
+                        // Direct call for singleton function is not handled properly by SortFilterProxyModel that's why `holdingsTextFormat` is used instead.
+                        expression: d.holdingsTextFormat(model.type, model.name, model.amount)
                    }
                 }
                 permissionName: model.permissionsObjectModel.text

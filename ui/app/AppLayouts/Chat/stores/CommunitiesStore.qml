@@ -1,10 +1,5 @@
 import QtQuick 2.0
 
-import AppLayouts.Chat.controls.community 1.0
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as SQ
-import utils 1.0
-
 QtObject {
     id: root
 
@@ -131,23 +126,6 @@ QtObject {
             // Add into permission model:
             console.log("TODO: Create permissions - backend call - Now dummy data shown")
             root.permissionsModel.append(permission)
-        }
-    }
-
-    function setHoldingsTextFormat(type, name, amount) {
-        switch (type) {
-            case HoldingTypes.Type.Asset:
-            case HoldingTypes.Type.Collectible:
-                return `${LocaleUtils.numberToLocaleString(amount)} ${name}`
-            case HoldingTypes.Type.Ens:
-                if (name === "*.eth")
-                    return qsTr("Any ENS username")
-                if (name.startsWith("*."))
-                    return qsTr("ENS username on '%1' domain").arg(name.substring(2))
-
-                return qsTr("ENS username '%1'").arg(name)
-            default:
-                return ""
         }
     }
 

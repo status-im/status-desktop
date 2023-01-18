@@ -23,87 +23,45 @@ StatusScrollView {
         readonly property int columns: 2
     }
 
-    implicitHeight: Math.min(column.implicitHeight, root.maxHeight)
+    implicitHeight: Math.min(grid.implicitHeight, root.maxHeight)
     implicitWidth: d.imageSize * d.columns + grid.columnSpacing * (d.columns - 1)
     clip: true
-    flickDeceleration: Flickable.VerticalFlick
+    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-    ColumnLayout {
-        id: column
-        spacing: 4
-        Item {
-            Layout.fillWidth: true
-            height: 45 // by design
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: 8
-                spacing: 8
-                StatusRoundedImage {
-                    Layout.alignment: Qt.AlignVCenter
-                    image.source: root.titleImage
-                    visible: root.titleImage.toString() !== ""
-                    Layout.preferredWidth: 32
-                    Layout.preferredHeight: Layout.preferredWidth
-                }
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignVCenter
-                    spacing: 0
-                    StatusBaseText {
-                        Layout.fillWidth: true
-                        text: root.title
-                        color: Theme.palette.directColor1
-                        font.pixelSize: 13
-                        clip: true
-                        elide: Text.ElideRight
+    GridLayout {
+        id: grid
+        Layout.alignment: Qt.AlignHCenter
+        Layout.fillWidth: true
+        columnSpacing: 8
+        rowSpacing: 12
+        columns: d.columns
+
+        Repeater {
+            model: root.model
+            delegate: ColumnLayout {
+                spacing: 4
+                Rectangle {
+                    Layout.preferredWidth: 133
+                    Layout.preferredHeight: 133
+                    color: "transparent"
+                    Image {
+                        source: model.imageSource ?  model.imageSource :  ""
+                        anchors.fill: parent
                     }
-                    StatusBaseText {
-                        visible: root.subtitle
-                        Layout.fillWidth: true
-                        text: root.subtitle
-                        color: Theme.palette.baseColor1
-                        font.pixelSize: 12
-                        clip: true
-                        elide: Text.ElideRight
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onClicked: { root.itemClicked(model.key, model.name, model.iconSource) }
                     }
                 }
-            }
-        }
-        GridLayout {
-            id: grid
-            Layout.alignment: Qt.AlignHCenter
-            Layout.fillWidth: true
-            columnSpacing: 8
-            rowSpacing: 12
-            columns: d.columns
-            Repeater {
-                model: root.model
-                delegate: ColumnLayout {
-                    spacing: 4
-                    Rectangle {
-                        Layout.preferredWidth: 133
-                        Layout.preferredHeight: 133
-                        color: "transparent"
-                        Image {
-                            source: model.imageSource
-                            anchors.fill: parent
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            hoverEnabled: true
-                            onClicked: { root.itemClicked(model.key, model.name, model.iconSource) }
-                        }
-                    }
-                    StatusBaseText {
-                        Layout.alignment: Qt.AlignLeft
-                        Layout.leftMargin: 8
-                        text: model.name
-                        color: Theme.palette.directColor1
-                        font.pixelSize: 13
-                        clip: true
-                        elide: Text.ElideRight
-                    }
+                StatusBaseText {
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.leftMargin: 8
+                    text: model.name
+                    color: Theme.palette.directColor1
+                    font.pixelSize: 13
+                    elide: Text.ElideRight
                 }
             }
         }
