@@ -38,7 +38,6 @@ import AppLayouts.stores 1.0
 
 import SortFilterProxyModel 0.2
 
-import "popups"
 import "panels"
 import "activitycenter/popups"
 import "activitycenter/stores"
@@ -70,7 +69,7 @@ Item {
         }
 
         onMailserverNotWorking: {
-            Global.openPopup(mailserverNotWorkingPopupComponent)
+            mailserverConnectionBanner.show()
         }
 
         onActiveSectionChanged: {
@@ -714,7 +713,6 @@ Item {
                     }
                 }
 
-                
                 ModuleWarning {
                     id: downloadingArchivesBanner
                     Layout.fillWidth: true
@@ -722,6 +720,14 @@ Item {
                     type: ModuleWarning.Danger
                     text: qsTr("Downloading message history archives, DO NOT CLOSE THE APP until this banner disappears.")
                     closeBtnVisible: false
+                }
+
+                ModuleWarning {
+                    id: mailserverConnectionBanner
+                    type: ModuleWarning.Danger
+                    text: qsTr("Can not connect to mailserver. Retrying automatically")
+                    onCloseClicked: hide()
+                    Layout.fillWidth: true
                 }
 
                 Component {
@@ -1008,15 +1014,6 @@ Item {
                 }
             }
         } // ColumnLayout
-
-        Component {
-            id: mailserverNotWorkingPopupComponent
-            MailserverConnectionDialog {
-                onClosed: {
-                    destroy()
-                }
-            }
-        }
 
         Component {
             id: chooseBrowserPopupComponent
