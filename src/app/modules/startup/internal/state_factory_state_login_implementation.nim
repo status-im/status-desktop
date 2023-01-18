@@ -27,7 +27,7 @@ proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardF
         return createState(StateType.LoginKeycardPinVerified, state.flowType, nil)
     if keycardFlowType == ResponseTypeValueEnterPIN:
       if keycardEvent.error.len == 0:
-        if not controller.keyUidMatch(keycardEvent.keyUid):
+        if not controller.keyUidMatchSelectedLoginAccount(keycardEvent.keyUid):
           return createState(StateType.LoginKeycardWrongKeycard, state.flowType, nil)
         return createState(StateType.LoginKeycardRecognizedKeycard, state.flowType, nil)
       if keycardEvent.error.len > 0:

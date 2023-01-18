@@ -11,7 +11,8 @@ proc delete*(self: KeycardPluginReaderState) =
 method executeBackCommand*(self: KeycardPluginReaderState, controller: Controller) =
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
     self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard or
-    self.flowType == FlowType.FirstRunOldUserKeycardImport:
+    self.flowType == FlowType.FirstRunOldUserKeycardImport or
+    self.flowType == FlowType.LostKeycardReplacement:
       controller.cancelCurrentFlow()
 
 method resolveKeycardNextState*(self: KeycardPluginReaderState, keycardFlowType: string, keycardEvent: KeycardEvent, 

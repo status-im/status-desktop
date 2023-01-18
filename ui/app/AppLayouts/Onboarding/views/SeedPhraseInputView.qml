@@ -30,6 +30,21 @@ Item {
         id: timer
     }
 
+    QtObject {
+        id: d
+
+        property bool wrongSeedPhrase: root.startupStore.startupModuleInst.keycardData & Constants.predefinedKeycardData.wrongSeedPhrase
+
+        onWrongSeedPhraseChanged: {
+            if (wrongSeedPhrase) {
+                invalidSeedTxt.text = qsTr("Seed phrase doesn’t match the profile of an existing Keycard user on this device")
+            }
+            else {
+                invalidSeedTxt.text = ""
+            }
+        }
+    }
+
     function pasteWords () {
         const clipboardText = globalUtils.getFromClipboard()
         // Split words separated by commas and or blank spaces (spaces, enters, tabs)
@@ -200,7 +215,7 @@ Item {
                 property int itemIndex: index
                 z: (grid.currentIndex === index) ? 150000000 : 0
                 onTextChanged: {
-                    invalidSeedTxt.visible = false
+                    invalidSeedTxt.text = ""
                 }
                 onDoneInsertingWord: {
                     grid.addWord(mnemonicIndex, word)
@@ -272,8 +287,7 @@ Item {
             anchors.top: grid.bottom
             anchors.topMargin: 24
             color: Theme.palette.dangerColor1
-            visible: false
-            text: qsTr("Invalid seed")
+            visible: text !== ""
         }
 
         StatusButton {
@@ -297,7 +311,8 @@ Item {
                          root.startupStore.currentStartupState.flowType === Constants.startupFlow.appLogin) {
                     return qsTr("Recover Keycard")
                 }
-                else if (root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserImportSeedPhraseIntoKeycard) {
+                else if (root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserImportSeedPhraseIntoKeycard ||
+                            root.startupStore.currentStartupState.flowType === Constants.startupFlow.lostKeycardReplacement) {
                     return qsTr("Next")
                 }
                 return ""
@@ -313,7 +328,7 @@ Item {
                     root.mnemonicInput = []
                     root.startupStore.doPrimaryAction()
                 } else {
-                    invalidSeedTxt.visible = true
+                    invalidSeedTxt.text = qsTr("Invalid seed")
                     enabled = false
                 }
             }

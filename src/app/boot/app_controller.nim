@@ -47,6 +47,7 @@ logScope:
 type
   AppController* = ref object of RootObj
     storeKeyPair: bool
+    syncWalletForReplacedKeycard: bool
     statusFoundation: StatusFoundation
     notificationsManager*: NotificationsManager
 
@@ -108,6 +109,7 @@ proc userLoggedIn*(self: AppController): string
 proc logout*(self: AppController)
 proc finishAppLoading*(self: AppController)
 proc storeKeyPairForNewKeycardUser*(self: AppController)
+proc syncWalletAccountsOnLoginForReplacedKeycard*(self: AppController)
 
 # Main Module Delegate Interface
 proc mainDidLoad*(self: AppController)
@@ -130,6 +132,7 @@ proc connect(self: AppController) =
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
   result.storeKeyPair = false
+  result.syncWalletForReplacedKeycard = false
   result.statusFoundation = statusFoundation
   
   # Preparing settings service to be exposed later as global QObject
@@ -434,25 +437,54 @@ proc buildAndRegisterUserProfile(self: AppController) =
 
   singletonInstance.engine.setRootContextProperty("userProfile", self.userProfileVariant)
 
-  if self.storeKeyPair and singletonInstance.userProfile.getIsKeycardUser():
-    let allAccounts = self.walletAccountService.fetchAccounts()
-    let defaultWalletAccounts = allAccounts.filter(a => 
-      a.walletType == WalletTypeDefaultStatusAccount and 
-      a.path == account_constants.PATH_DEFAULT_WALLET and
-      not a.isChat and 
-      a.isWallet
-    )
-    if defaultWalletAccounts.len == 0:
-      error "default wallet account was not generated"
-      return
-    let defaultWalletAddress = defaultWalletAccounts[0].address
-    let keyPair = KeyPairDto(keycardUid: self.keycardService.getLastReceivedKeycardData().flowEvent.instanceUID,
-      keycardName: displayName,
-      keycardLocked: false,
-      accountsAddresses: @[defaultWalletAddress],
-      keyUid: loggedInAccount.keyUid)
-    let keystoreDir = self.accountsService.getKeyStoreDir()
-    discard self.walletAccountService.addMigratedKeyPair(keyPair, keystoreDir)
+  if singletonInstance.userProfile.getIsKeycardUser():
+    if self.storeKeyPair:
+      let allAccounts = self.walletAccountService.fetchAccounts()
+      let defaultWalletAccounts = allAccounts.filter(a => 
+        a.walletType == WalletTypeDefaultStatusAccount and 
+        a.path == account_constants.PATH_DEFAULT_WALLET and
+        not a.isChat and 
+        a.isWallet
+      )
+      if defaultWalletAccounts.len == 0:
+        error "default wallet account was not generated"
+        return
+      let defaultWalletAddress = defaultWalletAccounts[0].address
+      let keyPair = KeyPairDto(keycardUid: self.keycardService.getLastReceivedKeycardData().flowEvent.instanceUID,
+        keycardName: displayName,
+        keycardLocked: false,
+        accountsAddresses: @[defaultWalletAddress],
+        keyUid: loggedInAccount.keyUid)
+      let keystoreDir = self.accountsService.getKeyStoreDir()
+      discard self.walletAccountService.addMigratedKeyPair(keyPair, keystoreDir)
+    if self.syncWalletForReplacedKeycard:
+      let allAccounts = self.walletAccountService.fetchAccounts()
+      let accountsForLoggedInUser = allAccounts.filter(a => a.keyUid == loggedInAccount.keyUid)
+      var kpDto = KeyPairDto(keycardUid: "",
+        keycardName: displayName,
+        keycardLocked: false,
+        accountsAddresses: @[],
+        keyUid: loggedInAccount.keyUid)
+      var activeValidPathsToStoreToAKeycard: seq[string]
+      for acc in accountsForLoggedInUser:
+        activeValidPathsToStoreToAKeycard.add(acc.path)
+        kpDto.accountsAddresses.add(acc.address)
+      self.keycardService.startStoreMetadataFlow(displayName, self.startupModule.getPin(), activeValidPathsToStoreToAKeycard)
+      ## sleep for 3 seconds, since that is more than enough to store metadata to a keycard, if the reader is still plugged in
+      ## and the card is still inserted, otherwise we just skip that.
+      ## At the moment we're not able to sync later keycard without metadata, cause such card doesn't return instance uid for 
+      ## loaded seed phrase, that's in the notes I am taking for discussion with keycard team. If they are able to provide
+      ## instance uid for GetMetadata flow we will be able to use SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC signal for syncing
+      ## otherwise we need to handle that way separatelly in `handleKeycardSyncing` of shared module 
+      sleep(3000)
+      let (_, kcEvent) = self.keycardService.getLastReceivedKeycardData()
+      if kcEvent.instanceUID.len > 0:
+        kpDto.keycardUid = kcEvent.instanceUID
+        let keystoreDir = self.accountsService.getKeyStoreDir()
+        discard self.walletAccountService.addMigratedKeyPair(kpDto, keystoreDir)
 
 proc storeKeyPairForNewKeycardUser*(self: AppController) = 
   self.storeKeyPair = true
+
+proc syncWalletAccountsOnLoginForReplacedKeycard*(self: AppController) = 
+  self.syncWalletForReplacedKeycard = true

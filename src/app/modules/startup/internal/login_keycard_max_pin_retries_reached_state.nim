@@ -9,7 +9,7 @@ proc delete*(self: LoginKeycardMaxPinRetriesReachedState) =
   self.State.delete
 
 method executeBackCommand*(self: LoginKeycardMaxPinRetriesReachedState, controller: Controller) =
-  if self.flowType == FlowType.AppLogin and controller.isKeycardCreatedAccountSelectedOne():
+  if self.flowType == FlowType.AppLogin and controller.isSelectedAccountAKeycardAccount():
     controller.runLoginFlow()
 
 method getNextPrimaryState*(self: LoginKeycardMaxPinRetriesReachedState, controller: Controller): State =
@@ -25,6 +25,11 @@ method getNextQuaternaryState*(self: LoginKeycardMaxPinRetriesReachedState, cont
   if self.flowType == FlowType.AppLogin:
     controller.cancelCurrentFlow()
     return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
+
+method getNextQuinaryState*(self: LoginKeycardMaxPinRetriesReachedState, controller: Controller): State =
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.LostKeycardOptions, self.flowType, self)
 
 method resolveKeycardNextState*(self: LoginKeycardMaxPinRetriesReachedState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =

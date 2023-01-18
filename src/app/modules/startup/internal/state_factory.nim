@@ -15,6 +15,7 @@ logScope:
 # Forward declaration
 # General section
 proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State
+proc findBackStateWithTargetedStateType*(currentState: State, targetedStateType: StateType): State
 # Resolve state section
 proc ensureReaderAndCardPresenceOnboarding*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
 proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
@@ -77,6 +78,7 @@ include profile_fetching_success_state
 include profile_fetching_timeout_state
 include profile_fetching_announcement_state
 include recover_old_user_state
+include lost_keycard_options_state
 
 include state_factory_general_implementation
 include state_factory_state_onboarding_implementation

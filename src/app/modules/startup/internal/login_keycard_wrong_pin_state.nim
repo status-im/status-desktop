@@ -26,6 +26,11 @@ method getNextQuaternaryState*(self: LoginKeycardWrongPinState, controller: Cont
     controller.cancelCurrentFlow()
     return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
   
+method getNextQuinaryState*(self: LoginKeycardWrongPinState, controller: Controller): State =
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.LostKeycardOptions, self.flowType, self)
+
 method resolveKeycardNextState*(self: LoginKeycardWrongPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
   let state = ensureReaderAndCardPresenceLogin(self, keycardFlowType, keycardEvent, controller)

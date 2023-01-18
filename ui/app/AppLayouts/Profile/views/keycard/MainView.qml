@@ -34,11 +34,11 @@ ColumnLayout {
     Image {
         visible: d.noKeycardsSet
         Layout.alignment: Qt.AlignCenter
-        Layout.preferredHeight: sourceSize.height
-        Layout.preferredWidth: sourceSize.width
+        Layout.preferredHeight: 240
+        Layout.preferredWidth: 350
         fillMode: Image.PreserveAspectFit
         antialiasing: true
-        source: Style.png("keycard/security-keycard@2x")
+        source: Style.png("keycard/keycard-security")
         mipmap: true
     }
 

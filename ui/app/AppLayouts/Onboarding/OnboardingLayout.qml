@@ -42,6 +42,7 @@ OnboardingBasePage {
             case Constants.startupState.userProfileImportSeedPhrase:
             case Constants.startupState.profileFetchingAnnouncement:
             case Constants.startupState.userProfileCreateSameChatKey:
+            case Constants.startupState.lostKeycardOptions:
                 return keysMainViewComponent
 
             case Constants.startupState.userProfileCreate:

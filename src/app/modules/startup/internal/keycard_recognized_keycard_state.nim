@@ -11,7 +11,8 @@ proc delete*(self: KeycardRecognizedKeycardState) =
 method executeBackCommand*(self: KeycardRecognizedKeycardState, controller: Controller) =
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
     self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard or
-    self.flowType == FlowType.FirstRunOldUserKeycardImport:
+    self.flowType == FlowType.FirstRunOldUserKeycardImport or
+    self.flowType == FlowType.LostKeycardReplacement:
       controller.cancelCurrentFlow()
 
 method getNextPrimaryState*(self: KeycardRecognizedKeycardState, controller: Controller): State =
@@ -21,3 +22,5 @@ method getNextPrimaryState*(self: KeycardRecognizedKeycardState, controller: Con
     return createState(StateType.UserProfileEnterSeedPhrase, self.flowType, self.getBackState)
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
     return createState(StateType.KeycardEnterPin, self.flowType, self.getBackState)
+  if self.flowType == FlowType.LostKeycardReplacement:
+    return createState(StateType.UserProfileEnterSeedPhrase, self.flowType, self.getBackState)

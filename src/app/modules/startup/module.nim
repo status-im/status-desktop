@@ -113,6 +113,8 @@ method load*[T](self: Module[T]) =
       thumbnailImage = "", largeImage = "", keyUid = ""))
     items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_ADD_EXISTING_USER, icon = "wallet", 
       thumbnailImage = "", largeImage = "", keyUid = ""))
+    items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_LOST_KEYCARD, icon = "keycard", 
+      thumbnailImage = "", largeImage = "", keyUid = ""))
     self.view.setLoginAccountsModelItems(items)
     self.setSelectedLoginAccount(items[0])
   self.delegate.startupDidLoad()
@@ -451,11 +453,24 @@ method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurr
     self.keycardSharedModule.delete
     self.keycardSharedModule = nil
     if lastStepInTheCurrentFlow:
-      self.controller.cleanTmpData()
-      self.view.setCurrentStartupState(newWelcomeState(FlowType.General, nil))
+      # self.controller.cleanTmpData()
+      let currStateObj = self.view.currentStartupStateObj()
+      if currStateObj.isNil:
+        error "cannot resolve current state for onboarding/login flow continuation"
+        return
+      if currStateObj.flowType() == FlowType.LostKeycardReplacement:
+        let newState = currStateObj.getBackState()
+        if newState.isNil:
+          error "cannot resolve new state for onboarding/login flow continuation after shared flow is terminated"
+          return
+        self.view.setCurrentStartupState(newState)
+        debug "new state for onboarding/login flow continuation after shared flow is terminated", setCurrFlow=newState.flowType(), newCurrState=newState.stateType()
 
 method storeKeyPairForNewKeycardUser*[T](self: Module[T]) =
   self.delegate.storeKeyPairForNewKeycardUser()
+
+method syncWalletAccountsOnLoginForReplacedKeycard*[T](self: Module[T]) =
+  self.delegate.syncWalletAccountsOnLoginForReplacedKeycard()
 
 method checkForStoringPasswordToKeychain*[T](self: Module[T]) =
   self.controller.checkForStoringPasswordToKeychain()

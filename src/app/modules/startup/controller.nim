@@ -379,7 +379,7 @@ proc getSelectedLoginAccount*(self: Controller): AccountDto =
     if(acc.keyUid == self.tmpSelectedLoginAccountKeyUid):
       return acc
 
-proc keyUidMatch*(self: Controller, keyUid: string): bool =
+proc keyUidMatchSelectedLoginAccount*(self: Controller, keyUid: string): bool =
   return self.tmpSelectedLoginAccountKeyUid == keyUid
 
 proc isSelectedLoginAccountKeycardAccount*(self: Controller): bool =
@@ -391,7 +391,7 @@ proc setSelectedLoginAccount*(self: Controller, keyUid: string, isKeycardAccount
   let selectedAccount = self.getSelectedLoginAccount()
   singletonInstance.localAccountSettings.setFileName(selectedAccount.name)
 
-proc isKeycardCreatedAccountSelectedOne*(self: Controller): bool =
+proc isSelectedAccountAKeycardAccount*(self: Controller): bool =
   let selectedAccount = self.getSelectedLoginAccount()
   return selectedAccount.keycardPairing.len > 0
 
@@ -413,7 +413,14 @@ proc login*(self: Controller) =
   if(error.len > 0):
     self.delegate.emitAccountLoginError(error)
 
-proc loginAccountKeycard*(self: Controller) =
+proc loginAccountKeycard*(self: Controller, storeToKeychain = false, syncWalletAfterLogin = false) =
+  if syncWalletAfterLogin:
+    self.delegate.syncWalletAccountsOnLoginForReplacedKeycard()
+  if storeToKeychain:
+    ## storing not now, user will be asked to store the pin once he is logged in
+    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
+  else:
+    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
   self.delegate.moveToLoadingAppState()
   let error = self.accountsService.loginAccountKeycard(self.tmpKeycardEvent)
   if(error.len > 0):

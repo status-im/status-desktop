@@ -1,9 +1,11 @@
 type
   BiometricsState* = ref object of State
+    storeToKeychain: bool
 
 proc newBiometricsState*(flowType: FlowType, backState: State): BiometricsState =
   result = BiometricsState()
   result.setup(flowType, StateType.Biometrics, backState)
+  result.storeToKeychain = false
 
 proc delete*(self: BiometricsState) =
   self.State.delete
@@ -28,6 +30,9 @@ method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
     controller.storeKeycardAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
     controller.setupKeycardAccount(storeToKeychain)
+  elif self.flowType == FlowType.LostKeycardReplacement:
+    self.storeToKeychain = storeToKeychain
+    controller.startLoginFlowAutomatically(controller.getPin())
 
 method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
   let storeToKeychain = false # false, cause we don't have keychain support for other than mac os
@@ -45,3 +50,14 @@ method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
     controller.storeKeycardAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
     controller.setupKeycardAccount(storeToKeychain)
+  elif self.flowType == FlowType.LostKeycardReplacement:
+    self.storeToKeychain = storeToKeychain
+    controller.startLoginFlowAutomatically(controller.getPin())
+
+method resolveKeycardNextState*(self: BiometricsState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+  controller: Controller): State =
+  if self.flowType == FlowType.LostKeycardReplacement:
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+      keycardEvent.error.len == 0:
+        controller.setKeycardEvent(keycardEvent)
+        controller.loginAccountKeycard(self.storeToKeychain, syncWalletAfterLogin = true)
