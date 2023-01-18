@@ -24,4 +24,5 @@ method resolveKeycardNextState*(self: KeycardEnterSeedPhraseWordsState, keycardF
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.keyUid.len > 0:
         controller.setKeyUid(keycardEvent.keyUid)
-        return createState(StateType.UserProfileCreate, self.flowType, self)
+        let backState = findBackStateWithTargetedStateType(self, StateType.WelcomeNewStatusUser)
+        return createState(StateType.UserProfileCreate, self.flowType, backState)

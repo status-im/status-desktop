@@ -40,16 +40,17 @@ method resolveKeycardNextState*(self: KeycardRepeatPinState, keycardFlowType: st
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.keyUid.len > 0:
         controller.setKeyUid(keycardEvent.keyUid)
-        return createState(StateType.KeycardPinSet, self.flowType, self.getBackState)
+        let backState = findBackStateWithTargetedStateType(self, StateType.UserProfileImportSeedPhrase)
+        return createState(StateType.KeycardPinSet, self.flowType, backState)
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == RequestParamPUK:
-        controller.setRemainingAttempts(keycardEvent.pukRetries)
-        controller.setPukValid(false)
-        if keycardEvent.pukRetries > 0:
-          return createState(StateType.KeycardPinSet, self.flowType, self.getBackState)
-        return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)
+    if keycardFlowType == ResponseTypeValueEnterPUK: 
+      if keycardEvent.error.len > 0 and
+        keycardEvent.error == RequestParamPUK:
+          controller.setRemainingAttempts(keycardEvent.pukRetries)
+          controller.setPukValid(false)
+      if keycardEvent.pukRetries > 0:
+        return createState(StateType.KeycardPinSet, self.flowType, self.getBackState)
+      return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       controller.setKeycardEvent(keycardEvent)
       controller.setPukValid(true)

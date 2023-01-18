@@ -23,7 +23,7 @@ method getNextPrimaryState*(self: UserProfileEnterSeedPhraseState, controller: C
     return createState(StateType.UserProfileCreate, self.flowType, self)
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
     if not self.enteredMnemonicMatchTargetedKeyUid:
-      return createState(StateType.KeycardWrongKeycard, self.flowType, nil)
+      return createState(StateType.KeycardWrongKeycard, self.flowType, self)
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
     return createState(StateType.UserProfileCreatePassword, self.flowType, self)
 

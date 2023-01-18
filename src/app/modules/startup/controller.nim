@@ -178,6 +178,9 @@ proc getImportedAccount*(self: Controller): GeneratedAccountDto =
 proc getPasswordStrengthScore*(self: Controller, password, userName: string): int = 
   return self.generalService.getPasswordStrengthScore(password, userName)
 
+proc clearImage*(self: Controller) =
+  self.tmpProfileImageDetails = ProfileImageDetails()
+
 proc generateImage*(self: Controller, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string =
   let formatedImg = singletonInstance.utils.formatImagePath(imageUrl)
   let images = self.generalService.generateImages(formatedImg, aX, aY, bX, bY)
