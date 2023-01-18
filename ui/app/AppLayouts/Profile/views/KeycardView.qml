@@ -89,10 +89,10 @@ SettingsContentBase {
         Connections {
             target: root.keycardStore.keycardModule
 
-            onDisplayKeycardSharedModuleFlow: {
+            function onDisplayKeycardSharedModuleFlow() {
                 keycardPopup.active = true
             }
-            onDestroyKeycardSharedModuleFlow: {
+            function onDestroyKeycardSharedModuleFlow() {
                 keycardPopup.active = false
             }
             onSharedModuleBusy: {

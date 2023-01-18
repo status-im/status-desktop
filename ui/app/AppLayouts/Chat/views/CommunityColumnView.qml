@@ -124,7 +124,7 @@ Item {
 
         Connections {
             target: root.store.communitiesModuleInst
-            onCommunityAccessRequested: function (communityId) {
+            function onCommunityAccessRequested(communityId: string) {
                 if (communityId === communityData.id) {
                     joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
                 }
@@ -608,7 +608,7 @@ Item {
     Connections {
         target: root.store.mainModuleInst
 
-        onOpenCommunityMembershipRequestsPopup:{
+        function onOpenCommunityMembershipRequestsPopup(sectionId: string) {
             if(root.store.getMySectionId() != sectionId)
                 return
 

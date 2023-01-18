@@ -102,7 +102,7 @@ ModalPopup {
                 }
                 Connections {
                     target: stickerPackDetailsPopup.store.stickersStore.stickersModule
-                    onTransactionWasSent: {
+                    function onTransactionWasSent(txResult: string) {
                         try {
                             let response = JSON.parse(txResult)
                             if (!response.success) {

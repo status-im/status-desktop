@@ -596,7 +596,7 @@ StatusSectionLayout {
 
     Connections {
         target: _internal.currentWebView
-        onUrlChanged: {
+        function onUrlChanged() {
             browserHeader.addressBar.text = Web3ProviderStore.obtainAddress(_internal.currentWebView.url)
             RootStore.currentTabConnected = Web3ProviderStore.hasWalletConnected(Utils.getHostname(_internal.currentWebView.url))
         }
@@ -604,14 +604,14 @@ StatusSectionLayout {
 
     Connections {
         target: BookmarksStore.bookmarksModel
-        onModelChanged: {
+        function onModelChanged() {
             browserHeader.currentFavorite = Qt.binding(function () {return BookmarksStore.getCurrentFavorite(_internal.currentWebView.url)})
         }
     }
 
     Connections {
         target: browserSection
-        onOpenUrl: {
+        function onOpenUrl(url: string) {
             root.openUrlInNewTab(url);
         }
     }

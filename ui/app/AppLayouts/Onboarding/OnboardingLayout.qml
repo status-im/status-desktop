@@ -138,7 +138,7 @@ OnboardingBasePage {
 
     Connections {
         target: root.startupStore.startupModuleInst
-        onStartupError: {
+        function onStartupError(error: string, errType: int) {
             msgDialog.errType = errType
             if (errType === Constants.startupErrorType.setupAccError) {
                 if (error === Constants.existingAccountError) {
@@ -172,10 +172,10 @@ following the \"Add existing Status user\" flow, using your seed phrase.")
             msgDialog.open()
         }
 
-        onDisplayKeycardSharedModuleFlow: {
+        function onDisplayKeycardSharedModuleFlow() {
             keycardPopup.active = true
         }
-        onDestroyKeycardSharedModuleFlow: {
+        function onDestroyKeycardSharedModuleFlow() {
             keycardPopup.active = false
         }
     }

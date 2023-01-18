@@ -85,7 +85,7 @@ Rectangle {
                 }
                 Connections {
                     target: downloadsMenu
-                    onCancelClicked: {
+                    function onCancelClicked() {
                         isCanceled = true
                     }
                 }

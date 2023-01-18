@@ -33,7 +33,7 @@ ColumnLayout {
 
     Connections {
         target: RootStore.history
-        onLoadingTrxHistoryChanged: function(isLoading, address) {
+        function onLoadingTrxHistoryChanged(isLoading: bool, address: string) {
             if (historyView.account.address.toLowerCase() === address.toLowerCase()) {
                 historyView.isLoading = isLoading
             }

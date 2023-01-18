@@ -187,7 +187,7 @@ Item {
                         }
                         Connections {
                             target: root.store.stickersStore.stickersModule
-                            onTransactionWasSent: {
+                            function onTransactionWasSent(txResult: string) {
                                 try {
                                     let response = JSON.parse(txResult)
                                     if (!response.success) {

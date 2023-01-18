@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.13
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
+import shared.stores 1.0 as SharedStores
 
 import "stores"
 import "popups"
@@ -193,7 +194,7 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 languageStore: root.store.languageStore
-                currencyStore: root.store.walletStore.currencyStore
+                currencyStore: SharedStores.RootStore.currencyStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.language)
                 contentWidth: d.contentWidth
             }

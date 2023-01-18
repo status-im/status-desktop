@@ -65,7 +65,7 @@ StatusModal {
 
     Connections {
         target: contactsStore.mainModuleInst
-        onResolvedENS: {
+        function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
             if(!d.showChatKeyValidationIndicator){
                 d.showPasteButton = false
                 d.showChatKeyValidationIndicator = true

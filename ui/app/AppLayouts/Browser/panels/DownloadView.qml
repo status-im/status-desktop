@@ -61,7 +61,7 @@ import "../controls"
             }
             Connections {
                 target: downloadsMenu
-                onCancelClicked: {
+                function onCancelClicked() {
                     isCanceled = true
                 }
             }

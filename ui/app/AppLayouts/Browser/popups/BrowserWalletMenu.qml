@@ -102,7 +102,7 @@ Popup {
 
     Connections {
         target: WalletStore.dappBrowserAccount
-        onConnectedAccountDeleted: {
+        function onConnectedAccountDeleted() {
             popup.reload()
             // This is done because when an account is deleted and the account is updated to default one,
             // only the properties are updated and we need to listen to those events and update the selected account

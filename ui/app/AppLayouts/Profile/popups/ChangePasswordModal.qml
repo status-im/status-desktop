@@ -55,7 +55,9 @@ StatusModal {
 
     Connections {
         target: root.privacyStore.privacyModule
-        onPasswordChanged: onChangePasswordResponse(success, errorMsg)
+        function onPasswordChanged(success: bool, errorMsg: string) {
+            onChangePasswordResponse(success, errorMsg)
+        }
     }
 
     width: 480

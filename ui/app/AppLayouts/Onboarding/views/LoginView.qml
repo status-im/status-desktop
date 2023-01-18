@@ -105,7 +105,7 @@ Item {
     Connections{
         target: root.startupStore.startupModuleInst
 
-        onObtainingPasswordError: {
+        function onObtainingPasswordError(errorDescription: string, errorType: string) {
             if (errorType === Constants.keychain.errorType.authentication) {
                 // We are notifying user only about keychain errors.
                 return
@@ -120,7 +120,7 @@ Item {
             obtainingPasswordErrorNotification.open()
         }
 
-        onObtainingPasswordSuccess: {
+        function onObtainingPasswordSuccess(password: string) {
             if(localAccountSettings.storeToKeychainValue !== Constants.keychain.storedValue.store)
                 return
 
@@ -132,7 +132,7 @@ Item {
             }
         }
 
-        onAccountLoginError: {
+        function onAccountLoginError(error: string) {
             if (error) {
                 if (!root.startupStore.selectedLoginAccount.keycardCreatedAccount) {
                     // SQLITE_NOTADB: "file is not a database"

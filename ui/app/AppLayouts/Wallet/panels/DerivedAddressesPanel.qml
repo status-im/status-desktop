@@ -15,7 +15,7 @@ import "../stores"
 Item {
     id: derivedAddresses
 
-    property int selectedAccountType: RootStore.defaultSelectedType
+    property int selectedAccountType: Constants.AddAccountType.GenerateNew
     property string selectedKeyUid: RootStore.defaultSelectedKeyUid
     property bool selectedKeyUidMigratedToKeycard: RootStore.defaultSelectedKeyUidMigratedToKeycard
     property string selectedPath: ""
@@ -52,8 +52,8 @@ Item {
         id: _internal
 
         readonly property bool showEnterPinPassButton: !RootStore.loggedInUserAuthenticated &&
-                                                       derivedAddresses.selectedAccountType !== SelectGeneratedAccount.AddAccountType.ImportSeedPhrase &&
-                                                       derivedAddresses.selectedAccountType !== SelectGeneratedAccount.AddAccountType.ImportPrivateKey
+                                                       derivedAddresses.selectedAccountType !== Constants.AddAccountType.ImportSeedPhrase &&
+                                                       derivedAddresses.selectedAccountType !== Constants.AddAccountType.ImportPrivateKey
         property int pageSize: 6
         property int noOfPages: Math.ceil(RootStore.derivedAddressesList.count/pageSize)
         property int lastPageSize: RootStore.derivedAddressesList.count - ((noOfPages -1) * pageSize)
@@ -85,7 +85,7 @@ Item {
 
     Connections {
         target: RootStore.derivedAddressesList
-        onModelReset: {
+        function onModelReset() {
             _internal.pageSize = 0
             _internal.pageSize = 6
             _internal.nextSelectableAddressIndex = -1

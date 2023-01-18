@@ -293,7 +293,7 @@ Rectangle {
         enabled: control.emojiPopupOpened
         target: emojiPopup
 
-        function onEmojiSelected(text, atCursor) {
+        function onEmojiSelected(text: string, atCursor: bool) {
             insertInTextInput(atCursor ? messageInputField.cursorPosition : messageInputField.length, text)
             emojiBtn.highlighted = false
             messageInputField.forceActiveFocus();
@@ -308,7 +308,7 @@ Rectangle {
         enabled: control.stickersPopupOpened
         target: control.stickersPopup
 
-        function onStickerSelected(hashId, packId, url) {
+        function onStickerSelected(hashId: string, packId: string, url: string ) {
             control.stickerSelected(hashId, packId, url)
             control.hideExtendedArea();
             messageInputField.forceActiveFocus();

@@ -238,7 +238,9 @@ SettingsContentBase {
 
             Connections {
                 target: localAccountSensitiveSettings
-                onWhitelistedUnfurlingSitesChanged: generalColumn.populatePreviewableSites()
+                function onWhitelistedUnfurlingSitesChanged() {
+                    generalColumn.populatePreviewableSites()
+                }
             }
 
             // Manually add switch for the image unfurling

@@ -1,3 +1,4 @@
+.pragma library
 // polyfill.number.toLocaleDateString
 // Copied from: https://github.com/willsp/polyfill-Number.toLocaleString-with-Locales
 // Got this from MDN: 

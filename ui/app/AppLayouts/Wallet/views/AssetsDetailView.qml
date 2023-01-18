@@ -36,7 +36,7 @@ Item {
 
     Connections {
         target: walletSectionAllTokens
-        onTokenHistoricalDataReady: {
+        function onTokenHistoricalDataReady(tokenDetails: string) {
             let response = JSON.parse(tokenDetails)
             if (response === null) {
                 console.debug("error parsing json message for tokenHistoricalDataReady")

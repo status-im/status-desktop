@@ -42,11 +42,11 @@ StatusModal {
 
     Connections {
         target: walletSectionAccounts
-        onUserAuthenticationSuccess: {
+        function onUserAuthenticationSuccess(password: string) {
             validationError.text = ""
             d.password = password
             RootStore.loggedInUserAuthenticated = true
-            if (d.selectedAccountType === SelectGeneratedAccount.AddAccountType.ImportPrivateKey) {
+            if (d.selectedAccountType === Constants.AddAccountType.ImportPrivateKey) {
                 d.generateNewAccount()
             }
             else {
@@ -55,7 +55,7 @@ StatusModal {
                 }
             }
         }
-        onUserAuthentiactionFail: {
+        function onUserAuthentiactionFail() {
             d.password = ""
             RootStore.loggedInUserAuthenticated = false
             validationError.text = qsTr("An authentication failed")
@@ -70,7 +70,7 @@ StatusModal {
         readonly property int pageNumber: 1
 
         property string password: ""
-        property int selectedAccountType: RootStore.defaultSelectedType
+        property int selectedAccountType: Constants.AddAccountType.GenerateNew
         property string selectedAccountDerivedFromAddress: ""
         property string selectedKeyUid: RootStore.defaultSelectedKeyUid
         property bool selectedKeyUidMigratedToKeycard: RootStore.defaultSelectedKeyUidMigratedToKeycard
@@ -78,7 +78,7 @@ StatusModal {
         property string selectedAddress: ""
         property bool selectedAddressAvailable: true
 
-        readonly property bool authenticationNeeded: d.selectedAccountType !== SelectGeneratedAccount.AddAccountType.WatchOnly &&
+        readonly property bool authenticationNeeded: d.selectedAccountType !== Constants.AddAccountType.WatchOnly &&
                                                      d.password === ""
         property string addAccountIcon: ""
 
@@ -90,7 +90,7 @@ StatusModal {
         }
 
         function getDerivedAddressList() {
-            if(d.selectedAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase
+            if(d.selectedAccountType === Constants.AddAccountType.ImportSeedPhrase
                     && !!advancedSelection.expandableItem.path
                     && !!advancedSelection.expandableItem.mnemonicText) {
                 RootStore.getDerivedAddressListForMnemonic(advancedSelection.expandableItem.mnemonicText,
@@ -113,7 +113,7 @@ StatusModal {
             let errMessage = ""
 
             switch(d.selectedAccountType) {
-            case SelectGeneratedAccount.AddAccountType.GenerateNew:
+            case Constants.AddAccountType.GenerateNew:
                 if (d.selectedKeyUidMigratedToKeycard) {
                     errMessage = RootStore.addNewWalletAccountGeneratedFromKeycard(Constants.generatedWalletType,
                                                                                    accountNameInput.text,
@@ -126,16 +126,16 @@ StatusModal {
                                                           advancedSelection.expandableItem.derivedFromAddress)
                 }
                 break
-            case SelectGeneratedAccount.AddAccountType.ImportSeedPhrase:
+            case Constants.AddAccountType.ImportSeedPhrase:
                 errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, d.password,
                                                            accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.asset.emoji,
                                                            advancedSelection.expandableItem.completePath)
                 break
-            case SelectGeneratedAccount.AddAccountType.ImportPrivateKey:
+            case Constants.AddAccountType.ImportPrivateKey:
                 errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, d.password,
                                                                  accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.asset.emoji)
                 break
-            case SelectGeneratedAccount.AddAccountType.WatchOnly:
+            case Constants.AddAccountType.WatchOnly:
                 errMessage = RootStore.addWatchOnlyAccount(advancedSelection.expandableItem.watchAddress, accountNameInput.text,
                                                            colorSelectionGrid.selectedColor, accountNameInput.input.asset.emoji)
                 break
@@ -156,7 +156,7 @@ StatusModal {
             if (d.authenticationNeeded) {
                 d.password = ""
                 if (d.selectedKeyUidMigratedToKeycard &&
-                        d.selectedAccountType === SelectGeneratedAccount.AddAccountType.GenerateNew) {
+                        d.selectedAccountType === Constants.AddAccountType.GenerateNew) {
                     RootStore.authenticateUserAndDeriveAddressOnKeycardForPath(d.selectedKeyUid, d.selectedPath)
                 }
                 else {

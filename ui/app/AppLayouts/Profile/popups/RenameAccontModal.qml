@@ -34,7 +34,7 @@ StatusModal {
     Connections {
         enabled: popup.opened
         target: emojiPopup
-        onEmojiSelected: function (emojiText, atCursor) {
+        function onEmojiSelected(emojiText: string, atCursor: bool) {
             popup.contentItem.accountNameInput.input.asset.emoji = emojiText
         }
     }

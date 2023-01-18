@@ -57,7 +57,7 @@ Item {
 
     Connections {
         target: root.ensUsernamesStore.ensUsernamesModule
-        onDetailsObtained: {
+        function onDetailsObtained(ensName: string, address: string, pubkey: string, isStatus: bool, expirationTime: int) {
             if(username != (isStatus ? ensName + ".stateofus.eth" : ensName))
                 return;
             walletAddressLbl.subTitle = address;
@@ -71,7 +71,7 @@ Item {
                                  && root.ensUsernamesStore.preferredUsername !== username
             d.expirationTimestamp = expirationTime * 1000
         }
-        onLoading: {
+        function onLoading(isLoading: bool) {
             loadingImg.active = isLoading
             if (!isLoading)
                 return;
@@ -152,7 +152,7 @@ Item {
             }
             Connections {
                 target: root.ensUsernamesStore.ensUsernamesModule
-                onTransactionWasSent: {
+                function onTransactionWasSent(txResult: string) {
                     try {
                         let response = JSON.parse(txResult)
                         if (!response.success) {
