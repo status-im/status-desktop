@@ -246,6 +246,13 @@ QtObject {
         property color menuItemHoeverBackgroundColor
     }
 
+    property QtObject statusMessage: QtObject {
+        property color emojiReactionBackground
+        property color emojiReactionBackgroundHovered
+        property color emojiReactionActiveBackground
+        property color emojiReactionActiveBackgroundHovered
+    }
+
     function alphaColor(color, alpha) {
         let actualColor = Qt.darker(color, 1)
         actualColor.a = alpha
@@ -257,4 +264,3 @@ QtObject {
                        : StatusColors.colors[name]
     }
 }
-

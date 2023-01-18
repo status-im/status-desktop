@@ -1,10 +1,10 @@
 pragma Singleton
-import QtQuick 2.13
+
+import QtQml 2.14
 
 QtObject {
 
-    property var colors: {
-
+    readonly property var colors: {
         'black': '#000000',
         'white': '#FFFFFF',
 
@@ -69,4 +69,3 @@ QtObject {
         'lightPattensBlue': '#D7DEE4',
     }
 }
-
