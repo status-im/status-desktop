@@ -20,6 +20,10 @@ ThemePalette {
     dangerColor2: getColor('red3', 0.3)
     dangerColor3: getColor('red3', 0.2)
 
+    warningColor1: getColor('warning_orange')
+    warningColor2: getColor('warning_orange', 0.2)
+    warningColor3: getColor('warning_orange', 0.1)
+
     successColor1: getColor('green3')
     successColor2: getColor('green3', 0.2)
     successColor3: getColor('green3', 0.3)

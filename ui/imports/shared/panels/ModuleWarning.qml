@@ -13,6 +13,7 @@ Item {
 
     enum Type {
         Danger,
+        Warning,
         Success
     }
 
@@ -123,6 +124,7 @@ Item {
             switch (root.type) {
             case ModuleWarning.Danger: return Theme.palette.dangerColor1
             case ModuleWarning.Success: return Theme.palette.successColor1
+            case ModuleWarning.Warning: return Theme.palette.warningColor1
             default: return Theme.palette.baseColor1
             }
         }

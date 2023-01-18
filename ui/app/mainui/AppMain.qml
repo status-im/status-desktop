@@ -728,8 +728,8 @@ Item {
 
                 ModuleWarning {
                     id: mailserverConnectionBanner
-                    type: ModuleWarning.Danger
-                    text: qsTr("Can not connect to mailserver. Retrying automatically")
+                    type: ModuleWarning.Warning
+                    text: qsTr("Can not connect to store node. Retrying automatically")
                     onCloseClicked: hide()
                     Layout.fillWidth: true
                 }

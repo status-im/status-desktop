@@ -50,6 +50,8 @@ QtObject {
         'orange3': '#FFA67B',
         'orange4': '#FE8F59',
 
+        'warning_orange': '#F6793C',
+
         'purple': '#887AF9',
 
         'red': '#FF2D55',
