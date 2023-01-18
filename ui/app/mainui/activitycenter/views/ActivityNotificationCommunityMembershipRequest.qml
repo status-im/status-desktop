@@ -27,7 +27,7 @@ ActivityNotificationMessage {
     messageDetails.sender.profileImage.assetSettings.isImage: true
     messageDetails.sender.profileImage.pubkey: notification ? notification.author : ""
     messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(notification ? notification.author : "")
-    messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(notification ? notification.author : "", contactDetails.ensVerified)
+    messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(notification ? notification.author : "", contactDetails && contactDetails.ensVerified)
 
     messageBadgeComponent: CommunityBadge {
         readonly property var community: notification ?
