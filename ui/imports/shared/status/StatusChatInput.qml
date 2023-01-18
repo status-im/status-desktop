@@ -367,7 +367,7 @@ Rectangle {
                             event.key !== Qt.Key_Backspace &&
                             event.key !== Qt.Key_Delete &&
                             event.key !== Qt.Key_Escape
-        if (mentionsPos.length > 0 && symbolPressed) {
+        if ((mentionsPos.length > 0) && symbolPressed && (messageInputField.selectedText.length === 0)) {
             for (var i = 0; i < mentionsPos.length; i++) {
                 if (messageInputField.cursorPosition === mentionsPos[i].leftIndex) {
                     d.leftOfMentionIndex = i
@@ -1223,6 +1223,7 @@ Rectangle {
 
                         TextArea {
                             id: messageInputField
+
                             objectName: "messageInputField"
 
                             property var lastClick: 0
@@ -1260,21 +1261,21 @@ Rectangle {
                             }
 
                             onCursorPositionChanged: {
-                                if(mentionsPos.length > 0) {
+                                if(mentionsPos.length > 0 && ((keyEvent.key === Qt.Key_Left) || (keyEvent.key === Qt.Key_Right)
+                                  || (selectedText.length>0))) {
                                     const mention = d.getMentionAtPosition(cursorPosition)
-                                    if(mention) {
-                                        const cursorMovingLeft = cursorPosition < previousCursorPosition
+                                    if (mention) {
+                                        const cursorMovingLeft = (cursorPosition < previousCursorPosition);
                                         const newCursorPosition = cursorMovingLeft ?
-                                                               mention.leftIndex :
-                                                               mention.rightIndex
-                                        const isSelection = selectionStart != selectionEnd
+                                                                    mention.leftIndex :
+                                                                    mention.rightIndex
+                                        const isSelection = (selectedText.length>0);
                                         isSelection ? moveCursorSelection(newCursorPosition, TextEdit.SelectCharacters) :
                                                       cursorPosition = newCursorPosition
                                     }
                                 }
 
                                 inputScrollView.ensureVisible(cursorRectangle)
-
                                 previousCursorPosition = cursorPosition
                             }
 
