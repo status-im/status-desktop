@@ -68,6 +68,10 @@ Item {
             keycardPopup.active = false
         }
 
+        onMailserverWorking: {
+            mailserverConnectionBanner.hide()
+        }
+
         onMailserverNotWorking: {
             mailserverConnectionBanner.show()
         }
