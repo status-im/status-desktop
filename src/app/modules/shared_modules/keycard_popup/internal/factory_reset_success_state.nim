@@ -22,7 +22,8 @@ method executePrePrimaryStateCommand*(self: FactoryResetSuccessState, controller
     controller.runLoadAccountFlow(seedPhraseLength = 0, seedPhrase = "", pin = controller.getPinForKeycardCopy())
 
 method executeCancelCommand*(self: FactoryResetSuccessState, controller: Controller) =
-  if self.flowType == FlowType.SetupNewKeycard or
+  if self.flowType == FlowType.FactoryReset or
+    self.flowType == FlowType.SetupNewKeycard or
     self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
     self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
     self.flowType == FlowType.CreateCopyOfAKeycard:

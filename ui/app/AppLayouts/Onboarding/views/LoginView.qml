@@ -64,6 +64,8 @@ Item {
         readonly property string stateLoginRegularUser: "regularUserLogin"
         readonly property string stateLoginKeycardUser: "keycardUserLogin"
 
+        readonly property string lostKeycardItemKey: Constants.appTranslatableConstants.loginAccountsListLostKeycard
+
         property int remainingAttempts: root.startupStore.startupModuleInst.remainingAttempts
         onRemainingAttemptsChanged: {
             pinInputField.statesInitialization()
@@ -280,11 +282,22 @@ Item {
                         roleName: "order"
                         sortOrder: Qt.AscendingOrder
                     }
-                    filters: ValueFilter {
-                        roleName: "keyUid"
-                        value: root.startupStore.selectedLoginAccount.keyUid
-                        inverted: true
-                    }
+                    filters: [
+                        ExpressionFilter {
+                            expression: {
+                                if (!root.startupStore.selectedLoginAccount.keycardCreatedAccount &&
+                                        model.username === d.lostKeycardItemKey) {
+                                    return false
+                                }
+                                return true
+                            }
+                        },
+                        ValueFilter {
+                            roleName: "keyUid"
+                            value: root.startupStore.selectedLoginAccount.keyUid
+                            inverted: true
+                        }
+                    ]
                 }
 
                 onAboutToShow: {
@@ -305,7 +318,8 @@ Item {
                         }
                         label: {
                             if (model.username === Constants.appTranslatableConstants.loginAccountsListAddNewUser ||
-                                    model.username === Constants.appTranslatableConstants.loginAccountsListAddExistingUser) {
+                                    model.username === Constants.appTranslatableConstants.loginAccountsListAddExistingUser ||
+                                    model.username === Constants.appTranslatableConstants.loginAccountsListLostKeycard) {
                                 return Constants.appTranslationMap[model.username]
                             }
                             return model.username
@@ -323,6 +337,10 @@ Item {
                             else if (model.username === Constants.appTranslatableConstants.loginAccountsListAddExistingUser) {
                                 accountsPopup.close()
                                 root.startupStore.doQuaternaryAction()
+                            }
+                            else if (model.username === Constants.appTranslatableConstants.loginAccountsListLostKeycard) {
+                                accountsPopup.close()
+                                root.startupStore.doQuinaryAction()
                             }
                             else {
                                 d.resetLogin()

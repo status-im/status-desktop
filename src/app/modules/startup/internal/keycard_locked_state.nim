@@ -8,6 +8,10 @@ proc newKeycardLockedState*(flowType: FlowType, backState: State): KeycardLocked
 proc delete*(self: KeycardLockedState) =
   self.State.delete
 
+method executeBackCommand*(self: KeycardLockedState, controller: Controller) =
+  if self.flowType == FlowType.LostKeycardReplacement:
+    controller.cancelCurrentFlow()
+
 method executePrimaryCommand*(self: KeycardLockedState, controller: Controller) =
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
     controller.runFactoryResetPopup()

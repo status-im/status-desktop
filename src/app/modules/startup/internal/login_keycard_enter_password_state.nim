@@ -22,3 +22,8 @@ method getNextQuaternaryState*(self: LoginKeycardEnterPasswordState, controller:
   if self.flowType == FlowType.AppLogin:
     controller.cancelCurrentFlow()
     return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
+
+method getNextQuinaryState*(self: LoginKeycardEnterPasswordState, controller: Controller): State =
+  if self.flowType == FlowType.AppLogin:
+    controller.cancelCurrentFlow()
+    return createState(StateType.LostKeycardOptions, self.flowType, self)

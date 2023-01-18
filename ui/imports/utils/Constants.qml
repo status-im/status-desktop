@@ -23,6 +23,7 @@ QtObject {
         readonly property string firstRunOldUserKeycardImport: "FirstRunOldUserKeycardImport"
         readonly property string firstRunOldUserImportSeedPhrase: "FirstRunOldUserImportSeedPhrase"
         readonly property string appLogin: "AppLogin"
+        readonly property string lostKeycardReplacement: "LostKeycardReplacement"
     }
 
     readonly property QtObject startupState: QtObject {
@@ -83,6 +84,7 @@ QtObject {
         readonly property string profileFetchingSuccess: "ProfileFetchingSuccess"
         readonly property string profileFetchingTimeout: "ProfileFetchingTimeout"
         readonly property string profileFetchingAnnouncement: "ProfileFetchingAnnouncement"
+        readonly property string lostKeycardOptions: "LostKeycardOptions"
     }
 
     readonly property QtObject predefinedKeycardData: QtObject {
@@ -781,11 +783,13 @@ QtObject {
     readonly property QtObject appTranslatableConstants: QtObject {
         readonly property string loginAccountsListAddNewUser: "LOGIN-ACCOUNTS-LIST-ADD-NEW-USER"
         readonly property string loginAccountsListAddExistingUser: "LOGIN-ACCOUNTS-LIST-ADD-EXISTING-USER"
+        readonly property string loginAccountsListLostKeycard: "LOGIN-ACCOUNTS-LIST-LOST-KEYCARD"
     }
 
     readonly property var appTranslationMap: ({})
     Component.onCompleted: {
         appTranslationMap[appTranslatableConstants.loginAccountsListAddNewUser] = qsTr("Add new user")
         appTranslationMap[appTranslatableConstants.loginAccountsListAddExistingUser] = qsTr("Add existing Status user")
+        appTranslationMap[appTranslatableConstants.loginAccountsListLostKeycard] = qsTr("Lost Keycard")
     }
 }

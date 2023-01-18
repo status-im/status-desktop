@@ -13,6 +13,7 @@ type FlowType* {.pure.} = enum
   FirstRunOldUserKeycardImport = "FirstRunOldUserKeycardImport"
   FirstRunOldUserImportSeedPhrase = "FirstRunOldUserImportSeedPhrase"
   AppLogin = "AppLogin"
+  LostKeycardReplacement = "LostKeycardReplacement"
 
 type StateType* {.pure.} = enum
   NoState = "NoState"
@@ -72,6 +73,7 @@ type StateType* {.pure.} = enum
   ProfileFetchingSuccess = "ProfileFetchingSuccess"
   ProfileFetchingTimeout = "ProfileFetchingTimeout"
   ProfileFetchingAnnouncement = "ProfileFetchingAnnouncement"
+  LostKeycardOptions = "LostKeycardOptions"
 
 
 ## This is the base class for all state we may have in onboarding/login flow.

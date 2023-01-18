@@ -15,14 +15,15 @@ method executeBackCommand*(self: KeycardRepeatPinState, controller: Controller) 
 method executePrimaryCommand*(self: KeycardRepeatPinState, controller: Controller) =
   if not controller.getPinMatch():
     return
-  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())
-  elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
-    controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())
-  elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.storePinToKeycard(controller.getPin(), puk = "")
-  elif self.flowType == FlowType.AppLogin:
-    controller.storePinToKeycard(controller.getPin(), puk = "")
+  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
+    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+      controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())
+      return
+  if self.flowType == FlowType.FirstRunOldUserKeycardImport or
+    self.flowType == FlowType.AppLogin or
+    self.flowType == FlowType.LostKeycardReplacement:
+      controller.storePinToKeycard(controller.getPin(), puk = "")
+      return
 
 method resolveKeycardNextState*(self: KeycardRepeatPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
@@ -66,3 +67,9 @@ method resolveKeycardNextState*(self: KeycardRepeatPinState, keycardFlowType: st
       controller.setKeycardEvent(keycardEvent)
       controller.setPukValid(true)
       return createState(StateType.KeycardPinSet, self.flowType, self.getBackState)
+  if self.flowType == FlowType.LostKeycardReplacement:
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult:
+      controller.setKeycardEvent(keycardEvent)
+      controller.setPukValid(true)
+      let backState = findBackStateWithTargetedStateType(self, StateType.LostKeycardOptions)
+      return createState(StateType.KeycardPinSet, self.flowType, backState)

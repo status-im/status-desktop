@@ -7,3 +7,7 @@ proc newKeycardNotKeycardState*(flowType: FlowType, backState: State): KeycardNo
 
 proc delete*(self: KeycardNotKeycardState) =
   self.State.delete
+
+method executeBackCommand*(self: KeycardNotKeycardState, controller: Controller) =
+  if self.flowType == FlowType.LostKeycardReplacement:
+    controller.cancelCurrentFlow()

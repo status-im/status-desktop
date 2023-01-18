@@ -238,24 +238,51 @@ Item {
             }
         }
 
-        StatusBaseText {
+        Row {
             id: button3
+
+            property string text: ""
+            property string link: ""
+            property bool useLinkForButton: false
+
             Layout.alignment: Qt.AlignHCenter
-            visible: text !== ""
-            color: Theme.palette.primaryColor1
-            font.pixelSize: Constants.onboarding.fontSize3
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onEntered: {
-                    parent.font.underline = true
+            visible: button3.text !== ""
+            spacing: 0
+            padding: 0
+
+            StatusBaseText {
+                text: button3.text
+                color: Theme.palette.primaryColor1
+                font.pixelSize: Constants.onboarding.fontSize3
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onEntered: {
+                        parent.font.underline = true
+                    }
+                    onExited: {
+                        parent.font.underline = false
+                    }
+                    onClicked: {
+                        if (button3.useLinkForButton) {
+                            Qt.openUrlExternally(button3.link)
+                            return
+                        }
+                        root.startupStore.doTertiaryAction()
+                    }
                 }
-                onExited: {
-                    parent.font.underline = false
-                }
+            }
+
+            StatusFlatRoundButton {
+                visible: button3.link !== ""
+                height: 20
+                width: 20
+                icon.name: "external"
+                icon.width: 16
+                icon.height: 16
                 onClicked: {
-                    root.startupStore.doTertiaryAction()
+                    Qt.openUrlExternally(button3.link)
                 }
             }
         }
@@ -450,6 +477,39 @@ Item {
             PropertyChanges {
                 target: button3
                 text: ""
+            }
+        },
+        State {
+            name: Constants.startupState.lostKeycardOptions
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.lostKeycardOptions
+            PropertyChanges {
+                target: keysImg
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
+                source: Style.png("keycard/keycard-new")
+            }
+            PropertyChanges {
+                target: txtTitle
+                text: ""
+            }
+            PropertyChanges {
+                target: txtDesc
+                text: qsTr("Sorry to hear you’ve lost your Keycard, you have 3 options")
+                height: Constants.onboarding.loginInfoHeight2
+            }
+            PropertyChanges {
+                target: button1
+                text: qsTr("Create replacement Keycard with seed phrase")
+            }
+            PropertyChanges {
+                target: button2
+                text: qsTr("Start using account without keycard")
+            }
+            PropertyChanges {
+                target: button3
+                text: qsTr("Order new keycard")
+                link: "https://get.keycard.tech"
+                useLinkForButton: true
             }
         }
     ]

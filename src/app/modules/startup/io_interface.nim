@@ -143,6 +143,9 @@ method runFactoryResetPopup*(self: AccessInterface) {.base.} =
 method storeKeyPairForNewKeycardUser*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method syncWalletAccountsOnLoginForReplacedKeycard*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method checkForStoringPasswordToKeychain*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -165,3 +168,4 @@ type
     c.userLoggedIn()
     c.finishAppLoading()
     c.storeKeyPairForNewKeycardUser()
+    c.syncWalletAccountsOnLoginForReplacedKeycard()

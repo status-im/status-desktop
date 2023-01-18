@@ -11,10 +11,14 @@ proc ensureReaderAndCardPresenceOnboarding*(state: State, keycardFlowType: strin
     keycardEvent.error == ErrorConnection:
       if state.stateType == StateType.KeycardInsertKeycard:
         return nil
-      return createState(StateType.KeycardInsertKeycard, state.flowType, state.getBackState)
+      if state.stateType == StateType.KeycardPluginReader:
+        return createState(StateType.KeycardInsertKeycard, state.flowType, state.getBackState)
+      return createState(StateType.KeycardInsertKeycard, state.flowType, state)
   if keycardFlowType == ResponseTypeValueCardInserted:
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = false))
-    return createState(StateType.KeycardInsertedKeycard, state.flowType, state.getBackState)
+    if state.stateType == StateType.KeycardInsertKeycard:
+      return createState(StateType.KeycardInsertedKeycard, state.flowType, state.getBackState)
+    return createState(StateType.KeycardInsertedKeycard, state.flowType, state)
 
 proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
   let ensureState = ensureReaderAndCardPresenceOnboarding(state, keycardFlowType, keycardEvent, controller)
@@ -115,3 +119,28 @@ proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, key
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorRequireInit:
         return createState(StateType.KeycardCreatePin, state.flowType, state.getBackState)
+
+  if state.flowType == FlowType.LostKeycardReplacement:
+    var backState = state.getBackState
+    if state.stateType == StateType.LostKeycardOptions:
+      backState = state
+
+    if keycardFlowType == ResponseTypeValueEnterNewPIN and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorRequireInit:
+        if state.stateType == StateType.UserProfileEnterSeedPhrase:
+          return createState(StateType.KeycardCreatePin, state.flowType, state)
+        return createState(StateType.KeycardRecognizedKeycard, state.flowType, backState)
+    if keycardFlowType == ResponseTypeValueEnterPIN and 
+      keycardEvent.error.len == 0:
+        return createState(StateType.KeycardNotEmpty, state.flowType, backState)
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0:
+        if keycardEvent.error == ErrorNotAKeycard:
+          return createState(StateType.KeycardNotKeycard, state.flowType, backState)
+        if keycardEvent.error == RequestParamFreeSlots:
+          return createState(StateType.KeycardLocked, state.flowType, backState)
+        if keycardEvent.error == RequestParamPUKRetries:
+          return createState(StateType.KeycardLocked, state.flowType, backState)
+        if keycardEvent.error == ErrorHasKeys:
+          return createState(StateType.KeycardNotEmpty, state.flowType, backState)

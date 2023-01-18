@@ -8,9 +8,14 @@ proc newKeycardNotEmptyState*(flowType: FlowType, backState: State): KeycardNotE
 proc delete*(self: KeycardNotEmptyState) =
   self.State.delete
 
+method executeBackCommand*(self: KeycardNotEmptyState, controller: Controller) =
+  if self.flowType == FlowType.LostKeycardReplacement:
+    controller.cancelCurrentFlow()
+
 method executePrimaryCommand*(self: KeycardNotEmptyState, controller: Controller) =
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
-    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard or
+    self.flowType == FlowType.LostKeycardReplacement:
       controller.runFactoryResetPopup()
 
 method executeSecondaryCommand*(self: KeycardNotEmptyState, controller: Controller) =
