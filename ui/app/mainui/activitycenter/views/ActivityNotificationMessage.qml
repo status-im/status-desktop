@@ -34,7 +34,7 @@ ActivityNotificationBase {
             assetSettings.isImage: contactDetails && contactDetails.displayIcon.startsWith("data")
             pubkey: contactId
             colorId: Utils.colorIdForPubkey(contactId)
-            colorHash: Utils.getColorHashAsJson(contactId, contactDetails.ensVerified)
+            colorHash: Utils.getColorHashAsJson(contactId, contactDetails && contactDetails.ensVerified)
         }
     }
 

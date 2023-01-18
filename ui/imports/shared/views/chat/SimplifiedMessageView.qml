@@ -85,13 +85,17 @@ RowLayout {
                 elide: Text.ElideRight
                 font.pixelSize: 15
                 Layout.alignment: Qt.AlignVCenter
-                Layout.fillWidth: true
+                Layout.fillWidth: !root.messageBadgeComponent
             }
 
             Loader {
                 sourceComponent: root.messageBadgeComponent
                 Layout.alignment: Qt.AlignVCenter
                 Layout.fillHeight: true
+            }
+
+            Item {
+                Layout.fillWidth: !!root.messageBadgeComponent
             }
         }
     }
