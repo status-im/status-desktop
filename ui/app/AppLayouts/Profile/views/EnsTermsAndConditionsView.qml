@@ -85,7 +85,7 @@ Item {
             }
             Connections {
                 target: root.ensUsernamesStore.ensUsernamesModule
-                onTransactionWasSent: {
+                function onTransactionWasSent(txResult: string) {
                     try {
                         let response = JSON.parse(txResult)
                         if (!response.success) {

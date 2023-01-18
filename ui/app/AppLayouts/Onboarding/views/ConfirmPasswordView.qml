@@ -142,7 +142,7 @@ Item {
 
     Connections {
         target: RootStore.privacyModule
-        onPasswordChanged: {
+        function onPasswordChanged(success: bool, errorMsg: string) {
             if (success) {
                 submitBtn.loading = false
                 root.exit();

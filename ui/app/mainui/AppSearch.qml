@@ -28,7 +28,7 @@ Item {
 
     Connections {
         target: appSearch.store.locationMenuModel
-        onModelAboutToBeReset: {
+        function onModelAboutToBeReset() {
              while (searchPopupMenu.takeItem(searchPopupMenu.numDefaultItems)) {
                 // Delete the item right after the default items
                 // If takeItem returns null, it means there was nothing to remove
@@ -38,7 +38,9 @@ Item {
 
     Connections {
         target: appSearch.store.appSearchModule
-        onAppSearchCompleted: searchPopup.loading = false
+        function onAppSearchCompleted() {
+            searchPopup.loading = false
+        } 
     }
 
     StatusSearchLocationMenu {

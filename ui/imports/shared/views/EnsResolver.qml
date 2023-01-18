@@ -44,7 +44,7 @@ Item {
 
     Connections {
         target: mainModule
-        onResolvedENS: {
+        function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
             if (uuid !== root.uuid) {
                 return
             }

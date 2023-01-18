@@ -48,7 +48,7 @@ StatusDialog {
 
     Connections {
         target: store.currentAccount.assets
-        onModelReset: {
+        function onModelReset() {
             popup.selectedAccount =  null
             popup.selectedAccount = store.currentAccount
         }
@@ -393,7 +393,7 @@ StatusDialog {
 
                     Connections {
                         target: store.mainModuleInst
-                        onResolvedENS: {
+                        function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
                             recipientSelector.isPending = false
                             if(Utils.isValidAddress(resolvedAddress)) {
                                 d.resolvedENSAddress = resolvedAddress
@@ -474,7 +474,7 @@ StatusDialog {
 
     Connections {
         target: popup.store.walletSectionTransactionsInst
-        onSuggestedRoutesReady: {
+        function onSuggestedRoutesReady(suggestedRoutes: string) {
             let response = JSON.parse(suggestedRoutes)
             if(!!response.error) {
                 popup.isLoading = false
@@ -495,7 +495,7 @@ StatusDialog {
 
     Connections {
         target: popup.store.walletSectionTransactionsInst
-        onTransactionSent: {
+        function onTransactionSent(txResult: string) {
             d.isPendingTx = false
             try {
                 let response = JSON.parse(txResult)

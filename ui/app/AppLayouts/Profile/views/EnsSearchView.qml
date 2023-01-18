@@ -98,7 +98,7 @@ Item {
             }
             Connections {
                 target: root.ensUsernamesStore.ensUsernamesModule
-                onTransactionWasSent: {
+                function onTransactionWasSent(txResult: string) {
                     try {
                         let response = JSON.parse(txResult)
                         if (!response.success) {
@@ -189,7 +189,7 @@ Item {
 
             Connections {
                 target: root.ensUsernamesStore.ensUsernamesModule
-                onUsernameAvailabilityChecked: {
+                function onUsernameAvailabilityChecked(availabilityStatus: string) {
                     if(!validate(ensUsername.text)) return;
                     valid = false;
                     loading = false;

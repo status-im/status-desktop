@@ -779,6 +779,13 @@ QtObject {
         NoError
     }
 
+    enum AddAccountType {
+        GenerateNew,
+        ImportSeedPhrase,
+        ImportPrivateKey,
+        WatchOnly
+    }
+
     readonly property QtObject walletSection: QtObject {
         readonly property string cancelledMessage: "cancelled"
     }

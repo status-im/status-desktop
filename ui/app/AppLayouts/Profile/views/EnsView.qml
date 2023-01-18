@@ -315,14 +315,14 @@ Item {
 
     Connections {
         target: ensView
-        onConnect: {
+        function onConnect(ensUsername: string) {
             addedUsername = ensUsername;
         }
     }
 
     Connections {
         target: ensView.ensUsernamesStore.ensUsernamesModule
-        onTransactionCompleted: {
+        function onTransactionCompleted(success: bool, txHash: string, username: string, trxType: string, revertReason: string) {
             let title = ""
             switch(trxType){
             case "RegisterENS":

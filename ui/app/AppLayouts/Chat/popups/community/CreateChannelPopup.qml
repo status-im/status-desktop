@@ -65,11 +65,11 @@ StatusDialog {
         enabled: root.opened && root.emojiPopupOpened
         target: emojiPopup
 
-        onEmojiSelected: function (emojiText, atCursor) {
+        function onEmojiSelected(emojiText: string, atCursor: bool) {
             nameInput.input.asset.isLetterIdenticon = false;
             nameInput.input.asset.emoji = emojiText
         }
-        onClosed: {
+        function onClosed() {
             root.emojiPopupOpened = false
         }
     }

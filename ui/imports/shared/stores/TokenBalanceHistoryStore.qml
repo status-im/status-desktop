@@ -51,7 +51,7 @@ ChartStoreBase {
 
     Connections {
         target: walletSectionAllTokens
-        onTokenBalanceHistoryDataReady: (balanceHistory) => {
+        function onTokenBalanceHistoryDataReady(balanceHistory: string) {
            // chainId, address, symbol, timeInterval
             let response = JSON.parse(balanceHistory)
             if (response === null) {

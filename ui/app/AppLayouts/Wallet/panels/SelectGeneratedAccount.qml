@@ -17,24 +17,16 @@ StatusSelect {
     property string selectedKeyUid: userProfile.keyUid
     property bool selectedKeyUidMigratedToKeycard: userProfile.isKeycardUser
 
-
-    enum AddAccountType {
-        GenerateNew,
-        ImportSeedPhrase,
-        ImportPrivateKey,
-        WatchOnly
-    }
-
     function resetMe() {
         _internal.getGeneratedAccountsModel()
-        selectAccountType.addAccountType = SelectGeneratedAccount.AddAccountType.GenerateNew
+        selectAccountType.addAccountType = Constants.AddAccountType.GenerateNew
         selectAccountType.selectedKeyUid = userProfile.keyUid
         selectAccountType.selectedKeyUidMigratedToKeycard = userProfile.isKeycardUser
     }
 
     Connections {
         target: RootStore.generatedAccountsViewModel
-        onModelReset: {
+        function onModelReset() {
             _internal.delegateModel.model = RootStore.generatedAccountsViewModel
             _internal.getGeneratedAccountsModel()
         }
@@ -116,10 +108,10 @@ StatusSelect {
             titleText.color: Theme.palette.indirectColor1
         }
         onClicked: {
-            selectAccountType.addAccountType = (model.name === _internal.importSeedPhraseString) ? SelectGeneratedAccount.AddAccountType.ImportSeedPhrase :
-                                             (model.name === _internal.importPrivateKeyString) ? SelectGeneratedAccount.AddAccountType.ImportPrivateKey :
-                                             (model.name === _internal.addWatchOnlyAccountString) ? SelectGeneratedAccount.AddAccountType.WatchOnly :
-                                             SelectGeneratedAccount.AddAccountType.GenerateNew
+            selectAccountType.addAccountType = (model.name === _internal.importSeedPhraseString) ? Constants.AddAccountType.ImportSeedPhrase :
+                                             (model.name === _internal.importPrivateKeyString) ? Constants.AddAccountType.ImportPrivateKey :
+                                             (model.name === _internal.addWatchOnlyAccountString) ? Constants.AddAccountType.WatchOnly :
+                                             Constants.AddAccountType.GenerateNew
             selectedItem.title = model.name
             selectedItem.asset.name = model.iconName
             selectedItem.tagsModel = model.generatedModel

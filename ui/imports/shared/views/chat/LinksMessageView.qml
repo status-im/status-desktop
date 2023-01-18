@@ -70,7 +70,7 @@ Column {
                 id: linkFetchConnections
                 enabled: false
                 target: root.messageStore.messageModule
-                onLinkPreviewDataWasReceived: {
+                function onLinkPreviewDataWasReceived(previewData: string) {
                     let response = {}
                     try {
                         response = JSON.parse(previewData)
@@ -106,7 +106,7 @@ Column {
                 id: linkCommunityFetchConnections
                 enabled: false
                 target: root.store.communitiesModuleInst
-                function onCommunityAdded(communityId) {
+                function onCommunityAdded(communityId: string) {
                     if (communityId !== linkData.communityId) {
                         return
                     }

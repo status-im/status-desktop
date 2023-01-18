@@ -30,7 +30,7 @@ QtObject {
     property Connections conn: Connections {
         target: Web3ProviderStore.web3ProviderInst
 
-        onPostMessageResult: {
+        function onPostMessageResult(payloadMethod: string, result: string, chainId: string) {
             web3Response(result)
             const isSign = ["eth_sign", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"].indexOf(payloadMethod) > -1
             const isTx = payloadMethod === "eth_sendTransaction"

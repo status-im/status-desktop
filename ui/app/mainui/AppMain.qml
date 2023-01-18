@@ -58,29 +58,31 @@ Item {
     Connections {
         target: rootStore.mainModuleInst
 
-        onDisplayUserProfile: Global.openProfilePopup(publicKey)
+        function onDisplayUserProfile(publicKey: string) {
+            Global.openProfilePopup(publicKey)
+        }
 
-        onDisplayKeycardSharedModuleFlow: {
+        function onDisplayKeycardSharedModuleFlow() {
             keycardPopup.active = true
         }
 
-        onDestroyKeycardSharedModuleFlow: {
+        function onDestroyKeycardSharedModuleFlow() {
             keycardPopup.active = false
         }
 
-        onMailserverWorking: {
+        function onMailserverWorking() {
             mailserverConnectionBanner.hide()
         }
 
-        onMailserverNotWorking: {
+        function onMailserverNotWorking() {
             mailserverConnectionBanner.show()
         }
 
-        onActiveSectionChanged: {
+        function onActiveSectionChanged() {
             createChatView.opened = false
         }
 
-        onOpenActivityCenter: {
+        function onOpenActivityCenter() {
             Global.openPopup(activityCenterPopupComponent)
         }
     }
@@ -99,14 +101,14 @@ Item {
 
     Connections {
         target: Global
-        onOpenLinkInBrowser: {
+        function onOpenLinkInBrowser(link: string) {
             changeAppSectionBySectionId(Constants.appSection.browser)
             Qt.callLater(() => browserLayoutContainer.item.openUrlInNewTab(link));
         }
-        onOpenChooseBrowserPopup: {
+        function onOpenChooseBrowserPopup(link: string) {
             Global.openPopup(chooseBrowserPopupComponent, {link: link});
         }
-        onOpenDownloadModalRequested: {
+        function onOpenDownloadModalRequested(available: bool, version: string, url: string) {
             const downloadPage = downloadPageComponent.createObject(appMain,
                 {
                     newVersionAvailable: available,
@@ -117,52 +119,57 @@ Item {
             return downloadPage
         }
 
-        onOpenImagePopup: {
+        function onOpenImagePopup(image, contextMenu) {
             var popup = imagePopupComponent.createObject(appMain)
             popup.contextMenu = contextMenu
             popup.openPopup(image)
         }
 
-        onOpenCreateChatView: {
+        function onOpenCreateChatView() {
             createChatView.opened = true
         }
 
-        onCloseCreateChatView: {
+        function onCloseCreateChatView() {
             createChatView.opened = false
         }
 
-        onOpenProfilePopupRequested: {
+        function onOpenProfilePopupRequested(publicKey: string, parentPopup) {
             if (Global.profilePopupOpened) {
                 appMain.closeProfilePopup()
             }
             Global.openPopup(profilePopupComponent, {publicKey: publicKey, parentPopup: parentPopup})
             Global.profilePopupOpened = true
         }
-        onOpenNicknamePopupRequested: {
+        function onOpenNicknamePopupRequested(publicKey: string,nickname: string, subtitle: string) {
             Global.openPopup(nicknamePopupComponent, {publicKey: publicKey, nickname: nickname, "header.subTitle": subtitle})
         }
-        onBlockContactRequested: {
+        function onBlockContactRequested(publicKey: string, contactName: string) {
             Global.openPopup(blockContactConfirmationComponent, {contactName: contactName, contactAddress: publicKey})
         }
-        onUnblockContactRequested: {
+        function onUnblockContactRequested(publicKey: string, contactName: string) {
             Global.openPopup(unblockContactConfirmationComponent, {contactName: contactName, contactAddress: publicKey})
         }
 
-        onOpenActivityCenterPopupRequested: {
+        function onOpenActivityCenterPopupRequested(publicKey: string, contactName: string) {
             Global.openPopup(activityCenterPopupComponent)
         }
 
-        onOpenChangeProfilePicPopup: {
+        function onOpenChangeProfilePicPopup(cb) {
             var popup = changeProfilePicComponent.createObject(appMain, {callback: cb});
             popup.chooseImageToCrop();
         }
-        onOpenBackUpSeedPopup: Global.openPopup(backupSeedModalComponent)
-        onDisplayToastMessage: {
+        function onOpenBackUpSeedPopup() {
+            Global.openPopup(backupSeedModalComponent)
+        }
+        function onDisplayToastMessage(title: string, subTitle: string, icon: string, loading: bool, ephNotifType: int, url: string) {
             appMain.rootStore.mainModuleInst.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url);
         }
-        onOpenEditDisplayNamePopup: Global.openPopup(displayNamePopupComponent)
+        function onOpenEditDisplayNamePopup() {
+            Global.openPopup(displayNamePopupComponent)
+        }
 
-        onOpenPopupRequested: {
+        function onOpenPopupRequested(popupComponent, params) {
+
             if (activePopupComponents.includes(popupComponent)) {
                 return;
             }
@@ -181,7 +188,7 @@ Item {
             return popup;
         }
 
-        onOpenLink: {
+        function onOpenLink(link: string) {
             // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
             link = appMain.rootStore.plainText(link);
             if (appMain.rootStore.showBrowserSelector) {
@@ -196,13 +203,13 @@ Item {
             }
         }
 
-        onSetNthEnabledSectionActive: {
+        function onSetNthEnabledSectionActive(nthSection: int) {
             if(!appMain.rootStore.mainModuleInst)
                 return
             appMain.rootStore.mainModuleInst.setNthEnabledSectionActive(nthSection)
         }
 
-        onAppSectionBySectionTypeChanged: {
+        function onAppSectionBySectionTypeChanged(sectionType: int, subsection: int) {
             if(!appMain.rootStore.mainModuleInst)
                 return
 
@@ -598,7 +605,7 @@ Item {
 
                 Connections {
                     target: rootStore.aboutModuleInst
-                    onAppVersionFetched: {
+                    function onAppVersionFetched(available: bool, version: string, url: string) {
                         rootStore.setLatestVersionInfo(available, version, url);
                         bannersLayout.processUpdateAvailable()
                     }

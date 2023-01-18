@@ -3,14 +3,11 @@ pragma Singleton
 import QtQuick 2.13
 
 import utils 1.0
-import shared.stores 1.0 as SharedStore
-
 import "../panels"
 
 QtObject {
     id: root
 
-    readonly property int defaultSelectedType: SelectGeneratedAccount.AddAccountType.GenerateNew
     readonly property string defaultSelectedKeyUid: userProfile.keyUid
     readonly property bool defaultSelectedKeyUidMigratedToKeycard: userProfile.isKeycardUser
 
@@ -24,8 +21,6 @@ QtObject {
     property var accountSensitiveSettings: localAccountSensitiveSettings
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
 
-    property var currencyStore: SharedStore.RootStore.currencyStore
-    property string currentCurrency: currencyStore.currentCurrency
     property var totalCurrencyBalance: walletSection.totalCurrencyBalance
     property bool tokensLoading: walletSection.tokensLoading
     property string signingPhrase: walletSection.signingPhrase

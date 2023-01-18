@@ -1,6 +1,5 @@
 import QtQuick 2.13
 
-import shared.stores 1.0 as SharedStore
 import "../../Wallet/stores"
 
 QtObject {
@@ -21,9 +20,7 @@ QtObject {
     property var importedAccounts: walletSectionAccounts.imported
     property var generatedAccounts: walletSectionAccounts.generated
     property var watchOnlyAccounts: walletSectionAccounts.watchOnly
-
-    property var currencyStore: SharedStore.RootStore.currencyStore
-
+    
     property var currentAccount: walletSectionCurrent
 
     function switchAccountByAddress(address) {

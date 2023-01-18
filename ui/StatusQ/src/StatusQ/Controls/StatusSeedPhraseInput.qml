@@ -176,7 +176,7 @@ Item {
         // Consider word inserted if input looses focus while a valid word is present ("user" clicks outside)
         Connections {
             target: seedWordInput.input.edit
-            onActiveFocusChanged: {
+            function onActiveFocusChanged() {
                 if (!seedWordInput.input.edit.activeFocus && d.isInputValidWord) {
                     // There are so many side effects regarding focus and doneInsertingWord that we need to reset this flag not to be processed again.
                     d.isInputValidWord = false

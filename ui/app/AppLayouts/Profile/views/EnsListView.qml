@@ -43,7 +43,7 @@ Item {
 
     Connections {
         target: root.ensUsernamesStore.ensUsernamesModule
-        onUsernameConfirmed: {
+        function onUsernameConfirmed(username: string) {
             d.updateNumberOfPendingEnsUsernames()
             chatSettingsLabel.visible = true
         }

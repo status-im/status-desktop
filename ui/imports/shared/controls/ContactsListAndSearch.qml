@@ -115,7 +115,7 @@ Item {
 
             Connections {
                 target: mainModule
-                onResolvedENS: {
+                function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
                     chatKey.hasValidSearchResult = false
                     if (chatKey.text == "") {
                         ensUsername.text = "";
