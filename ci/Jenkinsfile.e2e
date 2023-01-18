@@ -102,11 +102,11 @@ pipeline {
             'statusteam/nim-waku:v0.13.0'
           ).run(
             ["-p 127.0.0.1:${env.RPC_PORT}:8545",
-             "-p 127.0.0.1:${env.P2P_PORT}:30303/tcp",
-             "-p 127.0.0.1:${env.P2P_PORT}:30303/udp",
+             "-p 127.0.0.1:${env.P2P_PORT}:${env.P2P_PORT}",
              "-v ${env.WORKSPACE}/ci/mailserver/config.json:/config.json"].join(' '),
             ['--store=true',
              '--keep-alive=true',
+             "--tcp-port=${env.P2P_PORT}",
              '--rpc-address=0.0.0.0',
              '--nat=none'].join(' ')
           )
@@ -128,10 +128,7 @@ pipeline {
         ]) { script {
           def result = squish([
             extraOptions: [
-              '--retry', '2',
-              '--tags', '~mayfail',
-              '--tags', '~merge',
-              '--tags', '~relyon-mailserver',
+              '--tags', 'relyon-mailserver',
               '--config', 'addAUT', 'nim_status_client',
               "${WORKSPACE}/bin",
             ].join('\n'),

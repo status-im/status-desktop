@@ -69,6 +69,7 @@ type UpstreamConfig* = object
   URL*: string
 
 type PinnedMailserver* = object
+  none*: string # Just for tests
   ethProd*: string
   ethStaging*: string
   ethTest*: string
@@ -128,6 +129,7 @@ type
 
 proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   # we maintain pinned mailserver per fleet
+  discard jsonObj.getProp("none", result.none)
   discard jsonObj.getProp("eth.prod", result.ethProd)
   discard jsonObj.getProp("eth.staging", result.ethStaging)
   discard jsonObj.getProp("eth.test", result.ethTest)
@@ -201,6 +203,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
 
 proc pinnedMailserverToJsonNode*(mailserver: PinnedMailserver): JsonNode =
   return %*{
+    "none": mailserver.none,
     "eth.prod": mailserver.ethProd,
     "eth.staging": mailserver.ethStaging,
     "eth.test": mailserver.ethTest,

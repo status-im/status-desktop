@@ -671,6 +671,7 @@ QtObject {
     readonly property string eth_signTypedData: "eth_signTypedData"
     readonly property string eth_signTypedData_v3: "eth_signTypedData_v3"
 
+    readonly property string none: "none"
     readonly property string eth_prod: "eth.prod"
     readonly property string eth_staging: "eth.staging"
     readonly property string eth_test: "eth.test"

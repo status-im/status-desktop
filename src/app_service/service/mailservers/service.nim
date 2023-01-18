@@ -110,18 +110,24 @@ QtObject:
     self.initMailservers()
     self.fetchMailservers()
 
+    echo "TEST_PEER_ENR: ======================================================================"
+    echo TEST_PEER_ENR
+
     let fleet = self.nodeConfigurationService.getFleet()
     if TEST_PEER_ENR != "":
       var found = false
       for mailserver in self.mailservers:
         if mailserver.nodeAddress == TEST_PEER_ENR:
+          echo ":: FOUND"
           found = true
           break
       if not found:
         let mailserverName = "Test Mailserver"
         self.mailservers.add((name: mailserverName, nodeAddress: TEST_PEER_ENR))
         let mailserverID = self.saveMailserver(mailserverName, TEST_PEER_ENR)
+        echo ":: NOT FOUND: adding and pinning ", mailserverId, fleet
         discard self.settingsService.pinMailserver(mailserverId, fleet)
+
 
     if MAILSERVER_ID != "":
       discard self.settingsService.pinMailserver(MAILSERVER_ID, fleet)

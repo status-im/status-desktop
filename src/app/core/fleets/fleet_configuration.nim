@@ -3,6 +3,7 @@ import json, typetraits, tables, sequtils
 type
   Fleet* {.pure.} = enum
     Undefined = "",
+    None = "none",
     Prod = "eth.prod",
     Staging = "eth.staging",
     Test = "eth.test",
@@ -65,7 +66,7 @@ proc getMailservers*(self: FleetConfiguration, fleet: Fleet, isWakuV2: bool): Ta
   # Maybe it make senses to add a "waku-store" section in case we want to have separate node types?
   # Discuss with @iurimatias, @cammellos and Vac team
   let fleetKey = if isWakuV2: $FleetNodes.Waku else: $FleetNodes.Mailservers
-  if not self.fleet[$fleet].hasKey(fleetKey) :
+  if not self.fleet.hasKey($fleet) or not self.fleet[$fleet].hasKey(fleetKey) :
     result = initTable[string,string]()
     return
   result = self.fleet[$fleet][fleetKey]

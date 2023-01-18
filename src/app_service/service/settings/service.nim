@@ -375,6 +375,8 @@ QtObject:
       return self.settings.pinnedMailserver.statusTest
     elif (fleet == Fleet.StatusProd):
       return self.settings.pinnedMailserver.statusProd
+    elif (fleet == Fleet.None):
+      return self.settings.pinnedMailserver.none
     return ""
 
   proc pinMailserver*(self: Service, mailserverID: string, fleet: Fleet): bool =

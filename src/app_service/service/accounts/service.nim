@@ -329,6 +329,7 @@ QtObject:
 
     if TEST_PEER_ENR != "":
       let testPeerENRArr = %* @[TEST_PEER_ENR]
+      result["ClusterConfig"]["Fleet"] = newJString("none")
       result["ClusterConfig"]["WakuNodes"] = %* testPeerENRArr
       result["ClusterConfig"]["BootNodes"] = %* testPeerENRArr
       result["ClusterConfig"]["TrustedMailServers"] = %* testPeerENRArr
@@ -338,6 +339,10 @@ QtObject:
       result["Rendezvous"] = newJBool(false)
 
     result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
+
+    echo "DEFAULT NODE CONFIG +=================================="
+    echo $result
+
 
   proc setLocalAccountSettingsFile(self: Service) =
     if(defined(macosx) and self.getLoggedInAccount.isValid()):
@@ -607,6 +612,10 @@ QtObject:
           "RendezvousNodes": @[],
           "DiscV5BootstrapNodes": @[]
         }
+
+
+      echo "LOGIN NODECONFIG OVERRIDES ======================================================="
+      echo $nodeCfg
 
       let response = status_account.login(account.name, account.keyUid, account.kdfIterations, hashedPassword, thumbnailImage,
         largeImage, $nodeCfg)
