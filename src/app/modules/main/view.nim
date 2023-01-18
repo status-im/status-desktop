@@ -123,11 +123,16 @@ QtObject:
   proc emitStoringPasswordSuccess*(self: View) =
     self.storingPasswordSuccess()
 
+  proc mailserverWorking*(self:View) {.signal.}
+
   proc mailserverNotWorking*(self:View) {.signal.}
 
   proc displayWindowsOsNotification*(self:View, title: string, message: string) {.signal.}
 
-  proc emitMailservernotWorking*(self: View) =
+  proc emitMailserverWorking*(self: View) =
+    self.mailserverWorking()
+
+  proc emitMailserverNotWorking*(self: View) =
     self.mailserverNotWorking()
 
   proc activeSection*(self: View): ActiveSection =
