@@ -65,6 +65,8 @@ ThemePalette {
     statusLoadingHighlight: getColor('white', 0.03)
     statusLoadingHighlight2: getColor('white', 0.07)
 
+    messageHighlightColor: getColor('blue4', 0.2)
+
     userCustomizationColors: [
         "#AAC6FF",
         "#887AF9",

@@ -136,8 +136,8 @@ Control {
             }
             width: 2
             visible: root.isPinned || root.hasMention
-            color: root.isPinned ? Theme.palette.pinColor1 : root.hasMention ? Theme.palette.mentionColor1
-                                                                             : "transparent" // not visible really
+            color: root.hasMention ? Theme.palette.mentionColor1 : root.isPinned ? Theme.palette.pinColor1
+                                                                                 : "transparent" // not visible really
         }
     }
 
@@ -175,7 +175,7 @@ Control {
             anchors.fill: parent
             opacity: 0
             visible: opacity > 0.001
-            color: Theme.palette.baseColor2
+            color: Theme.palette.messageHighlightColor
         }
 
         MouseArea {
