@@ -54,7 +54,7 @@ Item {
             return
 
         this.lastAtPosition = -1
-        for (let c = cursorPosition; c >= 0; c--) {
+        for (let c = cursorPosition === 0 ? 0 : (cursorPosition-1); c >= 0; c--) {
             if (filter.charAt(c) === "@") {
                 this.lastAtPosition = c
                 break
@@ -119,12 +119,12 @@ Item {
         if (properties.length === 0) {
             return false
         }
-
         let filterWithoutAt = filter.substring(this.lastAtPosition + 1, this.cursorPosition)
         filterWithoutAt = filterWithoutAt.replace(/\*/g, "")
         suggestionsPanelRoot.formattedFilter = filterWithoutAt
 
         return !properties.every(p => item[p].toLowerCase().match(filterWithoutAt.toLowerCase()) === null)
+               && (lastAtPosition > -1)
     }
 
     function isFilteringPropertyOk() {
