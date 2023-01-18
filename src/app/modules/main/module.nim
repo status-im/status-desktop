@@ -576,6 +576,9 @@ method emitStoringPasswordError*[T](self: Module[T], errorDescription: string) =
 method emitStoringPasswordSuccess*[T](self: Module[T]) =
   self.view.emitStoringPasswordSuccess()
 
+method emitMailserverWorking*[T](self: Module[T]) =
+  self.view.emitMailserverWorking()
+
 method emitMailserverNotWorking*[T](self: Module[T]) =
   self.view.emitMailserverNotWorking()
 

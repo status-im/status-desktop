@@ -87,6 +87,9 @@ method emitStoringPasswordError*(self: AccessInterface, errorDescription: string
 method emitStoringPasswordSuccess*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method emitMailserverWorking*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method emitMailserverNotWorking*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

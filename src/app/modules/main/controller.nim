@@ -90,7 +90,8 @@ proc init*(self: Controller) =
     let d9 = 9*86400 # 9 days
     discard self.settingsService.setDefaultSyncPeriod(d9)
     
-  self.events.on("mailserverAvailable") do(e:Args):
+  self.events.on(SIGNAL_MAILSERVER_AVAILABLE) do(e:Args):
+    self.delegate.emitMailserverWorking()
     echo "MAILSERVER AVAILABLE: ", repr(e)
     # We need to take some actions here. This is the only pace where "mailserverAvailable" signal should be handled.
     # Do the following, if we really need that.
