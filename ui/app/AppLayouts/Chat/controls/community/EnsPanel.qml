@@ -6,10 +6,17 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
-
 ColumnLayout {
+    id: root
+
+    property int mode: HoldingTypes.Mode.Add
     property alias domainName: domainNameInput.text
     property alias domainNameValid: domainNameInput.valid
+    property alias addButtonEnabled: addOrUpdateButton.enabled
+
+    signal addClicked
+    signal updateClicked
+    signal removeClicked
 
     spacing: 0
 
@@ -55,5 +62,27 @@ ColumnLayout {
         font.pixelSize: 13
         lineHeight: 18
         lineHeightMode: Text.FixedHeight
+    }
+
+    StatusButton {
+        id: addOrUpdateButton
+
+        text: (root.mode === HoldingTypes.Mode.Add) ? qsTr("Add") : qsTr("Update")
+        Layout.topMargin: 40
+        Layout.preferredHeight: 44 // by design
+        Layout.fillWidth: true
+        onClicked: root.mode === HoldingTypes.Mode.Add
+                   ? root.addClicked() : root.updateClicked()
+    }
+
+    StatusFlatButton {
+        text: qsTr("Remove")
+        Layout.topMargin: 16 // by design
+        Layout.preferredHeight: 44 // by design
+        Layout.fillWidth: true
+        visible: root.mode === HoldingTypes.Mode.Update
+        type: StatusBaseButton.Type.Danger
+
+        onClicked: root.removeClicked()
     }
 }

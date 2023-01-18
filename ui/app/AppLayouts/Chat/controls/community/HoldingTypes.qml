@@ -4,4 +4,8 @@ QtObject {
     enum Type {
         Asset, Collectible, Ens
     }
+
+    enum Mode {
+        Add, Update
+    }
 }

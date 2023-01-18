@@ -9,11 +9,6 @@ import AppLayouts.Chat.controls.community 1.0
 Pane {
     id: root
 
-    function openFlow(flowType) {
-        holdingsDropdown.close()
-        holdingsDropdown.openFlow(flowType)
-    }
-
     RowLayout {
         Label {
             text: "Open flow:"
@@ -21,12 +16,19 @@ Pane {
 
         Button {
             text: "Add"
-            onClicked: openFlow(HoldingsDropdown.FlowType.Add)
+            onClicked: {
+                holdingsDropdown.close()
+                holdingsDropdown.open()
+            }
         }
 
         Button {
             text: "Update"
-            onClicked: openFlow(HoldingsDropdown.FlowType.Update)
+            onClicked: {
+                holdingsDropdown.close()
+                holdingsDropdown.setActiveTab(HoldingTypes.Type.Ens)
+                holdingsDropdown.openUpdateFlow()
+            }
         }
     }
 
@@ -88,6 +90,9 @@ Pane {
         }
 
         onOpened: contentItem.parent.parent = root
-        Component.onCompleted: openFlow(HoldingsDropdown.FlowType.Add)
+        Component.onCompleted: {
+            holdingsDropdown.close()
+            holdingsDropdown.open()
+        }
     }
 }

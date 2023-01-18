@@ -170,6 +170,10 @@ StatusScrollView {
             }
             return dirty
         }
+
+        function holdingsTextFormat(type, name, amount) {
+            return CommunityPermissionsHelpers.setHoldingsTextFormat(type, name, amount)
+        }
     }
 
     contentWidth: mainLayout.width
@@ -190,6 +194,9 @@ StatusScrollView {
         }
         StatusItemSelector {
             id: tokensSelector
+
+            property int editedIndex
+
             Layout.fillWidth: true
             icon: Style.svg("contact_verified")
             title: qsTr("Who holds")
@@ -198,14 +205,13 @@ StatusScrollView {
             asset.height: 28
             asset.width: asset.height
             addButton.visible: itemsModel.count < d.maxHoldingsItems
-
-            property int editedIndex
             itemsModel: SortFilterProxyModel {
                 sourceModel: d.dirtyValues.holdingsModel
 
                 proxyRoles: ExpressionRole {
                     name: "text"
-                    expression: root.store.setHoldingsTextFormat(model.type, model.name, model.amount)
+                     // Direct call for singleton function is not handled properly by SortFilterProxyModel that's why `holdingsTextFormat` is used instead.
+                    expression: d.holdingsTextFormat(model.type, model.name, model.amount)
                }
             }
 
@@ -222,15 +228,13 @@ StatusScrollView {
                 }
 
                 onAddAsset: {
-                    const modelItem = CommunityPermissionsHelpers.getAssetByKey(
-                                        store.assetsModel, key)
+                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.assetsModel, key)
                     addItem(HoldingTypes.Type.Asset, modelItem, amount)
                     dropdown.close()
                 }
 
                 onAddCollectible: {
-                    const modelItem = CommunityPermissionsHelpers.getCollectibleByKey(
-                                        store.collectiblesModel, key)
+                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.collectiblesModel, key)
                     addItem(HoldingTypes.Type.Collectible, modelItem, amount)
                     dropdown.close()
                 }
@@ -244,8 +248,7 @@ StatusScrollView {
                 }
 
                 onUpdateAsset: {
-                    const modelItem = CommunityPermissionsHelpers.getAssetByKey(
-                                        store.assetsModel, key)
+                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.assetsModel, key)
                     const name = modelItem.shortName ? modelItem.shortName : modelItem.name
                     const imageSource = modelItem.iconSource.toString()
 
@@ -255,8 +258,7 @@ StatusScrollView {
                 }
 
                 onUpdateCollectible: {
-                    const modelItem = CommunityPermissionsHelpers.getCollectibleByKey(
-                                        store.collectiblesModel, key)
+                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.collectiblesModel, key)
                     const name = modelItem.name
                     const imageSource = modelItem.iconSource.toString()
 
@@ -284,7 +286,7 @@ StatusScrollView {
                 dropdown.parent = tokensSelector.addButton
                 dropdown.x = tokensSelector.addButton.width + d.dropdownHorizontalOffset
                 dropdown.y = 0
-                dropdown.openFlow(HoldingsDropdown.FlowType.Add)
+                dropdown.open()
             }
 
             onItemClicked: {
@@ -305,7 +307,6 @@ StatusScrollView {
                     case HoldingTypes.Type.Collectible:
                         dropdown.collectibleKey = modelItem.key
                         dropdown.collectibleAmount = modelItem.amount
-                        dropdown.collectiblesSpecificAmount = modelItem.amount !== 1
                         break
                     case HoldingTypes.Type.Ens:
                         dropdown.ensDomainName = modelItem.name
@@ -314,8 +315,8 @@ StatusScrollView {
                         console.warn("Unsupported holdings type.")
                 }
 
-                dropdown.openFlow(HoldingsDropdown.FlowType.Update)
                 dropdown.setActiveTab(modelItem.type)
+                dropdown.openUpdateFlow()
 
                 editedIndex = index
             }

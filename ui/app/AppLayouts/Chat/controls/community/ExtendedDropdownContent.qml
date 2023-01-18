@@ -21,6 +21,7 @@ Item {
     readonly property bool canGoBack: root.state !== d.listView_depth1_State
 
     signal itemClicked(string key, string name, url iconSource)
+    signal navigateDeep(string key, var subItems)
 
     enum Type{
         Assets,
@@ -29,6 +30,14 @@ Item {
 
     function goBack() {
         root.state = d.listView_depth1_State
+    }
+
+    function goForward(key, itemName, itemSource, subItems) {
+        d.currentSubitems = subItems
+        d.currentItemKey = key
+        d.currentItemName = itemName
+        d.currentItemSource = itemSource
+        root.state = d.listView_depth2_State
     }
 
     QtObject {
@@ -44,6 +53,7 @@ Item {
         readonly property string listView_depth2_State: "LIST-DEPTH2"
         property var currentModel: root.store.collectiblesModel
         property var currentSubitems
+        property string currentItemKey: ""
         property string currentItemName: ""
         property url currentItemSource: ""
 
@@ -61,6 +71,7 @@ Item {
         }
 
         function reset() {
+            d.currentItemKey = ""
             d.currentItemName = ""
             d.currentItemSource = ""
             d.currentModel = root.store.collectiblesModel
@@ -86,6 +97,10 @@ Item {
                 isFilterOptionVisible: false
             }
             PropertyChanges {
+                target: tokenGroupItem
+                visible: false
+            }
+            PropertyChanges {
                 target: searcher
                 visible: type === ExtendedDropdownContent.Type.Collectibles
             }
@@ -102,6 +117,10 @@ Item {
                 currentModel: d.currentSubitems
                 isFilterOptionVisible: true
             }
+            PropertyChanges {
+                target: tokenGroupItem
+                visible: true
+            }
         },
         State {
             name: d.thumbnailsViewState
@@ -114,6 +133,10 @@ Item {
                 target: d
                 currentModel: d.currentSubitems
                 isFilterOptionVisible: true
+            }
+            PropertyChanges {
+                target: tokenGroupItem
+                visible: true
             }
         }
     ]
@@ -247,6 +270,18 @@ Item {
             maximumHeight: 36
         }
 
+        TokenItem {
+           id: tokenGroupItem
+           Layout.fillWidth: true
+           key: d.currentItemKey
+           name: d.currentItemName
+           iconSource: d.currentItemSource
+           enabled: true
+           onItemClicked: root.itemClicked(d.currentItemKey,
+                                           d.currentItemName,
+                                           d.currentItemSource)
+        }
+
         Loader {
             id: contentLoader
 
@@ -292,9 +327,11 @@ Item {
                 if(subItems && root.state === d.listView_depth1_State) {
                     // One deep navigation
                     d.currentSubitems = subItems
+                    d.currentItemKey = key
                     d.currentItemName = name
                     d.currentItemSource = iconSource
                     root.state = d.listView_depth2_State
+                    root.navigateDeep(key, subItems)
                 }
                 else {
                     d.reset()

@@ -9,7 +9,6 @@ import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Chat.helpers 1.0
 
-
 StatusDropdown {
     id: root
 
@@ -20,7 +19,6 @@ StatusDropdown {
 
     property string collectibleKey: ""
     property real collectibleAmount: 1
-    property bool collectiblesSpecificAmount: false
 
     property string ensDomainName: ""
 
@@ -34,46 +32,18 @@ StatusDropdown {
 
     signal removeClicked
 
-    function reset() {
-        d.currentHoldingType = HoldingTypes.Type.Asset
-        d.assetAmountText = ""
-        d.collectibleAmountText = ""
-
-        root.assetKey = ""
-        root.collectibleKey = ""
-        root.assetAmount = 0
-        root.collectibleAmount = 1
-        root.collectiblesSpecificAmount = false
-        root.ensDomainName = ""
-
-        statesStack.clear()
-    }
-
-    width: d.defaultWidth
-    padding: d.padding
-
-    // force keeping within the bounds of the enclosing window
-    margins: 0
-
-    onClosed: root.reset()
-
     enum FlowType {
-        Add, Update
+        Selected, List_Deep1, List_Deep2
     }
 
-    function openFlow(flowType) {
-        switch (flowType) {
-            case HoldingsDropdown.FlowType.Add:
-                statesStack.push(d.addState)
-                break
-            case HoldingsDropdown.FlowType.Update:
-                statesStack.push(d.updateState)
-                break
-            default:
-                console.warn("Unknown flow type.")
-                return
-        }
+    function openUpdateFlow() {
+        d.currentHoldingMode = HoldingTypes.Mode.Update
+        if(d.currentHoldingType !== HoldingTypes.Type.Ens) {
+            if(statesStack.size === 0)
+                statesStack.push(HoldingsDropdown.FlowType.List_Deep1)
 
+            statesStack.push(HoldingsDropdown.FlowType.Selected)
+        }
         open()
     }
 
@@ -81,50 +51,60 @@ StatusDropdown {
         d.currentHoldingType = holdingType
     }
 
+    function reset() {
+        d.currentHoldingType = HoldingTypes.Type.Asset
+        d.currentHoldingMode = HoldingTypes.Mode.Add
+
+        d.assetAmountText = ""
+        d.collectibleAmountText = ""
+        root.assetKey = ""
+        root.collectibleKey = ""
+        root.assetAmount = 0
+        root.collectibleAmount = 1
+        root.ensDomainName = ""
+
+        d.setInitialFlow()
+    }
+
     QtObject {
         id: d
 
         // Internal management properties and signals:
+        readonly property var holdingTypes: [
+            HoldingTypes.Type.Asset, HoldingTypes.Type.Collectible, HoldingTypes.Type.Ens
+        ]
         readonly property bool assetsReady: root.assetAmount > 0 && root.assetKey
         readonly property bool collectiblesReady: root.collectibleAmount > 0 && root.collectibleKey
         readonly property bool ensReady: d.ensDomainNameValid
 
-        readonly property string addState: "ADD"
-        readonly property string updateState: "UPDATE"
-        readonly property string extendedState: "EXTENDED"
-
-        property int holdingsTabMode: HoldingsTabs.Mode.Add
         property int extendedDropdownType: ExtendedDropdownContent.Type.Assets
+        property int currentHoldingType: HoldingTypes.Type.Asset
+        property int currentHoldingMode: HoldingTypes.Mode.Add
+        property bool extendedDeepNavigation: false
+        property var currentSubItems
+        property string currentItemKey: ""
 
         property string assetAmountText: ""
-        property string collectibleAmountText: ""
-
-        property int currentHoldingType: HoldingTypes.Type.Asset
-
+        property string collectibleAmountText: "1"
         property bool ensDomainNameValid: false
-
-        signal addClicked
-        signal updateClicked
 
         // By design values:
         readonly property int padding: 8
-
         readonly property int defaultWidth: 289
         readonly property int extendedContentHeight: 380
-
-        readonly property int tabsAddModeBaseHeight: 232 - padding * 2
-        readonly property int tabsAddModeExtendedHeight: 277 - padding * 2
-
-        readonly property int tabsUpdateModeBaseHeight: 284 - padding * 2
-        readonly property int tabsUpdateModeExtendedHeight: tabsUpdateModeBaseHeight
-                                                            + (tabsAddModeExtendedHeight - tabsAddModeBaseHeight)
-
+        readonly property int tabBarHeigh: 36
+        readonly property int tabBarTextSize: 13
         readonly property int backButtonWidth: 56
         readonly property int backButtonHeight: 24
         readonly property int backButtonToContentSpace: 8
 
-        readonly property string defaultAssetNameText: qsTr("Choose asset")
-        readonly property string defaultCollectibleNameText: qsTr("Choose collectible")
+        function setInitialFlow() {
+            statesStack.clear()
+            if(d.currentHoldingType !== HoldingTypes.Type.Ens)
+                statesStack.push(HoldingsDropdown.FlowType.List_Deep1)
+            else
+                statesStack.push(HoldingsDropdown.FlowType.Selected)
+        }
     }
 
     QtObject {
@@ -153,6 +133,9 @@ StatusDropdown {
         }
     }
 
+    width: d.defaultWidth
+    padding: d.padding
+    margins: 0  // force keeping within the bounds of the enclosing window
     contentItem: ColumnLayout {
         id: content
 
@@ -163,9 +146,7 @@ StatusDropdown {
 
             Layout.preferredWidth: d.backButtonWidth
             Layout.preferredHeight: d.backButtonHeight
-
             visible: statesStack.size > 1
-
             spacing: 0
             leftPadding: 4
             statusIcon: "next"
@@ -173,6 +154,50 @@ StatusDropdown {
             icon.height: 12
             iconRotation: 180
             text: qsTr("Back")
+        }
+
+        StatusSwitchTabBar {
+            id: tabBar
+
+            visible: !backButton.visible
+            Layout.preferredHeight: d.tabBarHeigh
+            Layout.fillWidth: true
+            currentIndex: d.holdingTypes.indexOf(d.currentHoldingType)
+            state: d.currentHoldingType
+            states: [
+                State {
+                    name: HoldingTypes.Type.Asset
+                    PropertyChanges {target: loader; sourceComponent: listLayout}
+                    PropertyChanges {target: root; height: d.extendedContentHeight}
+                    PropertyChanges {target: d; extendedDropdownType: ExtendedDropdownContent.Type.Assets}
+                },
+                State {
+                    name: HoldingTypes.Type.Collectible
+                    PropertyChanges {target: loader; sourceComponent: listLayout}
+                    PropertyChanges {target: root; height: d.extendedContentHeight}
+                    PropertyChanges {target: d; extendedDropdownType: ExtendedDropdownContent.Type.Collectibles}
+                },
+                State {
+                    name: HoldingTypes.Type.Ens
+                    PropertyChanges {target: loader; sourceComponent: ensLayout}
+                    PropertyChanges {target: root; height: undefined} // use implicit height
+                }
+            ]
+
+            onCurrentIndexChanged: {
+                d.currentHoldingType = d.holdingTypes[currentIndex]
+                d.setInitialFlow()
+            }
+
+            Repeater {
+                id: tabLabelsRepeater
+                model: [qsTr("Asset"), qsTr("Collectible"), qsTr("ENS")]
+
+                StatusSwitchTabButton {
+                    text: modelData
+                    fontPixelSize: d.tabBarTextSize
+                }
+            }
         }
 
         Loader {
@@ -183,185 +208,144 @@ StatusDropdown {
 
         states: [
             State {
-                name: d.addState
-                PropertyChanges {target: loader; sourceComponent: tabsView}
+                name: HoldingsDropdown.FlowType.Selected
+                PropertyChanges {target: loader; sourceComponent: (d.currentHoldingType === HoldingTypes.Type.Asset) ? assetLayout :
+                                                                  ((d.currentHoldingType === HoldingTypes.Type.Collectible) ? collectibleLayout : ensLayout) }
                 PropertyChanges {target: root; height: undefined} // use implicit height
             },
             State {
-                name: d.updateState
-                extend: d.addState
-                PropertyChanges {target: d; holdingsTabMode: HoldingsTabs.Mode.Update}
+                name: HoldingsDropdown.FlowType.List_Deep1
+                PropertyChanges {target: loader; sourceComponent: listLayout}
+                PropertyChanges {target: root; height: d.extendedContentHeight}
+                PropertyChanges {target: d; extendedDeepNavigation: false}                
             },
             State {
-                name: d.extendedState
-                PropertyChanges {target: loader; sourceComponent: extendedView}
-                PropertyChanges {target: root; height: d.extendedContentHeight}
+                name: HoldingsDropdown.FlowType.List_Deep2
+                extend: HoldingsDropdown.FlowType.List_Deep1
+                PropertyChanges {target: d; extendedDeepNavigation: true}
             }
         ]
     }
 
+    onClosed: root.reset()
+
     Component {
-        id: tabsView
+        id: listLayout
 
-        HoldingsTabs {
-            id: holdingsTabs
+        ExtendedDropdownContent {
+            id: listPanel
 
-            readonly property var holdingTypes: [
-                HoldingTypes.Type.Asset, HoldingTypes.Type.Collectible, HoldingTypes.Type.Ens
-            ]
-            readonly property var labels: [qsTr("Asset"), qsTr("Collectible"), qsTr("ENS")]
+            store: root.store
+            type: d.extendedDropdownType
 
-            readonly property bool extendedHeight:
-                d.currentHoldingType === HoldingTypes.Type.Collectible && collectiblesSpecificAmount ||
-                d.currentHoldingType === HoldingTypes.Type.Ens
+            onItemClicked: {
+                if(d.extendedDropdownType === ExtendedDropdownContent.Type.Assets)
+                    root.assetKey = key
+                else
+                    root.collectibleKey = key
 
-            implicitHeight: extendedHeight
-                            ? (mode === HoldingsTabs.Mode.Add ? d.tabsAddModeExtendedHeight : d.tabsUpdateModeExtendedHeight)
-                            : (mode === HoldingsTabs.Mode.Add ? d.tabsAddModeBaseHeight : d.tabsUpdateModeBaseHeight)
+                statesStack.push(HoldingsDropdown.FlowType.Selected)
+            }
 
-            states: [
-                State {
-                    name: HoldingTypes.Type.Asset
-                    PropertyChanges {target: holdingsTabs; sourceComponent: assetsLayout; addOrUpdateButtonEnabled: d.assetsReady}
-                },
-                State {
-                    name: HoldingTypes.Type.Collectible
-                    PropertyChanges {target: holdingsTabs; sourceComponent: collectiblesLayout; addOrUpdateButtonEnabled: d.collectiblesReady}
-                },
-                State {
-                    name: HoldingTypes.Type.Ens
-                    PropertyChanges {target: holdingsTabs; sourceComponent: ensLayout; addOrUpdateButtonEnabled: d.ensReady}
-                }
-            ]
+            onNavigateDeep: {
+                d.currentSubItems = subItems
+                d.currentItemKey = key
+                statesStack.push(HoldingsDropdown.FlowType.List_Deep2)
+            }
 
-            tabLabels: labels
-            state: d.currentHoldingType
-            mode: d.holdingsTabMode
-
-            currentIndex: holdingTypes.indexOf(d.currentHoldingType)
-            onCurrentIndexChanged: d.currentHoldingType = holdingTypes[currentIndex]
-
-            onAddClicked: d.addClicked()
-            onUpdateClicked: d.updateClicked()
-            onRemoveClicked: root.removeClicked()
+            Component.onCompleted: {
+                if(d.extendedDeepNavigation)
+                    listPanel.goForward(d.currentItemKey,
+                                        CommunityPermissionsHelpers.getTokenNameByKey(store.collectiblesModel, d.currentItemKey),
+                                        CommunityPermissionsHelpers.getTokenIconByKey(store.collectiblesModel, d.currentItemKey),
+                                        d.currentSubItems)
+            }
 
             Connections {
                 target: backButton
 
                 function onClicked() {
+                    if (listPanel.canGoBack)
+                        listPanel.goBack()
                     statesStack.pop()
                 }
             }
+
+            Connections {
+                target: root
+
+                function onClosed() { listPanel.goBack() }
+            }
         }
     }
 
     Component {
-        id: assetsLayout
+        id: assetLayout
 
-        AssetsPanel {
-            id: assetsPanel
-
-            assetName: d.defaultAssetNameText
-            amountText: d.assetAmountText
-            onAmountTextChanged: d.assetAmountText = amountText
+        TokenPanel {
+            id: assetPanel
 
             readonly property real effectiveAmount: amountValid ? amount : 0
+
+            tokenName: CommunityPermissionsHelpers.getTokenNameByKey(store.assetsModel, root.assetKey)
+            tokenShortName: CommunityPermissionsHelpers.getTokenShortNameByKey(store.assetsModel, root.assetKey)
+            tokenImage: CommunityPermissionsHelpers.getTokenIconByKey(store.assetsModel, root.assetKey)
+            amountText: d.assetAmountText
+            tokenCategoryText: qsTr("Asset")
+            addOrUpdateButtonEnabled: d.assetsReady
+            mode: d.currentHoldingMode
+
             onEffectiveAmountChanged: root.assetAmount = effectiveAmount
-
-            onPickerClicked: {
-                d.extendedDropdownType = ExtendedDropdownContent.Type.Assets
-                statesStack.push(d.extendedState)
-            }
-
-            readonly property string assetKey: root.assetKey
-
-            onAssetKeyChanged: {
-                const modelItem = CommunityPermissionsHelpers.getAssetByKey(
-                                    store.assetsModel, assetKey)
-
-                if (modelItem) {
-                    assetsPanel.assetName = modelItem.shortName
-                    assetsPanel.assetImage = modelItem.iconSource
-                } else {
-                    assetsPanel.assetName = d.defaultAssetNameText
-                    assetsPanel.assetImage = ""
-                }
-            }
+            onAmountTextChanged: d.assetAmountText = amountText
+            onAddClicked: root.addAsset(root.assetKey, root.assetAmount)
+            onUpdateClicked: root.updateAsset(root.assetKey, root.assetAmount)
+            onRemoveClicked: root.removeClicked()
 
             Component.onCompleted: {
                 if (d.assetAmountText.length === 0 && root.assetAmount)
-                    assetsPanel.setAmount(root.assetAmount)
+                    assetPanel.setAmount(root.assetAmount)
             }
 
             Connections {
-                target: d
+                target: backButton
 
-                function onAddClicked() {
-                    root.addAsset(root.assetKey, root.assetAmount)
-                }
-
-                function onUpdateClicked() {
-                    root.updateAsset(root.assetKey, root.assetAmount)
-                }
+                function onClicked() { statesStack.pop() }
             }
         }
     }
 
     Component {
-        id: collectiblesLayout
+        id: collectibleLayout
 
-        CollectiblesPanel {
-            id: collectiblesPanel
-
-            collectibleName: d.defaultCollectibleNameText
-            amountText: d.collectibleAmountText
-            onAmountTextChanged: d.collectibleAmountText = amountText
+        TokenPanel {
+            id: collectiblePanel
 
             readonly property real effectiveAmount: amountValid ? amount : 0
+
+            tokenName: CommunityPermissionsHelpers.getTokenNameByKey(store.collectiblesModel, root.collectibleKey)
+            tokenShortName: ""
+            tokenImage: CommunityPermissionsHelpers.getTokenIconByKey(store.collectiblesModel, root.collectibleKey)
+            amountText: d.collectibleAmountText
+            tokenCategoryText: qsTr("Collectible")
+            addOrUpdateButtonEnabled: d.collectiblesReady
+            allowDecimals: false
+            mode: d.currentHoldingMode
+
             onEffectiveAmountChanged: root.collectibleAmount = effectiveAmount
-
-            specificAmount: root.collectiblesSpecificAmount
-            onSpecificAmountChanged: root.collectiblesSpecificAmount = specificAmount
-
-            onPickerClicked: {
-                d.extendedDropdownType = ExtendedDropdownContent.Type.Collectibles
-                statesStack.push(d.extendedState)
-            }
+            onAmountTextChanged: d.collectibleAmountText = amountText
+            onAddClicked: root.addCollectible(root.collectibleKey, root.collectibleAmount)
+            onUpdateClicked: root.updateCollectible(root.collectibleKey, root.collectibleAmount)
+            onRemoveClicked: root.removeClicked()
 
             Component.onCompleted: {
-                if (d.collectibleAmountText.length === 0 && root.collectibleAmount)
-                    collectiblesPanel.setAmount(root.collectibleAmount)
-            }
-
-            function getAmount() {
-                return specificAmount ? effectiveAmount : 1
+                    if (d.collectibleAmountText.length === 0 && root.collectibleAmount)
+                        collectiblePanel.setAmount(root.collectibleAmount)
             }
 
             Connections {
-                target: d
+                target: backButton
 
-                function onAddClicked() {
-                    root.addCollectible(root.collectibleKey, collectiblesPanel.getAmount())
-                }
-
-                function onUpdateClicked() {
-                    root.updateCollectible(root.collectibleKey, collectiblesPanel.getAmount())
-                }
-            }
-
-            readonly property string collectibleKey: root.collectibleKey
-
-            onCollectibleKeyChanged: {
-                const modelItem = CommunityPermissionsHelpers.getCollectibleByKey(
-                                    store.collectiblesModel, collectibleKey)
-
-                if (modelItem) {
-                    collectiblesPanel.collectibleName = modelItem.name
-                    collectiblesPanel.collectibleImage = modelItem.iconSource
-                } else {
-                    collectiblesPanel.collectibleName = d.defaultCollectibleNameText
-                    collectiblesPanel.collectibleImage = ""
-                }
+                function onClicked() { statesStack.pop() }
             }
         }
     }
@@ -370,52 +354,15 @@ StatusDropdown {
         id: ensLayout
 
         EnsPanel {
+            addButtonEnabled: d.ensReady
             domainName: root.ensDomainName
+            mode: d.currentHoldingMode
+
             onDomainNameChanged: root.ensDomainName = domainName
             onDomainNameValidChanged: d.ensDomainNameValid = domainNameValid
-
-            Connections {
-                target: d
-
-                function onAddClicked() {
-                    root.addEns(root.ensDomainName)
-                }
-
-                function onUpdateClicked() {
-                    root.updateEns(root.ensDomainName)
-                }
-            }
-        }
-    }
-
-    Component {
-        id: extendedView
-
-        ExtendedDropdownContent {
-            id: extendedDropdown
-
-            store: root.store
-            type: d.extendedDropdownType
-
-            onItemClicked: {
-                statesStack.pop()
-
-                if(d.extendedDropdownType === ExtendedDropdownContent.Type.Assets)
-                    root.assetKey = key
-                else
-                    root.collectibleKey = key
-            }
-
-            Connections {
-                target: backButton
-
-                function onClicked() {
-                    if (extendedDropdown.canGoBack)
-                        extendedDropdown.goBack()
-                    else
-                        statesStack.pop()
-                }
-            }
+            onAddClicked: root.addEns(root.ensDomainName)
+            onUpdateClicked: root.updateEns(root.ensDomainName)
+            onRemoveClicked: root.removeClicked()
         }
     }
 }

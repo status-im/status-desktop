@@ -53,61 +53,20 @@ StatusListView {
             }
         }
     }// End of Header
-    delegate: Rectangle {
+    delegate: TokenItem {
         width: ListView.view.width
-        height: 45 // by design
-        color: mouseArea.containsMouse ? Theme.palette.baseColor4 : "transparent"
-        RowLayout {
-            anchors.fill: parent
-            anchors.leftMargin: 6
-            spacing: 8
-            StatusRoundedImage {
-                Layout.alignment: Qt.AlignVCenter
-                image.source: model.iconSource
-                visible: model.iconSource.toString() !== ""
-                Layout.preferredWidth: 32
-                Layout.preferredHeight: Layout.preferredWidth
-            }
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignVCenter
-                spacing: 0
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    text: model.name
-                    color: Theme.palette.directColor1
-                    font.pixelSize: 13
-                    clip: true
-                    elide: Text.ElideRight
-                }
-                StatusBaseText {
-                    visible: !!model.shortName
-                    Layout.fillWidth: true
-                    text: !!model.shortName ? model.shortName : ""
-                    color: Theme.palette.baseColor1
-                    font.pixelSize: 12
-                    clip: true
-                    elide: Text.ElideRight
-                }
-            }
-            StatusIcon {
-                icon: "tiny/chevron-right"
-                visible: !!model.subItems && model.subItems.count > 0
-                Layout.alignment: Qt.AlignVCenter
-                Layout.rightMargin: 16
-                color: Theme.palette.baseColor1
-                width: 16
-                height: 16
-            }
-        }
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            hoverEnabled: true
-            onClicked: { root.itemClicked(model.key, model.name, model.shortName, model.iconSource, model.subItems) }
-        }
-    }// End of Item
+        key: model.key
+        name: model.name
+        shortName: !!model.shortName ? model.shortName : ""
+        iconSource: model.iconSource
+        subItems: model.subItems
+        enabled: true
+        onItemClicked: root.itemClicked(model.key,
+                                        model.name,
+                                        model.shortName,
+                                        model.iconSource,
+                                        model.subItems)
+    }
     section.property: "category"
     section.criteria: ViewSection.FullString
     section.delegate: Item {
