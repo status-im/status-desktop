@@ -87,83 +87,82 @@ ThemePalette {
                           "#000086", "#9B81FF", "#3FAEF9", "#9A6600", "#00FFFF", "#008694",
                           "#C2FFFF", "#00F0B6"]
 
-    property QtObject statusAppLayout: QtObject {
+    statusAppLayout: QtObject {
         property color backgroundColor: baseColor3
         property color rightPanelBackgroundColor: baseColor3
     }
 
-    property QtObject statusAppNavBar: QtObject {
+    statusAppNavBar: QtObject {
         property color backgroundColor: baseColor5
     }
 
-    property QtObject statusToastMessage: QtObject {
+    statusToastMessage: QtObject {
         property color backgroundColor: baseColor3
     }
 
-    property QtObject statusListItem: QtObject {
+    statusListItem: QtObject {
         property color backgroundColor: baseColor3
         property color secondaryHoverBackgroundColor: primaryColor3
     }
 
-    property QtObject statusChatListItem: QtObject {
+    statusChatListItem: QtObject {
         property color hoverBackgroundColor: directColor8
         property color selectedBackgroundColor: directColor7
     }
 
-    property QtObject statusChatListCategoryItem: QtObject {
+    statusChatListCategoryItem: QtObject {
         property color buttonHoverBackgroundColor: directColor7
     }
 
-    property QtObject statusNavigationListItem: QtObject {
+    statusNavigationListItem: QtObject {
         property color hoverBackgroundColor: directColor8
         property color selectedBackgroundColor: directColor7
     }
 
-    property QtObject statusBadge: QtObject {
+    statusBadge: QtObject {
         property color foregroundColor: baseColor3
         property color borderColor: baseColor5
         property color hoverBorderColor: "#353A4D"
     }
 
-    property QtObject statusChatInfoButton: QtObject {
+    statusChatInfoButton: QtObject {
         property color backgroundColor: baseColor3
     }
 
-    property QtObject statusMenu: QtObject {
+    statusMenu: QtObject {
         property color backgroundColor: baseColor2
         property color hoverBackgroundColor: directColor7
         property color separatorColor: directColor7
     }
 
-    property QtObject statusModal: QtObject {
+    statusModal: QtObject {
         property color backgroundColor: baseColor3
     }
 
-    property QtObject statusRoundedImage: QtObject {
+    statusRoundedImage: QtObject {
         property color backgroundColor: baseColor3
     }
 
-    property QtObject statusChatInput: QtObject {
+    statusChatInput: QtObject {
         property color secondaryBackgroundColor: "#414141"
     }
 
-    property QtObject statusSwitchTab: QtObject {
+    statusSwitchTab: QtObject {
         property color buttonBackgroundColor: primaryColor1
         property color barBackgroundColor: primaryColor3
         property color selectedTextColor: white
         property color textColor: primaryColor1
     }
 
-    property QtObject statusSelect: QtObject {
+    statusSelect: QtObject {
         property color menuItemBackgroundColor: baseColor2
         property color menuItemHoverBackgroundColor: directColor7
     }
 
-    property QtObject statusMessage: QtObject {
+    statusMessage: QtObject {
         property color emojiReactionBackground: "#2d2823"
         property color emojiReactionBackgroundHovered: "#3a3632"
         property color emojiReactionActiveBackground: getColor('blue')
         property color emojiReactionActiveBackgroundHovered: Qt.darker(emojiReactionActiveBackground, 1.1)
     }
 }
-
