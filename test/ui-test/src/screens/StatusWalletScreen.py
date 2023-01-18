@@ -21,7 +21,6 @@ class MainWalletScreen(Enum):
     SAVED_ADDRESSES_BUTTON: str = "mainWallet_Saved_Addresses_Button"
     NETWORK_SELECTOR_BUTTON: str = "mainWallet_Network_Selector_Button"
     RIGHT_SIDE_TABBAR: str = "mainWallet_Right_Side_Tab_Bar"
-    MAILSERVER_RETRY: str = "mailserver_retry"
     FIRST_ACCOUNT_ITEM: str = "firstWalletAccount_Item"
     EPHEMERAL_NOTIFICATION_LIST: str = "mainWallet_Ephemeral_Notification_List"
     TOTAL_CURRENCY_BALANCE: str = "mainWallet_totalCurrencyBalance"

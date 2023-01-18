@@ -12,9 +12,6 @@ mainWallet_Network_Selector_Button = {"container": statusDesktop_mainWindow, "ob
 mainWallet_Right_Side_Tab_Bar = {"container": statusDesktop_mainWindow, "objectName": "rightSideWalletTabBar", "type": "StatusTabBar"}
 mainWallet_Ephemeral_Notification_List = {"container": statusDesktop_mainWindow, "objectName": "ephemeralNotificationList", "type": "StatusListView"}
 
-mailserver_dialog = {"container": statusDesktop_mainWindow_overlay, "objectName": "mailserverConnectionDialog", "type": "StatusDialog"}
-mailserver_retry = {"container": mailserver_dialog, "objectName": "mailserverConnectionDialog_retryButton", "type": "StatusButton"}
-
 accounts_StatusListView = {"container": statusDesktop_mainWindow, "objectName": "walletAccountsListView", "type": "StatusListView", "visible": True}
 firstWalletAccount_Item = {"container": accounts_StatusListView, "index": 0, "objectName": "walletAccountItem", "type": "StatusListItem", "visible": True}
 
