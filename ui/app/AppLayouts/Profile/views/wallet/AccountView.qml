@@ -130,7 +130,7 @@ Item {
                 tagsDelegate: StatusListItemTag {
                     bgColor: model.color
                     bgRadius: 6
-                    height: 50
+                    height: 22
                     closeButtonVisible: false
                     asset.emoji: model.emoji
                     asset.emojiSize: Emoji.size.verySmall
