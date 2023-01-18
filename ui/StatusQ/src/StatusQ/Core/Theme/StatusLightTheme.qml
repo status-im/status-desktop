@@ -18,6 +18,10 @@ ThemePalette {
     dangerColor2: getColor('red', 0.2)
     dangerColor3: getColor('red', 0.1)
 
+    warningColor1: getColor('warning_orange')
+    warningColor2: getColor('warning_orange', 0.2)
+    warningColor3: getColor('warning_orange', 0.1)
+
     successColor1: getColor('green')
     successColor2: getColor('green', 0.1)
     successColor3: getColor('green', 0.2)
