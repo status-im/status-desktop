@@ -21,3 +21,4 @@ method getNextPrimaryState*(self: UserProfileCreateState, controller: Controller
 
 method executeBackCommand*(self: UserProfileCreateState, controller: Controller) =
   controller.setDisplayName("")
+  controller.clearImage()

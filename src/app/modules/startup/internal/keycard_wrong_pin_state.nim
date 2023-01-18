@@ -36,6 +36,15 @@ method resolveKeycardNextState*(self: KeycardWrongPinState, keycardFlowType: str
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           return createState(StateType.KeycardMaxPinRetriesReached, self.flowType, self.getBackState)
         return nil
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == RequestParamPUKRetries:
+        controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.MaxPUKReached, add = true))
+        return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)
+    if keycardFlowType == ResponseTypeValueSwapCard and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == RequestParamFreeSlots:
+        return createState(StateType.KeycardMaxPairingSlotsReached, self.flowType, self.getBackState)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       controller.setKeycardEvent(keycardEvent)
       if not defined(macosx):

@@ -458,13 +458,15 @@ method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurr
       if currStateObj.isNil:
         error "cannot resolve current state for onboarding/login flow continuation"
         return
-      if currStateObj.flowType() == FlowType.LostKeycardReplacement:
-        let newState = currStateObj.getBackState()
-        if newState.isNil:
-          error "cannot resolve new state for onboarding/login flow continuation after shared flow is terminated"
-          return
-        self.view.setCurrentStartupState(newState)
-        debug "new state for onboarding/login flow continuation after shared flow is terminated", setCurrFlow=newState.flowType(), newCurrState=newState.stateType()
+      if currStateObj.flowType() == FlowType.FirstRunNewUserNewKeycardKeys or 
+        currStateObj.flowType() == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard or
+        currStateObj.flowType() == FlowType.LostKeycardReplacement:
+          let newState = currStateObj.getBackState()
+          if newState.isNil:
+            error "cannot resolve new state for onboarding/login flow continuation after shared flow is terminated"
+            return
+          self.view.setCurrentStartupState(newState)
+          debug "new state for onboarding/login flow continuation after shared flow is terminated", setCurrFlow=newState.flowType(), newCurrState=newState.stateType()
 
 method storeKeyPairForNewKeycardUser*[T](self: Module[T]) =
   self.delegate.storeKeyPairForNewKeycardUser()
