@@ -68,7 +68,7 @@ method cancelRequestToJoinCommunity*(self: AccessInterface, communityId: string)
 method requestToJoinCommunity*(self: AccessInterface, communityId: string, ensName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestCommunityInfo*(self: AccessInterface, communityId: string) {.base.} =
+method requestCommunityInfo*(self: AccessInterface, communityId: string, importing: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method deleteCommunityChat*(self: AccessInterface, communityId: string, channelId: string) {.base.} =
@@ -111,6 +111,9 @@ method curatedCommunityEdited*(self: AccessInterface, community: CuratedCommunit
   raise newException(ValueError, "No implementation available")
 
 method communityImported*(self: AccessInterface, community: CommunityDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityDataImported*(self: AccessInterface, community: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onImportCommunityErrorOccured*(self: AccessInterface, communityId: string, error: string) {.base.} =

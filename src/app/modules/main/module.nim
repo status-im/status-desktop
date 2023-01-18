@@ -935,7 +935,7 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
     if item.isEmpty():
       # request community info and then spectate
       self.statusUrlCommunityToSpectate = communityId
-      self.communitiesModule.requestCommunityInfo(communityId)
+      self.communitiesModule.requestCommunityInfo(communityId, false)
     else:
       self.setActiveSection(item)
 
@@ -954,7 +954,7 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
       let communityIdToSpectate = getCommunityIdFromFullChatId(chatId)
       # request community info and then spectate
       self.statusUrlCommunityToSpectate = communityIdToSpectate
-      self.communitiesModule.requestCommunityInfo(communityIdToSpectate)
+      self.communitiesModule.requestCommunityInfo(communityIdToSpectate, false)
 
   # enable after MVP
   #else(action == StatusUrlAction.OpenLinkInBrowser and singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()):

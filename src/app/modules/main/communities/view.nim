@@ -440,8 +440,8 @@ QtObject:
   proc requestToJoinCommunity*(self: View, communityId: string, ensName: string) {.slot.} =
     self.delegate.requestToJoinCommunity(communityId, ensName)
 
-  proc requestCommunityInfo*(self: View, communityId: string) {.slot.} =
-    self.delegate.requestCommunityInfo(communityId)
+  proc requestCommunityInfo*(self: View, communityId: string, importing: bool) {.slot.} =
+    self.delegate.requestCommunityInfo(communityId, importing)
 
   proc getCommunityDetails*(self: View, communityId: string): string {.slot.} =
     let communityItem = self.model.getItemById(communityId)

@@ -296,32 +296,34 @@ Item {
 
     Connections {
         target: root.store
+
         function onImportingCommunityStateChanged(communityId, state, errorMsg) {
+
+            const community = root.store.getCommunityDetailsAsJson(communityId)
             let title = ""
+            let subTitle = ""
             let loading = false
 
-            if (state === Constants.communityImported)
+            switch (state)
             {
-                title = qsTr("Community imported")
-            }
-            else if (state === Constants.communityImportingInProgress)
-            {
+            case Constants.communityImported:
+                title = qsTr("%1 community imported").arg(community.name);
+                break
+            case Constants.communityImportingInProgress:
                 title = qsTr("Importing community is in progress")
                 loading = true
-            }
-            else if (state === Constants.communityImportingError)
-            {
-                title = errorMsg
-            }
-
-            if(title == "")
-            {
-                console.error("unknown state while importing community: ", state)
+                break
+            case Constants.communityImportingError:
+                title = qsTr("%1 community importing error").arg(community.name)
+                subTitle = errorMsg
+                break
+            default:
+                console.error("unknown state while importing community: %1").arg(state)
                 return
             }
 
             Global.displayToastMessage(title,
-                                       "",
+                                       subTitle,
                                        "",
                                        loading,
                                        Constants.ephemeralNotificationType.normal,

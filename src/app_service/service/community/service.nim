@@ -538,7 +538,7 @@ QtObject:
 
   proc getCommunityById*(self: Service, communityId: string): CommunityDto =
     if(not self.joinedCommunities.hasKey(communityId)):
-      error "error: requested community doesn't exists"
+      error "error: requested community doesn't exists", communityId
       return
 
     return self.joinedCommunities[communityId]
@@ -1189,21 +1189,29 @@ QtObject:
       return
 
     var community = rpcResponseObj{"response"}{"result"}.toCommunityDto()
-    if community.id != "":
-      self.allCommunities[community.id] = community
-      self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
-    else:
+
+    if community.id == "":
       community.id = rpcResponseObj{"response"}{"communityId"}.getStr()
       self.events.emit(SIGNAL_COMMUNITY_LOAD_DATA_FAILED, CommunityArgs(community: community, error: "Couldn't find community info"))
+      return
+    
+    self.allCommunities[community.id] = community
+
+    if rpcResponseObj{"importing"}.getBool():
+      self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(community: community))
+
+    self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
 
 
-  proc requestCommunityInfo*(self: Service, communityId: string) =
+  proc requestCommunityInfo*(self: Service, communityId: string, importing = false) =
+
     try:
       let arg = AsyncRequestCommunityInfoTaskArg(
         tptr: cast[ByteAddress](asyncRequestCommunityInfoTask),
         vptr: cast[ByteAddress](self.vptr),
         slot: "asyncCommunityInfoLoaded",
-        communityId: communityId
+        communityId: communityId,
+        importing: importing
       )
       self.threadpool.start(arg)
     except Exception as e:
