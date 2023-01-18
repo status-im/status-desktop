@@ -35,12 +35,11 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_COMMUNITY_DATA_IMPORTED) do(e:Args):
     let args = CommunityArgs(e)
-    self.delegate.communityImported(args.community)
+    self.delegate.communityDataImported(args.community)
 
   self.events.on(SIGNAL_COMMUNITY_LOAD_DATA_FAILED) do(e: Args):
     let args = CommunityArgs(e)
     self.delegate.onImportCommunityErrorOccured(args.community.id, args.error)
-
 
   self.events.on(SIGNAL_CURATED_COMMUNITY_FOUND) do(e:Args):
     let args = CuratedCommunityArgs(e)
@@ -191,8 +190,8 @@ proc deleteCommunityCategory*(
     categoryId: string) =
   self.communityService.deleteCommunityCategory(communityId, categoryId)
 
-proc requestCommunityInfo*(self: Controller, communityId: string) =
-  self.communityService.requestCommunityInfo(communityId)
+proc requestCommunityInfo*(self: Controller, communityId: string, importing: bool) =
+  self.communityService.requestCommunityInfo(communityId, importing)
 
 proc importCommunity*(self: Controller, communityKey: string) =
   self.communityService.importCommunity(communityKey)

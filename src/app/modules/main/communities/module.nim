@@ -285,8 +285,8 @@ method cancelRequestToJoinCommunity*(self: Module, communityId: string) =
 method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =
   self.controller.requestToJoinCommunity(communityId, ensName)
 
-method requestCommunityInfo*(self: Module, communityId: string) =
-  self.controller.requestCommunityInfo(communityId)
+method requestCommunityInfo*(self: Module, communityId: string, importing: bool) =
+  self.controller.requestCommunityInfo(communityId, importing)
 
 method isUserMemberOfCommunity*(self: Module, communityId: string): bool =
   self.controller.isUserMemberOfCommunity(communityId)
@@ -302,11 +302,14 @@ method deleteCommunityChat*(self: Module, communityId: string, channelId: string
 
 method communityImported*(self: Module, community: CommunityDto) =
   self.view.addItem(self.getCommunityItem(community))
-  self.view.emitImportingCommunityStateChangedSignal(community.id, ImportCommunityState.Imported.int, "")
+  self.view.emitImportingCommunityStateChangedSignal(community.id, ImportCommunityState.Imported.int, errorMsg = "")
 
-method importCommunity*(self: Module, communityKey: string) =
-  self.view.emitImportingCommunityStateChangedSignal(communityKey, ImportCommunityState.ImportingInProgress.int, "")
-  self.controller.importCommunity(communityKey)
+method communityDataImported*(self: Module, community: CommunityDto) = 
+  self.view.addItem(self.getCommunityItem(community))
+
+method importCommunity*(self: Module, communityId: string) =
+  self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingInProgress.int, errorMsg = "")
+  self.controller.importCommunity(communityId)
 
 method onImportCommunityErrorOccured*(self: Module, communityId: string, error: string) =
   self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingError.int, error)

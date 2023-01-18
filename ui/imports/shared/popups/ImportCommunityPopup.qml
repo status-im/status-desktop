@@ -50,7 +50,8 @@ StatusDialog {
                   }
                   if (d.isPublicKey) {
                     importButton.loading = true
-                    root.store.requestCommunityInfo(communityKey)
+                    root.store.requestCommunityInfo(communityKey, true)
+                    root.close();
                   }
               }
             }
