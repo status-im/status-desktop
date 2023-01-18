@@ -177,7 +177,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     contactDetails.details.added,
     message.outgoingStatus,
     self.controller.getRenderedText(message.parsedText, communityChats),
-    message.text,
+    self.controller.replacePubKeysWithDisplayNames(message.text),
     message.image,
     message.containsContactMentions(),
     message.seen,

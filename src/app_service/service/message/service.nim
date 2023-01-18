@@ -775,6 +775,10 @@ proc deleteMessage*(self: Service, messageId: string) =
   except Exception as e:
     error "error: ", procName="deleteMessage", errName = e.name, errDesription = e.msg
 
+proc replacePubKeysWithDisplayNames*(self: Service, message: string): string =
+  let allKnownContacts = self.contactService.getContactsByGroup(ContactsGroup.AllKnownContacts)
+  return message_common.replacePubKeysWithDisplayNames(allKnownContacts, message)
+
 proc editMessage*(self: Service, messageId: string, contentType: int, msg: string) =
   try:
     let allKnownContacts = self.contactService.getContactsByGroup(ContactsGroup.AllKnownContacts)
