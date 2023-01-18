@@ -125,6 +125,10 @@ QtObject {
     property color dangerColor2
     property color dangerColor3
 
+    property color warningColor1
+    property color warningColor2
+    property color warningColor3
+
     property color successColor1
     property color successColor2
     property color successColor3
