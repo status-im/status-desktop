@@ -89,14 +89,12 @@ QtObject {
         root.communitiesModuleInst.importCommunity(communityKey);
     }
 
-    function requestCommunityInfo(communityKey) {
-        let publicKey = communityKey
-        if (Utils.isCompressedPubKey(communityKey)) {
-            publicKey = Utils.changeCommunityKeyCompression(communityKey)
-        }
-
+    function requestCommunityInfo(communityKey, importing = false) {
+        const publicKey = Utils.isCompressedPubKey(communityKey)
+                            ? Utils.changeCommunityKeyCompression(communityKey)
+                            : communityKey
         root.mainModuleInst.setCommunityIdToSpectate(publicKey)
-        root.communitiesModuleInst.requestCommunityInfo(publicKey);
+        root.communitiesModuleInst.requestCommunityInfo(publicKey, importing)
     }
 
     function setActiveCommunity(communityId) {

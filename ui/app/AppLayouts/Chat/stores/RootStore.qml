@@ -356,8 +356,8 @@ QtObject {
         return communitiesList.getSectionByIdJson(id)
     }
 
-    function requestCommunityInfo(id) {
-        communitiesModuleInst.requestCommunityInfo(id)
+    function requestCommunityInfo(id, importing = false) {
+        communitiesModuleInst.requestCommunityInfo(id, importing)
     }
 
     function getCommunityDetailsAsJson(id) {
