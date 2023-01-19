@@ -11,6 +11,11 @@ type TimedCache*[T] = Table[string, Value[T]]
 
 proc newTimedCache*[T](): TimedCache[T] = initTable[string, Value[T]]()
 
+proc init*[T](self: var TimedCache[T], values: Table[string, T]) =
+  self.clear()
+  for cacheKey, value in values:
+    self[cacheKey].value = value
+
 proc getTimestamp[T](self: TimedCache[T], cacheKey: string): DateTime = self[cacheKey].timestamp
 
 proc isCached*[T](self: TimedCache[T], cacheKey: string, duration=initDuration(minutes = 5)): bool =
