@@ -11,8 +11,8 @@ import StatusQ.Controls 0.1
 import utils 1.0
 import shared.views 1.0
 import shared.controls 1.0
+import shared.stores 1.0
 
-import "../stores"
 
 /// \beware: heavy shortcuts here, refactor to match the requirements when touching this again
 /// \todo split into token history and balance views; they have different requirements that introduce unnecessary complexity
