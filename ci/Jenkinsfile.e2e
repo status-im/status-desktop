@@ -49,7 +49,7 @@ pipeline {
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Makefile assumes the compiler folder is included */
-    QTDIR = '/opt/qt/5.14.2/gcc_64'
+    QTDIR = '/opt/qt/5.15.2/gcc_64'
     /* Include library in order to compile the project */
     LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/"
     /* Container ports */

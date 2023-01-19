@@ -7,7 +7,7 @@ https://ci.status.im/job/nim-status-client/
 
 ## Linux
 
-In order to build the Linux version of the application we use a modified `a12e/docker-qt:5.14-gcc_64` Docker image with the addition of Git and Golang.
+In order to build the Linux version of the application we use the ubuntu:18.04 Docker image where we install the Qt 5.15.2 provided by [aqt](https://github.com/miurahr/aqtinstall), linuxdeployqt provided by https://github.com/probonopd/linuxdeployqt and other dependencies (go, cmake, gcc etc.).
 
 The image is built with [`Dockerfile`](./Dockerfile) using:
 ```

@@ -7,7 +7,7 @@ pipeline {
   agent {
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:1.1.5'
+      image 'statusteam/nim-status-client-build:1.2.0'
     }
   }
 
@@ -42,7 +42,7 @@ pipeline {
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Makefile assumes the compiler folder is included */
-    QTDIR = "/opt/qt/5.14.2/gcc_64"
+    QTDIR = "/opt/qt/5.15.2/gcc_64"
     /* Include library in order to compile the project */
     LD_LIBRARY_PATH = "$QTDIR/lib"
   }

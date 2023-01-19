@@ -7,7 +7,7 @@ pipeline {
   agent {
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:1.1.5'
+      image 'statusteam/nim-status-client-build:1.2.0'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
       args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
     }
@@ -49,7 +49,7 @@ pipeline {
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Makefile assumes the compiler folder is included */
-    QTDIR = "/opt/qt/5.14.0/gcc_64"
+    QTDIR = "/opt/qt/5.15.2/gcc_64"
     /* Control output the filename */
     STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage')}"
     STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz')}"
