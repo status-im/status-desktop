@@ -248,6 +248,9 @@ proc getNumOfPinnedMessages*(self: Controller): int =
 proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
 
+proc replacePubKeysWithDisplayNames*(self: Controller, message: string): string =
+  return self.messageService.replacePubKeysWithDisplayNames(message)
+
 proc getMessageDetails*(self: Controller, messageId: string):
   tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
   return self.messageService.getDetailsForMessage(self.chatId, messageId)
