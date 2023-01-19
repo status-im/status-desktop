@@ -102,6 +102,9 @@ rpc(fetchPrices, "wallet"):
   symbols: seq[string]
   currencies: seq[string]
 
+rpc(getCachedPrices, "wallet"):
+  discard
+
 rpc(generateAccountWithDerivedPath, "accounts"):
   password: string
   name: string

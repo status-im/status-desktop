@@ -50,6 +50,8 @@ QtObject:
     priceCache: TimedCache[float64]
 
   proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64)
+  proc initTokenPrices(self: Service, prices: Table[string, Table[string, float64]])
+  proc jsonToPricesMap(node: JsonNode): Table[string, Table[string, float64]] 
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -69,6 +71,9 @@ QtObject:
 
   proc init*(self: Service) =
     try:
+      let response = backend.getCachedPrices()
+      self.initTokenPrices(jsonToPricesMap(response.result))
+
       let networks = self.networkService.getNetworks()
     
       for network in networks:
@@ -95,12 +100,6 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
       return
-
-  proc updateTokenPrices*(self: Service, tokens: seq[WalletTokenDto]) =
-    # Use data fetched by walletAccountService to update local price cache
-    for token in tokens:
-      for currency, marketValues in token.marketValuesPerCurrency:
-        self.updateCachedTokenPrice(token.symbol, currency, marketValues.price)
 
   proc findTokenBySymbol*(self: Service, network: NetworkDto, symbol: string): TokenDto =
     try:
@@ -142,20 +141,32 @@ QtObject:
     let cryptoKey = renameSymbol(crypto)
     return CRYPTO_SUB_UNITS_TO_FACTOR.getOrDefault(cryptoKey, (cryptoKey, 1.0))
 
+  proc jsonToPricesMap(node: JsonNode) : Table[string, Table[string, float64]] =
+    result = initTable[string, Table[string, float64]]()
+
+    for (symbol, pricePerCurrency) in node.pairs:
+      result[symbol] = initTable[string, float64]()
+      for (currency, price) in pricePerCurrency.pairs:
+        result[symbol][currency] = price.getFloat
+
+  proc initTokenPrices(self: Service, prices: Table[string, Table[string, float64]]) =
+    var cacheTable: Table[string, float64]
+    for token, pricesPerCurrency in prices:
+      for currency, price in pricesPerCurrency:
+        let cacheKey = getTokenPriceCacheKey(token, currency)
+        cacheTable[cacheKey] = price
+    self.priceCache.init(cacheTable)
+
+  proc updateTokenPrices*(self: Service, tokens: seq[WalletTokenDto]) =
+    # Use data fetched by walletAccountService to update local price cache
+    for token in tokens:
+      for currency, marketValues in token.marketValuesPerCurrency:
+        self.updateCachedTokenPrice(token.symbol, currency, marketValues.price)
+
   proc isCachedTokenPriceRecent*(self: Service, crypto: string, fiat: string): bool =
     let (cryptoKey, _) = getCryptoKeyAndFactor(crypto)
-
     let cacheKey = getTokenPriceCacheKey(cryptoKey, fiat)
     return self.priceCache.isCached(cacheKey)
-
-  proc getCachedTokenPrice*(self: Service, crypto: string, fiat: string): float64 =
-    let (cryptoKey, factor) = getCryptoKeyAndFactor(crypto)
-
-    let cacheKey = getTokenPriceCacheKey(cryptoKey, fiat)
-    if self.priceCache.hasKey(cacheKey):
-      return self.priceCache.get(cacheKey) * factor
-    else:
-      return 0.0
 
   proc getTokenPrice*(self: Service, crypto: string, fiat: string): float64 =
     let fiatKey = renameSymbol(fiat)
@@ -168,10 +179,7 @@ QtObject:
 
     try:
       let response = backend.fetchPrices(@[cryptoKey], @[fiatKey])
-      for (symbol, pricePerCurrency) in response.result.pairs:
-        prices[symbol] = initTable[string, float]()
-        for (currency, price) in pricePerCurrency.pairs:
-          prices[symbol][currency] = price.getFloat
+      let prices = jsonToPricesMap(response.result)
 
       self.updateCachedTokenPrice(cryptoKey, fiatKey, prices[cryptoKey][fiatKey])
       return prices[cryptoKey][fiatKey] * factor
@@ -180,6 +188,17 @@ QtObject:
       error "error: ", errDesription
       return 0.0
   
+  proc getCachedTokenPrice*(self: Service, crypto: string, fiat: string, fetchIfNotPresent: bool = false): float64 =
+    let (cryptoKey, factor) = getCryptoKeyAndFactor(crypto)
+
+    let cacheKey = getTokenPriceCacheKey(cryptoKey, fiat)
+    if self.priceCache.hasKey(cacheKey):
+      return self.priceCache.get(cacheKey) * factor
+    elif fetchIfNotPresent:
+      return self.getTokenPrice(crypto, fiat)
+    else:
+      return 0.0
+
   proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64) =
     let cacheKey = getTokenPriceCacheKey(crypto, fiat)
     self.priceCache.set(cacheKey, price)
