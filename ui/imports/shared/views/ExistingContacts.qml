@@ -13,7 +13,7 @@ import shared.stores 1.0
 // TODO move Contact into shared to get rid of that import
 import AppLayouts.Chat.controls 1.0
 
-import SortFilterProxyModel 0.2
+// import SortFilterProxyModel 0.2
 
 Item {
     id: root
@@ -48,38 +48,38 @@ Item {
         leftMargin: 0
         spacing: Style.current.padding
 
-        model: SortFilterProxyModel {
-            sourceModel: root.contactsStore.myContactsModel
-            filters: [
-                ExpressionFilter {
-                    expression: {
-                        root.filterText
-                        root.hideCommunityMembers
-                        root.communityId
-
-                        if (root.pubKeys.indexOf(model.pubKey) > -1)
-                            return true
-
-                        if (!model.isContact || model.isBlocked)
-                            return false
-
-                        const filter = root.filterText.toLowerCase()
-                        const filterAccepted = root.filterText === ""
-                                             || root.matchesAlias(model.alias.toLowerCase(), filter)
-                                             || model.displayName.toLowerCase().includes(filter)
-                                             || model.ensName.toLowerCase().includes(filter)
-                                             || model.localNickname.toLowerCase().includes(filter)
-                                             || model.pubKey.toLowerCase().includes(filter)
-
-                        if (!filterAccepted)
-                            return false
-
-                        return !root.hideCommunityMembers ||
-                               !root.rootStore.communityHasMember(root.communityId, model.pubKey)
-                    }
-                }
-            ]
-        }
+        // model: SortFilterProxyModel {
+        //     sourceModel: root.contactsStore.myContactsModel
+        //     filters: [
+        //         ExpressionFilter {
+        //             expression: {
+        //                 root.filterText
+        //                 root.hideCommunityMembers
+        //                 root.communityId
+        //
+        //                 if (root.pubKeys.indexOf(model.pubKey) > -1)
+        //                     return true
+        //
+        //                 if (!model.isContact || model.isBlocked)
+        //                     return false
+        //
+        //                 const filter = root.filterText.toLowerCase()
+        //                 const filterAccepted = root.filterText === ""
+        //                                      || root.matchesAlias(model.alias.toLowerCase(), filter)
+        //                                      || model.displayName.toLowerCase().includes(filter)
+        //                                      || model.ensName.toLowerCase().includes(filter)
+        //                                      || model.localNickname.toLowerCase().includes(filter)
+        //                                      || model.pubKey.toLowerCase().includes(filter)
+        //
+        //                 if (!filterAccepted)
+        //                     return false
+        //
+        //                 return !root.hideCommunityMembers ||
+        //                        !root.rootStore.communityHasMember(root.communityId, model.pubKey)
+        //             }
+        //         }
+        //     ]
+        // }
 
         delegate: StatusMemberListItem {
             width: contactListView.availableWidth

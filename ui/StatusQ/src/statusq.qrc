@@ -194,5 +194,9 @@
         <file>StatusQ/Popups/Dialog/StatusDialogBackground.qml</file>
         <file>StatusQ/Popups/StatusMenuInstantiator.qml</file>
         <file>StatusQ/Core/Utils/OperatorsUtils.qml</file>
+        <file>StatusQ/Components/StatusNetworkSelector.qml</file>
+        <file>StatusQ/Components/StatusNetworkListItemTag.qml</file>
+        <file>StatusQ/Core/StatusColorSettings.qml</file>
+        <file>StatusQ/Core/StatusBackgroundSettings.qml</file>
     </qresource>
 </RCC>

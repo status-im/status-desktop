@@ -17,6 +17,8 @@ import "../controls"
 
 Item {
     id: root
+    width: 500
+    height: 300
     anchors.leftMargin: Style.current.padding
     anchors.rightMargin: Style.current.padding
 
@@ -103,7 +105,8 @@ Item {
         anchors.left: parent.left
         visible: listView.count > 0
         spacing: 5
-        model: RootStore.savedAddresses
+        // model: RootStore.savedAddresses
+        model: RootStore.exampleSavedAddresses
         delegate: SavedAddressesDelegate {
             objectName: "savedAddressView_Delegate_" + name
 

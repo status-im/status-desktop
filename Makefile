@@ -149,11 +149,16 @@ endif
 
 # Qt5 dirs (we can't indent with tabs here)
 ifneq ($(detected_OS),Windows)
- QT5_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt5Core 2>/dev/null)
- QT5_LIBDIR := $(shell pkg-config --variable=libdir Qt5Core 2>/dev/null)
- ifeq ($(QT5_PCFILEDIR),)
-  QT5_PCFILEDIR := $(QTDIR)/lib/pkgconfig
-  QT5_LIBDIR := $(QTDIR)/lib
+ QT5_LIBDIR := $(shell qmake -query QT_INSTALL_LIBS 2>/dev/null)
+ ifeq ($(QT5_LIBDIR),)
+   $(error Cannot find "qmake". Please make sure you exported correct Qt installation binaries path to PATH env)
+ endif
+ QT5_INSTALL_PREFIX := $(shell qmake -query QT_INSTALL_PREFIX 2>/dev/null)
+ QT5_PKGCONFIG_INSTALL_PREFIX := $(shell pkg-config --variable=prefix Qt5Core 2>/dev/null)
+ ifeq ($(QT5_INSTALL_PREFIX),$(QT5_PKGCONFIG_INSTALL_PREFIX))
+  QT5_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt5Core 2>/dev/null)
+ else
+  QT5_PCFILEDIR := $(QT5_LIBDIR)/pkgconfig
   # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
   ifeq ($(detected_OS),Darwin)
    NIM_PARAMS += -L:"-framework Foundation -framework AppKit -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication"

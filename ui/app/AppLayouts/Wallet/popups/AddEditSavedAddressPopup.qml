@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQml.Models 2.14
+import QtQuick.Layouts 1.14
 
 import utils 1.0
 import shared.controls 1.0
@@ -11,7 +12,9 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups.Dialog 0.1
+import StatusQ.Components 0.1
 
+import "../controls"
 import "../stores"
 
 StatusDialog {
@@ -84,6 +87,7 @@ StatusDialog {
             id: addressInput
             implicitWidth: parent.width
             inputWidth: implicitWidth
+            // inputWidth: parent.width
             accounts: RootStore.accounts
             contactsStore: root.contactsStore
             label: qsTr("Address")
@@ -101,6 +105,74 @@ StatusDialog {
             readOnly: root.edit
             wrongInputValidationError: qsTr("Please enter a valid ENS name OR Ethereum Address")
             ownAddressError: qsTr("Can't add yourself as a saved address")
+        }
+
+        // StatusListItemTag {
+        //     bgColor: Theme.palette.baseColor2
+        //     visible: true
+        //     title: "Test title"
+        //     // asset.name: root.defaultItemImageSource
+        //     // asset.isImage: true
+        //     closeButtonVisible: false
+        //     titleText.color: Theme.palette.baseColor1
+        //     titleText.font.pixelSize: 15
+        // }
+
+        StatusNetworkSelector {
+            id: networkSelector
+
+            // title: "Network Selector Title"
+            defaultItemText: "Add networks"
+            defaultItemImageSource: "add"
+            // asset.color: Theme.palette.primaryColor1
+            radius: 0
+            closeButtonVisible: true
+            // color: "transparent"
+            // color: "yellow"
+
+            addButton.onClicked: {
+                console.log("on add button clicked")
+                // itemsModel.append({
+                //     text: "Tetxt"
+                // })
+                networkSelectPopup.visible = !networkSelectPopup.visible
+            }
+
+            onItemClicked: {
+                console.log("onItemClicked:", index)
+                // Append first item
+                if (index === 0 && defaultItem.visible) {
+                    // itemsModel.append({
+                    //     text: "First Text"
+                    // })
+
+                    networkSelectPopup.visible = !networkSelectPopup.visible
+                    // if (networkSelectPopup.opened)
+                    //     networkSelectPopup.close()
+                    // else
+                    //     networkSelectPopup.open()
+                }
+            }
+
+            onItemButtonClicked: {
+                console.log("onItemButtonClicked:", index)
+                itemsModel.remove(index)
+            }
+            // defaultItem.titleText.color: Theme.palette.primaryColor1
+        }
+    }
+
+    NetworkSelectPopup {
+        id: networkSelectPopup
+
+        anchors.centerIn: parent
+        modal: true
+        layer1Networks: RootStore.layer1Networks
+        layer2Networks: RootStore.layer2Networks
+        testNetworks: RootStore.testNetworks
+
+        onToggleNetwork: {
+            RootStore.toggleNetwork(chainId)
         }
     }
 

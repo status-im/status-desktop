@@ -81,6 +81,7 @@ Rectangle {
 
     signal clicked(string itemId, var mouse)
     signal titleClicked(string titleId)
+    signal iconClicked(var mouse)
 
     enum Type {
         Primary,
@@ -147,6 +148,18 @@ Rectangle {
                     !!statusListItem.asset.emoji
             badge.border.color: statusListItem.color
             ringSettings: statusListItem.ringSettings
+
+            hoverEnabled: true
+
+            Connections {
+                enabled: iconOrImage.status == Loader.Ready
+                target: iconOrImage.item
+
+                function onClicked(mouse) {
+                    console.log("onIconClicked")
+                    statusListItem.iconClicked(mouse)
+                }
+            }
         }
 
         Rectangle {

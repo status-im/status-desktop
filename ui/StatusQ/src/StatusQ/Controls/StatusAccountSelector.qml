@@ -8,7 +8,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 
-import SortFilterProxyModel 0.2
+// import SortFilterProxyModel 0.2
 
 Item {
     id: root
@@ -145,16 +145,16 @@ Item {
         label: root.label
         width: parent.width
 
-        model: SortFilterProxyModel {
-            sourceModel: root.accounts
-            filters: [
-                ValueFilter {
-                    roleName: "walletType"
-                    value: root.watchWalletType
-                    inverted: true
-                }
-            ]
-        }
+        // model: SortFilterProxyModel {
+        //     sourceModel: root.accounts
+        //     filters: [
+        //         ValueFilter {
+        //             roleName: "walletType"
+        //             value: root.watchWalletType
+        //             inverted: true
+        //         }
+        //     ]
+        // }
         contentItem: RowLayout {
             spacing: 8
 

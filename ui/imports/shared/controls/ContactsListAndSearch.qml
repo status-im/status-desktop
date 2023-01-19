@@ -67,7 +67,6 @@ Item {
     ColumnLayout {
         id: column
         anchors.fill: parent
-        anchors.rightMargin: Style.current.bigPadding
         spacing: Style.current.smallPadding
 
         Input {

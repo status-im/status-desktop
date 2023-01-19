@@ -15,6 +15,11 @@ Loader {
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
+        bgRadius: bgWidth / 2
+        // onColorChanged: console.log("StatusSmartIdenticon asset color:", color)
+
+        property StatusAssetSettings iconAsset: StatusAssetSettings {
+        }
     }
 
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
@@ -26,13 +31,16 @@ Loader {
     sourceComponent: (root.asset.isLetterIdenticon || root.asset.name === "") ? letterIdenticon :
                      !root.asset.isImage ? roundedIcon : roundedImage
 
+    property bool hoverEnabled: false
+    readonly property bool hovered: (sourceComponent == roundedIcon && item) ?
+                     item.hovered : false
+
     Component {
         id: roundedImage
 
         Item {
             width: root.asset.width
             height: root.asset.height
-
 
             StatusRoundedImage {
                 id: statusRoundImage
@@ -63,15 +71,20 @@ Loader {
 
     Component {
         id: roundedIcon
-        StatusRoundIcon {
-            asset.bgWidth: root.asset.bgWidth
-            asset.bgHeight: root.asset.bgHeight
-            asset.bgColor: root.asset.bgColor
-            asset.width: root.asset.width
-            asset.height: root.asset.height
-            asset.name: root.asset.name
-            asset.rotation: root.asset.rotation
-            asset.color: root.asset.color
+
+        StatusRoundButton {
+            icon.width: root.asset.width
+            icon.height: root.asset.height
+            icon.name: root.asset.name
+            icon.rotation: root.asset.rotation
+            icon.color: root.asset.color
+            icon.hoverColor: root.asset.hoverColor
+            color: root.asset.bgColor
+            radius: root.asset.bgRadius
+            hoverEnabled: root.hoverEnabled
+
+            // onClicked: console.log("Clicked")
+            // icon.onColorChanged: console.log("Round button color changed:", icon.color)
         }
     }
 

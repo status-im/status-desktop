@@ -204,11 +204,13 @@ ColumnLayout {
                 }
 
                 onSendTransactionCommandButtonClicked: {
+                    console.log("Send transaction clicked")
                     if(!chatContentModule) {
                         console.debug("error on sending transaction command - chat content module is not set")
                         return
                     }
 
+                    console.log("Send transaction clicked 2")
                     if (Utils.isEnsVerified(chatContentModule.getMyChatId())) {
                         Global.openPopup(root.sendTransactionWithEnsModal)
                     } else {

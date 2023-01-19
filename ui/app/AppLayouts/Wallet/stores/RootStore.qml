@@ -59,6 +59,29 @@ QtObject {
 
     //property bool firstTimeLogin: onboardingModel.isFirstTimeLogin
 
+    property ListModel exampleSavedAddresses: ListModel {
+        ListElement {
+            name: "Saved address 1"
+            address: "0xcfc9f08bbcbcb80760e8cb9a3c1232d19662fc6f"
+            favourite: false
+            ens: "ens 1"
+        }
+
+        ListElement {
+            name: "Saved address 2"
+            address: "0xadfaf08bbcbcb80760e8cb9a3c1232d19662adfa"
+            favourite: true
+            ens: "ens 2"
+        }
+
+        ListElement {
+            name: "Saved address 3"
+            address: "0xccccf08bbcbcb80760e8cb9a3c1232d19662cccc"
+            favourite: true
+            ens: "ens 3"
+        }
+    }
+
     // example wallet model
     property ListModel exampleWalletModel: ListModel {
         ListElement {

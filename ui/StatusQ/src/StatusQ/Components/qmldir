@@ -47,3 +47,5 @@ StatusDatePicker 0.1 StatusDatePicker.qml
 StatusChart 0.1 StatusChart.qml
 StatusChartPanel 0.1 StatusChartPanel.qml
 StatusStepper 0.1 StatusStepper.qml
+StatusNetworkSelector 0.1 StatusNetworkSelector.qml
+StatusNetworkListItemTag 0.1 StatusNetworkListItemTag.qml

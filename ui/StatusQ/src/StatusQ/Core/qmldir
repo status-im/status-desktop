@@ -14,3 +14,5 @@ StatusProfileImageSettings 0.1 StatusProfileImageSettings.qml
 StatusRollArea 0.1 StatusRollArea.qml
 StatusScrollView 0.1 StatusScrollView.qml
 StatusTooltipSettings 0.1 StatusTooltipSettings.qml
+StatusColorSettings 0.1 StatusColorSettings.qml
+StatusBackgroundSettings 0.1 StatusBackgroundSettings.qml

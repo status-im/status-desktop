@@ -34,40 +34,52 @@ StatusListItem {
     objectName: name
     subTitle: (ens.length > 0 ? ens + " \u2022 " : "")
                 + Utils.elideText(address, 6, 4)
-    color: "transparent"
     border.color: Theme.palette.baseColor5
-    titleTextIcon: root.favourite ? "star-icon" : ""
+    // titleTextIcon: root.favourite ? "star-icon" : ""
+    asset.name: root.favourite ? "star-icon" : "favourite"
+    // asset.color: showButtons ? Theme.palette.directColor1 : Theme.palette.directColor5
+    // asset.color: showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
+    asset.color: root.favourite ? Theme.palette.pinColor1 : (showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1) // star icon color default
+    // asset.color: Theme.palette.baseColor1
+    asset.hoverColor: root.favourite ? "transparent": Theme.palette.directColor1 // star icon color on hover
+    // asset.color: Theme.palette.directColor5
+    // asset.hoverColor: Theme.palette.directColor1
+    // type: StatusListItem.Type.Secondary
+    asset.bgColor: statusListItemIcon.hovered ? Theme.palette.primaryColor3 : "transparent" // icon outer background color
+    asset.bgRadius: 8
+
+    onIconClicked: {
+        console.log("delegate.onIconClicked:", mouse.x, mouse.y)
+        root.saveAddress(root.name, root.address, !root.favourite)
+    }
+
+        // StatusRoundButton {
+        //     objectName: "savedAddressView_Delegate_favouriteButton"
+        //     icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
+        //     type: StatusRoundButton.Type.Tertiary
+        //     icon.name: root.favourite ? "unfavourite" : "favourite"
+        //     onClicked: {
+        //         root.saveAddress(root.name, root.address, !root.favourite)
+        //     }
+        // },
+    statusListItemSubTitle.font.pixelSize: 13
     statusListItemComponentsSlot.spacing: 0
     property bool showButtons: sensor.containsMouse
 
     components: [
         StatusRoundButton {
             icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
-            type: StatusRoundButton.Type.Tertiary
+            type: StatusRoundButton.Type.Quinary
+            radius: 8
             icon.name: "send"
             onClicked: openSendModal()
-        },
-        CopyToClipBoardButton {
-            id: copyButton
-            type: StatusRoundButton.Type.Tertiary
-            icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
-            store: root.store
-            textToCopy: root.address
-        },
-        StatusRoundButton {
-            objectName: "savedAddressView_Delegate_favouriteButton"
-            icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
-            type: StatusRoundButton.Type.Tertiary
-            icon.name: root.favourite ? "unfavourite" : "favourite"
-            onClicked: {
-                root.saveAddress(root.name, root.address, !root.favourite)
-            }
         },
         StatusRoundButton {
             objectName: "savedAddressView_Delegate_menuButton"
             visible: !!root.name
             icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
-            type: StatusRoundButton.Type.Tertiary
+            type: StatusRoundButton.Type.Quinary
+            radius: 8
             icon.name: "more"
             onClicked: {
                 editDeleteMenu.openMenu(root.name, root.address, root.favourite);
@@ -75,6 +87,7 @@ StatusListItem {
         },
         StatusRoundButton {
             visible: !root.name
+            // visible: true
             icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
             type: StatusRoundButton.Type.Tertiary
             icon.name: "add"
@@ -116,6 +129,24 @@ StatusListItem {
                                      name: editDeleteMenu.contactName,
                                      favourite: editDeleteMenu.storeFavourite
                                  })
+            }
+        }
+        StatusAction {
+            text: qsTr("Copy")
+            objectName: "copySavedAddressAction"
+            assetSettings.name: "copy"
+            onTriggered: {
+                if (root.address)
+                    store.copyToClipboard(root.address)
+            }
+        }
+        StatusMenuSeparator { }
+        StatusAction {
+            text: qsTr("View on Etherscan")
+            objectName: "viewOnEtherscanAction"
+            assetSettings.name: "external"
+            onTriggered: {
+                Qt.openUrlExternally("https://etherscan.io/address/%1".arg(root.address))
             }
         }
         StatusMenuSeparator { }

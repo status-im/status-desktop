@@ -4,9 +4,11 @@ import QtQuick.Layouts 1.14
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 
 ColumnLayout {
     spacing: 20
+
     StatusItemSelector {
         id: selector
         icon: "qrc:/images/SNT.png"
@@ -51,6 +53,47 @@ ColumnLayout {
             dropdown.y = mouse.y
             dropdown.open()
         }
+    }
+
+    StatusNetworkSelector {
+        id: networkSelector
+
+        // title: "Network Selector Title"
+        defaultItemText: "Add networks"
+        defaultItemImageSource: "add"
+        // asset.color: Theme.palette.primaryColor1
+        radius: 0
+        closeButtonVisible: true
+        // color: "transparent"
+        // color: "yellow"
+
+        addButton.onClicked: {
+            console.log("on add button clicked")
+            itemsModel.append({
+                text: "Tetxt"
+            })
+        }
+
+        onItemClicked: {
+            console.log("onItemClicked:", index)
+            if (index === 0 && defaultItem.visible)
+                itemsModel.append({
+                    text: "First Text"
+                })
+
+        }
+
+        onItemButtonClicked: {
+            console.log("onItemButtonClicked:", index)
+            itemsModel.remove(index)
+        }
+        // defaultItem.titleText.color: Theme.palette.primaryColor1
+
+
+
+        // itemsModel: ListModel {
+        //     id: model
+        // }
     }
 
     StatusButton {
