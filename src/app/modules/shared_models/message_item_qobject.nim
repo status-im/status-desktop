@@ -46,6 +46,14 @@ QtObject:
   QtProperty[bool] quotedMessageDeleted:
     read = quotedMessageDeleted
 
+  proc quotedMessageAuthorDisplayName*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.quotedMessageAuthorDisplayName
+  QtProperty[string] quotedMessageAuthorDisplayName:
+    read = quotedMessageAuthorDisplayName
+
+  proc quotedMessageAuthorAvatar*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.quotedMessageAuthorAvatar
+  QtProperty[string] quotedMessageAuthorAvatar:
+    read = quotedMessageAuthorAvatar
+
   proc senderId*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.senderId
   QtProperty[string] senderId:
     read = senderId

@@ -641,14 +641,14 @@ Loader {
                     amISender: root.quotedMessageFrom === userProfile.pubKey
                     sender.id: root.quotedMessageFrom
                     sender.isContact: quotedMessageAuthorDetails.isContact
-                    sender.displayName: quotedMessageAuthorDetails.displayName
+                    sender.displayName: root.quotedMessageContentType === Constants.messageContentType.discordMessageType ? quotedMessageAuthorDisplayName : quotedMessageAuthorDetails.displayName
                     sender.isEnsVerified: quotedMessageAuthorDetails.ensVerified
                     sender.secondaryName: quotedMessageAuthorDetails.name || ""
                     sender.profileImage {
                         width: 20
                         height: 20
-                        name: quotedMessageAuthorDetails.thumbnailImage
-                        assetSettings.isImage: quotedMessageAuthorDetails.thumbnailImage !== ""
+                        name: root.quotedMessageContentType === Constants.messageContentType.discordMessageType ? quotedMessageAuthorAvatar : quotedMessageAuthorDetails.thumbnailImage
+                        assetSettings.isImage: quotedMessageAuthorDetails.thumbnailImage !== "" || quotedMessageAuthorAvatar != ""
                         showRing: (root.quotedMessageContentType !== Constants.messageContentType.discordMessageType) && !sender.isEnsVerified
                         pubkey: sender.id
                         colorId: Utils.colorIdForPubkey(sender.id)
