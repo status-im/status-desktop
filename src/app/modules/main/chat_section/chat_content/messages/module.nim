@@ -110,6 +110,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     quotedMessageParsedText = "",
     quotedMessageContentType = -1,
     quotedMessageDeleted = false,
+    quotedMessageDiscordMessage = DiscordMessage(),
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -159,6 +160,7 @@ proc createChatIdentifierItem(self: Module): Item =
     quotedMessageParsedText = "",
     quotedMessageContentType = -1,
     quotedMessageDeleted = false,
+    quotedMessageDiscordMessage = DiscordMessage(),
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module) =
@@ -247,6 +249,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         self.controller.getRenderedText(message.quotedMessage.parsedText),
         message.quotedMessage.contentType,
         message.quotedMessage.deleted,
+        message.quotedMessage.discordMessage,
         )
 
       for r in reactions:
@@ -357,6 +360,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       self.controller.getRenderedText(message.quotedMessage.parsedText),
       message.quotedMessage.contentType,
       message.quotedMessage.deleted,
+      message.quotedMessage.discordMessage,
     )
 
     items.add(item)
@@ -646,6 +650,7 @@ method getMessageById*(self: Module, messageId: string): message_item.Item =
       self.controller.getRenderedText(message.quotedMessage.parsedText),
       message.quotedMessage.contentType,
       message.quotedMessage.deleted,
+      message.quotedMessage.discordMessage
       )
     return item
   return nil
@@ -671,4 +676,3 @@ method scrollToNewMessagesMarker*(self: Module) =
 
 method markAllMessagesRead*(self: Module) =
   self.view.model().markAllAsSeen()
-

@@ -51,6 +51,8 @@ type
     QuotedMessageContentType
     QuotedMessageDeleted
     QuotedMessageFromIterator
+    QuotedMessageAuthorDisplayName
+    QuotedMessageAuthorAvatar
 
 QtObject:
   type
@@ -142,6 +144,8 @@ QtObject:
       ModelRole.QuotedMessageParsedText.int: "quotedMessageParsedText",
       ModelRole.QuotedMessageContentType.int: "quotedMessageContentType",
       ModelRole.QuotedMessageDeleted.int: "quotedMessageDeleted",
+      ModelRole.QuotedMessageAuthorDisplayName.int: "quotedMessageAuthorDisplayName",
+      ModelRole.QuotedMessageAuthorAvatar.int: "quotedMessageAuthorAvatar",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -205,6 +209,10 @@ QtObject:
       result = newQVariant(item.quotedMessageContentType)
     of ModelRole.QuotedMessageDeleted:
       result = newQVariant(item.quotedMessageDeleted)
+    of ModelRole.QuotedMessageAuthorDisplayName:
+      result = newQVariant(item.quotedMessageAuthorDisplayName)
+    of ModelRole.QuotedMessageAuthorAvatar:
+      result = newQVariant(item.quotedMessageAuthorAvatar)
     of ModelRole.MessageText:
       result = newQVariant(item.messageText)
     of ModelRole.UnparsedText:
