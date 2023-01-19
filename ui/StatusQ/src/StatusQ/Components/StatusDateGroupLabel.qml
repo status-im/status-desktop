@@ -18,8 +18,8 @@ StatusBaseText {
         const currentMsgDate = new Date(messageTimestamp)
         const prevMsgDate = new Date(previousMessageTimestamp)
 
-        if (prevMsgDate > 0 && currentMsgDate.getDay() === prevMsgDate.getDay())
-            return "";
+        if (prevMsgDate > 0 && currentMsgDate.getDay() <= prevMsgDate.getDay())
+            return ""
 
         const now = new Date();
         // FIXME Qt6: replace with Intl.DateTimeFormat
