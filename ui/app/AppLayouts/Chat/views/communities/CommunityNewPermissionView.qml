@@ -70,6 +70,8 @@ StatusScrollView {
     QtObject {
         id: d
 
+        readonly property int maxHoldingsItems: 5
+
         readonly property int dropdownHorizontalOffset: 4
         readonly property int dropdownVerticalOffset: 1
 
@@ -195,6 +197,7 @@ StatusScrollView {
             tagLeftPadding: 2
             asset.height: 28
             asset.width: asset.height
+            addButton.visible: itemsModel.count < d.maxHoldingsItems
 
             property int editedIndex
             itemsModel: SortFilterProxyModel {
