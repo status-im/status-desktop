@@ -518,17 +518,6 @@ StatusScrollView {
             }
         }
 
-        PermissionQualificationPanel {
-            Layout.fillWidth: true
-            Layout.topMargin: 24
-
-            visible: d.dirtyValues.holdingsModel.count > 0
-
-            qualifyingAddresses: 200234
-            knownAddresses: 663026
-            unknownAddresses: 396720
-        }
-
         StatusButton {
             visible: !root.isEditState
             Layout.topMargin: 24
