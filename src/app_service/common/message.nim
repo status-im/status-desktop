@@ -2,6 +2,22 @@ import sequtils, strutils, sugar, re
 import ../service/contacts/dto/contacts
 from conversion import SystemTagMapping
 
+
+proc replacePubKeysWithDisplayNames*(allKnownContacts: seq[ContactsDto], message: string): string =
+  let pubKeyPattern = re(r"(@0x[a-f0-9]+)", flags = {reStudy, reIgnoreCase})
+  let pubKeys = findAll(message, pubKeyPattern)
+  var updatedMessage = message
+
+  for pair in SystemTagMapping:
+    updatedMessage = updatedMessage.replaceWord(pair[1], pair[0])
+
+  for pk in pubKeys:
+    let listOfMatched = allKnownContacts.filter(x => "@" & x.id == pk)
+    if(listOfMatched.len > 0):
+      updatedMessage = updatedMessage.replaceWord(pk, "@" & listOfMatched[0].userDefaultDisplayName())
+
+  return updatedMessage
+
 proc replaceMentionsWithPubKeys*(allKnownContacts: seq[ContactsDto], message: string): string =
   let aliasPattern = re(r"(@[A-z][a-z]+ [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
   let ensPattern = re(r"(@\w+((\.stateofus)?\.eth))", flags = {reStudy, reIgnoreCase})
