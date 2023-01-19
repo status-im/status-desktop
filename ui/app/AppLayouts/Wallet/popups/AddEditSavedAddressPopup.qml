@@ -18,6 +18,7 @@ StatusDialog {
     id: root
 
     property bool edit: false
+    property bool addAddress: false
     property string address
     property alias name: nameInput.text
     property bool favourite: false
@@ -44,7 +45,7 @@ StatusDialog {
     }
 
     onOpened: {
-        if(edit) {
+        if(edit || addAddress) {
             addressInput.input.text = root.address
         }
         nameInput.input.edit.forceActiveFocus(Qt.MouseFocusReason)
@@ -98,7 +99,7 @@ StatusDialog {
             onSelectedRecipientChanged: {
                 root.address = selectedRecipient.address
             }
-            readOnly: root.edit
+            readOnly: root.edit || root.addAddress
             wrongInputValidationError: qsTr("Please enter a valid ENS name OR Ethereum Address")
             ownAddressError: qsTr("Can't add yourself as a saved address")
         }
