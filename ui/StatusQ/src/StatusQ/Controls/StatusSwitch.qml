@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtGraphicalEffects 1.14
 import StatusQ.Core 0.1
@@ -6,18 +6,29 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
 Switch {
-    id: statusSwitch
+    id: root
 
-    indicator: Rectangle {
+    background: MouseArea {
+        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+        acceptedButtons: Qt.NoButton
+    }
+
+    indicator: Item {
         id: oval
+
         implicitWidth: 52
         implicitHeight: 28
-        x: statusSwitch.leftPadding
+        x: root.leftPadding
         y: parent.height / 2 - height / 2
-        radius: 14
-        color: statusSwitch.checked ? Theme.palette.primaryColor1
-                               : Theme.palette.directColor8
 
+        Rectangle {
+            anchors.fill: parent
+
+            radius: 14
+            color: root.checked ? Theme.palette.primaryColor1
+                                : Theme.palette.directColor8
+            opacity: root.enabled ? 1 : 0.2
+        }
 
         Rectangle {
             id: circle
@@ -40,12 +51,12 @@ Switch {
             states: [
                 State {
                     name: "on"
-                    when: statusSwitch.checked
+                    when: root.checked
                     PropertyChanges { target: circle; x: oval.width - circle.width - 4 }
                 },
                 State {
                     name: "off"
-                    when: !statusSwitch.checked
+                    when: !root.checked
                     PropertyChanges { target: circle; x: 4 }
                 }
             ]
@@ -58,9 +69,10 @@ Switch {
     }
 
     contentItem: StatusBaseText {
-        text: statusSwitch.text
+        text: root.text
         opacity: enabled ? 1.0 : 0.3
         verticalAlignment: Text.AlignVCenter
-        leftPadding: !!statusSwitch.text ? statusSwitch.indicator.width + statusSwitch.spacing : statusSwitch.indicator.width
+        leftPadding: !!root.text ? root.indicator.width + root.spacing
+                                 : root.indicator.width
     }
 }
