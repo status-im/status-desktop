@@ -14,6 +14,9 @@ import SortFilterProxyModel 0.2
 StatusDropdown {
     id: root
 
+    property bool allowChoosingEntireCommunity: false
+    property bool showAddChannelButton: false
+
     property string communityName
     property string communityImage
     property color communityColor
@@ -100,6 +103,7 @@ StatusDropdown {
             Layout.topMargin: 9
             Layout.preferredHeight: 44
 
+            visible: root.allowChoosingEntireCommunity
 
             title: root.communityName
             subTitle: qsTr("Community")
@@ -147,6 +151,8 @@ StatusDropdown {
             Layout.fillWidth: true
             Layout.topMargin: 4 - implicitHeight / 2
             Layout.bottomMargin: 4 - implicitHeight / 2
+
+            visible: root.allowChoosingEntireCommunity
         }
 
         StatusScrollView {
@@ -154,6 +160,8 @@ StatusDropdown {
 
             Layout.fillWidth: true
             Layout.bottomMargin: 9
+            Layout.topMargin:
+                !root.allowChoosingEntireCommunity && !root.allowChoosingEntireCommunity ? 9 : 0
 
             padding: 0
 
@@ -165,6 +173,8 @@ StatusDropdown {
 
                 StatusIconTextButton {
                     Layout.preferredHeight: 36
+
+                    visible: root.showAddChannelButton
 
                     leftPadding: 8
                     spacing: 8

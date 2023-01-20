@@ -1,5 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 
 import AppLayouts.Chat.controls.community 1.0
 
@@ -22,6 +23,9 @@ SplitView {
         InDropdown {
             parent: pane
             anchors.centerIn: parent
+
+            allowChoosingEntireCommunity: allowChoosingEntireCommunityCheckBox.checked
+            showAddChannelButton: showAddChannelButtonCheckBox.checked
 
             communityName: "Socks"
             communityImage: ModelsData.icons.socks
@@ -53,5 +57,18 @@ SplitView {
         SplitView.preferredHeight: 200
 
         logsView.logText: logs.logText
+
+        ColumnLayout {
+            CheckBox {
+                id: allowChoosingEntireCommunityCheckBox
+
+                text: "Allow choosing entire community"
+            }
+            CheckBox {
+                id: showAddChannelButtonCheckBox
+
+                text: "Show \"Add channel\" button"
+            }
+        }
     }
 }
