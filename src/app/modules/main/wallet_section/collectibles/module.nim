@@ -6,15 +6,17 @@ import ../../../../core/eventemitter
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 import ../../../../../app_service/service/collectible/service as collectible_service
-import ../../../../../app_service/service/collectible/service as collectible_dto
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
 
 import ./current_collectible/module as current_collectible_module
 
+import ./models/collections_item as collections_item
+import ./models/collections_utils
 import ./models/collectibles_item as collectibles_item
 import ./models/collectible_trait_item as collectible_trait_item
-import ./models/collections_item as collections_item
+import ./models/collectibles_utils
+import ./models/collectibles_model as collectibles_model
 
 export io_interface
 
@@ -86,37 +88,31 @@ method switchAccount*(self: Module, accountIndex: int) =
 
   self.currentCollectibleModule.setCurrentAddress(network, self.address)
 
-proc collectibleToItem(c: collectible_dto.CollectibleDto) : collectibles_item.Item =
-  return collectibles_item.initItem(
-    c.id,
-    c.name,
-    c.imageUrl,
-    c.backgroundColor,
-    c.description,
-    c.permalink,
-    c.properties.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)),
-    c.rankings.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)),
-    c.statistics.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue))
-  )
-
-proc collectionToItem(c: CollectionData) : collections_item.Item =
-  return collections_item.initItem(
-      c.collection.name,
-      c.collection.slug,
-      c.collection.imageUrl,
-      c.collection.ownedAssetCount,
-      c.collectiblesLoaded,
-      toSeq(c.collectibles.values).map(c => collectibleToItem(c))
-  )
+proc collectionToItem(self: Module, collection: CollectionData) : collections_item.Item =
+    var item = collectionToItem(collection)
+    #[ Skeleton items are disabled until problem with OpenSea API is researched.
+      OpenSea is telling us the address owns a certain amount of NFTs from a certain collection, but
+      it doesn't give us the NFTs from that collection when trying to fetch them.
+    # Append skeleton collectibles if not yet fetched
+    let model = item.getCollectiblesModel()
+    let unfetchedCollectiblesCount = item.getOwnedAssetCount() - model.getCount()
+    if unfetchedCollectiblesCount > 0:
+      echo "unfetchedCollectiblesCount = ", unfetchedCollectiblesCount, " ", item.getSlug()
+      let skeletonItems = newSeqWith(unfetchedCollectiblesCount, collectibles_item.initItem())
+      model.appendItems(skeletonItems)
+    ]#
+    return item
 
 method setCollections*(self: Module, collections: CollectionsData) =
   self.view.setCollections(
-    toSeq(collections.collections.values).map(c => collectionToItem(c))
+    toSeq(collections.collections.values).map(c =>  self.collectionToItem(c)),
+    collections.collectionsLoaded
   )
 
 method updateCollection*(self: Module, collection: CollectionData) =
   self.view.setCollectibles(collection.collection.slug,
-    toSeq(collection.collectibles.values).map(c => collectibleToItem(c))
+    toSeq(collection.collectibles.values).map(c => collectibleToItem(c)),
+    collection.collectiblesLoaded
   )
 
 method fetchCollections*(self: Module) =

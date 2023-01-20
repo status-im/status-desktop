@@ -4,8 +4,9 @@ import ./collections_item as collections_item
 
 import ./collectibles_model as collectibles_model
 import ./collectibles_item as collectibles_item
+
 type
-  ModelRole {.pure.} = enum
+  CollectionRole* {.pure.} = enum
     Name = UserRole + 1,
     Slug
     ImageUrl
@@ -36,34 +37,30 @@ QtObject:
       result &= fmt"""[{i}]:({$self.items[i]})"""
 
   proc countChanged(self: Model) {.signal.}
-
-  proc getCount(self: Model): int {.slot.} =
+  proc getCount*(self: Model): int {.slot.} =
     self.items.len
-
-  QtProperty[int] collectionsLoaded:
-    read = getCollectionsLoaded
-    notify = collectionsLoadedChanged
-
-  proc collectionsLoadedChanged(self: Model) {.signal.}
-
-  proc getCollectionsLoaded(self: Model): int {.slot.} =
-    self.items.len
-
   QtProperty[int] count:
     read = getCount
     notify = countChanged
+
+  proc collectionsLoadedChanged(self: Model) {.signal.}
+  proc getCollectionsLoaded*(self: Model): bool {.slot.} =
+    self.collectionsLoaded
+  QtProperty[bool] collectionsLoaded:
+    read = getCollectionsLoaded
+    notify = collectionsLoadedChanged
 
   method rowCount(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Name.int:"name",
-      ModelRole.Slug.int:"slug",
-      ModelRole.ImageUrl.int:"imageUrl",
-      ModelRole.OwnedAssetCount.int:"ownedAssetCount",
-      ModelRole.CollectiblesLoaded.int:"collectiblesLoaded",
-      ModelRole.CollectiblesModel.int:"collectiblesModel"
+      CollectionRole.Name.int:"name",
+      CollectionRole.Slug.int:"slug",
+      CollectionRole.ImageUrl.int:"imageUrl",
+      CollectionRole.OwnedAssetCount.int:"ownedAssetCount",
+      CollectionRole.CollectiblesLoaded.int:"collectiblesLoaded",
+      CollectionRole.CollectiblesModel.int:"collectiblesModel"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -74,29 +71,39 @@ QtObject:
       return
 
     let item = self.items[index.row]
-    let enumRole = role.ModelRole
+    let enumRole = role.CollectionRole
 
     case enumRole:
-    of ModelRole.Name:
+    of CollectionRole.Name:
       result = newQVariant(item.getName())
-    of ModelRole.Slug:
+    of CollectionRole.Slug:
       result = newQVariant(item.getSlug())
-    of ModelRole.ImageUrl:
+    of CollectionRole.ImageUrl:
       result = newQVariant(item.getImageUrl())
-    of ModelRole.OwnedAssetCount:
+    of CollectionRole.OwnedAssetCount:
       result = newQVariant(item.getOwnedAssetCount())
-    of ModelRole.CollectiblesLoaded:
+    of CollectionRole.CollectiblesLoaded:
       result = newQVariant(item.getCollectiblesLoaded())
-    of ModelRole.CollectiblesModel:
+    of CollectionRole.CollectiblesModel:
       result = newQVariant(item.getCollectiblesModel())
     
-  proc setItems*(self: Model, items: seq[collections_item.Item]) =
+  proc setCollections*(self: Model, items: seq[collections_item.Item], collectionsLoaded: bool) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
-    self.collectionsLoaded = true
-    self.collectionsLoadedChanged()
+    if self.collectionsLoaded != collectionsLoaded:
+      self.collectionsLoaded = collectionsLoaded
+      self.collectionsLoadedChanged()
+
+  proc getCollectionItem*(self: Model, index: int) : collections_item.Item =
+    return self.items[index]
+
+  proc getCollectiblesModel*(self: Model, index: int) : collectibles_model.Model =
+    if index < self.items.len:
+      return self.items[index].getCollectiblesModel()
+    echo "getCollectiblesModel: Invalid index ", index, " with len ", self.items.len
+    return collectibles_model.newModel()
 
   proc findIndexBySlug(self: Model, slug: string): int =
     for i in 0 ..< self.items.len:
@@ -104,15 +111,21 @@ QtObject:
         return i
     return -1
 
-  proc updateCollectionCollectibles*(self: Model, slug: string, collectibles: seq[collectibles_item.Item]) =
+  proc signalDataChanged(self: Model, top: int, bottom: int, roles: int) {.signal.}
+
+  proc emitDataChanged(self: Model, top: int, bottom: int, role: int) =
+    let topIndex = self.createIndex(top, 0, nil)
+    let bottomIndex = self.createIndex(bottom, 0, nil)
+    self.dataChanged(topIndex, bottomIndex, @[role])
+    self.signalDataChanged(top, bottom, role)
+
+  proc updateCollectionCollectibles*(self: Model, slug: string, collectibles: seq[collectibles_item.Item], collectiblesLoaded: bool) =
     let idx = self.findIndexBySlug(slug)
     if idx > -1:
-      let index = self.createIndex(idx, 0, nil)
-
       let collectiblesModel = self.items[idx].getCollectiblesModel()
       collectiblesModel.setItems(collectibles)
-      self.dataChanged(index, index, @[ModelRole.CollectiblesModel.int])
+      self.emitDataChanged(idx, idx, CollectionRole.CollectiblesModel.int)
 
-      if not self.items[idx].getCollectiblesLoaded():
-        self.items[idx].collectiblesLoaded = true
-        self.dataChanged(index, index, @[ModelRole.CollectiblesLoaded.int])
+      if self.items[idx].getCollectiblesLoaded() != collectiblesLoaded:
+        self.items[idx].collectiblesLoaded = collectiblesLoaded
+        self.emitDataChanged(idx, idx, CollectionRole.CollectiblesLoaded.int)

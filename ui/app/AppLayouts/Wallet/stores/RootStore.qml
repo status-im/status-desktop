@@ -31,6 +31,7 @@ QtObject {
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 
     property var collections: walletSectionCollectibles.model
+    property var flatCollectibles: walletSectionCollectibles.flatModel
     property var currentCollectible: walletSectionCurrentCollectible
 
     property var savedAddresses: walletSectionSavedAddresses.model

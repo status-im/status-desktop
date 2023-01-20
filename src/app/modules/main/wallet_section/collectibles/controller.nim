@@ -42,6 +42,7 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COLLECTIONS_UPDATED) do(e:Args):
     let args = CollectionsUpdateArgs(e)
     self.refreshCollections(args.chainId, args.address)
+    self.collectibleService.fetchAllCollectibles(args.chainId, args.address)
   
   self.events.on(SIGNAL_COLLECTIBLES_UPDATED) do(e:Args):
     let args = CollectiblesUpdateArgs(e)
