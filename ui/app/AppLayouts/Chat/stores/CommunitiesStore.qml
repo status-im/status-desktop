@@ -3,6 +3,8 @@ import QtQuick 2.0
 QtObject {
     id: root
 
+    readonly property bool isOwner: false
+
     property var permissionsModel: ListModel {} // Backend permissions list object model assignment. Please check the current expected data in qml defined in `createPermissions` method
     property var permissionConflict: QtObject { // Backend conflicts object model assignment. Now mocked data.
         property bool exists: false

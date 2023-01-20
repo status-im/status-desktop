@@ -5,6 +5,8 @@ import StatusQ.Controls 0.1
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
+import utils 1.0
+
 StatusListItem {
     id: root
 
@@ -22,9 +24,16 @@ StatusListItem {
     asset.bgWidth: 32
     asset.bgHeight: 32
 
+    Binding on asset.color {
+        when: !root.enabled
+        value: Style.current.darkGrey
+    }
+
     components: [
         StatusRadioButton {
             id: radioButton
+
+            visible: root.enabled
 
             // reference to root for better integration with ButtonGroup
             // by accessing main component via ButtonGroup::checkedButton.item
