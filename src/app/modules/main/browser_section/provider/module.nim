@@ -12,7 +12,7 @@ import ../../../../../app_service/service/provider/service as provider_service
 import ../../../../global/global_singleton
 export io_interface
 
-# Shouldn't be public ever, user only within this module.
+# Shouldn't be public ever, use only within this module.
 type TmpSendTransactionDetails = object
   payloadMethod: string
   requestType: string

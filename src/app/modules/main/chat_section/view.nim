@@ -141,9 +141,6 @@ QtObject:
 
     return chatContentVariant
 
-  proc createPublicChat*(self: View, chatId: string) {.slot.} =
-    self.delegate.createPublicChat(chatId)
-
   proc createOneToOneChat*(self: View, communityID: string, chatId: string, ensName: string) {.slot.} =
     self.delegate.createOneToOneChat(communityID, chatId, ensName)
 

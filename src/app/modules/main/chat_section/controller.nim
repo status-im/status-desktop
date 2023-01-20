@@ -302,13 +302,6 @@ proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
     tuple[name: string, image: string, largeImage: string] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
-proc createPublicChat*(self: Controller, chatId: string) =
-  let response = self.chatService.createPublicChat(chatId)
-  if(response.success):
-    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService, self.nodeConfigurationService,
-      self.contactService, self.chatService, self.communityService, self.messageService,
-      self.gifService, self.mailserversService)
-
 proc createOneToOneChat*(self: Controller, communityID: string, chatId: string, ensName: string) =
   let response = self.chatService.createOneToOneChat(communityID, chatId, ensName)
   if(response.success):

@@ -270,7 +270,11 @@ proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
   var chatsObj: JsonNode
   if(jsonObj.getProp("chats", chatsObj)):
     for _, chatObj in chatsObj:
-      result.chats.add(toChatDto(chatObj))
+      let chat = toChatDto(chatObj)
+      if (chat.chatType == ChatType.Public):
+        # Filter out public chats as we don't show them anymore
+        continue
+      result.chats.add(chat)
 
   var categoriesObj: JsonNode
   if(jsonObj.getProp("categories", categoriesObj)):
@@ -306,9 +310,6 @@ proc toChatDto*(jsonObj: JsonNode, communityId: string): ChatDto =
   result.communityId = communityId
   if communityId != "":
     result.id = communityId & result.id.replace(communityId, "") # Adding communityID prefix in case it's not available
-
-proc isPublicChat*(chatDto: ChatDto): bool =
-  return chatDto.chatType == ChatType.Public
 
 proc isOneToOneChat*(chatDto: ChatDto): bool =
   return chatDto.chatType == ChatType.OneToOne

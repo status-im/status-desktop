@@ -186,13 +186,6 @@ GridLayout {
     }
 
     StatusChatInfoButton {
-        title: "public-chat"
-        subTitle: "Public Chat"
-        asset.color: Theme.palette.miscColor7
-        type: StatusChatInfoButton.Type.PublicChat
-    }
-
-    StatusChatInfoButton {
         title: "community-channel"
         subTitle: "Community Chat"
         asset.color: Theme.palette.miscColor7

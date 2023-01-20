@@ -15,7 +15,7 @@ Rectangle {
     property string chatId: ""
     property string name: "channelName"
     property string message: "My latest message\n with a return"
-    property int chatType: Constants.chatType.publicChat
+    property int chatType: Constants.chatType.unknown
 
     color: "#F7F7F7"
     width: 366

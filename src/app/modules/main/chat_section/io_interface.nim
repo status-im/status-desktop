@@ -160,9 +160,6 @@ method isCommunity*(self: AccessInterface): bool {.base.} =
 method getMySectionId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createPublicChat*(self: AccessInterface, chatId: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method switchToOrCreateOneToOneChat*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

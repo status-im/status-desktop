@@ -144,8 +144,7 @@ proc buildChatSectionUI(
     var colorHash: ColorHashDto = @[]
     var colorId: int = 0
     var onlineStatus = OnlineStatus.Inactive
-    let isUsersListAvailable = (chatDto.chatType != ChatType.OneToOne and
-      chatDto.chatType != ChatType.Public)
+    let isUsersListAvailable = chatDto.chatType != ChatType.OneToOne
     var blocked = false
     let belongToCommunity = chatDto.communityId != ""
     if(chatDto.chatType == ChatType.OneToOne):
@@ -411,17 +410,6 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
 
 method chatsModel*(self: Module): chats_model.Model =
   return self.view.chatsModel()
-
-method createPublicChat*(self: Module, chatId: string) =
-  if(self.controller.isCommunity()):
-    debug "creating public chat is not allowed for community, most likely it's an error in qml", methodName="createPublicChat"
-    return
-
-  if(self.chatContentModules.hasKey(chatId)):
-    self.setActiveItemSubItem(chatId, "")
-    return
-
-  self.controller.createPublicChat(chatId)
 
 method addNewChat*(
     self: Module,
@@ -788,8 +776,6 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   var notificationTitle = contactDetails.defaultDisplayName
 
   case chatDetails.chatType:
-    of ChatType.Public:
-      notificationTitle.add(fmt" ({chatDetails.name})")
     of ChatType.PrivateGroupChat:
       notificationTitle.add(fmt" ({chatDetails.name})")
     of ChatType.CommunityChat:

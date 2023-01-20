@@ -88,7 +88,7 @@ Item {
         StatusFlatRoundButton {
             id: membersButton
             visible: {
-                if(!chatContentModule || chatContentModule.chatDetails.type === Constants.chatType.publicChat)
+                if(!chatContentModule)
                     return false
 
                 return localAccountSensitiveSettings.showOnlineUsers &&
@@ -278,10 +278,8 @@ Item {
                     return ""
 
                 // In some moment in future this should be part of the backend logic.
-                // (once we add transaltion on the backend side)
+                // (once we add translation on the backend side)
                 switch (chatContentModule.chatDetails.type) {
-                case Constants.chatType.publicChat:
-                    return qsTr("Public chat")
                 case Constants.chatType.privateGroupChat:
                     return qsTr("%n member(s)", "", chatContentModule.usersModule.model.count)
                 case Constants.chatType.communityChat:
@@ -330,8 +328,7 @@ Item {
                 if(!chatContentModule)
                     return false
 
-                return chatContentModule.chatDetails.type !== Constants.chatType.publicChat &&
-                        chatContentModule.chatDetails.type !== Constants.chatType.communityChat &&
+                return chatContentModule.chatDetails.type !== Constants.chatType.communityChat &&
                         chatContentModule.chatDetails.type !== Constants.chatType.privateGroupChat
             }
             onClicked: {

@@ -102,10 +102,7 @@ StatusSectionLayout {
         }
 
         let chatContentModule = root.rootStore.currentChatContentModule()
-        if (!chatContentModule
-            || chatContentModule.chatDetails.type === Constants.chatType.publicChat)
-        {
-            // New communities have no chats, so no chatContentModule or it is a public chat
+        if (!chatContentModule) {
             return false
         }
         // Check if user list is available as an option for particular chat content module

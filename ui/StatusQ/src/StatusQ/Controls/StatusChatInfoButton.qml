@@ -25,7 +25,7 @@ Button {
     }
     property alias ringSettings: identicon.ringSettings
 
-    property int type: StatusChatInfoButton.Type.PublicChat
+    property int type: StatusChatInfoButton.Type.Unknown0
     property alias tooltip: statusToolTip
 
     signal pinnedMessagesCountClicked(var mouse)
@@ -101,9 +101,7 @@ Button {
                     objectName: "statusChatInfoButtonNameText"
                     Layout.fillWidth: true
                     elide: Text.ElideRight
-                    text: root.type === StatusChatInfoButton.Type.PublicChat && !root.title.startsWith("#") ?
-                              "#" + root.title
-                            : root.title
+                    text: root.title
                     color: root.muted ? Theme.palette.directColor5 : Theme.palette.directColor1
                     font.weight: Font.Medium
                 }
