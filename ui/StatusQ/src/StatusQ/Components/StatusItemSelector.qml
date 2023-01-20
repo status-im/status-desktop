@@ -118,6 +118,13 @@ Rectangle {
     property bool useLetterIdenticons: false
 
     /*!
+       \qmlproperty bool StatusItemSelector::itemsClickable
+       This property determines if items in the selector are clickable (cursor
+       is changed on hover and itemClicked emitted when clicked)
+    */
+    property bool itemsClickable: true
+
+    /*!
        \qmlsignal StatusItemSelector::itemClicked
        This signal is emitted when the item is clicked.
     */
@@ -217,7 +224,8 @@ Rectangle {
 
                         MouseArea {
                             anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
+                            enabled: root.itemsClickable
+                            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
                             onClicked: root.itemClicked(parent, model.index, mouse)
                         }

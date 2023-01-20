@@ -76,6 +76,23 @@ StatusScrollView {
         readonly property int dropdownVerticalOffset: 1
 
         property int permissionType: PermissionTypes.Type.None
+
+        readonly property bool isCommunityPermission:
+            permissionType === PermissionTypes.Type.Admin ||
+            permissionType === PermissionTypes.Type.Member
+
+        onIsCommunityPermissionChanged: {
+            if (isCommunityPermission) {
+                inModelChannels.clear()
+                inSelector.wholeCommunitySelected = true
+                inSelector.itemsModel = inModelCommunity
+            } else {
+                inSelector.itemsModel = 0
+                inSelector.wholeCommunitySelected = false
+                inSelector.itemsModel = inModelChannels
+            }
+        }
+
         property bool triggerDirtyTool: false // Trick: Used to force the reevaluation of dirty when an item of the list is updated
 
         property QtObject dirtyValues: QtObject {
@@ -417,6 +434,11 @@ StatusScrollView {
                 disableAdminPermission: !root.store.isOwner
 
                 onDone: {
+                    if (d.permissionType === permissionType) {
+                        permissionsDropdown.close()
+                        return
+                    }
+
                     d.permissionType = permissionType
                     d.dirtyValues.permissionObject.key = permissionType
                     d.dirtyValues.permissionObject.text = title
@@ -454,8 +476,13 @@ StatusScrollView {
         StatusItemSelector {
             id: inSelector
 
+            readonly property bool editable: !d.isCommunityPermission
+
+            addButton.visible: editable
+            itemsClickable: editable
+
             Layout.fillWidth: true
-            icon: Style.svg("create-category")
+            icon: d.isCommunityPermission ? Style.svg("communities") : Style.svg("create-category")
             iconSize: 24
             title: qsTr("In")
             defaultItemText: qsTr("Example: `#general` channel")
@@ -463,6 +490,21 @@ StatusScrollView {
             useLetterIdenticons: !wholeCommunitySelected || !inDropdown.communityImage
 
             property bool wholeCommunitySelected: false
+
+            function openInDropdown(parent, x, y) {
+                inDropdown.parent = parent
+                inDropdown.x = x
+                inDropdown.y = y
+
+                const selectedChannels = []
+
+                if (!inSelector.wholeCommunitySelected)
+                    for (let i = 0; i < inModelChannels.count; i++)
+                        selectedChannels.push(inModelChannels.get(i).itemId)
+
+                inDropdown.setSelectedChannels(selectedChannels)
+                inDropdown.open()
+            }
 
             ListModel {
                 id: inModelCommunity
@@ -520,21 +562,6 @@ StatusScrollView {
                     inSelector.itemsModel = inModelCommunity
                     close()
                 }
-            }
-
-            function openInDropdown(parent, x, y) {
-                inDropdown.parent = parent
-                inDropdown.x = x
-                inDropdown.y = y
-
-                const selectedChannels = []
-
-                if (!inSelector.wholeCommunitySelected)
-                    for (let i = 0; i < inModelChannels.count; i++)
-                        selectedChannels.push(inModelChannels.get(i).itemId)
-
-                inDropdown.setSelectedChannels(selectedChannels)
-                inDropdown.open()
             }
 
             addButton.onClicked: {
