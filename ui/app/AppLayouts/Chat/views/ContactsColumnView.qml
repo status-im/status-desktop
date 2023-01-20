@@ -64,26 +64,6 @@ Item {
                 Layout.fillWidth: true
             }
 
-            StatusRoundButton {
-                Layout.alignment: Qt.AlignVCenter
-                icon.name: "public-chat"
-                icon.color: Theme.palette.directColor1
-                icon.height: startChatButton.icon.height
-                icon.width: startChatButton.icon.width
-                implicitWidth: startChatButton.implicitWidth
-                implicitHeight: startChatButton.implicitHeight
-                type: StatusRoundButton.Type.Tertiary
-
-                onClicked: Global.openPopup(publicChatPopupComponent)
-
-                StatusToolTip {
-                    text: qsTr("Join public chats")
-                    visible: parent.hovered
-                    orientation: StatusToolTip.Orientation.Bottom
-                    y: parent.height + 12
-                }
-            }
-
             StatusIconTabButton {
                 id: startChatButton
                 Layout.alignment: Qt.AlignVCenter
@@ -239,23 +219,6 @@ Item {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    Component {
-        id: publicChatPopupComponent
-        PublicChatPopup {
-            onJoinPublicChat: {
-                chatSectionModule.createPublicChat(name)
-                close()
-            }
-            onSuggestedMessageClicked: {
-                chatSectionModule.createPublicChat(channel)
-                close()
-            }
-            onClosed: {
-                destroy()
             }
         }
     }

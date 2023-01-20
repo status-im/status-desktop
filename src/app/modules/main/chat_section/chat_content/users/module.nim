@@ -65,30 +65,6 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method onNewMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
-  for m in messages:
-    if(self.view.model().isContactWithIdAdded(m.`from`)):
-      continue
-
-    let contactDetails = self.controller.getContactDetails(m.`from`)
-    let statusUpdateDto = self.controller.getStatusForContact(m.`from`)
-    let status = toOnlineStatus(statusUpdateDto.statusType)
-    self.view.model().addItem(initMemberItem(
-      pubKey = m.`from`,
-      displayName = contactDetails.details.displayName,
-      ensName = contactDetails.details.name,
-      localNickname = contactDetails.details.localNickname,
-      alias = contactDetails.details.alias,
-      icon = contactDetails.icon,
-      colorId = contactDetails.colorId,
-      colorHash = contactDetails.colorHash,
-      onlineStatus = status,
-      isContact = contactDetails.details.isContact,
-      isVerified = contactDetails.details.isContactVerified(),
-      isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,
-      )
-    )
-
 method contactNicknameChanged*(self: Module, publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.model().setName(

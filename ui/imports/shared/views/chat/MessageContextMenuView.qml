@@ -29,7 +29,7 @@ StatusMenu {
     property string selectedUserDisplayName: ""
     property string selectedUserIcon: ""
 
-    property int chatType: Constants.chatType.publicChat
+    property int chatType: Constants.chatType.unknown
     property string messageId: ""
     property string unparsedText: ""
     property string messageSenderId: ""
@@ -411,8 +411,6 @@ StatusMenu {
                 return true
 
             switch (root.chatType) {
-            case Constants.chatType.publicChat:
-                return false
             case Constants.chatType.profile:
                 return false
             case Constants.chatType.oneToOne:

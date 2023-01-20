@@ -31,7 +31,7 @@ Rectangle {
         charactersLen: root.type === StatusChatListItem.Type.OneToOneChat ? 2 : 1
     }
     property alias ringSettings: identicon.ringSettings
-    property int type: StatusChatListItem.Type.PublicChat
+    property int type: StatusChatListItem.Type.Unknown0
     property bool highlighted: false
     property bool highlightWhenCreated: false
     property bool selected: false
@@ -123,8 +123,6 @@ Rectangle {
 
             icon: {
                 switch (root.type) {
-                case StatusChatListItem.Type.PublicChat:
-                    return Theme.palette.name === "light" ? "tiny/public-chat" : "tiny/public-chat-white"
                 case StatusChatListItem.Type.GroupChat:
                     return Theme.palette.name === "light" ? "tiny/group" : "tiny/group-white"
                 case StatusChatListItem.Type.CommunityChat:
@@ -144,10 +142,7 @@ Rectangle {
             anchors.rightMargin: 6
             anchors.verticalCenter: parent.verticalCenter
 
-            text: (root.type === StatusChatListItem.Type.PublicChat &&
-                  !root.name.startsWith("#") ?
-                      "#" + root.name :
-                      root.name)
+            text: root.name
             elide: Text.ElideRight
             color: {
                 if (root.muted && !hoverHander.hovered && !root.highlighted) {

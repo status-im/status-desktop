@@ -86,21 +86,7 @@ proc init*(self: Controller) =
 
   let chat = self.getChat()
 
-  # Events only for public chats
-  if chat.isPublicChat():
-    self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
-      let args = MessagesLoadedArgs(e)
-      if(self.chatId != args.chatId):
-        return
-      self.delegate.onNewMessagesLoaded(args.messages)
-
-    self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e:Args):
-      let args = MessagesArgs(e)
-      if(self.chatId != args.chatId):
-        return
-      self.delegate.onNewMessagesLoaded(args.messages)
-
-  # Events only for the user list, so not needed in public and one to one chats
+  # Events only for the user list, so not needed in one to one chats
   if(self.isUsersListAvailable):
     self.events.on(SIGNAL_CONTACT_UNTRUSTWORTHY) do(e: Args):
       var args = TrustArgs(e)

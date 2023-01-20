@@ -47,8 +47,7 @@ Badge {
         StatusIcon {
             Layout.preferredWidth: 16
             Layout.preferredHeight: 16
-            icon: chatType === Constants.chatType.publicChat ? "tiny/public-chat"
-                                                             : "tiny/group"
+            icon: "tiny/group"
             color: Theme.palette.baseColor1
         }
 
@@ -60,9 +59,7 @@ Badge {
 
         StyledText {
             Layout.alignment: Qt.AlignVCenter
-            text: chatType !== Constants.chatType.publicChat ?
-                      StatusQUtils.Emoji.parse(StatusQUtils.Utils.filterXSS(name)) :
-                      "#" + StatusQUtils.Utils.filterXSS(name)
+            text: StatusQUtils.Emoji.parse(StatusQUtils.Utils.filterXSS(name))
 
             color: Theme.palette.baseColor1
             font.weight: Font.Medium

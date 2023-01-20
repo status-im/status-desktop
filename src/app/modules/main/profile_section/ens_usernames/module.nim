@@ -23,7 +23,7 @@ include ../../../../../app_service/common/json_utils
 
 const cancelledRequest* = "cancelled"
 
-# Shouldn't be public ever, user only within this module.
+# Shouldn't be public ever, use only within this module.
 type TmpSendEnsTransactionDetails = object
   ensUsername: string
   address: string

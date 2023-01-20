@@ -13,7 +13,7 @@ export io_interface
 
 const cancelledRequest* = "cancelled"
 
-# Shouldn't be public ever, user only within this module.
+# Shouldn't be public ever, use only within this module.
 type TmpSendTransactionDetails = object
   fromAddr: string
   toAddr: string

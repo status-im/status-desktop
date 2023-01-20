@@ -112,13 +112,13 @@ proc searchMessages*(self: Controller, searchTerm: string) =
     if (self.searchLocation != singletonInstance.userProfile.getPubKey()):
       communities.add(self.searchLocation)
     else:
-      let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
+      let types = @[ChatType.OneToOne, ChatType.PrivateGroupChat]
       let displayedChats = self.getChatDetailsForChatTypes(types)
       for c in displayedChats:
         chats.add(c.id)
 
   if (communities.len == 0 and chats.len == 0):
-    let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
+    let types = @[ChatType.OneToOne, ChatType.PrivateGroupChat]
     let displayedChats = self.getChatDetailsForChatTypes(types)
     for c in displayedChats:
       chats.add(c.id)

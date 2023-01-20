@@ -1062,7 +1062,7 @@ Rectangle {
             Layout.bottomMargin: 4
             icon.name: "image"
             type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-            visible: !isEdit && control.chatType !== Constants.chatType.publicChat
+            visible: !isEdit
             enabled: !control.isContactBlocked
             onClicked: {
                 highlighted = true

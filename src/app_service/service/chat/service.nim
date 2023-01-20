@@ -165,7 +165,11 @@ QtObject:
 
       for chat in chats:
         if chat.active and chat.chatType != chat_dto.ChatType.Unknown:
-          self.chats[chat.id] = chat
+          if chat.chatType == chat_dto.ChatType.Public:
+            # Deactivate old public chats
+            discard status_chat.deactivateChat(chat.id)
+          else:
+            self.chats[chat.id] = chat
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
@@ -292,17 +296,6 @@ QtObject:
     result.chatDto = jsonChat.toChatDto()
     self.updateOrAddChat(result.chatDto)
     result.success = true
-
-  proc createPublicChat*(self: Service, chatId: string): tuple[chatDto: ChatDto, success: bool] =
-    try:
-      let response = status_chat.createPublicChat(chatId)
-      result.chatDto = response.result.toChatDto()
-      self.updateOrAddChat(result.chatDto)
-      result.success = true
-    except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
-      return
 
   proc createOneToOneChat*(self: Service, communityID: string, chatId: string, ensName: string): tuple[chatDto: ChatDto, success: bool] =
     try:

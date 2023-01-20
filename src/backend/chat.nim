@@ -36,11 +36,6 @@ proc getChats*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = callPrivateRPC("chat_getChats", payload)
 
-proc createPublicChat*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let communityId = ""
-  let payload = %* [communityId, chatId]
-  result = callPrivateRPC("chat_joinChat", payload)
-
 proc createOneToOneChat*(chatId: string, ensName: string = ""): RpcResponse[JsonNode] {.raises: [Exception].} =
   let communityId = ""
   let payload = %* [communityId, chatId, ensName]
