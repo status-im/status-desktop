@@ -59,6 +59,8 @@ pipeline {
     /* Ganache config */
     GANACHE_RPC_PORT = "${9545 + env.EXECUTOR_NUMBER.toInteger()}"
     GANACHE_MNEMONIC = 'pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial'
+    /* Squish config */
+    SQUISH_LICENSEKEY_DIR = /home/jenkins // Just testing, need to replace with $HOME, but I am not sure if the same user runs the tests
   }
 
   stages {
@@ -120,7 +122,12 @@ pipeline {
       options {
         throttle(categories: ['status-desktop-e2e-tests'])
       }
-      steps { script {
+      steps {
+        echo "HOME is ${HOME}"
+        echo "USER is ${USER}"
+        sh 'printenv'
+
+        script {
         wrap([
           $class: 'Xvfb',
           autoDisplayName: true,
