@@ -82,5 +82,5 @@ include recover_old_user_state
 include lost_keycard_options_state
 
 include state_factory_general_implementation
-include state_factory_state_onboarding_implementation
-include state_factory_state_login_implementation
+include state_factory_onboarding_implementation
+include state_factory_login_implementation
