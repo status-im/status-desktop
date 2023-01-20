@@ -10,8 +10,8 @@ StatusBaseText {
     property double messageTimestamp
 
     readonly property int msInADay: 86400000
-    readonly property int lastMessageInDays:  Math.floor(previousMessageTimestamp / msInADay)
-    readonly property int currentMessageInDays: Math.floor(messageTimestamp / msInADay)
+    readonly property int lastMessageInDays: previousMessageTimestamp / msInADay
+    readonly property int currentMessageInDays: messageTimestamp / msInADay
 
     font.pixelSize: 13
     color: Theme.palette.baseColor1
