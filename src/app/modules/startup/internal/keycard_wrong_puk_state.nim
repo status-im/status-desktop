@@ -38,7 +38,7 @@ method resolveKeycardNextState*(self: KeycardWrongPukState, keycardFlowType: str
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       controller.setKeycardEvent(keycardEvent)
       controller.setPukValid(true)
-      if not defined(macosx):
+      if not main_constants.IS_MACOS:
         controller.setupKeycardAccount(false)
         return nil
       return createState(StateType.Biometrics, self.flowType, self.getBackState)

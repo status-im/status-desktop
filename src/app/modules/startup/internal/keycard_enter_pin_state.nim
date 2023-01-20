@@ -55,7 +55,7 @@ method resolveKeycardNextState*(self: KeycardEnterPinState, keycardFlowType: str
         return createState(StateType.KeycardMaxPairingSlotsReached, self.flowType, self.getBackState)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       controller.setKeycardEvent(keycardEvent)
-      if not defined(macosx):
+      if not main_constants.IS_MACOS:
         controller.setupKeycardAccount(false)
         return nil
       return createState(StateType.Biometrics, self.flowType, self)

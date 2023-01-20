@@ -3,6 +3,10 @@ import os, sequtils, strutils
 import # vendor libs
   confutils
 
+## Added a constant here cause it's easier to check the app how it behaves 
+## on other platform if we just change the value here
+const IS_MACOS* = defined(macosx)
+
 const sep* = when defined(windows): "\\" else: "/"
 
 proc defaultDataDir*(): string =
@@ -12,7 +16,7 @@ proc defaultDataDir*(): string =
       parentDir(getAppDir())
     elif homeDir == "":
       getCurrentDir()
-    elif defined(macosx):
+    elif IS_MACOS:
       joinPath(homeDir, "Library", "Application Support")
     elif defined(windows):
       let targetDir = getEnv("LOCALAPPDATA").string
@@ -46,7 +50,7 @@ type StatusDesktopConfig = object
 # Credit: https://github.com/bitcoin/bitcoin/blame/b6e34afe9735faf97d6be7a90fafd33ec18c0cbb/src/util/system.cpp#L383-L389
 
 var cliParams = commandLineParams()
-if defined(macosx):
+if IS_MACOS:
   cliParams.keepIf(proc(p: string): bool = not p.startsWith("-psn_"))
 
 let desktopConfig = StatusDesktopConfig.load(cliParams)

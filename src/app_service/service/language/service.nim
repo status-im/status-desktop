@@ -1,5 +1,7 @@
 import NimQml
 import json_serialization, chronicles, os, strformat, re
+
+import ../../../constants as main_constants
 import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
 import ../../../app/core/signals/types
@@ -47,7 +49,7 @@ proc init*(self: Service) =
       self.i18nPath = joinPath(getAppDir(), "i18n")
     elif (defined(windows)):
       self.i18nPath = joinPath(getAppDir(), "../resources/i18n")
-    elif (defined(macosx)):
+    elif (main_constants.IS_MACOS):
       self.i18nPath = joinPath(getAppDir(), "../i18n")
     elif (defined(linux)):
       self.i18nPath = joinPath(getAppDir(), "../i18n")

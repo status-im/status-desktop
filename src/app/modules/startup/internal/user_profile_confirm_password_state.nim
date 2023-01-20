@@ -9,12 +9,12 @@ proc delete*(self: UserProfileConfirmPasswordState) =
   self.State.delete
 
 method getNextPrimaryState*(self: UserProfileConfirmPasswordState, controller: Controller): State =
-  if not defined(macosx):
+  if not main_constants.IS_MACOS:
     return nil
   return createState(StateType.Biometrics, self.flowType, self)
 
 method executePrimaryCommand*(self: UserProfileConfirmPasswordState, controller: Controller) =
-  if defined(macosx):
+  if main_constants.IS_MACOS:
     return
   let storeToKeychain = false # false, cause we don't have keychain support for other than mac os
   if self.flowType == FlowType.FirstRunNewUserNewKeys:

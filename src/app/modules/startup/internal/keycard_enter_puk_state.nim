@@ -33,6 +33,14 @@ method resolveKeycardNextState*(self: KeycardEnterPukState, keycardFlowType: str
         if keycardEvent.pukRetries > 0:
           return createState(StateType.KeycardWrongPuk, self.flowType, self.getBackState)
         return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult:
+      controller.setKeycardEvent(keycardEvent)
+      controller.setPukValid(true)
+      if not main_constants.IS_MACOS:
+        controller.setupKeycardAccount(false)
+        return nil
+      let backState = findBackStateWithTargetedStateType(self, StateType.RecoverOldUser)
+      return createState(StateType.Biometrics, self.flowType, backState)
   if self.flowType == FlowType.AppLogin:
     if keycardFlowType == ResponseTypeValueEnterNewPIN and 
       keycardEvent.error.len > 0 and

@@ -2,6 +2,8 @@ import json, random, times, strutils, sugar, os, re, chronicles
 import nimcrypto
 import signing_phrases
 
+import ../../constants as main_constants
+
 const STATUS_DOMAIN* = ".stateofus.eth"
 const ETH_DOMAIN* = ".eth"
 
@@ -39,7 +41,7 @@ proc defaultDataDir(): string =
       parentDir(getAppDir())
     elif homeDir == "":
       getCurrentDir()
-    elif defined(macosx):
+    elif main_constants.IS_MACOS:
       joinPath(homeDir, "Library", "Application Support")
     elif defined(windows):
       let targetDir = getEnv("LOCALAPPDATA").string
