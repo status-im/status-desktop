@@ -81,6 +81,18 @@ StatusScrollView {
             permissionType === PermissionTypes.Type.Admin ||
             permissionType === PermissionTypes.Type.Member
 
+        onPermissionTypeChanged: {
+            if (permissionType === PermissionTypes.Type.Admin) {
+                d.dirtyValues.isPrivateDirty = (root.isPrivate === false)
+            } else {
+                if (permissionType === PermissionTypes.Type.Moderator) {
+                    d.dirtyValues.isPrivateDirty = (root.isPrivate === false)
+                } else {
+                    d.dirtyValues.isPrivateDirty = (root.isPrivate === true)
+                }
+            }
+        }
+
         onIsCommunityPermissionChanged: {
             if (isCommunityPermission) {
                 inModelChannels.clear()
@@ -431,7 +443,7 @@ StatusScrollView {
                 id: permissionsDropdown
 
                 initialPermissionType: d.permissionType
-                disableAdminPermission: !root.store.isOwner
+                enableAdminPermission: root.store.isOwner
 
                 onDone: {
                     if (d.permissionType === permissionType) {
@@ -594,14 +606,14 @@ StatusScrollView {
             ColumnLayout {
                 Layout.fillWidth: true
                 StatusBaseText {
-                    text: qsTr("Private")
+                    text: qsTr("Hide permission")
                     color: Theme.palette.directColor1
                     font.pixelSize: 15
                 }
                 StatusBaseText {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    text: qsTr("Make this permission private to hide it from members who don’t meet it’s requirements")
+                    text: qsTr("Make this permission hidden from members who don’t meet it’s requirements")
                     color: Theme.palette.baseColor1
                     font.pixelSize: 15
                     lineHeight: 1.2
@@ -611,6 +623,7 @@ StatusScrollView {
                 }
             }
             StatusSwitch {
+                enabled: d.permissionType !== PermissionTypes.Type.Admin
                 checked: d.dirtyValues.isPrivateDirty ? !root.isPrivate : root.isPrivate
                 onToggled: d.dirtyValues.isPrivateDirty = (root.isPrivate !== checked)
             }

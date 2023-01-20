@@ -15,7 +15,7 @@ StatusDropdown {
     property int mode: PermissionsDropdown.Mode.Add
     property int initialPermissionType: PermissionTypes.Type.None
 
-    property bool disableAdminPermission: false
+    property bool enableAdminPermission: true
 
     enum Mode {
         Add, Update
@@ -95,7 +95,7 @@ StatusDropdown {
             checked: d.initialPermissionType === permissionType
             buttonGroup: group
 
-            enabled: !root.disableAdminPermission
+            enabled: root.enableAdminPermission
 
             Layout.fillWidth: true
         }
@@ -160,7 +160,7 @@ StatusDropdown {
             readonly property string description:
                 qsTr("Members who meet the requirements will be allowed to read the selected channels")
 
-            title: qsTr("Read")
+            title: qsTr("View only")
             asset.name: "show"
             checked: d.initialPermissionType === permissionType
             buttonGroup: group
