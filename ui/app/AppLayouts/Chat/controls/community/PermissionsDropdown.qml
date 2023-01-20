@@ -15,6 +15,8 @@ StatusDropdown {
     property int mode: PermissionsDropdown.Mode.Add
     property int initialPermissionType: PermissionTypes.Type.None
 
+    property bool disableAdminPermission: false
+
     enum Mode {
         Add, Update
     }
@@ -92,6 +94,8 @@ StatusDropdown {
             asset.name: "admin"
             checked: d.initialPermissionType === permissionType
             buttonGroup: group
+
+            enabled: !root.disableAdminPermission
 
             Layout.fillWidth: true
         }

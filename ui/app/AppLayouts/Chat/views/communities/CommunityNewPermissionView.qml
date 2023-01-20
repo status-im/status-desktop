@@ -414,6 +414,7 @@ StatusScrollView {
                 id: permissionsDropdown
 
                 initialPermissionType: d.permissionType
+                disableAdminPermission: !root.store.isOwner
 
                 onDone: {
                     d.permissionType = permissionType

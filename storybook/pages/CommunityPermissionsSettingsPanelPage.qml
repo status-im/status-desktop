@@ -25,6 +25,8 @@ SplitView {
                     topMargin: 50
                 }
                 store: CommunitiesStore {
+                    readonly property bool isOwner: isOwnerCheckBox.checked
+
                     assetsModel: AssetsModel {}
                     collectiblesModel: CollectiblesModel {}
                     channelsModel: ListModel {
@@ -80,6 +82,12 @@ SplitView {
             SplitView.preferredHeight: 150
 
             logsView.logText: logs.logText
+
+            CheckBox {
+                id: isOwnerCheckBox
+
+                text: "Is owner"
+            }
         }
     }
 }
