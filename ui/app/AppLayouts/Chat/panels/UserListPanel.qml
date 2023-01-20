@@ -96,7 +96,7 @@ Item {
                         messageContextMenu.isProfile = true
                         messageContextMenu.myPublicKey = userProfile.pubKey
                         messageContextMenu.selectedUserPublicKey = model.pubKey
-                        messageContextMenu.selectedUserDisplayName = model.displayName
+                        messageContextMenu.selectedUserDisplayName = nickName || userName
                         messageContextMenu.selectedUserIcon = model.icon
                         messageContextMenu.popup(4, 4)
                     } else if (mouse.button === Qt.LeftButton && !!messageContextMenu) {
