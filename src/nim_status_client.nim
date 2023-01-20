@@ -3,7 +3,7 @@ import NimQml, chronicles, os, strformat, strutils, times, md5, json
 import status_go
 import keycard_go
 import app/core/main
-import constants
+import constants as main_constants
 
 import app/global/global_singleton
 import app/boot/app_controller
@@ -29,14 +29,14 @@ proc determineOpenUri(): string =
 
 proc determineStatusAppIconPath(): string =
   if defined(production):
-    if defined(macosx):
+    if main_constants.IS_MACOS:
       return "" # not used in macOS
-    elif defined(windows):
+    elif main_constants.IS_MACOS:
       return "/../resources/status.svg"
     else:
       return "/../status.svg"
   else:
-    if defined(macosx):
+    if main_constants.IS_MACOS:
       return "" # not used in macOS
     else:
       return "/../status-dev.svg"
@@ -78,7 +78,7 @@ proc setupRemoteSignalsHandling() =
   keycard_go.setSignalEventCallback(callbackKeycardGo)
 
 proc mainProc() =
-  if defined(macosx) and defined(production):
+  if main_constants.IS_MACOS and defined(production):
     setCurrentDir(getAppDir())
 
   ensureDirectories(DATADIR, TMPDIR, LOGDIR)
@@ -121,7 +121,7 @@ proc mainProc() =
   let dockShowAppEvent = newStatusDockShowAppEventObject(singletonInstance.engine)
   let osThemeEvent = newStatusOSThemeEventObject(singletonInstance.engine)
 
-  if not defined(macosx):
+  if not main_constants.IS_MACOS:
     app.icon(app.applicationDirPath & statusAppIconPath)
 
   prepareLogging()

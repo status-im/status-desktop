@@ -19,7 +19,7 @@ method getNextPrimaryState*(self: KeycardPinSetState, controller: Controller): S
     return createState(StateType.UserProfileCreate, self.flowType, self.getBackState)
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
     if controller.getValidPuk():
-      if not defined(macosx):
+      if not main_constants.IS_MACOS:
         return nil
       return createState(StateType.Biometrics, self.flowType, self.getBackState)
     return createState(StateType.KeycardWrongPuk, self.flowType, self.getBackState)
@@ -31,20 +31,25 @@ method getNextPrimaryState*(self: KeycardPinSetState, controller: Controller): S
       return nil
     return createState(StateType.KeycardWrongPuk, self.flowType, self.getBackState)
   if self.flowType == FlowType.LostKeycardReplacement:
-    if not defined(macosx):
+    if not main_constants.IS_MACOS:
       return nil
     return createState(StateType.Biometrics, self.flowType, self.getBackState)
 
 method executePrimaryCommand*(self: KeycardPinSetState, controller: Controller) =
-  if defined(macosx):
-    return
-  # if controller.getValidPuk():
-  #   controller.setupKeycardAccount(false)
-  #   return
+  if self.flowType == FlowType.FirstRunOldUserKeycardImport:
+    if main_constants.IS_MACOS:
+      return
+    if controller.getValidPuk():
+      controller.setupKeycardAccount(false)
   if self.flowType == FlowType.AppLogin:
     if controller.getRecoverUsingSeedPhraseWhileLogin():
       controller.startLoginFlowAutomatically(controller.getPin())
+      return
+    if controller.getValidPuk():
+      controller.setupKeycardAccount(false)
   if self.flowType == FlowType.LostKeycardReplacement:
+    if main_constants.IS_MACOS:
+      return
     controller.startLoginFlowAutomatically(controller.getPin())
 
 method resolveKeycardNextState*(self: KeycardPinSetState, keycardFlowType: string, keycardEvent: KeycardEvent, 

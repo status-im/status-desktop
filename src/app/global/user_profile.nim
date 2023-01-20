@@ -1,5 +1,6 @@
 import NimQml
 
+import ../../constants as main_constants
 import local_account_settings
 
 QtObject:
@@ -51,7 +52,7 @@ QtObject:
     read = getIsKeycardUser
 
   proc getUsingBiometricLogin*(self: UserProfile): bool {.slot.} =
-    if(not defined(macosx)):
+    if(not main_constants.IS_MACOS):
       return false
     return self.localAccountSettings.getStoreToKeychainValue() == LS_VALUE_STORE
   QtProperty[bool] usingBiometricLogin:

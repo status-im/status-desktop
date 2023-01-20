@@ -6,6 +6,7 @@ import internal/[state, state_factory]
 import models/generated_account_item as gen_acc_item
 import models/login_account_item as login_acc_item
 import models/fetching_data_model as fetch_model
+import ../../../constants as main_constants
 import ../../global/global_singleton
 import ../../global/app_translatable_constants as atc
 import ../../core/eventemitter
@@ -89,7 +90,7 @@ method load*[T](self: Module[T]) =
   self.view.setGeneratedAccountList(accounts)
 
   if(self.controller.shouldStartWithOnboardingScreen()):
-    if defined(macosx):
+    if main_constants.IS_MACOS:
       self.view.setCurrentStartupState(newNotificationState(FlowType.General, nil))
     else:
       self.view.setCurrentStartupState(newWelcomeState(FlowType.General, nil))

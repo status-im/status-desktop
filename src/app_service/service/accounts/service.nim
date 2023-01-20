@@ -340,7 +340,7 @@ QtObject:
     result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
 
   proc setLocalAccountSettingsFile(self: Service) =
-    if(defined(macosx) and self.getLoggedInAccount.isValid()):
+    if(main_constants.IS_MACOS and self.getLoggedInAccount.isValid()):
       singletonInstance.localAccountSettings.setFileName(self.getLoggedInAccount.name)
 
   proc addKeycardDetails(self: Service, settingsJson: var JsonNode, accountData: var JsonNode) =

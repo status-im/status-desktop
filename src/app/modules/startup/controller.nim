@@ -2,6 +2,7 @@ import Tables, chronicles, strutils, os
 import uuids
 import io_interface
 
+import ../../../constants as main_constants
 import ../../global/global_singleton
 import ../../core/signals/types
 import ../../core/eventemitter
@@ -400,7 +401,7 @@ proc isSelectedAccountAKeycardAccount*(self: Controller): bool =
 
 proc tryToObtainDataFromKeychain*(self: Controller) =
   # Dealing with Keychain is the MacOS only feature
-  if(not defined(macosx)):
+  if not main_constants.IS_MACOS:
     return
   let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
   if (value != LS_VALUE_STORE):
@@ -504,7 +505,7 @@ proc checkForStoringPasswordToKeychain*(self: Controller) =
   # This proc is called once user is logged in irrespective he is logged in
   # through the onboarding or login view. 
   # This is MacOS only feature
-  if not defined(macosx):
+  if not main_constants.IS_MACOS:
     return
 
   let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()

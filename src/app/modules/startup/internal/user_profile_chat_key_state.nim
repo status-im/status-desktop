@@ -9,7 +9,7 @@ proc delete*(self: UserProfileChatKeyState) =
   self.State.delete
 
 method executePrimaryCommand*(self: UserProfileChatKeyState, controller: Controller) =
-  if defined(macosx):
+  if main_constants.IS_MACOS:
     return
   let storeToKeychain = false # false, cause we don't have keychain support for other than mac os
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
@@ -26,6 +26,6 @@ method getNextPrimaryState*(self: UserProfileChatKeyState, controller: Controlle
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
     self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard  or
     self.flowType == FlowType.FirstRunOldUserKeycardImport:
-      if not defined(macosx):
+      if not main_constants.IS_MACOS:
         return nil
       return createState(StateType.Biometrics, self.flowType, self)
