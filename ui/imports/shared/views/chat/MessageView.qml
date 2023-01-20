@@ -89,7 +89,7 @@ Loader {
     property string prevMessageSenderId: prevMessageAsJsonObj ? prevMessageAsJsonObj.senderId : ""
     property var prevMessageAsJsonObj
     property int nextMessageIndex: -1
-    property int nextMessageTimestamp: nextMessageAsJsonObj ? nextMessageAsJsonObj.timestamp : 0
+    property double nextMessageTimestamp: nextMessageAsJsonObj ? nextMessageAsJsonObj.timestamp : 0
     property var nextMessageAsJsonObj
 
     property bool editModeOn: false

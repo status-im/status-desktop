@@ -67,6 +67,8 @@ Item {
                 anchors.fill: parent
 
                 RowLayout {
+                    Layout.fillWidth: true
+
                     StatusSmartIdenticon {
                         id: profileImage
                         Layout.alignment: Qt.AlignTop
@@ -78,7 +80,7 @@ Item {
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
                             anchors.fill: parent
                             enabled: root.profileClickable
-                            onClicked: replyProfileClicked(this, mouse)
+                            onClicked: root.replyProfileClicked(this, mouse)
                         }
                     }
                     StatusBaseText {
@@ -89,44 +91,50 @@ Item {
                         text: replyDetails.amISender ? qsTr("You") : replyDetails.sender.displayName
                     }
                 }
-                // FIXME OPTIMIZE by using Loaders
-                StatusTextMessage {
-                    objectName: "StatusMessage_replyDetails_textMessage"
+                Loader {
                     Layout.fillWidth: true
-                    textField.font.pixelSize: Theme.secondaryTextFontSize
-                    textField.color: Theme.palette.baseColor1
-                    visible: !!replyDetails.messageText && replyDetails.contentType !== StatusMessage.ContentType.Sticker
-                    allowShowMore: false
-                    stripHtmlTags: true
-                    convertToSingleLine: true
-                    messageDetails: root.replyDetails
-                }
-                StatusImageMessage {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: imageAlias.paintedHeight
-                    imageWidth: 56
-                    source: replyDetails.contentType === StatusMessage.ContentType.Image ? replyDetails.messageContent : ""
-                    visible: source
-                    shapeType: StatusImageMessage.ShapeType.ROUNDED
-                }
-                Item {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 48
-                    Layout.alignment: Qt.AlignLeft
-                    visible: replyDetails.contentType === StatusMessage.ContentType.Sticker
-                    StatusSticker {
-                        asset.width: 48
-                        asset.height: 48
-                        asset.name: replyDetails.messageContent
-                        asset.isImage: true
+                    asynchronous: true
+                    active: !!replyDetails.messageText && replyDetails.contentType !== StatusMessage.ContentType.Sticker
+                    visible: active
+                    sourceComponent: StatusTextMessage {
+                        objectName: "StatusMessage_replyDetails_textMessage"
+                        textField.font.pixelSize: Theme.secondaryTextFontSize
+                        textField.color: Theme.palette.baseColor1
+                        allowShowMore: false
+                        stripHtmlTags: true
+                        convertToSingleLine: true
+                        messageDetails: root.replyDetails
                     }
                 }
-                Item {
+                Loader {
+                    Layout.fillWidth: true
+                    asynchronous: true
+                    active: replyDetails.contentType === StatusMessage.ContentType.Image
+                    visible: active
+                    sourceComponent: StatusImageMessage {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: imageAlias.paintedHeight
+                        imageWidth: 56
+                        source: replyDetails.messageContent
+                        shapeType: StatusImageMessage.ShapeType.ROUNDED
+                    }
+                }
+                StatusSticker {
+                    asynchronous: true
+                    active: replyDetails.contentType === StatusMessage.ContentType.Sticker
+                    visible: active
+                    asset.width: 48
+                    asset.height: 48
+                    asset.name: replyDetails.messageContent
+                    asset.isImage: true
+                }
+                Loader {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 22
-                    visible: replyDetails.contentType === StatusMessage.ContentType.Audio
-                    StatusAudioMessage {
-                        id: audioMessage
+                    asynchronous: true
+                    active: replyDetails.contentType === StatusMessage.ContentType.Audio
+                    visible: active
+                    sourceComponent: StatusAudioMessage {
                         anchors.left: parent.left
                         width: 125
                         height: 22

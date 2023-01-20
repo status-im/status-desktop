@@ -527,6 +527,8 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.senderEnsVerified = updatedContact.details.ensVerified
     if(item.quotedMessageAuthorDetails.details.id == contactId):
       item.quotedMessageAuthorDetails = updatedContact
+      item.quotedMessageAuthorDisplayName = updatedContact.defaultDisplayName
+      item.quotedMessageAuthorAvatar = updatedContact.icon
     if(item.messageContainsMentions):
       let (message, _, err) = self.controller.getMessageDetails(item.id)
       if(err.len == 0):
