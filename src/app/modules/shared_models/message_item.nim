@@ -146,7 +146,8 @@ proc initItem*(
     if result.quotedMessageAuthorAvatar == "":
       result.quotedMessageAuthorAvatar = quotedMessageDiscordMessage.author.avatarUrl
   else:
-    result.quotedMessageAuthorDisplayName = quotedMessageAuthorDetails.details.displayName
+    result.quotedMessageAuthorDisplayName = if quotedMessageAuthorDetails.details.localNickname != "": quotedMessageAuthorDetails.details.localNickname
+                                            else: quotedMessageAuthorDetails.details.displayName
     result.quotedMessageAuthorAvatar = quotedMessageAuthorDetails.details.image.thumbnail
 
   if contentType == ContentType.DiscordMessage:

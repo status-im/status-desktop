@@ -639,7 +639,7 @@ Loader {
                     sender.isContact: quotedMessageAuthorDetailsIsContact
                     sender.displayName: quotedMessageAuthorDetailsDisplayName
                     sender.isEnsVerified: quotedMessageAuthorDetailsEnsVerified
-                    sender.secondaryName: quotedMessageAuthorDetailsName || ""
+                    sender.secondaryName: quotedMessageAuthorDetailsName
                     sender.profileImage {
                         width: 20
                         height: 20
