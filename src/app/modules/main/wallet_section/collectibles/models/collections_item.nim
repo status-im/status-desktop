@@ -17,8 +17,7 @@ proc initItem*(name, slug, imageUrl: string, ownedAssetCount: int, collectiblesL
   result.imageUrl = imageUrl
   result.ownedAssetCount = ownedAssetCount
   result.collectiblesLoaded = collectiblesLoaded
-  result.collectiblesModel = collectibles_model.newModel()
-  result.collectiblesModel.setItems(collectibles)
+  result.collectiblesModel = collectibles_model.newModel(collectibles)
 
 proc initItem*(): Item =
   result = initItem("", "", "", 0, false, @[])

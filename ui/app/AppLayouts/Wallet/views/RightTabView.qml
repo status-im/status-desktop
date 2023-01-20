@@ -97,7 +97,9 @@ Item {
                         }
                     }
                     CollectiblesView {
+                        collectiblesModel: RootStore.flatCollectibles
                         onCollectibleClicked: {
+                            RootStore.selectCollectible(collectionSlug, collectibleId)
                             stack.currentIndex = 1
                         }
                     }

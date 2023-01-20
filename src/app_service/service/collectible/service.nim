@@ -165,11 +165,12 @@ QtObject:
           data.chainId = chainIdJson.getInt()
           data.address = addressJson.getStr()
 
+          var collections: seq[CollectionDto]
           let collectionsJson = responseObj["collections"]
           if (collectionsJson.kind == JArray):
-            let collections = map(collectionsJson.getElems(), proc(x: JsonNode): CollectionDto = x.toCollectionDto())
-            self.setCollections(data.chainId, data.address, collections)
-            self.events.emit(SIGNAL_COLLECTIONS_UPDATED, data)
+            collections = map(collectionsJson.getElems(), proc(x: JsonNode): CollectionDto = x.toCollectionDto())
+          self.setCollections(data.chainId, data.address, collections)
+          self.events.emit(SIGNAL_COLLECTIONS_UPDATED, data)
     except Exception as e:
       let errDescription = e.msg
       error "error onRxCollections: ", errDescription
@@ -208,11 +209,12 @@ QtObject:
           data.address = addressJson.getStr()
           data.collectionSlug = collectionSlugJson.getStr()
 
+          var collectibles: seq[CollectibleDto]
           let collectiblesJson = responseObj["collectibles"]
           if (collectiblesJson.kind == JArray):
-            let collectibles = map(collectiblesJson.getElems(), proc(x: JsonNode): CollectibleDto = x.toCollectibleDto())
-            self.setCollectibles(data.chainId, data.address, data.collectionSlug, collectibles)
-            self.events.emit(SIGNAL_COLLECTIBLES_UPDATED, data)
+            collectibles = map(collectiblesJson.getElems(), proc(x: JsonNode): CollectibleDto = x.toCollectibleDto())
+          self.setCollectibles(data.chainId, data.address, data.collectionSlug, collectibles)
+          self.events.emit(SIGNAL_COLLECTIBLES_UPDATED, data)
     except Exception as e:
       let errDescription = e.msg
       error "error onRxCollectibles: ", errDescription
@@ -241,3 +243,11 @@ QtObject:
       limit: limit
     )
     self.threadpool.start(arg)
+
+  proc fetchAllCollectibles*(self: Service, chainId: int, address: string) =
+    try:
+      for collectionSlug, _ in self.data[chainId][address].collections:
+        self.fetchCollectibles(chainId, address, collectionSlug)
+    except Exception as e:
+      let errDescription = e.msg
+      error "error fetchAllCollectibles: ", errDescription
