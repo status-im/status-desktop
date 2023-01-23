@@ -8,7 +8,14 @@ import utils 1.0
 QtObject {
     id: root
 
-    property var permissionsModel: ListModel {} // Backend permissions list object model asignement. Please check the current expected data in qml defined in `createPermissions` method
+    property var permissionsModel: ListModel {} // Backend permissions list object model assignment. Please check the current expected data in qml defined in `createPermissions` method
+    property var permissionConflict: QtObject { // Backend conflicts object model assignment. Now mocked data.
+        property bool exists: false
+        property string holdings: qsTr("1 ETH")
+        property string permissions: qsTr("View and Post")
+        property string channels: qsTr("#general")
+
+    }
 
     // TODO: Replace to real data, now dummy model
     property var  assetsModel: ListModel {
