@@ -30,7 +30,7 @@ Feature: Status Desktop community admin features
 
         # User 2 Alice (admin) logs in
         Given the user restarts the app
-        And the user "Alive" logs in with password "TesTEr16843/!@00"
+        And the user "Alice" logs in with password "TesTEr16843/!@00"
         Then the user lands on the signed in app
         When the user opens the community named "MyFriends"
         Then the user lands on the community named "MyFriends"
