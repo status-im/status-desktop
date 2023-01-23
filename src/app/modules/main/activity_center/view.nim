@@ -42,6 +42,15 @@ QtObject:
     read = hasMoreToShow
     notify = hasMoreToShowChanged
 
+  proc unreadActivityCenterNotificationsCountChanged*(self: View) {.signal.}
+
+  proc unreadActivityCenterNotificationsCount*(self: View): int {.slot.}  =
+    self.delegate.unreadActivityCenterNotificationsCount()
+
+  QtProperty[int] unreadActivityCenterNotificationsCount:
+    read = unreadActivityCenterNotificationsCount
+    notify = unreadActivityCenterNotificationsCountChanged
+
   proc pushActivityCenterNotifications*(self:View, activityCenterNotifications: seq[Item]) =
     self.model.addActivityNotificationItemsToList(activityCenterNotifications)
     self.hasMoreToShowChanged()

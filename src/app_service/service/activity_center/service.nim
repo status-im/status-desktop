@@ -43,6 +43,7 @@ type
 
 # Signals which may be emitted by this service:
 const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED* = "activityCenterNotificationsLoaded"
+const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED* = "activityCenterNotificationsCountMayChanged"
 const SIGNAL_MARK_NOTIFICATIONS_AS_READ* = "markNotificationsAsRead"
 const SIGNAL_MARK_NOTIFICATIONS_AS_UNREAD* = "markNotificationsAsUnread"
 const SIGNAL_MARK_NOTIFICATIONS_AS_ACCEPTED* = "markNotificationsAsAccepted"
@@ -83,6 +84,7 @@ QtObject:
           SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
           ActivityCenterNotificationsArgs(activityCenterNotifications: receivedData.activityCenterNotifications)
         )
+        self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
 
   proc parseACNotificationResponse*(self: Service, response: RpcResponse[JsonNode]) =
     var activityCenterNotifications: seq[ActivityCenterNotificationDto] = @[]
@@ -95,6 +97,7 @@ QtObject:
           SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
           ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications)
         )
+        self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
 
   proc hasMoreToShow*(self: Service): bool =
     return self.cursor != ""
@@ -123,6 +126,15 @@ QtObject:
     self.cursor = activityCenterNotificationsTuple[0];
     result = activityCenterNotificationsTuple[1]
 
+  proc getUnreadActivityCenterNotificationsCount*(self: Service): int =
+    try:
+      let response = backend.unreadActivityCenterNotificationsCount()
+
+      if response.result.kind != JNull:
+        return response.result.getInt
+    except Exception as e:
+      error "Error getting unread activity center unread count", msg = e.msg
+
   proc markActivityCenterNotificationRead*(
       self: Service,
       notificationId: string,
@@ -131,18 +143,10 @@ QtObject:
     try:
       discard backend.markActivityCenterNotificationsRead(@[notificationId])
       self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_READ, markAsReadProps)
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
       error "Error marking as read", msg = e.msg
       result = e.msg
-
-  proc unreadActivityCenterNotificationsCount*(self: Service): int =
-    try:
-      let response = backend.unreadActivityCenterNotificationsCount()
-
-      if response.result.kind != JNull:
-        return response.result.getInt
-    except Exception as e:
-      error "Error getting unread activity center unread count", msg = e.msg
 
   proc markActivityCenterNotificationUnread*(
       self: Service,
@@ -152,6 +156,7 @@ QtObject:
     try:
       discard backend.markActivityCenterNotificationsUnread(@[notificationId])
       self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_UNREAD, markAsUnreadProps)
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
       error "Error marking as unread", msg = e.msg
       result = e.msg
@@ -167,6 +172,7 @@ QtObject:
 
       self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_READ,
         MarkAsReadNotificationProperties(notificationTypes: types, isAll: true))
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
       error "Error marking all as read", msg = e.msg
       result = e.msg
@@ -185,7 +191,9 @@ QtObject:
   proc acceptActivityCenterNotifications*(self: Service, notificationIds: seq[string]): string =
     try:
       discard backend.acceptActivityCenterNotifications(notificationIds)
-
+      self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_ACCEPTED,
+        MarkAsDismissedNotificationProperties(notificationIds: notificationIds))
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
       error "Error marking as accepted", msg = e.msg
       result = e.msg
@@ -195,6 +203,7 @@ QtObject:
       discard backend.dismissActivityCenterNotifications(notificationIds)
       self.events.emit(SIGNAL_MARK_NOTIFICATIONS_AS_DISMISSED,
         MarkAsDismissedNotificationProperties(notificationIds: notificationIds))
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
     except Exception as e:
       error "Error marking as dismissed", msg = e.msg
       result = e.msg

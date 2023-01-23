@@ -67,12 +67,14 @@ proc init*(self: Controller) =
     if (evArgs.notificationIds.len > 0):
       self.delegate.markActivityCenterNotificationUnreadDone(evArgs.notificationIds)
 
+  self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED) do(e: Args):
+    self.delegate.unreadActivityCenterNotificationsCountChanged()
 
 proc hasMoreToShow*(self: Controller): bool =
    return self.activityCenterService.hasMoreToShow()
 
 proc unreadActivityCenterNotificationsCount*(self: Controller): int =
-   return self.activityCenterService.unreadActivityCenterNotificationsCount()
+   return self.activityCenterService.getUnreadActivityCenterNotificationsCount()
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
    return self.contactsService.getContactDetails(contactId)

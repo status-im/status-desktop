@@ -167,7 +167,7 @@ Popup {
         anchors.top: activityCenterTopBar.bottom
         anchors.bottom: parent.bottom
         anchors.margins: Style.current.smallPadding
-        spacing: Style.current.padding
+        spacing: 1
 
         model: SortFilterProxyModel {
             sourceModel: root.activityCenterStore.activityCenterList

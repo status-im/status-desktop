@@ -71,6 +71,9 @@ method hasMoreToShow*(self: Module): bool =
 method unreadActivityCenterNotificationsCount*(self: Module): int =
   self.controller.unreadActivityCenterNotificationsCount()
 
+method unreadActivityCenterNotificationsCountChanged*(self: Module) =
+  self.view.unreadActivityCenterNotificationsCountChanged()
+
 proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: ChatDto): MessageItem =
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats

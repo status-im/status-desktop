@@ -43,19 +43,6 @@ QtObject:
       if (notification.chatId == chatId and not notification.read):
         result.add(notification.id)
 
-  proc unreadCountChanged*(self: Model) {.signal.}
-
-  proc unreadCount*(self: Model): int {.slot.} =
-    result = 0
-    for notification in self.activityCenterNotifications:
-      if (notification.isNotReadOrActiveCTA()):
-          result += 1
-    return result
-
-  QtProperty[int] unreadCount:
-    read = unreadCount
-    notify = unreadCountChanged
-
   proc markAllAsRead*(self: Model)  =
     for activityCenterNotification in self.activityCenterNotifications:
       activityCenterNotification.read = true
@@ -63,7 +50,6 @@ QtObject:
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.activityCenterNotifications.len - 1, 0, nil)
     self.dataChanged(topLeft, bottomRight, @[NotifRoles.Read.int])
-    self.unreadCountChanged()
 
   method rowCount*(self: Model, index: QModelIndex = nil): int = self.activityCenterNotifications.len
 
@@ -127,7 +113,6 @@ QtObject:
         self.dataChanged(index, index, @[NotifRoles.Read.int])
         break
       i.inc
-    self.unreadCountChanged()
 
   proc markActivityCenterNotificationRead*(self: Model, notificationId: string) =
     var i = 0
@@ -138,7 +123,6 @@ QtObject:
         self.dataChanged(index, index, @[NotifRoles.Read.int])
         break
       i.inc
-    self.unreadCountChanged()
 
   proc removeNotifications*(self: Model, ids: seq[string]) =
     var i = 0
@@ -157,7 +141,6 @@ QtObject:
       self.activityCenterNotifications.delete(indexUpdated)
       self.endRemoveRows()
       i = i + 1
-    self.unreadCountChanged()
 
   proc setNewData*(self: Model, activityCenterNotifications: seq[Item]) =
     self.beginResetModel()
@@ -168,8 +151,6 @@ QtObject:
     self.beginInsertRows(newQModelIndex(), 0, 0)
     self.activityCenterNotifications.insert(activityCenterNotification, 0)
     self.endInsertRows()
-
-    self.unreadCountChanged()
 
     if self.activityCenterNotifications.len > 1:
       let topLeft = self.createIndex(0, 0, nil)
@@ -186,4 +167,3 @@ QtObject:
             self.removeNotifications(@[notif.id])
             break
         self.addActivityNotificationItemToList(activityCenterNotification, false)
-    self.unreadCountChanged()

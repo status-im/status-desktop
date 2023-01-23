@@ -182,6 +182,9 @@ rpc(dismissActivityCenterNotifications, "wakuext"):
 rpc(unreadActivityCenterNotificationsCount, "wakuext"):
   discard
 
+rpc(unreadAndAcceptedActivityCenterNotificationsCount, "wakuext"):
+  discard
+
 rpc(getBookmarks, "browsers"):
   discard
 
