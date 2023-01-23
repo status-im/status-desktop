@@ -16,7 +16,8 @@ Feature: Status Desktop Contacts Flows
         Then the contact request for chat key "zQ3shQihZMmciZWUrjvsY6kUoaqSKp9DFSjMPRkkKGty3XCKZ" is present in the pending requests tab
         # TODO for future improvements: log into the other account and check that we received the request (will require some cleanup)
 
-    @relyon-mailserver
+    @relyon-mailserver @mayfail
+    # FIXME this test will fail because we no longer support public channels. Re-implement in a community channel. Issue #9252
     Scenario: The user can add a contact from the chat
         # User 1 sends a message in the channel
         When the user opens the chat section
