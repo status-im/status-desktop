@@ -140,10 +140,16 @@ method setRemainingAttempts*(self: AccessInterface, value: int) {.base.} =
 method runFactoryResetPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method storeKeyPairForNewKeycardUser*(self: AccessInterface) {.base.} =
+method storeDefaultKeyPairForNewKeycardUser*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method syncWalletAccountsOnLoginForReplacedKeycard*(self: AccessInterface) {.base.} =
+method syncKeycardBasedOnAppWalletStateAfterLogin*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: AccessInterface, oldKeycardUid: string, newKeycardUid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkForStoringPasswordToKeychain*(self: AccessInterface) {.base.} =
@@ -167,5 +173,7 @@ type
     c.startupDidLoad()
     c.userLoggedIn()
     c.finishAppLoading()
-    c.storeKeyPairForNewKeycardUser()
-    c.syncWalletAccountsOnLoginForReplacedKeycard()
+    c.storeDefaultKeyPairForNewKeycardUser()
+    c.syncKeycardBasedOnAppWalletStateAfterLogin()
+    c.addToKeycardUidPairsToCheckForAChangeAfterLogin(string, string)
+    c.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin()

@@ -46,8 +46,9 @@ logScope:
 
 type
   AppController* = ref object of RootObj
-    storeKeyPair: bool
-    syncWalletForReplacedKeycard: bool
+    storeDefaultKeyPair: bool
+    syncKeycardBasedOnAppWalletState: bool
+    changedKeycardUids: seq[tuple[oldKcUid: string, newKcUid: string]] # used in case user unlocked keycard during onboarding using seed phrase
     statusFoundation: StatusFoundation
     notificationsManager*: NotificationsManager
 
@@ -108,8 +109,10 @@ proc startupDidLoad*(self: AppController)
 proc userLoggedIn*(self: AppController): string
 proc logout*(self: AppController)
 proc finishAppLoading*(self: AppController)
-proc storeKeyPairForNewKeycardUser*(self: AppController)
-proc syncWalletAccountsOnLoginForReplacedKeycard*(self: AppController)
+proc storeDefaultKeyPairForNewKeycardUser*(self: AppController)
+proc syncKeycardBasedOnAppWalletStateAfterLogin*(self: AppController)
+proc addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: AppController, oldKeycardUid: string, newKeycardUid: string)
+proc removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*(self: AppController)
 
 # Main Module Delegate Interface
 proc mainDidLoad*(self: AppController)
@@ -131,8 +134,8 @@ proc connect(self: AppController) =
 
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
-  result.storeKeyPair = false
-  result.syncWalletForReplacedKeycard = false
+  result.storeDefaultKeyPair = false
+  result.syncKeycardBasedOnAppWalletState = false
   result.statusFoundation = statusFoundation
   
   # Preparing settings service to be exposed later as global QObject
@@ -437,8 +440,29 @@ proc buildAndRegisterUserProfile(self: AppController) =
 
   singletonInstance.engine.setRootContextProperty("userProfile", self.userProfileVariant)
 
+  ##############################################################################                                             store def   kc sync with app    kc uid
+  ## Onboarding flows sync keycard state after login                                                                          keypair  | (inc. kp store)  |  update
+  ## `I’m new to Status` -> `Generate new keys`                                                                          ->     na     |       na         |    na
+  ## `I’m new to Status` -> `Generate keys for a new Keycard`                                                            ->    yes     |       no         |    no 
+  ## `I’m new to Status` -> `Import a seed phrase` -> `Import a seed phrase`                                             ->     na     |       na         |    na
+  ## `I’m new to Status` -> `Import a seed phrase` -> `Import a seed phrase into a new Keycard`                          ->    yes     |       no         |    no 
+  ## 
+  ## `I already use Status` -> `Scan sync code`                                                                          -> flow not developed yet 
+  ## `I already use Status` -> `I don’t have other device` -> `Login with Keycard` (fetched)                             ->     no     |      yes         |    no
+  ## `I already use Status` -> `I don’t have other device` -> `Login with Keycard` (unlock via puk, fetched)             ->     no     |      yes         |    no
+  ## `I already use Status` -> `I don’t have other device` -> `Login with Keycard` (unlock via seed phrase, fetched)     ->     no     |      yes         |   yes (kc details should be fetched and set to db while recovering, that's the reason why)
+  ## `I already use Status` -> `I don’t have other device` -> `Login with Keycard` (not fetched)                         ->     no     |      yes         |    no
+  ## `I already use Status` -> `I don’t have other device` -> `Login with Keycard` (unlock via puk, not fetched)         ->     no     |      yes         |    no
+  ## `I already use Status` -> `I don’t have other device` -> `Login with Keycard` (unlock via seed phrase, not fetched) ->     no     |      yes         |    no
+  ## `I already use Status` -> `I don’t have other device` -> `Enter a seed phrase`                                      ->     na     |       na         |    na
+  ## 
+  ## `Login`                                                                                                             ->     na     |       na         |    na
+  ## `Login` -> if card was unlocked via puk                                                                             ->     na     |       na         |    na
+  ## `Login` -> if card was unlocked via seed phrase                                                                     ->     no     |       no         |   yes  
+  ## `Login` -> `Create replacement Keycard with seed phrase`                                                            ->     no     |      yes         |    no (we don't know which kc is replaced if user has more kc for the same kp)
+  ##############################################################################
   if singletonInstance.userProfile.getIsKeycardUser():
-    if self.storeKeyPair:
+    if self.storeDefaultKeyPair:
       let allAccounts = self.walletAccountService.fetchAccounts()
       let defaultWalletAccounts = allAccounts.filter(a => 
         a.walletType == WalletTypeDefaultStatusAccount and 
@@ -457,10 +481,10 @@ proc buildAndRegisterUserProfile(self: AppController) =
         keyUid: loggedInAccount.keyUid)
       let keystoreDir = self.accountsService.getKeyStoreDir()
       discard self.walletAccountService.addMigratedKeyPair(keyPair, keystoreDir)
-    if self.syncWalletForReplacedKeycard:
+    if self.syncKeycardBasedOnAppWalletState:
       let allAccounts = self.walletAccountService.fetchAccounts()
       let accountsForLoggedInUser = allAccounts.filter(a => a.keyUid == loggedInAccount.keyUid)
-      var kpDto = KeyPairDto(keycardUid: "",
+      var keyPair = KeyPairDto(keycardUid: "",
         keycardName: displayName,
         keycardLocked: false,
         accountsAddresses: @[],
@@ -468,7 +492,7 @@ proc buildAndRegisterUserProfile(self: AppController) =
       var activeValidPathsToStoreToAKeycard: seq[string]
       for acc in accountsForLoggedInUser:
         activeValidPathsToStoreToAKeycard.add(acc.path)
-        kpDto.accountsAddresses.add(acc.address)
+        keyPair.accountsAddresses.add(acc.address)
       self.keycardService.startStoreMetadataFlow(displayName, self.startupModule.getPin(), activeValidPathsToStoreToAKeycard)
       ## sleep for 3 seconds, since that is more than enough to store metadata to a keycard, if the reader is still plugged in
       ## and the card is still inserted, otherwise we just skip that.
@@ -477,14 +501,26 @@ proc buildAndRegisterUserProfile(self: AppController) =
       ## instance uid for GetMetadata flow we will be able to use SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC signal for syncing
       ## otherwise we need to handle that way separatelly in `handleKeycardSyncing` of shared module 
       sleep(3000)
+      self.keycardService.cancelCurrentFlow()
       let (_, kcEvent) = self.keycardService.getLastReceivedKeycardData()
       if kcEvent.instanceUID.len > 0:
-        kpDto.keycardUid = kcEvent.instanceUID
+        keyPair.keycardUid = kcEvent.instanceUID
         let keystoreDir = self.accountsService.getKeyStoreDir()
-        discard self.walletAccountService.addMigratedKeyPair(kpDto, keystoreDir)
+        discard self.walletAccountService.addMigratedKeyPair(keyPair, keystoreDir)
 
-proc storeKeyPairForNewKeycardUser*(self: AppController) = 
-  self.storeKeyPair = true
+    if self.changedKeycardUids.len > 0:
+      let oldUid = self.changedKeycardUids[0].oldKcUid
+      let newUid = self.changedKeycardUids[^1].newKcUid
+      discard self.walletAccountService.updateKeycardUid(oldUid, newUid)
 
-proc syncWalletAccountsOnLoginForReplacedKeycard*(self: AppController) = 
-  self.syncWalletForReplacedKeycard = true
+proc storeDefaultKeyPairForNewKeycardUser*(self: AppController) = 
+  self.storeDefaultKeyPair = true
+
+proc syncKeycardBasedOnAppWalletStateAfterLogin*(self: AppController) = 
+  self.syncKeycardBasedOnAppWalletState = true
+
+proc addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: AppController, oldKeycardUid: string, newKeycardUid: string) = 
+  self.changedKeycardUids.add((oldKcUid: oldKeycardUid, newKcUid: newKeycardUid))
+
+proc removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*(self: AppController) = 
+  self.changedKeycardUids = @[]

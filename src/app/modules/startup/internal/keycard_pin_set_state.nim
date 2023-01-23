@@ -25,11 +25,9 @@ method getNextPrimaryState*(self: KeycardPinSetState, controller: Controller): S
     return createState(StateType.KeycardWrongPuk, self.flowType, self.getBackState)
   if self.flowType == FlowType.AppLogin:
     if controller.getRecoverUsingSeedPhraseWhileLogin():
-      return createState(StateType.LoginKeycardReadingKeycard, self.flowType, nil)
-    if controller.getValidPuk():
-      controller.loginAccountKeycard()
       return nil
-    return createState(StateType.KeycardWrongPuk, self.flowType, self.getBackState)
+    if not controller.getValidPuk():
+      return createState(StateType.KeycardWrongPuk, self.flowType, self.getBackState)
   if self.flowType == FlowType.LostKeycardReplacement:
     if not main_constants.IS_MACOS:
       return nil
@@ -40,13 +38,13 @@ method executePrimaryCommand*(self: KeycardPinSetState, controller: Controller) 
     if main_constants.IS_MACOS:
       return
     if controller.getValidPuk():
-      controller.setupKeycardAccount(false)
+      controller.setupKeycardAccount(storeToKeychain = false, newKeycard = false)
   if self.flowType == FlowType.AppLogin:
     if controller.getRecoverUsingSeedPhraseWhileLogin():
       controller.startLoginFlowAutomatically(controller.getPin())
       return
     if controller.getValidPuk():
-      controller.setupKeycardAccount(false)
+      controller.loginAccountKeycard()
   if self.flowType == FlowType.LostKeycardReplacement:
     if main_constants.IS_MACOS:
       return
@@ -58,4 +56,10 @@ method resolveKeycardNextState*(self: KeycardPinSetState, keycardFlowType: strin
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.error.len == 0:
         controller.setKeycardEvent(keycardEvent)
-        controller.loginAccountKeycard()
+        controller.loginAccountKeycard(storeToKeychain = true, syncWalletAfterLogin = true)
+  if self.flowType == FlowType.AppLogin:
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+      keycardEvent.error.len == 0:
+        # we are here in case of recover account from the login flow using seed phrase
+        controller.setKeycardEvent(keycardEvent)
+        controller.loginAccountKeycard(storeToKeychain = false, syncWalletAfterLogin = false)

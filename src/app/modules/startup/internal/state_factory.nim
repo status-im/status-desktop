@@ -1,4 +1,4 @@
-import chronicles
+import sequtils, sugar, chronicles
 import ../../../../constants as main_constants
 import ../../../../app_service/service/keycard/constants
 import ../controller

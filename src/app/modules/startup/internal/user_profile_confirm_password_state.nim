@@ -22,7 +22,7 @@ method executePrimaryCommand*(self: UserProfileConfirmPasswordState, controller:
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
     controller.storeImportedAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    controller.storeKeycardAccountAndLogin(storeToKeychain)
+    controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
     controller.storeImportedAccountAndLogin(storeToKeychain = false)
 

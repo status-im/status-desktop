@@ -25,7 +25,7 @@ logScope:
   topics = "accounts-service"
 
 const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET, PATH_ENCRYPTION]
-const ACCOUNT_ALREADY_EXISTS_ERROR =  "account already exists"
+const ACCOUNT_ALREADY_EXISTS_ERROR* =  "account already exists"
 const output_csv {.booldefine.} = false
 const KDF_ITERATIONS* {.intdefine.} = 256_000
 
@@ -146,6 +146,13 @@ QtObject:
 
     except Exception as e:
       error "error: ", procName="openedAccounts", errName = e.name, errDesription = e.msg
+
+  proc openedAccountsContainsKeyUid*(self: Service, keyUid: string): bool =
+    let openedAccounts = self.openedAccounts()
+    for acc in openedAccounts:
+      if acc.keyUid == keyUid:
+        return true
+    return false
 
   proc storeDerivedAccounts(self: Service, accountId, hashedPassword: string,
     paths: seq[string]): DerivedAccounts =

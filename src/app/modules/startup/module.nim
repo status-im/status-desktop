@@ -347,7 +347,7 @@ proc delayStartingApp[T](self: Module[T]) =
   ## - FlowType.FirstRunOldUserImportSeedPhrase
   ## - FlowType.FirstRunOldUserKeycardImport
   ## we want to delay app start just to be sure that messages from waku will be received
-  self.controller.connectToTimeoutEventAndStratTimer(timeoutInMilliseconds = 30000) # delay for 30 seconds
+  self.controller.connectToTimeoutEventAndStratTimer(timeoutInMilliseconds = 10000) # delay for 30 seconds
 
 method startAppAfterDelay*[T](self: Module[T]) =
   if not self.view.fetchingDataModel().allMessagesLoaded():
@@ -469,11 +469,17 @@ method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurr
           self.view.setCurrentStartupState(newState)
           debug "new state for onboarding/login flow continuation after shared flow is terminated", setCurrFlow=newState.flowType(), newCurrState=newState.stateType()
 
-method storeKeyPairForNewKeycardUser*[T](self: Module[T]) =
-  self.delegate.storeKeyPairForNewKeycardUser()
+method storeDefaultKeyPairForNewKeycardUser*[T](self: Module[T]) =
+  self.delegate.storeDefaultKeyPairForNewKeycardUser()
 
-method syncWalletAccountsOnLoginForReplacedKeycard*[T](self: Module[T]) =
-  self.delegate.syncWalletAccountsOnLoginForReplacedKeycard()
+method syncKeycardBasedOnAppWalletStateAfterLogin*[T](self: Module[T]) =
+  self.delegate.syncKeycardBasedOnAppWalletStateAfterLogin()
+
+method addToKeycardUidPairsToCheckForAChangeAfterLogin*[T](self: Module[T], oldKeycardUid: string, newKeycardUid: string) =
+  self.delegate.addToKeycardUidPairsToCheckForAChangeAfterLogin(oldKeycardUid, newKeycardUid)
+
+method removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*[T](self: Module[T]) =
+  self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin()
 
 method checkForStoringPasswordToKeychain*[T](self: Module[T]) =
   self.controller.checkForStoringPasswordToKeychain()

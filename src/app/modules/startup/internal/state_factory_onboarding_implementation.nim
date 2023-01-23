@@ -121,20 +121,12 @@ proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, key
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamFreeSlots:
         return createState(StateType.KeycardMaxPairingSlotsReached, state.flowType, backState)
-    if keycardFlowType == ResponseTypeValueEnterNewPIN and 
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorRequireInit:
-        return createState(StateType.KeycardCreatePin, state.flowType, backState)
   
   if state.flowType == FlowType.AppLogin:
     if keycardFlowType == ResponseTypeValueSwapCard and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPUKRetries:
         return createState(StateType.KeycardMaxPukRetriesReached, state.flowType, state.getBackState)
-    if keycardFlowType == ResponseTypeValueEnterNewPIN and 
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorRequireInit:
-        return createState(StateType.KeycardCreatePin, state.flowType, state.getBackState)
 
   if state.flowType == FlowType.LostKeycardReplacement:
     var backState = state.getBackState

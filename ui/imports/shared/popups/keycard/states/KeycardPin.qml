@@ -39,14 +39,15 @@ Item {
     }
 
     Component.onCompleted: {
-        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication) {
+        if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.authentication ||
+                root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.factoryReset) {
             timer.start()
         }
     }
 
     Timer {
         id: timer
-        interval: 1000
+        interval: 500
         onTriggered: {
             pinInputField.statesInitialization()
             pinInputField.forceFocus()
