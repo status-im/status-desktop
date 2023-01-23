@@ -167,7 +167,6 @@ ColumnLayout {
             selectedKeyUid: advancedSection.selectedKeyUid
             selectedKeyUidMigratedToKeycard: advancedSection.selectedKeyUidMigratedToKeycard
             selectedPath: advancedSection.path
-            enterPasswordIcon: advancedSection.enterPasswordIcon
 
             Component.onCompleted: {
                 advancedSection.selectedAddress = Qt.binding(function() { return derivedAddressesPanel.selectedAddress})
