@@ -42,7 +42,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.Service,
   nodeConfigurationService: node_configuration_service.Service, contactService: contact_service.Service, chatService: chat_service.Service,
   communityService: community_service.Service, messageService: message_service.Service, gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service):
+  mailserversService: mailservers_service.Service, communityUsersModule: users_module.AccessInterface):
   Module =
   result = Module()
   result.delegate = delegate
@@ -55,10 +55,11 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.inputAreaModule = input_area_module.newModule(result, sectionId, chatId, belongsToCommunity, chatService, communityService, gifService)
   result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity,
   contactService, communityService, chatService, messageService, mailserversService)
-  result.usersModule = users_module.newModule(
-    result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable,
-    contactService, chat_service, communityService, messageService
-  )
+  result.usersModule = 
+    if communityUsersModule == nil: 
+      users_module.newModule( events, sectionId, chatId, belongsToCommunity, 
+      isUsersListAvailable, contactService, chat_service, communityService, messageService)
+    else: communityUsersModule
 
 method delete*(self: Module) =
   self.inputAreaModule.delete
@@ -86,6 +87,8 @@ method load*(self: Module) =
     if(contactDto.image.thumbnail.len > 0):
       chatImage = contactDto.image.thumbnail
 
+  self.usersModule.load()
+
   self.view.load(chatDto.id, chatDto.chatType.int, self.controller.belongsToCommunity(),
     self.controller.isUsersListAvailable(), chatName, chatImage,
     chatDto.color, chatDto.description, chatDto.emoji, hasNotification, notificationsCount,
@@ -94,7 +97,6 @@ method load*(self: Module) =
 
   self.inputAreaModule.load()
   self.messagesModule.load()
-  self.usersModule.load()
 
 proc checkIfModuleDidLoad(self: Module) =
   if self.moduleLoaded:

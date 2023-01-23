@@ -1,6 +1,5 @@
 import NimQml, strutils, sequtils, sugar
 import io_interface
-import ../io_interface as delegate_interface
 import view, controller
 import ../../../../shared_models/[member_model, member_item]
 import ../../../../../global/global_singleton
@@ -17,7 +16,6 @@ export io_interface
 
 type
   Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
     view: View
     viewVariant: QVariant
     controller: Controller
@@ -27,13 +25,12 @@ type
 method addChatMember*(self: Module,  member: ChatMember)
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
+  events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service,
   chatService: chat_service.Service, communityService: community_service.Service,
   messageService: message_service.Service,
 ): Module =
   result = Module()
-  result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(
@@ -48,8 +45,9 @@ method delete*(self: Module) =
   self.controller.delete
 
 method load*(self: Module) =
-  self.controller.init()
-  self.view.load()
+  if not self.moduleLoaded:
+    self.controller.init()
+    self.view.load()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -60,7 +58,6 @@ method viewDidLoad*(self: Module) =
     self.addChatMember(member)
 
   self.moduleLoaded = true
-  self.delegate.usersDidLoad()
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
@@ -140,6 +137,9 @@ method addChatMember*(self: Module,  member: ChatMember) =
     ))
 
 method onChatMembersAdded*(self: Module,  ids: seq[string]) =
+  if ids.len() == 0:
+    return
+
   let members = self.controller.getChatMembers()
   for id in ids:
     for member in members:

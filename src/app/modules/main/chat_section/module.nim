@@ -8,6 +8,7 @@ import ../../shared_models/user_item as user_item
 import ../../shared_models/user_model as user_model
 
 import chat_content/module as chat_content_module
+import chat_content/users/module as users_module
 
 import ../../../global/app_sections_config as conf
 import ../../../global/global_singleton
@@ -38,6 +39,7 @@ type
     controller: Controller
     chatContentModules: OrderedTable[string, chat_content_module.AccessInterface]
     moduleLoaded: bool
+    usersModule: users_module.AccessInterface
 
 # Forward declaration
 proc buildChatSectionUI(self: Module,
@@ -77,6 +79,12 @@ proc newModule*(
 
   result.chatContentModules = initOrderedTable[string, chat_content_module.AccessInterface]()
 
+  # Simple community channels uses comminity usersModule while chats uses their own usersModule
+  if isCommunity:
+    result.usersModule = users_module.newModule(
+      events, sectionId, chatId = "", belongsToCommunity = true, isUsersListAvailable = true,
+      contactService, chat_service, communityService, messageService)
+
 method delete*(self: Module) =
   for cModule in self.chatContentModules.values:
     cModule.delete
@@ -84,6 +92,8 @@ method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
+  if self.usersModule != nil:
+    self.usersModule.delete
 
 method isCommunity*(self: Module): bool =
   return self.controller.isCommunity()
@@ -108,7 +118,7 @@ proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsers
   mailserversService: mailservers_service.Service) =
   self.chatContentModules[chatId] = chat_content_module.newModule(self, events, self.controller.getMySectionId(), chatId,
     belongToCommunity, isUsersListAvailable, settingsService, nodeConfigurationService, contactService, chatService, communityService,
-    messageService, gifService, mailserversService)
+    messageService, gifService, mailserversService, self.usersModule)
 
 proc removeSubmodule(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
@@ -135,7 +145,6 @@ proc buildChatSectionUI(
   for chatDto in channelGroup.chats:
     if (chatDto.categoryId != ""):
       continue
-
     let hasNotification = not chatDto.muted and (chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0)
     let notificationsCount = chatDto.unviewedMentionsCount
 
@@ -186,7 +195,6 @@ proc buildChatSectionUI(
 
     let categoryChats = channelGroup.chats.filter(c => c.categoryId == cat.id)
     for chatDto in categoryChats:
-
       let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
       let notificationsCount = chatDto.unviewedMentionsCount
 
@@ -284,6 +292,8 @@ method load*(
   if(not self.controller.isCommunity()):
     # we do this only in case of chat section (not in case of communities)
     self.initContactRequestsModel()
+  else:
+    self.usersModule.load()
 
   let activeChatId = self.controller.getActiveChatId()
   for chatId, cModule in self.chatContentModules:
