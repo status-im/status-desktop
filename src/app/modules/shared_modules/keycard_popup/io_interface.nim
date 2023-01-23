@@ -76,6 +76,7 @@ type FlowType* {.pure.} = enum
 const FlowsWeShouldNotTryAKeycardSyncFor* = @[
   FlowType.General, 
   FlowType.FactoryReset,
+  FlowType.UnlockKeycard,
   FlowType.SetupNewKeycard, 
   FlowType.SetupNewKeycardNewSeedPhrase,
   FlowType.SetupNewKeycardOldSeedPhrase, 

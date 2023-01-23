@@ -64,6 +64,7 @@ type
     tmpKeycardCopyDestinationKeycardUid: string
     tmpKeycardSyncingInProgress: bool
     tmpFlowData: SharedKeycarModuleFlowTerminatedArgs
+    tmpUnlockUsingSeedPhrase: bool # true - sp, false - puk
 
 proc newController*(delegate: io_interface.AccessInterface,
   uniqueIdentifier: string,
@@ -280,6 +281,12 @@ proc keycardSyncingInProgress*(self: Controller): bool =
 
 proc setKeycardSyncingInProgress*(self: Controller, value: bool) =
   self.tmpKeycardSyncingInProgress = value
+
+proc unlockUsingSeedPhrase*(self: Controller): bool =
+  return self.tmpUnlockUsingSeedPhrase
+
+proc setUnlockUsingSeedPhrase*(self: Controller, value: bool) =
+  self.tmpUnlockUsingSeedPhrase = value
 
 proc setSelectedKeyPair*(self: Controller, isProfile: bool, paths: seq[string], keyPairDto: KeyPairDto) =
   if paths.len != keyPairDto.accountsAddresses.len:

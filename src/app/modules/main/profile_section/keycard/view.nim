@@ -44,6 +44,10 @@ QtObject:
   QtProperty[QVariant] keycardSharedModule:
     read = getKeycardSharedModule
     
+  proc sharedModuleBusy*(self: View) {.signal.}
+  proc emitSharedModuleBusy*(self: View) =
+    self.sharedModuleBusy()
+    
   proc displayKeycardSharedModuleFlow*(self: View) {.signal.}
   proc emitDisplayKeycardSharedModuleFlow*(self: View) =
     self.displayKeycardSharedModuleFlow()

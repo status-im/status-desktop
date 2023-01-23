@@ -512,6 +512,7 @@ proc buildAndRegisterUserProfile(self: AppController) =
       let oldUid = self.changedKeycardUids[0].oldKcUid
       let newUid = self.changedKeycardUids[^1].newKcUid
       discard self.walletAccountService.updateKeycardUid(oldUid, newUid)
+      discard self.walletAccountService.setKeycardUnlocked(loggedInAccount.keyUid, newUid)
 
 proc storeDefaultKeyPairForNewKeycardUser*(self: AppController) = 
   self.storeDefaultKeyPair = true
