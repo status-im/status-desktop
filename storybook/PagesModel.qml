@@ -54,6 +54,10 @@ ListModel {
          section: "Panels"
     }
     ListElement {
+         title: "PermissionConflictWarningPanel"
+         section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
