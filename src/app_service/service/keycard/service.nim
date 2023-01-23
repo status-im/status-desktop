@@ -131,19 +131,19 @@ QtObject:
     self.updateLocalPayloadForCurrentFlow(payload, cleanBefore = true)
     let response = keycard_go.keycardStartFlow(self.currentFlow.int, $payload)
     if self.doLogging:
-      debug "keycardStartFlow", currentFlow=self.currentFlow.int, payload=payload, response=response
+      debug "keycardStartFlow", kcServiceCurrFlow=($self.currentFlow), payload=payload, response=response
 
   proc resumeFlow(self: Service, payload: JsonNode) =
     self.updateLocalPayloadForCurrentFlow(payload)
     let response = keycard_go.keycardResumeFlow($payload)
     if self.doLogging:
-      debug "keycardResumeFlow", currentFlow=self.currentFlow.int, payload=payload, response=response
+      debug "keycardResumeFlow", kcServiceCurrFlow=($self.currentFlow), payload=payload, response=response
 
   proc cancelCurrentFlow*(self: Service) =
     let response = keycard_go.keycardCancelFlow()
     self.currentFlow = KCSFlowType.NoFlow
     if self.doLogging:
-      debug "keycardCancelFlow", currentFlow=self.currentFlow.int, response=response
+      debug "keycardCancelFlow", kcServiceCurrFlow=($self.currentFlow), response=response
 
   proc generateRandomPUK*(self: Service): string =
     randomize()
@@ -154,7 +154,7 @@ QtObject:
     if(self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
       return
     if self.doLogging:
-      debug "onTimeout, about to start flow: ", currentFlow=self.currentFlow
+      debug "onTimeout, about to start flow: ", kcServiceCurrFlow=($self.currentFlow)
     self.startFlow(self.setPayloadForCurrentFlow)
 
   proc runTimer(self: Service) =

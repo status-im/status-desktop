@@ -39,9 +39,10 @@ method resolveKeycardNextState*(self: KeycardWrongPukState, keycardFlowType: str
       controller.setKeycardEvent(keycardEvent)
       controller.setPukValid(true)
       if not main_constants.IS_MACOS:
-        controller.setupKeycardAccount(false)
+        controller.setupKeycardAccount(storeToKeychain = false, newKeycard = false)
         return nil
-      return createState(StateType.Biometrics, self.flowType, self.getBackState)
+      let backState = findBackStateWithTargetedStateType(self, StateType.RecoverOldUser)
+      return createState(StateType.Biometrics, self.flowType, backState)
   if self.flowType == FlowType.AppLogin:
     if keycardFlowType == ResponseTypeValueEnterPUK and 
       keycardEvent.error.len > 0 and

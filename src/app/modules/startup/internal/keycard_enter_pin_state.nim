@@ -56,6 +56,7 @@ method resolveKeycardNextState*(self: KeycardEnterPinState, keycardFlowType: str
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       controller.setKeycardEvent(keycardEvent)
       if not main_constants.IS_MACOS:
-        controller.setupKeycardAccount(false)
+        controller.setupKeycardAccount(storeToKeychain = false, newKeycard = false)
         return nil
-      return createState(StateType.Biometrics, self.flowType, self)
+      let backState = findBackStateWithTargetedStateType(self, StateType.RecoverOldUser)
+      return createState(StateType.Biometrics, self.flowType, backState)

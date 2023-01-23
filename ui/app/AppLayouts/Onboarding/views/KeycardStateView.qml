@@ -361,7 +361,7 @@ Item {
             }
             PropertyChanges {
                 target: message
-                text: qsTr("Remove Keycard and try again")
+                text: qsTr("Go back, remove Keycard and try again")
                 color: Theme.palette.baseColor1
                 font.pixelSize: Constants.keycard.general.fontSize3
             }

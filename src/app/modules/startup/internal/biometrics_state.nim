@@ -10,10 +10,6 @@ proc newBiometricsState*(flowType: FlowType, backState: State): BiometricsState 
 proc delete*(self: BiometricsState) =
   self.State.delete
 
-method executeBackCommand*(self: BiometricsState, controller: Controller) =
-  if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.runRecoverAccountFlow()
-
 method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
   let storeToKeychain = true # true, cause we have support for keychain for mac os
   if self.flowType == FlowType.FirstRunNewUserNewKeys:
@@ -25,11 +21,11 @@ method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
     ## but since current implementation is like that and this is not a bug fixing issue, left as it is.
     controller.storeImportedAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    controller.storeKeycardAccountAndLogin(storeToKeychain)
+    controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
-    controller.storeKeycardAccountAndLogin(storeToKeychain)
+    controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.setupKeycardAccount(storeToKeychain)
+    controller.setupKeycardAccount(storeToKeychain, newKeycard = false)
   elif self.flowType == FlowType.LostKeycardReplacement:
     self.storeToKeychain = storeToKeychain
     controller.startLoginFlowAutomatically(controller.getPin())
@@ -45,11 +41,11 @@ method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
     ## but since current implementation is like that and this is not a bug fixing issue, left as it is.
     controller.storeImportedAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    controller.storeKeycardAccountAndLogin(storeToKeychain)
+    controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
-    controller.storeKeycardAccountAndLogin(storeToKeychain)
+    controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.setupKeycardAccount(storeToKeychain)
+    controller.setupKeycardAccount(storeToKeychain, newKeycard = false)
   elif self.flowType == FlowType.LostKeycardReplacement:
     self.storeToKeychain = storeToKeychain
     controller.startLoginFlowAutomatically(controller.getPin())

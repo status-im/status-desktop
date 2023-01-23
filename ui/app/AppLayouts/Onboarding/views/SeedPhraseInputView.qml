@@ -37,6 +37,10 @@ Item {
 
         onWrongSeedPhraseChanged: {
             if (wrongSeedPhrase) {
+                if (root.startupStore.startupModuleInst.flowType === Constants.startupFlow.firstRunOldUserImportSeedPhrase) {
+                    invalidSeedTxt.text = qsTr("Profile keypair for the inserted seed phrase is already set up")
+                    return
+                }
                 invalidSeedTxt.text = qsTr("Seed phrase doesn’t match the profile of an existing Keycard user on this device")
             }
             else {

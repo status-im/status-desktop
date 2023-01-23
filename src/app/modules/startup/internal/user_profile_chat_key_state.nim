@@ -13,11 +13,11 @@ method executePrimaryCommand*(self: UserProfileChatKeyState, controller: Control
     return
   let storeToKeychain = false # false, cause we don't have keychain support for other than mac os
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    controller.storeKeycardAccountAndLogin(storeToKeychain)
+    controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
-    controller.storeKeycardAccountAndLogin(storeToKeychain)
+    controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.setupKeycardAccount(storeToKeychain)
+    controller.setupKeycardAccount(storeToKeychain, newKeycard = false)
 
 method getNextPrimaryState*(self: UserProfileChatKeyState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunNewUserNewKeys or

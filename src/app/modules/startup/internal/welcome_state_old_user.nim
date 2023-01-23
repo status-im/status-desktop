@@ -9,7 +9,9 @@ proc delete*(self: WelcomeStateOldUser) =
   self.State.delete
 
 method executeBackCommand*(self: WelcomeStateOldUser, controller: Controller) =
-  if self.flowType == FlowType.AppLogin and controller.isSelectedAccountAKeycardAccount():
+  controller.cancelCurrentFlow()
+  if self.stateType != StateType.Welcome and controller.isSelectedAccountAKeycardAccount():
+    # means we're getting back to login flow
     controller.runLoginFlow()
 
 method getNextPrimaryState*(self: WelcomeStateOldUser, controller: Controller): State =

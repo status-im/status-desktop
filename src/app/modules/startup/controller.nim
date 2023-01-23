@@ -50,6 +50,7 @@ type
     tmpSeedPhraseLength: int
     tmpKeyUid: string
     tmpKeycardEvent: KeycardEvent
+    tmpCardMetadata: CardMetadata
     tmpKeychainErrorOccurred: bool
     tmpRecoverUsingSeedPhraseWhileLogin: bool
 
@@ -162,6 +163,7 @@ proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
 
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
+  self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
   self.profileService.setDisplayName(self.tmpDisplayName)
   let images = self.storeIdentityImage()
   self.accountsService.updateLoggedInAccount(self.tmpDisplayName, images)
@@ -266,6 +268,18 @@ proc setRemainingAttempts*(self: Controller, value: int) =
 proc setKeycardEvent*(self: Controller, value: KeycardEvent) =
   self.tmpKeycardEvent = value
 
+proc setMetadataFromKeycard*(self: Controller, cardMetadata: CardMetadata) =
+  self.tmpCardMetadata = cardMetadata
+
+proc getMetadataFromKeycard*(self: Controller): CardMetadata =
+  return self.tmpCardMetadata
+
+proc addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: Controller, oldKeycardUid: string, newKeycardUid: string) = 
+  self.delegate.addToKeycardUidPairsToCheckForAChangeAfterLogin(oldKeycardUid, newKeycardUid)
+
+proc syncKeycardBasedOnAppWalletStateAfterLogin(self: Controller) = 
+  self.delegate.syncKeycardBasedOnAppWalletStateAfterLogin()
+
 proc keychainErrorOccurred*(self: Controller): bool =
   return self.tmpKeychainErrorOccurred
 
@@ -354,23 +368,33 @@ proc storeImportedAccountAndLogin*(self: Controller, storeToKeychain: bool) =
   let accountId = self.getImportedAccount().id
   self.setupAccount(accountId, storeToKeychain)
 
-proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool) =
+proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool) =
   if self.importMnemonic():
     self.delegate.moveToLoadingAppState()
-    self.delegate.storeKeyPairForNewKeycardUser()
-    self.storeMetadataForNewKeycardUser()
+    if newKeycard:
+      self.delegate.storeDefaultKeyPairForNewKeycardUser()
+      self.storeMetadataForNewKeycardUser()
+    else:
+      self.syncKeycardBasedOnAppWalletStateAfterLogin()
     self.accountsService.setupAccountKeycard(KeycardEvent(), self.tmpDisplayName, useImportedAcc = true)
     self.setupKeychain(storeToKeychain)
   else:
     error "an error ocurred while importing mnemonic"
 
-proc setupKeycardAccount*(self: Controller, storeToKeychain: bool) =
+proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, newKeycard: bool) =
   if self.tmpSeedPhrase.len > 0:
     # if `tmpSeedPhrase` is not empty means user has recovered keycard via seed phrase
-    self.storeKeycardAccountAndLogin(storeToKeychain)
+    self.storeKeycardAccountAndLogin(storeToKeychain, newKeycard)
   else:
+    if self.tmpKeycardEvent.keyUid.len == 0 or
+      self.accountsService.openedAccountsContainsKeyUid(self.tmpKeycardEvent.keyUid):
+        self.delegate.importAccountError(ACCOUNT_ALREADY_EXISTS_ERROR)
+        return
     self.delegate.moveToLoadingAppState()
-    self.delegate.storeKeyPairForNewKeycardUser()
+    if newKeycard:
+      self.delegate.storeDefaultKeyPairForNewKeycardUser()
+    else:
+      self.syncKeycardBasedOnAppWalletStateAfterLogin()
     self.accountsService.setupAccountKeycard(self.tmpKeycardEvent, self.tmpDisplayName, useImportedAcc = false)
     self.setupKeychain(storeToKeychain)
 
@@ -419,7 +443,7 @@ proc login*(self: Controller) =
 
 proc loginAccountKeycard*(self: Controller, storeToKeychain = false, syncWalletAfterLogin = false) =
   if syncWalletAfterLogin:
-    self.delegate.syncWalletAccountsOnLoginForReplacedKeycard()
+    self.syncKeycardBasedOnAppWalletStateAfterLogin()
   if storeToKeychain:
     ## storing not now, user will be asked to store the pin once he is logged in
     singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
@@ -433,6 +457,9 @@ proc loginAccountKeycard*(self: Controller, storeToKeychain = false, syncWalletA
 proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =
   let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)
   return acc.keyUid
+
+proc getCurrentKeycardServiceFlow*(self: Controller): keycard_service.KCSFlowType =
+  return self.keycardService.getCurrentFlow()
 
 proc getLastReceivedKeycardData*(self: Controller): tuple[flowType: string, flowEvent: KeycardEvent] =
   return self.keycardService.getLastReceivedKeycardData()
@@ -462,6 +489,10 @@ proc runRecoverAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase =
 proc runStoreMetadataFlow*(self: Controller, cardName: string, pin: string, walletPaths: seq[string]) =
   self.cancelCurrentFlow()
   self.keycardService.startStoreMetadataFlow(cardName, pin, walletPaths)
+
+proc runGetMetadataFlow*(self: Controller, resolveAddress = false, exportMasterAddr = false, pin = "") =
+  self.cancelCurrentFlow()
+  self.keycardService.startGetMetadataFlow(resolveAddress, exportMasterAddr, pin)
 
 proc resumeCurrentFlow*(self: Controller) =
   self.keycardService.resumeCurrentFlow()
