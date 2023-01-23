@@ -15,6 +15,13 @@ Pane {
             readonly property var assetsModel: AssetsModel {}
             readonly property var collectiblesModel: CollectiblesModel {}
             readonly property var channelsModel: ChannelsModel {}
+            readonly property var permissionConflict: QtObject {
+                property bool exists: true
+                property string holdings: "1 ETH"
+                property string permissions: "View and Post"
+                property string channels: "#general"
+
+            }
 
             function editPermission(index, holdings, permissions, channels, isPrivate) {
                 logs.logEvent("CommunitiesStore::editPermission - index: " + index)
