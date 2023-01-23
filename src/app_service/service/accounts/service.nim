@@ -701,6 +701,8 @@ QtObject:
       hashedCurrentPassword: hashedCurrentPassword,
       newPassword: newPassword
     )
+
+    DB_BLOCKED_DUE_TO_PROFILE_MIGRATION = true
     self.threadpool.start(arg)
 
   proc onConvertToKeycardAccount*(self: Service, response: string) {.slot.} =

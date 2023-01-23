@@ -152,10 +152,13 @@ QtObject:
       result.walletAccounts = initOrderedTable[string, WalletAccountDto]()
 
   proc fetchAccounts*(self: Service): seq[WalletAccountDto] =
-    let response = status_go_accounts.getAccounts()
-    return response.result.getElems().map(
-        x => x.toWalletAccountDto()
-      ).filter(a => not a.isChat)
+    try:
+      let response = status_go_accounts.getAccounts()
+      return response.result.getElems().map(
+          x => x.toWalletAccountDto()
+        ).filter(a => not a.isChat)
+    except Exception as e:
+      error "error: ", procName="fetchAccounts", errName = e.name, errDesription = e.msg    
 
   proc setEnsName(self: Service, account: WalletAccountDto) =
     let chainId = self.networkService.getNetworkForEns().chainId
