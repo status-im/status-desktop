@@ -518,9 +518,19 @@ StatusScrollView {
             }
         }
 
+        PermissionConflictWarningPanel{
+            id: conflictPanel
+            visible: store.permissionConflict.exists
+            Layout.fillWidth: true
+            Layout.topMargin: 50 // by desing
+            holdings: store.permissionConflict.holdings
+            permissions: store.permissionConflict.permissions
+            channels: store.permissionConflict.channels
+        }
+
         StatusButton {
             visible: !root.isEditState
-            Layout.topMargin: 24
+            Layout.topMargin: conflictPanel.visible ? conflictPanel.Layout.topMargin : 24 // by design
             text: qsTr("Create permission")
             enabled: d.dirtyValues.holdingsModel && d.dirtyValues.holdingsModel.count > 0 && d.dirtyValues.permissionObject.key !== null
             Layout.preferredHeight: 44
