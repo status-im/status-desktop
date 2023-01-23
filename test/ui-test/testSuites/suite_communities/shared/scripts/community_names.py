@@ -31,6 +31,8 @@ communitySettings_MembersTab_Member_Kick_Button = {"container": communitySetting
 communitySettings_KickModal_Kick_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
 chatView_TogglePinMessageButton = {"container": chatView_log, "objectName": "MessageView_toggleMessagePin", "type": "StatusFlatRoundButton", "visible": True}
 chatView_ReplyToMessageButton = {"container": chatView_log, "objectName": "replyToMessageButton", "type": "StatusFlatRoundButton", "visible": True}
+chatView_editMessageInputComponent = {"container": statusDesktop_mainWindow, "objectName": "editMessageInput", "type": "StatusChatInput", "visible": True}
+chatView_editMessageInputTextArea = {"container": chatView_editMessageInputComponent, "objectName": "messageInputField", "type": "TextArea", "visible": True}
 
 # Community channel popup:
 createOrEditCommunityChannelNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelNameInput", "type": "TextEdit", "visible": True}

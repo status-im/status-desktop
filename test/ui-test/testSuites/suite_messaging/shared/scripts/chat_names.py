@@ -5,7 +5,6 @@ mainWindow_scrollView_ScrollView = {"container": statusDesktop_mainWindow, "id":
 chatView_chatLogView_lastMsg_MessageView = {"container": chatView_log, "index": 0, "type": "MessageView"}
 chatView_lastChatText_Text = {"container": chatView_chatLogView_lastMsg_MessageView, "type": "TextEdit", "objectName": "StatusTextMessage_chatText", "visible": True}
 chatView_editMessageInputComponent = {"container": statusDesktop_mainWindow, "objectName": "editMessageInput", "type": "StatusChatInput", "visible": True}
-chatView_editMessageInputTextArea = {"container": chatView_editMessageInputComponent, "objectName": "messageInputField", "type": "TextArea", "visible": True}
 mark_as_Read_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "chatMarkAsReadMenuItem", "type": "StatusMenuItem", "visible": True}
 chat_Input_Stickers_Button = {"container": statusDesktop_mainWindow, "objectName": "statusChatInputStickersButton", "type": "StatusFlatRoundButton", "visible": True}
 chatView_SuggestionBoxPanel ={"container": statusDesktop_mainWindow, "objectName": "suggestionsBox", "type": "SuggestionBoxPanel"}
