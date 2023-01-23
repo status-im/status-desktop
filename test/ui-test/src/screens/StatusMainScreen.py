@@ -22,7 +22,6 @@ class MainScreenComponents(Enum):
     POPUP_OVERLAY = "statusDesktop_mainWindow_overlay"
     CHAT_NAVBAR_ICON = "navBarListView_Chat_navbar_StatusNavBarTabButton"
     COMMUNITY_PORTAL_BUTTON = "navBarListView_Communities_Portal_navbar_StatusNavBarTabButton"
-    JOIN_PUBLIC_CHAT = "join_public_chat_StatusMenuItem"
     SETTINGS_BUTTON = "navBarListView_Settings_navbar_StatusNavBarTabButton"
     WALLET_BUTTON = "wallet_navbar_wallet_icon_StatusIcon"
     START_CHAT_BTN = "mainWindow_startChat"
@@ -47,7 +46,6 @@ class ProfilePopup(Enum):
     
 class ChatNamePopUp(Enum):
     CHAT_NAME_TEXT = "chat_name_PlaceholderText"
-    INPUT_ROOM_TOPIC_TEXT = "joinPublicChat_input"
     START_CHAT_BTN = "startChat_Btn"
 
 

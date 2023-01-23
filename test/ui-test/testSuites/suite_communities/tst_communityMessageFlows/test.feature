@@ -78,3 +78,51 @@ Feature: Status Desktop community messages
         Examples:
         | edited       |
         | Edited by me |
+
+    Scenario Outline: The user can delete his/her own message
+         Given the user sends a chat message "<message>"
+         When the user deletes the message at index 0
+         Then the last message displayed is not "<message>"
+         Examples:
+             | message             |
+             | random chat message |
+
+    Scenario: The user can clear chat history
+        Given the user sends a chat message "Hi hi"
+        And the user sends a chat message "testing chat"
+        And the user sends a chat message "history"
+        When the user clears chat history
+        Then the chat is cleared
+
+    Scenario: The user can send a GIF
+        Given the user opens app settings screen
+        And the user opens the messaging settings
+        When the user activates the link preview if it is deactivated
+        And the user activates tenor GIFs preview
+        And the user opens the community named "test_community"
+        Then the user lands on the community named "test_community"
+        When the user sends a GIF message
+        Then the GIF message is displayed
+
+    @mayfail
+    # Test fails at finding the link. Issue #9380
+    Scenario Outline: The user can activate image unfurling
+        Given the user sends a chat message "<image_url>"
+        And the image "<image_url>" is not unfurled in the chat
+        And the user opens app settings screen
+        And the user opens the messaging settings
+        When the user activates the link preview if it is deactivated
+        And the user activates image unfurling
+        And the user opens the community named "test_community"
+        Then the user lands on the community named "test_community"
+        When the user switches to "general" chat
+        Then the image "<image_url>" is unfurled in the chat
+        Examples:
+           | image_url                                                                                      |
+           | https://github.com/status-im/status-desktop/raw/master/test/ui-test/fixtures/images/doggo.jpeg |
+
+   Scenario: The user is able to use emoji suggestions
+        Given the user types "hello :thumbs"
+        And the user selects the emoji in the suggestion's list
+        When the user presses enter
+        Then the last chat message contains "👍"

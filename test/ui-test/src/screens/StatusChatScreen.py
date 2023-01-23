@@ -481,7 +481,11 @@ class StatusChatScreen:
             verify(str(chat_image_loader.source.path) in image_link, "The url is most probably the one expected")
 
     def verify_image_unfurled_status(self, image_link: str, unfurled: bool):
+        message_list = get_obj(ChatComponents.CHAT_LOG.value)
+        message_list.positionViewAtEnd()
         self._verify_image_unfurled_status_for_component(ChatComponents.LINK_PREVIEW_UNFURLED_IMAGE.value, image_link, unfurled)
 
     def verify_link_image_unfurled_status(self, image_link: str, unfurled: bool):
+        message_list = get_obj(ChatComponents.CHAT_LOG.value)
+        message_list.positionViewAtEnd()
         self._verify_image_unfurled_status_for_component(ChatComponents.LINK_PREVIEW_UNFURLED_LINK_IMAGE.value, image_link, unfurled)
