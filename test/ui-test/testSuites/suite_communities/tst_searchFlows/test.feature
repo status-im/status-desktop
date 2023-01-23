@@ -40,27 +40,3 @@ Feature: Search feature (ctrl+F)
         And the user searches for "automation"
         When the user clicks on the search result for channel "automation-community"
         Then the channel named "automation-community" is open
-
-	@mayfail
-	# myfail because of dekstop issue #7989. Once it is fixed, remove tag.
-	Scenario: The user can search for a public channel
-        Given the user opens the search menu
-        And the user searches for "automation"
-        When the user clicks on the search result for channel "search-automation-test-2"
-        Then the chat title is "search-automation-test-2"
-
-	@mayfail
-	# myfail because of desktop issue #7989. Once it is fixed, remove tag.
-    Scenario: The user can search for a message in a public channel
-        Given the user opens the chat section
-        And the user joins chat room "search-automation-test-1"
-        And the user sends a random chat message
-        # Go back to the portal so that we see if the search really redirects
-        And the user opens the community portal section
-        And the user opens the search menu
-
-        When the user searches the random message
-        Then the search menu shows 1 results
-
-        When the user clicks on the search result for the random message
-        Then the chat title is "search-automation-test-1"

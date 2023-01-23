@@ -114,12 +114,6 @@ def signs_up_with_seed_phrase_process_steps(context, seed_phrase: str, user: str
     the_user_signs_up(user, password)
     the_user_lands_on_the_signed_in_app()
 
-def the_user_joins_chat_room(chat_room: str):
-    main_screen = StatusMainScreen()        
-    main_screen.join_chat_room(chat_room)
-    chat_screen = StatusChatScreen()
-    chat_screen.verify_chat_title(chat_room)
-
 def the_user_opens_the_chat_section():
     main_screen = StatusMainScreen()        
     main_screen.open_chat_section()

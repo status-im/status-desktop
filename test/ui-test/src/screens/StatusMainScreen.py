@@ -20,7 +20,6 @@ import time
 class MainScreenComponents(Enum):
     MAIN_WINDOW = "statusDesktop_mainWindow"
     POPUP_OVERLAY = "statusDesktop_mainWindow_overlay"
-    PUBLIC_CHAT_ICON = "mainWindow_public_chat_icon_StatusIcon"
     CHAT_NAVBAR_ICON = "navBarListView_Chat_navbar_StatusNavBarTabButton"
     COMMUNITY_PORTAL_BUTTON = "navBarListView_Communities_Portal_navbar_StatusNavBarTabButton"
     JOIN_PUBLIC_CHAT = "join_public_chat_StatusMenuItem"
@@ -99,12 +98,6 @@ class StatusMainScreen:
             sleep_test(0.5)
         verify_failure(f"Banner is still visible after {timeoutMSec}ms")
 
-    def join_chat_room(self, room: str):
-        click_obj_by_name(MainScreenComponents.PUBLIC_CHAT_ICON.value)
-        #click_obj_by_name(MainScreenComponents.JOIN_PUBLIC_CHAT.value)
-        type(ChatNamePopUp.INPUT_ROOM_TOPIC_TEXT.value, room)
-        click_obj_by_name(ChatNamePopUp.START_CHAT_BTN.value)
-        
     def open_chat_section(self):
         click_obj_by_name(MainScreenComponents.CHAT_NAVBAR_ICON.value)
         
