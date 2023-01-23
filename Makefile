@@ -117,11 +117,11 @@ BOTTLES_DIR := $(shell pwd)/bottles
 BOTTLES := $(addprefix $(BOTTLES_DIR)/,openssl@1.1 pcre)
 
 $(BOTTLES): | $(BOTTLES_DIR)
-	echo -e "\e[92mFetching:\e[39m $(notdir $@) bottle"
+	echo -e "\033[92mFetching:\033[39m $(notdir $@) bottle"
 	./scripts/fetch-brew-bottle.sh $(notdir $@)
 
 $(BOTTLES_DIR):
-	echo -e "\e[92mUpdating:\e[39m macOS Homebrew"
+	echo -e "\033[92mUpdating:\033[39m macOS Homebrew"
 	if [[ $$(stat -f %u /usr/local/var/homebrew) -ne "$${UID}" ]]; then \
 		echo "Missing permissions to update Homebrew formulae!" >&2; \
 	else \
@@ -380,7 +380,7 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(
 			bin/nim_status_client) || true)
 ifeq ($(detected_OS),Darwin)
 ifeq ("$(wildcard ./node_modules/.bin/fileicon)","")
-	echo -e "\e[92mInstalling:\e[39m fileicon"
+	echo -e "\033[92mInstalling:\033[39m fileicon"
 	npm i
 endif
 endif
@@ -391,7 +391,7 @@ _APPIMAGE_TOOL := appimagetool-x86_64.AppImage
 APPIMAGE_TOOL := tmp/linux/tools/$(_APPIMAGE_TOOL)
 
 $(APPIMAGE_TOOL):
-	echo -e "\e[92mFetching:\e[39m appimagetool"
+	echo -e "\033[92mFetching:\033[39m appimagetool"
 	rm -rf tmp/linux
 	mkdir -p tmp/linux/tools
 	wget -nv https://github.com/AppImage/AppImageKit/releases/download/continuous/$(_APPIMAGE_TOOL)
@@ -476,7 +476,7 @@ endif
 DMG_TOOL := node_modules/.bin/create-dmg
 
 $(DMG_TOOL):
-	echo -e "\e[92mInstalling:\e[39m create-dmg"
+	echo -e "\033[92mInstalling:\033[39m create-dmg"
 	npm i
 
 MACOS_OUTER_BUNDLE := tmp/macos/dist/Status.app
@@ -543,7 +543,7 @@ notarize-macos:
 NIM_WINDOWS_PREBUILT_DLLS ?= tmp/windows/tools/pcre.dll
 
 $(NIM_WINDOWS_PREBUILT_DLLS):
-	echo -e "\e[92mFetching:\e[39m prebuilt DLLs from nim-lang.org"
+	echo -e "\033[92mFetching:\033[39m prebuilt DLLs from nim-lang.org"
 	rm -rf tmp/windows
 	mkdir -p tmp/windows/tools
 	cd tmp/windows/tools && \
@@ -633,7 +633,7 @@ ICON_TOOL := node_modules/.bin/fileicon
 # WAKUV2_PORT ?= 30307
 
 run-linux: nim_status_client
-	echo -e "\e[92mRunning:\e[39m bin/nim_status_client"
+	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)" \
 	./bin/nim_status_client
 
@@ -644,11 +644,11 @@ run-macos: nim_status_client
 	cd bin/StatusDev.app/Contents/MacOS && \
 		ln -fs ../../../nim_status_client ./
 	./node_modules/.bin/fileicon set bin/nim_status_client status-dev.icns
-	echo -e "\e[92mRunning:\e[39m bin/StatusDev.app/Contents/MacOS/nim_status_client"
+	echo -e "\033[92mRunning:\033[39m bin/StatusDev.app/Contents/MacOS/nim_status_client"
 	./bin/StatusDev.app/Contents/MacOS/nim_status_client
 
 run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
-	echo -e "\e[92mRunning:\e[39m bin/nim_status_client.exe"
+	echo -e "\033[92mRunning:\033[39m bin/nim_status_client.exe"
 	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe
 
