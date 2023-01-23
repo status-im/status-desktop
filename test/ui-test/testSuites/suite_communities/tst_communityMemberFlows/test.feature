@@ -40,3 +40,31 @@ Feature: Status Desktop community members
         When the admin kicks the user named Bobby
         And the admin goes back to the community
         Then the number of members is 1
+
+    @relyon-mailserver
+    # TODO we need the mailserver to get the message we want to reply to
+    # TODO move this test to another Case that contains other community scenarios that need reboots
+    Scenario Outline: The user can reply to another message
+        # User 1 Bobby sends a message
+        Given the user starts the application with a specific data folder "../../../fixtures/community_members"
+        When the user "Bobby" logs in with password "TesTEr16843/!@00"
+        Then the user lands on the signed in app
+        When the user opens the community named "MyFriends"
+        Then the user lands on the community named "MyFriends"
+        When the user switches to "general" chat
+        And the user sends a chat message "Reply to me please"
+        Then the last chat message contains "Reply to me please"
+
+        # User 2 Alice (admin) logs in
+        Given the user restarts the app
+        And the user "Alice" logs in with password "TesTEr16843/!@00"
+        Then the user lands on the signed in app
+        When the user opens the community named "MyFriends"
+        Then the user lands on the community named "MyFriends"
+        When the user replies to the message at index 0 with "<reply>"
+        Then the chat message "<reply>" is displayed as a reply
+        Examples:
+         | reply           |
+         | This is a reply |
+
+
