@@ -1,5 +1,4 @@
 import steps.commonInitSteps as init_steps
-import steps.commonInitSteps as init_steps
 
 from screens.StatusMainScreen import StatusMainScreen
 from screens.SettingsScreen import SettingsScreen
@@ -284,10 +283,10 @@ def the_user_opens_the_contact_settings():
     _settingsScreen.open_contacts_settings()
     
 def the_user_activates_wallet():
-    wallet_init_steps.the_user_activates_wallet()
+    _settingsScreen.activate_wallet_option()
     
 def the_user_opens_the_wallet_settings():
-    wallet_init_steps.the_user_opens_the_wallet_settings()
+    _settingsScreen.open_wallet_settings()
         
 def the_user_opens_the_profile_settings():
     _settingsScreen.open_profile_settings()

@@ -15,18 +15,10 @@ def activate_and_open_wallet():
     init_steps.the_user_activates_wallet_and_opens_the_wallet_section()
     the_user_accepts_the_signing_phrase()
     
-def the_user_activates_wallet():
-    settings_screen = SettingsScreen()
-    settings_screen.activate_wallet_option()
-    
 def the_user_opens_the_wallet_settings():
     settings_screen = SettingsScreen()
     settings_screen.open_wallet_settings()
-    
-def enable_wallet_section():
-    init_steps.the_user_opens_app_settings_screen()
-    the_user_activates_wallet()
-    
+       
 def the_user_opens_wallet_screen():
     main_screen = StatusMainScreen()
     main_screen.open_wallet()       
