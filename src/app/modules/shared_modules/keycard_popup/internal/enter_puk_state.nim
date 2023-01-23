@@ -10,6 +10,7 @@ proc delete*(self: EnterPukState) =
 
 method executePrePrimaryStateCommand*(self: EnterPukState, controller: Controller) =
   if self.flowType == FlowType.UnlockKeycard:
+    controller.setUnlockUsingSeedPhrase(false)
     if controller.getPuk().len == PUKLengthForStatusApp:
       controller.enterKeycardPuk(controller.getPuk())
 

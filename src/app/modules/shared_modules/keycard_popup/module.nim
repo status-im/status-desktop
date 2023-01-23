@@ -138,7 +138,7 @@ method checkRepeatedKeycardPukWhileTyping*[T](self: Module[T], puk: string): boo
 method getCurrentFlowType*[T](self: Module[T]): FlowType =
   let currStateObj = self.view.currentStateObj()
   if currStateObj.isNil:
-    error "sm_cannot resolve current state in order to determine mnemonic"
+    error "sm_cannot resolve current state"
     return FlowType.General
   return currStateObj.flowType()
 

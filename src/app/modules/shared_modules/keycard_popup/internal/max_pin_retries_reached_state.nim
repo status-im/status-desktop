@@ -29,6 +29,7 @@ method getNextPrimaryState*(self: MaxPinRetriesReachedState, controller: Control
         return
       return createState(StateType.FactoryResetConfirmation, self.flowType, self)
   if self.flowType == FlowType.Authentication:
+    controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
     controller.runSharedModuleFlow(FlowType.UnlockKeycard)
 
 method executeCancelCommand*(self: MaxPinRetriesReachedState, controller: Controller) =

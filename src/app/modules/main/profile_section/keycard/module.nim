@@ -97,6 +97,10 @@ method getKeycardSharedModule*(self: Module): QVariant =
     return self.keycardSharedModule.getModuleAsVariant()
 
 proc createSharedKeycardModule(self: Module) =
+  if self.isSharedKeycardModuleFlowRunning():
+    info "keycard shared module is still running"
+    self.view.emitSharedModuleBusy()
+    return
   self.keycardSharedModule = keycard_shared_module.newModule[Module](self, UNIQUE_SETTING_KEYCARD_MODULE_IDENTIFIER, 
     self.events, self.keycardService, self.settingsService, self.privacyService, self.accountsService, 
     self.walletAccountService, self.keychainService)
