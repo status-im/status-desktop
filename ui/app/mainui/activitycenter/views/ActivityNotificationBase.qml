@@ -22,7 +22,7 @@ Item {
 
     signal closeActivityCenter()
 
-    implicitHeight: Math.max(60, bodyLoader.height +
+    implicitHeight: Math.max(60, bodyLoader.height + bodyLoader.anchors.topMargin * 2 +
                                  (dateGroupLabel.visible ? dateGroupLabel.height : 0) +
                                  (badgeLoader.item ? badgeLoader.height + Style.current.smallPadding : 0))
 
@@ -37,9 +37,19 @@ Item {
         visible: text !== ""
     }
 
+    Rectangle {
+        id: backgroundRect
+        anchors.fill: parent
+        anchors.topMargin: dateGroupLabel.visible ? dateGroupLabel.height : 0
+        radius: 6
+        color: notification && !notification.read ? Theme.palette.primaryColor3 : "transparent"
+        Behavior on color { ColorAnimation { duration: 200 } }
+    }
+
     Loader {
         id: bodyLoader
         anchors.top: dateGroupLabel.visible ? dateGroupLabel.bottom : parent.top
+        anchors.topMargin: Style.current.smallPadding
         anchors.right: ctaLoader.left
         anchors.left: parent.left
     }
@@ -47,6 +57,7 @@ Item {
     Loader {
         id: badgeLoader
         anchors.bottom: parent.bottom
+        anchors.bottomMargin: Style.current.smallPadding
         anchors.left: parent.left
         anchors.leftMargin: 50 // TODO find a way to align with the text of the message
     }

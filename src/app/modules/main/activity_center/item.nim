@@ -129,16 +129,3 @@ proc messageItem*(self: Item): MessageItem =
 
 proc repliedMessageItem*(self: Item): MessageItem =
   return self.repliedMessageItem
-
-# TODO: this logic should be moved to status-go (https://github.com/status-im/status-desktop/issues/8074)
-proc isNotReadOrActiveCTA*(self: Item): bool =
-  return ((self.notificationType == ActivityCenterNotificationType.CommunityMembershipRequest and
-           self.membershipStatus == ActivityCenterMembershipStatus.Pending) or
-          (self.notificationType == ActivityCenterNotificationType.ContactRequest and
-           self.messageItem.contactRequestState == CONTACT_REQUEST_PENDING_STATE) or
-          (self.notificationType == ActivityCenterNotificationType.ContactVerification and
-           self.verificationStatus == VerificationStatus.Verifying) or
-          (self.notificationType == ActivityCenterNotificationType.Mention and
-           not self.read) or
-          (self.notificationType == ActivityCenterNotificationType.Reply and
-           not self.read))

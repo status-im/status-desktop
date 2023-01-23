@@ -24,6 +24,9 @@ method hasMoreToShow*(self: AccessInterface): bool {.base.} =
 method unreadActivityCenterNotificationsCount*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method unreadActivityCenterNotificationsCountChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method convertToItems*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]): seq[Item] {.base.} =
   raise newException(ValueError, "No implementation available")
 

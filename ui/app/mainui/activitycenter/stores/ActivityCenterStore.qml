@@ -5,9 +5,9 @@ QtObject {
 
     property bool hideReadNotifications: false
 
-    property var activityCenterModuleInst: activityCenterModule
-    property var activityCenterList: activityCenterModuleInst.activityNotificationsModel
-    property int unreadNotificationsCount: activityCenterList.unreadCount
+    readonly property var activityCenterModuleInst: activityCenterModule
+    readonly property var activityCenterList: activityCenterModuleInst.activityNotificationsModel
+    readonly property int unreadNotificationsCount: activityCenterModuleInst.unreadActivityCenterNotificationsCount
 
     function markAllActivityCenterNotificationsRead() {
         root.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
