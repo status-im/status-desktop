@@ -21,4 +21,7 @@ method getNextPrimaryState*(self: ProfileFetchingAnnouncementState, controller: 
 method getNextSecondaryState*(self: ProfileFetchingAnnouncementState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
     self.flowType == FlowType.FirstRunOldUserKeycardImport:
-      return createState(StateType.UserProfileCreateSameChatKey, self.flowType, self)
+      return createState(StateType.UserProfileCreate, self.flowType, self)
+      ## Once we decide to have `Create a new profile with the same chatkey` screen again we just need to remove the 
+      ## previous line and include the line below. Skipped due to https://github.com/status-im/status-desktop/issues/9223
+      # return createState(StateType.UserProfileCreateSameChatKey, self.flowType, self)
