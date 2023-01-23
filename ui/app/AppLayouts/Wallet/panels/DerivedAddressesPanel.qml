@@ -22,7 +22,6 @@ Item {
     property string pathSubFix: ""
     property bool isLoading: RootStore.derivedAddressesLoading
     property bool pathError: Utils.isInvalidPath(RootStore.derivedAddressesError)
-    property string enterPasswordIcon: ""
 
     property alias selectedAddress: selectedDerivedAddress.title
     property alias selectedAddressAvailable: selectedDerivedAddress.enabled
@@ -141,10 +140,7 @@ Item {
 
         StatusButton {
             visible: _internal.showEnterPinPassButton
-            text: derivedAddresses.selectedKeyUidMigratedToKeycard || userProfile.isKeycardUser?
-                      qsTr("Enter PIN") :
-                      qsTr("Enter password")
-            icon.name: derivedAddresses.enterPasswordIcon
+            text: qsTr("Preview address")
             highlighted: focus
 
             onClicked: _internal.runAction()

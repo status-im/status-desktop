@@ -278,7 +278,6 @@ StatusModal {
                 expandable: true
                 expandableComponent: AdvancedAddAccountView {
                     width: parent.width
-                    enterPasswordIcon: d.addAccountIcon
                     onCalculateDerivedPath: {
                         if (d.selectedKeyUidMigratedToKeycard) {
                             d.password = ""
