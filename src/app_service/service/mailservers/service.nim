@@ -157,7 +157,10 @@ QtObject:
       let receivedData = MailserverChangedSignal(e)
       let address = receivedData.address
 
-      info "active mailserver changed", node=address
+      if address == "":
+        info "removing active mailserver"
+      else:
+        info "active mailserver changed", node=address
       let data = ActiveMailserverChangedArgs(nodeAddress: address)
       self.events.emit(SIGNAL_ACTIVE_MAILSERVER_CHANGED, data)
 
