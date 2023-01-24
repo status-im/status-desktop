@@ -15,6 +15,7 @@ Control {
     property string shortName
     property url iconSource
     property var subItems
+    property bool selected: false
 
     signal itemClicked(string key, string name, string shortName,  url iconSource, var subItems)
 
@@ -71,8 +72,10 @@ Control {
         }
 
         StatusIcon {
-            icon: "tiny/chevron-right"
-            visible: !!root.subItems && root.subItems.count > 0
+            readonly property bool hasSubItems: !!root.subItems && root.subItems.count > 0
+
+            icon: root.selected && !hasSubItems ? "checkmark" : "tiny/chevron-right"
+            visible: root.selected || hasSubItems
             Layout.alignment: Qt.AlignVCenter
             Layout.rightMargin: 16
             color: Theme.palette.baseColor1

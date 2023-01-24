@@ -83,7 +83,7 @@ ColumnLayout {
         Layout.preferredHeight: d.defaultHeight
         Layout.fillWidth: true
         Layout.topMargin: d.defaultSpacing
-        visible: root.mode === HoldingTypes.Mode.Update
+        visible: root.mode === HoldingTypes.Mode.UpdateOrRemove
         type: StatusBaseButton.Type.Danger
 
         onClicked: root.removeClicked()

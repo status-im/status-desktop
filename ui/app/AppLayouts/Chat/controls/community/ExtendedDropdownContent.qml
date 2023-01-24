@@ -16,6 +16,7 @@ Item {
     id: root
 
     property var store
+    property var checkedKeys: []
     property int type: ExtendedDropdownContent.Type.Assets
 
     readonly property bool canGoBack: root.state !== d.listView_depth1_State
@@ -272,10 +273,14 @@ Item {
 
         TokenItem {
            id: tokenGroupItem
+
            Layout.fillWidth: true
+
            key: d.currentItemKey
            name: d.currentItemName
            iconSource: d.currentItemSource
+
+           selected: root.checkedKeys.includes(key)
            enabled: true
            onItemClicked: root.itemClicked(d.currentItemKey,
                                            d.currentItemName,
@@ -301,6 +306,8 @@ Item {
             }
             isHeaderVisible: false  // TEMPORARILY hidden. These 2 header options will be implemented after MVP.
             model: d.currentModel
+            checkedKeys: root.checkedKeys
+
             onHeaderItemClicked: {
                 if(key === "MINT") console.log("TODO: Mint asset")
                 else if(key === "IMPORT") console.log("TODO: Import existing asset")
@@ -319,6 +326,7 @@ Item {
             }
 
             model: d.currentModel
+            checkedKeys: root.checkedKeys
 
             onHeaderItemClicked: {
                 if(key === "MINT") console.log("TODO: Mint collectible")
@@ -351,6 +359,8 @@ Item {
             padding: 0
 
             model: d.currentModel
+            checkedKeys: root.checkedKeys
+
             onItemClicked: {
                 d.reset()
                 root.itemClicked(key, name, iconSource)
