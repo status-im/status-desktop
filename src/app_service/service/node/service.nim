@@ -4,41 +4,31 @@ import ../settings/service as settings_service
 import ../node_configuration/service as node_configuration_service
 
 import ../../../app/core/eventemitter
-import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/fleets/fleet_configuration
-
-include async_tasks
+import ../../../backend/node as status_node
 
 logScope:
   topics = "node-service"
 
 # Signals which may be emitted by this service:
-const SIGNAL_BITS_SET_FETCHED* = "bitsSetFetched"
 const SIGNAL_NETWORK_DISCONNECTED* = "networkDisconnected"
 const SIGNAL_NETWORK_CONNECTED* = "networkConnected"
-
-type
-    BitsSet* = ref object of Args
-        bitsSet*: int
 
 QtObject:
     type Service* = ref object of QObject
         events*: EventEmitter
-        threadpool: ThreadPool
         settingsService: settings_service.Service
         nodeConfigurationService: node_configuration_service.Service
-        bloomBitsSet: int
         peers*: seq[string]
         connected: bool
 
     proc delete*(self: Service) =
        self.QObject.delete
 
-    proc newService*(events: EventEmitter, threadpool: ThreadPool, settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service): Service =
+    proc newService*(events: EventEmitter, settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service): Service =
         new(result, delete)
         result.QObject.setup
         result.events = events
-        result.threadpool = threadpool
         result.settingsService = settingsService
         result.nodeConfigurationService = nodeConfigurationService
         result.peers = @[]
@@ -46,24 +36,6 @@ QtObject:
 
     proc init*(self: Service) =
         discard
-
-    proc bloomFiltersBitsSet*(self: Service, slot: string) =
-        let arg = BloomBitsSetTaskArg(
-            tptr: cast[ByteAddress](bloomBitsSetTask),
-            vptr: cast[ByteAddress](self.vptr),
-            slot: slot
-        )
-        self.threadpool.start(arg)
-
-    proc fetchBitsSet*(self: Service) =
-        self.bloomFiltersBitsSet("bitsSet")
-
-    proc getBloomBitsSet*(self: Service): int =
-        return self.bloomBitsSet;
-
-    proc bitsSet*(self: Service, bitsSet: string) {.slot.} =
-        self.bloomBitsSet = parseInt(bitsSet)
-        self.events.emit(SIGNAL_BITS_SET_FETCHED, BitsSet(bitsSet: self.bloomBitsSet))
 
     proc sendRPCMessageRaw*(self: Service, inputJSON: string): string =
         return status_node.sendRPCMessageRaw(inputJSON)

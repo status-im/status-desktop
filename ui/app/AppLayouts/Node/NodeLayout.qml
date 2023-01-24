@@ -57,30 +57,6 @@ StatusSectionLayout {
             }
         }
 
-        RowLayout {
-            id: bloomF
-            Layout.fillWidth: true
-            StatusBaseText {
-                color: Theme.palette.primaryColor1
-                text: qsTr("Bloom Filter Usage")
-                Layout.rightMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
-                Layout.fillWidth: true
-                font.weight: Font.Medium
-                font.pixelSize: 20
-            }
-            StatusBaseText {
-                id: bloomPerc
-                color: Theme.palette.primaryColor1
-                text: ((root.store.nodeModelInst.bloomBits / 512) * 100).toFixed(2) + "%"
-                Layout.rightMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
-                Layout.fillWidth: true
-                font.weight: Font.Medium
-                font.pixelSize: 20
-            }
-        }
-
         ColumnLayout {
             id: mailserverLogsContainer
             height: 300

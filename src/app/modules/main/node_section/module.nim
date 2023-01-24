@@ -69,9 +69,6 @@ method setV2LightMode*(self: Module, enabled: bool) =
 method getWakuBloomFilterMode*(self: Module): bool =
   return self.controller.getWakuBloomFilterMode()
 
-method fetchBitsSet*(self: Module) =
-  self.controller.fetchBitsSet();
-
 method isV2LightMode*(self: Module): bool =
   return self.controller.isV2LightMode()
 
@@ -97,6 +94,3 @@ method log*(self: Module, logContent: string) =
 
 method setPeerSize*(self: Module, peerSize: int) =
   self.view.setPeerSize(peerSize)
-
-method setBitsSet*(self: Module, bitsSet: int) =
-  self.view.setBitsSet(bitsSet)
