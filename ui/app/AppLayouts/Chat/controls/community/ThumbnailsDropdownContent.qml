@@ -13,6 +13,8 @@ StatusScrollView {
     property url titleImage: ""
     property string subtitle: ""
     property ListModel model
+    property var checkedKeys: []
+
     property int maxHeight: 381 // default by design
 
     signal itemClicked(var key, string name, url iconSource)
@@ -47,6 +49,29 @@ StatusScrollView {
                     Image {
                         source: model.imageSource ?  model.imageSource :  ""
                         anchors.fill: parent
+
+                        Rectangle {
+                            width: 32
+                            height: 32
+
+                            anchors.bottom: parent.bottom
+                            anchors.right: parent.right
+                            anchors.margins: 8
+
+                            radius: width / 2
+                            visible: root.checkedKeys.includes(model.key)
+                            // TODO: use color from theme when defined properly in the design
+                            color: "#F5F6F8"
+
+                            StatusIcon {
+                                anchors.centerIn: parent
+                                icon: "checkmark"
+
+                                color: Theme.palette.baseColor1
+                                width: 16
+                                height: 16
+                            }
+                        }
                     }
                     MouseArea {
                         anchors.fill: parent

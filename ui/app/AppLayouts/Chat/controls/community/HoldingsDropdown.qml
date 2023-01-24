@@ -13,6 +13,8 @@ StatusDropdown {
     id: root
 
     property var store
+    property var usedTokens: []
+    property var usedEnsNames: []
 
     property string assetKey: ""
     property real assetAmount: 0
@@ -37,7 +39,7 @@ StatusDropdown {
     }
 
     function openUpdateFlow() {
-        d.currentHoldingMode = HoldingTypes.Mode.Update
+        d.initialHoldingMode = HoldingTypes.Mode.UpdateOrRemove
         if(d.currentHoldingType !== HoldingTypes.Type.Ens) {
             if(statesStack.size === 0)
                 statesStack.push(HoldingsDropdown.FlowType.List_Deep1)
@@ -53,16 +55,13 @@ StatusDropdown {
 
     function reset() {
         d.currentHoldingType = HoldingTypes.Type.Asset
-        d.currentHoldingMode = HoldingTypes.Mode.Add
+        d.initialHoldingMode = HoldingTypes.Mode.Add
 
-        d.assetAmountText = ""
-        d.collectibleAmountText = ""
         root.assetKey = ""
         root.collectibleKey = ""
-        root.assetAmount = 0
-        root.collectibleAmount = 1
         root.ensDomainName = ""
 
+        d.setDefaultAmounts()
         d.setInitialFlow()
     }
 
@@ -79,7 +78,14 @@ StatusDropdown {
 
         property int extendedDropdownType: ExtendedDropdownContent.Type.Assets
         property int currentHoldingType: HoldingTypes.Type.Asset
-        property int currentHoldingMode: HoldingTypes.Mode.Add
+
+        property bool updateSelected: false
+
+        property int initialHoldingMode: HoldingTypes.Mode.Add
+        property int effectiveHoldingMode: initialHoldingMode === HoldingTypes.Mode.UpdateOrRemove
+                                           ? HoldingTypes.Mode.UpdateOrRemove
+                                           : (updateSelected ? HoldingTypes.Mode.Update : HoldingTypes.Mode.Add)
+
         property bool extendedDeepNavigation: false
         property var currentSubItems
         property string currentItemKey: ""
@@ -104,6 +110,13 @@ StatusDropdown {
                 statesStack.push(HoldingsDropdown.FlowType.List_Deep1)
             else
                 statesStack.push(HoldingsDropdown.FlowType.Selected)
+        }
+
+        function setDefaultAmounts() {
+            d.assetAmountText = ""
+            d.collectibleAmountText = ""
+            root.assetAmount = 0
+            root.collectibleAmount = 1
         }
     }
 
@@ -236,9 +249,27 @@ StatusDropdown {
             id: listPanel
 
             store: root.store
+            checkedKeys: root.usedTokens.map(entry => entry.key)
             type: d.extendedDropdownType
 
             onItemClicked: {
+                d.assetAmountText = ""
+                d.collectibleAmountText = ""
+
+                if (checkedKeys.includes(key)) {
+                    const amount = root.usedTokens.find(entry => entry.key === key).amount
+
+                    if(d.extendedDropdownType === ExtendedDropdownContent.Type.Assets)
+                        root.assetAmount = amount
+                    else
+                        root.collectibleAmount = amount
+
+                    d.updateSelected = true
+                } else {
+                    d.setDefaultAmounts()
+                    d.updateSelected = false
+                }
+
                 if(d.extendedDropdownType === ExtendedDropdownContent.Type.Assets)
                     root.assetKey = key
                 else
@@ -293,7 +324,7 @@ StatusDropdown {
             amountText: d.assetAmountText
             tokenCategoryText: qsTr("Asset")
             addOrUpdateButtonEnabled: d.assetsReady
-            mode: d.currentHoldingMode
+            mode: d.effectiveHoldingMode
 
             onEffectiveAmountChanged: root.assetAmount = effectiveAmount
             onAmountTextChanged: d.assetAmountText = amountText
@@ -329,7 +360,7 @@ StatusDropdown {
             tokenCategoryText: qsTr("Collectible")
             addOrUpdateButtonEnabled: d.collectiblesReady
             allowDecimals: false
-            mode: d.currentHoldingMode
+            mode: d.effectiveHoldingMode
 
             onEffectiveAmountChanged: root.collectibleAmount = effectiveAmount
             onAmountTextChanged: d.collectibleAmountText = amountText
@@ -356,7 +387,8 @@ StatusDropdown {
         EnsPanel {
             addButtonEnabled: d.ensReady
             domainName: root.ensDomainName
-            mode: d.currentHoldingMode
+            mode: d.initialHoldingMode
+            reservedNames: root.usedEnsNames
 
             onDomainNameChanged: root.ensDomainName = domainName
             onDomainNameValidChanged: d.ensDomainNameValid = domainNameValid

@@ -14,11 +14,15 @@ ColumnLayout {
     property alias domainNameValid: domainNameInput.valid
     property alias addButtonEnabled: addOrUpdateButton.enabled
 
+    property var reservedNames: []
+
     signal addClicked
     signal updateClicked
     signal removeClicked
 
     spacing: 0
+
+    onReservedNamesChanged: domainNameInput.validate()
 
     StatusInput {
         id: domainNameInput
@@ -33,13 +37,22 @@ ColumnLayout {
         font.pixelSize: 13
         input.placeholderText: "name.eth"
 
+        errorMessageCmp.visible: false
+
         validators: StatusRegularExpressionValidator {
             // TODO: check ens domain validator
             regularExpression: /^(\*\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?$/i
-            errorMessage: qsTr("Subdomain not recognized")
+            errorMessage: alreadyUsed
+                          ? qsTr("This condition has already been added")
+                          : qsTr("This is not ENS name")
+
+            property bool alreadyUsed: false
 
             validate: function (value) {
-                return value === "*.eth" || regularExpression.test(value)
+                alreadyUsed = reservedNames.includes(value)
+
+                return (value === "*.eth" || regularExpression.test(value))
+                        && !alreadyUsed
             }
         }
 
@@ -64,11 +77,34 @@ ColumnLayout {
         lineHeightMode: Text.FixedHeight
     }
 
+    Item {
+        Layout.topMargin: 8
+        Layout.fillWidth: true
+        Layout.preferredHeight: Math.max(18, errorText.height) // by design
+
+        StatusBaseText {
+            id: errorText
+
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            text: domainNameInput.errorMessageCmp.text
+
+            font.pixelSize: 13
+            lineHeight: 18
+            lineHeightMode: Text.FixedHeight
+
+            color: Theme.palette.dangerColor1
+            wrapMode: Text.Wrap
+        }
+    }
+
     StatusButton {
         id: addOrUpdateButton
 
         text: (root.mode === HoldingTypes.Mode.Add) ? qsTr("Add") : qsTr("Update")
-        Layout.topMargin: 40
+        Layout.topMargin: 13 // by design
         Layout.preferredHeight: 44 // by design
         Layout.fillWidth: true
         onClicked: root.mode === HoldingTypes.Mode.Add
@@ -80,7 +116,7 @@ ColumnLayout {
         Layout.topMargin: 16 // by design
         Layout.preferredHeight: 44 // by design
         Layout.fillWidth: true
-        visible: root.mode === HoldingTypes.Mode.Update
+        visible: root.mode === HoldingTypes.Mode.UpdateOrRemove
         type: StatusBaseButton.Type.Danger
 
         onClicked: root.removeClicked()

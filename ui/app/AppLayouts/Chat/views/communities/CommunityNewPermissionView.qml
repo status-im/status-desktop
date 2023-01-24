@@ -87,6 +87,48 @@ StatusScrollView {
             }
             property bool isPrivateDirty: false
 
+            function getIndexOfKey(key) {
+                const count = holdingsModel.count
+
+                for (let i = 0; i < count; i++)
+                    if (holdingsModel.get(i).key === key)
+                        return i
+
+                return -1
+            }
+
+            function getTokenKeysAndAmounts() {
+                const keysAndAmounts = []
+                const count = holdingsModel.count
+
+                for (let i = 0; i < count; i++) {
+                    const item = holdingsModel.get(i)
+
+                    if (item.type === HoldingTypes.Type.Ens)
+                        continue
+
+                    keysAndAmounts.push({ key: item.key, amount: item.amount })
+                }
+
+                return keysAndAmounts
+            }
+
+            function getEnsNames() {
+                const names = []
+                const count = holdingsModel.count
+
+                for (let i = 0; i < count; i++) {
+                    const item = holdingsModel.get(i)
+
+                    if (item.type !== HoldingTypes.Type.Ens)
+                        continue
+
+                    names.push(item.name)
+                }
+
+                return names
+            }
+
             // TODO: Channels
         }
 
@@ -195,7 +237,7 @@ StatusScrollView {
         StatusItemSelector {
             id: tokensSelector
 
-            property int editedIndex
+            property int editedIndex: -1
 
             Layout.fillWidth: true
             icon: Style.svg("contact_verified")
@@ -227,6 +269,28 @@ StatusScrollView {
                     d.dirtyValues.holdingsModel.append({ type, key, name, amount, imageSource })
                 }
 
+                function prepareUpdateIndex(key) {
+                    const itemIndex = tokensSelector.editedIndex
+                    const existingIndex = d.dirtyValues.getIndexOfKey(key)
+
+                    if (itemIndex !== -1 && existingIndex !== -1 && itemIndex !== existingIndex) {
+                        const previousKey = d.dirtyValues.holdingsModel.get(itemIndex).key
+                        d.dirtyValues.holdingsModel.remove(existingIndex)
+                        return d.dirtyValues.getIndexOfKey(previousKey)
+                    }
+
+                    if (itemIndex === -1) {
+                        return existingIndex
+                    }
+
+                    return itemIndex
+                }
+
+                onOpened: {
+                    usedTokens = d.dirtyValues.getTokenKeysAndAmounts()
+                    usedEnsNames = d.dirtyValues.getEnsNames().filter(item => item !== ensDomainName)
+                }
+
                 onAddAsset: {
                     const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.assetsModel, key)
                     addItem(HoldingTypes.Type.Asset, modelItem, amount)
@@ -240,7 +304,7 @@ StatusScrollView {
                 }
 
                 onAddEns: {
-                    const key = "ENS"
+                    const key = "ENS_" + domain
                     const icon = Style.svg("profile/ensUsernames")
 
                     d.dirtyValues.holdingsModel.append({type: HoldingTypes.Type.Ens, key, name: domain, amount: 1, imageSource: icon })
@@ -248,27 +312,31 @@ StatusScrollView {
                 }
 
                 onUpdateAsset: {
+                    const itemIndex = prepareUpdateIndex(key)
+
                     const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.assetsModel, key)
                     const name = modelItem.shortName ? modelItem.shortName : modelItem.name
                     const imageSource = modelItem.iconSource.toString()
 
-                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Asset, key, name, amount, imageSource })
+                    d.dirtyValues.holdingsModel.set(itemIndex, { type: HoldingTypes.Type.Asset, key, name, amount, imageSource })
                     d.triggerDirtyTool = !d.triggerDirtyTool
                     dropdown.close()
                 }
 
                 onUpdateCollectible: {
+                    const itemIndex = prepareUpdateIndex(key)
+
                     const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.collectiblesModel, key)
                     const name = modelItem.name
                     const imageSource = modelItem.iconSource.toString()
 
-                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Collectible, key, name, amount, imageSource })
+                    d.dirtyValues.holdingsModel.set(itemIndex, { type: HoldingTypes.Type.Collectible, key, name, amount, imageSource })
                     d.triggerDirtyTool = !d.triggerDirtyTool
                     dropdown.close()
                 }
 
                 onUpdateEns: {
-                    const key = "ENS"
+                    const key = "ENS_" + domain
                     const icon = Style.svg("profile/ensUsernames")
 
                     d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Ens, key, name: domain, amount: 1, imageSource: icon })
@@ -287,6 +355,8 @@ StatusScrollView {
                 dropdown.x = tokensSelector.addButton.width + d.dropdownHorizontalOffset
                 dropdown.y = 0
                 dropdown.open()
+
+                editedIndex = -1
             }
 
             onItemClicked: {

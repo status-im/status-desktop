@@ -12,6 +12,8 @@ import StatusQ.Components 0.1
 StatusListView {
     id: root
 
+    property var checkedKeys: []
+
     property var headerModel
     property bool isHeaderVisible: true
     property int maxHeight: 381 // default by design
@@ -60,7 +62,8 @@ StatusListView {
         shortName: !!model.shortName ? model.shortName : ""
         iconSource: model.iconSource
         subItems: model.subItems
-        enabled: true
+        selected: root.checkedKeys.includes(model.key)
+
         onItemClicked: root.itemClicked(model.key,
                                         model.name,
                                         model.shortName,

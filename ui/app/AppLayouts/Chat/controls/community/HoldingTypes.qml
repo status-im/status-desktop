@@ -6,6 +6,6 @@ QtObject {
     }
 
     enum Mode {
-        Add, Update
+        Add, Update, UpdateOrRemove
     }
 }
