@@ -25,9 +25,6 @@ method setStats*(self: AccessInterface, stats: Stats) {.base.} =
 method log*(self: AccessInterface, logContent: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setBitsSet*(self: AccessInterface, bitsSet: int) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -44,9 +41,6 @@ method setV2LightMode*(self: AccessInterface, enabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getWakuBloomFilterMode*(self: AccessInterface): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method fetchBitsSet*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isV2LightMode*(self: AccessInterface): bool {.base.} =

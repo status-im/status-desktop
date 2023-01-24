@@ -11,7 +11,6 @@ QtObject:
       lastMessage*: string
       stats*: Stats
       peerSize: int
-      bloomBitsSet: int
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -88,22 +87,6 @@ QtObject:
   proc setStats*(self: View, stats: Stats) =
     self.stats = stats
     self.statsChanged()
-
-  proc fetchBitsSet*(self: View) =
-    self.delegate.fetchBitsSet()
-
-  proc getBloomBitsSet(self: View): int {.slot.} =
-    self.bloomBitsSet
-
-  proc bloomBitsSetChanged(self: View) {.signal.}
-
-  proc setBitsSet*(self: View, bitsSet: int) =
-    self.bloomBitsSet = bitsSet
-    self.bloomBitsSetChanged();
-
-  QtProperty[int] bloomBits:
-    read = getBloomBitsSet
-    notify = bloomBitsSetChanged
 
   proc uploadRate*(self: View): string {.slot.} = $self.stats.uploadRate
 

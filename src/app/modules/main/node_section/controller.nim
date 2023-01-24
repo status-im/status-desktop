@@ -54,13 +54,9 @@ proc init*(self: Controller) =
 
   self.events.on(SignalType.Stats.event) do (e:Args):
     self.delegate.setStats(StatsSignal(e).stats)
-    if not self.isWakuV2: self.delegate.fetchBitsSet()
 
   self.events.on(SignalType.ChroniclesLogs.event) do(e:Args):
     self.delegate.log(ChroniclesLogsSignal(e).content)
-
-  self.events.on(SIGNAL_BITS_SET_FETCHED) do (e:Args):
-    self.delegate.setBitsSet(self.nodeService.getBloomBitsSet())
 
   self.setPeers(self.nodeService.fetchPeers())
 
@@ -84,9 +80,6 @@ proc setV2LightMode*(self: Controller, enabled: bool): bool =
 
 proc getWakuBloomFilterMode*(self: Controller): bool =
     return self.settingsService.getWakuBloomFilterMode()
-
-proc fetchBitsSet*(self: Controller) =
-    self.nodeService.fetchBitsSet()
 
 proc getWakuVersion*(self: Controller): int =
     var fleet = self.nodeConfigurationService.getFleet()
