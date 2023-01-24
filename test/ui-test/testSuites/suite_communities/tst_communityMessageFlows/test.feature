@@ -142,3 +142,20 @@ Feature: Status Desktop community messages
         | displayName        |
         | notExistingAccount |
         | asdfgNoNo          |
+
+    Scenario: The user can send an emoji as a message
+        When the user sends the emoji "heart_eyes" as a message
+        Then the last chat message contains "😍"
+
+    Scenario Outline: The user can send an emoji in a message
+        When the user sends the emoji "sunglasses" with message "<message>"
+        Then the last chat message contains "😎"
+        And the last chat message contains "<message>"
+        Examples:
+         | message          |
+         | wow I'm so cool  |
+
+    Scenario: The user can type message with emoji autoreplace
+        When the user sends a chat message "Hello :)"
+        Then the last chat message contains "🙂"
+        And the last chat message contains "Hello"
