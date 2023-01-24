@@ -135,3 +135,10 @@ Feature: Status Desktop community messages
         Examples:
         | displayName | message          |
         | tester123   |  testing mention |
+
+    Scenario Outline: The user can not do a mention to a not existing users
+        Then the user cannot input a mention to a not existing user "<displayName>"
+        Examples:
+        | displayName        |
+        | notExistingAccount |
+        | asdfgNoNo          |
