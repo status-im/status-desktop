@@ -285,7 +285,8 @@ Item {
                     filters: [
                         ExpressionFilter {
                             expression: {
-                                if (!root.startupStore.selectedLoginAccount.keycardCreatedAccount &&
+                                if (!!root.startupStore.selectedLoginAccount &&
+                                   !root.startupStore.selectedLoginAccount.keycardCreatedAccount &&
                                         model.username === d.lostKeycardItemKey) {
                                     return false
                                 }

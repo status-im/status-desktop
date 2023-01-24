@@ -228,10 +228,10 @@ StatusSectionLayout {
             dappBrowserAccIcon: WalletStore.dappBrowserAccount.color
             settingMenu: settingsMenu
             walletMenu: browserWalletMenu
-            currentUrl: _internal.currentWebView.url
-            isLoading: _internal.currentWebView.loading
-            canGoBack: _internal.currentWebView.canGoBack
-            canGoForward: _internal.currentWebView.canGoForward
+            currentUrl: !!_internal.currentWebView ? _internal.currentWebView.url : ""
+            isLoading: (!!_internal.currentWebView && _internal.currentWebView.loading)
+            canGoBack: (!!_internal.currentWebView && _internal.currentWebView.canGoBack)
+            canGoForward: (!!_internal.currentWebView && _internal.currentWebView.canGoForward)
             currentTabConnected: RootStore.currentTabConnected
             onOpenHistoryPopup: historyMenu.popup(xPos, yPos)
             onGoBack: _internal.currentWebView.goBack()
@@ -274,7 +274,7 @@ StatusSectionLayout {
             anchors.left: parent.left
             anchors.right: parent.right
             z: 50
-            tabComponent: webEngineView
+            tabComponent: !!webEngineView ? webEngineView : null
             currentWebEngineProfile: _internal.currentWebView.profile
             determineRealURL: function(url) {
                 return _internal.determineRealURL(url)

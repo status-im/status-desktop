@@ -29,7 +29,8 @@ Item {
     ColumnLayout {
         id: layout
 
-        anchors.fill: parent
+        implicitWidth: childrenRect.width
+        implicitHeight: childrenRect.height
 
         spacing: 8
 
