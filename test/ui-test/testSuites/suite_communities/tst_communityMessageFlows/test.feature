@@ -126,3 +126,12 @@ Feature: Status Desktop community messages
         And the user selects the emoji in the suggestion's list
         When the user presses enter
         Then the last chat message contains "👍"
+
+    @mayfail
+    # This tests fails. Issue #9314
+    Scenario Outline: The user can do a mention
+        When the user inputs a mention to "<displayName>" with message "<message>"
+        Then the "<displayName>" mention with message "<message>" have been sent
+        Examples:
+        | displayName | message          |
+        | tester123   |  testing mention |

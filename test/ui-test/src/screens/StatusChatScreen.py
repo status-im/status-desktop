@@ -399,26 +399,25 @@ class StatusChatScreen:
     # This method expects to have just one mention / link in the last chat message 
     def verify_last_message_sent_contains_mention(self, displayName: str, message: str):
         [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
+
+        if not loaded:
+            verify_failure("No messages found in chat.")
         
-        if loaded:
-            # Verifying mention
-            verify_text_contains(str(last_message_obj.text), displayName)
-            
-            # Verifying message
-            verify_text_contains(str(last_message_obj.text), message)
-            
-            # Get link value from chat text:
-            try:
-                href_info = re.search(_LINK_HREF_REGEX, str(last_message_obj.text)).group(1)
-            except AttributeError:
-                # <a href=, "> not found in the original string
-                verify_failure("Mention link not found in last chat message.")
-            
-            click_link(ChatComponents.LAST_MESSAGE_TEXT.value, href_info)
-            verify(is_found(ChatComponents.MENTION_PROFILE_VIEW.value), "Checking user mentioned profile popup is open.")            
-            
-        else:
-            verify_failure("No messages found in chat.")  
+        # Verifying mention
+        verify_text_contains(str(last_message_obj.text), displayName)
+        
+        # Verifying message
+        verify_text_contains(str(last_message_obj.text), message)
+        
+        # Get link value from chat text:
+        try:
+            href_info = re.search(_LINK_HREF_REGEX, str(last_message_obj.text)).group(1)
+        except AttributeError:
+            # <a href=, "> not found in the original string
+            verify_failure("Mention link not found in last chat message.")
+        
+        click_link(ChatComponents.LAST_MESSAGE_TEXT.value, href_info)
+        verify(is_found(ChatComponents.MENTION_PROFILE_VIEW.value), "Checking user mentioned profile popup is open.")            
         
     def verify_chat_title(self, title: str):
         info_btn = get_obj(ChatComponents.TOOLBAR_INFO_BUTTON.value)
