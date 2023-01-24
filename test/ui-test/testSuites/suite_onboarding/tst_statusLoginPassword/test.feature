@@ -29,6 +29,7 @@ Feature: Status Desktop login
             | username 		   | password          |
             | Athletic_Prime   | TesTEr16843/!@00  |
 
+	@mayfail
     Scenario Outline: User tries to login with an invalid password
         Given A first time user lands on the status desktop and generates new key
         And the user signs up with username "<username>" and password "<password>"

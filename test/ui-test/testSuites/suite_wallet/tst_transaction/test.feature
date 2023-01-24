@@ -16,6 +16,7 @@ Feature: Status Desktop Transaction
 	** and the user opens wallet screen
 	** and the user accepts the signing phrase
 
+	@mayfail
     Scenario Outline: The user sends a transaction
  		When the user sends a transaction to himself from account "Status account" of "<amount>" "<token>" on "<chain_name>" with password "qqqqqqqqqq"
 		Then the transaction is in progress

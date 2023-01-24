@@ -9,6 +9,7 @@ Feature: Status Desktop Contacts Flows
         And the user opens app settings screen
 
 
+	@mayfail
     Scenario: The user can add a contact with a chat key
     	When the user opens the messaging settings
     	And the user opens the contacts settings

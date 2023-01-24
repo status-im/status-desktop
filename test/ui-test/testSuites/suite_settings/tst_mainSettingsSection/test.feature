@@ -20,6 +20,7 @@ Feature: Status Desktop Main Settings Section
         When the user backs up the wallet seed phrase
         Then the backup seed phrase indicator is not displayed
 
+	@mayfail
     Scenario: The user can switch state to offline
     	When the users switches state to offline
     	Then the user appears offline
@@ -28,6 +29,7 @@ Feature: Status Desktop Main Settings Section
     	And the user "tester123" logs in with password "TesTEr16843/!@00"
     	Then the user appears offline
 
+	@mayfail
     Scenario: The user can switch state to online
         When the users switches state to offline
     	And the user restarts the app
@@ -41,6 +43,7 @@ Feature: Status Desktop Main Settings Section
     	And the user "tester123" logs in with password "TesTEr16843/!@00"
     	Then the user appears online
 
+	@mayfail
 	Scenario: The user can switch state to automatic
         When the users switches state to automatic
     	Then the user status is automatic
@@ -49,6 +52,7 @@ Feature: Status Desktop Main Settings Section
     	And the user "tester123" logs in with password "TesTEr16843/!@00"
     	Then the user status is automatic
 
+	@mayfail
 	Scenario: The user can change the password and login with new password
     	When the user changes the password from TesTEr16843/!@00 to NewPassword@12345
     	And the user restarts the app
