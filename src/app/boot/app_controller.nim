@@ -256,6 +256,9 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.connect()
 
 proc delete*(self: AppController) =
+  info "logging out..."
+  self.generalService.logout()
+
   singletonInstance.delete
   self.notificationsManager.delete
   self.keychainService.delete
