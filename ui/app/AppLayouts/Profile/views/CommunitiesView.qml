@@ -37,8 +37,8 @@ SettingsContentBase {
 
     Item {
         id: rootItem
-        height: childrenRect.height
         width: root.contentWidth
+        height: childrenRect.height
 
         ColumnLayout {
             id: noCommunitiesLayout

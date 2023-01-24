@@ -78,7 +78,7 @@ StatusSectionLayout {
         currentIndex: Global.settingsSubsection
 
         onCurrentIndexChanged: {
-            if (!children[currentIndex].active)
+            if (!!children[currentIndex] && !children[currentIndex].active)
                 children[currentIndex].active = true
 
             root.store.backButtonName = ""
@@ -285,6 +285,8 @@ StatusSectionLayout {
         Loader {
             active: false
             asynchronous: true
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             sourceComponent: CommunitiesView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height

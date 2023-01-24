@@ -23,7 +23,7 @@ SettingsContentBase {
 
     Item {
         width: root.contentWidth
-        height: parent.height
+        height: !!parent ? parent.height : 0
 
         Item {
             id: firstTimeSetup
