@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import Storybook 1.0
+import Models 1.0
 
 import AppLayouts.Chat.controls.community 1.0
 
@@ -39,54 +40,8 @@ Pane {
         anchors.centerIn: root
 
         store: QtObject {
-            readonly property ListModel collectiblesModel: ListModel {
-
-                Component.onCompleted: {
-                    const collectibles = []
-
-                    for (let i = 0; i < 20; i++) {
-                        collectibles.push({
-                            key: "key " + (i + 1),
-                            iconSource: "",
-                            name: "Collectible " + (i + 1),
-                            category: "Community collectibles, cat "
-                                      + (Math.floor(i / 4) + 1)
-                        })
-                    }
-
-                    const subitems = []
-                    for (let j = 0; j < 20; j++) {
-
-                        subitems.push({
-                            key: "subkey " + (j + 1),
-                            iconSource: "",
-                            name: "Collectible (sub) " + (j + 1)//,
-                        })
-                    }
-
-                    collectibles[1].subItems = subitems;
-
-                    append(collectibles)
-                }
-            }
-
-            readonly property ListModel assetsModel: ListModel {
-                ListElement {
-                    key: "socks"; iconSource: ""; name: "Unisocks"; shortName: "SOCKS"; category: "Community assets"
-                }
-                ListElement {
-                    key: "zrx"; iconSource: ""; name: "Ox"; shortName: "ZRX"; category: "Listed assets"
-                }
-                ListElement {
-                    key: "1inch"; iconSource: ""; name: "1inch"; shortName: "ZRX"; category: "Listed assets"
-                }
-                ListElement {
-                    key: "Aave"; iconSource: ""; name: "Aave"; shortName: "AAVE"; category: "Listed assets"}
-
-                ListElement {
-                    key: "Amp"; iconSource: ""; name: "Amp"; shortName: "AMP"; category: "Listed assets"
-                }
-            }
+            readonly property var collectiblesModel: CollectiblesModel {}
+            readonly property var assetsModel: AssetsModel {}
         }
 
         onOpened: contentItem.parent.parent = root

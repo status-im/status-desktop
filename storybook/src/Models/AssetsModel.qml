@@ -21,7 +21,7 @@ ListModel {
                        key: "1inch",
                        iconSource: ModelsData.assets.inch,
                        name: "1inch",
-                       shortName: "ZRX",
+                       shortName: "1INCH",
                        category: "Listed assets"
                    },
                    {
