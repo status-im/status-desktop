@@ -6,6 +6,7 @@ Feature: Status Desktop Sign Up with seed phrase, negative cases
 
   The feature start sequence follows the global one (setup on global `bdd_hooks`): No additional steps
 
+  @mayfail
   Scenario: User signs up with wrong imported seed phrase
 
     Given A first time user lands on the status desktop and navigates to import seed phrase

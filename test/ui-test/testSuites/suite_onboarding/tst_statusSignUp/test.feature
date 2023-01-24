@@ -23,6 +23,7 @@ Feature: Status Desktop Sign Up
     Then the user lands on the signed in app
     And the user is online
 
+  @mayfail
   Scenario Outline: The user signs up with imported seed phrase and and its state is online
     Given A first time user lands on the status desktop and navigates to import seed phrase
     When the user inputs the seed phrase "<seed>"

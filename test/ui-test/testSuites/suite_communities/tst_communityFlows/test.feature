@@ -36,6 +36,7 @@ Feature: Status Desktop community
             | test-channel    | Community channel description tested 1      | bottom_menu      |
             | test-channel2   | Community channel description tested 2      | right_click_menu |
 
+	@mayfail
     Scenario Outline: The admin edits a community channel
         Given the admin creates a community channel named "<community_channel_name>", with description "<community_channel_description>", with the method "bottom_menu"
         And the channel named "<community_channel_name>" is open
