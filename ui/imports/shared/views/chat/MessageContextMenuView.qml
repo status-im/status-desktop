@@ -365,14 +365,14 @@ StatusMenu {
             root.store.copyToClipboard(root.unparsedText)
             close()
         }
-        enabled: root.messageContentType === Constants.messageContentType.messageType
+        enabled: root.messageContentType === Constants.messageContentType.messageType && !root.isProfile && !emojiContainer.visible
     }
 
     StatusAction {
         id: copyMessageIdAction
         text: qsTr("Copy Message Id")
         icon.name: "copy"
-        enabled: root.isDebugEnabled && !pinnedPopup
+        enabled: root.isDebugEnabled && !root.isProfile && !root.pinnedPopup && !emojiContainer.visible
         onTriggered: {
             root.store.copyToClipboard(root.messageId)
             close()
