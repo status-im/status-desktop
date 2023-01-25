@@ -132,15 +132,9 @@ QtObject:
   proc init*(self: Service) =
     self.doConnect()
 
-    # Response of `transactionService.getPendingTransactions()` should be appropriate DTO, that's not added at the moment
-    # but once we add it, need to update this block here, since we won't need to parse json manually here.
-    let pendingTransactions = self.transactionService.getPendingTransactions()
-    if (pendingTransactions.kind == JArray and pendingTransactions.len > 0):
-      for trx in pendingTransactions.getElems():
-        let transactionType = trx["type"].getStr
-        if transactionType == $PendingTransactionTypeDto.RegisterENS or
-          transactionType == $PendingTransactionTypeDto.SetPubKey:
-          self.pendingEnsUsernames.incl trx["additionalData"].getStr
+    for trx in self.transactionService.getPendingTransactions():
+      if trx.typeValue == $PendingTransactionTypeDto.RegisterENS or trx.typeValue == $PendingTransactionTypeDto.SetPubKey:
+        self.pendingEnsUsernames.incl trx.additionalData
 
   proc getMyPendingEnsUsernames*(self: Service): seq[string] =
     for i in self.pendingEnsUsernames.items:
@@ -260,7 +254,7 @@ QtObject:
       let hash = resp.result.getStr
 
       let resolverAddress = status_ens.resolver(chainId, ensUsername.addDomain()).result.getStr
-      self.transactionService.trackPendingTransaction(
+      self.transactionService.watchTransaction(
         hash, $address, resolverAddress,
         $PendingTransactionTypeDto.SetPubKey, ensUsername, chainId
       )
@@ -317,7 +311,7 @@ QtObject:
       let hash = resp.result.getStr
 
       let ensUsernamesAddress = self.getEnsRegisteredAddress()
-      self.transactionService.trackPendingTransaction(
+      self.transactionService.watchTransaction(
         hash, address, ensUsernamesAddress,
         $PendingTransactionTypeDto.ReleaseENS, ensUsername, chainId
       )
@@ -368,7 +362,7 @@ QtObject:
       let hash = resp.result.getStr
       let sntContract = self.getStatusToken()
       let ensUsername = self.formatUsername(username, true)
-      self.transactionService.trackPendingTransaction(
+      self.transactionService.watchTransaction(
         hash, address, $sntContract.address,
         $PendingTransactionTypeDto.RegisterEns, ensUsername,
         chainId

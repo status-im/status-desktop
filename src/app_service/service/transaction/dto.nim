@@ -125,13 +125,23 @@ proc cmpTransactions*(x, y: TransactionDto): int =
 
 type
   SuggestedFeesDto* = ref object
-    gasPrice*: float
-    baseFee*: float
-    maxPriorityFeePerGas*: float
-    maxFeePerGasL*: float
-    maxFeePerGasM*: float
-    maxFeePerGasH*: float
+    gasPrice*: float64
+    baseFee*: float64
+    maxPriorityFeePerGas*: float64
+    maxFeePerGasL*: float64
+    maxFeePerGasM*: float64
+    maxFeePerGasH*: float64
     eip1559Enabled*: bool
+
+proc decodeSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
+  result = SuggestedFeesDto()
+  result.gasPrice = jsonObj{"gasPrice"}.getFloat
+  result.baseFee = jsonObj{"baseFee"}.getFloat
+  result.maxPriorityFeePerGas = jsonObj{"maxPriorityFeePerGas"}.getFloat
+  result.maxFeePerGasL = jsonObj{"maxFeePerGasL"}.getFloat
+  result.maxFeePerGasM = jsonObj{"maxFeePerGasM"}.getFloat
+  result.maxFeePerGasH = jsonObj{"maxFeePerGasH"}.getFloat
+  result.eip1559Enabled = jsonObj{"eip1559Enabled"}.getbool
 
 proc toSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
   result = SuggestedFeesDto()
@@ -225,7 +235,7 @@ proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   discard jsonObj.getProp("bridgeName", result.bridgeName)
   result.fromNetwork = Json.decode($jsonObj["fromNetwork"], NetworkDto, allowUnknownFields = true)
   result.toNetwork = Json.decode($jsonObj["toNetwork"], NetworkDto, allowUnknownFields = true)
-  result.gasFees = Json.decode($jsonObj["gasFees"], SuggestedFeesDto, allowUnknownFields = true)
+  result.gasFees = decodeSuggestedFeesDto(jsonObj["gasFees"])
   discard jsonObj.getProp("cost", result.cost)
   discard jsonObj.getProp("tokenFees", result.tokenFees)
   discard jsonObj.getProp("bonderFees", result.bonderFees)

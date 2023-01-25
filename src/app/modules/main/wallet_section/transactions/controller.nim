@@ -44,29 +44,25 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SignalType.Wallet.event) do(e:Args):
-    var data = WalletSignal(e)
-    case data.eventType:
-      of "new-transfers":
-        for account in data.accounts:
-          # TODO find a way to use data.blockNumber
-          self.loadTransactions(account, stint.fromHex(Uint256, "0x0"))
-      of "recent-history-fetching":
-        self.delegate.setHistoryFetchState(data.accounts, isFetching = true)
-      of "recent-history-ready":
-        for account in data.accounts:
-          self.loadTransactions(account, stint.fromHex(Uint256, "0x0"))
-        self.delegate.setHistoryFetchState(data.accounts, isFetching = false)
-      of "non-archival-node-detected":
-        let accounts = self.getWalletAccounts()
-        let addresses = accounts.map(account => account.address)
-        self.delegate.setHistoryFetchState(addresses, isFetching = false)
-        self.delegate.setIsNonArchivalNode(true)
-      of "fetching-history-error":
-        let accounts = self.getWalletAccounts()
-        let addresses = accounts.map(account => account.address)
-        self.delegate.setHistoryFetchState(addresses, isFetching = false)
+  self.events.on(SIGNAL_HISTORY_FETCHING) do (e:Args):
+    let args = HistoryArgs(e)
+    self.delegate.setHistoryFetchState(args.addresses, isFetching = true)
 
+  self.events.on(SIGNAL_HISTORY_READY) do (e:Args):
+    let args = HistoryArgs(e)
+    self.delegate.setHistoryFetchState(args.addresses, isFetching = false)
+
+  self.events.on(SIGNAL_HISTORY_NON_ARCHIVAL_NODE) do (e:Args):
+    let accounts = self.getWalletAccounts()
+    let addresses = accounts.map(account => account.address)
+    self.delegate.setHistoryFetchState(addresses, isFetching = false)
+    self.delegate.setIsNonArchivalNode(true)
+
+  self.events.on(SIGNAL_HISTORY_ERROR) do (e:Args):
+    let accounts = self.getWalletAccounts()
+    let addresses = accounts.map(account => account.address)
+    self.delegate.setHistoryFetchState(addresses, isFetching = false)
+    
   self.events.on(SIGNAL_TRANSACTIONS_LOADED) do(e:Args):
     let args = TransactionsLoadedArgs(e)
     self.delegate.setTrxHistoryResult(args.transactions, args.address, args.wasFetchMore)
@@ -83,15 +79,15 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_SUGGESTED_ROUTES_READY) do(e:Args):
     self.delegate.suggestedRoutesReady(SuggestedRoutesArgs(e).suggestedRoutes)
 
-  self.events.on(SIGNAL_PENDING_TX_COMPLETED) do(e:Args):
-    self.walletAccountService.checkRecentHistory()
-
   self.events.on(SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS) do(e:Args):
     let args = TransactionsLoadedArgs(e)
     self.delegate.setHistoryFetchState(args.address, isFetching = false)
 
-proc checkPendingTransactions*(self: Controller): seq[TransactionDto] =
-  return self.transactionService.checkPendingTransactions()
+proc watchPendingTransactions*(self: Controller): seq[TransactionDto] =
+  return self.transactionService.watchPendingTransactions()
+
+proc getPendingTransactions*(self: Controller): seq[TransactionDto] =
+  return self.transactionService.getPendingTransactions()
 
 proc getWalletAccounts*(self: Controller): seq[WalletAccountDto] =
   self.walletAccountService.getWalletAccounts()

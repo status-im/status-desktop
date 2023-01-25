@@ -211,7 +211,7 @@ QtObject:
       let transactionResponse = status_stickers.buy(chainId, %txData, packId, password)
       let transactionHash = transactionResponse.result.getStr()
       let sntContract = self.getStatusToken()
-      self.transactionService.trackPendingTransaction(
+      self.transactionService.watchTransaction(
         transactionHash,
         address,
         $sntContract.address,

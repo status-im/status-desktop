@@ -80,7 +80,7 @@ proc transactionsToItems(self: Module, transactions: seq[TransactionDto]) : seq[
   ))
 
 proc setPendingTx(self: Module) =
-  self.view.setPendingTx(self.transactionsToItems(self.controller.checkPendingTransactions()))
+  self.view.setPendingTx(self.transactionsToItems(self.controller.watchPendingTransactions()))
 
 method viewDidLoad*(self: Module) =
   let accounts = self.getWalletAccounts()
@@ -168,7 +168,7 @@ method onUserAuthenticated*(self: Module, password: string) =
 
 method transactionWasSent*(self: Module, result: string) =
   self.view.transactionWasSent(result)
-  self.setPendingTx()
+  self.view.setPendingTx(self.transactionsToItems(self.controller.getPendingTransactions()))
 
 method suggestedFees*(self: Module, chainId: int): string = 
   return self.controller.suggestedFees(chainId)
