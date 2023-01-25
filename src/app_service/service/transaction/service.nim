@@ -35,8 +35,11 @@ include ../../common/json_utils
 const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
 const SIGNAL_TRANSACTION_SENT* = "transactionSent"
 const SIGNAL_SUGGESTED_ROUTES_READY* = "suggestedRoutesReady"
-const SIGNAL_PENDING_TX_COMPLETED* = "pendingTransactionCompleted"
 const SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS* = "transactionsLoadingCompleteForAllNetworks"
+const SIGNAL_HISTORY_FETCHING* = "historyFetching"
+const SIGNAL_HISTORY_READY* = "historyReady"
+const SIGNAL_HISTORY_NON_ARCHIVAL_NODE* = "historyNonArchivalNode"
+const SIGNAL_HISTORY_ERROR* = "historyError"
 
 type
   EstimatedTime* {.pure.} = enum
@@ -53,6 +56,10 @@ type
     chainId*: int
     success*: bool
     revertReason*: string
+
+type
+  HistoryArgs* = ref object of Args
+    addresses*: seq[string]
 
 type
   TransactionsLoadedArgs* = ref object of Args
@@ -82,8 +89,7 @@ QtObject:
     txCounter: Table[string, seq[int]]
 
   # Forward declaration
-  proc checkPendingTransactions*(self: Service): seq[TransactionDto]
-  proc checkPendingTransactions*(self: Service, address: string)
+  proc loadTransactions*(self: Service, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false)
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -91,7 +97,7 @@ QtObject:
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
-      networkService: network_service.Service,
+      networkService: network_service.Service,  
       settingsService: settings_service.Service,
       tokenService: token_service.Service,
   ): Service =
@@ -104,101 +110,80 @@ QtObject:
     result.tokenService = tokenService
     result.txCounter = initTable[string, seq[int]]()
 
-  proc doConnect*(self: Service) =
+  proc init*(self: Service) =
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
-      if(data.eventType == "newblock"):
-        for acc in data.accounts:
-          self.checkPendingTransactions(acc)
+      case data.eventType:
+        of "recent-history-fetching":
+          self.events.emit(SIGNAL_HISTORY_FETCHING, HistoryArgs(addresses: data.accounts))
+        of "recent-history-ready":
+          for account in data.accounts:
+            self.loadTransactions(account, stint.fromHex(Uint256, "0x0"))
+          self.events.emit(SIGNAL_HISTORY_READY, HistoryArgs(addresses: data.accounts))
+        of "non-archival-node-detected":
+          self.events.emit(SIGNAL_HISTORY_NON_ARCHIVAL_NODE, Args())
+        of "fetching-history-error":
+          self.events.emit(SIGNAL_HISTORY_ERROR, Args())
 
-  proc init*(self: Service) =
-    self.doConnect()
-
-  proc watchTransactionResult*(self: Service, watchTxResult: string) {.slot.} =
-    let watchTxResult = parseJson(watchTxResult)
-    let txHash = watchTxResult["txHash"].getStr
-    let success = watchTxResult["isSuccessfull"].getBool
-    if(success):
-      self.events.emit(SIGNAL_PENDING_TX_COMPLETED, PendingTxCompletedArgs(txHash: txHash))
-
-  proc watchTransaction*(self: Service, chainId: int, transactionHash: string) =
-      let arg = WatchTransactionTaskArg(
-        chainId: chainId,
-        txHash: transactionHash,
-        tptr: cast[ByteAddress](watchTransactionsTask),
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "watchTransactionResult",
-      )
-      self.threadpool.start(arg)
-  
-  proc getTransactionReceipt*(self: Service, chainId: int, transactionHash: string): JsonNode =
-    try:
-      let response = transactions.getTransactionReceipt(chainId, transactionHash)
-      result = response.result
-    except Exception as e:
-      let errDescription = e.msg
-      error "error getting transaction receipt: ", errDescription
-  
-  proc deletePendingTransaction*(self: Service, chainId: int, transactionHash: string) =
-    try:
-      discard transactions.deletePendingTransaction(chainId, transactionHash)
-    except Exception as e:
-      let errDescription = e.msg
-      error "error deleting pending transaction: ", errDescription
-  
-  proc confirmTransactionStatus(self: Service, pendingTransactions: seq[TransactionDto]) =
-    for trx in pendingTransactions:
-      let transactionReceipt = self.getTransactionReceipt(trx.chainId, trx.txHash)
-      if transactionReceipt != nil and transactionReceipt.kind != JNull:
-        self.deletePendingTransaction(trx.chainId, trx.txHash)
-        let ev = TransactionMinedArgs(
-                  data: trx.additionalData,
-                  transactionHash: trx.txHash,
-                  chainId: trx.chainId,
-                  success: transactionReceipt{"status"}.getStr == "0x1",
-                  revertReason: ""
-                )
-        self.events.emit(parseEnum[PendingTransactionTypeDto](trx.typeValue).event, ev)
-
-  proc getPendingTransactions*(self: Service): JsonNode =
+  proc getPendingTransactions*(self: Service): seq[TransactionDto] =
     try:
       let chainIds = self.networkService.getNetworks().map(a => a.chainId)
-      let response = backend.getPendingTransactionsByChainIDs(chainIds)
-      return response.result
+      let response = backend.getPendingTransactionsByChainIDs(chainIds).result
+      if (response.kind == JArray and response.len > 0):
+        return response.getElems().map(x => x.toPendingTransactionDto())
+
+      return @[]
     except Exception as e:
       let errDescription = e.msg
       error "error: ", errDescription
       return
 
-  proc getPendingOutboundTransactionsByAddress*(self: Service, address: string): JsonNode =
-    try:
-      let chainIds = self.networkService.getNetworks().map(a => a.chainId)
-      result = transactions.getPendingOutboundTransactionsByAddress(chainIds, address).result
-    except Exception as e:
-      let errDescription = e.msg
-      error "error getting pending txs by address: ", errDescription, address
+  proc watchTransactionResult*(self: Service, watchTxResult: string) {.slot.} =
+    let watchTxResult = parseJson(watchTxResult)
+    let success = watchTxResult["isSuccessfull"].getBool
+    if(success):
+      let hash = watchTxResult["hash"].getStr
+      let chainId = watchTxResult["chainId"].getInt
+      let address = watchTxResult["address"].getStr
+      let transactionReceipt = transactions.getTransactionReceipt(chainId, hash).result
+      if transactionReceipt != nil and transactionReceipt.kind != JNull:
+        discard transactions.deletePendingTransaction(chainId, hash)
+        let ev = TransactionMinedArgs(
+          data: "",
+          transactionHash: hash,
+          chainId: chainId,
+          success: transactionReceipt{"status"}.getStr == "0x1",
+          revertReason: ""
+        )
+        self.events.emit(parseEnum[PendingTransactionTypeDto](watchTxResult["trxType"].getStr).event, ev)
+        transactions.checkRecentHistory(@[chainId], @[address])
 
-  proc checkPendingTransactions*(self: Service): seq[TransactionDto] =
-    # TODO move this to a thread
+  proc watchTransaction*(
+    self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string, data: string, chainId: int, track: bool = true
+  ) =
+    if track:
+      try:
+        discard transactions.trackPendingTransaction(hash, fromAddress, toAddress, trxType, data, chainId)
+      except Exception as e:
+        let errDescription = e.msg
+        error "error: ", errDescription
+
+    let arg = WatchTransactionTaskArg(
+      chainId: chainId,
+      hash: hash,
+      address: fromAddress,
+      trxType: trxType,
+      tptr: cast[ByteAddress](watchTransactionTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "watchTransactionResult",
+    )
+    self.threadpool.start(arg)
+
+  proc watchPendingTransactions*(self: Service): seq[TransactionDto] =
     let pendingTransactions = self.getPendingTransactions()
-    if (pendingTransactions.kind == JArray and pendingTransactions.len > 0):
-      let pendingTxs = pendingTransactions.getElems().map(x => x.toPendingTransactionDto())
-      self.confirmTransactionStatus(pendingTxs)
-      for tx in pendingTxs:
-        self.watchTransaction(tx.chainId, tx.txHash)
-      return pendingTxs
-
-  proc checkPendingTransactions*(self: Service, address: string) =
-    let pendingTxs = self.getPendingOutboundTransactionsByAddress(address).getElems().map(x => x.toPendingTransactionDto())
-    self.confirmTransactionStatus(pendingTxs)
-
-  proc trackPendingTransaction*(self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string, 
-    data: string, chainId: int) =
-    try:
-      discard transactions.trackPendingTransaction(hash, fromAddress, toAddress, trxType, data, chainId)
-    except Exception as e:
-      let errDescription = e.msg
-      error "error: ", errDescription
+    for tx in pendingTransactions:
+      self.watchTransaction(tx.txHash, tx.fromAddress, tx.to, tx.typeValue, tx.input, tx.chainId, track = false)
+    return pendingTransactions
 
   proc setTrxHistoryResult*(self: Service, historyJSON: string) {.slot.} =
     let historyData = parseJson(historyJSON)
@@ -357,11 +342,12 @@ QtObject:
         paths,
         password,
       )
+
       # Watch for this transaction to be completed
       if response.result{"hashes"} != nil:
         for hash in response.result["hashes"][$chainID]:
           let txHash = hash.getStr
-          self.watchTransaction(chainID, txHash)
+          self.watchTransaction(txHash, from_addr, to_addr, $PendingTransactionTypeDto.WalletTransfer, "", chainId, track = false)
       let output = %* {"result": response.result{"hashes"}, "success":true, "uuid": %uuid }
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
     except Exception as e:
@@ -407,16 +393,6 @@ QtObject:
     except Exception as e:
       error "Error fetching crypto services", message = e.msg
       return @[]
-
-  proc addToAllTransactionsAndSetNewMinMax(self: Service, myTip: float, numOfTransactionWithTipLessThanMine: var int, 
-    transactions: JsonNode) =
-    if transactions.kind != JArray:
-      return
-    for t in transactions:
-      let gasPriceUnparsed = $fromHex(Stuint[256], t{"gasPrice"}.getStr)
-      let gasPrice = parseFloat(wei2gwei(gasPriceUnparsed))
-      if gasPrice < myTip:
-        numOfTransactionWithTipLessThanMine.inc
 
   proc getEstimatedTime*(self: Service, chainId: int, maxFeePerGas: string): EstimatedTime =
     try:
