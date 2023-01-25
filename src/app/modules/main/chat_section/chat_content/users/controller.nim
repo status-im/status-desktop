@@ -52,21 +52,17 @@ proc handleCommunityOnlyConnections(self: Controller) =
     if (args.communityId == self.sectionId):
       self.delegate.onChatMembersAdded(@[args.pubKey])
 
-  self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e:Args):
-    let args = CommunitiesArgs(e)
-    for community in args.communities:
-      if (community.id != self.sectionId):
-        continue
-      # If we didn't join the community, all members in the list will have status
-      # joined=false. No need to try add them to the model
-      if community.isMember:
-        let membersPubKeys = community.members.map(x => x.id)
-        self.delegate.onChatMembersAddedOrRemoved(membersPubKeys)
+  self.events.on(SIGNAL_COMMUNITY_MEMBERS_CHANGED) do(e:Args):
+    let args = CommunityMembersArgs(e)
+    if args.communityId != self.sectionId:
+      return
+
+    self.delegate.onMembersChanged(args.members)
 
   self.events.on(SIGNAL_COMMUNITY_MEMBER_REMOVED) do(e: Args):
     let args = CommunityMemberArgs(e)
     if (args.communityId == self.sectionId):
-        self.delegate.onChatMemberRemoved(args.pubKey)
+      self.delegate.onChatMemberRemoved(args.pubKey)
 
 proc init*(self: Controller) =
   # Events that are needed for all chats because of mentions
@@ -121,11 +117,10 @@ proc init*(self: Controller) =
       if (args.chatId == self.chatId):
         self.delegate.onChatMembersAdded(args.ids)
 
-    self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
-      var args = ChatUpdateArgs(e)
-      for chat in args.chats:
-        if (chat.id == self.chatId):
-          self.delegate.onChatUpdated(chat)
+    self.events.on(SIGNAL_CHAT_MEMBERS_CHANGED) do(e: Args):
+      var args = ChatMembersChangedArgs(e)
+      if (args.chatId == self.chatId):
+        self.delegate.onMembersChanged(args.members)
 
     self.events.on(SIGNAL_CHAT_MEMBER_REMOVED) do(e: Args):
       let args = ChatMemberRemovedArgs(e)
@@ -145,18 +140,10 @@ proc getChat*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
 proc getChatMembers*(self: Controller): seq[ChatMember] =
-  var communityId = ""
-  if (self.belongsToCommunity):
-    communityId = self.sectionId
-  return self.chatService.getMembers(communityId, self.chatId)
-
-proc getMembersPublicKeys*(self: Controller): seq[string] =
-  if(self.belongsToCommunity):
-    let communityDto = self.communityService.getCommunityById(self.sectionId)
-    return communityDto.members.map(x => x.id)
-  else:
-    let chatDto = self.getChat()
-    return chatDto.members.map(x => x.id)
+  if self.belongsToCommunity:
+    return self.communityService.getCommunityById(self.sectionId).members
+  
+  return self.chatService.getChatById(self.chatId).members
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, largeImage: string] =

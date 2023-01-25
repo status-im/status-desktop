@@ -22,7 +22,7 @@ type
     moduleLoaded: bool
 
 # Forward declaration
-method addChatMember*(self: Module,  member: ChatMember)
+method addChatMember(self: Module,  member: ChatMember)
 
 proc newModule*(
   events: EventEmitter, sectionId: string, chatId: string,
@@ -96,7 +96,7 @@ method userProfileUpdated*(self: Module) =
 method loggedInUserImageChanged*(self: Module) =
   self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
 
-method addChatMember*(self: Module,  member: ChatMember) =
+method addChatMember(self: Module,  member: ChatMember) =
   if member.id == "":
     return
 
@@ -136,43 +136,21 @@ method addChatMember*(self: Module,  member: ChatMember) =
     isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy
     ))
 
-method onChatMembersAdded*(self: Module,  ids: seq[string]) =
-  if ids.len() == 0:
-    return
-
-  let members = self.controller.getChatMembers()
-  for id in ids:
-    for member in members:
-      if (member.id == id):
-        self.addChatMember(member)
-
-method onChatUpdated*(self: Module,  chat: ChatDto) =
-  let members = self.controller.getChatMembers()
-  for member in chat.members:
-    for existingMember in members:
-      if existingMember.id == member.id:
-        self.addChatMember(existingMember)
-
-  if chat.members.len > 0:
-    let ids = self.view.model.getItemIds()
-    for id in ids:
-      var found = false
-      for member in chat.members:
-        if (member.id == id):
-          found = true
-          break
-      if (not found):
-        self.view.model().removeItemById(id)
+method onChatMembersAdded*(self: Module, ids: seq[string]) =
+  for memberId in ids:
+    self.addChatMember(ChatMember(id: memberId, admin: false, joined: true, roles: @[]))
 
 method onChatMemberRemoved*(self: Module, id: string) =
   self.view.model().removeItemById(id)
 
-method onChatMembersAddedOrRemoved*(self: Module,  ids: seq[string]) =
+method onMembersChanged*(self: Module,  members: seq[ChatMember]) =
   let modelIDs = self.view.model().getItemIds()
-  let membersAdded = filter(ids, id => not modelIDs.contains(id))
-  let membersRemoved = filter(modelIDs, id => not ids.contains(id))
+  let membersAdded = filter(members, member => not modelIDs.contains(member.id))
+  let membersRemoved = filter(modelIDs, id => not members.any(member => member.id == id))
 
-  self.onChatMembersAdded(membersAdded)
+  for member in membersAdded:
+    self.addChatMember(member)
+
   for id in membersRemoved:
     self.onChatMemberRemoved(id)
 
@@ -192,10 +170,6 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
     joined = joined,
     isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,
     )
-
-method getMembersPublicKeys*(self: Module): string =
-  let publicKeys = self.controller.getMembersPublicKeys()
-  return publicKeys.join(" ")
 
 method addGroupMembers*(self: Module, pubKeys: seq[string]) =
   self.controller.addGroupMembers(pubKeys)

@@ -73,6 +73,10 @@ type
     chatId*: string
     id*: string
 
+  ChatMembersChangedArgs* = ref object of Args
+    chatId*: string
+    members*: seq[ChatMember]
+
   ChatMemberUpdatedArgs* = ref object of Args
     chatId*: string
     id*: string
@@ -92,6 +96,7 @@ const SIGNAL_CHAT_HISTORY_CLEARED* = "chatHistoryCleared"
 const SIGNAL_CHAT_RENAMED* = "chatRenamed"
 const SIGNAL_GROUP_CHAT_DETAILS_UPDATED* = "groupChatDetailsUpdated"
 const SIGNAL_CHAT_MEMBERS_ADDED* = "chatMemberAdded"
+const SIGNAL_CHAT_MEMBERS_CHANGED* = "chatMembersChanged"
 const SIGNAL_CHAT_MEMBER_REMOVED* = "chatMemberRemoved"
 const SIGNAL_CHAT_MEMBER_UPDATED* = "chatMemberUpdated"
 const SIGNAL_CHAT_SWITCH_TO_OR_CREATE_1_1_CHAT* = "switchToOrCreateOneToOneChat"
@@ -128,7 +133,13 @@ QtObject:
         for chatDto in receivedData.chats:
           if (chatDto.active):
             chats.add(chatDto)
+
+            # Handling members update
+            if self.chats.hasKey(chatDto.id) and self.chats[chatDto.id].members != chatDto.members:
+              self.events.emit(SIGNAL_CHAT_MEMBERS_CHANGED, ChatMembersChangedArgs(chatId: chatDto.id, members: chatDto.members))
+
             self.updateOrAddChat(chatDto)
+
         self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(messages: receivedData.messages, chats: chats))
 
       if (receivedData.clearedHistories.len > 0):
@@ -613,8 +624,7 @@ QtObject:
       let myPubkey = singletonInstance.userProfile.getPubKey()
       result = @[]
       for (id, memberObj) in response.result.pairs:
-        var member = toChatMember(memberObj)
-        member.id = id
+        var member = toChatMember(memberObj, id)
         # Make yourself as the first result
         if (id == myPubkey):
           result.insert(member)
