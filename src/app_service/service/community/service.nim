@@ -67,6 +67,11 @@ type
     communityId*: string
     pubKey*: string
 
+  CommunityMembersArgs* = ref object of Args
+    communityId*: string
+    members*: seq[ChatMember]
+    isMember*: bool
+
   CommunityMutedArgs* = ref object of Args
     communityId*: string
     muted*: bool
@@ -118,6 +123,7 @@ const SIGNAL_COMMUNITY_CATEGORY_REORDERED* = "communityCategoryReordered"
 const SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED* = "communityChannelCategoryChanged"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 const SIGNAL_COMMUNITY_MEMBER_REMOVED* = "communityMemberRemoved"
+const SIGNAL_COMMUNITY_MEMBERS_CHANGED* = "communityMembersChanged"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
 const SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED* = "requestToJoinCommunityCanceled"
 const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
@@ -446,6 +452,12 @@ QtObject:
 
             let data = CommunityChatArgs(chat: updatedChat)
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
+
+      # members list was changed
+      if community.members != prev_community.members:
+        self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED, 
+        CommunityMembersArgs(communityId: community.id, members: community.members, isMember: community.isMember))
+
       self.allCommunities[community.id] = community
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
 

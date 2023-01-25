@@ -126,7 +126,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.permissions.access,
       c.permissions.ensOnly,
       c.muted,
-      c.members.map(proc(member: Member): MemberItem =
+      c.members.map(proc(member: ChatMember): MemberItem =
         result = self.createMemberItem(member.id, "")),
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled,
       bannedMembers = c.bannedMembersIds.map(proc(bannedMemberId: string): MemberItem =

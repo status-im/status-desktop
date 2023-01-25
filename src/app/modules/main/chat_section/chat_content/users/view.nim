@@ -40,9 +40,6 @@ QtObject:
     read = getModel
     notify = modelChanged
 
-  proc getMembersPublicKeys*(self: View): string {.slot.} =
-    return self.delegate.getMembersPublicKeys()
-
   proc temporaryModelChanged*(self: View) {.signal.}
 
   proc getTemporaryModel(self: View): QVariant {.slot.} =

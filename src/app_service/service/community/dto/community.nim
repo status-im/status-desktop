@@ -13,20 +13,6 @@ type RequestToJoinType* {.pure.}= enum
   Accepted = 3,
   Canceled = 4
 
-type Member* = object
-  id*: string
-  roles*: seq[int]
-
-proc toMember*(jsonObj: JsonNode, memberId: string): Member =
-  # Mapping this DTO is not strightforward since only keys are used for id. We
-  # handle it a bit different.
-  result = Member()
-  result.id = memberId
-  var rolesObj: JsonNode
-  if(jsonObj.getProp("roles", rolesObj)):
-    for roleObj in rolesObj:
-      result.roles.add(roleObj.getInt)
-
 type CommunityMembershipRequestDto* = object
   id*: string
   publicKey*: string
@@ -58,7 +44,7 @@ type CommunityDto* = object
   categories*: seq[Category]
   images*: Images
   permissions*: Permission
-  members*: seq[Member]
+  members*: seq[ChatMember]
   canRequestAccess*: bool
   canManageUsers*: bool
   canJoin*: bool
@@ -159,6 +145,7 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("introMessage", result.introMessage)
   discard jsonObj.getProp("outroMessage", result.outroMessage)
   discard jsonObj.getProp("encrypted", result.encrypted)
+  discard jsonObj.getProp("isMember", result.isMember)
 
   var chatsObj: JsonNode
   if(jsonObj.getProp("chats", chatsObj)):
@@ -185,7 +172,8 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   var membersObj: JsonNode
   if(jsonObj.getProp("members", membersObj) and membersObj.kind == JObject):
     for memberId, memberObj in membersObj:
-      result.members.add(toMember(memberObj, memberId))
+      # Do not display members list until the user became a community member
+      result.members.add(toChannelMember(memberObj, memberId, joined = result.isMember))
 
   var tagsObj: JsonNode
   if(jsonObj.getProp("tags", tagsObj)):
@@ -204,7 +192,6 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("color", result.color)
 
   discard jsonObj.getProp("requestedToJoinAt", result.requestedToJoinAt)
-  discard jsonObj.getProp("isMember", result.isMember)
   discard jsonObj.getProp("muted", result.muted)
 
 proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipRequestDto =
@@ -267,7 +254,8 @@ proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
     members: communityDto.members.map(m => ChatMember(
         id: m.id,
         joined: true,
-        admin: isMemberAdmin(m.roles)
+        admin: isMemberAdmin(m.roles),
+        roles: m.roles
       )),
     canManageUsers: communityDto.canManageUsers,
     muted: communityDto.muted,

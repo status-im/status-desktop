@@ -172,27 +172,37 @@ proc toCategory*(jsonObj: JsonNode): Category =
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("position", result.position)
 
-proc toChatMember*(jsonObj: JsonNode): ChatMember =
+proc toChatMember*(jsonObj: JsonNode, memberId: string): ChatMember =
+  # Parse status-go "Member" type
+  # Mapping this DTO is not strightforward since only keys are used for id
   result = ChatMember()
-  discard jsonObj.getProp("id", result.id)
+  result.id = memberId
   discard jsonObj.getProp("admin", result.admin)
   discard jsonObj.getProp("joined", result.joined)
-
   var rolesObj: JsonNode
   if(jsonObj.getProp("roles", rolesObj) and rolesObj.kind == JArray):
     for role in rolesObj:
       result.roles.add(role.getInt)
 
-  # channel group members json contains only roles
-  # fill admin info by checking roles
-  if (not jsonObj.contains("admin")):
-    result.admin = isMemberAdmin(result.roles)
+proc toGroupChatMember*(jsonObj: JsonNode): ChatMember =
+  # parse status-go "ChatMember" type
+  result = ChatMember()
+  discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("admin", result.admin)
+  result.joined = true
 
-proc toChatMember(jsonObj: JsonNode, memberId: string): ChatMember =
+proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMember =
+  # Parse status-go "CommunityMember" type
   # Mapping this DTO is not strightforward since only keys are used for id. We
   # handle it a bit different.
-  result = jsonObj.toChatMember()
+  result = ChatMember()
   result.id = memberId
+  var rolesObj: JsonNode
+  if(jsonObj.getProp("roles", rolesObj)):
+    for roleObj in rolesObj:
+      result.roles.add(roleObj.getInt)
+  result.joined = joined
+  result.admin = isMemberAdmin(result.roles)
 
 proc toChatDto*(jsonObj: JsonNode): ChatDto =
   result = ChatDto()
@@ -242,9 +252,11 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   var membersObj: JsonNode
   if(jsonObj.getProp("members", membersObj)):
     if(membersObj.kind == JArray):
+      # during group chat updates
       for memberObj in membersObj:
-        result.members.add(toChatMember(memberObj))
+        result.members.add(toGroupChatMember(memberObj))
     elif(membersObj.kind == JObject):
+      # on a startup, chat/channel creation
       for memberId, memberObj in membersObj:
         result.members.add(toChatMember(memberObj, memberId))
 
@@ -292,7 +304,7 @@ proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
   var membersObj: JsonNode
   if(jsonObj.getProp("members", membersObj) and membersObj.kind == JObject):
     for memberId, memberObj in membersObj:
-      result.members.add(toChatMember(memberObj, memberId))
+      result.members.add(toChannelMember(memberObj, memberId, joined = true))
 
   var bannedMembersIdsObj: JsonNode
   if(jsonObj.getProp("banList", bannedMembersIdsObj) and bannedMembersIdsObj.kind == JArray):
