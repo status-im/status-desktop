@@ -240,19 +240,13 @@ QtObject:
       if(chats[i].chatType == ChatType.OneToOne and not self.contactService.getContactById(chatId).isContact):
         continue
 
-      let currentChatCursor = self.initOrGetMessageCursor(chatId)
-      # Ignore messages update if chat haven't loaded any messages and try to load them from database instead
-      if(currentChatCursor.isEmpty()):
-        currentChatCursor.makeObsolete()
-        self.asyncLoadMoreMessagesForChat(chatId)
-        continue
-
       var chatMessages: seq[MessageDto]
       for msg in messages:
         if(msg.localChatId != chatId):
           continue
 
         # Ignore messages older than current chat cursor
+        let currentChatCursor = self.initOrGetMessageCursor(chatId)
         let msgCursorValue = initCursorValue(msg.id, msg.clock)
         if(not currentChatCursor.isLessThan(msgCursorValue)):
           currentChatCursor.makeObsolete()
