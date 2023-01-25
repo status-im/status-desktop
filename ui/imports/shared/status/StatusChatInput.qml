@@ -222,7 +222,7 @@ Rectangle {
             if(mentionsPos.length == 0) return
 
             const unformattedText = messageInputField.getText(0, messageInputField.length)
-            mentionsPos = mentionsPos.filter( mention => unformattedText.charAt(mention.leftIndex) === "@")
+            mentionsPos = mentionsPos.filter(mention => unformattedText.charAt(mention.leftIndex) === "@")
         }
 
         function insertMention(aliasName, publicKey, lastAtPosition, lastCursorPosition) {
@@ -411,7 +411,7 @@ Rectangle {
                 anticipatedCursorPosition += event.key === Qt.Key_Backspace ?
                                                -1 : 1
 
-               const mention = d.getMentionAtPosition(anticipatedCursorPosition)
+                const mention = d.getMentionAtPosition(anticipatedCursorPosition)
                 if(mention) {
                     d.removeMention(mention)
                     event.accepted = true
@@ -909,15 +909,15 @@ Rectangle {
         target: Global.dragArea
         ignoreUnknownSignals: true
         function onDroppedOnValidScreen(drop) {
-                                    let validImages = validateImages(drop.urls)
-                                    if (validImages.length > 0) {
-                                        showImageArea(validImages)
-                                        drop.acceptProposedAction()
-                                    }
-                                }
+            let validImages = validateImages(drop.urls)
+            if (validImages.length > 0) {
+                showImageArea(validImages)
+                drop.acceptProposedAction()
+            }
+        }
     }
 
-     // This is used by Squish tests to not have to access the file dialog
+    // This is used by Squish tests to not have to access the file dialog
     function selectImageString(filePath) {
         let validImages = validateImages([filePath])
         if (validImages.length > 0) {
@@ -1479,5 +1479,4 @@ Rectangle {
             }
         }
     }
-
 }
