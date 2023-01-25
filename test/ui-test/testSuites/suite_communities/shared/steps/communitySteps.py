@@ -146,6 +146,10 @@ def step(context, user_name, message):
 def step(context, user_name):
     _statusCommunityScreen.kick_member_from_community(user_name)
 
+@When("the user opens the community portal section")
+def step(context: any):
+    init_steps.the_user_opens_the_community_portal_section()
+
 #########################
 ### VERIFICATIONS region:
 #########################

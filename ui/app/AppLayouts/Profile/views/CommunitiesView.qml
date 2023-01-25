@@ -100,6 +100,8 @@ SettingsContentBase {
 
             CommunitiesListPanel {
                 id: communitiesList
+
+                objectName: "CommunitiesView_communitiesListPanel"
                 width: parent.width
 
                 model: SortFilterProxyModel {

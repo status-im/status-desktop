@@ -111,6 +111,7 @@ class ConfirmationDialog(Enum):
     SIGN_OUT_CONFIRMATION: str = "signOutConfirmation_StatusButton"
 
 class CommunitiesSettingsScreen(Enum):
+    LIST_PANEL: str = "settings_Communities_CommunitiesListPanel"
     LEAVE_COMMUNITY_BUTTONS: str = "settings_Communities_MainView_LeaveCommunityButtons"
     LEAVE_COMMUNITY_POPUP_LEAVE_BUTTON: str = "settings_Communities_MainView_LeavePopup_LeaveCommunityButton"
 
@@ -264,10 +265,18 @@ class SettingsScreen:
     def open_communities_section(self):
         click_obj_by_name(SidebarComponents.COMMUNITIES_OPTION.value)
 
-    def leave_community(self):
-        # In our case we have only one visible community and only one button
-        click_obj_by_name(CommunitiesSettingsScreen.LEAVE_COMMUNITY_BUTTONS.value)
-        click_obj_by_name(CommunitiesSettingsScreen.LEAVE_COMMUNITY_POPUP_LEAVE_BUTTON.value)
+    def leave_community(self, community_name: str):
+        communities_list = get_obj(CommunitiesSettingsScreen.LIST_PANEL.value)
+        verify(communities_list.count > 0, "At least one joined community exists")
+        for i in range(communities_list.count):
+            delegate = communities_list.itemAtIndex(i)
+            if str(delegate.title) == community_name:
+                buttons = get_children_with_object_name(delegate, "CommunitiesListPanel_leaveCommunityPopupButton")
+                verify(len(buttons) > 0, "Leave community button exists")
+                click_obj(buttons[0])
+                click_obj_by_name(CommunitiesSettingsScreen.LEAVE_COMMUNITY_POPUP_LEAVE_BUTTON.value)
+                return
+        verify(False, "Community left")
 
     def open_profile_settings(self):
         verify_object_enabled(SidebarComponents.PROFILE_OPTION.value)
