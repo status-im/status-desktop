@@ -678,6 +678,9 @@ Rectangle {
     }
 
     function onRelease(event) {
+        if ((event.modifiers & Qt.ControlModifier) || (event.modifiers & Qt.MetaModifier)) // these are likely shortcuts with no meaningful text
+            return
+
         if (event.key === Qt.Key_Backspace && textFormatMenu.opened) {
             textFormatMenu.close()
         }
