@@ -25,6 +25,7 @@ QtObject {
     property MessagingStore messagingStore: MessagingStore {
         privacyModule: profileSectionModuleInst.privacyModule
         syncModule: profileSectionModuleInst.syncModule
+        wakuModule: profileSectionModuleInst.wakuModule
     }
 
     property DevicesStore devicesStore: DevicesStore {

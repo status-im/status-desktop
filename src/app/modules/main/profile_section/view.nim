@@ -51,6 +51,11 @@ QtObject:
   QtProperty[QVariant] syncModule:
     read = getSyncModule
 
+  proc getWakuModule(self: View): QVariant {.slot.} =
+    return self.delegate.getWakuModule()
+  QtProperty[QVariant] wakuModule:
+    read = getWakuModule
+
   proc getNotificationsModule(self: View): QVariant {.slot.} =
     return self.delegate.getNotificationsModule()
   QtProperty[QVariant] notificationsModule:
