@@ -140,9 +140,9 @@ def step(context: any):
 def step(context: any):
     _settingsScreen.open_communities_section()
 
-@When("the user leaves the community")
-def step(context: any):
-    _settingsScreen.leave_community()
+@When("the user leaves \"|any|\" community")
+def step(context: any, communityName):
+    _settingsScreen.leave_community(communityName)
 
 @When("the user opens the profile settings")
 def step(context: any):

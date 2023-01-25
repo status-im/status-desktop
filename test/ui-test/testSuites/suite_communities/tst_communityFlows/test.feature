@@ -115,12 +115,3 @@ Feature: Status Desktop community
         Examples:
             | new_emoji_description | new_emoji |
             | thumbs up             | 👍        |
-
-    # TODO: This scenario must be in a different feature since it does not accomplishe the start/en sequence and / or background
-    # Add new test case that contains scenarios related to create/delete and navigate throw communities and usage of navbar.
-    #@merge
-    #Scenario: User leaves community
-    #    When the user opens app settings screen
-    #    And the user opens the communities settings
-    #    And the user leaves the community
-    #    Then the count of communities in navbar is 0
