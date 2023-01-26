@@ -74,3 +74,6 @@ proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
 const DESKTOP_VERSION* {.strdefine.} = "0.0.0"
 # This is changed during compilation by executing git command
 const GIT_COMMIT* {.strdefine.} = ""
+
+# Name of the test environment var to check for
+const TEST_ENVIRONMENT_VAR* = "TEST_ENVIRONMENT"

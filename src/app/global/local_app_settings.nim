@@ -93,3 +93,10 @@ QtObject:
       of LAS_KEY_THEME: self.themeChanged()
       of LAS_KEY_GEOMETRY: self.geometryChanged()
       of LAS_KEY_VISIBILITY: self.visibilityChanged()
+
+
+  proc getTestEnvironment*(self: LocalAppSettings): bool {.slot.} =
+    return existsEnv(TEST_ENVIRONMENT_VAR)
+
+  QtProperty[bool] testEnvironment:
+    read = getTestEnvironment
