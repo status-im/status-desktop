@@ -14,7 +14,7 @@ _MIN_WAIT_OBJ_TIMEOUT = 500
 # The default maximum timeout to wait for close the app in seconds
 _MAX_WAIT_CLOSE_APP_TIMEOUT = 20
 
-def verify_screen(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
+def verify_screen(objName: str, timeout: int=1000):
     result = is_loaded_visible_and_enabled(objName, timeout)
     test.verify(result, True)
 
