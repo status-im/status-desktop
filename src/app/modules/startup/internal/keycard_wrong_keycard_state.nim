@@ -10,6 +10,5 @@ proc delete*(self: KeycardWrongKeycardState) =
 
 method executeBackCommand*(self: KeycardWrongKeycardState, controller: Controller) =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport or 
-    self.flowType == FlowType.AppLogin or 
-    self.flowType == FlowType.LostKeycardReplacement:
+    self.flowType == FlowType.AppLogin:
       controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = false))

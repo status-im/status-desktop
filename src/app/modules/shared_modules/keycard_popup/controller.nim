@@ -373,8 +373,7 @@ proc convertSelectedKeyPairToKeycardAccount*(self: Controller, password: string)
     return
   let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
   singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
-  self.accountsService.convertToKeycardAccount(self.tmpSelectedKeyPairDto.keyUid, 
-    currentPassword = password,
+  self.accountsService.convertToKeycardAccount(currentPassword = password,
     newPassword = acc.derivedAccounts.encryption.publicKey)
 
 proc getConvertingProfileSuccess*(self: Controller): bool =

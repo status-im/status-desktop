@@ -1265,6 +1265,56 @@ Item {
                 text: ""
                 visible: false
             }
+        },
+        State {
+            name: Constants.startupState.loginKeycardConvertedToRegularAccount
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardConvertedToRegularAccount
+            PropertyChanges {
+                target: image
+                pattern: Constants.keycardAnimations.strongSuccess.pattern
+                source: ""
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongSuccess.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongSuccess.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongSuccess.endImgIndex
+                duration: Constants.keycardAnimations.strongSuccess.duration
+                loops: Constants.keycardAnimations.strongSuccess.loops
+            }
+            PropertyChanges {
+                target: userInfo
+                visible: false
+            }
+            PropertyChanges {
+                target: title
+                text: qsTr("Your account has been successfully converted to a non Keycard account")
+                visible: true
+            }
+            PropertyChanges {
+                target: passwordSection
+                visible: false
+            }
+            PropertyChanges {
+                target: pinSection
+                visible: false
+            }
+            PropertyChanges {
+                target: info
+                visible: false
+            }
+            PropertyChanges {
+                target: message
+                text: qsTr("To complete the process close Status and log in with your password")
+                visible: true
+            }
+            PropertyChanges {
+                target: button
+                text: qsTr("Restart app & sign in using your password")
+                visible: true
+            }
+            PropertyChanges {
+                target: link
+                text: ""
+                visible: false
+            }
         }
     ]
 }

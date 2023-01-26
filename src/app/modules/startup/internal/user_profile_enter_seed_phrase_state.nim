@@ -32,6 +32,14 @@ method getNextPrimaryState*(self: UserProfileEnterSeedPhraseState, controller: C
     if self.enteredMnemonicMatchTargetedKeyUid:
       return createState(StateType.KeycardCreatePin, self.flowType, self)
     return createState(StateType.KeycardWrongKeycard, self.flowType, self)
+  if self.flowType == FlowType.LostKeycardReplacement:
+    if self.enteredMnemonicMatchTargetedKeyUid:
+      return createState(StateType.KeycardCreatePin, self.flowType, self)
+    return createState(StateType.UserProfileWrongSeedPhrase, self.flowType, self)
+  if self.flowType == FlowType.LostKeycardConvertToRegularAccount:
+    if self.enteredMnemonicMatchTargetedKeyUid:
+      return createState(StateType.UserProfileCreatePassword, self.flowType, self)
+    return createState(StateType.UserProfileWrongSeedPhrase, self.flowType, self)
 
 method executePrimaryCommand*(self: UserProfileEnterSeedPhraseState, controller: Controller) =
   if self.flowType == FlowType.FirstRunNewUserImportSeedPhrase or
@@ -58,6 +66,10 @@ method executePrimaryCommand*(self: UserProfileEnterSeedPhraseState, controller:
         if self.enteredMnemonicMatchTargetedKeyUid:
           controller.storeSeedPhraseToKeycard(controller.getSeedPhraseLength(), controller.getSeedPhrase())
         else:
+          controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
+      if self.flowType == FlowType.LostKeycardConvertToRegularAccount:
+        self.enteredMnemonicMatchTargetedKeyUid = controller.keyUidMatchSelectedLoginAccount(keyUid)
+        if not self.enteredMnemonicMatchTargetedKeyUid:
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WrongSeedPhrase, add = true))
 
 method resolveKeycardNextState*(self: UserProfileEnterSeedPhraseState, keycardFlowType: string, keycardEvent: KeycardEvent, 

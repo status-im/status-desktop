@@ -10,4 +10,5 @@ proc delete*(self: LoginKeycardPinVerifiedState) =
 
 method executePrimaryCommand*(self: LoginKeycardPinVerifiedState, controller: Controller) =
   if self.flowType == FlowType.AppLogin:
-    controller.loginAccountKeycard()
+    let storeToKeychainValue = singletonInstance.localAccountSettings.getStoreToKeychainValue()
+    controller.loginAccountKeycard(storeToKeychainValue)

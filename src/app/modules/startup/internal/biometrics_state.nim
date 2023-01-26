@@ -29,6 +29,8 @@ method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
   elif self.flowType == FlowType.LostKeycardReplacement:
     self.storeToKeychain = storeToKeychain
     controller.startLoginFlowAutomatically(controller.getPin())
+  elif self.flowType == FlowType.LostKeycardConvertToRegularAccount:
+    controller.loginAccountKeycardUsingSeedPhrase(storeToKeychain)
 
 method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
   let storeToKeychain = false # false, cause we don't have keychain support for other than mac os
@@ -49,6 +51,8 @@ method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
   elif self.flowType == FlowType.LostKeycardReplacement:
     self.storeToKeychain = storeToKeychain
     controller.startLoginFlowAutomatically(controller.getPin())
+  elif self.flowType == FlowType.LostKeycardConvertToRegularAccount:
+    controller.loginAccountKeycardUsingSeedPhrase(storeToKeychain)
 
 method resolveKeycardNextState*(self: BiometricsState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
@@ -56,4 +60,7 @@ method resolveKeycardNextState*(self: BiometricsState, keycardFlowType: string, 
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.error.len == 0:
         controller.setKeycardEvent(keycardEvent)
-        controller.loginAccountKeycard(self.storeToKeychain, syncWalletAfterLogin = true)
+        var storeToKeychainValue = LS_VALUE_NEVER
+        if self.storeToKeychain:
+          storeToKeychainValue = LS_VALUE_NOT_NOW
+        controller.loginAccountKeycard(storeToKeychainValue, syncWalletAfterLogin = true)

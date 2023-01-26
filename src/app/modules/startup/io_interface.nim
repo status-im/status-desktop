@@ -6,6 +6,13 @@ from ../../../app_service/service/keycard/service import KeycardEvent, KeyDetail
 const UNIQUE_STARTUP_MODULE_IDENTIFIER* = "SartupModule"
 
 type
+  StartupErrorType* {.pure.} = enum
+    UnknownType = 0
+    ImportAccError
+    SetupAccError
+    ConvertToRegularAccError
+
+type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
@@ -92,13 +99,10 @@ method getPin*(self: AccessInterface): string {.base.} =
 method getPasswordStrengthScore*(self: AccessInterface, password: string, userName: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setupAccountError*(self: AccessInterface, error: string) {.base.} =
+method emitStartupError*(self: AccessInterface, error: string, errType: StartupErrorType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method validMnemonic*(self: AccessInterface, mnemonic: string): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method importAccountError*(self: AccessInterface, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method importAccountSuccess*(self: AccessInterface) {.base.} =

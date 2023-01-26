@@ -1,4 +1,5 @@
 import sequtils, sugar, chronicles
+import ../../../global/global_singleton
 import ../../../../constants as main_constants
 import ../../../../app_service/service/keycard/constants
 import ../controller
@@ -54,12 +55,14 @@ include user_profile_create_password_state
 include user_profile_create_state 
 include user_profile_create_same_chat_key_state 
 include user_profile_enter_seed_phrase_state 
+include user_profile_wrong_seed_phrase_state 
 include user_profile_import_seed_phrase_state 
 include welcome_state_new_user
 include welcome_state_old_user
 include welcome_state
 include login_state
 include login_plugin_state
+include login_keycard_converted_to_regular_account_state
 include login_keycard_insert_keycard_state
 include login_keycard_inserted_keycard_state
 include login_keycard_reading_keycard_state

@@ -365,6 +365,44 @@ Item {
                 color: Theme.palette.baseColor1
                 font.pixelSize: Constants.keycard.general.fontSize3
             }
+        },
+        State {
+            name: Constants.startupState.userProfileWrongSeedPhrase
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileWrongSeedPhrase
+            PropertyChanges {
+                target: image
+                pattern: Constants.keycardAnimations.strongError.pattern
+                source: ""
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
+                duration: Constants.keycardAnimations.strongError.duration
+                loops: Constants.keycardAnimations.strongError.loops
+            }
+            PropertyChanges {
+                target: title
+                text: qsTr("Seed phrase doesn’t match any user")
+                color: Theme.palette.directColor1
+                font.pixelSize: Constants.keycard.general.fontSize1
+            }
+            PropertyChanges {
+                target: info
+                text: qsTr("The seed phrase you enter needs to match the seed phrase of an existing user on this device")
+                color: Theme.palette.directColor1
+                font.pixelSize: Constants.keycard.general.fontSize2
+            }
+            PropertyChanges {
+                target: button
+                text: qsTr("Try entering seed phrase again")
+            }
+            PropertyChanges {
+                target: link
+                text: ""
+            }
+            PropertyChanges {
+                target: message
+                text: ""
+            }
         }
     ]
 }
