@@ -20,7 +20,8 @@ Control {
         Sticker = 4,
         Audio = 5,
         Transaction = 6,
-        Invitation = 7
+        Invitation = 7,
+        DiscordMessage = 8
     }
 
     property list<Item> quickActions
@@ -184,7 +185,6 @@ Control {
             id: messageLayout
             anchors.fill: parent
             spacing: 2
-
             Loader {
                 Layout.fillWidth: true
                 active: isAReply
@@ -253,7 +253,10 @@ Control {
                     }
                     Loader {
                         Layout.fillWidth: true
-                        active: !root.editMode && !!root.messageDetails.messageText && !root.hideMessage
+                        active: (!root.editMode && !!root.messageDetails.messageText && !root.hideMessage
+                             && ((root.messageDetails.contentType === StatusMessage.ContentType.Text)
+                             || (root.messageDetails.contentType === StatusMessage.ContentType.Emoji) ||
+                                (root.messageDetails.contentType === StatusMessage.ContentType.DiscordMessage)))
                         visible: active
                         sourceComponent: StatusTextMessage {
                             objectName: "StatusMessage_textMessage"

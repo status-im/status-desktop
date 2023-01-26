@@ -363,6 +363,8 @@ Loader {
             StatusMessage {
                 id: delegate
                 Layout.fillWidth: true
+                Layout.topMargin: 2
+                Layout.bottomMargin: 2
 
                 function convertContentType(value) {
                     switch (value) {
@@ -380,6 +382,8 @@ Loader {
                         return StatusMessage.ContentType.Audio;
                     case Constants.messageContentType.communityInviteType:
                         return StatusMessage.ContentType.Invitation;
+                    case Constants.messageContentType.discordMessageType:
+                        return StatusMessage.ContentType.DiscordMessage;
                     case Constants.messageContentType.fetchMoreMessagesButton:
                     case Constants.messageContentType.chatIdentifier:
                     case Constants.messageContentType.unknownContentType:
