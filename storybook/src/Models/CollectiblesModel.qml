@@ -44,6 +44,18 @@ ListModel {
                                iconSource: ModelsData.collectibles.kitty5,
                                imageSource: ModelsData.collectibles.kitty5Big,
                                name: "Magicat-3"
+                           },
+                           {
+                               key: "Kitty5",
+                               iconSource: ModelsData.collectibles.kitty4,
+                               imageSource: ModelsData.collectibles.kitty4Big,
+                               name: "Furbeard-3"
+                           },
+                           {
+                               key: "Kitty6",
+                               iconSource: ModelsData.collectibles.kitty5,
+                               imageSource: ModelsData.collectibles.kitty5Big,
+                               name: "Magicat-4"
                            }
                        ]
                    },

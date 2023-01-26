@@ -204,7 +204,7 @@ StatusDropdown {
 
             Repeater {
                 id: tabLabelsRepeater
-                model: [qsTr("Asset"), qsTr("Collectible"), qsTr("ENS")]
+                model: [qsTr("Assets"), qsTr("Collectibles"), qsTr("ENS")]
 
                 StatusSwitchTabButton {
                     text: modelData

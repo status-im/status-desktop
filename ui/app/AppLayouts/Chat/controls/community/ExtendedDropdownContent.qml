@@ -1,6 +1,9 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.14
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
+import QtQml 2.14
+
+import Qt.labs.settings 1.0
 
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
@@ -19,7 +22,7 @@ Item {
     property var checkedKeys: []
     property int type: ExtendedDropdownContent.Type.Assets
 
-    readonly property bool canGoBack: root.state !== d.listView_depth1_State
+    readonly property bool canGoBack: root.state !== d.depth1_ListState
 
     signal itemClicked(string key, string name, url iconSource)
     signal navigateDeep(string key, var subItems)
@@ -30,7 +33,7 @@ Item {
     }
 
     function goBack() {
-        root.state = d.listView_depth1_State
+        d.reset()
     }
 
     function goForward(key, itemName, itemSource, subItems) {
@@ -38,53 +41,81 @@ Item {
         d.currentItemKey = key
         d.currentItemName = itemName
         d.currentItemSource = itemSource
-        root.state = d.listView_depth2_State
+        root.state = d.useThumbnailsOnDepth2
+                ? d.depth2_ThumbnailsState : d.depth2_ListState
+    }
+
+    Settings {
+        property alias useThumbnailsOnDepth2: d.useThumbnailsOnDepth2
     }
 
     QtObject {
         id: d
+
         readonly property int filterItemsHeight: 36
         readonly property int filterPopupWidth: 233
-        readonly property int filterPopupHeight: 205
 
         // Internal management properties
         property bool isFilterOptionVisible: false
-        readonly property string thumbnailsViewState: "THUMBNAILS"
-        readonly property string listView_depth1_State: "LIST-DEPTH1"
-        readonly property string listView_depth2_State: "LIST-DEPTH2"
-        property var currentModel: root.store.collectiblesModel
-        property var currentSubitems
+        property bool useThumbnailsOnDepth2: false
+
+        readonly property string depth1_ListState: "DEPTH-1-LIST"
+        readonly property string depth2_ListState: "DEPTH-2-LIST"
+        readonly property string depth2_ThumbnailsState: "DEPTH-2-THUMBNAILS"
+
+        property var currentModel: null
+        property var currentSubitems: null
         property string currentItemKey: ""
         property string currentItemName: ""
         property url currentItemSource: ""
 
-        readonly property SortFilterProxyModel filtered: SortFilterProxyModel {
-            id: collectiblesFilteredModel
+        readonly property bool searchMode: searcher.text.length > 0
 
-            sourceModel: root.store.collectiblesModel
+        onCurrentModelChanged: {
+            // Workaround for a bug in SortFilterProxyModel causing that model
+            // is rendered incorrectly when sourceModel is changed to a model
+            // with different set of roles
+            filteredModel.active = false
+            filteredModel.active = true
 
-            filters: ExpressionFilter {
-                expression: {
-                    searcher.text
-                    return name.toLowerCase().includes(searcher.text.toLowerCase())
+            searcher.text = ""
+            filteredModel.item.sourceModel = currentModel
+            contentLoader.item.model = filteredModel.item
+        }
+
+        readonly property Loader loader_: Loader {
+            id: filteredModel
+
+            sourceComponent: SortFilterProxyModel {
+                filters: ExpressionFilter {
+                    expression: {
+                        searcher.text
+
+                        if (model.shortName && model.shortName.toLowerCase()
+                                .includes(searcher.text.toLowerCase()))
+                            return true
+
+                        return model.name.toLowerCase().includes(
+                                    searcher.text.toLowerCase())
+                    }
                 }
             }
         }
 
         function reset() {
+            searcher.text = ""
             d.currentItemKey = ""
             d.currentItemName = ""
             d.currentItemSource = ""
-            d.currentModel = root.store.collectiblesModel
-            d.currentSubitems = undefined
-            root.state = d.listView_depth1_State
+            d.currentSubitems = null
+            root.state = d.depth1_ListState
         }
     }
 
-    state: d.listView_depth1_State
+    state: d.depth1_ListState
     states: [
         State {
-            name: d.listView_depth1_State
+            name: d.depth1_ListState
 
             PropertyChanges {
                 target: contentLoader
@@ -94,20 +125,17 @@ Item {
             PropertyChanges {
                 target: d
                 currentModel: root.type === ExtendedDropdownContent.Type.Assets
-                              ? root.store.assetsModel : collectiblesFilteredModel//root.store.collectiblesModel
+                              ? root.store.assetsModel : root.store.collectiblesModel
                 isFilterOptionVisible: false
             }
+
             PropertyChanges {
                 target: tokenGroupItem
                 visible: false
             }
-            PropertyChanges {
-                target: searcher
-                visible: type === ExtendedDropdownContent.Type.Collectibles
-            }
         },
         State {
-            name: d.listView_depth2_State
+            name: d.depth2_ListState
 
             PropertyChanges {
                 target: contentLoader
@@ -124,7 +152,7 @@ Item {
             }
         },
         State {
-            name: d.thumbnailsViewState
+            name: d.depth2_ThumbnailsState
 
             PropertyChanges {
                 target: contentLoader
@@ -164,23 +192,29 @@ Item {
     // Filter options popup:
     StatusDropdown {
         id: filterOptionsPopup
+
         width: d.filterPopupWidth
-        height: d.filterPopupHeight
+
         contentItem: ColumnLayout {
             anchors.fill: parent
             anchors.topMargin: 8
             anchors.bottomMargin: 8
-            ListView {
-                Layout.fillWidth: true
-                Layout.preferredHeight: model.count * d.filterItemsHeight
+
+            spacing: 0
+
+            // TODO: it can be simplified by using inline components after
+            // migration to Qt 5.15 or higher
+            Repeater {
                 model: ListModel {
                     ListElement { text: qsTr("Most viewed"); selected: true }
                     ListElement { text: qsTr("Newest first"); selected: false }
                     ListElement { text: qsTr("Oldest first"); selected: false }
                 }
+
                 delegate: StatusItemPicker {
-                    width: ListView.view.width
-                    height: d.filterItemsHeight
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: d.filterItemsHeight
+
                     color: sensor1.containsMouse ? Theme.palette.baseColor4 : "transparent"
                     name: model.text
                     namePixelSize: 13
@@ -201,25 +235,28 @@ Item {
                         }
                     }
                 }
-
-                // Not visual element to control filter options
-                ButtonGroup {
-                    id: filterRadioBtnGroup
-                }
             }
 
-            Separator { Layout.fillWidth: true }
+            ButtonGroup {
+                id: filterRadioBtnGroup
+            }
 
-            ListView {
+            Separator {
                 Layout.fillWidth: true
-                Layout.preferredHeight: model.count * d.filterItemsHeight
+                Layout.topMargin: 5
+                Layout.bottomMargin: 5
+            }
+
+            Repeater {
                 model: ListModel {
                     ListElement { key: "LIST"; text: qsTr("List"); selected: true }
                     ListElement { key: "THUMBNAILS"; text: qsTr("Thumbnails"); selected: false }
                 }
-                delegate:  StatusItemPicker {
-                    width: ListView.view.width
-                    height: d.filterItemsHeight
+
+                delegate: StatusItemPicker {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: d.filterItemsHeight
+
                     color: sensor2.containsMouse ? Theme.palette.baseColor4 : "transparent"
                     name: model.text
                     namePixelSize: 13
@@ -236,20 +273,27 @@ Item {
                         onClicked: {
                             selected = !selected
                             if(model.key === "LIST") {
-                                root.state = d.listView_depth2_State
+                                root.state = d.depth2_ListState
                             }
                             else if(model.key === "THUMBNAILS") {
-                                 root.state = d.thumbnailsViewState
+                                 root.state = d.depth2_ThumbnailsState
                             }
                             filterOptionsPopup.close()
                         }
                     }
-                }
 
-                // Not visual element to control visualization options
-                ButtonGroup {
-                    id: visualizationRadioBtnGroup
+                    Binding {
+                        target: d
+                        when: model.key === "THUMBNAILS" && selected
+                        property: "useThumbnailsOnDepth2"
+                        value: true
+                        restoreMode: Binding.RestoreBindingOrValue
+                    }
                 }
+            }
+
+            ButtonGroup {
+                id: visualizationRadioBtnGroup
             }
         }
     }
@@ -263,12 +307,20 @@ Item {
             id: searcher
 
             Layout.fillWidth: true
+            Layout.topMargin: root.state === d.depth1_ListState ? 0 : 8
 
-            visible: false
             topPadding: 0
             bottomPadding: 0
             minimumHeight: 36
             maximumHeight: 36
+
+            placeholderText: root.type === ExtendedDropdownContent.Type.Assets ?
+                                 qsTr("Search assets") : qsTr("Search collectibles")
+
+            Binding on placeholderText{
+                when: d.currentItemName !== ""
+                value: qsTr("Search %1").arg(d.currentItemName)
+            }
         }
 
         TokenItem {
@@ -277,7 +329,7 @@ Item {
            Layout.fillWidth: true
 
            key: d.currentItemKey
-           name: d.currentItemName
+           name: qsTr("Any %1").arg(d.currentItemName)
            iconSource: d.currentItemSource
 
            selected: root.checkedKeys.includes(key)
@@ -292,7 +344,6 @@ Item {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-
         }
     }
 
@@ -304,9 +355,9 @@ Item {
                 ListElement { key: "MINT"; icon: "add"; iconSize: 16; description: qsTr("Mint asset"); rotation: 0; spacing: 8 }
                 ListElement { key: "IMPORT"; icon: "invite-users"; iconSize: 16; description: qsTr("Import existing asset"); rotation: 180; spacing: 8 }
             }
-            isHeaderVisible: false  // TEMPORARILY hidden. These 2 header options will be implemented after MVP.
-            model: d.currentModel
+            areHeaderButtonsVisible: false  // TEMPORARILY hidden. These 2 header options will be implemented after MVP.
             checkedKeys: root.checkedKeys
+            searchMode: d.searchMode
 
             onHeaderItemClicked: {
                 if(key === "MINT") console.log("TODO: Mint asset")
@@ -320,25 +371,26 @@ Item {
         id: collectiblesListView
 
         ListDropdownContent {
-            isHeaderVisible: root.state === d.listView_depth1_State
+            areHeaderButtonsVisible: root.state === d.depth1_ListState
             headerModel: ListModel {
                ListElement { key: "MINT"; icon: "add"; iconSize: 16; description: qsTr("Mint collectible"); rotation: 0; spacing: 8 }
             }
 
-            model: d.currentModel
             checkedKeys: root.checkedKeys
+            searchMode: d.searchMode
 
             onHeaderItemClicked: {
                 if(key === "MINT") console.log("TODO: Mint collectible")
             }
             onItemClicked: {
-                if(subItems && root.state === d.listView_depth1_State) {
+                if(subItems && root.state === d.depth1_ListState) {
                     // One deep navigation
                     d.currentSubitems = subItems
                     d.currentItemKey = key
                     d.currentItemName = name
                     d.currentItemSource = iconSource
-                    root.state = d.listView_depth2_State
+                    root.state = d.useThumbnailsOnDepth2
+                            ? d.depth2_ThumbnailsState : d.depth2_ListState
                     root.navigateDeep(key, subItems)
                 }
                 else {
@@ -355,11 +407,9 @@ Item {
         ThumbnailsDropdownContent {
             title: d.currentItemName
             titleImage: d.currentItemSource
+            checkedKeys: root.checkedKeys
 
             padding: 0
-
-            model: d.currentModel
-            checkedKeys: root.checkedKeys
 
             onItemClicked: {
                 d.reset()
