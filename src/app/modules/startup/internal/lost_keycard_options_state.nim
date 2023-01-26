@@ -19,8 +19,9 @@ method executePrimaryCommand*(self: LostKeycardOptionsState, controller: Control
     self.setFlowType(FlowType.LostKeycardReplacement)
     controller.runLoadAccountFlow()
 
-method executeSecondaryCommand*(self: LostKeycardOptionsState, controller: Controller) =
-  echo "TODO: start using account without keycard..."
+method getNextSecondaryState*(self: LostKeycardOptionsState, controller: Controller): State =
+  if controller.isSelectedAccountAKeycardAccount():
+    return createState(StateType.UserProfileEnterSeedPhrase, FlowType.LostKeycardConvertToRegularAccount, self)
 
 method resolveKeycardNextState*(self: LostKeycardOptionsState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =

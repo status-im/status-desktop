@@ -462,7 +462,7 @@ QtObject:
         "public-key": whisperPublicKey,
         "name": alias,
         "display-name": displayName,
-        "address": whisperAddress,
+        "address": address,
         "eip1581-address": eip1581Address,
         "dapps-address":  walletAddress,
         "wallet-root-address": walletRootAddress,
@@ -631,21 +631,15 @@ QtObject:
       error "error: ", procName="login", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc loginAccountKeycard*(self: Service, keycardData: KeycardEvent): string = 
+  proc loginAccountKeycard*(self: Service, accToBeLoggedIn: AccountDto, keycardData: KeycardEvent): string = 
     try:
       self.setKeyStoreDir(keycardData.keyUid)
-
-      let openedAccounts = self.openedAccounts()
-      var accToBeLoggedIn: AccountDto
-      for acc in openedAccounts:
-        if acc.keyUid == keycardData.keyUid:
-          accToBeLoggedIn = acc
-          break
 
       var accountDataJson = %* {
         "name": accToBeLoggedIn.name,
         "address": keycardData.masterKey.address,
-        "key-uid": keycardData.keyUid
+        "key-uid": keycardData.keyUid,
+        "kdfIterations": KDF_ITERATIONS,
       }
       var settingsJson: JsonNode
       self.addKeycardDetails(settingsJson, accountDataJson)
@@ -681,14 +675,12 @@ QtObject:
       error "error: ", procName="verifyAccountPassword", errName = e.name, errDesription = e.msg
 
 
-  proc convertToKeycardAccount*(self: Service, keyUid: string, currentPassword: string, newPassword: string) = 
+  proc convertToKeycardAccount*(self: Service, currentPassword: string, newPassword: string) = 
     var accountDataJson = %* {
-      "name": self.getLoggedInAccount().name,
-      "key-uid": keyUid
+      "key-uid": self.getLoggedInAccount().keyUid,
+      "kdfIterations": KDF_ITERATIONS
     }
-    var settingsJson = %* {
-      "display-name": self.getLoggedInAccount().name
-    }
+    var settingsJson = %* { }
 
     self.addKeycardDetails(settingsJson, accountDataJson)
     
@@ -704,7 +696,6 @@ QtObject:
       slot: "onConvertToKeycardAccount",
       accountDataJson: accountDataJson,
       settingsJson: settingsJson,
-      keyStoreDir: self.keyStoreDir,
       hashedCurrentPassword: hashedCurrentPassword,
       newPassword: newPassword
     )
@@ -725,6 +716,20 @@ QtObject:
     except Exception as e:
       error "error handilng migrated keypair response", errDesription=e.msg
     self.events.emit(SIGNAL_CONVERTING_PROFILE_KEYPAIR, ResultArgs(success: result))
+
+  proc convertToRegularAccount*(self: Service, mnemonic: string, currentPassword: string, newPassword: string): string = 
+    let hashedPassword = hashString(newPassword)
+    try:
+      let response = status_account.convertToRegularAccount(mnemonic, currentPassword, hashedPassword)
+      var errMsg = ""
+      if(response.result.contains("error")):
+        errMsg = response.result["error"].getStr
+        if errMsg.len > 0:
+          error "error: ", procName="convertToRegularAccount", errDesription = errMsg
+      return errMsg
+    except Exception as e:
+      error "error converting to regular account: ", message = e.msg
+      return e.msg
 
   proc verifyPassword*(self: Service, password: string): bool =
     try:

@@ -56,5 +56,6 @@ method resolveKeycardNextState*(self: KeycardEnterPukState, keycardFlowType: str
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       controller.setKeycardEvent(keycardEvent)
       controller.setPukValid(true)
-      controller.loginAccountKeycard()
+      let storeToKeychainValue = singletonInstance.localAccountSettings.getStoreToKeychainValue()
+      controller.loginAccountKeycard(storeToKeychainValue)
       return nil

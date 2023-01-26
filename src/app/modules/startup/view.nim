@@ -192,17 +192,12 @@ QtObject:
   proc getPasswordStrengthScore*(self: View, password: string, userName: string): int {.slot.} =
     return self.delegate.getPasswordStrengthScore(password, userName)
 
-  proc accountSetupError*(self: View, error: string) {.signal.}
-  proc setupAccountError*(self: View, error: string) =
-    self.accountSetupError(error)
+  proc startupError*(self: View, error: string, errType: int) {.signal.}
+  proc emitStartupError*(self: View, error: string, errType: StartupErrorType) =
+    self.startupError(error, errType.int)
 
   proc validMnemonic*(self: View, mnemonic: string): bool {.slot.} =
     return self.delegate.validMnemonic(mnemonic)
-
-  proc accountImportError*(self: View, error: string) {.signal.}
-  proc importAccountError*(self: View, error: string) =
-    # In QML we can connect to this signal and notify user, before refactoring we didn't have this signal
-    self.accountImportError(error)
 
   proc accountImportSuccess*(self: View) {.signal.}
   proc importAccountSuccess*(self: View) =

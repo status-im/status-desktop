@@ -24,6 +24,7 @@ QtObject {
         readonly property string firstRunOldUserImportSeedPhrase: "FirstRunOldUserImportSeedPhrase"
         readonly property string appLogin: "AppLogin"
         readonly property string lostKeycardReplacement: "LostKeycardReplacement"
+        readonly property string lostKeycardConvertToRegularAccount: "LostKeycardConvertToRegularAccount"
     }
 
     readonly property QtObject startupState: QtObject {
@@ -40,6 +41,7 @@ QtObject {
         readonly property string userProfileConfirmPassword: "UserProfileConfirmPassword"
         readonly property string userProfileImportSeedPhrase: "UserProfileImportSeedPhrase"
         readonly property string userProfileEnterSeedPhrase: "UserProfileEnterSeedPhrase"
+        readonly property string userProfileWrongSeedPhrase: "UserProfileWrongSeedPhrase"
         readonly property string biometrics: "Biometrics"
         readonly property string keycardPluginReader: "KeycardPluginReader"
         readonly property string keycardInsertKeycard: "KeycardInsertKeycard"
@@ -80,6 +82,7 @@ QtObject {
         readonly property string loginKeycardMaxPairingSlotsReached: "LoginKeycardMaxPairingSlotsReached"
         readonly property string loginKeycardEmpty: "LoginKeycardEmpty"
         readonly property string loginNotKeycard: "LoginNotKeycard"
+        readonly property string loginKeycardConvertedToRegularAccount: "LoginKeycardConvertedToRegularAccount"
         readonly property string profileFetching: "ProfileFetching"
         readonly property string profileFetchingSuccess: "ProfileFetchingSuccess"
         readonly property string profileFetchingTimeout: "ProfileFetchingTimeout"
@@ -730,6 +733,13 @@ QtObject {
     }
 
     readonly property bool isCppApp: typeof cppApp !== "undefined" ? cppApp : false
+
+    readonly property QtObject startupErrorType: QtObject {
+        readonly property int unknownType: 0
+        readonly property int importAccError: 1
+        readonly property int setupAccError: 2
+        readonly property int convertToRegularAccError: 3
+    }
 
     readonly property string existingAccountError: "account already exists"
     readonly property string wrongDerivationPathError: "error parsing derivation path"

@@ -316,7 +316,8 @@ Item {
                     return qsTr("Recover Keycard")
                 }
                 else if (root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserImportSeedPhraseIntoKeycard ||
-                            root.startupStore.currentStartupState.flowType === Constants.startupFlow.lostKeycardReplacement) {
+                         root.startupStore.currentStartupState.flowType === Constants.startupFlow.lostKeycardReplacement ||
+                         root.startupStore.currentStartupState.flowType === Constants.startupFlow.lostKeycardConvertToRegularAccount) {
                     return qsTr("Next")
                 }
                 return ""

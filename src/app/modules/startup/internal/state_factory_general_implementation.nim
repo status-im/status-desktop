@@ -21,6 +21,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newUserProfileImportSeedPhraseState(flowType, backState)
   if stateToBeCreated == StateType.UserProfileEnterSeedPhrase:
     return newUserProfileEnterSeedPhraseState(flowType, backState)
+  if stateToBeCreated == StateType.UserProfileWrongSeedPhrase:
+    return newUserProfileWrongSeedPhraseState(flowType, backState)
   if stateToBeCreated == StateType.Biometrics:
     return newBiometricsState(flowType, backState)
   if stateToBeCreated == StateType.KeycardPluginReader:
@@ -73,6 +75,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newLoginState(flowType, backState)
   if stateToBeCreated == StateType.LoginPlugin:
     return newLoginPluginState(flowType, backState)
+  if stateToBeCreated == StateType.LoginKeycardConvertedToRegularAccount:
+    return newLoginKeycardConvertedToRegularAccountState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardInsertKeycard:
     return newLoginKeycardInsertKeycardState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardInsertedKeycard:

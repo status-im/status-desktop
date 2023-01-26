@@ -8,12 +8,11 @@ type
     settingsJson: JsonNode 
     hashedCurrentPassword: string
     newPassword: string
-    keyStoreDir: string
 
 const convertToKeycardAccountTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[ConvertToKeycardAccountTaskArg](argEncoded)
   try:
-    let response = status_account.convertToKeycardAccount(arg.keyStoreDir, arg.accountDataJson, arg.settingsJson, 
+    let response = status_account.convertToKeycardAccount(arg.accountDataJson, arg.settingsJson, 
       arg.hashedCurrentPassword, arg.newPassword)
     arg.finish(response)
   except Exception as e:

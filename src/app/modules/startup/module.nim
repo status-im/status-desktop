@@ -262,14 +262,11 @@ method getPin*[T](self: Module[T]): string =
 method getPasswordStrengthScore*[T](self: Module[T], password, userName: string): int =
   return self.controller.getPasswordStrengthScore(password, userName)
 
-method setupAccountError*[T](self: Module[T], error: string) =
-  self.view.setupAccountError(error)
+method emitStartupError*[T](self: Module[T], error: string, errType: StartupErrorType) =
+  self.view.emitStartupError(error, errType)
 
 method validMnemonic*[T](self: Module[T], mnemonic: string): bool =
   return self.controller.validMnemonic(mnemonic)
-
-method importAccountError*[T](self: Module[T], error: string) =
-  self.view.importAccountError(error)
 
 method importAccountSuccess*[T](self: Module[T]) =
   self.view.importAccountSuccess()
@@ -358,8 +355,15 @@ method startAppAfterDelay*[T](self: Module[T]) =
     self.view.setCurrentStartupState(newProfileFetchingState(currStateObj.flowType(), nil))
   self.moveToStartupState()
 
-proc logoutAndDisplayError[T](self: Module[T], error: string) =
+proc logoutAndDisplayError[T](self: Module[T], error: string, errType: StartupErrorType) =
   self.delegate.logout()
+  if self.controller.isSelectedLoginAccountKeycardAccount() and
+    errType == StartupErrorType.ConvertToRegularAccError:
+      self.view.setCurrentStartupState(newLoginState(FlowType.AppLogin, nil))
+      self.controller.runLoginFlow()
+      self.moveToStartupState()
+      self.emitStartupError(error, errType)
+      return
   self.moveToStartupState()
   self.emitAccountLoginError(error)
 
@@ -377,12 +381,20 @@ method onNodeLogin*[T](self: Module[T], error: string) =
         self.delayStartingApp()
         let err = self.delegate.userLoggedIn()
         if err.len > 0:
-          self.logoutAndDisplayError(err)
+          self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
           return
+    elif currStateObj.flowType() == FlowType.LostKeycardConvertToRegularAccount:
+        let err = self.controller.convertToRegularAccount()
+        if err.len > 0:
+          self.logoutAndDisplayError(err, StartupErrorType.ConvertToRegularAccError)
+          return
+        self.delegate.logout()
+        self.view.setCurrentStartupState(newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil))
+        self.moveToStartupState()
     else:
       let err = self.delegate.userLoggedIn()
       if err.len > 0:
-        self.logoutAndDisplayError(err)
+        self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
         return
       self.delegate.finishAppLoading()
       if currStateObj.flowType() != FlowType.AppLogin:
@@ -393,7 +405,7 @@ method onNodeLogin*[T](self: Module[T], error: string) =
     if currStateObj.flowType() == FlowType.AppLogin:
       self.emitAccountLoginError(error)
     else:
-      self.setupAccountError(error)
+      self.emitStartupError(error, StartupErrorType.SetupAccError)
     error "login error", methodName="onNodeLogin", errDesription =error
 
 method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEvent: KeycardEvent) =

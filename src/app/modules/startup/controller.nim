@@ -338,7 +338,7 @@ proc importMnemonic*(self: Controller): bool =
     self.delegate.importAccountSuccess()
     return true
   else:
-    self.delegate.importAccountError(error)
+    self.delegate.emitStartupError(error, StartupErrorType.ImportAccError)
     return false
 
 proc setupKeychain(self: Controller, store: bool) =
@@ -352,7 +352,7 @@ proc setupAccount(self: Controller, accountId: string, storeToKeychain: bool) =
   self.delegate.moveToLoadingAppState()
   let error = self.accountsService.setupAccount(accountId, self.tmpPassword, self.tmpDisplayName)
   if error != "":
-    self.delegate.setupAccountError(error)
+    self.delegate.emitStartupError(error, StartupErrorType.SetupAccError)
   else:
     self.setupKeychain(storeToKeychain)
     
@@ -388,7 +388,7 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, newKeycard: b
   else:
     if self.tmpKeycardEvent.keyUid.len == 0 or
       self.accountsService.openedAccountsContainsKeyUid(self.tmpKeycardEvent.keyUid):
-        self.delegate.importAccountError(ACCOUNT_ALREADY_EXISTS_ERROR)
+        self.delegate.emitStartupError(ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError)
         return
     self.delegate.moveToLoadingAppState()
     if newKeycard:
@@ -441,19 +441,43 @@ proc login*(self: Controller) =
   if(error.len > 0):
     self.delegate.emitAccountLoginError(error)
 
-proc loginAccountKeycard*(self: Controller, storeToKeychain = false, syncWalletAfterLogin = false) =
+proc loginAccountKeycard*(self: Controller, storeToKeychainValue: string, syncWalletAfterLogin = false) =
   if syncWalletAfterLogin:
     self.syncKeycardBasedOnAppWalletStateAfterLogin()
+  singletonInstance.localAccountSettings.setStoreToKeychainValue(storeToKeychainValue)
+  self.delegate.moveToLoadingAppState()
+  let selAcc = self.getSelectedLoginAccount()
+  let error = self.accountsService.loginAccountKeycard(selAcc, self.tmpKeycardEvent)
+  if(error.len > 0):
+    self.delegate.emitAccountLoginError(error)
+
+proc loginAccountKeycardUsingSeedPhrase*(self: Controller, storeToKeychain: bool) =
+  let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true, includeWhisper = true)
+  let selAcc = self.getSelectedLoginAccount()
+
+  var kcData = KeycardEvent(
+    keyUid: acc.keyUid,
+    masterKey: KeyDetails(address: acc.address),
+    whisperKey: KeyDetails(privateKey: acc.derivedAccounts.whisper.privateKey),
+    encryptionKey: KeyDetails(publicKey: acc.derivedAccounts.encryption.publicKey)
+  )
+  if acc.derivedAccounts.whisper.privateKey.startsWith("0x"):
+    kcData.whisperKey.privateKey = acc.derivedAccounts.whisper.privateKey[2..^1]
+
   if storeToKeychain:
     ## storing not now, user will be asked to store the pin once he is logged in
     singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
   else:
     singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
+
   self.delegate.moveToLoadingAppState()
-  let error = self.accountsService.loginAccountKeycard(self.tmpKeycardEvent)
+  let error = self.accountsService.loginAccountKeycard(selAcc, kcData)
   if(error.len > 0):
     self.delegate.emitAccountLoginError(error)
 
+proc convertToRegularAccount*(self: Controller): string =
+  let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
+  return self.accountsService.convertToRegularAccount(self.getSeedPhrase(), acc.derivedAccounts.encryption.publicKey, self.getPassword())
 proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =
   let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)
   return acc.keyUid
