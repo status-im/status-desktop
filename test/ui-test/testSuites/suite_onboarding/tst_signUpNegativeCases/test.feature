@@ -27,7 +27,7 @@ Feature: Status Desktop Sign Up, negative cases
   Given the user inputs username "tester123"
    When "<password-1>" is entered into the first password field
    And "<password-2>" is entered into the second password field
-   Then the create password button is disabled
+   Then the create password button is "<button-state>"
 
    Examples:
    | password-1       | password-2             | button-state | reason                     |
