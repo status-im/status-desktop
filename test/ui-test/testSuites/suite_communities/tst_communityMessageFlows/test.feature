@@ -166,3 +166,7 @@ Feature: Status Desktop community messages
          Given the user installs the sticker pack at position 4
          When the user sends the sticker at position 2 in the list
          Then the last chat message is a sticker
+
+     Scenario: The user marks a channel as read
+        When the user marks the channel "general" as read
+        # TODO find a way to validate that it worked

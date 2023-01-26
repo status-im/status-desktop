@@ -19,6 +19,7 @@ from drivers.SDKeyboardCommands import *
 from .StatusMainScreen import StatusMainScreen
 from utils.FileManager import *
 from screens.StatusChatScreen import MessageContentType
+from utils.ObjectAccess import *
 
 class CommunityCreateMethods(Enum):
     BOTTOM_MENU = "bottom_menu"
@@ -45,6 +46,8 @@ class CommunityScreenComponents(Enum):
     CHAT_INPUT_ROOT = "chatInput_Root"
     TOGGLE_PIN_MESSAGE_BUTTON = "chatView_TogglePinMessageButton"
     REPLY_TO_MESSAGE_BUTTON = "chatView_ReplyToMessageButton"
+    CHAT_LIST = "chatList_ListView"
+    MARK_AS_READ_BUTTON = "mark_as_Read_StatusMenuItem"
     
     PIN_TEXT = "chatInfoButton_Pin_Text"
     ADD_MEMBERS_BUTTON = "community_AddMembers_Button"
@@ -409,3 +412,21 @@ class StatusCommunityScreen:
         
     def toggle_reply_message_at_index(self, message_index: int):
         self._click_msg_action_button(message_index, CommunityScreenComponents.REPLY_TO_MESSAGE_BUTTON.value)
+        
+    def mark_as_read(self, chatName: str):
+        chat_lists = get_obj(CommunityScreenComponents.CHAT_LIST.value)
+        found = False
+        verify(chat_lists.count > 0, "At least one chat exists")
+        for i in range(chat_lists.count):
+            chat = chat_lists.itemAtIndex(i)
+            chat_list_items = get_children_with_object_name(chat, "chatItem")
+            verify(len(chat_list_items) > 0, "StatusChatListItem exists")
+            if str(chat_list_items[0].name) == chatName:
+                right_click_obj(chat)
+                found = True
+                break
+
+        if not found:
+            test.fail("Chat is not loaded")
+        
+        click_obj_by_name(CommunityScreenComponents.MARK_AS_READ_BUTTON.value)

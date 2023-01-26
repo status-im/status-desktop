@@ -109,10 +109,6 @@ def step(context, message_index):
 def step(context, message_index, message):
     _statusChat.edit_message_at_index(message_index, message)
     
-@When("the user marks the channel \"|any|\" as read")
-def step(context, channel):
-    _statusMain.mark_as_read(channel)
-    
 @When("the user deletes the message at index |any|")
 def step(context, message_index):
     _statusChat.delete_message_at_index(message_index)

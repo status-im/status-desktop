@@ -150,6 +150,10 @@ def step(context, user_name):
 def step(context: any):
     init_steps.the_user_opens_the_community_portal_section()
 
+@When("the user marks the channel \"|any|\" as read")
+def step(context, channel):
+    _statusCommunityScreen.mark_as_read(channel)
+
 #########################
 ### VERIFICATIONS region:
 #########################

@@ -26,7 +26,6 @@ class MainScreenComponents(Enum):
     WALLET_BUTTON = "wallet_navbar_wallet_icon_StatusIcon"
     START_CHAT_BTN = "mainWindow_startChat"
     CHAT_LIST = "chatList"
-    MARK_AS_READ_BUTTON = "mark_as_Read_StatusMenuItem"
     COMMUNITY_NAVBAR_BUTTONS = "navBarListView_All_Community_Buttons"
     PROFILE_SETTINGS_VIEW = "mainWindow_ProfileSettingsView" 
     PROFILE_NAVBAR_BUTTON = "mainWindow_ProfileNavBarButton"
@@ -95,19 +94,10 @@ class StatusMainScreen:
         [loaded, chat_lists] = is_loaded(MainScreenComponents.CHAT_LIST.value)
         if loaded:
             for index in range(chat_lists.statusChatListItems.count):
-                chat = chat_lists.statusChatListItems.itemAt(index)
+                chat = chat_lists.statusChatListItems.itemAtIndex(index)
                 if(chat.objectName == chatName):
                     return True, chat        
         return False, None
-
-    def mark_as_read(self, chatName: str):
-        [loaded, chat_button] = self._find_chat(chatName)
-        if loaded:
-            right_click_obj(chat_button)
-        else:
-            test.fail("Chat is not loaded")
-        
-        click_obj_by_name(MainScreenComponents.MARK_AS_READ_BUTTON.value)
 
     def open_wallet(self):
         click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)

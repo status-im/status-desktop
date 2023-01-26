@@ -52,7 +52,7 @@ class ChatComponents(Enum):
     MENTION_PROFILE_VIEW = "chatView_userMentioned_ProfileView"
     CHAT_INPUT_EMOJI_BUTTON = "chatInput_Emoji_Button"
     EMOJI_POPUP_EMOJI_PLACEHOLDER = "emojiPopup_Emoji_Button_Placeholder"
-    CHAT_LIST = "chatList_Repeater"
+    CHAT_LIST = "chatList_ListView"
     MORE_OPTIONS_BUTTON = "chatView_ChatToolbarMoreOptionsButton"
     CLEAR_HISTORY_MENUITEM = "clearHistoryMenuItem"
     EDIT_MESSAGE_INPUT = "chatView_editMessageInputComponent"
@@ -229,7 +229,7 @@ class StatusChatScreen:
         chat_lists = get_obj(ChatComponents.CHAT_LIST.value)
         verify(chat_lists.count > 0, "At least one chat exists")
         for i in range(chat_lists.count):
-            chat = chat_lists.itemAt(i)
+            chat = chat_lists.itemAtIndex(i)
             chat_list_items = get_children_with_object_name(chat, "chatItem")
             verify(len(chat_list_items) > 0, "StatusChatListItem exists")
             if str(chat_list_items[0].name) == chatName:
@@ -465,7 +465,7 @@ class StatusChatScreen:
 
     def verify_chat_order(self, index: int, chatName: str):
         chat_lists = get_obj(ChatComponents.CHAT_LIST.value)
-        chat = chat_lists.itemAt(index)
+        chat = chat_lists.itemAtIndex(index)
         verify(not is_null(chat), "Chat ({}) at index {} exists".format(chatName, index))
         chat_list_items = get_children_with_object_name(chat, "chatItem")
         verify(len(chat_list_items) > 0, "StatusChatListItem exists")
