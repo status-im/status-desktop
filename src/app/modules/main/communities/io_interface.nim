@@ -134,7 +134,7 @@ method requestExtractDiscordChannelsAndCategories*(self: AccessInterface, filesT
 method discordCategoriesAndChannelsExtracted*(self: AccessInterface, categories: seq[DiscordCategoryDto], channels: seq[DiscordChannelDto], oldestMessageTimestamp: int, errors: Table[string, DiscordImportError], errorsCount: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method discordImportProgressUpdated*(self: AccessInterface, communityId: string, communityName: string, communityImage: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool) {.base.} =
+method discordImportProgressUpdated*(self: AccessInterface, communityId: string, communityName: string, communityImage: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool, totalChunksCount: int, currentChunk: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method requestCancelDiscordCommunityImport*(self: AccessInterface, id: string) {.base.} =

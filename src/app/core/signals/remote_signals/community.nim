@@ -29,6 +29,8 @@ type DiscordCommunityImportProgressSignal* = ref object of Signal
   errorsCount*: int
   warningsCount*: int
   stopped*: bool
+  totalChunksCount*: int
+  currentChunk*: int
 
 type DiscordCommunityImportFinishedSignal* = ref object of Signal
   communityId*: string
@@ -74,6 +76,8 @@ proc fromEvent*(T: type DiscordCommunityImportProgressSignal, event: JsonNode): 
     result.errorsCount = importProgressObj{"errorsCount"}.getInt()
     result.warningsCount = importProgressObj{"warningsCount"}.getInt()
     result.stopped = importProgressObj{"stopped"}.getBool()
+    result.totalChunksCount = importProgressObj{"totalChunksCount"}.getInt()
+    result.currentChunk = importProgressObj{"currentChunk"}.getInt()
 
     if importProgressObj["communityImages"].kind == JObject:
       result.communityImages = chat.toImages(importProgressObj["communityImages"])

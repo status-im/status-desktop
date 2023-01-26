@@ -22,6 +22,8 @@ QtObject {
     property bool discordImportInProgress: root.communitiesModuleInst.discordImportInProgress
     property bool discordImportCancelled: root.communitiesModuleInst.discordImportCancelled
     property bool discordImportProgressStopped: root.communitiesModuleInst.discordImportProgressStopped
+    property int discordImportProgressTotalChunksCount: root.communitiesModuleInst.discordImportProgressTotalChunksCount
+    property int discordImportProgressCurrentChunk: root.communitiesModuleInst.discordImportProgressCurrentChunk
     property string discordImportCommunityId: root.communitiesModuleInst.discordImportCommunityId
     property string discordImportCommunityName: root.communitiesModuleInst.discordImportCommunityName
     property url discordImportCommunityImage: root.communitiesModuleInst.discordImportCommunityImage

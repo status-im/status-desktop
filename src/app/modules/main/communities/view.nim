@@ -38,6 +38,8 @@ QtObject:
       discordImportInProgress: bool
       discordImportCancelled: bool
       discordImportProgressStopped: bool
+      discordImportProgressTotalChunksCount: int
+      discordImportProgressCurrentChunk: int
       discordImportTasksModel: DiscordImportTasksModel
       discordImportTasksModelVariant: QVariant
       discordDataExtractionInProgress: bool
@@ -225,6 +227,34 @@ QtObject:
   QtProperty[int] discordImportProgressStopped:
     read = getDiscordImportProgressStopped
     notify = discordImportProgressStoppedChanged
+
+  proc discordImportProgressTotalChunksCountChanged*(self: View) {.signal.}
+
+  proc setDiscordImportProgressTotalChunksCount*(self: View, count: int) {.slot.} =
+    if (self.discordImportProgressTotalChunksCount == count): return
+    self.discordImportProgressTotalChunksCount = count
+    self.discordImportProgressTotalChunksCountChanged()
+
+  proc getDiscordImportProgressTotalChunksCount*(self: View): int {.slot.} =
+    return self.discordImportProgressTotalChunksCount
+
+  QtProperty[int] discordImportProgressTotalChunksCount:
+    read = getDiscordImportProgressTotalChunksCount
+    notify = discordImportProgressTotalChunksCountChanged
+
+  proc discordImportProgressCurrentChunkChanged*(self: View) {.signal.}
+
+  proc setDiscordImportProgressCurrentChunk*(self: View, count: int) {.slot.} =
+    if (self.discordImportProgressCurrentChunk == count): return
+    self.discordImportProgressCurrentChunk = count
+    self.discordImportProgressCurrentChunkChanged()
+
+  proc getDiscordImportProgressCurrentChunk*(self: View): int {.slot.} =
+    return self.discordImportProgressCurrentChunk
+
+  QtProperty[int] discordImportProgressCurrentChunk:
+    read = getDiscordImportProgressCurrentChunk
+    notify = discordImportProgressCurrentChunkChanged
 
   proc addItem*(self: View, item: SectionItem) =
     self.model.addItem(item)
