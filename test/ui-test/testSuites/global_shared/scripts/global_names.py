@@ -34,7 +34,7 @@ closeButton_StatusHeaderAction = {"container": statusDesktop_mainWindow_overlay,
 # Main Window - chat related:
 mainWindow_statusChatNavBarListView_ListView = {"container": statusDesktop_mainWindow, "objectName": "statusChatNavBarListView", "type": "ListView", "visible": True}
 navBarListView_Chat_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_statusChatNavBarListView_ListView, "objectName": "Messages-navbar", "type": "StatusNavBarTabButton", "visible": True}
-chatList_Repeater = {"container": statusDesktop_mainWindow, "objectName": "chatListItems", "type": "Repeater", "visible": True}
+chatList_ListView = {"container": statusDesktop_mainWindow, "objectName": "chatListItems", "type": "StatusListView", "visible": True}
 chatList = {"container": statusDesktop_mainWindow, "objectName": "ContactsColumnView_chatList", "type": "StatusChatList"}
 mainWindow_startChat = {"checkable": True, "container": statusDesktop_mainWindow, "objectName": "startChatButton", "type": "StatusIconTabButton"}
 chatView_messageInput = {"container": statusDesktop_mainWindow, "objectName": "messageInputField", "type": "TextArea", "visible": True}

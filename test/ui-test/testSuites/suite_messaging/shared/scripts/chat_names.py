@@ -2,7 +2,6 @@ from scripts.global_names import *
 
 # Chat view:
 mainWindow_scrollView_ScrollView = {"container": statusDesktop_mainWindow, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
-mark_as_Read_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "chatMarkAsReadMenuItem", "type": "StatusMenuItem", "visible": True}
 chatView_unfurledLinkComponent_linkImage = {"container": chatView_log, "objectName": "LinksMessageView_unfurledLinkComponent_linkImage", "type": "StatusChatImageLoader", "visible": True}
 chatView_LinksMessageView_enableBtn = {"container": chatView_log, "objectName": "LinksMessageView_enableBtn", "type": "StatusFlatButton", "visible": True}
 

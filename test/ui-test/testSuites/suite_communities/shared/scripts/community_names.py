@@ -40,6 +40,7 @@ chatView_unfurledImageComponent_linkImage = {"container": chatView_log, "objectN
 emojiSuggestions_first_inputListRectangle ={"container": statusDesktop_mainWindow_overlay, "objectName": "inputListRectangle_0", "type": "Rectangle"}
 chatInput_Emoji_Button = {"container": statusDesktop_mainWindow, "objectName": "statusChatInputEmojiButton", "type": "StatusFlatRoundButton", "visible": True}
 chat_Input_Stickers_Button = {"container": statusDesktop_mainWindow, "objectName": "statusChatInputStickersButton", "type": "StatusFlatRoundButton", "visible": True}
+mark_as_Read_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "chatMarkAsReadMenuItem", "type": "StatusMenuItem", "visible": True}
 
 # Stickers Popup
 chat_StickersPopup_GetStickers_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "stickersPopupGetStickersButton", "type": "StatusButton", "visible": True}
