@@ -23,7 +23,7 @@ Item {
     property alias cropRect: editor.cropRect
     property string imageData
 
-    implicitHeight: layout.implicitHeight
+    implicitHeight: layout.childrenRect.height
 
     ColumnLayout {
         id: layout

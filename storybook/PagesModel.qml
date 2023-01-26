@@ -98,6 +98,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusScrollView"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }

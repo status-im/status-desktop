@@ -36,6 +36,7 @@ StatusModal {
     contentItem: StatusScrollView {
         id: scroll
         width: parent.width
+        height: parent.height
         topPadding: 30
         leftPadding: 20
         rightPadding: 20

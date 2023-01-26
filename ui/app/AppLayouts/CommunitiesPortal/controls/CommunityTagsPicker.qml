@@ -29,6 +29,7 @@ ColumnLayout {
         }
     }
 
+    implicitHeight: childrenRect.height
     spacing: 8
 
     QtObject {
