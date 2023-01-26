@@ -335,7 +335,7 @@ method getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): Dis
       t.errorsCount,
       t.warningsCount)
 
-method discordImportProgressUpdated*(self: Module, communityId: string, communityName: string, communityImage: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool) =
+method discordImportProgressUpdated*(self: Module, communityId: string, communityName: string, communityImage: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool, totalChunksCount: int, currentChunk: int) =
 
   var taskItems: seq[DiscordImportTaskItem] = @[]
 
@@ -355,6 +355,8 @@ method discordImportProgressUpdated*(self: Module, communityId: string, communit
   # That's why we pass it as integer instead.
   self.view.setDiscordImportProgress((progress*100).int)
   self.view.setDiscordImportProgressStopped(stopped)
+  self.view.setDiscordImportProgressTotalChunksCount(totalChunksCount)
+  self.view.setDiscordImportProgressCurrentChunk(currentChunk)
   if stopped or progress.int >= 1:
     self.view.setDiscordImportInProgress(false)
 

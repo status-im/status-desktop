@@ -110,6 +110,8 @@ StatusScrollView {
         readonly property bool importStopped: root.store.discordImportProgressStopped
         readonly property bool hasErrors: root.store.discordImportErrorsCount
         readonly property bool hasWarnings: root.store.discordImportWarningsCount
+        readonly property int totalChunksCount: root.store.discordImportProgressTotalChunksCount
+        readonly property int currentChunk: root.store.discordImportProgressCurrentChunk
 
         readonly property int status: {
             if (importStopped) {
@@ -137,9 +139,7 @@ StatusScrollView {
             if (progress <= 0.0)
               return qsTr("Pending...")
 
-            return state === "import.taskState.saving" ?
-              qsTr("Saving... This can take a moment, almost done!") :
-              qsTr("Working...")
+            return qsTr("Importing from file %1 of %2...").arg(currentChunk).arg(totalChunksCount)
         }
     }
 

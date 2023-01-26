@@ -91,6 +91,8 @@ type
     errorsCount*: int
     warningsCount*: int
     stopped*: bool
+    totalChunksCount*: int
+    currentChunk*: int
 
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
@@ -257,7 +259,9 @@ QtObject:
         progress: receivedData.progress,
         errorsCount: receivedData.errorsCount,
         warningsCount: receivedData.warningsCount,
-        stopped: receivedData.stopped
+        stopped: receivedData.stopped,
+        totalChunksCount: receivedData.totalChunksCount,
+        currentChunk: receivedData.currentChunk,
       ))
 
     self.events.on(SignalType.ImportingHistoryArchiveMessages.event) do(e: Args):
