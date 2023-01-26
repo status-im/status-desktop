@@ -3,3 +3,4 @@ CommunityProfilePopupInviteFriendsPanel 1.0 CommunityProfilePopupInviteFriendsPa
 CommunityProfilePopupInviteMessagePanel 1.0 CommunityProfilePopupInviteMessagePanel.qml
 PermissionQualificationPanel 1.0 PermissionQualificationPanel.qml
 PermissionConflictWarningPanel 1.0 PermissionConflictWarningPanel.qml
+CommunityColumnHeaderPanel 1.0 CommunityColumnHeaderPanel.qml

@@ -122,6 +122,13 @@ QtObject {
         return result
     }
 
+    function openCloseCreateChatView() {
+        if (root.openCreateChat) {
+             Global.closeCreateChatView()
+        } else {
+            Global.openCreateChatView()
+        }
+    }
 
     property var messageStore: MessageStore { }
 

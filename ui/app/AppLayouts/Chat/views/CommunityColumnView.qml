@@ -51,50 +51,20 @@ Item {
         }
     }
 
-    StatusChatInfoButton {
+    CommunityColumnHeaderPanel {
         id: communityHeader
-        objectName: "communityHeaderButton"
-        readonly property int nbMembers: communityData.members.count
-        title: communityData.name
-        subTitle: qsTr("%n member(s)", "", nbMembers)
-        asset.name: communityData.image
-        asset.color: communityData.color
-        asset.isImage: true
-        onClicked: if (communityData.amISectionAdmin) { root.infoButtonClicked() }
+
         anchors.top: parent.top
-        anchors.topMargin: Style.current.smallPadding
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.halfPadding
-        anchors.right: (implicitWidth > parent.width - 50) ? adHocChatButton.left : undefined
-        anchors.rightMargin: Style.current.halfPadding
-        type: StatusChatInfoButton.Type.OneToOneChat
-        hoverEnabled: communityData.amISectionAdmin
-    }
-
-    StatusIconTabButton {
-        id: adHocChatButton
-        icon.name: "edit"
-        objectName: "startChatButton"
-        icon.color: Theme.palette.directColor1
-        anchors.verticalCenter: communityHeader.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        checked: root.store.openCreateChat
-        highlighted: root.store.openCreateChat
-        onClicked: {
-            if (root.store.openCreateChat) {
-                Global.closeCreateChatView()
-            } else {
-                Global.openCreateChatView()
-            }
-        }
-
-        StatusToolTip {
-            text: qsTr("Start chat")
-            visible: parent.hovered
-            orientation: StatusToolTip.Orientation.Bottom
-            y: parent.height + 12
-        }
+        name: communityData.name
+        membersCount: communityData.members.count
+        image: communityData.image
+        color: communityData.color
+        amISectionAdmin: communityData.amISectionAdmin
+        openCreateChat: root.store.openCreateChat
+        onInfoButtonClicked: root.infoButtonClicked()
+        onAdHocChatButtonClicked: root.store.openCloseCreateChatView()
     }
 
     StatusButton {
