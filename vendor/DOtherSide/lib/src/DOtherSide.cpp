@@ -283,16 +283,16 @@ void dos_qguiapplication_clipboard_setImageByUrl(const char* url)
 void dos_qguiapplication_download_image(const char *imageSource, const char *filePath)
 {
     // Extract file path that can be used to save the image
-    QString fileL = QString(filePath).replace(QRegExp("^(file:/{2})|(qrc:/{2})|(http:/{2})"), "");
+    const QString fileL = QUrl(filePath).toLocalFile();
 
     // Get current Date/Time information to use in naming of the image file
-    QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss");
+    const QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss");
 
     // Extract the image data to be able to load and save into a QImage
-    QByteArray btArray =  QString(imageSource).split("base64,")[1].toUtf8();
+    const QByteArray btArray =  QString(imageSource).split("base64,")[1].toUtf8();
     QImage image;
     image.loadFromData(QByteArray::fromBase64(btArray));
-    image.save(QString(fileL) + "/image_" + dateTimeString + ".png");
+    image.save(fileL + "/image_" + dateTimeString + ".png");
 }
 
 void dos_qguiapplication_download_imageByUrl(const char *url, const char *filePath)
@@ -302,13 +302,10 @@ void dos_qguiapplication_download_imageByUrl(const char *url, const char *filePa
 
     QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url)));
 
-    QObject::connect(reply, &QNetworkReply::finished, [reply, path = QString(filePath)]() mutable {
+    QObject::connect(reply, &QNetworkReply::finished, [reply, path = QUrl(filePath).toLocalFile()]() mutable {
         if(reply->error() == QNetworkReply::NoError) {
-            // Extract file path that can be used to save the image
-            path.replace(QRegExp("^(file:/{2})|(qrc:/{2})|(http:/{2})"), "");
-
             // Get current Date/Time information to use in naming of the image file
-            QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss");
+            const QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss");
 
             // Extract the image data to be able to load and save into a QImage
             QByteArray btArray = reply->readAll();
