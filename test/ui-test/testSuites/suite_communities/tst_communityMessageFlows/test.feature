@@ -159,3 +159,10 @@ Feature: Status Desktop community messages
         When the user sends a chat message "Hello :)"
         Then the last chat message contains "🙂"
         And the last chat message contains "Hello"
+
+    @mayfail
+    # NOTE: It may be flaky due to undeterministic network conditions and 3rd party infura response.
+    Scenario: The user can send a sticker after installing a free pack
+         Given the user installs the sticker pack at position 4
+         When the user sends the sticker at position 2 in the list
+         Then the last chat message is a sticker
