@@ -12,7 +12,7 @@ StatusScrollView {
     property string title: ""
     property url titleImage: ""
     property string subtitle: ""
-    property ListModel model
+    property var model
     property var checkedKeys: []
 
     property int maxHeight: 381 // default by design
@@ -30,63 +30,81 @@ StatusScrollView {
     clip: true
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-    GridLayout {
-        id: grid
-        Layout.alignment: Qt.AlignHCenter
+    ColumnLayout {
         Layout.fillWidth: true
-        columnSpacing: 8
-        rowSpacing: 12
-        columns: d.columns
 
-        Repeater {
-            model: root.model
-            delegate: ColumnLayout {
-                spacing: 4
-                Rectangle {
-                    Layout.preferredWidth: 133
-                    Layout.preferredHeight: 133
-                    color: "transparent"
-                    Image {
-                        source: model.imageSource ?  model.imageSource :  ""
-                        anchors.fill: parent
+        StatusBaseText {
+            Layout.leftMargin: 8
+            Layout.topMargin: 8
 
-                        Rectangle {
-                            width: 32
-                            height: 32
+            visible: !!model ? model.count === 0 : false
 
-                            anchors.bottom: parent.bottom
-                            anchors.right: parent.right
-                            anchors.margins: 8
+            Layout.fillWidth: true
 
-                            radius: width / 2
-                            visible: root.checkedKeys.includes(model.key)
-                            // TODO: use color from theme when defined properly in the design
-                            color: "#F5F6F8"
+            text: qsTr("No results")
+            color: Theme.palette.baseColor1
+            font.pixelSize: 12
+            wrapMode: Text.Wrap
+        }
 
-                            StatusIcon {
-                                anchors.centerIn: parent
-                                icon: "checkmark"
+        GridLayout {
+            id: grid
+            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
+            columnSpacing: 8
+            rowSpacing: 12
+            columns: d.columns
 
-                                color: Theme.palette.baseColor1
-                                width: 16
-                                height: 16
+            Repeater {
+                model: root.model
+                delegate: ColumnLayout {
+                    spacing: 4
+                    Rectangle {
+                        Layout.preferredWidth: 133
+                        Layout.preferredHeight: 133
+                        color: "transparent"
+                        Image {
+                            source: model.imageSource ?  model.imageSource :  ""
+                            anchors.fill: parent
+
+                            Rectangle {
+                                width: 32
+                                height: 32
+
+                                anchors.bottom: parent.bottom
+                                anchors.right: parent.right
+                                anchors.margins: 8
+
+                                radius: width / 2
+                                visible: root.checkedKeys.includes(model.key)
+                                // TODO: use color from theme when defined properly in the design
+                                color: "#F5F6F8"
+
+                                StatusIcon {
+                                    anchors.centerIn: parent
+                                    icon: "checkmark"
+
+                                    color: Theme.palette.baseColor1
+                                    width: 16
+                                    height: 16
+                                }
                             }
                         }
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
+                            onClicked: { root.itemClicked(model.key, model.name, model.iconSource) }
+                        }
                     }
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
-                        onClicked: { root.itemClicked(model.key, model.name, model.iconSource) }
+                    StatusBaseText {
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.leftMargin: 8
+                        text: model.name
+                        color: Theme.palette.directColor1
+                        font.pixelSize: 13
+                        elide: Text.ElideRight
                     }
-                }
-                StatusBaseText {
-                    Layout.alignment: Qt.AlignLeft
-                    Layout.leftMargin: 8
-                    text: model.name
-                    color: Theme.palette.directColor1
-                    font.pixelSize: 13
-                    elide: Text.ElideRight
                 }
             }
         }
