@@ -58,6 +58,10 @@ ListModel {
          section: "Panels"
     }
     ListElement {
+         title: "CommunityColumnHeaderPanel"
+         section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
