@@ -6,7 +6,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
-ColumnLayout {
+Column {
     id: root
 
     property alias archiveSupportEnabled: archiveSupportToggle.checked
@@ -26,8 +26,8 @@ ColumnLayout {
     RowLayout {
         id: archiveSupport
 
-        Layout.fillWidth: true
-        Layout.preferredHeight: d.optionHeight
+        width: parent.width
+        height: d.optionHeight
 
         StatusBaseText {
             Layout.fillWidth: true
@@ -44,8 +44,8 @@ ColumnLayout {
     }
 
     RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: d.optionHeight
+        width: parent.width
+        height: d.optionHeight
 
         StatusBaseText {
             Layout.fillWidth: true
@@ -61,8 +61,8 @@ ColumnLayout {
     }
 
     RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: d.optionHeight
+        width: parent.width
+        height: d.optionHeight
 
         StatusBaseText {
             Layout.fillWidth: true
@@ -78,8 +78,8 @@ ColumnLayout {
     }
 
     RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: d.optionHeight
+        width: visible ? parent.width : 0
+        height: visible ? d.optionHeight : 0
         visible: requestToJoinToggle.checked
 
         StatusBaseText {

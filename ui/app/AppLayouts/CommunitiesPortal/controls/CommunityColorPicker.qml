@@ -18,6 +18,7 @@ ColumnLayout {
 
     spacing: 8
 
+    implicitHeight: childrenRect.height
     StatusBaseText {
         text: qsTr("Community color")
         font.pixelSize: 15

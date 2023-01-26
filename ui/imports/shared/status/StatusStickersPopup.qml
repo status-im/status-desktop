@@ -268,6 +268,7 @@ Popup {
             StatusScrollView {
                 height: 40
                 Layout.fillWidth: true
+                Layout.fillHeight: true
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
                 RowLayout {

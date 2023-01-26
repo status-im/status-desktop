@@ -159,6 +159,7 @@ StatusDropdown {
             id: scrollView
 
             Layout.fillWidth: true
+            Layout.fillHeight: true
             Layout.bottomMargin: 9
             Layout.topMargin:
                 !root.allowChoosingEntireCommunity && !root.allowChoosingEntireCommunity ? 9 : 0

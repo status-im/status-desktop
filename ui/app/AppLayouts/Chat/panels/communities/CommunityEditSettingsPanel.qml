@@ -25,7 +25,8 @@ StatusScrollView {
     id: root
     objectName: "communityEditPanelScrollView"
 
-    implicitHeight: layout.implicitHeight
+    implicitWidth: contentWidth
+    implicitHeight: layout.childrenRect.height
 
     property alias name: nameInput.text
     property alias description: descriptionTextInput.text
@@ -53,7 +54,7 @@ StatusScrollView {
         id: layout
 
         width: 608
-        height: childrenRect.height
+        height: parent.height
 
         spacing: 12
 
@@ -140,6 +141,7 @@ StatusScrollView {
 
         CommunityOptions {
             id: options
+            Layout.fillWidth: true
         }
 
         StatusModalDivider {
