@@ -64,6 +64,16 @@ Item {
                     card.advancedMode = checked
                 }
             }
+
+
+            StatusCheckBox {
+                Layout.alignment: Qt.AlignVCenter
+                text: "loading"
+                font.family: Theme.palette.monoFont.name
+                onClicked: {
+                    card.loading = checked
+                }
+            }
         }
 
         Rectangle {

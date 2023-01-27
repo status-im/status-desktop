@@ -38,6 +38,7 @@ RowLayout {
     ColumnLayout {
         Layout.alignment: Qt.AlignTop
         Layout.preferredWidth: root.width
+        spacing: 4
         StatusBaseText {
             Layout.maximumWidth: 410
             font.pixelSize: 15
@@ -56,14 +57,14 @@ RowLayout {
         }
         ScrollView {
             Layout.fillWidth: true
-            Layout.preferredHeight: row.height + 10
-            Layout.topMargin: Style.current.bigPadding
+            Layout.preferredHeight: visible ? row.height + 10 : 0
+            Layout.topMargin: Style.current.smallPadding
             contentWidth: row.width
             contentHeight: row.height + 10
             ScrollBar.vertical.policy: ScrollBar.AlwaysOff
             ScrollBar.horizontal.policy: ScrollBar.AsNeeded
             clip: true
-            visible: !root.isLoading ? root.isBridgeTx ? true : root.errorType === Constants.NoError : false
+            visible: root.isBridgeTx ? true : !root.isLoading ? root.errorType === Constants.NoError : false
             Column {
                 id: row
                 spacing: Style.current.padding
@@ -78,10 +79,10 @@ RowLayout {
         BalanceExceeded {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Style.current.bigPadding
+            Layout.topMargin: Style.current.smallPadding
             amountToSend: root.amountToSend ? root.amountToSend.amount : 0.0
-            isLoading: root.isLoading
             errorType: root.errorType
+            isLoading: root.isLoading && !root.isBridgeTx
         }
     }
 
@@ -126,7 +127,7 @@ RowLayout {
                 objectName: chainName
                 leftPadding: 5
                 rightPadding: 5
-                implicitWidth: 150
+                implicitWidth: 410
                 title: chainName
                 property bool tokenBalanceOnChainValid: selectedAccount && selectedAccount !== undefined && selectedAsset !== undefined
                 property var tokenBalanceOnChain: tokenBalanceOnChainValid ? root.store.getTokenBalanceOnChain(selectedAccount, chainId, selectedAsset.symbol) : undefined
@@ -136,11 +137,12 @@ RowLayout {
                 asset.height: 32
                 asset.name: Style.svg("tiny/" + iconUrl)
                 asset.isImage: true
+                border.color: gasRectangle.checked ? Theme.palette.primaryColor2 : "transparent"
                 color: {
                     if (sensor.containsMouse || highlighted ||  gasRectangle.checked) {
-                        return Theme.palette.baseColor2
+                        return Theme.palette.statusListItem.backgroundColor
                     }
-                    return Theme.palette.statusListItem.backgroundColor
+                    return Theme.palette.baseColor2
                 }
                 onClicked: gasRectangle.toggle()
             }
