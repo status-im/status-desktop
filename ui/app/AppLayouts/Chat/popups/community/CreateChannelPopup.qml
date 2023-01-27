@@ -135,6 +135,10 @@ StatusDialog {
                     StatusMinLengthValidator {
                         minLength: 1
                         errorMessage: Utils.getErrorMessage(nameInput.errors, qsTr("channel name"))
+                    },
+                    StatusRegularExpressionValidator {
+                        regularExpression: Constants.regularExpressions.alphanumericalExpanded
+                        errorMessage: Constants.errorMessages.alphanumericalExpandedRegExp
                     }
                 ]
             }

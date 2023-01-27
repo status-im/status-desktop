@@ -578,6 +578,14 @@ QtObject {
         readonly property int telegram: 6
     }
 
+    readonly property QtObject regularExpressions: QtObject {
+        readonly property var alphanumericalExpanded: /^$|^[a-zA-Z0-9\-_ ]+$/
+    }
+
+    readonly property QtObject errorMessages: QtObject {
+        readonly property string alphanumericalExpandedRegExp: qsTr("Only letters, numbers, underscores, whitespaces and hyphens allowed")
+    }
+
     readonly property var socialLinkPrefixesByType: [ // NB order must match the "socialLinkType" enum above
         "",
         "https://twitter.com/",

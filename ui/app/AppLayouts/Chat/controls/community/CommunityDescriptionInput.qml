@@ -26,6 +26,10 @@ StatusInput {
             minLength: 1
             errorMessage: Utils.getErrorMessage(root.errors,
                                                 qsTr("community description"))
+        },
+        StatusRegularExpressionValidator {
+            regularExpression: Constants.regularExpressions.alphanumericalExpanded
+            errorMessage: Constants.errorMessages.alphanumericalExpandedRegExp
         }
     ]
 }

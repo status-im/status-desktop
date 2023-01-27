@@ -46,7 +46,8 @@ StatusScrollView {
     property size bottomReservedSpace: Qt.size(0, 0)
     property bool bottomReservedSpaceActive: false
 
-    readonly property bool saveChangesButtonEnabled: true
+    readonly property bool saveChangesButtonEnabled: !((nameInput.input.dirty && !nameInput.valid) ||
+                                                       (descriptionTextInput.input.dirty && !descriptionTextInput.valid))
 
     ColumnLayout {
         id: layout
