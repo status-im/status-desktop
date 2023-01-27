@@ -28,10 +28,15 @@ StatusScrollView {
     property bool isEditState: false
     property bool dirty: {
 
-        let trick = d.triggerDirtyTool // Trick: Used to force the reevaluation of dirty when an item of the list is updated
+        const trick = d.triggerDirtyTool // Trick: Used to force the reevaluation of dirty when an item of the list is updated
 
         // Holdings:
-        const dirtyHoldingsList = d.checkIfHoldingsDirty()
+        if (d.checkIfHoldingsDirty())
+            return true
+
+        // Channels
+        if (d.checkIfInDirty())
+            return true
 
         // Permissions:
         let dirtyPermissionObj = false
@@ -39,15 +44,12 @@ StatusScrollView {
             dirtyPermissionObj = (d.dirtyValues.permissionObject.key !== root.permissionObject.key) ||
                     (d.dirtyValues.permissionObject.text !== root.permissionObject.text) ||
                     (d.dirtyValues.permissionObject.imageSource !== root.permissionObject.imageSource)
-        }
-        else {
+        } else {
             dirtyPermissionObj = d.dirtyValues.permissionObject.key !== null
         }
 
-        // TODO: Channels:
-        let dirtyChannelsList = false
 
-        return dirtyHoldingsList || dirtyPermissionObj || dirtyChannelsList || d.dirtyValues.isPrivateDirty
+        return dirtyPermissionObj || d.dirtyValues.isPrivateDirty
     }
     property bool saveChanges: false
     property bool resetChanges: false
@@ -60,7 +62,7 @@ StatusScrollView {
     // roles: key, text, imageSource
     property var permissionObject
 
-    // TODO roles:
+    // roles: itemId, text, emoji, color
     property var channelsModel: ListModel {}
 
     property bool isPrivate
@@ -95,20 +97,23 @@ StatusScrollView {
 
         onIsCommunityPermissionChanged: {
             if (isCommunityPermission) {
-                inModelChannels.clear()
+                d.dirtyValues.channelsModel.clear()
                 inSelector.wholeCommunitySelected = true
                 inSelector.itemsModel = inModelCommunity
             } else {
                 inSelector.itemsModel = 0
                 inSelector.wholeCommunitySelected = false
-                inSelector.itemsModel = inModelChannels
+                inSelector.itemsModel = d.dirtyValues.channelsModel
             }
         }
 
-        property bool triggerDirtyTool: false // Trick: Used to force the reevaluation of dirty when an item of the list is updated
+        // Trick: Used to force the reevaluation of dirty when an item of the list is updated
+        property int triggerDirtyTool: 0
 
         property QtObject dirtyValues: QtObject {
             property ListModel holdingsModel: ListModel {}
+            property ListModel channelsModel: ListModel {}
+
             property QtObject permissionObject: QtObject {
                property var key: null
                property string text: ""
@@ -166,36 +171,29 @@ StatusScrollView {
             root.store.editPermission(root.permissionIndex,
                                       d.dirtyValues.holdingsModel,
                                       d.dirtyValues.permissionObject,
-                                      root.channelsModel,
+                                      d.dirtyValues.channelsModel,
                                       d.dirtyValues.isPrivateDirty ? !root.isPrivate : root.isPrivate)
         }
 
         function loadInitValues() {
             // Holdings:
             d.dirtyValues.holdingsModel.clear()
-            if(root.holdingsModel) {
-                for(let i = 0; i < root.holdingsModel.count; i++) {
-                    let item = root.holdingsModel.get(i)
-                    let initItem = null
-                    if(item.shortName) {
-                        initItem =  {
-                            type: item.type,
-                            key: item.key,
-                            name: item.name,
-                            shortName: item.shortName,
-                            amount: item.amount,
-                            imageSource: item.imageSource
-                        }
+
+            if (root.holdingsModel) {
+                for (let i = 0; i < root.holdingsModel.count; i++) {
+                    const item = root.holdingsModel.get(i)
+
+                    const initItem = {
+                        type: item.type,
+                        key: item.key,
+                        name: item.name,
+                        amount: item.amount,
+                        imageSource: item.imageSource
                     }
-                    else {
-                        initItem =  {
-                            type: item.type,
-                            key: item.key,
-                            name: item.name,
-                            amount: item.amount,
-                            imageSource: item.imageSource
-                        }
-                    }
+
+                    if (item.shortName)
+                        initItem.shortName = item.shortName
+
                     d.dirtyValues.holdingsModel.append(initItem)
                 }
             }
@@ -205,41 +203,94 @@ StatusScrollView {
             d.dirtyValues.permissionObject.text = root.permissionObject ? root.permissionObject.text : ""
             d.dirtyValues.permissionObject.imageSource = root.permissionObject ? root.permissionObject.imageSource : ""
 
-            // TODO: Channels
+            d.permissionType = root.permissionObject ? root.permissionObject.key : PermissionTypes.Type.None
+
+            // Channels
+            d.dirtyValues.channelsModel.clear()
+
+            if (root.channelsModel) {
+                for (let c = 0; c < root.channelsModel.count; c++) {
+                    const item = root.channelsModel.get(c)
+
+                    const initItem = {
+                        itemId: item.itemId,
+                        text: item.text,
+                        emoji: item.emoji,
+                        color: item.color,
+                        operator: OperatorsUtils.Operators.None
+                    }
+
+                    d.dirtyValues.channelsModel.append(initItem)
+                }
+            }
+
+            if (root.channelsModel && (root.channelsModel.count || d.dirtyValues.permissionObject.key === null)) {
+                inSelector.wholeCommunitySelected = false
+                inSelector.itemsModel = d.dirtyValues.channelsModel
+            } else {
+                inSelector.wholeCommunitySelected = true
+                inSelector.itemsModel = inModelCommunity
+            }
 
             // Is private permission
             d.dirtyValues.isPrivateDirty = false
         }
 
         function checkIfHoldingsDirty() {
-            let dirty = false
-            if(root.holdingsModel) {
-                if(root.holdingsModel.count !== d.dirtyValues.holdingsModel.count) {
-                    dirty = true
-                }
-                else {
-                    // Check element by element
-                    let equals = 0
-                    for(let i = 0; i < root.holdingsModel.count; i++) {
-                        const item1 = root.holdingsModel.get(i)
-                        for(let j = 0; j < d.dirtyValues.holdingsModel.count; j++) {
-                            let item2 = d.dirtyValues.holdingsModel.get(j)
-                            // key, name, shortName, amount
-                            if((item1.key === item2.key) &&
-                               (item1.name === item2.name) &&
-                               (item1.shortName === item2.shortName) &&
-                               (item1.amount === item2.amount)) {
-                                equals = equals + 1
-                            }
-                        }
+            if (!root.holdingsModel)
+                return d.dirtyValues.holdingsModel.count !== 0
+
+            if (root.holdingsModel.count !== d.dirtyValues.holdingsModel.count)
+                return true
+
+            // Check element by element
+            const count = root.holdingsModel.count
+            let equals = 0
+
+            for (let i = 0; i < count; i++) {
+                const item1 = root.holdingsModel.get(i)
+
+                for (let j = 0; j < count; j++) {
+                    const item2 = d.dirtyValues.holdingsModel.get(j)
+
+                    if (item1.key === item2.key
+                            && item1.name === item2.name
+                            && item1.shortName === item2.shortName
+                            && item1.amount === item2.amount) {
+                        equals++
                     }
-                    dirty = (equals !== root.holdingsModel.count)
                 }
             }
-            else {
-                dirty = (d.dirtyValues.holdingsModel.count !== 0)
+
+            return equals !== count
+        }
+
+        function checkIfInDirty() {
+            if (!root.channelsModel)
+                return d.dirtyValues.channelsModel.count !== 0
+
+            if (root.channelsModel.count !== d.dirtyValues.channelsModel.count)
+                return true
+
+            const count = root.channelsModel.count
+            let equals = 0
+
+            for (let i = 0; i < count; i++) {
+                const item1 = root.channelsModel.get(i)
+
+                for (let j = 0; j < count; j++) {
+                    const item2 = d.dirtyValues.channelsModel.get(j)
+
+                    if (item1.itemId === item2.itemId
+                            && item1.text === item2.text
+                            && item1.emoji === item2.emoji
+                            && item1.color === item2.color) {
+                        equals++
+                    }
+                }
             }
-            return dirty
+
+            return equals !== count
         }
 
         function holdingsTextFormat(type, name, amount) {
@@ -258,11 +309,13 @@ StatusScrollView {
         id: mainLayout
         width: root.viewWidth
         spacing: 0
+
         CurveSeparatorWithText {
             Layout.alignment: Qt.AlignLeft
             Layout.leftMargin: 14
             text: qsTr("Anyone")
         }
+
         StatusItemSelector {
             id: tokensSelector
 
@@ -279,15 +332,26 @@ StatusScrollView {
             itemsModel: SortFilterProxyModel {
                 sourceModel: d.dirtyValues.holdingsModel
 
-                proxyRoles: ExpressionRole {
-                    name: "text"
-                     // Direct call for singleton function is not handled properly by SortFilterProxyModel that's why `holdingsTextFormat` is used instead.
-                    expression: d.holdingsTextFormat(model.type, model.name, model.amount)
-               }
+                proxyRoles: [
+                    ExpressionRole {
+                        name: "text"
+                         // Direct call for singleton function is not handled properly by SortFilterProxyModel that's why `holdingsTextFormat` is used instead.
+                        expression: d.holdingsTextFormat(model.type, model.name, model.amount)
+                    },
+                    ExpressionRole {
+                        name: "operator"
+
+                        // Direct call for singleton enum is not handled properly by SortFilterProxyModel.
+                        readonly property int none: OperatorsUtils.Operators.None
+
+                        expression: none
+                    }
+                ]
             }
 
             HoldingsDropdown {
                 id: dropdown
+
                 store: root.store
 
                 function addItem(type, item, amount) {
@@ -348,7 +412,7 @@ StatusScrollView {
                     const imageSource = modelItem.iconSource.toString()
 
                     d.dirtyValues.holdingsModel.set(itemIndex, { type: HoldingTypes.Type.Asset, key, name, amount, imageSource })
-                    d.triggerDirtyTool = !d.triggerDirtyTool
+                    d.triggerDirtyTool++
                     dropdown.close()
                 }
 
@@ -360,7 +424,7 @@ StatusScrollView {
                     const imageSource = modelItem.iconSource.toString()
 
                     d.dirtyValues.holdingsModel.set(itemIndex, { type: HoldingTypes.Type.Collectible, key, name, amount, imageSource })
-                    d.triggerDirtyTool = !d.triggerDirtyTool
+                    d.triggerDirtyTool++
                     dropdown.close()
                 }
 
@@ -369,7 +433,7 @@ StatusScrollView {
                     const icon = Style.svg("profile/ensUsernames")
 
                     d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Ens, key, name: domain, amount: 1, imageSource: icon })
-                    d.triggerDirtyTool = !d.triggerDirtyTool
+                    d.triggerDirtyTool++
                     dropdown.close()
                 }
 
@@ -501,6 +565,10 @@ StatusScrollView {
 
             useLetterIdenticons: !wholeCommunitySelected || !inDropdown.communityImage
 
+            tagLeftPadding: wholeCommunitySelected ? 2 : 6
+            asset.width: wholeCommunitySelected ? 28 : 20
+            asset.height: asset.width
+
             property bool wholeCommunitySelected: false
 
             function openInDropdown(parent, x, y) {
@@ -511,8 +579,8 @@ StatusScrollView {
                 const selectedChannels = []
 
                 if (!inSelector.wholeCommunitySelected)
-                    for (let i = 0; i < inModelChannels.count; i++)
-                        selectedChannels.push(inModelChannels.get(i).itemId)
+                    for (let i = 0; i < d.dirtyValues.channelsModel.count; i++)
+                        selectedChannels.push(d.dirtyValues.channelsModel.get(i).itemId)
 
                 inDropdown.setSelectedChannels(selectedChannels)
                 inDropdown.open()
@@ -527,15 +595,12 @@ StatusScrollView {
                     append({
                         imageSource: inDropdown.communityData.image,
                         text: inDropdown.communityData.name,
-                        operator: OperatorsUtils.Operators.None
+                        operator: OperatorsUtils.Operators.None,
+                        color: ""
                     })
 
                     setProperty(0, "color", colorWorkaround)
                 }
-            }
-
-            ListModel {
-                id: inModelChannels
             }
 
             InDropdown {
@@ -550,12 +615,12 @@ StatusScrollView {
                 communityColor: communityData.color
 
                 onChannelsSelected: {
-                    inModelChannels.clear()
+                    d.dirtyValues.channelsModel.clear()
                     inSelector.itemsModel = 0
                     inSelector.wholeCommunitySelected = false
 
-                    channels.map(channel => {
-                        inModelChannels.append({
+                    channels.forEach(channel => {
+                        d.dirtyValues.channelsModel.append({
                             itemId: channel.itemId,
                             text: "#" + channel.name,
                             emoji: channel.emoji,
@@ -564,12 +629,12 @@ StatusScrollView {
                         })
                     })
 
-                    inSelector.itemsModel = inModelChannels
+                    inSelector.itemsModel = d.dirtyValues.channelsModel
                     close()
                 }
 
                 onCommunitySelected: {
-                    inModelChannels.clear()
+                    d.dirtyValues.channelsModel.clear()
                     inSelector.wholeCommunitySelected = true
                     inSelector.itemsModel = inModelCommunity
                     close()
@@ -631,6 +696,7 @@ StatusScrollView {
 
         PermissionConflictWarningPanel{
             id: conflictPanel
+
             visible: store.permissionConflict.exists
             Layout.fillWidth: true
             Layout.topMargin: 50 // by desing
@@ -643,7 +709,9 @@ StatusScrollView {
             visible: !root.isEditState
             Layout.topMargin: conflictPanel.visible ? conflictPanel.Layout.topMargin : 24 // by design
             text: qsTr("Create permission")
-            enabled: d.dirtyValues.holdingsModel && d.dirtyValues.holdingsModel.count > 0 && d.dirtyValues.permissionObject.key !== null
+            enabled: d.dirtyValues.holdingsModel.count > 0
+                     && d.dirtyValues.permissionObject.key !== null
+                     && (d.dirtyValues.channelsModel.count > 0 || d.isCommunityPermission)
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
@@ -651,7 +719,7 @@ StatusScrollView {
                 root.store.createPermission(d.dirtyValues.holdingsModel,
                                             d.dirtyValues.permissionObject,
                                             d.dirtyValues.isPrivateDirty ? !root.isPrivate : root.isPrivate,
-                                            root.channelsModel)
+                                            d.dirtyValues.channelsModel)
                 root.permissionCreated()
             }
         }

@@ -141,10 +141,22 @@ Control{
                 model: root.channelsListModel
 
                 StatusListItemTag {
+                    readonly property bool isLetterIdenticon: !model.imageSource
+
+                    asset.isLetterIdenticon: isLetterIdenticon
+                    asset.emoji: model.emoji ? model.emoji : ""
+                    asset.color: model.color ? model.color : ""
+                    asset.width: isLetterIdenticon ? 20 : 28
+                    asset.height: asset.width
+
+                    leftPadding: isLetterIdenticon ? 6 : 2
+
                     height: d.flowRowHeight
-                    width: (implicitWidth > content.width) ? content.width : implicitWidth
+                    width: (implicitWidth > content.width)
+                           ? content.width : implicitWidth
+
                     title: model.text
-                    asset.name: model.imageSource
+                    asset.name: model.imageSource ? model.imageSource : ""
                     asset.isImage: true
                     asset.bgColor: "transparent"
                     closeButtonVisible: false

@@ -45,18 +45,6 @@ SplitView {
                         ])
                     }
                 }
-
-                function editPermission(index, holdings, permissions, channels, isPrivate) {
-                    logs.logEvent("CommunitiesStore::editPermission - index: " + index)
-                }
-
-                function duplicatePermission(index) {
-                    logs.logEvent("CommunitiesStore::duplicatePermission - index: " + index)
-                }
-
-                function removePermission(index) {
-                    logs.logEvent("CommunitiesStore::removePermission - index: " + index)
-                }
             }
 
             rootStore: QtObject {

@@ -48,14 +48,14 @@ ListModel {
                 name: "faq"
                 icon: ""
                 color: ""
-                colorId: 1
+                colorId: 5
             },
             ListElement {
                 itemId: 5
                 name: "report-scam"
                 icon: ""
                 color: ""
-                colorId: 1
+                colorId: 4
             }
         ]
     }

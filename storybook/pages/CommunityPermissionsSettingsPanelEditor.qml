@@ -100,12 +100,16 @@ Flickable {
                         Repeater {
                              model: channelsListModel
                              CommunityPermissionsSettingItemEditor {
+                                 isEmojiSelectorVisible: true
+
                                  panelText: "In [item " + model.index + "]"
-                                 name: model.name
-                                 icon: model.iconSource
+                                 name: model.text
+                                 icon: model.iconSource ? model.iconSource : ""
+                                 emoji: model.emoji ? model.emoji : ""
                                  iconsModel: AssetsCollectiblesIconsModel {}
                                  onNameChanged: model.name = name
                                  onIconChanged: model.iconSource = icon
+                                 onEmojiChanged: model.emoji = emoji
                              }
                         }
                     }

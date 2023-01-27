@@ -31,6 +31,21 @@ SplitView {
                         logs.logEvent("CommunitiesStore::duplicatePermission - index: " + index)
                     }
                 }
+
+                rootStore: QtObject {
+                    readonly property QtObject chatCommunitySectionModule: QtObject {
+                        readonly property var model: ChannelsModel {}
+                    }
+
+                    readonly property QtObject mainModuleInst: QtObject {
+                        readonly property QtObject activeSection: QtObject {
+                            readonly property string name: "Socks"
+                            readonly property string image: ModelsData.icons.socks
+                            readonly property color color: "red"
+                        }
+                    }
+                }
+
                 onEditPermission: logs.logEvent("CommunitiesStore::editPermission - index: " + index)
                 onRemovePermission: logs.logEvent("CommunitiesStore::removePermission - index: " + index)
 
