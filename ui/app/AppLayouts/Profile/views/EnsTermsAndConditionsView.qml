@@ -54,15 +54,16 @@ Item {
                 let assetsList = buyEnsModal.store.currentAccount.assets
                 for(var i=0; i< assetsList.count;i++) {
                     let symbol = JSON.parse(root.stickersStore.getStatusToken()).symbol
-                    if(symbol === assetsList.rowData(i, "symbol"))
-                        return {
-                            name: assetsList.rowData(i, "name"),
-                            symbol: assetsList.rowData(i, "symbol"),
-                            totalBalance: assetsList.rowData(i, "totalBalance"),
-                            totalCurrencyBalance: assetsList.rowData(i, "totalCurrencyBalance"),
-                            balances: assetsList.rowData(i, "balances"),
-                            decimals: assetsList.rowData(i, "decimals")
-                        }
+                    if (symbol !== assetsList.rowData(i, "symbol"))
+                        continue
+                    return {
+                        name: assetsList.rowData(i, "name"),
+                        symbol: assetsList.rowData(i, "symbol"),
+                        totalBalance: JSON.parse(assetsList.rowData(i, "totalBalance")),
+                        totalCurrencyBalance: JSON.parse(assetsList.rowData(i, "totalCurrencyBalance")),
+                        balances: assetsList.rowData(i, "balances"),
+                        decimals: assetsList.rowData(i, "decimals")
+                    }
                 }
                 return {}
             }

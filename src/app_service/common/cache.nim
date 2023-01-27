@@ -14,7 +14,7 @@ proc newTimedCache*[T](): TimedCache[T] = initTable[string, Value[T]]()
 proc init*[T](self: var TimedCache[T], values: Table[string, T]) =
   self.clear()
   for cacheKey, value in values:
-    self[cacheKey].value = value
+    self.set(cacheKey, value)
 
 proc getTimestamp[T](self: TimedCache[T], cacheKey: string): DateTime = self[cacheKey].timestamp
 

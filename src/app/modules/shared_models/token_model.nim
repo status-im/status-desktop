@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, strutils, strformat, json
 
 import ./token_item
 import ./currency_amount
@@ -153,8 +153,8 @@ QtObject:
     case column:
       of "name": result = $item.getName()
       of "symbol": result = $item.getSymbol()
-      of "totalBalance": result = $item.getTotalBalance()
-      of "totalCurrencyBalance": result = $item.getTotalCurrencyBalance()
+      of "totalBalance": result = $item.getTotalBalance().toJsonNode()
+      of "totalCurrencyBalance": result = $item.getTotalCurrencyBalance().toJsonNode()
       of "enabledNetworkCurrencyBalance": result = $item.getEnabledNetworkCurrencyBalance()
       of "enabledNetworkBalance": result = $item.getEnabledNetworkBalance()
       of "visibleForNetwork": result = $item.getVisibleForNetwork()

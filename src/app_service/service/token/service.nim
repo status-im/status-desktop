@@ -72,8 +72,12 @@ QtObject:
   proc init*(self: Service) =
     try:
       let response = backend.getCachedPrices()
-      self.initTokenPrices(jsonToPricesMap(response.result))
+      let prices = jsonToPricesMap(response.result)
+      self.initTokenPrices(prices)
+    except Exception as e:
+      error "Cached prices init error", errDesription = e.msg
 
+    try:
       let networks = self.networkService.getNetworks()
     
       for network in networks:
@@ -93,11 +97,8 @@ QtObject:
         self.tokens[network.chainId] = default_tokens.filter(
           proc(x: TokenDto): bool = x.chainId == network.chainId
         )
-
     except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
-      return
+      error "Tokens init error", errDesription = e.msg
 
   proc findTokenBySymbol*(self: Service, network: NetworkDto, symbol: string): TokenDto =
     try:

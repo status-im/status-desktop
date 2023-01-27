@@ -244,7 +244,12 @@ StatusDialog {
                         StatusListItemTag {
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                             Layout.preferredHeight: 22
-                            title: d.maxFiatBalance && d.maxFiatBalance.amount > 0 ? qsTr("Max: %1").arg(LocaleUtils.currencyAmountToLocaleString(d.maxFiatBalance)) : qsTr("No balances active")
+                            title: {
+                                if (!d.maxFiatBalance || d.maxFiatBalance.amount <= 0)
+                                    return qsTr("No balances active")
+                                const balance = LocaleUtils.currencyAmountToLocaleString(d.maxFiatBalance)
+                                return qsTr("Max: %1").arg(balance)
+                            }
                             closeButtonVisible: false
                             titleText.font.pixelSize: 12
                             bgColor: amountToSendInput.input.valid ? Theme.palette.primaryColor3 : Theme.palette.dangerColor2
