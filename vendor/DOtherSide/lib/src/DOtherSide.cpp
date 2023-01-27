@@ -283,7 +283,7 @@ void dos_qguiapplication_clipboard_setImageByUrl(const char* url)
 void dos_qguiapplication_download_image(const char *imageSource, const char *filePath)
 {
     // Extract file path that can be used to save the image
-    const QString fileL = QUrl(filePath).toLocalFile();
+    const QString fileL = QFile::decodeName(filePath);
 
     // Get current Date/Time information to use in naming of the image file
     const QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss");
@@ -301,8 +301,9 @@ void dos_qguiapplication_download_imageByUrl(const char *url, const char *filePa
     manager.setAutoDeleteReplies(true);
 
     QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url)));
+    const auto path = QFile::decodeName(filePath);
 
-    QObject::connect(reply, &QNetworkReply::finished, [reply, path = QUrl(filePath).toLocalFile()]() mutable {
+    QObject::connect(reply, &QNetworkReply::finished, [reply, path] {
         if(reply->error() == QNetworkReply::NoError) {
             // Get current Date/Time information to use in naming of the image file
             const QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss");
