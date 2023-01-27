@@ -76,8 +76,8 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1
 ENV PATH="/opt/cmake/bin:${PATH}"
 
 # Installing Golang
-RUN GOLANG_SHA256="9e5de37f9c49942c601b191ac5fba404b868bfc21d446d6960acc12283d6e5f2" \
- && GOLANG_TARBALL="go1.18.5.linux-amd64.tar.gz" \
+RUN GOLANG_SHA256="36519702ae2fd573c9869461990ae550c8c0d955cd28d2827a6b159fda81ff95" \
+ && GOLANG_TARBALL="go1.19.5.linux-amd64.tar.gz" \
  && wget -q "https://dl.google.com/go/${GOLANG_TARBALL}" \
  && echo "${GOLANG_SHA256} ${GOLANG_TARBALL}" | sha256sum -c \
  && sudo tar -C /usr/local -xzf "${GOLANG_TARBALL}" \
