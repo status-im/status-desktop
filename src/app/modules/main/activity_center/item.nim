@@ -61,7 +61,7 @@ proc initItem*(
   result.chatType = chatType
 
 proc `$`*(self: Item): string =
-  result = fmt"""StickerItem(
+  result = fmt"""activity_center/Item(
     id: {self.id},
     name: {$self.name},
     chatId: {$self.chatId},

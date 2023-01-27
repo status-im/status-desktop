@@ -340,123 +340,126 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.joinedCommunities[settings.id]))
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string]) =
-    var community = communities[0]
-    if(not self.allCommunities.hasKey(community.id)):
+    try:
+      var community = communities[0]
+      if(not self.allCommunities.hasKey(community.id)):
+        self.allCommunities[community.id] = community
+        self.events.emit(SIGNAL_COMMUNITY_ADDED, CommunityArgs(community: community))
+
+        if(not self.joinedCommunities.hasKey(community.id)):
+          if (community.joined and community.isMember):
+            self.joinedCommunities[community.id] = community
+            self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
+
+        return
+
+      if(self.curatedCommunities.hasKey(community.id)):
+        self.curatedCommunities[community.id].available = true
+        self.curatedCommunities[community.id].community = community
+
+      let prev_community = self.allCommunities[community.id]
+
+      # If there's settings without `id` it means the original
+      # signal didn't include actual communitySettings, hence we
+      # assign the settings we already have, otherwise we risk our
+      # settings to be overridden with wrong defaults.
+      if community.settings.id == "":
+        community.settings = prev_community.settings
+
+      # category was added
+      if(community.categories.len > prev_community.categories.len):
+        for category in community.categories:
+          if findIndexById(category.id, prev_community.categories) == -1:
+            let chats = self.getChatsInCategory(community, category.id)
+
+            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_CREATED,
+              CommunityCategoryArgs(communityId: community.id, category: category, chats: chats))
+
+      # category was removed
+      elif(community.categories.len < prev_community.categories.len):
+        for prv_category in prev_community.categories:
+          if findIndexById(prv_category.id, community.categories) == -1:
+            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_DELETED,
+              CommunityCategoryArgs(communityId: community.id, category: Category(id: prv_category.id)))
+
+      # some property has changed
+      else:
+        for category in community.categories:
+          # id is present
+          let index = findIndexById(category.id, prev_community.categories)
+          if index == -1:
+            continue
+          # but something is different
+          let prev_category = prev_community.categories[index]
+          if category.position != prev_category.position:
+            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_REORDERED,
+              CommunityChatOrderArgs(
+                communityId: community.id,
+                categoryId: category.id,
+                position: category.position))
+          if category.name != prev_category.name:
+            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED,
+              CommunityCategoryArgs(communityId: community.id, category: category))
+
+      # channel was added
+      if(community.chats.len > prev_community.chats.len):
+        for chat in community.chats:
+          if findIndexById(chat.id, prev_community.chats) == -1:
+            self.chatService.updateOrAddChat(chat) # we have to update chats stored in the chat service.
+            let data = CommunityChatArgs(chat: chat)
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
+
+            # if the chat was created by the current user then it's already in the model and should be reordered if necessary
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
+              chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
+
+      # channel was removed
+      elif((community.chats.len-removedChats.len) < prev_community.chats.len):
+        for prv_chat in prev_community.chats:
+          if findIndexById(prv_chat.id, community.chats) == -1:
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_DELETED, CommunityChatIdArgs(communityId: community.id,
+            chatId: prv_chat.id))
+      # some property has changed
+      else:
+        for chat in community.chats:
+          # id is present
+          let index = findIndexById(chat.id, prev_community.chats)
+          if index == -1:
+            continue
+          # but something is different
+          let prev_chat = prev_community.chats[index]
+          # Handle position changes
+          if chat.position != prev_chat.position:
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
+            chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
+
+          # Handle channel was added/removed to/from category
+          if chat.categoryId != prev_chat.categoryId:
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED, CommunityChatOrderArgs(communityId: community.id,
+            chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
+
+          # Handle name/description changes
+          if chat.name != prev_chat.name or chat.description != prev_chat.description or chat.color != prev_chat.color:
+            var updatedChat = findChatById(chat.id, updatedChats)
+            updatedChat.updateMissingFields(chat)
+            self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
+
+            let data = CommunityChatArgs(chat: updatedChat)
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
       self.allCommunities[community.id] = community
-      self.events.emit(SIGNAL_COMMUNITY_ADDED, CommunityArgs(community: community))
+      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
 
       if(not self.joinedCommunities.hasKey(community.id)):
         if (community.joined and community.isMember):
           self.joinedCommunities[community.id] = community
           self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
-
-      return
-
-    if(self.curatedCommunities.hasKey(community.id)):
-      self.curatedCommunities[community.id].available = true
-      self.curatedCommunities[community.id].community = community
-
-    let prev_community = self.allCommunities[community.id]
-
-    # If there's settings without `id` it means the original
-    # signal didn't include actual communitySettings, hence we
-    # assign the settings we already have, otherwise we risk our
-    # settings to be overridden with wrong defaults.
-    if community.settings.id == "":
-      community.settings = prev_community.settings
-
-    # category was added
-    if(community.categories.len > prev_community.categories.len):
-      for category in community.categories:
-        if findIndexById(category.id, prev_community.categories) == -1:
-          let chats = self.getChatsInCategory(community, category.id)
-
-          self.events.emit(SIGNAL_COMMUNITY_CATEGORY_CREATED,
-            CommunityCategoryArgs(communityId: community.id, category: category, chats: chats))
-
-    # category was removed
-    elif(community.categories.len < prev_community.categories.len):
-      for prv_category in prev_community.categories:
-        if findIndexById(prv_category.id, community.categories) == -1:
-          self.events.emit(SIGNAL_COMMUNITY_CATEGORY_DELETED,
-            CommunityCategoryArgs(communityId: community.id, category: Category(id: prv_category.id)))
-
-    # some property has changed
-    else:
-      for category in community.categories:
-        # id is present
-        let index = findIndexById(category.id, prev_community.categories)
-        if index == -1:
-          continue
-        # but something is different
-        let prev_category = prev_community.categories[index]
-        if category.position != prev_category.position:
-          self.events.emit(SIGNAL_COMMUNITY_CATEGORY_REORDERED,
-            CommunityChatOrderArgs(
-              communityId: community.id,
-              categoryId: category.id,
-              position: category.position))
-        if category.name != prev_category.name:
-          self.events.emit(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED,
-            CommunityCategoryArgs(communityId: community.id, category: category))
-
-    # channel was added
-    if(community.chats.len > prev_community.chats.len):
-      for chat in community.chats:
-        if findIndexById(chat.id, prev_community.chats) == -1:
-          self.chatService.updateOrAddChat(chat) # we have to update chats stored in the chat service.
-          let data = CommunityChatArgs(chat: chat)
-          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
-
-          # if the chat was created by the current user then it's already in the model and should be reordered if necessary
-          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
-            chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
-
-    # channel was removed
-    elif((community.chats.len-removedChats.len) < prev_community.chats.len):
-      for prv_chat in prev_community.chats:
-        if findIndexById(prv_chat.id, community.chats) == -1:
-          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_DELETED, CommunityChatIdArgs(communityId: community.id,
-          chatId: prv_chat.id))
-    # some property has changed
-    else:
-      for chat in community.chats:
-        # id is present
-        let index = findIndexById(chat.id, prev_community.chats)
-        if index == -1:
-          continue
-        # but something is different
-        let prev_chat = prev_community.chats[index]
-        # Handle position changes
-        if chat.position != prev_chat.position:
-          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
-          chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
-
-        # Handle channel was added/removed to/from category
-        if chat.categoryId != prev_chat.categoryId:
-          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED, CommunityChatOrderArgs(communityId: community.id,
-          chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
-
-        # Handle name/description changes
-        if chat.name != prev_chat.name or chat.description != prev_chat.description or chat.color != prev_chat.color:
-          var updatedChat = findChatById(chat.id, updatedChats)
-          updatedChat.updateMissingFields(chat)
-          self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
-
-          let data = CommunityChatArgs(chat: updatedChat)
-          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
-
-    self.allCommunities[community.id] = community
-    self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
-
-    if(not self.joinedCommunities.hasKey(community.id)):
-      if (community.joined and community.isMember):
-        self.joinedCommunities[community.id] = community
-        self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
-        # remove my pending requests
-        keepIf(self.myCommunityRequests, request => request.communityId != community.id)
-    else:
-      self.saveUpdatedJoinedCommunity(community)
+          # remove my pending requests
+          keepIf(self.myCommunityRequests, request => request.communityId != community.id)
+      else:
+        self.saveUpdatedJoinedCommunity(community)
+    
+    except Exception as e:
+      error "Error handling community updates", msg = e.msg, communities, updatedChats, removedChats
 
   proc init*(self: Service) =
     self.doConnect()
@@ -1107,11 +1110,15 @@ QtObject:
               chatDetails.updateMissingFields(self.joinedCommunities[communityId].chats[idx])
               self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
               chats.add(chatDetails)
+
         for k, v in response.result["communityChanges"].getElems()[0]["categoriesAdded"].pairs():
           let category = v.toCategory()
+          self.joinedCommunities[communityId].categories.add(category)
           self.events.emit(SIGNAL_COMMUNITY_CATEGORY_CREATED,
             CommunityCategoryArgs(communityId: communityId, category: category, chats: chats))
 
+        # Update `allCommunities` to the new `joinedCommunity` value
+        self.allCommunities[communityId] = self.joinedCommunities[communityId]
     except Exception as e:
       error "Error creating community category", msg = e.msg, communityId, name
 
@@ -1157,10 +1164,16 @@ QtObject:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error deleting community category: " & error.message)
 
+      # Update communities objetcts
+      let updatedCommunity = response.result["communities"][0].toCommunityDto
+      self.joinedCommunities[communityId] = updatedCommunity
+      self.allCommunities[communityId] = updatedCommunity
+
       self.events.emit(SIGNAL_COMMUNITY_CATEGORY_DELETED,
         CommunityCategoryArgs(
           communityId: communityId,
-          category: Category(id: categoryId)
+          category: Category(id: categoryId),
+          chats: updatedCommunity.chats
         )
       )
     except Exception as e:

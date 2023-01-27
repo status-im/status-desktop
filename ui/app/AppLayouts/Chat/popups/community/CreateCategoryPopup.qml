@@ -94,11 +94,11 @@ StatusModal {
                     model: SortFilterProxyModel {
                         sourceModel: root.isEdit ? root.store.chatCommunitySectionModule.editCategoryChannelsModel
                                                  : root.store.chatCommunitySectionModule.model
-                        // filter out categories
+                        // filter out channels with categories
                         filters: ValueFilter {
-                            roleName: "type"
-                            value: Constants.chatType.unknown
-                            inverted: true
+                            enabled: !root.isEdit
+                            roleName: "categoryId"
+                            value: ""
                         }
                     }
 
@@ -116,40 +116,44 @@ StatusModal {
                         }
                     }
 
-                    delegate: StatusListItem {
-                        readonly property bool checked: channelItemCheckbox.checked
-                        objectName: model.name
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        height: visible ? implicitHeight : 0
-                        title: "#" + model.name
-                        asset.width: 30
-                        asset.height: 30
-                        asset.emoji: model.emoji
-                        asset.color: model.color
-                        asset.imgIsIdenticon: false
-                        asset.name: model.icon
-                        asset.isImage: !!model.icon
-                        ringSettings.ringSpecModel: model.colorHash
-                        asset.isLetterIdenticon: true
-                        asset.bgColor: model.color
-                        onClicked: channelItemCheckbox.checked = !channelItemCheckbox.checked
+                    delegate: Loader {
+                        active: model.type !== Constants.chatType.category
+                        
+                        sourceComponent: StatusListItem {
+                            readonly property bool checked: channelItemCheckbox.checked
+                            objectName: model.name
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            height: visible ? implicitHeight : 0
+                            title: "#" + model.name
+                            asset.width: 30
+                            asset.height: 30
+                            asset.emoji: model.emoji
+                            asset.color: model.color
+                            asset.imgIsIdenticon: false
+                            asset.name: model.icon
+                            asset.isImage: !!model.icon
+                            ringSettings.ringSpecModel: model.colorHash
+                            asset.isLetterIdenticon: true
+                            asset.bgColor: model.color
+                            onClicked: channelItemCheckbox.checked = !channelItemCheckbox.checked
 
-                        components: [
-                            StatusCheckBox {
-                                id: channelItemCheckbox
-                                checked: root.isEdit ? model.categoryId === root.categoryId : false
-                                onCheckedChanged: {
-                                    if(checked){
-                                        var idx = root.channels.indexOf(model.itemId)
-                                        if(idx === -1){
-                                            root.channels.push(model.itemId)
+                            components: [
+                                StatusCheckBox {
+                                    id: channelItemCheckbox
+                                    checked: root.isEdit ? model.categoryId === root.categoryId : false
+                                    onCheckedChanged: {
+                                        if(checked){
+                                            var idx = root.channels.indexOf(model.itemId)
+                                            if(idx === -1){
+                                                root.channels.push(model.itemId)
+                                            }
+                                        } else {
+                                            root.channels = root.channels.filter(el => el !== model.itemId);
                                         }
-                                    } else {
-                                        root.channels = root.channels.filter(el => el !== model.itemId);
                                     }
                                 }
-                            }
-                        ]
+                            ]
+                        }
                     }
                 }
             }

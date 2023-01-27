@@ -50,7 +50,7 @@ method setFirstChannelAsActive*(self: AccessInterface) {.base.} =
 method chatContentDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method activeItemSubItemSet*(self: AccessInterface, itemId: string, subItemId: string) {.base.} =
+method activeItemSet*(self: AccessInterface, itemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method makeChatWithIdActive*(self: AccessInterface, chatId: string) {.base.} =
@@ -124,7 +124,10 @@ method onGroupChatDetailsUpdated*(self: AccessInterface, chatId: string, newName
 method onCommunityChannelEdited*(self: AccessInterface, chat: ChatDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onReorderChatOrCategory*(self: AccessInterface, chatOrCatId: string, position: int, newCategoryIdForChat: string) {.base.} =
+method onReorderChat*(self: AccessInterface, chattId: string, position: int, newCategoryIdForChat: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onReorderCategory*(self: AccessInterface, catId: string, position: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityCategoryChannelChanged*(self: AccessInterface, chatId: string, newCategoryIdForChat: string) {.base.} =
@@ -133,7 +136,7 @@ method onCommunityCategoryChannelChanged*(self: AccessInterface, chatId: string,
 method onCommunityCategoryCreated*(self: AccessInterface, category: Category, chats: seq[ChatDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityCategoryDeleted*(self: AccessInterface, category: Category) {.base.} =
+method onCommunityCategoryDeleted*(self: AccessInterface, category: Category, chats: seq[ChatDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityCategoryEdited*(self: AccessInterface, category: Category, chats: seq[ChatDto]) {.base.} =
@@ -148,7 +151,7 @@ method setLoadingHistoryMessagesInProgress*(self: AccessInterface, isLoading: bo
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setActiveItemSubItem*(self: AccessInterface, itemId: string, subItemId: string) {.base.} =
+method setActiveItem*(self: AccessInterface, itemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getChatContentModule*(self: AccessInterface, chatId: string): QVariant {.base.} =

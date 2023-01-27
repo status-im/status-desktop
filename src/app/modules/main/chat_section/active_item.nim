@@ -1,20 +1,14 @@
 import NimQml
-import item, sub_item, active_sub_item
+import item
 
 QtObject:
   type ActiveItem* = ref object of QObject
     item: Item
-    activeSubItem: ActiveSubItem
-    activeSubItemVariant: QVariant
 
   proc setup(self: ActiveItem) =
     self.QObject.setup
-    self.activeSubItem = newActiveSubItem()
-    self.activeSubItemVariant = newQVariant(self.activeSubItem)
 
   proc delete*(self: ActiveItem) =
-    self.activeSubItem.delete
-    self.activeSubItemVariant.delete
     self.QObject.delete
 
   proc newActiveItem*(): ActiveItem =
@@ -23,22 +17,17 @@ QtObject:
 
   #################################################
   # Forward declaration section
-  proc activeSubItemChanged(self: ActiveItem) {.signal.}
   proc idChanged(self: ActiveItem) {.signal.}
 
   #################################################
 
-  proc setActiveItemData*(self: ActiveItem, item: Item, subItem: SubItem) =
+  proc setActiveItemData*(self: ActiveItem, item: Item) =
     self.item = item
-    self.activeSubItem.setActiveSubItemData(subItem)
-    self.activeSubItemChanged()
 
   # Used when there is no longer an active item (last channel was deleted)
   proc resetActiveItemData*(self: ActiveItem) =
     self.item = Item()
-    self.activeSubItem.setActiveSubItemData(SubItem())
     self.idChanged()
-    self.activeSubItemChanged()
 
   proc getId(self: ActiveItem): string {.slot.} =
     if(self.item.isNil):
@@ -48,15 +37,6 @@ QtObject:
   QtProperty[string] id:
     read = getId
     notify = idChanged
-
-  proc getIsSubItemActive(self: ActiveItem): bool {.slot.} =
-    if(self.activeSubItem.getId().len > 0):
-      return true
-
-    return false
-
-  QtProperty[bool] isSubItemActive:
-    read = getIsSubItemActive
 
   proc getName(self: ActiveItem): string {.slot.} =
     if(self.item.isNil):
@@ -143,11 +123,3 @@ QtObject:
 
   QtProperty[int] position:
     read = getPosition
-
-  proc getActiveSubItem(self: ActiveItem): QVariant {.slot.} =
-    return self.activeSubItemVariant
-
-  QtProperty[QVariant] activeSubItem:
-    read = getActiveSubItem
-    notify = activeSubItemChanged
-

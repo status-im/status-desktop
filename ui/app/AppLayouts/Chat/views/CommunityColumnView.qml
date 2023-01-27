@@ -237,11 +237,7 @@ Item {
 
             onChatItemSelected: {
                 Global.closeCreateChatView()
-
-                if(categoryId === "")
-                    root.communitySectionModule.setActiveItem(id, "")
-                else
-                    root.communitySectionModule.setActiveItem(categoryId, id)
+                root.communitySectionModule.setActiveItem(id)
             }
 
             showCategoryActionButtons: communityData.amISectionAdmin
@@ -288,27 +284,35 @@ Item {
 
             categoryPopupMenu: StatusMenu {
 
-                property var categoryItem
+                property var itemWithCategory
+                property string categoryId
 
-                openHandler: function (id) {
-                    let jsonObj = root.communitySectionModule.getItemAsJson(id)
-                    let obj = JSON.parse(jsonObj)
-                    if (obj.error) {
-                        console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
+                openHandler: function () {
+                    let jsonObj = root.communitySectionModule.getItemPartOfCategoryAsJsonById(categoryId)
+                    try {
+                        let obj = JSON.parse(jsonObj)
+                        if (obj.error) {
+                            console.error("error parsing chat item json object, id: ", categoryId, " error: ", obj.error)
+                            close()
+                            return
+                        }
+                        itemWithCategory = obj
+                    } catch (e) {
+                        console.error("error parsing chat item json object, id: ", categoryId, " error: ", e)
                         close()
                         return
                     }
-                    categoryItem = obj
                 }
 
                 StatusAction {
-                    text: categoryItem.muted ? qsTr("Unmute category") : qsTr("Mute category")
+                    // TODO pass categoryMuted to Item
+                    text: itemWithCategory.muted ? qsTr("Unmute category") : qsTr("Mute category")
                     icon.name: "notification"
                     onTriggered: {
-                        if (categoryItem.muted) {
-                            root.communitySectionModule.unmuteCategory(categoryItem.itemId)
+                        if (itemWithCategory.muted) {
+                            root.communitySectionModule.unmuteCategory(itemWithCategory.categoryId)
                         } else {
-                            root.communitySectionModule.muteCategory(categoryItem.itemId)
+                            root.communitySectionModule.muteCategory(itemWithCategory.categoryId)
                         }
                     }
                 }
@@ -322,8 +326,8 @@ Item {
                        Global.openPopup(createCategoryPopup, {
                            isEdit: true,
                            channels: [],
-                           categoryId: categoryItem.categoryId,
-                           categoryName: categoryItem.name
+                           categoryId: itemWithCategory.categoryId,
+                           categoryName: itemWithCategory.categoryName
                        })
                     }
                 }
@@ -340,10 +344,10 @@ Item {
                     type: StatusAction.Type.Danger
                     onTriggered: {
                         Global.openPopup(deleteCategoryConfirmationDialogComponent, {
-                            title: qsTr("Delete %1 category").arg(categoryItem.name),
-                            confirmationText: qsTr("Are you sure you want to delete %1 category? Channels inside the category won’t be deleted.")
-                                .arg(categoryItem.name),
-                            categoryId: categoryItem.categoryId
+                            title: qsTr("Delete %1 category").arg(itemWithCategory.categoryName),
+                            confirmationText: qsTr("Are you sure you want to delete %1 category? Channels inside the category won't be deleted.")
+                                .arg(itemWithCategory.categoryName),
+                            categoryId: itemWithCategory.categoryId
                         })
                     }
                 }
@@ -354,27 +358,33 @@ Item {
                 emojiPopup: root.emojiPopup
 
                 openHandler: function (id) {
-                    let jsonObj = root.communitySectionModule.getItemAsJson(id)
-                    let obj = JSON.parse(jsonObj)
-                    if (obj.error) {
-                        console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
+                    try {
+                        let jsonObj = root.communitySectionModule.getItemAsJson(id)
+                        let obj = JSON.parse(jsonObj)
+                        if (obj.error) {
+                            console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
+                            close()
+                            return
+                        }
+
+                        currentFleet = root.communitySectionModule.getCurrentFleet()
+                        isCommunityChat = root.communitySectionModule.isCommunity()
+                        amIChatAdmin = obj.amIChatAdmin
+                        chatId = obj.itemId
+                        chatName = obj.name
+                        chatDescription = obj.description
+                        chatIcon = obj.icon
+                        chatEmoji = obj.emoji
+                        chatColor = obj.color
+                        chatType = obj.type
+                        chatMuted = obj.muted
+                        channelPosition = obj.position
+                        chatCategoryId = obj.categoryId
+                    } catch (e) {
+                        console.error("error parsing chat item json object, id: ", id, " error: ", e)
                         close()
                         return
                     }
-
-                    currentFleet = root.communitySectionModule.getCurrentFleet()
-                    isCommunityChat = root.communitySectionModule.isCommunity()
-                    amIChatAdmin = obj.amIChatAdmin
-                    chatId = obj.itemId
-                    chatName = obj.name
-                    chatDescription = obj.description
-                    chatIcon = obj.icon
-                    chatEmoji = obj.emoji
-                    chatColor = obj.color
-                    chatType = obj.type
-                    chatMuted = obj.muted
-                    channelPosition = obj.position
-                    chatCategoryId = obj.categoryId
                 }
 
                 onMuteChat: {
