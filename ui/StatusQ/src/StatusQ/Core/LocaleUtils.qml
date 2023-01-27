@@ -29,8 +29,11 @@ QtObject {
 
     function numberFromLocaleString(num, locale = null) {
         locale = locale || Qt.locale()
-
-        return Number.fromLocaleString(locale, num)
+        try {
+            return Number.fromLocaleString(locale, num)
+        } catch (_) {
+            return parseFloat(num)
+        }
     }
 
     function currencyAmountToLocaleString(currencyAmount, options = null, locale = null) {
