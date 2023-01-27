@@ -91,7 +91,7 @@ QtObject {
 
     function createPermission(holdings, permissions, isPrivate, channels, index = null) {
         // TO BE REPLACED: It shold just be a call to the backend sharing `holdings`, `permissions`, `channels` and `isPrivate` properties.
-        var permission = {
+        const permission = {
             isPrivate: true,
             holdingsListModel: [],
             permissionsObjectModel: {
@@ -99,20 +99,20 @@ QtObject {
                 text: "",
                 imageSource: ""
             },
-            channelsListModel: []
-        };
+            channelsListModel: [],
+        }
 
         // Setting HOLDINGS:
-        for (var i = 0; i < holdings.count; i++ ) {
-            var entry = holdings.get(i);
-             // roles: type, key, name, amount, imageSource
+        for (let i = 0; i < holdings.count; i++ ) {
+            const entry = holdings.get(i)
+
             permission.holdingsListModel.push({
-                                                  type: entry.type,
-                                                  key: entry.key,
-                                                  name: entry.name,
-                                                  amount: entry.amount,
-                                                  imageSource: entry.imageSource
-                                          });
+                type: entry.type,
+                key: entry.key,
+                name: entry.name,
+                amount: entry.amount,
+                imageSource: entry.imageSource
+            })
         }
 
         // Setting PERMISSIONS:
@@ -120,18 +120,27 @@ QtObject {
         permission.permissionsObjectModel.text = permissions.text
         permission.permissionsObjectModel.imageSource = permissions.imageSource
 
+        // Setting CHANNELS
+        for (let c = 0; c < channels.count; c++) {
+            const entry = channels.get(c)
+
+            permission.channelsListModel.push({
+                itemId: entry.itemId,
+                text: entry.text,
+                emoji: entry.emoji,
+                color: entry.color
+            })
+        }
+
         // Setting PRIVATE permission property:
         permission.isPrivate = isPrivate
 
-        // TODO: Set channels list. Now mocked data.
-        permission.channelsListModel = root.channelsModel
 
-        if(index !== null) {
+        if (index !== null) {
             // Edit permission model:
             console.log("TODO: Edit permissions - backend call")
             root.permissionsModel.set(index, permission)
-        }
-        else {
+        } else {
             // Add into permission model:
             console.log("TODO: Create permissions - backend call - Now dummy data shown")
             root.permissionsModel.append(permission)
@@ -147,7 +156,8 @@ QtObject {
         // TO BE REPLACED: Call to backend
         console.log("TODO: Duplicate permissions - backend call")
         const permission = root.permissionsModel.get(index)
-        createPermission(permission.holdingsListModel, permission.permissionsObjectModel, permission.isPrivate, permission.channelsListModel)
+        createPermission(permission.holdingsListModel, permission.permissionsObjectModel,
+                         permission.isPrivate, permission.channelsListModel)
     }
 
     function removePermission(index) {

@@ -12,8 +12,10 @@ ColumnLayout {
     property string name
     property string icon
     property string amountText
+    property string emoji
     property bool isAmountVisible: false
     property bool isImageSelectorVisible: true
+    property bool isEmojiSelectorVisible: false
     property var iconsModel
 
     Label {
@@ -63,7 +65,7 @@ ColumnLayout {
         ColumnLayout {
             Label {
                 Layout.fillWidth: true
-                text: "Type"
+                text: "Name"
             }
             TextField {
                 background: Rectangle {
@@ -90,6 +92,23 @@ ColumnLayout {
                 Layout.fillWidth: true
                 text: root.amountText
                 onTextChanged: root.amountText = text
+            }
+        }
+
+        ColumnLayout {
+            visible: root.isEmojiSelectorVisible
+            Label {
+                Layout.fillWidth: true
+                text: "Emoji"
+            }
+            TextField {
+                background: Rectangle {
+                    radius: 16
+                    border.color: 'lightgrey'
+                }
+                Layout.fillWidth: true
+                text: root.emoji
+                onTextChanged: root.emoji = text
             }
         }
     }

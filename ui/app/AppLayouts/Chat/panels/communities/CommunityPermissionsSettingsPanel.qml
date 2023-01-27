@@ -156,6 +156,7 @@ SettingsPageLayout {
         id: permissionsView
         CommunityPermissionsView {
             viewWidth: root.viewWidth
+            rootStore: root.rootStore
             store: root.store
             onEditPermission: {
                 d.permissionIndexToEdit = index

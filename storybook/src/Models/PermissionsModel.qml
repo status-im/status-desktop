@@ -32,82 +32,79 @@ ListModel {
                ])
 
     function createHoldingsModel1() {
-        var holdings = []
-        holdings.push({
-                          operator: OperatorsUtils.Operators.None,
-                          type: HoldingTypes.Type.Asset,
-                          key: "SOCKS",
-                          name: "SOCKS",
-                          amount: 1.2,
-                          imageSource: ModelsData.assets.socks
-                      });
-        holdings.push({
-                          operator: OperatorsUtils.Operators.Or,
-                          type: HoldingTypes.Type.Asset,
-                          key: "ZRX",
-                          name: "ZRX",
-                          amount: 15,
-                          imageSource: ModelsData.assets.zrx
-                      });
-        holdings.push({
-                          operator: OperatorsUtils.Operators.And,
-                          type: HoldingTypes.Type.Collectible,
-                          key: "Furbeard",
-                          name: "Furbeard",
-                          amount: 12,
-                          imageSource: ModelsData.collectibles.kitty1
-                      });
-        return holdings
+        return [
+            {
+                operator: OperatorsUtils.Operators.None,
+                type: HoldingTypes.Type.Asset,
+                key: "SOCKS",
+                name: "SOCKS",
+                amount: 1.2,
+                imageSource: ModelsData.assets.socks
+            },
+            {
+                operator: OperatorsUtils.Operators.Or,
+                type: HoldingTypes.Type.Asset,
+                key: "ZRX",
+                name: "ZRX",
+                amount: 15,
+                imageSource: ModelsData.assets.zrx
+            },
+            {
+                operator: OperatorsUtils.Operators.And,
+                type: HoldingTypes.Type.Collectible,
+                key: "Furbeard",
+                name: "Furbeard",
+                amount: 12,
+                imageSource: ModelsData.collectibles.kitty1
+            }
+        ]
     }
 
     function createHoldingsModel2() {
-        var holdings = []
-        holdings.push({
-                          operator: OperatorsUtils.Operators.None,
-                          type: HoldingTypes.Type.Collectible,
-                          key: "Happy Meow",
-                          name: "Happy Meow",
-                          amount: 50.25,
-                          imageSource: ModelsData.collectibles.kitty3
-                      });
-        holdings.push({
-                          operator: OperatorsUtils.Operators.And,
-                          type: HoldingTypes.Type.Collectible,
-                          key: "AMP",
-                          name: "AMP",
-                          amount: 11,
-                          imageSource: ModelsData.assets.amp
-                      });
-        return holdings
+        return [
+            {
+                operator: OperatorsUtils.Operators.None,
+                type: HoldingTypes.Type.Collectible,
+                key: "Happy Meow",
+                name: "Happy Meow",
+                amount: 50.25,
+                imageSource: ModelsData.collectibles.kitty3
+            },
+            {
+                operator: OperatorsUtils.Operators.And,
+                type: HoldingTypes.Type.Collectible,
+                key: "AMP",
+                name: "AMP",
+                amount: 11,
+                imageSource: ModelsData.assets.amp
+            }
+        ]
     }
 
     function createChannelsModel1() {
-        var channels = []
-        channels.push({
-                          key: "help",
-                          iconSource: ModelsData.assets.zrx,
-                          name: "#help"
-                      });
-        channels.push({
-                          key: "faq",
-                          iconSource: ModelsData.assets.zrx,
-                          name: "#faq"
-                      });
-        return channels
+        return [
+            {
+                key: "general",
+                text: "#general",
+                color: "lightgreen",
+                emoji: "👋"
+            },
+            {
+                key: "faq",
+                text: "#faq",
+                color: "lightblue",
+                emoji: "⚽"
+            }
+        ]
     }
 
     function createChannelsModel2() {
-        var channels = []
-        channels.push({
-                          key: "welcome",
-                          iconSource: ModelsData.assets.inch,
-                          name: "#welcome"
-                      });
-        channels.push({
-                          key: "general",
-                          iconSource: ModelsData.assets.inch,
-                          name: "#general"
-                      });
-        return channels
+        return [
+            {
+                key: "socks",
+                iconSource: ModelsData.icons.socks,
+                text: "Socks"
+            }
+        ]
     }
 }

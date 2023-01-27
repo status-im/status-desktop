@@ -15,6 +15,7 @@ import AppLayouts.Chat.helpers 1.0
 StatusScrollView {
     id: root
 
+    property var rootStore
     property var store
     property int viewWidth: 560 // by design
 
@@ -43,6 +44,20 @@ StatusScrollView {
         width: root.viewWidth
         spacing: 24
 
+        ListModel {
+            id: communityItemModel
+
+            readonly property var communityData: rootStore.mainModuleInst.activeSection
+
+            Component.onCompleted: {
+                append({
+                    text: communityData.name,
+                    imageSource: communityData.image,
+                    color: communityData.color
+                })
+            }
+        }
+
         Repeater {
             model: root.store.permissionsModel
             delegate: PermissionItem {
@@ -52,29 +67,35 @@ StatusScrollView {
 
                     proxyRoles: ExpressionRole {
                         name: "text"
-                        // Direct call for singleton function is not handled properly by SortFilterProxyModel that's why `holdingsTextFormat` is used instead.
+                        // Direct call for singleton function is not handled properly
+                        // by SortFilterProxyModel that's why `holdingsTextFormat` is used instead.
                         expression: d.holdingsTextFormat(model.type, model.name, model.amount)
                    }
                 }
                 permissionName: model.permissionsObjectModel.text
                 permissionImageSource: model.permissionsObjectModel.imageSource
-                channelsListModel: SortFilterProxyModel {
+
+                SortFilterProxyModel {
+                    id: proxiedChannelsModel
+
                     sourceModel: model.channelsListModel
 
                     proxyRoles: [
                         ExpressionRole {
-                            name: "text"
-                            expression: model.name
-                        },
-                        ExpressionRole {
-                        name: "imageSource"
-                        expression: model.iconSource
-                    }
+                            name: "imageSource"
+                            expression: model.iconSource
+                        }
                    ]
                 }
+
+                channelsListModel: proxiedChannelsModel.count
+                                   ? proxiedChannelsModel : communityItemModel
                 isPrivate: model.isPrivate
 
-                onEditClicked: root.editPermission(model.index, model.holdingsListModel, model.permissionsObjectModel, model.channelsListModel, model.isPrivate)
+                onEditClicked: root.editPermission(model.index, model.holdingsListModel,
+                                                   model.permissionsObjectModel,
+                                                   model.channelsListModel, model.isPrivate)
+
                 onDuplicateClicked: store.duplicatePermission(model.index)
                 onRemoveClicked: root.removePermission(model.index)
             }
