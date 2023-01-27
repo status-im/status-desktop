@@ -147,6 +147,8 @@ QtObject {
         readonly property string keycardAlreadyUnlocked: "KeycardAlreadyUnlocked"
         readonly property string notKeycard: "NotKeycard"
         readonly property string unlockKeycardOptions: "UnlockKeycardOptions"
+        readonly property string unlockingKeycard: "UnlockingKeycard"
+        readonly property string unlockKeycardFailure: "UnlockKeycardFailure"
         readonly property string unlockKeycardSuccess: "UnlockKeycardSuccess"
         readonly property string wrongKeycard: "WrongKeycard"
         readonly property string recognizedKeycard: "RecognizedKeycard"

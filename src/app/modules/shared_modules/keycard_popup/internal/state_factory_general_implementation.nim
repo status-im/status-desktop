@@ -131,6 +131,10 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newKeycardAlreadyUnlockedState(flowType, backState)
   if stateToBeCreated == StateType.UnlockKeycardOptions:
     return newUnlockKeycardOptionsState(flowType, backState)
+  if stateToBeCreated == StateType.UnlockingKeycard:
+    return newUnlockingKeycardState(flowType, backState)
+  if stateToBeCreated == StateType.UnlockKeycardFailure:
+    return newUnlockKeycardFailureState(flowType, backState)
   if stateToBeCreated == StateType.UnlockKeycardSuccess:
     return newUnlockKeycardSuccessState(flowType, backState)
   if stateToBeCreated == StateType.MaxPinRetriesReached:

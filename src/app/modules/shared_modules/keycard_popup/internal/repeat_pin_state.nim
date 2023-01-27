@@ -20,16 +20,17 @@ method executePreSecondaryStateCommand*(self: RepeatPinState, controller: Contro
     self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
       controller.storePinToKeycard(controller.getPin(), controller.generateRandomPUK())
   if self.flowType == FlowType.UnlockKeycard:
-    if controller.unlockUsingSeedPhrase():
-      controller.runGetMetadataFlow()
-      return
-    controller.storePinToKeycard(controller.getPin(), "")      
+    if not controller.unlockUsingSeedPhrase():
+      controller.storePinToKeycard(controller.getPin(), "")
 
 method getNextSecondaryState*(self: RepeatPinState, controller: Controller): State =
   if not controller.getPinMatch():
     return
   if self.flowType == FlowType.ChangeKeycardPin:
     return createState(StateType.ChangingKeycardPin, self.flowType, nil)
+  if self.flowType == FlowType.UnlockKeycard:
+    if controller.unlockUsingSeedPhrase():
+      return createState(StateType.UnlockingKeycard, self.flowType, nil)
 
 method executeCancelCommand*(self: RepeatPinState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
@@ -79,27 +80,4 @@ method resolveKeycardNextState*(self: RepeatPinState, keycardFlowType: string, k
             return createState(StateType.MaxPukRetriesReached, self.flowType, nil)
         if keycardFlowType == ResponseTypeValueKeycardFlowResult:
           controller.setPukValid(true)
-          controller.updateKeycardUid(keycardEvent.keyUid, keycardEvent.instanceUID)
           return createState(StateType.PinSet, self.flowType, nil)
-    else:
-      if controller.getCurrentKeycardServiceFlow() == KCSFlowType.GetMetadata:
-        controller.setMetadataFromKeycard(keycardEvent.cardMetadata)
-        if keycardFlowType == ResponseTypeValueKeycardFlowResult:
-          if keycardEvent.error.len == 0:
-            controller.runLoadAccountFlow(controller.getSeedPhraseLength(), controller.getSeedPhrase(), controller.getPin(), puk = "",
-              factoryReset = true)
-            return
-      if controller.getCurrentKeycardServiceFlow() == KCSFlowType.LoadAccount:
-        if keycardFlowType == ResponseTypeValueKeycardFlowResult:
-          if controller.getKeyPairForProcessing().getKeyUid() != keycardEvent.keyUid:
-            error "load account keyUid and keyUid being unlocked do not match"
-            controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
-            return
-          controller.updateKeycardUid(keycardEvent.keyUid, keycardEvent.instanceUID)
-          let md = controller.getMetadataFromKeycard()
-          let paths = md.walletAccounts.map(a => a.path)
-          controller.runStoreMetadataFlow(cardName = md.name, pin = controller.getPin(), walletPaths = paths)
-      if controller.getCurrentKeycardServiceFlow() == KCSFlowType.StoreMetadata:
-        if keycardFlowType == ResponseTypeValueKeycardFlowResult and
-          keycardEvent.instanceUID.len > 0:
-            return createState(StateType.PinSet, self.flowType, nil)    

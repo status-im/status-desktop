@@ -57,6 +57,8 @@ Item {
             case Constants.keycardSharedState.keycardAlreadyUnlocked:
             case Constants.keycardSharedState.notKeycard:
             case Constants.keycardSharedState.unlockKeycardOptions:
+            case Constants.keycardSharedState.unlockingKeycard:
+            case Constants.keycardSharedState.unlockKeycardFailure:
             case Constants.keycardSharedState.unlockKeycardSuccess:
             case Constants.keycardSharedState.wrongKeycard:
             case Constants.keycardSharedState.biometricsReadyToSign:
