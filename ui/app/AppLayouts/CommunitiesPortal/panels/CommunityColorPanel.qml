@@ -18,6 +18,7 @@ StatusScrollView {
         objectName: "communityColorPanelSelectColorButton"
         text: qsTr("Select Community Colour")
         onClicked: root.accepted()
+        enabled: hexInput.valid
     }
 
     property alias color: colorSpace.color
