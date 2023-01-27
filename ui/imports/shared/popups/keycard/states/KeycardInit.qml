@@ -21,6 +21,7 @@ Item {
                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycard ||
                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard ||
+                root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockingKeycard ||
                 root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard) {
             root.sharedKeycardModule.currentState.doPrimaryAction()
         }
@@ -35,6 +36,7 @@ Item {
                                                               root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountNewSeedPhrase ||
                                                               root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
                                                               root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycard ||
+                                                              root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockingKeycard ||
                                                               root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycard
     }
 
@@ -132,6 +134,7 @@ Item {
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycard ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard ||
+                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockingKeycard ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPin ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPuk ||
                          root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCode ||
@@ -555,6 +558,7 @@ Item {
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhrase ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycard ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockingKeycard ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPin ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPuk ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCode ||
@@ -579,6 +583,9 @@ Item {
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.renamingKeycard) {
                         return qsTr("Renaming keycard...")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockingKeycard) {
+                        return qsTr("Unlocking keycard...")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPin) {
                         return qsTr("Updating PIN")
@@ -1009,6 +1016,7 @@ Item {
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.creatingAccountOldSeedPhraseFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.importingFromKeycardFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameFailure ||
+                  root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockKeycardFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPukFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPairingCodeFailure ||
                   root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.copyingKeycardFailure
@@ -1029,6 +1037,9 @@ Item {
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardRenameFailure) {
                         return qsTr("Keycard renaming failed")
+                    }
+                    if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.unlockKeycardFailure) {
+                        return qsTr("Unlock a Keycard failed")
                     }
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.changingKeycardPukFailure) {
                         return qsTr("Setting Keycard’s PUK failed")

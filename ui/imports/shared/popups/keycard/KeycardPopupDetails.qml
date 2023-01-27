@@ -25,6 +25,7 @@ QtObject {
         case Constants.keycardSharedState.readingKeycard:
         case Constants.keycardSharedState.recognizedKeycard:
         case Constants.keycardSharedState.renamingKeycard:
+        case Constants.keycardSharedState.unlockingKeycard:
         case Constants.keycardSharedState.changingKeycardPin:
         case Constants.keycardSharedState.changingKeycardPuk:
         case Constants.keycardSharedState.changingKeycardPairingCode:
@@ -764,6 +765,8 @@ QtObject {
                     case Constants.keycardSharedState.keycardEmptyMetadata:
                     case Constants.keycardSharedState.keycardAlreadyUnlocked:
                     case Constants.keycardSharedState.wrongKeycard:
+                    case Constants.keycardSharedState.unlockingKeycard:
+                    case Constants.keycardSharedState.unlockKeycardFailure:
                     case Constants.keycardSharedState.unlockKeycardSuccess:
                         return qsTr("Done")
 

@@ -105,6 +105,8 @@ include seed_phrase_display_state
 include seed_phrase_enter_words_state
 include select_existing_key_pair_state
 include unlock_keycard_options_state
+include unlocking_keycard_state
+include unlock_keycard_failure_state
 include unlock_keycard_success_state
 include wrong_biometrics_password_state
 include wrong_keycard_state
