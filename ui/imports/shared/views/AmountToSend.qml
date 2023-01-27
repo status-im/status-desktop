@@ -23,14 +23,20 @@ ColumnLayout {
     Binding {
         target: root
         property: "cryptoValueToSend"
-        value: root.selectedAsset, !inputIsFiat ? getCryptoCurrencyAmount(LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)) : getCryptoValue(fiatValueToSend ? fiatValueToSend.amount : 0.0)
+        value: {
+            const value = !inputIsFiat ? getCryptoCurrencyAmount(LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)) : getCryptoValue(fiatValueToSend ? fiatValueToSend.amount : 0.0)
+            return root.selectedAsset, value
+        }
         delayed: true
     }
     property var fiatValueToSend
     Binding {
         target: root
         property: "fiatValueToSend"
-        value: root.selectedAsset, inputIsFiat ? getFiatCurrencyAmount(LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)) : getFiatValue(cryptoValueToSend ? cryptoValueToSend.amount : 0.0)
+        value: {
+            const value = inputIsFiat ? getFiatCurrencyAmount(LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)) : getFiatValue(cryptoValueToSend ? cryptoValueToSend.amount : 0.0)
+            return root.selectedAsset, value
+        }
         delayed: true
     }
     property string currentCurrency
