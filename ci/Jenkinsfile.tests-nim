@@ -7,7 +7,7 @@ pipeline {
   agent {
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:1.2.0'
+      image 'alexjba/status-linux:0.0.2'
     }
   }
 

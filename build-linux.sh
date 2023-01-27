@@ -13,5 +13,5 @@ docker run -it --rm \
   -u jenkins:$(getent group $(whoami) | cut -d: -f3) \
   -v "${PWD}:/status-desktop" \
   -w /status-desktop \
-  statusteam/nim-status-client-build:1.2.0 \
+  alexjba/status-linux:0.0.2 \
   ./docker-linux-app-image.sh

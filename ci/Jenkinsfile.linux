@@ -7,7 +7,7 @@ pipeline {
   agent {
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:1.2.0'
+      image 'alexjba/status-linux:0.0.2'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
       args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
     }
