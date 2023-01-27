@@ -145,8 +145,8 @@ Item {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
             amountToSend: root.amountToSend ? root.amountToSend.amount : 0.0
-            isLoading: root.isLoading
             errorType: root.errorType
+            visible: root.errorType === Constants.NoRoute
         }
         ColumnLayout {
             id: toNetworksLayout
@@ -157,7 +157,7 @@ Item {
                 Layout.maximumWidth: 100
                 font.pixelSize: 10
                 color: Theme.palette.baseColor1
-                text: StatusQUtils.Utils.elideText(selectedAccount.address, 6, 4).toUpperCase()
+                text: !!selectedAccount ? StatusQUtils.Utils.elideText(selectedAccount.address, 6, 4).toUpperCase() :  ""
                 elide: Text.ElideMiddle
             }
             Repeater {
@@ -182,6 +182,7 @@ Item {
                     enableText: qsTr("Enable")
                     disabled: store.disabledChainIdsToList.includes(model.chainId)
                     clickable: root.interactive
+                    loading: root.isLoading
                     onClicked: {
                         store.addRemoveDisabledToChain(model.chainId, disabled)
                         // only recalculate if the a best route was disabled

@@ -43,6 +43,7 @@ Rectangle {
         Column {
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.preferredWidth: root.width - feesIcon.width - Style.current.xlPadding
+            spacing: isLoading ? 4 : 0
             Item {
                 width: parent.width
                 height: childrenRect.height

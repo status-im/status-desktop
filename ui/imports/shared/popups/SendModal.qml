@@ -124,11 +124,16 @@ StatusDialog {
         color: Theme.palette.baseColor3
     }
 
+    onIsLoadingChanged: if(isLoading) bestRoutes = []
+
     onSelectedAccountChanged: popup.recalculateRoutesAndFees()
 
     onOpened: {
         if(!isBridgeTx) {
             store.setDefaultPreferredDisabledChains()
+        }
+        else {
+            store.setAllNetworksAsPreferredChains()
         }
 
         amountToSendInput.input.input.edit.forceActiveFocus()
@@ -284,7 +289,7 @@ StatusDialog {
                             id: amountToReceive
                             Layout.alignment: Qt.AlignRight
                             Layout.fillWidth:true
-                            visible: popup.bestRoutes !== undefined && popup.bestRoutes.length > 0
+                            visible: popup.bestRoutes !== undefined && popup.bestRoutes.length > 0 && !!amountToSendInput.input.text && amountToSendInput.input.valid
                             store: popup.store
                             isLoading: popup.isLoading
                             selectedAsset: assetSelector.selectedAsset
@@ -377,12 +382,14 @@ StatusDialog {
                                 icon.color: Theme.palette.baseColor1
                                 backgroundHoverColor: "transparent"
                                 onClicked: {
+                                    popup.isLoading = true
                                     recipientSelector.input.edit.clear()
                                     d.waitTimer.restart()
                                 }
                             }
                         }
                         Keys.onReleased: {
+                            popup.isLoading = true
                             d.waitTimer.restart()
                             if(!d.isAddressValid) {
                                 isPending = true
@@ -412,6 +419,7 @@ StatusDialog {
                         store: popup.store
                         onContactSelected:  {
                             recipientSelector.input.text = address
+                            popup.isLoading = true
                             d.waitTimer.restart()
                         }
                         visible: !d.recipientReady && !isBridgeTx && !!assetSelector.selectedAsset
@@ -431,7 +439,7 @@ StatusDialog {
                         requiredGasInEth: d.totalFeesInEth
                         selectedAsset: assetSelector.selectedAsset
                         onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
-                        visible: d.recipientReady && !!assetSelector.selectedAsset
+                        visible: d.recipientReady && !!assetSelector.selectedAsset && !!amountToSendInput.input.text
                         errorType: d.errorType
                         isLoading: popup.isLoading
                         bestRoutes: popup.bestRoutes
@@ -445,7 +453,7 @@ StatusDialog {
                         anchors.right: parent.right
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
-                        visible: d.recipientReady && !!assetSelector.selectedAsset && networkSelector.advancedOrCustomMode
+                        visible: d.recipientReady && !!assetSelector.selectedAsset && networkSelector.advancedOrCustomMode && !!amountToSendInput.input.text
                         selectedTokenSymbol: assetSelector.selectedAsset ? assetSelector.selectedAsset.symbol: ""
                         isLoading: popup.isLoading
                         bestRoutes: popup.bestRoutes
@@ -463,7 +471,7 @@ StatusDialog {
         maxFiatFees: popup.isLoading ? "..." : LocaleUtils.currencyAmountToLocaleString(d.totalFeesInFiat)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: d.recipientReady && amountToSendInput.cryptoValueToSend && amountToSendInput.cryptoValueToSend.amount > 0 && !d.errorMode
+        visible: d.recipientReady && !!amountToSendInput.cryptoValueToSend && amountToSendInput.cryptoValueToSend.amount > 0 && !d.errorMode && !!amountToSendInput.input.text && amountToSendInput.input.valid
         onNextButtonClicked: popup.sendTransaction()
     }
 

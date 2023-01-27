@@ -14,7 +14,7 @@ ColumnLayout {
     id: balancedExceededError
 
     property double amountToSend: 0
-    property bool isLoading: true
+    property bool isLoading: false
     property int errorType: Constants.NoError
 
     visible: balancedExceededError.errorType !== Constants.NoError || isLoading
@@ -27,13 +27,6 @@ ColumnLayout {
         color: Theme.palette.dangerColor1
         visible: !isLoading
     }
-    StatusLoadingIndicator {
-        Layout.preferredHeight: 24
-        Layout.preferredWidth: 24
-        Layout.alignment: Qt.AlignHCenter
-        color: Theme.palette.baseColor1
-        visible: isLoading
-    }
     StatusBaseText {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignHCenter
@@ -41,8 +34,17 @@ ColumnLayout {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         color: Theme.palette.dangerColor1
-        text: isLoading ? qsTr("Calculating fees") : balancedExceededError.errorType === Constants.SendAmountExceedsBalance ?
-                              qsTr("Balance exceeded") : balancedExceededError.errorType === Constants.NoRoute ? qsTr("No route found") : ""
+        text: balancedExceededError.errorType === Constants.SendAmountExceedsBalance ? qsTr("Balance exceeded") :
+              balancedExceededError.errorType === Constants.NoRoute ? qsTr("No route found") : ""
         wrapMode: Text.WordWrap
+        visible: !isLoading
+    }
+    Loader {
+        id: loadingComponent
+        Layout.alignment: Qt.AlignLeft
+        Layout.preferredHeight: 32
+        Layout.fillWidth: true
+        active: isLoading
+        sourceComponent: LoadingComponent { radius: 4 }
     }
 }

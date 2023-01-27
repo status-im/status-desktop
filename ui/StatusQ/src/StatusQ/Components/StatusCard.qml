@@ -159,6 +159,11 @@ Rectangle {
     */
     property real maxAdvancedValue
     /*!
+       \qmlproperty real StatusCard::loading
+       This property holds id the card is in loading state
+    */
+    property bool loading: false
+    /*!
         \qmlsignal StatusCard::clicked
         This signal is emitted when the card is clicked
     */
@@ -332,6 +337,13 @@ Rectangle {
                 }
             }
         }
+        Loader {
+            id: loadingComponent
+            Layout.preferredHeight: active ? 32 : 0
+            Layout.fillWidth: true
+            active: false
+            sourceComponent: LoadingComponent { radius: 4 }
+        }
         StatusBaseText {
             id: tertiaryText
             Layout.maximumWidth: layout.width
@@ -424,7 +436,11 @@ Rectangle {
             }
             PropertyChanges {
                 target: basicInput
-                visible: !advancedMode
+                visible: !advancedMode && !(root.loading && !disabled)
+            }
+            PropertyChanges {
+                target: loadingComponent
+                active: root.loading && !advancedMode && !disabled
             }
         },
         State {
@@ -493,7 +509,11 @@ Rectangle {
             }
             PropertyChanges {
                 target: basicInput
-                visible: !advancedMode
+                visible: !advancedMode && !(root.loading && !disabled)
+            }
+            PropertyChanges {
+                target: loadingComponent
+                active: root.loading && !advancedMode && !disabled
             }
         },
         State {
@@ -562,7 +582,11 @@ Rectangle {
             }
             PropertyChanges {
                 target: basicInput
-                visible: !advancedMode
+                visible: !advancedMode && !(root.loading && !disabled)
+            }
+            PropertyChanges {
+                target: loadingComponent
+                active: root.loading && !advancedMode && !disabled
             }
         },
         State {
@@ -630,6 +654,10 @@ Rectangle {
             PropertyChanges {
                 target: basicInput
                 visible: true
+            }
+            PropertyChanges {
+                target: loadingComponent
+                active: false
             }
         }
     ]}

@@ -117,6 +117,16 @@ QtObject {
         addUnpreferredChainsToDisabledChains()
     }
 
+    function setAllNetworksAsPreferredChains() {
+        var preferredChains = []
+        for(var i = 0; i < allNetworks.count; i++) {
+            let chainId = allNetworks.rowData(i, "chainId") * 1
+            if(!preferredChainIds.includes(chainId)) {
+                preferredChainIds.push(chainId)
+            }
+        }
+    }
+
     function resetTxStoreProperties() {
         disabledChainIdsFromList = []
         disabledChainIdsToList = []
@@ -182,10 +192,12 @@ QtObject {
             }
         }
 
-        if(!chainFound && !isBridgeTx)
-            addPreferredChains([getMainnetChainId()], showUnpreferredNetworks)
-        else
-            addPreferredChains(tempPreferredChains, showUnpreferredNetworks)
+        if(!isBridgeTx) {
+            if(!chainFound)
+                addPreferredChains([getMainnetChainId()], showUnpreferredNetworks)
+            else
+                addPreferredChains(tempPreferredChains, showUnpreferredNetworks)
+        }
 
         editedText +="</a></p>"
         return {
