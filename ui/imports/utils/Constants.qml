@@ -372,6 +372,7 @@ QtObject {
     }
 
     readonly property QtObject chatType: QtObject{
+        readonly property int category: -1
         readonly property int unknown: 0
         readonly property int oneToOne: 1
         readonly property int publicChat: 2

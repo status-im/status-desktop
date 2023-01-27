@@ -30,9 +30,6 @@ Item {
     property alias sensor: sensor
     property bool draggableItems: false
     property bool draggableCategories: false
-    // Keeps track of expanded category state. Should only be modified
-    // internally at runtime.
-    property var openedCategoryState: ({})
 
     property Component categoryPopupMenu
     property Component chatListPopupMenu
@@ -78,194 +75,27 @@ Item {
                 onChatItemUnmuted: root.chatItemUnmuted(id)
                 onChatItemReordered: root.chatItemReordered(categoryId, id, from, to)
                 draggableItems: root.draggableItems
+                showCategoryActionButtons: root.showCategoryActionButtons
+                onCategoryAddButtonClicked: {
+                    root.categoryAddButtonClicked(id)
+                }
 
                 model: SortFilterProxyModel {
                     sourceModel: root.model
-
-                    filters: ValueFilter { roleName: "isCategory"; value: false }
-                    sorters: RoleSorter { roleName: "position" }
+                    sorters: [
+                        RoleSorter {
+                            roleName: "categoryPosition"
+                            priority: 2 // Higher number === higher priority
+                        },
+                        RoleSorter {
+                            roleName: "position"
+                            priority: 1
+                        }
+                    ]
                 }
 
                 popupMenu: root.chatListPopupMenu
-            }
-
-            DelegateModel {
-                id: delegateModel
-
-                property int destinationPosition: -1
-
-                model: SortFilterProxyModel {
-                    sourceModel: root.model
-
-                    filters: ValueFilter { roleName: "isCategory"; value: true }
-                    sorters: RoleSorter { roleName: "position" }
-                }
-
-                items.includeByDefault: false
-
-                groups: DelegateModelGroup {
-                    id: unsortedItems
-
-                    name: "unsorted"
-                    includeByDefault: true
-                    onChanged: Utils.delegateModelSort(unsortedItems, delegateModel.items,
-                                                       (a, b) => a.position < b.position)
-                }
-
-                delegate: Item {
-                    id: draggable
-                    objectName: model.name
-                    width: statusChatListCategory.width
-                    height: statusChatListCategory.height
-                    property alias chatListCategory: statusChatListCategory
-
-                    StatusChatListCategory {
-                        id: statusChatListCategory
-
-                        property bool dragActive: false
-                        property real startY: 0
-                        property real startX: 0
-
-                        opacity: dragActive ? 0.0 : 1.0
-
-                        dragSensor.drag.target: draggedListCategoryLoader.item
-                        dragSensor.drag.threshold: 0.1
-                        dragSensor.drag.filterChildren: true
-                        dragSensor.onPressAndHold: {
-                            if (root.draggableCategories) {
-                                dragActive = true
-                            }
-                        }
-                        dragSensor.onReleased: {
-                            if (dragActive && delegateModel.destinationPosition !== -1 && statusChatListCategory.originalOrder !== delegateModel.destinationPosition) {
-                                root.chatListCategoryReordered(statusChatListCategory.categoryId, statusChatListCategory.originalOrder, delegateModel.destinationPosition)
-                            }
-                            dragActive = false
-                        }
-                        dragSensor.cursorShape: dragActive ? Qt.ClosedHandCursor : Qt.PointingHandCursor
-                        dragSensor.onPressed: {
-                            startY = dragSensor.mouseY
-                            startX = dragSensor.mouseX
-                        }
-                        dragSensor.onMouseYChanged: {
-                            if (root.draggableCategories && (Math.abs(startY - dragSensor.mouseY) > 1) && dragSensor.pressed) {
-                                dragActive = true
-                            }
-                        }
-                        dragSensor.onMouseXChanged: {
-                            if (root.draggableCategories && (Math.abs(startX - dragSensor.mouseX) > 1) && dragSensor.pressed) {
-                                dragActive = true
-                            }
-                        }
-                        onDragActiveChanged: delegateModel.destinationPosition = -1
-
-                        addButton.tooltip: root.categoryAddButtonToolTip
-                        menuButton.tooltip: root.categoryMenuButtonToolTip
-
-                        originalOrder: model.position
-                        categoryId: model.itemId
-                        name: model.name
-                        hasUnreadMessages: model.hasUnreadMessages
-
-                        showActionButtons: root.showCategoryActionButtons
-                        addButton.onClicked: root.categoryAddButtonClicked(model.itemId)
-
-                        chatList.model: SortFilterProxyModel {
-                            sourceModel: model.subItems
-                            sorters: RoleSorter { roleName: "position" }
-                        }
-
-                        chatList.onChatItemSelected: root.chatItemSelected(categoryId, id)
-                        chatList.onChatItemUnmuted: root.chatItemUnmuted(id)
-                        chatList.onChatItemReordered: root.chatItemReordered(model.itemId, id, from, to)
-                        chatList.draggableItems: root.draggableItems
-
-                        popupMenu: root.categoryPopupMenu
-                        chatListPopupMenu: root.chatListPopupMenu
-
-                        // Used to set the initial value of "opened" when the
-                        // model is bound/changed.
-                        opened: {
-                            let openedState = root.openedCategoryState[model.itemId]
-                            return openedState !== undefined ? openedState : true // defaults to open
-                        }
-
-                        // Used to track the internal changes of the `opened`
-                        // property. This cannot be brought inside the component
-                        // as the state would be lost each time the model is
-                        // changed.
-                        onOpenedChanged: {
-                            root.openedCategoryState[model.itemId] = statusChatListCategory.opened
-                        }
-
-                        Connections {
-                            function onOriginalOrderChanged() {
-                                Qt.callLater(() => {
-                                    if (!delegateModel)
-                                        return
-
-                                    delegateModel.items.setGroups(0, delegateModel.items.count, "unsorted")
-                                })
-                            }
-                        }
-                    }
-
-                    DropArea {
-                        id: dropArea
-                        width: draggable.chatListCategory.dragActive ? 0 : parent.width
-                        height: draggable.chatListCategory.dragActive ? 0 : parent.height
-                        keys: ["chat-category"]
-
-                        onEntered: reorderDelay.start()
-
-                        Timer {
-                            id: reorderDelay
-                            interval: 100
-                            repeat: false
-                            onTriggered: {
-                                if (dropArea.containsDrag) {
-                                    delegateModel.destinationPosition = delegateModel.model.get(draggable.DelegateModel.itemsIndex).position
-                                    delegateModel.items.move(dropArea.drag.source.DelegateModel.itemsIndex, draggable.DelegateModel.itemsIndex)
-                                }
-                            }
-                        }
-                    }
-
-                    Loader {
-                        id: draggedListCategoryLoader
-                        active: draggable.chatListCategory.dragActive
-                        sourceComponent: StatusChatListCategory {
-                            property var globalPosition: Utils.getAbsolutePosition(draggable)
-                            parent: QC.Overlay.overlay
-
-                            dragSensor.cursorShape: draggable.chatListCategory.dragSensor.cursorShape
-                            Drag.active: draggable.chatListCategory.dragActive
-                            Drag.hotSpot.x: width / 2
-                            Drag.hotSpot.y: height / 2
-                            Drag.keys: ["chat-category"]
-                            Drag.source: draggable
-
-                            Component.onCompleted: {
-                                x = globalPosition.x
-                                y = globalPosition.y
-                            }
-                            dragged: true
-                            categoryId: draggable.chatListCategory.categoryId
-                            name: draggable.chatListCategory.name
-                            showActionButtons: draggable.chatListCategory.showActionButtons
-                            hasUnreadMessages: draggable.chatListCategory.hasUnreadMessages
-
-                            chatList.model: draggable.chatListCategory.chatList.model
-                        }
-                    }
-                }
-            }
-
-            Repeater {
-                id: statusChatListCategories
-                objectName: "communityChatListCategories"
-                visible: !!model && model.count > 0
-                model: delegateModel
+                categoryPopupMenu: root.categoryPopupMenu
             }
         }
     }

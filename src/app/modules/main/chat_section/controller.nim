@@ -23,7 +23,6 @@ type
     sectionId: string
     isCommunitySection: bool
     activeItemId: string
-    activeSubItemId: string
     events: EventEmitter
     settingsService: settings_service.Service
     nodeConfigurationService: node_configuration_service.Service
@@ -57,11 +56,7 @@ proc delete*(self: Controller) =
   discard
 
 proc getActiveChatId*(self: Controller): string =
-  if(self.activeSubItemId.len > 0):
-    return self.activeSubItemId
-  else:
-    return self.activeItemId
-
+  return self.activeItemId
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
@@ -157,7 +152,7 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_COMMUNITY_CATEGORY_DELETED) do(e:Args):
       let args = CommunityCategoryArgs(e)
       if (args.communityId == self.sectionId):
-        self.delegate.onCommunityCategoryDeleted(args.category)
+        self.delegate.onCommunityCategoryDeleted(args.category, args.chats)
 
     self.events.on(SIGNAL_COMMUNITY_CATEGORY_EDITED) do(e:Args):
       let args = CommunityCategoryArgs(e)
@@ -167,7 +162,7 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_COMMUNITY_CATEGORY_REORDERED) do(e:Args):
       let args = CommunityChatOrderArgs(e)
       if (args.communityId == self.sectionId):
-        self.delegate.onReorderChatOrCategory(args.categoryId, args.position, args.categoryId)
+        self.delegate.onReorderCategory(args.categoryId, args.position)
 
     self.events.on(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED) do(e:Args):
       let args = CommunityCategoryArgs(e)
@@ -177,7 +172,7 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_REORDERED) do(e:Args):
       let args = CommunityChatOrderArgs(e)
       if (args.communityId == self.sectionId):
-        self.delegate.onReorderChatOrCategory(args.chatId, args.position, args.categoryId)
+        self.delegate.onReorderChat(args.chatId, args.position, args.categoryId)
     
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED) do(e:Args):
       let args = CommunityChatOrderArgs(e)
@@ -285,15 +280,13 @@ proc getCommunityDetails*(self: Controller, communityId: string): CommunityDto =
 proc getCommunityCategoryDetails*(self: Controller, communityId: string, categoryId: string): Category =
   return self.communityService.getCategoryById(communityId, categoryId)
 
-proc setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string) =
+proc setActiveItem*(self: Controller, itemId: string) =
   self.activeItemId = itemId
-  self.activeSubItemId = subItemId
-  let chatId = self.getActiveChatId()
-  if chatId != "":
-    self.messageService.asyncLoadInitialMessagesForChat(chatId)
+  if self.activeItemId != "":
+    self.messageService.asyncLoadInitialMessagesForChat(self.activeItemId)
 
   # We need to take other actions here like notify status go that unviewed mentions count is updated and so...
-  self.delegate.activeItemSubItemSet(self.activeItemId, self.activeSubItemId)
+  self.delegate.activeItemSet(self.activeItemId)
 
 proc removeCommunityChat*(self: Controller, itemId: string) =
   self.communityService.deleteCommunityChat(self.getMySectionId(), itemId)

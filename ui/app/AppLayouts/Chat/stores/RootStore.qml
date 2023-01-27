@@ -29,12 +29,8 @@ QtObject {
     // a method which will return appropriate chat content module for selected chat/channel
     function currentChatContentModule(){
         // When we decide to have the same struct as it's on the backend we will remove this function.
-        // So far this is a way to deal with refactord backend from the current qml structure.
-        if(chatCommunitySectionModule.activeItem.isSubItemActive)
-            chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.activeSubItem.id)
-        else
-            chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
-
+        // So far this is a way to deal with refactored backend from the current qml structure.
+        chatCommunitySectionModule.prepareChatContentModuleForChatId(chatCommunitySectionModule.activeItem.id)
         return chatCommunitySectionModule.getChatContentModule()
     }
 

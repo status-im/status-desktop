@@ -189,19 +189,16 @@ QtObject {
     }
 
     property bool playAnimation: {
-        if(!Global.applicationWindow.active)
+        if (!Global.applicationWindow.active)
             return false
 
-        if(root.getSectionId() !== mainModule.activeSection.id)
+        if (root.getSectionId() !== mainModule.activeSection.id)
             return false
 
-        if(!root.chatSectionModule)
+        if (!root.chatSectionModule)
             return false
 
-        if(root.chatSectionModule.activeItem.isSubItemActive &&
-                root.getChatId() !== root.chatSectionModule.activeItem.activeSubItem.id ||
-                !root.chatSectionModule.activeItem.isSubItemActive &&
-                root.getChatId() !== root.chatSectionModule.activeItem.id)
+        if (root.getChatId() !== root.chatSectionModule.activeItem.id)
             return false
 
         return true

@@ -1,6 +1,6 @@
 import NimQml, json, sequtils
 import model as chats_model
-import item, sub_item, active_item
+import item, active_item
 import ../../shared_models/user_model as user_model
 import io_interface
 
@@ -113,12 +113,12 @@ QtObject:
     read = getActiveItem
     notify = activeItemChanged
 
-  method activeItemSubItemSet*(self: View, item: Item, subItem: SubItem) =
-    self.activeItem.setActiveItemData(item, subItem)
+  method activeItemSet*(self: View, item: Item) =
+    self.activeItem.setActiveItemData(item)
     self.activeItemChanged()
 
-  proc setActiveItem*(self: View, itemId: string, subItemId: string = "") {.slot.} =
-    self.delegate.setActiveItemSubItem(itemId, subItemId)
+  proc setActiveItem*(self: View, itemId: string) {.slot.} =
+    self.delegate.setActiveItem(itemId)
 
   proc switchToChannel*(self: View, channelName: string) {.slot.} =
     self.delegate.switchToChannel(channelName)
@@ -148,7 +148,15 @@ QtObject:
     self.delegate.leaveChat(id)
 
   proc getItemAsJson*(self: View, itemId: string): string {.slot.} =
-    let jsonObj = self.model.getItemOrSubItemByIdAsJson(itemId)
+    let jsonObj = self.model.getItemByIdAsJson(itemId)
+    if jsonObj == nil or jsonObj.kind != JObject:
+      return
+    return $jsonObj
+
+  proc getItemPartOfCategoryAsJsonById*(self: View, categoryId: string): string {.slot.} =
+    let jsonObj = self.model.getItemPartOfCategoryAsJsonById(categoryId)
+    if jsonObj == nil or jsonObj.kind != JObject:
+      return
     return $jsonObj
 
   proc muteChat*(self: View, chatId: string) {.slot.} =

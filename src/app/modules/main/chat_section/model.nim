@@ -1,8 +1,8 @@
-import NimQml, Tables, strutils, strformat, json
+import NimQml, Tables, strutils, strformat, json, sequtils
 import ../../../../app_service/common/types
 from ../../../../app_service/service/chat/dto/chat import ChatType
 from ../../../../app_service/service/contacts/dto/contacts import TrustStatus
-import item, sub_item, base_item, sub_model
+import item
 
 type
   ModelRole {.pure.} = enum
@@ -23,10 +23,11 @@ type
     Blocked
     Active
     Position
-    SubItems
-    IsCategory
     CategoryId
+    CategoryName
+    CategoryPosition
     Highlight
+    CategoryOpened
     TrustStatus
     OnlineStatus
 
@@ -89,10 +90,11 @@ QtObject:
       ModelRole.Blocked.int:"blocked",
       ModelRole.Active.int:"active",
       ModelRole.Position.int:"position",
-      ModelRole.SubItems.int:"subItems",
-      ModelRole.IsCategory.int:"isCategory",
       ModelRole.CategoryId.int:"categoryId",
+      ModelRole.CategoryName.int:"categoryName",
+      ModelRole.CategoryPosition.int:"categoryPosition",
       ModelRole.Highlight.int:"highlight",
+      ModelRole.CategoryOpened.int:"categoryOpened",
       ModelRole.TrustStatus.int:"trustStatus",
       ModelRole.OnlineStatus.int:"onlineStatus",
     }.toTable
@@ -142,14 +144,16 @@ QtObject:
       result = newQVariant(item.active)
     of ModelRole.Position:
       result = newQVariant(item.position)
-    of ModelRole.SubItems:
-      result = newQVariant(item.subItems)
-    of ModelRole.IsCategory:
-      result = newQVariant(item.`type` == ChatType.Unknown.int)
     of ModelRole.CategoryId:
       result = newQVariant(item.categoryId)
+    of ModelRole.CategoryName:
+      result = newQVariant(item.categoryName)
+    of ModelRole.CategoryPosition:
+      result = newQVariant(item.categoryPosition)
     of ModelRole.Highlight:
       result = newQVariant(item.highlight)
+    of ModelRole.CategoryOpened:
+      result = newQVariant(item.categoryOpened)
     of ModelRole.TrustStatus:
       result = newQVariant(item.trustStatus.int)
     of ModelRole.OnlineStatus:
@@ -173,13 +177,33 @@ QtObject:
       idx.inc
     return -1
 
-  proc getItemIdxByCategory*(self: Model, category: string): int =
+  proc getItemIdxByCategory*(self: Model, categoryId: string): int =
     var idx = 0
     for it in self.items:
-      if(it.categoryId == category):
+      if it.categoryId == categoryId:
         return idx
       idx.inc
     return -1
+
+  proc getCategoryNameForCategoryId*(self: Model, categoryId: string): string {.slot.} =
+    let index = self.getItemIdxByCategory(categoryId)
+    if index == -1:
+      return
+    return self.items[index].categoryName
+
+  proc getCategoryOpenedForCategoryId*(self: Model, categoryId: string): bool {.slot.} =
+    let index = self.getItemIdxByCategory(categoryId)
+    if index == -1:
+      return true # Default to true just in case
+    return self.items[index].categoryOpened
+
+  proc changeCategoryOpened*(self: Model, categoryId: string, opened: bool) {.slot.} =
+    for i in 0 ..< self.items.len:
+      if self.items[i].categoryId == categoryId:
+        self.items[i].categoryOpened = opened
+        let index = self.createIndex(i, 0, nil)
+        # Also signal on CategoryId because the section header only knows the categoryId
+        self.dataChanged(index, index, @[ModelRole.CategoryId.int, ModelRole.CategoryOpened.int])
 
   proc removeItemByIndex(self: Model, idx: int) =
     if idx == -1:
@@ -198,18 +222,6 @@ QtObject:
     let idx = self.getItemIdxById(id)
     if idx != -1:
       self.removeItemByIndex(idx)
-
-  proc removeItemOrSubitemById*(self: Model, id: string) =
-    let idx = self.getItemIdxById(id)
-    if idx != -1:
-      self.removeItemByIndex(idx)
-      return
-    else:
-      for it in self.items:
-        let subItemIndex = it.subItems.getItemIdxById(id)
-        if subItemIndex != -1:
-          it.subItems.removeItemById(id)
-          return
 
   proc getItemAtIndex*(self: Model, index: int): Item =
     if(index < 0 or index >= self.items.len):
@@ -239,230 +251,249 @@ QtObject:
     let item = self.getItemById(id)
     if (not item.isNil):
       return ("", item.position)
-    else:
-      for it in self.items:
-        let item = it.subItems.getItemById(id)
-        if(not item.isNil):
-          return (it.categoryId, item.position)
     return ("", -1)
 
-  proc getSubItemById*(self: Model, id: string): SubItem =
-    for it in self.items:
-      let item = it.subItems.getItemById(id)
-      if(not item.isNil):
-        return item
-
-  proc setActiveItemSubItem*(self: Model, id: string, subItemId: string) =
+  proc setActiveItem*(self: Model, id: string) =
     for i in 0 ..< self.items.len:
-      self.items[i].setActiveSubItem(subItemId)
-
-      if(self.items[i].active):
+      let isChannelToSetActive = (self.items[i].id == id)
+      if self.items[i].active != isChannelToSetActive:
         let index = self.createIndex(i, 0, nil)
-        self.items[i].BaseItem.active = false
+        # Set active channel to true and others to false
+        self.items[i].active = isChannelToSetActive
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
-      if(self.items[i].id == id):
+  proc changeMutedOnItemById*(self: Model, id: string, muted: bool) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    if(self.items[index].muted == muted):
+      return
+    self.items[index].muted = muted
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Muted.int])
+
+  proc changeMutedOnItemByCategoryId*(self: Model, categoryId: string, muted: bool) =
+    for i in 0 ..< self.items.len:
+      if self.items[i].categoryId == categoryId and self.items[i].muted != muted:
         let index = self.createIndex(i, 0, nil)
-        self.items[i].BaseItem.active = true
-        self.dataChanged(index, index, @[ModelRole.Active.int])
+        self.items[i].muted = muted
+        self.dataChanged(index, index, @[ModelRole.Muted.int])
 
-  proc getItemOrSubItemByIdAsJson*(self: Model, id: string): JsonNode =
-    for it in self.items:
-      if(it.id == id):
-        return it.toJsonNode()
+  proc changeBlockedOnItemById*(self: Model, id: string, blocked: bool) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    if(self.items[index].blocked == blocked):
+      return
+    self.items[index].blocked = blocked
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Blocked.int])
 
+  proc updateItemDetailsById*(self: Model, id, name, icon: string, trustStatus: TrustStatus) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    self.items[index].name = name
+    self.items[index].icon = icon
+    self.items[index].trustStatus = trustStatus
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[
+      ModelRole.Name.int,
+      ModelRole.Icon.int,
+      ModelRole.TrustStatus.int,
+    ])
+
+  proc updateItemDetailsById*(self: Model, id, name, description, emoji, color: string) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    self.items[index].name = name
+    self.items[index].description = description
+    self.items[index].emoji = emoji
+    self.items[index].color = color
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[
+      ModelRole.Name.int,
+      ModelRole.Description.int,
+      ModelRole.Emoji.int,
+      ModelRole.Color.int,
+    ])
+
+  proc updateNameColorIconOnItemById*(self: Model, id, name, color, icon: string) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    self.items[index].name = name
+    self.items[index].color = color
+    self.items[index].icon = icon
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[
+      ModelRole.Name.int,
+      ModelRole.Color.int,
+      ModelRole.Icon.int,
+    ])
+
+  proc updateItemsWithCategoryDetailById*(
+      self: Model,
+      ids: seq[string],
+      categoryId,
+      newCategoryName: string,
+      newCategoryPosition: int,
+    ) =
+    var indexesToDelete: seq[int] = @[]
+    for i in 0 ..< self.items.len:
+      var item = self.items[i]
+      var hasCategory = item.categoryId == categoryId
       var found = false
-      let jsonObj = it.subItems.getItemByIdAsJson(id, found)
-      if(found):
-        return jsonObj
+      for id in ids:
+        if item.id != id:
+          continue
+        found = true
+        item.categoryId = categoryId
+        item.categoryName = newCategoryName
+        item.categoryPosition = newCategoryPosition
+        let modelIndex = self.createIndex(i, 0, nil)
+        # Also signal on CategoryId because the section header only knows the categoryId
+        self.dataChanged(modelIndex, modelIndex, @[
+          ModelRole.CategoryId.int,
+          ModelRole.CategoryName.int,
+          ModelRole.CategoryPosition.int,
+        ])
+        break
+      if hasCategory and not found:
+        # This item was removed from the category
+        if (item.`type` == CATEGORY_TYPE):
+          # It was an empty item to show the category and it isn't needed anymore
+          indexesToDelete.add(i)
+          continue
+          
+        item.categoryId = ""
+        item.categoryName = ""
+        item.categoryPosition = -1
+        let modelIndex = self.createIndex(i, 0, nil)
+        self.dataChanged(modelIndex, modelIndex, @[
+          ModelRole.CategoryId.int,
+          ModelRole.CategoryName.int,
+          ModelRole.CategoryPosition.int,
+        ])
 
-  proc getItemOrSubItemByIdAsBase*(self: Model, id: string): BaseItem =
-    for it in self.items:
-      if(it.id == id):
-        return BaseItem(it)
-      let subItem = it.subItems.getItemById(id)
-      if (not subItem.isNil):
-        return BaseItem(subItem)
+    # Go through indexesToDelete from the highest to the bottom, that way the indexes stay correct
+    var f = indexesToDelete.len - 1
+    while f > -1:
+      self.removeItemByIndex(indexesToDelete[f])
+      dec(f)
 
-  proc muteUnmuteItemOrSubItemById*(self: Model, id: string, mute: bool) =
+ 
+  proc renameCategoryOnItems*(self: Model, categoryId, newName: string) =
     for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
-        let index = self.createIndex(i, 0, nil)
-        self.items[i].BaseItem.muted = mute
-        self.dataChanged(index, index, @[ModelRole.Muted.int])
-        return
+      var item = self.items[i]
+      if item.categoryId != categoryId:
+        continue
+      item.categoryName = newName
+      let modelIndex = self.createIndex(i, 0, nil)
+      self.dataChanged(modelIndex, modelIndex, @[ModelRole.CategoryName.int])
 
-      if self.items[i].subItems.muteUnmuteItemById(id, mute):
-        self.items[i].BaseItem.muted = self.items[i].subItems.isAllMuted()
-        return
+  proc renameItemById*(self: Model, id, name: string) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    if(self.items[index].name == name):
+      return
+    self.items[index].name = name
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Name.int])
 
-  proc muteUnmuteItemsOrSubItemsByCategoryId*(self: Model, categoryId: string, mute: bool) =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].categoryId == categoryId):
-        let index = self.createIndex(i, 0, nil)
-        self.items[i].subItems.muteUnmuteAll(mute)
-        self.items[i].BaseItem.muted = mute
-        self.dataChanged(index, index, @[ModelRole.Muted.int])
+  proc updateItemOnlineStatusById*(self: Model, id: string, onlineStatus: OnlineStatus) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    if(self.items[index].onlineStatus == onlineStatus):
+      return
+    self.items[index].onlineStatus = onlineStatus
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.OnlineStatus.int])
 
-  proc blockUnblockItemOrSubItemById*(self: Model, id: string, blocked: bool) =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
-        let index = self.createIndex(i, 0, nil)
-        self.items[i].BaseItem.blocked = blocked
-        self.dataChanged(index, index, @[ModelRole.Blocked.int])
-        return
+  proc updateNotificationsForItemById*(self: Model, id: string, hasUnreadMessages: bool,
+      notificationsCount: int) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    self.items[index].hasUnreadMessages = hasUnreadMessages
+    self.items[index].notificationsCount = notificationsCount
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.HasUnreadMessages.int, ModelRole.NotificationsCount.int])
 
-      if self.items[i].subItems.blockUnblockItemById(id, blocked):
-        return
-
-  proc updateItemDetails*(self: Model, id, name, icon: string, trustStatus: TrustStatus) =
-    ## This updates only first level items, it doesn't update subitems, since subitems cannot have custom icon.
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
-        self.items[i].BaseItem.name = name
-        self.items[i].BaseItem.icon = icon
-        self.items[i].BaseItem.trustStatus = trustStatus
-        let index = self.createIndex(i, 0, nil)
-        self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.Icon.int,
-          ModelRole.TrustStatus.int])
-        return
-
-  proc renameItem*(self: Model, id: string, name: string) =
-    for i in 0 ..< self.items.len:
-      if self.items[i].id == id:
-        self.items[i].BaseItem.name = name
-        let index = self.createIndex(i, 0, nil)
-        self.dataChanged(index, index, @[ModelRole.Name.int])
-        return
-
-  proc updateNameColorIcon*(self: Model, id, name, color, icon: string) =
-    ## This updates only first level items, it doesn't update subitems, since subitems cannot have custom icon.
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
-        self.items[i].BaseItem.name = name
-        self.items[i].BaseItem.color = color
-        self.items[i].BaseItem.icon = icon
-        let index = self.createIndex(i, 0, nil)
-        self.dataChanged(index, index,
-          @[ModelRole.Name.int, ModelRole.Color.int, ModelRole.Icon.int])
-        return
-
-  proc updateItemDetails*(self: Model, id, name, description, emoji, color: string) =
-    ## This updates only first level items, it doesn't update subitems, since subitems cannot have custom icon.
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
-        self.items[i].BaseItem.name = name
-        self.items[i].BaseItem.description = description
-        self.items[i].BaseItem.emoji = emoji
-        self.items[i].BaseItem.color = color
-        let index = self.createIndex(i, 0, nil)
-        self.dataChanged(index, index,
-          @[ModelRole.Name.int, ModelRole.Description.int, ModelRole.Emoji.int, ModelRole.Color.int])
-        return
-  
-  proc updateItemOnlineStatus*(self: Model, id: string, onlineStatus: OnlineStatus) =
-    ## This updates only first level items, it doesn't update subitems, since subitems cannot have onlineStatus.
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
-        if(self.items[i].onlineStatus != onlineStatus):
-          self.items[i].BaseItem.onlineStatus = onlineStatus
-          let index = self.createIndex(i, 0, nil)
-          self.dataChanged(index, index, @[ModelRole.OnlineStatus.int])
-          return
-
-  proc updateNotificationsForItemOrSubItemById*(self: Model, id: string, hasUnreadMessages: bool,
-    notificationsCount: int) =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
-        let index = self.createIndex(i, 0, nil)
-        self.items[i].BaseItem.hasUnreadMessages = hasUnreadMessages
-        self.items[i].BaseItem.notificationsCount = notificationsCount
-        self.dataChanged(index, index, @[ModelRole.HasUnreadMessages.int, ModelRole.NotificationsCount.int])
-        return
-
-      if self.items[i].subItems.updateNotificationsForItemById(id, hasUnreadMessages, notificationsCount):
-        return
-
-  proc updateLastMessageTimestampForItemById*(self: Model, id: string, lastMessageTimestamp: int) =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
-        let index = self.createIndex(i, 0, nil)
-        self.items[i].BaseItem.lastMessageTimestamp = lastMessageTimestamp
-        self.dataChanged(index, index, @[ModelRole.LastMessageTimestamp.int])
-        return
+  proc updateLastMessageTimestampOnItemById*(self: Model, id: string, lastMessageTimestamp: int) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    if(self.items[index].lastMessageTimestamp == lastMessageTimestamp):
+      return
+    self.items[index].lastMessageTimestamp = lastMessageTimestamp
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.LastMessageTimestamp.int])
 
   proc getAllNotifications*(self: Model): tuple[hasNotifications: bool, notificationsCount: int] =
     result.hasNotifications = false
     result.notificationsCount = 0
     for i in 0 ..< self.items.len:
-      if(self.items[i].BaseItem.`type` == ChatType.Unknown.int):
-        for subItem in self.items[i].subItems().items():
-          result.hasNotifications = result.hasNotifications or subItem.BaseItem.hasUnreadMessages
-          result.notificationsCount = result.notificationsCount + subItem.BaseItem.notificationsCount
-      else:
-        result.hasNotifications = result.hasNotifications or self.items[i].BaseItem.hasUnreadMessages
-        result.notificationsCount = result.notificationsCount + self.items[i].BaseItem.notificationsCount
+      result.hasNotifications = result.hasNotifications or self.items[i].hasUnreadMessages
+      result.notificationsCount = result.notificationsCount + self.items[i].notificationsCount
 
-  proc reorderModel*(self: Model, id: string, position: int) =
-    let index = self.getItemIdxById(id)
+  proc reorderChatById*(
+      self: Model,
+      chatId: string,
+      position: int,
+      newCategoryId: string,
+      newCategoryName: string,
+      newCategoryPosition: int,
+    ) =
+    let index = self.getItemIdxById(chatId)
     if index == -1:
       return
-    if(self.items[index].BaseItem.position == position):
-      return
-    self.items[index].BaseItem.position = position
+    var roles = @[ModelRole.Position.int]
+    if(self.items[index].categoryId != newCategoryId):
+      self.items[index].categoryId = newCategoryId
+      self.items[index].categoryName = newCategoryName
+      self.items[index].categoryPosition = newCategoryPosition
+      roles = roles.concat(@[
+        ModelRole.CategoryId.int,
+        ModelRole.CategoryName.int,
+        ModelRole.CategoryPosition.int,
+      ])
+    self.items[index].position = position
     let modelIndex = self.createIndex(index, 0, nil)
-    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Position.int])
+    self.dataChanged(modelIndex, modelIndex, roles)
 
-  proc reorderSubModel(self: Model, chatId: string, position: int) =
-    for it in self.items:
-      if(it.subItems.getCount() > 0):
-        it.subItems.reorder(chatId, position)
-
-  proc moveItemFromTo(self: Model, chatId: string, oldCategoryId: string, oldPosition: int, newCategoryId: string, newPosition: int) =
-    if (oldCategoryId == newCategoryId):
-      # move position only
-      if (oldCategoryId == ""):
-        self.reorderModel(chatId, newPosition)
-      else:
-        self.reorderSubModel(chatId, newPosition)
-    else:
-      # move between categories
-      let baseItemToMove = self.getItemOrSubItemByIdAsBase(chatId)
-      var oldCategoryItem = self.getItemById(oldCategoryId)
-
-      if not oldCategoryItem.isNil:
-        oldCategoryItem.subItems().removeItemById(chatId)
-      else:
-        self.removeItemById(chatId)
-
-      if newCategoryId != "":
-        let channelItem = initSubItem(baseItemToMove.id, newCategoryId, baseItemToMove.name, baseItemToMove.icon,
-          baseItemToMove.color, baseItemToMove.emoji, baseItemToMove.description, baseItemToMove.type,
-          baseItemToMove.amIChatAdmin, baseItemToMove.lastMessageTimestamp, baseItemToMove.hasUnreadMessages,
-          baseItemToMove.notificationsCount, baseItemToMove.muted, baseItemToMove.blocked,
-          baseItemToMove.active, newPosition)
-        let newCategoryItem = self.getItemById(newCategoryId)
-        newCategoryItem.appendSubItem(channelItem)
-      else:
-        let channelItem = initItem(baseItemToMove.id, baseItemToMove.name, baseItemToMove.icon,
-          baseItemToMove.color, baseItemToMove.emoji, baseItemToMove.description, baseItemToMove.type, baseItemToMove.amIChatAdmin,
-          baseItemToMove.lastMessageTimestamp, baseItemToMove.hasUnreadMessages, baseItemToMove.notificationsCount,
-          baseItemToMove.muted, baseItemToMove.blocked, baseItemToMove.active, newPosition, categoryId="")
-        self.appendItem(channelItem)
-
-
-  proc reorder*(self: Model, chatOrCategoryId: string, position: int, newCategoryIdForChat: string) =
-    let indexOfCategoryItem = self.getItemIdxByCategory(chatOrCategoryId) # chats have empty categoryId
-    if(indexOfCategoryItem == -1):
-      # reorder chat
-      let (currentCat, currentPos) = self.getCategoryAndPosition(chatOrCategoryId)
-      if (currentPos != -1):
-        self.moveItemFromTo(chatOrCategoryId, currentCat, currentPos, newCategoryIdForChat, position)
-      return
-    # reorder categories
-    self.reorderModel(chatOrCategoryId, position)
+  proc reorderCategoryById*(
+      self: Model,
+      categoryId: string,
+      position: int,
+    ) =
+    for i in 0 ..< self.items.len:
+      var item = self.items[i]
+      if item.categoryId != categoryId:
+        continue
+      if item.categoryPosition == position:
+        continue
+      item.categoryPosition = position
+      let modelIndex = self.createIndex(i, 0, nil)
+      self.dataChanged(modelIndex, modelIndex, @[ModelRole.CategoryPosition.int])
 
   proc clearItems*(self: Model) =
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()
+
+  proc getItemByIdAsJson*(self: Model, id: string): JsonNode =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+
+    return self.items[index].toJsonNode()
+
+  proc getItemPartOfCategoryAsJsonById*(self: Model, categoryId: string): JsonNode =
+    let index = self.getItemIdxByCategory(categoryId)
+    if index == -1:
+      return
+    return self.items[index].toJsonNode()

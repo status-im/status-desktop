@@ -312,7 +312,6 @@ QtObject:
       return TrustStatus.Unknown
 
   proc getContactById*(self: Service, id: string): ContactsDto =
-
     var pubkey = id
 
     if len(pubkey) == 0:
@@ -353,7 +352,7 @@ QtObject:
       var num64: int64
       let parsedChars = parseHex(pubkey, num64)
       if(parsedChars != PK_LENGTH_0X_INCLUDED):
-        debug "id doesn't have expected lenght"
+        debug "id doesn't have expected length"
         return
 
       let alias = self.generateAlias(pubkey)

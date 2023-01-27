@@ -36,12 +36,11 @@ Item {
 
     property bool isSectionActive: mainModule.activeSection.id === parentModule.getMySectionId()
     property string activeChatId: parentModule && parentModule.activeItem.id
-    property string activeSubItemId: parentModule && parentModule.activeItem.activeSubItem.id
     property int chatsCount: parentModule && parentModule.model ? parentModule.model.count : 0
-    property string activeChatType: parentModule && parentModule.activeItem.type
+    property int activeChatType: parentModule && parentModule.activeItem.type
     property bool stickersLoaded: false
-    property var contactDetails: Utils.getContactDetailsAsJson(root.activeChatId, false)
-    property bool isUserAdded: root.contactDetails.isAdded
+    property var contactDetails: activeChatType === Constants.chatType.oneToOne && Utils.getContactDetailsAsJson(root.activeChatId, false)
+    property bool isUserAdded: root.contactDetails && root.contactDetails.isAdded
 
     signal openAppSearch()
     signal openStickerPackPopup(string stickerPackId)
@@ -119,89 +118,37 @@ Item {
     Repeater {
         id: chatRepeater
         model: parentModule && parentModule.model
-        delegate: delegateChooser
+        delegate: Loader {
+            id: chatLoader
+            // Channels are not loaded by default and only load when first put active
+            active: model.active
+            visible: active
+            width: parent.width
+            height: parent.height
 
-        DelegateChooser {
-            id: delegateChooser
-            role: "type"
-            DelegateChoice { // In case of category
-                roleValue: Constants.chatType.unknown
-                delegate: Repeater {
-                    model: {
-                        if (!subItems) {
-                            console.error("We got a category with no subitems. It is possible that the channel had a type unknown")
-                        }
-                        return subItems
-                    }
-                    delegate: Loader {
-                        id: categoryChatLoader
-                        // Channels are not loaded by default and only load when first put active
-                        active: model.active
-                        visible: active
-                        width: parent.width
-                        height: parent.height
-
-                        sourceComponent: ChatContentView {
-                            visible: !root.rootStore.openCreateChat && isActiveChannel
-                            rootStore: root.rootStore
-                            contactsStore: root.contactsStore
-                            emojiPopup: root.emojiPopup
-                            stickersPopup: root.stickersPopup
-                            sendTransactionNoEnsModal: cmpSendTransactionNoEns
-                            receiveTransactionModal: cmpReceiveTransaction
-                            sendTransactionWithEnsModal: cmpSendTransactionWithEns
-                            stickersLoaded: root.stickersLoaded
-                            isBlocked: model.blocked
-                            isActiveChannel: categoryChatLoader.visible
-                            onOpenStickerPackPopup: {
-                                root.openStickerPackPopup(stickerPackId)
-                            }
-                            onOpenAppSearch: {
-                                root.openAppSearch();
-                            }
-                            Component.onCompleted: {
-                                parentModule.prepareChatContentModuleForChatId(model.itemId)
-                                chatContentModule = parentModule.getChatContentModule()
-                                chatSectionModule = root.parentModule
-                            }
-                        }
-                    }
+            sourceComponent: ChatContentView {
+                visible: !root.rootStore.openCreateChat && isActiveChannel
+                rootStore: root.rootStore
+                contactsStore: root.contactsStore
+                emojiPopup: root.emojiPopup
+                stickersPopup: root.stickersPopup
+                sendTransactionNoEnsModal: cmpSendTransactionNoEns
+                receiveTransactionModal: cmpReceiveTransaction
+                sendTransactionWithEnsModal: cmpSendTransactionWithEns
+                stickersLoaded: root.stickersLoaded
+                isBlocked: model.blocked
+                isActiveChannel: chatLoader.visible
+                onOpenStickerPackPopup: {
+                    root.openStickerPackPopup(stickerPackId)
                 }
-            }
-            DelegateChoice { // In all other cases
-                delegate: Loader {
-                    id: chatLoader
-                    // Channels are not loaded by default and only load when first put active
-                    active: model.active
-                    visible: active
-                    width: parent.width
-                    height: parent.height
-
-                    sourceComponent: ChatContentView {
-                        visible: !root.rootStore.openCreateChat && isActiveChannel
-                        rootStore: root.rootStore
-                        contactsStore: root.contactsStore
-                        emojiPopup: root.emojiPopup
-                        stickersPopup: root.stickersPopup
-                        sendTransactionNoEnsModal: cmpSendTransactionNoEns
-                        receiveTransactionModal: cmpReceiveTransaction
-                        sendTransactionWithEnsModal: cmpSendTransactionWithEns
-                        stickersLoaded: root.stickersLoaded
-                        isBlocked: model.blocked
-                        isActiveChannel: chatLoader.visible
-                        onOpenStickerPackPopup: {
-                            root.openStickerPackPopup(stickerPackId)
-                        }
-                        onOpenAppSearch: {
-                            root.openAppSearch();
-                        }
-                        Component.onCompleted: {
-                            parentModule.prepareChatContentModuleForChatId(model.itemId)
-                            chatContentModule = parentModule.getChatContentModule()
-                            chatSectionModule = root.parentModule
-                            root.checkForCreateChatOptions(model.itemId)
-                        }
-                    }
+                onOpenAppSearch: {
+                    root.openAppSearch();
+                }
+                Component.onCompleted: {
+                    parentModule.prepareChatContentModuleForChatId(model.itemId)
+                    chatContentModule = parentModule.getChatContentModule()
+                    chatSectionModule = root.parentModule
+                    root.checkForCreateChatOptions(model.itemId)
                 }
             }
         }

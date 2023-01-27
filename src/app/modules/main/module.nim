@@ -9,9 +9,8 @@ import ../../global/app_sections_config as conf
 import ../../global/app_signals
 import ../../global/global_singleton
 
-import chat_section/[model, sub_item, sub_model]
-import chat_section/base_item as chat_section_base_item
-import chat_section/item as chat_section_item
+import chat_section/model as chat_model
+import chat_section/item as chat_item
 import chat_section/module as chat_section_module
 import wallet_section/module as wallet_section_module
 import browser_section/module as browser_section_module
@@ -654,16 +653,12 @@ method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVar
   return self.channelGroupModules[communityId].getModuleAsVariant()
 
 method rebuildChatSearchModel*[T](self: Module[T]) =
-  let transformItem = proc(item: chat_section_base_item.BaseItem, sectionId, sectionName: string): chat_search_item.Item =
+  let transformItem = proc(item: chat_item.Item, sectionId, sectionName: string): chat_search_item.Item =
     result = chat_search_item.initItem(item.id(), item.name(), item.color(), item.icon(), sectionId, sectionName)
 
-  let transform = proc(items: seq[chat_section_item.Item], sectionId, sectionName: string): seq[chat_search_item.Item] =
+  let transform = proc(items: seq[chat_item.Item], sectionId, sectionName: string): seq[chat_search_item.Item] =
     for item in items:
-      if item.type() != ChatType.Unknown.int:
-        result.add(transformItem(item, sectionId, sectionName))
-      else:
-        for subItem in item.subItems().items():
-          result.add(transformItem(subItem, sectionId, sectionName))
+      result.add(transformItem(item, sectionId, sectionName))
 
   var items: seq[chat_search_item.Item] = @[]
   for cId in self.channelGroupModules.keys:
@@ -751,7 +746,7 @@ method communityJoined*[T](
     self.setActiveSection(communitySectionItem)
     if(channelGroup.chats.len > 0):
       let chatId = channelGroup.chats[0].id
-      self.channelGroupModules[community.id].setActiveItemSubItem(chatId, "")
+      self.channelGroupModules[community.id].setActiveItem(chatId)
 
 method communityLeft*[T](self: Module[T], communityId: string) =
   if(not self.channelGroupModules.contains(communityId)):
