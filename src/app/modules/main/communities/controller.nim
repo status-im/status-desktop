@@ -5,6 +5,7 @@ import ../../../core/signals/types
 import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
+import ../../../../app_service/service/community_tokens/service as community_tokens_service
 
 type
   Controller* = ref object of RootObj
@@ -12,18 +13,21 @@ type
     events: EventEmitter
     communityService: community_service.Service
     contactsService: contacts_service.Service
+    communityTokensService: community_tokens_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
     communityService: community_service.Service,
     contactsService: contacts_service.Service,
+    communityTokensService: community_tokens_service.Service,
     ): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.communityService = communityService
   result.contactsService = contactsService
+  result.communityTokensService = communityTokensService
 
 proc delete*(self: Controller) =
   discard
@@ -223,3 +227,6 @@ proc requestExtractDiscordChannelsAndCategories*(self: Controller, filesToImport
 
 proc requestCancelDiscordCommunityImport*(self: Controller, id: string) =
   self.communityService.requestCancelDiscordCommunityImport(id)
+
+proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
+  self.communityTokensService.getCommunityTokens(communityId)

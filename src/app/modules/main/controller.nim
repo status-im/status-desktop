@@ -17,6 +17,7 @@ import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/node/service as node_service
+import ../../../app_service/service/community_tokens/service as community_tokens_service
 
 import ../shared_models/section_item, io_interface
 import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
@@ -42,6 +43,7 @@ type
     privacyService: privacy_service.Service
     mailserversService: mailservers_service.Service
     nodeService: node_service.Service
+    communityTokensService: community_tokens_service.Service
     activeSectionId: string
     authenticateUserFlowRequestedBy: string
 
@@ -61,6 +63,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   privacyService: privacy_service.Service,
   mailserversService: mailservers_service.Service,
   nodeService: node_service.Service,
+  communityTokensService: community_tokens_service.Service,
 ):
   Controller =
   result = Controller()
@@ -77,6 +80,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.privacyService = privacyService
   result.nodeService = nodeService
   result.mailserversService = mailserversService
+  result.communityTokensService = communityTokensService
 
 proc delete*(self: Controller) =
   discard
@@ -278,6 +282,14 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e: Args):
     self.delegate.onMyRequestAdded();
 
+  self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOYED) do(e: Args):
+    let args = CommunityTokenDeployedArgs(e)
+    self.delegate.onCommunityTokenDeployed(args.communityToken)
+
+  self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS) do(e: Args):
+    let args = CommunityTokenDeployedStatusArgs(e)
+    self.delegate.onCommunityTokenDeployStateChanged(args.communityId, args.contractAddress, args.deployState)
+
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED) do(e: Args):
     let args = SharedKeycarModuleFlowTerminatedArgs(e)
     if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER:
@@ -389,3 +401,6 @@ proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpda
 
 proc getVerificationRequestFrom*(self: Controller, publicKey: string): VerificationRequest =
   self.contactsService.getVerificationRequestFrom(publicKey)
+
+proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
+  self.communityTokensService.getCommunityTokens(communityId)

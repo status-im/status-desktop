@@ -1,5 +1,5 @@
-import NimQml, Tables
-import token_item
+import NimQml, Tables, strformat
+import ../../../../../../app_service/service/community_tokens/dto/community_token
 
 type
   ModelRole {.pure.} = enum
@@ -7,17 +7,16 @@ type
     TokenAddress
     Name
     Description
-    Icon
     Supply
     InfiniteSupply
     Transferable
     RemoteSelfDestruct
     NetworkId
-    MintingState
+    DeployState
 
 QtObject:
   type TokenModel* = ref object of QAbstractListModel
-    items*: seq[TokenItem]
+    items*: seq[CommunityTokenDto]
 
   proc setup(self: TokenModel) =
     self.QAbstractListModel.setup
@@ -30,12 +29,29 @@ QtObject:
     new(result, delete)
     result.setup
 
+  proc updateDeployState*(self: TokenModel, contractAddress: string, deployState: DeployState) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].address == contractAddress):
+        self.items[i].deployState = deployState
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[ModelRole.DeployState.int])
+        return
+
   proc countChanged(self: TokenModel) {.signal.}
 
-  proc setItems*(self: TokenModel, items: seq[TokenItem]) =
+  proc setItems*(self: TokenModel, items: seq[CommunityTokenDto]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
+    self.countChanged()
+
+  proc appendItem*(self: TokenModel, item: CommunityTokenDto) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+    self.items.add(item)
+    self.endInsertRows()
     self.countChanged()
 
   proc getCount*(self: TokenModel): int {.slot.} =
@@ -54,13 +70,12 @@ QtObject:
       ModelRole.TokenAddress.int:"tokenAddress",
       ModelRole.Name.int:"name",
       ModelRole.Description.int:"description",
-      ModelRole.Icon.int:"icon",
       ModelRole.Supply.int:"supply",
       ModelRole.InfiniteSupply.int:"infiniteSupply",
       ModelRole.Transferable.int:"transferable",
       ModelRole.RemoteSelfDestruct.int:"remoteSelfDestruct",
       ModelRole.NetworkId.int:"networkId",
-      ModelRole.MintingState.int:"mintingState",
+      ModelRole.DeployState.int:"deployState",
     }.toTable
 
   method data(self: TokenModel, index: QModelIndex, role: int): QVariant =
@@ -72,25 +87,28 @@ QtObject:
     let enumRole = role.ModelRole
     case enumRole:
       of ModelRole.TokenType:
-        result = newQVariant(item.getTokenType().int)
+        result = newQVariant(item.tokenType.int)
       of ModelRole.TokenAddress:
-        result = newQVariant(item.getTokenAddress())
+        result = newQVariant(item.address)
       of ModelRole.Name:
-        result = newQVariant(item.getName())
+        result = newQVariant(item.name)
       of ModelRole.Description:
-        result = newQVariant(item.getDescription())
-      of ModelRole.Icon:
-        result = newQVariant(item.getIcon())
+        result = newQVariant(item.description)
       of ModelRole.Supply:
-        result = newQVariant(item.getSupply())
+        result = newQVariant(item.supply)
       of ModelRole.InfiniteSupply:
-        result = newQVariant(item.getInfiniteSupply())
+        result = newQVariant(item.infiniteSupply)
       of ModelRole.Transferable:
-        result = newQVariant(item.isTransferrable())
+        result = newQVariant(item.transferable)
       of ModelRole.RemoteSelfDestruct:
-        result = newQVariant(item.isRemoteSelfDestruct())
+        result = newQVariant(item.remoteSelfDestruct)
       of ModelRole.NetworkId:
-        result = newQVariant(item.getNetworkId())
-      of ModelRole.MintingState:
-        result = newQVariant(item.getMintingState().int)
+        result = newQVariant(item.chainId)
+      of ModelRole.DeployState:
+        result = newQVariant(item.deployState.int)
 
+  proc `$`*(self: TokenModel): string =
+      for i in 0 ..< self.items.len:
+        result &= fmt"""TokenModel:
+        [{i}]:({$self.items[i]})
+        """

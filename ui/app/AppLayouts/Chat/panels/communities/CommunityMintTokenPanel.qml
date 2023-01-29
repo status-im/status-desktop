@@ -93,7 +93,7 @@ Item {
             model: root.tokensModel
 
             delegate: Text {
-                text: "name: " + name + ", descr: " + description + ", supply: " + supply
+                text: "name: " + name + ", descr: " + description + ", supply: " + supply + ", status: " + deployState
             }
         }
     }

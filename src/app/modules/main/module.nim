@@ -51,7 +51,7 @@ import ../../../app_service/service/devices/service as devices_service
 import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/ens/service as ens_service
-import ../../../app_service/service/community_tokens/service as tokens_service
+import ../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../app_service/service/network/service as network_service
 import ../../../app_service/service/general/service as general_service
 import ../../../app_service/service/keycard/service as keycard_service
@@ -134,7 +134,7 @@ proc newModule*[T](
   nodeService: node_service.Service,
   gifService: gif_service.Service,
   ensService: ens_service.Service,
-  tokensService: tokens_service.Service,
+  communityTokensService: community_tokens_service.Service,
   networkService: network_service.Service,
   generalService: general_service.Service,
   keycardService: keycard_service.Service
@@ -157,6 +157,7 @@ proc newModule*[T](
     privacyService,
     mailserversService,
     nodeService,
+    communityTokensService
   )
   result.moduleLoaded = false
 
@@ -191,7 +192,7 @@ proc newModule*[T](
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService, tokenService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService, communityService)
-  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, tokensService)
+  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
@@ -222,9 +223,11 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
   let isCommunity = c.channelGroupType == ChannelGroupType.Community
   var communityDetails: CommunityDto
   var unviewedCount, mentionsCount: int
+  var communityTokens: seq[CommunityTokenDto]
   if (isCommunity):
     (unviewedCount, mentionsCount) = self.controller.getNumOfNotificationsForCommunity(c.id)
     communityDetails = self.controller.getCommunityById(c.id)
+    communityTokens = self.controller.getCommunityTokens(c.id)
   else:
     let receivedContactRequests = self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
     (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForChat()
@@ -335,7 +338,8 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         requestToJoinId = requestDto.id
       )
     ) else: @[],
-    c.encrypted
+    c.encrypted,
+    communityTokens
   )
 
 method load*[T](
@@ -877,6 +881,16 @@ method contactsStatusUpdated*[T](self: Module[T], statusUpdates: seq[StatusUpdat
   for s in statusUpdates:
     let status = toOnlineStatus(s.statusType)
     self.view.activeSection().setOnlineStatusForMember(s.publicKey, status)
+
+method onCommunityTokenDeployed*[T](self: Module[T], communityToken: CommunityTokenDto) {.base.} =
+  let item = self.view.model().getItemById(communityToken.communityId)
+  if item.id != "":
+    item.appendCommunityToken(communityToken)
+
+method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: string, contractAddress: string, deployState: DeployState) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.updateCommunityTokenDeployState(contractAddress, deployState)
 
 method contactUpdated*[T](self: Module[T], publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)

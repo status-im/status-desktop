@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, sequtils, json, sugar, stint
+import NimQml, Tables, chronicles, json, stint
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 
@@ -10,15 +10,30 @@ import ../eth/dto/transaction
 
 import ../../../backend/response_type
 
-import ../../common/json_utils
 import ../../common/conversion
 
 import ./dto/deployment_parameters
+import ./dto/community_token
 
-#include async_tasks
+export community_token
+export deployment_parameters
 
 logScope:
   topics = "community-tokens-service"
+
+type
+  CommunityTokenDeployedStatusArgs* = ref object of Args
+    communityId*: string
+    contractAddress*: string
+    deployState*: DeployState
+
+type
+  CommunityTokenDeployedArgs* = ref object of Args
+    communityToken*: CommunityTokenDto
+
+# Signals which may be emitted by this service:
+const SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS* = "communityTokenDeployStatus"
+const SIGNAL_COMMUNITY_TOKEN_DEPLOYED* = "communityTokenDeployed"
 
 QtObject:
   type
@@ -47,32 +62,66 @@ QtObject:
   proc init*(self: Service) =
     self.events.on(PendingTransactionTypeDto.CollectibleDeployment.event) do(e: Args):
       var receivedData = TransactionMinedArgs(e)
-      # TODO signalize module about about contract state
-      if receivedData.success:
-        echo "!!! Collectible deployed"
-      else:
-        echo "!!! Collectible not deployed"
+      let deployState = if receivedData.success: DeployState.Deployed else: DeployState.Failed
+      let tokenDto = toCommunityTokenDto(parseJson(receivedData.data))
+      if not receivedData.success:
+        error "Collectible contract not deployed", address=tokenDto.address
+      try:
+        discard updateCommunityTokenState(tokenDto.address, deployState) #update db state
+      except RpcException:
+        error "Error updating collectibles contract state", message = getCurrentExceptionMsg()
+      let data = CommunityTokenDeployedStatusArgs(communityId: tokenDto.communityId, contractAddress: tokenDto.address, deployState: deployState)
+      self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
 
-  proc mintCollectibles*(self: Service, addressFrom: string, password: string, deploymentParams: DeploymentParameters) =
+  proc mintCollectibles*(self: Service, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters) =
     try:
       let chainId = self.networkService.getNetworkForCollectibles().chainId
       let txData = TransactionDataDto(source: parseAddress(addressFrom))
+
       let response = tokens_backend.deployCollectibles(chainId, %deploymentParams, %txData, password)
-      if (not response.error.isNil):
-        error "Error minting collectibles", message = response.error.message
-        return
       let contractAddress = response.result["contractAddress"].getStr()
       let transactionHash = response.result["transactionHash"].getStr()
       echo "!!! Contract address ", contractAddress
       echo "!!! Transaction hash ", transactionHash
+
+      var communityToken: CommunityTokenDto
+      communityToken.tokenType = TokenType.ERC721
+      communityToken.communityId = communityId
+      communityToken.address = contractAddress
+      communityToken.name = deploymentParams.name
+      communityToken.symbol = deploymentParams.symbol
+      communityToken.description = deploymentParams.description
+      communityToken.supply = deploymentParams.supply
+      communityToken.infiniteSupply = deploymentParams.infiniteSupply
+      communityToken.transferable = deploymentParams.transferable
+      communityToken.remoteSelfDestruct = deploymentParams.remoteSelfDestruct
+      communityToken.tokenUri = deploymentParams.tokenUri
+      communityToken.chainId = chainId
+      communityToken.deployState = DeployState.InProgress
+      communityToken.image = "" # TODO later
+
+      # save token to db
+      discard tokens_backend.addCommunityToken(communityToken)
+      let data = CommunityTokenDeployedArgs(communityToken: communityToken)
+      self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYED, data)
+
       # observe transaction state
       self.transactionService.watchTransaction(
         transactionHash,
         addressFrom,
         contractAddress,
         $PendingTransactionTypeDto.CollectibleDeployment,
-        "",
+        $communityToken.toJsonNode(),
         chainId,
       )
+
     except RpcException:
       error "Error minting collectibles", message = getCurrentExceptionMsg()
+
+  proc getCommunityTokens*(self: Service, communityId: string): seq[CommunityTokenDto] =
+    try:
+      let chainId = self.networkService.getNetworkForCollectibles().chainId
+      let response = tokens_backend.getCommunityTokens(communityId, chainId)
+      return parseCommunityTokens(response)
+    except RpcException:
+        error "Error getting community tokens", message = getCurrentExceptionMsg()

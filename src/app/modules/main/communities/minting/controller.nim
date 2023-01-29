@@ -1,7 +1,6 @@
 import ./io_interface as minting_module_interface
 
-import ../../../../../app_service/service/community_tokens/service as tokens_service
-import ../../../../../app_service/service/community_tokens/dto/deployment_parameters
+import ../../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../core/signals/types
 import ../../../../core/eventemitter
 import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
@@ -13,17 +12,17 @@ type
   Controller* = ref object of RootObj
     mintingModule: minting_module_interface.AccessInterface
     events: EventEmitter
-    tokensService: tokens_service.Service
+    communityTokensService: community_tokens_service.Service
 
 proc newMintingController*(
     mintingModule: minting_module_interface.AccessInterface,
     events: EventEmitter,
-    tokensService: tokens_service.Service
+    communityTokensService: community_tokens_service.Service
     ): Controller =
   result = Controller()
   result.mintingModule = mintingModule
   result.events = events
-  result.tokensService = tokensService
+  result.communityTokensService = communityTokensService
 
 proc delete*(self: Controller) =
   discard
@@ -35,9 +34,12 @@ proc init*(self: Controller) =
       return
     self.mintingModule.onUserAuthenticated(args.password)
 
-proc mintCollectibles*(self: Controller, addressFrom: string, password: string, deploymentParams: DeploymentParameters) =
-  self.tokensService.mintCollectibles(addressFrom, password, deploymentParams)
+proc mintCollectibles*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters) =
+  self.communityTokensService.mintCollectibles(communityId, addressFrom, password, deploymentParams)
 
 proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_MINT_COLLECTIBLES_MINTING_MODULE_IDENTIFIER, keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
+
+proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
+  return self.communityTokensService.getCommunityTokens(communityId)
