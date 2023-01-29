@@ -21,7 +21,7 @@ import ../../../core/eventemitter
 import ../../../../app_service/common/types
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
-import ../../../../app_service/service/community_tokens/service as tokens_service
+import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/chat/dto/chat
 import ./minting/module as minting_module
 
@@ -52,7 +52,7 @@ proc newModule*(
     events: EventEmitter,
     communityService: community_service.Service,
     contactsService: contacts_service.Service,
-    tokensService: tokens_service.Service): Module =
+    communityTokensService: community_tokens_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
@@ -62,8 +62,9 @@ proc newModule*(
     events,
     communityService,
     contactsService,
+    communityTokensService,
   )
-  result.mintingModule = minting_module.newMintingModule(result, events, tokensService)
+  result.mintingModule = minting_module.newMintingModule(result, events, communityTokensService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -143,6 +144,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       declinedMemberRequests = c.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
         result = self.createMemberItem(requestDto.publicKey, requestDto.id)),
       encrypted = c.encrypted,
+      communityTokens = self.controller.getCommunityTokens(c.id)
     )
 
 method getCuratedCommunityItem(self: Module, c: CuratedCommunity): CuratedCommunityItem =

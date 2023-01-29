@@ -255,9 +255,9 @@ StatusSectionLayout {
 
             CommunityMintTokensSettingsPanel {
                 transactionStore: root.transactionStore
-                tokensModel: root.communityStore.mintTokensModel
+                tokensModel: root.community.communityTokens
                 onMintCollectible: {
-                    root.communityStore.mintCollectible(address, name, symbol, description, supply,
+                    root.communityStore.mintCollectible(root.community.id, address, name, symbol, description, supply,
                                                         infiniteSupply, transferable, selfDestruct, network)
                 }
                 onPreviousPageNameChanged: root.backButtonName = previousPageName

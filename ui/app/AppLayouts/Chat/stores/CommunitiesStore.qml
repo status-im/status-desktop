@@ -177,12 +177,11 @@ QtObject {
     }
 
     // Minting tokens:
-    property var mintTokensModel: mintingModuleInst ? mintingModuleInst.tokensModel : null
 
-    function mintCollectible(address, name, symbol, description, supply,
+    function mintCollectible(communityId, address, name, symbol, description, supply,
                              infiniteSupply, transferable, selfDestruct, network)
     {
-        mintingModuleInst.mintCollectible(address, name, symbol, description, supply,
+        mintingModuleInst.mintCollectible(communityId, address, name, symbol, description, supply,
                                           infiniteSupply, transferable, selfDestruct, network)
     }
 }

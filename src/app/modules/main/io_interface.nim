@@ -8,6 +8,7 @@ import ../../../app_service/service/community/service as community_service
 import ../../../app_service/service/message/service as message_service
 import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/mailservers/service as mailservers_service
+import ../../../app_service/service/community_tokens/service as token_service
 from ../../../app_service/common/types import StatusType
 
 import ../../global/app_signals
@@ -248,6 +249,12 @@ method tryKeycardSync*(self: AccessInterface, keyUid: string, pin: string) {.bas
   raise newException(ValueError, "No implementation available")
 
 method onSharedKeycarModuleKeycardSyncPurposeTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityTokenDeployed*(self: AccessInterface, communityToken: CommunityTokenDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, contractAddress: string, deployState: DeployState) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController

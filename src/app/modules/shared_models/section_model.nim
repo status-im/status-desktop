@@ -3,6 +3,8 @@ import NimQml, Tables, strutils, strformat
 import json, json_serialization
 
 import section_item, member_model
+import ../../../app_service/service/community_tokens/dto/community_token
+
 
 type
   ModelRole {.pure.} = enum
@@ -37,6 +39,7 @@ type
     PinMessageAllMembersEnabled
     BannedMembersModel
     Encrypted
+    CommunityTokensModel
 
 QtObject:
   type
@@ -105,6 +108,7 @@ QtObject:
       ModelRole.PinMessageAllMembersEnabled.int:"pinMessageAllMembersEnabled",
       ModelRole.BannedMembersModel.int:"bannedMembers",
       ModelRole.Encrypted.int:"encrypted",
+      ModelRole.CommunityTokensModel.int:"communityTokens",
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -180,6 +184,8 @@ QtObject:
       result = newQVariant(item.bannedMembers)
     of ModelRole.Encrypted:
       result = newQVariant(item.encrypted)
+    of ModelRole.CommunityTokensModel:
+      result = newQVariant(item.communityTokens)
 
   proc isItemExist(self: SectionModel, id: string): bool =
     for it in self.items:
@@ -272,6 +278,7 @@ QtObject:
       ModelRole.PinMessageAllMembersEnabled.int,
       ModelRole.BannedMembersModel.int,
       ModelRole.Encrypted.int,
+      ModelRole.CommunityTokensModel.int
       ])
 
   proc getNthEnabledItem*(self: SectionModel, nth: int): SectionItem =
@@ -357,6 +364,14 @@ QtObject:
         self.items[i].notificationsCount = notificationsCount
         self.dataChanged(index, index, @[ModelRole.HasNotification.int, ModelRole.NotificationsCount.int])
         self.notificationsCountChanged()
+        return
+
+  proc appendCommunityToken*(self: SectionModel, id: string, item: CommunityTokenDto) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].appendCommunityToken(item)
+        self.dataChanged(index, index, @[ModelRole.CommunityTokensModel.int])
         return
 
   proc getSectionNameById*(self: SectionModel, sectionId: string): string {.slot.} =
