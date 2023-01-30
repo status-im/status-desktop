@@ -4,7 +4,7 @@ library 'status-jenkins-lib@v1.6.3'
 def isPRBuild = utils.isPRBuild()
 
 pipeline {
-  agent { label 'windows' }
+  agent { label 'windows && x86_64 && qt-5.15.2' }
 
   parameters {
     booleanParam(
