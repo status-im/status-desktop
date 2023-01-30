@@ -246,7 +246,7 @@ proc saveAccountAndLoginWithKeycard*(chatKey, password: string, account, subacco
 proc convertToKeycardAccount*(account: JsonNode, settings: JsonNode, password: string, newPassword: string): 
   RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
-    let response = status_go.convertToKeycardAccount($account, $settings, password, newPassword)
+    let response = status_go.convertToKeycardAccountDesktop($account, $settings, password, newPassword)
     result.result = Json.decode(response, JsonNode)
 
   except RpcException as e:
