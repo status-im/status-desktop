@@ -334,7 +334,6 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     c.encrypted
   )
 
-
 method load*[T](
   self: Module[T],
   events: EventEmitter,
@@ -355,30 +354,6 @@ method load*[T](
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
   if (activeSectionId == ""):
     activeSectionId = singletonInstance.userProfile.getPubKey()
-
-  let channelGroups = self.controller.getChannelGroups()
-  for channelGroup in channelGroups:
-    self.channelGroupModules[channelGroup.id] = chat_section_module.newModule(
-      self,
-      events,
-      channelGroup.id,
-      isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community,
-      settingsService,
-      nodeConfigurationService,
-      contactsService,
-      chatService,
-      communityService,
-      messageService,
-      gifService,
-      mailserversService
-    )
-    let channelGroupItem = self.createChannelGroupItem(channelGroup)
-    self.view.model().addItem(channelGroupItem)
-    if(activeSectionId == channelGroupItem.id):
-      activeSection = channelGroupItem
-    
-    self.channelGroupModules[channelGroup.id].load(channelGroup, events, settingsService, nodeConfigurationService,
-      contactsService, chatService, communityService, messageService, gifService, mailserversService)
 
   # Communities Portal Section
   let communitiesPortalSectionItem = initItem(conf.COMMUNITIESPORTAL_SECTION_ID, SectionType.CommunitiesPortal, conf.COMMUNITIESPORTAL_SECTION_NAME,
@@ -484,6 +459,56 @@ method load*[T](
     self.setActiveSection(self.view.model().getItemBySectionType(SectionType.Chat))
   else:
     self.setActiveSection(activeSection)
+
+method onChatsLoaded*[T](
+  self: Module[T],
+  channelGroups: seq[ChannelGroupDto],
+  events: EventEmitter,
+  settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
+  contactsService: contacts_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
+  messageService: message_service.Service,
+  gifService: gif_service.Service,
+  mailserversService: mailservers_service.Service,
+) =
+  var activeSection: SectionItem
+  var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
+  if activeSectionId == "":
+    activeSectionId = singletonInstance.userProfile.getPubKey()
+
+  for channelGroup in channelGroups:
+    self.channelGroupModules[channelGroup.id] = chat_section_module.newModule(
+      self,
+      events,
+      channelGroup.id,
+      isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community,
+      settingsService,
+      nodeConfigurationService,
+      contactsService,
+      chatService,
+      communityService,
+      messageService,
+      gifService,
+      mailserversService
+    )
+    let channelGroupItem = self.createChannelGroupItem(channelGroup)
+    self.view.model().addItem(channelGroupItem)
+    if activeSectionId == channelGroupItem.id:
+      activeSection = channelGroupItem
+    
+    self.channelGroupModules[channelGroup.id].load(channelGroup, events, settingsService, nodeConfigurationService,
+      contactsService, chatService, communityService, messageService, gifService, mailserversService)
+
+  # Set active section if it is one of the channel sections
+  if not activeSection.isEmpty():
+    self.setActiveSection(activeSection)
+
+  self.view.chatsLoaded()
+
+method onChatsLoadingFailed*[T](self: Module[T]) =
+  self.view.chatsLoadingFailed()
 
 proc checkIfModuleDidLoad [T](self: Module[T]) =
   if self.moduleLoaded:

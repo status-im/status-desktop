@@ -166,7 +166,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, 
     result.activityCenterService
   )
-  result.chatService = chat_service.newService(statusFoundation.events, result.contactsService)
+  result.chatService = chat_service.newService(statusFoundation.events, statusFoundation.threadpool, result.contactsService)
   result.tokenService = token_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.networkService
   )

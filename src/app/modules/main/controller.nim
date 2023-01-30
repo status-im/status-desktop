@@ -86,6 +86,24 @@ proc init*(self: Controller) =
     let d9 = 9*86400 # 9 days
     discard self.settingsService.setDefaultSyncPeriod(d9)
 
+  self.events.on(SIGNAL_CHATS_LOADED) do(e:Args):
+    let args = ChannelGroupsArgs(e)
+    self.delegate.onChatsLoaded(
+      args.channelGroups,
+      self.events,
+      self.settingsService,
+      self.nodeConfigurationService,
+      self.contactsService,
+      self.chatService,
+      self.communityService,
+      self.messageService,
+      self.gifService,
+      self.mailserversService,
+    )
+
+  self.events.on(SIGNAL_CHATS_LOADING_FAILED) do(e:Args):
+    self.delegate.onChatsLoadingFailed()
+
   self.events.on(SIGNAL_ACTIVE_MAILSERVER_CHANGED) do(e:Args):
     let args = ActiveMailserverChangedArgs(e)
     if args.nodeAddress == "":

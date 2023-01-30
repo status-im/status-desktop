@@ -20,7 +20,7 @@ import "../popups/community"
 
 Item {
     id: root
-    width: 304
+    width: Constants.chatSectionLeftColumnWidth
     height: parent.height
 
     // Important:

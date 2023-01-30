@@ -374,9 +374,13 @@ Item {
         height: 440
     }
 
-    StatusStickersPopup {
-        id: statusStickersPopup
-        store: chatLayoutContainer.rootStore
+    Loader {
+        id: statusStickersPopupLoader
+        active: appMain.rootStore.mainModuleInst.chatsLoaded
+        sourceComponent: StatusStickersPopup {
+            id: statusStickersPopup
+            store: personalChatLayoutLoader.item.rootStore
+        }
     }
 
     StatusMainLayout {
@@ -874,34 +878,78 @@ Item {
                     // If we ever change stack layout component order we need to updade
                     // Constants.appViewStackIndex accordingly
 
-                    ChatLayout {
-                        id: chatLayoutContainer
+                    Loader {
+                        id: personalChatLayoutLoader
+                        sourceComponent: {
+                            if (appMain.rootStore.mainModuleInst.chatsLoadingFailed) {
+                                return errorStateComponent
+                            }
+                            if (appMain.rootStore.mainModuleInst.chatsLoaded) {
+                                return personalChatLayoutComponent
+                            }
+                            return loadingStateComponent
+                        }
+                        
+                        Component {
+                            id: loadingStateComponent
+                            Item {
+                                anchors.fill: parent
 
-                        chatView.emojiPopup: statusEmojiPopup
-                        chatView.stickersPopup: statusStickersPopup
-
-                        contactsStore: appMain.rootStore.contactStore
-                        rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
-                        rootStore.openCreateChat: createChatView.opened
-
-                        chatView.onProfileButtonClicked: {
-                            Global.changeAppSectionBySectionType(Constants.appSection.profile);
+                                Row {
+                                    anchors.centerIn: parent
+                                    spacing: 6
+                                    StatusBaseText {
+                                        text: qsTr("Loading...")
+                                    }
+                                    LoadingAnimation {}
+                                }
+                            }
+                        }
+                        
+                        Component {
+                            id: errorStateComponent
+                            Item {
+                                anchors.fill: parent
+                                StatusBaseText {
+                                    text: qsTr("Error loading chats, try closing the app and restarting")
+                                    anchors.centerIn: parent
+                                }
+                            }
                         }
 
-                        chatView.onOpenAppSearch: {
-                            appSearch.openSearchPopup()
-                        }
+                        Component {
+                            id: personalChatLayoutComponent
 
-                        onImportCommunityClicked: {
-                            Global.openPopup(communitiesPortalLayoutContainer.importCommunitiesPopup);
-                        }
+                            ChatLayout {
+                                id: chatLayoutContainer
 
-                        onCreateCommunityClicked: {
-                            Global.openPopup(communitiesPortalLayoutContainer.createCommunitiesPopup);
-                        }
+                                chatView.emojiPopup: statusEmojiPopup
+                                chatView.stickersPopup: statusStickersPopupLoader.item
 
-                        Component.onCompleted: {
-                            rootStore.chatCommunitySectionModule = appMain.rootStore.mainModuleInst.getChatSectionModule()
+                                contactsStore: appMain.rootStore.contactStore
+                                rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                                rootStore.openCreateChat: createChatView.opened
+
+                                chatView.onProfileButtonClicked: {
+                                    Global.changeAppSectionBySectionType(Constants.appSection.profile);
+                                }
+
+                                chatView.onOpenAppSearch: {
+                                    appSearch.openSearchPopup()
+                                }
+
+                                onImportCommunityClicked: {
+                                    Global.openPopup(communitiesPortalLayoutContainer.importCommunitiesPopup);
+                                }
+
+                                onCreateCommunityClicked: {
+                                    Global.openPopup(communitiesPortalLayoutContainer.createCommunitiesPopup);
+                                }
+
+                                Component.onCompleted: {
+                                    rootStore.chatCommunitySectionModule = appMain.rootStore.mainModuleInst.getChatSectionModule()
+                                }
+                            }
                         }
                     }
 
@@ -975,7 +1023,7 @@ Item {
 
                                     sourceComponent: ChatLayout {
                                         chatView.emojiPopup: statusEmojiPopup
-                                        chatView.stickersPopup: statusStickersPopup
+                                        chatView.stickersPopup: statusStickersPopupLoader.item
 
                                         contactsStore: appMain.rootStore.contactStore
                                         rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
@@ -1006,7 +1054,7 @@ Item {
                     id: createChatView
 
                     property bool opened: false
-                    active: opened
+                    active: appMain.rootStore.mainModuleInst.chatsLoaded && opened
 
                     asynchronous: true
                     anchors.top: parent.top
@@ -1014,12 +1062,14 @@ Item {
                     anchors.rightMargin: 8
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
-                    width: parent.width - chatLayoutContainer.chatView.leftPanel.width - anchors.rightMargin - anchors.leftMargin
+                    width: active ?
+                            parent.width - Constants.chatSectionLeftColumnWidth -
+                            anchors.rightMargin - anchors.leftMargin : 0
 
                     sourceComponent: CreateChatView {
-                        rootStore: chatLayoutContainer.rootStore
+                        rootStore: personalChatLayoutLoader.item.rootStore
                         emojiPopup: statusEmojiPopup
-                        stickersPopup: statusStickersPopup
+                        stickersPopup: statusStickersPopupLoader.item
                     }
                 }
             }
@@ -1076,7 +1126,7 @@ Item {
                 x: parent.width - width - Style.current.smallPadding
                 y: parent.y + _buttonSize
                 height: appView.height - _buttonSize * 2
-                store: chatLayoutContainer.rootStore
+                store: personalChatLayoutLoader.item.rootStore
                 activityCenterStore: appMain.activityCenterStore
             }
         }
