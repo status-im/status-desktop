@@ -111,7 +111,7 @@ Item {
                 {
                     newVersionAvailable: available,
                     downloadURL: url,
-                    currentVersion: rootStore.profileSectionStore.getCurrentVersion(),
+                    currentVersion: appMain.rootStore.profileSectionStore.getCurrentVersion(),
                     newVersion: version
                 })
             return downloadPage
@@ -566,6 +566,9 @@ Item {
             ColumnLayout {
                 id: bannersLayout
 
+                enabled: !localAppSettings.testEnvironment
+                visible: enabled
+
                 property var updateBanner: null
                 property var connectedBanner: null
                 readonly property bool isConnected: appMain.rootStore.mainModuleInst.isOnline
@@ -762,11 +765,9 @@ Item {
                         onCloseClicked: {
                             hide();
                         }
-                        onHideStarted: {
-                            bannersLayout.connectedBanner = null
-                        }
                         onHideFinished: {
                             destroy()
+                            bannersLayout.connectedBanner = null
                         }
                     }
                 }
@@ -813,11 +814,9 @@ Item {
                                 appMain.rootStore.resetLastVersion();
                             hide()
                         }
-                        onHideStarted: {
-                            bannersLayout.updateBanner = null
-                        }
                         onHideFinished: {
                             destroy()
+                            bannersLayout.updateBanner = null
                         }
                     }
                 }
