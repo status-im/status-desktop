@@ -17,7 +17,7 @@ Item {
         Success
     }
 
-    property bool active: false
+    property bool active
     property int type: ModuleWarning.Danger
     property int progressValue: -1 // 0..100, -1 not visible
     property string text: ""
@@ -31,18 +31,9 @@ Item {
     signal hideStarted()
     signal hideFinished()
 
-    QtObject {
-        id: d 
-        property bool active: false
-    }
-
     function show() {
-        if (localAppSettings.testEnvironment) {
-            // Never show the banner while in a test enviornment
-            return
-        }
         hideTimer.stop()
-        d.active = true;
+        active = true;
     }
 
     function showFor(duration = 5000) {
@@ -61,15 +52,10 @@ Item {
 
     signal linkActivated(string link)
 
-    implicitHeight: d.active ? content.implicitHeight : 0
+    implicitHeight: active ? content.implicitHeight : 0
     visible: implicitHeight > 0
 
     onActiveChanged: {
-         if (localAppSettings.testEnvironment) {
-            // Never show the banner while in a test enviornment
-            return
-        }
-        d.active = active
         active ? showAnimation.start() : hideAnimation.start()
     }
 
@@ -110,7 +96,7 @@ Item {
         repeat: false
         running: false
         onTriggered: {
-            d.active = false
+            root.active = false
         }
     }
 
