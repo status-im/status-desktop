@@ -18,20 +18,20 @@ function Install-Dependencies {
     scoop install --global `
         7zip git dos2unix findutils `
         wget rcedit inno-setup `
-        make cmake gcc go@1.18.8
+        make cmake gcc go@1.19.5
     scoop bucket add extras
-    scoop install --global vcredist2017
+    scoop install --global vcredist2019
 }
 
 function Install-Qt-SDK {
     Write-Host "Installing Qt $QtVersion SDK..."
     pip install aqtinstall
-    aqt install --output "C:\Qt" $QtVersion windows desktop win64_msvc2017_64 -m qtwebengine qtlottie
+    aqt install-qt -O "C:\Qt" windows desktop $QtVersion win64_msvc2019_64 -m qtwebengine qtlottie
 }
 
-# Install Microsoft Visual C++ Build Tools 15.8.9
+# Install Microsoft Visual C++ Build Tools 16.11.23
 function Install-VC-BuildTools {
-    $VCBuildToolsUrl = "https://download.visualstudio.microsoft.com/download/pr/e286f66e-4366-425f-bcc5-c88627c6e95a/0401d4decb00884a7d50f69732e1d680/vs_buildtools.exe"
+    $VCBuildToolsUrl = "https://download.visualstudio.microsoft.com/download/pr/33d686db-3937-4a19-bb3c-be031c5d69bf/66d85abf1020496b07c59aba176def5127352f2fbdd3c4c4143738ab7dfcb459/vs_BuildTools.exe"
     $VCBuildToolsExe = "$HOME\Downloads\vs_BuildTools.exe"
 
     Write-Host "Downloading Microsoft Visual C++ Build Tools..."
@@ -60,8 +60,8 @@ SUCCESS!
 
 Before you attempt to build nim-status-client you'll need a few environment variables set:
 
-export QTDIR="/c/Qt/$QtVersion/msvc2017_64"
-export Qt5_DIR="/c/Qt/$QtVersion/msvc2017_64"
+export QTDIR="/c/Qt/$QtVersion/msvc2019_64"
+export Qt5_DIR="/c/Qt/$QtVersion/msvc2019_64"
 export VCINSTALLDIR="/c/BuildTools/VC"
 
 You might also have to include the following paths in your `$PATH:
@@ -77,7 +77,7 @@ export PATH=`"/c/ProgramData/scoop/apps/inno-setup/current:`$PATH`"
 # Stop the script after first error
 $ErrorActionPreference = 'Stop'
 # Version of Qt SDK available form aqt
-$QtVersion = "5.14.2"
+$QtVersion = "5.15.2"
 
 # Don't run when sourcing script
 If ($MyInvocation.InvocationName -ne ".") {
