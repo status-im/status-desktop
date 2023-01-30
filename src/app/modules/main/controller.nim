@@ -89,11 +89,14 @@ proc init*(self: Controller) =
   if self.accountsService.isFirstTimeAccountLogin():
     let d9 = 9*86400 # 9 days
     discard self.settingsService.setDefaultSyncPeriod(d9)
-    
-  self.events.on(SIGNAL_MAILSERVER_AVAILABLE) do(e:Args):
+
+  self.events.on(SIGNAL_ACTIVE_MAILSERVER_CHANGED) do(e:Args):
+    let args = ActiveMailserverChangedArgs(e)
+    if args.nodeAddress == "":
+      return
     self.delegate.emitMailserverWorking()
-    echo "MAILSERVER AVAILABLE: ", repr(e)
-    # We need to take some actions here. This is the only pace where "mailserverAvailable" signal should be handled.
+    echo "ACTIVE MAILSERVER CHANGED: ", repr(e)
+    # We need to take some actions here. This is the only place where "activeMailserverChanged" signal should be handled.
     # Do the following, if we really need that.
     # requestAllHistoricMessagesResult
     # requestMissingCommunityInfos
@@ -266,7 +269,7 @@ proc init*(self: Controller) =
   self.events.on(chat_service.SIGNAL_CHAT_LEFT) do(e: Args):
     let args = chat_service.ChatArgs(e)
     self.delegate.onChatLeft(args.chatId)
-  
+
   self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e: Args):
     self.delegate.onMyRequestAdded();
 
@@ -276,7 +279,7 @@ proc init*(self: Controller) =
       self.delegate.onSharedKeycarModuleKeycardSyncPurposeTerminated(args.lastStepInTheCurrentFlow)
       self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED, Args())
       return
-    if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_IDENTIFIER or 
+    if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_IDENTIFIER or
       self.authenticateUserFlowRequestedBy.len == 0:
         return
     self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
@@ -289,7 +292,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(e: Args):
     let args = SharedKeycarModuleBaseArgs(e)
-    if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_IDENTIFIER or 
+    if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_IDENTIFIER or
       self.authenticateUserFlowRequestedBy.len == 0:
         return
     self.delegate.onDisplayKeycardSharedModuleFlow()
