@@ -291,6 +291,8 @@ QtObject {
         }
     }
 
+    readonly property int chatSectionLeftColumnWidth: 304
+
     readonly property QtObject appSection: QtObject {
         readonly property int chat: 0
         readonly property int community: 1

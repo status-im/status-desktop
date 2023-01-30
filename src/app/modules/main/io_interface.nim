@@ -68,6 +68,24 @@ method chatSectionDidLoad*(self: AccessInterface) {.base.} =
 method communitySectionDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onChatsLoaded*(
+  self: AccessInterface,
+  channelGroups: seq[ChannelGroupDto],
+  events: EventEmitter,
+  settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
+  contactsService: contacts_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
+  messageService: message_service.Service,
+  gifService: gif_service.Service,
+  mailserversService: mailservers_service.Service)
+  {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onChatsLoadingFailed*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onActiveChatChange*(self: AccessInterface, sectionId: string, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

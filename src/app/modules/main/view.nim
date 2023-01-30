@@ -14,6 +14,8 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: section_model.SectionModel
       modelVariant: QVariant
+      chatsLoaded: bool
+      chatsLoadingFailed: bool
       activeSection: ActiveSection
       activeSectionVariant: QVariant
       chatSearchModel: chat_search_model.Model
@@ -40,6 +42,8 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
     result.model = section_model.newModel()
+    result.chatsLoaded = false
+    result.chatsLoadingFailed = false
     result.modelVariant = newQVariant(result.model)
     result.activeSection = newActiveSection()
     result.activeSectionVariant = newQVariant(result.activeSection)
@@ -154,6 +158,30 @@ QtObject:
 
   proc setCurrentUserStatus*(self: View, status: int) {.slot.} =
     self.delegate.setCurrentUserStatus(intToEnum(status, StatusType.Unknown))
+
+  proc chatsLoadedChanged(self: View) {.signal.}
+
+  proc chatsLoaded*(self: View) =
+    self.chatsLoaded = true
+    self.chatsLoadedChanged()
+
+  proc getChatsLoaded(self: View): bool {.slot.} =
+    return self.chatsLoaded
+  QtProperty[bool] chatsLoaded:
+    read = getChatsLoaded
+    notify = chatsLoadedChanged
+
+  proc chatsLoadingFailedChanged(self: View) {.signal.}
+
+  proc chatsLoadingFailed*(self: View) =
+    self.chatsLoadingFailed = true
+    self.chatsLoadingFailedChanged()
+
+  proc getChatsLoadingFailed(self: View): bool {.slot.} =
+    return self.chatsLoadingFailed
+  QtProperty[bool] chatsLoadingFailed:
+    read = getChatsLoadingFailed
+    notify = chatsLoadingFailedChanged
 
   # Since we cannot return QVariant from the proc which has arguments, so cannot have proc like this:
   # prepareCommunitySectionModuleForCommunityId(self: View, communityId: string): QVariant {.slot.}

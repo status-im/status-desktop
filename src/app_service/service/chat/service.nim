@@ -1,5 +1,7 @@
 import NimQml, Tables, json, sequtils, strformat, chronicles, os, std/algorithm, strutils, uuids, base64
+import std/[times, os]
 
+import ../../../app/core/tasks/[qt, threadpool]
 import ./dto/chat as chat_dto
 import ../message/dto/message as message_dto
 import ../activity_center/dto/notification as notification_dto
@@ -18,24 +20,20 @@ from ../../common/account_constants import ZERO_ADDRESS
 
 export chat_dto
 
-
 logScope:
   topics = "chat-service"
 
 include ../../common/json_utils
+include ../../../app/core/tasks/common
+include async_tasks
 
 type
+  ChannelGroupsArgs* = ref object of Args
+    channelGroups*: seq[ChannelGroupDto]
+
   ChatUpdateArgs* = ref object of Args
     chats*: seq[ChatDto]
     messages*: seq[MessageDto]
-    # TODO refactor that part
-    # pinnedMessages*: seq[MessageDto]
-    # emojiReactions*: seq[Reaction]
-    # communities*: seq[Community]
-    # communityMembershipRequests*: seq[CommunityMembershipRequest]
-    activityCenterNotifications*: seq[ActivityCenterNotificationDto]
-    # statusUpdates*: seq[StatusUpdate]
-    # deletedMessages*: seq[RemovedMessage]
 
   CreatedChatArgs* = ref object of Args
     chat*: ChatDto
@@ -85,6 +83,8 @@ type
 
 
 # Signals which may be emitted by this service:
+const SIGNAL_CHATS_LOADED* = "chatsLoaded"
+const SIGNAL_CHATS_LOADING_FAILED* = "chatsLoadingFailed"
 const SIGNAL_CHAT_UPDATE* = "chatUpdate"
 const SIGNAL_CHAT_LEFT* = "channelLeft"
 const SIGNAL_SENDING_FAILED* = "messageSendingFailed"
@@ -105,19 +105,27 @@ const SIGNAL_CHAT_CREATED* = "chatCreated"
 
 QtObject:
   type Service* = ref object of QObject
+    threadpool: ThreadPool
     events: EventEmitter
     chats: Table[string, ChatDto] # [chat_id, ChatDto]
     channelGroups: OrderedTable[string, ChannelGroupDto] # [chatGroup_id, ChannelGroupDto]
     contactService: contact_service.Service
 
   proc delete*(self: Service) =
-    discard
+    self.QObject.delete
 
-  proc newService*(events: EventEmitter, contactService: contact_service.Service): Service =
+  proc newService*(
+      events: EventEmitter,
+      threadpool: ThreadPool,
+      contactService: contact_service.Service
+    ): Service =
     new(result, delete)
+    result.QObject.setup
     result.events = events
+    result.threadpool = threadpool
     result.contactService = contactService
     result.chats = initTable[string, ChatDto]()
+    result.channelGroups = initOrderedTable[string, ChannelGroupDto]()
 
   # Forward declarations
   proc updateOrAddChat*(self: Service, chat: ChatDto)
@@ -152,19 +160,31 @@ QtObject:
           if (community.joined):
             self.updateOrAddChannelGroup(community.toChannelGroupDto())
   
+  proc getChannelGroups*(self: Service): seq[ChannelGroupDto] =
+    return toSeq(self.channelGroups.values)
+
+  proc asyncGetChats*(self: Service) =
+    let arg = AsyncGetChatsTaskArg(
+      tptr: cast[ByteAddress](asyncGetChatsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncGetChatsResponse",
+    )
+    self.threadpool.start(arg)
+
   proc sortPersonnalChatAsFirst[T, D](x, y: (T, D)): int =
     if (x[1].channelGroupType == Personal): return -1
     if (y[1].channelGroupType == Personal): return 1
     return 0
 
-  proc init*(self: Service) =  
-    self.doConnect()
-
+  proc onAsyncGetChatsResponse*(self: Service, response: string) {.slot.} =
     try:
-      let response = status_chat.getChats()
+      let rpcResponseObj = response.parseJson
+
+      if(rpcResponseObj["channelGroups"].kind == JNull):
+        raise newException(RpcException, "No channel groups returned")
 
       var chats: seq[ChatDto] = @[]
-      for (sectionId, section) in response.result.pairs:
+      for (sectionId, section) in rpcResponseObj["channelGroups"].pairs:
         var channelGroup = section.toChannelGroupDto()
         channelGroup.id = sectionId
         self.channelGroups[sectionId] = channelGroup
@@ -181,13 +201,17 @@ QtObject:
             discard status_chat.deactivateChat(chat.id)
           else:
             self.chats[chat.id] = chat
+
+      self.events.emit(SIGNAL_CHATS_LOADED, ChannelGroupsArgs(channelGroups: self.getChannelGroups()))
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
-      return
+      self.events.emit(SIGNAL_CHATS_LOADING_FAILED, Args())
 
-  proc getChannelGroups*(self: Service): seq[ChannelGroupDto] =
-    return toSeq(self.channelGroups.values)
+  proc init*(self: Service) =
+    self.doConnect()
+
+    self.asyncGetChats()
 
   proc hasChannel*(self: Service, chatId: string): bool =
     self.chats.hasKey(chatId)
