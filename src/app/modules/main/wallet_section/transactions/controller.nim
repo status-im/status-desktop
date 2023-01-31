@@ -50,7 +50,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_HISTORY_READY) do (e:Args):
     let args = HistoryArgs(e)
-    self.delegate.setHistoryFetchState(args.addresses, isFetching = false)
+    self.delegate.setHistoryFetchState(args.addresses, isFetching = true)
 
   self.events.on(SIGNAL_HISTORY_NON_ARCHIVAL_NODE) do (e:Args):
     let accounts = self.getWalletAccounts()
@@ -65,6 +65,7 @@ proc init*(self: Controller) =
     
   self.events.on(SIGNAL_TRANSACTIONS_LOADED) do(e:Args):
     let args = TransactionsLoadedArgs(e)
+    self.delegate.setHistoryFetchState(@[args.address], isFetching = false)
     self.delegate.setTrxHistoryResult(args.transactions, args.address, args.wasFetchMore)
 
   self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
