@@ -90,6 +90,19 @@ method viewDidLoad*(self: Module) =
 
   self.delegate.communitiesModuleDidLoad()
 
+method onActivated*(self: Module) =
+  self.controller.asyncLoadCuratedCommunities()
+
+method curatedCommunitiesLoaded*(self: Module, curatedCommunities: seq[CuratedCOmmunity]) =
+  self.setCuratedCommunities(curatedCommunities)
+  self.view.setCuratedCommunitiesLoading(false)
+
+method curatedCommunitiesLoading*(self: Module) =
+  self.view.setCuratedCommunitiesLoading(true)
+
+method curatedCommunitiesLoadingFailed*(self: Module) =
+  self.view.setCuratedCommunitiesLoading(false)
+
 proc createMemberItem(self: Module, memberId, requestId: string): MemberItem =
   let contactDetails = self.controller.getContactDetails(memberId)
   result = initMemberItem(

@@ -86,6 +86,16 @@ proc init*(self: Controller) =
     let args = CommunityIdArgs(e)
     self.delegate.communityHistoryArchivesDownloadFinished(args.communityId)
 
+  self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADING) do(e:Args):
+    self.delegate.curatedCommunitiesLoading()
+
+  self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED) do(e:Args):
+    self.delegate.curatedCommunitiesLoadingFailed()
+
+  self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADED) do(e:Args):
+    let args = CuratedCommunitiesArgs(e)
+    self.delegate.curatedCommunitiesLoaded(args.curatedCommunities)
+
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
 
@@ -214,6 +224,9 @@ proc userCanJoin*(self: Controller, communityId: string): bool =
 
 proc isCommunityRequestPending*(self: Controller, communityId: string): bool =
   return self.communityService.isCommunityRequestPending(communityId)
+
+proc asyncLoadCuratedCommunities*(self: Controller) =
+  self.communityService.asyncLoadCuratedCommunities()
 
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
   return self.contactsService.getStatusForContactWithId(publicKey)

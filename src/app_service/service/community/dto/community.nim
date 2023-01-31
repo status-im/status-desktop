@@ -222,7 +222,22 @@ proc parseCuratedCommunities*(response: RpcResponse[JsonNode]): seq[CuratedCommu
       ))
   if (response.result["unknownCommunities"].kind == JArray):
     for communityId in response.result["unknownCommunities"].items():
-      result.add(CuratedCOmmunity(
+      result.add(CuratedCommunity(
+        available: false,
+        communityId: communityId.getStr()
+      ))
+
+proc parseCuratedCommunities*(response: JsonNode): seq[CuratedCommunity] =
+  if (response["communities"].kind == JObject):
+    for (communityId, communityJson) in response["communities"].pairs():
+      result.add(CuratedCommunity(
+        available: true,
+        communityId: communityId,
+        community: communityJson.toCommunityDto()
+      ))
+  if (response["unknownCommunities"].kind == JArray):
+    for communityId in response["unknownCommunities"].items():
+      result.add(CuratedCommunity(
         available: false,
         communityId: communityId.getStr()
       ))

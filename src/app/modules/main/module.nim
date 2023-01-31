@@ -665,6 +665,8 @@ method activeSectionSet*[T](self: Module[T], sectionId: string) =
     echo "main-module, incorrect section id: ", sectionId
     return
 
+  if sectionId == conf.COMMUNITIESPORTAL_SECTION_ID:
+    self.communitiesModule.onActivated()
   self.view.model().setActiveSection(sectionId)
   self.view.activeSectionSet(item)
 

@@ -31,6 +31,9 @@ type
   CuratedCommunityArgs* = ref object of Args
     curatedCommunity*: CuratedCommunity
 
+  CuratedCommunitiesArgs* = ref object of Args
+    curatedCommunities*: seq[CuratedCommunity]
+
   CommunitiesArgs* = ref object of Args
     communities*: seq[CommunityDto]
 
@@ -138,6 +141,10 @@ const SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED* = "discordCategoriesAndC
 const SIGNAL_DISCORD_COMMUNITY_IMPORT_FINISHED* = "discordCommunityImportFinished"
 const SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS* = "discordCommunityImportProgress"
 
+const SIGNAL_CURATED_COMMUNITIES_LOADING* = "curatedCommunitiesLoading"
+const SIGNAL_CURATED_COMMUNITIES_LOADED* = "curatedCommunitiesLoaded"
+const SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED* = "curatedCommunitiesLoadingFailed"
+
 QtObject:
   type
     Service* = ref object of QObject
@@ -157,7 +164,7 @@ QtObject:
   proc loadCommunityTags(self: Service): string
   proc loadAllCommunities(self: Service): seq[CommunityDto]
   proc loadJoinedComunities(self: Service): seq[CommunityDto]
-  proc loadCuratedCommunities(self: Service): seq[CuratedCommunity]
+  proc asyncLoadCuratedCommunities*(self: Service)
   proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto]
   proc loadMyPendingRequestsToJoin*(self: Service)
   proc loadMyCanceledRequestsToJoin*(self: Service)
@@ -502,10 +509,6 @@ QtObject:
     for community in allCommunities:
       self.allCommunities[community.id] = community
 
-    let curatedCommunities = self.loadCuratedCommunities()
-    for curatedCommunity in curatedCommunities:
-      self.curatedCommunities[curatedCommunity.communityId] = curatedCommunity
-
     let communitiesSettings = self.loadCommunitiesSettings()
     for settings in communitiesSettings:
       if self.allCommunities.hasKey(settings.id):
@@ -537,15 +540,6 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
-      return @[]
-
-  proc loadCuratedCommunities(self: Service): seq[CuratedCommunity] =
-    try:
-      let response = status_go.getCuratedCommunities()
-      return parseCuratedCommunities(response)
-    except Exception as e:
-      let errDesription = e.msg
-      error "error loading curated communities: ", errDesription
       return @[]
 
   proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto] =
@@ -1245,6 +1239,35 @@ QtObject:
 
     self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
 
+
+  proc asyncLoadCuratedCommunities*(self: Service) =
+    self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING, Args())
+    try:
+      let arg = AsyncLoadCuratedCommunitiesTaskArg(
+        tptr: cast[ByteAddress](asyncLoadCuratedCommunitiesTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncLoadCuratedCommunitiesDone",
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error loading curated communities", msg = e.msg 
+
+  proc onAsyncLoadCuratedCommunitiesDone*(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+      if (rpcResponseObj{"error"}.kind != JNull):
+        let error = Json.decode($rpcResponseObj["error"], RpcError)
+        error "Error requesting community info", msg = error.message
+        return
+
+      let curatedCommunities = parseCuratedCommunities(rpcResponseObj{"result"})
+      for curatedCommunity in curatedCommunities:
+        self.curatedCommunities[curatedCommunity.communityId] = curatedCommunity
+      self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADED, CuratedCommunitiesArgs(curatedCommunities: self.getCuratedCommunities()))
+    except Exception as e:
+      let errMsg = e.msg
+      error "error: ", errMsg
+      self.events.emit(SIGNAL_CURATEDCOMMUNITIES_LOADING_FAILED, Args())
 
   proc requestCommunityInfo*(self: Service, communityId: string, importing = false) =
 

@@ -14,6 +14,9 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onActivated*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setCommunityTags*(self: AccessInterface, communityTags: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -146,3 +149,11 @@ method communityHistoryArchivesDownloadStarted*(self: AccessInterface, community
 method communityHistoryArchivesDownloadFinished*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method curatedCommunitiesLoading*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method curatedCommunitiesLoadingFailed*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method curatedCommunitiesLoaded*(self: AccessInterface, curatedCommunities: seq[CuratedCOmmunity]) {.base.} =
+  raise newException(ValueError, "No implementation available")
