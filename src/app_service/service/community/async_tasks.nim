@@ -11,3 +11,12 @@ const asyncRequestCommunityInfoTask: Task = proc(argEncoded: string) {.gcsafe, n
   let response = status_go.requestCommunityInfo(arg.communityId)
   let tpl: tuple[communityId: string, response: RpcResponse[JsonNode], importing: bool] = (arg.communityId, response, arg.importing)
   arg.finish(tpl)
+
+type
+  AsyncLoadCuratedCommunitiesTaskArg = ref object of QObjectTaskArg
+
+const asyncLoadCuratedCommunitiesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncLoadCuratedCommunitiesTaskArg](argEncoded)
+  let response = status_go.getCuratedCommunities()
+  arg.finish(response)
+
