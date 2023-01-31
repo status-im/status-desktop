@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>testQAbstractItemModel.qml</file>
+        <file>testQObject.qml</file>
+        <file>testQDeclarative.qml</file>
+        <file>testQQuickView.qml</file>
+    </qresource>
+</RCC>
