@@ -60,7 +60,7 @@ ColumnLayout {
 
     StyledText {
         id: noTxs
-        visible: transactionListRoot.count === 0
+        visible: !isLoading && transactionListRoot.count === 0
         text: qsTr("No transactions found")
         font.pixelSize: Style.current.primaryTextFontSize
     }
