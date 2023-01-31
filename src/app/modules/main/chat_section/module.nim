@@ -29,6 +29,8 @@ import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
 
 export io_interface
 
+const CATEGORY_ID_PREFIX = "cat-"
+
 logScope:
   topics = "chat-section-module"
 
@@ -130,7 +132,7 @@ proc removeSubmodule(self: Module, chatId: string) =
 proc addEmptyChatItemForCategory(self: Module, category: Category) =
   # Add an empty chat item that has the category info
   let emptyChatItem = chat_item.initItem(
-        id = "cat-" & category.id,
+        id = CATEGORY_ID_PREFIX & category.id,
         name = "",
         icon = "",
         color = "",
@@ -599,6 +601,8 @@ method onCommunityCategoryDeleted*(self: Module, cat: Category, chats: seq[ChatD
       newCategoryName = "",
       newCategoryPosition = -1,
     )
+  self.view.chatsModel().removeItemById(CATEGORY_ID_PREFIX & cat.id)
+
 
 method setFirstChannelAsActive*(self: Module) =
   if(self.view.chatsModel().getCount() == 0):
@@ -614,7 +618,7 @@ method onCommunityCategoryChannelChanged*(self: Module, channelId: string, newCa
     else:
       self.setActiveItem(channelId)
 
-method onReorderChat*(self: Module, chatId: string, position: int, newCategoryIdForChat: string) =
+method onReorderChat*(self: Module, chatId: string, position: int, newCategoryIdForChat: string, prevCategoryId: string, prevCategoryDeleted: bool) =
   var newCategoryName = ""
   var newCategoryPos = -1
   if newCategoryIdForChat != "":
@@ -622,6 +626,10 @@ method onReorderChat*(self: Module, chatId: string, position: int, newCategoryId
     newCategoryName = newCategory.name
     newCategoryPos = newCategory.position
   self.view.chatsModel().reorderChatById(chatId, position, newCategoryIdForChat, newCategoryName, newCategoryPos)
+  if prevCategoryId != "" and not prevCategoryDeleted:
+    if not self.view.chatsModel().hasEmptyChatItem(CATEGORY_ID_PREFIX & prevCategoryId):
+      let category = self.controller.getCommunityCategoryDetails(self.controller.getMySectionId(), prevCategoryId)
+      self.addEmptyChatItemForCategory(category)
 
 method onReorderCategory*(self: Module, catId: string, position: int) =
   self.view.chatsModel().reorderCategoryById(catId, position)
