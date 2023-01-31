@@ -1,0 +1,13 @@
+find_package(Doxygen)
+
+if (DOXYGEN_FOUND)
+  set(INPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
+  set(INPUT_CSS_FILE ${CMAKE_CURRENT_SOURCE_DIR}/qtify.css)
+  set(INPUT_README_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../README.md)
+  set(OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
+  set(OUTPUT_FILE ${OUTPUT_DIR}/Doxyfile)
+  set(OUTPUT_CSS_FILE ${OUTPUT_DIR}/qtify.css)
+  configure_file(${INPUT_FILE} ${OUTPUT_FILE} @ONLY)
+  file(COPY ${INPUT_CSS_FILE} ${INPUT_README_FILE} DESTINATION ${OUTPUT_DIR})
+  add_custom_target(doc ${DOXYGEN_EXECUTABLE} ${OUTPUT_FILE} WORKING_DIRECTORY ${OUTPUT_DIR} COMMENT "Generating the API documentation with Doxygen" VERBATIM)
+endif()
