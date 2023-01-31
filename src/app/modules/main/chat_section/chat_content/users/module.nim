@@ -53,10 +53,7 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  let members = self.controller.getChatMembers()
-  for member in members:
-    self.addChatMember(member)
-
+  self.updateMembersList()
   self.moduleLoaded = true
 
 method getModuleAsVariant*(self: Module): QVariant =
@@ -176,3 +173,8 @@ method addGroupMembers*(self: Module, pubKeys: seq[string]) =
 
 method removeGroupMembers*(self: Module, pubKeys: seq[string]) =
   self.controller.removeGroupMembers(pubKeys)
+
+method updateMembersList*(self: Module) =
+  let members = self.controller.getChatMembers()
+  for member in members:
+    self.addChatMember(member)

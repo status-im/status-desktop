@@ -325,3 +325,6 @@ method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUp
 
 method switchToChannel*(self: AccessInterface, channelName: string) =
   raise newException(ValueError, "No implementation available")
+
+method joinSpectatedCommunity*(self: AccessInterface) =
+  raise newException(ValueError, "No implementation available")
