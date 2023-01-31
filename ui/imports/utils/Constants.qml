@@ -656,6 +656,7 @@ QtObject {
     readonly property string generatedWalletType: "generated"
 
     readonly property string dummyText: "Dummy"
+    readonly property int dummyModelItems: 25
 
     readonly property string windows: "windows"
     readonly property string linux: "linux"
