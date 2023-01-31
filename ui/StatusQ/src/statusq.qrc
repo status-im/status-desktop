@@ -17,7 +17,6 @@
         <file>StatusQ/Components/StatusChatInfoToolBar.qml</file>
         <file>StatusQ/Components/StatusChatList.qml</file>
         <file>StatusQ/Components/StatusChatListAndCategories.qml</file>
-        <file>StatusQ/Components/StatusChatListCategory.qml</file>
         <file>StatusQ/Components/StatusChatListCategoryItem.qml</file>
         <file>StatusQ/Components/StatusChatListItem.qml</file>
         <file>StatusQ/Components/StatusToolBar.qml</file>
