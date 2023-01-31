@@ -8,8 +8,6 @@ import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
-import utils 1.0 as LocalUtils
-
 Item {
     id: root
 
@@ -116,7 +114,7 @@ Item {
 
         delegate: Loader {
             id: chatLoader
-            active: model.type !== LocalUtils.Constants.chatType.category && model.categoryOpened
+            active: model.type !== d.chatTypeCategory && model.categoryOpened
             // TODO fix height not adjusting
             // This below doesn't work well, the height stays at 0 after reopening
             // height: active && item ? item.height : 0
@@ -303,6 +301,7 @@ Item {
         id: d
 
         property int destinationPosition: -1
+        readonly property int chatTypeCategory: -1
     }
 
     Loader {
