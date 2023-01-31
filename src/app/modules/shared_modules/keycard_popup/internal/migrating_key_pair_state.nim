@@ -34,10 +34,7 @@ proc runStoreMetadataFlow(self: MigratingKeyPairState, controller: Controller) =
 
 method executePrePrimaryStateCommand*(self: MigratingKeyPairState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
-    if controller.getSelectedKeyPairIsProfile():
-      controller.authenticateUser()
-    else:
-      self.doMigration(controller)
+    controller.authenticateUser()
 
 method executePreSecondaryStateCommand*(self: MigratingKeyPairState, controller: Controller) =
   ## Secondary action is called after each async action during migration process. 
@@ -62,6 +59,13 @@ method executePreSecondaryStateCommand*(self: MigratingKeyPairState, controller:
         if self.profileConversionOk:
           self.runStoreMetadataFlow(controller)
     else:
+      if not self.authenticationDone:
+        self.authenticationDone = true
+        let password = controller.getPassword()
+        self.authenticationOk = controller.verifyPassword(password)
+        if self.authenticationOk:
+          self.doMigration(controller)
+          return
       if not self.addingMigratedKeypairDone:
         self.addingMigratedKeypairDone = true
         self.addingMigratedKeypairOk = controller.getAddingMigratedKeypairSuccess()

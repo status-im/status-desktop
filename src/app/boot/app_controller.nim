@@ -479,8 +479,7 @@ proc buildAndRegisterUserProfile(self: AppController) =
         keycardLocked: false,
         accountsAddresses: @[defaultWalletAddress],
         keyUid: loggedInAccount.keyUid)
-      let keystoreDir = self.accountsService.getKeyStoreDir()
-      discard self.walletAccountService.addMigratedKeyPair(keyPair, keystoreDir)
+      discard self.walletAccountService.addMigratedKeyPair(keyPair)
     if self.syncKeycardBasedOnAppWalletState:
       let allAccounts = self.walletAccountService.fetchAccounts()
       let accountsForLoggedInUser = allAccounts.filter(a => a.keyUid == loggedInAccount.keyUid)
@@ -505,8 +504,7 @@ proc buildAndRegisterUserProfile(self: AppController) =
       let (_, kcEvent) = self.keycardService.getLastReceivedKeycardData()
       if kcEvent.instanceUID.len > 0:
         keyPair.keycardUid = kcEvent.instanceUID
-        let keystoreDir = self.accountsService.getKeyStoreDir()
-        discard self.walletAccountService.addMigratedKeyPair(keyPair, keystoreDir)
+        discard self.walletAccountService.addMigratedKeyPair(keyPair)
 
     if self.changedKeycardUids.len > 0:
       let oldUid = self.changedKeycardUids[0].oldKcUid

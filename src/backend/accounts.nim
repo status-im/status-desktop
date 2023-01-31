@@ -21,11 +21,9 @@ const WATCH* = "watch"
 proc getAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("accounts_getAccounts")
 
-proc deleteAccount*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  return core.callPrivateRPC("accounts_deleteAccount", %* [address])
-
-proc deleteAccountForMigratedKeypair*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  return core.callPrivateRPC("accounts_deleteAccountForMigratedKeypair", %* [address])
+proc deleteAccount*(address: string, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [address, password]
+  return core.callPrivateRPC("accounts_deleteAccount", payload)
 
 proc saveAccount*(name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, accountType, color, emoji: string,
   walletDefaultAccount: bool, chatDefaultAccount: bool): 
