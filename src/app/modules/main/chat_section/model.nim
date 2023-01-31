@@ -185,6 +185,12 @@ QtObject:
       idx.inc
     return -1
 
+  proc hasEmptyChatItem*(self: Model, categoryId: string): bool =
+    for it in self.items:
+      if it.id == categoryId:
+        return true
+    return false
+
   proc getCategoryNameForCategoryId*(self: Model, categoryId: string): string {.slot.} =
     let index = self.getItemIdxByCategory(categoryId)
     if index == -1:
@@ -391,7 +397,7 @@ QtObject:
         continue
       item.categoryName = newName
       let modelIndex = self.createIndex(i, 0, nil)
-      self.dataChanged(modelIndex, modelIndex, @[ModelRole.CategoryName.int])
+      self.dataChanged(modelIndex, modelIndex, @[ModelRole.CategoryId.int, ModelRole.CategoryName.int])
 
   proc renameItemById*(self: Model, id, name: string) =
     let index = self.getItemIdxById(id)

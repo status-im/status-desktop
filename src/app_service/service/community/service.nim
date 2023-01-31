@@ -52,6 +52,8 @@ type
     chatId*: string
     categoryId*: string
     position*: int
+    prevCategoryId*: string
+    prevCategoryDeleted*: bool
 
   CommunityCategoryOrderArgs* = ref object of Args
     communityId*: string
@@ -371,10 +373,14 @@ QtObject:
       if community.settings.id == "":
         community.settings = prev_community.settings
 
+      var deletedCategories: seq[string] = @[]
+
       # category was added
       if(community.categories.len > prev_community.categories.len):
         for category in community.categories:
           if findIndexById(category.id, prev_community.categories) == -1:
+            self.allCommunities[community.id].categories.add(category)
+            self.joinedCommunities[community.id].categories.add(category)
             let chats = self.getChatsInCategory(community, category.id)
 
             self.events.emit(SIGNAL_COMMUNITY_CATEGORY_CREATED,
@@ -384,6 +390,7 @@ QtObject:
       elif(community.categories.len < prev_community.categories.len):
         for prv_category in prev_community.categories:
           if findIndexById(prv_category.id, community.categories) == -1:
+            deletedCategories.add(prv_category.id)
             self.events.emit(SIGNAL_COMMUNITY_CATEGORY_DELETED,
               CommunityCategoryArgs(communityId: community.id, category: Category(id: prv_category.id)))
 
@@ -440,8 +447,16 @@ QtObject:
 
           # Handle channel was added/removed to/from category
           if chat.categoryId != prev_chat.categoryId:
+
+            var prevCategoryDeleted = false
+            if chat.categoryId == "":
+              for catId in deletedCategories:
+                if prev_chat.categoryId == catId:
+                  prevCategoryDeleted = true
+                  break
+
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED, CommunityChatOrderArgs(communityId: community.id,
-            chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
+                                                                                               chatId: chat.id, categoryId: chat.categoryId, position: chat.position, prevCategoryId: prev_chat.categoryId, prevCategoryDeleted: prevCategoryDeleted))
 
           # Handle name/description changes
           if chat.name != prev_chat.name or chat.description != prev_chat.description or chat.color != prev_chat.color:
