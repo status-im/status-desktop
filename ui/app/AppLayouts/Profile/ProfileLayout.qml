@@ -263,6 +263,8 @@ StatusSectionLayout {
                 contentWidth: d.contentWidth
 
                 store: QtObject {
+                    readonly property bool isProduction: production
+
                     function checkForUpdates() {
                         return root.store.checkForUpdates()
                     }
@@ -272,7 +274,10 @@ StatusSectionLayout {
                     }
 
                     function getReleaseNotes() {
-                        openLink("https://github.com/status-im/status-desktop/releases/%1".arg(getCurrentVersion()))
+                        const link = isProduction ? "https://github.com/status-im/status-desktop/releases/%1".arg(getCurrentVersion()) :
+                                                    "https://github.com/status-im/status-desktop/"
+
+                        openLink(link)
                     }
 
                     function openLink(url) {

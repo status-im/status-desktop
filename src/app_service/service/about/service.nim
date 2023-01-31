@@ -12,9 +12,6 @@ import ../../../constants
 logScope:
   topics = "about-service"
 
-# This is changed during compilation by reading the VERSION file
-const DESKTOP_VERSION {.strdefine.} = "0.0.0"
-
 const APP_UPDATES_ENS* = "desktop.status.eth"
 
 type
@@ -48,7 +45,7 @@ QtObject:
     result.threadpool = threadpool
 
   proc getAppVersion*(self: Service): string =
-    return DESKTOP_VERSION
+    return APP_VERSION
 
   proc getNodeVersion*(self: Service): string =
     try:
@@ -58,7 +55,7 @@ QtObject:
 
   proc checkForUpdates*(self: Service) =
     try:
-      discard status_about.checkForUpdates(types.Mainnet, APP_UPDATES_ENS, DESKTOP_VERSION)
+      discard status_about.checkForUpdates(types.Mainnet, APP_UPDATES_ENS, self.getAppVersion())
     except Exception as e:
       error "Error checking for updates", msg=e.msg
 

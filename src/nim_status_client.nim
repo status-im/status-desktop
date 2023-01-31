@@ -166,7 +166,7 @@ proc mainProc() =
   keycardServiceQObjPointer = cast[pointer](appController.keycardService.vptr)
   setupRemoteSignalsHandling()
 
-  info fmt("Version: {DESKTOP_VERSION}")
+  info fmt("Version: {APP_VERSION}")
   info fmt("Commit: {GIT_COMMIT}")
   info "Current date:", currentDateTime=now()
 

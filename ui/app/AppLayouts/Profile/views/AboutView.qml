@@ -16,6 +16,7 @@ SettingsContentBase {
 
     property var store
 
+    titleRowComponentLoader.active: root.store.isProduction
     titleRowComponentLoader.sourceComponent: StatusButton {
         size: StatusBaseButton.Size.Small
         text: qsTr("Check for updates")
