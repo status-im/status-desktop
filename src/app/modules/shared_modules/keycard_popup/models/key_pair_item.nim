@@ -192,6 +192,8 @@ QtObject:
     self.setLastAccountAsObservedAccount()
   proc containsAccountAddress*(self: KeyPairItem, address: string): bool =
     return self.accounts.containsAccountAddress(address)
+  proc containsPathOutOfTheDefaultStatusDerivationTree*(self: KeyPairItem): bool {.slot.} =
+    return self.accounts.containsPathOutOfTheDefaultStatusDerivationTree()
   proc updateDetailsForAccountWithAddressIfTheyAreSet*(self: KeyPairItem, address, name, color, emoji: string) =
     self.accounts.updateDetailsForAddressIfTheyAreSet(address, name, color, emoji)
 

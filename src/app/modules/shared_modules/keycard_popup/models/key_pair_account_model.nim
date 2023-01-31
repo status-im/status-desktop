@@ -1,6 +1,8 @@
 import NimQml, Tables, strformat, strutils
 import key_pair_account_item
 
+import ../../../../../app_service/common/account_constants
+
 export key_pair_account_item
 
 type
@@ -78,6 +80,14 @@ QtObject:
         return true
     return false
 
+  proc containsPathOutOfTheDefaultStatusDerivationTree*(self: KeyPairAccountModel): bool =
+    for it in self.items:
+      if not it.getPath().startsWith(account_constants.PATH_WALLET_ROOT&"/") or
+        it.getPath().count("'") != 3 or
+        it.getPath().count("/") != 5: 
+          return true
+    return false
+
   proc getItemAtIndex*(self: KeyPairAccountModel, index: int): KeyPairAccountItem =
     if index < 0 or index >= self.items.len:
       return newKeyPairAccountItem()
@@ -109,3 +119,4 @@ QtObject:
         if emoji.len > 0:
           self.items[i].setEmoji(emoji)
         return
+      

@@ -186,6 +186,10 @@ QtObject {
         globalUtils.copyToClipboard(text)
     }
 
+    function getDerivedAddress(password, derivedFrom, path, hashPassword) {
+        walletSectionAccounts.getDerivedAddress(password, derivedFrom, path, hashPassword)
+    }
+
     function getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber, hashPassword) {
         walletSectionAccounts.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber, hashPassword)
     }
@@ -246,7 +250,7 @@ QtObject {
         walletSectionAccounts.destroySharedKeycarModule()
     }
 
-    function authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath) {
-        walletSectionAccounts.authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath)
+    function authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath, searchForFirstAvailableAddress) {
+        walletSectionAccounts.authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath, searchForFirstAvailableAddress)
     }
 }

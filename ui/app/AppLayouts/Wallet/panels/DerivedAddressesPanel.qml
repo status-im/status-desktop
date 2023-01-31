@@ -32,6 +32,7 @@ Item {
         selectedDerivedAddress.pathSubFix = 0
         selectedDerivedAddress.title = "---"
         selectedDerivedAddress.subTitle = qsTr("No activity")
+        selectedDerivedAddress.enabled = false
     }
 
     onIsLoadingChanged:  {
@@ -77,7 +78,7 @@ Item {
 
         function runAction() {
             if (derivedAddresses.selectedKeyUidMigratedToKeycard)
-                RootStore.authenticateUserAndDeriveAddressOnKeycardForPath(derivedAddresses.selectedKeyUid, derivedAddresses.selectedPath)
+                RootStore.authenticateUserAndDeriveAddressOnKeycardForPath(derivedAddresses.selectedKeyUid, derivedAddresses.selectedPath, false)
             else
                 RootStore.authenticateUser()
         }
