@@ -4,7 +4,9 @@ import QtQuick.Controls 2.13
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+
 import shared.panels 1.0
+import utils 1.0
 
 import "collectibles"
 
@@ -23,30 +25,9 @@ Item {
         height: parent.height
 
         sourceComponent: {
-            if (!root.areCollectionsLoaded)
-            {
-                return loading
-            } else if (root.collectiblesModel.collectionCount === 0) {
+            if (root.areCollectionsLoaded && root.collectiblesModel.collectionCount === 0)
                 return empty;
-            } else if (root.collectiblesModel.count === 0) {
-                return loading
-            }
             return loaded;
-        }
-    }
-
-    Component {
-        id: loading
-
-        Item {
-            id: loadingIndicator
-            height: 164
-            StatusLoadingIndicator {
-                width: 20
-                height: 20
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
         }
     }
 
@@ -68,19 +49,16 @@ Item {
         StatusGridView {
             id: gridView
             anchors.fill: parent
-            model: root.collectiblesModel
+            model: root.areCollectionsLoaded ? root.collectiblesModel : Constants.dummyModelItems
             cellHeight: 229
             cellWidth: 176
-            delegate: Item {
+            delegate: CollectibleView {
                 height: gridView.cellHeight
                 width: gridView.cellWidth
-                CollectibleView {
-                    collectibleModel: model
-                    anchors.fill: parent
-                    anchors.bottomMargin: 4
-                    onCollectibleClicked: {
-                        root.collectibleClicked(slug, collectibleId);
-                    }
+                collectibleModel: root.areCollectionsLoaded ? model : undefined
+                isLoadingDelegate: !root.areCollectionsLoaded
+                onCollectibleClicked: {
+                    root.collectibleClicked(slug, collectibleId);
                 }
             }
         }
