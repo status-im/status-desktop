@@ -1017,3 +1017,7 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
   for s in statusUpdates:
     let status = toOnlineStatus(s.statusType)
     self.view.chatsModel().updateItemOnlineStatusById(s.publicKey, status)
+
+method joinSpectatedCommunity*(self: Module) =
+  if self.usersModule != nil:
+    self.usersModule.updateMembersList()

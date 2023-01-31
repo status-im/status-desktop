@@ -1,4 +1,4 @@
-import NimQml, tables, json, sugar, sequtils, strformat, marshal, times
+import NimQml, tables, json, sugar, sequtils, strformat, marshal, times, chronicles
 
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
@@ -709,6 +709,24 @@ method communityJoined*[T](
   var firstCommunityJoined = false
   if (self.channelGroupModules.len == 1): # First one is personal chat section
     firstCommunityJoined = true
+
+  if(community.permissions.access == COMMUNITY_PERMISSION_ACCESS_ON_REQUEST and 
+    community.requestedToJoinAt > 0 and 
+    community.joined):
+    singletonInstance.globalEvents.myRequestToJoinCommunityAcccepted("Community Request Accepted",
+      fmt "Your request to join community {community.name} is accepted", community.id)
+    self.displayEphemeralNotification(fmt "{community.name} membership approved ", "", conf.COMMUNITIESPORTAL_SECTION_ICON, false, EphemeralNotificationType.Success.int, "")
+
+  # if we are joining spectated community
+  if self.channelGroupModules.hasKey(community.id):
+    let communityModule = self.channelGroupModules[community.id]
+    # Must never happen
+    if not communityModule.isLoaded():
+      error "Community module was not loaded in spectated mode", communityId=community.id
+
+    communityModule.joinSpectatedCommunity()
+    return
+    
   self.channelGroupModules[community.id] = chat_section_module.newModule(
       self,
       events,
@@ -734,13 +752,6 @@ method communityJoined*[T](
       self.view.model().getItemIndex(singletonInstance.userProfile.getPubKey()) + 1)
   else:
     self.view.model().addItem(communitySectionItem)
-
-  if(community.permissions.access == COMMUNITY_PERMISSION_ACCESS_ON_REQUEST and 
-    community.requestedToJoinAt > 0 and 
-    community.joined):
-    singletonInstance.globalEvents.myRequestToJoinCommunityAcccepted("Community Request Accepted",
-      fmt "Your request to join community {community.name} is accepted", community.id)
-    self.displayEphemeralNotification(fmt "{community.name} membership approved ", "", conf.COMMUNITIESPORTAL_SECTION_ICON, false, EphemeralNotificationType.Success.int, "")
 
   if setActive:
     self.setActiveSection(communitySectionItem)

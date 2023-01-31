@@ -70,7 +70,6 @@ type
   CommunityMembersArgs* = ref object of Args
     communityId*: string
     members*: seq[ChatMember]
-    isMember*: bool
 
   CommunityMutedArgs* = ref object of Args
     communityId*: string
@@ -454,9 +453,9 @@ QtObject:
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
 
       # members list was changed
-      if community.members != prev_community.members:
+      if community.isMember and community.members != prev_community.members:
         self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED, 
-        CommunityMembersArgs(communityId: community.id, members: community.members, isMember: community.isMember))
+        CommunityMembersArgs(communityId: community.id, members: community.members))
 
       self.allCommunities[community.id] = community
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
