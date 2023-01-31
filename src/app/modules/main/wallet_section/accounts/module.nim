@@ -180,15 +180,24 @@ method addAccountsFromSeed*(self: Module, seedPhrase: string, password: string, 
 method addWatchOnlyAccount*(self: Module, address: string, accountName: string, color: string, emoji: string): string =
   return self.controller.addWatchOnlyAccount(address, accountName, color, emoji)
 
-method deleteAccount*(self: Module, keyUid: string, address: string) =
+proc authenticateActivityForKeyUid(self: Module, keyUid: string, reason: AuthenticationReason) =
+  self.authentiactionReason = reason
   let keyPair = self.controller.getMigratedKeyPairByKeyUid(keyUid)
   let keyPairMigratedToKeycard = keyPair.len > 0
-  if not keyPairMigratedToKeycard:
-    self.controller.deleteAccount(address, keyPairMigratedToKeycard)
+  if keyPairMigratedToKeycard:
+    self.controller.authenticateKeyPair(keyUid)
   else:
-    self.authentiactionReason = AuthenticationReason.DeleteAccountAuthentication
-    self.processingWalletAccount = WalletAccountDetails(keyUid: keyUid, address: address)
-    self.controller.authenticateUser(keyUid)
+    if singletonInstance.userProfile.getIsKeycardUser():
+      ## We're here in case the keypair we're conducting an action for is not migrated to a keycard, but
+      ## profile keypair is migrated, then we're authenticating profile keypair (logged in user).
+      self.processingWalletAccount.keyUid = singletonInstance.userProfile.getKeyUid()
+      self.controller.authenticateKeyPair(singletonInstance.userProfile.getKeyUid())
+    else:
+      self.controller.authenticateKeyPair()
+
+method deleteAccount*(self: Module, keyUid: string, address: string) =
+  self.processingWalletAccount = WalletAccountDetails(keyUid: keyUid, address: address)
+  self.authenticateActivityForKeyUid(keyUid, AuthenticationReason.DeleteAccountAuthentication)
 
 method getDerivedAddressList*(self: Module, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool) =
   self.controller.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber, hashPassword)
@@ -203,12 +212,7 @@ method validSeedPhrase*(self: Module, value: string): bool =
   return self.controller.validSeedPhrase(value)
 
 method authenticateUser*(self: Module) =
-  self.authentiactionReason = AuthenticationReason.LoggedInUserAuthentication
-  if singletonInstance.userProfile.getIsKeycardUser():
-    let keyUid = singletonInstance.userProfile.getKeyUid()
-    self.controller.authenticateUser(keyUid)
-  else:
-    self.controller.authenticateUser()
+  self.authenticateActivityForKeyUid(singletonInstance.userProfile.getKeyUid(), AuthenticationReason.LoggedInUserAuthentication)
 
 method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
   if self.authentiactionReason == AuthenticationReason.LoggedInUserAuthentication or
@@ -219,8 +223,13 @@ method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid:
         self.view.userAuthentiactionFail()
   elif self.authentiactionReason == AuthenticationReason.DeleteAccountAuthentication:
     if self.processingWalletAccount.keyUid == keyUid:
-      self.controller.deleteAccount(self.processingWalletAccount.address, true)
-      self.tryKeycardSync(keyUid, pin)
+      # keycard keypair authentication
+      self.controller.deleteAccount(self.processingWalletAccount.address)
+      if pin.len == PINLengthForStatusApp:
+        self.tryKeycardSync(keyUid, pin)
+    if password.len > 0 and keyUid.len == 0:
+      # regular keypair authentication
+      self.controller.deleteAccount(self.processingWalletAccount.address, password)      
 
 method createSharedKeycardModule*(self: Module) =
   if self.keycardSharedModule.isNil:

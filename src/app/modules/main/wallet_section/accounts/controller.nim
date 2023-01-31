@@ -90,8 +90,8 @@ proc addAccountsFromSeed*(self: Controller, seedPhrase: string, password: string
 proc addWatchOnlyAccount*(self: Controller, address: string, accountName: string, color: string, emoji: string): string =
   return self.walletAccountService.addWatchOnlyAccount(address, accountName, color, emoji)
 
-proc deleteAccount*(self: Controller, address: string, keyPairMigratedToKeycard: bool) =
-  self.walletAccountService.deleteAccount(address, keyPairMigratedToKeycard)
+proc deleteAccount*(self: Controller, address: string, password = "") =
+  self.walletAccountService.deleteAccount(address, password)
 
 proc fetchDerivedAddressDetails*(self: Controller, address: string) =
   self.walletAccountService.fetchDerivedAddressDetails(address)
@@ -109,7 +109,7 @@ proc validSeedPhrase*(self: Controller, seedPhrase: string): bool =
   let err = self.accountsService.validateMnemonic(seedPhrase)
   return err.len == 0
 
-proc authenticateUser*(self: Controller, keyUid = "") =
+proc authenticateKeyPair*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_ACCOUNTS_MODULE_AUTH_IDENTIFIER,
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)

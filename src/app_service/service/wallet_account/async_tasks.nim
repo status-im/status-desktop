@@ -110,7 +110,7 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
 type
   AddMigratedKeyPairTaskArg* = ref object of QObjectTaskArg
     keyPair: KeyPairDto 
-    keyStoreDir: string
+    password: string
 
 const addMigratedKeyPairTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AddMigratedKeyPairTaskArg](argEncoded)
@@ -120,7 +120,7 @@ const addMigratedKeyPairTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
       arg.keyPair.keycardName,
       arg.keyPair.keyUid,
       arg.keyPair.accountsAddresses,
-      arg.keyStoreDir
+      arg.password
       )
     let success = responseHasNoErrors("addMigratedKeyPair", response)
     let responseJson = %*{
