@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.14
 Rectangle {
     id: root
 
+    z: 1000
     border.color: 'red'
     color: 'transparent'
 
