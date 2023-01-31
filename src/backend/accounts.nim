@@ -313,6 +313,10 @@ proc setDisplayName*(displayName: string): RpcResponse[JsonNode] {.raises: [Exce
   let payload = %* [displayName]
   result = core.callPrivateRPC("setDisplayName".prefix, payload)
 
+proc getDerivedAddress*(password: string, derivedFrom: string, path: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [password, derivedFrom, path]
+  result = core.callPrivateRPC("wallet_getDerivedAddressForPath", payload)
+
 proc getDerivedAddressList*(password: string, derivedFrom: string, path: string, pageSize: int = 0, pageNumber: int = 6,): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [password, derivedFrom, path, pageSize, pageNumber ]
   result = core.callPrivateRPC("wallet_getDerivedAddressesForPath", payload)

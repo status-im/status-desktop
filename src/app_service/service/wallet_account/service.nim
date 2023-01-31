@@ -433,6 +433,17 @@ QtObject:
       account.emoji = emoji
       self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
 
+  proc getDerivedAddress*(self: Service, password: string, derivedFrom: string, path: string, hashPassword: bool)=
+    let arg = GetDerivedAddressTaskArg(
+      password: if hashPassword: hashPassword(password) else: password,
+      derivedFrom: derivedFrom,
+      path: path,
+      tptr: cast[ByteAddress](getDerivedAddressTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "setDerivedAddress",
+    )
+    self.threadpool.start(arg)
+
   proc getDerivedAddressList*(self: Service, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool)=
     let arg = GetDerivedAddressesTaskArg(
       password: if hashPassword: hashPassword(password) else: password,
@@ -476,6 +487,16 @@ QtObject:
     # emit event
     self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY, DerivedAddressesArgs(
       derivedAddresses: derivedAddress,
+      error: error
+    ))
+
+  proc setDerivedAddress*(self: Service, derivedAddressesJson: string) {.slot.} =
+    let response = parseJson(derivedAddressesJson)
+    let derivedAddress = response["derivedAddresses"].toDerivedAddressDto()
+    let error = response["error"].getStr()
+    # emit event
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY, DerivedAddressesArgs(
+      derivedAddresses: @[derivedAddress],
       error: error
     ))
 

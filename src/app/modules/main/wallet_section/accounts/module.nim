@@ -199,6 +199,9 @@ method deleteAccount*(self: Module, keyUid: string, address: string) =
   self.processingWalletAccount = WalletAccountDetails(keyUid: keyUid, address: address)
   self.authenticateActivityForKeyUid(keyUid, AuthenticationReason.DeleteAccountAuthentication)
 
+method getDerivedAddress*(self: Module, password: string, derivedFrom: string, path: string, hashPassword: bool) =
+  self.controller.getDerivedAddress(password, derivedFrom, path, hashPassword)
+
 method getDerivedAddressList*(self: Module, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool) =
   self.controller.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber, hashPassword)
 
@@ -266,11 +269,12 @@ proc findFirstAvaliablePathForWallet(self: Module, keyUid: string): string =
       return path
   error "we couldn't find available wallet account path"
   
-method authenticateUserAndDeriveAddressOnKeycardForPath*(self: Module, keyUid: string, derivationPath: string) =
+method authenticateUserAndDeriveAddressOnKeycardForPath*(self: Module, keyUid: string, derivationPath: string, searchForFirstAvailableAddress: bool) =
   self.authentiactionReason = AuthenticationReason.DeriveAccountForKeyPairAuthentication
   var finalPath = derivationPath
-  if self.checkIfWalletAccountIsAlreadyCreated(keyUid, finalPath):
-    finalPath = self.findFirstAvaliablePathForWallet(keyUid)
+  if searchForFirstAvailableAddress and
+    self.checkIfWalletAccountIsAlreadyCreated(keyUid, finalPath):
+      finalPath = self.findFirstAvaliablePathForWallet(keyUid)
   if self.keycardSharedModule.isNil:
     self.createSharedKeycardModule()
   self.processingWalletAccount = WalletAccountDetails(keyUid: keyUid, path: finalPath)

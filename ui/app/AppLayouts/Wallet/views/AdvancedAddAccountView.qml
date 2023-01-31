@@ -16,11 +16,12 @@ import "../panels"
 ColumnLayout {
     id: advancedSection
 
+    readonly property alias useFullyCustomPath: fullyCustomPathCheckBox.checked
     property int addAccountType: Constants.AddAccountType.GenerateNew
     property string selectedKeyUid: RootStore.defaultSelectedKeyUid
     property bool selectedKeyUidMigratedToKeycard: RootStore.defaultSelectedKeyUidMigratedToKeycard
     property string selectedAddress: ""
-    property bool selectedAddressAvailable: true
+    property bool selectedAddressAvailable: false
     property string enterPasswordIcon: ""
     property string derivedFromAddress: ""
     property string mnemonicText: ""
@@ -76,11 +77,11 @@ ColumnLayout {
     onPathChanged:  {
         if(addAccountType === Constants.AddAccountType.ImportSeedPhrase) {
             if(importSeedPhrasePanel.isValid) {
-                calculateDerivedPath()
+                advancedSection.calculateDerivedPath()
             }
         }
         else {
-            calculateDerivedPath()
+            advancedSection.calculateDerivedPath()
         }
     }
 
@@ -90,11 +91,11 @@ ColumnLayout {
 
         if(addAccountType === Constants.AddAccountType.ImportSeedPhrase) {
             if(importSeedPhrasePanel.isValid) {
-                calculateDerivedPath()
+                advancedSection.calculateDerivedPath()
             }
         }
         else {
-            calculateDerivedPath()
+            advancedSection.calculateDerivedPath()
         }
     }
 
@@ -146,35 +147,50 @@ ColumnLayout {
         ]
     }
 
-    RowLayout {
+    ColumnLayout {
         Layout.preferredWidth: parent.width
-        Layout.rightMargin: 2
-        spacing: Style.current.bigPadding
-        visible: advancedSection.addAccountType !== Constants.AddAccountType.ImportPrivateKey &&
-                 advancedSection.addAccountType !== Constants.AddAccountType.WatchOnly
+        spacing: 0
 
-        readonly property int itemWidth: (advancedSection.width - Style.current.bigPadding) * 0.5
+        RowLayout {
+            Layout.preferredWidth: advancedSection.width
+            Layout.rightMargin: 2
+            spacing: Style.current.bigPadding
+            visible: advancedSection.addAccountType !== Constants.AddAccountType.ImportPrivateKey &&
+                     advancedSection.addAccountType !== Constants.AddAccountType.WatchOnly
 
-        DerivationPathsPanel {
-            id: derivationPathsPanel
-            Layout.preferredWidth: parent.itemWidth
-            Layout.alignment: Qt.AlignTop
-            Component.onCompleted: advancedSection.path = Qt.binding(function() { return derivationPathsPanel.path})
+            readonly property int itemWidth: (advancedSection.width - Style.current.bigPadding) * 0.5
+
+            DerivationPathsPanel {
+                id: derivationPathsPanel
+                useFullyCustomPath: fullyCustomPathCheckBox.checked
+                Layout.preferredWidth: parent.itemWidth
+                Layout.alignment: Qt.AlignTop
+                Component.onCompleted: advancedSection.path = Qt.binding(function() { return derivationPathsPanel.path})
+            }
+            DerivedAddressesPanel {
+                id: derivedAddressesPanel
+                Layout.preferredWidth: parent.itemWidth
+                Layout.alignment: Qt.AlignTop
+
+                selectedAccountType: advancedSection.addAccountType
+                selectedKeyUid: advancedSection.selectedKeyUid
+                selectedKeyUidMigratedToKeycard: advancedSection.selectedKeyUidMigratedToKeycard
+                selectedPath: advancedSection.path
+
+                Component.onCompleted: {
+                    advancedSection.selectedAddress = Qt.binding(function() { return derivedAddressesPanel.selectedAddress})
+                    advancedSection.selectedAddressAvailable = Qt.binding(function() { return derivedAddressesPanel.selectedAddressAvailable})
+                    advancedSection.pathSubFix = Qt.binding(function() { return derivedAddressesPanel.pathSubFix})
+                }
+            }
         }
-        DerivedAddressesPanel {
-            id: derivedAddressesPanel
-            Layout.preferredWidth: parent.itemWidth
-            Layout.alignment: Qt.AlignTop
 
-            selectedAccountType: advancedSection.addAccountType
-            selectedKeyUid: advancedSection.selectedKeyUid
-            selectedKeyUidMigratedToKeycard: advancedSection.selectedKeyUidMigratedToKeycard
-            selectedPath: advancedSection.path
-
-            Component.onCompleted: {
-                advancedSection.selectedAddress = Qt.binding(function() { return derivedAddressesPanel.selectedAddress})
-                advancedSection.selectedAddressAvailable = Qt.binding(function() { return derivedAddressesPanel.selectedAddressAvailable})
-                advancedSection.pathSubFix = Qt.binding(function() { return derivedAddressesPanel.pathSubFix})
+        StatusCheckBox {
+            id: fullyCustomPathCheckBox
+            Layout.preferredWidth: advancedSection.width
+            text: qsTr("I acknowledge that by adding an account out of the default Status derivation path I will not be able to migrate a keypair to a Keycard")
+            onToggled: {
+                advancedSection.reset()
             }
         }
     }

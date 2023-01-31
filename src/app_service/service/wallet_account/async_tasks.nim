@@ -1,12 +1,27 @@
 #################################################
 # Async load derivedAddreses
 #################################################
-
 type
-  GetDerivedAddressesTaskArg* = ref object of QObjectTaskArg
+  GetDerivedAddressTaskArg* = ref object of QObjectTaskArg
     password: string
     derivedFrom: string
     path: string
+
+const getDerivedAddressTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[GetDerivedAddressTaskArg](argEncoded)
+  var output = %*{
+    "derivedAddress": "",
+    "error": ""
+  }
+  try:
+    let response = status_go_accounts.getDerivedAddress(arg.password, arg.derivedFrom, arg.path)
+    output["derivedAddresses"] = response.result
+  except Exception as e:
+    output["error"] = %* fmt"Error getting derived address list: {e.msg}"
+  arg.finish(output)
+
+type
+  GetDerivedAddressesTaskArg* = ref object of GetDerivedAddressTaskArg
     pageSize: int
     pageNumber: int
 
