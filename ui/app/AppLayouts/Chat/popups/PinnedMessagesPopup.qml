@@ -111,12 +111,16 @@ StatusDialog {
 
                 MouseArea {
                     anchors.fill: parent
-                    enabled: !!root.messageToPin
                     cursorShape: Qt.PointingHandCursor
                     z: 55
                     onClicked: {
-                        if (!radio.checked)
-                            radio.checked = true
+                        if (!!root.messageToPin) {
+                            if (!radio.checked)
+                                radio.checked = true
+                        } else {
+                            root.close()
+                            root.messageStore.messageModule.jumpToMessage(model.id)
+                        }
                     }
                 }
 
