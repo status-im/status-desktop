@@ -28,6 +28,7 @@ proc setContactLocalNickname*(id: string, name: string): RpcResponse[JsonNode] {
   }]
   result = callPrivateRPC("setContactLocalNickname".prefix, payload)
 
+
 proc sendContactRequest*(id: string, message: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [{
       "id": id,
