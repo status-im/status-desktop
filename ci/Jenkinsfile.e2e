@@ -5,7 +5,7 @@ def isPRBuild = utils.isPRBuild()
 
 pipeline {
   agent {
-    label 'linux && x86_64 && qt-5.14.2'
+    label 'linux && x86_64 && qt-5.15.2'
   }
 
   parameters {
@@ -53,7 +53,7 @@ pipeline {
     /* Makefile assumes the compiler folder is included */
     QTDIR = '/opt/qt/5.15.2/gcc_64'
     /* Include library in order to compile the project */
-    LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/"
+    LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard"
     /* Container ports */
     RPC_PORT = "${8545 + env.EXECUTOR_NUMBER.toInteger()}"
     P2P_PORT = "${6010 + env.EXECUTOR_NUMBER.toInteger()}"
