@@ -18,6 +18,7 @@ Item {
     property var store
     property var bestRoutes
     property var selectedAccount
+    property string ensAddressOrEmpty: ""
     property var selectedAsset
     property var allNetworks
     property bool customMode: false
@@ -152,14 +153,31 @@ Item {
             id: toNetworksLayout
             Layout.alignment: Qt.AlignRight | Qt.AlignTop
             spacing: 12
-            StatusBaseText {
+
+            RowLayout {
                 Layout.alignment: Qt.AlignRight | Qt.AlignTop
-                Layout.maximumWidth: 100
-                font.pixelSize: 10
-                color: Theme.palette.baseColor1
-                text: !!selectedAccount ? StatusQUtils.Utils.elideText(selectedAccount.address, 6, 4).toUpperCase() :  ""
-                elide: Text.ElideMiddle
+                Layout.maximumWidth: 160
+
+                StatusBaseText {
+                    id: receiverIdentityText
+
+                    text: root.ensAddressOrEmpty.length > 0
+                            ? root.ensAddressOrEmpty
+                            : !!selectedAccount ? StatusQUtils.Utils.elideText(selectedAccount.address, 6, 4).toUpperCase() :  ""
+                    Layout.fillWidth: true
+
+                    font.pixelSize: 10
+                    color: Theme.palette.baseColor1
+                    elide: Text.ElideMiddle
+                    horizontalAlignment: Text.AlignRight
+                }
+                StatusBaseText {
+                    font.pixelSize: receiverIdentityText.font.pixelSize
+                    color: receiverIdentityText.color
+                    text: qsTr("WILL RECEIVE")
+                }
             }
+
             Repeater {
                 id: toNetworksRepeater
                 model: root.allNetworks
