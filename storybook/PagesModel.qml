@@ -30,6 +30,10 @@ ListModel {
          section: "Views"
     }
     ListElement {
+         title: "JoinCommunityView"
+         section: "Views"
+    }
+    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }

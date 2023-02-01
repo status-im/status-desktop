@@ -25,7 +25,8 @@ SplitView {
                     margins: 50
                 }
                 store: CommunitiesStore {
-                    permissionsModel: PermissionsModel { id: mockedModel }
+                    id: mockedCommunity
+                    permissionsModel: PermissionsModel.permissionsModel
 
                     function duplicatePermission(index) {
                         logs.logEvent("CommunitiesStore::duplicatePermission - index: " + index)
@@ -68,7 +69,7 @@ SplitView {
 
         CommunityPermissionsSettingsPanelEditor {
             anchors.fill: parent
-            model: mockedModel
+            model: mockedCommunity.permissionsModel
         }
     }
 }
