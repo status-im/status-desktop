@@ -66,6 +66,10 @@ ListModel {
          section: "Panels"
     }
     ListElement {
+         title: "JoinPermissionsOverlayPanel"
+         section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
