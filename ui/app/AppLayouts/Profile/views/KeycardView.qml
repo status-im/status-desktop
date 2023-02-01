@@ -95,7 +95,7 @@ SettingsContentBase {
             function onDestroyKeycardSharedModuleFlow() {
                 keycardPopup.active = false
             }
-            onSharedModuleBusy: {
+            function onSharedModuleBusy() {
                 Global.openPopup(sharedModuleBusyPopupComponent)
             }
         }
