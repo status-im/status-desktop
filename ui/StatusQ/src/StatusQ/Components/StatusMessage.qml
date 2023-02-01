@@ -226,7 +226,7 @@ Control {
                     spacing: 2
                     Layout.alignment: Qt.AlignTop
                     Layout.fillWidth: true
-                    Layout.leftMargin: profileImage.visible ? 0 : root.messageDetails.sender.profileImage.assetSettings.width + parent.spacing
+                    Layout.leftMargin: profileImage.active ? 0 : root.messageDetails.sender.profileImage.assetSettings.width + parent.spacing
 
                     StatusPinMessageDetails {
                         active: root.isPinned && !editMode
