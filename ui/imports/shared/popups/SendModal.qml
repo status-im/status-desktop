@@ -445,6 +445,7 @@ StatusDialog {
                         store: popup.store
                         interactive: popup.interactive
                         selectedAccount: popup.selectedAccount
+                        ensAddressOrEmpty: d.isENSValid ? d.resolvedENSAddress : ""
                         amountToSend: amountToSendInput.cryptoValueToSend
                         requiredGasInEth: d.totalFeesInEth
                         selectedAsset: assetSelector.selectedAsset

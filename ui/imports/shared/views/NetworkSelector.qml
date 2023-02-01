@@ -20,6 +20,7 @@ Item {
     property var store
     property var currencyStore : store.currencyStore
     property var selectedAccount
+    property string ensAddressOrEmpty: ""
     property var selectedAsset
     property var amountToSend
     property var requiredGasInEth
@@ -106,6 +107,7 @@ Item {
                 store: root.store
                 customMode: tabBar.currentIndex === 2
                 selectedAccount: root.selectedAccount
+                ensAddressOrEmpty: root.ensAddressOrEmpty
                 amountToSend: root.amountToSend
                 requiredGasInEth: root.requiredGasInEth
                 selectedAsset: root.selectedAsset

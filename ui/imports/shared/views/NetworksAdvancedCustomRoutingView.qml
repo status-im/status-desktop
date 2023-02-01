@@ -16,6 +16,7 @@ ColumnLayout {
 
     property var store
     property var selectedAccount
+    property string ensAddressOrEmpty: ""
     property var amountToSend
     property var requiredGasInEth
     property bool customMode: false
@@ -83,6 +84,7 @@ ColumnLayout {
                 sourceComponent: NetworkCardsComponent {
                     store: root.store
                     selectedAccount: root.selectedAccount
+                    ensAddressOrEmpty: root.ensAddressOrEmpty
                     allNetworks: root.store.allNetworks
                     amountToSend: root.amountToSend
                     customMode: root.customMode
