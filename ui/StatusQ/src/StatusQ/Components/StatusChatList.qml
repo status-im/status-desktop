@@ -70,7 +70,7 @@ Item {
                 Connections {
                     enabled: categoryPopupMenuSlot.active && highlighted
                     target: categoryPopupMenuSlot.item
-                    onClosed: {
+                    function onClosed() {
                         statusChatListCategoryItem.highlighted = false
                         statusChatListCategoryItem.menuButton.highlighted = false
                     }
