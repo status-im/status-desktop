@@ -110,6 +110,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusMessage"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
