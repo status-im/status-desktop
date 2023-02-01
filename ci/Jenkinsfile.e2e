@@ -5,7 +5,7 @@ def isPRBuild = utils.isPRBuild()
 
 pipeline {
   agent {
-    label 'linux && x86_64 && qt-5.14.2'
+    label 'linux && x86_64 && qt-5.15.2'
   }
 
   parameters {
@@ -52,6 +52,7 @@ pipeline {
     NIMFLAGS = '--colors:off'
     /* Makefile assumes the compiler folder is included */
     QTDIR = '/opt/qt/5.15.2/gcc_64'
+    PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Include library in order to compile the project */
     LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/"
     /* Container ports */
@@ -138,7 +139,7 @@ pipeline {
               '--config', 'addAUT', 'nim_status_client',
               "${WORKSPACE}/bin",
             ].join('\n'),
-            squishPackageName: 'squish-6.7.2-qt514x-linux64',
+            squishPackageName: 'squish-7.1.0-qt515x-linux64',
             testSuite: "${WORKSPACE}/test/ui-test/testSuites/*",
           ])
           print("Squish run result: ${result}")

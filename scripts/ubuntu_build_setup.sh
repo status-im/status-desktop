@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
+GO_VERSION="1.19.5"
+GO_INSTALL_DIR="/usr/local/go"
+QT_VERSION="5.15.2"
+QT_INSTALL_DIR="/opt/qt"
+
 function check_version {
   source /etc/os-release
   
@@ -40,20 +45,38 @@ function install_qt {
   apt install -y python3-pip
   pip install -U pip
   pip install aqtinstall
-  aqt install-qt linux desktop 5.14.2 gcc_64 -m qtwebengine qtlottie -O /opt/qt
+  aqt install-qt linux desktop ${QT_VERSION} gcc_64 -m qtwebengine -O ${QT_INSTALL_DIR}
+}
+
+function get_go_arch {
+  case "$(uname -m)" in
+    "x86_64")  echo "amd64" ;;
+    "aarch64") echo "arm64" ;;
+    "armv*")   echo "armv6l" ;;
+    *)         echo "UNKNOWN" ;;
+  esac
 }
 
 function install_golang {
-  if ! [[ -x "$(command -v go)" ]]; then
-    echo "Install GoLang"
-    export GOLANG_SHA256="006f6622718212363fa1ff004a6ab4d87bbbe772ec5631bab7cac10be346e4f1"
-    export GOLANG_TARBALL="go1.18.5.linux-arm64.tar.gz"
-    wget -q "https://dl.google.com/go/${GOLANG_TARBALL}"
-    echo "${GOLANG_SHA256} ${GOLANG_TARBALL}" | sha256sum -c
-    tar -C /usr/local -xzf "${GOLANG_TARBALL}"
-    rm "${GOLANG_TARBALL}"
-    ln -s /usr/local/go/bin/go /usr/local/bin
+  if [[ -x "$(command -v go)" ]]; then
+    echo "Already present: $(go version)"
+    return
   fi
+  declare -A GO_SHA256_MAP
+  GO_SHA256_MAP=(
+    ["amd64"]="36519702ae2fd573c9869461990ae550c8c0d955cd28d2827a6b159fda81ff95"
+    ["arm64"]="fc0aa29c933cec8d76f5435d859aaf42249aa08c74eb2d154689ae44c08d23b3"
+    ["armv6l"]="ec14f04bdaf4a62bdcf8b55b9b6434cc27c2df7d214d0bb7076a7597283b026a"
+  )
+  echo "Install GoLang ${GO_VERSION}"
+  GO_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+  GO_ARCH=$(get_go_arch)
+  GO_TARBALL="go${GO_VERSION}.${GO_OS}-${GO_ARCH}.tar.gz"
+  wget -q "https://dl.google.com/go/${GO_TARBALL}" -O "${GO_TARBALL}"
+  echo "${GO_SHA256_MAP[${GO_ARCH}]} ${GO_TARBALL}" | sha256sum -c
+  tar -C "${GO_INSTALL_DIR}" -xzf "${GO_TARBALL}"
+  rm "${GO_TARBALL}"
+  ln -s "${GO_INSTALL_DIR}/go/bin/go" /usr/local/bin
 }
 
 function success_message {
@@ -62,7 +85,7 @@ SUCCESS!
 
 Before you attempt to build status-dektop you'll need a few environment variables set:
 
-export QTDIR=/opt/qt/5.14.2/gcc_64
+export QTDIR=${QT_INSTALL_DIR}/${QT_VERSION}/gcc_64
 export PATH=\$QTDIR:\$QTDIR/bin:\$PATH
 "
   echo $msg
