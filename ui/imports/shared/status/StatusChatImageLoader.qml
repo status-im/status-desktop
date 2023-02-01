@@ -13,12 +13,13 @@ Item {
     property bool isCurrentUser: false
     property url source
     property bool isActiveChannel: false
-    property bool playing: Global.applicationWindow.active && isChatActive
+    property bool playing: Global.applicationWindow.active
     property bool isAnimated: !!source && source.toString().endsWith('.gif')
     property var container
     property alias imageAlias: imageMessage
     property bool allCornersRounded: false
     property bool isOnline: true // TODO: mark as required when migrating to 5.15 or above
+    property bool imageLoaded: (imageMessage.status === Image.Ready)
 
     signal clicked(var image, var mouse)
 
@@ -114,9 +115,11 @@ Item {
     Loader {
         id: loadingImageLoader
         active: imageMessage.status === Image.Loading
-                    || imageMessage.status === Image.Error
-        width: 300
+             || imageMessage.status === Image.Error
+        visible: active
+        width: active ? 300 : 0
         height: width
+
         sourceComponent: Rectangle {
             anchors.fill: parent
             border.width: 1
