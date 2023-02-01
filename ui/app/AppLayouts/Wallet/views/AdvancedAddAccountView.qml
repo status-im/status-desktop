@@ -16,7 +16,7 @@ import "../panels"
 ColumnLayout {
     id: advancedSection
 
-    property int addAccountType: SelectGeneratedAccount.AddAccountType.GenerateNew
+    property int addAccountType: Constants.AddAccountType.GenerateNew
     property string selectedKeyUid: RootStore.defaultSelectedKeyUid
     property bool selectedKeyUidMigratedToKeycard: RootStore.defaultSelectedKeyUidMigratedToKeycard
     property string selectedAddress: ""
@@ -29,9 +29,9 @@ ColumnLayout {
     property string pathSubFix: ""
     property string completePath: path + "/" + pathSubFix
     property alias watchAddress: addressInput.text
-    property bool isValid: addAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase ? importSeedPhrasePanel.isValid :
-                           addAccountType === SelectGeneratedAccount.AddAccountType.ImportPrivateKey ? (importPrivateKeyPanel.text !== "" && importPrivateKeyPanel.valid) :
-                           addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly ? (addressInput.text !== "" && addressInput.valid) : true
+    property bool isValid: addAccountType === Constants.AddAccountType.ImportSeedPhrase ? importSeedPhrasePanel.isValid :
+                           addAccountType === Constants.AddAccountType.ImportPrivateKey ? (importPrivateKeyPanel.text !== "" && importPrivateKeyPanel.valid) :
+                           addAccountType === Constants.AddAccountType.WatchOnly ? (addressInput.text !== "" && addressInput.valid) : true
 
     signal calculateDerivedPath()
     signal enterPressed()
@@ -58,15 +58,15 @@ ColumnLayout {
     }
 
     function validate() {
-        if(addAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase) {
+        if(addAccountType === Constants.AddAccountType.ImportSeedPhrase) {
             // validate mnemonic
             return importSeedPhrasePanel.validate()
         }
-        else if(addAccountType === SelectGeneratedAccount.AddAccountType.ImportPrivateKey) {
+        else if(addAccountType === Constants.AddAccountType.ImportPrivateKey) {
             // validate privateKey
             return importPrivateKeyPanel.validateMe()
         }
-        else if(addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly) {
+        else if(addAccountType === Constants.AddAccountType.WatchOnly) {
             return addressInput.valid
         }
 
@@ -74,7 +74,7 @@ ColumnLayout {
     }
 
     onPathChanged:  {
-        if(addAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase) {
+        if(addAccountType === Constants.AddAccountType.ImportSeedPhrase) {
             if(importSeedPhrasePanel.isValid) {
                 calculateDerivedPath()
             }
@@ -88,7 +88,7 @@ ColumnLayout {
         // reset derviedAccountsList
         derivedAddressesPanel.reset()
 
-        if(addAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase) {
+        if(addAccountType === Constants.AddAccountType.ImportSeedPhrase) {
             if(importSeedPhrasePanel.isValid) {
                 calculateDerivedPath()
             }
@@ -112,7 +112,7 @@ ColumnLayout {
 
     ImportPrivateKeyPanel {
         id: importPrivateKeyPanel
-        visible: advancedSection.addAccountType === SelectGeneratedAccount.AddAccountType.ImportPrivateKey && advancedSection.visible
+        visible: advancedSection.addAccountType === Constants.AddAccountType.ImportPrivateKey && advancedSection.visible
     }
 
     ImportSeedPhrasePanel {
@@ -120,7 +120,7 @@ ColumnLayout {
         Layout.preferredWidth: parent.width
         Layout.preferredHeight: visible ? importSeedPhrasePanel.preferredHeight: 0
         Layout.leftMargin: (Style.current.halfPadding/4)
-        visible: advancedSection.addAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase && advancedSection.visible
+        visible: advancedSection.addAccountType === Constants.AddAccountType.ImportSeedPhrase && advancedSection.visible
         onMnemonicStringChanged: {
             advancedSection.mnemonicText = mnemonicString
             if(isValid) {
@@ -132,7 +132,7 @@ ColumnLayout {
 
     StatusInput {
         id: addressInput
-        visible: advancedSection.addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly && advancedSection.visible
+        visible: advancedSection.addAccountType === Constants.AddAccountType.WatchOnly && advancedSection.visible
         placeholderText: qsTr("Enter address...")
         label: qsTr("Account address")
         validators: [
@@ -150,8 +150,8 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.rightMargin: 2
         spacing: Style.current.bigPadding
-        visible: advancedSection.addAccountType !== SelectGeneratedAccount.AddAccountType.ImportPrivateKey &&
-                 advancedSection.addAccountType !== SelectGeneratedAccount.AddAccountType.WatchOnly
+        visible: advancedSection.addAccountType !== Constants.AddAccountType.ImportPrivateKey &&
+                 advancedSection.addAccountType !== Constants.AddAccountType.WatchOnly
         DerivationPathsPanel {
             id: derivationPathsPanel
             Layout.preferredWidth: ((parent.width - (Style.current.bigPadding/2))/2)
