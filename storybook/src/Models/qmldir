@@ -1,9 +1,9 @@
 singleton ModelsData 1.0 ModelsData.qml
+singleton PermissionsModel 1.0 PermissionsModel.qml
 IconModel 1.0 IconModel.qml
 BannerModel 1.0 BannerModel.qml
 UsersModel 1.0 UsersModel.qml
 AssetsModel 1.0 AssetsModel.qml
 CollectiblesModel 1.0 CollectiblesModel.qml
 ChannelsModel 1.0 ChannelsModel.qml
-PermissionsModel 1.0 PermissionsModel.qml
 AssetsCollectiblesIconsModel 1.0 AssetsCollectiblesIconsModel.qml

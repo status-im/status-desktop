@@ -39,6 +39,11 @@ QtObject {
         readonly property string inch: Style.png("tokens/CUSTOM-TOKEN")
         readonly property string aave: Style.png("tokens/CUSTOM-TOKEN")
         readonly property string amp: Style.png("tokens/CUSTOM-TOKEN")
+        readonly property string uni: Style.png("tokens/UNI")
+        readonly property string eth: Style.png("tokens/ETH")
+        readonly property string dai: Style.png("tokens/DAI")
+        readonly property string snt: Style.png("tokens/SNT")
+        readonly property string mana: Style.png("tokens/aMANA")
     }
 
     readonly property QtObject collectibles: QtObject {
