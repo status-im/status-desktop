@@ -709,12 +709,12 @@ proc renderInline(self: Service, parsedText: ParsedText, communityChats: seq[Cha
           if pair[1] == "@" & id:
             tag = pair[0]
             break
-        result = fmt("<a href=\"\" class=\"mention\">{tag}</a>")
+        result = fmt("<a href=\"#\" class=\"mention\">{tag}</a>")
       else:
         if isCompressedPubKey(id):
           id = status_accounts.decompressPk(id).result
         let contactDto = self.contactService.getContactById(id)
-        result = fmt("<a href=\"//{id}\" class=\"mention\">{contactDto.userDefaultDisplayName()}</a>")
+        result = fmt("<a href=\"//{id}\" class=\"mention\">@{contactDto.userDefaultDisplayName()}</a>")
     of PARSED_TEXT_CHILD_TYPE_STATUS_TAG:
       result = fmt("<span>#{value}</span>")
       for chat in communityChats:
