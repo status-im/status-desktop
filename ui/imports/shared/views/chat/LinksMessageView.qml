@@ -252,12 +252,16 @@ Column {
     Component {
         id: unfurledLinkComponent
         MessageBorder {
+            id: unfurledLink
+            readonly property bool isGIFImage: linkData.thumbnailUrl.endsWith(".gif")
             width: linkImage.visible ? linkImage.width + 2 : 300
             height: {
                 if (linkImage.visible) {
-                    return linkImage.height + (Style.current.smallPadding * 2) + linkTitle.height + 2 + linkSite.height
+                    return linkImage.height + (!unfurledLink.isGIFImage ?
+                           ((Style.current.smallPadding * 2) + (linkTitle.height + 2 + linkSite.height)) : 0)
                 }
-                return (Style.current.smallPadding * 2) + linkTitle.height + 2 + linkSite.height
+                return (Style.current.smallPadding * 2) + (!unfurledLink.isGIFImage ?
+                        (linkTitle.height + 2 + linkSite.height) : 0)
             }
             isCurrentUser: root.isCurrentUser
 
@@ -272,8 +276,65 @@ Column {
                 isCurrentUser: root.isCurrentUser
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
-                playing: root.messageStore.playAnimation
                 isOnline: root.store.mainModuleInst.isOnline
+                onClicked: {
+                    if (unfurledLink.isGIFImage) {
+                        if (playing) {
+                            imageClicked(linkImage.imageAlias);
+                        } else {
+                            if (root.messageStore.playAnimation) {
+                                linkImage.playing = true;
+                                animationPlayingTimer.restart();
+                            }
+                        }
+                    } else {
+                        if (!!linkData.callback) {
+                            return linkData.callback()
+                        }
+                        Global.openLink(linkData.address)
+                    }
+                }
+
+                onImageLoadedChanged: {
+                    if (imageLoaded && root.messageStore.playAnimation) {
+                        playing = true;
+                        animationPlayingTimer.start();
+                    }
+                }
+                Timer {
+                    id: animationPlayingTimer
+                    interval: 10000
+                    running: false
+                    onTriggered: {
+                        if (root.messageStore.playAnimation) {
+                            linkImage.playing = false;
+                        }
+                    }
+                }
+            }
+
+            Loader {
+                width: 45
+                height: 38
+                anchors.left: parent.left
+                anchors.leftMargin: 12
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 12
+                active: !linkImage.playing
+                sourceComponent: Item {
+                    anchors.fill: parent
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "black"
+                        radius: Style.current.radius
+                        opacity: .4
+                    }
+                    StatusBaseText {
+                        anchors.centerIn: parent
+                        text: "GIF"
+                        font.pixelSize: 13
+                    }
+                }
             }
 
             StatusBaseText {
@@ -282,6 +343,7 @@ Column {
                 font.pixelSize: 13
                 font.weight: Font.Medium
                 wrapMode: Text.Wrap
+                visible: !unfurledLink.isGIFImage
                 anchors.top: linkImage.visible ? linkImage.bottom : parent.top
                 anchors.topMargin: Style.current.smallPadding
                 anchors.left: parent.left
@@ -292,6 +354,7 @@ Column {
 
             StatusBaseText {
                 id: linkSite
+                visible: !unfurledLink.isGIFImage
                 text: linkData.site
                 font.pixelSize: 12
                 font.weight: Font.Thin
@@ -300,20 +363,6 @@ Column {
                 anchors.topMargin: 2
                 anchors.left: linkTitle.left
                 anchors.bottomMargin: Style.current.halfPadding
-            }
-
-            MouseArea {
-                anchors.top: linkImage.visible ? linkImage.top : linkTitle.top
-                anchors.left: linkImage.visible ? linkImage.left : linkTitle.left
-                anchors.right: linkImage.visible ? linkImage.right : linkTitle.right
-                anchors.bottom: linkSite.bottom
-                cursorShape: Qt.PointingHandCursor
-                onClicked:  {
-                    if (!!linkData.callback) {
-                        return linkData.callback()
-                    }
-                    Global.openLink(linkData.address)
-                }
             }
 
             Component.onCompleted: d.unfurledLinksCount++

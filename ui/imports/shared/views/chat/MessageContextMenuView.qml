@@ -195,7 +195,7 @@ StatusMenu {
 
     StatusAction {
         id: copyImageAction
-        text: qsTr("Copy image")
+        text: (root.imageSource.endsWith(".gif")) ? qsTr("Copy GIF") : qsTr("Copy image")
         onTriggered: {
             if (root.imageSource) {
                 root.store.copyImageToClipboardByUrl(root.imageSource)
@@ -208,7 +208,7 @@ StatusMenu {
 
     StatusAction {
         id: downloadImageAction
-        text: qsTr("Download image")
+        text: (root.imageSource.endsWith(".gif")) ? qsTr("Download GIF") : qsTr("Download image")
         onTriggered: {
             fileDialog.open()
             root.close()
