@@ -37,7 +37,9 @@ function install_release_dependencies {
 function install_runtime_dependencies {
   echo "Install runtime dependencies"
   # xvfb is needed in order run squish test into a headless server 
-  apt install -yq libxcomposite-dev xvfb libxft-dev
+  apt install -yq libxcomposite-dev xvfb libxft-dev \
+      libxcb-shape0 libxcb-randr0 libxcb-render0 libxcb-icccm4 libxcb-image0 \
+      libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0
 }
 
 function install_qt {
