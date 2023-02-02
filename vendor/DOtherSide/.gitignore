@@ -1,0 +1,41 @@
+*.*~
+build*
+*.pro.*
+*.o
+.directory
+#*#
+nimcache
+*.kdev4
+*.user
+.idea
+*.orig
+doc
+cmake-build-*
+.cache
+
+# libraries
+*.a
+*.so
+*.so.*
+*.dylib
+
+# CMake
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+*_autogen
+CMakeDoxyfile.in
+CMakeDoxygenDefaults.cmake
+DOtherSide.pc
+
+# binaries
+test/TestDynamicQObject
+
