@@ -659,7 +659,7 @@ QtObject {
 
     readonly property string windows: "windows"
     readonly property string linux: "linux"
-    readonly property string mac: "mac"
+    readonly property string mac: "osx"
 
     // Transaction states
     readonly property int addressRequested: 1
