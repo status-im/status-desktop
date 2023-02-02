@@ -326,15 +326,14 @@ Rectangle {
                 implicitHeight: visible ? 22 : 0
             }
 
-            ScrollView {
+            Flickable {
                 visible: tagsRepeater.count > 0
                 anchors.top: statusListItemTertiaryTitle.bottom
                 anchors.topMargin: visible ? 8 : 0
-                width: parent.width
-                height: visible ? contentHeight : 0
+                width: Math.min(statusListItemTagsSlotInline.width, parent.width)
+                height: visible ? statusListItemTagsSlotInline.height : 0
                 clip: true
-
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+                interactive: contentWidth > width
 
                 Row {
                     id: statusListItemTagsSlotInline
