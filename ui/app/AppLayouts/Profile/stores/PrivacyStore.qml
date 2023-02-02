@@ -29,7 +29,11 @@ QtObject {
         return root.privacyModule.validatePassword(password)
     }
 
-    function storeToKeyChain(pass) {
-        mainModule.storePassword(pass);
+    function tryStoreToKeyChain() {
+        root.privacyModule.tryStoreToKeyChain()
+    }
+
+    function tryRemoveFromKeyChain() {
+        root.privacyModule.tryRemoveFromKeyChain()
     }
 }

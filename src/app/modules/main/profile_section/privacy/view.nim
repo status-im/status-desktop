@@ -63,3 +63,18 @@ QtObject:
 
   proc getPasswordStrengthScore*(self: View, password: string): int {.slot.} =
     return self.delegate.getPasswordStrengthScore(password)
+
+  proc storeToKeychainError*(self:View, errorDescription: string) {.signal.}
+  proc emitStoreToKeychainError*(self: View, errorDescription: string) =
+    self.storeToKeychainError(errorDescription)
+
+  proc storeToKeychainSuccess*(self:View) {.signal.}
+  proc emitStoreToKeychainSuccess*(self: View) =
+    self.storeToKeychainSuccess()
+
+  proc tryStoreToKeyChain*(self: View) {.slot.} =
+    self.delegate.tryStoreToKeyChain()
+
+  proc tryRemoveFromKeyChain*(self: View) {.slot.} =
+    self.delegate.tryRemoveFromKeyChain()
+    

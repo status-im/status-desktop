@@ -12,7 +12,6 @@ import "../../popups"
 import "../../stores"
 import "../../controls"
 import "../../panels"
-import "../../../Onboarding/shared" as OnboardingComponents
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -69,20 +68,23 @@ ColumnLayout {
         }
 
         if (biometricsSwitch.checked && !biometricsSwitch.currentStoredValue)
-            Global.openPopup(storePasswordModal)
+            root.privacyStore.tryStoreToKeyChain()
         else if (!biometricsSwitch.checked)
-            localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.never;
+            root.privacyStore.tryRemoveFromKeyChain()
 
         reset()
     }
 
-    function offerToStorePassword(password, runStoreToKeyChainPopup)
-    {
-        if (Qt.platform.os !== "osx")
-            return;
+    Connections {
+        target: Qt.platform.os === Constants.mac? root.privacyStore.privacyModule : null
 
-        localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store;
-        root.privacyStore.storeToKeyChain(password);
+        function onStoreToKeychainError(errorDescription: string) {
+            root.reset()
+        }
+
+        function onStoreToKeychainSuccess() {
+            root.reset()
+        }
     }
 
     ProfileHeader {
@@ -244,17 +246,6 @@ ColumnLayout {
                     showShevronIcon: false
                     enabled: false
                 }
-            }
-        }
-    }
-
-    Component {
-        id: storePasswordModal
-
-        OnboardingComponents.CreatePasswordModal {
-            privacyStore: root.privacyStore
-            onOfferToStorePassword: {
-                root.offerToStorePassword(password, runStoreToKeychainPopup)
             }
         }
     }

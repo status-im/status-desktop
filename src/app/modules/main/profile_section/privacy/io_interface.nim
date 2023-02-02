@@ -58,3 +58,18 @@ method validatePassword*(self: AccessInterface, password: string): bool {.base.}
 
 method getPasswordStrengthScore*(self: AccessInterface, password: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onStoreToKeychainError*(self: AccessInterface, errorDescription: string, errorType: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onStoreToKeychainSuccess*(self: AccessInterface, data: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method tryStoreToKeyChain*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method tryRemoveFromKeyChain*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
