@@ -4,7 +4,9 @@ library 'status-jenkins-lib@v1.6.3'
 def isPRBuild = utils.isPRBuild()
 
 pipeline {
-  agent { label 'linux' }
+  agent {
+    label 'linux && x86_64 && qt-5.15.2'
+  }
 
   parameters {
     choice(
@@ -37,7 +39,8 @@ pipeline {
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Makefile assumes the compiler folder is included */
-    QTDIR = "/opt/qt/5.14.2/gcc_64"
+    QTDIR = "/opt/qt/5.15.2/gcc_64"
+    PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Include library in order to compile the project */
     LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/"
   }
