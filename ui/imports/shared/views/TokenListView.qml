@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtQuick.Layouts 1.14
 
 import SortFilterProxyModel 0.2
 
@@ -11,7 +12,7 @@ import utils 1.0
 
 import "../controls"
 
-Rectangle {
+Item {
     id: root
 
     property var assets: []
@@ -29,43 +30,24 @@ Rectangle {
         })
     }
 
-    height: visible ? tokenList.height: 0
-    color: Theme.palette.indirectColor1
-    radius: 8
+    implicitWidth: contentLayout.implicitWidth
+    implicitHeight: contentLayout.implicitHeight
 
-    StatusListView {
-        id: tokenList
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        width: parent.width
-        height: Math.min(433, tokenList.contentHeight)
+    ColumnLayout {
+        id: contentLayout
 
-        model: SortFilterProxyModel {
-            sourceModel: root.assets
-            filters: [
-                ExpressionFilter {
-                    expression: {
-                        var tokenSymbolByAddress = searchTokenSymbolByAddressFn(d.searchString)
-                        return visibleForNetwork && (
-                            symbol.startsWith(d.searchString.toUpperCase()) || name.toUpperCase().startsWith(d.searchString.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
-                        )
-                    }
-                }
-            ]
-        }
-        delegate: TokenBalancePerChainDelegate {
-            width: ListView.view.width
-            getNetworkIcon: root.getNetworkIcon
-            onTokenSelected: root.tokenSelected(selectedToken)
-        }
-        headerPositioning: ListView.OverlayHeader
-        header: Rectangle {
-            width: parent.width
-            height: childrenRect.height
+        anchors.fill: parent
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: headerColumn.height
+
             color: Theme.palette.indirectColor1
             radius: 8
-            z: 2
+
             Column {
+                id: headerColumn
+
                 width: parent.width
                 Item {
                     height: 5
@@ -88,6 +70,33 @@ Rectangle {
                     width: parent.width
                     color: Theme.palette.baseColor3
                 }
+            }
+        }
+
+        StatusListView {
+            id: tokenList
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: 396
+
+            model: SortFilterProxyModel {
+                sourceModel: root.assets
+                filters: [
+                    ExpressionFilter {
+                        expression: {
+                            var tokenSymbolByAddress = searchTokenSymbolByAddressFn(d.searchString)
+                            tokenList.positionViewAtBeginning()
+                            return visibleForNetwork && (
+                                symbol.startsWith(d.searchString.toUpperCase()) || name.toUpperCase().startsWith(d.searchString.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
+                            )
+                        }
+                    }
+                ]
+            }
+            delegate: TokenBalancePerChainDelegate {
+                width: ListView.view.width
+                getNetworkIcon: root.getNetworkIcon
+                onTokenSelected: root.tokenSelected(selectedToken)
             }
         }
     }

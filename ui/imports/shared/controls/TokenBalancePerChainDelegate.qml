@@ -25,7 +25,15 @@ StatusListItem {
     tagsModel: balances.count > 0 ? balances : []
     tagsDelegate: sensor.containsMouse ? expandedItem : compactItem
 
-    onClicked: tokenSelected({name, symbol, totalBalance, totalCurrencyBalance, balances, decimals})
+    onClicked: d.selectToken()
+
+    QtObject {
+        id: d
+
+        function selectToken() {
+            root.tokenSelected({name, symbol, totalBalance, totalCurrencyBalance, balances, decimals})
+        }
+    }
 
     Component {
         id: compactItem

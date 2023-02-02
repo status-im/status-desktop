@@ -179,11 +179,13 @@ StatusDialog {
         clip: true
         ColumnLayout {
             id: group1
-            Layout.preferredWidth: parent.width
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
             Rectangle {
-                Layout.preferredWidth: parent.width
-                Layout.preferredHeight: assetAndAmmountSelector.height + Style.current.halfPadding
+                Layout.fillWidth: true
+                Layout.preferredHeight: assetAndAmountSelector.implicitHeight + Style.current.halfPadding
+
                 color: Theme.palette.baseColor3
                 z: 100
 
@@ -195,17 +197,17 @@ StatusDialog {
                     color: Theme.palette.dropShadow
                 }
 
-                Column {
-                    id: assetAndAmmountSelector
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                ColumnLayout {
+                    id: assetAndAmountSelector
+
+                    anchors.fill: parent
                     anchors.leftMargin: Style.current.xlPadding
                     anchors.rightMargin: Style.current.xlPadding
+
                     z: 1
                     spacing: 16
 
                     RowLayout {
-                        width: parent.width
                         spacing: 8
                         StatusBaseText {
                             id: modalHeader
@@ -262,7 +264,6 @@ StatusDialog {
                         }
                     }
                     RowLayout {
-                        width: parent.width
                         AmountToSend {
                             id: amountToSendInput
                             Layout.fillWidth:true
@@ -285,6 +286,10 @@ StatusDialog {
                             }
                             onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
                         }
+
+                        // Horizontal spacer
+                        RowLayout {}
+
                         AmountToReceive {
                             id: amountToReceive
                             Layout.alignment: Qt.AlignRight
@@ -304,8 +309,9 @@ StatusDialog {
                     }
                     TokenListView {
                         id: tokenListRect
-                        anchors.left: parent.left
-                        anchors.right: parent.right
+
+                        Layout.fillWidth: true
+
                         visible: !assetSelector.selectedAsset
                         assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : []
                         searchTokenSymbolByAddressFn: function (address) {

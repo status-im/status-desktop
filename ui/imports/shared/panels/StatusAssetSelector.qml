@@ -75,7 +75,7 @@ Item {
         control.popup.width: 492
         control.popup.height: 416
         control.popup.x: -root.x
-        
+
         popupContentItemObjectName: "assetSelectorList"
 
         model : SortFilterProxyModel {
