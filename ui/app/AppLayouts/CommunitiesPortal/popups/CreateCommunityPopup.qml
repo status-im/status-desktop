@@ -368,6 +368,8 @@ StatusStackModal {
     stackItems: [
         StatusScrollView {
             id: generalView
+            implicitWidth: root.width
+            implicitHeight: root.height
 
             readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid
 
