@@ -150,8 +150,8 @@ proc mainProc() =
     networkAccessFactory.delete()
     dockShowAppEvent.delete()
     osThemeEvent.delete()
-    statusFoundation.delete()
     appController.delete()
+    statusFoundation.delete()
     singleInstance.delete()
     app.delete()
 
