@@ -14,6 +14,7 @@ import AppLayouts.Chat.views 1.0
 import StatusQ.Layout 0.1
 
 import utils 1.0
+import shared.popups 1.0
 
 StatusSectionLayout {
     id: root
@@ -22,15 +23,17 @@ StatusSectionLayout {
     property bool amISectionAdmin: false
     property bool openCreateChat: false
     property string name
+    property string introMessage
     property string communityDesc
     property color color
     property string channelName
     property string channelDesc
     property bool joinCommunity: true // Otherwise it means join channel action
+    property int accessType
+    property bool isInvitationPending: false
 
     // Permission overlay view properties:
     property bool requirementsMet: true
-    property bool isInvitationPending: false
     property bool isJoinRequestRejected: false
     property bool requiresRequest: false
     property var communityHoldings
@@ -50,6 +53,12 @@ StatusSectionLayout {
     signal adHocChatButtonClicked
     signal revealAddressClicked
     signal invitationPendingClicked
+    signal joined
+    signal cancelMembershipRequest
+
+    function openJoinCommunityDialog() {
+        joinCommunityDialog.open()
+    }
 
     QtObject {
         id: d
@@ -282,5 +291,18 @@ StatusSectionLayout {
             radius: d.blurryRadius
             transparentBorder: true
         }
+    }
+
+    CommunityIntroDialog {
+        id: joinCommunityDialog
+
+        name: root.name
+        introMessage: root.introMessage
+        imageSrc: root.image
+        accessType: root.accessType
+        isInvitationPending: root.isInvitationPending
+
+        onJoined: root.joined()
+        onCancelMembershipRequest: root.cancelMembershipRequest()
     }
 }
