@@ -81,12 +81,6 @@ method getActiveSectionId*(self: AccessInterface): string {.base.} =
 method communitiesModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method emitStoringPasswordError*(self: AccessInterface, errorDescription: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method emitStoringPasswordSuccess*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method emitMailserverWorking*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -163,9 +157,6 @@ method onNetworkDisconnected*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method storePassword*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setActiveSection*(self: AccessInterface, item: SectionItem) {.base.} =

@@ -110,19 +110,6 @@ QtObject:
 
   proc openStoreToKeychainPopup*(self: View) {.signal.}
 
-  proc storePassword*(self: View, password: string) {.slot.} =
-    self.delegate.storePassword(password)
-
-  proc storingPasswordError*(self:View, errorDescription: string) {.signal.}
-
-  proc emitStoringPasswordError*(self: View, errorDescription: string) =
-    self.storingPasswordError(errorDescription)
-
-  proc storingPasswordSuccess*(self:View) {.signal.}
-
-  proc emitStoringPasswordSuccess*(self: View) =
-    self.storingPasswordSuccess()
-
   proc mailserverWorking*(self:View) {.signal.}
 
   proc mailserverNotWorking*(self:View) {.signal.}

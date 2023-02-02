@@ -145,7 +145,6 @@ proc newModule*[T](
     events,
     settingsService,
     nodeConfigurationService,
-    keychainService,
     accountsService,
     chatService,
     communityService,
@@ -566,15 +565,6 @@ method networksModuleDidLoad*[T](self: Module[T]) =
 method viewDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
-method storePassword*[T](self: Module[T], password: string) =
-  self.controller.storePassword(password)
-
-method emitStoringPasswordError*[T](self: Module[T], errorDescription: string) =
-  self.view.emitStoringPasswordError(errorDescription)
-
-method emitStoringPasswordSuccess*[T](self: Module[T]) =
-  self.view.emitStoringPasswordSuccess()
-
 method emitMailserverWorking*[T](self: Module[T]) =
   self.view.emitMailserverWorking()
 
@@ -709,24 +699,6 @@ method communityJoined*[T](
   var firstCommunityJoined = false
   if (self.channelGroupModules.len == 1): # First one is personal chat section
     firstCommunityJoined = true
-
-  if(community.permissions.access == COMMUNITY_PERMISSION_ACCESS_ON_REQUEST and 
-    community.requestedToJoinAt > 0 and 
-    community.joined):
-    singletonInstance.globalEvents.myRequestToJoinCommunityAcccepted("Community Request Accepted",
-      fmt "Your request to join community {community.name} is accepted", community.id)
-    self.displayEphemeralNotification(fmt "{community.name} membership approved ", "", conf.COMMUNITIESPORTAL_SECTION_ICON, false, EphemeralNotificationType.Success.int, "")
-
-  # if we are joining spectated community
-  if self.channelGroupModules.hasKey(community.id):
-    let communityModule = self.channelGroupModules[community.id]
-    # Must never happen
-    if not communityModule.isLoaded():
-      error "Community module was not loaded in spectated mode", communityId=community.id
-
-    communityModule.joinSpectatedCommunity()
-    return
-    
   self.channelGroupModules[community.id] = chat_section_module.newModule(
       self,
       events,

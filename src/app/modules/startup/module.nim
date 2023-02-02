@@ -272,7 +272,6 @@ method importAccountSuccess*[T](self: Module[T]) =
   self.view.importAccountSuccess()
 
 method setSelectedLoginAccount*[T](self: Module[T], item: login_acc_item.Item) =
-  self.controller.disconnectKeychain()
   self.controller.cancelCurrentFlow()
   self.controller.setSelectedLoginAccount(item.getKeyUid(), item.getKeycardCreatedAccount())
   if item.getKeycardCreatedAccount():
@@ -286,7 +285,6 @@ method setSelectedLoginAccount*[T](self: Module[T], item: login_acc_item.Item) =
     else:
       self.view.setCurrentStartupState(newLoginKeycardEnterPasswordState(FlowType.AppLogin, nil))
   self.view.setSelectedLoginAccount(item)
-  self.controller.connectKeychain()
 
 method emitAccountLoginError*[T](self: Module[T], error: string) =
   self.controller.setPassword("")
@@ -492,6 +490,3 @@ method addToKeycardUidPairsToCheckForAChangeAfterLogin*[T](self: Module[T], oldK
 
 method removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*[T](self: Module[T]) =
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin()
-
-method checkForStoringPasswordToKeychain*[T](self: Module[T]) =
-  self.controller.checkForStoringPasswordToKeychain()

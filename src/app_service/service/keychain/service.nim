@@ -48,6 +48,9 @@ QtObject:
   proc tryToObtainData*(self: Service, key: string) =
     self.keychainManager.readDataAsync(key)
 
+  proc tryToDeleteData*(self: Service, key: string) =
+    self.keychainManager.deleteDataAsync(key)
+
   proc onKeychainManagerError*(self: Service, errorType: string, errorCode: int,
     errorDescription: string) {.slot.} =
     ## This slot is called in case an error occured while we're dealing with

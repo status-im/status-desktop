@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar, chronicles, os
+import NimQml, sequtils, sugar, chronicles, os, uuids
 
 import ../../app_service/service/general/service as general_service
 import ../../app_service/service/keychain/service as keychain_service
@@ -37,6 +37,7 @@ import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
 import ../core/notifications/notifications_manager
 
+import ../../constants as main_constants
 import ../global/global_singleton
 
 import ../core/[main]
@@ -51,6 +52,7 @@ type
     changedKeycardUids: seq[tuple[oldKcUid: string, newKcUid: string]] # used in case user unlocked keycard during onboarding using seed phrase
     statusFoundation: StatusFoundation
     notificationsManager*: NotificationsManager
+    keychainConnectionIds: seq[UUID]
 
     # Global
     appSettingsVariant: QVariant
@@ -310,6 +312,47 @@ proc delete*(self: AppController) =
   self.gifService.delete
   self.keycardService.delete
 
+proc disconnectKeychain(self: AppController) =
+  for id in self.keychainConnectionIds:
+    self.statusFoundation.events.disconnect(id)
+  self.keychainConnectionIds = @[]
+
+proc connectKeychain(self: AppController) =
+  var handlerId = self.statusFoundation.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e:Args):
+    let args = KeyChainServiceArg(e)
+    self.disconnectKeychain()
+    ## we need to set local `storeToKeychain` prop to `store` value since in this context means pass/pin is stored well
+    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_STORE)
+  self.keychainConnectionIds.add(handlerId)
+
+  handlerId = self.statusFoundation.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
+    let args = KeyChainServiceArg(e)
+    self.disconnectKeychain()
+    ## no need for any other activity in this context, local `storeToKeychain` prop remains as it was
+    ## maybe in some point in future we add a popup letting user know about this
+    info "unable to store the data to keychain", errCode=args.errCode, errType=args.errType, errDesc=args.errDescription
+  self.keychainConnectionIds.add(handlerId)
+
+proc checkForStoringPasswordToKeychain(self: AppController) =
+  ## This proc is used to store pass/pin depends on user's selection during onboarding flow.
+  let account = self.accountsService.getLoggedInAccount()
+  let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
+  if not main_constants.IS_MACOS or # This is MacOS only feature
+    value == LS_VALUE_STORE or # means pass is already stored, no need to store it again
+    value == LS_VALUE_NEVER or # means pass doesn't need to be stored at all
+    account.name.len == 0:
+      return
+  # We are here if stored "storeToKeychain" property for the logged in user is either empty or set to "NotNow".
+
+  #TODO: we should store PubKey of this account instead of display name (display name is not unique)
+  #      and we may run into a problem if 2 accounts with the same display name are generated.
+  self.connectKeychain()
+  let pass = self.startupModule.getPassword()
+  if pass.len > 0:
+    self.keychainService.storeData(account.name, pass)
+  else:
+    self.keychainService.storeData(account.name, self.startupModule.getPin())
+
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
   singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
@@ -323,7 +366,7 @@ proc startupDidLoad*(self: AppController) =
 
 proc mainDidLoad*(self: AppController) =
   self.startupModule.moveToAppState()
-  self.startupModule.checkForStoringPasswordToKeychain()
+  self.checkForStoringPasswordToKeychain()
 
 proc start*(self: AppController) =
   self.keycardService.init()

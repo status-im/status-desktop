@@ -80,21 +80,24 @@ proc newController*(delegate: io_interface.AccessInterface,
 proc cleanTmpData*(self: Controller)
 proc storeMetadataForNewKeycardUser(self: Controller)
 proc storeIdentityImage*(self: Controller): seq[Image]
+proc getSelectedLoginAccount*(self: Controller): AccountDto
 
-proc disconnectKeychain*(self: Controller) =
+proc disconnectKeychain(self: Controller) =
   for id in self.keychainConnectionIds:
     self.events.disconnect(id)
   self.keychainConnectionIds = @[]
 
-proc connectKeychain*(self: Controller) =
+proc connectKeychain(self: Controller) =
   var handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e:Args):
     let args = KeyChainServiceArg(e)
+    self.disconnectKeychain()
     self.delegate.emitObtainingPasswordSuccess(args.data)
   self.keychainConnectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
     let args = KeyChainServiceArg(e)
     self.tmpKeychainErrorOccurred = true
+    self.disconnectKeychain()
     self.delegate.emitObtainingPasswordError(args.errDescription, args.errType)
   self.keychainConnectionIds.add(handlerId)
 
@@ -122,8 +125,6 @@ proc delete*(self: Controller) =
   self.disconnect()
 
 proc init*(self: Controller) =
-  self.connectKeychain()
-
   var handlerId = self.events.onWithUUID(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     self.delegate.onNodeLogin(signal.event.error)
@@ -306,15 +307,16 @@ proc cleanTmpData*(self: Controller) =
   self.setKeycardEvent(KeycardEvent())
   self.setRecoverUsingSeedPhraseWhileLogin(false)
 
-proc storePasswordToKeychain(self: Controller) =
-  let account = self.accountsService.getLoggedInAccount()
+proc tryToObtainDataFromKeychain*(self: Controller) =
+  ## This proc is used to fetch pass/pin from the keychain while user is trying to login.
   let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-  if (value != LS_VALUE_STORE or account.name.len == 0):
-    return
-  #TODO: we should store PubKey of this account instead of display name (display name is not unique)
-  #      and we may run into a problem if 2 accounts with the same display name are generated.
-  let data = if self.tmpPassword.len > 0: self.tmpPassword else: self.tmpPin
-  self.keychainService.storeData(account.name, data)
+  if not main_constants.IS_MACOS or # This is MacOS only feature
+    value != LS_VALUE_STORE:
+      return
+  self.connectKeychain() # handling the results is done in slots connected in `connectKeychain` proc 
+  self.tmpKeychainErrorOccurred = false
+  let selectedAccount = self.getSelectedLoginAccount()
+  self.keychainService.tryToObtainData(selectedAccount.name)
 
 proc storeIdentityImage*(self: Controller): seq[Image] =
   if self.tmpProfileImageDetails.url.len == 0:
@@ -343,8 +345,7 @@ proc importMnemonic*(self: Controller): bool =
 
 proc setupKeychain(self: Controller, store: bool) =
   if store:
-    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_STORE)
-    self.storePasswordToKeychain()
+    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
   else:
     singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
 
@@ -423,17 +424,6 @@ proc isSelectedAccountAKeycardAccount*(self: Controller): bool =
   let selectedAccount = self.getSelectedLoginAccount()
   return selectedAccount.keycardPairing.len > 0
 
-proc tryToObtainDataFromKeychain*(self: Controller) =
-  # Dealing with Keychain is the MacOS only feature
-  if not main_constants.IS_MACOS:
-    return
-  let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-  if (value != LS_VALUE_STORE):
-    return
-  self.tmpKeychainErrorOccurred = false
-  let selectedAccount = self.getSelectedLoginAccount()
-  self.keychainService.tryToObtainData(selectedAccount.name)
-
 proc login*(self: Controller) =
   self.delegate.moveToLoadingAppState()
   let selectedAccount = self.getSelectedLoginAccount()
@@ -464,11 +454,7 @@ proc loginAccountKeycardUsingSeedPhrase*(self: Controller, storeToKeychain: bool
   if acc.derivedAccounts.whisper.privateKey.startsWith("0x"):
     kcData.whisperKey.privateKey = acc.derivedAccounts.whisper.privateKey[2..^1]
 
-  if storeToKeychain:
-    ## storing not now, user will be asked to store the pin once he is logged in
-    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
-  else:
-    singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
+  self.setupKeychain(storeToKeychain)
 
   self.delegate.moveToLoadingAppState()
   let error = self.accountsService.loginAccountKeycard(selAcc, kcData)
@@ -555,19 +541,3 @@ proc storeMetadataForNewKeycardUser(self: Controller) =
   ## Stores metadata, default Status account only, to the keycard for a newly created keycard user.
   let paths = @[account_constants.PATH_DEFAULT_WALLET]
   self.runStoreMetadataFlow(self.getDisplayName(), self.getPin(), paths)
-
-proc checkForStoringPasswordToKeychain*(self: Controller) =
-  # This proc is called once user is logged in irrespective he is logged in
-  # through the onboarding or login view. 
-  # This is MacOS only feature
-  if not main_constants.IS_MACOS:
-    return
-
-  let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-  if (value == LS_VALUE_STORE or value == LS_VALUE_NEVER):
-    return
-
-  # We are here if stored "storeToKeychain" property for the logged in user
-  # is either empty or set to "NotNow".
-  singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_STORE)
-  self.storePasswordToKeychain()
