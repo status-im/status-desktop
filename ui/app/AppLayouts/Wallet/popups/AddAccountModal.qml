@@ -195,12 +195,12 @@ StatusModal {
 
     contentItem: StatusScrollView {
         id: scroll
-        width: root.width
+        implicitWidth: root.width
+        implicitHeight: 400
         topPadding: Style.current.halfPadding
         bottomPadding: Style.current.halfPadding
         leftPadding: Style.current.padding
         rightPadding: Style.current.padding
-        height: 400
         objectName: "AddAccountModalContent"
 
         Column {
