@@ -156,9 +156,6 @@ method addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: AccessInterface, o
 method removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method checkForStoringPasswordToKeychain*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onFetchingFromWakuMessageReceived*(self: AccessInterface, section: string, totalMessages: int, loadedMessages: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -8,7 +8,6 @@ import ../../core/notifications/notifications_manager
 import ../../../app_service/common/types
 import ../../../app_service/service/settings/service as settings_service
 import ../../../app_service/service/node_configuration/service as node_configuration_service
-import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service as accounts_service
 import ../../../app_service/service/chat/service as chat_service
 import ../../../app_service/service/community/service as community_service
@@ -34,7 +33,6 @@ type
     events: EventEmitter
     settingsService: settings_service.Service
     nodeConfigurationService: node_configuration_service.Service
-    keychainService: keychain_service.Service
     accountsService: accounts_service.Service
     chatService: chat_service.Service
     communityService: community_service.Service
@@ -54,7 +52,6 @@ proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   settingsService: settings_service.Service,
   nodeConfigurationService: node_configuration_service.Service,
-  keychainService: keychain_service.Service,
   accountsService: accounts_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -71,7 +68,6 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.events = events
   result.settingsService = settingsService
   result.nodeConfigurationService = nodeConfigurationService
-  result.keychainService = keychainService
   result.accountsService = accountsService
   result.chatService = chatService
   result.communityService = communityService
@@ -103,15 +99,6 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_MAILSERVER_NOT_WORKING) do(e: Args):
     self.delegate.emitMailserverNotWorking()
-
-  self.events.on(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e:Args):
-    let args = KeyChainServiceArg(e)
-    self.delegate.emitStoringPasswordSuccess()
-
-  self.events.on(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
-    let args = KeyChainServiceArg(e)
-    if self.accountsService.getLoggedInAccount().isValid():
-      self.delegate.emitStoringPasswordError(args.errDescription)
 
   self.events.on(SIGNAL_COMMUNITY_JOINED) do(e:Args):
     let args = CommunityArgs(e)
@@ -311,15 +298,6 @@ proc isConnected*(self: Controller): bool =
 
 proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
   return self.chatService.getChannelGroups()
-
-proc storePassword*(self: Controller, password: string) =
-  let account = self.accountsService.getLoggedInAccount()
-
-  let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-  if (value != LS_VALUE_STORE or account.name.len == 0):
-    return
-
-  self.keychainService.storeData(account.name, password)
 
 proc getActiveSectionId*(self: Controller): string =
   result = self.activeSectionId
