@@ -448,6 +448,7 @@ StatusStackModal {
 
                 CommunityOptions {
                     id: options
+                    Layout.fillWidth: true
                 }
 
                 Item {
