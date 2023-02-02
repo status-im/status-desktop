@@ -94,7 +94,7 @@ Item {
                 Loader {
                     Layout.fillWidth: true
                     asynchronous: true
-                    active: !!replyDetails.messageText && replyDetails.contentType !== StatusMessage.ContentType.Sticker
+                    active: !!replyDetails.messageText && replyDetails.contentType !== StatusMessage.ContentType.Sticker && replyDetails.contentType !== StatusMessage.ContentType.Image
                     visible: active
                     sourceComponent: StatusTextMessage {
                         objectName: "StatusMessage_replyDetails_textMessage"
