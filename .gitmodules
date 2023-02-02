@@ -2,9 +2,6 @@
 	path = vendor/nimbus-build-system
 	url = https://github.com/status-im/nimbus-build-system-desktop.git
 	branch = desktop
-[submodule "vendor/DOtherSide"]
-	path = vendor/DOtherSide
-	url = https://github.com/status-im/DOtherSide.git
 [submodule "vendor/nimqml"]
 	path = vendor/nimqml
 	url = https://github.com/status-im/nimqml.git
