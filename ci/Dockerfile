@@ -40,11 +40,17 @@ RUN apt update -yq && apt install -yq software-properties-common \
  && add-apt-repository -y ppa:git-core/ppa \
  && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
  && apt update -yq && apt full-upgrade -yq && apt install -yq --no-install-recommends --fix-missing  \
-    git openssh-client ca-certificates locales sudo curl build-essential pkg-config libgl1-mesa-dev libsm6 libice6 libxext6 libxrender1 \
-    libfontconfig1 libdbus-1-3 libz-dev fuse file libxkbcommon-dev libxkbcommon-x11-dev wget make libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev llvm \
-    libncurses5-dev libncursesw5-dev xz-utils tk-dev libgstreamer-plugins-base1.0-0 libpcsclite-dev cmake extra-cmake-modules s3cmd libpcre3-dev libnss3 libxcomposite1 libxtst6 jq \
-    gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-alsa libpulse-mainloop-glib0 \
-    gstreamer1.0-pulseaudio libxrandr2 libxcursor1 libxi6 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-render0 libxcb-xinerama0 gnupg2 gcc-9 g++-9 \
+    gnupg2 openssh-client ca-certificates locales sudo jq curl wget fuse s3cmdfile llvm tk-dev xz-utils \
+    git make build-essential pkg-config cmake extra-cmake-modules gcc-9 g++-9 \
+    libgl1-mesa-dev libsm6 libice6 libfontconfig1 libdbus-1-3 libssl-dev libz-dev \
+    zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev \
+    libncurses5-dev libncursesw5-dev libpcsclite-dev  libpcre3-dev libnss3 \
+    gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-alsa libpulse-mainloop-glib0 \
+    gstreamer1.0-pulseaudio libgstreamer-plugins-base1.0-0 \
+    libxext6 libxrender1 libxkbcommon-dev libxkbcommon-x11-dev libxcomposite1 libxtst6 \
+    libxrandr2 libxcursor1 libxi6 libxcb-randr0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
+    libxcb-render-util0 libxcb-shape0 libxcb-render0 libxcb-xinerama0 \
  &&  update-alternatives \
     --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 \
     --slave /usr/bin/g++ g++ /usr/bin/g++-9 \
