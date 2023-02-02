@@ -20,14 +20,25 @@ SplitView {
         // General properties:
         property string name: "Uniswap"
         property string communityDesc: "General channel for the community"
+        property string introMessage: "%1 sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+
+1. Ut enim ad minim veniam
+2. Excepteur sint occaecat cupidatat non proident
+3. Duis aute irure
+4. Dolore eu fugiat nulla pariatur
+5. 🚗 consectetur adipiscing elit
+
+Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.".arg(d.name)
+
         property color color: "orchid"
         property string channelName: joinCommunity ? "general" : "#vip"
         property string channelDesc: "VIP members only"
         property bool joinCommunity: true // Otherwise it means join channel action
+        property int accessType: Constants.communityChatPublicAccess
 
         // Overlay component:
         property bool requirementsMet: true
-        property bool isInvitationPending: false
+        property bool isInvitationPending: true
         property bool isJoinRequestRejected: false
         property bool requiresRequest: false
         property var communityHoldings: PermissionsModel.shortPermissionsModel
@@ -95,10 +106,13 @@ SplitView {
                 // General properties:
                 name: d.name
                 communityDesc: d.communityDesc
+                introMessage: d.introMessage
                 color: d.color
                 channelName: d.channelName
                 channelDesc: d.channelDesc
                 joinCommunity: d.joinCommunity
+                accessType: d.accessType
+                isInvitationPending: d.isInvitationPending
 
                 // Blur background properties:
                 membersCount: d.membersCount
@@ -112,7 +126,6 @@ SplitView {
 
                 // Permissions properties
                 requirementsMet: d.requirementsMet
-                isInvitationPending: d.isInvitationPending
                 isJoinRequestRejected: d.isJoinRequestRejected
                 requiresRequest: d.requiresRequest
                 communityHoldings: d.communityHoldings
@@ -126,8 +139,13 @@ SplitView {
                     openCreateChat = !openCreateChat
                 }
                 onNotificationButtonClicked: logs.logEvent("JoinCommunityView::onNotificationButtonClicked()")
-                onRevealAddressClicked: logs.logEvent("JoinCommunityView::onRevealAddressClicked()")
+                onRevealAddressClicked: {
+                    logs.logEvent("JoinCommunityView::onRevealAddressClicked()")
+                    openJoinCommunityDialog()
+                }
                 onInvitationPendingClicked: logs.logEvent("JoinCommunityView::onInvitationPendingClicked()")
+                onJoined: logs.logEvent("JoinCommunityView::onJoined()")
+                onCancelMembershipRequest: logs.logEvent("JoinCommunityView::onCancelMembershipRequest()")
             }
         }
 
@@ -189,6 +207,44 @@ SplitView {
                            text: qsTr("Model 2")
                             onCheckedChanged: if(checked) d.communityItemsModel = d.model2
                        }
+                }
+
+                // Join types:
+                Label {
+                    Layout.fillWidth: true
+                    text: "JOIN TYPES"
+                    font.bold: true
+                    font.pixelSize: 18
+                }
+
+                ColumnLayout {
+                    Label {
+                        Layout.fillWidth: true
+                        text: "Is invitation pending:"
+                    }
+
+                    CheckBox {
+                        checked: d.isInvitationPending
+                        onCheckedChanged:  d.isInvitationPending = checked
+                    }
+                }
+
+                ColumnLayout {
+                    visible: !d.isInvitationPending
+                    Label {
+                        Layout.fillWidth: true
+                        text: "Access type:"
+                    }
+
+                    RadioButton {
+                        checked: true
+                        text: qsTr("Public access")
+                        onCheckedChanged: d.accessType = Constants.communityChatPublicAccess
+                    }
+                    RadioButton {
+                        text: qsTr("On request")
+                        onCheckedChanged: d.accessType = Constants.communityChatOnRequestAccess
+                    }
                 }
 
                 // Join community overlay editor:
