@@ -585,11 +585,11 @@ method updateChatFetchMoreMessages*(self: Module) =
   if (self.controller.getChatDetails().hasMoreMessagesToRequest()):
     self.view.model().insertItemBasedOnClock(self.createFetchMoreMessagesItem())
 
-method getLinkPreviewData*(self: Module, link: string, uuid: string): string =
-  return self.controller.getLinkPreviewData(link, uuid)
+method getLinkPreviewData*(self: Module, link: string, uuid: string, whiteListedSites: string, whiteListedImgExtensions: string, unfurlImages: bool): string =
+  return self.controller.getLinkPreviewData(link, uuid, whiteListedSites, whiteListedImgExtensions, unfurlImages)
 
-method onPreviewDataLoaded*(self: Module, previewData: string) =
-  self.view.onPreviewDataLoaded(previewData)
+method onPreviewDataLoaded*(self: Module, previewData: string, uuid: string) =
+  self.view.onPreviewDataLoaded(previewData, uuid)
 
 method switchToMessage*(self: Module, messageId: string) =
   let index = self.view.model().findIndexForMessageId(messageId)
