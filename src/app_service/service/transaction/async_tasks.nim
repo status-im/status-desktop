@@ -137,6 +137,7 @@ const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
 
 type
   WatchTransactionTaskArg* = ref object of QObjectTaskArg
+    data: string
     hash: string
     chainId: int
     address: string
@@ -147,6 +148,7 @@ const watchTransactionTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.}
   try:
     let output = %*{
       "hash": arg.hash,
+      "data": arg.data,
       "address": arg.address,
       "chainId": arg.chainId,
       "trxType": arg.trxType,
@@ -156,6 +158,7 @@ const watchTransactionTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.}
   except Exception as e:
     let output = %* {
       "hash": arg.hash,
+      "data": arg.data,
       "address": arg.address,
       "chainId": arg.chainId,
       "trxType": arg.trxType,

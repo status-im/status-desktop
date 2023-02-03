@@ -147,8 +147,9 @@ QtObject:
       let transactionReceipt = transactions.getTransactionReceipt(chainId, hash).result
       if transactionReceipt != nil and transactionReceipt.kind != JNull:
         discard transactions.deletePendingTransaction(chainId, hash)
+        echo watchTxResult["data"].getStr
         let ev = TransactionMinedArgs(
-          data: "",
+          data: watchTxResult["data"].getStr,
           transactionHash: hash,
           chainId: chainId,
           success: transactionReceipt{"status"}.getStr == "0x1",
@@ -171,6 +172,7 @@ QtObject:
       hash: hash,
       address: fromAddress,
       trxType: trxType,
+      data: data,
       tptr: cast[ByteAddress](watchTransactionTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "watchTransactionResult",
