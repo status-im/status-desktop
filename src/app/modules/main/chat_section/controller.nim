@@ -23,6 +23,7 @@ type
     sectionId: string
     isCommunitySection: bool
     activeItemId: string
+    isCurrentSectionActive: bool
     events: EventEmitter
     settingsService: settings_service.Service
     nodeConfigurationService: node_configuration_service.Service
@@ -42,6 +43,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.delegate = delegate
   result.sectionId = sectionId
   result.isCommunitySection = isCommunity
+  result.isCurrentSectionActive = false
   result.events = events
   result.settingsService = settingsService
   result.nodeConfigurationService = nodeConfigurationService
@@ -57,6 +59,12 @@ proc delete*(self: Controller) =
 
 proc getActiveChatId*(self: Controller): string =
   return self.activeItemId
+
+proc getIsCurrentSectionActive*(self: Controller): bool =
+  return self.isCurrentSectionActive
+
+proc setIsCurrentSectionActive*(self: Controller, active: bool) =
+  self.isCurrentSectionActive = active
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
@@ -282,6 +290,9 @@ proc getCommunityCategoryDetails*(self: Controller, communityId: string, categor
 
 proc setActiveItem*(self: Controller, itemId: string) =
   self.activeItemId = itemId
+  let isSectionActive = self.getIsCurrentSectionActive()
+  if not isSectionActive:
+    return
   if self.activeItemId != "":
     self.messageService.asyncLoadInitialMessagesForChat(self.activeItemId)
 
