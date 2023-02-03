@@ -6,7 +6,7 @@ import QtQuick.Layouts 1.14
 import Qt.labs.settings 1.0
 import QtQml.Models 2.14
 
-import Sandbox 0.1
+import StatusQ 0.1
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1

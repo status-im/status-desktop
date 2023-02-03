@@ -1,4 +1,4 @@
-#include "DOtherSide/DOtherSideStatusWindow.h"
+#include "StatusQ/statuswindow.h"
 
 StatusWindow::StatusWindow(QWindow *parent)
 : QQuickWindow(parent),
@@ -17,6 +17,15 @@ StatusWindow::StatusWindow(QWindow *parent)
             showTitleBar();
         }
     });
+}
+
+void StatusWindow::updatePosition()
+{
+    auto point = QPoint(screen()->geometry().center().x() - geometry().width() / 2,
+                        screen()->geometry().center().y() - geometry().height() / 2);
+    if (point != this->position()) {
+        this->setPosition(point);
+    }
 }
 
 void StatusWindow::toggleFullScreen()

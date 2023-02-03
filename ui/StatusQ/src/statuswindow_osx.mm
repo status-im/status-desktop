@@ -1,4 +1,4 @@
-#include "DOtherSide/DOtherSideStatusWindow.h"
+#include "StatusQ/statuswindow.h"
 
 #include <Foundation/Foundation.h>
 #include <AppKit/NSView.h>

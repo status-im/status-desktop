@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QDirIterator>
 
-#include "statuswindow.h"
+#include "StatusQ/typesregistration.h"
 
 SandboxApp::SandboxApp(int &argc, char **argv)
     : QGuiApplication(argc, argv)
@@ -20,7 +20,7 @@ SandboxApp::SandboxApp(int &argc, char **argv)
 
 void SandboxApp::startEngine()
 {
-    qmlRegisterType<StatusWindow>("Sandbox", 0, 1, "StatusWindow");
+    registerStatusQTypes();
 
 #ifdef QT_DEBUG
     const QUrl url = QUrl::fromLocalFile(SRC_DIR + QStringLiteral("/main.qml"));
