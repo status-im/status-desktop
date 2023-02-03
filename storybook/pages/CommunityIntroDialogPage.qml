@@ -6,6 +6,7 @@ import Storybook 1.0
 import Models 1.0
 
 import shared.popups 1.0
+import utils 1.0
 
 SplitView {
     SplitView {
@@ -31,14 +32,21 @@ SplitView {
 
             CommunityIntroDialog {
                 id: dialog
-
                 anchors.centerIn: parent
+                name: "Status"
+                imageSrc: ModelsData.icons.status
+                introMessage: "%1 sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 
-                visible: true
+1. Ut enim ad minim veniam
+2. Excepteur sint occaecat cupidatat non proident
+3. Duis aute irure
+4. Dolore eu fugiat nulla pariatur
+5. 🚗 consectetur adipiscing elit
 
-                name: "test"
-                introMessage: "Welcome to the Status CCs community. Only Status CCs are allowed in this community."
-                imageSrc: ModelsData.icons.cryptoKitty
+Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.".arg(dialog.name)
+
+                onJoined: logs.logEvent("CommunityIntroDialog::onJoined()")
+                onCancelMembershipRequest: logs.logEvent("CommunityIntroDialog::onCancelMembershipRequest()")
 
             }
         }
@@ -62,7 +70,7 @@ SplitView {
 
             Label {
                 Layout.fillWidth: true
-                text: "name"
+                text: "Nadialogme"
                 font.weight: Font.Bold
             }
 
@@ -74,7 +82,7 @@ SplitView {
 
             Label {
                 Layout.fillWidth: true
-                text: "intro message"
+                text: "Intro message"
                 font.weight: Font.Bold
             }
 
@@ -84,15 +92,57 @@ SplitView {
                 onTextChanged: dialog.introMessage = text
             }
 
-            CheckBox {
-                text: "icon"
-                checked: true
-                onToggled: {
-                    if (checked) {
-                        dialog.imageSrc = ModelsData.icons.cryptoKitty
-                    } else {
-                        dialog.imageSrc = ""
-                    }
+            ColumnLayout {
+                Label {
+                    Layout.fillWidth: true
+                    text: "Icon:"
+                }
+                RadioButton {
+                    checked: true
+                    text: "Status"
+                    onCheckedChanged: if(checked) dialog.imageSrc = ModelsData.icons.status
+                }
+                RadioButton {
+                    text: "Crypto Punks"
+                    onCheckedChanged: if(checked) dialog.imageSrc = ModelsData.icons.cryptPunks
+                }
+                RadioButton {
+                    text: "Rarible"
+                    onCheckedChanged: if(checked) dialog.imageSrc = ModelsData.icons.rarible
+                }
+                RadioButton {
+                    text: "None"
+                    onCheckedChanged: if(checked) dialog.imageSrc = ""
+                }
+            }
+
+            ColumnLayout {
+                Label {
+                    Layout.fillWidth: true
+                    text: "Is invitation pending:"
+                }
+
+                CheckBox {
+                    checked: dialog.isInvitationPending
+                    onCheckedChanged:  dialog.isInvitationPending = checked
+                }
+            }
+
+            ColumnLayout {
+                visible: !dialog.isInvitationPending
+                Label {
+                    Layout.fillWidth: true
+                    text: "Access type:"
+                }
+
+                RadioButton {
+                    checked: true
+                    text: qsTr("Public access")
+                    onCheckedChanged: dialog.accessType = Constants.communityChatPublicAccess
+                }
+                RadioButton {
+                    text: qsTr("On request")
+                    onCheckedChanged: dialog.accessType = Constants.communityChatOnRequestAccess
                 }
             }
 
