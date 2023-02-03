@@ -8,7 +8,7 @@ ListModel {
             featured: true,
             id: "id1",
             loaded: true,
-            icon: ModelsData.icons.cryptoKitty,
+            icon: ModelsData.icons.status,
             banner: ModelsData.banners.status,
             color: "blue",
             name: "Status.im",
