@@ -128,6 +128,11 @@ class BackupSeedPhrasePopup(Enum):
     CONFIRM_SECOND_WORD_INPUT: str = "backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord_inputText"
     CONFIRM_YOU_STORED_CHECKBOX: str = "backup_seed_phrase_popup_ConfirmStoringSeedPhrasePanel_storeCheck"
     CONFIRM_YOU_STORED_BUTTON: str = "backup_seed_phrase_popup_BackupSeedModal_completeAndDeleteSeedPhraseButton"
+    
+class SharedPopup(Enum):
+    POPUP_CONTENT: str = "sharedPopup_Popup_Content"
+    PASSWORD_INPUT: str = "sharedPopup_Password_Input"
+    PRIMARY_BUTTON: str = "sharedPopup_Primary_Button"
 
 class SettingsScreen:
     __pid = 0
@@ -148,7 +153,7 @@ class SettingsScreen:
         self.activate_wallet_option()    
         click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)
     
-    def delete_account(self, account_name: str):
+    def delete_account(self, account_name: str, password: str):
         self.open_wallet_settings()
         
         index = self._find_account_index(account_name)
@@ -160,6 +165,9 @@ class SettingsScreen:
         click_obj(accounts.itemAtIndex(index))
         click_obj_by_name(WalletSettingsScreen.DELETE_ACCOUNT.value)
         click_obj_by_name(WalletSettingsScreen.DELETE_ACCOUNT_CONFIRM.value)
+        
+        wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
+        click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
         
     def verify_no_account(self, account_name: str):
         index = self._find_account_index(account_name)

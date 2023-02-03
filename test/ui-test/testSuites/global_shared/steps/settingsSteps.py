@@ -95,10 +95,10 @@ def step(context: any):
 def step(context: any):
     the_user_opens_the_wallet_settings()
 
-@When("the user deletes the account \"|any|\"")
-def step(context: any, account_name: str):
+@When("the user deletes the account \"|any|\" with password \"|any|\"")
+def step(context: any, account_name: str, password: str):
     _statusMain.open_settings()
-    _settingsScreen.delete_account(account_name)
+    _settingsScreen.delete_account(account_name, password)
 
 @When("the user selects the default account")
 def step(context: any):
