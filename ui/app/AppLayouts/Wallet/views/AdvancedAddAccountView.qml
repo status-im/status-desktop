@@ -147,20 +147,23 @@ ColumnLayout {
     }
 
     RowLayout {
-        Layout.fillWidth: true
+        Layout.preferredWidth: parent.width
         Layout.rightMargin: 2
         spacing: Style.current.bigPadding
         visible: advancedSection.addAccountType !== Constants.AddAccountType.ImportPrivateKey &&
                  advancedSection.addAccountType !== Constants.AddAccountType.WatchOnly
+
+        readonly property int itemWidth: (advancedSection.width - Style.current.bigPadding) * 0.5
+
         DerivationPathsPanel {
             id: derivationPathsPanel
-            Layout.preferredWidth: ((parent.width - (Style.current.bigPadding/2))/2)
+            Layout.preferredWidth: parent.itemWidth
             Layout.alignment: Qt.AlignTop
             Component.onCompleted: advancedSection.path = Qt.binding(function() { return derivationPathsPanel.path})
         }
         DerivedAddressesPanel {
             id: derivedAddressesPanel
-            Layout.preferredWidth: ((parent.width - (Style.current.bigPadding/2))/2)
+            Layout.preferredWidth: parent.itemWidth
             Layout.alignment: Qt.AlignTop
 
             selectedAccountType: advancedSection.addAccountType
