@@ -19,6 +19,7 @@ StatusListItem {
     property bool showActionButtons: false
     property bool showMenuButton: showActionButtons
     property bool showAddButton: showActionButtons
+    property bool showToggleButton: showActionButtons
     property bool hasUnreadMessages: false
     property alias addButton: addButton
     property alias menuButton: menuButton
@@ -61,6 +62,7 @@ StatusListItem {
             icon.name: "chevron-down"
             icon.width: 18
             icon.rotation: statusChatListCategoryItem.opened ? 0 : 270
+            visible: statusChatListCategoryItem.showToggleButton
             onClicked: statusChatListCategoryItem.toggleButtonClicked(mouse)
         }
     ]

@@ -145,9 +145,10 @@ proc addEmptyChatItemForCategory(self: Module, category: Category) =
         blocked = false,
         active = false,
         position = 99,
-        category.id,
-        category.name,
-        category.position,
+        categoryId = category.id,
+        categoryName = category.name,
+        categoryPosition = category.position,
+        categoryHasItems = false
       )
   self.view.chatsModel().appendItem(emptyChatItem)
 
@@ -565,17 +566,18 @@ method removeCommunityChat*(self: Module, chatId: string) =
 method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDto]) =
   # Update chat items that have that category
   let chatIds = chats.filterIt(it.categoryId == cat.id).mapIt(it.id)
+  let hasChatItems = chatIds.len > 0
   self.view.chatsModel().updateItemsWithCategoryDetailById(
     chatIds,
     cat.id,
     cat.name,
     cat.position,
+    hasChatItems
   )
-  
-  if chatIds.len == 0:
+
+  if not hasChatItems:
     # New category with no chats associated, we created an empty chatItem with the category info
     self.addEmptyChatItemForCategory(cat)
-    return
 
 method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto]) =
   if (self.doesCatOrChatExist(cat.id)):

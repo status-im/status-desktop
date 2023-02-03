@@ -51,10 +51,12 @@ Item {
             }
             property string categoryName: ""
             property bool categoryOpened: true
+            property bool categoryHasItems: false
 
             function updateCategoryData(catId) {
                 categoryName = root.model.sourceModel.getCategoryNameForCategoryId(catId)
                 categoryOpened = root.model.sourceModel.getCategoryOpenedForCategoryId(catId)
+                categoryHasItems = root.model.sourceModel.getCategoryHasItemsForCategoryId(catId)
             }
 
             id: statusChatListCategoryItemLoader
@@ -84,6 +86,7 @@ Item {
                 propagateTitleClicks: true // title click is handled as a normal click (fallthru)
                 showAddButton: showCategoryActionButtons
                 showMenuButton: !!root.popupMenu
+                showToggleButton: categoryHasItems
                 // TODO uncomment this when drag and drop is reimplemented
                 highlighted: false//statusChatListCategory.dragged
                 onClicked: {

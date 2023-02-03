@@ -30,6 +30,7 @@ type
     categoryName: string
     categoryPosition: int
     categoryOpened: bool
+    categoryHasItems: bool
     highlight: bool
     trustStatus: TrustStatus
     onlineStatus: OnlineStatus
@@ -58,7 +59,8 @@ proc initItem*(
     highlight: bool = false,
     categoryOpened: bool = true,
     trustStatus: TrustStatus = TrustStatus.Unknown,
-    onlineStatus = OnlineStatus.Inactive
+    onlineStatus = OnlineStatus.Inactive,
+    categoryHasItems = false
     ): Item =
   result = Item()
   result.id = id
@@ -86,6 +88,7 @@ proc initItem*(
   result.categoryOpened = categoryOpened
   result.trustStatus = trustStatus
   result.onlineStatus = onlineStatus
+  result.categoryHasItems = categoryHasItems
 
 proc `$`*(self: Item): string =
   result = fmt"""chat_section/Item(
@@ -112,6 +115,7 @@ proc `$`*(self: Item): string =
     categoryOpened: {$self.categoryOpened},
     trustStatus: {$self.trustStatus},
     onlineStatus: {$self.onlineStatus},
+    categoryHasItems: {$self.categoryHasItems},
     ]"""
 
 proc toJsonNode*(self: Item): JsonNode =
@@ -137,7 +141,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "highlight": self.highlight,
     "categoryOpened": self.categoryOpened,
     "trustStatus": self.trustStatus,
-    "onlineStatus": self.onlineStatus
+    "onlineStatus": self.onlineStatus,
+    "categoryHasItems": self.categoryHasItems
   }
 
 proc delete*(self: Item) =
@@ -247,6 +252,12 @@ proc categoryPosition*(self: Item): int =
 
 proc `categoryPosition=`*(self: var Item, value: int) =
   self.categoryPosition = value
+
+proc categoryHasItems*(self: Item): bool =
+  self.categoryHasItems
+
+proc `categoryHasItems=`*(self: var Item, value: bool) =
+  self.categoryHasItems = value
 
 proc highlight*(self: Item): bool =
   self.highlight

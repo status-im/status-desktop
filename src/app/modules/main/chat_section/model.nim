@@ -26,6 +26,7 @@ type
     CategoryId
     CategoryName
     CategoryPosition
+    CategoryHasChatItems
     Highlight
     CategoryOpened
     TrustStatus
@@ -93,6 +94,7 @@ QtObject:
       ModelRole.CategoryId.int:"categoryId",
       ModelRole.CategoryName.int:"categoryName",
       ModelRole.CategoryPosition.int:"categoryPosition",
+      ModelRole.CategoryHasChatItems.int:"categoryHasItems",
       ModelRole.Highlight.int:"highlight",
       ModelRole.CategoryOpened.int:"categoryOpened",
       ModelRole.TrustStatus.int:"trustStatus",
@@ -150,6 +152,8 @@ QtObject:
       result = newQVariant(item.categoryName)
     of ModelRole.CategoryPosition:
       result = newQVariant(item.categoryPosition)
+    of ModelRole.CategoryHasChatItems:
+      result = newQVariant(item.categoryHasItems)
     of ModelRole.Highlight:
       result = newQVariant(item.highlight)
     of ModelRole.CategoryOpened:
@@ -196,6 +200,12 @@ QtObject:
     if index == -1:
       return true # Default to true just in case
     return self.items[index].categoryOpened
+
+  proc getCategoryHasItemsForCategoryId*(self: Model, categoryId: string): bool {.slot.} =
+    let index = self.getItemIdxByCategory(categoryId)
+    if index == -1:
+      return true # Default to true just in case
+    return self.items[index].categoryHasItems
 
   proc changeCategoryOpened*(self: Model, categoryId: string, opened: bool) {.slot.} =
     for i in 0 ..< self.items.len:
@@ -339,6 +349,7 @@ QtObject:
       categoryId,
       newCategoryName: string,
       newCategoryPosition: int,
+      categoryHasItems: bool,
     ) =
     var indexesToDelete: seq[int] = @[]
     for i in 0 ..< self.items.len:
@@ -352,12 +363,14 @@ QtObject:
         item.categoryId = categoryId
         item.categoryName = newCategoryName
         item.categoryPosition = newCategoryPosition
+        item.categoryHasItems = categoryHasItems
         let modelIndex = self.createIndex(i, 0, nil)
         # Also signal on CategoryId because the section header only knows the categoryId
         self.dataChanged(modelIndex, modelIndex, @[
           ModelRole.CategoryId.int,
           ModelRole.CategoryName.int,
           ModelRole.CategoryPosition.int,
+          ModelRole.CategoryHasChatItems.int,
         ])
         break
       if hasCategory and not found:
@@ -370,11 +383,13 @@ QtObject:
         item.categoryId = ""
         item.categoryName = ""
         item.categoryPosition = -1
+        item.categoryHasItems = false
         let modelIndex = self.createIndex(i, 0, nil)
         self.dataChanged(modelIndex, modelIndex, @[
           ModelRole.CategoryId.int,
           ModelRole.CategoryName.int,
           ModelRole.CategoryPosition.int,
+          ModelRole.CategoryHasChatItems.int,
         ])
 
     # Go through indexesToDelete from the highest to the bottom, that way the indexes stay correct
@@ -460,6 +475,7 @@ QtObject:
         ModelRole.CategoryId.int,
         ModelRole.CategoryName.int,
         ModelRole.CategoryPosition.int,
+        ModelRole.CategoryHasChatItems.int,
       ])
     self.items[index].position = position
     let modelIndex = self.createIndex(index, 0, nil)
