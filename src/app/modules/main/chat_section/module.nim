@@ -329,9 +329,10 @@ method load*(
     self.usersModule.load()
 
   let activeChatId = self.controller.getActiveChatId()
+  let isCurrentSectionActive = self.controller.getIsCurrentSectionActive()
   for chatId, cModule in self.chatContentModules:
     cModule.load()
-    if chatId == activeChatId:
+    if isCurrentSectionActive and chatId == activeChatId:
       cModule.onMadeActive()
 
 proc checkIfModuleDidLoad(self: Module) =
@@ -426,8 +427,15 @@ method updateLastMessageTimestamp*(self: Module, chatId: string, lastMessageTime
 
 method onActiveSectionChange*(self: Module, sectionId: string) =
   if(sectionId != self.controller.getMySectionId()):
+    self.controller.setIsCurrentSectionActive(false)
     return
 
+  self.controller.setIsCurrentSectionActive(true)
+  let activeChatId = self.controller.getActiveChatId()
+  if activeChatId == "":
+    self.setFirstChannelAsActive()
+  else:
+    self.setActiveItem(activeChatId)
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
 
 method chatsModel*(self: Module): chats_model.Model =
