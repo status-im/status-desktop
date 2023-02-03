@@ -343,7 +343,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
     # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
     # Now we just skip deleted messages
     if message.deleted or message.deletedForMe:
-      return
+      continue
 
     var item = initItem(
       message.id,
@@ -648,7 +648,7 @@ method getMessageById*(self: Module, messageId: string): message_item.Item =
         quotedMessageAuthorDetails = sender
       else:
         quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
-        
+
     var transactionContract = message.transactionParameters.contract
     var transactionValue = message.transactionParameters.value
     var isCurrentUser = sender.isCurrentUser
