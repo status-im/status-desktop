@@ -207,11 +207,7 @@ Loader {
         id: d
 
         readonly property int chatButtonSize: 32
-
-        readonly property bool isSingleImage: linkUrlsModel.count === 1 && linkUrlsModel.get(0).isImage
-                                              && `<p>${linkUrlsModel.get(0).link}</p>` === root.messageText
-
-        property int unfurledLinksCount: 0
+        property bool hideMessage: false
 
         property string activeMessage
         readonly property bool isMessageActive: d.activeMessage === root.messageId
@@ -243,19 +239,7 @@ Loader {
         }
     }
 
-    onLinkUrlsChanged: {
-        linkUrlsModel.clear()
-        if (!root.linkUrls) {
-            return
-        }
-        root.linkUrls.split(" ").forEach(link => {
-            linkUrlsModel.append({link, isImage: Utils.hasImageExtension(link)})
-        })
-    }
 
-    ListModel {
-        id: linkUrlsModel
-    }
 
     Connections {
         enabled: d.isMessageActive
@@ -476,7 +460,7 @@ Loader {
                                   root.editModeOn ||
                                   !root.rootStore.mainModuleInst.activeSection.joined
 
-                hideMessage: d.isSingleImage && d.unfurledLinksCount === 1
+                hideMessage: d.hideMessage
 
                 overrideBackground: root.placeholderMessage
                 profileClickable: !root.isDiscordMessage
@@ -695,10 +679,11 @@ Loader {
                     }
                 }
 
-                hasLinks: linkUrlsModel.count
+                hasLinks: !!root.linkUrls
                 linksComponent: Component {
                     LinksMessageView {
-                        linksModel: linkUrlsModel
+                        id: linksMessageView
+                        links: root.linkUrls
                         container: root
                         messageStore: root.messageStore
                         store: root.rootStore
@@ -706,9 +691,11 @@ Loader {
                         onImageClicked: {
                             root.imageClicked(image);
                         }
-
-                        Component.onCompleted: d.unfurledLinksCount = Qt.binding(() => unfurledLinksCount)
-                        Component.onDestruction: d.unfurledLinksCount = 0
+                        onLinksLoaded: {
+                            // If there is only one image and no links, hide the message
+                            // Handled in linksLoaded signal to evaulate it only once
+                            d.hideMessage = linksMessageView.unfurledImagesCount === 1 && linksMessageView.unfurledLinksCount === 0
+                        }
                     }
                 }
 

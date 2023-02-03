@@ -383,7 +383,9 @@ QtObject {
     function getLinkTitleAndCb(link) {
         const result = {
             title: "Status",
-            callback: null
+            callback: null,
+            fetching: true,
+            communityId: ""
         }
 
         // User profile
@@ -399,37 +401,31 @@ QtObject {
         }*/
 
         // Community
-        const communityId = Utils.getCommunityIdFromShareLink(link)
-        if (communityId !== "") {
-            const communityName = getSectionNameById(communityId)
+        result.communityId = Utils.getCommunityIdFromShareLink(link)
+        if(!result.communityId) return result
 
-            if (!communityName) {
-                // Unknown community, fetch the info if possible
-                root.requestCommunityInfo(communityId)
-                result.communityId = communityId
-                result.fetching = true
-                return result
-            }
-
-            result.title = qsTr("Join the %1 community").arg(communityName)
-            result.communityId = communityId
-            result.callback = function () {
-                const isUserMemberOfCommunity = isUserMemberOfCommunity(communityId)
-                if (isUserMemberOfCommunity) {
-                    setActiveCommunity(communityId)
-                    return
-                }
-
-                const userCanJoin = userCanJoin(communityId)
-                // TODO find what to do when you can't join
-                if (userCanJoin) {
-                    requestToJoinCommunity(communityId, userProfileInst.preferredName)
-                }
-            }
+        const communityName = getSectionNameById(result.communityId)
+        if (!communityName) {
+            // Unknown community, fetch the info if possible
+            root.requestCommunityInfo(communityId)
             return result
         }
 
+        result.title = qsTr("Join the %1 community").arg(communityName)
+        result.fetching = false
+        result.callback = function () {
+            const isUserMemberOfCommunity = isUserMemberOfCommunity(result.communityId)
+            if (isUserMemberOfCommunity) {
+                setActiveCommunity(result.communityId)
+                return
+            }
 
+            const userCanJoin = userCanJoin(result.communityId)
+            // TODO find what to do when you can't join
+            if (userCanJoin) {
+                requestToJoinCommunity(result.communityId, userProfileInst.preferredName)
+            }
+        }
         return result
     }
 

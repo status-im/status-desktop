@@ -123,10 +123,10 @@ method editMessage*(self: AccessInterface, messageId: string, contentType: int, 
 method onHistoryCleared*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getLinkPreviewData*(self: AccessInterface, link: string, uuid: string): string {.base.} =
+method getLinkPreviewData*(self: AccessInterface, link: string, uuid: string, whiteListedSites: string, whiteListedImgExtensions: string, unfurlImages: bool): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onPreviewDataLoaded*(self: AccessInterface, previewData: string) {.base.} =
+method onPreviewDataLoaded*(self: AccessInterface, previewData: string, uuid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method requestMoreMessages*(self: AccessInterface) {.base.} =
