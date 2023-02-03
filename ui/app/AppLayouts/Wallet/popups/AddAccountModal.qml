@@ -271,7 +271,6 @@ StatusModal {
 
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width
-                enabled: accountNameInput.valid
 
                 primaryText: qsTr("Advanced")
                 type: StatusExpandableItem.Type.Tertiary
