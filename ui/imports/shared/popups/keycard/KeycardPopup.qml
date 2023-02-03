@@ -68,33 +68,10 @@ StatusModal {
         implicitHeight: contentHeight + topPadding + bottomPadding
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        width: parent.width
-        height: {
-            let availableSpace = Global.applicationWindow.height - (root.margins * 2 + root.topPadding + root.bottomPadding)
-            return Math.min(content.height, availableSpace)
-        }
 
         KeycardPopupContent {
             id: content
             width: scrollView.availableWidth
-            height: {
-                // for all flows
-                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {
-                    if (!root.sharedKeycardModule.keyPairStoredOnKeycardIsKnown) {
-                        return Constants.keycard.general.popupBiggerHeight
-                    }
-                }
-
-                if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard &&
-                        root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.manageKeycardAccounts &&
-                        root.sharedKeycardModule.keyPairHelper.accounts.count > 1) {
-                    return Constants.keycard.general.popupBiggerHeight
-                }
-
-                return Constants.keycard.general.popupHeight
-            }
-
             sharedKeycardModule: root.sharedKeycardModule
             emojiPopup: root.emojiPopup
             onPrimaryButtonEnabledChanged: d.primaryButtonEnabled = primaryButtonEnabled
