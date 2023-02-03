@@ -7,7 +7,6 @@ import shared 1.0
 
 Item {
     id: root
-    default property alias inner: contents.children
     property bool isCurrentUser: false
     readonly property int smallCorner: Style.current.radius / 2
     readonly property int bigCorner: Style.current.radius * 2
@@ -84,12 +83,6 @@ Item {
                     visible: root.isCurrentUser
                 }
             }
-        }
-
-        Item {
-            id: contents
-            width: root.width
-            height: root.height
         }
     }
 }

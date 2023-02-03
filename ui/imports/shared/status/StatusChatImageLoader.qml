@@ -20,6 +20,7 @@ Item {
     property bool allCornersRounded: false
     property bool isOnline: true // TODO: mark as required when migrating to 5.15 or above
     property bool imageLoaded: (imageMessage.status === Image.Ready)
+    property alias asynchronous: imageMessage.asynchronous
 
     signal clicked(var image, var mouse)
 

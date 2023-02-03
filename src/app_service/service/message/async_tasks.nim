@@ -1,3 +1,4 @@
+import std/uri, std/httpclient
 include ../../common/json_utils
 include ../../../app/core/tasks/common
 
@@ -152,25 +153,87 @@ const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe
 
 type
   AsyncGetLinkPreviewDataTaskArg = ref object of QObjectTaskArg
-    link: string
+    links: string
     uuid: string
+    whiteListedUrls: string
+    whiteListedImgExtensions: string
+    unfurlImages: bool
+
+
 
 const asyncGetLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetLinkPreviewDataTaskArg](argEncoded)
+  var previewData =  %* {
+    "links": %*[]
+    }
+    
+  if arg.links == "":
+    arg.finish(previewData)
+    return
 
-  var success = true
-  var result: JsonNode =  %* {}
-  try:
-    let response = status_go_chat.getLinkPreviewData(arg.link)
-    result = response.result
-  except:
-    success = false
+  let parsedWhiteListUrls = parseJson(arg.whiteListedUrls)
+  let parsedWhiteListImgExtensions = arg.whiteListedImgExtensions.split(",")
+  let httpClient = newHttpClient()
+  
+  for link in arg.links.split(" "):
+    if link == "":
+      continue
 
-  let responseJson = %*{
-      "link": arg.link,
-      "uuid": arg.uuid,
-      "success": success,
-      "result": result,
+    let uri = parseUri(link)
+    let path = uri.path
+    let domain = uri.hostname.toLower()
+    let isSupportedImage = any(parsedWhiteListImgExtensions, proc (extenstion: string): bool = path.endsWith(extenstion))
+    let isWhitelistedUrl = parsedWhiteListUrls.hasKey(domain)
+    let processUrl = isWhitelistedUrl or isSupportedImage
+
+    if domain == "" or processUrl == false:
+      continue
+
+    let canUnfurl = parsedWhiteListUrls{domain}.getBool() or (isSupportedImage and arg.unfurlImages)
+    let responseJson = %*{
+      "link": link,
+      "success": true,
+      "unfurl": canUnfurl,
+      "isStatusDeepLink": false,
+      "result": %*{}
     }
 
-  arg.finish(responseJson)
+    if canUnfurl == false:
+      previewData["links"].add(responseJson)
+      continue
+
+    #1. if it's an image, we use httpclient to validate the url
+    if isSupportedImage:
+      let headResponse = httpclient.head(link)
+      #validate image url
+      responseJson["success"] = %(headResponse.code() == Http200 and headResponse.contentType().startsWith("image/"))
+      responseJson["result"] = %*{
+            "site": domain,
+            "thumbnailUrl": link,
+            "contentType": headResponse.contentType()
+          }
+      previewData["links"].add(responseJson)
+      continue
+
+    #2. Process whitelisted url
+    #status deep links are handled internally
+    if domain == "status-im" or domain == "join.status.im":
+      responseJson["success"] = %true
+      responseJson["isStatusDeepLink"] = %true
+      responseJson["result"] = %*{
+        "site": domain,
+        "contentType": "text/html"
+      }
+      previewData["links"].add(responseJson)
+      continue
+    #other links are handled by status-go
+    try:
+      let response = status_go_chat.getLinkPreviewData(link)
+      responseJson["result"] = response.result
+      responseJson["success"] = %true
+    except:
+      responseJson["success"] = %false
+    previewData["links"].add(responseJson)
+
+  let tpl: tuple[previewData: JsonNode, uuid: string] = (previewData, arg.uuid)
+  arg.finish(tpl)
