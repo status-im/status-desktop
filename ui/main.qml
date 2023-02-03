@@ -7,8 +7,6 @@ import QtQuick.Window 2.12
 import QtQml 2.13
 import QtQuick.Controls.Universal 2.12
 
-import DotherSide 0.1
-
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
@@ -17,6 +15,7 @@ import shared.popups 1.0
 import mainui 1.0
 import AppLayouts.Onboarding 1.0
 
+import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
 
 StatusWindow {

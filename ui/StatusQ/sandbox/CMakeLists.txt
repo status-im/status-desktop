@@ -7,11 +7,29 @@ find_package(
 
 file(GLOB_RECURSE QML_FILES "../*.qml" "../qmldir")
 file(GLOB_RECURSE JS_FILES "../*.js")
-file(GLOB_RECURSE HEADERS *.h)
+
+set(HEADERS sandboxapp.h)
+set(SOURCES main.cpp sandboxapp.cpp)
+
+set(STATUSQ_DIR ..)
+set(STATUSQ_HEADERS
+    ${STATUSQ_DIR}/include/StatusQ/statuswindow.h
+    ${STATUSQ_DIR}/include/StatusQ/typesregistration.h
+)
+
+set(STATUSQ_SOURCES
+    ${STATUSQ_DIR}/src/statuswindow.cpp
+    ${STATUSQ_DIR}/src/typesregistration.cpp
+)
+
 if(APPLE)
-  file(GLOB_RECURSE SOURCES *.cpp *.mm)
+    list(APPEND STATUSQ_SOURCES
+        ${STATUSQ_DIR}/src/statuswindow_osx.mm
+    )
 else()
-  file(GLOB_RECURSE SOURCES *.cpp)
+    list(APPEND STATUSQ_SOURCES
+        ${STATUSQ_DIR}/src/statuswindow_other.cpp
+    )
 endif()
 
 set(QRC_FILES qml.qrc ../src/statusq.qrc ../src/assets.qrc)
@@ -21,11 +39,14 @@ add_executable(
   ${PROJECT_NAME}
   ${HEADERS}
   ${SOURCES}
+  ${STATUSQ_HEADERS}
+  ${STATUSQ_SOURCES}
   ${QRC_FILES}
   ${QRC_COMPILED}
   ${QML_FILES}
   ${JS_FILES})
 
+target_include_directories(${PROJECT_NAME} PUBLIC ${STATUSQ_DIR}/include)
 target_compile_definitions(${PROJECT_NAME}
                            PRIVATE SRC_DIR="${CMAKE_CURRENT_LIST_DIR}")
 target_link_libraries(

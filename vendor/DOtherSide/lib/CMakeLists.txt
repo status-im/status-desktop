@@ -18,13 +18,38 @@ macro(add_target name type)
         file(GLOB MONITORING_SOURCES src/Status/Monitoring/*.cpp)
     endif()
 
+    set(STATUSQ_DIR ../../../ui/StatusQ)
+    set(STATUSQ_HEADERS
+        ${STATUSQ_DIR}/include/StatusQ/statuswindow.h
+        ${STATUSQ_DIR}/include/StatusQ/typesregistration.h
+    )
+
+    set(STATUSQ_SOURCES
+        ${STATUSQ_DIR}/src/statuswindow.cpp
+        ${STATUSQ_DIR}/src/typesregistration.cpp
+    )
+
+    if(APPLE)
+        list(APPEND STATUSQ_SOURCES
+            ${STATUSQ_DIR}/src/statuswindow_osx.mm
+        )
+    else()
+        list(APPEND STATUSQ_SOURCES
+            ${STATUSQ_DIR}/src/statuswindow_other.cpp
+        )
+    endif()
+
     if(APPLE)
         file(GLOB MM_FILES src/*.mm src/Status/*.mm)
         #prepend items because .mm files need build priority to override cpp impl
         list(INSERT SOURCES 0 ${MM_FILES})
     endif()
 
-    add_library(${name} ${type} ${SOURCES} ${HEADERS} ${MONITORING_SOURCES} ${MONITORING_HEADERS})
+    add_library(${name} ${type}
+        ${SOURCES} ${HEADERS}
+        ${MONITORING_SOURCES} ${MONITORING_HEADERS}
+        ${STATUSQ_HEADERS} ${STATUSQ_SOURCES}
+    )
 
     if (WIN32)
         target_compile_definitions(${name} PRIVATE -DWIN32)
@@ -32,7 +57,7 @@ macro(add_target name type)
 
     set_target_properties(${name} PROPERTIES CXX_STANDARD 11 AUTOMOC ON)
 
-    target_include_directories(${name} PUBLIC include include/Qt)
+    target_include_directories(${name} PUBLIC include include/Qt ${STATUSQ_DIR}/include)
 
     target_link_libraries(${name} PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Network Qt5::Multimedia SortFilterProxyModel)
 

@@ -1,4 +1,4 @@
-#include "DOtherSide/DOtherSideStatusWindow.h"
+#include "StatusQ/statuswindow.h"
 
 void StatusWindow::removeTitleBar()
 {
