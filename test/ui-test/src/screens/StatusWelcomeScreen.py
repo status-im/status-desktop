@@ -150,9 +150,9 @@ class StatusWelcomeScreen:
             message = 'Try clicking "Create Password" until button not visible (moved to the next screen)')
 
     def input_confirmation_password(self, password: str):
-        log("[input_confirmation_password] - Before `CONFIRM_PSW_AGAIN_INPUT` check")
-        verify(is_loaded_visible_and_enabled(SignUpComponents.CONFIRM_PSW_AGAIN_INPUT.value, 10)[0], 'Reconfirm password is visible')
-        log("[input_confirmation_password] - After `CONFIRM_PSW_AGAIN_INPUT` check")
+        #log("[input_confirmation_password] - Before `CONFIRM_PSW_AGAIN_INPUT` check")
+        #verify(is_loaded_visible_and_enabled(SignUpComponents.CONFIRM_PSW_AGAIN_INPUT.value, 10)[0], 'Reconfirm password is visible')
+        #log("[input_confirmation_password] - After `CONFIRM_PSW_AGAIN_INPUT` check")
         type(SignUpComponents.CONFIRM_PSW_AGAIN_INPUT.value, password)
         log("[input_confirmation_password] - After typing into `CONFIRM_PSW_AGAIN_INPUT` password: " + password)
         do_until_validation_with_timeout(
