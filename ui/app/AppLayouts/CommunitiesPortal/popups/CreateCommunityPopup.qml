@@ -370,14 +370,15 @@ StatusStackModal {
             id: generalView
             implicitWidth: root.width
             implicitHeight: root.height
-
+            contentWidth: availableWidth
+            contentHeight: generalViewLayout.implicitHeight
             readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid
 
             clip: false
 
             ColumnLayout {
                 id: generalViewLayout
-                width: generalView.availableWidth
+                width: generalView.contentWidth
                 spacing: 16
 
                 CommunityNameInput {
