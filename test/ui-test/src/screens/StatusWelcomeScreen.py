@@ -159,6 +159,7 @@ class StatusWelcomeScreen:
             do_fn = lambda: click_obj_by_name(SignUpComponents.FINALIZE_PSW_BUTTON.value),
             validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.FINALIZE_PSW_BUTTON.value, 50)[0],
             message = 'Try clicking "Finalize" until button not visible (moved to the next screen')
+        log("[input_confirmation_password] - After `do_until_validation_with_timeout` on `FINALIZE_PSW_BUTTON`")
 
     def agree_terms_and_conditions(self):
         if sys.platform == "darwin":
