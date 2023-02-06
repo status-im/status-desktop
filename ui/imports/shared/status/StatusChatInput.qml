@@ -2,9 +2,6 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
-import DotherSide 0.1
-
-import StatusQ 0.1
 
 import utils 1.0
 
@@ -16,6 +13,7 @@ import shared.stores 1.0
 //TODO remove this dependency
 import AppLayouts.Chat.panels 1.0
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils

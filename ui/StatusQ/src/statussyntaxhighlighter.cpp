@@ -1,4 +1,4 @@
-#include "DOtherSide/DOtherSideStatusSyntaxHighlighter.h"
+#include "StatusQ/statussyntaxhighlighter.h"
 
 #include <QQuickTextDocument>
 

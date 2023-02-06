@@ -64,7 +64,6 @@
 #include "DOtherSide/DosQDeclarative.h"
 #include "DOtherSide/DosQQuickImageProvider.h"
 #include "DOtherSide/DOtherSideSingleInstance.h"
-#include "DOtherSide/DOtherSideStatusSyntaxHighlighter.h"
 
 #include "DOtherSide/Status/DockShowAppEvent.h"
 #include "DOtherSide/Status/OSThemeEvent.h"
@@ -74,8 +73,9 @@
 #include "DOtherSide/Status/SoundManager.h"
 #include "DOtherSide/Status/RXValidator.h"
 
-#include "StatusQ/statuswindow.h"
 #include "StatusQ/QClipboardProxy.h"
+#include "StatusQ/statussyntaxhighlighter.h"
+#include "StatusQ/statuswindow.h"
 
 #ifdef MONITORING
 #include <QProcessEnvironment>
@@ -91,9 +91,9 @@ void register_meta_types()
     qRegisterMetaType<QVector<int>>();
 
     qmlRegisterType<StatusWindow>("StatusQ", 0 , 1, "StatusWindow");
+    qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0 , 1, "StatusSyntaxHighlighter");
     qmlRegisterSingletonType<QClipboardProxy>("StatusQ", 0 , 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
 
-    qmlRegisterType<StatusSyntaxHighlighter>("DotherSide", 0 , 1, "StatusSyntaxHighlighter");
     qmlRegisterType<RXValidator>("DotherSide", 0, 1, "RXValidator");
 
 #ifdef MONITORING
