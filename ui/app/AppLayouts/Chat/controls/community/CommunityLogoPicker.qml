@@ -28,8 +28,6 @@ Item {
     ColumnLayout {
         id: layout
 
-        implicitWidth: childrenRect.width
-        implicitHeight: childrenRect.height
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 8
 
