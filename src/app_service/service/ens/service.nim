@@ -60,7 +60,6 @@ type
     transactionHash*: string
     ensUsername*: string
     transactionType*: string
-    revertReason*: string
 
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED* = "ensUsernameAvailabilityChecked"
@@ -111,10 +110,9 @@ QtObject:
     self.pendingEnsUsernames.excl(dto)
     self.events.emit(SIGNAL_ENS_TRANSACTION_CONFIRMED, data)
 
-  proc revertTransaction(self: Service, trxType: string, ensUsername: string, transactionHash: string,
-    revertReason: string) =
+  proc revertTransaction(self: Service, trxType: string, ensUsername: string, transactionHash: string) =
     let dto = EnsUsernameDto(chainId: self.getChainId(), username: ensUsername)
-    let data = EnsTransactionArgs(transactionHash: transactionHash, ensUsername: ensUsername, transactionType: $trxType, revertReason: revertReason)
+    let data = EnsTransactionArgs(transactionHash: transactionHash, ensUsername: ensUsername, transactionType: $trxType)
     self.pendingEnsUsernames.excl(dto)
     self.events.emit(SIGNAL_ENS_TRANSACTION_REVERTED, data)
 
@@ -124,16 +122,14 @@ QtObject:
       if receivedData.success:
         self.confirmTransaction($PendingTransactionTypeDto.RegisterENS, receivedData.data, receivedData.transactionHash)
       else:
-        self.revertTransaction($PendingTransactionTypeDto.RegisterENS, receivedData.data, receivedData.transactionHash,
-        receivedData.revertReason)
+        self.revertTransaction($PendingTransactionTypeDto.RegisterENS, receivedData.data, receivedData.transactionHash)
 
     self.events.on(PendingTransactionTypeDto.SetPubKey.event) do(e: Args):
       var receivedData = TransactionMinedArgs(e)
       if receivedData.success:
         self.confirmTransaction($PendingTransactionTypeDto.SetPubKey, receivedData.data, receivedData.transactionHash)
       else:
-        self.revertTransaction($PendingTransactionTypeDto.SetPubKey, receivedData.data, receivedData.transactionHash,
-        receivedData.revertReason)
+        self.revertTransaction($PendingTransactionTypeDto.SetPubKey, receivedData.data, receivedData.transactionHash)
 
   proc init*(self: Service) =
     self.doConnect()

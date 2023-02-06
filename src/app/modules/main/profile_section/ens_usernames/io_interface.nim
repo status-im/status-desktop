@@ -26,8 +26,7 @@ method ensTransactionConfirmed*(self: AccessInterface, trxType: string, ensUsern
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method ensTransactionReverted*(self: AccessInterface, trxType: string, ensUsername: string, transactionHash: string,
-  revertReason: string) {.base.} =
+method ensTransactionReverted*(self: AccessInterface, trxType: string, ensUsername: string, transactionHash: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =

@@ -55,7 +55,6 @@ type
     transactionHash*: string
     chainId*: int
     success*: bool
-    revertReason*: string
 
 type
   HistoryArgs* = ref object of Args
@@ -153,7 +152,6 @@ QtObject:
           transactionHash: hash,
           chainId: chainId,
           success: transactionReceipt{"status"}.getStr == "0x1",
-          revertReason: ""
         )
         self.events.emit(parseEnum[PendingTransactionTypeDto](watchTxResult["trxType"].getStr).event, ev)
         transactions.checkRecentHistory(@[chainId], @[address])

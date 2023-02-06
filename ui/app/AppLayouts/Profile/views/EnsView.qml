@@ -326,7 +326,7 @@ Item {
 
     Connections {
         target: ensView.ensUsernamesStore.ensUsernamesModule
-        function onTransactionCompleted(success: bool, txHash: string, username: string, trxType: string, revertReason: string) {
+        function onTransactionCompleted(success: bool, txHash: string, username: string, trxType: string) {
             let title = ""
             switch(trxType){
             case "RegisterENS":

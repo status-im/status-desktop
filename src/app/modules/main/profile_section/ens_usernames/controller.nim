@@ -58,7 +58,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_ENS_TRANSACTION_REVERTED) do(e:Args):
     let args = EnsTransactionArgs(e)
-    self.delegate.ensTransactionReverted(args.transactionType, args.ensUsername, args.transactionHash, args.revertReason)
+    self.delegate.ensTransactionReverted(args.transactionType, args.ensUsername, args.transactionHash)
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)

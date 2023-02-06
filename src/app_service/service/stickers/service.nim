@@ -49,7 +49,6 @@ type
     transactionHash*: string
     packID*: string
     transactionType*: string
-    revertReason*: string
   StickerPackInstalledArgs* = ref object of Args
     packId*: string
 
@@ -143,7 +142,7 @@ QtObject:
     except:
       error "Error confirming sticker transaction", message = getCurrentExceptionMsg()
 
-  proc revertTransaction(self: Service, trxType: string, packID: string, transactionHash: string, revertReason: string) =
+  proc revertTransaction(self: Service, trxType: string, packID: string, transactionHash: string) =
     try:
       if not self.marketStickerPacks.contains(packID):
         let pendingStickerPacksResponse = status_stickers.pending() 
@@ -159,8 +158,7 @@ QtObject:
                 ))
       discard status_stickers.removePending(packID)
       self.marketStickerPacks[packID].status = StickerPackStatus.Available
-      let data = StickerTransactionArgs(transactionHash: transactionHash, packID: packID, transactionType: $trxType,
-        revertReason: revertReason)
+      let data = StickerTransactionArgs(transactionHash: transactionHash, packID: packID, transactionType: $trxType)
       self.events.emit(SIGNAL_STICKER_TRANSACTION_REVERTED, data)
     except:
       error "Error reverting sticker transaction", message = getCurrentExceptionMsg()
@@ -175,8 +173,7 @@ QtObject:
       if receivedData.success:
         self.confirmTransaction($PendingTransactionTypeDto.BuyStickerPack, receivedData.data, receivedData.transactionHash)
       else:
-        self.revertTransaction($PendingTransactionTypeDto.BuyStickerPack, receivedData.data, receivedData.transactionHash,
-        receivedData.revertReason)
+        self.revertTransaction($PendingTransactionTypeDto.BuyStickerPack, receivedData.data, receivedData.transactionHash)
 
   proc buildTransaction*(
     source: Address,
