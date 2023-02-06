@@ -5,6 +5,8 @@ include(GNUInstallDirs)
 option(MONITORING "Tools for real-time inspection of the application." OFF)
 set(MONITORING_QML_ENTRY_POINT "" CACHE STRING "QML file intended to start the monitoring tool UI.")
 
+include(../../../ui/StatusQ/StatusQSources.cmake)
+
 # Macro for merging common code between static and shared
 macro(add_target name type)
     find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets Network Multimedia REQUIRED)
@@ -16,33 +18,6 @@ macro(add_target name type)
     if(MONITORING)
         file(GLOB MONITORING_HEADERS include/DOtherSide/Status/Monitoring/*.h)
         file(GLOB MONITORING_SOURCES src/Status/Monitoring/*.cpp)
-    endif()
-
-    set(STATUSQ_DIR ../../../ui/StatusQ)
-    set(STATUSQ_HEADERS
-        ${STATUSQ_DIR}/include/StatusQ/statuswindow.h
-        ${STATUSQ_DIR}/include/StatusQ/typesregistration.h
-        ${STATUSQ_DIR}/include/StatusQ/QClipboardProxy.h
-        ${STATUSQ_DIR}/include/StatusQ/statussyntaxhighlighter.h
-        ${STATUSQ_DIR}/include/StatusQ/rxvalidator.h
-    )
-
-    set(STATUSQ_SOURCES
-        ${STATUSQ_DIR}/src/statuswindow.cpp
-        ${STATUSQ_DIR}/src/typesregistration.cpp
-        ${STATUSQ_DIR}/src/QClipboardProxy.cpp
-        ${STATUSQ_DIR}/src/statussyntaxhighlighter.cpp
-        ${STATUSQ_DIR}/src/rxvalidator.cpp
-    )
-
-    if(APPLE)
-        list(APPEND STATUSQ_SOURCES
-            ${STATUSQ_DIR}/src/statuswindow_osx.mm
-        )
-    else()
-        list(APPEND STATUSQ_SOURCES
-            ${STATUSQ_DIR}/src/statuswindow_other.cpp
-        )
     endif()
 
     if(APPLE)
