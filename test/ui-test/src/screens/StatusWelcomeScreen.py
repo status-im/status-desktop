@@ -137,17 +137,24 @@ class StatusWelcomeScreen:
             message = 'Try clicking "Next" until new password screen is visible')
 
     def input_password(self, password: str):
+        log("[input_password] - Before `NEW_PSW_INPUT` check")
         verify(is_loaded_visible_and_enabled(SignUpComponents.NEW_PSW_INPUT.value, 10)[0], 'New Password input is visible')
+        log("[input_password] - After `NEW_PSW_INPUT` check")
         type(SignUpComponents.NEW_PSW_INPUT.value, password)
+        log("[input_password] - After typing into `NEW_PSW_INPUT` password: " + password)
         type(SignUpComponents.CONFIRM_PSW_INPUT.value, password)
+        log("[input_password] - After typing into `CONFIRM_PSW_INPUT` password: " + password)
         do_until_validation_with_timeout(
             do_fn = lambda: click_obj_by_name(SignUpComponents.CREATE_PSW_BUTTON.value),
             validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.CREATE_PSW_BUTTON.value, 50)[0],
             message = 'Try clicking "Create Password" until button not visible (moved to the next screen)')
 
     def input_confirmation_password(self, password: str):
+        log("[input_confirmation_password] - Before `CONFIRM_PSW_AGAIN_INPUT` check")
         verify(is_loaded_visible_and_enabled(SignUpComponents.CONFIRM_PSW_AGAIN_INPUT.value, 10)[0], 'Reconfirm password is visible')
+        log("[input_confirmation_password] - After `CONFIRM_PSW_AGAIN_INPUT` check")
         type(SignUpComponents.CONFIRM_PSW_AGAIN_INPUT.value, password)
+        log("[input_confirmation_password] - After typing into `CONFIRM_PSW_AGAIN_INPUT` password: " + password)
         do_until_validation_with_timeout(
             do_fn = lambda: click_obj_by_name(SignUpComponents.FINALIZE_PSW_BUTTON.value),
             validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.FINALIZE_PSW_BUTTON.value, 50)[0],
