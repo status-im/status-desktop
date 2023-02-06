@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QImage>
 
 class QClipboard;
 class QJSEngine;

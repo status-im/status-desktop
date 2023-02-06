@@ -30,6 +30,29 @@ file(GLOB_RECURSE TEST_QML_FILES "qmlTests/*.qml")
 
 set(PROJECT_LIB "${PROJECT_NAME}Lib")
 
+set(STATUSQ_DIR ../ui/StatusQ)
+set(STATUSQ_HEADERS
+    ${STATUSQ_DIR}/include/StatusQ/statuswindow.h
+    ${STATUSQ_DIR}/include/StatusQ/typesregistration.h
+    ${STATUSQ_DIR}/include/StatusQ/QClipboardProxy.h
+)
+
+set(STATUSQ_SOURCES
+    ${STATUSQ_DIR}/src/statuswindow.cpp
+    ${STATUSQ_DIR}/src/typesregistration.cpp
+    ${STATUSQ_DIR}/src/QClipboardProxy.cpp
+)
+
+if(APPLE)
+    list(APPEND STATUSQ_SOURCES
+        ${STATUSQ_DIR}/src/statuswindow_osx.mm
+    )
+else()
+    list(APPEND STATUSQ_SOURCES
+        ${STATUSQ_DIR}/src/statuswindow_other.cpp
+    )
+endif()
+
 add_library(${PROJECT_LIB}
     cachecleaner.cpp cachecleaner.h
     directorieswatcher.cpp directorieswatcher.h
@@ -40,7 +63,10 @@ add_library(${PROJECT_LIB}
     figmalinkssource.cpp figmalinkssource.h
     modelutils.cpp modelutils.h
     sectionsdecoratormodel.cpp sectionsdecoratormodel.h
+    ${STATUSQ_HEADERS} ${STATUSQ_SOURCES}
 )
+
+target_include_directories(${PROJECT_LIB} PUBLIC ${STATUSQ_DIR}/include)
 
 add_executable(
   ${PROJECT_NAME}

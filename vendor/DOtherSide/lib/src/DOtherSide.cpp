@@ -72,10 +72,10 @@
 #include "DOtherSide/Status/OSNotification.h"
 #include "DOtherSide/Status/KeychainManager.h"
 #include "DOtherSide/Status/SoundManager.h"
-#include "DOtherSide/Status/QClipboardProxy.h"
 #include "DOtherSide/Status/RXValidator.h"
 
 #include "StatusQ/statuswindow.h"
+#include "StatusQ/QClipboardProxy.h"
 
 #ifdef MONITORING
 #include <QProcessEnvironment>
@@ -91,8 +91,9 @@ void register_meta_types()
     qRegisterMetaType<QVector<int>>();
 
     qmlRegisterType<StatusWindow>("StatusQ", 0 , 1, "StatusWindow");
+    qmlRegisterSingletonType<QClipboardProxy>("StatusQ", 0 , 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
+
     qmlRegisterType<StatusSyntaxHighlighter>("DotherSide", 0 , 1, "StatusSyntaxHighlighter");
-    qmlRegisterSingletonType<QClipboardProxy>("DotherSide", 0 , 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
     qmlRegisterType<RXValidator>("DotherSide", 0, 1, "RXValidator");
 
 #ifdef MONITORING

@@ -1,4 +1,4 @@
-#include "DOtherSide/Status/QClipboardProxy.h"
+#include "StatusQ/QClipboardProxy.h"
 
 #include <QBuffer>
 #include <QClipboard>

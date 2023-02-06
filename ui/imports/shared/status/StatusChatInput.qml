@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 import DotherSide 0.1
 
+import StatusQ 0.1
+
 import utils 1.0
 
 import shared 1.0

@@ -22,11 +22,13 @@ macro(add_target name type)
     set(STATUSQ_HEADERS
         ${STATUSQ_DIR}/include/StatusQ/statuswindow.h
         ${STATUSQ_DIR}/include/StatusQ/typesregistration.h
+        ${STATUSQ_DIR}/include/StatusQ/QClipboardProxy.h
     )
 
     set(STATUSQ_SOURCES
         ${STATUSQ_DIR}/src/statuswindow.cpp
         ${STATUSQ_DIR}/src/typesregistration.cpp
+        ${STATUSQ_DIR}/src/QClipboardProxy.cpp
     )
 
     if(APPLE)
