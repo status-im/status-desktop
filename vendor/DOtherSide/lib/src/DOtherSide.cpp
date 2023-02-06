@@ -71,9 +71,9 @@
 #include "DOtherSide/Status/OSNotification.h"
 #include "DOtherSide/Status/KeychainManager.h"
 #include "DOtherSide/Status/SoundManager.h"
-#include "DOtherSide/Status/RXValidator.h"
 
 #include "StatusQ/QClipboardProxy.h"
+#include "StatusQ/rxvalidator.h"
 #include "StatusQ/statussyntaxhighlighter.h"
 #include "StatusQ/statuswindow.h"
 
@@ -92,9 +92,8 @@ void register_meta_types()
 
     qmlRegisterType<StatusWindow>("StatusQ", 0 , 1, "StatusWindow");
     qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0 , 1, "StatusSyntaxHighlighter");
+    qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
     qmlRegisterSingletonType<QClipboardProxy>("StatusQ", 0 , 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
-
-    qmlRegisterType<RXValidator>("DotherSide", 0, 1, "RXValidator");
 
 #ifdef MONITORING
     qmlRegisterSingletonType<Monitor>("Monitoring", 1 , 0, "Monitor", &Monitor::qmlInstance);

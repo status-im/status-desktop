@@ -1,4 +1,4 @@
-#include "DOtherSide/Status/RXValidator.h"
+#include "StatusQ/rxvalidator.h"
 
 RXValidator::RXValidator(QObject* parent)
     : QValidator(parent)

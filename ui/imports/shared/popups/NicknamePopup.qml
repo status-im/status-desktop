@@ -1,11 +1,10 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
-import DotherSide 0.1
-
 import utils 1.0
 import shared.controls 1.0
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
