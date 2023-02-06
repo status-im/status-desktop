@@ -169,7 +169,7 @@ pipeline {
       env.PKG_URL = "${currentBuild.absoluteUrl}/consoleText"
     } }
     cleanup { script {
-      sh './scripts/clean-git.sh'
+      //sh './scripts/clean-git.sh'
       if (binding.hasVariable('ganache')) { ganache.stop() }
       if (binding.hasVariable('nimwaku')) { nimwaku.stop() }
     } }
