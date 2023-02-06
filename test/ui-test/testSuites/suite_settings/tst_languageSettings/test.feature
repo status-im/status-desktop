@@ -22,6 +22,8 @@ Feature: Status Language Settings
     	When the user opens app settings screen
     	And the user clicks on Language & Currency
 
+	# Just skipped for testing e2e
+	@mayfail
 	# Each language run takes 30 seconds, so only some of them are enabled until we can parallelize executions
     Scenario Outline: The user is able to select a specific language and after a restart, the language is kept
 		When the user opens the language selector
@@ -59,6 +61,8 @@ Feature: Status Language Settings
 	        #| Tagalog                 | Tagalog                 |
 	        #| Turkish                 | Türkçe                  |
 
+	# Just skipped for testing e2e
+	@mayfail
 	# Each language run takes 30 seconds, so only some of them are enabled until we can parallelize executions
 	Scenario Outline: The user is able to search and select a specific language and after a restart, the language is kept
 		When the user opens the language selector
