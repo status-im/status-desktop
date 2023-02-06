@@ -266,13 +266,12 @@ method ensTransactionConfirmed*(self: Module, trxType: string, ensUsername: stri
     self.view.model().updatePendingStatus(chainId, ensUsername, false)
   else:
     self.view.model().addItem(Item(chainId: chainId, ensUsername: ensUsername, isPending: false))
-  self.view.emitTransactionCompletedSignal(true, transactionHash, ensUsername, trxType, "")
+  self.view.emitTransactionCompletedSignal(true, transactionHash, ensUsername, trxType)
 
-method ensTransactionReverted*(self: Module, trxType: string, ensUsername: string, transactionHash: string,
-    revertReason: string) =
+method ensTransactionReverted*(self: Module, trxType: string, ensUsername: string, transactionHash: string) =
   let chainId = self.getChainIdForEns()
   self.view.model().removeItemByEnsUsername(chainId, ensUsername)
-  self.view.emitTransactionCompletedSignal(false, transactionHash, ensUsername, trxType, revertReason)
+  self.view.emitTransactionCompletedSignal(false, transactionHash, ensUsername, trxType)
 
 method getEnsRegisteredAddress*(self: Module): string =
   return self.controller.getEnsRegisteredAddress()

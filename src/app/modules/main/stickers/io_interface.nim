@@ -98,8 +98,7 @@ method getChainIdForStickers*(self: AccessInterface): int {.base.} =
 method stickerTransactionConfirmed*(self: AccessInterface, trxType: string, packID: string, transactionHash: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method stickerTransactionReverted*(self: AccessInterface, trxType: string, packID: string, transactionHash: string,
-  revertReason: string) {.base.} =
+method stickerTransactionReverted*(self: AccessInterface, trxType: string, packID: string, transactionHash: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =

@@ -55,7 +55,7 @@ QtObject:
 
   proc transactionWasSent*(self: View, txResult: string) {.signal.}
 
-  proc transactionCompleted*(self: View, success: bool, txHash: string, revertReason: string = "") {.signal.}
+  proc transactionCompleted*(self: View, success: bool, txHash: string) {.signal.}
 
   proc estimate*(self: View, packId: string, address: string, price: string, uuid: string) {.slot.} =
     self.delegate.estimate(packId, address, price, uuid)
@@ -175,8 +175,6 @@ QtObject:
   proc getStatusToken*(self: View): string {.slot.} =
     return self.delegate.getStatusToken()
 
-  proc transactionCompleted(self: View, success: bool, txHash: string, packID: string, trxType: string,
-    revertReason: string) {.signal.}
-  proc emitTransactionCompletedSignal*(self: View, success: bool, txHash: string, packID: string, trxType: string,
-    revertReason: string) =
-    self.transactionCompleted(success, txHash, packID, trxType, revertReason)
+  proc transactionCompleted(self: View, success: bool, txHash: string, packID: string, trxType: string) {.signal.}
+  proc emitTransactionCompletedSignal*(self: View, success: bool, txHash: string, packID: string, trxType: string) =
+    self.transactionCompleted(success, txHash, packID, trxType)

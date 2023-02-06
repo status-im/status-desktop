@@ -248,9 +248,8 @@ method getChainIdForStickers*(self: Module): int =
 method stickerTransactionConfirmed*(self: Module, trxType: string, packID: string, transactionHash: string) =
   self.view.stickerPacks.updateStickerPackInList(packID, true, false)
   self.controller.installStickerPack(packID)
-  self.view.emitTransactionCompletedSignal(true, transactionHash, packID, trxType, "")
+  self.view.emitTransactionCompletedSignal(true, transactionHash, packID, trxType)
 
-method stickerTransactionReverted*(self: Module, trxType: string, packID: string, transactionHash: string,
-  revertReason: string) =
+method stickerTransactionReverted*(self: Module, trxType: string, packID: string, transactionHash: string) =
   self.view.stickerPacks.updateStickerPackInList(packID, false, false)
-  self.view.emitTransactionCompletedSignal(false, transactionHash, packID, trxType, revertReason)
+  self.view.emitTransactionCompletedSignal(false, transactionHash, packID, trxType)

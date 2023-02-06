@@ -95,11 +95,9 @@ QtObject:
   proc emitUsernameConfirmedSignal*(self: View, ensUsername: string) =
     self.usernameConfirmed(ensUsername)
 
-  proc transactionCompleted(self: View, success: bool, txHash: string, username: string, trxType: string,
-    revertReason: string) {.signal.}
-  proc emitTransactionCompletedSignal*(self: View, success: bool, txHash: string, username: string, trxType: string,
-    revertReason: string) =
-    self.transactionCompleted(success, txHash, username, trxType, revertReason)
+  proc transactionCompleted(self: View, success: bool, txHash: string, username: string, trxType: string) {.signal.}
+  proc emitTransactionCompletedSignal*(self: View, success: bool, txHash: string, username: string, trxType: string) =
+    self.transactionCompleted(success, txHash, username, trxType)
 
   proc removeEnsUsername*(self: View, chainId: int, ensUsername: string): bool {.slot.} =
     return self.delegate.removeEnsUsername(chainId, ensUsername)

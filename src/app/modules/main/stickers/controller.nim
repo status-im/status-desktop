@@ -99,7 +99,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_STICKER_TRANSACTION_REVERTED) do(e:Args):
     let args = StickerTransactionArgs(e)
-    self.delegate.stickerTransactionReverted(args.transactionType, args.packID, args.transactionHash, args.revertReason)
+    self.delegate.stickerTransactionReverted(args.transactionType, args.packID, args.transactionHash)
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
