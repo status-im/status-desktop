@@ -12,6 +12,8 @@ import StatusQ.Popups 0.1
 StatusScrollView {
     id: root
 
+    contentWidth: column.implicitWidth
+    contentHeight: column.implicitHeight
     property string title: qsTr("Community Colour")
 
     property var rightButtons: StatusButton {

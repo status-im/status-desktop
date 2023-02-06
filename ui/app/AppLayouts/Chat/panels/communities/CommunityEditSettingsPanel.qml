@@ -26,7 +26,7 @@ StatusScrollView {
     objectName: "communityEditPanelScrollView"
 
     implicitWidth: contentWidth
-    implicitHeight: layout.childrenRect.height
+    contentHeight: layout.implicitHeight
 
     property alias name: nameInput.text
     property alias description: descriptionTextInput.text
@@ -54,7 +54,6 @@ StatusScrollView {
         id: layout
 
         width: 608
-        height: parent.height
 
         spacing: 12
 
@@ -93,9 +92,11 @@ StatusScrollView {
                 id: pickColorComponent
 
                 StatusStackModal {
-                    anchors.centerIn: parent
                     width: 640
+                    height: root.height
+                    anchors.centerIn: parent
                     replaceItem: CommunityColorPanel {
+                        clip: true
                         Component.onCompleted: color = colorPicker.color
                         onAccepted: {
                             colorPicker.color = color;
