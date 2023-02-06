@@ -41,6 +41,9 @@ const SIGNAL_HISTORY_READY* = "historyReady"
 const SIGNAL_HISTORY_NON_ARCHIVAL_NODE* = "historyNonArchivalNode"
 const SIGNAL_HISTORY_ERROR* = "historyError"
 
+const SIMPLE_TX_BRIDGE_NAME = "Simple"
+const HOP_TX_BRIDGE_NAME = "Hop"
+
 type
   EstimatedTime* {.pure.} = enum
     Unknown = 0
@@ -230,50 +233,69 @@ QtObject:
         self.txCounter[address] = networkChains
         self.threadpool.start(arg)
 
-  proc transfer*(
+  proc createApprovalPath*(self: Service, route: TransactionPathDto, from_addr: string, toAddress: Address, gasFees: string): TransactionBridgeDto =
+    var txData = TransactionDataDto()
+    let approve = Approve(
+      to: parseAddress(route.approvalContractAddress),
+      value: route.approvalAmountRequired,
+    )
+    let data = ERC20_procS.toTable["approve"].encodeAbi(approve)
+    txData = ens_utils.buildTokenTransaction(
+      parseAddress(from_addr),
+      toAddress,
+      $route.gasAmount,
+      gasFees,
+      route.gasFees.eip1559Enabled,
+      $route.gasFees.maxPriorityFeePerGas,
+      $route.gasFees.maxFeePerGasM
+    )
+    txData.data = data
+
+    var path = TransactionBridgeDto(bridgeName: SIMPLE_TX_BRIDGE_NAME, chainID: route.fromNetwork.chainId)
+    path.simpleTx = txData
+    return path
+
+  proc createPath*(self: Service, route: TransactionPathDto, txData: TransactionDataDto, tokenSymbol: string, to_addr: string): TransactionBridgeDto =
+    var path = TransactionBridgeDto(bridgeName: route.bridgeName, chainID: route.fromNetwork.chainId)
+    var hopTx = TransactionDataDto()
+    var cbridgeTx = TransactionDataDto()
+
+    if(route.bridgeName == SIMPLE_TX_BRIDGE_NAME):
+      path.simpleTx = txData
+    elif(route.bridgeName == HOP_TX_BRIDGE_NAME):
+      hopTx = txData
+      hopTx.chainID =  route.toNetwork.chainId.some
+      hopTx.symbol = tokenSymbol.some
+      hopTx.recipient = parseAddress(to_addr).some
+      hopTx.amount = route.amountIn.some
+      hopTx.bonderFee = route.bonderFees.some
+      path.hopTx = hopTx
+    else:
+      cbridgeTx = txData
+      cbridgeTx.chainID =  route.toNetwork.chainId.some
+      cbridgeTx.symbol = tokenSymbol.some
+      cbridgeTx.recipient = parseAddress(to_addr).some
+      cbridgeTx.amount = route.amountIn.some
+      path.cbridgeTx = cbridgeTx
+
+    return path
+
+  proc transferEth*(
     self: Service,
     from_addr: string,
     to_addr: string,
     tokenSymbol: string,
     value: string,
     uuid: string,
-    selectedRoutes: string,
-    password: string,
+    routes: seq[TransactionPathDto],
+    password: string
   ) =
     try:
-      let selRoutes = parseJson(selectedRoutes)
-      let routes = selRoutes.getElems().map(x => x.convertToTransactionPathDto())
-
       var paths: seq[TransactionBridgeDto] = @[]
-      var isEthTx = false
-      var chainID = 0
-      var amountToSend: UInt256
-      var toAddress: Address
-      var data = ""
-
-      if(routes.len > 0):
-        chainID = routes[0].fromNetwork.chainID
-      let network = self.networkService.getNetwork(chainID)
-      if network.nativeCurrencySymbol == tokenSymbol:
-        isEthTx = true
-
-      if(isEthTx):
-        amountToSend = conversion.eth2Wei(parseFloat(value), 18)
-        toAddress = parseAddress(to_addr)
-      else:
-        let token = self.tokenService.findTokenBySymbol(network, tokenSymbol)
-        amountToSend = conversion.eth2Wei(parseFloat(value), token.decimals)
-        toAddress = token.address
-        let transfer = Transfer(
-          to: parseAddress(to_addr),
-          value: amountToSend,
-        )
-        data = ERC20_procS.toTable["transfer"].encodeAbi(transfer)
+      let amountToSend = conversion.eth2Wei(parseFloat(value), 18)
+      let toAddress = parseAddress(to_addr)
 
       for route in routes:
-        var simpleTx = TransactionDataDto()
-        var hopTx = TransactionDataDto()
-        var cbridgeTx = TransactionDataDto()
         var txData = TransactionDataDto()
         var gasFees: string = ""
 
@@ -281,54 +303,13 @@ QtObject:
           gasFees = $route.gasFees.gasPrice
 
         if route.approvalRequired:
-          let approve = Approve(
-            to: parseAddress(route.approvalContractAddress),
-            value: route.approvalAmountRequired,
-          )
-          data = ERC20_procS.toTable["approve"].encodeAbi(approve)
-          txData = ens_utils.buildTokenTransaction(
-            parseAddress(from_addr),
-            toAddress,
-            $route.gasAmount,
-            gasFees,
-            route.gasFees.eip1559Enabled,
-            $route.gasFees.maxPriorityFeePerGas,
-            $route.gasFees.maxFeePerGasM
-          )
-          txData.data = data
-          var path = TransactionBridgeDto(bridgeName: "Simple", chainID: route.fromNetwork.chainId)
-          path.simpleTx = txData
-          paths.add(path)
+          paths.add(self.createApprovalPath(route, from_addr, toAddress, gasFees))
 
-        if(isEthTx) :
-          txData = ens_utils.buildTransaction(parseAddress(from_addr), eth2Wei(parseFloat(value), 18),
-  $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
-          txData.to = parseAddress(to_addr).some
-        else:
-          txData = ens_utils.buildTokenTransaction(parseAddress(from_addr), toAddress,
-  $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
-          txData.data = data
+        txData = ens_utils.buildTransaction(parseAddress(from_addr), route.amountIn,
+          $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
+        txData.to = parseAddress(to_addr).some
 
-        var path = TransactionBridgeDto(bridgeName: route.bridgeName, chainID: route.fromNetwork.chainId)
-        if(route.bridgeName == "Simple"):
-          path.simpleTx = txData
-        elif(route.bridgeName == "Hop"):
-          hopTx = txData
-          hopTx.chainID =  route.toNetwork.chainId.some
-          hopTx.symbol = tokenSymbol.some
-          hopTx.recipient = parseAddress(to_addr).some
-          hopTx.amount = route.amountIn.some
-          hopTx.bonderFee = route.bonderFees.some
-          path.hopTx = hopTx
-        else:
-          cbridgeTx = txData
-          cbridgeTx.chainID =  route.toNetwork.chainId.some
-          cbridgeTx.symbol = tokenSymbol.some
-          cbridgeTx.recipient = parseAddress(to_addr).some
-          cbridgeTx.amount = route.amountIn.some
-          path.cbridgeTx = cbridgeTx
-
-        paths.add(path)
+        paths.add(self.createPath(route, txData, tokenSymbol, to_addr))
 
       let response = transactions.createMultiTransaction(
         MultiTransactionDto(
@@ -343,16 +324,113 @@ QtObject:
         password,
       )
 
-      # Watch for this transaction to be completed
       if response.result{"hashes"} != nil:
-        for hash in response.result["hashes"][$chainID]:
-          let txHash = hash.getStr
-          self.watchTransaction(txHash, from_addr, to_addr, $PendingTransactionTypeDto.WalletTransfer, "", chainId, track = false)
+        for route in routes:
+          for hash in response.result["hashes"][$route.fromNetwork.chainID]:
+            self.watchTransaction(hash.getStr, from_addr, to_addr, $PendingTransactionTypeDto.WalletTransfer, " ", route.fromNetwork.chainID, track = false)
       let output = %* {"result": response.result{"hashes"}, "success":true, "uuid": %uuid }
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
     except Exception as e:
-      error "Error sending token transfer transaction", msg = e.msg
-      let err =  fmt"Error sending token transfer transaction: {e.msg}"
+      let output = %* {"success":false, "uuid": %uuid, "error":fmt"Error sending token transfer transaction: {e.msg}"}
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
+
+  proc transferToken*(
+    self: Service,
+    from_addr: string,
+    to_addr: string,
+    tokenSymbol: string,
+    value: string,
+    uuid: string,
+    routes: seq[TransactionPathDto],
+    password: string,
+  ) =
+    try:
+      var paths: seq[TransactionBridgeDto] = @[]
+      var chainID = 0
+
+      if(routes.len > 0):
+        chainID = routes[0].fromNetwork.chainID
+
+      let network = self.networkService.getNetwork(chainID)
+
+      let token = self.tokenService.findTokenBySymbol(network, tokenSymbol)
+      let amountToSend = conversion.eth2Wei(parseFloat(value), token.decimals)
+      let toAddress = token.address
+      let transfer = Transfer(
+        to: parseAddress(to_addr),
+        value: amountToSend,
+      )
+      let data = ERC20_procS.toTable["transfer"].encodeAbi(transfer)
+
+      for route in routes:
+        var txData = TransactionDataDto()
+        var gasFees: string = ""
+
+        if(not route.gasFees.eip1559Enabled):
+          gasFees = $route.gasFees.gasPrice
+
+        if route.approvalRequired:
+          paths.add(self.createApprovalPath(route, from_addr, toAddress, gasFees))
+
+        txData = ens_utils.buildTokenTransaction(parseAddress(from_addr), toAddress,
+          $route.gasAmount, gasFees, route.gasFees.eip1559Enabled, $route.gasFees.maxPriorityFeePerGas, $route.gasFees.maxFeePerGasM)
+        txData.data = data
+
+        paths.add(self.createPath(route, txData, tokenSymbol, to_addr))
+
+      let response = transactions.createMultiTransaction(
+        MultiTransactionDto(
+          fromAddress: from_addr,
+          toAddress: to_addr,
+          fromAsset: tokenSymbol,
+          toAsset: tokenSymbol,
+          fromAmount:  "0x" & amountToSend.toHex,
+          multiTxtype: MultiTransactionType.MultiTransactionSend,
+        ),
+        paths,
+        password,
+      )
+
+      if response.result{"hashes"} != nil:
+        for route in routes:
+          for hash in response.result["hashes"][$route.fromNetwork.chainID]:
+            self.watchTransaction(hash.getStr, from_addr, to_addr, $PendingTransactionTypeDto.WalletTransfer, " ", route.fromNetwork.chainID, track = false)
+      let output = %* {"result": response.result{"hashes"}, "success":true, "uuid": %uuid }
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
+    except Exception as e:
+      let output = %* {"success":false, "uuid": %uuid, "error":fmt"Error sending token transfer transaction: {e.msg}"}
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
+
+  proc transfer*(
+    self: Service,
+    from_addr: string,
+    to_addr: string,
+    tokenSymbol: string,
+    value: string,
+    uuid: string,
+    selectedRoutes: string,
+    password: string,
+  ) =
+    try:
+      var chainID = 0
+      let selRoutes = parseJson(selectedRoutes)
+      let routes = selRoutes.getElems().map(x => x.convertToTransactionPathDto())
+
+      var isEthTx = false
+
+      if(routes.len > 0):
+        chainID = routes[0].fromNetwork.chainID
+
+      let network = self.networkService.getNetwork(chainID)
+      if network.nativeCurrencySymbol == tokenSymbol:
+        isEthTx = true
+
+      if(isEthTx):
+        self.transferEth(from_addr, to_addr, tokenSymbol, value, uuid, routes, password)
+      else:
+        self.transferToken(from_addr, to_addr, tokenSymbol, value, uuid, routes, password)
+
+    except Exception as e:
       let output = %* {"success":false, "uuid": %uuid, "error":fmt"Error sending token transfer transaction: {e.msg}"}
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
 
