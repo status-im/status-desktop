@@ -39,12 +39,12 @@ def start_application(app_name: str):
 def is_loaded_visible_and_enabled(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
     obj = None
     try:
-        print(datetime.now() ,"- BEFORE squish.waitForObject(", getattr(names, objName), timeout, ")")
+        #print(datetime.now() ,"- BEFORE squish.waitForObject(", getattr(names, objName), timeout, ")")
         obj = squish.waitForObject(getattr(names, objName), timeout)
-        print(datetime.now() ,"- AFTER squish.waitForObject(", getattr(names, objName), timeout, ")")
+        #print(datetime.now() ,"- AFTER squish.waitForObject(", getattr(names, objName), timeout, ")")
         return True, obj
     except LookupError:
-        print(datetime.now() ,"- LOOKUP ERROR squish.waitForObject(", getattr(names, objName), timeout, ")")
+        #print(datetime.now() ,"- LOOKUP ERROR squish.waitForObject(", getattr(names, objName), timeout, ")")
         return False, obj
 
 
@@ -125,11 +125,11 @@ def hover_and_click_object_by_name(objName: str):
 
 # It executes the left-click action into object with given object name:
 def click_obj_by_name(objName: str):
-    print(datetime.now() ,"- click_obj_by_name - START (", objName, ")")
+    #print(datetime.now() ,"- click_obj_by_name - START (", objName, ")")
     obj = squish.waitForObject(getattr(names, objName), 15000)
-    print(datetime.now() ,"- click_obj_by_name - MIDDLE (", objName, ")")
+    #print(datetime.now() ,"- click_obj_by_name - MIDDLE (", objName, ")")
     squish.mouseClick(obj, squish.Qt.LeftButton)
-    print(datetime.now() ,"- click_obj_by_name - END (", objName, ")")
+    #print(datetime.now() ,"- click_obj_by_name - END (", objName, ")")
 
 # It executes the click action into the given object at particular coordinates:
 def click_obj_by_name_at_coordinates(objName: str, x: int, y: int):
