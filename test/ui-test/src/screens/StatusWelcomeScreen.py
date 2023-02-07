@@ -147,11 +147,12 @@ class StatusWelcomeScreen:
         log("[input_password] - After typing into `NEW_PSW_INPUT` password: " + password)
         type(SignUpComponents.CONFIRM_PSW_INPUT.value, password)
         log("[input_password] - After typing into `CONFIRM_PSW_INPUT` password: " + password)
-        do_until_validation_with_timeout(
-            do_fn = lambda: click_obj_by_name(SignUpComponents.CREATE_PSW_BUTTON.value),
-            validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.CREATE_PSW_BUTTON.value, 50)[0],
-            message = 'Try clicking "Create Password" until button not visible (moved to the next screen)')
-        log("[input_password] - After calling do_until_validation_with_timeout on `CREATE_PSW_BUTTON`")
+        click_obj_by_name(SignUpComponents.CREATE_PSW_BUTTON.value)
+        #do_until_validation_with_timeout(
+        #    do_fn = lambda: click_obj_by_name(SignUpComponents.CREATE_PSW_BUTTON.value),
+        #    validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.CREATE_PSW_BUTTON.value, 50)[0],
+        #    message = 'Try clicking "Create Password" until button not visible (moved to the next screen)')
+        #log("[input_password] - After calling do_until_validation_with_timeout on `CREATE_PSW_BUTTON`")
 
     def input_confirmation_password(self, password: str):
         #log("[input_confirmation_password] - Before `CONFIRM_PSW_AGAIN_INPUT` check")
@@ -159,11 +160,12 @@ class StatusWelcomeScreen:
         #log("[input_confirmation_password] - After `CONFIRM_PSW_AGAIN_INPUT` check")
         type(SignUpComponents.CONFIRM_PSW_AGAIN_INPUT.value, password)
         log("[input_confirmation_password] - After typing into `CONFIRM_PSW_AGAIN_INPUT` password: " + password)
-        do_until_validation_with_timeout(
-            do_fn = lambda: click_obj_by_name(SignUpComponents.FINALIZE_PSW_BUTTON.value),
-            validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.FINALIZE_PSW_BUTTON.value, 50)[0],
-            message = 'Try clicking "Finalize" until button not visible (moved to the next screen')
-        log("[input_confirmation_password] - After `do_until_validation_with_timeout` on `FINALIZE_PSW_BUTTON`")
+        click_obj_by_name(SignUpComponents.FINALIZE_PSW_BUTTON.value)
+        #do_until_validation_with_timeout(
+        #    do_fn = lambda: click_obj_by_name(SignUpComponents.FINALIZE_PSW_BUTTON.value),
+        #    validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.FINALIZE_PSW_BUTTON.value, 50)[0],
+        #    message = 'Try clicking "Finalize" until button not visible (moved to the next screen')
+        #log("[input_confirmation_password] - After `do_until_validation_with_timeout` on `FINALIZE_PSW_BUTTON`")
 
     def agree_terms_and_conditions(self):
         if sys.platform == "darwin":
