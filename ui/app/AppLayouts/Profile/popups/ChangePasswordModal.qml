@@ -35,7 +35,7 @@ StatusModal {
             console.warn("TODO: Display error message when change password action failure! ")
         }
         d.passwordProcessing = "";
-        submitBtn.enabled = false;
+        submitBtn.loading = false;
     }
 
     QtObject {
