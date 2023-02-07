@@ -28,7 +28,7 @@ Item {
         primaryText: currentCollectible.collectionName
         secondaryText: currentCollectible.id
         isNarrowMode: root.isNarrowMode
-        networkName: currentCollectible.networkName
+        networkShortName: currentCollectible.networkShortName
         networkColor: currentCollectible.networkColor
         networkIconURL: currentCollectible.networkIconUrl
     }
