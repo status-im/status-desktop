@@ -1,4 +1,4 @@
-#include "DOtherSide/Status/Monitoring/Monitor.h"
+#include "StatusDesktop/Monitoring/Monitor.h"
 
 #include <QCoreApplication>
 #include <QDebug>

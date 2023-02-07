@@ -1,4 +1,4 @@
-#include "DOtherSide/Status/Monitoring/ContextPropertiesModel.h"
+#include "StatusDesktop/Monitoring/ContextPropertiesModel.h"
 
 ContextPropertiesModel::ContextPropertiesModel(QObject* parent)
     : QAbstractListModel(parent)

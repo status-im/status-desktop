@@ -7,23 +7,21 @@ set(MONITORING_QML_ENTRY_POINT "" CACHE STRING "QML file intended to start the m
 
 include(../../../ui/StatusQ/StatusQSources.cmake)
 
+if(MONITORING)
+    include(../../../ui/MonitoringSources.cmake)
+endif()
+
 # Macro for merging common code between static and shared
 macro(add_target name type)
     find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets Network Multimedia REQUIRED)
 
     file(GLOB HEADERS include/DOtherSide/*.h include/DOtherSide/Status/*.h)
-
     file(GLOB SOURCES src/*.cpp src/Status/*.cpp)
-
-    if(MONITORING)
-        file(GLOB MONITORING_HEADERS include/DOtherSide/Status/Monitoring/*.h)
-        file(GLOB MONITORING_SOURCES src/Status/Monitoring/*.cpp)
-    endif()
 
     if(APPLE)
         file(GLOB MM_FILES src/*.mm src/Status/*.mm)
         #prepend items because .mm files need build priority to override cpp impl
-        list(INSERT SOURCES 0 ${MM_FILES})
+        list(PREPEND SOURCES ${MM_FILES})
     endif()
 
     add_library(${name} ${type}
@@ -48,6 +46,8 @@ macro(add_target name type)
     endif()
 
     if(MONITORING)
+        target_include_directories(${name} PUBLIC ${MONITORING_INCLUDE_PATH})
+
         target_compile_definitions(${name} PRIVATE MONITORING)
         target_compile_definitions(${name} PRIVATE MONITORING_QML_ENTRY_POINT="${MONITORING_QML_ENTRY_POINT}")
     endif()
