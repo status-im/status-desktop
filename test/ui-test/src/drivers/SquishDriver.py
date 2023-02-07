@@ -39,11 +39,12 @@ def start_application(app_name: str):
 def is_loaded_visible_and_enabled(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
     obj = None
     try:
-        print(datetime.now() ,"- squish.waitForObject(", getattr(names, objName), timeout, ")")
+        print(datetime.now() ,"- BEFORE squish.waitForObject(", getattr(names, objName), timeout, ")")
         obj = squish.waitForObject(getattr(names, objName), timeout)
-        print(datetime.now() ,"- squish.waitForObject(", getattr(names, objName), timeout, ")")
+        print(datetime.now() ,"- AFTER squish.waitForObject(", getattr(names, objName), timeout, ")")
         return True, obj
     except LookupError:
+        print(datetime.now() ,"- LOOKUP ERROR squish.waitForObject(", getattr(names, objName), timeout, ")")
         return False, obj
 
 
@@ -186,14 +187,14 @@ def reset_scroll_obj_by_name(objName: str):
 
 # execute do_fn until validation_fn returns True or timeout is reached
 def do_until_validation_with_timeout(do_fn, validation_fn, message: str, timeout_ms: int=_MAX_WAIT_OBJ_TIMEOUT * 2):
-    print(datetime.now() ,'- start: do_until_validation_with_timeout')
+    print(datetime.now() ,'- START: do_until_validation_with_timeout(message:', message, ')')
     start_time = time.time()
     while(not validation_fn()):
         if ((time.time() - start_time) * 1000) > timeout_ms:
             raise Exception("Timeout reached while validating: " + message)
         print(datetime.now() ,'- do_fn')
         do_fn()
-    print(datetime.now() ,'- end: do_until_validation_with_timeout')
+    print(datetime.now() ,'- END: do_until_validation_with_timeout(message:', message, ')')
 
 def scroll_item_until_item_is_visible(itemToScrollObjName: str, itemToBeVisibleObjName: str, timeout_ms: int=_MAX_WAIT_OBJ_TIMEOUT * 2):
     is_item_visible_fn = lambda: is_loaded_visible_and_enabled(itemToBeVisibleObjName, 10)[0]
