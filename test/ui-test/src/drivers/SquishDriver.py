@@ -125,8 +125,11 @@ def hover_and_click_object_by_name(objName: str):
 
 # It executes the left-click action into object with given object name:
 def click_obj_by_name(objName: str):
-    obj = squish.waitForObject(getattr(names, objName))
+    print(datetime.now() ,"- click_obj_by_name - START (", objName, ")")
+    obj = squish.waitForObject(getattr(names, objName), 15000)
+    print(datetime.now() ,"- click_obj_by_name - MIDDLE (", objName, ")")
     squish.mouseClick(obj, squish.Qt.LeftButton)
+    print(datetime.now() ,"- click_obj_by_name - END (", objName, ")")
 
 # It executes the click action into the given object at particular coordinates:
 def click_obj_by_name_at_coordinates(objName: str, x: int, y: int):
