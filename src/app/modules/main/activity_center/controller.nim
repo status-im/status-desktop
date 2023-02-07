@@ -69,12 +69,16 @@ proc init*(self: Controller) =
 
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED) do(e: Args):
     self.delegate.unreadActivityCenterNotificationsCountChanged()
+    self.delegate.hasUnseenActivityCenterNotificationsChanged()
 
 proc hasMoreToShow*(self: Controller): bool =
    return self.activityCenterService.hasMoreToShow()
 
 proc unreadActivityCenterNotificationsCount*(self: Controller): int =
    return self.activityCenterService.getUnreadActivityCenterNotificationsCount()
+
+proc hasUnseenActivityCenterNotifications*(self: Controller): bool =
+   return self.activityCenterService.getHasUnseenActivityCenterNotifications()
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
    return self.contactsService.getContactDetails(contactId)
@@ -101,6 +105,9 @@ proc markActivityCenterNotificationUnread*(
     markAsUnreadProps: MarkAsUnreadNotificationProperties
     ): string =
    return self.activityCenterService.markActivityCenterNotificationUnread(notificationId, markAsUnreadProps)
+
+proc markAsSeenActivityCenterNotifications*(self: Controller) =
+   self.activityCenterService.markAsSeenActivityCenterNotifications()
 
 proc acceptActivityCenterNotifications*(self: Controller, notificationIds: seq[string]): string =
    return self.activityCenterService.acceptActivityCenterNotifications(notificationIds)

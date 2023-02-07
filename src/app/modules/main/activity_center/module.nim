@@ -71,8 +71,14 @@ method hasMoreToShow*(self: Module): bool =
 method unreadActivityCenterNotificationsCount*(self: Module): int =
   self.controller.unreadActivityCenterNotificationsCount()
 
+method hasUnseenActivityCenterNotifications*(self: Module): bool =
+  self.controller.hasUnseenActivityCenterNotifications()
+
 method unreadActivityCenterNotificationsCountChanged*(self: Module) =
   self.view.unreadActivityCenterNotificationsCountChanged()
+
+method hasUnseenActivityCenterNotificationsChanged*(self: Module) =
+  self.view.hasUnseenActivityCenterNotificationsChanged()
 
 proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: ChatDto): MessageItem =
   let contactDetails = self.controller.getContactDetails(message.`from`)
@@ -202,6 +208,9 @@ method markActivityCenterNotificationRead*(
 method markActivityCenterNotificationReadDone*(self: Module, notificationIds: seq[string]) =
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationReadDone(notificationId)
+
+method markAsSeenActivityCenterNotifications*(self: Module) =
+  self.controller.markAsSeenActivityCenterNotifications()
 
 method pushActivityCenterNotifications*(
     self: Module,

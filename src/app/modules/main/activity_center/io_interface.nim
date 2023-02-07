@@ -24,7 +24,13 @@ method hasMoreToShow*(self: AccessInterface): bool {.base.} =
 method unreadActivityCenterNotificationsCount*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method hasUnseenActivityCenterNotifications*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method unreadActivityCenterNotificationsCountChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method hasUnseenActivityCenterNotificationsChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method convertToItems*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]): seq[Item] {.base.} =
@@ -55,6 +61,9 @@ method markActivityCenterNotificationRead*(self: AccessInterface, notificationId
   raise newException(ValueError, "No implementation available")
 
 method markActivityCenterNotificationUnread*(self: AccessInterface, notificationId: string, communityId: string, channelId: string, nType: int): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method markAsSeenActivityCenterNotifications*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method pushActivityCenterNotifications*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]) {.base.} =

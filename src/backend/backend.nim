@@ -185,6 +185,12 @@ rpc(dismissActivityCenterNotifications, "wakuext"):
 rpc(unreadActivityCenterNotificationsCount, "wakuext"):
   discard
 
+rpc(hasUnseenActivityCenterNotifications, "wakuext"):
+  discard
+
+rpc(markAsSeenActivityCenterNotifications, "wakuext"):
+  discard
+
 rpc(unreadAndAcceptedActivityCenterNotificationsCount, "wakuext"):
   discard
 

@@ -108,6 +108,7 @@ Popup {
     }
     onClosed: {
         Global.popupOpened = false
+        activityCenterStore.markAsSeenActivityCenterNotifications()
     }
 
     x: Global.applicationWindow.width - root.width - Style.current.halfPadding

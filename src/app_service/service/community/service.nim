@@ -726,7 +726,7 @@ QtObject:
   proc requestToJoinCommunity*(self: Service, communityId: string, ensName: string) =
     try:
       let response = status_go.requestToJoinCommunity(communityId, ensName)
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
 
       if not self.processRequestsToJoinCommunity(response.result):
         error "error: ", procName="requestToJoinCommunity", errDesription = "no 'requestsToJoinCommunity' key in response"
@@ -794,7 +794,7 @@ QtObject:
   proc leaveCommunity*(self: Service, communityId: string) =
     try:
       let response = status_go.leaveCommunity(communityId)
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
@@ -1382,7 +1382,7 @@ QtObject:
             error "error while cancel membership request ", msg
             return
           self.myCommunityRequests.delete(i)
-          self.activityCenterService.parseACNotificationResponse(response)
+          self.activityCenterService.parseActivityCenterResponse(response)
           self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED, Args())
           return
 
@@ -1394,7 +1394,7 @@ QtObject:
   proc acceptRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
       let response = status_go.acceptRequestToJoinCommunity(requestId)
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
 
       let newMemberPubkey = self.removeMembershipRequestFromCommunityAndGetMemberPubkey(communityId, requestId)
 
@@ -1409,7 +1409,7 @@ QtObject:
   proc declineRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
       let response = status_go.declineRequestToJoinCommunity(requestId)
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
 
       self.moveRequestToDeclined(communityId, requestId)
 

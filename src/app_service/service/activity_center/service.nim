@@ -86,7 +86,7 @@ QtObject:
         )
         self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
 
-  proc parseACNotificationResponse*(self: Service, response: RpcResponse[JsonNode]) =
+  proc parseActivityCenterResponse*(self: Service, response: RpcResponse[JsonNode]) =
     var activityCenterNotifications: seq[ActivityCenterNotificationDto] = @[]
     if response.result{"activityCenterNotifications"} != nil:
       for jsonMsg in response.result["activityCenterNotifications"]:
@@ -98,6 +98,8 @@ QtObject:
           ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications)
         )
         self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
+    if response.result{"activityCenterState"} != nil:
+      echo response.result["activityCenterNotifications"]
 
   proc hasMoreToShow*(self: Service): bool =
     return self.cursor != ""
@@ -133,7 +135,16 @@ QtObject:
       if response.result.kind != JNull:
         return response.result.getInt
     except Exception as e:
-      error "Error getting unread activity center unread count", msg = e.msg
+      error "Error getting unread activity center notifications count", msg = e.msg
+
+  proc getHasUnseenActivityCenterNotifications*(self: Service): bool =
+    try:
+      let response = backend.hasUnseenActivityCenterNotifications()
+
+      if response.result.kind != JNull:
+        return response.result.getBool
+    except Exception as e:
+      error "Error getting unseen activity center notifications", msg = e.msg
 
   proc markActivityCenterNotificationRead*(
       self: Service,
@@ -176,6 +187,12 @@ QtObject:
     except Exception as e:
       error "Error marking all as read", msg = e.msg
       result = e.msg
+
+  proc markAsSeenActivityCenterNotifications*(self: Service) =
+    try:
+      discard backend.markAsSeenActivityCenterNotifications()
+    except Exception as e:
+      error "Error marking as seen", msg = e.msg
 
   proc asyncActivityNotificationLoaded*(self: Service, rpcResponse: string) {.slot.} =
     let rpcResponseObj = rpcResponse.parseJson

@@ -88,6 +88,13 @@ SplitView {
     property alias notificationCount: statusToolBar.notificationCount
 
     /*!
+        \qmlproperty alias StatusAppLayout::hasUnseenNotifications
+        This property holds a reference to the hasUnseenNotifications property of the
+        header component.
+    */
+    property alias hasUnseenNotifications: statusToolBar.hasUnseenNotifications
+
+    /*!
         \qmlproperty alias StatusAppLayout::backButtonName
         This property holds a reference to the backButtonName property of the
         header component.
