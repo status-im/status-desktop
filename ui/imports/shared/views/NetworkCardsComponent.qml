@@ -188,6 +188,7 @@ Item {
                     property int bentLine: 0
                     property double amountToReceive: 0
                     property var currencyAmountToReceive: root.getCryptoCurrencyAmount(amountToReceive)
+                    property var preferredChains: store.preferredChainIds
                     property bool preferred: store.preferredChainIds.includes(model.chainId)
                     primaryText: model.chainName
                     secondaryText: LocaleUtils.currencyAmountToLocaleString(currencyAmountToReceive)
@@ -221,6 +222,8 @@ Item {
                                 root.reCalculateSuggestedRoute()
                         }
                     }
+                    // Only needed until we move preferredChains to nim side
+                    onPreferredChainsChanged: preferred = store.preferredChainIds.includes(model.chainId)
                 }
             }
         }
