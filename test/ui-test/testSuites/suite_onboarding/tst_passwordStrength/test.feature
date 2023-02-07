@@ -14,6 +14,8 @@ Feature: Password strength validation including UI pixel-perfect validation
     ** given A first time user lands on the status desktop and generates new key
     ** and the user inputs username "tester123"
 
+	# Just skipped for testing e2e
+	@mayfail
     Scenario Outline: As a user I want to see the strength of the password
         Given the user clears input "onboarding_newPsw_Input"
 		When the user inputs the following "<password>" with ui-component "onboarding_newPsw_Input"

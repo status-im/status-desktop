@@ -140,7 +140,7 @@ pipeline {
               "${WORKSPACE}/bin",
             ].join('\n'),
             squishPackageName: 'squish-7.1.0-qt515x-linux64',
-            testSuite: "${WORKSPACE}/test/ui-test/testSuites/suite_settings",
+            testSuite: "${WORKSPACE}/test/ui-test/testSuites/suite_onboarding",
           ])
           print("Squish run result: ${result}")
           /* Ignore UNSTABLE caused by retried tests. */
