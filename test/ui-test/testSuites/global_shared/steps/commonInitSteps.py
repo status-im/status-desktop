@@ -31,6 +31,7 @@ _feature_name = "feature_name"
 def context_init(context, testSettings, screenshot_on_fail = True):
     # With this property it is enabled that every test failure will cause Squish to take a screenshot of the desktop when the failure occurred
     testSettings.logScreenshotOnFail = screenshot_on_fail
+    testSettings.waitForObjectTimeout = 1000
     
     filesMngr.erase_directory(_status_qt_path)
     context.userData = {}
