@@ -15,6 +15,7 @@
 # *****************************************************************************
 import common.Common as common
 import time
+from datetime import datetime
 
 import steps.commonInitSteps as init_steps
 from screens.StatusMainScreen import StatusMainScreen
@@ -94,7 +95,13 @@ def step(context):
 
 @Then("the following ui-component \"|any|\" is not enabled")
 def step(context, obj):
+    mLog = str(datetime.now()) + " - Before the following ui-component is not enabled: " + obj
+    print(datetime.now() ,"- Before the following ui-component is not enabled: " + obj)
+    test.log(mLog)
     common.object_not_enabled(obj)
+    print(datetime.now() + "- After the following ui-component is not enabled: " + obj)
+    mLog = str(datetime.now()) + "- After the following ui-component is not enabled: " + obj
+    test.log(mLog)
     
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:
