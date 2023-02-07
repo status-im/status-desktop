@@ -110,10 +110,13 @@ class StatusWelcomeScreen:
         input_seed_phrase(SeedPhraseComponents.SEEDS_WORDS_TEXTFIELD_template.value, words)
 
     def input_username_and_password_and_finalize_sign_up(self, username: str, password: str):
+        log("[input_username_and_password_and_finalize_sign_up] - Before `input_username` check")        
         self.input_username(username)
 
+        log("[input_username_and_password_and_finalize_sign_up] - Before `input_password` check")        
         self.input_password(password)
-
+        
+        log("[input_username_and_password_and_finalize_sign_up] - Before `input_confirmation_password` check")
         self.input_confirmation_password(password)
 
         if sys.platform == "darwin":
@@ -148,6 +151,7 @@ class StatusWelcomeScreen:
             do_fn = lambda: click_obj_by_name(SignUpComponents.CREATE_PSW_BUTTON.value),
             validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.CREATE_PSW_BUTTON.value, 50)[0],
             message = 'Try clicking "Create Password" until button not visible (moved to the next screen)')
+        log("[input_password] - After calling do_until_validation_with_timeout on `CREATE_PSW_BUTTON`")
 
     def input_confirmation_password(self, password: str):
         #log("[input_confirmation_password] - Before `CONFIRM_PSW_AGAIN_INPUT` check")
@@ -222,7 +226,14 @@ class StatusWelcomeScreen:
     def input_username_profileImage_password_and_finalize_sign_up(self, profileImageUrl: str, username: str, password: str):
         self.input_profile_image(profileImageUrl)
 
-        self.input_username_and_grab_profile_image_sreenshot(username)        
+        self.input_username_and_grab_profile_image_sreenshot(username)   
+
+        log("[input_username_profileImage_password_and_finalize_sign_up] - Before `input_password` check")        
+        self.input_password(password)
+        
+        log("[input_username_profileImage_password_and_finalize_sign_up] - Before `input_confirmation_password` check")
+        self.input_confirmation_password(password)
+        log("[input_username_profileImage_password_and_finalize_sign_up] - After `input_confirmation_password` check")
 
         self.input_password(password)
 
