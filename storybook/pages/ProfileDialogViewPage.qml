@@ -6,6 +6,9 @@ import Storybook 1.0
 
 import utils 1.0
 import shared.views 1.0
+import mainui 1.0
+
+import StatusQ 0.1
 
 SplitView {
     id: root
@@ -91,6 +94,11 @@ SplitView {
 
     Logs { id: logs }
 
+    Popups {
+        popupParent: root
+        rootStore: QtObject {}
+    }
+
     SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
@@ -113,10 +121,6 @@ SplitView {
                         implicitWidth: 640
 
                         publicKey: switchOwnProfile.checked ? "0xdeadbeef" : "0xrandomguy"
-
-                        Component.onCompleted: {
-                            Global.appMain = root // FIXME this is here for the popups to work
-                        }
 
                         profileStore: QtObject {
                             readonly property string pubkey: "0xdeadbeef"
@@ -286,7 +290,11 @@ SplitView {
                     TextField {
                         Layout.fillWidth: true
                         id: bio
-                        text: "Hello from MockMainModule, I am a mock user and this is my bio."
+                        text: "Hi, I am Alex. I'm an indie developer who mainly works on web products.
+
+I worked for several different companies and created a couple of my own products from scratch. Currently building Telescope and Prepacked.
+
+Say hi, or find me on Twitter, GitHub, or Mastodon."
                     }
                 }
             }

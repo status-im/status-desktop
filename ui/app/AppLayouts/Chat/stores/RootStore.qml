@@ -37,7 +37,7 @@ QtObject {
     // Contact requests related part
     property var contactRequestsModel: chatCommunitySectionModule.contactRequestsModel
 
-    property var loadingHistoryMessagesInProgress: chatCommunitySectionModule.loadingHistoryMessagesInProgress
+    property bool loadingHistoryMessagesInProgress: chatCommunitySectionModule.loadingHistoryMessagesInProgress
 
     property var advancedModule: profileSectionModule.advancedModule
 

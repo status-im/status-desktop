@@ -1,5 +1,4 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.14
 
 import utils 1.0
 import shared.controls 1.0
@@ -61,11 +60,9 @@ StatusModal {
                 charLimit: maxNicknameLength
                 validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
                 validators: [
-                    StatusRegularExpressionValidator {
+                    StatusValidator {
                         validatorObj: RXValidator { regularExpression: /^[\w\d_ -]*$/u }
-                        validate: function (value) {
-                            return validatorObj.test(value)
-                        }
+                        validate: (value) => validatorObj.test(value)
                     }
                 ]
                 Keys.onReleased: {

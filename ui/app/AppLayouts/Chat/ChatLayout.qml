@@ -61,16 +61,12 @@ StackLayout {
             hasAddedContacts: root.contactsStore.myContactsModel.count > 0
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
             community: root.rootStore.mainModuleInst ? root.rootStore.mainModuleInst.activeSection
-                                                       || {} : {}
+                                                       || ({}) : ({})
 
-        onBackToCommunityClicked: root.currentIndex = 0
+            onBackToCommunityClicked: root.currentIndex = 0
 
-        // TODO: remove me when migration to new settings is done
-        onOpenLegacyPopupClicked: Global.openPopup(Global.communityProfilePopup, {
-                                                       "store": root.rootStore,
-                                                       "community": community,
-                                                       "communitySectionModule": chatCommunitySectionModule
-                                                   })
+            // TODO: remove me when migration to new settings is done
+            onOpenLegacyPopupClicked: Global.openCommunityProfilePopupRequested(root.rootStore, community, chatCommunitySectionModule)
         }
     }
 }

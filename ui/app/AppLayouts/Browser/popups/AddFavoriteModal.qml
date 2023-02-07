@@ -79,8 +79,6 @@ ModalPopup {
             id: urlInput
             anchors.left: parent.left
             anchors.right: parent.right
-            leftPadding: 0
-            rightPadding: 0
             label: qsTr("URL")
             input.text: ogUrl
             placeholderText: qsTr("Paste URL")

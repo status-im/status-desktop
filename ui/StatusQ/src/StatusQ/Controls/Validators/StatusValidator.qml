@@ -1,9 +1,6 @@
-import QtQuick 2.13
-import StatusQ.Controls 0.1
+import QtQuick 2.14
 
 QtObject {
-    id: statusValidator
-
     property string name: ""
     property string errorMessage: qsTr("invalid input")
     property var validatorObj

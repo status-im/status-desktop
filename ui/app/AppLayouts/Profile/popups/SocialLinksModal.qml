@@ -66,6 +66,7 @@ StatusDialog {
     StatusScrollView {
         id: scrollView
 
+        implicitHeight: contentHeight + topPadding + bottomPadding
         anchors.fill: parent
         padding: 0
 

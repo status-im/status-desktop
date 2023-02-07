@@ -4,17 +4,14 @@ import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
 import Qt.labs.qmlmodels 1.0
 import Qt.labs.platform 1.1
-import Qt.labs.settings 1.0
 import QtQml.Models 2.14
 
 import AppLayouts.Wallet 1.0
 import AppLayouts.Node 1.0
 import AppLayouts.Browser 1.0
 import AppLayouts.Chat 1.0
-import AppLayouts.Chat.popups 1.0
 import AppLayouts.Chat.views 1.0
 import AppLayouts.Profile 1.0
-import AppLayouts.Profile.popups 1.0
 import AppLayouts.CommunitiesPortal 1.0
 
 import utils 1.0
@@ -51,15 +48,11 @@ Item {
     // set from main.qml
     property var sysPalette
 
-    property var activePopupComponents: []
-
-    signal closeProfilePopup()
-
     Connections {
         target: rootStore.mainModuleInst
 
         function onDisplayUserProfile(publicKey: string) {
-            Global.openProfilePopup(publicKey)
+            popups.openProfilePopup(publicKey)
         }
 
         function onDisplayKeycardSharedModuleFlow() {
@@ -83,46 +76,23 @@ Item {
         }
 
         function onOpenActivityCenter() {
-            Global.openPopup(activityCenterPopupComponent)
+            popups.openPopup(activityCenterPopupComponent)
         }
     }
 
     Popups {
+        id: popups
+        popupParent: appMain
         rootStore: appMain.rootStore
-
-        Component.onCompleted: {
-            Global.openSendIDRequestPopup.connect(openSendIDRequestPopup)
-            Global.openOutgoingIDRequestPopup.connect(openOutgoingIDRequestPopup)
-            Global.openIncomingIDRequestPopup.connect(openIncomingIDRequestPopup)
-            Global.openInviteFriendsToCommunityPopup.connect(openInviteFriendsToCommunityPopup)
-            Global.openContactRequestPopup.connect(openContactRequestPopup)
-        }
     }
 
     Connections {
+        id: globalConns
         target: Global
+
         function onOpenLinkInBrowser(link: string) {
             changeAppSectionBySectionId(Constants.appSection.browser)
             Qt.callLater(() => browserLayoutContainer.item.openUrlInNewTab(link));
-        }
-        function onOpenChooseBrowserPopup(link: string) {
-            Global.openPopup(chooseBrowserPopupComponent, {link: link});
-        }
-        function onOpenDownloadModalRequested(available: bool, version: string, url: string) {
-            const downloadPage = downloadPageComponent.createObject(appMain,
-                {
-                    newVersionAvailable: available,
-                    downloadURL: url,
-                    currentVersion: appMain.rootStore.profileSectionStore.getCurrentVersion(),
-                    newVersion: version
-                })
-            return downloadPage
-        }
-
-        function onOpenImagePopup(image, contextMenu) {
-            var popup = imagePopupComponent.createObject(appMain)
-            popup.contextMenu = contextMenu
-            popup.openPopup(image)
         }
 
         function onOpenCreateChatView() {
@@ -133,74 +103,42 @@ Item {
             createChatView.opened = false
         }
 
-        function onOpenProfilePopupRequested(publicKey: string, parentPopup) {
-            if (Global.profilePopupOpened) {
-                appMain.closeProfilePopup()
-            }
-            Global.openPopup(profilePopupComponent, {publicKey: publicKey, parentPopup: parentPopup})
-            Global.profilePopupOpened = true
-        }
-        function onOpenNicknamePopupRequested(publicKey: string,nickname: string, subtitle: string) {
-            Global.openPopup(nicknamePopupComponent, {publicKey: publicKey, nickname: nickname, "header.subTitle": subtitle})
-        }
-        function onBlockContactRequested(publicKey: string, contactName: string) {
-            Global.openPopup(blockContactConfirmationComponent, {contactName: contactName, contactAddress: publicKey})
-        }
-        function onUnblockContactRequested(publicKey: string, contactName: string) {
-            Global.openPopup(unblockContactConfirmationComponent, {contactName: contactName, contactAddress: publicKey})
+        function onOpenActivityCenterPopupRequested() {
+            popups.openPopup(activityCenterPopupComponent)
         }
 
-        function onOpenActivityCenterPopupRequested(publicKey: string, contactName: string) {
-            Global.openPopup(activityCenterPopupComponent)
-        }
-
-        function onOpenChangeProfilePicPopup(cb) {
-            var popup = changeProfilePicComponent.createObject(appMain, {callback: cb});
-            popup.chooseImageToCrop();
-        }
-        function onOpenBackUpSeedPopup() {
-            Global.openPopup(backupSeedModalComponent)
-        }
         function onDisplayToastMessage(title: string, subTitle: string, icon: string, loading: bool, ephNotifType: int, url: string) {
-            appMain.rootStore.mainModuleInst.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url);
-        }
-        function onOpenEditDisplayNamePopup() {
-            Global.openPopup(displayNamePopupComponent)
-        }
-
-        function onOpenPopupRequested(popupComponent, params) {
-
-            if (activePopupComponents.includes(popupComponent)) {
-                return;
-            }
-
-            const popup = popupComponent.createObject(appMain, params);
-            popup.open();
-
-            activePopupComponents.push(popupComponent);
-
-            popup.closed.connect(() => {
-                const removeIndex = activePopupComponents.indexOf(popupComponent);
-                if (removeIndex !== -1) {
-                    activePopupComponents.splice(removeIndex, 1);
-                }
-            })
-            return popup;
+            appMain.rootStore.mainModuleInst.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url)
         }
 
         function onOpenLink(link: string) {
             // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
-            link = appMain.rootStore.plainText(link);
+            link = appMain.rootStore.plainText(link)
             if (appMain.rootStore.showBrowserSelector) {
-                Global.openChooseBrowserPopup(link);
+                popups.openChooseBrowserPopup(link)
             } else {
                 if (appMain.rootStore.openLinksInStatus) {
-                    Global.changeAppSectionBySectionType(Constants.appSection.browser);
-                    Global.openLinkInBrowser(link);
+                    globalConns.onAppSectionBySectionTypeChanged(Constants.appSection.browser)
+                    globalConns.onOpenLinkInBrowser(link)
                 } else {
-                    Qt.openUrlExternally(link);
+                    Qt.openUrlExternally(link)
                 }
             }
+        }
+
+        function onPlaySendMessageSound() {
+            sendMessageSound.stop()
+            sendMessageSound.play()
+        }
+
+        function onPlayNotificationSound() {
+            notificationSound.stop()
+            notificationSound.play()
+        }
+
+        function onPlayErrorSound() {
+            errorSound.stop()
+            errorSound.play()
         }
 
         function onSetNthEnabledSectionActive(nthSection: int) {
@@ -224,124 +162,22 @@ Item {
         appMain.rootStore.mainModuleInst.setActiveSectionById(sectionId)
     }
 
-    Component {
-        id: backupSeedModalComponent
-        BackupSeedModal {
-            anchors.centerIn: parent
-            privacyStore: appMain.rootStore.profileSectionStore.privacyStore
-            onClosed: destroy()
-        }
-    }
-
-    Component {
-        id: displayNamePopupComponent
-        DisplayNamePopup {
-            anchors.centerIn: parent
-            profileStore: appMain.rootStore.profileSectionStore.profileStore
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
-        id: downloadPageComponent
-        DownloadPage {
-            onClosed: {
-                destroy();
-            }
-        }
-    }
-
-    Component {
-        id: imagePopupComponent
-        StatusImageModal {
-            id: imagePopup
-            onClicked: {
-                if (mouse.button === Qt.LeftButton) {
-                    imagePopup.close()
-                } else if(mouse.button === Qt.RightButton) {
-                    contextMenu.imageSource = imagePopup.imageSource
-                    contextMenu.hideEmojiPicker = true
-                    contextMenu.isRightClickOnImage = true
-                    contextMenu.parent = imagePopup.contentItem
-                    contextMenu.show()
-                }
-            }
-            onClosed: destroy()
-        }
-    }
-
-    Component {
-        id: profilePopupComponent
-        ProfileDialog {
-            id: profilePopup
-            profileStore: appMain.rootStore.profileSectionStore.profileStore
-            contactsStore: appMain.rootStore.profileSectionStore.contactsStore
-
-            onClosed: {
-                if (profilePopup.parentPopup) {
-                    profilePopup.parentPopup.close()
-                }
-                Global.profilePopupOpened = false
-                destroy()
-            }
-
-            Component.onCompleted: {
-                appMain.closeProfilePopup.connect(profilePopup.close)
-            }
-        }
-    }
-
-    Component {
-        id: changeProfilePicComponent
-        ImageCropWorkflow {
-            title: qsTr("Profile Picture")
-            acceptButtonText: qsTr("Make this my Profile Pic")
-            onImageCropped: {
-                if (callback) {
-                    callback(image,
-                             cropRect.x.toFixed(),
-                             cropRect.y.toFixed(),
-                             (cropRect.x + cropRect.width).toFixed(),
-                             (cropRect.y + cropRect.height).toFixed())
-                    return
-                }
-
-                appMain.rootStore.profileSectionStore.profileStore.uploadImage(image,
-                                              cropRect.x.toFixed(),
-                                              cropRect.y.toFixed(),
-                                              (cropRect.x + cropRect.width).toFixed(),
-                                              (cropRect.y + cropRect.height).toFixed());
-            }
-        }
-    }
-
     Audio {
         id: sendMessageSound
         store: rootStore
         source: "qrc:/imports/assets/audio/send_message.wav"
-        Component.onCompleted: {
-            Global.sendMessageSound = this;
-        }
     }
 
     Audio {
         id: notificationSound
         store: rootStore
         source: "qrc:/imports/assets/audio/notification.wav"
-        Component.onCompleted: {
-            Global.notificationSound = this;
-        }
     }
 
     Audio {
         id: errorSound
         source: "qrc:/imports/assets/audio/error.mp3"
         store: rootStore
-        Component.onCompleted: {
-            Global.errorSound = this;
-        }
     }
 
     Loader {
@@ -452,7 +288,7 @@ Item {
                             icon.name: "share-ios"
                             enabled: model.canManageUsers
                             onTriggered: {
-                                Global.openInviteFriendsToCommunityPopup(model,
+                                popups.openInviteFriendsToCommunityPopup(model,
                                                                          communityContextMenu.chatCommunitySectionModule,
                                                                          null)
                             }
@@ -461,11 +297,7 @@ Item {
                         StatusAction {
                             text: qsTr("View Community")
                             icon.name: "group-chat"
-                            onTriggered: Global.openPopup(communityProfilePopup, {
-                                                              store: appMain.rootStore,
-                                                              community: model,
-                                                              communitySectionModule: communityContextMenu.chatCommunitySectionModule
-                                                          })
+                            onTriggered: popups.openCommunityProfilePopup(appMain.rootStore, model, communityContextMenu.chatCommunitySectionModule)
                         }
 
                         StatusMenuSeparator {}
@@ -670,9 +502,7 @@ Item {
                     text: qsTr("Secure your seed phrase")
                     buttonText: qsTr("Back up now")
 
-                    onClicked: {
-                        Global.openBackUpSeedPopup();
-                    }
+                    onClicked: popups.openBackUpSeedPopup()
 
                     onCloseClicked: {
                         appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner = true
@@ -719,7 +549,7 @@ Item {
 
                         return ""
                     }
-                    onLinkActivated: Global.openPopup(communitiesPortalLayoutContainer.discordImportProgressPopup)
+                    onLinkActivated: popups.openPopup(communitiesPortalLayoutContainer.discordImportProgressPopup)
                     progressValue: progress
                     closeBtnVisible: finished || stopped
                     buttonText: finished && !errors ? qsTr("Visit your Community") : ""
@@ -880,6 +710,8 @@ Item {
 
                     Loader {
                         id: personalChatLayoutLoader
+                        asynchronous: true
+                        active: appView.currentIndex === Constants.appViewStackIndex.chat
                         sourceComponent: {
                             if (appMain.rootStore.mainModuleInst.chatsLoadingFailed) {
                                 return errorStateComponent
@@ -939,11 +771,11 @@ Item {
                                 }
 
                                 onImportCommunityClicked: {
-                                    Global.openPopup(communitiesPortalLayoutContainer.importCommunitiesPopup);
+                                    popups.openPopup(communitiesPortalLayoutContainer.importCommunitiesPopup);
                                 }
 
                                 onCreateCommunityClicked: {
-                                    Global.openPopup(communitiesPortalLayoutContainer.createCommunitiesPopup);
+                                    popups.openPopup(communitiesPortalLayoutContainer.createCommunitiesPopup);
                                 }
 
                                 Component.onCompleted: {
@@ -1076,50 +908,8 @@ Item {
         } // ColumnLayout
 
         Component {
-            id: chooseBrowserPopupComponent
-            ChooseBrowserPopup {
-                onClosed: {
-                    destroy()
-                }
-            }
-        }
-
-        Component {
-            id: communityProfilePopup
-
-            CommunityProfilePopup {
-                anchors.centerIn: parent
-                contactsStore: appMain.rootStore.contactStore
-                hasAddedContacts: appMain.rootStore.hasAddedContacts
-
-                onClosed: {
-                    destroy()
-                }
-            }
-        }
-
-        Component {
-            id: pinnedMessagesPopupComponent
-            PinnedMessagesPopup {
-                id: pinnedMessagesPopup
-                emojiReactionsModel: appMain.rootStore.emojiReactionsModel
-                onClosed: destroy()
-            }
-        }
-
-        Component {
-            id: genericConfirmationDialog
-            ConfirmationDialog {
-                onClosed: {
-                    destroy()
-                }
-            }
-        }
-
-        Component {
             id: activityCenterPopupComponent
             ActivityCenterPopup {
-                id: activityCenter
                 // TODO get screen size // Taken from old code top bar height was fixed there to 56
                 property int _buttonSize: 56
 
@@ -1128,41 +918,6 @@ Item {
                 height: appView.height - _buttonSize * 2
                 store: personalChatLayoutLoader.item.rootStore
                 activityCenterStore: appMain.activityCenterStore
-            }
-        }
-
-        Component {
-            id: nicknamePopupComponent
-            NicknamePopup {
-                onEditDone: {
-                    if (nickname !== newNickname) {
-                        appMain.rootStore.contactStore.changeContactNickname(publicKey, newNickname)
-                    }
-                    close()
-                }
-                onClosed: destroy()
-            }
-        }
-
-        Component {
-            id: unblockContactConfirmationComponent
-            UnblockContactConfirmationDialog {
-                onUnblockButtonClicked: {
-                    appMain.rootStore.contactStore.unblockContact(contactAddress)
-                    close()
-                }
-                onClosed: destroy()
-            }
-        }
-
-        Component {
-            id: blockContactConfirmationComponent
-            BlockContactConfirmationDialog {
-                onBlockButtonClicked: {
-                    appMain.rootStore.contactStore.blockContact(contactAddress)
-                    close()
-                }
-                onClosed: destroy()
             }
         }
 
@@ -1354,9 +1109,6 @@ Item {
     }
 
     Component.onCompleted: {
-        Global.appMain = this;
-        Global.pinnedMessagesPopup = pinnedMessagesPopupComponent;
-        Global.communityProfilePopup = communityProfilePopup;
         const whitelist = appMain.rootStore.messagingStore.getLinkPreviewWhitelist()
         try {
             const whiteListedSites = JSON.parse(whitelist)

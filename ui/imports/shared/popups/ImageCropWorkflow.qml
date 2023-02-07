@@ -23,6 +23,7 @@ Item {
     property bool roundedImage: true
 
     signal imageCropped(var image, var cropRect)
+    signal done()
 
     function chooseImageToCrop() {
         fileDialog.open()
@@ -87,6 +88,7 @@ Item {
                 }
             }
         ]
+        onClosed: root.done()
     } // StatusModal
 } // Item
 

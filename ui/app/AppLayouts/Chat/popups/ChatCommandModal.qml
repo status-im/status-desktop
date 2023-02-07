@@ -1,7 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import QtQuick.Dialogs 1.3
 
 import utils 1.0
 import shared.controls 1.0
@@ -18,8 +17,8 @@ StatusModal {
     property var store
     property var contactsStore
 
-    property string commandTitle: "Send"
-    property string finalButtonLabel: "Request address"
+    property string commandTitle: qsTr("Send")
+    property string finalButtonLabel: qsTr("Request address")
     property var sendChatCommand: function () {}
     property bool isRequested: false
 
