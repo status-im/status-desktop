@@ -8,6 +8,7 @@ QtObject {
     readonly property var activityCenterModuleInst: activityCenterModule
     readonly property var activityCenterList: activityCenterModuleInst.activityNotificationsModel
     readonly property int unreadNotificationsCount: activityCenterModuleInst.unreadActivityCenterNotificationsCount
+    readonly property bool hasUnseenNotifications: activityCenterModuleInst.hasUnseenActivityCenterNotifications
 
     function markAllActivityCenterNotificationsRead() {
         root.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
@@ -23,6 +24,10 @@ QtObject {
         root.activityCenterModuleInst.markActivityCenterNotificationUnread(
             notification.id, notification.message.communityId,
             notification.message.chatId, notification.notificationType)
+    }
+
+    function markAsSeenActivityCenterNotifications() {
+        root.activityCenterModuleInst.markAsSeenActivityCenterNotifications()
     }
 
     function switchTo(notification) {

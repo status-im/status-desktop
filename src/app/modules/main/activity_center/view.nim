@@ -51,6 +51,15 @@ QtObject:
     read = unreadActivityCenterNotificationsCount
     notify = unreadActivityCenterNotificationsCountChanged
 
+  proc hasUnseenActivityCenterNotificationsChanged*(self: View) {.signal.}
+
+  proc hasUnseenActivityCenterNotifications*(self: View): bool {.slot.}  =
+    self.delegate.hasUnseenActivityCenterNotifications()
+
+  QtProperty[bool] hasUnseenActivityCenterNotifications:
+    read = hasUnseenActivityCenterNotifications
+    notify = hasUnseenActivityCenterNotificationsChanged
+
   proc pushActivityCenterNotifications*(self:View, activityCenterNotifications: seq[Item]) =
     self.model.addActivityNotificationItemsToList(activityCenterNotifications)
     self.hasMoreToShowChanged()
@@ -98,6 +107,10 @@ QtObject:
       channelId,
       nType
     )
+
+  proc markAsSeenActivityCenterNotifications(self: View): void {.slot.} =
+    self.delegate.markAsSeenActivityCenterNotifications()
+    self.hasUnseenActivityCenterNotificationsChanged()
 
   proc acceptActivityCenterNotifications(self: View, idsJson: string): string {.slot.} =
     let ids = map(parseJson(idsJson).getElems(), proc(x:JsonNode):string = x.getStr())

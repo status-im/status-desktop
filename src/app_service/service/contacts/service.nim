@@ -436,7 +436,7 @@ QtObject:
       contact.removed = false
       self.saveContact(contact)
       self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
 
     except Exception as e:
       error "an error occurred while accepting contact request", msg=e.msg
@@ -453,7 +453,7 @@ QtObject:
       contact.removed = true
       self.saveContact(contact)
       self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
     except Exception as e:
       error "an error occurred while dismissing contact request", msg=e.msg
 
@@ -593,7 +593,7 @@ QtObject:
       if not response.error.isNil:
         let msg = response.error.message
         raise newException(RpcException, msg)
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
 
       if self.contacts.hasKey(publicKey):
         self.contacts[publicKey].trustStatus = TrustStatus.Trusted
@@ -618,7 +618,7 @@ QtObject:
       if not response.error.isNil:
         let msg = response.error.message
         raise newException(RpcException, msg)
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
 
       if self.contacts.hasKey(publicKey):
         self.contacts[publicKey].trustStatus = TrustStatus.Untrustworthy
@@ -693,7 +693,7 @@ QtObject:
       self.saveContact(contact)
 
       self.events.emit(SIGNAL_CONTACT_VERIFICATION_SENT, ContactArgs(contactId: publicKey))
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
     except Exception as e:
       error "Error sending verification request", msg = e.msg
 
@@ -717,7 +717,7 @@ QtObject:
       self.saveContact(contact)
 
       self.events.emit(SIGNAL_CONTACT_VERIFICATION_CANCELLED, ContactArgs(contactId: publicKey))
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
     except Exception as e:
       error "Error canceling verification request", msg = e.msg
 
@@ -739,7 +739,7 @@ QtObject:
 
       self.events.emit(SIGNAL_CONTACT_VERIFICATION_ACCEPTED,
         VerificationRequestArgs(verificationRequest: request))
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
     except Exception as e:
       error "error accepting contact verification request", msg=e.msg
 
@@ -758,6 +758,6 @@ QtObject:
       self.receivedIdentityRequests[publicKey] = request
 
       self.events.emit(SIGNAL_CONTACT_VERIFICATION_DECLINED, ContactArgs(contactId: publicKey))
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
     except Exception as e:
       error "error declining contact verification request", msg=e.msg

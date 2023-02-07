@@ -26,6 +26,7 @@ StatusSectionLayout {
     id: root
 
     notificationCount: activityCenterStore.unreadNotificationsCount
+    hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     // TODO: get this model from backend?
     property var settingsMenuModel: [{name: qsTr("Overview"), icon: "show", enabled: true},
