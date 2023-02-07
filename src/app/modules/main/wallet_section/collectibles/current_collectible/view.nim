@@ -11,7 +11,7 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
 
-      networkName: string
+      networkShortName: string
       networkColor: string
       networkIconUrl: string
 
@@ -47,14 +47,14 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
-  proc getNetworkName(self: View): QVariant {.slot.} =
-    return newQVariant(self.networkName)
+  proc getNetworkShortName(self: View): QVariant {.slot.} =
+    return newQVariant(self.networkShortName)
 
-  proc networkNameChanged(self: View) {.signal.}
+  proc networkShortNameChanged(self: View) {.signal.}
 
-  QtProperty[QVariant] networkName:
-    read = getNetworkName
-    notify = networkNameChanged
+  QtProperty[QVariant] networkShortName:
+    read = getNetworkShortName
+    notify = networkShortNameChanged
 
   proc getNetworkColor(self: View): QVariant {.slot.} =
     return newQVariant(self.networkColor)
@@ -177,9 +177,9 @@ QtObject:
     self.delegate.update(collectionSlug, id)
 
   proc setData*(self: View, collection: collectible_dto.CollectionDto, collectible: collectible_dto.CollectibleDto, network: network_dto.NetworkDto) =
-    if (self.networkName != network.chainName):
-      self.networkName = network.chainName
-      self.networkNameChanged()
+    if (self.networkShortName != network.shortName):
+      self.networkShortName = network.shortName
+      self.networkShortNameChanged()
 
     if (self.networkColor != network.chainColor):
       self.networkColor = network.chainColor

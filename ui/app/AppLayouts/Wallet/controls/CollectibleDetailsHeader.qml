@@ -15,7 +15,7 @@ ColumnLayout {
     property alias primaryText: collectibleName.text
     property string secondaryText
     property bool isNarrowMode
-    property string networkName
+    property string networkShortName
     property string networkColor
     property string networkIconURL
 
@@ -84,9 +84,9 @@ ColumnLayout {
 
         InformationTag {
             id: networkTag
-            readonly property bool isNetworkValid: networkName !== ""
+            readonly property bool isNetworkValid: networkShortName !== ""
             image.source: isNetworkValid && networkIconURL !== "" ? Style.svg("tiny/" + networkIconURL) : ""
-            tagPrimaryLabel.text: isNetworkValid ? networkName : "---"
+            tagPrimaryLabel.text: isNetworkValid ? networkShortName : "---"
             tagPrimaryLabel.color: isNetworkValid ? networkColor : "black"
             visible: isNetworkValid
         }
