@@ -471,8 +471,7 @@ SettingsContentBase {
                     value = appSettings.volume
                     volumeSlider.valueChanged.connect(() => {
                                                           // play a sound preview, but not on startup
-                                                          Global.notificationSound.stop()
-                                                          Global.notificationSound.play()
+                                                          Global.playNotificationSound()
                                                       });
                 }
             }

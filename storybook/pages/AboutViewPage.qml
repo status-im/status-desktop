@@ -21,6 +21,8 @@ SplitView {
             contentWidth: parent.width
 
             store: QtObject {
+                readonly property bool isProduction: false
+
                 function checkForUpdates() {
                     logs.logEvent("store::checkForUpdates")
                 }

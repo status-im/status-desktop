@@ -99,12 +99,7 @@ ColumnLayout {
                 console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
                 return
             }
-            Global.openPopup(Global.pinnedMessagesPopup, {
-                                 store: rootStore,
-                                 messageStore: messageStore,
-                                 pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
-                                 messageToPin: messageId
-                             })
+            Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, messageId)
         }
 
         onToggleReaction: {
@@ -243,8 +238,7 @@ ColumnLayout {
                                                   chatInput.fileUrlsAndSources
                                                   ))
                     {
-                        Global.sendMessageSound.stop();
-                        Qt.callLater(Global.sendMessageSound.play);
+                        Global.playSendMessageSound()
 
                         chatInput.textInput.clear();
                         chatInput.textInput.textFormat = TextEdit.PlainText;

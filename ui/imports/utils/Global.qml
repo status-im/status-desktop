@@ -6,19 +6,14 @@ QtObject {
     id: root
 
     property var dragArea
-    property var appMain
     property var applicationWindow
     property bool popupOpened: false
     property int settingsSubsection: Constants.settingsSubsection.profile
 
     property var userProfile
-    property var pinnedMessagesPopup
-    property var communityProfilePopup
-    property bool profilePopupOpened: false
 
-    property var sendMessageSound
-    property var notificationSound
-    property var errorSound
+    signal openPinnedMessagesPopupRequested(var store, var messageStore, var pinnedMessagesModel, string messageToPin)
+    signal openCommunityProfilePopupRequested(var store, var community, var chatCommunitySectionModule)
 
     signal openLinkInBrowser(string link)
     signal openChooseBrowserPopup(string link)
@@ -31,7 +26,7 @@ QtObject {
 
     signal displayToastMessage(string title, string subTitle, string icon, bool loading, int ephNotifType, string url)
 
-    signal openPopupRequested(var popupComponent, var params);
+    signal openPopupRequested(var popupComponent, var params)
     signal openNicknamePopupRequested(string publicKey, string nickname, string subtitle)
     signal openDownloadModalRequested(bool available, string version, string url)
     signal openChangeProfilePicPopup(var cb)
@@ -51,6 +46,10 @@ QtObject {
     signal setNthEnabledSectionActive(int nthSection)
     signal appSectionBySectionTypeChanged(int sectionType, int subsection)
 
+    signal playSendMessageSound()
+    signal playNotificationSound()
+    signal playErrorSound()
+
     function openProfilePopup(publicKey, parentPopup) {
         root.openProfilePopupRequested(publicKey, parentPopup)
     }
@@ -69,10 +68,5 @@ QtObject {
 
     function changeAppSectionBySectionType(sectionType, subsection = 0) {
         root.appSectionBySectionTypeChanged(sectionType, subsection);
-    }
-
-    function playErrorSound() {
-        if (root.errorSound)
-            root.errorSound.play();
     }
 }

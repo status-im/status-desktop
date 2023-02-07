@@ -467,7 +467,6 @@ Loader {
                 disableHover: root.disableHover ||
                               (root.chatLogView && root.chatLogView.moving) ||
                               (root.messageContextMenu && root.messageContextMenu.opened) ||
-                              Global.profilePopupOpened ||
                               Global.popupOpened
 
                 hideQuickActions: root.isChatBlocked ||
@@ -816,12 +815,7 @@ Loader {
                                     return;
                                 }
 
-                                Global.openPopup(Global.pinnedMessagesPopup, {
-                                                     store: root.rootStore,
-                                                     messageStore: messageStore,
-                                                     pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
-                                                     messageToPin: root.messageId
-                                                 });
+                                Global.openPinnedMessagesPopupRequested(root.rootStore, messageStore, chatContentModule.pinnedMessagesModel, root.messageId)
                             }
                         }
                     },

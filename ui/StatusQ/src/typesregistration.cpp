@@ -3,6 +3,7 @@
 #include "StatusQ/QClipboardProxy.h"
 #include "StatusQ/statussyntaxhighlighter.h"
 #include "StatusQ/statuswindow.h"
+#include "StatusQ/rxvalidator.h"
 
 #include <QQmlEngine>
 
@@ -12,4 +13,5 @@ void registerStatusQTypes()
     qmlRegisterSingletonType<QClipboardProxy>("StatusQ", 0 , 1, "QClipboardProxy",
                                               &QClipboardProxy::qmlInstance);
     qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0 , 1, "StatusSyntaxHighlighter");
+    qmlRegisterType<RXValidator>("StatusQ", 0 , 1, "RXValidator");
 }

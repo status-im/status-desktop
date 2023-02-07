@@ -161,12 +161,10 @@ Item {
                 ColumnLayout {
                     StatusBaseText {
                         text: {
-                            if (Global.appMain) {
-                                return "Balance: %1%2".arg(SharedStore.RootStore.currencyStore.currentCurrencySymbol)
-                                .arg(Utils.toLocaleString(root.sharedKeycardModule.keyPairHelper.observedAccount.balance.toFixed(2), appSettings.locale, {"model.account.currency": true}))
-                            }
-                            // without language/model refactor no way to read currency symbol or `appSettings.locale` before user logs in
-                            return "Balance: $%1".arg(Utils.toLocaleString(root.sharedKeycardModule.keyPairHelper.observedAccount.balance.toFixed(2), localAppSettings.language, {"model.account.currency": true}))
+                            return qsTr("Balance: %1").arg(LocaleUtils.currencyAmountToLocaleString({
+                                        amount: parseFloat(root.sharedKeycardModule.keyPairHelper.observedAccount.balance),
+                                        symbol: SharedStore.RootStore.currencyStore.currentCurrencySymbol,
+                                        displayDecimals: 2}))
                         }
                         wrapMode: Text.WordWrap
                         font.pixelSize: Constants.keycard.general.fontSize2

@@ -104,6 +104,15 @@ Pane {
             }
         }
 
+        readonly property var conns3: Connections {
+            target: root.contactsStore.sentContactRequestsModel
+
+            function onItemChanged(pubKey) {
+                if (pubKey === root.publicKey)
+                    d.reload()
+            }
+        }
+
         readonly property var timer: Timer {
             id: timer
         }
@@ -171,8 +180,7 @@ Pane {
             size: StatusButton.Size.Small
             text: qsTr("Send Contact Request")
             onClicked: {
-                Global.openContactRequestPopup(root.publicKey,
-                                               popup => popup.accepted.connect(d.reload))
+                Global.openContactRequestPopup(root.publicKey, null)
             }
         }
     }
@@ -395,8 +403,7 @@ Pane {
                                  d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy // we have an action button otherwise
                         onTriggered: {
                             moreMenu.close()
-                            Global.openContactRequestPopup(root.publicKey,
-                                                           popup => popup.closed.connect(d.reload))
+                            Global.openContactRequestPopup(root.publicKey, null)
                         }
                     }
                     StatusAction {

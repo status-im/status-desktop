@@ -10,9 +10,16 @@ import Storybook 1.0
 import Models 1.0
 
 import utils 1.0
+import mainui 1.0
 
 SplitView {
+    id: root
     Logs { id: logs }
+
+    Popups {
+        popupParent: root
+        rootStore: QtObject {}
+    }
 
     SplitView {
         orientation: Qt.Vertical
@@ -38,16 +45,6 @@ SplitView {
                 function navigateToCommunity() {
                     logs.logEvent("CommunitiesStore::navigateToCommunity", ["communityId"], arguments)
                 }
-            }
-
-            // TODO: onCompleted handler and localAccountSensitiveSettings are here to allow opening
-            // "Import Community" and "Create New Community" popups. However those popups shouldn't
-            // be tightly coupled with `CommunitiesPortalLayout` so it should be refactored in the next step.
-            // Pressing buttons "Import using key" and "Create new community" should only request for opening
-            // dialogs, and in Storybook it should be logged in the same way as calls to stores.
-            // Mentioned popups should have their own pages in the Storybook.
-            Component.onCompleted: {
-                Global.appMain = this
             }
 
             QtObject {
