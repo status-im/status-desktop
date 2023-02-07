@@ -190,14 +190,17 @@ def reset_scroll_obj_by_name(objName: str):
 
 # execute do_fn until validation_fn returns True or timeout is reached
 def do_until_validation_with_timeout(do_fn, validation_fn, message: str, timeout_ms: int=_MAX_WAIT_OBJ_TIMEOUT * 2):
-    print(datetime.now() ,'- START: do_until_validation_with_timeout(message:', message, ')')
+    print(datetime.now() ,'- do_until_validation_with_timeout - START - (message:', message, ')')
     start_time = time.time()
+    print(datetime.now() ,'- do_until_validation_with_timeout - BEFORE while')
     while(not validation_fn()):
         if ((time.time() - start_time) * 1000) > timeout_ms:
+            print(datetime.now() ,'- do_until_validation_with_timeout - TIMEOUT EXCEPTION')
             raise Exception("Timeout reached while validating: " + message)
-        print(datetime.now() ,'- do_fn')
+        print(datetime.now() ,'- do_until_validation_with_timeout - BEFORE do_fn')
         do_fn()
-    print(datetime.now() ,'- END: do_until_validation_with_timeout(message:', message, ')')
+        print(datetime.now() ,'- do_until_validation_with_timeout - AFTER do_fn')
+    print(datetime.now() ,'- do_until_validation_with_timeout - END - (message:', message, ')')
 
 def scroll_item_until_item_is_visible(itemToScrollObjName: str, itemToBeVisibleObjName: str, timeout_ms: int=_MAX_WAIT_OBJ_TIMEOUT * 2):
     is_item_visible_fn = lambda: is_loaded_visible_and_enabled(itemToBeVisibleObjName, 10)[0]
