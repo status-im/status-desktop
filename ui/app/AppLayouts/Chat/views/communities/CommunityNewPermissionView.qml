@@ -660,42 +660,19 @@ StatusScrollView {
         Separator {
             Layout.topMargin: 24
         }
-        RowLayout {
+
+        HidePermissionPanel {
             Layout.topMargin: 12
             Layout.fillWidth: true
             Layout.leftMargin: 16
             Layout.rightMargin: Layout.leftMargin
-            spacing: 16
-            StatusRoundIcon {
-                asset.name: "hide"
-            }
-            ColumnLayout {
-                Layout.fillWidth: true
-                StatusBaseText {
-                    text: qsTr("Hide permission")
-                    color: Theme.palette.directColor1
-                    font.pixelSize: 15
-                }
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    text: qsTr("Make this permission hidden from members who don’t meet it’s requirements")
-                    color: Theme.palette.baseColor1
-                    font.pixelSize: 15
-                    lineHeight: 1.2
-                    wrapMode: Text.WordWrap
-                    elide: Text.ElideRight
-                    clip: true
-                }
-            }
-            StatusSwitch {
-                enabled: d.permissionType !== PermissionTypes.Type.Admin
-                checked: d.dirtyValues.isPrivate
-                onToggled: d.dirtyValues.isPrivate = checked
-            }
+
+            enabled: d.permissionType !== PermissionTypes.Type.Admin
+            checked: d.dirtyValues.isPrivate
+            onToggled: d.dirtyValues.isPrivate = checked
         }
 
-        PermissionConflictWarningPanel{
+        PermissionConflictWarningPanel {
             id: conflictPanel
 
             visible: store.permissionConflict.exists

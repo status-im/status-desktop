@@ -19,7 +19,7 @@ SplitView {
             height: conflictPanel.implicitHeight
             anchors.centerIn: parent
 
-            PermissionConflictWarningPanel{
+            PermissionConflictWarningPanel {
                 id: conflictPanel
                 anchors.left: parent.left
                 anchors.right: parent.right
