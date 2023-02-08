@@ -146,33 +146,47 @@ SettingsPageLayout {
         id: newPermissionView
 
         CommunityNewPermissionView {
-            id: newPermissionViewItem
-
             viewWidth: root.viewWidth
+
             rootStore: root.rootStore
             store: root.store
-            onPermissionCreated: root.state = d.permissionsViewState
+
             isEditState: root.state === d.editPermissionViewState
-            permissionIndex: d.permissionIndexToEdit
             holdingsModel: d.holdingsToEditModel
             permissionObject: d.permissionsToEditObject
             channelsModel: d.channelsToEditModel
             isPrivate: d.isPrivateToEditValue
 
+            onCreatePermissionClicked: {
+                root.store.createPermission(dirtyValues.holdingsModel,
+                                            dirtyValues.permissionObject,
+                                            dirtyValues.isPrivate,
+                                            dirtyValues.channelsModel)
+
+                root.state = d.permissionsViewState
+            }
+
             Connections {
                 target: d
 
                 function onSaveChanges() {
-                    newPermissionViewItem.saveChanges()
+                    root.store.editPermission(
+                                d.permissionIndexToEdit,
+                                dirtyValues.holdingsModel,
+                                dirtyValues.permissionObject,
+                                dirtyValues.channelsModel,
+                                dirtyValues.isPrivate)
                 }
 
                 function onResetChanges() {
-                    newPermissionViewItem.resetChanges()
+                    resetChanges()
                 }
             }
 
-            Component.onCompleted: {
-                root.dirty = Qt.binding(() => newPermissionViewItem.isEditState && newPermissionViewItem.dirty)
+            Binding {
+                target: root
+                property: "dirty"
+                value: isEditState && dirty
             }
         }
     }
