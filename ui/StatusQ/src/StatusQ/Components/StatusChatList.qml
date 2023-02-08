@@ -1,6 +1,5 @@
-import QtQuick 2.14
-import QtQml.Models 2.14
-import QtQuick.Controls 2.14 as QC
+import QtQuick 2.15
+import QtQuick.Controls 2.15 as QC
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -38,37 +37,30 @@ Item {
         height: contentHeight
         objectName: "chatListItems"
         model: root.model
-        spacing: 4
+        spacing: 0
         section.property: "categoryId"
         section.criteria: ViewSection.FullString
 
         section.delegate: Loader {
-            readonly property string categoryId: {
-                // Update category data from here because `dataChanged` signals on the Name do not affect the section
-                // The section is only affected by CategoryId changes, but it never actually changes, so `categoryName` doesn't update automatically
-                updateCategoryData(section)
-                return section
-            }
-            property string categoryName: ""
-            property bool categoryOpened: true
-
-            function updateCategoryData(catId) {
-                categoryName = root.model.sourceModel.getCategoryNameForCategoryId(catId)
-                categoryOpened = root.model.sourceModel.getCategoryOpenedForCategoryId(catId)
-            }
-
             id: statusChatListCategoryItemLoader
-            active: !!categoryId
+            active: !!section
+
+            required property string section
 
             sourceComponent: StatusChatListCategoryItem {
                 id: statusChatListCategoryItem
                 
                 function setupPopup() {
-                    categoryPopupMenuSlot.item.categoryId = statusChatListCategoryItemLoader.categoryId
+                    categoryPopupMenuSlot.item.categoryId = statusChatListCategoryItemLoader.section
+                }
+
+                function toggleCategory() {
+                    root.model.sourceModel.changeCategoryOpened(statusChatListCategoryItemLoader.section, !opened)
+                    opened = root.model.sourceModel.getCategoryOpenedForCategoryId(statusChatListCategoryItemLoader.section)
                 }
 
                 Connections {
-                    enabled: categoryPopupMenuSlot.active && highlighted
+                    enabled: categoryPopupMenuSlot.active && statusChatListCategoryItem.highlighted
                     target: categoryPopupMenuSlot.item
                     function onClosed() {
                         statusChatListCategoryItem.highlighted = false
@@ -76,16 +68,26 @@ Item {
                     }
                 }
 
-                title: categoryName
+                title: root.model.sourceModel.getCategoryNameForCategoryId(statusChatListCategoryItemLoader.section)
 
-                opened: categoryOpened
+                opened: root.model.sourceModel.getCategoryOpenedForCategoryId(statusChatListCategoryItemLoader.section)
 
                 sensor.pressAndHoldInterval: 150
                 propagateTitleClicks: true // title click is handled as a normal click (fallthru)
                 showAddButton: showCategoryActionButtons
                 showMenuButton: !!root.popupMenu
-                // TODO uncomment this when drag and drop is reimplemented
-                highlighted: false//statusChatListCategory.dragged
+                highlighted: false//statusChatListCategory.dragged // FIXME DND
+
+                hasUnreadMessages: root.model.sourceModel.getCategoryHasUnreadMessages(statusChatListCategoryItemLoader.section)
+                Connections {
+                    target: root.model.sourceModel
+                    function onCategoryHasUnreadMessagesChanged(categoryId: string, hasUnread: bool) {
+                        if (categoryId === statusChatListCategoryItemLoader.section) {
+                            statusChatListCategoryItem.hasUnreadMessages = hasUnread
+                        }
+                    }
+                }
+
                 onClicked: {
                     if (sensor.enabled) {
                         if (mouse.button === Qt.RightButton && showCategoryActionButtons && !!root.categoryPopupMenu) {
@@ -93,11 +95,11 @@ Item {
                             highlighted = true;
                             categoryPopupMenuSlot.item.popup()
                         } else if (mouse.button === Qt.LeftButton) {
-                            root.model.sourceModel.changeCategoryOpened(section, !statusChatListCategoryItem.opened)
+                            toggleCategory()
                         }
                     }
                 }
-                onToggleButtonClicked: root.model.sourceModel.changeCategoryOpened(section, !statusChatListCategoryItem.opened)
+                onToggleButtonClicked: toggleCategory()
                 onMenuButtonClicked: {
                     statusChatListCategoryItem.setupPopup()
                     highlighted = true
@@ -114,25 +116,25 @@ Item {
 
         delegate: Loader {
             id: chatLoader
-            active: model.type !== d.chatTypeCategory && model.categoryOpened
-            // TODO fix height not adjusting
-            // This below doesn't work well, the height stays at 0 after reopening
-            // height: active && item ? item.height : 0
-            
-            sourceComponent: Item {
+            active: model.type !== d.chatTypeCategory
+            height: active && item ? item.height : 0
+            visible: height
+
+            sourceComponent: QC.Control {
                 id: draggable
                 objectName: model.name
                 width: root.width
-                height: statusChatListItem.height
+                height: model.categoryOpened ? statusChatListItem.height : 0
+                verticalPadding: 2
+
                 property alias chatListItem: statusChatListItem
 
-                MouseArea {
+                contentItem: MouseArea {
                     id: dragSensor
 
                     anchors.fill: parent
                     cursorShape: active ? Qt.ClosedHandCursor : Qt.PointingHandCursor
                     hoverEnabled: true
-                    pressAndHoldInterval: 150
                     enabled: root.draggableItems
 
                     property bool active: false
@@ -140,7 +142,6 @@ Item {
                     property real startX: 0
 
                     drag.target: draggedListItemLoader.item
-                    drag.threshold: 0.1
                     drag.filterChildren: true
 
                     onPressed: {
@@ -173,7 +174,7 @@ Item {
                         opacity: dragSensor.active ? 0.0 : 1.0
                         originalOrder: model.position
                         chatId: model.itemId
-                        categoryId: model.parentItemId? model.parentItemId : ""
+                        categoryId: model.categoryId
                         name: model.name
                         type: !!model.type ? model.type : StatusChatListItem.Type.CommunityChat
                         muted: model.muted
@@ -201,7 +202,7 @@ Item {
 
                                 popupMenuSlot.item.openHandler = function () {
                                     if (!!originalOpenHandler) {
-                                        originalOpenHandler(model.itemId)
+                                        originalOpenHandler(statusChatListItem.chatId)
                                     }
                                 }
 
@@ -221,10 +222,10 @@ Item {
                                 return
                             }
                             if (!statusChatListItem.selected) {
-                                root.chatItemSelected(model.parentItemId, model.itemId)
+                                root.chatItemSelected(statusChatListItem.categoryId, statusChatListItem.chatId)
                             }
                         }
-                        onUnmute: root.chatItemUnmuted(model.itemId)
+                        onUnmute: root.chatItemUnmuted(statusChatListItem.chatId)
                     }
                 }
 
