@@ -353,6 +353,26 @@ QtObject:
         self.joinedCommunities[settings.id].settings = settings
         self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.joinedCommunities[settings.id]))
 
+  proc checkForCategoryPropertyUpdates(self: Service, community: CommunityDto, prev_community: CommunityDto) =
+    for category in community.categories:
+          # id is present
+          let index = findIndexById(category.id, prev_community.categories)
+          if index == -1:
+            continue
+          # but something is different
+          let prev_category = prev_community.categories[index]
+
+          if category.position != prev_category.position:
+            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_REORDERED,
+              CommunityChatOrderArgs(
+                communityId: community.id,
+                categoryId: category.id,
+                position: category.position))
+          if category.name != prev_category.name:
+            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED,
+              CommunityCategoryArgs(communityId: community.id, category: category))
+
+    
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string]) =
     try:
       var community = communities[0]
@@ -403,22 +423,7 @@ QtObject:
 
       # some property has changed
       else:
-        for category in community.categories:
-          # id is present
-          let index = findIndexById(category.id, prev_community.categories)
-          if index == -1:
-            continue
-          # but something is different
-          let prev_category = prev_community.categories[index]
-          if category.position != prev_category.position:
-            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_REORDERED,
-              CommunityChatOrderArgs(
-                communityId: community.id,
-                categoryId: category.id,
-                position: category.position))
-          if category.name != prev_category.name:
-            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED,
-              CommunityCategoryArgs(communityId: community.id, category: category))
+        self.checkForCategoryPropertyUpdates(community, prev_community)
 
       # channel was added
       if(community.chats.len > prev_community.chats.len):
@@ -1118,6 +1123,11 @@ QtObject:
         raise newException(RpcException, "Error creating community category: " & error.message)
 
       if response.result != nil and response.result.kind != JNull:
+        self.checkForCategoryPropertyUpdates(
+          response.result["communityChanges"].getElems()[0]["community"].toCommunityDto,
+          self.joinedCommunities[communityId]
+        )
+
         var chats: seq[ChatDto] = @[]
         for chatId, v in response.result["communityChanges"].getElems()[0]["chatsModified"].pairs():
           let fullChatId = communityId & chatId
@@ -1168,6 +1178,15 @@ QtObject:
             self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
             chats.add(chatDetails)
 
+        # Update communities objects
+        let updatedCommunity = response.result["communities"][0].toCommunityDto         
+        self.checkForCategoryPropertyUpdates(
+          updatedCommunity,
+          self.joinedCommunities[communityId]
+        )
+        self.joinedCommunities[communityId] = updatedCommunity
+        self.allCommunities[communityId] = updatedCommunity
+
         for k, v in response.result["communityChanges"].getElems()[0]["categoriesModified"].pairs():
           let category = v.toCategory()
           self.events.emit(SIGNAL_COMMUNITY_CATEGORY_EDITED,
@@ -1184,8 +1203,13 @@ QtObject:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error deleting community category: " & error.message)
 
-      # Update communities objetcts
+      # Update communities objects
       let updatedCommunity = response.result["communities"][0].toCommunityDto
+            
+      self.checkForCategoryPropertyUpdates(
+        updatedCommunity,
+        self.joinedCommunities[communityId]
+      )
       self.joinedCommunities[communityId] = updatedCommunity
       self.allCommunities[communityId] = updatedCommunity
 

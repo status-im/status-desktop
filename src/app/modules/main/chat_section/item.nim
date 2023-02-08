@@ -27,7 +27,6 @@ type
     active: bool
     position: int
     categoryId: string
-    categoryName: string
     categoryPosition: int
     categoryOpened: bool
     highlight: bool
@@ -51,7 +50,6 @@ proc initItem*(
     active: bool,
     position: int,
     categoryId: string = "",
-    categoryName: string = "",
     categoryPosition: int = -1,
     colorId: int = 0,
     colorHash: seq[ColorHashSegment] = @[],
@@ -80,7 +78,6 @@ proc initItem*(
   result.active = active
   result.position = position
   result.categoryId = categoryId
-  result.categoryName = categoryName
   result.categoryPosition = categoryPosition
   result.highlight = highlight
   result.categoryOpened = categoryOpened
@@ -106,7 +103,6 @@ proc `$`*(self: Item): string =
     active: {$self.active},
     position: {$self.position},
     categoryId: {$self.categoryId},
-    categoryName: {$self.categoryName},
     categoryPosition: {$self.categoryPosition},
     highlight: {$self.highlight},
     categoryOpened: {$self.categoryOpened},
@@ -132,7 +128,6 @@ proc toJsonNode*(self: Item): JsonNode =
     "active": self.active,
     "position": self.position,
     "categoryId": self.categoryId,
-    "categoryName": self.categoryName,
     "categoryPosition": self.categoryPosition,
     "highlight": self.highlight,
     "categoryOpened": self.categoryOpened,
@@ -235,12 +230,6 @@ proc categoryId*(self: Item): string =
 
 proc `categoryId=`*(self: var Item, value: string) =
   self.categoryId = value
-
-proc categoryName*(self: Item): string =
-  self.categoryName
-
-proc `categoryName=`*(self: var Item, value: string) =
-  self.categoryName = value
 
 proc categoryPosition*(self: Item): int =
   self.categoryPosition
