@@ -25,9 +25,6 @@ SettingsPageLayout {
                 root.state = d.getInitialState()
             }
         }
-
-        d.saveChanges = false
-        d.resetChanges = false
     }
 
     QtObject {
@@ -38,8 +35,9 @@ SettingsPageLayout {
         readonly property string permissionsViewState: "PERMISSIONS"
         readonly property string editPermissionViewState: "EDIT_PERMISSION"
         readonly property bool permissionsExist: store.permissionsModel.count > 0
-        property bool saveChanges: false
-        property bool resetChanges: false
+
+        signal saveChanges
+        signal resetChanges
 
         property int permissionIndexToEdit
         property ListModel holdingsToEditModel: ListModel {}
@@ -115,13 +113,15 @@ SettingsPageLayout {
     }
 
     onSaveChangesClicked: {
-        d.saveChanges = true
-        d.resetChanges = true
+        d.saveChanges()
+        d.resetChanges()
+
         root.navigateBack()
     }
 
     onResetChangesClicked: {
-        d.resetChanges = true
+        d.resetChanges()
+
         root.navigateBack()
     }
 
@@ -158,10 +158,22 @@ SettingsPageLayout {
             permissionObject: d.permissionsToEditObject
             channelsModel: d.channelsToEditModel
             isPrivate: d.isPrivateToEditValue
-            saveChanges: d.saveChanges
-            resetChanges: d.resetChanges
 
-            Component.onCompleted: { root.dirty = Qt.binding(() => newPermissionViewItem.isEditState && newPermissionViewItem.dirty) }
+            Connections {
+                target: d
+
+                function onSaveChanges() {
+                    newPermissionViewItem.saveChanges()
+                }
+
+                function onResetChanges() {
+                    newPermissionViewItem.resetChanges()
+                }
+            }
+
+            Component.onCompleted: {
+                root.dirty = Qt.binding(() => newPermissionViewItem.isEditState && newPermissionViewItem.dirty)
+            }
         }
     }
 

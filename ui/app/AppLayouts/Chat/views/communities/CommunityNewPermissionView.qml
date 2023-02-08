@@ -26,7 +26,7 @@ StatusScrollView {
 
     property int viewWidth: 560 // by design
     property bool isEditState: false
-    property bool dirty: {
+    readonly property bool dirty: {
 
         const trick = d.triggerDirtyTool // Trick: Used to force the reevaluation of dirty when an item of the list is updated
 
@@ -51,8 +51,14 @@ StatusScrollView {
 
         return dirtyPermissionObj || d.dirtyValues.isPrivateDirty
     }
-    property bool saveChanges: false
-    property bool resetChanges: false
+
+    function saveChanges() {
+        d.saveChanges()
+    }
+
+    function resetChanges() {
+        d.loadInitValues()
+    }
 
     property int permissionIndex
 
@@ -301,8 +307,6 @@ StatusScrollView {
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
 
-    onSaveChangesChanged: if(saveChanges) d.saveChanges()
-    onResetChangesChanged: if(resetChanges)  d.loadInitValues()
     onPermissionObjectChanged: d.loadInitValues()
 
     ColumnLayout {
