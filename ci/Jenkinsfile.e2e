@@ -139,7 +139,7 @@ pipeline {
               '--config', 'addAUT', 'nim_status_client',
               "${WORKSPACE}/bin",
             ].join('\n'),
-            squishPackageName: 'squish-7.1.0-qt515x-linux64',
+            squishPackageName: 'squish-6.7.2-qt514x-linux64',
             testSuite: "${WORKSPACE}/test/ui-test/testSuites/*",
           ])
           print("Squish run result: ${result}")
