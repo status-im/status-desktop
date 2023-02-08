@@ -17,7 +17,7 @@ ColumnLayout {
     property var selectedAsset
     property bool isBridgeTx: false
     property bool interactive: false
-    property var maxFiatBalance
+    property double maxFiatBalance
     property bool inputIsFiat: false
     property var cryptoValueToSend
     Binding {
@@ -64,7 +64,7 @@ ColumnLayout {
     }
 
     onMaxFiatBalanceChanged: {
-        floatValidator.top = maxFiatBalance ? maxFiatBalance.amount : 0.0
+        floatValidator.top = maxFiatBalance
         input.validate()
     }
 
@@ -92,7 +92,7 @@ ColumnLayout {
                 StatusFloatValidator {
                     id: floatValidator
                     bottom: 0
-                    top: root.maxFiatBalance.amount
+                    top: root.maxFiatBalance
                     errorMessage: ""
                 }
             ]

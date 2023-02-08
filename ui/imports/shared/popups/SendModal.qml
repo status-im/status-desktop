@@ -82,9 +82,12 @@ StatusDialog {
         readonly property int errorType: !amountToSendInput.input.valid ? Constants.SendAmountExceedsBalance :
                                                                           (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0 && !!amountToSendInput.input.text && recipientReady && !popup.isLoading) ?
                                                                               Constants.NoRoute : Constants.NoError
-        readonly property var maxFiatBalance: !!assetSelector.selectedAsset ? (amountToSendInput.inputIsFiat ?
-                                                                                    assetSelector.selectedAsset.totalCurrencyBalance :
-                                                                                    assetSelector.selectedAsset.totalBalance): undefined
+        readonly property string maxFiatBalance:!!assetSelector.selectedAsset ? (amountToSendInput.inputIsFiat ?
+                                                                                    LocaleUtils.currencyAmountToLocaleString(assetSelector.selectedAsset.totalCurrencyBalance) :
+                                                                                    LocaleUtils.currencyAmountToLocaleString(assetSelector.selectedAsset.totalBalance)): ""
+        readonly property double maxFiatBalanceAmount: !!assetSelector.selectedAsset ? (amountToSendInput.inputIsFiat ?
+                                                                                    assetSelector.selectedAsset.totalCurrencyBalance.amount :
+                                                                                    assetSelector.selectedAsset.totalBalance.amount): 0.0
         readonly property bool errorMode: popup.isLoading || !recipientReady ? false : errorType !== Constants.NoError || networkSelector.errorMode || isNaN(amountToSendInput.input.text)
         readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending
         property bool isAddressValid: Utils.isValidAddress(popup.addressText)
@@ -245,10 +248,9 @@ StatusDialog {
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                             Layout.preferredHeight: 22
                             title: {
-                                if (!d.maxFiatBalance || d.maxFiatBalance.amount <= 0)
+                                if (d.maxFiatBalanceAmount <= 0)
                                     return qsTr("No balances active")
-                                const balance = LocaleUtils.currencyAmountToLocaleString(d.maxFiatBalance)
-                                return qsTr("Max: %1").arg(balance)
+                                return qsTr("Max: %1").arg(d.maxFiatBalance)
                             }
                             closeButtonVisible: false
                             titleText.font.pixelSize: 12
@@ -264,7 +266,7 @@ StatusDialog {
                             isBridgeTx: popup.isBridgeTx
                             interactive: popup.interactive
                             selectedAsset: assetSelector.selectedAsset
-                            maxFiatBalance: d.maxFiatBalance
+                            maxFiatBalance: d.maxFiatBalanceAmount
                             currentCurrency: popup.store.currentCurrency
                             getFiatValue: function(cryptoValue) {
                                 return selectedAsset ? popup.currencyStore.getFiatValue(cryptoValue, selectedAsset.symbol, currentCurrency) : undefined
