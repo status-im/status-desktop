@@ -54,9 +54,6 @@ proc delete*(self: Controller) =
 
 proc init*(self: Controller) =
 
-  let installedStickers = self.stickerService.getInstalledStickerPacks()
-  self.delegate.populateInstalledStickerPacks(installedStickers)
-
   self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
     self.disconnected = true
     self.delegate.clearStickerPacks()
@@ -84,6 +81,11 @@ proc init*(self: Controller) =
       args.isBought,
       args.isPending
     )
+
+  self.events.on(SIGNAL_LOAD_INSTALLED_STICKER_PACKS_DONE) do(e: Args):
+    let args = StickerPacksArgs(e)
+    self.delegate.installedStickerPacksLoaded()
+    self.delegate.populateInstalledStickerPacks(args.packs)
 
   self.events.on(SIGNAL_ALL_STICKER_PACKS_LOADED) do(e: Args):
     self.delegate.allPacksLoaded()
@@ -121,6 +123,9 @@ proc getRecentStickers*(self: Controller): seq[StickerDto] =
 
 proc loadRecentStickers*(self: Controller) =
   self.stickerService.asyncLoadRecentStickers()
+
+proc loadInstalledStickerPacks*(self: Controller) =
+  self.stickerService.asyncLoadInstalledStickerPacks()
 
 proc estimate*(self: Controller, packId: string, address: string, price: string, uuid: string) =
   self.stickerService.estimate(packId, address, price, uuid)

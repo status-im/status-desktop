@@ -38,6 +38,10 @@ Popup {
         function getRecentStickers() {
             store.stickersModuleInst.getRecentStickers()
         }
+
+        function getInstalledStickerPacks() {
+            store.stickersModuleInst.getInstalledStickerPacks()
+        }
     }
 
     enabled: !!d.recentStickers && !!d.stickerPackList
@@ -61,6 +65,7 @@ Popup {
     }
 
     onAboutToShow: {
+        d.getInstalledStickerPacks()
         if (stickerGrid.packId == -1) {
             d.getRecentStickers()
         }

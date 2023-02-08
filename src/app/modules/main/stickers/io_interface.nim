@@ -28,7 +28,10 @@ method getRecentStickers*(self: AccessInterface) {.base.} =
 method loadRecentStickers*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getInstalledStickerPacks*(self: AccessInterface): Table[string, StickerPackDto] {.base.} =
+method getInstalledStickerPacks*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method installedStickerPacksLoaded*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method obtainMarketStickerPacks*(self: AccessInterface) {.base.} =
