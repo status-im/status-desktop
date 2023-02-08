@@ -1,5 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 
 import AppLayouts.Chat.views.communities 1.0
 import AppLayouts.Chat.stores 1.0
@@ -16,7 +17,16 @@ SplitView {
     Pane {
         id: root
 
+        SplitView.fillWidth: true
+        SplitView.fillHeight: true
+
         CommunityNewPermissionView {
+            id: communityNewPermissionView
+
+            anchors.fill: parent
+
+            isEditState: isEditStateCheckBox.checked
+            isPrivate: isPrivateCheckBox.checked
 
             store: CommunitiesStore {
                 readonly property var assetsModel: AssetsModel {}
@@ -31,6 +41,10 @@ SplitView {
                 }
 
                 readonly property bool isOwner: isOwnerCheckBox.checked
+
+                function createPermission(holdings, permissions, isPrivate, channels) {
+                    logs.logEvent("CommunitiesStore::creatPermission")
+                }
 
                 function editPermission(index, holdings, permissions, channels, isPrivate) {
                     logs.logEvent("CommunitiesStore::editPermission - index: " + index)
@@ -66,14 +80,58 @@ SplitView {
         id: logsAndControlsPanel
 
         SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 150
+        SplitView.preferredHeight: 160
 
         logsView.logText: logs.logText
 
-        CheckBox {
-            id: isOwnerCheckBox
 
-            text: "Is owner"
+        ColumnLayout {
+
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            RowLayout {
+                Layout.fillWidth: true
+
+                CheckBox {
+                    id: isOwnerCheckBox
+
+                    text: "Is owner"
+                }
+
+                CheckBox {
+                    id: isEditStateCheckBox
+
+                    text: "Is edit state"
+                }
+
+                CheckBox {
+                    id: isPrivateCheckBox
+
+                    text: "Is private"
+                }
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+
+                Button {
+                    text: "Save changes"
+
+                    onClicked: communityNewPermissionView.saveChanges()
+                }
+
+                Button {
+                    text: "Reset changes"
+
+                    onClicked: communityNewPermissionView.resetChanges()
+                }
+            }
+
+            Label {
+                text: "Is dirty: " + communityNewPermissionView.dirty
+            }
         }
     }
 }
