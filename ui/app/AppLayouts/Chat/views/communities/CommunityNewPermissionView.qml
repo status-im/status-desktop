@@ -38,6 +38,10 @@ StatusScrollView {
         if (d.checkIfInDirty())
             return true
 
+        // Is private
+        if (root.isPrivate !== d.dirtyValues.isPrivate)
+            return true
+
         // Permissions:
         let dirtyPermissionObj = false
         if(root.permissionObject && d.dirtyValues.permissionObject.key !== null) {
@@ -48,8 +52,7 @@ StatusScrollView {
             dirtyPermissionObj = d.dirtyValues.permissionObject.key !== null
         }
 
-
-        return dirtyPermissionObj || d.dirtyValues.isPrivateDirty
+        return dirtyPermissionObj
     }
 
     function saveChanges() {
@@ -71,7 +74,7 @@ StatusScrollView {
     // roles: itemId, text, emoji, color
     property var channelsModel: ListModel {}
 
-    property bool isPrivate
+    property bool isPrivate: false
 
     signal permissionCreated()
 
@@ -90,15 +93,9 @@ StatusScrollView {
             permissionType === PermissionTypes.Type.Member
 
         onPermissionTypeChanged: {
-            if (permissionType === PermissionTypes.Type.Admin) {
-                d.dirtyValues.isPrivateDirty = (root.isPrivate === false)
-            } else {
-                if (permissionType === PermissionTypes.Type.Moderator) {
-                    d.dirtyValues.isPrivateDirty = (root.isPrivate === false)
-                } else {
-                    d.dirtyValues.isPrivateDirty = (root.isPrivate === true)
-                }
-            }
+            d.dirtyValues.isPrivate =
+                    (permissionType === PermissionTypes.Type.Admin) ||
+                    (permissionType === PermissionTypes.Type.Moderator)
         }
 
         onIsCommunityPermissionChanged: {
@@ -125,7 +122,8 @@ StatusScrollView {
                property string text: ""
                property string imageSource: ""
             }
-            property bool isPrivateDirty: false
+
+            property bool isPrivate: false
 
             function getIndexOfKey(key) {
                 const count = holdingsModel.count
@@ -173,12 +171,11 @@ StatusScrollView {
         }
 
         function saveChanges() {
-
             root.store.editPermission(root.permissionIndex,
                                       d.dirtyValues.holdingsModel,
                                       d.dirtyValues.permissionObject,
                                       d.dirtyValues.channelsModel,
-                                      d.dirtyValues.isPrivateDirty ? !root.isPrivate : root.isPrivate)
+                                      d.dirtyValues.isPrivate)
         }
 
         function loadInitValues() {
@@ -239,7 +236,7 @@ StatusScrollView {
             }
 
             // Is private permission
-            d.dirtyValues.isPrivateDirty = false
+            d.dirtyValues.isPrivate = root.isPrivate
         }
 
         function checkIfHoldingsDirty() {
@@ -693,8 +690,8 @@ StatusScrollView {
             }
             StatusSwitch {
                 enabled: d.permissionType !== PermissionTypes.Type.Admin
-                checked: d.dirtyValues.isPrivateDirty ? !root.isPrivate : root.isPrivate
-                onToggled: d.dirtyValues.isPrivateDirty = (root.isPrivate !== checked)
+                checked: d.dirtyValues.isPrivate
+                onToggled: d.dirtyValues.isPrivate = checked
             }
         }
 
@@ -722,7 +719,7 @@ StatusScrollView {
             onClicked: {
                 root.store.createPermission(d.dirtyValues.holdingsModel,
                                             d.dirtyValues.permissionObject,
-                                            d.dirtyValues.isPrivateDirty ? !root.isPrivate : root.isPrivate,
+                                            d.dirtyValues.isPrivate,
                                             d.dirtyValues.channelsModel)
                 root.permissionCreated()
             }
