@@ -11,7 +11,7 @@ Item {
     id: root
 
     implicitWidth: statusChatListItems.width
-    height: statusChatListItems.height
+    implicitHeight: statusChatListItems.contentHeight
 
     property string categoryId: ""
     property var model: null
@@ -34,10 +34,11 @@ Item {
     StatusListView {
         id: statusChatListItems
         width: 288
-        height: contentHeight
+        height: root.height
         objectName: "chatListItems"
         model: root.model
         spacing: 0
+        interactive: height !== contentHeight
         section.property: "categoryId"
         section.criteria: ViewSection.FullString
 
