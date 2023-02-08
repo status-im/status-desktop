@@ -202,8 +202,7 @@ QtObject:
       if self.items[i].categoryId == categoryId:
         self.items[i].categoryOpened = opened
         let index = self.createIndex(i, 0, nil)
-        # Also signal on CategoryId because the section header only knows the categoryId
-        self.dataChanged(index, index, @[ModelRole.CategoryId.int, ModelRole.CategoryOpened.int])
+        self.dataChanged(index, index, @[ModelRole.CategoryOpened.int])
 
   proc removeItemByIndex(self: Model, idx: int) =
     if idx == -1:
@@ -240,12 +239,13 @@ QtObject:
       if(it.id == id):
         return it
 
-  proc setCategoryHasUnreadMessages*(self: Model, id: string, value: bool) =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
-        let index = self.createIndex(i, 0, nil)
-        self.items[i].hasUnreadMessages = value
-        self.dataChanged(index, index, @[ModelRole.HasUnreadMessages.int])
+  proc categoryHasUnreadMessagesChanged*(self: Model, categoryId: string, hasUnread: bool) {.signal.}
+
+  proc getCategoryHasUnreadMessages*(self: Model, categoryId: string): bool {.slot.} =
+    return self.items.anyIt(it.categoryId == categoryId and it.hasUnreadMessages)
+
+  proc setCategoryHasUnreadMessages*(self: Model, categoryId: string, value: bool) =
+    self.categoryHasUnreadMessagesChanged(categoryId, value)
 
   proc getCategoryAndPosition*(self: Model, id: string): (string, int) =
     let item = self.getItemById(id)
