@@ -55,10 +55,6 @@ def step(context, text, obj):
 def step(context: any, obj: str):
     the_user_clicks_on_the_following_ui_component(obj)
 
-@Given("the user has joined chats")
-def step(context):
-    the_user_joins_chats(context)
-
 #########################
 ### ACTIONS region:
 #########################
@@ -83,10 +79,6 @@ def step(context, room):
 @When("the user waits |any| seconds")
 def step(context, amount):
     time.sleep(2)
-
-@When("the user joins chats")
-def step(context):
-    the_user_joins_chats(context)
 
 #########################
 ### VERIFICATIONS region:
@@ -114,8 +106,3 @@ def the_user_inputs_the_following_text_with_uicomponent(text: str, obj):
 def the_user_clicks_on_the_following_ui_component(obj):
     init_steps.the_user_clicks_on_the_following_ui_component(obj)
 
-def the_user_joins_chats(context: any):
-    table = context.table
-    for i, row in enumerate(table):
-        room = row[0]
-        init_steps.the_user_joins_chat_room(room)
