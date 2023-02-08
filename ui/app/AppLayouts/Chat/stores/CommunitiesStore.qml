@@ -162,7 +162,7 @@ QtObject {
         permission.permissionsObjectModel.text = permissions.text
         permission.permissionsObjectModel.imageSource = permissions.imageSource
 
-        // Setting CHANNELS
+        // Setting CHANNELS:
         for (let c = 0; c < channels.count; c++) {
             const entry = channels.get(c)
 

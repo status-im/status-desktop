@@ -28,7 +28,8 @@ StatusScrollView {
     property bool isEditState: false
     readonly property bool dirty: {
 
-        const trick = d.triggerDirtyTool // Trick: Used to force the reevaluation of dirty when an item of the list is updated
+        // Trick: Used to force the reevaluation of dirty when an item of the list is updated
+        const trick = d.triggerDirtyTool
 
         // Holdings:
         if (d.checkIfHoldingsDirty())
@@ -55,16 +56,6 @@ StatusScrollView {
         return dirtyPermissionObj
     }
 
-    function saveChanges() {
-        d.saveChanges()
-    }
-
-    function resetChanges() {
-        d.loadInitValues()
-    }
-
-    property int permissionIndex
-
     // roles: type, key, name, amount, imageSource
     property var holdingsModel: ListModel {}
 
@@ -76,7 +67,13 @@ StatusScrollView {
 
     property bool isPrivate: false
 
-    signal permissionCreated()
+    readonly property alias dirtyValues: d.dirtyValues
+
+    signal createPermissionClicked
+
+    function resetChanges() {
+        d.loadInitValues()
+    }
 
     QtObject {
         id: d
@@ -113,11 +110,11 @@ StatusScrollView {
         // Trick: Used to force the reevaluation of dirty when an item of the list is updated
         property int triggerDirtyTool: 0
 
-        property QtObject dirtyValues: QtObject {
-            property ListModel holdingsModel: ListModel {}
-            property ListModel channelsModel: ListModel {}
+        readonly property QtObject dirtyValues: QtObject {
+            readonly property ListModel holdingsModel: ListModel {}
+            readonly property ListModel channelsModel: ListModel {}
 
-            property QtObject permissionObject: QtObject {
+            readonly property QtObject permissionObject: QtObject {
                property var key: null
                property string text: ""
                property string imageSource: ""
@@ -166,16 +163,6 @@ StatusScrollView {
 
                 return names
             }
-
-            // TODO: Channels
-        }
-
-        function saveChanges() {
-            root.store.editPermission(root.permissionIndex,
-                                      d.dirtyValues.holdingsModel,
-                                      d.dirtyValues.permissionObject,
-                                      d.dirtyValues.channelsModel,
-                                      d.dirtyValues.isPrivate)
         }
 
         function loadInitValues() {
@@ -693,13 +680,8 @@ StatusScrollView {
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
-            onClicked: {
-                root.store.createPermission(d.dirtyValues.holdingsModel,
-                                            d.dirtyValues.permissionObject,
-                                            d.dirtyValues.isPrivate,
-                                            d.dirtyValues.channelsModel)
-                root.permissionCreated()
-            }
+
+            onClicked: root.createPermissionClicked()
         }
     }
 }

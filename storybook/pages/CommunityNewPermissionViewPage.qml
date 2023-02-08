@@ -113,20 +113,10 @@ SplitView {
                 }
             }
 
-            RowLayout {
-                Layout.fillWidth: true
+            Button {
+                text: "Reset changes"
 
-                Button {
-                    text: "Save changes"
-
-                    onClicked: communityNewPermissionView.saveChanges()
-                }
-
-                Button {
-                    text: "Reset changes"
-
-                    onClicked: communityNewPermissionView.resetChanges()
-                }
+                onClicked: communityNewPermissionView.resetChanges()
             }
 
             Label {
