@@ -153,12 +153,6 @@ QtObject:
       return
     return $jsonObj
 
-  proc getItemPartOfCategoryAsJsonById*(self: View, categoryId: string): string {.slot.} =
-    let jsonObj = self.model.getItemPartOfCategoryAsJsonById(categoryId)
-    if jsonObj == nil or jsonObj.kind != JObject:
-      return
-    return $jsonObj
-
   proc muteChat*(self: View, chatId: string) {.slot.} =
     self.delegate.muteChat(chatId)
 

@@ -29,8 +29,6 @@ import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
 
 export io_interface
 
-const CATEGORY_ID_PREFIX = "cat-"
-
 logScope:
   topics = "chat-section-module"
 
@@ -129,26 +127,24 @@ proc removeSubmodule(self: Module, chatId: string) =
   self.chatContentModules.del(chatId)
 
 
-proc addEmptyChatItemForCategory(self: Module, category: Category) =
-  # Add an empty chat item that has the category info
+proc addCategoryItem(self: Module, category: Category, amIAdmin: bool) =
   let emptyChatItem = chat_item.initItem(
-        id = CATEGORY_ID_PREFIX & category.id,
-        name = "",
+        id = category.id,
+        category.name,
         icon = "",
         color = "",
         emoji = "",
         description = "",
         `type` = chat_item.CATEGORY_TYPE,
-        amIChatAdmin = false,
+        amIAdmin,
         lastMessageTimestamp = 0,
         hasUnreadMessages = false,
         notificationsCount = 0,
         muted = false,
         blocked = false,
         active = false,
-        position = 99,
+        position = -1, # Set position as -1, so that the Category Item is on top of its Channels
         category.id,
-        category.name,
         category.position,
       )
   self.view.chatsModel().appendItem(emptyChatItem)
@@ -172,6 +168,10 @@ proc buildChatSectionUI(
   # If a category doesn't have a chat, we add it as an empty chat
   var categoriesWithAssociatedItems: seq[string] = @[]
 
+  for categoryDto in channelGroup.categories:
+    # Add items for the categories. We use a special type to identify categories
+    self.addCategoryItem(categoryDto, channelGroup.admin)
+
   for chatDto in channelGroup.chats:
     let hasNotification = not chatDto.muted and (chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0)
     let notificationsCount = chatDto.unviewedMentionsCount
@@ -184,9 +184,7 @@ proc buildChatSectionUI(
     let isUsersListAvailable = chatDto.chatType != ChatType.OneToOne
     var blocked = false
     let belongToCommunity = chatDto.communityId != ""
-    var categoryName = ""
     var categoryPosition = -1
-    var chatPosition = chatDto.position
 
     if chatDto.chatType == ChatType.OneToOne:
       let contactDetails = self.controller.getContactDetails(chatDto.id)
@@ -218,11 +216,8 @@ proc buildChatSectionUI(
       for category in channelGroup.categories:
         if category.id == chatDto.categoryId:
           categoriesWithAssociatedItems.add(chatDto.categoryId)
-          categoryName = category.name
           categoryPosition = category.position
           break
-      if categoryName == "":
-        error "No category found in the channel group for chat", chatName=chatDto.name, categoryId=chatDto.categoryId
 
     let newChatItem = chat_item.initItem(
       chatDto.id,
@@ -241,7 +236,6 @@ proc buildChatSectionUI(
       isActive,
       chatDto.position,
       chatDto.categoryId,
-      categoryName,
       categoryPosition,
       colorId,
       colorHash,
@@ -264,19 +258,6 @@ proc buildChatSectionUI(
       gifService,
       mailserversService,
     )
-
-  # Loop channelGroup categories to see if some of them don't have a chat
-  if categoriesWithAssociatedItems.len < channelGroup.categories.len:
-    for category in channelGroup.categories:
-      var found = false
-      for categoryId in categoriesWithAssociatedItems:
-        if categoryId == category.id:
-          found = true
-          break
-      if found:
-        continue
-
-      self.addEmptyChatItemForCategory(category)
 
   self.setActiveItem(selectedItemId)
 
@@ -473,7 +454,6 @@ method addNewChat*(
   var colorHash: ColorHashDto = @[]
   var colorId: int = 0
   var onlineStatus = OnlineStatus.Inactive
-  var categoryName = ""
   var categoryPosition = -1
 
   var isUsersListAvailable = true
@@ -495,7 +475,6 @@ method addNewChat*(
     if category.id == "":
       error "No category found for chat", chatName=chatDto.name, categoryId=chatDto.categoryId
     else:
-      categoryName = category.name
       categoryPosition = category.position
 
   let chat_item = chat_item.initItem(
@@ -515,7 +494,6 @@ method addNewChat*(
     setChatAsActive,
     chatDto.position,
     chatDto.categoryId,
-    categoryName,
     categoryPosition,
     colorId,
     colorHash,
@@ -565,44 +543,36 @@ method removeCommunityChat*(self: Module, chatId: string) =
   self.controller.removeCommunityChat(chatId)
 
 method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDto]) =
+  # Update category itself
+  self.view.chatsModel().updateCategoryDetailsById(
+    cat.id,
+    cat.name,
+    cat.position
+  )
   # Update chat items that have that category
-  let chatIds = chats.filterIt(it.categoryId == cat.id).mapIt(it.id)
-  self.view.chatsModel().updateItemsWithCategoryDetailById(
-    chatIds,
+  self.view.chatsModel().updateItemsWithCategoryDetailsById(
+    chats,
     cat.id,
     cat.name,
     cat.position,
   )
-  
-  if chatIds.len == 0:
-    # New category with no chats associated, we created an empty chatItem with the category info
-    self.addEmptyChatItemForCategory(cat)
-    return
 
 method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto]) =
   if (self.doesCatOrChatExist(cat.id)):
     return
 
-  if chats.len == 0:
-    # New category with no chats associated, we created an empty chatItem with the category info
-    self.addEmptyChatItemForCategory(cat)
-    return
-    
-  # Consider the new category as an edit, we just change the chat items with the new cat info
-  self.onCommunityCategoryEdited(cat, chats)
+  # TODO get admin status
+  self.addCategoryItem(cat, false)
+  # Update chat items that now belong to that category
+  self.view.chatsModel().updateItemsWithCategoryDetailsById(
+    chats,
+    cat.id,
+    cat.name,
+    cat.position,
+  )
 
 method onCommunityCategoryDeleted*(self: Module, cat: Category, chats: seq[ChatDto]) =
-  # Update chat positions and remove association with category
-  for chat in chats:
-    self.view.chatsModel().reorderChatById(
-      chat.id,
-      chat.position,
-      newCategoryId = "",
-      newCategoryName = "",
-      newCategoryPosition = -1,
-    )
-  self.view.chatsModel().removeItemById(CATEGORY_ID_PREFIX & cat.id)
-
+  self.view.chatsModel().removeCategory(cat.id, chats)
 
 method setFirstChannelAsActive*(self: Module) =
   if(self.view.chatsModel().getCount() == 0):
@@ -611,31 +581,19 @@ method setFirstChannelAsActive*(self: Module) =
   let chat_item = self.view.chatsModel().getItemAtIndex(0)
   self.setActiveItem(chat_item.id)
 
-method onCommunityCategoryChannelChanged*(self: Module, channelId: string, newCategoryIdForChat: string) =
-  if channelId == self.controller.getActiveChatId():
-    if newCategoryIdForChat.len > 0:
-      self.setActiveItem(channelId)
-    else:
-      self.setActiveItem(channelId)
-
 method onReorderChat*(self: Module, chatId: string, position: int, newCategoryIdForChat: string, prevCategoryId: string, prevCategoryDeleted: bool) =
   var newCategoryName = ""
   var newCategoryPos = -1
   if newCategoryIdForChat != "":
     let newCategory = self.controller.getCommunityCategoryDetails(self.controller.getMySectionId(), newCategoryIdForChat)
-    newCategoryName = newCategory.name
     newCategoryPos = newCategory.position
-  self.view.chatsModel().reorderChatById(chatId, position, newCategoryIdForChat, newCategoryName, newCategoryPos)
-  if prevCategoryId != "" and not prevCategoryDeleted:
-    if not self.view.chatsModel().hasEmptyChatItem(CATEGORY_ID_PREFIX & prevCategoryId):
-      let category = self.controller.getCommunityCategoryDetails(self.controller.getMySectionId(), prevCategoryId)
-      self.addEmptyChatItemForCategory(category)
+  self.view.chatsModel().reorderChatById(chatId, position, newCategoryIdForChat, newCategoryPos)
 
 method onReorderCategory*(self: Module, catId: string, position: int) =
   self.view.chatsModel().reorderCategoryById(catId, position)
 
 method onCategoryNameChanged*(self: Module, category: Category) =
-  self.view.chatsModel().renameCategoryOnItems(category.id, category.name)
+  self.view.chatsModel().renameCategory(category.id, category.name)
 
 method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
