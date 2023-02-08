@@ -34,6 +34,10 @@ Popup {
         function loadStickers() {
             store.stickersModuleInst.loadStickers()
         }
+
+        function getRecentStickers() {
+            store.stickersModuleInst.getRecentStickers()
+        }
     }
 
     enabled: !!d.recentStickers && !!d.stickerPackList
@@ -53,6 +57,12 @@ Popup {
             fast: true
             cached: true
             color: "#22000000"
+        }
+    }
+
+    onAboutToShow: {
+        if (stickerGrid.packId == -1) {
+            d.getRecentStickers()
         }
     }
 
@@ -261,6 +271,7 @@ Popup {
                 onClicked: {
                     highlighted = true
                     stickerPackListView.selectedPackId = -1
+                    d.getRecentStickers()
                     stickerGrid.model = d.recentStickers
                 }
             }

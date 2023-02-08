@@ -108,6 +108,7 @@ QtObject:
 
   proc addRecentStickerToList*(self: View, sticker: Item) =
     self.recentStickers.addStickerToList(sticker)
+    self.recentStickersUpdated()
 
   proc getAllPacksLoaded(self: View): bool {.slot.} =
     self.packsLoaded
@@ -142,6 +143,9 @@ QtObject:
     self.packsLoadFailedChanged()
 
     self.delegate.obtainMarketStickerPacks()
+
+  proc getRecentStickers(self: View) {.slot.} =
+    self.delegate.getRecentStickers()
 
   proc send*(self: View, channelId: string, hash: string, replyTo: string, pack: string, url: string) {.slot.} =
     let sticker = initItem(hash, pack, url)

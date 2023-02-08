@@ -163,6 +163,15 @@ method estimate*(self: Module, packId: string, address: string, price: string, u
 method addRecentStickerToList*(self: Module, sticker: StickerDto) =
   self.view.addRecentStickerToList(initItem(sticker.hash, sticker.packId, sticker.url))
 
+method getRecentStickers*(self: Module) =
+  let data = self.controller.getRecentStickers()
+  if data.len > 0:
+    for sticker in data:
+      self.addRecentStickerToList(sticker)
+      return
+  self.controller.loadRecentStickers()
+
+
 method clearStickerPacks*(self: Module) =
   self.view.clearStickerPacks()
 
