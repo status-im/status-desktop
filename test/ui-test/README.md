@@ -18,3 +18,17 @@ UI test application for **Status Desktop**
 Now you should be able to create new suites, test cases and run the existing ones just only by clicking `Run` buttons!!
 
 [Here](https://hackmd.io/@status-desktop/S19eu_Baq) a more detailed **installation guide** specific for this project.
+
+## Squish versions tested
+
+| Status APP Qt version | Squish version | Squish Qt version | Local macOS Monterey 12.3.1 | CI  |
+|---|---|---|---|---|
+| 5.14.2 | 6.7.2 | 5.14 | OK | OK |
+| 5.15.2 | 6.7.2 | 5.14 | OK | OK |
+| 5.15.2 | 7.0.1 | 5.15 | KO | KO |
+| 5.15.2 | 7.1.0 | 5.14 | KO | KO |
+| 5.15.2 | 7.1.0 | 5.15 | KO | KO |
+
+NOTE: KO means the test execution hangs on `squish.waitForObject()` or `squish.findObject()`. Seen this behaviour particularly in `Onboarding / Create Password Screen`. 
+
+Last status app tested: Master branch - Commit: `5f4000b7a57cd5c268c3ebf847e2b3ef1a8ff96a`
