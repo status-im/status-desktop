@@ -22,3 +22,13 @@ Feature: Status Desktop One to One Chat Flows
         Then the chat title is "Athletic"
         When the user sends a chat message "Test message"
         Then the last chat message contains "Test message"
+
+    Scenario: After sending a message the user sees chats order by most recent activity
+        When the user creates a one to one chat with "Athletic"
+        And the user creates a one to one chat with "Nervous"
+        And the user switches to "Athletic" chat
+        And the user sends a random chat message
+        Then the random chat message is displayed
+        And the user chats are sorted accordingly
+        | Athletic |
+        | Nervous  |
