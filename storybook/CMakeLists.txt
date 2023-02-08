@@ -22,7 +22,11 @@ find_package(
 
 include (../ui/StatusQ/StatusQSources.cmake)
 
-file(GLOB_RECURSE CORE_QML_FILES "../ui/StatusQ/*.qml" "../ui/app/*.qml" "../ui/imports/*.qml")
+file(GLOB_RECURSE CORE_QML_FILES
+    "../ui/StatusQ/*.qml" "../ui/app/*.qml" "../ui/imports/*.qml"
+    "../ui/StatusQ/*/qmldir" "../ui/app/*/qmldir" "../ui/imports/*/qmldir"
+)
+
 file(GLOB_RECURSE CORE_JS_FILES "../ui/StatusQ/*.js" "../ui/app/*.js")
 
 file(GLOB_RECURSE STORYBOOK_QML_FILES "stubs/*.qml" "mocks/*.qml" "pages/*.qml"
