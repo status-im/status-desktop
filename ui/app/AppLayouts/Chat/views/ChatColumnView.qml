@@ -1,8 +1,9 @@
-import QtQuick 2.13
+import QtQuick 2.14
 import Qt.labs.platform 1.1
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 import QtGraphicalEffects 1.0
+import QtQml 2.14
 import Qt.labs.qmlmodels 1.0
 
 import StatusQ.Core.Theme 0.1
@@ -118,13 +119,25 @@ Item {
     Repeater {
         id: chatRepeater
         model: parentModule && parentModule.model
+
         delegate: Loader {
             id: chatLoader
-            // Channels are not loaded by default and only load when first put active
-            active: model.active
-            visible: active
+
+            // Channels/chats are not loaded by default and only load when first put active
+            active: false
             width: parent.width
             height: parent.height
+            visible: model.active
+
+            // Removing the binding in order not to unload the content:
+            // It is done for keeping:
+            //   - the last channel/chat scroll position
+            //   - the last typed but not sent text
+            Binding on active {
+                when: !chatLoader.active
+                restoreMode: Binding.RestoreNone
+                value: model.itemId && root.isSectionActive && (model.itemId === root.activeChatId || model.itemId === root.activeSubItemId)
+            }
 
             sourceComponent: ChatContentView {
                 visible: !root.rootStore.openCreateChat && isActiveChannel
