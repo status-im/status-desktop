@@ -13,6 +13,12 @@ type
     packId*: string
     chainId*: int
     hasKey*: bool
+  AsyncGetRecentStickersTaskArg* = ref object of QObjectTaskArg
+
+const asyncGetRecentStickersTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncGetRecentStickersTaskArg](argEncoded)
+  let response = status_stickers.recent()
+  arg.finish(response)
 
 proc getMarketStickerPacks*(chainId: int): 
     tuple[stickers: Table[string, StickerPackDto], error: string] =

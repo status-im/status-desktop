@@ -51,6 +51,8 @@ type
     transactionType*: string
   StickerPackInstalledArgs* = ref object of Args
     packId*: string
+  StickersArgs* = ref object of Args
+    stickers*: seq[StickerDto]
 
 # Signals which may be emitted by this service:
 const SIGNAL_STICKER_PACK_LOADED* = "stickerPackLoaded"
@@ -60,6 +62,9 @@ const SIGNAL_STICKER_GAS_ESTIMATED* = "stickerGasEstimated"
 const SIGNAL_STICKER_TRANSACTION_CONFIRMED* = "stickerTransactionConfirmed"
 const SIGNAL_STICKER_TRANSACTION_REVERTED* = "stickerTransactionReverted"
 const SIGNAL_STICKER_PACK_INSTALLED* = "stickerPackInstalled"
+const SIGNAL_LOAD_RECENT_STICKERS_STARTED* = "loadRecentStickersStarted"
+const SIGNAL_LOAD_RECENT_STICKERS_FAILED* = "loadRecentStickersFailed"
+const SIGNAL_LOAD_RECENT_STICKERS_DONE* = "loadRecentStickersDone"
 
 QtObject:
   type Service* = ref object of QObject
@@ -329,6 +334,33 @@ QtObject:
         result = stickerJson.toStickerDto() & result
     except RpcException:
       error "Error getting recent stickers", message = getCurrentExceptionMsg()
+
+  proc asyncLoadRecentStickers*(self: Service) =
+    self.events.emit(SIGNAL_LOAD_RECENT_STICKERS_STARTED, Args())
+    try:
+      let arg = AsyncGetRecentStickersTaskArg(
+        tptr: cast[ByteAddress](asyncGetRecentStickersTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncGetRecentStickersDone"
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error loading recent stickers", msg = e.msg
+
+  proc onAsyncGetRecentStickersDone*(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+      if (rpcResponseObj{"error"}.kind != JNull):
+        let error = Json.decode($rpcResponseObj["error"], RpcError)
+        error "error loading recent stickers", msg = error.message
+        return
+
+      let recentStickers = map(rpcResponseObj{"result"}.getElems(), toStickerDto)
+      self.events.emit(SIGNAL_LOAD_RECENT_STICKERS_DONE, StickersArgs(stickers: recentStickers))
+    except Exception as e:
+      let errMsg = e.msg
+      error "error: ", errMsg
+      self.events.emit(SIGNAL_LOAD_RECENT_STICKERS_FAILED, Args())
 
   proc getNumInstalledStickerPacks*(self: Service): int =
     try:
