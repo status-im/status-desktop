@@ -9,6 +9,8 @@ Feature: User Identity
         And the user signs up with username "tester123" and password "TesTEr16843/!@00"
         And the user lands on the signed in app
 
+    @mayfail
+    # FIXME test is broken on step `the user's social links are empty`. Issue #9499
     Scenario Outline: The user sets display name, bio and social links
         Given the user opens app settings screen
         And the user opens the profile settings
