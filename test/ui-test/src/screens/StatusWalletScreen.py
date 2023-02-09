@@ -109,6 +109,7 @@ class StatusWalletScreen:
         time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_WATCH_ONLY.value)
 
+        scroll_item_until_item_is_visible(AddAccountPopup.SCROLL_BAR.value, AddAccountPopup.ADDRESS_INPUT.value)
         type(AddAccountPopup.ADDRESS_INPUT.value, address)
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
 
