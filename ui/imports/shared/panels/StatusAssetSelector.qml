@@ -68,7 +68,6 @@ Item {
     StatusComboBox {
         id: comboBox
         objectName: "assetSelectorButton"
-        width: d.isTokenSelected ? rowLayout.implicitWidth : 116
         height: 34
 
         control.padding: 4
@@ -132,7 +131,6 @@ Item {
                 visible: d.isTokenSelected
             }
             StatusBaseText {
-                Layout.maximumWidth: comboBox.width - Style.current.padding
                 Layout.alignment: Qt.AlignCenter
                 visible: !d.isTokenSelected
                 font.pixelSize: 15

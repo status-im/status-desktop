@@ -57,7 +57,7 @@ proc adaptNodeSettingsForTheAppNeed(self: Service) =
   self.configuration.LogFile = "./geth.log"
   self.configuration.ShhextConfig.BackupDisabledDataDir = "./"
 
-  if (not self.isCommunityHistoryArchiveSupportEnabled):
+  if (not self.isCommunityHistoryArchiveSupportEnabled()):
     # Force community archive support true on Desktop
     # TODO those lines can be removed in the future once we are sure no one has used a legacy client where it is off
     if (self.enableCommunityHistoryArchiveSupport()):

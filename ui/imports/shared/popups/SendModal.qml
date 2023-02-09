@@ -334,8 +334,12 @@ StatusDialog {
             StatusScrollView {
                 id: scrollView
                 topPadding: 12
+
+                implicitWidth: contentWidth + leftPadding + rightPadding
+                implicitHeight: contentHeight + topPadding + bottomPadding
+                Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.preferredWidth: parent.width
+
                 contentHeight: layout.height + Style.current.padding
                 contentWidth: parent.width
                 z: 0
