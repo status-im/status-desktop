@@ -177,7 +177,7 @@ method onNetworkDisconnected*(self: AccessInterface) {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setActiveSection*(self: AccessInterface, item: SectionItem) {.base.} =
+method setActiveSection*(self: AccessInterface, item: SectionItem, skipSavingInSettings: bool = false) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setActiveSectionById*(self: AccessInterface, id: string) {.base.} =

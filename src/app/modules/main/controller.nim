@@ -46,7 +46,7 @@ type
     authenticateUserFlowRequestedBy: string
 
 # Forward declaration
-proc setActiveSection*(self: Controller, sectionId: string)
+proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false)
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -320,10 +320,11 @@ proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
 proc getActiveSectionId*(self: Controller): string =
   result = self.activeSectionId
 
-proc setActiveSection*(self: Controller, sectionId: string) =
+proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false) =
   self.activeSectionId = sectionId
-  let sectionIdToSave = if (sectionId == conf.SETTINGS_SECTION_ID): "" else: sectionId
-  singletonInstance.localAccountSensitiveSettings.setActiveSection(sectionIdToSave)
+  if not skipSavingInSettings:
+    let sectionIdToSave = if (sectionId == conf.SETTINGS_SECTION_ID): "" else: sectionId
+    singletonInstance.localAccountSensitiveSettings.setActiveSection(sectionIdToSave)
   self.delegate.activeSectionSet(self.activeSectionId)
 
 proc getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, mentions:int] =

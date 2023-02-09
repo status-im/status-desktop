@@ -7,6 +7,7 @@ import ../../../app_service/common/types
 
 type
   SectionType* {.pure.} = enum
+    LoadingSection = -1
     Chat = 0
     Community,
     Wallet,
