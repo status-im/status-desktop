@@ -11,10 +11,8 @@ import "popups/community"
 StackLayout {
     id: root
 
-    property var contactsStore
-    property RootStore rootStore: RootStore {
-        contactsStore: root.contactsStore
-    }
+    property RootStore rootStore
+    readonly property var contactsStore: rootStore.contactsStore
 
     property alias chatView: chatView
     signal importCommunityClicked()
