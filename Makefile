@@ -367,7 +367,7 @@ endif
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
 $(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
+		$(ENV_SCRIPT) nim c $(NIM_PARAMS) -d:ssl --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
 		(([[ $(detected_OS) = Darwin ]] && \
 		install_name_tool -change \
