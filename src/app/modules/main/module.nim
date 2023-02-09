@@ -356,92 +356,109 @@ method load*[T](
     activeSectionId = singletonInstance.userProfile.getPubKey()
 
   # Communities Portal Section
-  let communitiesPortalSectionItem = initItem(conf.COMMUNITIESPORTAL_SECTION_ID, SectionType.CommunitiesPortal, conf.COMMUNITIESPORTAL_SECTION_NAME,
-  amISectionAdmin = false,
-  description = "",
-  image = "",
-  icon = conf.COMMUNITIESPORTAL_SECTION_ICON,
-  color = "",
-  hasNotification = false,
-  notificationsCount = 0,
-  active = false,
-  enabled = true)
+  let communitiesPortalSectionItem = initItem(
+    conf.COMMUNITIESPORTAL_SECTION_ID,
+    SectionType.CommunitiesPortal,
+    conf.COMMUNITIESPORTAL_SECTION_NAME,
+    amISectionAdmin = false,
+    description = "",
+    image = "",
+    icon = conf.COMMUNITIESPORTAL_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = true,
+  )
   self.view.model().addItem(communitiesPortalSectionItem)
   if(activeSectionId == communitiesPortalSectionItem.id):
     activeSection = communitiesPortalSectionItem
 
   # Wallet Section
-  let walletSectionItem = initItem(conf.WALLET_SECTION_ID, SectionType.Wallet, conf.WALLET_SECTION_NAME,
-  amISectionAdmin = false,
-  description = "",
-  introMessage = "",
-  outroMessage = "",
-  image = "",
-  icon = conf.WALLET_SECTION_ICON,
-  color = "",
-  hasNotification = false,
-  notificationsCount = 0,
-  active = false,
-  enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled())
+  let walletSectionItem = initItem(
+    conf.WALLET_SECTION_ID,
+    SectionType.Wallet,
+    conf.WALLET_SECTION_NAME,
+    amISectionAdmin = false,
+    description = "",
+    introMessage = "",
+    outroMessage = "",
+    image = "",
+    icon = conf.WALLET_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled(),
+  )
   self.view.model().addItem(walletSectionItem)
   if(activeSectionId == walletSectionItem.id):
     activeSection = walletSectionItem
 
   # Browser Section
-  let browserSectionItem = initItem(conf.BROWSER_SECTION_ID, SectionType.Browser, conf.BROWSER_SECTION_NAME,
-  amISectionAdmin = false,
-  description = "",
-  introMessage = "",
-  outroMessage = "",
-  image = "",
-  icon = conf.BROWSER_SECTION_ICON,
-  color = "",
-  hasNotification = false,
-  notificationsCount = 0,
-  active = false,
-  enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled())
+  let browserSectionItem = initItem(
+    conf.BROWSER_SECTION_ID,
+    SectionType.Browser,
+    conf.BROWSER_SECTION_NAME,
+    amISectionAdmin = false,
+    description = "",
+    introMessage = "",
+    outroMessage = "",
+    image = "",
+    icon = conf.BROWSER_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled(),
+  )
   self.view.model().addItem(browserSectionItem)
   if(activeSectionId == browserSectionItem.id):
     activeSection = browserSectionItem
 
   # Node Management Section
-  let nodeManagementSectionItem = initItem(conf.NODEMANAGEMENT_SECTION_ID, SectionType.NodeManagement,
-  conf.NODEMANAGEMENT_SECTION_NAME,
-  amISectionAdmin = false,
-  description = "",
-  introMessage = "",
-  outroMessage = "",
-  image = "",
-  icon = conf.NODEMANAGEMENT_SECTION_ICON,
-  color = "",
-  hasNotification = false,
-  notificationsCount = 0,
-  active = false,
-  enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled())
+  let nodeManagementSectionItem = initItem(
+    conf.NODEMANAGEMENT_SECTION_ID,
+    SectionType.NodeManagement,
+    conf.NODEMANAGEMENT_SECTION_NAME,
+    amISectionAdmin = false,
+    description = "",
+    introMessage = "",
+    outroMessage = "",
+    image = "",
+    icon = conf.NODEMANAGEMENT_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled(),
+  )
   self.view.model().addItem(nodeManagementSectionItem)
   if(activeSectionId == nodeManagementSectionItem.id):
     activeSection = nodeManagementSectionItem
 
   # Profile Section
-  let profileSettingsSectionItem = initItem(conf.SETTINGS_SECTION_ID, SectionType.ProfileSettings,
-  conf.SETTINGS_SECTION_NAME,
-  amISectionAdmin = false,
-  description = "",
-  introMessage = "",
-  outroMessage = "",
-  image = "",
-  icon = conf.SETTINGS_SECTION_ICON,
-  color = "",
-  hasNotification = self.calculateProfileSectionHasNotification(),
-  notificationsCount = 0,
-  active = false,
-  enabled = true)
+  let profileSettingsSectionItem = initItem(
+    conf.SETTINGS_SECTION_ID,
+    SectionType.ProfileSettings,
+    conf.SETTINGS_SECTION_NAME,
+    amISectionAdmin = false,
+    description = "",
+    introMessage = "",
+    outroMessage = "",
+    image = "",
+    icon = conf.SETTINGS_SECTION_ICON,
+    color = "",
+    hasNotification = self.calculateProfileSectionHasNotification(),
+    notificationsCount = 0,
+    active = false,
+    enabled = true,
+  )
   self.view.model().addItem(profileSettingsSectionItem)
   if(activeSectionId == profileSettingsSectionItem.id):
     activeSection = profileSettingsSectionItem
 
   self.browserSectionModule.load()
-  # self.nodeManagementSectionModule.load()
   self.profileSectionModule.load()
   self.stickersModule.load()
   self.networksModule.load()
@@ -451,12 +468,27 @@ method load*[T](
   self.nodeSectionModule.load()
   # Load wallet last as it triggers events that are listened by other modules
   self.walletSectionModule.load()
-  #self.communitiesPortalSectionModule.load()
 
   # Set active section on app start
-  # If section is profile then open chat by default
+  # If section is empty or profile then open the loading section until chats are loaded
   if activeSection.isEmpty() or activeSection.sectionType == SectionType.ProfileSettings:
-    self.setActiveSection(self.view.model().getItemBySectionType(SectionType.Chat))
+    # Set bogus Item as active until the chat is loaded
+    let loadingItem = initItem(
+      LOADING_SECTION_ID,
+      SectionType.LoadingSection,
+      name = "",
+      amISectionAdmin = false,
+      description = "",
+      image = "",
+      icon = "",
+      color = "",
+      hasNotification = false,
+      notificationsCount = 0,
+      active = false,
+      enabled = true,
+    )
+    self.view.model().addItem(loadingItem)
+    self.setActiveSection(loadingItem, skipSavingInSettings = true)
   else:
     self.setActiveSection(activeSection)
 
@@ -504,6 +536,9 @@ method onChatsLoaded*[T](
   # Set active section if it is one of the channel sections
   if not activeSection.isEmpty():
     self.setActiveSection(activeSection)
+
+  # Remove old loading section
+  self.view.model().removeItem(LOADING_SECTION_ID)
 
   self.view.chatsLoaded()
 
@@ -602,11 +637,11 @@ method setCommunityIdToSpectate*[T](self: Module[T], communityId: string) =
 method getActiveSectionId*[T](self: Module[T]): string =
   return self.controller.getActiveSectionId()
 
-method setActiveSection*[T](self: Module[T], item: SectionItem) =
+method setActiveSection*[T](self: Module[T], item: SectionItem, skipSavingInSettings: bool = false) =
   if(item.isEmpty()):
     echo "section is empty and cannot be made as active one"
     return
-  self.controller.setActiveSection(item.id)
+  self.controller.setActiveSection(item.id, skipSavingInSettings)
 
 method setActiveSectionById*[T](self: Module[T], id: string) =
     let item = self.view.model().getItemById(id)
