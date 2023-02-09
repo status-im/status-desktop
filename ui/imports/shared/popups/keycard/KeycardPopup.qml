@@ -63,6 +63,10 @@ StatusModal {
 
     contentItem: StatusScrollView {
         id: scrollView
+
+        implicitWidth: contentWidth + leftPadding + rightPadding
+        implicitHeight: contentHeight + topPadding + bottomPadding
+
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         width: parent.width
         height: {
