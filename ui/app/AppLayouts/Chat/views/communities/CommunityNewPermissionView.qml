@@ -27,16 +27,12 @@ StatusScrollView {
     property int viewWidth: 560 // by design
     property bool isEditState: false
     readonly property bool dirty: {
-
-        // Trick: Used to force the reevaluation of dirty when an item of the list is updated
-        const trick = d.triggerDirtyTool
-
         // Holdings:
-        if (d.checkIfHoldingsDirty())
+        if (!holdingsModelComparator.equal)
             return true
 
         // Channels
-        if (d.checkIfInDirty())
+        if (!channelsModelComparator.equal)
             return true
 
         // Is private
@@ -75,6 +71,26 @@ StatusScrollView {
         d.loadInitValues()
     }
 
+    ModelsComparator {
+        id: holdingsModelComparator
+
+        modelA: root.dirtyValues.holdingsModel
+        modelB: root.holdingsModel
+
+        roles: ["key", "name", "shortName", "amount"]
+        mode: ModelsComparator.CompareMode.Set
+    }
+
+    ModelsComparator {
+        id: channelsModelComparator
+
+        modelA: root.dirtyValues.channelsModel
+        modelB: root.channelsModel
+
+        roles: ["itemId", "text", "emoji", "color"]
+        mode: ModelsComparator.CompareMode.Set
+    }
+
     QtObject {
         id: d
 
@@ -106,9 +122,6 @@ StatusScrollView {
                 inSelector.itemsModel = d.dirtyValues.channelsModel
             }
         }
-
-        // Trick: Used to force the reevaluation of dirty when an item of the list is updated
-        property int triggerDirtyTool: 0
 
         readonly property QtObject dirtyValues: QtObject {
             readonly property ListModel holdingsModel: ListModel {}
@@ -171,63 +184,6 @@ StatusScrollView {
 
             // Is private permission
             d.dirtyValues.isPrivate = root.isPrivate
-        }
-
-        function checkIfHoldingsDirty() {
-            if (!root.holdingsModel)
-                return d.dirtyValues.holdingsModel.count !== 0
-
-            if (root.holdingsModel.count !== d.dirtyValues.holdingsModel.count)
-                return true
-
-            // Check element by element
-            const count = root.holdingsModel.count
-            let equals = 0
-
-            for (let i = 0; i < count; i++) {
-                const item1 = root.holdingsModel.get(i)
-
-                for (let j = 0; j < count; j++) {
-                    const item2 = d.dirtyValues.holdingsModel.get(j)
-
-                    if (item1.key === item2.key
-                            && item1.name === item2.name
-                            && item1.shortName === item2.shortName
-                            && item1.amount === item2.amount) {
-                        equals++
-                    }
-                }
-            }
-
-            return equals !== count
-        }
-
-        function checkIfInDirty() {
-            if (!root.channelsModel)
-                return d.dirtyValues.channelsModel.count !== 0
-
-            if (root.channelsModel.count !== d.dirtyValues.channelsModel.count)
-                return true
-
-            const count = root.channelsModel.count
-            let equals = 0
-
-            for (let i = 0; i < count; i++) {
-                const item1 = root.channelsModel.get(i)
-
-                for (let j = 0; j < count; j++) {
-                    const item2 = d.dirtyValues.channelsModel.get(j)
-
-                    if (item1.itemId === item2.itemId
-                            && item1.text === item2.text
-                            && item1.emoji === item2.emoji
-                            && item1.color === item2.color) {
-                        equals++
-                    }
-                }
-            }
-
-            return equals !== count
         }
 
         function holdingsTextFormat(type, name, amount) {
@@ -347,7 +303,6 @@ StatusScrollView {
                     const imageSource = modelItem.iconSource.toString()
 
                     d.dirtyValues.holdingsModel.set(itemIndex, { type: HoldingTypes.Type.Asset, key, name, amount, imageSource })
-                    d.triggerDirtyTool++
                     dropdown.close()
                 }
 
@@ -359,7 +314,6 @@ StatusScrollView {
                     const imageSource = modelItem.iconSource.toString()
 
                     d.dirtyValues.holdingsModel.set(itemIndex, { type: HoldingTypes.Type.Collectible, key, name, amount, imageSource })
-                    d.triggerDirtyTool++
                     dropdown.close()
                 }
 
@@ -368,7 +322,6 @@ StatusScrollView {
                     const icon = Style.svg("profile/ensUsernames")
 
                     d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Ens, key, name: domain, amount: 1, imageSource: icon })
-                    d.triggerDirtyTool++
                     dropdown.close()
                 }
 
