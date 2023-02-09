@@ -32,6 +32,7 @@ import StatusQ.Core 0.1
 
 import AppLayouts.Browser.stores 1.0 as BrowserStores
 import AppLayouts.stores 1.0
+import AppLayouts.Chat.stores 1.0 as ChatStores
 
 import SortFilterProxyModel 0.2
 
@@ -44,6 +45,11 @@ Item {
 
     property alias appLayout: appLayout
     property RootStore rootStore: RootStore {}
+    property var rootChatStore: ChatStores.RootStore {
+        contactsStore: appMain.rootStore.contactStore
+        emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+        openCreateChat: createChatView.opened
+    }
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
     // set from main.qml
     property var sysPalette
@@ -215,7 +221,7 @@ Item {
         active: appMain.rootStore.mainModuleInst.chatsLoaded
         sourceComponent: StatusStickersPopup {
             id: statusStickersPopup
-            store: personalChatLayoutLoader.item.rootStore
+            store: appMain.rootChatStore
         }
     }
 
@@ -755,12 +761,10 @@ Item {
                             ChatLayout {
                                 id: chatLayoutContainer
 
+                                rootStore: appMain.rootChatStore
+
                                 chatView.emojiPopup: statusEmojiPopup
                                 chatView.stickersPopup: statusStickersPopupLoader.item
-
-                                contactsStore: appMain.rootStore.contactStore
-                                rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
-                                rootStore.openCreateChat: createChatView.opened
 
                                 chatView.onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -857,9 +861,7 @@ Item {
                                         chatView.emojiPopup: statusEmojiPopup
                                         chatView.stickersPopup: statusStickersPopupLoader.item
 
-                                        contactsStore: appMain.rootStore.contactStore
-                                        rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
-                                        rootStore.openCreateChat: createChatView.opened
+                                        rootStore: appMain.rootChatStore
 
                                         chatView.onProfileButtonClicked: {
                                             Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -899,7 +901,7 @@ Item {
                             anchors.rightMargin - anchors.leftMargin : 0
 
                     sourceComponent: CreateChatView {
-                        rootStore: personalChatLayoutLoader.item.rootStore
+                        rootStore: appMain.rootChatStore
                         emojiPopup: statusEmojiPopup
                         stickersPopup: statusStickersPopupLoader.item
                     }
@@ -916,7 +918,7 @@ Item {
                 x: parent.width - width - Style.current.smallPadding
                 y: parent.y + _buttonSize
                 height: appView.height - _buttonSize * 2
-                store: personalChatLayoutLoader.item.rootStore
+                store: appMain.rootChatStore
                 activityCenterStore: appMain.activityCenterStore
             }
         }
