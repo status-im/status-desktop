@@ -70,6 +70,7 @@ class AddAccountPopup(Enum):
     PRIVATE_KEY_INPUT: str = "mainWallet_Add_Account_Popup_Private_Key"
     ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account_Popup_Footer_Add_Account"
     SEED_PHRASE_INPUT_TEMPLATE: str = "mainWindow_Add_Account_Popup_Seed_Phrase_"
+    SEED_PHRASE_INPUT_LAST: str = "mainWindow_Add_Account_Popup_Seed_Phrase_12"
 
 class SharedPopup(Enum):
     POPUP_CONTENT: str = "sharedPopup_Popup_Content"
@@ -123,6 +124,7 @@ class StatusWalletScreen:
         time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_PRIVATE_KEY.value)
 
+        scroll_item_until_item_is_visible(AddAccountPopup.SCROLL_BAR.value, AddAccountPopup.PRIVATE_KEY_INPUT.value)
         type(AddAccountPopup.PRIVATE_KEY_INPUT.value, private_key)
 
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
@@ -143,16 +145,12 @@ class StatusWalletScreen:
         time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_SEED_PHRASE.value)
         time.sleep(1)
+
+        for i in range(1, 5):
+            scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
+            time.sleep(1)
+
         words = mnemonic.split()
-        scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(1)
-
-        scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(1)
-
-        scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(1)
-
         input_seed_phrase(AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value, words)
         time.sleep(1)
 
