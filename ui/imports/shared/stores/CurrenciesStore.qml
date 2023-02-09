@@ -969,6 +969,9 @@ QtObject {
     }
 
     function getCurrencyAmount(amount, symbol) {
+        if (isNaN(amount)) {
+            amount = 0
+        }
         let obj = JSON.parse((walletSection.getCurrencyAmountAsJson(amount, symbol)))
         if (obj.error) {
             console.error("Error parsing currency amount json object, amount: ", amount, ", symbol ", symbol, " error: ", obj.error)
