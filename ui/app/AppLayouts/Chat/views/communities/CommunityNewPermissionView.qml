@@ -8,12 +8,12 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
 
-import AppLayouts.Chat.helpers 1.0
 import utils 1.0
 import shared.panels 1.0
 
 import SortFilterProxyModel 0.2
 
+import AppLayouts.Chat.helpers 1.0
 import AppLayouts.Chat.panels.communities 1.0
 
 import "../../../Chat/controls/community"
@@ -122,46 +122,20 @@ StatusScrollView {
 
             property bool isPrivate: false
 
-            function getIndexOfKey(key) {
-                const count = holdingsModel.count
-
-                for (let i = 0; i < count; i++)
-                    if (holdingsModel.get(i).key === key)
-                        return i
-
-                return -1
+            function getHoldingIndex(key) {
+                return ModelUtils.indexOf(holdingsModel, "key", key)
             }
 
             function getTokenKeysAndAmounts() {
-                const keysAndAmounts = []
-                const count = holdingsModel.count
-
-                for (let i = 0; i < count; i++) {
-                    const item = holdingsModel.get(i)
-
-                    if (item.type === HoldingTypes.Type.Ens)
-                        continue
-
-                    keysAndAmounts.push({ key: item.key, amount: item.amount })
-                }
-
-                return keysAndAmounts
+                return ModelUtils.modelToArray(holdingsModel, ["type", "key", "amount"])
+                    .filter(item => item.type !== HoldingTypes.Type.Ens)
+                    .map(item => ({ key: item.key, amount: item.amount }))
             }
 
             function getEnsNames() {
-                const names = []
-                const count = holdingsModel.count
-
-                for (let i = 0; i < count; i++) {
-                    const item = holdingsModel.get(i)
-
-                    if (item.type !== HoldingTypes.Type.Ens)
-                        continue
-
-                    names.push(item.name)
-                }
-
-                return names
+                return ModelUtils.modelToArray(holdingsModel, ["type", "name"])
+                    .filter(item => item.type === HoldingTypes.Type.Ens)
+                    .map(item => item.name)
             }
         }
 
@@ -169,24 +143,9 @@ StatusScrollView {
             // Holdings:
             d.dirtyValues.holdingsModel.clear()
 
-            if (root.holdingsModel) {
-                for (let i = 0; i < root.holdingsModel.count; i++) {
-                    const item = root.holdingsModel.get(i)
-
-                    const initItem = {
-                        type: item.type,
-                        key: item.key,
-                        name: item.name,
-                        amount: item.amount,
-                        imageSource: item.imageSource
-                    }
-
-                    if (item.shortName)
-                        initItem.shortName = item.shortName
-
-                    d.dirtyValues.holdingsModel.append(initItem)
-                }
-            }
+            d.dirtyValues.holdingsModel.append(
+                        ModelUtils.modelToArray(root.holdingsModel,
+                                                ["type", "key", "name", "amount", "imageSource", "shortName"]))
 
             // Permissions:
             d.dirtyValues.permissionObject.key = root.permissionObject ? root.permissionObject.key : null
@@ -198,21 +157,9 @@ StatusScrollView {
             // Channels
             d.dirtyValues.channelsModel.clear()
 
-            if (root.channelsModel) {
-                for (let c = 0; c < root.channelsModel.count; c++) {
-                    const item = root.channelsModel.get(c)
-
-                    const initItem = {
-                        itemId: item.itemId,
-                        text: item.text,
-                        emoji: item.emoji,
-                        color: item.color,
-                        operator: OperatorsUtils.Operators.None
-                    }
-
-                    d.dirtyValues.channelsModel.append(initItem)
-                }
-            }
+            d.dirtyValues.channelsModel.append(
+                        ModelUtils.modelToArray(root.channelsModel,
+                                                ["itemId", "text", "emoji", "color", "operator"]))
 
             if (root.channelsModel && (root.channelsModel.count || d.dirtyValues.permissionObject.key === null)) {
                 inSelector.wholeCommunitySelected = false
@@ -352,12 +299,12 @@ StatusScrollView {
 
                 function prepareUpdateIndex(key) {
                     const itemIndex = tokensSelector.editedIndex
-                    const existingIndex = d.dirtyValues.getIndexOfKey(key)
+                    const existingIndex = d.dirtyValues.getHoldingIndex(key)
 
                     if (itemIndex !== -1 && existingIndex !== -1 && itemIndex !== existingIndex) {
                         const previousKey = d.dirtyValues.holdingsModel.get(itemIndex).key
                         d.dirtyValues.holdingsModel.remove(existingIndex)
-                        return d.dirtyValues.getIndexOfKey(previousKey)
+                        return d.dirtyValues.getHoldingIndex(previousKey)
                     }
 
                     if (itemIndex === -1) {
