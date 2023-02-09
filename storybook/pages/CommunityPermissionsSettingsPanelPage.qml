@@ -1,5 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 
 import AppLayouts.Chat.panels.communities 1.0
 import AppLayouts.Chat.stores 1.0
@@ -20,6 +21,8 @@ SplitView {
         SplitView.fillHeight: true
         color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
         CommunityPermissionsSettingsPanel {
+            id: communityPermissionsSettingsPanel
+
             anchors {
                 fill: parent
                 topMargin: 50
@@ -71,10 +74,21 @@ SplitView {
 
         logsView.logText: logs.logText
 
-        CheckBox {
-            id: isOwnerCheckBox
 
-            text: "Is owner"
+        ColumnLayout {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            CheckBox {
+                id: isOwnerCheckBox
+
+                text: "Is owner"
+            }
+
+            Label {
+                text: "Is dirty: " + communityPermissionsSettingsPanel.dirty
+            }
         }
     }
 }
