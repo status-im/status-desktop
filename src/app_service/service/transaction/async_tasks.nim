@@ -164,3 +164,25 @@ const watchTransactionTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.}
       "trxType": arg.trxType,
       "isSuccessfull": false
     }
+
+type
+  GetCryptoServicesTaskArg* = ref object of QObjectTaskArg
+    discard
+
+const getCryptoServicesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[GetCryptoServicesTaskArg](argEncoded)
+
+  try:
+    let response = transactions.fetchCryptoServices()
+
+    if not response.error.isNil:
+      raise newException(ValueError, "Error fetching crypto services" & response.error.message)
+
+    arg.finish(%* {
+      "result": response.result,
+    })
+  except Exception as e:
+    error "Error fetching crypto services", message = e.msg
+    arg.finish(%* {
+      "result": @[],
+    }) 

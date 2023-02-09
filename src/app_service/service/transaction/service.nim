@@ -11,6 +11,7 @@ import ../../common/conversion as common_conversion
 import ../../../app/core/[main]
 import ../../../app/core/signals/types
 import ../../../app/core/tasks/[qt, threadpool]
+import ../../../app/global/global_singleton
 import ../wallet_account/service as wallet_account_service
 import ../network/service as network_service
 import ../token/service as token_service
@@ -40,6 +41,7 @@ const SIGNAL_HISTORY_FETCHING* = "historyFetching"
 const SIGNAL_HISTORY_READY* = "historyReady"
 const SIGNAL_HISTORY_NON_ARCHIVAL_NODE* = "historyNonArchivalNode"
 const SIGNAL_HISTORY_ERROR* = "historyError"
+const SIGNAL_CRYPTO_SERVICES_READY* = "cryptoServicesReady"
 
 const SIMPLE_TX_BRIDGE_NAME = "Simple"
 const HOP_TX_BRIDGE_NAME = "Hop"
@@ -81,6 +83,11 @@ type
   PendingTxCompletedArgs* = ref object of Args
     txHash*: string
 
+type
+  CryptoServicesArgs* = ref object of Args
+    data*: seq[CryptoRampDto]
+  
+
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
@@ -113,6 +120,8 @@ QtObject:
     result.txCounter = initTable[string, seq[int]]()
 
   proc init*(self: Service) =
+    signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
+
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
       case data.eventType:
@@ -460,17 +469,20 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc fetchCryptoServices*(self: Service): seq[CryptoRampDto] =
-    try:
-      let response = transactions.fetchCryptoServices()
+  proc onFetchCryptoServices*(self: Service, response: string) {.slot.} =
+    let cryptoServices = parseJson(response){"result"}.getElems().map(x => x.toCryptoRampDto())
+    self.events.emit(SIGNAL_CRYPTO_SERVICES_READY, CryptoServicesArgs(data: cryptoServices))
 
-      if not response.error.isNil:
-        raise newException(ValueError, "Error fetching crypto services" & response.error.message)
+  proc fetchCryptoServices*(self: Service) =
+    if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
+      return
 
-      return response.result.getElems().map(x => x.toCryptoRampDto())
-    except Exception as e:
-      error "Error fetching crypto services", message = e.msg
-      return @[]
+    let arg = GetCryptoServicesTaskArg(
+      tptr: cast[ByteAddress](getCryptoServicesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onFetchCryptoServices",
+    )
+    self.threadpool.start(arg)
 
   proc getEstimatedTime*(self: Service, chainId: int, maxFeePerGas: string): EstimatedTime =
     try:
@@ -487,3 +499,6 @@ QtObject:
     except Exception as e:
       error "Error getting latest block number", message = e.msg
       return ""
+  
+  proc onIsWalletEnabledChanged*(self: Service) {.slot.} =
+    self.fetchCryptoServices()

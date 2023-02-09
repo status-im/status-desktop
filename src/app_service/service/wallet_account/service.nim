@@ -416,7 +416,7 @@ QtObject:
 
   method toggleTestNetworksEnabled*(self: Service) =
     discard self.settingsService.toggleTestNetworksEnabled()
-    self.tokenService.init()
+    self.tokenService.loadData()
     self.checkRecentHistory()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 

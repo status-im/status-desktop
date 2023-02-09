@@ -1,3 +1,5 @@
+import ../../../../../app_service/service/transaction/cryptoRampDto
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -9,6 +11,9 @@ method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isLoaded*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateCryptoServices*(self: AccessInterface, cryptoServices: seq[CryptoRampDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface
