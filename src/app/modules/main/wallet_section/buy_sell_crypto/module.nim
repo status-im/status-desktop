@@ -26,29 +26,27 @@ proc newModule*(
   result.delegate = delegate
   result.events = events
   result.view = newView(result)
-  result.controller = controller.newController(result, transactionService)
+  result.controller = controller.newController(result, events, transactionService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
   self.view.delete
   self.controller.delete
 
-method fetchCryptoServices*(self: Module) =
-  let cryptoServices = self.controller.fetchCryptoServices()
-
-  let items = cryptoServices.map(proc (w: CryptoRampDto): item.Item =
-    result = initItem(
-      w.name,
-      w.description,
-      w.fees,
-      w.logoUrl,
-      w.siteUrl,
-      w.hostname
-    ))
+method updateCryptoServices*(self: Module, cryptoServices: seq[CryptoRampDto]) =
+  let items = cryptoServices.map(proc (w: CryptoRampDto): item.Item = result = initItem(
+    w.name,
+    w.description,
+    w.fees,
+    w.logoUrl,
+    w.siteUrl,
+    w.hostname
+  ))
   self.view.setItems(items)
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionBuySellCrypto", newQVariant(self.view))
+  self.controller.fetchCryptoServices()
   self.controller.init()
   self.view.load()
 
@@ -56,6 +54,5 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  self.fetchCryptoServices()
   self.moduleLoaded = true
   self.delegate.buySellCryptoModuleDidLoad()

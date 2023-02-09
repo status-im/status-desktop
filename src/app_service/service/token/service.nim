@@ -69,7 +69,10 @@ QtObject:
     result.tokens = initTable[int, seq[TokenDto]]()
     result.priceCache = newTimedCache[float64]()
 
-  proc init*(self: Service) =
+  proc loadData*(self: Service) =
+    if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
+      return
+
     try:
       let response = backend.getCachedPrices()
       let prices = jsonToPricesMap(response.result)
@@ -99,6 +102,13 @@ QtObject:
         )
     except Exception as e:
       error "Tokens init error", errDesription = e.msg
+
+  proc init*(self: Service) =
+    signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
+    self.loadData()
+    
+  proc onIsWalletEnabledChanged*(self: Service) {.slot.} =
+    self.loadData()
 
   proc findTokenBySymbol*(self: Service, network: NetworkDto, symbol: string): TokenDto =
     try:
