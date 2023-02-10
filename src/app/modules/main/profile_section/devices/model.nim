@@ -1,4 +1,4 @@
-import NimQml, Tables
+import NimQml, Tables, sequtils
 import item
 
 type
@@ -101,3 +101,6 @@ QtObject:
     self.items[i].name = name
     self.items[i].enabled = enabled
     self.dataChanged(first, last, @[ModelRole.Name.int, ModelRole.Enabled.int])
+
+  proc getIsDeviceSetup*(self: Model, installationId: string): bool =
+    return anyIt(self.items, it.installationId == installationId and it.name != "")

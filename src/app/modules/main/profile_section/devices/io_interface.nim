@@ -1,4 +1,6 @@
 import NimQml
+import ../../../../../app_service/service/devices/service as devices_service
+
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -21,7 +23,16 @@ method updateOrAddDevice*(self: AccessInterface, installationId: string, name: s
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isDeviceSetup*(self: AccessInterface): bool {.base.} =
+method getMyInstallationId*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onDevicesLoaded*(self: AccessInterface, allDevices: seq[DeviceDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onDevicesLoadingErrored*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method loadDevices*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setDeviceName*(self: AccessInterface, name: string) {.base.} =

@@ -21,17 +21,18 @@ SettingsContentBase {
 
     property bool isSyncing: false
 
-    Item {
+    Component.onCompleted: {
+        root.devicesStore.loadDevices()
+    }
+
+    Column {
         width: root.contentWidth
         height: !!parent ? parent.height : 0
+        spacing: Style.current.padding
 
         Item {
             id: firstTimeSetup
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
+            width: parent.width
             visible: !root.devicesStore.isDeviceSetup
             height: visible ? childrenRect.height : 0
 
@@ -64,22 +65,14 @@ SettingsContentBase {
 
         Item {
             id: advertiseDeviceItem
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            anchors.top: firstTimeSetup.visible ? firstTimeSetup.bottom : parent.top
-            anchors.topMargin: Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
+            width: parent.width
             visible: root.devicesStore.isDeviceSetup
-            height: visible ? childrenRect.height : 0
+            height: visible ? advertiseDevice.height + learnMoreText.height + Style.current.padding : 0
 
-            Rectangle {
+            Item {
                 id: advertiseDevice
                 height: childrenRect.height
                 width: 500
-                anchors.left: parent.left
-                anchors.right: parent.right
-                color: Style.current.transparent
 
                 SVGImage {
                     id: advertiseImg
@@ -115,15 +108,16 @@ SettingsContentBase {
                     anchors.leftMargin: Style.current.padding
                     color: Theme.palette.directColor1
                 }
+            }
 
-                MouseArea {
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.fill: parent
-                    onClicked: root.devicesStore.advertise()
-                }
+            MouseArea {
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill: advertiseDevice
+                onClicked: root.devicesStore.advertise()
             }
 
             StatusBaseText {
+                id: learnMoreText
                 anchors.top: advertiseDevice.bottom
                 anchors.topMargin: Style.current.padding
                 text: qsTr("Learn more")
@@ -138,16 +132,24 @@ SettingsContentBase {
             }
         }
 
+        StatusBaseText {
+            visible: root.devicesStore.devicesModule.devicesLoading
+            text: qsTr("Loading devices...")
+        }
+
+        StatusBaseText {
+            visible: root.devicesStore.devicesModule.devicesLoadingError
+            text: qsTr("Error loading devices. Please try again later.")
+        }
+
         Item {
             id: deviceListItem
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            anchors.top: advertiseDeviceItem.visible ? advertiseDeviceItem.bottom : parent.top
-            anchors.topMargin: Style.current.padding * 2
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
+            width: parent.width
             height: childrenRect.height
-            visible: root.devicesStore.isDeviceSetup
+            visible: !root.devicesStore.devicesModule.devicesLoading &&
+                !root.devicesStore.devicesModule.devicesLoadingError &&
+                root.devicesStore.isDeviceSetup
+
 
             StatusBaseText {
                 id: deviceListLbl
@@ -165,6 +167,7 @@ SettingsContentBase {
                 height: 300
                 spacing: 5
                 width: parent.width
+                model: root.devicesStore.devicesModel
                 // TODO: replace with StatusQ component
                 delegate: Item {
                     height: childrenRect.height
@@ -203,7 +206,6 @@ SettingsContentBase {
                         onClicked: root.devicesStore.enableDevice(model.installationId, devicePairedSwitch)
                     }
                 }
-                model: root.devicesStore.devicesModel
             }
             
             StatusButton {

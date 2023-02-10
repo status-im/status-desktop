@@ -205,7 +205,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.privacyService = privacy_service.newService(statusFoundation.events, result.settingsService,
   result.accountsService)
   result.savedAddressService = saved_address_service.newService(statusFoundation.events, result.networkService)
-  result.devicesService = devices_service.newService(statusFoundation.events, result.settingsService)
+  result.devicesService = devices_service.newService(statusFoundation.events, statusFoundation.threadpool, result.settingsService)
   result.mailserversService = mailservers_service.newService(statusFoundation.events, statusFoundation.threadpool,
     result.settingsService, result.nodeConfigurationService, statusFoundation.fleetConfiguration)
   result.nodeService = node_service.newService(statusFoundation.events, result.settingsService, result.nodeConfigurationService)
