@@ -1,4 +1,4 @@
-import std/uri, std/httpclient
+import std/uri
 include ../../common/json_utils
 include ../../../app/core/tasks/common
 
@@ -173,7 +173,6 @@ const asyncGetLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nim
 
   let parsedWhiteListUrls = parseJson(arg.whiteListedUrls)
   let parsedWhiteListImgExtensions = arg.whiteListedImgExtensions.split(",")
-  let httpClient = newHttpClient()
   
   for link in arg.links.split(" "):
     if link == "":
@@ -204,13 +203,11 @@ const asyncGetLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nim
 
     #1. if it's an image, we use httpclient to validate the url
     if isSupportedImage:
-      let headResponse = httpclient.head(link)
-      #validate image url
-      responseJson["success"] = %(headResponse.code() == Http200 and headResponse.contentType().startsWith("image/"))
+      #TODO: validate image url using HEAD request
       responseJson["result"] = %*{
             "site": domain,
             "thumbnailUrl": link,
-            "contentType": headResponse.contentType()
+            "contentType": "image/" & path.split(".")[^1]
           }
       previewData["links"].add(responseJson)
       continue
