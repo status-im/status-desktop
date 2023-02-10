@@ -6,7 +6,6 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import SortFilterProxyModel 0.2
-import utils 1.0
 import shared.popups 1.0
 
 import AppLayouts.Chat.controls.community 1.0
@@ -19,8 +18,9 @@ StatusScrollView {
     property var store
     property int viewWidth: 560 // by design
 
-    signal editPermission(int index, var holidings, var permission, var channels, bool isPrivate)
-    signal removePermission(int index)
+    signal editPermissionRequested(int index)
+    signal duplicatePermissionRequested(int index)
+    signal removePermissionRequested(int index)
 
     QtObject {
         id: d
@@ -33,11 +33,6 @@ StatusScrollView {
 
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height + mainLayout.anchors.topMargin
-
-    onRemovePermission: {
-        d.permissionIndexToRemove = index
-        Global.openPopup(deletePopup)
-    }
 
     ColumnLayout {
         id: mainLayout
@@ -92,27 +87,26 @@ StatusScrollView {
                                    ? proxiedChannelsModel : communityItemModel
                 isPrivate: model.isPrivate
 
-                onEditClicked: root.editPermission(model.index, model.holdingsListModel,
-                                                   model.permissionsObjectModel,
-                                                   model.channelsListModel, model.isPrivate)
+                onEditClicked: root.editPermissionRequested(model.index)
+                onDuplicateClicked: root.duplicatePermissionRequested(model.index)
 
-                onDuplicateClicked: store.duplicatePermission(model.index)
-                onRemoveClicked: root.removePermission(model.index)
+                onRemoveClicked: {
+                    d.permissionIndexToRemove = index
+                    declineAllDialog.open()
+                }
             }
         }
     }
 
-    Component {
-        id: deletePopup
-        ConfirmationDialog {
-            id: declineAllDialog
-            header.title: qsTr("Sure you want to delete permission")
-            confirmationText: qsTr("If you delete this permission, any of your community members who rely on this permission will loose the access this permission gives them.")
-            onConfirmButtonClicked: {
-                store.removePermission(d.permissionIndexToRemove)
-                close()
-            }
+    ConfirmationDialog {
+        id: declineAllDialog
+
+        header.title: qsTr("Sure you want to delete permission")
+        confirmationText: qsTr("If you delete this permission, any of your community members who rely on this permission will loose the access this permission gives them.")
+
+        onConfirmButtonClicked: {
+            root.removePermissionRequested(d.permissionIndexToRemove)
+            close()
         }
     }
-
 }

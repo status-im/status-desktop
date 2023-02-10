@@ -15,14 +15,14 @@ SettingsPageLayout {
 
     function navigateBack() {
         if (root.state === d.newPermissionViewState) {
-            root.state = d.getInitialState()
+            root.state = d.initialState
         } else if(root.state === d.permissionsViewState) {
             root.state = d.newPermissionViewState
         } else if(root.state === d.editPermissionViewState) {
             if (root.dirty) {
                 root.notifyDirty()
             } else {
-                root.state = d.getInitialState()
+                root.state = d.initialState
             }
         }
     }
@@ -52,9 +52,8 @@ SettingsPageLayout {
             }
         }
 
-        function getInitialState() {
-            return root.store.permissionsModel.count > 0 ? d.permissionsViewState : d.welcomeViewState
-        }
+        readonly property string initialState: root.store.permissionsModel.count > 0
+                                               ? d.permissionsViewState : d.welcomeViewState
 
         function initializeData() {
             holdingsToEditModel = defaultListObject.createObject(d)
@@ -67,7 +66,7 @@ SettingsPageLayout {
     saveChangesButtonEnabled: true
     saveChangesText: qsTr("Update permission")
     cancelChangesText: qsTr("Revert changes")
-    state: d.getInitialState()
+    state: d.initialState
     states: [
         State {
             name: d.welcomeViewState
@@ -193,17 +192,29 @@ SettingsPageLayout {
 
     Component {
         id: permissionsView
+
         CommunityPermissionsView {
             viewWidth: root.viewWidth
             rootStore: root.rootStore
             store: root.store
-            onEditPermission: {
+
+            onEditPermissionRequested: {
+                const item = root.store.permissionsModel.get(index)
+
                 d.permissionIndexToEdit = index
-                d.holdingsToEditModel = holidings
-                d.permissionsToEditObject = permission
-                d.channelsToEditModel = channels
-                d.isPrivateToEditValue = isPrivate
+                d.holdingsToEditModel = item.holdingsListModel
+                d.permissionsToEditObject = item.permissionsObjectModel
+                d.channelsToEditModel = item.channelsListModel
+                d.isPrivateToEditValue = item.isPrivate
                 root.state = d.editPermissionViewState
+            }
+
+            onDuplicatePermissionRequested: {
+                root.store.duplicatePermission(index)
+            }
+
+            onRemovePermissionRequested: {
+                root.store.removePermission(index)
             }
         }
     }
