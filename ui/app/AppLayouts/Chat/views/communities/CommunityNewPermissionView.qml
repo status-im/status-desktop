@@ -26,6 +26,7 @@ StatusScrollView {
 
     property int viewWidth: 560 // by design
     property bool isEditState: false
+
     readonly property bool dirty: {
         // Holdings:
         if (!holdingsModelComparator.equal)
