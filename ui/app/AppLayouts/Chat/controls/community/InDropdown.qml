@@ -8,7 +8,6 @@ import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
 import shared.controls 1.0
-
 import SortFilterProxyModel 0.2
 
 StatusDropdown {
@@ -50,6 +49,9 @@ StatusDropdown {
     QtObject {
         id: d
 
+        readonly property int defaultVMargin: 9
+        readonly property int maxHeightCountNo: 5
+        readonly property int itemStandardHeight: 44
         readonly property var selectedChannels: new Map()
 
         signal setSelectedChannels(var channels)
@@ -80,11 +82,7 @@ StatusDropdown {
         }
     }
 
-    ColumnLayout {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.left: parent.left
-
+   contentItem: ColumnLayout {
         spacing: 0
 
         SearchBox {
@@ -100,11 +98,10 @@ StatusDropdown {
 
         StatusListItem {
             Layout.fillWidth: true
-            Layout.topMargin: 9
-            Layout.preferredHeight: 44
+            Layout.topMargin: d.defaultVMargin
+            Layout.preferredHeight: d.itemStandardHeight
 
             visible: root.allowChoosingEntireCommunity
-
             title: root.communityName
             subTitle: qsTr("Community")
 
@@ -154,29 +151,26 @@ StatusDropdown {
 
             visible: root.allowChoosingEntireCommunity
         }
-
         StatusScrollView {
             id: scrollView
-
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.bottomMargin: 9
+            Layout.minimumHeight: Math.min(d.maxHeightCountNo, topRepeater.count) * d.itemStandardHeight
+            Layout.maximumHeight: Layout.minimumHeight
+            contentHeight: scrollableColumn.implicitHeight
+            Layout.bottomMargin: d.defaultVMargin
             Layout.topMargin:
-                !root.allowChoosingEntireCommunity && !root.allowChoosingEntireCommunity ? 9 : 0
+                !root.allowChoosingEntireCommunity && !root.allowChoosingEntireCommunity ? d.defaultVMargin : 0
 
             padding: 0
 
             ColumnLayout {
-                id: scollableColumn
-
-                spacing: 0
+                id: scrollableColumn
                 width: scrollView.width
+                spacing: 0
 
                 StatusIconTextButton {
                     Layout.preferredHeight: 36
-
                     visible: root.showAddChannelButton
-
                     leftPadding: 8
                     spacing: 8
                     statusIcon: "add"
@@ -189,7 +183,6 @@ StatusDropdown {
 
                 Repeater {
                     id: topRepeater
-
                     model: SortFilterProxyModel {
                         id: topLevelModel
 
@@ -203,10 +196,8 @@ StatusDropdown {
 
                     ColumnLayout {
                         id: column
-
                         Layout.fillWidth: true
                         spacing: 0
-
                         readonly property var topModel: model
                         readonly property alias checkBox: loader.item
                         property int checkedCount: 0
@@ -232,8 +223,8 @@ StatusDropdown {
                             id: loader
 
                             Layout.fillWidth: true
-                            Layout.topMargin: model.isCategory ? 9 : 0
-
+                            Layout.preferredHeight: d.itemStandardHeight
+                            Layout.topMargin: model.isCategory ? d.defaultVMargin : 0
                             sourceComponent: model.isCategory
                                              ? communityCategoryDelegate
                                              : communityDelegate
@@ -312,7 +303,6 @@ StatusDropdown {
 
                         Repeater {
                             id: subItemsRepeater
-
                             model: SortFilterProxyModel {
                                 sourceModel: topModel.isCategory ? topModel.subItems : null
                                 sorters: RoleSorter { roleName: "position" }
@@ -330,7 +320,6 @@ StatusDropdown {
                                 id: communitySubItem
 
                                 Layout.fillWidth: true
-
                                 readonly property bool show: d.search(model.name, searcher.text)
                                                              || checked
 

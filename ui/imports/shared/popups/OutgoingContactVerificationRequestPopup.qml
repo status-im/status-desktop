@@ -108,7 +108,6 @@ StatusDialog {
                 text: qsTr("Waiting for %1's response...").arg(root.verificationResponseDisplayName)
                 font.pixelSize: Style.current.additionalTextSize
                 horizontalAlignment : Text.AlignHCenter
-                Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap
                 color: Theme.palette.baseColor1
