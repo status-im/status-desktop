@@ -547,7 +547,7 @@ Pane {
         StatusScrollView {
             id: scrollView
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.preferredHeight: contentHeight + topPadding + bottomPadding
             Layout.leftMargin: -column.anchors.leftMargin
             Layout.rightMargin: -column.anchors.rightMargin
             Layout.topMargin: -column.spacing
