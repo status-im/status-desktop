@@ -737,7 +737,7 @@ Item {
                                     anchors.centerIn: parent
                                     spacing: 6
                                     StatusBaseText {
-                                        text: qsTr("Loading...")
+                                        text: qsTr("Loading chats...")
                                     }
                                     LoadingAnimation {}
                                 }

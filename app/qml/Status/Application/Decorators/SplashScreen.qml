@@ -8,30 +8,32 @@ Item {
 
     signal animationFinished()
     function show() {
-        splashLogo.playing = true
+        animator.start()
     }
 
     implicitWidth: splashLogo.implicitWidth
     implicitHeight: splashLogo.implicitHeight
 
-    visible: (opacity > 0.0001)
-
-    // TODO: consider bringing POC attempt to use lottie animations
-    AnimatedImage {
+    Image {
         id: splashLogo
         anchors.centerIn: parent
-        scale: 0.5
-        source: Resources.gif("status_splash_" + Style.theme.name)
+        sourceSize.width: width || undefined
+        sourceSize.height: height || undefined
+        mipmap: true
+        antialiasing: true
+        source: Resources.svg("status-logo-circle")
+        width: 60
+        height: 60
+        fillMode: Image.Stretch
 
-        readonly property real frameToStartAnimation: frameCount/2
-        readonly property real animationRange: (frameCount - frameToStartAnimation)
-
-        onCurrentFrameChanged: {
-            if(currentFrame > frameToStartAnimation)
-                root.opacity = 1 - (currentFrame - frameToStartAnimation)/animationRange
-            if(currentFrame === (frameCount - 1))
-                root.animationFinished()
+        RotationAnimator {
+            id: animator
+            target: splashLogo
+            from: 0
+            to: 360
+            duration: 2000
+            loops: Animation.Infinite
+            onStopped: root.animationFinished()
         }
-        playing: false
     }
 }
