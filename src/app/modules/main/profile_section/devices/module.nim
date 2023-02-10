@@ -43,35 +43,42 @@ method load*(self: Module) =
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
+method getMyInstallationId(self: Module): string =
+  return self.controller.getMyInstallationId()
+
 proc isMyDevice(self: Module, installationId: string): bool =
   let myInstallationId = self.controller.getMyInstallationId()
   return installationId == myInstallationId
 
-proc initModel(self: Module) =
+method loadDevices*(self: Module) =
+  self.view.setDevicesLoading(true)
+  self.controller.asyncLoadDevices()
+
+method onDevicesLoadingErrored*(self: Module) =
+  self.view.setDevicesLoading(false)
+  self.view.setDevicesLoadingError(true)
+
+method onDevicesLoaded*(self: Module, allDevices: seq[DeviceDto]) =
   var items: seq[Item]
-  let allDevices = self.controller.getAllDevices()
   for d in allDevices:
     let item = initItem(d.id, d.metadata.name, d.enabled, self.isMyDevice(d.id))
     items.add(item)
-
   self.view.model().addItems(items)
+  self.view.setDevicesLoading(false)
+  self.view.deviceSetupChanged()
 
 method viewDidLoad*(self: Module) =
-  self.initModel()
   self.moduleLoaded = true
   self.delegate.devicesModuleDidLoad()
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method isDeviceSetup*(self: Module): bool =
-  return self.controller.isDeviceSetup()
-
 method setDeviceName*(self: Module, name: string) =
   self.controller.setDeviceName(name)
   # in future if we start getting more meaningful response form the `status-go` part, we may
   # move this call to the `onDeviceNameSet` slot and confirm change on the qml side that way.
-  self.view.emitDeviceSetupChangedSignal()
+  self.view.deviceSetupChanged()
 
 method syncAllDevices*(self: Module) =
   self.controller.syncAllDevices()

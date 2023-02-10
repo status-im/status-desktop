@@ -29,6 +29,13 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
+  self.events.on(SIGNAL_DEVICES_LOADED) do(e: Args):
+    var args = DevicesArg(e)
+    self.delegate.onDevicesLoaded(args.devices)
+
+  self.events.on(SIGNAL_ERROR_LOADING_DEVICES) do(e: Args):
+    self.delegate.onDevicesLoadingErrored()
+
   self.events.on(SIGNAL_UPDATE_DEVICE) do(e: Args):
     var args = UpdateDeviceArgs(e)
     self.delegate.updateOrAddDevice(args.deviceId, args.name, args.enabled)
@@ -36,11 +43,8 @@ proc init*(self: Controller) =
 proc getMyInstallationId*(self: Controller): string =
   return self.settingsService.getInstallationId()
 
-proc getAllDevices*(self: Controller): seq[DeviceDto] =
-  return self.devicesService.getAllDevices()
-
-proc isDeviceSetup*(self: Controller): bool =
-  return self.devicesService.isDeviceSetup()
+proc asyncLoadDevices*(self: Controller) =
+  self.devicesService.asyncLoadDevices()
 
 proc setDeviceName*(self: Controller, name: string) =
   self.devicesService.setDeviceName(name)

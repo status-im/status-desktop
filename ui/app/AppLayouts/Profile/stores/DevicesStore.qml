@@ -11,6 +11,10 @@ QtObject {
     // Module Properties
     property bool isDeviceSetup: devicesModule.isDeviceSetup
 
+    function loadDevices() {
+        return root.devicesModule.loadDevices()
+    }
+
     function setName(name) {
         return root.devicesModule.setName(name)
     }

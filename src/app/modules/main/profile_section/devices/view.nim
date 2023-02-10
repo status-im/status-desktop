@@ -7,6 +7,8 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: Model
       modelVariant: QVariant
+      devicesLoading: bool
+      devicesLoadingError: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -17,6 +19,8 @@ QtObject:
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
+    result.devicesLoading = false
+    result.devicesLoadingError = false
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
 
@@ -35,13 +39,37 @@ QtObject:
 
   proc deviceSetupChanged*(self: View) {.signal.}
   proc getIsDeviceSetup*(self: View): bool {.slot} =
-    return self.delegate.isDeviceSetup()
+    return self.model.getIsDeviceSetup(self.delegate.getMyInstallationId())
   QtProperty[bool] isDeviceSetup:
     read = getIsDeviceSetup
     notify = deviceSetupChanged
 
-  proc emitDeviceSetupChangedSignal*(self: View) =
-    self.deviceSetupChanged()
+  proc devicesLoadingChanged*(self: View) {.signal.}
+  proc setDevicesLoading*(self: View, value: bool) =
+    if self.devicesLoading == value:
+      return
+    self.devicesLoading = value
+    self.devicesLoadingChanged()
+  proc getDevicesLoading*(self: View): bool {.slot} =
+    return self.devicesLoading
+  QtProperty[bool] devicesLoading:
+    read = getDevicesLoading
+    notify = devicesLoadingChanged
+
+  proc devicesLoadingErrorChanged*(self: View) {.signal.}
+  proc setDevicesLoadingError*(self: View, value: bool) =
+    if self.devicesLoadingError == value:
+      return
+    self.devicesLoadingError = value
+    self.devicesLoadingErrorChanged()
+  proc getDevicesLoadingError*(self: View): bool {.slot} =
+    return self.devicesLoadingError
+  QtProperty[bool] devicesLoadingError:
+    read = getDevicesLoadingError
+    notify = devicesLoadingErrorChanged
+
+  proc loadDevices*(self: View) {.slot.} =
+    self.delegate.loadDevices()
 
   proc setName*(self: View, deviceName: string) {.slot.} =
     self.delegate.setDeviceName(deviceName)
