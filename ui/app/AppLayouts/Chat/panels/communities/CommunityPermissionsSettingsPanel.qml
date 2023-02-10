@@ -169,7 +169,6 @@ SettingsPageLayout {
                 channelsTracker.revision
                 communityNewPermissionView.dirtyValues.permissionType
                 communityNewPermissionView.dirtyValues.isPrivate
-
                 const model = root.store.permissionsModel
                 const count = model.rowCount()
 
@@ -269,6 +268,7 @@ SettingsPageLayout {
 
         CommunityPermissionsView {
             viewWidth: root.viewWidth
+            height: root.height
             rootStore: root.rootStore
             store: root.store
 

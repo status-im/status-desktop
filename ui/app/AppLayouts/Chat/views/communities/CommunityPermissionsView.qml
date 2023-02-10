@@ -30,12 +30,12 @@ StatusScrollView {
         property int permissionIndexToRemove
     }
 
-    contentWidth: mainLayout.width
-    contentHeight: mainLayout.height + mainLayout.anchors.topMargin
+    contentWidth: root.viewWidth
+    contentHeight: mainLayout.implicitHeight
 
     ColumnLayout {
         id: mainLayout
-        width: root.viewWidth
+        width: parent.width
         spacing: 24
 
         ListModel {
