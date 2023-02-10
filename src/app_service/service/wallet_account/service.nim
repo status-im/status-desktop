@@ -6,7 +6,7 @@ import ../settings/service as settings_service
 import ../accounts/service as accounts_service
 import ../token/service as token_service
 import ../network/service as network_service
-import ../../common/[account_constants, string_utils]
+import ../../common/[account_constants, utils]
 import ../../../app/global/global_singleton
 
 import dto, derived_address, key_pair_dto
@@ -317,7 +317,7 @@ QtObject:
           derivedFrom)
       else:
         discard backend.generateAccountWithDerivedPath(
-          hashPassword(password),
+          utils.hashPassword(password),
           accountName,
           color,
           emoji,
@@ -341,7 +341,7 @@ QtObject:
       else:
         discard backend.addAccountWithPrivateKey(
           privateKey,
-          hashPassword(password),
+          utils.hashPassword(password),
           accountName,
           color,
           emoji)
@@ -365,7 +365,7 @@ QtObject:
       else:
         discard backend.addAccountWithMnemonicAndPath(
           mnemonic,
-          hashPassword(password),
+          utils.hashPassword(password),
           accountName,
           color,
           emoji,
@@ -393,7 +393,7 @@ QtObject:
     try:
       var hashedPassword = ""
       if password.len > 0:
-        hashedPassword = hashString(password)
+        hashedPassword = utils.hashPassword(password)
       discard status_go_accounts.deleteAccount(address, hashedPassword)
       let accountDeleted = self.removeAccount(address)
       self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(account: accountDeleted))
@@ -433,7 +433,7 @@ QtObject:
 
   proc getDerivedAddress*(self: Service, password: string, derivedFrom: string, path: string, hashPassword: bool)=
     let arg = GetDerivedAddressTaskArg(
-      password: if hashPassword: hashPassword(password) else: password,
+      password: if hashPassword: utils.hashPassword(password) else: password,
       derivedFrom: derivedFrom,
       path: path,
       tptr: cast[ByteAddress](getDerivedAddressTask),
@@ -444,7 +444,7 @@ QtObject:
 
   proc getDerivedAddressList*(self: Service, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool)=
     let arg = GetDerivedAddressesTaskArg(
-      password: if hashPassword: hashPassword(password) else: password,
+      password: if hashPassword: utils.hashPassword(password) else: password,
       derivedFrom: derivedFrom,
       path: path,
       pageSize: pageSize,
@@ -604,7 +604,7 @@ QtObject:
     # in some contexts we just need to add keypair to the db, so password is not needed.
     var hashedPassword = ""
     if password.len > 0:
-      hashedPassword = hashString(password)
+      hashedPassword = utils.hashPassword(password)
     let arg = AddMigratedKeyPairTaskArg(
       tptr: cast[ByteAddress](addMigratedKeyPairTask),
       vptr: cast[ByteAddress](self.vptr),

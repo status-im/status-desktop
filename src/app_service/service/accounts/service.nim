@@ -7,12 +7,13 @@ import ./dto/generated_accounts as dto_generated_accounts
 from ../keycard/service import KeycardEvent, KeyDetails 
 import ../../../backend/general as status_general
 import ../../../backend/core as status_core
+import ../../../backend/privacy as status_privacy
 
 import ../../../app/core/eventemitter
 import ../../../app/core/signals/types
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/fleets/fleet_configuration
-import ../../common/[account_constants, network_constants, utils, string_utils]
+import ../../common/[account_constants, network_constants, utils]
 import ../../../constants as main_constants
 
 import ../settings/dto/settings as settings
@@ -377,7 +378,7 @@ QtObject:
         error "error: ", procName="setupAccount", errDesription = description
         return description
 
-      let hashedPassword = hashString(password)
+      let hashedPassword = hashPassword(password)
       discard self.storeAccount(accountId, hashedPassword)
       discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
       self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, 
@@ -549,9 +550,35 @@ QtObject:
       error "error: ", procName="importMnemonic", errName = e.name, errDesription = e.msg
       return e.msg
 
+  proc verifyAccountPassword*(self: Service, account: string, password: string): bool =
+    try:
+      let response = status_account.verifyAccountPassword(account, password, self.keyStoreDir)
+      if(response.result.contains("error")):
+        let errMsg = response.result["error"].getStr
+        if(errMsg.len == 0):
+          return true
+        else:
+          error "error: ", procName="verifyAccountPassword", errDesription = errMsg
+      return false
+    except Exception as e:
+      error "error: ", procName="verifyAccountPassword", errName = e.name, errDesription = e.msg
+
+  proc verifyDatabasePassword*(self: Service, keyuid: string, hashedPassword: string): bool =
+    try:
+      let response = status_account.verifyDatabasePassword(keyuid, hashedPassword)
+      if(response.result.contains("error")):
+        let errMsg = response.result["error"].getStr
+        if(errMsg.len == 0):
+          return true
+        else:
+          error "error: ", procName="verifyDatabasePassword", errDesription = errMsg
+      return false
+    except Exception as e:
+      error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
+
   proc login*(self: Service, account: AccountDto, password: string): string =
     try:
-      let hashedPassword = hashString(password)
+      let hashedPassword = hashPassword(password)
       var thumbnailImage: string
       var largeImage: string
       for img in account.images:
@@ -615,17 +642,21 @@ QtObject:
           "DiscV5BootstrapNodes": @[]
         }
 
-      let response = status_account.login(account.name, account.keyUid, account.kdfIterations, hashedPassword, thumbnailImage,
-        largeImage, $nodeCfg)
-      var error = "response doesn't contain \"error\""
-      if(response.result.contains("error")):
-        error = response.result["error"].getStr
-        if error == "":
-          debug "Account logged in"
-          self.loggedInAccount = account
-          self.setLocalAccountSettingsFile()
 
-      return error
+      let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashPassword(password, lower=false))
+      if isOldHashPassword:
+        discard status_privacy.lowerDatabasePassword(account.keyUid, password)
+      
+      let response = status_account.login(
+        account.name, account.keyUid, account.kdfIterations, hashedPassword, thumbnailImage, largeImage, $nodeCfg
+      )
+      if response.result{"error"}.getStr == "":
+        debug "Account logged in"
+        self.loggedInAccount = account
+        self.setLocalAccountSettingsFile()
+        return ""
+
+      return response.result{"error"}.getStr
 
     except Exception as e:
       error "error: ", procName="login", errName = e.name, errDesription = e.msg
@@ -661,20 +692,6 @@ QtObject:
       error "error: ", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc verifyAccountPassword*(self: Service, account: string, password: string): bool =
-    try:
-      let response = status_account.verifyAccountPassword(account, password, self.keyStoreDir)
-      if(response.result.contains("error")):
-        let errMsg = response.result["error"].getStr
-        if(errMsg.len == 0):
-          return true
-        else:
-          error "error: ", procName="verifyAccountPassword", errDesription = errMsg
-      return false
-    except Exception as e:
-      error "error: ", procName="verifyAccountPassword", errName = e.name, errDesription = e.msg
-
-
   proc convertToKeycardAccount*(self: Service, currentPassword: string, newPassword: string) = 
     var accountDataJson = %* {
       "key-uid": self.getLoggedInAccount().keyUid,
@@ -689,7 +706,7 @@ QtObject:
       error "error: ", procName="convertToKeycardAccount", errDesription = description
       return
 
-    let hashedCurrentPassword = hashString(currentPassword)
+    let hashedCurrentPassword = hashPassword(currentPassword)
     let arg = ConvertToKeycardAccountTaskArg(
       tptr: cast[ByteAddress](convertToKeycardAccountTask),
       vptr: cast[ByteAddress](self.vptr),
@@ -718,7 +735,7 @@ QtObject:
     self.events.emit(SIGNAL_CONVERTING_PROFILE_KEYPAIR, ResultArgs(success: result))
 
   proc convertToRegularAccount*(self: Service, mnemonic: string, currentPassword: string, newPassword: string): string = 
-    let hashedPassword = hashString(newPassword)
+    let hashedPassword = hashPassword(newPassword)
     try:
       let response = status_account.convertToRegularAccount(mnemonic, currentPassword, hashedPassword)
       var errMsg = ""
@@ -733,7 +750,7 @@ QtObject:
 
   proc verifyPassword*(self: Service, password: string): bool =
     try:
-      let hashedPassword = hashString(password)
+      let hashedPassword = hashPassword(password)
       let response = status_account.verifyPassword(hashedPassword)
       return response.result.getBool
     except Exception as e:

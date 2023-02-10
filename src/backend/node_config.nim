@@ -1,7 +1,7 @@
 import json, json_serialization, chronicles
 import ./core
 import ./response_type
-import utils
+import ../app_service/common/utils
 
 import status_go
 

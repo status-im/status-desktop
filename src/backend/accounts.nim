@@ -1,5 +1,5 @@
 import json, json_serialization, chronicles, strutils
-import ./core, ./utils
+import ./core, ../app_service/common/utils
 import ./response_type
 
 import status_go
@@ -298,6 +298,16 @@ proc verifyAccountPassword*(address: string, password: string, keystoreDir: stri
 
   except RpcException as e:
     error "error doing rpc request", methodName = "verifyAccountPassword", exception=e.msg
+    raise newException(RpcException, e.msg)
+
+proc verifyDatabasePassword*(keyuid: string, hashedPassword: string):
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  try:
+    let response = status_go.verifyDatabasePassword(keyuid, hashedPassword)
+    result.result = Json.decode(response, JsonNode)
+
+  except RpcException as e:
+    error "error doing rpc request", methodName = "verifyDatabasePassword", exception=e.msg
     raise newException(RpcException, e.msg)
 
 proc storeIdentityImage*(keyUID: string, imagePath: string, aX, aY, bX, bY: int):

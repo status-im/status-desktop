@@ -10,8 +10,18 @@ const ETH_DOMAIN* = ".eth"
 proc arrayContains*[T](arr: seq[T], value: T): bool = 
   return arr.any(x => x == value)
 
-proc hashPassword*(password: string): string =
-  result = "0x" & $keccak_256.digest(password)
+proc hashPassword*(password: string, lower: bool = true): string =
+  let hashed = "0x" & $keccak_256.digest(password)
+  
+  if lower:
+    return hashed.toLowerAscii()
+
+  return hashed
+
+proc prefix*(methodName: string, isExt:bool = true): string =
+  result = "waku"
+  result = result & (if isExt: "ext_" else: "_")
+  result = result & methodName
 
 proc generateSigningPhrase*(count: int): string =
   let now = getTime()
