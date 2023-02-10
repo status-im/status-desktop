@@ -1,5 +1,5 @@
 import json, strutils, json_serialization, chronicles
-import core, utils
+import core, ../app_service/common/utils
 import response_type
 
 import status_go

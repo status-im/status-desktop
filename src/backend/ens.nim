@@ -1,6 +1,6 @@
 import json
 import ./core, ./response_type
-import ./utils
+import ../app_service/common/utils
 export response_type
 
 proc getEnsUsernames*(): RpcResponse[JsonNode] {.raises: [Exception].} =

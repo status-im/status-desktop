@@ -1,5 +1,5 @@
 import json, json_serialization, chronicles
-import ./utils
+import ../app_service/common/utils
 import ./core
 
 logScope:
