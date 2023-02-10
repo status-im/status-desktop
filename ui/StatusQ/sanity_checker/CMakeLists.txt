@@ -23,7 +23,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${STATUSQ_DIR}/include)
 
 target_link_libraries(
   ${PROJECT_NAME} PRIVATE Qt5::Core Qt5::Quick Qt5::QuickControls2
-                          SortFilterProxyModel)
+                          SortFilterProxyModel
+                          qzxing)
 
 if (APPLE)
   find_library(AppKit AppKit)

@@ -1198,6 +1198,17 @@ QtObject {
             hasNotification: false
             notificationsCount: 0
         }
+        ListElement {
+            sectionId: "demoApp"
+            sectionType: 103
+            name: "QR Scanner"
+            active: false
+            image: ""
+            icon: "qr-scan"
+            color: ""
+            hasNotification: false
+            notificationsCount: 0
+        }
     }
 
     property ListModel demoAppSectionsModel: ListModel {

@@ -5,6 +5,7 @@
 #include <QQmlEngine>
 
 #include "StatusQ/typesregistration.h"
+#include <QZXing>
 
 int main(int argc, char *argv[])
 {
@@ -15,6 +16,8 @@ int main(int argc, char *argv[])
     QQmlEngine engine;
 
     engine.addImportPath(QStringLiteral(":/"));
+
+    QZXing::registerQMLTypes();
 
     QDirIterator it(":", QDirIterator::Subdirectories);
     bool errorsFound = false;
