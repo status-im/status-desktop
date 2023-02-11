@@ -27,42 +27,20 @@ StatusScrollView {
     property int viewWidth: 560 // by design
     property bool isEditState: false
 
-    readonly property bool dirty: {
-        // Holdings:
-        if (!holdingsModelComparator.equal)
-            return true
+    readonly property bool dirty:
+        !holdingsModelComparator.equal ||
+        !channelsModelComparator.equal ||
+        root.isPrivate !== d.dirtyValues.isPrivate ||
+        root.permissionType !== d.dirtyValues.permissionType
 
-        // Channels
-        if (!channelsModelComparator.equal)
-            return true
-
-        // Is private
-        if (root.isPrivate !== d.dirtyValues.isPrivate)
-            return true
-
-        // Permissions:
-        let dirtyPermissionObj = false
-        if(root.permissionObject && d.dirtyValues.permissionObject.key !== null) {
-            dirtyPermissionObj = (d.dirtyValues.permissionObject.key !== root.permissionObject.key) ||
-                    (d.dirtyValues.permissionObject.text !== root.permissionObject.text) ||
-                    (d.dirtyValues.permissionObject.imageSource !== root.permissionObject.imageSource)
-        } else {
-            dirtyPermissionObj = d.dirtyValues.permissionObject.key !== null
-        }
-
-        return dirtyPermissionObj
-    }
+    property int permissionType: PermissionTypes.Type.None
+    property bool isPrivate: false
 
     // roles: type, key, name, amount, imageSource
     property var holdingsModel: ListModel {}
 
-    // roles: key, text, imageSource
-    property var permissionObject
-
     // roles: itemId, text, emoji, color
     property var channelsModel: ListModel {}
-
-    property bool isPrivate: false
 
     readonly property alias dirtyValues: d.dirtyValues
 
@@ -100,17 +78,9 @@ StatusScrollView {
         readonly property int dropdownHorizontalOffset: 4
         readonly property int dropdownVerticalOffset: 1
 
-        property int permissionType: PermissionTypes.Type.None
-
         readonly property bool isCommunityPermission:
-            permissionType === PermissionTypes.Type.Admin ||
-            permissionType === PermissionTypes.Type.Member
-
-        onPermissionTypeChanged: {
-            d.dirtyValues.isPrivate =
-                    (permissionType === PermissionTypes.Type.Admin) ||
-                    (permissionType === PermissionTypes.Type.Moderator)
-        }
+            dirtyValues.permissionType === PermissionTypes.Type.Admin ||
+            dirtyValues.permissionType === PermissionTypes.Type.Member
 
         onIsCommunityPermissionChanged: {
             if (isCommunityPermission) {
@@ -128,13 +98,13 @@ StatusScrollView {
             readonly property ListModel holdingsModel: ListModel {}
             readonly property ListModel channelsModel: ListModel {}
 
-            readonly property QtObject permissionObject: QtObject {
-               property var key: null
-               property string text: ""
-               property string imageSource: ""
-            }
-
+            property int permissionType: PermissionTypes.Type.None
             property bool isPrivate: false
+
+            Binding on isPrivate {
+                value: (d.dirtyValues.permissionType === PermissionTypes.Type.Admin) ||
+                       (d.dirtyValues.permissionType === PermissionTypes.Type.Moderator)
+            }
 
             function getHoldingIndex(key) {
                 return ModelUtils.indexOf(holdingsModel, "key", key)
@@ -162,11 +132,7 @@ StatusScrollView {
                                                 ["type", "key", "name", "amount", "imageSource", "shortName"]))
 
             // Permissions:
-            d.dirtyValues.permissionObject.key = root.permissionObject ? root.permissionObject.key : null
-            d.dirtyValues.permissionObject.text = root.permissionObject ? root.permissionObject.text : ""
-            d.dirtyValues.permissionObject.imageSource = root.permissionObject ? root.permissionObject.imageSource : ""
-
-            d.permissionType = root.permissionObject ? root.permissionObject.key : PermissionTypes.Type.None
+            d.dirtyValues.permissionType = root.permissionType
 
             // Channels
             d.dirtyValues.channelsModel.clear()
@@ -175,7 +141,7 @@ StatusScrollView {
                         ModelUtils.modelToArray(root.channelsModel,
                                                 ["itemId", "text", "emoji", "color", "operator"]))
 
-            if (root.channelsModel && (root.channelsModel.count || d.dirtyValues.permissionObject.key === null)) {
+            if (root.channelsModel && (root.channelsModel.count || d.dirtyValues.permissionType === PermissionTypes.Type.None)) {
                 inSelector.wholeCommunitySelected = false
                 inSelector.itemsModel = d.dirtyValues.channelsModel
             } else {
@@ -195,7 +161,7 @@ StatusScrollView {
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
 
-    onPermissionObjectChanged: d.loadInitValues()
+    onPermissionTypeChanged: d.loadInitValues()
 
     ColumnLayout {
         id: mainLayout
@@ -388,26 +354,33 @@ StatusScrollView {
             useIcons: true
             title: qsTr("Is allowed to")
             defaultItemText: qsTr("Example: View and post")
-            itemsModel: d.dirtyValues.permissionObject.key ? d.dirtyValues.permissionObject : null
 
-            addButton.visible: !root.permissionObject
+            QtObject {
+                id: permissionItemModelData
+
+                readonly property int key: d.dirtyValues.permissionType
+                readonly property string text: PermissionTypes.getName(key)
+                readonly property string imageSource: PermissionTypes.getIcon(key)
+            }
+
+            itemsModel: d.dirtyValues.permissionType !== PermissionTypes.Type.None
+                        ? permissionItemModelData : null
+
+            addButton.visible: d.dirtyValues.permissionType === PermissionTypes.Type.None
 
             PermissionsDropdown {
                 id: permissionsDropdown
 
-                initialPermissionType: d.permissionType
+                initialPermissionType: d.dirtyValues.permissionType
                 enableAdminPermission: root.store.isOwner
 
                 onDone: {
-                    if (d.permissionType === permissionType) {
+                    if (d.dirtyValues.permissionType === permissionType) {
                         permissionsDropdown.close()
                         return
                     }
 
-                    d.permissionType = permissionType
-                    d.dirtyValues.permissionObject.key = permissionType
-                    d.dirtyValues.permissionObject.text = title
-                    d.dirtyValues.permissionObject.imageSource = asset
+                    d.dirtyValues.permissionType = permissionType
                     permissionsDropdown.close()
                 }
             }
@@ -555,7 +528,7 @@ StatusScrollView {
             Layout.leftMargin: 16
             Layout.rightMargin: Layout.leftMargin
 
-            enabled: d.permissionType !== PermissionTypes.Type.Admin
+            enabled: d.dirtyValues.permissionType !== PermissionTypes.Type.Admin
             checked: d.dirtyValues.isPrivate
             onToggled: d.dirtyValues.isPrivate = checked
         }
@@ -576,7 +549,7 @@ StatusScrollView {
             Layout.topMargin: conflictPanel.visible ? conflictPanel.Layout.topMargin : 24 // by design
             text: qsTr("Create permission")
             enabled: d.dirtyValues.holdingsModel.count > 0
-                     && d.dirtyValues.permissionObject.key !== null
+                     && d.dirtyValues.permissionType !== PermissionTypes.Type.None
                      && (d.dirtyValues.channelsModel.count > 0 || d.isCommunityPermission)
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter

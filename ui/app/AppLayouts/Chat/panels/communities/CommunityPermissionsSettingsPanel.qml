@@ -1,8 +1,9 @@
 import QtQuick 2.14
 
+import AppLayouts.Chat.controls.community 1.0
 import AppLayouts.Chat.layouts 1.0
-import AppLayouts.Chat.views.communities 1.0
 import AppLayouts.Chat.stores 1.0
+import AppLayouts.Chat.views.communities 1.0
 
 import utils 1.0
 
@@ -41,7 +42,7 @@ SettingsPageLayout {
 
         property int permissionIndexToEdit
         property ListModel holdingsToEditModel: ListModel {}
-        property var permissionsToEditObject
+        property int permissionTypeToEdit: PermissionTypes.Type.None
         property ListModel channelsToEditModel: ListModel {}
         property bool isPrivateToEditValue: false
 
@@ -57,8 +58,8 @@ SettingsPageLayout {
 
         function initializeData() {
             holdingsToEditModel = defaultListObject.createObject(d)
-            permissionsToEditObject = null
             channelsToEditModel = defaultListObject.createObject(d)
+            permissionTypeToEdit = PermissionTypes.Type.None
             isPrivateToEditValue = false
         }
     }
@@ -151,14 +152,16 @@ SettingsPageLayout {
             store: root.store
 
             isEditState: root.state === d.editPermissionViewState
+
             holdingsModel: d.holdingsToEditModel
-            permissionObject: d.permissionsToEditObject
             channelsModel: d.channelsToEditModel
+
+            permissionType: d.permissionTypeToEdit
             isPrivate: d.isPrivateToEditValue
 
             onCreatePermissionClicked: {
                 root.store.createPermission(dirtyValues.holdingsModel,
-                                            dirtyValues.permissionObject,
+                                            dirtyValues.permissionType,
                                             dirtyValues.isPrivate,
                                             dirtyValues.channelsModel)
 
@@ -172,7 +175,7 @@ SettingsPageLayout {
                     root.store.editPermission(
                                 d.permissionIndexToEdit,
                                 dirtyValues.holdingsModel,
-                                dirtyValues.permissionObject,
+                                dirtyValues.permissionType,
                                 dirtyValues.channelsModel,
                                 dirtyValues.isPrivate)
                 }
@@ -203,8 +206,8 @@ SettingsPageLayout {
 
                 d.permissionIndexToEdit = index
                 d.holdingsToEditModel = item.holdingsListModel
-                d.permissionsToEditObject = item.permissionsObjectModel
                 d.channelsToEditModel = item.channelsListModel
+                d.permissionTypeToEdit = item.permissionType
                 d.isPrivateToEditValue = item.isPrivate
                 root.state = d.editPermissionViewState
             }
