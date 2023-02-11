@@ -19,11 +19,13 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
             color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
+
             CommunityPermissionsView {
                 anchors {
                     fill: parent
                     margins: 50
                 }
+
                 store: CommunitiesStore {
                     id: mockedCommunity
                     permissionsModel: PermissionsModel.permissionsModel

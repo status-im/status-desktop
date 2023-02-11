@@ -131,17 +131,13 @@ QtObject {
         ListElement { key: "general"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "#general"}
     }
 
-    function createPermission(holdings, permissions, isPrivate, channels, index = null) {
+    function createPermission(holdings, permissionType, isPrivate, channels, index = null) {
         // TO BE REPLACED: It shold just be a call to the backend sharing `holdings`, `permissions`, `channels` and `isPrivate` properties.
         const permission = {
-            isPrivate: true,
             holdingsListModel: [],
-            permissionsObjectModel: {
-                key: "",
-                text: "",
-                imageSource: ""
-            },
             channelsListModel: [],
+            permissionType,
+            isPrivate
         }
 
         // Setting HOLDINGS:
@@ -157,11 +153,6 @@ QtObject {
             })
         }
 
-        // Setting PERMISSIONS:
-        permission.permissionsObjectModel.key = permissions.key
-        permission.permissionsObjectModel.text = permissions.text
-        permission.permissionsObjectModel.imageSource = permissions.imageSource
-
         // Setting CHANNELS:
         for (let c = 0; c < channels.count; c++) {
             const entry = channels.get(c)
@@ -174,10 +165,6 @@ QtObject {
             })
         }
 
-        // Setting PRIVATE permission property:
-        permission.isPrivate = isPrivate
-
-
         if (index !== null) {
             // Edit permission model:
             console.log("TODO: Edit permissions - backend call")
@@ -189,16 +176,16 @@ QtObject {
         }
     }
 
-    function editPermission(index, holdings, permissions, channels, isPrivate) {
+    function editPermission(index, holdings, permissionType, channels, isPrivate) {
         // TO BE REPLACED: Call to backend
-        createPermission(holdings, permissions, isPrivate, channels, index)
+        createPermission(holdings, permissionType, isPrivate, channels, index)
     }
 
     function duplicatePermission(index) {
         // TO BE REPLACED: Call to backend
         console.log("TODO: Duplicate permissions - backend call")
         const permission = root.permissionsModel.get(index)
-        createPermission(permission.holdingsListModel, permission.permissionsObjectModel,
+        createPermission(permission.holdingsListModel, permission.permissionType,
                          permission.isPrivate, permission.channelsListModel)
     }
 

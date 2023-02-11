@@ -13,24 +13,16 @@ QtObject {
         Component.onCompleted:
         append([
                    {
-                       isPrivate: true,
                        holdingsListModel: root.createHoldingsModel1(),
-                       permissionsObjectModel: {
-                           key: 1,
-                           text: "Become member",
-                           imageSource: "in-contacts"
-                       },
-                       channelsListModel: root.createChannelsModel1()
+                       channelsListModel: root.createChannelsModel1(),
+                       permissionType: PermissionTypes.Type.Admin,
+                       isPrivate: true
                    },
                    {
-                       isPrivate: false,
                        holdingsListModel: root.createHoldingsModel2(),
-                       permissionsObjectModel: {
-                           key: 2,
-                           text: "View and post",
-                           imageSource: "edit"
-                       },
-                       channelsListModel: root.createChannelsModel2()
+                       channelsListModel: root.createChannelsModel2(),
+                       permissionType: PermissionTypes.Type.Member,
+                       isPrivate: false
                    }
                ])
     }
@@ -39,14 +31,10 @@ QtObject {
         Component.onCompleted:
         append([
                    {
-                       isPrivate: true,
                        holdingsListModel: root.createHoldingsModel3(),
-                       permissionsObjectModel: {
-                           key: 1,
-                           text: "Become member",
-                           imageSource: "in-contacts"
-                       },
-                       channelsListModel: root.createChannelsModel1()
+                       channelsListModel: root.createChannelsModel1(),
+                       permissionType: PermissionTypes.Type.Admin,
+                       isPrivate: true,
                    }
                ])
     }
@@ -55,44 +43,28 @@ QtObject {
         Component.onCompleted:
         append([
                    {
-                       isPrivate: true,
                        holdingsListModel: root.createHoldingsModel4(),
-                       permissionsObjectModel: {
-                           key: 1,
-                           text: "Become member",
-                           imageSource: "in-contacts"
-                       },
-                       channelsListModel: root.createChannelsModel1()
+                       channelsListModel: root.createChannelsModel1(),
+                       permissionType: PermissionTypes.Type.Admin,
+                       isPrivate: true
                    },
                    {
-                       isPrivate: false,
                        holdingsListModel: root.createHoldingsModel3(),
-                       permissionsObjectModel: {
-                           key: 2,
-                           text: "View and post",
-                           imageSource: "edit"
-                       },
-                       channelsListModel: root.createChannelsModel2()
+                       channelsListModel: root.createChannelsModel2(),
+                       permissionType: PermissionTypes.Type.Member,
+                       isPrivate: false
                    },
                    {
-                       isPrivate: false,
                        holdingsListModel: root.createHoldingsModel2(),
-                       permissionsObjectModel: {
-                           key: 2,
-                           text: "View and post",
-                           imageSource: "edit"
-                       },
-                       channelsListModel: root.createChannelsModel2()
+                       channelsListModel: root.createChannelsModel2(),
+                       permissionType: PermissionTypes.Type.Member,
+                       isPrivate: false
                    },
                    {
-                       isPrivate: false,
+                       channelsListModel: root.createChannelsModel2(),
                        holdingsListModel: root.createHoldingsModel1(),
-                       permissionsObjectModel: {
-                           key: 2,
-                           text: "View and post",
-                           imageSource: "edit"
-                       },
-                       channelsListModel: root.createChannelsModel2()
+                       permissionType: PermissionTypes.Type.Member,
+                       isPrivate: false
                    }
                ])
     }

@@ -55,8 +55,10 @@ StatusScrollView {
 
         Repeater {
             model: root.store.permissionsModel
+
             delegate: PermissionItem {
                 Layout.preferredWidth: root.viewWidth
+
                 holdingsListModel: SortFilterProxyModel {
                     sourceModel: model.holdingsListModel
 
@@ -67,8 +69,8 @@ StatusScrollView {
                         expression: d.holdingsTextFormat(model.type, model.name, model.amount)
                    }
                 }
-                permissionName: model.permissionsObjectModel.text
-                permissionImageSource: model.permissionsObjectModel.imageSource
+
+                permissionType: model.permissionType
 
                 SortFilterProxyModel {
                     id: proxiedChannelsModel
