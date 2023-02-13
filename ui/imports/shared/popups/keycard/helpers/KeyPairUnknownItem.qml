@@ -126,17 +126,34 @@ Rectangle {
                         Layout.preferredHeight: parent.height
                     }
 
-                    StatusBaseText {
-                        Layout.alignment: Qt.AlignVCenter
-                        text: {
-                            return LocaleUtils.currencyAmountToLocaleString({
-                                        amount: parseFloat(model.account.balance.amount),
-                                        symbol: SharedStore.RootStore.currencyStore.currentCurrencySymbol,
-                                        displayDecimals: 2})
+                    Component {
+                        id: balance
+                        StatusBaseText {
+
+                            text: {
+                                return LocaleUtils.currencyAmountToLocaleString({
+                                                                                    amount: parseFloat(model.account.balance),
+                                                                                    symbol: SharedStore.RootStore.currencyStore.currentCurrencySymbol,
+                                                                                    displayDecimals: 2})
+                            }
+                            wrapMode: Text.WordWrap
+                            font.pixelSize: Constants.keycard.general.fontSize2
+                            color: Theme.palette.baseColor1
                         }
-                        wrapMode: Text.WordWrap
-                        font.pixelSize: Constants.keycard.general.fontSize2
-                        color: Theme.palette.baseColor1
+                    }
+
+                    Component {
+                        id: fetchingBalance
+                        StatusLoadingIndicator {
+                            width: 12
+                            height: 12
+                        }
+                    }
+
+                    Loader {
+                        id: fetchLoaderIndicator
+                        Layout.alignment: Qt.AlignVCenter
+                        sourceComponent: model.account.balanceFetched? balance : fetchingBalance
                     }
                 }
             }

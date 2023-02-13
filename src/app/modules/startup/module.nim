@@ -129,7 +129,7 @@ method getKeycardSharedModule*[T](self: Module[T]): QVariant =
 
 proc createSharedKeycardModule[T](self: Module[T]) =
   self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_STARTUP_MODULE_IDENTIFIER, 
-    self.events, self.keycardService, settingsService = nil, privacyService = nil, self.accountsService, 
+    self.events, self.keycardService, settingsService = nil, networkService = nil, privacyService = nil, self.accountsService, 
     walletAccountService = nil, self.keychainService)
 
 method moveToLoadingAppState*[T](self: Module[T]) =

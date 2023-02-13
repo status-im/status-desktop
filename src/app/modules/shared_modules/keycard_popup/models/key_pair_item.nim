@@ -196,6 +196,8 @@ QtObject:
     return self.accounts.containsPathOutOfTheDefaultStatusDerivationTree()
   proc updateDetailsForAccountWithAddressIfTheyAreSet*(self: KeyPairItem, address, name, color, emoji: string) =
     self.accounts.updateDetailsForAddressIfTheyAreSet(address, name, color, emoji)
+  proc setBalanceForAddress*(self: KeyPairItem, address: string, balance: float) =
+    self.accounts.setBalanceForAddress(address, balance)
 
   proc setItem*(self: KeyPairItem, item: KeyPairItem) =
     self.setKeyUid(item.getKeyUid())

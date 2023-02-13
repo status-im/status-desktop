@@ -1,4 +1,4 @@
-import NimQml, random, strutils, marshal, sequtils, sugar, chronicles
+import NimQml, tables, random, strutils, marshal, sequtils, sugar, chronicles
 
 import io_interface
 import view, controller
@@ -11,6 +11,7 @@ import ../../../../app_service/common/utils
 import ../../../../app_service/service/keycard/constants
 import ../../../../app_service/service/keycard/service as keycard_service
 import ../../../../app_service/service/settings/service as settings_service
+import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/privacy/service as privacy_service
 import ../../../../app_service/service/accounts/service as accounts_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
@@ -43,6 +44,7 @@ proc newModule*[T](delegate: T,
   events: EventEmitter,
   keycardService: keycard_service.Service,
   settingsService: settings_service.Service,
+  networkService: network_service.Service,
   privacyService: privacy_service.Service,
   accountsService: accounts_service.Service,
   walletAccountService: wallet_account_service.Service,
@@ -53,7 +55,7 @@ proc newModule*[T](delegate: T,
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, uniqueIdentifier, events, keycardService, settingsService,
-    privacyService, accountsService, walletAccountService, keychainService)
+    networkService, privacyService, accountsService, walletAccountService, keychainService)
   result.initialized = false
   result.authenticationPopupIsAlreadyRunning = false
   result.derivingAccountDetails.deriveAddressAfterAuthentication = false
@@ -624,9 +626,16 @@ proc updateKeyPairItemIfDataAreKnown[T](self: Module[T], address: string, item: 
     if a.walletType == WalletTypeDefaultStatusAccount:
       icon = "wallet"
     item.setKeyUid(a.keyUid)
-    item.addAccount(newKeyPairAccountItem(a.name, a.path, a.address, a.publicKey, a.emoji, a.color, icon, balance = 0.0))
+    item.addAccount(newKeyPairAccountItem(a.name, a.path, a.address, a.publicKey, a.emoji, a.color, icon, balance = 0.0, balanceFetched = true))
     return true
   return false
+
+method onTokensRebuilt*[T](self: Module[T], accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
+  let chainIds = self.controller.getChainIdsOfAllKnownNetworks()
+  let currency = self.controller.getCurrency()
+  for address, tokens in accountsTokens.pairs:
+    let balance = tokens.map(t => t.getCurrencyBalance(chainIds, currency)).foldl(a + b, 0.0)
+    self.getKeyPairForProcessing().setBalanceForAddress(address, balance)
 
 proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardMetadata): 
   tuple[item: KeyPairItem, knownKeyPair: bool] =
@@ -646,9 +655,10 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
   for wa in cardMetadata.walletAccounts:
     if self.updateKeyPairItemIfDataAreKnown(wa.address, result.item):
       continue
-    let balance = self.controller.getCurrencyBalanceForAddress(wa.address)
+    let (balance, balanceFetched) = self.controller.getOrFetchBalanceForAddressInPreferredCurrency(wa.address)
     result.knownKeyPair = false
-    result.item.addAccount(newKeyPairAccountItem(name = "", wa.path, wa.address, pubKey = wa.publicKey, emoji = "", color = self.generateRandomColor(), icon = "wallet", balance))
+    result.item.addAccount(newKeyPairAccountItem(name = "", wa.path, wa.address, pubKey = wa.publicKey, emoji = "", 
+      color = self.generateRandomColor(), icon = "wallet", balance, balanceFetched))
 
 method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadata) =
   let(item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)

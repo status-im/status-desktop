@@ -8,6 +8,7 @@ import ../../../../core/eventemitter
 
 import ../../../../../app_service/service/keycard/service as keycard_service
 import ../../../../../app_service/service/settings/service as settings_service
+import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/privacy/service as privacy_service
 import ../../../../../app_service/service/accounts/service as accounts_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
@@ -36,6 +37,7 @@ type
     events: EventEmitter
     keycardService: keycard_service.Service
     settingsService: settings_service.Service
+    networkService: network_service.Service
     privacyService: privacy_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
@@ -49,6 +51,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   keycardService: keycard_service.Service,
   settingsService: settings_service.Service,
+  networkService: network_service.Service,
   privacyService: privacy_service.Service,
   accountsService: accounts_service.Service,
   walletAccountService: wallet_account_service.Service,
@@ -58,6 +61,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.events = events
   result.keycardService = keycardService
   result.settingsService = settingsService
+  result.networkService = networkService
   result.privacyService = privacyService
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
@@ -102,7 +106,7 @@ proc createSharedKeycardModule(self: Module) =
     self.view.emitSharedModuleBusy()
     return
   self.keycardSharedModule = keycard_shared_module.newModule[Module](self, UNIQUE_SETTING_KEYCARD_MODULE_IDENTIFIER, 
-    self.events, self.keycardService, self.settingsService, self.privacyService, self.accountsService, 
+    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService, 
     self.walletAccountService, self.keychainService)
 
 method onSharedKeycarModuleFlowTerminated*(self: Module, lastStepInTheCurrentFlow: bool) =
