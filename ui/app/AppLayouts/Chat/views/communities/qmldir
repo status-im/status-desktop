@@ -1,4 +1,6 @@
 CommunityNewPermissionView 1.0 CommunityNewPermissionView.qml
 CommunityPermissionsView 1.0 CommunityPermissionsView.qml
+CommunityWelcomePermissionsView 1.0 CommunityWelcomePermissionsView.qml
+HoldingsSelectionModel 1.0 HoldingsSelectionModel.qml
 JoinCommunityView 1.0 JoinCommunityView.qml
 CommunityWelcomeSettingsView 1.0 CommunityWelcomeSettingsView.qml

@@ -25,10 +25,14 @@ SplitView {
         property bool isInvitationPending: false
         property bool isJoinRequestRejected: false
         property bool requiresRequest: false
+
         property var communityHoldingsModel: PermissionsModel.shortPermissionsModel
         property var viewOnlyHoldingsModel: PermissionsModel.shortPermissionsModel
         property var viewAndPostHoldingsModel: PermissionsModel.shortPermissionsModel
         property var moderateHoldingsModel: PermissionsModel.shortPermissionsModel
+
+        property var assetsModel: AssetsModel {}
+        property var collectiblesModel: CollectiblesModel {}
     }
 
     Logs { id: logs }
@@ -66,6 +70,9 @@ SplitView {
 
                         JoinPermissionsOverlayPanel {
                             id: overlayPannel
+
+                            assetsModel: d.assetsModel
+                            collectiblesModel: d.collectiblesModel
 
                             anchors.centerIn: parent
                             joinCommunity: d.joinCommunity

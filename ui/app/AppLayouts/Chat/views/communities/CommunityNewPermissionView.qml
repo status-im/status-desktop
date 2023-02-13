@@ -128,8 +128,7 @@ StatusScrollView {
             d.dirtyValues.holdingsModel.clear()
 
             d.dirtyValues.holdingsModel.append(
-                        ModelUtils.modelToArray(root.holdingsModel,
-                                                ["type", "key", "name", "amount", "imageSource", "shortName"]))
+                        ModelUtils.modelToArray(root.holdingsModel, ["type", "key", "amount"]))
 
             // Permissions:
             d.dirtyValues.permissionType = root.permissionType
@@ -151,10 +150,6 @@ StatusScrollView {
 
             // Is private permission
             d.dirtyValues.isPrivate = root.isPrivate
-        }
-
-        function holdingsTextFormat(type, name, amount) {
-            return CommunityPermissionsHelpers.setHoldingsTextFormat(type, name, amount)
         }
     }
 
@@ -187,24 +182,12 @@ StatusScrollView {
             asset.height: 28
             asset.width: asset.height
             addButton.visible: itemsModel.count < d.maxHoldingsItems
-            itemsModel: SortFilterProxyModel {
+
+            itemsModel: HoldingsSelectionModel {
                 sourceModel: d.dirtyValues.holdingsModel
 
-                proxyRoles: [
-                    ExpressionRole {
-                        name: "text"
-                         // Direct call for singleton function is not handled properly by SortFilterProxyModel that's why `holdingsTextFormat` is used instead.
-                        expression: d.holdingsTextFormat(model.type, model.name, model.amount)
-                    },
-                    ExpressionRole {
-                        name: "operator"
-
-                        // Direct call for singleton enum is not handled properly by SortFilterProxyModel.
-                        readonly property int none: OperatorsUtils.Operators.None
-
-                        expression: none
-                    }
-                ]
+                assetsModel: root.store.assetsModel
+                collectiblesModel: root.store.collectiblesModel
             }
 
             HoldingsDropdown {
@@ -214,10 +197,8 @@ StatusScrollView {
 
                 function addItem(type, item, amount) {
                     const key = item.key
-                    const name = item.shortName ? item.shortName : item.name
-                    const imageSource = item.iconSource.toString()
 
-                    d.dirtyValues.holdingsModel.append({ type, key, name, amount, imageSource })
+                    d.dirtyValues.holdingsModel.append({ type, key, amount })
                 }
 
                 function prepareUpdateIndex(key) {
@@ -255,40 +236,32 @@ StatusScrollView {
                 }
 
                 onAddEns: {
-                    const key = "ENS_" + domain
-                    const icon = Style.svg("profile/ensUsernames")
-
-                    d.dirtyValues.holdingsModel.append({type: HoldingTypes.Type.Ens, key, name: domain, amount: 1, imageSource: icon })
+                    d.dirtyValues.holdingsModel.append(
+                                { type: HoldingTypes.Type.Ens, key: domain, amount: 1 })
                     dropdown.close()
                 }
 
                 onUpdateAsset: {
                     const itemIndex = prepareUpdateIndex(key)
-
                     const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.assetsModel, key)
-                    const name = modelItem.shortName ? modelItem.shortName : modelItem.name
-                    const imageSource = modelItem.iconSource.toString()
 
-                    d.dirtyValues.holdingsModel.set(itemIndex, { type: HoldingTypes.Type.Asset, key, name, amount, imageSource })
+                    d.dirtyValues.holdingsModel.set(itemIndex,
+                                                    { type: HoldingTypes.Type.Asset, key, amount })
                     dropdown.close()
                 }
 
                 onUpdateCollectible: {
                     const itemIndex = prepareUpdateIndex(key)
-
                     const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.collectiblesModel, key)
-                    const name = modelItem.name
-                    const imageSource = modelItem.iconSource.toString()
 
-                    d.dirtyValues.holdingsModel.set(itemIndex, { type: HoldingTypes.Type.Collectible, key, name, amount, imageSource })
+                    d.dirtyValues.holdingsModel.set(itemIndex,
+                                                    { type: HoldingTypes.Type.Collectible, key, amount })
                     dropdown.close()
                 }
 
                 onUpdateEns: {
-                    const key = "ENS_" + domain
-                    const icon = Style.svg("profile/ensUsernames")
-
-                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex, { type: HoldingTypes.Type.Ens, key, name: domain, amount: 1, imageSource: icon })
+                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex,
+                                                    { type: HoldingTypes.Type.Ens, key: domain, amount: 1 })
                     dropdown.close()
                 }
 
@@ -327,7 +300,7 @@ StatusScrollView {
                         dropdown.collectibleAmount = modelItem.amount
                         break
                     case HoldingTypes.Type.Ens:
-                        dropdown.ensDomainName = modelItem.name
+                        dropdown.ensDomainName = modelItem.key
                         break
                     default:
                         console.warn("Unsupported holdings type.")
