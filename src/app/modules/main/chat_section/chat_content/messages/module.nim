@@ -343,7 +343,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
     # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
     # Now we just skip deleted messages
     if message.deleted or message.deletedForMe:
-      return
+      continue
 
     var item = initItem(
       message.id,
