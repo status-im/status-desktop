@@ -613,6 +613,7 @@ QtObject {
     readonly property int communityChatInvitationOnlyAccess: 2
     readonly property int communityChatOnRequestAccess: 3
 
+    readonly property int activityCenterNotificationTypeNoType: 0
     readonly property int activityCenterNotificationTypeOneToOne: 1
     readonly property int activityCenterNotificationTypeGroupRequest: 2
     readonly property int activityCenterNotificationTypeMention: 3
