@@ -7,6 +7,8 @@ import AppLayouts.Chat.stores 1.0
 import Storybook 1.0
 import Models 1.0
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
+
 
 SplitView {
     Logs { id: logs }
@@ -29,6 +31,14 @@ SplitView {
                 store: CommunitiesStore {
                     id: mockedCommunity
                     permissionsModel: PermissionsModel.permissionsModel
+
+                    readonly property var assetsModel: AssetsModel {
+                        id: assetsModel
+                    }
+
+                    readonly property var collectiblesModel: CollectiblesModel {
+                        id: collectiblesModel
+                    }
 
                     function duplicatePermission(index) {
                         logs.logEvent("CommunitiesStore::duplicatePermission - index: " + index)
@@ -76,6 +86,11 @@ SplitView {
         CommunityPermissionsSettingsPanelEditor {
             anchors.fill: parent
             model: mockedCommunity.permissionsModel
+
+            assetKeys: ModelUtils.modelToArray(
+                           assetsModel, ["key"]).map(asset => asset.key)
+            collectibleKeys: ModelUtils.modelToArray(
+                                 collectiblesModel, ["key"]).map(collectible => collectible.key)
         }
     }
 }

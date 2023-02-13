@@ -36,10 +36,13 @@ StatusSectionLayout {
     property bool requirementsMet: true
     property bool isJoinRequestRejected: false
     property bool requiresRequest: false
+
     property var communityHoldingsModel
     property var viewOnlyHoldingsModel
     property var viewAndPostHoldingsModel
     property var moderateHoldingsModel
+    property var assetsModel
+    property var collectiblesModel
 
     // Blur view properties:
     property int membersCount
@@ -271,9 +274,12 @@ StatusSectionLayout {
                         communityName: root.name
                         communityHoldingsModel: root.communityHoldingsModel
                         channelName: root.channelName
+
                         viewOnlyHoldingsModel: root.viewOnlyHoldingsModel
                         viewAndPostHoldingsModel: root.viewAndPostHoldingsModel
                         moderateHoldingsModel: root.moderateHoldingsModel
+                        assetsModel: root.assetsModel
+                        collectiblesModel: root.collectiblesModel
 
                         onRevealAddressClicked: root.revealAddressClicked()
                         onInvitationPendingClicked: root.invitationPendingClicked()

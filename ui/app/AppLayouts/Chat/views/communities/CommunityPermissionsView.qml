@@ -24,11 +24,8 @@ StatusScrollView {
 
     QtObject {
         id: d
-        property int permissionIndexToRemove
 
-        function holdingsTextFormat(type, name, amount) {
-            return CommunityPermissionsHelpers.setHoldingsTextFormat(type, name, amount)
-        }
+        property int permissionIndexToRemove
     }
 
     contentWidth: mainLayout.width
@@ -59,15 +56,10 @@ StatusScrollView {
             delegate: PermissionItem {
                 Layout.preferredWidth: root.viewWidth
 
-                holdingsListModel: SortFilterProxyModel {
+                holdingsListModel: HoldingsSelectionModel {
                     sourceModel: model.holdingsListModel
-
-                    proxyRoles: ExpressionRole {
-                        name: "text"
-                        // Direct call for singleton function is not handled properly
-                        // by SortFilterProxyModel that's why `holdingsTextFormat` is used instead.
-                        expression: d.holdingsTextFormat(model.type, model.name, model.amount)
-                   }
+                    assetsModel: store.assetsModel
+                    collectiblesModel: store.collectiblesModel
                 }
 
                 permissionType: model.permissionType
@@ -76,6 +68,7 @@ StatusScrollView {
                     id: proxiedChannelsModel
 
                     sourceModel: model.channelsListModel
+
 
                     proxyRoles: [
                         ExpressionRole {

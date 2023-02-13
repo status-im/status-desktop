@@ -147,9 +147,7 @@ QtObject {
             permission.holdingsListModel.push({
                 type: entry.type,
                 key: entry.key,
-                name: entry.name,
-                amount: entry.amount,
-                imageSource: entry.imageSource
+                amount: entry.amount
             })
         }
 

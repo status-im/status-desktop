@@ -72,30 +72,21 @@ QtObject {
     function createHoldingsModel1() {
         return [
                     {
-                        operator: OperatorsUtils.Operators.None,
                         type: HoldingTypes.Type.Asset,
-                        key: "SOCKS",
-                        name: "SOCKS",
+                        key: "socks",
                         amount: 1.2,
-                        imageSource: ModelsData.assets.socks,
                         available: true
                     },
                     {
-                        operator: OperatorsUtils.Operators.Or,
                         type: HoldingTypes.Type.Asset,
-                        key: "ZRX",
-                        name: "ZRX",
+                        key: "zrx",
                         amount: 15,
-                        imageSource: ModelsData.assets.zrx,
                         available: false
                     },
                     {
-                        operator: OperatorsUtils.Operators.And,
                         type: HoldingTypes.Type.Collectible,
-                        key: "Furbeard",
-                        name: "Furbeard",
+                        key: "Kitty1",
                         amount: 12,
-                        imageSource: ModelsData.collectibles.kitty1,
                         available: true
                     }
                 ]
@@ -104,21 +95,15 @@ QtObject {
     function createHoldingsModel2() {
         return [
                     {
-                        operator: OperatorsUtils.Operators.None,
                         type: HoldingTypes.Type.Collectible,
-                        key: "Happy Meow",
-                        name: "Happy Meow",
+                        key: "Kitty3",
                         amount: 50.25,
-                        imageSource: ModelsData.collectibles.kitty3,
                         available: true
                     },
                     {
-                        operator: OperatorsUtils.Operators.And,
                         type: HoldingTypes.Type.Collectible,
-                        key: "AMP",
-                        name: "AMP",
+                        key: "Anniversary",
                         amount: 11,
-                        imageSource: ModelsData.assets.amp,
                         available: false
                     }
                 ]
@@ -127,20 +112,14 @@ QtObject {
     function createHoldingsModel3() {
         return [
                     {
-                        operator: OperatorsUtils.Operators.None,
                         type: HoldingTypes.Type.Asset,
-                        key: "uni",
-                        imageSource: ModelsData.assets.uni,
-                        name: "UNI",
+                        key: "socks",
                         amount: 15,
                         available: true
                     },
                     {
-                        operator: OperatorsUtils.Operators.None,
                         type: HoldingTypes.Type.Asset,
-                        key: "eth",
-                        imageSource: ModelsData.assets.eth,
-                        name: "ETH",
+                        key: "zrx",
                         amount: 1,
                         available: false
                     }
@@ -150,47 +129,32 @@ QtObject {
     function createHoldingsModel4() {
         return [
                     {
-                        operator: OperatorsUtils.Operators.None,
                         type: HoldingTypes.Type.Asset,
-                        key: "uni",
-                        imageSource: ModelsData.assets.uni,
-                        name: "UNI",
+                        key: "socks",
                         amount: 15,
                         available: true
                     },
                     {
-                        operator: OperatorsUtils.Operators.None,
                         type: HoldingTypes.Type.Asset,
-                        key: "eth",
-                        imageSource: ModelsData.assets.eth,
-                        name: "ETH",
+                        key: "zrx",
                         amount: 1,
                         available: false
                     },
                     {
-                        operator: OperatorsUtils.Operators.None,
                         type: HoldingTypes.Type.Asset,
-                        key: "snt",
-                        imageSource: ModelsData.assets.snt,
-                        name: "SNT",
+                        key: "1inch",
                         amount: 25000,
                         available: true
                     },
                     {
-                        operator: OperatorsUtils.Operators.None,
                         type: HoldingTypes.Type.Asset,
-                        key: "uni",
-                        imageSource: ModelsData.assets.dai,
-                        name: "DAI",
+                        key: "Aave",
                         amount: 100,
                         available: true
                     },
                     {
-                        operator: OperatorsUtils.Operators.None,
                         type: HoldingTypes.Type.Asset,
-                        key: "mana",
-                        imageSource: ModelsData.assets.mana,
-                        name: "MANA",
+                        key: "Amp",
                         amount: 2,
                         available: true
                     }

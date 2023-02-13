@@ -6,13 +6,21 @@ import Storybook 1.0
 import Models 1.0
 import StatusQ.Core.Utils 0.1
 
+import AppLayouts.Chat.controls.community 1.0
+
 Flickable {
     id: root
 
     property var model
 
+    property var assetKeys: []
+    property var collectibleKeys: []
+
     QtObject {
         id: d
+
+        property int newType
+        property string newKey
         property string newName
         property double newAmount
         property string newImageSource
@@ -54,45 +62,48 @@ Flickable {
                         Repeater {
                             model: holdingsListModel
 
-                            CommunityPermissionsSettingItemEditor {
+                            CommunityPermissionsHoldingItemEditor {
                                 Layout.fillWidth: true
                                 panelText: "Who holds [item " + model.index + "]"
-                                name: model.name
-                                icon: model.imageSource
+                                type: model.type
+                                key: model.key
                                 amountText: model.amount
-                                isAmountVisible: true
-                                iconsModel: AssetsCollectiblesIconsModel {}
-                                onNameChanged: model.name = name
-                                onIconChanged: model.imageSource = icon
+
+                                assetKeys: root.assetKeys
+                                collectibleKeys: root.collectibleKeys
+
+                                onTypeChanged: model.type = type
+                                onKeyChanged: model.key = key
                                 onAmountTextChanged: model.amount = parseFloat(amountText)
                             }
                         }
                     }
 
-                    CommunityPermissionsSettingItemEditor {
-                        panelText: "New holdings item"
-                        name: d.newName
-                        icon: d.newImageSource
+                    CommunityPermissionsHoldingItemEditor {
+                        panelText: "New holding item"
+                        type: d.newType
+                        key: d.newKey
                         amountText: d.newAmount
-                        isAmountVisible: true
-                        iconsModel: AssetsCollectiblesIconsModel {}
-                        onNameChanged: d.newName = name
-                        onIconChanged: d.newImageSource = icon
+
+                        assetKeys: root.assetKeys
+                        collectibleKeys: root.collectibleKeys
+
+                        onTypeChanged: d.newType = type
+                        onKeyChanged: d.newKey = key
                         onAmountTextChanged: d.newAmount = parseFloat(amountText)
                     }
 
                     Button {
-                        enabled: d.newName && d.newAmount && d.newImageSource
+                        enabled: d.newKey && (d.newAmount || d.newType === HoldingTypes.Type.Ens)
                         Layout.fillWidth: true
                         text: "Add new holding"
+
                         onClicked: {
-                            model.holdingsListModel.append([{
-                                                                type: 1,
-                                                                key: d.newName,
-                                                                name: d.newName,
-                                                                amount: d.newAmount,
-                                                                imageSource: d.newImageSource
-                                                         }])
+                            model.holdingsListModel.append({
+                                type: d.newType,
+                                key: d.newKey,
+                                amount: d.newAmount
+                            })
                         }
                     }
 
