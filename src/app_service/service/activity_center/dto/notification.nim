@@ -8,7 +8,7 @@ include ../../../common/json_utils
 include ../../../common/utils
 
 type ActivityCenterNotificationType* {.pure.}= enum
-  Unknown = 0,
+  NoType = 0,
   NewOneToOne = 1,
   NewPrivateGroupChat = 2,
   Mention = 3,
@@ -81,7 +81,7 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
 
   discard jsonObj.getProp("author", result.author)
 
-  result.notificationType = ActivityCenterNotificationType.Unknown
+  result.notificationType = ActivityCenterNotificationType.NoType
   var notificationTypeInt: int
   if (jsonObj.getProp("type", notificationTypeInt) and
     (notificationTypeInt >= ord(low(ActivityCenterNotificationType)) or

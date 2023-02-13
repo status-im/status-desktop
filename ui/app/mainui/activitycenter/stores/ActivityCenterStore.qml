@@ -6,7 +6,7 @@ QtObject {
     property bool hideReadNotifications: false
 
     readonly property var activityCenterModuleInst: activityCenterModule
-    readonly property var activityCenterList: activityCenterModuleInst.activityNotificationsModel
+    readonly property var activityCenterNotifications: activityCenterModuleInst.activityNotificationsModel
     readonly property int unreadNotificationsCount: activityCenterModuleInst.unreadActivityCenterNotificationsCount
     readonly property bool hasUnseenNotifications: activityCenterModuleInst.hasUnseenActivityCenterNotifications
 

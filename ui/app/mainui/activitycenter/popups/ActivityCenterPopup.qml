@@ -6,8 +6,6 @@ import Qt.labs.qmlmodels 1.0
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
-import SortFilterProxyModel 0.2
-
 import shared 1.0
 import shared.popups 1.0
 import shared.views.chat 1.0
@@ -45,30 +43,6 @@ Popup {
     property var store
 
     readonly property int unreadNotificationsCount: root.activityCenterStore.unreadNotificationsCount
-
-    function filterActivityCategories(notificationType) {
-        switch (root.currentActivityCategory) {
-        case ActivityCenterPopup.ActivityCategory.All:
-            return true
-        case ActivityCenterPopup.ActivityCategory.Admin:
-            return notificationType === Constants.activityCenterNotificationTypeCommunityMembershipRequest
-        case ActivityCenterPopup.ActivityCategory.Mentions:
-            return notificationType === Constants.activityCenterNotificationTypeMention
-        case ActivityCenterPopup.ActivityCategory.Replies:
-            return notificationType === Constants.activityCenterNotificationTypeReply
-        case ActivityCenterPopup.ActivityCategory.ContactRequests:
-            return notificationType === Constants.activityCenterNotificationTypeContactRequest
-        case ActivityCenterPopup.ActivityCategory.IdentityVerification:
-            return notificationType === Constants.activityCenterNotificationTypeContactVerification
-        case ActivityCenterPopup.ActivityCategory.Membership:
-            return notificationType === Constants.activityCenterNotificationTypeCommunityInvitation ||
-                   notificationType === Constants.activityCenterNotificationTypeCommunityMembershipRequest ||
-                   notificationType === Constants.activityCenterNotificationTypeCommunityRequest ||
-                   notificationType === Constants.activityCenterNotificationTypeCommunityKicked
-        default:
-            return false
-        }
-    }
 
     function calcNotificationType(notificationType, cnt) {
         switch (notificationType) {
@@ -136,7 +110,7 @@ Popup {
 
     Repeater {
         id: notificationTypeCounter
-        model: root.activityCenterStore.activityCenterList
+        model: root.activityCenterStore.activityCenterNotifications
 
         delegate: Item {
             Component.onCompleted: calcNotificationType(model.notificationType, 1)
@@ -170,19 +144,7 @@ Popup {
         anchors.margins: Style.current.smallPadding
         spacing: 1
 
-        model: SortFilterProxyModel {
-            sourceModel: root.activityCenterStore.activityCenterList
-
-            filters: ExpressionFilter { expression: filterActivityCategories(model.notificationType) &&
-                                                    !(activityCenterStore.hideReadNotifications && model.read) }
-
-            sorters: [
-                RoleSorter {
-                    roleName: "timestamp"
-                    sortOrder: Qt.DescendingOrder
-                }
-            ]
-        }
+        model: root.activityCenterStore.activityCenterNotifications
 
         delegate: Loader {
             width: listView.availableWidth
