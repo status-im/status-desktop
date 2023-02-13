@@ -26,7 +26,7 @@ Item {
     QtObject {
         id: d
 
-        property int expirationTimestamp: 0
+        property double expirationTimestamp: 0
     }
 
     StatusBaseText {
