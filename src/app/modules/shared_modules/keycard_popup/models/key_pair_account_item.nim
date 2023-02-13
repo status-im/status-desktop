@@ -10,12 +10,13 @@ QtObject:
     color: string
     icon: string
     balance: float
+    balanceFetched: bool
 
   proc delete*(self: KeyPairAccountItem) =
     self.QObject.delete
 
   proc newKeyPairAccountItem*(name = "", path = "", address = "", pubKey = "", emoji = "", color = "", icon = "", 
-    balance = 0.0): KeyPairAccountItem =
+    balance = 0.0, balanceFetched = true): KeyPairAccountItem =
     new(result, delete)
     result.QObject.setup
     result.name = name
@@ -26,6 +27,7 @@ QtObject:
     result.color = color
     result.icon = icon
     result.balance = balance
+    result.balanceFetched = balanceFetched
 
   proc `$`*(self: KeyPairAccountItem): string =
     result = fmt"""KeyPairAccountItem[
@@ -37,7 +39,8 @@ QtObject:
       color: {self.color},
       icon: {self.icon},
       icon: {$self.icon},
-      balance: {self.balance}
+      balance: {self.balance},
+      balanceFetched: {self.balanceFetched}
       ]"""
 
   proc nameChanged*(self: KeyPairAccountItem) {.signal.}
@@ -122,8 +125,15 @@ QtObject:
     return self.balance
   proc setBalance*(self: KeyPairAccountItem, value: float) {.slot.} =
     self.balance = value
+    self.balanceFetched = true
     self.balanceChanged()
   QtProperty[float] balance:
     read = getBalance
     write = setBalance
+    notify = balanceChanged
+
+  proc getBalanceFetched*(self: KeyPairAccountItem): bool {.slot.} =
+    return self.balanceFetched
+  QtProperty[bool] balanceFetched:
+    read = getBalanceFetched
     notify = balanceChanged

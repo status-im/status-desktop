@@ -80,6 +80,7 @@ type
     urlsManager: UrlsManager
     keycardService: keycard_service.Service
     settingsService: settings_service.Service
+    networkService: network_service.Service
     privacyService: privacy_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
@@ -163,6 +164,7 @@ proc newModule*[T](
   result.urlsManager = urlsManager
   result.keycardService = keycardService
   result.settingsService = settingsService
+  result.networkService = networkService
   result.privacyService = privacyService
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
@@ -981,7 +983,7 @@ method getKeycardSharedModule*[T](self: Module[T]): QVariant =
 
 proc createSharedKeycardModule[T](self: Module[T]) =
   self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_IDENTIFIER, 
-    self.events, self.keycardService, self.settingsService, self.privacyService, self.accountsService, 
+    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService, 
     self.walletAccountService, self.keychainService)
 
 method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
@@ -1003,7 +1005,7 @@ method onSharedKeycarModuleKeycardSyncPurposeTerminated*[T](self: Module[T], las
 
 method tryKeycardSync*[T](self: Module[T], keyUid: string, pin: string) =
   self.keycardSharedModuleKeycardSyncPurpose = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER, 
-    self.events, self.keycardService, self.settingsService, self.privacyService, self.accountsService, 
+    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService, 
     self.walletAccountService, self.keychainService)
   if self.keycardSharedModuleKeycardSyncPurpose.isNil:
     return

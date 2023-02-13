@@ -12,6 +12,7 @@ import ../../../../app_service/common/utils
 import ../../../../app_service/common/account_constants
 import ../../../../app_service/service/keycard/service as keycard_service
 import ../../../../app_service/service/settings/service as settings_service
+import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/privacy/service as privacy_service
 import ../../../../app_service/service/accounts/service as accounts_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
@@ -29,6 +30,7 @@ type
     events: EventEmitter
     keycardService: keycard_service.Service
     settingsService: settings_service.Service
+    networkService: network_service.Service
     privacyService: privacy_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
@@ -71,6 +73,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   keycardService: keycard_service.Service,
   settingsService: settings_service.Service,
+  networkService: network_service.Service,
   privacyService: privacy_service.Service,
   accountsService: accounts_service.Service,
   walletAccountService: wallet_account_service.Service,
@@ -82,6 +85,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.events = events
   result.keycardService = keycardService
   result.settingsService = settingsService
+  result.networkService = networkService
   result.privacyService = privacyService
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
@@ -112,6 +116,8 @@ proc serviceApplicable[T](service: T): bool =
     serviceName = "PrivacyService"
   when (service is settings_service.Service):
     serviceName = "SettingsService"
+  when (service is network_service.Service):
+    serviceName = "NetworkService"
   when (service is accounts_service.Service):
     serviceName = "AccountsService"
   when (service is keychain_service.Service):
@@ -180,6 +186,11 @@ proc init*(self: Controller) =
     let args = ResultArgs(e)
     self.tmpConvertingProfileSuccess = args.success
     self.delegate.onSecondaryActionClicked()
+  self.connectionIds.add(handlerId)
+
+  handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
+    let arg = TokensPerAccountArgs(e)
+    self.delegate.onTokensRebuilt(arg.accountsTokens)
   self.connectionIds.add(handlerId)
 
 proc switchToWalletSection*(self: Controller) =
@@ -602,10 +613,11 @@ proc isKeyPairAlreadyAdded*(self: Controller, keyUid: string): bool =
   let accountsForKeyUid = walletAccounts.filter(a => a.keyUid == keyUid)
   return accountsForKeyUid.len > 0
 
-proc getCurrencyBalanceForAddress*(self: Controller, address: string): float64 =
+proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Controller, address: string): tuple[balance: float64, fetched: bool] =
   if not serviceApplicable(self.walletAccountService):
-    return
-  return self.walletAccountService.getCurrencyBalanceForAddress(address)
+    # Return 0, casuse JSON-RPC client is unavailable before user logs in.
+    return (0.0, true)
+  return self.walletAccountService.getOrFetchBalanceForAddressInPreferredCurrency(address)
 
 proc addMigratedKeyPair*(self: Controller, keyPair: KeyPairDto) =
   if not serviceApplicable(self.walletAccountService):
@@ -681,6 +693,16 @@ proc getSigningPhrase*(self: Controller): string =
   if not serviceApplicable(self.settingsService):
     return
   return self.settingsService.getSigningPhrase()
+
+proc getCurrency*(self: Controller): string =
+  if not serviceApplicable(self.settingsService):
+    return
+  return self.settingsService.getCurrency()
+
+proc getChainIdsOfAllKnownNetworks*(self: Controller): seq[int] =
+  if not serviceApplicable(self.networkService):
+    return
+  return self.networkService.getNetworks().map(n => n.chainId)
 
 proc enterKeycardPin*(self: Controller, pin: string) =
   if not serviceApplicable(self.keycardService):

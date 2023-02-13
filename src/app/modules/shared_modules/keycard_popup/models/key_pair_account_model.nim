@@ -119,4 +119,9 @@ QtObject:
         if emoji.len > 0:
           self.items[i].setEmoji(emoji)
         return
+
+  proc setBalanceForAddress*(self: KeyPairAccountModel, address: string, balance: float) =
+    for i in 0 ..< self.items.len:
+      if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
+        self.items[i].setBalance(balance)
       

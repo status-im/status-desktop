@@ -237,7 +237,7 @@ method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid:
 method createSharedKeycardModule*(self: Module) =
   if self.keycardSharedModule.isNil:
     self.keycardSharedModule = keycard_shared_module.newModule[Module](self, UNIQUE_WALLET_SECTION_ACCOUNTS_MODULE_IDENTIFIER, 
-      self.events, self.keycardService, settingsService = nil, privacyService = nil, self.accountsService, 
+      self.events, self.keycardService, settingsService = nil, networkService = nil, privacyService = nil, self.accountsService, 
       self.walletAccountService, keychainService = nil)
 
 method destroySharedKeycarModule*(self: Module) =

@@ -120,7 +120,7 @@ QtObject:
     walletAccounts {.guard: walletAccountsLock.}: OrderedTable[string, WalletAccountDto]
 
   # Forward declaration
-  proc buildAllTokens(self: Service, accounts: seq[string])
+  proc buildAllTokens(self: Service, accounts: seq[string], store: bool)
   proc checkRecentHistory*(self: Service)
   proc checkConnected(self: Service)
   proc startWallet(self: Service)
@@ -212,7 +212,7 @@ QtObject:
         account.relatedAccounts = accounts.filter(x => not account.derivedFrom.isEmptyOrWhitespace and (cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0))
         self.storeAccount(account)
 
-      self.buildAllTokens(self.getAddresses())
+      self.buildAllTokens(self.getAddresses(), store = true)
       self.checkRecentHistory()
       self.startWallet()
     except Exception as e:
@@ -231,7 +231,7 @@ QtObject:
       var data = WalletSignal(e)
       case data.eventType:
         of "wallet-tick-reload":
-          self.buildAllTokens(self.getAddresses())
+          self.buildAllTokens(self.getAddresses(), store = true)
           self.checkRecentHistory()
         of "wallet-tick-check-connected":
           self.checkConnected()
@@ -290,7 +290,7 @@ QtObject:
         newAccount.relatedAccounts = accounts.filter(x => cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0)
         break
     self.storeAccount(newAccount)
-    self.buildAllTokens(@[newAccount.address])
+    self.buildAllTokens(@[newAccount.address], store = true)
     self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
   proc addOrReplaceWalletAccount(self: Service, name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, accountType, 
@@ -405,7 +405,7 @@ QtObject:
 
   proc updateCurrency*(self: Service, newCurrency: string) =
     discard self.settingsService.saveCurrency(newCurrency)
-    self.buildAllTokens(self.getAddresses())
+    self.buildAllTokens(self.getAddresses(), store = true)
     self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
 
   proc toggleNetworkEnabled*(self: Service, chainId: int) =
@@ -525,27 +525,33 @@ QtObject:
       let chainIds = self.networkService.getNetworks().map(n => n.chainId)
 
       let responseObj = response.parseJson
+      var storeResult: bool
+      var resultObj: JsonNode
+      discard responseObj.getProp("storeResult", storeResult)
+      discard responseObj.getProp("result", resultObj)
+
       var data = TokensPerAccountArgs()
-      if responseObj.kind == JObject:
-        for wAddress, tokensDetailsObj in responseObj:
+      if resultObj.kind == JObject:
+        for wAddress, tokensDetailsObj in resultObj:
           if tokensDetailsObj.kind == JArray:
             var tokens: seq[WalletTokenDto]
             tokens = map(tokensDetailsObj.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
             tokens.sort(priorityTokenCmp)
             data.accountsTokens[wAddress] = tokens
-            self.storeTokensForAccount(wAddress, tokens)
-            self.tokenService.updateTokenPrices(tokens) # For efficiency. Will be removed when token info fetching gets moved to the tokenService
-            # Gather symbol for visible tokens
-            for token in tokens:
-              if token.getVisibleForNetworkWithPositiveBalance(chainIds) and find(visibleSymbols, token.symbol) == -1:
-                visibleSymbols.add(token.symbol)
+            if storeResult:
+              self.storeTokensForAccount(wAddress, tokens)
+              self.tokenService.updateTokenPrices(tokens) # For efficiency. Will be removed when token info fetching gets moved to the tokenService
+              # Gather symbol for visible tokens
+              for token in tokens:
+                if token.getVisibleForNetworkWithPositiveBalance(chainIds) and find(visibleSymbols, token.symbol) == -1:
+                  visibleSymbols.add(token.symbol)
       self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, data)
-
-      discard backend.updateVisibleTokens(visibleSymbols)
+      if visibleSymbols.len > 0:
+        discard backend.updateVisibleTokens(visibleSymbols)
     except Exception as e:
       error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
 
-  proc buildAllTokens(self: Service, accounts: seq[string]) =
+  proc buildAllTokens(self: Service, accounts: seq[string], store: bool) =
     if not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled() or
       accounts.len == 0:
         return
@@ -554,16 +560,17 @@ QtObject:
       tptr: cast[ByteAddress](prepareTokensTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAllTokensBuilt",
-      accounts: accounts
+      accounts: accounts,
+      storeResult: store
     )
     self.threadpool.start(arg)
 
   proc onIsWalletEnabledChanged*(self: Service) {.slot.} =
-    self.buildAllTokens(self.getAddresses())
+    self.buildAllTokens(self.getAddresses(), store = true)
     self.checkRecentHistory()
     self.startWallet()
 
-  proc getCurrentCurrencyIfEmpty(self: Service, currency: string): string =
+  proc getCurrentCurrencyIfEmpty(self: Service, currency = ""): string =
     if currency != "":
       return currency
     else:
@@ -577,9 +584,15 @@ QtObject:
   proc findTokenSymbolByAddress*(self: Service, address: string): string =
     return self.tokenService.findTokenSymbolByAddress(address)
 
-  proc getCurrencyBalanceForAddress*(self: Service, address: string, currency: string = ""): float64 =
-    let chainIds = self.networkService.getNetworks().map(n => n.chainId)
-    return self.getAccountByAddress(address).getCurrencyBalance(chainIds, self.getCurrentCurrencyIfEmpty(currency))
+  proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Service, address: string): tuple[balance: float64, fetched: bool] =
+    if self.walletAccountsContainsAddress(address):
+      let chainIds = self.networkService.getNetworks().map(n => n.chainId)
+      result.balance = self.getAccountByAddress(address).getCurrencyBalance(chainIds, self.getCurrentCurrencyIfEmpty())
+      result.fetched = true
+    else:
+      self.buildAllTokens(@[address], store = false)
+      result.balance = 0.0
+      result.fetched = false
 
   proc getTotalCurrencyBalance*(self: Service, currency: string = ""): float64 =
     let chainIds = self.networkService.getNetworks().filter(a => a.enabled).map(a => a.chainId)

@@ -112,11 +112,21 @@ const fetchDerivedAddressDetailsTask*: Task = proc(argEncoded: string) {.gcsafe,
 type
   BuildTokensTaskArg = ref object of QObjectTaskArg
     accounts: seq[string]
+    storeResult: bool
 
 const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[BuildTokensTaskArg](argEncoded)
-  let response = backend.getWalletToken(arg.accounts)
-  arg.finish(response.result)
+  var output = %*{
+    "result": "",
+    "storeResult": false
+  }
+  try:
+    let response = backend.getWalletToken(arg.accounts)
+    output["result"] = response.result
+    output["storeResult"] = %* arg.storeResult
+  except Exception as e:
+    let err = fmt"Error getting wallet tokens"
+  arg.finish(output)
 
 #################################################
 # Async add migrated keypair
