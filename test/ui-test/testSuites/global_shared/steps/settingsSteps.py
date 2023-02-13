@@ -58,6 +58,16 @@ def step(context):
 @Given("the user opens own profile popup")
 def step(context: any):
     the_user_opens_own_profile_popup()
+
+@Given("Application Settings \"|any|\" is open")
+def step(context: any, settings_type:str):
+    #TODO: Implement parameters for settings
+    _settingsScreen.open_advanced_settings()
+
+@Given("\"|any|\" is toggled on under Experimental features")
+def step(context: any, settings_type:str):
+    #TODO: Implement parameters for settings
+    _settingsScreen.activate_community_permission_settings()
     
 #########################
 ### ACTIONS region:
@@ -197,7 +207,7 @@ def step(context: any):
     _statusMain.navigate_to_edit_profile()
 
 @When("the user closes the popup")
-def step(context: any):
+def step(context: any): 
     _statusMain.close_popup()
 
 #########################

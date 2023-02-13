@@ -218,6 +218,14 @@ def step(context, communityDescription: str):
 def step(context, color: str):
     _statusCommunityScreen.verify_community_overview_color(color)
     
+  
+
+@Given("\"Test-Community\" community exists")
+def step(context):
+    test.warning("TODO implement \"Test-Community\" community exists")
+
+
+    
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:
 ########################################################################### 
