@@ -1,79 +1,102 @@
-import NimQml, strformat, strutils, tables
+import NimQml, strformat, chronicles, strutils, tables, json
+
+import ../../../backend/backend as backend
+
+import ../../../app/core/eventemitter
+import ../../../app/core/tasks/[qt, threadpool]
+import ../../../app/core/signals/types
+
 import ../settings/service as settings_service
 import ../token/service as token_service
-import ./dto, ./utils
-import ../../common/cache
+import ./dto
+
+include  ../../common/json_utils
+include async_tasks
 
 export dto
 
-const DECIMALS_CALCULATION_CURRENCY = "USD"
+# Signals which may be emitted by this service:
+const SIGNAL_CURRENCY_FORMATS_UPDATED* = "currencyFormatsUpdated"
+
+type
+  CurrencyFormatsUpdatedArgs* = ref object of Args
+    discard
 
 QtObject:
   type Service* = ref object of QObject
+    events: EventEmitter
+    threadpool: ThreadPool
     tokenService: token_service.Service
     settingsService: settings_service.Service
-    isCurrencyFiatCache: Table[string, bool]                    # Fiat info does not change, we can fetch/calculate once and
-    fiatCurrencyFormatCache: Table[string, CurrencyFormatDto]   # keep the results forever.
-    tokenCurrencyFormatCache: TimedCache[CurrencyFormatDto]     # Token format changes with price, so we use a timed cache.
+    currencyFormatCache: Table[string, CurrencyFormatDto]
+
+  # Forward declarations
+  proc fetchAllCurrencyFormats(self: Service)
+  proc getCachedCurrencyFormats(self: Service): Table[string, CurrencyFormatDto]
 
   proc delete*(self: Service) =
     self.QObject.delete
 
   proc newService*(
+    events: EventEmitter,
+    threadpool: ThreadPool,
     tokenService: token_service.Service,
     settingsService: settings_service.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup
+    result.events = events
+    result.threadpool = threadpool
     result.tokenService = tokenService
     result.settingsService = settingsService
-    result.tokenCurrencyFormatCache = newTimedCache[CurrencyFormatDto]()
   
   proc init*(self: Service) =
-    discard
+    self.events.on(SignalType.Wallet.event) do(e:Args):
+      var data = WalletSignal(e)
+      case data.eventType:
+        of "wallet-currency-tick-update-format":
+          self.fetchAllCurrencyFormats()
+          discard
+    # Load cache from DB
+    self.currencyFormatCache = self.getCachedCurrencyFormats()
+    # Trigger async fetch
+    self.fetchAllCurrencyFormats()
 
-  proc isCurrencyFiat(self: Service, symbol: string): bool =
-    if not self.isCurrencyFiatCache.hasKey(symbol):
-      self.isCurrencyFiatCache[symbol] = isCurrencyFiat(symbol)
-    return self.isCurrencyFiatCache[symbol]
+  proc jsonToFormatsTable(node: JsonNode) : Table[string, CurrencyFormatDto] =
+    result = initTable[string, CurrencyFormatDto]()
 
-  proc getFiatCurrencyFormat(self: Service, symbol: string): CurrencyFormatDto =
-    if not self.fiatCurrencyFormatCache.hasKey(symbol):
-      self.fiatCurrencyFormatCache[symbol] = CurrencyFormatDto(
-        symbol: toUpperAscii(symbol),
-        displayDecimals: getFiatDisplayDecimals(symbol),
-        stripTrailingZeroes: false
-      )
-    return self.fiatCurrencyFormatCache[symbol]
+    for (symbol, formatObj) in node.pairs:
+      result[symbol] = formatObj.toCurrencyFormatDto()
 
-  proc getTokenCurrencyFormat(self: Service, symbol: string): CurrencyFormatDto =
-    if self.tokenCurrencyFormatCache.isCached(symbol):
-      return self.tokenCurrencyFormatCache.get(symbol)
+  proc getCachedCurrencyFormats(self: Service): Table[string, CurrencyFormatDto] =
+    try:
+      let response = backend.getCachedCurrencyFormats()
+      result = jsonToFormatsTable(response.result)
+    except Exception as e:
+      let errDesription = e.msg
+      error "error getCachedCurrencyFormats: ", errDesription
 
-    var updateCache = true
-    let pegSymbol = self.tokenService.getTokenPegSymbol(symbol)
-    if pegSymbol != "":
-      let currencyFormat = self.getFiatCurrencyFormat(pegSymbol)
-      result = CurrencyFormatDto(
-        symbol: symbol,
-        displayDecimals: currencyFormat.displayDecimals,
-        stripTrailingZeroes: currencyFormat.stripTrailingZeroes
-      )
-      updateCache = true
-    else:
-      let price = self.tokenService.getCachedTokenPrice(symbol, DECIMALS_CALCULATION_CURRENCY, true)
-      result = CurrencyFormatDto(
-        symbol: symbol,
-        displayDecimals: getTokenDisplayDecimals(price),
-        stripTrailingZeroes: true
-      )
-      updateCache = self.tokenService.isCachedTokenPriceRecent(symbol, DECIMALS_CALCULATION_CURRENCY)
+  proc onAllCurrencyFormatsFetched(self: Service, response: string) {.slot.} =
+    try:
+      let responseObj = response.parseJson
+      if (responseObj.kind == JObject):
+        let formatsPerSymbol = jsonToFormatsTable(responseObj)
+        for symbol, format in formatsPerSymbol:
+          self.currencyFormatCache[symbol] = format
+        self.events.emit(SIGNAL_CURRENCY_FORMATS_UPDATED, CurrencyFormatsUpdatedArgs())
+    except Exception as e:
+      let errDescription = e.msg
+      error "error onAllCurrencyFormatsFetched: ", errDescription
 
-    if updateCache:
-      self.tokenCurrencyFormatCache.set(symbol, result)
+  proc fetchAllCurrencyFormats(self: Service) =
+    let arg = FetchAllCurrencyFormatsTaskArg(
+      tptr: cast[ByteAddress](fetchAllCurrencyFormatsTaskArg),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAllCurrencyFormatsFetched",
+    )
+    self.threadpool.start(arg)
 
   proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
-    if self.isCurrencyFiat(symbol):
-      return self.getFiatCurrencyFormat(symbol)
-    else:
-      return self.getTokenCurrencyFormat(symbol)
+    if not self.currencyFormatCache.hasKey(symbol):
+      return newCurrencyFormatDto(symbol)
+    return self.currencyFormatCache[symbol]

@@ -84,6 +84,10 @@ proc init*(self: Controller) =
     let args = TransactionsLoadedArgs(e)
     self.delegate.setHistoryFetchState(args.address, isFetching = false)
 
+  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
+    # TODO: Rebuild Transaction items
+    discard
+
 proc watchPendingTransactions*(self: Controller): seq[TransactionDto] =
   return self.transactionService.watchPendingTransactions()
 

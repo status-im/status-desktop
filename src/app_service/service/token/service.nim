@@ -50,7 +50,6 @@ QtObject:
     priceCache: TimedCache[float64]
 
   proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64)
-  proc initTokenPrices(self: Service, prices: Table[string, Table[string, float64]])
   proc jsonToPricesMap(node: JsonNode): Table[string, Table[string, float64]] 
 
   proc delete*(self: Service) =
@@ -72,13 +71,6 @@ QtObject:
   proc loadData*(self: Service) =
     if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
       return
-
-    try:
-      let response = backend.getCachedPrices()
-      let prices = jsonToPricesMap(response.result)
-      self.initTokenPrices(prices)
-    except Exception as e:
-      error "Cached prices init error", errDesription = e.msg
 
     try:
       let networks = self.networkService.getNetworks()
@@ -157,14 +149,6 @@ QtObject:
       result[symbol] = initTable[string, float64]()
       for (currency, price) in pricePerCurrency.pairs:
         result[symbol][currency] = price.getFloat
-
-  proc initTokenPrices(self: Service, prices: Table[string, Table[string, float64]]) =
-    var cacheTable: Table[string, float64]
-    for token, pricesPerCurrency in prices:
-      for currency, price in pricesPerCurrency:
-        let cacheKey = getTokenPriceCacheKey(token, currency)
-        cacheTable[cacheKey] = price
-    self.priceCache.init(cacheTable)
 
   proc updateTokenPrices*(self: Service, tokens: seq[WalletTokenDto]) =
     # Use data fetched by walletAccountService to update local price cache

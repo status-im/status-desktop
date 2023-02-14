@@ -141,6 +141,9 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     self.refreshWalletAccounts()
 
+  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
+    self.refreshWalletAccounts()
+
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
     let args = KeycardActivityArgs(e)
     if not args.success:
