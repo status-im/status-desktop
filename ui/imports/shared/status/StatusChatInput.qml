@@ -1175,8 +1175,7 @@ Rectangle {
 
             ColumnLayout {
                 id: inputLayout
-
-                anchors.fill: parent
+                width: parent.width
                 spacing: 4
 
                 StatusChatInputReplyArea {
@@ -1207,17 +1206,15 @@ Rectangle {
 
                 RowLayout {
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
+                    Layout.minimumHeight: (messageInputField.contentHeight + messageInputField.topPadding + messageInputField.bottomPadding)
+                    Layout.maximumHeight: 112
                     spacing: Style.current.radius
-
                     StatusScrollView {
                         id: inputScrollView
-
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.leftMargin: 12
                         Layout.rightMargin: 12
-                        Layout.maximumHeight: 112
                         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
                         padding: 0
@@ -1285,13 +1282,14 @@ Rectangle {
                             onTextChanged: {
                                 if (length <= control.messageLimit) {
                                     var symbols = ":='xX><0O;*dB8-D#%\\";
-                                    if ((length > 1) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1))) !== -1)
-                                            && (!getText((cursorPosition - 7), cursorPosition).includes("http"))) {
+                                    var symbolIdx = ((cursorPosition > 2) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1)))!==-1))
+                                                    ? (cursorPosition -1) : (symbols.indexOf(getText(0, 1))!==-1) ? 2 : -1;
+                                    if ((getText(symbolIdx-2, (symbolIdx-1)) === " ") || (symbolIdx === 2)) {
                                         const emojis = StatusQUtils.Emoji.emojiJSON.emoji_json.filter(function (emoji) {
-                                            if (emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition)) ||
-                                                    emoji.aliases_ascii.includes(getText((cursorPosition - 3), cursorPosition))) {
-                                                var has2Chars = emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition));
-                                                replaceWithEmoji("", getText(cursorPosition - (has2Chars ? 2 : 3), cursorPosition), emoji.unicode);
+                                            if (emoji.aliases_ascii.includes(getText((symbolIdx-1), (symbolIdx+1))) ||
+                                                emoji.aliases_ascii.includes(getText((symbolIdx-2), (symbolIdx+1)))) {
+                                                var has2Chars = emoji.aliases_ascii.includes(getText((symbolIdx-4), (symbolIdx-2)));
+                                                replaceWithEmoji("", getText((symbolIdx - (has2Chars ? 3 : 2)), symbolIdx), emoji.unicode);
                                             }
                                         })
                                     }
@@ -1460,7 +1458,7 @@ Rectangle {
                                 color: "transparent"
                                 onClicked: {
                                     control.stickersPopupOpened = true
-                                    
+
                                     togglePopup(control.stickersPopup, stickersBtn)
                                 }
                             }
