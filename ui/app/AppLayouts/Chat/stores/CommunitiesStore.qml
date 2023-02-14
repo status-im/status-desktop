@@ -169,7 +169,7 @@ QtObject {
 
     //MINTING
 
-    property var mintTokensModel: mintingModuleInst.tokensModel
+    property var mintTokensModel: !!mintingModuleInst ? mintingModuleInst.tokensModel : null
 
     function mintCollectible(address, name, symbol, description, supply,
                              infiniteSupply, transferable, selfDestruct, network)
