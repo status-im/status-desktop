@@ -172,7 +172,9 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.tokenService = token_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.networkService
   )
-  result.currencyService = currency_service.newService(result.tokenService, result.settingsService)
+  result.currencyService = currency_service.newService(
+    statusFoundation.events, statusFoundation.threadpool, result.tokenService, result.settingsService
+  )
   result.collectibleService = collectible_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService)
   result.walletAccountService = wallet_account_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.settingsService, result.accountsService,

@@ -121,6 +121,8 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     self.setTotalCurrencyBalance()
     self.view.setTokensLoading(false)
+  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
+    self.setTotalCurrencyBalance()
 
   self.controller.init()
   self.view.load()

@@ -27,6 +27,7 @@ type
     currentAccountIndex: int
 
 proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]])
+proc onCurrencyFormatsUpdated(self: Module)
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -105,6 +106,9 @@ method load*(self: Module) =
     let arg = TokensPerAccountArgs(e)
     self.onTokensRebuilt(arg.accountsTokens)
 
+  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
+    self.onCurrencyFormatsUpdated()
+
   self.controller.init()
   self.view.load()
   self.switchAccount(0)
@@ -124,6 +128,11 @@ proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[Wall
   if not accountsTokens.contains(walletAccount.address):
     return
   self.setAssets(accountsTokens[walletAccount.address])
+
+proc onCurrencyFormatsUpdated(self: Module) =
+  # Update assets
+  let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
+  self.setAssets(walletAccount.tokens)
 
 method findTokenSymbolByAddress*(self: Module, address: string): string =
   return self.controller.findTokenSymbolByAddress(address)
