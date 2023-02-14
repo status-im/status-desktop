@@ -5,6 +5,7 @@ import AppLayouts.Chat.layouts 1.0
 import AppLayouts.Chat.stores 1.0
 import AppLayouts.Chat.views.communities 1.0
 
+import StatusQ.Core.Utils 0.1
 import utils 1.0
 
 SettingsPageLayout {
@@ -57,8 +58,8 @@ SettingsPageLayout {
                                                ? d.permissionsViewState : d.welcomeViewState
 
         function initializeData() {
-            holdingsToEditModel = defaultListObject.createObject(d)
-            channelsToEditModel = defaultListObject.createObject(d)
+            holdingsToEditModel = emptyModel
+            channelsToEditModel = emptyModel
             permissionTypeToEdit = PermissionTypes.Type.None
             isPrivateToEditValue = false
         }
@@ -146,6 +147,8 @@ SettingsPageLayout {
         id: newPermissionView
 
         CommunityNewPermissionView {
+            id: communityNewPermissionView
+
             viewWidth: root.viewWidth
 
             rootStore: root.rootStore
@@ -190,6 +193,55 @@ SettingsPageLayout {
                 property: "dirty"
                 value: isEditState && dirty
             }
+
+            ModelChangeTracker {
+                id: holdingsTracker
+
+                model: communityNewPermissionView.dirtyValues.holdingsModel
+            }
+
+            ModelChangeTracker {
+                id: channelsTracker
+
+                model: communityNewPermissionView.dirtyValues.channelsModel
+            }
+
+            Binding {
+                target: root
+                property: "saveChangesButtonEnabled"
+                value: !communityNewPermissionView.duplicationWarningVisible
+            }
+
+            duplicationWarningVisible: {
+                // dependencies
+                holdingsTracker.revision
+                channelsTracker.revision
+                communityNewPermissionView.dirtyValues.permissionType
+                communityNewPermissionView.dirtyValues.isPrivate
+
+                const model = root.store.permissionsModel
+
+                for (let i = 0; i < model.count; i++) {
+                    if (root.state === d.editPermissionViewState
+                            && d.permissionIndexToEdit === i)
+                        continue
+
+                    const item = model.get(i)
+
+                    const holdings = item.holdingsListModel
+                    const channels = item.channelsListModel
+                    const permissionType = item.permissionType
+
+                    const same = (a, b) => ModelUtils.checkEqualitySet(a, b, ["key"])
+
+                    if (same(dirtyValues.holdingsModel, holdings)
+                            && same(dirtyValues.channelsModel, channels)
+                            && dirtyValues.permissionType === permissionType)
+                        return true
+                }
+
+                return false
+            }
         }
     }
 
@@ -201,19 +253,24 @@ SettingsPageLayout {
             rootStore: root.rootStore
             store: root.store
 
-            onEditPermissionRequested: {
+            function setInitialValuesFromIndex(index) {
                 const item = root.store.permissionsModel.get(index)
 
-                d.permissionIndexToEdit = index
                 d.holdingsToEditModel = item.holdingsListModel
                 d.channelsToEditModel = item.channelsListModel
                 d.permissionTypeToEdit = item.permissionType
                 d.isPrivateToEditValue = item.isPrivate
+            }
+
+            onEditPermissionRequested: {
+                setInitialValuesFromIndex(index)
+                d.permissionIndexToEdit = index
                 root.state = d.editPermissionViewState
             }
 
             onDuplicatePermissionRequested: {
-                root.store.duplicatePermission(index)
+                setInitialValuesFromIndex(index)
+                root.state = d.newPermissionViewState
             }
 
             onRemovePermissionRequested: {
@@ -222,8 +279,7 @@ SettingsPageLayout {
         }
     }
 
-    Component {
-        id: defaultListObject
-        ListModel {}
+    ListModel {
+        id: emptyModel
     }
 }

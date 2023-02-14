@@ -6,4 +6,5 @@ CommunityProfilePopupInviteMessagePanel 1.0 CommunityProfilePopupInviteMessagePa
 HidePermissionPanel 1.0 HidePermissionPanel.qml
 JoinPermissionsOverlayPanel 1.0 JoinPermissionsOverlayPanel.qml
 PermissionConflictWarningPanel 1.0 PermissionConflictWarningPanel.qml
+PermissionDuplicationWarningPanel 1.0 PermissionDuplicationWarningPanel.qml
 PermissionQualificationPanel 1.0 PermissionQualificationPanel.qml

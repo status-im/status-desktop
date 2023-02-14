@@ -27,6 +27,7 @@ SplitView {
 
             isEditState: isEditStateCheckBox.checked
             isPrivate: isPrivateCheckBox.checked
+            duplicationWarningVisible: isDuplicationWarningVisibleCheckBox.checked
 
             store: CommunitiesStore {
                 readonly property var assetsModel: AssetsModel {}
@@ -48,10 +49,6 @@ SplitView {
 
                 function editPermission(index, holdings, permissions, channels, isPrivate) {
                     logs.logEvent("CommunitiesStore::editPermission - index: " + index)
-                }
-
-                function duplicatePermission(index) {
-                    logs.logEvent("CommunitiesStore::duplicatePermission - index: " + index)
                 }
 
                 function removePermission(index) {
@@ -110,6 +107,12 @@ SplitView {
                     id: isPrivateCheckBox
 
                     text: "Is private"
+                }
+
+                CheckBox {
+                    id: isDuplicationWarningVisibleCheckBox
+
+                    text: "Is duplication warning visible"
                 }
             }
 

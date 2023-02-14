@@ -195,5 +195,6 @@
         <file>StatusQ/Components/LoadingComponent.qml</file>
         <file>StatusQ/Core/Utils/ModelUtils.qml</file>
         <file>StatusQ/Core/Utils/ModelsComparator.qml</file>
+        <file>StatusQ/Core/Utils/ModelChangeTracker.qml</file>
     </qresource>
 </RCC>
