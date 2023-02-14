@@ -6,14 +6,14 @@ QtObject {
 
     property var profileModule
 
-    property string pubkey: userProfile.pubKey
-    property string name: userProfile.name
-    property string username: userProfile.username
-    property string displayName: userProfile.displayName
-    property string preferredName: userProfile.preferredName
-    property string profileLargeImage: userProfile.largeImage
-    property string icon: userProfile.icon
-    property bool userDeclinedBackupBanner: localAccountSensitiveSettings.userDeclinedBackupBanner
+    property string pubkey: !!Global.userProfile? Global.userProfile.pubKey : ""
+    property string name: !!Global.userProfile? Global.userProfile.name : ""
+    property string username: !!Global.userProfile? Global.userProfile.username : ""
+    property string displayName: !!Global.userProfile? Global.userProfile.displayName : ""
+    property string preferredName: !!Global.userProfile? Global.userProfile.preferredName : ""
+    property string profileLargeImage: !!Global.userProfile? Global.userProfile.largeImage : ""
+    property string icon: !!Global.userProfile? Global.userProfile.icon : ""
+    property bool userDeclinedBackupBanner: Global.appIsReady? localAccountSensitiveSettings.userDeclinedBackupBanner : false
     property var privacyStore: profileSectionModule.privacyModule
 
     readonly property string bio: profileModule.bio

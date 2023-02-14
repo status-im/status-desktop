@@ -1,6 +1,7 @@
 pragma Singleton
 
 import QtQuick 2.12
+import utils 1.0
 
 QtObject {
     id: root
@@ -11,10 +12,10 @@ QtObject {
 
     property var profileSectionModuleInst: profileSectionModule
     property var privacyModule: profileSectionModuleInst.privacyModule
-    property var userProfileInst: !!userProfile ? userProfile : null
-    property var walletSectionInst: !!walletSection ? walletSection : null
-    property var appSettingsInst: !!appSettings ? appSettings : null
-    property var accountSensitiveSettings: !!localAccountSensitiveSettings ? localAccountSensitiveSettings : null
+    property var userProfileInst: !!Global.userProfile? Global.userProfile : null
+    property var walletSectionInst: Global.appIsReady && !!walletSection? walletSection : null
+    property var appSettingsInst: Global.appIsReady && !!appSettings? appSettings : null
+    property var accountSensitiveSettings: Global.appIsReady && !!localAccountSensitiveSettings? localAccountSensitiveSettings : null
     property real volume: !!appSettingsInst ? appSettingsInst.volume * 0.01 : 0.5
     property bool isWalletEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.isWalletEnabled : false
     property bool notificationSoundsEnabled: !!appSettingsInst ? appSettingsInst.notificationSoundsEnabled : true
@@ -28,18 +29,18 @@ QtObject {
 //    property string gasEthValue: !!walletModelInst ? walletModelInst.gasView.getGasEthValue : "0"
 
     property CurrenciesStore currencyStore: CurrenciesStore {}
-    property string currentCurrency: walletSection.currentCurrency
+    property string currentCurrency: Global.appIsReady? walletSection.currentCurrency : ""
 //    property string defaultCurrency: !!walletModelInst ? walletModelInst.balanceView.defaultCurrency : "0"
 //    property string fiatValue: !!walletModelInst ? walletModelInst.balanceView.getFiatValue : "0"
 //    property string cryptoValue: !!walletModelInst ? walletModelInst.balanceView.getCryptoValue : "0"
 
     property var history: typeof walletSectionTransactions !== "undefined" ? walletSectionTransactions
                                                                           : null
-    property var historyTransactions: walletSectionTransactions.model
+    property var historyTransactions: Global.appIsReady? walletSectionTransactions.model : null
     property bool isNonArchivalNode: history ? history.isNonArchivalNode
                                              : false
-    property bool tokensLoading: walletSection.tokensLoading
-    property var currentAccount: walletSectionCurrent
+    property bool tokensLoading: Global.appIsReady? walletSection.tokensLoading : false
+    property var currentAccount: Global.appIsReady? walletSectionCurrent : null
     property var marketValueStore: TokenMarketValuesStore{}
 
     function getNetworkColor(chainId) {
@@ -183,7 +184,9 @@ QtObject {
     }
 
     function findTokenSymbolByAddress(address) {
-        return  walletSectionAllTokens.findTokenSymbolByAddress(address)
+        if (Global.appIsReady)
+            return walletSectionAllTokens.findTokenSymbolByAddress(address)
+        return ""
     }
 
     function getNameForSavedWalletAddress(address) {
@@ -223,16 +226,18 @@ QtObject {
     }
 
     function getHistoricalDataForToken(symbol, currency) {
-        walletSectionAllTokens.getHistoricalDataForToken(symbol,currency)
+        if (Global.appIsReady)
+            walletSectionAllTokens.getHistoricalDataForToken(symbol,currency)
     }
 
-    property bool marketHistoryIsLoading: walletSectionAllTokens.marketHistoryIsLoading
+    property bool marketHistoryIsLoading: Global.appIsReady? walletSectionAllTokens.marketHistoryIsLoading : false
 
     // TODO: range until we optimize to cache the data and abuse the requests
     function fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum) {
-        walletSectionAllTokens.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum)
+        if (Global.appIsReady)
+            walletSectionAllTokens.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum)
     }
 
-    property bool balanceHistoryIsLoading: walletSectionAllTokens.balanceHistoryIsLoading
+    property bool balanceHistoryIsLoading: Global.appIsReady? walletSectionAllTokens.balanceHistoryIsLoading : false
 
 }
