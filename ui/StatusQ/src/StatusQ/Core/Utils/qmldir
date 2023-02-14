@@ -2,6 +2,7 @@ module StatusQ.Core.Utils
 
 EmojiJSON 1.0 emojiList.js
 JSONListModel 0.1 JSONListModel.qml
+ModelChangeTracker 0.1 ModelChangeTracker.qml
 ModelsComparator 0.1 ModelsComparator.qml
 XSS 1.0 xss.js
 singleton Emoji 0.1 Emoji.qml

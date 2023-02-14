@@ -44,6 +44,8 @@ StatusScrollView {
 
     readonly property alias dirtyValues: d.dirtyValues
 
+    property alias duplicationWarningVisible: duplicationPanel.visible
+
     signal createPermissionClicked
 
     function resetChanges() {
@@ -156,7 +158,7 @@ StatusScrollView {
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
 
-    onPermissionTypeChanged: d.loadInitValues()
+    onPermissionTypeChanged: Qt.callLater(() => d.loadInitValues())
 
     ColumnLayout {
         id: mainLayout
@@ -517,6 +519,14 @@ StatusScrollView {
             channels: store.permissionConflict.channels
         }
 
+        PermissionDuplicationWarningPanel {
+            id: duplicationPanel
+
+            visible: false
+            Layout.fillWidth: true
+            Layout.topMargin: 50 // by desing
+        }
+
         StatusButton {
             visible: !root.isEditState
             Layout.topMargin: conflictPanel.visible ? conflictPanel.Layout.topMargin : 24 // by design
@@ -524,6 +534,7 @@ StatusScrollView {
             enabled: d.dirtyValues.holdingsModel.count > 0
                      && d.dirtyValues.permissionType !== PermissionTypes.Type.None
                      && (d.dirtyValues.channelsModel.count > 0 || d.isCommunityPermission)
+                     && !root.duplicationWarningVisible
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true

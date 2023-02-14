@@ -39,10 +39,6 @@ SplitView {
                     readonly property var collectiblesModel: CollectiblesModel {
                         id: collectiblesModel
                     }
-
-                    function duplicatePermission(index) {
-                        logs.logEvent("CommunitiesStore::duplicatePermission - index: " + index)
-                    }
                 }
 
                 rootStore: QtObject {

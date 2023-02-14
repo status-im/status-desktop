@@ -179,14 +179,6 @@ QtObject {
         createPermission(holdings, permissionType, isPrivate, channels, index)
     }
 
-    function duplicatePermission(index) {
-        // TO BE REPLACED: Call to backend
-        console.log("TODO: Duplicate permissions - backend call")
-        const permission = root.permissionsModel.get(index)
-        createPermission(permission.holdingsListModel, permission.permissionType,
-                         permission.isPrivate, permission.channelsListModel)
-    }
-
     function removePermission(index) {
         console.log("TODO: Remove permissions - backend call")
         root.permissionsModel.remove(index)
