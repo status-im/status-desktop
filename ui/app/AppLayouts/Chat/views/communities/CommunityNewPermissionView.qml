@@ -11,8 +11,6 @@ import StatusQ.Core.Utils 0.1
 import utils 1.0
 import shared.panels 1.0
 
-import SortFilterProxyModel 0.2
-
 import AppLayouts.Chat.helpers 1.0
 import AppLayouts.Chat.panels.communities 1.0
 
@@ -33,6 +31,13 @@ StatusScrollView {
         root.isPrivate !== d.dirtyValues.isPrivate ||
         root.permissionType !== d.dirtyValues.permissionType
 
+    readonly property alias dirtyValues: d.dirtyValues
+
+    readonly property bool isFullyFilled:
+        dirtyValues.holdingsModel.count > 0 &&
+        dirtyValues.permissionType !== PermissionTypes.Type.None &&
+        (d.isCommunityPermission || dirtyValues.channelsModel.count > 0)
+
     property int permissionType: PermissionTypes.Type.None
     property bool isPrivate: false
 
@@ -41,8 +46,6 @@ StatusScrollView {
 
     // roles: itemId, text, emoji, color
     property var channelsModel: ListModel {}
-
-    readonly property alias dirtyValues: d.dirtyValues
 
     property alias duplicationWarningVisible: duplicationPanel.visible
 
@@ -81,8 +84,7 @@ StatusScrollView {
         readonly property int dropdownVerticalOffset: 1
 
         readonly property bool isCommunityPermission:
-            dirtyValues.permissionType === PermissionTypes.Type.Admin ||
-            dirtyValues.permissionType === PermissionTypes.Type.Member
+            PermissionTypes.isCommunityPermission(dirtyValues.permissionType)
 
         onIsCommunityPermissionChanged: {
             if (isCommunityPermission) {
@@ -511,9 +513,10 @@ StatusScrollView {
         PermissionConflictWarningPanel {
             id: conflictPanel
 
-            visible: store.permissionConflict.exists
             Layout.fillWidth: true
             Layout.topMargin: 50 // by desing
+
+            visible: store.permissionConflict.exists
             holdings: store.permissionConflict.holdings
             permissions: store.permissionConflict.permissions
             channels: store.permissionConflict.channels
@@ -522,22 +525,23 @@ StatusScrollView {
         PermissionDuplicationWarningPanel {
             id: duplicationPanel
 
-            visible: false
             Layout.fillWidth: true
             Layout.topMargin: 50 // by desing
+
+            visible: false
         }
 
         StatusButton {
-            visible: !root.isEditState
-            Layout.topMargin: conflictPanel.visible ? conflictPanel.Layout.topMargin : 24 // by design
-            text: qsTr("Create permission")
-            enabled: d.dirtyValues.holdingsModel.count > 0
-                     && d.dirtyValues.permissionType !== PermissionTypes.Type.None
-                     && (d.dirtyValues.channelsModel.count > 0 || d.isCommunityPermission)
-                     && !root.duplicationWarningVisible
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
+            Layout.topMargin: conflictPanel.visible
+                              ? conflictPanel.Layout.topMargin
+                              : Style.current.bigPadding
+
+            visible: !root.isEditState
+            text: qsTr("Create permission")
+            enabled: root.isFullyFilled && !root.duplicationWarningVisible
 
             onClicked: root.createPermissionClicked()
         }
