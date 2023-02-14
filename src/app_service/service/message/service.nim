@@ -247,11 +247,12 @@ QtObject:
           continue
 
         # Ignore messages older than current chat cursor
-        let currentChatCursor = self.initOrGetMessageCursor(chatId)
-        let msgCursorValue = initCursorValue(msg.id, msg.clock)
-        if(not currentChatCursor.isLessThan(msgCursorValue)):
-          currentChatCursor.makeObsolete()
-          continue
+        if(self.isChatCursorInitialized(chatId)):
+          let currentChatCursor = self.initOrGetMessageCursor(chatId)
+          let msgCursorValue = initCursorValue(msg.id, msg.clock)
+          if(not currentChatCursor.isLessThan(msgCursorValue)):
+            currentChatCursor.makeObsolete()
+            continue
 
         if(msg.editedAt > 0):
           let data = MessageEditedArgs(chatId: msg.localChatId, message: msg)
