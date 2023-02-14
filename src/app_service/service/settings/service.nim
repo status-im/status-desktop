@@ -17,7 +17,7 @@ export settings_dto
 export stickers_dto
 
 # Default values:
-const DEFAULT_CURRENCY* = "usd"
+const DEFAULT_CURRENCY* = "USD"
 const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
 const DEFAULT_FLEET* = $Fleet.StatusProd
 
@@ -106,7 +106,7 @@ QtObject:
     if(self.settings.currency.len == 0):
       self.settings.currency = DEFAULT_CURRENCY
 
-    return self.settings.currency
+    return self.settings.currency.toUpperAscii()
 
   proc saveDappsAddress*(self: Service, value: string): bool =
     if(self.saveSetting(KEY_DAPPS_ADDRESS, value)):

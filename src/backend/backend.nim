@@ -105,9 +105,6 @@ rpc(fetchPrices, "wallet"):
   symbols: seq[string]
   currencies: seq[string]
 
-rpc(getCachedPrices, "wallet"):
-  discard
-
 rpc(generateAccountWithDerivedPath, "accounts"):
   password: string
   name: string
@@ -292,8 +289,8 @@ rpc(getBalanceHistory, "wallet"):
   address: string
   timeInterval: int
 
-rpc(isCurrencyFiat, "wallet"):
-  code: string
+rpc(getCachedCurrencyFormats, "wallet"):
+  discard
 
-rpc(getFiatCurrencyMinorUnit, "wallet"):
-  code: string
+rpc(fetchAllCurrencyFormats, "wallet"):
+  discard
