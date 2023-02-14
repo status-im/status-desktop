@@ -94,6 +94,10 @@ ListModel {
          section: "Popups"
     }
     ListElement {
+         title: "CommunityTokenPermissionsPopup"
+         section: "Popups"
+    }
+    ListElement {
         title: "MembersSelector"
         section: "Components"
     }
