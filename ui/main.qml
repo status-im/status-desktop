@@ -165,6 +165,7 @@ StatusWindow {
                 appLoadingAnimation.active = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
                 appLoadingAnimation.runningProgressAnimation = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
                 Global.userProfile = userProfile
+                Global.appIsReady = true
 
                 loader.sourceComponent = app
 

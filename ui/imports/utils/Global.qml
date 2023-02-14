@@ -11,6 +11,7 @@ QtObject {
     property int settingsSubsection: Constants.settingsSubsection.profile
 
     property var userProfile
+    property bool appIsReady: false
 
     signal openPinnedMessagesPopupRequested(var store, var messageStore, var pinnedMessagesModel, string messageToPin)
     signal openCommunityProfilePopupRequested(var store, var community, var chatCommunitySectionModule)

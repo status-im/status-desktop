@@ -27,7 +27,7 @@ QtObject {
         return 0;
     }
 
-    property string currentCurrency: walletSection.currentCurrency
+    property string currentCurrency: Global.appIsReady? walletSection.currentCurrency : ""
     property int currentCurrencyModelIndex: getModelIndexForShortName(currentCurrency)
     property string currentCurrencySymbol: currenciesModel.get(currentCurrencyModelIndex).symbol
 

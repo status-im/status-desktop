@@ -67,11 +67,11 @@ QtObject {
         stickersModule: stickersModuleInst
     }
 
-    property bool browserMenuItemEnabled: localAccountSensitiveSettings.isBrowserEnabled
-    property bool walletMenuItemEnabled: localAccountSensitiveSettings.isWalletEnabled
+    property bool browserMenuItemEnabled: Global.appIsReady? localAccountSensitiveSettings.isBrowserEnabled : false
+    property bool walletMenuItemEnabled: Global.appIsReady? localAccountSensitiveSettings.isWalletEnabled : false
 
-    property var communitiesModuleInst: communitiesModule
-    property var communitiesList: communitiesModuleInst.model
+    property var communitiesModuleInst: Global.appIsReady? communitiesModule : null
+    property var communitiesList: !!communitiesModuleInst? communitiesModuleInst.model : null
     property var communitiesProfileModule: profileSectionModuleInst.communitiesModule
 
     property ListModel mainMenuItems: ListModel {

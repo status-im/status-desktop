@@ -7,9 +7,9 @@ QtObject {
     property var contactsModule
 
     property var globalUtilsInst: globalUtils
-    property var mainModuleInst: mainModule
+    property var mainModuleInst: Global.appIsReady? mainModule : null
 
-    property string myPublicKey: userProfile.pubKey
+    property string myPublicKey: !!Global.userProfile? Global.userProfile.pubKey : ""
 
     property var myContactsModel: contactsModule.myMutualContactsModel
     property var blockedContactsModel: contactsModule.blockedContactsModel
