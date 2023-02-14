@@ -64,4 +64,9 @@ QtObject {
 
         return ""
     }
+
+    function isCommunityPermission(permissionType) {
+        return permissionType === PermissionTypes.Type.Admin
+                || permissionType === PermissionTypes.Type.Member
+    }
 }

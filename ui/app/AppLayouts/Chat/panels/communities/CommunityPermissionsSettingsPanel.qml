@@ -162,6 +162,37 @@ SettingsPageLayout {
             permissionType: d.permissionTypeToEdit
             isPrivate: d.isPrivateToEditValue
 
+            duplicationWarningVisible: {
+                // dependencies
+                holdingsTracker.revision
+                channelsTracker.revision
+                communityNewPermissionView.dirtyValues.permissionType
+                communityNewPermissionView.dirtyValues.isPrivate
+
+                const model = root.store.permissionsModel
+
+                for (let i = 0; i < model.count; i++) {
+                    if (root.state === d.editPermissionViewState
+                            && d.permissionIndexToEdit === i)
+                        continue
+
+                    const item = model.get(i)
+
+                    const holdings = item.holdingsListModel
+                    const channels = item.channelsListModel
+                    const permissionType = item.permissionType
+
+                    const same = (a, b) => ModelUtils.checkEqualitySet(a, b, ["key"])
+
+                    if (same(dirtyValues.holdingsModel, holdings)
+                            && same(dirtyValues.channelsModel, channels)
+                            && dirtyValues.permissionType === permissionType)
+                        return true
+                }
+
+                return false
+            }
+
             onCreatePermissionClicked: {
                 root.store.createPermission(dirtyValues.holdingsModel,
                                             dirtyValues.permissionType,
@@ -210,37 +241,7 @@ SettingsPageLayout {
                 target: root
                 property: "saveChangesButtonEnabled"
                 value: !communityNewPermissionView.duplicationWarningVisible
-            }
-
-            duplicationWarningVisible: {
-                // dependencies
-                holdingsTracker.revision
-                channelsTracker.revision
-                communityNewPermissionView.dirtyValues.permissionType
-                communityNewPermissionView.dirtyValues.isPrivate
-
-                const model = root.store.permissionsModel
-
-                for (let i = 0; i < model.count; i++) {
-                    if (root.state === d.editPermissionViewState
-                            && d.permissionIndexToEdit === i)
-                        continue
-
-                    const item = model.get(i)
-
-                    const holdings = item.holdingsListModel
-                    const channels = item.channelsListModel
-                    const permissionType = item.permissionType
-
-                    const same = (a, b) => ModelUtils.checkEqualitySet(a, b, ["key"])
-
-                    if (same(dirtyValues.holdingsModel, holdings)
-                            && same(dirtyValues.channelsModel, channels)
-                            && dirtyValues.permissionType === permissionType)
-                        return true
-                }
-
-                return false
+                       && communityNewPermissionView.isFullyFilled
             }
         }
     }
