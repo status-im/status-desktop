@@ -428,17 +428,13 @@ StatusScrollView {
             ListModel {
                 id: inModelCommunity
 
-                readonly property string colorWorkaround: inDropdown.communityData.color
-
                 Component.onCompleted: {
                     append({
                         imageSource: inDropdown.communityData.image,
                         text: inDropdown.communityData.name,
                         operator: OperatorsUtils.Operators.None,
-                        color: ""
+                        color: inDropdown.communityData.color
                     })
-
-                    setProperty(0, "color", colorWorkaround)
                 }
             }
 

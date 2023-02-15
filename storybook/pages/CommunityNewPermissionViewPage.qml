@@ -66,7 +66,7 @@ SplitView {
                     readonly property QtObject activeSection: QtObject {
                         readonly property string name: "Socks"
                         readonly property string image: ModelsData.icons.socks
-                        readonly property color color: "red"
+                        readonly property string color: "red"
                     }
                 }
             }

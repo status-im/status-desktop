@@ -20,6 +20,7 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
         color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
+
         CommunityPermissionsSettingsPanel {
             id: communityPermissionsSettingsPanel
 
@@ -59,7 +60,7 @@ SplitView {
                     readonly property QtObject activeSection: QtObject {
                         readonly property string name: "Socks"
                         readonly property string image: ModelsData.icons.socks
-                        readonly property color color: "red"
+                        readonly property string color: "red"
                     }
                 }
             }
@@ -73,7 +74,6 @@ SplitView {
         SplitView.preferredHeight: 150
 
         logsView.logText: logs.logText
-
 
         ColumnLayout {
             anchors.top: parent.top
