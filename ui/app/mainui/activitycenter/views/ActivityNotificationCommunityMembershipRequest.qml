@@ -42,6 +42,7 @@ ActivityNotificationMessage {
             root.store.setActiveCommunity(notification.communityId)
             root.closeActivityCenter()
         }
+        Layout.maximumWidth: 190
     }
 
     ctaComponent: MembershipCta {
