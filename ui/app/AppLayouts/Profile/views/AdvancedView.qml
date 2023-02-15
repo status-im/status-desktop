@@ -455,6 +455,17 @@ SettingsContentBase {
                     Global.openPopup(enableAutoMessageConfirmationDialogComponent)
                 }
             }
+
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("Fake loading screen")
+                isSwitch: true
+                switchChecked: root.advancedStore.isFakeLoadingScreenEnabled
+                onClicked: {
+                    root.advancedStore.toggleFakeLoadingScreen()
+                }
+            }
         }
 
         FleetsModal {

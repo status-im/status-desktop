@@ -156,11 +156,14 @@ StatusWindow {
                 startupOnboarding.visible = true
             }
             else if(state === Constants.appState.appLoading) {
-                loader.sourceComponent = appLoadingAnimation
+                loader.sourceComponent = undefined
+                appLoadingAnimation.active = true
                 startupOnboarding.visible = false
             }
             else if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
+                appLoadingAnimation.active = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
+                appLoadingAnimation.runningProgressAnimation = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
                 Global.userProfile = userProfile
 
                 loader.sourceComponent = app
@@ -315,10 +318,19 @@ StatusWindow {
         }
     }
 
-    Component {
+    Loader {
         id: appLoadingAnimation
-        SplashScreen {
+        property bool runningProgressAnimation: false
+        anchors.fill: parent
+        active: false
+        sourceComponent: DidYouKnowSplashScreen {
             objectName: "splashScreen"
+            NumberAnimation on progress { from: 0.0; to: 1; duration: 30000; running: runningProgressAnimation }
+            onProgressChanged: {
+                if (progress === 1) {
+                    appLoadingAnimation.active = false
+                }
+            }
         }
     }
 
