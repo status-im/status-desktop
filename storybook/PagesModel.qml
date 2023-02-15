@@ -70,6 +70,10 @@ ListModel {
          section: "Panels"
     }
     ListElement {
+        title: "DidYouKnowSplashScreen"
+        section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
