@@ -341,7 +341,7 @@ StatusDialog {
                 Layout.fillHeight: true
 
                 contentHeight: layout.height + Style.current.padding
-                contentWidth: parent.width
+
                 z: 0
                 objectName: "sendModalScroll"
 

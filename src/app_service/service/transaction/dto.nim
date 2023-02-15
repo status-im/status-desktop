@@ -51,7 +51,7 @@ type
     value*: string
     fromAddress*: string
     to*: string
-    chainId*: int    
+    chainId*: int
     maxFeePerGas*: string
     maxPriorityFeePerGas*: string
     input*: string
