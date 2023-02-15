@@ -344,7 +344,6 @@ QtObject {
         Component {
             id: pinnedMessagesPopup
             PinnedMessagesPopup {
-                emojiReactionsModel: rootStore.emojiReactionsModel
                 onClosed: destroy()
             }
         },

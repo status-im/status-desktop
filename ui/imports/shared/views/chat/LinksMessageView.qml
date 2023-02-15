@@ -18,7 +18,6 @@ Column {
 
     property var store
     property var messageStore
-    property var container
 
     //receiving space separated url list
     property string links: ""
@@ -132,7 +131,6 @@ Column {
                 property bool localAnimationEnabled: true
                 objectName: "LinksMessageView_unfurledImageComponent_linkImage"
                 anchors.centerIn: parent
-                container: root.container
                 source: result.thumbnailUrl
                 imageWidth: 300
                 isCurrentUser: root.isCurrentUser
@@ -214,7 +212,6 @@ Column {
             StatusChatImageLoader {
                 id: linkImage
                 objectName: "LinksMessageView_unfurledLinkComponent_linkImage"
-                container: root.container
                 source: result.thumbnailUrl
                 visible: result.thumbnailUrl.length
                 readonly property int previewWidth: parseInt(result.width)
