@@ -4,6 +4,8 @@ import json, sequtils, sugar, tables, strutils, json_serialization
 
 import ../../../../backend/communities
 include ../../../common/json_utils
+import ../../../common/types
+import ../../../common/conversion
 
 import ../../chat/dto/chat
 
@@ -57,6 +59,13 @@ type CommunityTokenPermissionDto* = object
   chatIds*: seq[string]
   isPrivate*: bool
 
+type CommunityTokensMetadataDto* = object
+  addresses*: Table[int, string]
+  description*: string
+  image*: string
+  symbol*: string
+  tokenType*: TokenType
+
 type CommunityDto* = object
   id*: string
   admin*: bool
@@ -89,6 +98,7 @@ type CommunityDto* = object
   encrypted*: bool
   canceledRequestsToJoin*: seq[CommunityMembershipRequestDto]  
   tokenPermissions*: Table[string, CommunityTokenPermissionDto]
+  communityTokensMetadata*: seq[CommunityTokensMetadataDto]
 
 type CuratedCommunity* = object
     available*: bool
@@ -145,6 +155,22 @@ proc toDiscordImportError*(jsonObj: JsonNode): DiscordImportError =
   result = DiscordImportError()
   discard jsonObj.getProp("code", result.code)
   discard jsonObj.getProp("message", result.message)
+
+proc toCommunityTokenAdresses*(jsonObj: JsonNode): Table[int, string] =
+  for i in jsonObj.keys():
+    result[parseInt(i)] = jsonObj[i].getStr()
+
+proc toCommunityTokensMetadataDto*(jsonObj: JsonNode): CommunityTokensMetadataDto =
+  result = CommunityTokensMetadataDto()
+  discard jsonObj.getProp("description", result.description)
+  discard jsonObj.getProp("image", result.image)
+  discard jsonObj.getProp("symbol", result.symbol)
+  var tokenTypeInt: int
+  discard jsonObj.getProp("tokenType", tokenTypeInt)
+  result.tokenType = intToEnum(tokenTypeInt, TokenType.ERC721)
+  var addressesObj: JsonNode
+  discard jsonObj.getProp("contract_addresses", addressesObj)
+  result.addresses = toCommunityTokenAdresses(addressesObj)
 
 proc toDiscordImportTaskProgress*(jsonObj: JsonNode): DiscordImportTaskProgress =
   result = DiscordImportTaskProgress()
@@ -284,6 +310,11 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
 
   discard jsonObj.getProp("requestedToJoinAt", result.requestedToJoinAt)
   discard jsonObj.getProp("muted", result.muted)
+
+  var communityTokensMetadataObj: JsonNode
+  if(jsonObj.getProp("communityTokensMetadata", communityTokensMetadataObj) and communityTokensMetadataObj.kind == JArray):
+    for tokenObj in communityTokensMetadataObj:
+      result.communityTokensMetadata.add(tokenObj.toCommunityTokensMetadataDto())
 
 proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipRequestDto =
   result = CommunityMembershipRequestDto()

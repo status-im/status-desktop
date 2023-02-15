@@ -1,6 +1,7 @@
 import NimQml, json
 
 import ../../../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../../../app_service/service/community/dto/community
 import ../../../../core/eventemitter
 import ../../../../global/global_singleton
 import ../io_interface as parent_interface
@@ -18,6 +19,7 @@ type
     tempCommunityId: string
     tempChainId: int
     tempDeploymentParams: DeploymentParameters
+    tempTokenMetadata: CommunityTokensMetadataDto
 
 proc newMintingModule*(
     parent: parent_interface.AccessInterface,
@@ -34,23 +36,31 @@ method delete*(self: Module) =
   self.viewVariant.delete
   self.controller.delete
 
+method resetTempValues(self:Module) =
+  self.tempAddressFrom = ""
+  self.tempCommunityId = ""
+  self.tempDeploymentParams = DeploymentParameters()
+  self.tempTokenMetadata = CommunityTokensMetadataDto()
+  self.tempChainId = 0
+
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("mintingModule", self.viewVariant)
   self.controller.init()
   self.view.load()
 
 method mintCollectible*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
-                        supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int) =
+                        supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, image: string) =
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
   self.tempChainId = chainId
   self.tempDeploymentParams.name = name
   self.tempDeploymentParams.symbol = symbol
-  self.tempDeploymentParams.description = description
   self.tempDeploymentParams.supply = supply
   self.tempDeploymentParams.infiniteSupply = infiniteSupply
   self.tempDeploymentParams.transferable = transferable
   self.tempDeploymentParams.remoteSelfDestruct = selfDestruct
+  self.tempTokenMetadata.image = image
+  self.tempTokenMetadata.description = description
   if singletonInstance.userProfile.getIsKeycardUser():
     let keyUid = singletonInstance.userProfile.getKeyUid()
     self.controller.authenticateUser(keyUid)
@@ -58,12 +68,9 @@ method mintCollectible*(self: Module, communityId: string, fromAddress: string, 
     self.controller.authenticateUser()
 
 method onUserAuthenticated*(self: Module, password: string) =
-  defer: self.tempAddressFrom = ""
-  defer: self.tempDeploymentParams = DeploymentParameters()
-  defer: self.tempCommunityId = ""
-  defer: self.tempChainId = -1
+  defer: self.resetTempValues()
   if password.len == 0:
     discard
     #TODO signalize somehow
   else:
-    self.controller.mintCollectibles(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams, self.tempChainId)
+    self.controller.mintCollectibles(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams, self.tempTokenMetadata, self.tempChainId)

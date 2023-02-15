@@ -258,7 +258,6 @@ StatusSectionLayout {
                 communitiesStore: root.communityStore
                 transactionStore: root.transactionStore
                 tokensModel: root.community.communityTokens
-                
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
             }
 

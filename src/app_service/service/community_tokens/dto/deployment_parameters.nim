@@ -1,4 +1,4 @@
-import json, stint
+import json
 
 type
   DeploymentParameters* = object
@@ -9,7 +9,6 @@ type
     transferable*: bool
     remoteSelfDestruct*: bool
     tokenUri*: string
-    description*: string # not part of smart contract
 
 proc `%`*(x: DeploymentParameters): JsonNode =
   result = newJobject()

@@ -1,6 +1,7 @@
 import ./io_interface as minting_module_interface
 
 import ../../../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../../../app_service/service/community/dto/community
 import ../../../../core/signals/types
 import ../../../../core/eventemitter
 import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
@@ -34,8 +35,8 @@ proc init*(self: Controller) =
       return
     self.mintingModule.onUserAuthenticated(args.password)
 
-proc mintCollectibles*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, chainId: int) =
-  self.communityTokensService.mintCollectibles(communityId, addressFrom, password, deploymentParams, chainId)
+proc mintCollectibles*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, chainId: int) =
+  self.communityTokensService.mintCollectibles(communityId, addressFrom, password, deploymentParams, tokenMetadata, chainId)
 
 proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_MINT_COLLECTIBLES_MINTING_MODULE_IDENTIFIER, keyUid: keyUid)
