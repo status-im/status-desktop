@@ -14,7 +14,7 @@ Item {
     property string messageText: ""
 
     signal editCancelled()
-    signal editCompleted(var newMsgText)
+    signal editCompleted(string newMsgText)
 
     implicitHeight: layout.implicitHeight
     implicitWidth: layout.implicitWidth

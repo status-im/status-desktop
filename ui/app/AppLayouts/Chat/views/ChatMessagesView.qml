@@ -174,8 +174,6 @@ Item {
         Button {
             id: scrollDownButton
 
-            readonly property int buttonPadding: 5
-
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
