@@ -693,7 +693,8 @@ Loader {
                         onLinksLoaded: {
                             // If there is only one image and no links, hide the message
                             // Handled in linksLoaded signal to evaulate it only once
-                            d.hideMessage = linksMessageView.unfurledImagesCount === 1 && linksMessageView.unfurledLinksCount === 0
+                            d.hideMessage = linksMessageView.unfurledImagesCount === 1 && linksMessageView.unfurledLinksCount === 0 
+                                            && `<p>${root.linkUrls}</p>` === root.messageText
                         }
                     }
                 }
