@@ -35,7 +35,7 @@ Control {
             StatusBaseText {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                text: qsTr("Make this permission hidden from members who don’t meet it’s requirements")
+                text: qsTr("Make this permission hidden from members who don’t meet its requirements")
                 color: Theme.palette.baseColor1
                 font.pixelSize: Style.current.primaryTextFontSize
                 lineHeight: 1.2
