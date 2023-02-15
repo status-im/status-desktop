@@ -148,7 +148,7 @@ Rectangle {
                 width: ListView.view.width - Style.current.padding * 2
                 highlighted: !ListView.view.footerItem.button.highlighted &&
                              RootStore.currentAccount.name === model.name
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenter: !!parent ? parent.horizontalCenter : undefined
                 title: model.name
                 subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance)
                 asset.emoji: !!model.emoji ? model.emoji: ""

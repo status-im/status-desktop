@@ -88,7 +88,6 @@ type
 type
   CryptoServicesArgs* = ref object of Args
     data*: seq[CryptoRampDto]
-  
 
 QtObject:
   type Service* = ref object of QObject
@@ -109,7 +108,7 @@ QtObject:
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
-      networkService: network_service.Service,  
+      networkService: network_service.Service,
       settingsService: settings_service.Service,
       tokenService: token_service.Service,
   ): Service =
@@ -162,7 +161,7 @@ QtObject:
       let address = watchTxResult["address"].getStr
       let transactionReceipt = transactions.getTransactionReceipt(chainId, hash).result
       if transactionReceipt != nil and transactionReceipt.kind != JNull:
-        discard transactions.deletePendingTransaction(chainId, hash)
+        # Pending transaction will be deleted by backend after transfering multi-transaction info to history
         echo watchTxResult["data"].getStr
         let ev = TransactionMinedArgs(
           data: watchTxResult["data"].getStr,
