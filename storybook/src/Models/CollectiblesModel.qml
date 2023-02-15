@@ -1,4 +1,6 @@
-import QtQuick 2.0
+import QtQuick 2.15
+
+import AppLayouts.Chat.controls.community 1.0
 
 ListModel {
     Component.onCompleted:
@@ -7,13 +9,13 @@ ListModel {
                        key: "Anniversary",
                        iconSource: ModelsData.collectibles.anniversary,
                        name: "Anniversary",
-                       category: "Community collectibles"
+                       category: TokenCategories.Category.Community
                    },
                    {
                        key: "CryptoKitties",
                        iconSource: ModelsData.collectibles.cryptoKitties,
                        name: "CryptoKitties",
-                       category: "Your collectibles",
+                       category: TokenCategories.Category.Own,
                        subItems: [
                            {
                                key: "Kitty1",
@@ -63,13 +65,13 @@ ListModel {
                        key: "SuperRare",
                        iconSource: ModelsData.collectibles.superRare,
                        name: "SuperRare",
-                       category: "Your collectibles"
+                       category: TokenCategories.Category.Own
                    },
                    {
                        key: "Custom",
                        iconSource: ModelsData.collectibles.custom,
                        name: "Custom Collectible",
-                       category: "All collectibles"
+                       category: TokenCategories.Category.General
                    }
                ])
 }

@@ -1,5 +1,7 @@
 import QtQuick 2.0
 
+import AppLayouts.Chat.controls.community 1.0
+
 ListModel {
     Component.onCompleted:
         append([
@@ -8,35 +10,35 @@ ListModel {
                        iconSource: ModelsData.assets.socks,
                        name: "Unisocks",
                        shortName: "SOCKS",
-                       category: "Community assets"
+                       category: TokenCategories.Category.Community
                    },
                    {
                        key: "zrx",
                        iconSource: ModelsData.assets.zrx,
                        name: "Ox",
                        shortName: "ZRX",
-                       category: "Listed assets"
+                       category: TokenCategories.Category.Own
                    },
                    {
                        key: "1inch",
                        iconSource: ModelsData.assets.inch,
                        name: "1inch",
                        shortName: "1INCH",
-                       category: "Listed assets"
+                       category: TokenCategories.Category.Own
                    },
                    {
                        key: "Aave",
                        iconSource: ModelsData.assets.aave,
                        name: "Aave",
                        shortName: "AAVE",
-                       category: "Listed assets"
+                       category: TokenCategories.Category.Own
                    },
                    {
                        key: "Amp",
                        iconSource: ModelsData.assets.amp,
                        name: "Amp",
                        shortName: "AMP",
-                       category: "Listed assets"
+                       category: TokenCategories.Category.Own
                    }
                ])
 }
