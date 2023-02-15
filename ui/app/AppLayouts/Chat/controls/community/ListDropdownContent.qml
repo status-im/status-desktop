@@ -93,7 +93,7 @@ StatusListView {
                                         model.subItems)
     }
 
-    section.property: root.searchMode ? "" : "category"
+    section.property: root.searchMode ? "" : "categoryLabel"
     section.criteria: ViewSection.FullString
 
     section.delegate: Item {

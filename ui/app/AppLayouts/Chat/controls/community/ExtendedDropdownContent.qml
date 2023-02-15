@@ -99,6 +99,20 @@ Item {
                                     searcher.text.toLowerCase())
                     }
                 }
+
+                proxyRoles: ExpressionRole {
+                    name: "categoryLabel"
+
+                    function getCategoryLabelForType(category, type) {
+                        if (type === ExtendedDropdownContent.Type.Assets)
+                            return TokenCategories.getCategoryLabelForAsset(category)
+
+                        return TokenCategories.getCategoryLabelForCollectible(category)
+                    }
+
+                    expression: getCategoryLabelForType(model.category, root.type)
+
+               }
             }
         }
 

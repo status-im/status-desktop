@@ -1,5 +1,7 @@
 import QtQuick 2.0
 
+import AppLayouts.Chat.controls.community 1.0
+
 QtObject {
     id: root
 
@@ -18,70 +20,108 @@ QtObject {
 
     // TODO: Replace to real data, now dummy model
     property var  assetsModel: ListModel {
-        ListElement {key: "socks"; iconSource: "qrc:imports/assets/png/tokens/SOCKS.png"; name: "Unisocks"; shortName: "SOCKS"; category: "Community assets"}
-        ListElement {key: "zrx"; iconSource: "qrc:imports/assets/png/tokens/ZRX.png"; name: "Ox"; shortName: "ZRX"; category: "Listed assets"}
-        ListElement {key: "1inch"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "1inch"; shortName: "ZRX"; category: "Listed assets"}
-        ListElement {key: "Aave"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "Aave"; shortName: "AAVE"; category: "Listed assets"}
-        ListElement {key: "Amp"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "Amp"; shortName: "AMP"; category: "Listed assets"}
+        Component.onCompleted: {
+            append([
+                       {
+                           key: "socks",
+                           iconSource: "qrc:imports/assets/png/tokens/SOCKS.png",
+                           name: "Unisocks",
+                           shortName: "SOCKS",
+                           category: TokenCategories.Category.Community
+                       },
+                       {
+                           key: "zrx",
+                           iconSource: "qrc:imports/assets/png/tokens/ZRX.png",
+                           name: "Ox",
+                           shortName: "ZRX",
+                           category: TokenCategories.Category.Own
+                       },
+                       {
+                           key: "1inch",
+                           iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png",
+                           name: "1inch",
+                           shortName: "ZRX",
+                           category: TokenCategories.Category.Own
+                       },
+                       {
+                           key: "Aave",
+                           iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png",
+                           name: "Aave",
+                           shortName: "AAVE",
+                           category: TokenCategories.Category.Own
+                       },
+                       {
+                           key: "Amp",
+                           iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png",
+                           name: "Amp",
+                           shortName: "AMP",
+                           category: TokenCategories.Category.Own
+                       }
+                   ])
+        }
     }
 
     // TODO: Replace to real data, now dummy model
     property var collectiblesModel: ListModel {
-        ListElement {
-            key: "Anniversary"
-            iconSource: "qrc:imports/assets/png/collectibles/Anniversary.png"
-            name: "Anniversary"
-            category: "Community collectibles"
-        }
-        ListElement {
-            key: "CryptoKitties"
-            iconSource: "qrc:imports/assets/png/collectibles/CryptoKitties.png"
-            name: "CryptoKitties"
-            category: "Your collectibles"
-            subItems: [
-                ListElement {
-                    key: "Kitty1"
-                    iconSource: "qrc:imports/assets/png/collectibles/Furbeard.png"
-                    imageSource: "qrc:imports/assets/png/collectibles/FurbeardBig.png"
-                    name: "Furbeard"
-                },
-                ListElement {
-                    key: "Kitty2"
-                    iconSource: "qrc:imports/assets/png/collectibles/Magicat.png"
-                    imageSource: "qrc:imports/assets/png/collectibles/MagicatBig.png"
-                    name: "Magicat"
-                },
-                ListElement {
-                    key: "Kitty3"
-                    iconSource: "qrc:imports/assets/png/collectibles/HappyMeow.png"
-                    imageSource: "qrc:imports/assets/png/collectibles/HappyMeowBig.png"
-                    name: "Happy Meow"
-                },
-                ListElement {
-                    key: "Kitty4"
-                    iconSource: "qrc:imports/assets/png/collectibles/Furbeard.png"
-                    imageSource: "qrc:imports/assets/png/collectibles/FurbeardBig.png"
-                    name: "Furbeard-2"
-                },
-                ListElement {
-                    key: "Kitty5"
-                    iconSource: "qrc:imports/assets/png/collectibles/Magicat.png"
-                    imageSource: "qrc:imports/assets/png/collectibles/MagicatBig.png"
-                    name: "Magicat-3"
-                }
-            ]
-        }
-        ListElement {
-            key: "SuperRare"
-            iconSource: "qrc:imports/assets/png/collectibles/SuperRare.png";
-            name: "SuperRare"
-            category: "Your collectibles"
-        }
-        ListElement {
-            key: "Custom"
-            iconSource: "qrc:imports/assets/png/collectibles/SNT.png"
-            name: "Custom Collectible"
-            category: "All collectibles"
+        Component.onCompleted: {
+            append([
+                       {
+                           key: "Anniversary",
+                           iconSource: "qrc:imports/assets/png/collectibles/Anniversary.png",
+                           name: "Anniversary",
+                           category: TokenCategories.Category.Community
+                       },
+                       {
+                           key: "CryptoKitties",
+                           iconSource: "qrc:imports/assets/png/collectibles/CryptoKitties.png",
+                           name: "CryptoKitties",
+                           category: TokenCategories.Category.Own,
+                           subItems: [
+                               {
+                                   key: "Kitty1",
+                                   iconSource: "qrc:imports/assets/png/collectibles/Furbeard.png",
+                                   imageSource: "qrc:imports/assets/png/collectibles/FurbeardBig.png",
+                                   name: "Furbeard"
+                               },
+                               {
+                                   key: "Kitty2",
+                                   iconSource: "qrc:imports/assets/png/collectibles/Magicat.png",
+                                   imageSource: "qrc:imports/assets/png/collectibles/MagicatBig.png",
+                                   name: "Magicat"
+                               },
+                               {
+                                   key: "Kitty3",
+                                   iconSource: "qrc:imports/assets/png/collectibles/HappyMeow.png",
+                                   imageSource: "qrc:imports/assets/png/collectibles/HappyMeowBig.png",
+                                   name: "Happy Meow"
+                               },
+                               {
+                                   key: "Kitty4",
+                                   iconSource: "qrc:imports/assets/png/collectibles/Furbeard.png",
+                                   imageSource: "qrc:imports/assets/png/collectibles/FurbeardBig.png",
+                                   name: "Furbeard-2"
+                               },
+                               {
+                                   key: "Kitty5",
+                                   iconSource: "qrc:imports/assets/png/collectibles/Magicat.png",
+                                   imageSource: "qrc:imports/assets/png/collectibles/MagicatBig.png",
+                                   name: "Magicat-3"
+                               }
+                           ]
+                       },
+                       {
+                           key: "SuperRare",
+                           iconSource: "qrc:imports/assets/png/collectibles/SuperRare.png",
+                           name: "SuperRare",
+                           category: TokenCategories.Category.Own
+                       },
+                       {
+                           key: "Custom",
+                           iconSource: "qrc:imports/assets/png/collectibles/SNT.png",
+                           name: "Custom Collectible",
+                           category: TokenCategories.Category.General
+                       }
+                   ])
         }
     }
 
