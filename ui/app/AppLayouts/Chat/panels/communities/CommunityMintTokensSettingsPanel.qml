@@ -81,7 +81,6 @@ SettingsPageLayout {
             onMintCollectible: {
                 root.communitiesStore.mintCollectible(root.communityId,
                                                       root.transactionStore.currentAccount.address, /*TODO use address from SendModal*/
-                                                      artworkSource,
                                                       name,
                                                       symbol,
                                                       description,
@@ -89,7 +88,8 @@ SettingsPageLayout {
                                                       infiniteSupply,
                                                       transferable,
                                                       selfDestruct,
-                                                      chainId)
+                                                      chainId,
+                                                      artworkSource)
             }
         }
     }

@@ -13,6 +13,7 @@ type
     RemoteSelfDestruct
     NetworkId
     DeployState
+    Image
 
 QtObject:
   type TokenModel* = ref object of QAbstractListModel
@@ -76,6 +77,7 @@ QtObject:
       ModelRole.RemoteSelfDestruct.int:"remoteSelfDestruct",
       ModelRole.NetworkId.int:"networkId",
       ModelRole.DeployState.int:"deployState",
+      ModelRole.Image.int:"image",
     }.toTable
 
   method data(self: TokenModel, index: QModelIndex, role: int): QVariant =
@@ -106,6 +108,8 @@ QtObject:
         result = newQVariant(item.chainId)
       of ModelRole.DeployState:
         result = newQVariant(item.deployState.int)
+      of ModelRole.Image:
+        result = newQVariant(item.image)
 
   proc `$`*(self: TokenModel): string =
       for i in 0 ..< self.items.len:

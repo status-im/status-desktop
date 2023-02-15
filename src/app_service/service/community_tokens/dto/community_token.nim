@@ -2,11 +2,7 @@ import json, json, sequtils
 import ../../../../backend/response_type
 include ../../../common/json_utils
 import ../../../common/conversion
-
-type
-  TokenType* {.pure.} = enum
-    ERC721
-    #ERC20
+import ../../community/dto/community
 
 type
   DeployState* {.pure.} = enum

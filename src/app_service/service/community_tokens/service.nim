@@ -4,12 +4,13 @@ import ../../../app/core/tasks/[qt, threadpool]
 
 import ../../../backend/community_tokens as tokens_backend
 import ../transaction/service as transaction_service
-
+import ../ens/utils as ens_utils
 import ../eth/dto/transaction
 
 import ../../../backend/response_type
 
 import ../../common/conversion
+import ../community/dto/community
 
 import ./dto/deployment_parameters
 import ./dto/community_token
@@ -69,9 +70,16 @@ QtObject:
       let data = CommunityTokenDeployedStatusArgs(communityId: tokenDto.communityId, contractAddress: tokenDto.address, deployState: deployState)
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
 
-  proc mintCollectibles*(self: Service, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, chainId: int) =
+  proc mintCollectibles*(self: Service, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, chainId: int) =
     try:
-      let txData = TransactionDataDto(source: parseAddress(addressFrom))
+      # TODO this will come from SendModal
+      let suggestedFees = self.transactionService.suggestedFees(chainId)
+      let contractGasUnits = "3702411"
+
+      let txData = ens_utils.buildTransaction(parseAddress(addressFrom), 0.u256, contractGasUnits,
+      if suggestedFees.eip1559Enabled: "" else: $suggestedFees.gasPrice, suggestedFees.eip1559Enabled,
+      if suggestedFees.eip1559Enabled: $suggestedFees.maxPriorityFeePerGas else: "",
+      if suggestedFees.eip1559Enabled: $suggestedFees.maxFeePerGasM else: "")
 
       let response = tokens_backend.deployCollectibles(chainId, %deploymentParams, %txData, password)
       let contractAddress = response.result["contractAddress"].getStr()
@@ -85,7 +93,7 @@ QtObject:
       communityToken.address = contractAddress
       communityToken.name = deploymentParams.name
       communityToken.symbol = deploymentParams.symbol
-      communityToken.description = deploymentParams.description
+      communityToken.description = tokenMetadata.description
       communityToken.supply = deploymentParams.supply
       communityToken.infiniteSupply = deploymentParams.infiniteSupply
       communityToken.transferable = deploymentParams.transferable
@@ -93,7 +101,7 @@ QtObject:
       communityToken.tokenUri = deploymentParams.tokenUri
       communityToken.chainId = chainId
       communityToken.deployState = DeployState.InProgress
-      communityToken.image = "" # TODO later
+      communityToken.image = tokenMetadata.image
 
       # save token to db
       discard tokens_backend.addCommunityToken(communityToken)

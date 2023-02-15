@@ -64,12 +64,11 @@ QtObject {
     }
 
     // Minting tokens:
-    function mintCollectible(communityId, address, artworkSource, name, symbol, description, supply,
-                             infiniteSupply, transferable, selfDestruct, chainId)
+    function mintCollectible(communityId, address, name, symbol, description, supply,
+                             infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
     {
-        // TODO: Backend needs to add `artworkSource` param
         mintingModuleInst.mintCollectible(communityId, address, name, symbol, description, supply,
-                                          infiniteSupply, transferable, selfDestruct, chainId)
+                                          infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
     }
 
     // Network selection properties:
