@@ -97,7 +97,7 @@ StatusScrollView {
         id: declineAllDialog
 
         header.title: qsTr("Sure you want to delete permission")
-        confirmationText: qsTr("If you delete this permission, any of your community members who rely on this permission will loose the access this permission gives them.")
+        confirmationText: qsTr("If you delete this permission, any of your community members who rely on this permission will lose the access this permission gives them.")
 
         onConfirmButtonClicked: {
             root.removePermissionRequested(d.permissionIndexToRemove)
