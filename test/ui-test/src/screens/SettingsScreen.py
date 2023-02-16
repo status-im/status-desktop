@@ -488,4 +488,16 @@ class SettingsScreen:
         contact_list = get_obj(ContactsViewScreen.RECEIVED_REQUESTS_CONTACT_PANEL_LIST_VIEW.value)
         verify_equal(contact_list.count, 1, "Checking if there is exactly one pending contact request") 
         
-        
+    
+    def open_community(self, community_name: str):
+        communities_list = get_obj(CommunitiesSettingsScreen.LIST_PANEL.value)
+        verify(communities_list.count > 0, "At least one joined community exists")
+        for i in range(communities_list.count):
+            delegate = communities_list.itemAtIndex(i)
+            if str(delegate.title) == community_name:
+                click_obj(delegate)
+                return
+        verify(False, "Community ")
+      
+    #def click_on_community(community_name:str):
+              

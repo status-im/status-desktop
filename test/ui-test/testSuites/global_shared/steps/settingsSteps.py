@@ -131,7 +131,7 @@ def step(context):
 @When("the user opens the language selector")
 def step(context):
     _languageScreen.open_language_combobox()
-    
+  
 @When("the user selects the language |any|")
 def step(context, native):
     _languageScreen.select_language(native)
@@ -145,7 +145,8 @@ def step(context, native):
 def step(context: any):
     ctx = currentApplicationContext()
     _settingsScreen.sign_out_and_quit_the_app(ctx.pid)
-    
+ 
+@Given("the user opens the communities settings")    
 @When("the user opens the communities settings")
 def step(context: any):
     _settingsScreen.open_communities_section()
@@ -278,6 +279,11 @@ def step(context):
 @Then("a contact request is present in the received pending requests tab")
 def step(context):
     _settingsScreen.verify_there_is_a_received_contact_request()
+    
+@Then("the user opens the community named \"|any|\"")
+def step(context, community_name:str):
+    _settingsScreen.open_community(community_name)
+
     
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:
