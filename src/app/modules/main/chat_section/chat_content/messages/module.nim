@@ -206,7 +206,6 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       if message.deleted or message.deletedForMe:
         continue
       let chatDetails = self.controller.getChatDetails()
-      let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
 
       let sender = self.controller.getContactDetails(message.`from`)
       var quotedMessageAuthorDetails = ContactDetails()
@@ -215,6 +214,10 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
           quotedMessageAuthorDetails = sender
         else:
           quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
+
+      var communityChats: seq[ChatDto]
+      if chatDetails.communityId != "":
+        communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
 
       let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
       var transactionContract = message.transactionParameters.contract
