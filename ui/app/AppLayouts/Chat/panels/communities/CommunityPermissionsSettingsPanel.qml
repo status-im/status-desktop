@@ -4,6 +4,8 @@ import AppLayouts.Chat.layouts 1.0
 import AppLayouts.Chat.views.communities 1.0
 import AppLayouts.Chat.stores 1.0
 
+import utils 1.0
+
 SettingsPageLayout {
     id: root
 
@@ -126,15 +128,26 @@ SettingsPageLayout {
     // Community Permissions possible view contents:
     Component {
         id: welcomeView
-        CommunityWelcomePermissionsView {
+
+        CommunityWelcomeSettingsView {
             viewWidth: root.viewWidth
+            image: Style.png("community/permissions21_3_1")
+            title: qsTr("Permissions")
+            subtitle: qsTr("You can manage your community by creating and issuing membership and access permissions")
+            checkersModel: [
+                qsTr("Give individual members access to private channels"),
+                qsTr("Monetise your community with subscriptions and fees"),
+                qsTr("Require holding a token or NFT to obtain exclusive membership rights")
+            ]
         }
     }
 
     Component {
         id: newPermissionView
+
         CommunityNewPermissionView {
             id: newPermissionViewItem
+
             viewWidth: root.viewWidth
             rootStore: root.rootStore
             store: root.store
