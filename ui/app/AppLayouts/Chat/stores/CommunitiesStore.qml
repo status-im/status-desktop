@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.15
 
 import AppLayouts.Chat.controls.community 1.0
 
@@ -7,7 +7,7 @@ QtObject {
 
     readonly property bool isOwner: false
 
-    property var mintingModuleInst: mintingModule
+    property var mintingModuleInst: mintingModule ?? null
 
     property var permissionsModel: ListModel {} // Backend permissions list object model assignment. Please check the current expected data in qml defined in `createPermissions` method
     property var permissionConflict: QtObject { // Backend conflicts object model assignment. Now mocked data.
@@ -207,9 +207,8 @@ QtObject {
         root.permissionsModel.remove(index)
     }
 
-    //MINTING
-
-    property var mintTokensModel: !!mintingModuleInst ? mintingModuleInst.tokensModel : null
+    // Minting tokens:
+    property var mintTokensModel: mintingModuleInst ? mintingModuleInst.tokensModel : null
 
     function mintCollectible(address, name, symbol, description, supply,
                              infiniteSupply, transferable, selfDestruct, network)
