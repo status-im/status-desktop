@@ -101,8 +101,9 @@ ColumnLayout {
         TransactionDelegate {
             property bool modelDataValid: !!modelData
             isIncoming: modelDataValid ? modelData.to === account.address: false
-            cryptoValue: modelDataValid ? modelData.value : undefined
-            fiatValue: modelDataValid  && !!cryptoValue ? RootStore.getFiatValue(cryptoValue.amount, symbol, RootStore.currentCurrency) : undefined
+            currentCurrency: RootStore.currentCurrency
+            cryptoValue: modelDataValid ? modelData.value.amount : 0.0
+            fiatValue: modelDataValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
             networkIcon: modelDataValid ? RootStore.getNetworkIcon(modelData.chainId) : ""
             networkColor: modelDataValid ? RootStore.getNetworkColor(modelData.chainId) : ""
             networkName: modelDataValid ? RootStore.getNetworkShortName(modelData.chainId) : ""

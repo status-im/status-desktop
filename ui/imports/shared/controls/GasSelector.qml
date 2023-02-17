@@ -20,7 +20,7 @@ Item {
     property var bestRoutes: []
     property var getGasEthValue: function () {}
     property var getFiatValue: function () {}
-    property var getCurrencyAmount: function () {}
+    property var formatCurrencyAmount: function () {}
 
     width: parent.width
     height: visible ? advancedGasSelector.height + Style.current.halfPadding : 0
@@ -48,20 +48,20 @@ Item {
                 statusListItemIcon.active: true
                 statusListItemIcon.opacity: modelData.isFirstSimpleTx
                 title: qsTr("%1 transaction fee").arg(modelData.fromNetwork.chainName)
-                subTitle: LocaleUtils.currencyAmountToLocaleString(totalGasAmountEth)
-                property var totalGasAmountEth: {
+                subTitle: root.formatCurrencyAmount(totalGasAmountEth, "ETH")
+                property double totalGasAmountEth: {
                     let maxFees = modelData.gasFees.maxFeePerGasM
                     let gasPrice = modelData.gasFees.eip1559Enabled ? maxFees : modelData.gasFees.gasPrice
                     return root.getGasEthValue(gasPrice , modelData.gasAmount)
                 }
-                property var totalGasAmountFiat: root.getFiatValue(totalGasAmountEth.amount, "ETH", root.currentCurrency)
+                property double totalGasAmountFiat: root.getFiatValue(totalGasAmountEth, "ETH", root.currentCurrency)
                 statusListItemSubTitle.width: listItem.width/2 - Style.current.smallPadding
                 statusListItemSubTitle.elide: Text.ElideMiddle
                 statusListItemSubTitle.wrapMode: Text.NoWrap
                 components: [
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
-                        text: LocaleUtils.currencyAmountToLocaleString(totalGasAmountFiat)
+                        text: root.formatCurrencyAmount(totalGasAmountFiat, root.currentCurrency)
                         font.pixelSize: 15
                         color: Theme.palette.baseColor1
                         width: listItem.width/2 - Style.current.padding
@@ -83,9 +83,10 @@ Item {
                 statusListItemIcon.active: true
                 statusListItemIcon.opacity: modelData.isFirstSimpleTx
                 title: qsTr("Approve %1 %2 Bridge").arg(modelData.fromNetwork.chainName).arg(root.selectedTokenSymbol)
-                property var approvalGasFees: root.getCurrencyAmount(modelData.approvalGasFees, "ETH")
-                property var approvalGasFeesFiat: root.getFiatValue(approvalGasFees.amount, "ETH", root.currentCurrency)
-                subTitle: LocaleUtils.currencyAmountToLocaleString(approvalGasFees)
+                property double approvalGasFees: modelData.approvalGasFees
+                property string approvalGasFeesSymbol: "ETH"
+                property double approvalGasFeesFiat: root.getFiatValue(approvalGasFees, approvalGasFeesSymbol, root.currentCurrency)
+                subTitle: root.formatCurrencyAmount(approvalGasFees, approvalGasFeesSymbol)
                 statusListItemSubTitle.width: listItem.width/2 - Style.current.smallPadding
                 statusListItemSubTitle.elide: Text.ElideMiddle
                 statusListItemSubTitle.wrapMode: Text.NoWrap
@@ -93,7 +94,7 @@ Item {
                 components: [
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
-                        text: LocaleUtils.currencyAmountToLocaleString(approvalGasFeesFiat)
+                        text:  root.formatCurrencyAmount(approvalGasFeesFiat, root.currentCurrency)
                         font.pixelSize: 15
                         color: Theme.palette.baseColor1
                         width: listItem.width/2 - Style.current.padding
@@ -116,16 +117,16 @@ Item {
                 statusListItemIcon.active: true
                 statusListItemIcon.opacity: modelData.isFirstBridgeTx
                 title: qsTr("%1 -> %2 bridge").arg(modelData.fromNetwork.chainName).arg(modelData.toNetwork.chainName)
-                property var tokenFees: root.getCurrencyAmount(modelData.tokenFees, root.selectedTokenSymbol)
-                property var tokenFeesFiat: root.getFiatValue(tokenFees.amount, root.selectedTokenSymbol, root.currentCurrency)
-                subTitle: LocaleUtils.currencyAmountToLocaleString(tokenFees)
+                property double tokenFees: modelData.tokenFees
+                property double tokenFeesFiat: root.getFiatValue(tokenFees, root.selectedTokenSymbol, root.currentCurrency)
+                subTitle: root.formatCurrencyAmount(tokenFees, root.selectedTokenSymbol)
                 visible: modelData.bridgeName !== "Simple"
                 statusListItemSubTitle.width: 100
                 statusListItemSubTitle.elide: Text.ElideMiddle
                 components: [
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
-                        text: LocaleUtils.currencyAmountToLocaleString(tokenFeesFiat)
+                        text: root.formatCurrencyAmount(tokenFeesFiat, root.currentCurrency)
                         font.pixelSize: 15
                         color: Theme.palette.baseColor1
                         width: listItem2.width/2 - Style.current.padding

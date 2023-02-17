@@ -1,4 +1,4 @@
-﻿import QtQuick 2.13
+import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
@@ -16,20 +16,21 @@ Item {
     id: root
 
     property var store
+    readonly property var currencyStore: store.currencyStore
     property var bestRoutes
     property var selectedAccount
     property string ensAddressOrEmpty: ""
     property var selectedAsset
+    readonly property string selectedSymbol: !!selectedAsset ? selectedAsset.symbol : ""
     property var allNetworks
     property bool customMode: false
-    property var amountToSend
-    property var requiredGasInEth
-    property bool errorMode: !root.amountToSend || d.customAmountToSend > root.amountToSend.amount
+    property double amountToSend
+    property double requiredGasInEth
+    property bool errorMode: d.customAmountToSend > root.amountToSend
     property bool interactive: true
     property bool showPreferredChains: false
     property var weiToEth: function(wei) {}
     property var reCalculateSuggestedRoute: function() {}
-    property var getCryptoCurrencyAmount: function(cryptoValue) {}
     property int errorType: Constants.NoError
     property bool isLoading
 
@@ -52,7 +53,7 @@ Item {
             d.customAmountToSend = 0
             for(var i = 0; i<fromNetworksRepeater.count; i++) {
                 if(fromNetworksRepeater.itemAt(i).locked) {
-                    let amountEntered = fromNetworksRepeater.itemAt(i).advancedInputCurrencyAmount.amount
+                    let amountEntered = fromNetworksRepeater.itemAt(i).advancedInputCurrencyAmount
                     d.customAmountToSend += isNaN(amountEntered) ? 0 : amountEntered
                 }
             }
@@ -94,27 +95,27 @@ Item {
                     property double amountToSend: 0
                     property int routeOnNetwork: 0
                     property bool selectedAssetValid: selectedAccount && selectedAccount !== undefined && selectedAsset !== undefined
-                    property var tokenBalanceOnChain: selectedAssetValid ? root.store.getTokenBalanceOnChain(selectedAccount, model.chainId, selectedAsset.symbol) : undefined
-                    property bool hasGas: selectedAssetValid && requiredGasInEth ? selectedAccount.hasGas(model.chainId, model.nativeCurrencySymbol, requiredGasInEth.amount) : false
-                    property var advancedInputCurrencyAmount: selectedAssetValid ? root.getCryptoCurrencyAmount(LocaleUtils.numberFromLocaleString(advancedInputText)) : undefined
+                    property double tokenBalanceOnChain: selectedAssetValid ? root.store.getTokenBalanceOnChain(selectedAccount, model.chainId, root.selectedSymbol).amount : 0.0
+                    property bool hasGas: selectedAssetValid && requiredGasInEth !== undefined ? selectedAccount.hasGas(model.chainId, model.nativeCurrencySymbol, requiredGasInEth) : false
+                    property double advancedInputCurrencyAmount: selectedAssetValid && advancedInput.valid ? LocaleUtils.numberFromLocaleString(advancedInputText) : 0.0
 
                     primaryText: model.chainName
-                    secondaryText: !tokenBalanceOnChain || (tokenBalanceOnChain.amount === 0 && root.amountToSend && root.amountToSend.amount !== 0) ?
-                                       qsTr("No Balance") : !hasGas ? qsTr("No Gas") : advancedInputCurrencyAmount ? LocaleUtils.currencyAmountToLocaleString(advancedInputCurrencyAmount) : "N/A"
-                    tertiaryText: root.errorMode && advancedInputCurrencyAmount && advancedInputCurrencyAmount.amount !== 0 && advancedInput.valid ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: ") + LocaleUtils.currencyAmountToLocaleString(tokenBalanceOnChain)
+                    secondaryText: (tokenBalanceOnChain == 0 && root.amountToSend > 0) ?
+                                        qsTr("No Balance") : !hasGas ? qsTr("No Gas") : root.currencyStore.formatCurrencyAmount(advancedInputCurrencyAmount, root.selectedSymbol)
+                    tertiaryText: root.errorMode && advancedInputCurrencyAmount > 0 ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: ") + root.currencyStore.formatCurrencyAmount(tokenBalanceOnChain, root.selectedSymbol)
                     locked: store.lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined && lockedItem.chainID ===  model.chainId) !== -1
                     preCalculatedAdvancedText: {
                         let index  = store.lockedInAmounts.findIndex(lockedItem => lockedItem!== undefined && lockedItem.chainID === model.chainId)
                         if(locked && index !== -1) {
                             let amount = root.weiToEth(parseInt(store.lockedInAmounts[index].value, 16))
-                            return LocaleUtils.numberToLocaleString(amount.amount)
+                            return LocaleUtils.numberToLocaleString(amount)
                         }
                         else return LocaleUtils.numberToLocaleString(fromNetwork.amountToSend)
                     }
-                    maxAdvancedValue: tokenBalanceOnChain ? tokenBalanceOnChain.amount : 0.0
-                    state: !tokenBalanceOnChain || tokenBalanceOnChain.amount === 0 || !hasGas ?
+                    maxAdvancedValue: tokenBalanceOnChain
+                    state: tokenBalanceOnChain === 0 || !hasGas ?
                                "unavailable" :
-                               (root.errorMode || !advancedInput.valid) && (advancedInputCurrencyAmount.amount !== 0) ? "error" : "default"
+                               (root.errorMode || !advancedInput.valid) && advancedInputCurrencyAmount > 0 ? "error" : "default"
                     cardIcon.source: Style.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
                     disableText:  qsTr("Disable")
@@ -134,9 +135,9 @@ Item {
                     }
                     onCardLocked: {
 
-                        store.addLockedInAmount(model.chainId, advancedInputCurrencyAmount.amount, root.selectedAsset.decimals, isLocked)
+                        store.addLockedInAmount(model.chainId, advancedInputCurrencyAmount, root.selectedAsset.decimals, isLocked)
                         d.calculateCustomAmounts()
-                        if(!locked || (d.customAmountToSend <= root.amountToSend.amount && advancedInput.valid))
+                        if(!locked || (d.customAmountToSend <= root.amountToSend && advancedInput.valid))
                             root.reCalculateSuggestedRoute()
                     }
                 }
@@ -145,7 +146,7 @@ Item {
         BalanceExceeded {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
-            amountToSend: root.amountToSend ? root.amountToSend.amount : 0.0
+            amountToSend: root.amountToSend
             errorType: root.errorType
             visible: root.errorType === Constants.NoRoute
         }
@@ -187,11 +188,10 @@ Item {
                     property int routeOnNetwork: 0
                     property int bentLine: 0
                     property double amountToReceive: 0
-                    property var currencyAmountToReceive: root.getCryptoCurrencyAmount(amountToReceive)
                     property var preferredChains: store.preferredChainIds
                     property bool preferred: store.preferredChainIds.includes(model.chainId)
                     primaryText: model.chainName
-                    secondaryText: LocaleUtils.currencyAmountToLocaleString(currencyAmountToReceive)
+                    secondaryText: root.currencyStore.formatCurrencyAmount(amountToReceive, root.selectedSymbol)
                     tertiaryText: state === "unpreferred"  ? qsTr("UNPREFERRED") : ""
                     state: !preferred ? "unpreferred" : "default"
                     opacity: preferred || showPreferredChains ? 1 : 0
@@ -276,10 +276,10 @@ Item {
                     yOffsetFrom = toN.objectName === fromN.objectName  && toN.routeOnNetwork !== 0 ? toN.routeOnNetwork * 16 : 0
                     yOffsetTo = toN.routeOnNetwork * 16
                     xOffset = (fromN.y - toN.y > 0 ? -1 : 1) * toN.bentLine * 16
-                    let amountToSend = weiToEth(bestRoutes[i].amountIn)
-                    let amountToReceive = weiToEth(bestRoutes[i].amountOut)
-                    fromN.amountToSend = amountToSend.amount
-                    toN.amountToReceive += amountToReceive.amount
+                    let amountToSend = root.weiToEth(bestRoutes[i].amountIn)
+                    let amountToReceive = root.weiToEth(bestRoutes[i].amountOut)
+                    fromN.amountToSend = amountToSend
+                    toN.amountToReceive += amountToReceive
                     fromN.routeOnNetwork += 1
                     toN.routeOnNetwork += 1
                     toN.bentLine = toN.objectName !== fromN.objectName

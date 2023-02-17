@@ -59,8 +59,9 @@ Item {
 
                 modelData: transaction
                 isIncoming: d.isIncoming
-                cryptoValue: root.isTransactionValid ? transaction.value : undefined
-                fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue.amount, symbol, RootStore.currentCurrency): undefined
+                currentCurrency: RootStore.currentCurrency
+                cryptoValue: root.isTransactionValid ? transaction.value.amount: 0.0
+                fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
                 networkIcon: root.isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId): ""
                 networkColor: root.isTransactionValid ? RootStore.getNetworkColor(transaction.chainId): ""
                 networkName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId): ""
@@ -68,8 +69,8 @@ Item {
                 transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
                 shortTimeStamp: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
                 savedAddressName: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
-                title: d.isIncoming ? qsTr("Received %1 from %2").arg(LocaleUtils.currencyAmountToLocaleString(cryptoValue)).arg(d.from) :
-                                    qsTr("Sent %1 to %2").arg(LocaleUtils.currencyAmountToLocaleString(cryptoValue)).arg(d.to)
+                title: d.isIncoming ? qsTr("Received %1 from %2").arg(RootStore.formatCurrencyAmount(cryptoValue, symbol)).arg(d.from) :
+                                    qsTr("Sent %1 to %2").arg(RootStore.formatCurrencyAmount(cryptoValue, symbol)).arg(d.to)
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 state: "big"
@@ -137,8 +138,9 @@ Item {
                 width: parent.width
                 modelData: transaction
                 isIncoming: d.isIncoming
-                cryptoValue: root.isTransactionValid ? transaction.value: undefined
-                fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue.amount, symbol, RootStore.currentCurrency): undefined
+                currentCurrency: RootStore.currentCurrency
+                cryptoValue: root.isTransactionValid ? transaction.value.amount: 0.0
+                fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
                 networkIcon: root.isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId) : ""
                 networkColor: root.isTransactionValid ? RootStore.getNetworkColor(transaction.chainId): ""
                 networkName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId): ""
@@ -146,8 +148,8 @@ Item {
                 transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
                 shortTimeStamp: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
                 savedAddressName: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
-                title: d.isIncoming ? qsTr("Received %1 from %2").arg(LocaleUtils.currencyAmountToLocaleString(cryptoValue)).arg(d.from) :
-                                    qsTr("Sent %1 to %2").arg(LocaleUtils.currencyAmountToLocaleString(cryptoValue)).arg(d.to)
+                title: d.isIncoming ? qsTr("Received %1 from %2").arg(RootStore.formatCurrencyAmount(cryptoValue, symbol)).arg(d.from) :
+                                    qsTr("Sent %1 to %2").arg(RootStore.formatCurrencyAmount(cryptoValue, symbol)).arg(d.to)
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 border.width: 1

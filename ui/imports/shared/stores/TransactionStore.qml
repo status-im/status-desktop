@@ -256,6 +256,7 @@ QtObject {
             return undefined
         }
 
-        return JSON.parse(selectedAccount.getTokenBalanceOnChainAsJson(chainId, tokenSymbol))
+        selectedAccount.prepareTokenBalanceOnChain(chainId, tokenSymbol)
+        return selectedAccount.getPreparedTokenBalanceOnChain()
     }
 }

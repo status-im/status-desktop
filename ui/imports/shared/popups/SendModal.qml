@@ -60,8 +60,8 @@ StatusDialog {
         popup.store.authenticateAndTransfer(
                     popup.selectedAccount.address,
                     recipientAddress,
-                    assetSelector.selectedAsset.symbol,
-                    amountToSendInput.cryptoValueToSend.amount,
+                    d.selectedSymbol,
+                    amountToSendInput.cryptoValueToSend,
                     d.uuid,
                     JSON.stringify(popup.bestRoutes)
                     )
@@ -70,7 +70,7 @@ StatusDialog {
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
         if(!!popup.selectedAccount && !!assetSelector.selectedAsset && d.recipientReady && amountToSendInput.input.valid) {
             popup.isLoading = true
-            let amount = Math.round(amountToSendInput.cryptoValueToSend.amount * Math.pow(10, assetSelector.selectedAsset.decimals))
+            let amount = Math.round(amountToSendInput.cryptoValueToSend * Math.pow(10, assetSelector.selectedAsset.decimals))
             popup.store.suggestedRoutes(popup.selectedAccount.address, amount.toString(16), assetSelector.selectedAsset.symbol,
                                         store.disabledChainIdsFromList, store.disabledChainIdsToList,
                                         store.preferredChainIds, popup.sendType, store.lockedInAmounts)
@@ -82,9 +82,11 @@ StatusDialog {
         readonly property int errorType: !amountToSendInput.input.valid ? Constants.SendAmountExceedsBalance :
                                                                           (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0 && !!amountToSendInput.input.text && recipientReady && !popup.isLoading) ?
                                                                               Constants.NoRoute : Constants.NoError
-        readonly property var maxFiatBalance: !!assetSelector.selectedAsset ? (amountToSendInput.inputIsFiat ?
-                                                                                    assetSelector.selectedAsset.totalCurrencyBalance :
-                                                                                    assetSelector.selectedAsset.totalBalance): undefined
+        readonly property double maxFiatBalance: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.totalCurrencyBalance.amount : 0
+        readonly property double maxCryptoBalance: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.totalBalance.amount : 0
+        readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
+        readonly property string selectedSymbol: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.symbol : ""
+        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? popup.store.currentCurrency : selectedSymbol
         readonly property bool errorMode: popup.isLoading || !recipientReady ? false : errorType !== Constants.NoError || networkSelector.errorMode || isNaN(amountToSendInput.input.text)
         readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending
         property bool isAddressValid: Utils.isValidAddress(popup.addressText)
@@ -96,9 +98,9 @@ StatusDialog {
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
-        property var totalFeesInEth
-        property var totalFeesInFiat
-        property var totalAmountToReceive
+        property double totalFeesInEth
+        property double totalFeesInFiat
+        property double totalAmountToReceive
 
         property Timer waitTimer: Timer {
             interval: 1500
@@ -252,9 +254,9 @@ StatusDialog {
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                             Layout.preferredHeight: 22
                             title: {
-                                if (!d.maxFiatBalance || d.maxFiatBalance.amount <= 0)
+                                if (d.maxInputBalance <= 0)
                                     return qsTr("No balances active")
-                                const balance = LocaleUtils.currencyAmountToLocaleString(d.maxFiatBalance)
+                                const balance = popup.currencyStore.formatCurrencyAmount(d.maxInputBalance, d.inputSymbol)
                                 return qsTr("Max: %1").arg(balance)
                             }
                             closeButtonVisible: false
@@ -269,21 +271,16 @@ StatusDialog {
                             Layout.fillWidth:true
                             isBridgeTx: popup.isBridgeTx
                             interactive: popup.interactive
-                            selectedAsset: assetSelector.selectedAsset
-                            maxFiatBalance: d.maxFiatBalance
+                            selectedSymbol: d.selectedSymbol
+                            maxInputBalance: d.maxInputBalance
                             currentCurrency: popup.store.currentCurrency
                             getFiatValue: function(cryptoValue) {
-                                return selectedAsset ? popup.currencyStore.getFiatValue(cryptoValue, selectedAsset.symbol, currentCurrency) : undefined
+                                return selectedSymbol ? popup.currencyStore.getFiatValue(cryptoValue, selectedSymbol, currentCurrency) : 0.0
                             }
                             getCryptoValue: function(fiatValue) {
-                                return selectedAsset ? popup.currencyStore.getCryptoValue(fiatValue, selectedAsset.symbol, currentCurrency) : undefined
+                                return selectedSymbol ? popup.currencyStore.getCryptoValue(fiatValue, selectedSymbol, currentCurrency) : 0.0
                             }
-                            getFiatCurrencyAmount: function(fiatValue) {
-                                return popup.currencyStore.getCurrencyAmount(fiatValue, currentCurrency)
-                            }
-                            getCryptoCurrencyAmount: function(cryptoValue) {
-                                return selectedAsset ? popup.currencyStore.getCurrencyAmount(cryptoValue, selectedAsset.symbol) : undefined
-                            }
+                            formatCurrencyAmount: popup.currencyStore.formatCurrencyAmount
                             onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
                         }
 
@@ -297,14 +294,15 @@ StatusDialog {
                             visible: popup.bestRoutes !== undefined && popup.bestRoutes.length > 0 && !!amountToSendInput.input.text && amountToSendInput.input.valid
                             store: popup.store
                             isLoading: popup.isLoading
-                            selectedAsset: assetSelector.selectedAsset
+                            selectedSymbol: d.selectedSymbol
                             isBridgeTx: popup.isBridgeTx
                             cryptoValueToReceive: d.totalAmountToReceive
                             inputIsFiat: amountToSendInput.inputIsFiat
                             currentCurrency: popup.store.currentCurrency
                             getFiatValue: function(cryptoValue) {
-                                return popup.currencyStore.getFiatValue(cryptoValue, selectedAsset.symbol, currentCurrency)
+                                return popup.currencyStore.getFiatValue(cryptoValue, selectedSymbol, currentCurrency)
                             }
+                            formatCurrencyAmount: popup.currencyStore.formatCurrencyAmount
                         }
                     }
                     TokenListView {
@@ -465,7 +463,7 @@ StatusDialog {
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
                         visible: d.recipientReady && !!assetSelector.selectedAsset && networkSelector.advancedOrCustomMode && !!amountToSendInput.input.text
-                        selectedTokenSymbol: assetSelector.selectedAsset ? assetSelector.selectedAsset.symbol: ""
+                        selectedTokenSymbol: d.selectedSymbol
                         isLoading: popup.isLoading
                         bestRoutes: popup.bestRoutes
                         store: popup.store
@@ -479,10 +477,10 @@ StatusDialog {
 
     footer: SendModalFooter {
         nextButtonText: popup.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
-        maxFiatFees: popup.isLoading ? "..." : LocaleUtils.currencyAmountToLocaleString(d.totalFeesInFiat)
+        maxFiatFees: popup.isLoading ? "..." : popup.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, popup.store.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: d.recipientReady && !!amountToSendInput.cryptoValueToSend && amountToSendInput.cryptoValueToSend.amount > 0 && !d.errorMode && !!amountToSendInput.input.text && amountToSendInput.input.valid
+        visible: d.recipientReady && amountToSendInput.cryptoValueToSend > 0 && !d.errorMode && !!amountToSendInput.input.text && amountToSendInput.input.valid
         onNextButtonClicked: popup.sendTransaction()
     }
 
@@ -502,11 +500,10 @@ StatusDialog {
             popup.bestRoutes =  response.suggestedRoutes.best
             let gasTimeEstimate = response.suggestedRoutes.gasTimeEstimate
             d.totalTimeEstimate = popup.store.getLabelForEstimatedTxTime(gasTimeEstimate.totalTime)
-            d.totalFeesInEth = popup.currencyStore.getCurrencyAmount(gasTimeEstimate.totalFeesInEth, "ETH")
-            let totalFeesInFiat = popup.currencyStore.getFiatValue( gasTimeEstimate.totalFeesInEth, "ETH", popup.store.currentCurrency).amount +
-                popup.currencyStore.getFiatValue(gasTimeEstimate.totalTokenFees, fees.selectedTokenSymbol, popup.store.currentCurrency).amount
-            d.totalFeesInFiat = popup.currencyStore.getCurrencyAmount(totalFeesInFiat, popup.store.currentCurrency)
-            d.totalAmountToReceive = popup.currencyStore.getCurrencyAmount(popup.store.getWei2Eth(response.suggestedRoutes.amountToReceive, assetSelector.selectedAsset.decimals), fees.selectedTokenSymbol)
+            d.totalFeesInEth = gasTimeEstimate.totalFeesInEth
+            d.totalFeesInFiat = popup.currencyStore.getFiatValue( gasTimeEstimate.totalFeesInEth, "ETH", popup.store.currentCurrency) +
+                popup.currencyStore.getFiatValue(gasTimeEstimate.totalTokenFees, fees.selectedTokenSymbol, popup.store.currentCurrency)
+            d.totalAmountToReceive = popup.store.getWei2Eth(response.suggestedRoutes.amountToReceive, assetSelector.selectedAsset.decimals)
             networkSelector.toNetworksList = response.suggestedRoutes.toNetworks
             popup.isLoading = false
         }
