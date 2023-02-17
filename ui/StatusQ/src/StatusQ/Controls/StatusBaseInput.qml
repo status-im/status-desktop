@@ -378,8 +378,8 @@ Item {
                                 if (utf8Length > root.maximumLength) {
                                     var cursor = cursorPosition
                                     text = previousText
-                                    if (cursor > text.length) {
-                                        cursorPosition = text.length
+                                    if (cursor > length) {
+                                        cursorPosition = length
                                     } else {
                                         cursorPosition = cursor - 1
                                     }
@@ -405,7 +405,7 @@ Item {
 
                         StatusBaseText {
                             id: placeholder
-                            visible: (edit.text.length === 0)
+                            visible: (edit.length === 0)
                             anchors.fill: parent
                             verticalAlignment: parent.verticalAlignment
                             font.pixelSize: 15
@@ -436,7 +436,7 @@ Item {
         id: clearButton
 
         StatusFlatRoundButton {
-            visible: edit.text.length != 0 && root.clearable && !root.multiline
+            visible: edit.length != 0 && root.clearable && !root.multiline
                      && edit.activeFocus
             type: StatusFlatRoundButton.Type.Secondary
             width: 24

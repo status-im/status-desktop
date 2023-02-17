@@ -29,6 +29,7 @@ QtObject {
     property real bgHeight
     property int bgRadius
     property color bgColor: "transparent"
+    property color bgBorderColor: "transparent"
 
     //image
     property bool isImage: false
