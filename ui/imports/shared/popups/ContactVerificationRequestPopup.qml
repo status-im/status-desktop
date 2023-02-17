@@ -1,18 +1,19 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
+import QtQml.Models 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import shared.controls 1.0
 import shared.views.chat 1.0
 
 import utils 1.0
 
-StatusModal {
+StatusDialog {
     id: root
 
     property var contactsStore
@@ -58,27 +59,25 @@ StatusModal {
         property string senderIcon: ""
         property string challengeText: ""
         property string responseText: ""
-        property string messageTimestamp: ""
-        property string responseTimestamp: ""
+        property double messageTimestamp
+        property double responseTimestamp
     }
 
-    anchors.centerIn: parent
-    header.title: qsTr("%1 is asking you to verify your identity").arg(d.senderDisplayName)
+    title: qsTr("%1 is asking you to verify your identity").arg(d.senderDisplayName)
 
-    onOpened: {
+    onAboutToShow: {
         root.updateVerificationDetails()
         verificationResponse.input.edit.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     contentItem: StatusScrollView {
         padding: 0
-        contentWidth: 480
+        implicitWidth: 560
+        implicitHeight: contentColumn.childrenRect.height
 
         ColumnLayout {
             id: contentColumn
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: Style.current.bigPadding
+            width: root.availableWidth
             spacing: Style.current.padding
 
             StatusBaseText {
@@ -89,7 +88,6 @@ StatusModal {
                         .arg(d.senderDisplayName).arg(d.senderDisplayName)
                 font.pixelSize: 15
                 Layout.fillWidth: true
-                Layout.topMargin: Style.current.padding
             }
 
             SimplifiedMessageView {
@@ -144,36 +142,38 @@ StatusModal {
         }
     }
 
-    rightButtons: [
-        StatusButton {
-            visible: !d.responseText
-            text: qsTr("Refuse Verification")
-            onClicked: {
-                root.verificationRefused(d.senderPublicKey)
-                root.close();
+    footer: StatusDialogFooter {
+        rightButtons: ObjectModel {
+            StatusButton {
+                visible: !d.responseText
+                text: qsTr("Refuse Verification")
+                onClicked: {
+                    root.verificationRefused(d.senderPublicKey)
+                    root.close();
+                }
             }
-        },
-        StatusButton {
-            text: qsTr("Send Answer")
-            visible: !d.responseText
-            enabled: verificationResponse.text !== ""
-            onClicked: {
-                root.responseSent(d.senderPublicKey, Utils.escapeHtml(verificationResponse.text))
-                d.responseText = verificationResponse.text
-                d.responseTimestamp = Date.now()
+            StatusButton {
+                text: qsTr("Send Answer")
+                visible: !d.responseText
+                enabled: verificationResponse.text !== ""
+                onClicked: {
+                    root.responseSent(d.senderPublicKey, Utils.escapeHtml(verificationResponse.text))
+                    d.responseText = verificationResponse.text
+                    d.responseTimestamp = Date.now()
+                }
             }
-        },
-        StatusFlatButton {
-            visible: d.responseText
-            text: qsTr("Change answer")
-            onClicked: {
-                d.responseText = ""
+            StatusFlatButton {
+                visible: d.responseText
+                text: qsTr("Change answer")
+                onClicked: {
+                    d.responseText = ""
+                }
             }
-        },
-        StatusButton {
-            visible: d.responseText
-            text: qsTr("Close")
-            onClicked: root.close()
+            StatusButton {
+                visible: d.responseText
+                text: qsTr("Close")
+                onClicked: root.close()
+            }
         }
-    ]
+    }
 }

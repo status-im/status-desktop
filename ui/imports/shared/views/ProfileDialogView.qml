@@ -68,7 +68,8 @@ Pane {
             outgoingVerificationStatus !== Constants.verificationStatus.unverified &&
             outgoingVerificationStatus !== Constants.verificationStatus.verified &&
             outgoingVerificationStatus !== Constants.verificationStatus.trusted
-        readonly property bool isVerificationRequestReceived: incomingVerificationStatus === Constants.verificationStatus.verifying
+        readonly property bool isVerificationRequestReceived: incomingVerificationStatus === Constants.verificationStatus.verifying ||
+                                                              incomingVerificationStatus === Constants.verificationStatus.verified
 
         readonly property bool isTrusted: outgoingVerificationStatus === Constants.verificationStatus.trusted ||
                                           incomingVerificationStatus === Constants.verificationStatus.trusted
