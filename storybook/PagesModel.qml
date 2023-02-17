@@ -74,6 +74,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+         title: "CommunityMintTokensSettingsPanel"
+         section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
