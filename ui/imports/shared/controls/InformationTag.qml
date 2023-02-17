@@ -15,8 +15,6 @@ Control {
     property alias controlBackground: controlBackground
     property alias rightComponent: rightComponent.sourceComponent
 
-    implicitWidth: 66
-    implicitHeight: 26
     horizontalPadding: Style.current.halfPadding
     verticalPadding: 5
 
