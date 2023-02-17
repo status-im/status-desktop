@@ -209,7 +209,7 @@ QtObject {
             readonly property string pattern: "keycard/card_insert/img-%1"
             readonly property int startImgIndexForTheFirstLoop: 0
             readonly property int startImgIndexForOtherLoops: 0
-            readonly property int endImgIndex: 16
+            readonly property int endImgIndex: 15
             readonly property int duration: 1000
             readonly property int loops: 1
         }
