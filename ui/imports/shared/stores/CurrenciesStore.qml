@@ -1,4 +1,7 @@
-import QtQuick 2.13
+import QtQuick 2.15
+
+import StatusQ.Core 0.1
+
 import utils 1.0
 import "../../../app/AppLayouts/Profile/stores"
 
@@ -27,9 +30,9 @@ QtObject {
         return 0;
     }
 
-    property string currentCurrency: Global.appIsReady? walletSection.currentCurrency : ""
-    property int currentCurrencyModelIndex: getModelIndexForShortName(currentCurrency)
-    property string currentCurrencySymbol: currenciesModel.get(currentCurrencyModelIndex).symbol
+    readonly property string currentCurrency: Global.appIsReady ? walletSection.currentCurrency : ""
+    readonly property int currentCurrencyModelIndex: getModelIndexForShortName(currentCurrency)
+    readonly property string currentCurrencySymbol: currenciesModel.get(currentCurrencyModelIndex).symbol ?? Qt.locale().currencySymbol(Locale.CurrencySymbol)
 
     property ListModel currenciesModel: ListModel {
        ListElement {
@@ -315,6 +318,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e8-1f1f4.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -962,8 +966,8 @@ QtObject {
             root.currenciesModel.get(0).selected = true
     }
 
-    function updateCurrency(newCurrenyKey) {
-        let index = getModelIndexForKey(newCurrenyKey)
+    function updateCurrency(newCurrencyKey) {
+        let index = getModelIndexForKey(newCurrencyKey)
         let shortName = root.currenciesModel.get(index).shortName
         walletSection.updateCurrency(shortName)
     }
@@ -981,17 +985,17 @@ QtObject {
     }
 
     function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
-        var amount = profileSectionModule.ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
+        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
         return getCurrencyAmount(parseFloat(amount), fiatSymbol)
     }
 
     function getCryptoValue(balance, cryptoSymbol, fiatSymbol) {
-        var amount = profileSectionModule.ensUsernamesModule.getCryptoValue(balance, cryptoSymbol, fiatSymbol)
+        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getCryptoValue(balance, cryptoSymbol, fiatSymbol)
         return getCurrencyAmount(parseFloat(amount), cryptoSymbol) 
     }
 
     function getGasEthValue(gweiValue, gasLimit) {
-        var amount = profileSectionModule.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
+        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
         return getCurrencyAmount(parseFloat(amount), "ETH") 
     }
 
