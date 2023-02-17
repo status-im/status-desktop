@@ -132,6 +132,7 @@ Button {
             text: root.text
             color: d.textColor
             verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
         }
     }
 
