@@ -6,17 +6,15 @@ import StatusQ.Controls 0.1
 
 import utils 1.0
 import shared.popups 1.0
-import shared.stores 1.0
 
 Item {
     id: root
 
+    property var transactionStore
     property var tokensModel
 
     signal mintCollectible(string address, string name, string symbol, string description, int supply,
                            bool infiniteSupply, bool transferable, bool selfDestruct, string network)
-
-    readonly property var transactionStore: TransactionStore{}
 
     ColumnLayout {
         id: layout

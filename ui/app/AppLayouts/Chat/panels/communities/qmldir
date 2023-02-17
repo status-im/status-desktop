@@ -5,3 +5,4 @@ PermissionQualificationPanel 1.0 PermissionQualificationPanel.qml
 PermissionConflictWarningPanel 1.0 PermissionConflictWarningPanel.qml
 CommunityColumnHeaderPanel 1.0 CommunityColumnHeaderPanel.qml
 JoinPermissionsOverlayPanel 1.0 JoinPermissionsOverlayPanel.qml
+CommunityMintTokensSettingsPanel 1.0 CommunityMintTokensSettingsPanel.qml
