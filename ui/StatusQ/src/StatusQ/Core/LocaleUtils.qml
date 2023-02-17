@@ -50,22 +50,38 @@ QtObject {
             return NaN
         }
 
+        // Parse options
+        var optShowOnlyAmount = false
+        var optDisplayDecimals = currencyAmount.displayDecimals
+        var optStripTrailingZeroes = currencyAmount.stripTrailingZeroes
+        if (options) {
+            if (options.onlyAmount !== undefined) {
+                optShowOnlyAmount = true
+            }
+            if (options.minDecimals !== undefined && options.minDecimals > optDisplayDecimals) {
+                optDisplayDecimals = options.minDecimals
+            }
+            if (options.stripTrailingZeroes !== undefined) {
+                optStripTrailingZeroes = options.stripTrailingZeroes
+            }
+        }
+
         var amountStr
-        let minAmount = 10**-currencyAmount.displayDecimals
-        if (currencyAmount.amount > 0 && currencyAmount.amount < minAmount && !(options && options.onlyAmount))
+        let minAmount = 10**-optDisplayDecimals
+        if (currencyAmount.amount > 0 && currencyAmount.amount < minAmount && !optShowOnlyAmount)
         {
             // Handle amounts smaller than resolution
-            amountStr = "<%1".arg(numberToLocaleString(minAmount, currencyAmount.displayDecimals, locale))
+            amountStr = "<%1".arg(numberToLocaleString(minAmount, optDisplayDecimals, locale))
         } else {
             // Normal formatting
-            amountStr = numberToLocaleString(currencyAmount.amount, currencyAmount.displayDecimals, locale)
-            if (currencyAmount.stripTrailingZeroes) {
+            amountStr = numberToLocaleString(currencyAmount.amount, optDisplayDecimals, locale)
+            if (optStripTrailingZeroes) {
                 amountStr = stripTrailingZeroes(amountStr, locale)
             }
         }
 
         // Add symbol
-        if (currencyAmount.symbol && !(options && options.onlyAmount)) {
+        if (currencyAmount.symbol && !optShowOnlyAmount) {
             amountStr = "%1 %2".arg(amountStr).arg(currencyAmount.symbol)
         }
 

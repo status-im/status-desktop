@@ -17,6 +17,8 @@ ColumnLayout {
     property bool isBridgeTx: false
     property bool inputIsFiat: false
     property string currentCurrency
+    property int minCryptoDecimals: 0
+    property int minFiatDecimals: 0
     property var getFiatValue: function(cryptoValue) {}
     property var formatCurrencyAmount: function() {}
 
@@ -26,12 +28,12 @@ ColumnLayout {
             if(!root.selectedSymbol || !cryptoValueToReceive)
                 return LocaleUtils.numberToLocaleString(0, 2)
             let fiatValue = root.getFiatValue(cryptoValueToReceive, root.selectedSymbol, root.currentCurrency)
-            return root.formatCurrencyAmount(fiatValue, root.currentCurrency)
+            return root.formatCurrencyAmount(fiatValue, root.currentCurrency, inputIsFiat ? {"minDecimals": root.minFiatDecimals, "stripTrailingZeroes": true} : {})
         }
         readonly property string cryptoValue: {
             if(!root.selectedSymbol || !cryptoValueToReceive)
                 return LocaleUtils.numberToLocaleString(0, 2)
-            return root.formatCurrencyAmount(cryptoValueToReceive, root.selectedSymbol)
+            return root.formatCurrencyAmount(cryptoValueToReceive, root.selectedSymbol, !inputIsFiat ? {"minDecimals": root.minCryptoDecimals, "stripTrailingZeroes": true} : {})
         }
     }
 
