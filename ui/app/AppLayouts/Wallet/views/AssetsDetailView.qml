@@ -20,7 +20,7 @@ import shared.stores 1.0
 Item {
     id: root
 
-    property var token: {}
+    property var token: ({})
     /*required*/ property string address: ""
 
     QtObject {
@@ -290,31 +290,31 @@ Item {
                 Layout.fillWidth: true
             }
             InformationTile {
-                readonly property string changePctHour: token ? token.changePctHour.toFixed(2) : ""
+                readonly property double changePctHour: token ? token.changePctHour : 0
                 maxWidth: parent.width
                 primaryText: qsTr("Hour")
-                secondaryText: changePctHour ? "%1%".arg(changePctHour) : "---"
-                secondaryLabel.color: Math.sign(Number(changePctHour)) === 0 ? Theme.palette.directColor1 :
-                                                                               Math.sign(Number(changePctHour)) === -1 ? Theme.palette.dangerColor1 :
-                                                                                                                         Theme.palette.successColor1
+                secondaryText: changePctHour ? "%1%".arg(LocaleUtils.numberToLocaleString(changePctHour, 2)) : "---"
+                secondaryLabel.color: Math.sign(changePctHour) === 0 ? Theme.palette.directColor1 :
+                                                                       Math.sign(changePctHour) === -1 ? Theme.palette.dangerColor1 :
+                                                                                                         Theme.palette.successColor1
             }
             InformationTile {
-                readonly property string changePctDay: token ? token.changePctDay.toFixed(2) : ""
+                readonly property double changePctDay: token ? token.changePctDay : 0
                 maxWidth: parent.width
                 primaryText: qsTr("Day")
-                secondaryText: changePctDay ? "%1%".arg(changePctDay) : "---"
-                secondaryLabel.color: Math.sign(Number(changePctDay)) === 0 ? Theme.palette.directColor1 :
-                                                                              Math.sign(Number(changePctDay)) === -1 ? Theme.palette.dangerColor1 :
-                                                                                                                       Theme.palette.successColor1
+                secondaryText: changePctDay ? "%1%".arg(LocaleUtils.numberToLocaleString(changePctDay, 2)) : "---"
+                secondaryLabel.color: Math.sign(changePctDay) === 0 ? Theme.palette.directColor1 :
+                                                                      Math.sign(changePctDay) === -1 ? Theme.palette.dangerColor1 :
+                                                                                                       Theme.palette.successColor1
             }
             InformationTile {
-                readonly property string changePct24hour: token ? token.changePct24hour.toFixed(2) : ""
+                readonly property double changePct24hour: token ? token.changePct24hour : 0
                 maxWidth: parent.width
                 primaryText: qsTr("24 Hours")
-                secondaryText: changePct24hour ? "%1%".arg(changePct24hour) : "---"
-                secondaryLabel.color: Math.sign(Number(changePct24hour)) === 0 ? Theme.palette.directColor1 :
-                                                                                 Math.sign(Number(changePct24hour)) === -1 ? Theme.palette.dangerColor1 :
-                                                                                                                             Theme.palette.successColor1
+                secondaryText: changePct24hour ? "%1%".arg(LocaleUtils.numberToLocaleString(changePct24hour, 2)) : "---"
+                secondaryLabel.color: Math.sign(changePct24hour) === 0 ? Theme.palette.directColor1 :
+                                                                         Math.sign(changePct24hour) === -1 ? Theme.palette.dangerColor1 :
+                                                                                                             Theme.palette.successColor1
             }
         }
 
