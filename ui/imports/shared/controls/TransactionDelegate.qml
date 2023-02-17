@@ -8,6 +8,7 @@ import StatusQ.Controls 0.1
 
 import utils 1.0
 import shared 1.0
+import shared.stores 1.0
 
 StatusListItem {
     id: root
@@ -18,9 +19,10 @@ StatusListItem {
     property var modelData
     property string symbol
     property bool isIncoming
+    property string currentCurrency
     property int transferStatus
-    property var cryptoValue
-    property var fiatValue
+    property double cryptoValue
+    property double fiatValue
     property string networkIcon
     property string networkColor
     property string networkName
@@ -73,8 +75,8 @@ StatusListItem {
                 }
                 StatusTextWithLoadingState {
                     id: cryptoValueText
-                    text: LocaleUtils.currencyAmountToLocaleString(cryptoValue)
-                    customColor: Theme.palette.directColor1
+                    text: RootStore.formatCurrencyAmount(cryptoValue, root.symbol)
+                    color: Theme.palette.directColor1
                     loading: root.loading
                 }
 
@@ -82,7 +84,7 @@ StatusListItem {
             StatusTextWithLoadingState {
                 id: fiatValueText
                 Layout.alignment: Qt.AlignRight
-                text: LocaleUtils.currencyAmountToLocaleString(fiatValue)
+                text: RootStore.formatCurrencyAmount(fiatValue, root.currentCurrency)
                 font.pixelSize: 15
                 customColor: Theme.palette.baseColor1
                 loading: root.loading

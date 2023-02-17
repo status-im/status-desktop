@@ -13,19 +13,20 @@ ColumnLayout {
     id: root
 
     property alias input: topAmountToSendInput
+    readonly property double inputNumber: topAmountToSendInput.text ? LocaleUtils.numberFromLocaleString(topAmountToSendInput.text) : 0
 
-    property var selectedAsset
+    property string selectedSymbol
     property bool isBridgeTx: false
     property bool interactive: false
-    property var maxFiatBalance
+    property double maxInputBalance
     property bool inputIsFiat: false
-    property var cryptoValueToSend
+    property double cryptoValueToSend
     Binding {
         target: root
         property: "cryptoValueToSend"
         value: {
-            const value = !inputIsFiat ? getCryptoCurrencyAmount(LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)) : getCryptoValue(fiatValueToSend ? fiatValueToSend.amount : 0.0)
-            return root.selectedAsset, value
+            const value = !inputIsFiat ? inputNumber : getCryptoValue(fiatValueToSend)
+            return root.selectedSymbol, value
         }
         delayed: true
     }
@@ -34,16 +35,15 @@ ColumnLayout {
         target: root
         property: "fiatValueToSend"
         value: {
-            const value = inputIsFiat ? getFiatCurrencyAmount(LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)) : getFiatValue(cryptoValueToSend ? cryptoValueToSend.amount : 0.0)
-            return root.selectedAsset, value
+            const value = inputIsFiat ? inputNumber : getFiatValue(cryptoValueToSend)
+            return root.selectedSymbol, value
         }
         delayed: true
     }
     property string currentCurrency
     property var getFiatValue: function(cryptoValue) {}
     property var getCryptoValue: function(fiatValue) {}
-    property var getFiatCurrencyAmount: function(fiatValue) {}
-    property var getCryptoCurrencyAmount: function(cryptoValue) {}
+    property var formatCurrencyAmount: function() {}
 
     signal reCalculateSuggestedRoute()
 
@@ -54,17 +54,10 @@ ColumnLayout {
             interval: 1000
             onTriggered: reCalculateSuggestedRoute()
         }
-
-        function formatValue(value) {
-            if (!value) {
-                return zeroString
-            }
-            return LocaleUtils.currencyAmountToLocaleString(value)
-        }
     }
 
-    onMaxFiatBalanceChanged: {
-        floatValidator.top = maxFiatBalance ? maxFiatBalance.amount : 0.0
+    onMaxInputBalanceChanged: {
+        floatValidator.top = maxInputBalance
         input.validate()
     }
 
@@ -78,7 +71,8 @@ ColumnLayout {
     }
     RowLayout {
         id: topItem
-        property var topAmountToSend: !inputIsFiat ? cryptoValueToSend : fiatValueToSend
+        property double topAmountToSend: !inputIsFiat ? cryptoValueToSend : fiatValueToSend
+        property string topAmountSymbol: !inputIsFiat ? root.selectedSymbol : root.currentCurrency
         Layout.alignment: Qt.AlignLeft
         AmountInputWithCursor {
             id: topAmountToSendInput
@@ -92,7 +86,7 @@ ColumnLayout {
                 StatusFloatValidator {
                     id: floatValidator
                     bottom: 0
-                    top: root.maxFiatBalance.amount
+                    top: root.maxInputBalance
                     errorMessage: ""
                 }
             ]
@@ -112,7 +106,8 @@ ColumnLayout {
     }
     Item {
         id: bottomItem
-        property var bottomAmountToSend: inputIsFiat ? cryptoValueToSend : fiatValueToSend
+        property double bottomAmountToSend: inputIsFiat ? cryptoValueToSend : fiatValueToSend
+        property string bottomAmountSymbol: inputIsFiat ? selectedSymbol : currentCurrency
         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
         Layout.preferredWidth: txtBottom.width
         Layout.preferredHeight: txtBottom.height
@@ -120,7 +115,7 @@ ColumnLayout {
             id: txtBottom
             anchors.top: parent.top
             anchors.left: parent.left
-            text: d.formatValue(bottomItem.bottomAmountToSend)
+            text: root.formatCurrencyAmount(bottomItem.bottomAmountToSend, bottomItem.bottomAmountSymbol)
             font.pixelSize: 13
             color: Theme.palette.directColor5
         }
@@ -130,7 +125,7 @@ ColumnLayout {
             onClicked: {
                 topAmountToSendInput.validate()
                 if(!!topAmountToSendInput.text) {
-                    topAmountToSendInput.text = LocaleUtils.currencyAmountToLocaleString(bottomItem.bottomAmountToSend, {onlyAmount: true})
+                    topAmountToSendInput.text = root.formatCurrencyAmount(bottomItem.bottomAmountToSend, bottomItem.bottomAmountSymbol, {onlyAmount: true})
                 }
                 inputIsFiat = !inputIsFiat
                 d.waitTimer.restart()

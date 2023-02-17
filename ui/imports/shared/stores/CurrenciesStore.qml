@@ -972,34 +972,31 @@ QtObject {
         walletSection.updateCurrency(shortName)
     }
 
+    // The object returned by this sometimes becomes null when used as part of a binding expression.
+    // Will probably be solved when moving to C++, for now avoid storing the result of this function and use
+    // formatCurrencyAmount at the visualization point instead, or move functionality over to the NIM side.
     function getCurrencyAmount(amount, symbol) {
-        if (isNaN(amount)) {
-            amount = 0
-        }
-        let obj = JSON.parse((walletSection.getCurrencyAmountAsJson(amount, symbol)))
-        if (obj.error) {
-            console.error("Error parsing currency amount json object, amount: ", amount, ", symbol ", symbol, " error: ", obj.error)
-            return {amount: nan, symbol: symbol}
-        }
-        return obj
+        walletSection.prepareCurrencyAmount(amount, symbol)
+        return walletSection.getPreparedCurrencyAmount()
     }
 
-    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
-        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
-        return getCurrencyAmount(parseFloat(amount), fiatSymbol)
+    function formatCurrencyAmount(amount, symbol, options = null, locale = null) {
+        var currencyAmount = getCurrencyAmount(amount, symbol)
+        return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
     }
 
-    function getCryptoValue(balance, cryptoSymbol, fiatSymbol) {
-        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getCryptoValue(balance, cryptoSymbol, fiatSymbol)
-        return getCurrencyAmount(parseFloat(amount), cryptoSymbol) 
+    function getFiatValue(cryptoAmount, cryptoSymbol, fiatSymbol) {
+        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getFiatValue(cryptoAmount, cryptoSymbol, fiatSymbol)
+        return parseFloat(amount)
+    }
+
+    function getCryptoValue(fiatAmount, cryptoSymbol, fiatSymbol) {
+        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getCryptoValue(fiatAmount, cryptoSymbol, fiatSymbol)
+        return parseFloat(amount)
     }
 
     function getGasEthValue(gweiValue, gasLimit) {
         var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
-        return getCurrencyAmount(parseFloat(amount), "ETH") 
-    }
-
-    function formatCurrencyAmount(currencyAmount) {
-        return LocaleUtils.currencyAmountToLocaleString(currencyAmount)
+        return parseFloat(amount)
     }
 }

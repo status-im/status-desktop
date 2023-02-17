@@ -12,6 +12,8 @@ QtObject:
       signingPhrase: string
       isMnemonicBackedUp: bool
       tokensLoading: bool
+      tmpAmount: float  # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
+      tmpSymbol: string # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
 
   proc setup(self: View) =
     self.QObject.setup
@@ -90,8 +92,16 @@ QtObject:
 #  proc getCurrencyAmount*(self: View, amount: float, symbol: string): QVariant {.slot.} =
 #    return newQVariant(self.delegate.getCurrencyAmount(amount, symbol))
 
-  proc getCurrencyAmountAsJson*(self: View, amount: float, symbol: string): string {.slot.} =
-    return $self.delegate.getCurrencyAmount(amount, symbol).toJsonNode()
+# As a workaround, we do it in two steps: First call prepareCurrencyAmount, then getPreparedCurrencyAmount
+  proc prepareCurrencyAmount*(self: View, amount: float, symbol: string) {.slot.} =
+    self.tmpAmount = amount
+    self.tmpSymbol = symbol
+
+  proc getPreparedCurrencyAmount*(self: View): QVariant {.slot.} =
+    let currencyAmount = self.delegate.getCurrencyAmount(self.tmpAmount, self.tmpSymbol)
+    self.tmpAmount = 0
+    self.tmpSymbol = "ERROR"
+    return newQVariant(currencyAmount)
 
   proc setTokensLoading*(self: View, loading: bool) =
     self.tokensLoading = loading

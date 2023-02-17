@@ -221,8 +221,8 @@ QtObject {
         return currencyStore.getGasEthValue(gweiValue, gasLimit)
     }
 
-    function formatCurrencyAmount(currencyAmount) {
-        return currencyStore.formatCurrencyAmount(currencyAmount)
+    function formatCurrencyAmount(amount, symbol, options = null, locale = null) {
+        return currencyStore.formatCurrencyAmount(amount, symbol, options, locale)
     }
 
     function getHistoricalDataForToken(symbol, currency) {

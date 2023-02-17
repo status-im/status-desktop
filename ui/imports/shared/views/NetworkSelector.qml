@@ -1,4 +1,4 @@
-﻿import QtQuick 2.13
+import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
@@ -87,8 +87,9 @@ Item {
                 errorType: root.errorType
                 toNetworksList: root.toNetworksList
                 weiToEth: function(wei) {
-                    return root.currencyStore.getCurrencyAmount(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)), selectedAsset.symbol)
+                    return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
                 }
+                formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
                 reCalculateSuggestedRoute: function() {
                     root.reCalculateSuggestedRoute()
                 }
@@ -118,10 +119,7 @@ Item {
                 isBridgeTx: root.isBridgeTx
                 errorType: root.errorType
                 weiToEth: function(wei) {
-                    return root.currencyStore.getCurrencyAmount(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)), selectedAsset.symbol)
-                }
-                getCryptoCurrencyAmount: function(cryptoValue) {
-                    return selectedAsset ? root.currencyStore.getCurrencyAmount(parseFloat(cryptoValue), selectedAsset.symbol) : undefined
+                    return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
                 }
             }
         }
