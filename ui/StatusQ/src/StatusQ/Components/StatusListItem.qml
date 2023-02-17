@@ -34,6 +34,7 @@ Rectangle {
     property Component inlineTagDelegate
     property bool loading: false
     property bool loadingFailed: false
+    property bool iconHoverEnabled: false
 
     property StatusAssetSettings asset: StatusAssetSettings {
         height: isImage ? 40 : 20
@@ -80,6 +81,7 @@ Rectangle {
 
     signal clicked(string itemId, var mouse)
     signal titleClicked(string titleId)
+    signal iconClicked(var mouse)
 
     enum Type {
         Primary,
@@ -146,6 +148,9 @@ Rectangle {
             badge.border.color: statusListItem.color
             ringSettings: statusListItem.ringSettings
             loading: statusListItem.loading
+            hoverEnabled: statusListItem.iconHoverEnabled
+
+            onClicked: statusListItem.iconClicked(mouse)
         }
 
         Item {

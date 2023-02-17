@@ -15,6 +15,7 @@ Loader {
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
+        bgRadius: bgWidth / 2
     }
 
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
@@ -27,6 +28,10 @@ Loader {
                      !root.asset.isImage ? roundedIcon : roundedImage
 
     property bool loading: false
+    property bool hoverEnabled: false
+    readonly property bool hovered: (sourceComponent == roundedIcon && item) ?
+                     item.hovered : false
+    signal clicked()
 
     Component {
         id: roundedImage
@@ -34,7 +39,6 @@ Loader {
         Item {
             width: root.asset.width
             height: root.asset.height
-
 
             StatusRoundedImage {
                 id: statusRoundImage
@@ -65,15 +69,20 @@ Loader {
 
     Component {
         id: roundedIcon
-        StatusRoundIcon {
-            asset.bgWidth: root.asset.bgWidth
-            asset.bgHeight: root.asset.bgHeight
-            asset.bgColor: root.asset.bgColor
-            asset.width: root.asset.width
-            asset.height: root.asset.height
-            asset.name: root.asset.name
-            asset.rotation: root.asset.rotation
-            asset.color: root.asset.color
+
+        StatusRoundButton {
+            width: root.asset.bgWidth
+            height: root.asset.bgHeight
+            color: root.asset.bgColor
+            icon.width: root.asset.width
+            icon.height: root.asset.height
+            icon.name: root.asset.name
+            icon.rotation: root.asset.rotation
+            icon.color: root.asset.color
+            icon.hoverColor: root.asset.hoverColor
+            radius: root.asset.bgRadius
+            hoverEnabled: root.hoverEnabled
+            onClicked: root.clicked()
         }
     }
 
