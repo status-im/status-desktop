@@ -49,6 +49,8 @@ Control {
             spacing: d.defaultHoldingsSpacing
 
             Repeater {
+                id: repeater
+
                 model: root.model
 
                 ColumnLayout {
@@ -88,7 +90,7 @@ Control {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("or")
                         textFormat: Text.StyledText
-                        visible: (index !== root.model.count - 1)
+                        visible: (index !== repeater.count - 1)
                     }
                 }
             }

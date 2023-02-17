@@ -30,6 +30,7 @@ SplitView {
 
                 store: CommunitiesStore {
                     id: mockedCommunity
+
                     permissionsModel: PermissionsModel.permissionsModel
 
                     readonly property var assetsModel: AssetsModel {
@@ -83,10 +84,8 @@ SplitView {
             anchors.fill: parent
             model: mockedCommunity.permissionsModel
 
-            assetKeys: ModelUtils.modelToArray(
-                           assetsModel, ["key"]).map(asset => asset.key)
-            collectibleKeys: ModelUtils.modelToArray(
-                                 collectiblesModel, ["key"]).map(collectible => collectible.key)
+            assetKeys: assetsModel.data.map(asset => asset.key)
+            collectibleKeys: collectiblesModel.data.map(collectible => collectible.key)
         }
     }
 }

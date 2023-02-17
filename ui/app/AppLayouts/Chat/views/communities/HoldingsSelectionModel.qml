@@ -12,6 +12,15 @@ SortFilterProxyModel {
     property var assetsModel
     property var collectiblesModel
 
+
+    readonly property ModelChangeTracker _assetsChanges: ModelChangeTracker {
+        model: assetsModel
+    }
+
+    readonly property ModelChangeTracker _collectiblesChanges: ModelChangeTracker {
+        model: collectiblesModel
+    }
+
     proxyRoles: [
         ExpressionRole {
             name: "text"
@@ -23,10 +32,9 @@ SortFilterProxyModel {
                 const model = type === HoldingTypes.Type.Asset
                             ? assetsModel
                             : collectiblesModel
-
                 const item = CommunityPermissionsHelpers.getTokenByKey(model, key)
 
-                return item ? item.name : ""
+                return item ? item.shortName || item.name : ""
             }
 
             function getText(type, key, amount) {
@@ -38,7 +46,11 @@ SortFilterProxyModel {
 
             // Direct call for singleton function is not handled properly by
             // SortFilterProxyModel that's why helper function is used instead.
-            expression: getText(model.type, model.key, model.amount)
+            expression: {
+                _assetsChanges.revision
+                _collectiblesChanges.revision
+                getText(model.type, model.key, model.amount)
+            }
         },
         ExpressionRole {
             name: "imageSource"
@@ -53,7 +65,11 @@ SortFilterProxyModel {
                 return CommunityPermissionsHelpers.getTokenIconByKey(model, key)
             }
 
-            expression: getIcon(model.type, model.key)
+            expression: {
+                _assetsChanges.revision
+                _collectiblesChanges.revision
+                getIcon(model.type, model.key)
+            }
         },
         ExpressionRole {
             name: "operator"
