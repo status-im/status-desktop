@@ -18,6 +18,8 @@ import StatusQ.Controls.Validators 0.1
 
 import AppLayouts.Chat.stores 1.0
 
+import shared.stores 1.0
+
 import "../panels/communities"
 import "../popups/community"
 import "../layouts"
@@ -31,10 +33,9 @@ StatusSectionLayout {
     property var settingsMenuModel: [{name: qsTr("Overview"), icon: "show", enabled: true},
                                      {name: qsTr("Members"), icon: "group-chat", enabled: true},
                                      {name: qsTr("Permissions"), icon: "objects", enabled: root.rootStore.communityPermissionsEnabled},
-                                     {name: qsTr("Tokens"), icon: "token", enabled: root.rootStore.communityTokensEnabled}]
+                                     {name: qsTr("Mint Tokens"), icon: "token", enabled: root.rootStore.communityTokensEnabled}]
 
     // TODO: Next community settings options:
-    //                        {name: qsTr("Tokens"), icon: "token"},
     //                        {name: qsTr("Airdrops"), icon: "airdrop"},
     //                        {name: qsTr("Token sales"), icon: "token-sale"},
     //                        {name: qsTr("Subscriptions"), icon: "subscription"},
@@ -44,6 +45,7 @@ StatusSectionLayout {
     property var chatCommunitySectionModule
     property var communityStore: CommunitiesStore {}
     property bool hasAddedContacts: false
+    property var transactionStore: TransactionStore {}
 
     readonly property string filteredSelectedTags: {
         var tagsArray = []
@@ -248,12 +250,14 @@ StatusSectionLayout {
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
             }
 
-            CommunityTokensPanel {
+            CommunityMintTokensSettingsPanel {
+                transactionStore: root.transactionStore
                 tokensModel: root.communityStore.mintTokensModel
                 onMintCollectible: {
                     root.communityStore.mintCollectible(address, name, symbol, description, supply,
                                                         infiniteSupply, transferable, selfDestruct, network)
                 }
+                onPreviousPageNameChanged: root.backButtonName = previousPageName
             }
 
             onCurrentIndexChanged: root.backButtonName = centerPanelContentLoader.item.children[d.currentIndex].previousPageName
