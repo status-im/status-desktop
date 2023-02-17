@@ -1,4 +1,4 @@
-import QtQuick 2.13
+﻿import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
@@ -23,6 +23,8 @@ Item {
     property string ensAddressOrEmpty: ""
     property var selectedAsset
     property var amountToSend
+    property int minSendCryptoDecimals: 0
+    property int minReceiveCryptoDecimals: 0
     property var requiredGasInEth
     property var bestRoutes
     property bool isLoading: false
@@ -79,6 +81,7 @@ Item {
                 bestRoutes: root.bestRoutes
                 isBridgeTx: root.isBridgeTx
                 amountToSend: root.amountToSend
+                minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 isLoading: root.isLoading
                 store: root.store
                 selectedAsset: root.selectedAsset
@@ -111,6 +114,8 @@ Item {
                 ensAddressOrEmpty: root.ensAddressOrEmpty
                 amountToSend: root.amountToSend
                 requiredGasInEth: root.requiredGasInEth
+                minSendCryptoDecimals: root.minSendCryptoDecimals
+                minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 selectedAsset: root.selectedAsset
                 onReCalculateSuggestedRoute: root.reCalculateSuggestedRoute()
                 bestRoutes: root.bestRoutes

@@ -298,6 +298,8 @@ StatusDialog {
                             isBridgeTx: popup.isBridgeTx
                             cryptoValueToReceive: d.totalAmountToReceive
                             inputIsFiat: amountToSendInput.inputIsFiat
+                            minCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
+                            minFiatDecimals: amountToSendInput.minReceiveFiatDecimals
                             currentCurrency: popup.store.currentCurrency
                             getFiatValue: function(cryptoValue) {
                                 return popup.currencyStore.getFiatValue(cryptoValue, selectedSymbol, currentCurrency)
@@ -445,6 +447,8 @@ StatusDialog {
                         selectedAccount: popup.selectedAccount
                         ensAddressOrEmpty: d.isENSValid ? d.resolvedENSAddress : ""
                         amountToSend: amountToSendInput.cryptoValueToSend
+                        minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals
+                        minReceiveCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
                         requiredGasInEth: d.totalFeesInEth
                         selectedAsset: assetSelector.selectedAsset
                         onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()

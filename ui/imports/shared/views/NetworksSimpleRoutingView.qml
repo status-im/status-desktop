@@ -1,4 +1,4 @@
-import QtQuick 2.13
+﻿import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
@@ -18,6 +18,7 @@ RowLayout {
     property var store
     property var bestRoutes
     property double amountToSend
+    property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
     property bool isBridgeTx: false
     property var selectedAsset
@@ -107,7 +108,7 @@ RowLayout {
                 else {
                     amountOut = root.weiToEth(parseInt(store.lockedInAmounts[index].value, 16))
                 }
-                return root.formatCurrencyAmount(amountOut, selectedAsset.symbol)
+                return root.formatCurrencyAmount(amountOut, selectedAsset.symbol, {"minDecimals": root.minReceiveCryptoDecimals})
             }
             statusListItemSubTitle.color: root.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
             asset.width: 32

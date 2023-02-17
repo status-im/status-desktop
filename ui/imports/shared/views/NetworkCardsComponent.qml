@@ -1,4 +1,4 @@
-import QtQuick 2.13
+﻿import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
@@ -25,6 +25,8 @@ Item {
     property var allNetworks
     property bool customMode: false
     property double amountToSend
+    property int minSendCryptoDecimals: 0
+    property int minReceiveCryptoDecimals: 0
     property double requiredGasInEth
     property bool errorMode: d.customAmountToSend > root.amountToSend
     property bool interactive: true
@@ -101,7 +103,7 @@ Item {
 
                     primaryText: model.chainName
                     secondaryText: (tokenBalanceOnChain == 0 && root.amountToSend > 0) ?
-                                        qsTr("No Balance") : !hasGas ? qsTr("No Gas") : root.currencyStore.formatCurrencyAmount(advancedInputCurrencyAmount, root.selectedSymbol)
+                                        qsTr("No Balance") : !hasGas ? qsTr("No Gas") : root.currencyStore.formatCurrencyAmount(advancedInputCurrencyAmount, root.selectedSymbol, {"minDecimals": root.minSendCryptoDecimals})
                     tertiaryText: root.errorMode && advancedInputCurrencyAmount > 0 ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: ") + root.currencyStore.formatCurrencyAmount(tokenBalanceOnChain, root.selectedSymbol)
                     locked: store.lockedInAmounts.findIndex(lockedItem => lockedItem !== undefined && lockedItem.chainID ===  model.chainId) !== -1
                     preCalculatedAdvancedText: {
@@ -191,7 +193,7 @@ Item {
                     property var preferredChains: store.preferredChainIds
                     property bool preferred: store.preferredChainIds.includes(model.chainId)
                     primaryText: model.chainName
-                    secondaryText: root.currencyStore.formatCurrencyAmount(amountToReceive, root.selectedSymbol)
+                    secondaryText: root.currencyStore.formatCurrencyAmount(amountToReceive, root.selectedSymbol, {"minDecimals": root.minReceiveCryptoDecimals})
                     tertiaryText: state === "unpreferred"  ? qsTr("UNPREFERRED") : ""
                     state: !preferred ? "unpreferred" : "default"
                     opacity: preferred || showPreferredChains ? 1 : 0

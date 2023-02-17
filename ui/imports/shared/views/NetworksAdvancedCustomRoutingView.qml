@@ -1,4 +1,4 @@
-import QtQuick 2.13
+﻿import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
 import utils 1.0
@@ -18,6 +18,8 @@ ColumnLayout {
     property var selectedAccount
     property string ensAddressOrEmpty: ""
     property double amountToSend
+    property int minSendCryptoDecimals: 0
+    property int minReceiveCryptoDecimals: 0
     property double requiredGasInEth
     property bool customMode: false
     property var selectedAsset
@@ -86,6 +88,8 @@ ColumnLayout {
                     ensAddressOrEmpty: root.ensAddressOrEmpty
                     allNetworks: root.store.allNetworks
                     amountToSend: root.amountToSend
+                    minSendCryptoDecimals: root.minSendCryptoDecimals
+                    minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                     customMode: root.customMode
                     requiredGasInEth: root.requiredGasInEth
                     selectedAsset: root.selectedAsset

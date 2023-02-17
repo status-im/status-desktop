@@ -14,6 +14,10 @@ ColumnLayout {
 
     property alias input: topAmountToSendInput
     readonly property double inputNumber: topAmountToSendInput.text ? LocaleUtils.numberFromLocaleString(topAmountToSendInput.text) : 0
+    readonly property int minSendCryptoDecimals: !inputIsFiat ? LocaleUtils.fractionalPartLength(inputNumber) : 0 
+    readonly property int minReceiveCryptoDecimals: !inputIsFiat ? minSendCryptoDecimals + 1 : 0 
+    readonly property int minSendFiatDecimals: inputIsFiat ? LocaleUtils.fractionalPartLength(inputNumber) : 0 
+    readonly property int minReceiveFiatDecimals: inputIsFiat ? minSendFiatDecimals + 1 : 0 
 
     property string selectedSymbol
     property bool isBridgeTx: false
