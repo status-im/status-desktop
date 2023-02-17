@@ -170,13 +170,14 @@ SettingsPageLayout {
                 communityNewPermissionView.dirtyValues.isPrivate
 
                 const model = root.store.permissionsModel
+                const count = model.rowCount()
 
-                for (let i = 0; i < model.count; i++) {
+                for (let i = 0; i < count; i++) {
                     if (root.state === d.editPermissionViewState
                             && d.permissionIndexToEdit === i)
                         continue
 
-                    const item = model.get(i)
+                    const item = ModelUtils.get(model, i)
 
                     const holdings = item.holdingsListModel
                     const channels = item.channelsListModel
@@ -255,7 +256,7 @@ SettingsPageLayout {
             store: root.store
 
             function setInitialValuesFromIndex(index) {
-                const item = root.store.permissionsModel.get(index)
+                const item = ModelUtils.get(root.store.permissionsModel, index)
 
                 d.holdingsToEditModel = item.holdingsListModel
                 d.channelsToEditModel = item.channelsListModel

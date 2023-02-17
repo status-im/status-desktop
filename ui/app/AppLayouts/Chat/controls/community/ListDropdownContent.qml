@@ -125,7 +125,7 @@ StatusListView {
         Item {
             id: sectionDelegateRoot
 
-            property string section: root.model && root.model.count ?
+            property string section: root.count ?
                                          qsTr("Search result") :
                                          qsTr("No results")
 
