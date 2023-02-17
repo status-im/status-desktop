@@ -1,6 +1,17 @@
 import json, os, chronicles, strutils
 import ../../constants as main_constants
 
+# set via `nim c` param `-d:POKT_TOKEN:[token]`; should be set in CI/release builds
+const POKT_TOKEN {.strdefine.} = ""
+# allow runtime override via environment variable; core contributors can set a
+# release token in this way for local development
+let POKT_TOKEN_ENV = $getEnv("POKT_TOKEN")
+let POKT_TOKEN_RESOLVED =
+  if POKT_TOKEN_ENV != "":
+    POKT_TOKEN_ENV
+  else:
+    POKT_TOKEN
+
 # set via `nim c` param `-d:INFURA_TOKEN:[token]`; should be set in CI/release builds
 const INFURA_TOKEN {.strdefine.} = ""
 # allow runtime override via environment variable; core contributors can set a
@@ -43,7 +54,8 @@ var NETWORKS* = %* [
   {
     "chainId": 1,
     "chainName": "Ethereum Mainnet",
-    "rpcUrl": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "rpcUrl": "https://eth-mainnet.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
+    "fallbackUrl": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://etherscan.io/",
     "iconUrl": "network/Network=Ethereum",
     "chainColor": "#627EEA",
@@ -56,24 +68,26 @@ var NETWORKS* = %* [
     "enabled": true,
   },
   {
-      "chainId": 5,
-      "chainName": "Goerli",
-      "rpcUrl": "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
-      "blockExplorerUrl": "https://goerli.etherscan.io/",
-      "iconUrl": "network/Network=Testnet",
-      "chainColor": "#939BA1",
-      "shortName": "goEth",
-      "nativeCurrencyName": "Ether",
-      "nativeCurrencySymbol": "ETH",
-      "nativeCurrencyDecimals": 18,
-      "isTest": true,
-      "layer": 1,
-      "enabled": true,
+    "chainId": 5,
+    "chainName": "Goerli",
+    "rpcUrl": "https://eth-goerli.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
+    "fallbackUrl": "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "blockExplorerUrl": "https://goerli.etherscan.io/",
+    "iconUrl": "network/Network=Testnet",
+    "chainColor": "#939BA1",
+    "shortName": "goEth",
+    "nativeCurrencyName": "Ether",
+    "nativeCurrencySymbol": "ETH",
+    "nativeCurrencyDecimals": 18,
+    "isTest": true,
+    "layer": 1,
+    "enabled": true,
   },
   {
     "chainId": 10,
     "chainName": "Optimism",
-    "rpcUrl": "https://optimism-mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "rpcUrl": "https://optimism-mainnet.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
+    "fallbackUrl": "https://optimism-mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://optimistic.etherscan.io",
     "iconUrl": "network/Network=Optimism",
     "chainColor": "#E90101",
@@ -89,6 +103,7 @@ var NETWORKS* = %* [
     "chainId": 420,
     "chainName": "Optimism Goerli Testnet",
     "rpcUrl": "https://optimism-goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "fallbackUrl": "",
     "blockExplorerUrl": "https://goerli-optimism.etherscan.io/",
     "iconUrl": "network/Network=Testnet",
     "chainColor": "#939BA1",
@@ -103,7 +118,8 @@ var NETWORKS* = %* [
   {
     "chainId": 42161,
     "chainName": "Arbitrum",
-    "rpcUrl": "https://arbitrum-mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "rpcUrl": "https://arbitrum-one.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
+    "fallbackUrl": "https://arbitrum-mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://arbiscan.io/",
     "iconUrl": "network/Network=Arbitrum",
     "chainColor": "#51D0F0",
@@ -119,6 +135,7 @@ var NETWORKS* = %* [
     "chainId": 421613,
     "chainName": "Arbitrum Goerli",
     "rpcUrl": "https://arbitrum-goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "fallbackUrl": "",
     "blockExplorerUrl": "https://goerli.arbiscan.io/",
     "iconUrl": "network/Network=Testnet",
     "chainColor": "#939BA1",
@@ -138,6 +155,7 @@ if GANACHE_NETWORK_RPC_URL != "":
       "chainId": 1,
       "chainName": "Ethereum Mainnet",
       "rpcUrl": GANACHE_NETWORK_RPC_URL,
+      "fallbackUrl": GANACHE_NETWORK_RPC_URL,
       "blockExplorerUrl": "https://etherscan.io/",
       "iconUrl": "network/Network=Ethereum",
       "chainColor": "#627EEA",
@@ -159,6 +177,7 @@ if GANACHE_NETWORK_RPC_URL != "":
       "chainId": 5,
       "chainName": "Goerli",
       "rpcUrl": GANACHE_NETWORK_RPC_URL,
+      "fallbackUrl": GANACHE_NETWORK_RPC_URL,
       "blockExplorerUrl": "https://goerli.etherscan.io/",
       "iconUrl": "network/Network=Testnet",
       "chainColor": "#939BA1",
@@ -180,6 +199,7 @@ if GANACHE_NETWORK_RPC_URL != "":
       "chainId": 10,
       "chainName": "Optimism",
       "rpcUrl": GANACHE_NETWORK_RPC_URL,
+      "fallbackUrl": GANACHE_NETWORK_RPC_URL,
       "blockExplorerUrl": "https://optimistic.etherscan.io",
       "iconUrl": "network/Network=Optimism",
       "chainColor": "#E90101",
@@ -195,6 +215,7 @@ if GANACHE_NETWORK_RPC_URL != "":
       "chainId": 420,
       "chainName": "Optimism Goerli Testnet",
       "rpcUrl": GANACHE_NETWORK_RPC_URL,
+      "fallbackUrl": GANACHE_NETWORK_RPC_URL,
       "blockExplorerUrl": "https://goerli-optimism.etherscan.io/",
       "iconUrl": "network/Network=Testnet",
       "chainColor": "#939BA1",
@@ -210,6 +231,7 @@ if GANACHE_NETWORK_RPC_URL != "":
       "chainId": 42161,
       "chainName": "Arbitrum",
       "rpcUrl": GANACHE_NETWORK_RPC_URL,
+      "fallbackUrl": GANACHE_NETWORK_RPC_URL,
       "blockExplorerUrl": "https://arbiscan.io/",
       "iconUrl": "network/Network=Arbitrum",
       "chainColor": "#51D0F0",
@@ -225,6 +247,7 @@ if GANACHE_NETWORK_RPC_URL != "":
       "chainId": 421613,
       "chainName": "Arbitrum Goerli",
       "rpcUrl": GANACHE_NETWORK_RPC_URL,
+      "fallbackUrl": GANACHE_NETWORK_RPC_URL,
       "blockExplorerUrl": "https://goerli.arbiscan.io/",
       "iconUrl": "network/Network=Testnet",
       "chainColor": "#939BA1",

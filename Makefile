@@ -318,10 +318,18 @@ compile-translations: $(QM_BINARIES)
 
 # default token is a free-tier token with limited capabilities and usage
 # limits; our docs should include directions for community contributor to setup
+# their own Pokt account and token instead of relying on this default token
+# during development
+DEFAULT_POKT_TOKEN := 849214fd2f85acead08f5184
+POKT_TOKEN ?= $(DEFAULT_POKT_TOKEN)
+NIM_PARAMS += -d:POKT_TOKEN:"$(POKT_TOKEN)"
+
+# default token is a free-tier token with limited capabilities and usage
+# limits; our docs should include directions for community contributor to setup
 # their own Infura account and token instead of relying on this default token
 # during development
-DEFAULT_TOKEN := 220a1abb4b6943a093c35d0ce4fb0732
-INFURA_TOKEN ?= $(DEFAULT_TOKEN)
+DEFAULT_INFURA_TOKEN := 220a1abb4b6943a093c35d0ce4fb0732
+INFURA_TOKEN ?= $(DEFAULT_INFURA_TOKEN)
 NIM_PARAMS += -d:INFURA_TOKEN:"$(INFURA_TOKEN)"
 
 DEFAULT_OPENSEA_API_KEY := ""
