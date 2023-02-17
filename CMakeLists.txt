@@ -22,9 +22,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 include(CTest)
 enable_testing()
 
-if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm64" AND APPLE)
-  set(STATUSGO_FORCE_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
-endif()
+# if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm64" AND APPLE)
+#   set(STATUSGO_FORCE_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
+# endif()
 
 # status-desktop application
 add_subdirectory(vendor)
