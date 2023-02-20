@@ -51,8 +51,8 @@ StatusListItem {
             id: copyButton
             type: StatusRoundButton.Type.Tertiary
             icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
-            store: root.store
             textToCopy: root.address
+            onCopyClicked: root.store.copyToClipboard(textToCopy)
         },
         StatusRoundButton {
             objectName: "savedAddressView_Delegate_favouriteButton"

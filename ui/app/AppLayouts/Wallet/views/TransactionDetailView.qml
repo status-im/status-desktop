@@ -116,30 +116,12 @@ Item {
                 expanded: true
             }
 
-            StatusListItem {
-                id: data
-                width: parent.width
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                color: "transparent"
-                border.width: 1
-                border.color: Theme.palette.directColor8
-
-                statusListItemTitle.color: Theme.palette.baseColor1
-
-                title: qsTr("Data" )
-                subTitle: root.isTransactionValid ? root.transaction.input : ""
-                components: [
-                    CopyToClipBoardButton {
-                        icon.width: 15
-                        icon.height: 15
-                        type: StatusRoundButton.Type.Tertiary
-                        color: "transparent"
-                        icon.color: data.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
-                        store: RootStore
-                        textToCopy: data.subTitle
-                    }
-                ]
+            InformationTile {
+                maxWidth: parent.width
+                primaryText: qsTr("Data")
+                secondaryText: root.isTransactionValid ? root.transaction.input : ""
+                copy: true
+                onCopyClicked: RootStore.copyToClipboard(textToCopy)
             }
         }
     }
