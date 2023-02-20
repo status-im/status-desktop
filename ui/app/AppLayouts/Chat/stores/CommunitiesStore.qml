@@ -2,6 +2,8 @@ import QtQuick 2.15
 
 import AppLayouts.Chat.controls.community 1.0
 
+import StatusQ.Core.Utils 0.1
+
 QtObject {
     id: root
 
@@ -131,56 +133,69 @@ QtObject {
         ListElement { key: "general"; iconSource: "qrc:imports/assets/png/tokens/CUSTOM-TOKEN.png"; name: "#general"}
     }
 
+    readonly property QtObject _d: QtObject {
+        id: d
+
+        property int keyCounter: 0
+
+        function createPermissionEntry(holdings, permissionType, isPrivate, channels) {
+            const permission = {
+                holdingsListModel: [],
+                channelsListModel: [],
+                permissionType,
+                isPrivate
+            }
+
+            // Setting HOLDINGS:
+            for (let i = 0; i < holdings.count; i++ ) {
+                const entry = holdings.get(i)
+
+                permission.holdingsListModel.push({
+                    type: entry.type,
+                    key: entry.key,
+                    amount: entry.amount
+                })
+            }
+
+            // Setting CHANNELS:
+            for (let c = 0; c < channels.count; c++) {
+                const entry = channels.get(c)
+
+                permission.channelsListModel.push({
+                    itemId: entry.itemId,
+                    text: entry.text,
+                    emoji: entry.emoji,
+                    color: entry.color
+                })
+            }
+
+            return permission
+        }
+    }
+
     function createPermission(holdings, permissionType, isPrivate, channels, index = null) {
-        // TO BE REPLACED: It shold just be a call to the backend sharing `holdings`, `permissions`, `channels` and `isPrivate` properties.
-        const permission = {
-            holdingsListModel: [],
-            channelsListModel: [],
-            permissionType,
-            isPrivate
-        }
+        // TO BE REPLACED: It shold just be a call to the backend sharing
+        // `holdings`, `permissions`, `channels` and `isPrivate` properties.
 
-        // Setting HOLDINGS:
-        for (let i = 0; i < holdings.count; i++ ) {
-            const entry = holdings.get(i)
+        const permissionEntry = d.createPermissionEntry(
+                                  holdings, permissionType, isPrivate, channels)
 
-            permission.holdingsListModel.push({
-                type: entry.type,
-                key: entry.key,
-                amount: entry.amount
-            })
-        }
-
-        // Setting CHANNELS:
-        for (let c = 0; c < channels.count; c++) {
-            const entry = channels.get(c)
-
-            permission.channelsListModel.push({
-                itemId: entry.itemId,
-                text: entry.text,
-                emoji: entry.emoji,
-                color: entry.color
-            })
-        }
-
-        if (index !== null) {
-            // Edit permission model:
-            console.log("TODO: Edit permissions - backend call")
-            root.permissionsModel.set(index, permission)
-        } else {
-            // Add into permission model:
-            console.log("TODO: Create permissions - backend call - Now dummy data shown")
-            root.permissionsModel.append(permission)
-        }
+        permissionEntry.key = "" + d.keyCounter++
+        root.permissionsModel.append(permissionEntry)
     }
 
-    function editPermission(index, holdings, permissionType, channels, isPrivate) {
+    function editPermission(key, holdings, permissionType, channels, isPrivate) {
         // TO BE REPLACED: Call to backend
-        createPermission(holdings, permissionType, isPrivate, channels, index)
+
+        const permissionEntry = d.createPermissionEntry(
+                                  holdings, permissionType, isPrivate, channels)
+
+        const index = ModelUtils.indexOf(root.permissionsModel, "key", key)
+        root.permissionsModel.set(index, permissionEntry)
     }
 
-    function removePermission(index) {
-        console.log("TODO: Remove permissions - backend call")
+    function removePermission(key) {
+        const index = ModelUtils.indexOf(root.permissionsModel, "key", key)
         root.permissionsModel.remove(index)
     }
 

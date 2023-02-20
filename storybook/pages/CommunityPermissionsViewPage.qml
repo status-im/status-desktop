@@ -57,12 +57,11 @@ SplitView {
                 }
 
                 onEditPermissionRequested:
-                    logs.logEvent("CommunitiesStore::editPermission - index: " + index)
+                    logs.logEvent("CommunityPermissionsView::editPermissionRequested - index: " + index)
                 onRemovePermissionRequested:
-                    logs.logEvent("CommunitiesStore::removePermission - index: " + index)
+                    logs.logEvent("CommunityPermissionsView::removePermissionRequested - index: " + index)
                 onDuplicatePermissionRequested:
-                    logs.logEvent("CommunitiesStore::duplicatePermission - index: " + index)
-
+                    logs.logEvent("CommunityPermissionsView::duplicatePermissionRequested - index: " + index)
             }
         }
 

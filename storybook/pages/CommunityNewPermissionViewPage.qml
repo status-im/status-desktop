@@ -47,12 +47,12 @@ SplitView {
                     logs.logEvent("CommunitiesStore::creatPermission")
                 }
 
-                function editPermission(index, holdings, permissions, channels, isPrivate) {
-                    logs.logEvent("CommunitiesStore::editPermission - index: " + index)
+                function editPermission(key, holdings, permissions, channels, isPrivate) {
+                    logs.logEvent("CommunitiesStore::editPermission - key: " + key)
                 }
 
-                function removePermission(index) {
-                    logs.logEvent("CommunitiesStore::removePermission - index: " + index)
+                function removePermission(key) {
+                    logs.logEvent("CommunitiesStore::removePermission - key: " + key)
                 }
             }
 
