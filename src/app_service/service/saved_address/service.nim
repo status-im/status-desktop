@@ -6,6 +6,7 @@ import ../../../app/core/eventemitter
 import ../../../backend/backend
 import ../../../app/core/[main]
 import ../network/service as network_service
+import ../settings/service as settings_service
 
 export dto
 
@@ -20,14 +21,17 @@ type
     events: EventEmitter
     savedAddresses: seq[SavedAddressDto]
     networkService: network_service.Service
+    settingsService: settings_service.Service
 
 proc delete*(self: Service) =
   discard
 
-proc newService*(events: EventEmitter, networkService: network_service.Service): Service =
+proc newService*(events: EventEmitter, networkService: network_service.Service,
+                                      settingsService: settings_service.Service): Service =
   result = Service()
   result.events = events
   result.networkService = networkService
+  result.settingsService = settingsService
 
 proc fetchAddresses(self: Service) =
   try:
@@ -39,11 +43,12 @@ proc fetchAddresses(self: Service) =
     )
     let chainId = self.networkService.getNetworkForEns().chainId
     for savedAddress in self.savedAddresses:
-      try:
-        let nameResponse = backend.getName(chainId, savedAddress.address)
-        savedAddress.ens = nameResponse.result.getStr
-      except:
-        continue
+      if savedAddress.ens != "":
+        try:
+          let nameResponse = backend.getName(chainId, savedAddress.address)
+          savedAddress.ens = nameResponse.result.getStr
+        except:
+          continue
 
   except Exception as e:
     error "error: ", procName="fetchAddress", errName = e.name, errDesription = e.msg
@@ -64,9 +69,10 @@ proc init*(self: Service) =
 proc getSavedAddresses*(self: Service): seq[SavedAddressDto] =
   return self.savedAddresses
 
-proc createOrUpdateSavedAddress*(self: Service, name: string, address: string, favourite: bool): string =
+proc createOrUpdateSavedAddress*(self: Service, name: string, address: string, favourite: bool, chainShortNames: string, ens: string): string =
   try:
-    discard backend.upsertSavedAddress(backend.SavedAddress(name: name, address: address, favourite: favourite))
+    let isTestAddress = self.settingsService.areTestNetworksEnabled()
+    discard backend.upsertSavedAddress(backend.SavedAddress(name: name, address: address, favourite: favourite, chainShortNames: chainShortNames, ens: ens, isTest: isTestAddress))
     self.updateAddresses()
     return ""
   except Exception as e:
@@ -74,9 +80,10 @@ proc createOrUpdateSavedAddress*(self: Service, name: string, address: string, f
     error "error: ", errDesription
     return errDesription
 
-proc deleteSavedAddress*(self: Service, address: string): string =
+proc deleteSavedAddress*(self: Service, address: string, ens: string): string =
   try:
-    var response = backend.deleteSavedAddress(0, address)
+    let isTestAddress = self.settingsService.areTestNetworksEnabled()
+    var response = backend.deleteSavedAddress(address, ens, isTestAddress)
     if not response.error.isNil:
       raise newException(Exception, response.error.message)
 

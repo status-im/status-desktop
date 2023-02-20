@@ -38,6 +38,35 @@ QtObject {
         return startsWith0x(value) && isHex(value) && value.length === 42
     }
 
+    function isValidAddressWithChainPrefix(value) {
+        return value.match(/^(([a-zA-Z]{3,5}:)*)?(0x[a-fA-F0-9]{40})$/)
+    }
+
+    function getChainsPrefix(address) {
+        // matchAll is not supported by QML JS engine
+        return address.match(/([a-zA-Z]{3,5}:)*/)[0].split(':').filter(e => !!e)
+    }
+
+    function isLikelyEnsName(text) {
+        return text.startsWith("@") || !isLikelyAddress(text)
+    }
+
+    function isLikelyAddress(text) {
+        return text.includes(":") || text.includes('0x')
+    }
+
+    function richColorText(text, color) {
+        return "<font color=\"" + color + "\">" + text + "</font>"
+    }
+
+    function splitToChainPrefixAndAddress(input) {
+        const addressIdx = input.indexOf('0x')
+        if (addressIdx < 0)
+            return { prefix: input, address: "" }
+
+        return { prefix: input.substring(0, addressIdx), address: input.substring(addressIdx) }
+    }
+
     function isPrivateKey(value) {
         return isHex(value) && ((startsWith0x(value) && value.length === 66) ||
                                 (!startsWith0x(value) && value.length === 64))
@@ -109,7 +138,7 @@ QtObject {
             return false
         }
         const isEmail = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.test(inputValue)
-        const isDomain = /(?:(?:(?<thld>[\w\-]*)(?:\.))?(?<sld>[\w\-]*))\.(?<tld>[\w\-]*)/.test(inputValue)
+        const isDomain = /\b((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,63}\b/.test(inputValue)
         return isEmail || isDomain || (inputValue.startsWith("@") && inputValue.length > 1)
     }
 

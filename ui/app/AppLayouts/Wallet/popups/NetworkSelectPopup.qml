@@ -30,7 +30,7 @@ Popup {
 
     property bool multiSelection: true
 
-    signal toggleNetwork(int chainId)
+    signal toggleNetwork(var network)
     signal singleNetworkSelected(int chainId, string chainName, string iconUrl)
 
     background: Rectangle {
@@ -114,7 +114,7 @@ Popup {
             asset.name: Style.svg(model.iconUrl)
             onClicked:  {
                 if(root.multiSelection)
-                    checkBox.toggle()
+                    checkBox.toggled()
                 else
                     radioButton.toggle()
             }
@@ -124,10 +124,10 @@ Popup {
                     visible: root.multiSelection
                     checked: root.useNetworksExtraStoreProxy ? model.isActive : model.isEnabled
                     onToggled: {
-                        if(root.useNetworksExtraStoreProxy && model.isActive !== checked) {
-                            model.isActive = checked
-                        } else if (model.isEnabled !== checked) {
-                            root.toggleNetwork(model.chainId)
+                        if (root.useNetworksExtraStoreProxy) {
+                            model.isActive = !model.isActive
+                        } else {
+                            root.toggleNetwork(model)
                         }
                     }
                 },
