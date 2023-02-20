@@ -46,7 +46,7 @@ To run the sandbox from within a command line interface, run the following comma
 $ git clone https://github.com/status-im/StatusQ
 $ cd StatusQ
 $ git submodule update --init
-$ ./sandbox/scripts/build
+$ ./scripts/build
 ```
 
 Once that is done, the sandbox can be started with the generated executable:
