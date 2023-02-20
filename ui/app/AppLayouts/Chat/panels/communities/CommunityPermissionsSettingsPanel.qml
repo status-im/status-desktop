@@ -131,7 +131,7 @@ SettingsPageLayout {
 
         CommunityWelcomeSettingsView {
             viewWidth: root.viewWidth
-            image: Style.png("community/permissions21_3_1")
+            image: Style.png("community/permissions2_3")
             title: qsTr("Permissions")
             subtitle: qsTr("You can manage your community by creating and issuing membership and access permissions")
             checkersModel: [
