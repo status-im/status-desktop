@@ -18,9 +18,9 @@ SettingsPageLayout {
     function navigateBack() {
         if (root.state === d.newPermissionViewState) {
             root.state = d.initialState
-        } else if(root.state === d.permissionsViewState) {
+        } else if (root.state === d.permissionsViewState) {
             root.state = d.newPermissionViewState
-        } else if(root.state === d.editPermissionViewState) {
+        } else if (root.state === d.editPermissionViewState) {
             if (root.dirty) {
                 root.notifyDirty()
             } else {
@@ -41,7 +41,8 @@ SettingsPageLayout {
         signal saveChanges
         signal resetChanges
 
-        property int permissionIndexToEdit
+        property string permissionKeyToEdit
+
         property ListModel holdingsToEditModel: ListModel {}
         property int permissionTypeToEdit: PermissionTypes.Type.None
         property ListModel channelsToEditModel: ListModel {}
@@ -50,7 +51,7 @@ SettingsPageLayout {
         onPermissionsExistChanged: {
             // Navigate back to welcome permissions view if all existing permissions are removed.
             if(root.state === d.permissionsViewState && !permissionsExist) {
-                root.state =  d.welcomeViewState;
+                root.state = d.welcomeViewState;
             }
         }
 
@@ -173,11 +174,11 @@ SettingsPageLayout {
                 const count = model.rowCount()
 
                 for (let i = 0; i < count; i++) {
-                    if (root.state === d.editPermissionViewState
-                            && d.permissionIndexToEdit === i)
-                        continue
-
                     const item = ModelUtils.get(model, i)
+
+                    if (root.state === d.editPermissionViewState
+                            && d.permissionKeyToEdit === item.key)
+                        continue
 
                     const holdings = item.holdingsListModel
                     const channels = item.channelsListModel
@@ -208,7 +209,7 @@ SettingsPageLayout {
 
                 function onSaveChanges() {
                     root.store.editPermission(
-                                d.permissionIndexToEdit,
+                                d.permissionKeyToEdit,
                                 dirtyValues.holdingsModel,
                                 dirtyValues.permissionType,
                                 dirtyValues.channelsModel,
@@ -266,7 +267,8 @@ SettingsPageLayout {
 
             onEditPermissionRequested: {
                 setInitialValuesFromIndex(index)
-                d.permissionIndexToEdit = index
+                d.permissionKeyToEdit = ModelUtils.get(
+                            root.store.permissionsModel, index, "key")
                 root.state = d.editPermissionViewState
             }
 
@@ -276,7 +278,8 @@ SettingsPageLayout {
             }
 
             onRemovePermissionRequested: {
-                root.store.removePermission(index)
+                const key = ModelUtils.get(root.store.permissionsModel, index, "key")
+                root.store.removePermission(key)
             }
         }
     }
