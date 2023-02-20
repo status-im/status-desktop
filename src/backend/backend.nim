@@ -29,6 +29,9 @@ type
     name* {.serializedFieldName("name").}: string
     address* {.serializedFieldName("address").}: string
     favourite* {.serializedFieldName("favourite").}: bool
+    chainShortNames* {.serializedFieldName("chainShortNames").}: string
+    ens* {.serializedFieldName("ens").}: string
+    isTest* {.serializedFieldName("isTest").}: bool
 
   Network* = ref object of RootObj
     chainId* {.serializedFieldName("chainId").}: int
@@ -82,8 +85,9 @@ rpc(upsertSavedAddress, "wakuext"):
   savedAddress: SavedAddress
 
 rpc(deleteSavedAddress, "wakuext"):
-  chainId: int
   address: string
+  ens: string
+  isTest: bool
 
 rpc(getSavedAddresses, "wallet"):
   discard

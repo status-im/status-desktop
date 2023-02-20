@@ -375,6 +375,7 @@ StatusDialog {
 
                         label: qsTr("To")
                         placeholderText: qsTr("Enter an ENS name or address")
+                        text: popup.addressText
                         input.background.color: Theme.palette.indirectColor1
                         input.background.border.width: 0
                         input.implicitHeight: 56

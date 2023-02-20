@@ -193,12 +193,20 @@ QtObject {
         return walletSectionSavedAddresses.getNameByAddress(address)
     }
 
-    function createOrUpdateSavedAddress(name, address, favourite) {
-        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite)
+    function getChainShortNamesForSavedWalletAddress(address) {
+        return walletSectionSavedAddresses.getChainShortNamesForAddress(address)
     }
 
-    function deleteSavedAddress(address) {
-        return walletSectionSavedAddresses.deleteSavedAddress(address)
+    function getEnsForSavedWalletAddress(address) {
+        return walletSectionSavedAddresses.getEnsForAddress(address)
+    }
+
+    function createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens) {
+        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
+    }
+
+    function deleteSavedAddress(addresse, ens) {
+        return walletSectionSavedAddresses.deleteSavedAddress(address, ens)
     }
 
     function getLatestBlockNumber() {

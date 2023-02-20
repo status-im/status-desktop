@@ -14,6 +14,8 @@ import utils 1.0
 import shared.stores 1.0
 
 import "../controls"
+import "../stores" as WalletStores
+import ".."
 
 Item {
     id: root
@@ -31,6 +33,8 @@ Item {
         readonly property string savedAddressNameFrom: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.from): ""
         readonly property string from: root.isTransactionValid ? !!savedAddressNameFrom ? savedAddressNameFrom : Utils.compactAddress(transaction.from, 4): ""
         readonly property string to: root.isTransactionValid ? !!savedAddressNameTo ? savedAddressNameTo : Utils.compactAddress(transaction.to, 4): ""
+        readonly property string savedAddressEns: RootStore.getEnsForSavedWalletAddress(isIncoming ? transaction.from : transaction.to)
+        readonly property string savedAddressChains: RootStore.getChainShortNamesForSavedWalletAddress(isIncoming ? transaction.from : transaction.to)
 
         function getNameForSavedWalletAddress(address) {
             return RootStore.getNameForSavedWalletAddress(address)
@@ -81,16 +85,18 @@ Item {
 
                 name: d.isIncoming ? d.savedAddressNameFrom : d.savedAddressNameTo
                 address:  root.isTransactionValid ? d.isIncoming ? transaction.from : transaction.to : ""
+                ens: d.savedAddressEns
+                chainShortNames: d.savedAddressChains
                 title: d.isIncoming ? d.from : d.to
                 subTitle:  root.isTransactionValid ? d.isIncoming ? !!d.savedAddressNameFrom ? Utils.compactAddress(transaction.from, 4) : "" : !!d.savedAddressNameTo ? Utils.compactAddress(transaction.to, 4) : "": ""
-                store: RootStore
+                store: WalletStores.RootStore
                 contactsStore: root.contactsStore
                 onOpenSendModal: root.sendModal.open(address);
-                saveAddress: function(name, address, favourite) {
-                    RootStore.createOrUpdateSavedAddress(name, address, favourite)
+                saveAddress: function(name, address, favourite, chainShortNames, ens) {
+                    RootStore.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
                 }
-                deleteSavedAddress: function(address) {
-                    RootStore.deleteSavedAddress(address)
+                deleteSavedAddress: function(address, ens) {
+                    RootStore.deleteSavedAddress(address, ens)
                 }
             }
 

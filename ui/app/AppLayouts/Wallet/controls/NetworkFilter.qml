@@ -99,7 +99,7 @@ Item {
         multiSelection: root.multiSelection
 
         onToggleNetwork: {
-            store.toggleNetwork(chainId)
+            store.toggleNetwork(network.chainId)
         }
 
         onSingleNetworkSelected: {
