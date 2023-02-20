@@ -286,7 +286,6 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: "setMarketStickerPacks",
       chainId: chainId,
-      running: cast[ByteAddress](addr self.threadpool.running)
     )
     self.threadpool.start(arg)
 
