@@ -4,9 +4,14 @@
 #include <QQmlComponent>
 #include <QQmlEngine>
 
+#include "StatusQ/typesregistration.h"
+
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
+
+    registerStatusQTypes();
+
     QQmlEngine engine;
 
     engine.addImportPath(QStringLiteral(":/"));
