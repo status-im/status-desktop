@@ -234,7 +234,7 @@ Item {
                 Layout.preferredHeight: 20
                 color: Style.current.transparent
                 textToCopy: pubkey
-                store: root.store
+                onCopyClicked: root.store.copyToClipboard(textToCopy)
             }
         }
 
