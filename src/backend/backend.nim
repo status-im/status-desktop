@@ -239,12 +239,12 @@ rpc(fetchMarketValues, "wallet"):
 rpc(fetchTokenDetails, "wallet"):
   symbols: seq[string]
 
-rpc(addMigratedKeyPair, "accounts"):
+rpc(addMigratedKeyPairOrAddAccountsIfKeyPairIsAdded, "accounts"):
   keycardUid: string
   keyPairName: string
   keyUid: string
   accountAddresses: seq[string]
-  keyStoreDir: string
+  password: string
 
 rpc(removeMigratedAccountsForKeycard, "accounts"):
   keycardUid: string

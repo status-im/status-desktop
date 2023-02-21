@@ -1,4 +1,4 @@
-import NimQml, tables, random, strutils, marshal, sequtils, sugar, chronicles
+import NimQml, tables, random, strutils, sequtils, sugar, chronicles
 
 import io_interface
 import view, controller
@@ -66,10 +66,10 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
-proc init[T](self: Module[T]) =
+proc init[T](self: Module[T], fullConnect = true) =
   if not self.initialized:
     self.initialized = true
-    self.controller.init()
+    self.controller.init(fullConnect)
 
 method getModuleAsVariant*[T](self: Module[T]): QVariant =
   return self.viewVariant
@@ -241,13 +241,20 @@ proc handleKeycardSyncing[T](self: Module[T]) =
         accountsAddresses: @[],
         keyUid: flowEvent.keyUid)
       let alreadySetKeycards = self.controller.getAllKnownKeycards().filter(kp => kp.keycardUid == flowEvent.instanceUID)
-      if alreadySetKeycards.len == 1:
-        var accountsToRemove = alreadySetKeycards[0].accountsAddresses
+      if alreadySetKeycards.len <= 1:
+        var accountsToRemove: seq[string]
+        if alreadySetKeycards.len == 1:
+          accountsToRemove = alreadySetKeycards[0].accountsAddresses
         let appAccounts = self.controller.getWalletAccounts()
         var activeValidPathsToStoreToAKeycard: seq[string]
+        var containsPathOutOfTheDefaultStatusDerivationTree = false
         for appAcc in appAccounts:
           if appAcc.keyUid != flowEvent.keyUid:
             continue
+          # do not sync if any wallet's account has path out of the default Status derivation tree
+          if utils.isPathOutOfTheDefaultStatusDerivationTree(appAcc.path):
+            containsPathOutOfTheDefaultStatusDerivationTree = true
+            break
           activeValidPathsToStoreToAKeycard.add(appAcc.path)
           var index = -1
           var found = false
@@ -264,24 +271,25 @@ proc handleKeycardSyncing[T](self: Module[T]) =
             # we store to db only accounts we haven't stored before, accounts which are already on a keycard (in metadata)
             # we assume they are already in the db
             kpDto.accountsAddresses.add(appAcc.address)
-        if accountsToRemove.len > 0:
-          self.controller.removeMigratedAccountsForKeycard(kpDto.keyUid, kpDto.keycardUid, accountsToRemove)
-        if kpDto.accountsAddresses.len > 0:
-          self.controller.addMigratedKeyPair(kpDto)
-        # if all accounts are removed from the app, there is no point in storing empty accounts list to a keycard, cause in that case
-        # keypair which is on that keycard won't be known to the app, that means keypair was removed from the app
-        if activeValidPathsToStoreToAKeycard.len > 0:
-          ##  we need to store paths to a keycard if the num of paths in the app and on a keycard is diffrent
-          ## or if the paths are different
-          var storeToKeycard = activeValidPathsToStoreToAKeycard.len != flowEvent.cardMetadata.walletAccounts.len
-          if not storeToKeycard:
-            for wa in flowEvent.cardMetadata.walletAccounts:
-              if not utils.arrayContains(activeValidPathsToStoreToAKeycard, wa.path):
-                storeToKeycard = true
-                break
-          if storeToKeycard:
-            self.controller.runStoreMetadataFlow(flowEvent.cardMetadata.name, self.controller.getPin(), activeValidPathsToStoreToAKeycard)
-            return
+        if not containsPathOutOfTheDefaultStatusDerivationTree:
+          if accountsToRemove.len > 0:
+            self.controller.removeMigratedAccountsForKeycard(kpDto.keyUid, kpDto.keycardUid, accountsToRemove)
+          if kpDto.accountsAddresses.len > 0:
+            self.controller.addMigratedKeyPair(kpDto)
+          # if all accounts are removed from the app, there is no point in storing empty accounts list to a keycard, cause in that case
+          # keypair which is on that keycard won't be known to the app, that means keypair was removed from the app
+          if activeValidPathsToStoreToAKeycard.len > 0:
+            ##  we need to store paths to a keycard if the num of paths in the app and on a keycard is diffrent
+            ## or if the paths are different
+            var storeToKeycard = activeValidPathsToStoreToAKeycard.len != flowEvent.cardMetadata.walletAccounts.len
+            if not storeToKeycard:
+              for wa in flowEvent.cardMetadata.walletAccounts:
+                if not utils.arrayContains(activeValidPathsToStoreToAKeycard, wa.path):
+                  storeToKeycard = true
+                  break
+            if storeToKeycard:
+              self.controller.runStoreMetadataFlow(flowEvent.cardMetadata.name, self.controller.getPin(), activeValidPathsToStoreToAKeycard)
+              return
       elif alreadySetKeycards.len > 1:
         error "it's impossible to have more then one keycard with the same uid", keycarUid=flowEvent.instanceUID
   self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
@@ -295,7 +303,7 @@ method syncKeycardBasedOnAppState*[T](self: Module[T], keyUid: string, pin: stri
   if keyUid.len == 0:
     debug "cannot sync with the empty keyUid"
     return
-  self.init()
+  self.init(fullConnect = false)
   self.controller.setKeyUidWhichIsBeingSyncing(keyUid)
   self.controller.setPin(pin)
   self.controller.setKeycardSyncingInProgress(true)

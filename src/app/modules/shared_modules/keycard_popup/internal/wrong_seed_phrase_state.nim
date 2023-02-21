@@ -1,5 +1,3 @@
-import os
-
 type
   WrongSeedPhraseState* = ref object of State
     verifiedSeedPhrase: bool

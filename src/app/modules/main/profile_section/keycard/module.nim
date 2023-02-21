@@ -276,6 +276,9 @@ method onLoggedInUserImageChanged*(self: Module) =
     return
   self.view.keycardDetailsModel().setImage(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
 
+method onKeycardsSynchronized*(self: Module) =
+  self.buildKeycardList()
+
 method onNewKeycardSet*(self: Module, keyPair: KeyPairDto) =
   let walletAccounts = self.controller.getWalletAccounts()
   var mainViewItem = self.view.keycardModel().getItemForKeyUid(keyPair.keyUid)

@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar, chronicles, os, uuids
+import NimQml, sequtils, chronicles, os, uuids
 
 import ../../app_service/service/general/service as general_service
 import ../../app_service/service/keychain/service as keychain_service
@@ -32,12 +32,11 @@ import ../../app_service/service/mailservers/service as mailservers_service
 import ../../app_service/service/gif/service as gif_service
 import ../../app_service/service/ens/service as ens_service
 import ../../app_service/service/community_tokens/service as tokens_service
-import ../../app_service/common/account_constants
 
+import ../modules/shared_modules/keycard_popup/module as keycard_shared_module
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
 import ../core/notifications/notifications_manager
-
 import ../../constants as main_constants
 import ../global/global_singleton
 
@@ -107,6 +106,7 @@ type
 proc load(self: AppController)
 proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController)
 proc buildAndRegisterUserProfile(self: AppController)
+proc tryKeycardSyncWithTheAppState(self: AppController)
 
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
@@ -373,6 +373,7 @@ proc startupDidLoad*(self: AppController) =
   self.startupModule.startUpUIRaised()
 
 proc mainDidLoad*(self: AppController) =
+  self.tryKeycardSyncWithTheAppState()
   self.startupModule.moveToAppState()
   self.checkForStoringPasswordToKeychain()
 
@@ -492,6 +493,7 @@ proc buildAndRegisterUserProfile(self: AppController) =
 
   singletonInstance.engine.setRootContextProperty("userProfile", self.userProfileVariant)
 
+proc tryKeycardSyncWithTheAppState(self: AppController) =
   ##############################################################################                                             store def   kc sync with app    kc uid
   ## Onboarding flows sync keycard state after login                                                                          keypair  | (inc. kp store)  |  update
   ## `I’m new to Status` -> `Generate new keys`                                                                          ->     na     |       na         |    na
@@ -513,56 +515,19 @@ proc buildAndRegisterUserProfile(self: AppController) =
   ## `Login` -> if card was unlocked via seed phrase                                                                     ->     no     |       no         |   yes  
   ## `Login` -> `Create replacement Keycard with seed phrase`                                                            ->     no     |      yes         |    no (we don't know which kc is replaced if user has more kc for the same kp)
   ##############################################################################
-  if singletonInstance.userProfile.getIsKeycardUser():
-    if self.storeDefaultKeyPair:
-      let allAccounts = self.walletAccountService.fetchAccounts()
-      let defaultWalletAccounts = allAccounts.filter(a => 
-        a.walletType == WalletTypeDefaultStatusAccount and 
-        a.path == account_constants.PATH_DEFAULT_WALLET and
-        not a.isChat and 
-        a.isWallet
+  if singletonInstance.userProfile.getIsKeycardUser() or 
+    self.syncKeycardBasedOnAppWalletState:
+      let data = SharedKeycarModuleArgs(
+        pin: self.startupModule.getPin(), 
+        keyUid: singletonInstance.userProfile.getKeyUid()
       )
-      if defaultWalletAccounts.len == 0:
-        error "default wallet account was not generated"
-        return
-      let defaultWalletAddress = defaultWalletAccounts[0].address
-      let keyPair = KeyPairDto(keycardUid: self.keycardService.getLastReceivedKeycardData().flowEvent.instanceUID,
-        keycardName: displayName,
-        keycardLocked: false,
-        accountsAddresses: @[defaultWalletAddress],
-        keyUid: loggedInAccount.keyUid)
-      discard self.walletAccountService.addMigratedKeyPair(keyPair)
-    if self.syncKeycardBasedOnAppWalletState:
-      let allAccounts = self.walletAccountService.fetchAccounts()
-      let accountsForLoggedInUser = allAccounts.filter(a => a.keyUid == loggedInAccount.keyUid)
-      var keyPair = KeyPairDto(keycardUid: "",
-        keycardName: displayName,
-        keycardLocked: false,
-        accountsAddresses: @[],
-        keyUid: loggedInAccount.keyUid)
-      var activeValidPathsToStoreToAKeycard: seq[string]
-      for acc in accountsForLoggedInUser:
-        activeValidPathsToStoreToAKeycard.add(acc.path)
-        keyPair.accountsAddresses.add(acc.address)
-      self.keycardService.startStoreMetadataFlow(displayName, self.startupModule.getPin(), activeValidPathsToStoreToAKeycard)
-      ## sleep for 3 seconds, since that is more than enough to store metadata to a keycard, if the reader is still plugged in
-      ## and the card is still inserted, otherwise we just skip that.
-      ## At the moment we're not able to sync later keycard without metadata, cause such card doesn't return instance uid for 
-      ## loaded seed phrase, that's in the notes I am taking for discussion with keycard team. If they are able to provide
-      ## instance uid for GetMetadata flow we will be able to use SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC signal for syncing
-      ## otherwise we need to handle that way separatelly in `handleKeycardSyncing` of shared module 
-      sleep(3000)
-      self.keycardService.cancelCurrentFlow()
-      let (_, kcEvent) = self.keycardService.getLastReceivedKeycardData()
-      if kcEvent.instanceUID.len > 0:
-        keyPair.keycardUid = kcEvent.instanceUID
-        discard self.walletAccountService.addMigratedKeyPair(keyPair)
+      self.statusFoundation.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC, data)
 
-    if self.changedKeycardUids.len > 0:
-      let oldUid = self.changedKeycardUids[0].oldKcUid
-      let newUid = self.changedKeycardUids[^1].newKcUid
-      discard self.walletAccountService.updateKeycardUid(oldUid, newUid)
-      discard self.walletAccountService.setKeycardUnlocked(loggedInAccount.keyUid, newUid)
+  if self.changedKeycardUids.len > 0:
+    let oldUid = self.changedKeycardUids[0].oldKcUid
+    let newUid = self.changedKeycardUids[^1].newKcUid
+    discard self.walletAccountService.updateKeycardUid(oldUid, newUid)
+    discard self.walletAccountService.setKeycardUnlocked(singletonInstance.userProfile.getKeyUid(), newUid)
 
 proc storeDefaultKeyPairForNewKeycardUser*(self: AppController) = 
   self.storeDefaultKeyPair = true

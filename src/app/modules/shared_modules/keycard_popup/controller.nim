@@ -165,7 +165,7 @@ proc disconnectAll*(self: Controller) =
 proc delete*(self: Controller) =
   self.disconnectAll()
 
-proc init*(self: Controller) =
+proc init*(self: Controller, fullConnect = true) =
   self.connectKeycardReponseSignal()
 
   var handlerId = self.events.onWithUUID(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
@@ -176,22 +176,23 @@ proc init*(self: Controller) =
     self.delegate.onUserAuthenticated(args.password, args.pin)
   self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
-    let args = KeycardActivityArgs(e)
-    self.tmpAddingMigratedKeypairSuccess = args.success
-    self.delegate.onSecondaryActionClicked()
-  self.connectionIds.add(handlerId)
-  
-  handlerId = self.events.onWithUUID(SIGNAL_CONVERTING_PROFILE_KEYPAIR) do(e: Args):
-    let args = ResultArgs(e)
-    self.tmpConvertingProfileSuccess = args.success
-    self.delegate.onSecondaryActionClicked()
-  self.connectionIds.add(handlerId)
+  if fullConnect:
+    handlerId = self.events.onWithUUID(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
+      let args = KeycardActivityArgs(e)
+      self.tmpAddingMigratedKeypairSuccess = args.success
+      self.delegate.onSecondaryActionClicked()
+    self.connectionIds.add(handlerId)
+    
+    handlerId = self.events.onWithUUID(SIGNAL_CONVERTING_PROFILE_KEYPAIR) do(e: Args):
+      let args = ResultArgs(e)
+      self.tmpConvertingProfileSuccess = args.success
+      self.delegate.onSecondaryActionClicked()
+    self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
-    let arg = TokensPerAccountArgs(e)
-    self.delegate.onTokensRebuilt(arg.accountsTokens)
-  self.connectionIds.add(handlerId)
+    handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
+      let arg = TokensPerAccountArgs(e)
+      self.delegate.onTokensRebuilt(arg.accountsTokens)
+    self.connectionIds.add(handlerId)
 
 proc switchToWalletSection*(self: Controller) =
   let data = ActiveSectionChatArgs(sectionId: conf.WALLET_SECTION_ID)
@@ -661,11 +662,11 @@ proc setCurrentKeycardStateToUnlocked*(self: Controller, keyUid: string, keycard
   if not self.walletAccountService.setKeycardUnlocked(keyUid, keycardUid):
     info "updating keycard unlocked state failed", keyUid=keyUid, keycardUid=keycardUid
 
-proc updateKeycardName*(self: Controller, keyUid: string, keycardUid: string, keycardName: string): bool =
+proc updateKeycardName*(self: Controller, keycardUid: string, keycardName: string): bool =
   if not serviceApplicable(self.walletAccountService):
     return false
-  if not self.walletAccountService.updateKeycardName(keyUid, keycardUid, keycardName):
-    info "updating keycard name failed", keyUid=keyUid, keycardUid=keycardUid, keycardName=keycardName
+  if not self.walletAccountService.updateKeycardName(keycardUid, keycardName):
+    info "updating keycard name failed", keycardUid=keycardUid, keycardName=keycardName
     return false
   return true
 

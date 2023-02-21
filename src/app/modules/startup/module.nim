@@ -342,7 +342,7 @@ proc delayStartingApp[T](self: Module[T]) =
   ## - FlowType.FirstRunOldUserImportSeedPhrase
   ## - FlowType.FirstRunOldUserKeycardImport
   ## we want to delay app start just to be sure that messages from waku will be received
-  self.controller.connectToTimeoutEventAndStratTimer(timeoutInMilliseconds = 10000) # delay for 30 seconds
+  self.controller.connectToTimeoutEventAndStratTimer(timeoutInMilliseconds = 30000) # delay for 30 seconds
 
 method startAppAfterDelay*[T](self: Module[T]) =
   if not self.view.fetchingDataModel().allMessagesLoaded():

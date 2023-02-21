@@ -34,7 +34,9 @@ const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY* = "walletAccount/derivedAddre
 const SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT* = "walletAccount/tokensRebuilt"
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_DETAILS_FETCHED* = "walletAccount/derivedAddressDetailsFetched"
 
+const SIGNAL_KEYCARDS_SYNCHRONIZED* = "keycardsSynchronized"
 const SIGNAL_NEW_KEYCARD_SET* = "newKeycardSet"
+const SIGNAL_KEYCARD_DELETED* = "keycardDeleted"
 const SIGNAL_KEYCARD_ACCOUNTS_REMOVED* = "keycardAccountsRemoved"
 const SIGNAL_KEYCARD_LOCKED* = "keycardLocked"
 const SIGNAL_KEYCARD_UNLOCKED* = "keycardUnlocked"
@@ -124,6 +126,8 @@ QtObject:
   proc checkRecentHistory*(self: Service)
   proc checkConnected(self: Service)
   proc startWallet(self: Service)
+  proc handleKeycardActions(self: Service, keycardActions: seq[KeycardActionDto])
+  proc handleKeycardsState(self: Service, keycardsState: seq[KeyPairDto])
 
   proc delete*(self: Service) =
     self.closingApp = true
@@ -226,6 +230,9 @@ QtObject:
         for settingsField in receivedData.settings:
           if settingsField.name == KEY_CURRENCY:
             self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
+
+      self.handleKeycardsState(receivedData.keycards)
+      self.handleKeycardActions(receivedData.keycardActions)
 
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
@@ -614,24 +621,33 @@ QtObject:
     )
     self.threadpool.start(arg)
 
+  proc emitAddKeycardAddAccountsChange(self: Service, success: bool, keyPair: KeyPairDto) =
+    let data = KeycardActivityArgs(
+      success: success, 
+      keyPair: keyPair
+    )
+    self.events.emit(SIGNAL_NEW_KEYCARD_SET, data)
+
   proc onMigratedKeyPairAdded*(self: Service, response: string) {.slot.} =
-    var data = KeycardActivityArgs()
-    data.success = false
     try:
       let responseObj = response.parseJson
-      discard responseObj.getProp("success", data.success)
-      var kpJson: JsonNode
-      if responseObj.getProp("keyPair", kpJson):
-        data.keyPair = kpJson.toKeyPairDto()
+      var keyPair: KeyPairDto
+      var success = false
+      discard responseObj.getProp("success", success)
+      if success:
+        var kpJson: JsonNode
+        if responseObj.getProp("keyPair", kpJson):
+          keyPair = kpJson.toKeyPairDto()
+      self.emitAddKeycardAddAccountsChange(success, keyPair)
     except Exception as e:
       error "error handilng migrated keypair response", errDesription=e.msg
-    self.events.emit(SIGNAL_NEW_KEYCARD_SET, data)
+      self.emitAddKeycardAddAccountsChange(success = false, KeyPairDto())
 
   proc addMigratedKeyPair*(self: Service, keyPair: KeyPairDto, password = ""): bool =
     # Providing a password corresponding local keystore file will be removed as well, though
     # in some contexts we just need to add keypair to the db, so password is not needed.
     try:
-      let response = backend.addMigratedKeyPair(
+      let response = backend.addMigratedKeyPairOrAddAccountsIfKeyPairIsAdded(
         keyPair.keycardUid,
         keyPair.keycardName,
         keyPair.keyUid,
@@ -640,7 +656,7 @@ QtObject:
         )
       result = responseHasNoErrors("addMigratedKeyPair", response)
       if result:
-        self.events.emit(SIGNAL_NEW_KEYCARD_SET, KeycardActivityArgs(success: true, keyPair: keyPair))
+        self.emitAddKeycardAddAccountsChange(success = true, keyPair)
     except Exception as e:
       error "error: ", procName="addMigratedKeyPair", errName = e.name, errDesription = e.msg
 
@@ -653,18 +669,28 @@ QtObject:
     )
     self.threadpool.start(arg)
 
+  proc emitKeycardRemovedAccountsChange(self: Service, success: bool, keyUid: string, keycardUid: string, 
+    removedAccounts: seq[string]) =
+    let data = KeycardActivityArgs(
+      success: success, 
+      keyPair: KeyPairDto(keyUid: keyUid, keycardUid: keycardUid, accountsAddresses: removedAccounts)
+    )
+    self.events.emit(SIGNAL_KEYCARD_ACCOUNTS_REMOVED, data)
+
   proc onMigratedAccountsForKeycardRemoved*(self: Service, response: string) {.slot.} =
-    var data = KeycardActivityArgs()
-    data.success = false
     try:
       let responseObj = response.parseJson
-      discard responseObj.getProp("success", data.success)
-      var kpJson: JsonNode
-      if responseObj.getProp("keyPair", kpJson):
-        data.keyPair = kpJson.toKeyPairDto()
+      var keyPair: KeyPairDto
+      var success = false
+      discard responseObj.getProp("success", success)
+      if success:
+        var kpJson: JsonNode
+        if responseObj.getProp("keyPair", kpJson):
+          keyPair = kpJson.toKeyPairDto()
+      self.emitKeycardRemovedAccountsChange(success, keyPair.keyUid, keyPair.keycardUid, keyPair.accountsAddresses)
     except Exception as e:
       error "error handilng migrated keypair response", errDesription=e.msg
-    self.events.emit(SIGNAL_KEYCARD_ACCOUNTS_REMOVED, data)
+      self.emitKeycardRemovedAccountsChange(success = false, keyUid = "", keycardUid = "", removedAccounts = @[])
 
   proc getAllKnownKeycards*(self: Service): seq[KeyPairDto] = 
     try:
@@ -673,6 +699,16 @@ QtObject:
         return map(response.result.getElems(), proc(x: JsonNode): KeyPairDto = toKeyPairDto(x))
     except Exception as e:
       error "error: ", procName="getAllKnownKeycards", errName = e.name, errDesription = e.msg
+
+  proc getKeycardWithKeycardUid*(self: Service, keycardUid: string): KeyPairDto = 
+    let allKnownKeycards = self.getAllKnownKeycards()
+    let keycardsWithKeycardUid = allKnownKeycards.filter(kp => kp.keycardUid == keycardUid)
+    if keycardsWithKeycardUid.len == 0:
+      return
+    if keycardsWithKeycardUid.len > 1:
+      error "there are more than one keycard with the same uid", keycardUid=keycardUid
+      return
+    return keycardsWithKeycardUid[0]
 
   proc getAllMigratedKeyPairs*(self: Service): seq[KeyPairDto] = 
     try:
@@ -690,50 +726,68 @@ QtObject:
     except Exception as e:
       error "error: ", procName="getMigratedKeyPairByKeyUid", errName = e.name, errDesription = e.msg
 
-  proc updateKeycardName*(self: Service, keyUid: string, keycardUid: string, name: string): bool =
+  proc emitKeycardNameChange(self: Service, keycardUid: string, name: string) =
+    let data = KeycardActivityArgs(success: true, keyPair: KeyPairDto(keycardUid: keycardUid, keycardName: name))
+    self.events.emit(SIGNAL_KEYCARD_NAME_CHANGED, data)
+
+  proc updateKeycardName*(self: Service, keycardUid: string, name: string): bool =
     try:
       let response = backend.setKeycardName(keycardUid, name)
       result = responseHasNoErrors("updateKeycardName", response)
       if result:
-        let data = KeycardActivityArgs(success: true, keyPair: KeyPairDto(keyUid: keyUid, keycardUid: keycardUid, keycardName: name))
-        self.events.emit(SIGNAL_KEYCARD_NAME_CHANGED, data)
+        self.emitKeycardNameChange(keycardUid, name)
     except Exception as e:
       error "error: ", procName="updateKeycardName", errName = e.name, errDesription = e.msg
+
+  proc emitKeycardLockedChange(self: Service, keyUid: string, keycardUid: string) =
+    let data = KeycardActivityArgs(success: true, keyPair: KeyPairDto(keyUid: keyUid, keycardUid: keycardUid))
+    self.events.emit(SIGNAL_KEYCARD_LOCKED, data)
 
   proc setKeycardLocked*(self: Service, keyUid: string, keycardUid: string): bool =
     try:
       let response = backend.keycardLocked(keycardUid)
       result = responseHasNoErrors("setKeycardLocked", response)
       if result:
-        let data = KeycardActivityArgs(success: true, keyPair: KeyPairDto(keyUid: keyUid, keycardUid: keycardUid))
-        self.events.emit(SIGNAL_KEYCARD_LOCKED, data)
+        self.emitKeycardLockedChange(keyUid, keycardUid)
     except Exception as e:
       error "error: ", procName="setKeycardLocked", errName = e.name, errDesription = e.msg
+
+  proc emitKeycardUnlockedChange(self: Service, keyUid: string, keycardUid: string) =
+    let data = KeycardActivityArgs(success: true, keyPair: KeyPairDto(keyUid: keyUid, keycardUid: keycardUid))
+    self.events.emit(SIGNAL_KEYCARD_UNLOCKED, data)
 
   proc setKeycardUnlocked*(self: Service, keyUid: string, keycardUid: string): bool =
     try:
       let response = backend.keycardUnlocked(keycardUid)
       result = responseHasNoErrors("setKeycardUnlocked", response)
       if result:
-        let data = KeycardActivityArgs(success: true, keyPair: KeyPairDto(keyUid: keyUid, keycardUid: keycardUid))
-        self.events.emit(SIGNAL_KEYCARD_UNLOCKED, data)
+        self.emitKeycardUnlockedChange(keyUid, keycardUid)
     except Exception as e:
       error "error: ", procName="setKeycardUnlocked", errName = e.name, errDesription = e.msg
+
+  proc emitUpdateKeycardUidChange(self: Service, oldKeycardUid: string, newKeycardUid: string) =
+    let data = KeycardActivityArgs(success: true, oldKeycardUid: oldKeycardUid, keyPair: KeyPairDto(keycardUid: newKeycardUid))
+    self.events.emit(SIGNAL_KEYCARD_UID_UPDATED, data)
 
   proc updateKeycardUid*(self: Service, oldKeycardUid: string, newKeycardUid: string): bool =
     try:
       let response = backend.updateKeycardUID(oldKeycardUid, newKeycardUid)
       result = responseHasNoErrors("updateKeycardUid", response)
       if result:
-        let data = KeycardActivityArgs(success: true, oldKeycardUid: oldKeycardUid, keyPair: KeyPairDto(keycardUid: newKeycardUid))
-        self.events.emit(SIGNAL_KEYCARD_UID_UPDATED, data)
+        self.emitUpdateKeycardUidChange(oldKeycardUid, newKeycardUid)
     except Exception as e:
       error "error: ", procName="updateKeycardUid", errName = e.name, errDesription = e.msg
+
+  proc emitDeleteKeycardChange(self: Service, keycardUid: string) =
+    let data = KeycardActivityArgs(success: true, keyPair: KeyPairDto(keycardUid: keycardUid))
+    self.events.emit(SIGNAL_KEYCARD_DELETED, data)
 
   proc deleteKeycard*(self: Service, keycardUid: string): bool =
     try:
       let response = backend.deleteKeycard(keycardUid)
-      return responseHasNoErrors("deleteKeycard", response)
+      result = responseHasNoErrors("deleteKeycard", response)
+      if result:
+        self.emitDeleteKeycardChange(keycardUid)
     except Exception as e:
       error "error: ", procName="deleteKeycard", errName = e.name, errDesription = e.msg
     return false
@@ -744,3 +798,34 @@ QtObject:
       accountType, color, emoji)
     if result.len == 0:
       self.addNewAccountToLocalStore()
+
+  proc handleKeycardActions(self: Service, keycardActions: seq[KeycardActionDto]) =
+    if keycardActions.len == 0:
+      return    
+    for kcAction in keycardActions:
+      if kcAction.action == KeycardActionKeycardAdded or
+        kcAction.action == KeycardActionAccountsAdded:
+          self.emitAddKeycardAddAccountsChange(success = true, kcAction.keycard)
+      elif kcAction.action == KeycardActionKeycardDeleted:
+        self.emitDeleteKeycardChange(kcAction.keycard.keycardUid)
+      elif kcAction.action == KeycardActionAccountsRemoved:
+        let keycard = self.getKeycardWithKeycardUid(kcAction.keycard.keycardUid)
+        self.emitKeycardRemovedAccountsChange(success = true, keycard.keyUid, kcAction.keycard.keycardUid, kcAction.keycard.accountsAddresses)
+      elif kcAction.action == KeycardActionLocked:
+        let keycard = self.getKeycardWithKeycardUid(kcAction.keycard.keycardUid)
+        self.emitKeycardLockedChange(keycard.keyUid, kcAction.keycard.keycardUid)
+      elif kcAction.action == KeycardActionUnlocked:
+        let keycard = self.getKeycardWithKeycardUid(kcAction.keycard.keycardUid)
+        self.emitKeycardUnlockedChange(keycard.keyUid, kcAction.keycard.keycardUid)
+      elif kcAction.action == KeycardActionUidUpdated:
+        self.emitUpdateKeycardUidChange(kcAction.oldKeycardUid, kcAction.keycard.keycardUid)
+      elif kcAction.action == KeycardActionNameChanged:
+        self.emitKeycardNameChange(kcAction.keycard.keycardUid, kcAction.keycard.keycardName)
+      else:
+        error "unsupported action received", action=kcAction.action
+
+  proc handleKeycardsState(self: Service, keycardsState: seq[KeyPairDto]) =
+    if keycardsState.len == 0:
+      return
+    let data = KeycardActivityArgs(success: true)
+    self.events.emit(SIGNAL_KEYCARDS_SYNCHRONIZED, data)
