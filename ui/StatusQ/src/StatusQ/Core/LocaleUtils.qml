@@ -78,6 +78,8 @@ QtObject {
 
         readonly property var amPmFormatChars: ["AP", "A", "ap", "a"]
 
+        readonly property int msInADay: 86400000
+
         // try to parse date from a number or ISO string timestamp
         function readDate(value) {
             if (typeof value === "undefined") // default to "now" if omitted
@@ -101,6 +103,13 @@ QtObject {
                     result = result.concat(" ap")
                 return result
             }
+        }
+
+        // return full days between 2 dates
+        function daysBetween(firstDate, secondDate) {
+            firstDate.setHours(0, 0, 0) // discard time
+            secondDate.setHours(0, 0, 0)
+            return Math.round(Math.abs((firstDate - secondDate) / d.msInADay)) // Math.round: not all days are 24 hours long!
         }
     }
 
@@ -160,6 +169,34 @@ QtObject {
             formatString = formatString.replace("yy", "yyyy")
 
         return value.toLocaleString(loc, formatString)
+    }
+
+    // TODO use JS Intl.RelativeTimeFormat in Qt 6?
+    function formatRelativeTimestamp(timestamp) {
+        const now = new Date()
+        const value = d.readDate(timestamp)
+        const loc = Qt.locale()
+        const formatString = d.fixupTimeFormatString(loc.timeFormat(Locale.ShortFormat)) // format string for the time part
+        const dayDifference = d.daysBetween(d.readDate(timestamp), now)
+
+        // within last day, 2 or 7 days
+        if (dayDifference < 1) // today -> "Today 14:23"
+            return qsTr("Today %1").arg(value.toLocaleTimeString(loc, formatString))
+
+        if (dayDifference < 2) // yesterday -> "Yesterday 14:23"
+            return qsTr("Yesterday %1").arg(value.toLocaleTimeString(loc, formatString))
+
+        if (dayDifference < 7) // last 7 days -> "Mon 14:23"
+            return qsTr("%1 %2").arg(loc.standaloneDayName(value.getDay(), Locale.ShortFormat)).arg(value.toLocaleTimeString(loc, formatString))
+
+        // otherwise
+        var fullFormatString = d.fixupTimeFormatString(loc.dateTimeFormat(Locale.ShortFormat))
+        if (now.getFullYear() === value.getFullYear())
+            fullFormatString = fullFormatString.replace(/y/g, "") // strip year part, if current year -> "31 December 09:41"
+        else
+            fullFormatString = fullFormatString.replace("yy", "yyyy") // different year -> "31 December 2022 09:41"
+
+        return value.toLocaleString(loc, fullFormatString)
     }
 
     function getTimeDifference(d1, d2) {

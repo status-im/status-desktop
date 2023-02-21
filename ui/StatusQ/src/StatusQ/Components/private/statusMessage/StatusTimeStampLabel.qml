@@ -12,7 +12,7 @@ StatusBaseText {
     color: Theme.palette.baseColor1
     font.pixelSize: 10
     visible: !!text
-    text: showFullTimestamp ? LocaleUtils.formatDateTime(timestamp) : LocaleUtils.formatTime(timestamp, Locale.ShortFormat)
+    text: showFullTimestamp ? LocaleUtils.formatDateTime(timestamp) : LocaleUtils.formatRelativeTimestamp(timestamp)
     StatusToolTip {
         id: tooltip
         visible: hhandler.hovered && !!text
