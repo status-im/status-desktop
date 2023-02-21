@@ -140,14 +140,14 @@ type
 const addMigratedKeyPairTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AddMigratedKeyPairTaskArg](argEncoded)
   try:
-    let response = backend.addMigratedKeyPair(
+    let response = backend.addMigratedKeyPairOrAddAccountsIfKeyPairIsAdded(
       arg.keyPair.keycardUid,
       arg.keyPair.keycardName,
       arg.keyPair.keyUid,
       arg.keyPair.accountsAddresses,
       arg.password
       )
-    let success = responseHasNoErrors("addMigratedKeyPair", response)
+    let success = responseHasNoErrors("addMigratedKeyPairOrAddAccountsIfKeyPairIsAdded", response)
     let responseJson = %*{
       "success": success,
       "keyPair": arg.keyPair.toJsonNode()

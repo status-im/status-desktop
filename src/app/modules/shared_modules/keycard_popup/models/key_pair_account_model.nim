@@ -1,7 +1,7 @@
 import NimQml, Tables, strformat, strutils
 import key_pair_account_item
 
-import ../../../../../app_service/common/account_constants
+import ../../../../../app_service/common/utils
 
 export key_pair_account_item
 
@@ -82,10 +82,8 @@ QtObject:
 
   proc containsPathOutOfTheDefaultStatusDerivationTree*(self: KeyPairAccountModel): bool =
     for it in self.items:
-      if not it.getPath().startsWith(account_constants.PATH_WALLET_ROOT&"/") or
-        it.getPath().count("'") != 3 or
-        it.getPath().count("/") != 5: 
-          return true
+      if utils.isPathOutOfTheDefaultStatusDerivationTree(it.getPath()):
+        return true
     return false
 
   proc getItemAtIndex*(self: KeyPairAccountModel, index: int): KeyPairAccountItem =
