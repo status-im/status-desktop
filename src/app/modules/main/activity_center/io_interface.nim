@@ -84,5 +84,11 @@ method switchTo*(self: AccessInterface, sectionId, chatId, messageId: string) {.
 method getDetails*(self: AccessInterface, sectionId: string, chatId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getChatDetailsAsJson*(self: AccessInterface, chatId: string): string {.base.} = 
+method getChatDetailsAsJson*(self: AccessInterface, chatId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setActiveNotificationGroup*(self: AccessInterface, group: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getActiveNotificationGroup*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")

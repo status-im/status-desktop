@@ -13,12 +13,23 @@ type ActivityCenterNotificationType* {.pure.}= enum
   NewPrivateGroupChat = 2,
   Mention = 3,
   Reply = 4,
-  ContactRequest = 5
-  CommunityInvitation = 6
-  CommunityRequest = 7
-  CommunityMembershipRequest = 8
-  CommunityKicked = 9
+  ContactRequest = 5,
+  CommunityInvitation = 6,
+  CommunityRequest = 7,
+  CommunityMembershipRequest = 8,
+  CommunityKicked = 9,
   ContactVerification = 10
+
+type ActivityCenterGroup* {.pure.}= enum
+  All = 0,
+  Mentions = 1,
+  Replies = 2,
+  Membership = 3,
+  Admin = 4,
+  ContactRequests = 5,
+  IdentityVerification = 6,
+  Transactions = 7,
+  System = 8
 
 type ActivityCenterMembershipStatus* {.pure.}= enum
   Idle = 0,
@@ -109,4 +120,3 @@ proc parseActivityCenterNotifications*(rpcResult: JsonNode): (string, seq[Activi
     for jsonMsg in rpcResult["notifications"]:
       notifs.add(jsonMsg.toActivityCenterNotificationDto())
   return (rpcResult{"cursor"}.getStr, notifs)
-

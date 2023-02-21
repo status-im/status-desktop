@@ -296,3 +296,9 @@ method getChatDetailsAsJson*(self: Module, chatId: string): string =
   jsonObject["color"] = %* chatDto.color
   jsonObject["emoji"] = %* chatDto.emoji
   return $jsonObject
+
+method setActiveNotificationGroup*(self: Module, group: int) =
+  self.controller.setActiveNotificationGroup(group)
+
+method getActiveNotificationGroup*(self: Module): int =
+  return self.controller.getActiveNotificationGroup()

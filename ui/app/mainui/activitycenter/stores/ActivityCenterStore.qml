@@ -1,4 +1,6 @@
-import QtQuick 2.14
+import QtQuick 2.15
+
+import shared 1.0
 
 QtObject {
     id: root
@@ -9,6 +11,7 @@ QtObject {
     readonly property var activityCenterNotifications: activityCenterModuleInst.activityNotificationsModel
     readonly property int unreadNotificationsCount: activityCenterModuleInst.unreadActivityCenterNotificationsCount
     readonly property bool hasUnseenNotifications: activityCenterModuleInst.hasUnseenActivityCenterNotifications
+    readonly property int activeNotificationGroup: activityCenterModuleInst.activeNotificationGroup
 
     function markAllActivityCenterNotificationsRead() {
         root.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
@@ -32,5 +35,9 @@ QtObject {
 
     function switchTo(notification) {
         root.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.id)
+    }
+
+    function setActiveNotificationGroup(group) {
+        root.activityCenterModuleInst.setActiveNotificationGroup(group)
     }
 }

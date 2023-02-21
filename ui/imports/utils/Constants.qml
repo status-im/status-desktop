@@ -613,17 +613,31 @@ QtObject {
     readonly property int communityChatInvitationOnlyAccess: 2
     readonly property int communityChatOnRequestAccess: 3
 
-    readonly property int activityCenterNotificationTypeNoType: 0
-    readonly property int activityCenterNotificationTypeOneToOne: 1
-    readonly property int activityCenterNotificationTypeGroupRequest: 2
-    readonly property int activityCenterNotificationTypeMention: 3
-    readonly property int activityCenterNotificationTypeReply: 4
-    readonly property int activityCenterNotificationTypeContactRequest: 5
-    readonly property int activityCenterNotificationTypeCommunityInvitation: 6
-    readonly property int activityCenterNotificationTypeCommunityRequest: 7
-    readonly property int activityCenterNotificationTypeCommunityMembershipRequest: 8
-    readonly property int activityCenterNotificationTypeCommunityKicked: 9
-    readonly property int activityCenterNotificationTypeContactVerification: 10
+    enum ActivityCenterGroup {
+        All = 0,
+        Mentions = 1,
+        Replies = 2,
+        Membership = 3,
+        Admin = 4,
+        ContactRequests = 5,
+        IdentityVerification = 6,
+        Transactions = 7,
+        System = 8
+    }
+
+    enum ActivityCenterNotificationType {
+        NoType = 0,
+        NewOneToOne = 1,
+        NewPrivateGroupChat = 2,
+        Mention = 3,
+        Reply = 4,
+        ContactRequest = 5,
+        CommunityInvitation = 6,
+        CommunityRequest = 7,
+        CommunityMembershipRequest = 8,
+        CommunityKicked = 9,
+        ContactVerification = 10
+    }
 
     readonly property int activityCenterMembershipStatusPending: 1
     readonly property int activityCenterMembershipStatusAccepted: 2

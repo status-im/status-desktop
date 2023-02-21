@@ -140,3 +140,9 @@ proc getMessageById*(self: Controller, chatId, messageId: string): MessageDto =
   if(err.len > 0):
     return MessageDto()
   return message
+
+proc setActiveNotificationGroup*(self: Controller, group: int) =
+  self.activityCenterService.setActiveNotificationGroup(ActivityCenterGroup(group))
+
+proc getActiveNotificationGroup*(self: Controller): int =
+  return self.activityCenterService.getActiveNotificationGroup().int

@@ -57,6 +57,7 @@ QtObject:
     threadpool: ThreadPool
     events: EventEmitter
     cursor*: string
+    activeGroup: ActivityCenterGroup
 
   # Forward declaration
   proc asyncActivityNotificationLoad*(self: Service)
@@ -72,34 +73,41 @@ QtObject:
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
+    result.cursor = ""
+    result.activeGroup = ActivityCenterGroup.All
+
+  proc handleNewNotificationsLoaded(self: Service, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
+    if (activityCenterNotifications.len < 1):
+      return
+
+    # if (self.activeGroup == ActivityCenterGroup.All ||
+    #     backend. )
+
+    self.events.emit(
+      SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
+      ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications)
+    )
+    self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
 
   proc init*(self: Service) =
     self.asyncActivityNotificationLoad()
     self.events.on(SignalType.Message.event) do(e: Args):
       let receivedData = MessageSignal(e)
-
-      # Handling activityCenterNotifications updates
-      if (receivedData.activityCenterNotifications.len > 0):
-        self.events.emit(
-          SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
-          ActivityCenterNotificationsArgs(activityCenterNotifications: receivedData.activityCenterNotifications)
-        )
-        self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
+      self.handleNewNotificationsLoaded(receivedData.activityCenterNotifications)
 
   proc parseActivityCenterResponse*(self: Service, response: RpcResponse[JsonNode]) =
     var activityCenterNotifications: seq[ActivityCenterNotificationDto] = @[]
     if response.result{"activityCenterNotifications"} != nil:
       for jsonMsg in response.result["activityCenterNotifications"]:
         activityCenterNotifications.add(jsonMsg.toActivityCenterNotificationDto)
+      self.handleNewNotificationsLoaded(activityCenterNotifications)
 
-      if (activityCenterNotifications.len > 0):
-        self.events.emit(
-          SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
-          ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications)
-        )
-        self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
-    if response.result{"activityCenterState"} != nil:
-      echo response.result["activityCenterNotifications"]
+  proc setActiveNotificationGroup*(self: Service, group: ActivityCenterGroup) =
+    echo "---------------------------------- setActiveNotificationGroup >", group
+    self.activeGroup = group
+
+  proc getActiveNotificationGroup*(self: Service): ActivityCenterGroup =
+    return self.activeGroup
 
   proc hasMoreToShow*(self: Service): bool =
     return self.cursor != ""
@@ -224,5 +232,3 @@ QtObject:
     except Exception as e:
       error "Error marking as dismissed", msg = e.msg
       result = e.msg
-
-
