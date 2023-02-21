@@ -1,7 +1,7 @@
 import QtQml 2.14
 
 QtObject {
-    property alias model: d.target
+    property var model
 
     readonly property alias revision: d.revision
 
@@ -11,6 +11,8 @@ QtObject {
 
     readonly property Connections _d: Connections {
         id: d
+
+        target: model ?? null
 
         property int revision: 0
 

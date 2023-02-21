@@ -54,8 +54,8 @@ QtObject {
         if (modelA === modelB)
             return true
 
-        const countA = modelA === null ? 0 : modelA.rowCount()
-        const countB = modelB === null ? 0 : modelB.rowCount()
+        const countA = !!modelA ? modelA.rowCount() : 0
+        const countB = !!modelB ? modelB.rowCount() : 0
 
         if (countA !== countB)
             return false
@@ -78,8 +78,8 @@ QtObject {
         if (modelA === modelB)
             return true
 
-        const countA = modelA === null ? 0 : modelA.rowCount()
-        const countB = modelB === null ? 0 : modelB.rowCount()
+        const countA = !!modelA ? modelA.rowCount() : 0
+        const countB = !!modelB ? modelB.rowCount() : 0
 
         if (countA !== countB)
             return false
