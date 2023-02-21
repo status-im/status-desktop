@@ -56,6 +56,7 @@ ToolBar {
 
         StatusActivityCenterButton {
             id: notificationButton
+            Layout.leftMargin: 8
             unreadNotificationsCount: root.notificationCount
             hasUnseenNotifications: root.hasUnseenNotifications
             onClicked: root.notificationButtonClicked()
