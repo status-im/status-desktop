@@ -41,14 +41,14 @@ QtObject {
     function getTokenShortNameByKey(model, key) {
         const item = getTokenByKey(model, key)
         if (item)
-            return item.shortName
+            return item.shortName ?? ""
         return ""
     }
 
     function getTokenIconByKey(model, key) {
         const item = getTokenByKey(model, key)
         if (item)
-            return item.iconSource
+            return item.iconSource ?? ""
         return ""
     }
 

@@ -69,7 +69,6 @@ StatusScrollView {
 
                     sourceModel: model.channelsListModel
 
-
                     proxyRoles: [
                         ExpressionRole {
                             name: "imageSource"
