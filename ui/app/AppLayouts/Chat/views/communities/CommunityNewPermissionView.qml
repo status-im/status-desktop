@@ -61,7 +61,7 @@ StatusScrollView {
         modelA: root.dirtyValues.holdingsModel
         modelB: root.holdingsModel
 
-        roles: ["key", "name", "shortName", "amount"]
+        roles: ["key", "amount"]
         mode: ModelsComparator.CompareMode.Set
     }
 
@@ -130,7 +130,6 @@ StatusScrollView {
         function loadInitValues() {
             // Holdings:
             d.dirtyValues.holdingsModel.clear()
-
             d.dirtyValues.holdingsModel.append(
                         ModelUtils.modelToArray(root.holdingsModel, ["type", "key", "amount"]))
 
