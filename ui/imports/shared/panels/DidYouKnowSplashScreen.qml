@@ -27,7 +27,14 @@ Pane {
                 anchors.top: splashScreen.bottom
                 anchors.bottom: parent.bottom
                 width: parent.width
-                visible: root.progress != 0
+                visible: root.progress !== 0
+                Behavior on visible {
+                    SequentialAnimation {
+                        PropertyAction { target: content; property: "opacity"; value: visible ? 0 : didYouKnowText.opacity }                        //set opacity to 0 if the visible property changed to true
+                        PropertyAction { }                                                                                                          //set visible property
+                        NumberAnimation { target: content; property: "opacity"; duration: 1000; to: visible ? 1 : didYouKnowText.opacity }          //fade in
+                    }
+                }
                 Item {
                     Layout.fillHeight: true
                 }
@@ -44,7 +51,7 @@ Pane {
                     id: didYouKnowText
                     Layout.alignment: Qt.AlignHCenter
                     Layout.preferredHeight: 60
-                    Layout.preferredWidth: 520
+                    Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap
                     color: Theme.palette.directColor1
@@ -62,7 +69,7 @@ Pane {
                     }
                     Timer {
                         id: didYouKnowTimer
-                        interval: 5000
+                        interval: 7000
                         repeat: true
                         running: didYouKnowText.visible
                         onTriggered: didYouKnowText.text = didYouKnowMessages.iterator.next()
