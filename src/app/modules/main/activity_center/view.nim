@@ -145,3 +145,17 @@ QtObject:
 
   proc getChatDetailsAsJson*(self: View, chatId: string): string {.slot.} =
     return self.delegate.getChatDetailsAsJson(chatId)
+
+  proc activeNotificationGroupChanged*(self: View) {.signal.}
+
+  proc setActiveNotificationGroup*(self: View, group: int) {.slot.} =
+    self.delegate.setActiveNotificationGroup(group)
+    self.activeNotificationGroupChanged()
+
+  proc getActiveNotificationGroup*(self: View): int {.slot.} =
+    return self.delegate.getActiveNotificationGroup()
+
+  QtProperty[int] activeNotificationGroup:
+    read = getActiveNotificationGroup
+    write = setActiveNotificationGroup
+    notify = activeNotificationGroupChanged
