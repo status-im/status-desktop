@@ -6,21 +6,21 @@ QtObject {
     readonly property var messages: [
             [
                 qsTr("Status messenger is the most secure fully decentralised messenger in the world"),
-                qsTr("Status gives you full metadata privacy - it’s impossible to tell who you are chatting with by surveilling your internet traffic"),
+                qsTr("Full metadata privacy means it’s impossible to tell who you are talking to by surveilling your internet traffic"),
                 qsTr("Status is truly private - none of your personal details (or any other information) are sent to us"),
                 qsTr("Messages sent using Status are end to end encrypted and can only be opened by the recipient"),
-                qsTr("Status uses the Waku p2p gossip messaging protocol — an evolution of the Ethereum Foundation’s original Whisper protocol"),
+                qsTr("Status uses the Waku p2p gossip messaging protocol — an evolution of the EF’s original Whisper protocol"),
                 qsTr("Status is home to crypto’s leading multi-chain self-custodial wallet"),
                 qsTr("Status removes intermediaries to keep your messages private and your assets secure"),
                 qsTr("Status uses the latest encryption and security tools to secure your messages and transactions"),
-                qsTr("Status enables pseudo-anonymous interaction with Web3, DeFi, and society in general"),
+                qsTr("Status enables pseudo-anonymous interaction with Web3, DeFi, and society in general"),
                 qsTr("The Status Network token (SNT) is a modular utility token that fuels the Status network"),
                 qsTr("Your cryptographic keypair encrypts all of your messages which can only be unlocked by the intended recipient"),
                 qsTr("Status’ Web3 browser requires all DApps to ask permission before connecting to your wallet"),
                 qsTr("Your non-custodial wallet gives you full control over your funds without the use of a server"),
-                qsTr("Status is decentralized and serverless - chat, transact, and browse without surveillance, censorship, or data leakage"),
-                qsTr("Status is just open source software that provides a window into p2p networks, Status itself doesn’t provide any services"),
-                qsTr("Status is a way to access p2p networks that are permissionlessly created and run by individuals around the world."),
+                qsTr("Status is decentralized and serverless - chat, transact, and browse without surveillance and censorship"),
+                qsTr("Status is open source software that lets you use with p2p networks. Status itself doesn’t provide any services"),
+                qsTr("Status is a way to access p2p networks that are permissionlessly created and run by individuals around the world"),
             ],
             [
                 qsTr("Our 10 core principles include liberty, security, transparency, censorship resistance and inclusivity"),
@@ -29,7 +29,7 @@ QtObject {
                 qsTr("Status aims to protect the right to private, secure conversations, and the freedom to associate and collaborate"),
                 qsTr("One of our core aims is to maximize social, political, and economic freedoms"),
                 qsTr("Status abides by the cryptoeconomic design principle of censorship resistance"),
-                qsTr("Status is a public good. It is made available via the MIT liberal open source license, for anyone to share, modify and benefit from."),
+                qsTr("Status is a public good licensed under the MIT open source license, for anyone to share, modify and benefit from"),
                 qsTr("Status supports free communication without the approval or oversight of big tech"),
                 qsTr("Status allows you to communicate freely without the threat of surveillance"),
                 qsTr("Status supports free speech. Using p2p networks prevents us, or anyone else, from censoring you"),
@@ -51,11 +51,10 @@ QtObject {
             ],
             [
                 qsTr("Your mobile company, and government are able to see the contents of all your private SMS messages"),
-                qsTr("Because (unlike Status) other messengers with e2e encryption don’t have metadata privacy, your internet provider and government can tell who you are messaging with."),
+                qsTr("Many other messengers with e2e encryption don’t have metadata privacy!"),
             ],
             [
-                qsTr("Help to translate Status into your native language see https://translate.status.im for more info"),
-                qsTr("By storing your private keys offline on Keycard, you can add hardware-enforced authorizations to your transactions."),
+                qsTr("Help to translate Status into your native language see https://translate.status.im/ for more info"),
                 qsTr("By using Keycard, you can ensure your funds are safe even if your phone is stolen"),
                 qsTr("You can enhance security by using Keycard + PIN entry as two-factor authentication"),
             ],
@@ -65,8 +64,8 @@ QtObject {
                 qsTr("The all new Status desktop app is being actively developed and is earmarked for release in 2023"),
                 qsTr("Status also builds the Nimbus Ethereum consensus, execution and light clients"),
                 qsTr("Status’s Nimbus team is collaborating with the Ethereum Foundation to create the Portal Network"),
-                qsTr("Status’s Portal Network client (called Fluffy) means Status users will be able to interact with Ethereum without using a centeralised endpoint like Infura"),
-                qsTr("We are currently working hard on a tool that will enable you to easily import an existing Telegram or Discord group chat community into Status."),
+                qsTr("Status’s Portal Network client (Fluffy) will let Status users interact with Ethereum in a fully decenteralised way"),
+                qsTr("We are currently working on a tool to let you import an existing Telegram or Discord group into Status"),
             ]
     ]
 
