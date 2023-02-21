@@ -67,6 +67,7 @@ ToolTip {
     contentItem: StatusBaseText {
         text: statusToolTip.text
         color: Theme.palette.white
+        linkColor: Theme.palette.white
         wrapMode: Text.WordWrap
         font.pixelSize: 13
         font.weight: Font.Medium
