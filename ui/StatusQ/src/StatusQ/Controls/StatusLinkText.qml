@@ -1,23 +1,21 @@
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-import QtQuick 2.0
-import QtQuick.Layouts 1.0
+import QtQuick 2.14
 
-import StatusQ.Core 0.1
 /*!
    \qmltype StatusLinkText
    \inherits StatusBaseText
    \inqmlmodule StatusQ.Controls
    \since StatusQ.Controls 0.1
-   \brief Displays text abailable for mouse interaction and styled as link.
+   \brief Displays text available for mouse interaction and styled as link.
 
    Example of how to use it:
 
    \qml
         StatusLinkText {
             text: qsTr("Click me")
-            onClicked: console,log("link clicked")
+            onClicked: console.log("link clicked")
         }
    \endqml
 
@@ -31,7 +29,7 @@ StatusBaseText {
        \qmlproperty StatusLinkText StatusLinkText::linkColor
        This property holds text color while it's hovered by mouse cursor
     */
-    property color linkColor: Theme.palette.primaryColor1
+    linkColor: Theme.palette.primaryColor1
 
     /*!
        \qmlproperty StatusLinkText StatusLinkText::normalColor
@@ -41,7 +39,7 @@ StatusBaseText {
 
     /*!
        \qmlproperty StatusLinkText StatusLinkText::containsMouse
-       This property true whenever text is hoverd by mouse cursor
+       This property true whenever text is hovered by mouse cursor
     */
     readonly property alias containsMouse: textMouseArea.containsMouse
 
