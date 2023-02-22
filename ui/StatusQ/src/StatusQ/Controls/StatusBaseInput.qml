@@ -383,8 +383,8 @@ Item {
                                 if (utf8Length > root.maximumLength) {
                                     var cursor = cursorPosition
                                     text = previousText
-                                    if (cursor > length) {
-                                        cursorPosition = length
+                                    if (cursor > edit.length) {
+                                        cursorPosition = edit.length
                                     } else {
                                         cursorPosition = cursor - 1
                                     }
