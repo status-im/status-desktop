@@ -31,7 +31,8 @@ SplitView {
                 store: CommunitiesStore {
                     id: mockedCommunity
 
-                    permissionsModel: PermissionsModel.permissionsModel
+                    readonly property var permissionsModel:
+                        PermissionsModel.permissionsModel
 
                     readonly property var assetsModel: AssetsModel {
                         id: assetsModel

@@ -3,7 +3,7 @@ import QtQuick 2.15
 import StatusQ.Core 0.1
 
 import utils 1.0
-import "../../../app/AppLayouts/Profile/stores"
+import AppLayouts.Profile.stores 1.0
 
 QtObject {
     id: root
