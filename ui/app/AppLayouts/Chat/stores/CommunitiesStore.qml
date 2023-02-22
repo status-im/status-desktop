@@ -140,33 +140,10 @@ QtObject {
 
         function createPermissionEntry(holdings, permissionType, isPrivate, channels) {
             const permission = {
-                holdingsListModel: [],
-                channelsListModel: [],
+                holdingsListModel: holdings,
+                channelsListModel: channels,
                 permissionType,
                 isPrivate
-            }
-
-            // Setting HOLDINGS:
-            for (let i = 0; i < holdings.count; i++ ) {
-                const entry = holdings.get(i)
-
-                permission.holdingsListModel.push({
-                    type: entry.type,
-                    key: entry.key,
-                    amount: entry.amount
-                })
-            }
-
-            // Setting CHANNELS:
-            for (let c = 0; c < channels.count; c++) {
-                const entry = channels.get(c)
-
-                permission.channelsListModel.push({
-                    itemId: entry.itemId,
-                    text: entry.text,
-                    emoji: entry.emoji,
-                    color: entry.color
-                })
             }
 
             return permission
