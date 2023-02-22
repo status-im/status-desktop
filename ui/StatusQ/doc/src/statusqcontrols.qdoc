@@ -34,6 +34,7 @@
        \li \l{StatusIconTextButton}
        \li \l{StatusIdenticonRing}
        \li \l{StatusInput}
+       \li \l{StatusImageSelector}
        \li \l{StatusItemPicker}
        \li \l{StatusPickerButton}
        \li \l{StatusPinInput}
