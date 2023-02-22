@@ -196,10 +196,18 @@ SettingsPageLayout {
             }
 
             onCreatePermissionClicked: {
-                root.store.createPermission(dirtyValues.holdingsModel,
+                const holdings = ModelUtils.modelToArray(
+                                   dirtyValues.holdingsModel,
+                                   ["key", "type", "amount"])
+
+                const channels = ModelUtils.modelToArray(
+                                   dirtyValues.channelsModel,
+                                   ["itemId", "text", "emoji", "color"])
+
+                root.store.createPermission(holdings,
                                             dirtyValues.permissionType,
                                             dirtyValues.isPrivate,
-                                            dirtyValues.channelsModel)
+                                            channels)
 
                 root.state = d.permissionsViewState
             }
@@ -208,11 +216,19 @@ SettingsPageLayout {
                 target: d
 
                 function onSaveChanges() {
+                    const holdings = ModelUtils.modelToArray(
+                                       dirtyValues.holdingsModel,
+                                       ["key", "type", "amount"])
+
+                    const channels = ModelUtils.modelToArray(
+                                       dirtyValues.channelsModel,
+                                       ["itemId", "text", "emoji", "color"])
+
                     root.store.editPermission(
                                 d.permissionKeyToEdit,
-                                dirtyValues.holdingsModel,
+                                holdings,
                                 dirtyValues.permissionType,
-                                dirtyValues.channelsModel,
+                                channels,
                                 dirtyValues.isPrivate)
                 }
 
