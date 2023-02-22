@@ -8,12 +8,11 @@ import utils 1.0
 SettingsPageLayout {
     id: root
 
+    property string communityId
     property var tokensModel
+    property var communitiesStore
     property var transactionStore
     property int viewWidth: 560 // by design
-
-    signal mintCollectible(string address, string name, string symbol, string description, int supply,
-                           bool infiniteSupply, bool transferable, bool selfDestruct, string network)
 
     function navigateBack() {
         if (root.state === d.newCollectibleViewState) {
@@ -75,12 +74,23 @@ SettingsPageLayout {
     Component {
         id: newCollectiblesView
 
-        CommunityMintTokenPanel {
+        CommunityNewCollectibleView {
             anchors.fill: parent
-            transactionStore: root.transactionStore
+            store: root.communitiesStore
             tokensModel: root.tokensModel
-            onMintCollectible: root.mintCollectible(address, name, symbol, description, supply,
-                                                    infiniteSupply, transferable, selfDestruct, network)
+            onMintCollectible: {
+                root.communitiesStore.mintCollectible(root.communityId,
+                                                      root.transactionStore.currentAccount.address, /*TODO use address from SendModal*/
+                                                      artworkSource,
+                                                      name,
+                                                      symbol,
+                                                      description,
+                                                      supply,
+                                                      infiniteSupply,
+                                                      transferable,
+                                                      selfDestruct,
+                                                      chainId)
+            }
         }
     }
 }

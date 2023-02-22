@@ -254,12 +254,11 @@ StatusSectionLayout {
             }
 
             CommunityMintTokensSettingsPanel {
+                communityId: root.community.id
+                communitiesStore: root.communityStore
                 transactionStore: root.transactionStore
                 tokensModel: root.community.communityTokens
-                onMintCollectible: {
-                    root.communityStore.mintCollectible(root.community.id, address, name, symbol, description, supply,
-                                                        infiniteSupply, transferable, selfDestruct, network)
-                }
+                
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
             }
 
