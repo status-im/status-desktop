@@ -10,12 +10,14 @@ import shared.popups 1.0
 
 import AppLayouts.Chat.controls.community 1.0
 import AppLayouts.Chat.helpers 1.0
+import AppLayouts.Chat.stores 1.0
 
 StatusScrollView {
     id: root
 
     property var rootStore
-    property var store
+    required property CommunitiesStore store
+
     property int viewWidth: 560 // by design
 
     signal editPermissionRequested(int index)
