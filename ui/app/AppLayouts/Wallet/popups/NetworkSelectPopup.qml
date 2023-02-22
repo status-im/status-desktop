@@ -15,7 +15,7 @@ Popup {
     id: root
     modal: false
     width: 360
-    height: 432
+    height: Math.min(432, scrollView.contentHeight + root.padding)
 
     horizontalPadding: 5
     verticalPadding: 5
@@ -28,7 +28,10 @@ Popup {
     // If true NetworksExtraStoreProxy expected for layer1Networks and layer2Networks properties
     property bool useNetworksExtraStoreProxy: false
 
+    property bool multiSelection: true
+
     signal toggleNetwork(int chainId)
+    signal singleNetworkSelected(int chainId, string chainName, string iconUrl)
 
     background: Rectangle {
         radius: Style.current.radius
@@ -50,6 +53,7 @@ Popup {
         width: root.width
         height: root.height
         contentHeight: content.height
+        contentWidth: availableWidth
         padding: 0
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -109,21 +113,38 @@ Popup {
             asset.isImage: true
             asset.name: Style.svg(model.iconUrl)
             onClicked:  {
-                checkBox.checked = !checkBox.checked
+                if(root.multiSelection)
+                    checkBox.toggle()
+                else
+                    radioButton.toggle()
             }
             components: [
                 StatusCheckBox {
                     id: checkBox
+                    visible: root.multiSelection
                     checked: root.useNetworksExtraStoreProxy ? model.isActive : model.isEnabled
-                    onCheckedChanged: {
+                    onToggled: {
                         if(root.useNetworksExtraStoreProxy && model.isActive !== checked) {
                             model.isActive = checked
                         } else if (model.isEnabled !== checked) {
                             root.toggleNetwork(model.chainId)
                         }
                     }
+                },
+                StatusRadioButton {
+                    id: radioButton
+                    visible: !root.multiSelection
+                    size: StatusRadioButton.Size.Large
+                    ButtonGroup.group: radioBtnGroup
+                    checked: model.index === 0
+                    onCheckedChanged: if(checked) root.singleNetworkSelected(model.chainId, model.chainName, model.iconUrl)
+                    onToggled: if(checked) root.singleNetworkSelected(model.chainId, model.chainName, model.iconUrl)
                 }
             ]
         }
+    }
+
+    ButtonGroup {
+        id: radioBtnGroup
     }
 }

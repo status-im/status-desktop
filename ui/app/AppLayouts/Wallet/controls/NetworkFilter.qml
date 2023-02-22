@@ -17,6 +17,17 @@ Item {
     implicitHeight: parent.height
 
     property var store
+    property bool isChainVisible: true
+    property bool multiSelection: true
+
+    signal singleNetworkSelected(int chainId)
+
+    QtObject {
+        id: d
+
+        property string selectedChainName: ""
+        property string selectedIconUrl: ""
+    }
 
     Item {
         id: selectRectangleItem
@@ -36,7 +47,12 @@ Item {
             statusListItemTitle.font.pixelSize: 13
             statusListItemTitle.font.weight: Font.Medium
             statusListItemTitle.color: Theme.palette.baseColor1
-            title: store.enabledNetworks.count === store.allNetworks.count ? qsTr("All networks") : qsTr("%n network(s)", "", store.enabledNetworks.count)
+            title: root.multiSelection ? (store.enabledNetworks.count === store.allNetworks.count ? qsTr("All networks") : qsTr("%n network(s)", "", store.enabledNetworks.count)) :
+                                         d.selectedChainName
+            asset.height: 24
+            asset.width: asset.height
+            asset.isImage: !root.multiSelection
+            asset.name: !root.multiSelection ? Style.svg(d.selectedIconUrl) : ""
             components:[
                 StatusIcon {
                     width: 16
@@ -60,7 +76,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.halfPadding
         spacing: Style.current.smallPadding
-        visible: chainRepeater.count > 0
+        visible: root.isChainVisible && chainRepeater.count > 0
 
         Repeater {
             id: chainRepeater
@@ -80,9 +96,16 @@ Item {
         layer1Networks: store.layer1Networks
         layer2Networks: store.layer2Networks
         testNetworks: store.testNetworks
+        multiSelection: root.multiSelection
 
         onToggleNetwork: {
             store.toggleNetwork(chainId)
+        }
+
+        onSingleNetworkSelected: {
+            d.selectedChainName = chainName
+            d.selectedIconUrl = iconUrl
+            root.singleNetworkSelected(chainId)
         }
     }
 }
