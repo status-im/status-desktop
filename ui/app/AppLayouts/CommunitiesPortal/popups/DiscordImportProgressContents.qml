@@ -22,7 +22,11 @@ StatusScrollView {
 
     signal close()
 
-    implicitWidth: childrenRect.width
+    contentWidth: implicitWidth
+    contentHeight: implicitHeight
+    implicitWidth: column.childrenRect.width
+    implicitHeight: column.childrenRect.height
+
     padding: 0
 
     enum ImportStatus {
@@ -252,7 +256,8 @@ StatusScrollView {
     }
 
     ColumnLayout {
-        width: parent.width
+        id: column
+        width: root.availableWidth
         spacing: 20
 
         RowLayout {
@@ -263,7 +268,7 @@ StatusScrollView {
                 Layout.preferredHeight: 24
                 Layout.preferredWidth: 24
                 Layout.alignment: Qt.AlignHCenter
-                visible: root.store.discordImportHasCommunityImage && root.store.discordImportCommunityImage.toString() == ""
+                visible: root.store.discordImportHasCommunityImage && root.store.discordImportCommunityImage.toString() === ""
             }
             StatusRoundedImage {
                 Layout.preferredWidth: 36
