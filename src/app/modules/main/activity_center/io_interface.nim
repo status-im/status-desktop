@@ -66,10 +66,10 @@ method markActivityCenterNotificationUnread*(self: AccessInterface, notification
 method markAsSeenActivityCenterNotifications*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method pushActivityCenterNotifications*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]) {.base.} =
+method addActivityCenterNotifications*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addActivityCenterNotification*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]) {.base.} =
+method resetActivityCenterNotifications*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method acceptActivityCenterNotifications*(self: AccessInterface, notificationIds: seq[string]): string {.base.} =
@@ -91,4 +91,10 @@ method setActiveNotificationGroup*(self: AccessInterface, group: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getActiveNotificationGroup*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setActivityCenterReadType*(self: AccessInterface, readType: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getActivityCenterReadType*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")

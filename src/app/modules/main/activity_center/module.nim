@@ -181,7 +181,7 @@ method convertToItems*(
 
 method fetchActivityCenterNotifications*(self: Module) =
   let activityCenterNotifications = self.controller.getActivityCenterNotifications()
-  self.view.pushActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
+  self.view.addActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
 
 method markAllActivityCenterNotificationsRead*(self: Module): string =
   self.controller.markAllActivityCenterNotificationsRead()
@@ -212,17 +212,11 @@ method markActivityCenterNotificationReadDone*(self: Module, notificationIds: se
 method markAsSeenActivityCenterNotifications*(self: Module) =
   self.controller.markAsSeenActivityCenterNotifications()
 
-method pushActivityCenterNotifications*(
-    self: Module,
-    activityCenterNotifications: seq[ActivityCenterNotificationDto]
-    ) =
-  self.view.pushActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
+method addActivityCenterNotifications*(self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
+  self.view.addActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
 
-method addActivityCenterNotification*(
-    self: Module,
-    activityCenterNotifications: seq[ActivityCenterNotificationDto]
-    ) =
-  self.view.addActivityCenterNotification(self.convertToItems(activityCenterNotifications))
+method resetActivityCenterNotifications*(self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
+  self.view.resetActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
 
 method markActivityCenterNotificationUnread*(
     self: Module,
@@ -302,3 +296,9 @@ method setActiveNotificationGroup*(self: Module, group: int) =
 
 method getActiveNotificationGroup*(self: Module): int =
   return self.controller.getActiveNotificationGroup()
+
+method setActivityCenterReadType*(self: Module, readType: int) =
+  self.controller.setActivityCenterReadType(readType)
+
+method getActivityCenterReadType*(self: Module): int =
+  return self.controller.getActivityCenterReadType()

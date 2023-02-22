@@ -639,6 +639,12 @@ QtObject {
         ContactVerification = 10
     }
 
+    enum ActivityCenterReadType {
+        Read = 1,
+        Unread = 2,
+        All = 3
+    }
+
     readonly property int activityCenterMembershipStatusPending: 1
     readonly property int activityCenterMembershipStatusAccepted: 2
     readonly property int activityCenterMembershipStatusDeclined: 3

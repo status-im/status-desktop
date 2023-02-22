@@ -44,7 +44,7 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED) do(e: Args):
     let args = ActivityCenterNotificationsArgs(e)
-    self.delegate.addActivityCenterNotification(args.activityCenterNotifications)
+    self.delegate.addActivityCenterNotifications(args.activityCenterNotifications)
 
   self.events.on(activity_center_service.SIGNAL_MARK_NOTIFICATIONS_AS_ACCEPTED) do(e: Args):
     var evArgs = MarkAsAcceptedNotificationProperties(e)
@@ -143,6 +143,18 @@ proc getMessageById*(self: Controller, chatId, messageId: string): MessageDto =
 
 proc setActiveNotificationGroup*(self: Controller, group: int) =
   self.activityCenterService.setActiveNotificationGroup(ActivityCenterGroup(group))
+  self.activityCenterService.resetCursor()
+  let activityCenterNotifications = self.activityCenterService.getActivityCenterNotifications()
+  self.delegate.resetActivityCenterNotifications(activityCenterNotifications)
 
 proc getActiveNotificationGroup*(self: Controller): int =
   return self.activityCenterService.getActiveNotificationGroup().int
+
+proc setActivityCenterReadType*(self: Controller, readType: int) =
+  self.activityCenterService.setActivityCenterReadType(ActivityCenterReadType(readType))
+  self.activityCenterService.resetCursor()
+  let activityCenterNotifications = self.activityCenterService.getActivityCenterNotifications()
+  self.delegate.resetActivityCenterNotifications(activityCenterNotifications)
+
+proc getActivityCenterReadType*(self: Controller): int =
+  return self.activityCenterService.getActivityCenterReadType().int

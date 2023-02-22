@@ -165,6 +165,15 @@ rpc(activityCenterNotifications, "wakuext"):
   cursorVal: JsonNode
   limit: int
 
+rpc(activityCenterNotificationsByGroup, "wakuext"):
+  cursorVal: JsonNode
+  limit: int
+  group: int
+  readType: int
+
+rpc(activityCenterTypesByGroup, "wakuext"):
+  group: int
+
 rpc(markAllActivityCenterNotificationsRead, "wakuext"):
   discard
 

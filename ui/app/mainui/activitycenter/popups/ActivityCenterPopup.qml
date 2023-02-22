@@ -29,8 +29,6 @@ Popup {
     property ActivityCenterStore activityCenterStore
     property var store
 
-    readonly property int unreadNotificationsCount: root.activityCenterStore.unreadNotificationsCount
-
     onOpened: {
         Global.popupOpened = true
     }
@@ -65,18 +63,20 @@ Popup {
     ActivityCenterPopupTopBarPanel {
         id: activityCenterTopBar
         width: parent.width
-        unreadNotificationsCount: root.unreadNotificationsCount
+        unreadNotificationsCount: activityCenterStore.unreadNotificationsCount
         hasAdmin: root.adminCount > 0
         hasReplies: root.repliesCount > 0
         hasMentions: root.mentionsCount > 0
         hasContactRequests: root.contactRequestsCount > 0
         hasIdentityRequests: root.identityRequestsCount > 0
         hasMembership: root.membershipCount > 0
-        hideReadNotifications: activityCenterStore.hideReadNotifications
+        hideReadNotifications: activityCenterStore.activityCenterReadType === Constants.ActivityCenterReadType.Unread
         activeGroup: activityCenterStore.activeNotificationGroup
         onGroupTriggered: activityCenterStore.setActiveNotificationGroup(group)
         onMarkAllReadClicked: root.activityCenterStore.markAllActivityCenterNotificationsRead()
-        onShowHideReadNotifications: activityCenterStore.hideReadNotifications = hideReadNotifications
+        onShowHideReadNotifications: activityCenterStore.setActivityCenterReadType(hideReadNotifications ?
+                                                                                        Constants.ActivityCenterReadType.Unread :
+                                                                                        Constants.ActivityCenterReadType.All)
     }
 
     StatusListView {

@@ -58,6 +58,7 @@ QtObject:
     events: EventEmitter
     cursor*: string
     activeGroup: ActivityCenterGroup
+    readType: ActivityCenterReadType
 
   # Forward declaration
   proc asyncActivityNotificationLoad*(self: Service)
@@ -75,19 +76,22 @@ QtObject:
     result.threadpool = threadpool
     result.cursor = ""
     result.activeGroup = ActivityCenterGroup.All
+    result.readType = ActivityCenterReadType.All
 
   proc handleNewNotificationsLoaded(self: Service, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
-    if (activityCenterNotifications.len < 1):
-      return
-
-    # if (self.activeGroup == ActivityCenterGroup.All ||
-    #     backend. )
-
-    self.events.emit(
-      SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
-      ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications)
+    # For now status-go notify about every notification update regardless active group so we need filter manulay on the desktop side
+    let response = backend.activityCenterTypesByGroup(self.activeGroup.int) # NOTE: no error for trivial call
+    var groupTypes = toActivityCenterNotificationTypeList(response.result)
+    var filteredNotifications = filter(activityCenterNotifications, proc(notification: ActivityCenterNotificationDto): bool =
+      return (self.readType == ActivityCenterReadType.All or not notification.read) and groupTypes.contains(notification.notificationType)
     )
-    self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
+
+    if (filteredNotifications.len > 0):
+      self.events.emit(
+        SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
+        ActivityCenterNotificationsArgs(activityCenterNotifications: filteredNotifications)
+      )
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
 
   proc init*(self: Service) =
     self.asyncActivityNotificationLoad()
@@ -103,11 +107,19 @@ QtObject:
       self.handleNewNotificationsLoaded(activityCenterNotifications)
 
   proc setActiveNotificationGroup*(self: Service, group: ActivityCenterGroup) =
-    echo "---------------------------------- setActiveNotificationGroup >", group
     self.activeGroup = group
 
   proc getActiveNotificationGroup*(self: Service): ActivityCenterGroup =
     return self.activeGroup
+
+  proc setActivityCenterReadType*(self: Service, readType: ActivityCenterReadType) =
+    self.readType = readType
+
+  proc getActivityCenterReadType*(self: Service): ActivityCenterReadType =
+    return self.readType
+
+  proc resetCursor*(self: Service) =
+    self.cursor = ""
 
   proc hasMoreToShow*(self: Service): bool =
     return self.cursor != ""
@@ -117,8 +129,10 @@ QtObject:
       tptr: cast[ByteAddress](asyncActivityNotificationLoadTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "asyncActivityNotificationLoaded",
-      cursor: "",
-      limit: DEFAULT_LIMIT
+      cursor: self.cursor,
+      limit: DEFAULT_LIMIT,
+      group: self.activeGroup,
+      readType: self.readType
     )
     self.threadpool.start(arg)
 
@@ -130,7 +144,7 @@ QtObject:
     else:
       cursorVal = newJString(self.cursor)
 
-    let callResult = backend.activityCenterNotifications(cursorVal, DEFAULT_LIMIT)
+    let callResult = backend.activityCenterNotificationsByGroup(cursorVal, DEFAULT_LIMIT, self.activeGroup.int, self.readType.int)
     let activityCenterNotificationsTuple = parseActivityCenterNotifications(callResult.result)
 
     self.cursor = activityCenterNotificationsTuple[0];
