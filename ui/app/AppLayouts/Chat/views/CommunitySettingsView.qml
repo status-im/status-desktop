@@ -44,7 +44,7 @@ StatusSectionLayout {
     property var rootStore
     property var community
     property var chatCommunitySectionModule
-    property var communityStore: CommunitiesStore {}
+    required property CommunitiesStore communityStore
     property bool hasAddedContacts: false
     property var transactionStore: TransactionStore {}
 
@@ -248,6 +248,8 @@ StatusSectionLayout {
 
             CommunityPermissionsSettingsPanel {
                 rootStore: root.rootStore
+                store: root.communityStore
+
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
             }
 

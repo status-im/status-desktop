@@ -56,6 +56,8 @@ StackLayout {
 
         sourceComponent: CommunitySettingsView {
             rootStore: root.rootStore
+            communityStore: CommunitiesStore {}
+
             hasAddedContacts: root.contactsStore.myContactsModel.count > 0
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
             community: root.rootStore.mainModuleInst ? root.rootStore.mainModuleInst.activeSection

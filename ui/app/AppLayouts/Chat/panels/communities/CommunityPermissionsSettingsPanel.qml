@@ -12,7 +12,7 @@ SettingsPageLayout {
     id: root
 
     property var rootStore
-    property var store: CommunitiesStore {}
+    required property CommunitiesStore store
     property int viewWidth: 560 // by design
 
     function navigateBack() {

@@ -18,7 +18,9 @@ import SortFilterProxyModel 0.2
 Item {
     id: root
 
-    property var store
+    property var assetsModel
+    property var collectiblesModel
+
     property var checkedKeys: []
     property int type: ExtendedDropdownContent.Type.Assets
 
@@ -139,7 +141,7 @@ Item {
             PropertyChanges {
                 target: d
                 currentModel: root.type === ExtendedDropdownContent.Type.Assets
-                              ? root.store.assetsModel : root.store.collectiblesModel
+                              ? root.assetsModel : root.collectiblesModel
                 isFilterOptionVisible: false
             }
 

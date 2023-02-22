@@ -13,6 +13,7 @@ import shared.panels 1.0
 
 import AppLayouts.Chat.helpers 1.0
 import AppLayouts.Chat.panels.communities 1.0
+import AppLayouts.Chat.stores 1.0
 
 import "../../../Chat/controls/community"
 
@@ -20,7 +21,7 @@ StatusScrollView {
     id: root
 
     property var rootStore
-    property var store
+    required property CommunitiesStore store
 
     property int viewWidth: 560 // by design
     property bool isEditState: false
@@ -196,7 +197,8 @@ StatusScrollView {
             HoldingsDropdown {
                 id: dropdown
 
-                store: root.store
+                assetsModel: store.assetsModel
+                collectiblesModel: store.collectiblesModel
 
                 function addItem(type, item, amount) {
                     const key = item.key

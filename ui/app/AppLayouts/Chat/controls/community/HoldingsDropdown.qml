@@ -12,7 +12,9 @@ import AppLayouts.Chat.helpers 1.0
 StatusDropdown {
     id: root
 
-    property var store
+    property var assetsModel
+    property var collectiblesModel
+
     property var usedTokens: []
     property var usedEnsNames: []
 
@@ -248,7 +250,9 @@ StatusDropdown {
         ExtendedDropdownContent {
             id: listPanel
 
-            store: root.store
+            assetsModel: root.assetsModel
+            collectiblesModel: root.collectiblesModel
+
             checkedKeys: root.usedTokens.map(entry => entry.key)
             type: d.extendedDropdownType
 
@@ -287,8 +291,8 @@ StatusDropdown {
             Component.onCompleted: {
                 if(d.extendedDeepNavigation)
                     listPanel.goForward(d.currentItemKey,
-                                        CommunityPermissionsHelpers.getTokenNameByKey(store.collectiblesModel, d.currentItemKey),
-                                        CommunityPermissionsHelpers.getTokenIconByKey(store.collectiblesModel, d.currentItemKey),
+                                        CommunityPermissionsHelpers.getTokenNameByKey(root.collectiblesModel, d.currentItemKey),
+                                        CommunityPermissionsHelpers.getTokenIconByKey(root.collectiblesModel, d.currentItemKey),
                                         d.currentSubItems)
             }
 
@@ -318,9 +322,9 @@ StatusDropdown {
 
             readonly property real effectiveAmount: amountValid ? amount : 0
 
-            tokenName: CommunityPermissionsHelpers.getTokenNameByKey(store.assetsModel, root.assetKey)
-            tokenShortName: CommunityPermissionsHelpers.getTokenShortNameByKey(store.assetsModel, root.assetKey)
-            tokenImage: CommunityPermissionsHelpers.getTokenIconByKey(store.assetsModel, root.assetKey)
+            tokenName: CommunityPermissionsHelpers.getTokenNameByKey(root.assetsModel, root.assetKey)
+            tokenShortName: CommunityPermissionsHelpers.getTokenShortNameByKey(root.assetsModel, root.assetKey)
+            tokenImage: CommunityPermissionsHelpers.getTokenIconByKey(root.assetsModel, root.assetKey)
             amountText: d.assetAmountText
             tokenCategoryText: qsTr("Asset")
             addOrUpdateButtonEnabled: d.assetsReady
@@ -353,9 +357,9 @@ StatusDropdown {
 
             readonly property real effectiveAmount: amountValid ? amount : 0
 
-            tokenName: CommunityPermissionsHelpers.getTokenNameByKey(store.collectiblesModel, root.collectibleKey)
+            tokenName: CommunityPermissionsHelpers.getTokenNameByKey(root.collectiblesModel, root.collectibleKey)
             tokenShortName: ""
-            tokenImage: CommunityPermissionsHelpers.getTokenIconByKey(store.collectiblesModel, root.collectibleKey)
+            tokenImage: CommunityPermissionsHelpers.getTokenIconByKey(root.collectiblesModel, root.collectibleKey)
             amountText: d.collectibleAmountText
             tokenCategoryText: qsTr("Collectible")
             addOrUpdateButtonEnabled: d.collectiblesReady
