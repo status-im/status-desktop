@@ -15,7 +15,6 @@ Loader {
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
-        bgRadius: bgWidth / 2
     }
 
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
@@ -31,7 +30,7 @@ Loader {
     property bool hoverEnabled: false
     readonly property bool hovered: (sourceComponent == roundedIcon && item) ?
                      item.hovered : false
-    signal clicked()
+    signal clicked(var mouse)
 
     Component {
         id: roundedImage
@@ -70,19 +69,30 @@ Loader {
     Component {
         id: roundedIcon
 
-        StatusRoundButton {
-            width: root.asset.bgWidth
-            height: root.asset.bgHeight
-            color: root.asset.bgColor
-            icon.width: root.asset.width
-            icon.height: root.asset.height
-            icon.name: root.asset.name
-            icon.rotation: root.asset.rotation
-            icon.color: root.asset.color
-            icon.hoverColor: root.asset.hoverColor
-            radius: root.asset.bgRadius
-            hoverEnabled: root.hoverEnabled
-            onClicked: root.clicked()
+        StatusRoundIcon {
+            asset.bgRadius: root.asset.bgRadius
+            asset.bgWidth: root.asset.bgWidth
+            asset.bgHeight: root.asset.bgHeight
+            asset.bgColor: root.asset.bgColor
+            asset.width: root.asset.width
+            asset.height: root.asset.height
+            asset.name: root.asset.name
+            asset.rotation: root.asset.rotation
+            asset.color: root.asset.color
+
+            signal clicked(var mouse)
+
+            property alias hovered: mouseArea.containsMouse
+
+            MouseArea {
+                id: mouseArea
+
+                anchors.fill: parent
+                hoverEnabled: root.hoverEnabled
+                cursorShape: loading ? Qt.ArrowCursor
+                                     : Qt.PointingHandCursor
+                onClicked: parent.clicked(mouse)
+            }
         }
     }
 
@@ -129,6 +139,16 @@ Loader {
             radius: width/2
             height: root.asset.height
             width: root.asset.width
+        }
+    }
+
+    Connections {
+        target: item
+        enabled: status == Loader.Ready
+        ignoreUnknownSignals: true
+
+        function onClicked(mouse) {
+            root.clicked(mouse)
         }
     }
 }
