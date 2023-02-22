@@ -35,6 +35,9 @@ SplitView {
                 viewOnlyHoldingsModel: editor.viewOnlyHoldingsModel
                 viewAndPostHoldingsModel: editor.viewAndPostHoldingsModel
                 moderateHoldingsModel: editor.moderateHoldingsModel
+
+                assetsModel: AssetsModel {}
+                collectiblesModel: CollectiblesModel {}
             }
         }
     }

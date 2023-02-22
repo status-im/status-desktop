@@ -14,6 +14,9 @@ StatusDialog {
     property alias viewAndPostHoldingsModel: overlayPanel.viewAndPostHoldingsModel
     property alias moderateHoldingsModel: overlayPanel.moderateHoldingsModel
 
+    property alias assetsModel: overlayPanel.assetsModel
+    property alias collectiblesModel: overlayPanel.collectiblesModel
+
     QtObject {
         id: d
 
