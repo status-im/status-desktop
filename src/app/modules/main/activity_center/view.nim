@@ -60,10 +60,6 @@ QtObject:
     read = hasUnseenActivityCenterNotifications
     notify = hasUnseenActivityCenterNotificationsChanged
 
-  proc pushActivityCenterNotifications*(self:View, activityCenterNotifications: seq[Item]) =
-    self.model.addActivityNotificationItemsToList(activityCenterNotifications)
-    self.hasMoreToShowChanged()
-
   proc loadMoreNotifications(self: View) {.slot.} =
     self.delegate.fetchActivityCenterNotifications()
 
@@ -134,8 +130,11 @@ QtObject:
   proc dismissActivityCenterNotificationsDone*(self: View, notificationIds: seq[string]) =
     self.model.removeNotifications(notificationIds)
 
-  proc addActivityCenterNotification*(self: View, activityCenterNotifications: seq[Item]) =
+  proc addActivityCenterNotifications*(self: View, activityCenterNotifications: seq[Item]) =
     self.model.addActivityNotificationItemsToList(activityCenterNotifications)
+
+  proc resetActivityCenterNotifications*(self: View, activityCenterNotifications: seq[Item]) =
+    self.model.setNewData(activityCenterNotifications)
 
   proc switchTo*(self: View, sectionId: string, chatId: string, messageId: string) {.slot.} =
     self.delegate.switchTo(sectionId, chatId, messageId)
@@ -159,3 +158,17 @@ QtObject:
     read = getActiveNotificationGroup
     write = setActiveNotificationGroup
     notify = activeNotificationGroupChanged
+
+  proc activityCenterReadTypeChanged*(self: View) {.signal.}
+
+  proc setActivityCenterReadType*(self: View, readType: int) {.slot.} =
+    self.delegate.setActivityCenterReadType(readType)
+    self.activityCenterReadTypeChanged()
+
+  proc getActivityCenterReadType*(self: View): int {.slot.} =
+    return self.delegate.getActivityCenterReadType()
+
+  QtProperty[int] activityCenterReadType:
+    read = getActivityCenterReadType
+    write = setActivityCenterReadType
+    notify = activityCenterReadTypeChanged

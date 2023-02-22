@@ -5,13 +5,12 @@ import shared 1.0
 QtObject {
     id: root
 
-    property bool hideReadNotifications: false
-
     readonly property var activityCenterModuleInst: activityCenterModule
     readonly property var activityCenterNotifications: activityCenterModuleInst.activityNotificationsModel
     readonly property int unreadNotificationsCount: activityCenterModuleInst.unreadActivityCenterNotificationsCount
     readonly property bool hasUnseenNotifications: activityCenterModuleInst.hasUnseenActivityCenterNotifications
     readonly property int activeNotificationGroup: activityCenterModuleInst.activeNotificationGroup
+    readonly property int activityCenterReadType: activityCenterModuleInst.activityCenterReadType
 
     function markAllActivityCenterNotificationsRead() {
         root.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
@@ -39,5 +38,9 @@ QtObject {
 
     function setActiveNotificationGroup(group) {
         root.activityCenterModuleInst.setActiveNotificationGroup(group)
+    }
+
+    function setActivityCenterReadType(readType) {
+        root.activityCenterModuleInst.setActivityCenterReadType(readType)
     }
 }

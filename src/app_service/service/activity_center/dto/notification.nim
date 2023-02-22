@@ -31,6 +31,11 @@ type ActivityCenterGroup* {.pure.}= enum
   Transactions = 7,
   System = 8
 
+type ActivityCenterReadType* {.pure.}= enum
+  Read = 1,
+  Unread = 2
+  All = 3
+
 type ActivityCenterMembershipStatus* {.pure.}= enum
   Idle = 0,
   Pending = 1,
@@ -79,14 +84,14 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   result.membershipStatus = ActivityCenterMembershipStatus.Idle
   var membershipStatusInt: int
   if (jsonObj.getProp("membershipStatus", membershipStatusInt) and
-    (membershipStatusInt >= ord(low(ActivityCenterMembershipStatus)) or
+    (membershipStatusInt >= ord(low(ActivityCenterMembershipStatus)) and
     membershipStatusInt <= ord(high(ActivityCenterMembershipStatus)))):
       result.membershipStatus = ActivityCenterMembershipStatus(membershipStatusInt)
 
   result.verificationStatus = VerificationStatus.Unverified
   var verificationStatusInt: int
   if (jsonObj.getProp("contactVerificationStatus", verificationStatusInt) and
-    (verificationStatusInt >= ord(low(VerificationStatus)) or
+    (verificationStatusInt >= ord(low(VerificationStatus)) and
     verificationStatusInt <= ord(high(VerificationStatus)))):
       result.verificationStatus = VerificationStatus(verificationStatusInt)
 
@@ -95,7 +100,7 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   result.notificationType = ActivityCenterNotificationType.NoType
   var notificationTypeInt: int
   if (jsonObj.getProp("type", notificationTypeInt) and
-    (notificationTypeInt >= ord(low(ActivityCenterNotificationType)) or
+    (notificationTypeInt >= ord(low(ActivityCenterNotificationType)) and
     notificationTypeInt <= ord(high(ActivityCenterNotificationType)))):
       result.notificationType = ActivityCenterNotificationType(notificationTypeInt)
 
@@ -113,10 +118,18 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   if jsonObj.contains("replyMessage") and jsonObj{"replyMessage"}.kind != JNull:
     result.replyMessage = jsonObj{"replyMessage"}.toMessageDto()
 
-
 proc parseActivityCenterNotifications*(rpcResult: JsonNode): (string, seq[ActivityCenterNotificationDto]) =
   var notifs: seq[ActivityCenterNotificationDto] = @[]
   if rpcResult{"notifications"}.kind != JNull:
     for jsonMsg in rpcResult["notifications"]:
       notifs.add(jsonMsg.toActivityCenterNotificationDto())
   return (rpcResult{"cursor"}.getStr, notifs)
+
+proc toActivityCenterNotificationTypeList*(rpcResult: JsonNode): seq[ActivityCenterNotificationType] =
+  var types: seq[ActivityCenterNotificationType] = @[]
+  for jsonObj in rpcResult:
+    var notificationTypeInt = jsonObj.getInt()
+    if notificationTypeInt >= ord(low(ActivityCenterNotificationType)) and
+       notificationTypeInt <= ord(high(ActivityCenterNotificationType)):
+      types.add(ActivityCenterNotificationType(notificationTypeInt))
+  return types
