@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.14
 import AppLayouts.Chat.panels.communities 1.0
 import AppLayouts.Chat.stores 1.0
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 
 import Storybook 1.0
 import Models 1.0
@@ -31,9 +32,18 @@ SplitView {
             store: CommunitiesStore {
                 readonly property bool isOwner: isOwnerCheckBox.checked
 
-                assetsModel: AssetsModel {}
-                collectiblesModel: CollectiblesModel {}
-                channelsModel: ListModel {
+                property var permissionConflict: QtObject { // Backend conflicts object model assignment. Now mocked data.
+                    property bool exists: false
+                    property string holdings: qsTr("1 ETH")
+                    property string permissions: qsTr("View and Post")
+                    property string channels: qsTr("#general")
+
+                }
+
+                readonly property var permissionsModel: ListModel {}
+                readonly property var assetsModel: AssetsModel {}
+                readonly property var collectiblesModel: CollectiblesModel {}
+                readonly property var channelsModel: ListModel {
                     Component.onCompleted: {
                         append([
                             {
@@ -48,6 +58,44 @@ SplitView {
                             }
                         ])
                     }
+                }
+
+                readonly property QtObject _d: QtObject {
+                    id: d
+
+                    property int keyCounter: 0
+
+                    function createPermissionEntry(holdings, permissionType, isPrivate, channels) {
+                        const permission = {
+                            holdingsListModel: holdings,
+                            channelsListModel: channels,
+                            permissionType,
+                            isPrivate
+                        }
+
+                        return permission
+                    }
+                }
+
+                function createPermission(holdings, permissionType, isPrivate, channels, index = null) {
+                    const permissionEntry = d.createPermissionEntry(
+                                              holdings, permissionType, isPrivate, channels)
+
+                    permissionEntry.key = "" + d.keyCounter++
+                    permissionsModel.append(permissionEntry)
+                }
+
+                function editPermission(key, holdings, permissionType, channels, isPrivate) {
+                    const permissionEntry = d.createPermissionEntry(
+                                              holdings, permissionType, isPrivate, channels)
+
+                    const index = ModelUtils.indexOf(permissionsModel, "key", key)
+                    permissionsModel.set(index, permissionEntry)
+                }
+
+                function removePermission(key) {
+                    const index = ModelUtils.indexOf(permissionsModel, "key", key)
+                    permissionsModel.remove(index)
                 }
             }
 
