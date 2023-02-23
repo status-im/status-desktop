@@ -131,7 +131,7 @@ Rectangle {
 
         property int leftOfMentionIndex: -1
         property int rightOfMentionIndex: -1
-
+        readonly property int nbEmojisInClipboard: StatusQUtils.Emoji.nbEmojis(QClipboardProxy.html)
         readonly property StateGroup emojiPopupTakeover: StateGroup {
             states: State {
                 when: control.emojiPopupOpened
@@ -474,13 +474,14 @@ Rectangle {
                             }
                         }
                     }
-
                     insertInTextInput(d.copyTextStart, d.copiedTextFormatted)
                 } else {
                     d.copiedTextPlain = ""
                     d.copiedTextFormatted = ""
                     d.copiedMentionsPos = []
-                    messageInputField.insert(d.copyTextStart, "<div style='white-space: pre-wrap'>" + Utils.escapeHtml(QClipboardProxy.text) + "</div>") // preserve formatting
+                    messageInputField.insert(d.copyTextStart, ((d.nbEmojisInClipboard === 0) ?
+                    ("<div style='white-space: pre-wrap'>" + Utils.escapeHtml(QClipboardProxy.text) + "</div>")
+                    : StatusQUtils.Emoji.deparse(QClipboardProxy.html)));
                 }
             }
         }
@@ -715,7 +716,7 @@ Rectangle {
 
         if (messageInputField.readOnly) {
             messageInputField.readOnly = false;
-            messageInputField.cursorPosition = d.copyTextStart + QClipboardProxy.text.length;
+            messageInputField.cursorPosition = (d.copyTextStart + QClipboardProxy.text.length + d.nbEmojisInClipboard);
         }
     }
 
