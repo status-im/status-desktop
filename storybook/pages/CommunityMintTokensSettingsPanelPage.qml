@@ -28,6 +28,20 @@ SplitView {
                     readonly property string address: "0x0000001"
                 }
             }
+            communitiesStore: QtObject {
+
+                property var layer1Networks: NetworksModel.layer1Networks
+                property var layer2Networks: NetworksModel.layer2Networks
+                property var testNetworks: NetworksModel.testNetworks
+                property var enabledNetworks: NetworksModel.enabledNetworks
+                property var allNetworks: enabledNetworks
+
+                function mintCollectible(communityId, address, artworkSource, name, symbol, description, supply,
+                                         infiniteSupply, transferable, selfDestruct, chainId)
+                {
+                   logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
+                }
+            }
         }
     }
 
