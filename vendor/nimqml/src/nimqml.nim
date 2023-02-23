@@ -45,28 +45,44 @@ proc signal_handler*(receiver: pointer, signal: cstring, slot: cstring) =
 
 proc image_resizer*(imagePath: string, maxSize: int = 2000, tmpDir: string): string =
   discard existsOrCreateDir(tmpDir)
-  result = $dos_image_resizer(imagePath.cstring, maxSize.cint, tmpDir)
+  let imgResizer = dos_image_resizer(imagePath.cstring, maxSize.cint, tmpDir.cstring)
+  defer: dos_chararray_delete(imgResizer)
+  result = $(imgResizer)
 
 proc plain_text*(htmlString: string): string =
-  result = $(dos_plain_text(htmlString.cstring))
+  let plainText = dos_plain_text(htmlString.cstring)
+  defer: dos_chararray_delete(plainText)
+  result = $(plainText)
 
 proc escape_html*(input: string): string =
-  result = $(dos_escape_html(input.cstring))
+  let escapedHtml = dos_escape_html(input.cstring)
+  defer: dos_chararray_delete(escapedHtml)
+  result = $(escapedHtml)
 
 proc url_fromUserInput*(input: string): string =
-  result = $(dos_qurl_fromUserInput(input.cstring))
+  let urlStr = dos_qurl_fromUserInput(input.cstring)
+  defer: dos_chararray_delete(urlStr)
+  result = $(urlStr)
 
 proc url_host*(host: string): string =
-  result = $(dos_qurl_host(host.cstring))
+  let qurlHost = dos_qurl_host(host.cstring)
+  defer: dos_chararray_delete(qurlHost)
+  result = $(qurlHost)
 
 proc url_replaceHostAndAddPath*(url: string, newHost: string, protocol: string = "", pathPrefix: string = ""): string =
-  result = $(dos_qurl_replaceHostAndAddPath(url.cstring, protocol.cstring, newHost.cstring, pathPrefix.cstring))
+  let newUrl = dos_qurl_replaceHostAndAddPath(url.cstring, protocol.cstring, newHost.cstring, pathPrefix.cstring)
+  defer: dos_chararray_delete(newUrl)
+  result = $(newUrl)
 
 proc url_toLocalFile*(fileUrl: string): string =
-  result = $(dos_to_local_file(fileUrl.cstring))
+  let filePath = dos_to_local_file(fileUrl.cstring)
+  defer: dos_chararray_delete(filePath)
+  result = $(filePath)
 
 proc url_fromLocalFile*(filePath: string): string =
-  result = $(dos_from_local_file(filePath.cstring))
+  let url = dos_from_local_file(filePath.cstring)
+  defer: dos_chararray_delete(url)
+  result = $(url)
 
 proc app_isActive*(engine: QQmlApplicationEngine): bool =
   result = dos_app_is_active(engine.vptr)

@@ -8,7 +8,7 @@ proc setup(self: QModelIndex, other: DosQModelIndex, takeOwnership: Ownership) =
 
 proc delete*(self: QModelIndex) =
   ## Delete the given QModelIndex
-  if not self.vptr.isNil:
+  if self.vptr.isNil:
     return
   debugMsg("QModelIndex", "delete")
   dos_qmodelindex_delete(self.vptr)
