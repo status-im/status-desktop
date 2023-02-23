@@ -9,64 +9,67 @@ import AppLayouts.Chat.controls.community 1.0
 QtObject {
     id: root
 
-    readonly property var permissionsModel: ListModel {
-        Component.onCompleted:
-        append([
-                   {
-                       holdingsListModel: root.createHoldingsModel1(),
-                       channelsListModel: root.createChannelsModel1(),
-                       permissionType: PermissionTypes.Type.Admin,
-                       isPrivate: true
-                   },
-                   {
-                       holdingsListModel: root.createHoldingsModel2(),
-                       channelsListModel: root.createChannelsModel2(),
-                       permissionType: PermissionTypes.Type.Member,
-                       isPrivate: false
-                   }
-               ])
+    readonly property var permissionsModelData: [
+        {
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Admin,
+            isPrivate: true
+        },
+        {
+            holdingsListModel: root.createHoldingsModel2(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false
+        }
+    ]
+
+    readonly property var shortPermissionsModelData: [
+        {
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Admin,
+            isPrivate: true,
+        }
+    ]
+
+    readonly property var longPermissionsModelData: [
+        {
+            holdingsListModel: root.createHoldingsModel4(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Admin,
+            isPrivate: true
+        },
+        {
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false
+        },
+        {
+            holdingsListModel: root.createHoldingsModel2(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false
+        },
+        {
+            channelsListModel: root.createChannelsModel2(),
+            holdingsListModel: root.createHoldingsModel1(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false
+        }
+    ]
+
+    readonly property ListModel permissionsModel: ListModel {
+        Component.onCompleted: append(permissionsModelData)
     }
 
     readonly property var shortPermissionsModel: ListModel {
-        Component.onCompleted:
-        append([
-                   {
-                       holdingsListModel: root.createHoldingsModel3(),
-                       channelsListModel: root.createChannelsModel1(),
-                       permissionType: PermissionTypes.Type.Admin,
-                       isPrivate: true,
-                   }
-               ])
+        Component.onCompleted: append(shortPermissionsModelData)
     }
 
     readonly property var longPermissionsModel: ListModel {
-        Component.onCompleted:
-        append([
-                   {
-                       holdingsListModel: root.createHoldingsModel4(),
-                       channelsListModel: root.createChannelsModel1(),
-                       permissionType: PermissionTypes.Type.Admin,
-                       isPrivate: true
-                   },
-                   {
-                       holdingsListModel: root.createHoldingsModel3(),
-                       channelsListModel: root.createChannelsModel2(),
-                       permissionType: PermissionTypes.Type.Member,
-                       isPrivate: false
-                   },
-                   {
-                       holdingsListModel: root.createHoldingsModel2(),
-                       channelsListModel: root.createChannelsModel2(),
-                       permissionType: PermissionTypes.Type.Member,
-                       isPrivate: false
-                   },
-                   {
-                       channelsListModel: root.createChannelsModel2(),
-                       holdingsListModel: root.createHoldingsModel1(),
-                       permissionType: PermissionTypes.Type.Member,
-                       isPrivate: false
-                   }
-               ])
+        Component.onCompleted: append(longPermissionsModelData)
     }
 
     function createHoldingsModel1() {
