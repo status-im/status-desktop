@@ -31,14 +31,15 @@ SplitView {
                 store: CommunitiesStore {
                     id: mockedCommunity
 
-                    readonly property var permissionsModel:
-                        PermissionsModel.permissionsModel
+                    readonly property ListModel permissionsModel: ListModel {
+                        Component.onCompleted: append(PermissionsModel.permissionsModelData)
+                    }
 
-                    readonly property var assetsModel: AssetsModel {
+                    readonly property AssetsModel assetsModel: AssetsModel {
                         id: assetsModel
                     }
 
-                    readonly property var collectiblesModel: CollectiblesModel {
+                    readonly property CollectiblesModel collectiblesModel: CollectiblesModel {
                         id: collectiblesModel
                     }
                 }
