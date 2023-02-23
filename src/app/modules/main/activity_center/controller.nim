@@ -141,20 +141,20 @@ proc getMessageById*(self: Controller, chatId, messageId: string): MessageDto =
     return MessageDto()
   return message
 
-proc setActiveNotificationGroup*(self: Controller, group: int) =
-  self.activityCenterService.setActiveNotificationGroup(ActivityCenterGroup(group))
+proc setActiveNotificationGroup*(self: Controller, group: ActivityCenterGroup) =
+  self.activityCenterService.setActiveNotificationGroup(group)
   self.activityCenterService.resetCursor()
   let activityCenterNotifications = self.activityCenterService.getActivityCenterNotifications()
   self.delegate.resetActivityCenterNotifications(activityCenterNotifications)
 
-proc getActiveNotificationGroup*(self: Controller): int =
-  return self.activityCenterService.getActiveNotificationGroup().int
+proc getActiveNotificationGroup*(self: Controller): ActivityCenterGroup =
+  return self.activityCenterService.getActiveNotificationGroup()
 
-proc setActivityCenterReadType*(self: Controller, readType: int) =
-  self.activityCenterService.setActivityCenterReadType(ActivityCenterReadType(readType))
+proc setActivityCenterReadType*(self: Controller, readType: ActivityCenterReadType) =
+  self.activityCenterService.setActivityCenterReadType(readType)
   self.activityCenterService.resetCursor()
   let activityCenterNotifications = self.activityCenterService.getActivityCenterNotifications()
   self.delegate.resetActivityCenterNotifications(activityCenterNotifications)
 
-proc getActivityCenterReadType*(self: Controller): int =
-  return self.activityCenterService.getActivityCenterReadType().int
+proc getActivityCenterReadType*(self: Controller): ActivityCenterReadType =
+  return self.activityCenterService.getActivityCenterReadType()

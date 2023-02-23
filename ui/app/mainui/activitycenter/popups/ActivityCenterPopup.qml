@@ -70,13 +70,13 @@ Popup {
         hasContactRequests: root.contactRequestsCount > 0
         hasIdentityRequests: root.identityRequestsCount > 0
         hasMembership: root.membershipCount > 0
-        hideReadNotifications: activityCenterStore.activityCenterReadType === Constants.ActivityCenterReadType.Unread
+        hideReadNotifications: activityCenterStore.activityCenterReadType === ActivityCenterStore.ActivityCenterReadType.Unread
         activeGroup: activityCenterStore.activeNotificationGroup
         onGroupTriggered: activityCenterStore.setActiveNotificationGroup(group)
         onMarkAllReadClicked: root.activityCenterStore.markAllActivityCenterNotificationsRead()
         onShowHideReadNotifications: activityCenterStore.setActivityCenterReadType(hideReadNotifications ?
-                                                                                        Constants.ActivityCenterReadType.Unread :
-                                                                                        Constants.ActivityCenterReadType.All)
+                                                                                        ActivityCenterStore.ActivityCenterReadType.Unread :
+                                                                                        ActivityCenterStore.ActivityCenterReadType.All)
     }
 
     StatusListView {
@@ -98,21 +98,21 @@ Popup {
 
             sourceComponent: {
                 switch (model.notificationType) {
-                    case Constants.ActivityCenterNotificationType.Mention:
+                    case ActivityCenterStore.ActivityCenterNotificationType.Mention:
                         return mentionNotificationComponent
-                    case Constants.ActivityCenterNotificationType.Reply:
+                    case ActivityCenterStore.ActivityCenterNotificationType.Reply:
                         return replyNotificationComponent
-                    case Constants.ActivityCenterNotificationType.ContactRequest:
+                    case ActivityCenterStore.ActivityCenterNotificationType.ContactRequest:
                         return contactRequestNotificationComponent
-                    case Constants.ActivityCenterNotificationType.ContactVerification:
+                    case ActivityCenterStore.ActivityCenterNotificationType.ContactVerification:
                         return verificationRequestNotificationComponent
-                    case Constants.ActivityCenterNotificationType.CommunityInvitation:
+                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityInvitation:
                         return communityInvitationNotificationComponent
-                    case Constants.ActivityCenterNotificationType.MembershipRequest:
+                    case ActivityCenterStore.ActivityCenterNotificationType.MembershipRequest:
                         return membershipRequestNotificationComponent
-                    case Constants.ActivityCenterNotificationType.CommunityRequest:
+                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityRequest:
                         return communityRequestNotificationComponent
-                    case Constants.ActivityCenterNotificationType.CommunityKicked:
+                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityKicked:
                         return communityKickedNotificationComponent
                     default:
                         return null

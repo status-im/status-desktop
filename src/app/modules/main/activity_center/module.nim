@@ -292,13 +292,13 @@ method getChatDetailsAsJson*(self: Module, chatId: string): string =
   return $jsonObject
 
 method setActiveNotificationGroup*(self: Module, group: int) =
-  self.controller.setActiveNotificationGroup(group)
+  self.controller.setActiveNotificationGroup(ActivityCenterGroup(group))
 
 method getActiveNotificationGroup*(self: Module): int =
-  return self.controller.getActiveNotificationGroup()
+  return self.controller.getActiveNotificationGroup().int
 
 method setActivityCenterReadType*(self: Module, readType: int) =
-  self.controller.setActivityCenterReadType(readType)
+  self.controller.setActivityCenterReadType(ActivityCenterReadType(readType))
 
 method getActivityCenterReadType*(self: Module): int =
-  return self.controller.getActivityCenterReadType()
+  return self.controller.getActivityCenterReadType().int
