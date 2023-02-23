@@ -91,7 +91,8 @@ QtObject:
         SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
         ActivityCenterNotificationsArgs(activityCenterNotifications: filteredNotifications)
       )
-      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
+    # NOTE: this signal must fire even we have no new notifications to show
+    self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
 
   proc init*(self: Service) =
     self.asyncActivityNotificationLoad()
@@ -149,6 +150,16 @@ QtObject:
 
     self.cursor = activityCenterNotificationsTuple[0];
     result = activityCenterNotificationsTuple[1]
+
+  proc getActivityGroupCounter*(self: Service, group: ActivityCenterGroup): int =
+    try:
+      let response = backend.activityCenterNotificationsByGroupCount(group.int)
+
+      if response.result.kind != JNull:
+        return response.result.getInt
+    except Exception as e:
+      error "Error getting activity center notifications group count", msg = e.msg
+
 
   proc getUnreadActivityCenterNotificationsCount*(self: Service): int =
     try:

@@ -45,10 +45,18 @@ QtObject {
 
     readonly property var activityCenterModuleInst: activityCenterModule
     readonly property var activityCenterNotifications: activityCenterModuleInst.activityNotificationsModel
+
     readonly property int unreadNotificationsCount: activityCenterModuleInst.unreadActivityCenterNotificationsCount
     readonly property bool hasUnseenNotifications: activityCenterModuleInst.hasUnseenActivityCenterNotifications
     readonly property int activeNotificationGroup: activityCenterModuleInst.activeNotificationGroup
     readonly property int activityCenterReadType: activityCenterModuleInst.activityCenterReadType
+
+    readonly property int adminCount: activityCenterModuleInst.adminCount
+    readonly property int mentionsCount: activityCenterModuleInst.mentionsCount
+    readonly property int repliesCount: activityCenterModuleInst.repliesCount
+    readonly property int contactRequestsCount: activityCenterModuleInst.contactRequestsCount
+    readonly property int identityRequestsCount: activityCenterModuleInst.identityRequestsCount
+    readonly property int membershipCount: activityCenterModuleInst.membershipCount
 
     function markAllActivityCenterNotificationsRead() {
         root.activityCenterModuleInst.markAllActivityCenterNotificationsRead()

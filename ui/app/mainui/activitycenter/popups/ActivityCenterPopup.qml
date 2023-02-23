@@ -18,14 +18,6 @@ import "../stores"
 Popup {
     id: root
 
-    // FIXME: counters from service
-    property int adminCount: 1
-    property int mentionsCount: 1
-    property int repliesCount: 1
-    property int contactRequestsCount: 1
-    property int identityRequestsCount: 1
-    property int membershipCount: 1
-
     property ActivityCenterStore activityCenterStore
     property var store
 
@@ -64,16 +56,16 @@ Popup {
         id: activityCenterTopBar
         width: parent.width
         unreadNotificationsCount: activityCenterStore.unreadNotificationsCount
-        hasAdmin: root.adminCount > 0
-        hasReplies: root.repliesCount > 0
-        hasMentions: root.mentionsCount > 0
-        hasContactRequests: root.contactRequestsCount > 0
-        hasIdentityRequests: root.identityRequestsCount > 0
-        hasMembership: root.membershipCount > 0
+        hasAdmin: activityCenterStore.adminCount > 0
+        hasReplies: activityCenterStore.repliesCount > 0
+        hasMentions: activityCenterStore.mentionsCount > 0
+        hasContactRequests: activityCenterStore.contactRequestsCount > 0
+        hasIdentityRequests: activityCenterStore.identityRequestsCount > 0
+        hasMembership: activityCenterStore.membershipCount > 0
         hideReadNotifications: activityCenterStore.activityCenterReadType === ActivityCenterStore.ActivityCenterReadType.Unread
         activeGroup: activityCenterStore.activeNotificationGroup
         onGroupTriggered: activityCenterStore.setActiveNotificationGroup(group)
-        onMarkAllReadClicked: root.activityCenterStore.markAllActivityCenterNotificationsRead()
+        onMarkAllReadClicked: activityCenterStore.markAllActivityCenterNotificationsRead()
         onShowHideReadNotifications: activityCenterStore.setActivityCenterReadType(hideReadNotifications ?
                                                                                         ActivityCenterStore.ActivityCenterReadType.Unread :
                                                                                         ActivityCenterStore.ActivityCenterReadType.All)

@@ -70,6 +70,7 @@ proc init*(self: Controller) =
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED) do(e: Args):
     self.delegate.unreadActivityCenterNotificationsCountChanged()
     self.delegate.hasUnseenActivityCenterNotificationsChanged()
+    self.delegate.groupCountersChanged()
 
 proc hasMoreToShow*(self: Controller): bool =
    return self.activityCenterService.hasMoreToShow()
@@ -158,3 +159,6 @@ proc setActivityCenterReadType*(self: Controller, readType: ActivityCenterReadTy
 
 proc getActivityCenterReadType*(self: Controller): ActivityCenterReadType =
   return self.activityCenterService.getActivityCenterReadType()
+
+proc getActivityGroupCounter*(self: Controller, group: ActivityCenterGroup): int =
+  return self.activityCenterService.getActivityGroupCounter(group)

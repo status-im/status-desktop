@@ -172,3 +172,47 @@ QtObject:
     read = getActivityCenterReadType
     write = setActivityCenterReadType
     notify = activityCenterReadTypeChanged
+
+  proc groupCountersChanged*(self: View) {.signal.}
+
+  proc getAdminCount*(self: View): int {.slot.} =
+    return self.delegate.getAdminCount()
+
+  QtProperty[int] adminCount:
+    read = getAdminCount
+    notify = groupCountersChanged
+
+  proc getMentionsCount*(self: View): int {.slot.} =
+    return self.delegate.getMentionsCount()
+
+  QtProperty[int] mentionsCount:
+    read = getMentionsCount
+    notify = groupCountersChanged
+
+  proc getRepliesCount*(self: View): int {.slot.} =
+    return self.delegate.getRepliesCount()
+
+  QtProperty[int] repliesCount:
+    read = getRepliesCount
+    notify = groupCountersChanged
+
+  proc getContactRequestsCount*(self: View): int {.slot.} =
+    return self.delegate.getContactRequestsCount()
+
+  QtProperty[int] contactRequestsCount:
+    read = getContactRequestsCount
+    notify = groupCountersChanged
+
+  proc getIdentityRequestsCount*(self: View): int {.slot.} =
+    return self.delegate.getIdentityRequestsCount()
+
+  QtProperty[int] identityRequestsCount:
+    read = getIdentityRequestsCount
+    notify = groupCountersChanged
+
+  proc getMembershipCount*(self: View): int {.slot.} =
+    return self.delegate.getMembershipCount()
+
+  QtProperty[int] membershipCount:
+    read = getMembershipCount
+    notify = groupCountersChanged

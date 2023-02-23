@@ -170,6 +170,9 @@ rpc(activityCenterNotificationsByGroup, "wakuext"):
   group: int
   readType: int
 
+rpc(activityCenterNotificationsByGroupCount, "wakuext"):
+  group: int
+
 rpc(activityCenterTypesByGroup, "wakuext"):
   group: int
 
