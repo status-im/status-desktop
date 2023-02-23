@@ -158,6 +158,11 @@ def step(context: any):
 def step(context, channel):
     _statusCommunityScreen.mark_as_read(channel)
 
+@When("\"|any|\" is clicked in the community sidebar")
+def step(context, community_sidebar_option:str):
+    _statusCommunityScreen.click_sidebar_option(community_sidebar_option)
+
+
 #########################
 ### VERIFICATIONS region:
 #########################
@@ -224,10 +229,14 @@ def step(context, color: str):
     
   
 
-@Given("\"Test-Community\" community exists")
-def step(context):
-    test.warning("TODO implement \"Test-Community\" community exists")
+# @Given("\"Test-Community\" community exists")
+# def step(context):
+#     test.warning("TODO implement \"Test-Community\" community exists")
 
+
+@Then("\"|any|\" should be an available option in Community Settings")
+def step(context, manage_community_option:str):
+    _statusCommunityScreen.verify_option_exists(manage_community_option)
 
     
 ###########################################################################
