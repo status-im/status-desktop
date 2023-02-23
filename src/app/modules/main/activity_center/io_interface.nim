@@ -98,3 +98,24 @@ method setActivityCenterReadType*(self: AccessInterface, readType: int) {.base.}
 
 method getActivityCenterReadType*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method groupCountersChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getAdminCount*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getMentionsCount*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getRepliesCount*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getContactRequestsCount*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getIdentityRequestsCount*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getMembershipCount*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
