@@ -16,12 +16,15 @@ def erase_directory(dir: str):
             os.remove(directory)
             
 def clear_directory(dir: str):
-    for files in os.listdir(dir):
-        path = os.path.join(dir, files)
-        try:
-            shutil.rmtree(path)
-        except OSError:
-            os.remove(path)
+    if os.path.exists(dir):
+        for files in os.listdir(dir):
+            path = os.path.join(dir, files)
+            try:
+                shutil.rmtree(path)
+            except OSError:
+                os.remove(path)
+    else:
+        log("Trying to clear directory but it doesn't exist: " + dir) 
             
 def copy_directory(src: str, dst: str):
     if os.path.isdir(src) and os.path.isdir(dst):
