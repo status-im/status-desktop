@@ -164,17 +164,17 @@ rpc(activityCenterNotifications, "wakuext"):
   cursorVal: JsonNode
   limit: int
 
-rpc(activityCenterNotificationsByGroup, "wakuext"):
+rpc(activityCenterNotificationsBy, "wakuext"):
   cursorVal: JsonNode
   limit: int
-  group: int
+  activityTypes: seq[int]
   readType: int
+  accepted: bool
 
-rpc(activityCenterNotificationsByGroupCount, "wakuext"):
-  group: int
-
-rpc(activityCenterTypesByGroup, "wakuext"):
-  group: int
+rpc(activityCenterNotificationsCountBy, "wakuext"):
+  activityTypes: seq[int]
+  readType: int
+  accepted: bool
 
 rpc(markAllActivityCenterNotificationsRead, "wakuext"):
   discard

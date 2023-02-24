@@ -10,7 +10,8 @@ type
 
 const asyncActivityNotificationLoadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncActivityNotificationLoadTaskArg](argEncoded)
-  let activityNotificationsCallResult = backend.activityCenterNotificationsByGroup(newJString(arg.cursor), arg.limit, arg.group.int, arg.readType.int)
+  let groupTypes = activityCenterNotificationTypesByGroup(arg.group)
+  let activityNotificationsCallResult = backend.activityCenterNotificationsBy(newJString(arg.cursor), arg.limit, groupTypes, arg.readType.int, true)
 
   let responseJson = %*{
     "activityNotifications": activityNotificationsCallResult.result

@@ -161,9 +161,12 @@ QtObject:
 
   proc activityCenterReadTypeChanged*(self: View) {.signal.}
 
+  proc groupCountersChanged*(self: View) {.signal.}
+
   proc setActivityCenterReadType*(self: View, readType: int) {.slot.} =
     self.delegate.setActivityCenterReadType(readType)
     self.activityCenterReadTypeChanged()
+    self.groupCountersChanged()
 
   proc getActivityCenterReadType*(self: View): int {.slot.} =
     return self.delegate.getActivityCenterReadType()
@@ -172,8 +175,6 @@ QtObject:
     read = getActivityCenterReadType
     write = setActivityCenterReadType
     notify = activityCenterReadTypeChanged
-
-  proc groupCountersChanged*(self: View) {.signal.}
 
   proc getAdminCount*(self: View): int {.slot.} =
     return self.delegate.getAdminCount()
