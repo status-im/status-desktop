@@ -172,7 +172,7 @@ class StatusCommunityScreen:
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CHANNEL_MENU_ITEM.value)
 
         wait_for_object_and_type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, communityChannelName)
-        type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_DESCRIPTION_INPUT.value, communityChannelDescription)
+        type_text(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_DESCRIPTION_INPUT.value, communityChannelDescription)
 
         click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON.value)
 
@@ -181,7 +181,7 @@ class StatusCommunityScreen:
 
         # Select all text in the input before typing
         wait_for_object_and_type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, "<Ctrl+a>")
-        type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, new_community_channel_name)
+        type_text(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, new_community_channel_name)
         click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON.value)
         time.sleep(0.5)
 
@@ -207,7 +207,7 @@ class StatusCommunityScreen:
 
         # Select all text in the input before typing
         wait_for_object_and_type(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_NAME_INPUT.value, "<Ctrl+a>")
-        type(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_NAME_INPUT.value, new_community_category_name)
+        type_text(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_NAME_INPUT.value, new_community_category_name)
         self._toggle_channels_in_category_popop(community_channel_names)
         click_obj_by_name(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_BUTTON.value)
 
@@ -249,11 +249,11 @@ class StatusCommunityScreen:
     def change_community_name(self, new_community_name: str):
         # Select all text in the input before typing
         wait_for_object_and_type(CommunitySettingsComponents.EDIT_COMMUNITY_NAME_INPUT.value, "<Ctrl+a>")
-        type(CommunitySettingsComponents.EDIT_COMMUNITY_NAME_INPUT.value, new_community_name)
+        type_text(CommunitySettingsComponents.EDIT_COMMUNITY_NAME_INPUT.value, new_community_name)
         
     def change_community_description(self, new_community_description: str):
         wait_for_object_and_type(CommunitySettingsComponents.EDIT_COMMUNITY_DESCRIPTION_INPUT.value, "<Ctrl+a>")
-        type(CommunitySettingsComponents.EDIT_COMMUNITY_DESCRIPTION_INPUT.value, new_community_description)
+        type_text(CommunitySettingsComponents.EDIT_COMMUNITY_DESCRIPTION_INPUT.value, new_community_description)
 
     def change_community_color(self, new_community_color: str):
         scroll_obj_by_name(CommunitySettingsComponents.EDIT_COMMUNITY_SCROLL_VIEW.value)
@@ -262,7 +262,7 @@ class StatusCommunityScreen:
 
         click_obj_by_name(CommunitySettingsComponents.EDIT_COMMUNITY_COLOR_PICKER_BUTTON.value)
         wait_for_object_and_type(CommunityColorPanelComponents.HEX_COLOR_INPUT.value, "<Ctrl+a>")
-        type(CommunityColorPanelComponents.HEX_COLOR_INPUT.value, new_community_color)
+        type_text(CommunityColorPanelComponents.HEX_COLOR_INPUT.value, new_community_color)
         click_obj_by_name(CommunityColorPanelComponents.SAVE_COLOR_BUTTON.value)
     
     def save_community_changes(self):
@@ -378,7 +378,7 @@ class StatusCommunityScreen:
         click_obj(contact_item)
         click_obj_by_name(CommunityScreenComponents.INVITE_POPUP_NEXT_BUTTON.value)
         time.sleep(0.5)
-        type(CommunityScreenComponents.INVITE_POPUP_MESSAGE_INPUT.value, message)
+        type_text(CommunityScreenComponents.INVITE_POPUP_MESSAGE_INPUT.value, message)
         click_obj_by_name(CommunityScreenComponents.INVITE_POPUP_SEND_BUTTON.value)
 
     def _get_member_obj(self, member_name: str):

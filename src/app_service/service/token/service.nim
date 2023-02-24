@@ -168,7 +168,6 @@ QtObject:
     let cacheKey = getTokenPriceCacheKey(cryptoKey, fiatKey)
     if self.priceCache.isCached(cacheKey):
       return self.priceCache.get(cacheKey) * factor
-    var prices = initTable[string, Table[string, float]]()
 
     try:
       let response = backend.fetchPrices(@[cryptoKey], @[fiatKey])
@@ -180,7 +179,7 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
       return 0.0
-  
+
   proc getCachedTokenPrice*(self: Service, crypto: string, fiat: string, fetchIfNotPresent: bool = false): float64 =
     let (cryptoKey, factor) = getCryptoKeyAndFactor(crypto)
 

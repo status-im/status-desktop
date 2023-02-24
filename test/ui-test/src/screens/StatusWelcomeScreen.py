@@ -43,7 +43,7 @@ class SignUpComponents(Enum):
     WELCOME_SCREEN_USER_PROFILE_IMAGE: str = "mainWindow_WelcomeScreen_User_Profile_Image"
     WELCOME_SCREEN_CHAT_KEY_TEXT: str = "mainWindow_WelcomeScreen_ChatKeyText"
     BACK_BTN: str = "onboarding_back_button"
-    
+
 class SeedPhraseComponents(Enum):
     IMPORT_A_SEED_TEXT: str = "import_a_seed_phrase_StatusBaseText"
     INVALID_SEED_TEXT: str = "onboarding_InvalidSeed_Text"
@@ -53,7 +53,7 @@ class SeedPhraseComponents(Enum):
     TWENTY_FOUR_BUTTON: str = "switchTabBar_24_words_Button"
     SEEDS_WORDS_TEXTFIELD_template: str = "onboarding_SeedPhrase_Input_TextField_"
     SUBMIT_BUTTON: str = "seedPhraseView_Submit_Button"
-    
+
 class PasswordStrengthPossibilities(Enum):
     LOWER_VERY_WEAK = "lower_very_weak"
     UPPER_VERY_WEAK = "upper_very_weak"
@@ -66,7 +66,7 @@ class PasswordStrengthPossibilities(Enum):
 
 class MainScreen(Enum):
     SETTINGS_BUTTON = "settings_navbar_settings_icon_StatusIcon"
-    
+
 class LoginView(Enum):
     LOGIN_VIEW_USER_IMAGE: str = "loginView_userImage"
     PASSWORD_INPUT = "loginView_passwordInput"
@@ -97,7 +97,13 @@ class StatusWelcomeScreen:
 
     def input_seed_phrase(self, seed_phrase: str):
         words = seed_phrase.split()
-        
+
+        # On MacOS, there is an additional step to import a seed phrase than on Linux
+        try:
+            click_obj_by_name(SeedPhraseComponents.IMPORT_A_SEED_BUTTON.value, 1000)
+        except LookupError:
+            log("Ignoring error on non MacOS, as it is expected to not find the import seed phrase button at this stage")
+
         if len(words) == 12:
             click_obj_by_name(SeedPhraseComponents.TWELVE_WORDS_BUTTON.value)
         elif len(words) == 18:
@@ -124,7 +130,7 @@ class StatusWelcomeScreen:
 
     def input_username(self, username: str):
         common.clear_input_text(SignUpComponents.USERNAME_INPUT.value) 
-        type(SignUpComponents.USERNAME_INPUT.value, username)
+        type_text(SignUpComponents.USERNAME_INPUT.value, username)
         click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
 
         # The next click will move too fast sometime
@@ -138,8 +144,8 @@ class StatusWelcomeScreen:
 
     def input_password(self, password: str):
         verify(is_loaded_visible_and_enabled(SignUpComponents.NEW_PSW_INPUT.value, 10)[0], 'New Password input is visible')
-        type(SignUpComponents.NEW_PSW_INPUT.value, password)
-        type(SignUpComponents.CONFIRM_PSW_INPUT.value, password)
+        type_text(SignUpComponents.NEW_PSW_INPUT.value, password)
+        type_text(SignUpComponents.CONFIRM_PSW_INPUT.value, password)
         do_until_validation_with_timeout(
             do_fn = lambda: click_obj_by_name(SignUpComponents.CREATE_PSW_BUTTON.value),
             validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.CREATE_PSW_BUTTON.value, 50)[0],
@@ -147,7 +153,7 @@ class StatusWelcomeScreen:
 
     def input_confirmation_password(self, password: str):
         verify(is_loaded_visible_and_enabled(SignUpComponents.CONFIRM_PSW_AGAIN_INPUT.value, 10)[0], 'Reconfirm password is visible')
-        type(SignUpComponents.CONFIRM_PSW_AGAIN_INPUT.value, password)
+        type_text(SignUpComponents.CONFIRM_PSW_AGAIN_INPUT.value, password)
         do_until_validation_with_timeout(
             do_fn = lambda: click_obj_by_name(SignUpComponents.FINALIZE_PSW_BUTTON.value),
             validation_fn = lambda: not is_loaded_visible_and_enabled(SignUpComponents.FINALIZE_PSW_BUTTON.value, 50)[0],
@@ -162,10 +168,10 @@ class StatusWelcomeScreen:
         click_obj_by_name(AgreementPopUp.GET_STARTED_BUTTON.value)
         verify_text_matching(SignUpComponents.WELCOME_TO_STATUS.value, "Welcome to Status")
         click_obj_by_name(SignUpComponents.NEW_TO_STATUS.value)
-        
+
     def seed_phrase_visible(self):
         is_loaded_visible_and_enabled(SeedPhraseComponents.INVALID_SEED_TEXT.value)
-        
+
     # The following validation is based in screenshots comparison and is OS dependent:
     def validate_password_strength(self, strength: str):
         if sys.platform == "darwin":
@@ -192,29 +198,29 @@ class StatusWelcomeScreen:
 
             elif strength == PasswordStrengthPossibilities.NUMBERS_SYMBOLS_LOWER_UPPER_GREAT.value:
                 verify_screenshot("VP-PWStrength-numbers_symbols_lower_upper_great")
-            
+
         # TODO: Get screenshots in Linux
 
     def input_profile_image(self, profileImageUrl: str):
         workflow = get_obj(SignUpComponents.PROFILE_IMAGE_CROP_WORKFLOW_ITEM.value)
-        workflow.cropImage(profileImageUrl)        
+        workflow.cropImage(profileImageUrl)
         click_obj_by_name(SignUpComponents.PROFILE_IMAGE_CROPPER_ACCEPT_BUTTON.value)
-        
+
     def input_username_and_grab_profile_image_sreenshot(self, username: str):
-        type(SignUpComponents.USERNAME_INPUT.value, username)
+        type_text(SignUpComponents.USERNAME_INPUT.value, username)
         click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
-        
+
         # take a screenshot of the profile image to compare it later with the main screen
         profileIcon = wait_and_get_obj(SignUpComponents.WELCOME_SCREEN_USER_PROFILE_IMAGE.value)
         grabScreenshot_and_save(profileIcon, "profiletestimage", 200)
-        
+
         # There is another page with the same Next button
         click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
 
     def input_username_profileImage_password_and_finalize_sign_up(self, profileImageUrl: str, username: str, password: str):
         self.input_profile_image(profileImageUrl)
 
-        self.input_username_and_grab_profile_image_sreenshot(username)        
+        self.input_username_and_grab_profile_image_sreenshot(username)
 
         self.input_password(password)
 
@@ -222,17 +228,17 @@ class StatusWelcomeScreen:
 
         if sys.platform == "darwin":
             click_obj_by_name(SignUpComponents.PASSWORD_PREFERENCE.value)
-            
+
     def grab_screenshot(self):
         # take a screenshot of the profile image to compare it later with the main screen
         loginUserName = wait_and_get_obj(LoginView.LOGIN_VIEW_USER_IMAGE.value)
         grabScreenshot_and_save(loginUserName, "loginUserName", 200)
-        
+
     def enter_password(self, password):
         click_obj_by_name(LoginView.PASSWORD_INPUT.value)
-        type(LoginView.PASSWORD_INPUT.value, password)
-        click_obj_by_name(LoginView.SUBMIT_BTN.value)   
-        
+        type_text(LoginView.PASSWORD_INPUT.value, password)
+        click_obj_by_name(LoginView.SUBMIT_BTN.value)
+
     def navigate_back_to_user_profile_page(self):
         count = 0
         while not is_displayed(SignUpComponents.USERNAME_INPUT.value, 500):

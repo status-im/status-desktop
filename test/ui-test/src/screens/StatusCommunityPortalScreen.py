@@ -26,10 +26,10 @@ class StatusCommunityPortalScreen:
     def create_community(self, communityName: str, communityDescription: str, introMessage: str, outroMessage: str):
         click_obj_by_name(MainCommunityPortalScreen.CREATE_COMMUNITY_BUTTON.value)
         
-        type(CreateCommunityPopup.COMMUNITY_NAME_INPUT.value, communityName)
-        type(CreateCommunityPopup.COMMUNITY_DESCRIPTION_INPUT.value, communityDescription)
+        type_text(CreateCommunityPopup.COMMUNITY_NAME_INPUT.value, communityName)
+        type_text(CreateCommunityPopup.COMMUNITY_DESCRIPTION_INPUT.value, communityDescription)
         click_obj_by_name(CreateCommunityPopup.NEXT_SCREEN_BUTTON.value)
         
         wait_for_object_and_type(CreateCommunityPopup.COMMUNITY_INTRO_MESSAGE_INPUT.value, introMessage)
-        type(CreateCommunityPopup.COMMUNITY_OUTRO_MESSAGE_INPUT.value, outroMessage)
+        type_text(CreateCommunityPopup.COMMUNITY_OUTRO_MESSAGE_INPUT.value, outroMessage)
         click_obj_by_name(CreateCommunityPopup.DO_CREATE_COMMUNITY_BUTTON.value)

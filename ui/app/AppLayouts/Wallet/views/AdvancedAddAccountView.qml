@@ -37,6 +37,8 @@ ColumnLayout {
     signal calculateDerivedPath()
     signal enterPressed()
 
+    objectName: "advancedAddAccountViewRoot"
+
     function reset() {
         //reset selectGeneratedAccount
         selectGeneratedAccount.resetMe()
@@ -103,6 +105,7 @@ ColumnLayout {
 
     SelectGeneratedAccount {
         id: selectGeneratedAccount
+        objectName: "selectGeneratedAccount"
         Component.onCompleted: {
             advancedSection.addAccountType = Qt.binding(function() {return addAccountType})
             advancedSection.derivedFromAddress = Qt.binding(function() {return derivedFromAddress})
@@ -133,6 +136,8 @@ ColumnLayout {
 
     StatusInput {
         id: addressInput
+        input.placeholder.objectName: "advancedAddAccountViewAddressInputPlaceholder"
+        input.objectName: "advancedAddAccountViewAddressInput"
         visible: advancedSection.addAccountType === Constants.AddAccountType.WatchOnly && advancedSection.visible
         placeholderText: qsTr("Enter address...")
         label: qsTr("Account address")
@@ -160,7 +165,7 @@ ColumnLayout {
 
             readonly property int itemWidth: (advancedSection.width - Style.current.bigPadding) * 0.5
 
-            DerivationPathsPanel {
+        DerivationPathsPanel {
                 id: derivationPathsPanel
                 useFullyCustomPath: fullyCustomPathCheckBox.checked
                 Layout.preferredWidth: parent.itemWidth
@@ -187,6 +192,8 @@ ColumnLayout {
 
         StatusCheckBox {
             id: fullyCustomPathCheckBox
+            objectName: "fullyCustomPathCheckBox"
+            visible: advancedSection.addAccountType === Constants.AddAccountType.GenerateNew
             Layout.preferredWidth: advancedSection.width
             text: qsTr("I acknowledge that by adding an account out of the default Status derivation path I will not be able to migrate a keypair to a Keycard")
             onToggled: {
