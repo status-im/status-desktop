@@ -368,7 +368,7 @@ Item {
                         onCursorRectangleChanged: Utils.ensureVisible(flick, cursorRectangle)
                         onActiveFocusChanged: if (root.pristine) root.pristine = false
                         onTextChanged: {
-                            if (previousText === text || (previousText == "" && length == 0 && length != text.length)) {
+                            if (previousText === text || (previousText === "" && length === 0 && length !== text.length)) {
                                 // Not sure why, but the textChanged event was triggered even if it didn't really
 
                                 // Avoid further processing on initial condition when previousText is empty
