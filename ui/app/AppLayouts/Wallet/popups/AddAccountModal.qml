@@ -92,17 +92,17 @@ StatusModal {
 
         function getDerivedAddressList() {
             if (d.useFullyCustomPath) {
-                if(d.selectedAccountType === Constants.AddAccountType.ImportSeedPhrase
-                        && !!advancedSelection.expandableItem.path
-                        && !!advancedSelection.expandableItem.mnemonicText) {
-                    RootStore.getDerivedAddressListForMnemonic(advancedSelection.expandableItem.mnemonicText,
-                                                               advancedSelection.expandableItem.path, numOfItems, pageNumber)
-                } else if(!!d.selectedPath && !!d.selectedAccountDerivedFromAddress
+                if(!!d.selectedPath && !!d.selectedAccountDerivedFromAddress
                           && (d.password.length > 0)) {
                     RootStore.getDerivedAddressList(d.password, d.selectedAccountDerivedFromAddress,
                                                     d.selectedPath, numOfItems, pageNumber,
                                                     !(d.selectedKeyUidMigratedToKeycard || userProfile.isKeycardUser))
                 }
+            } else if(d.selectedAccountType === Constants.AddAccountType.ImportSeedPhrase
+                    && !!advancedSelection.expandableItem.path
+                    && !!advancedSelection.expandableItem.mnemonicText) {
+                RootStore.getDerivedAddressListForMnemonic(advancedSelection.expandableItem.mnemonicText,
+                                                            advancedSelection.expandableItem.path, numOfItems, pageNumber)
             } else if(!!d.selectedPath && !!d.selectedAccountDerivedFromAddress
                       && (d.password.length > 0)) {
                 RootStore.getDerivedAddress(d.password, d.selectedAccountDerivedFromAddress, d.selectedPath,
@@ -334,11 +334,10 @@ StatusModal {
                 return qsTr("Add account")
             }
 
-
             enabled: {
                 if (!accountNameInput.valid ||
                         loading ||
-                        (!d.useFullyCustomPath && !d.selectedAddressAvailable)) {
+                        ((root.authenticationNeeded && !d.useFullyCustomPath) && !d.selectedAddressAvailable)) {
                     return false
                 }
                 return advancedSelection.isValid

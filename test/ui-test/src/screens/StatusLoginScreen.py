@@ -56,7 +56,7 @@ class StatusLoginScreen():
     
     def enter_password(self, password):
         click_obj_by_name(SLoginComponents.PASSWORD_INPUT.value)
-        type(SLoginComponents.PASSWORD_INPUT.value, password)
+        type_text(SLoginComponents.PASSWORD_INPUT.value, password)
         click_obj_by_name(SLoginComponents.SUBMIT_BTN.value)
 
     def verify_error_message_is_displayed(self):
