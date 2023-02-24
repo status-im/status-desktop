@@ -144,7 +144,7 @@ Loader {
 
     Connections {
         target: item
-        enabled: status == Loader.Ready
+        enabled: status === Loader.Ready
         ignoreUnknownSignals: true
 
         function onClicked(mouse) {
