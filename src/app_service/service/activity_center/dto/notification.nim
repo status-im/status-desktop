@@ -125,11 +125,37 @@ proc parseActivityCenterNotifications*(rpcResult: JsonNode): (string, seq[Activi
       notifs.add(jsonMsg.toActivityCenterNotificationDto())
   return (rpcResult{"cursor"}.getStr, notifs)
 
-proc toActivityCenterNotificationTypeList*(rpcResult: JsonNode): seq[ActivityCenterNotificationType] =
-  var types: seq[ActivityCenterNotificationType] = @[]
-  for jsonObj in rpcResult:
-    var notificationTypeInt = jsonObj.getInt()
-    if notificationTypeInt >= ord(low(ActivityCenterNotificationType)) and
-       notificationTypeInt <= ord(high(ActivityCenterNotificationType)):
-      types.add(ActivityCenterNotificationType(notificationTypeInt))
-  return types
+proc activityCenterNotificationTypesByGroup*(group: ActivityCenterGroup) : seq[int] =
+  case group
+    of ActivityCenterGroup.All:
+      return @[
+        ActivityCenterNotificationType.NewPrivateGroupChat.int,
+        ActivityCenterNotificationType.Mention.int,
+        ActivityCenterNotificationType.Reply.int,
+        ActivityCenterNotificationType.ContactRequest.int,
+        ActivityCenterNotificationType.CommunityInvitation.int,
+        ActivityCenterNotificationType.CommunityRequest.int,
+        ActivityCenterNotificationType.CommunityMembershipRequest.int,
+        ActivityCenterNotificationType.CommunityKicked.int,
+        ActivityCenterNotificationType.ContactVerification.int
+      ]
+    of ActivityCenterGroup.Mentions:
+      return @[ActivityCenterNotificationType.Mention.int]
+    of ActivityCenterGroup.Replies:
+      return @[ActivityCenterNotificationType.Reply.int]
+    of ActivityCenterGroup.Membership:
+      return @[
+        ActivityCenterNotificationType.NewPrivateGroupChat.int,
+        ActivityCenterNotificationType.CommunityInvitation.int,
+        ActivityCenterNotificationType.CommunityRequest.int,
+        ActivityCenterNotificationType.CommunityMembershipRequest.int,
+        ActivityCenterNotificationType.CommunityKicked.int
+      ]
+    of ActivityCenterGroup.Admin:
+      return @[ActivityCenterNotificationType.CommunityMembershipRequest.int]
+    of ActivityCenterGroup.ContactRequests:
+      return @[ActivityCenterNotificationType.ContactRequest.int]
+    of ActivityCenterGroup.IdentityVerification:
+      return @[ActivityCenterNotificationType.ContactVerification.int]
+    else:
+      return @[]

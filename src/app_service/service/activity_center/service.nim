@@ -80,10 +80,9 @@ QtObject:
 
   proc handleNewNotificationsLoaded(self: Service, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
     # For now status-go notify about every notification update regardless active group so we need filter manulay on the desktop side
-    let response = backend.activityCenterTypesByGroup(self.activeGroup.int) # NOTE: no error for trivial call
-    var groupTypes = toActivityCenterNotificationTypeList(response.result)
-    var filteredNotifications = filter(activityCenterNotifications, proc(notification: ActivityCenterNotificationDto): bool =
-      return (self.readType == ActivityCenterReadType.All or not notification.read) and groupTypes.contains(notification.notificationType)
+    let groupTypes = activityCenterNotificationTypesByGroup(self.activeGroup)
+    let filteredNotifications = filter(activityCenterNotifications, proc(notification: ActivityCenterNotificationDto): bool =
+      return (self.readType == ActivityCenterReadType.All or not notification.read) and groupTypes.contains(notification.notificationType.int)
     )
 
     if (filteredNotifications.len > 0):
@@ -145,15 +144,21 @@ QtObject:
     else:
       cursorVal = newJString(self.cursor)
 
-    let callResult = backend.activityCenterNotificationsByGroup(cursorVal, DEFAULT_LIMIT, self.activeGroup.int, self.readType.int)
-    let activityCenterNotificationsTuple = parseActivityCenterNotifications(callResult.result)
+    try:
+      let groupTypes = activityCenterNotificationTypesByGroup(self.activeGroup)
+      let callResult = backend.activityCenterNotificationsBy(cursorVal, DEFAULT_LIMIT, groupTypes, self.readType.int, true)
+      let activityCenterNotificationsTuple = parseActivityCenterNotifications(callResult.result)
 
-    self.cursor = activityCenterNotificationsTuple[0];
-    result = activityCenterNotificationsTuple[1]
+      self.cursor = activityCenterNotificationsTuple[0];
+      result = activityCenterNotificationsTuple[1]
+
+    except Exception as e:
+      error "Error getting activity center notifications", msg = e.msg
 
   proc getActivityGroupCounter*(self: Service, group: ActivityCenterGroup): int =
     try:
-      let response = backend.activityCenterNotificationsByGroupCount(group.int)
+      let groupTypes = activityCenterNotificationTypesByGroup(group)
+      let response = backend.activityCenterNotificationsCountBy(groupTypes, self.readType.int, true)
 
       if response.result.kind != JNull:
         return response.result.getInt
