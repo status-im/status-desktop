@@ -274,10 +274,24 @@ Control {
                     Loader {
                         active: root.messageDetails.contentType === StatusMessage.ContentType.Image && !editMode
                         visible: active
-                        sourceComponent: StatusImageMessage {
-                            source: root.messageDetails.messageContent
-                            onClicked: root.imageClicked(image, mouse, imageSource)
-                            shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
+                        sourceComponent: Column {
+                            spacing: 8
+                            Loader {
+                                active: root.messageDetails.messageText !== ""
+                                visible: active
+                                sourceComponent: StatusTextMessage {
+                                    messageDetails: root.messageDetails
+                                    onLinkActivated: {
+                                        root.linkActivated(link);
+                                    }
+                                }
+                            }
+
+                            StatusImageMessage {
+                                source: root.messageDetails.messageContent
+                                onClicked: root.imageClicked(image, mouse, imageSource)
+                                shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
+                            }
                         }
                     }
                     Loader {
