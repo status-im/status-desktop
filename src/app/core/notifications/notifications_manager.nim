@@ -181,6 +181,8 @@ QtObject:
     # An exemption from the diagrams, at least for now, is that we don't need to implement the "Badge Check" block here, 
     # cause that's already handled in appropriate modules.
 
+    let appIsActive = app_isActive(singletonInstance.engine)
+
     if(details.notificationType == NotificationType.NewMessage or 
       details.notificationType == NotificationType.NewMessageWithPersonalMention or
       details.notificationType == NotificationType.NewMessageWithGlobalMention or
@@ -194,10 +196,9 @@ QtObject:
         details.notificationType == NotificationType.NewMessageWithPersonalMention or
         details.notificationType == NotificationType.NewMessageWithGlobalMention) and
         details.sectionActive and 
-        details.chatActive):
+        details.chatActive and appIsActive):
         return
 
-    let appIsActive = app_isActive(singletonInstance.engine)
     if(appIsActive):
       debug "Add APP notification", title=title, message=message
       self.events.emit(SIGNAL_DISPLAY_APP_NOTIFICATION, data)
