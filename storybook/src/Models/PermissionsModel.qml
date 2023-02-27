@@ -61,15 +61,36 @@ QtObject {
     ]
 
     readonly property ListModel permissionsModel: ListModel {
-        Component.onCompleted: append(permissionsModelData)
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.permissionsModel
+        }
+
+        Component.onCompleted: {
+            append(permissionsModelData)
+            guard.enabled = true
+        }
     }
 
     readonly property var shortPermissionsModel: ListModel {
-        Component.onCompleted: append(shortPermissionsModelData)
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.shortPermissionsModel
+        }
+
+        Component.onCompleted: {
+            append(shortPermissionsModelData)
+            guard.enabled = true
+        }
     }
 
     readonly property var longPermissionsModel: ListModel {
-        Component.onCompleted: append(longPermissionsModelData)
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.longPermissionsModel
+        }
+
+        Component.onCompleted: {
+            append(longPermissionsModelData)
+            guard.enabled = true
+        }
     }
 
     function createHoldingsModel1() {

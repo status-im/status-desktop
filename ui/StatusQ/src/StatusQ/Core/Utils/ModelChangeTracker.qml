@@ -1,9 +1,10 @@
-import QtQml 2.14
+import QtQml 2.15
 
 QtObject {
     property var model
 
     readonly property alias revision: d.revision
+    property alias enabled: d.enabled
 
     function reset() {
         d.revision = 0
