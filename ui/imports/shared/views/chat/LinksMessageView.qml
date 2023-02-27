@@ -183,10 +183,10 @@ Column {
             store: root.store
             communityId: invitationData ? invitationData.communityId : ""
             anchors.left: parent.left
-            visible: invitationData && !invitationData.fetching
+            visible: !!invitationData && !invitationData.fetching
 
             Connections {
-                enabled: invitationData && invitationData.fetching
+                enabled: !!invitationData && invitationData.fetching
                 target: root.store.communitiesModuleInst
                 function onCommunityAdded(communityId:  string) {
                     if (communityId !== invitationData.communityId) return
