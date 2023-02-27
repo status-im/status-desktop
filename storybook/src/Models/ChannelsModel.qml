@@ -2,66 +2,84 @@ import QtQuick 2.14
 
 ListModel {
     ListElement {
-        itemId: 0
+        itemId: "1"
+        isCategory: false
+        categoryId: ""
         name: "welcome"
-        isCategory: false
+        emoji: ""
         color: ""
         colorId: 1
-        icon: ""
     }
     ListElement {
-        itemId: 1
+        itemId: "2"
+        isCategory: false
+        categoryId: ""
         name: "announcements"
-        isCategory: false
+        emoji: ""
         color: ""
         colorId: 1
-        icon: ""
     }
     ListElement {
-        name: "Discussion"
+        itemId: "0"
         isCategory: true
-
-        subItems: [
-            ListElement {
-                itemId: 2
-                name: "general"
-                icon: ""
-                emoji: "👋"
-            },
-            ListElement {
-                itemId: 3
-                name: "help"
-                icon: ""
-                color: ""
-                colorId: 1
-                emoji: "⚽"
-            }
-        ]
+        categoryId: "1"
+        name: "discussion"
+        emoji: ""
+        color: ""
+        colorId: 1
     }
     ListElement {
-        name: "Support"
-        isCategory: true
-
-        subItems: [
-            ListElement {
-                itemId: 4
-                name: "faq"
-                icon: ""
-                color: ""
-                colorId: 5
-            },
-            ListElement {
-                itemId: 5
-                name: "report-scam"
-                icon: ""
-                color: ""
-                colorId: 4
-            }
-        ]
+        itemId: "3"
+        isCategory: false
+        categoryId: "1"
+        name: "general"
+        emoji: "👋"
+        color: ""
+        colorId: 1
     }
     ListElement {
-        name: "Empty"
+        itemId: "4"
+        isCategory: false
+        categoryId: "1"
+        name: "help"
+        emoji: "⚽"
+        color: ""
+        colorId: 1
+    }
+    ListElement {
+        itemId: "0"
         isCategory: true
-        subItems: []
+        categoryId: "2"
+        name: "support"
+        emoji: ""
+        color: ""
+        colorId: 1
+    }
+    ListElement {
+        itemId: "5"
+        isCategory: false
+        categoryId: "2"
+        name: "faq"
+        emoji: ""
+        color: ""
+        colorId: 5
+    }
+    ListElement {
+        itemId: "6"
+        isCategory: false
+        categoryId: "2"
+        name: "report-scam"
+        emoji: ""
+        color: ""
+        colorId: 4
+    }
+    ListElement {
+        itemId: "0"
+        isCategory: true
+        categoryId: "3"
+        name: "faq"
+        emoji: ""
+        color: ""
+        colorId: 5
     }
 }

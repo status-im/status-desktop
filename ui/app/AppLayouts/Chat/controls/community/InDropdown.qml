@@ -188,22 +188,44 @@ StatusDropdown {
 
                         sourceModel: root.model
 
+                        filters: AnyOf {
+                            ValueFilter {
+                                roleName: "categoryId"
+                                value: ""
+                            }
+                            ValueFilter {
+                                roleName: "isCategory"
+                                value: true
+                            }
+                        }
+
                         sorters: [
-                            RoleSorter { roleName: "isCategory" },
-                            RoleSorter { roleName: "position" }
+                            RoleSorter {
+                                roleName: "categoryPosition"
+                                priority: 2 // Higher number === higher priority
+                            },
+                            RoleSorter {
+                                roleName: "position"
+                                priority: 1
+                            }
                         ]
                     }
 
                     ColumnLayout {
                         id: column
-                        Layout.fillWidth: true
-                        spacing: 0
+
                         readonly property var topModel: model
                         readonly property alias checkBox: loader.item
                         property int checkedCount: 0
 
+                        readonly property bool isCategory: model.isCategory
+                        readonly property string categoryId: model.categoryId
+
+                        Layout.fillWidth: true
+                        spacing: 0
+
                         visible: {
-                            if (!model.isCategory)
+                            if (!isCategory)
                                 return d.search(model.name, searcher.text)
                                         || checkBox.checked
 
@@ -224,8 +246,8 @@ StatusDropdown {
 
                             Layout.fillWidth: true
                             Layout.preferredHeight: d.itemStandardHeight
-                            Layout.topMargin: model.isCategory ? d.defaultVMargin : 0
-                            sourceComponent: model.isCategory
+                            Layout.topMargin: isCategory ? d.defaultVMargin : 0
+                            sourceComponent: isCategory
                                              ? communityCategoryDelegate
                                              : communityDelegate
 
@@ -236,7 +258,6 @@ StatusDropdown {
                                     const checkBox = loader.item.checkBox
                                     checkBox.checked = false
                                     checkBox.onToggled()
-
                                 }
                             }
 
@@ -248,7 +269,7 @@ StatusDropdown {
 
                                     title: "#" + model.name
 
-                                    asset.name: model.icon
+                                    asset.name: model.icon ?? ""
                                     asset.emoji: d.resolveEmoji(model.emoji)
                                     asset.color: d.resolveColor(model.color,
                                                                 model.colorId)
@@ -283,7 +304,7 @@ StatusDropdown {
                                     title: model.name
 
                                     checkState: {
-                                        if (checkedCount === model.subItems.count)
+                                        if (checkedCount === subItems.count)
                                             return Qt.Checked
                                         else if (checkedCount === 0)
                                             return Qt.Unchecked
@@ -301,12 +322,31 @@ StatusDropdown {
                             }
                         }
 
+                        SortFilterProxyModel {
+                            id: subItems
+
+                            sourceModel: isCategory ? root.model : null
+
+                            filters: AllOf {
+                                ValueFilter {
+                                    roleName: "categoryId"
+                                    value: column.categoryId
+                                }
+                                ValueFilter {
+                                    roleName: "isCategory"
+                                    value: false
+                                }
+                            }
+
+                            sorters: RoleSorter {
+                                roleName: "position"
+                            }
+                        }
+
                         Repeater {
                             id: subItemsRepeater
-                            model: SortFilterProxyModel {
-                                sourceModel: topModel.isCategory ? topModel.subItems : null
-                                sorters: RoleSorter { roleName: "position" }
-                            }
+
+                            model: subItems
 
                             function setAll(checkState) {
                                 const subItemsCount = count
@@ -319,15 +359,16 @@ StatusDropdown {
                             CommunityListItem {
                                 id: communitySubItem
 
+                                readonly property bool show:
+                                    d.search(model.name, searcher.text) || checked
+
                                 Layout.fillWidth: true
-                                readonly property bool show: d.search(model.name, searcher.text)
-                                                             || checked
 
                                 visible: show
 
                                 title: "#" + model.name
 
-                                asset.name: model.icon
+                                asset.name: model.icon ?? ""
                                 asset.emoji: d.resolveEmoji(model.emoji)
                                 asset.color: d.resolveColor(model.color,
                                                             model.colorId)
