@@ -18,6 +18,7 @@ SettingsContentBase {
     id: root
 
     property DevicesStore devicesStore
+    property PrivacyStore privacyStore
 
     property bool isSyncing: false
 
@@ -227,6 +228,18 @@ SettingsContentBase {
                     timer.setTimeout(function(){
                         isSyncing = false
                     }, 10000);
+                }
+            }
+
+            StatusButton {
+                id: backupBtn
+                anchors.top: syncAllBtn.bottom
+                anchors.topMargin: Style.current.padding
+                anchors.horizontalCenter: listView.horizontalCenter
+                text: qsTr("Backup Data")
+                onClicked : {
+                    let lastUpdate = root.privacyStore.backupData() * 1000
+                    console.log("Backup done at: ", LocaleUtils.formatDateTime(lastUpdate))
                 }
             }
         }

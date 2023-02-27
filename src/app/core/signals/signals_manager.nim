@@ -105,6 +105,7 @@ QtObject:
       of SignalType.WakuFetchingBackupProgress: WakuFetchingBackupProgressSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpProfile: WakuBackedUpProfileSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpSettings: WakuBackedUpSettingsSignal.fromEvent(jsonSignal)
+      of SignalType.WakuBackedUpKeycards: WakuBackedUpKeycardsSignal.fromEvent(jsonSignal)
       else: Signal()
 
     result.signalType = signalType

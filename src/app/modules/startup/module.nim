@@ -32,6 +32,8 @@ const FetchingFromWakuCommunities = "communities"
 const FetchingFromWakuCommunitiesIcon = "communities"
 const FetchingFromWakuSettings = "settings"
 const FetchingFromWakuSettingsIcon = "settings"
+const FetchingFromWakuKeycards = "keycards"
+const FetchingFromWakuKeycardIcon = "keycard"
 
 type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
@@ -338,7 +340,8 @@ proc prepareAndInitFetchingData[T](self: Module[T]) =
     (FetchingFromWakuProfile, FetchingFromWakuProfileIcon),
     (FetchingFromWakuContacts, FetchingFromWakuContactsIcon),
     (FetchingFromWakuCommunities, FetchingFromWakuCommunitiesIcon),
-    (FetchingFromWakuSettings, FetchingFromWakuSettingsIcon)
+    (FetchingFromWakuSettings, FetchingFromWakuSettingsIcon),
+    (FetchingFromWakuKeycards, FetchingFromWakuKeycardIcon)
   ]
   self.view.createAndInitFetchingDataModel(listOfEntitiesWeExpectToBeSynced)
 
