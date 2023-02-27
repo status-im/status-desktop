@@ -31,6 +31,7 @@ proc setup*(self: QAbstractListModel) =
 
   self.vptr = dos_qabstractlistmodel_create(addr(self[]), self.metaObject.vptr,
                                             qobjectCallback, qaimCallbacks).DosQObject
+  self.owner = true
 
 proc delete*(self: QAbstractListModel) =
   ## Delete the given QAbstractItemModel
