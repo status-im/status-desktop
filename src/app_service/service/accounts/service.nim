@@ -320,20 +320,11 @@ QtObject:
     result["UpstreamConfig"]["Enabled"] = true.newJBool()
     result["UpstreamConfig"]["URL"] = NETWORKS[0]{"rpcUrl"}
     result["ShhextConfig"]["InstallationID"] = newJString(installationId)
-    result["NoDiscovery"] = true.newJBool()
-    result["Rendezvous"] = false.newJBool()
 
     # TODO: fleet.status.im should have different sections depending on the node type
     #       or maybe it's not necessary because a node has the identify protocol
     result["ClusterConfig"]["WakuNodes"] = %* dnsDiscoveryURL
     result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* dnsDiscoveryURL
-
-    result["WakuV2Config"]["EnableDiscV5"] = true.newJBool()
-    result["WakuV2Config"]["DiscoveryLimit"] = 20.newJInt()
-    result["WakuV2Config"]["Rendezvous"] = true.newJBool()
-    result["WakuV2Config"]["Enabled"] = true.newJBool()
-
-    result["WakuConfig"]["Enabled"] = false.newJBool()
 
     if TEST_PEER_ENR != "":
       let testPeerENRArr = %* @[TEST_PEER_ENR]

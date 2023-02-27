@@ -280,11 +280,11 @@ var NODE_CONFIG* = %* {
   },
   "Name": "StatusDesktop",
   "NetworkId": 1,
-  "NoDiscovery": false,
+  "NoDiscovery": true,
   "PermissionsConfig": {
     "Enabled": true
   },
-  "Rendezvous": true,
+  "Rendezvous": false,
   "RegisterTopics": @["whispermail"],
   "RequireTopics": {
     "whisper": {
@@ -319,21 +319,24 @@ var NODE_CONFIG* = %* {
     "URL": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
   },
   "WakuConfig": {
+    "Enabled": false,
     "BloomFilterMode": true,
     "Enabled": true,
     "LightClient": true,
     "MinimumPoW": 0.001
   },
   "WakuV2Config": {
-    "Enabled": false,
+    "Enabled": true,
     "Host": "0.0.0.0",
     "Port": WAKU_V2_PORT,
     "LightClient": false,
     "PersistPeers": true,
     "EnableDiscV5": true,
+    "DiscoveryLimit": 20,
     "UDPPort": WAKU_V2_PORT,
     "PeerExchange": true,
     "AutoUpdate": true,
+    "Rendezvous": true,
   },
   "WalletConfig": {
     "Enabled": true,
