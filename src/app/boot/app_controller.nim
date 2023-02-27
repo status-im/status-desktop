@@ -281,6 +281,7 @@ proc delete*(self: AppController) =
   self.gifService.delete
   if not self.startupModule.isNil:
     self.startupModule.delete
+    self.startupModule = nil
   self.mainModule.delete
   self.languageService.delete
 
@@ -460,6 +461,7 @@ proc finishAppLoading*(self: AppController) =
 
   if not self.startupModule.isNil:
     self.startupModule.delete
+    self.startupModule = nil
 
 proc logout*(self: AppController) =
   self.generalService.logout()
