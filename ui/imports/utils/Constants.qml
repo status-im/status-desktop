@@ -364,6 +364,7 @@ QtObject {
                 readonly property string contacts: "contacts"
                 readonly property string communities: "communities"
                 readonly property string settings: "settings"
+                readonly property string keycards: "keycards"
             }
         }
     }

@@ -223,6 +223,7 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 devicesStore: root.store.devicesStore
+                privacyStore: root.store.privacyStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.devicesSettings)
                 contentWidth: d.contentWidth
             }

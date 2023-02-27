@@ -78,3 +78,7 @@ proc initKeystore*(keystoreDir: string): RpcResponse[JsonNode] {.raises: [Except
   except RpcException as e:
     error "error", methodName = "initKeystore", exception=e.msg
     raise newException(RpcException, e.msg)
+
+proc backupData*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  result = callPrivateRPC("backupData".prefix, payload)

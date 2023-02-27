@@ -73,3 +73,6 @@ method tryRemoveFromKeyChain*(self: AccessInterface) {.base.} =
 
 method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method backupData*(self: AccessInterface): int64 {.base.} =
+  raise newException(ValueError, "No implementation available")
