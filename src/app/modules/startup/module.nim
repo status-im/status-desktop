@@ -65,11 +65,16 @@ proc newModule*[T](delegate: T,
   profileService, keycardService)
 
 method delete*[T](self: Module[T]) =
+  singletonInstance.engine.setRootContextProperty("startupModule", newQVariant())
   self.view.delete
+  self.view = nil
   self.viewVariant.delete
+  self.viewVariant = nil
   self.controller.delete
+  self.controller = nil
   if not self.keycardSharedModule.isNil:
     self.keycardSharedModule.delete
+    self.keycardSharedModule = nil
 
 proc extractImages(self: Module, account: AccountDto, thumbnailImage: var string,
   largeImage: var string) =
@@ -394,10 +399,10 @@ method onNodeLogin*[T](self: Module[T], error: string) =
       if err.len > 0:
         self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
         return
-      self.delegate.finishAppLoading()
       if currStateObj.flowType() != FlowType.AppLogin:
         discard self.controller.storeIdentityImage()
       self.controller.cleanTmpData()
+      self.delegate.finishAppLoading()
   else:
     self.moveToStartupState()
     if currStateObj.flowType() == FlowType.AppLogin:
