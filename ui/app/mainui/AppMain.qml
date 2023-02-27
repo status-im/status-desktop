@@ -5,6 +5,7 @@ import QtMultimedia 5.13
 import Qt.labs.qmlmodels 1.0
 import Qt.labs.platform 1.1
 import QtQml.Models 2.14
+import QtQml 2.15
 
 import AppLayouts.Wallet 1.0
 import AppLayouts.Node 1.0
@@ -761,8 +762,15 @@ Item {
                             ChatLayout {
                                 id: chatLayoutContainer
 
-                                rootStore: appMain.rootChatStore
+                                Binding {
+                                    target: rootDropAreaPanel
+                                    property: "enabled"
+                                    value: chatLayoutContainer.currentIndex === 0 // Meaning: Chats / channels view
+                                    when: visible
+                                    restoreMode: Binding.RestoreBindingOrValue
+                                }
 
+                                rootStore: appMain.rootChatStore
                                 chatView.emojiPopup: statusEmojiPopup
                                 chatView.stickersPopup: statusStickersPopupLoader.item
 
@@ -858,6 +866,16 @@ Item {
                                     Layout.fillHeight: true
 
                                     sourceComponent: ChatLayout {
+                                        id: chatLayoutComponent
+
+                                        Binding {
+                                            target: rootDropAreaPanel
+                                            property: "enabled"
+                                            value: chatLayoutComponent.currentIndex === 0 // Meaning: Chats / channels view
+                                            when: visible
+                                            restoreMode: Binding.RestoreBindingOrValue
+                                        }
+
                                         chatView.emojiPopup: statusEmojiPopup
                                         chatView.stickersPopup: statusStickersPopupLoader.item
 
@@ -1172,32 +1190,10 @@ Item {
         }
     }
 
-    Connections {
-        target: appMain.rootStore.mainModuleInst
-        function onActiveSectionChanged() {
-            let communitySectionModule = appMain.rootStore.mainModuleInst.getCommunitySectionModule()
-            if (communitySectionModule)
-                rootDropAreaPanel.activeChatType = communitySectionModule.activeItem.type
-        }
-    }
-
     DropAreaPanel {
         id: rootDropAreaPanel
+
         width: appMain.width
         height: appMain.height
-        activeChatType: appMain.rootStore.mainModuleInst.getCommunitySectionModule() ? appMain.rootStore.mainModuleInst.getCommunitySectionModule().activeItem.type
-                                                                                     : 0
-        enabled: !drag.source && (
-                                // in chat view
-                                (appMain.rootStore.mainModuleInst.activeSection.sectionType === Constants.appSection.chat &&
-                                (
-                                    // in a one-to-one chat
-                                    activeChatType === Constants.chatType.oneToOne ||
-                                    // in a private group chat
-                                    activeChatType === Constants.chatType.privateGroupChat
-                                    )
-                                ) ||
-                                // In community section
-                                appMain.rootStore.mainModuleInst.activeSection.sectionType === Constants.appSection.community)
     }
 }
