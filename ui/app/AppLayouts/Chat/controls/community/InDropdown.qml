@@ -52,7 +52,7 @@ StatusDropdown {
         readonly property int defaultVMargin: 9
         readonly property int maxHeightCountNo: 5
         readonly property int itemStandardHeight: 44
-        readonly property var selectedChannels: new Map()
+        readonly property var selectedChannels: new Set()
 
         signal setSelectedChannels(var channels)
 
@@ -69,12 +69,7 @@ StatusDropdown {
         }
 
         function addToSelectedChannels(model) {
-            selectedChannels.set(model.itemId, {
-                itemId: model.itemId,
-                name: model.name,
-                color: d.resolveColor(model.color, model.colorId),
-                emoji: d.resolveEmoji(model.emoji)
-            })
+            selectedChannels.add(model.itemId)
         }
 
         function removeFromSelectedChannels(model) {

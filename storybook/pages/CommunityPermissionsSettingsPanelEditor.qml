@@ -136,7 +136,7 @@ Flickable {
                                 text: modelData
 
                                 checked: ModelUtils.contains(
-                                             channelsListModel, "itemId", modelData)
+                                             channelsListModel, "key", modelData)
 
                                 onToggled: {
                                     const channels = []
@@ -146,8 +146,8 @@ Flickable {
                                         const checked = channelsRepeater.itemAt(i).checked
 
                                         if (checked) {
-                                            const itemId = root.channelKeys[i]
-                                            channels.push({ itemId })
+                                            const key = root.channelKeys[i]
+                                            channels.push({ key })
                                         }
                                     }
 

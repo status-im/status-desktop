@@ -200,8 +200,7 @@ SettingsPageLayout {
                                    ["key", "type", "amount"])
 
                 const channels = ModelUtils.modelToArray(
-                                   dirtyValues.channelsModel,
-                                   ["itemId"])
+                                   dirtyValues.channelsModel, ["key"])
 
                 root.store.createPermission(holdings,
                                             dirtyValues.permissionType,
@@ -220,8 +219,7 @@ SettingsPageLayout {
                                        ["key", "type", "amount"])
 
                     const channels = ModelUtils.modelToArray(
-                                       dirtyValues.channelsModel,
-                                       ["itemId"])
+                                       dirtyValues.channelsModel, ["key"])
 
                     root.store.editPermission(
                                 d.permissionKeyToEdit,

@@ -188,10 +188,10 @@ QtObject {
     function createChannelsModel1() {
         return [
                     {
-                        itemId: "_welcome"
+                        key: "_welcome"
                     },
                     {
-                        itemId: "_general"
+                        key: "_general"
                     }
                 ]
     }
