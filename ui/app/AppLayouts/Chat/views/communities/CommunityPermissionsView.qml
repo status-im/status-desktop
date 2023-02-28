@@ -66,21 +66,15 @@ StatusScrollView {
 
                 permissionType: model.permissionType
 
-                SortFilterProxyModel {
-                    id: proxiedChannelsModel
+                ChannelsSelectionModel {
+                    id: channelsSelectionModel
 
                     sourceModel: model.channelsListModel
-
-                    proxyRoles: [
-                        ExpressionRole {
-                            name: "imageSource"
-                            expression: model.iconSource
-                        }
-                   ]
+                    channelsModel: rootStore.chatCommunitySectionModule.model
                 }
 
-                channelsListModel: proxiedChannelsModel.count
-                                   ? proxiedChannelsModel : communityItemModel
+                channelsListModel: channelsSelectionModel.count
+                                   ? channelsSelectionModel : communityItemModel
                 isPrivate: model.isPrivate
 
                 onEditClicked: root.editPermissionRequested(model.index)

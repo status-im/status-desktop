@@ -2,15 +2,10 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
-import Storybook 1.0
-import Models 1.0
-
 import AppLayouts.Chat.controls.community 1.0
 
 ColumnLayout {
     id: root
-
-    property string panelText
 
     property int type
     property string key
@@ -31,10 +26,17 @@ ColumnLayout {
         ]
     }
 
-    Label {
-        Layout.fillWidth: true
-        text: root.panelText
-        font.weight: Font.Bold
+    onTypeChanged: {
+        Qt.callLater(() => {
+            if (d.ensLayout) {
+                root.key = "*.eth"
+                return
+            }
+
+            const idx = holdingComboBox.find(root.key)
+            holdingComboBox.currentIndex = idx === -1 ? 0 : idx
+            root.key = holdingComboBox.currentText
+        })
     }
 
     ColumnLayout {
@@ -53,6 +55,7 @@ ColumnLayout {
             valueRole: "value"
 
             onActivated: root.type = currentValue
+
             Component.onCompleted: currentIndex = indexOfValue(root.type)
         }
     }
@@ -65,6 +68,7 @@ ColumnLayout {
             }
 
             ComboBox {
+                id: holdingComboBox
                 Layout.fillWidth: true
 
                 visible: !d.ensLayout
@@ -99,9 +103,5 @@ ColumnLayout {
                 onTextChanged: root.amountText = text
             }
         }
-    }
-
-    MenuSeparator {
-        Layout.fillWidth: true
     }
 }

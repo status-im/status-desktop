@@ -45,7 +45,7 @@ StatusScrollView {
     // roles: type, key, name, amount, imageSource
     property var holdingsModel: ListModel {}
 
-    // roles: itemId, text, emoji, color
+    // roles: itemId, text, icon, emoji, color, colorId
     property var channelsModel: ListModel {}
 
     property alias duplicationWarningVisible: duplicationPanel.visible
@@ -72,7 +72,7 @@ StatusScrollView {
         modelA: root.dirtyValues.channelsModel
         modelB: root.channelsModel
 
-        roles: ["itemId", "text", "emoji", "color"]
+        roles: ["itemId"]
         mode: ModelsComparator.CompareMode.Set
     }
 
@@ -95,7 +95,7 @@ StatusScrollView {
             } else {
                 inSelector.itemsModel = 0
                 inSelector.wholeCommunitySelected = false
-                inSelector.itemsModel = d.dirtyValues.channelsModel
+                inSelector.itemsModel = channelsSelectionModel
             }
         }
 
@@ -141,12 +141,11 @@ StatusScrollView {
             d.dirtyValues.channelsModel.clear()
 
             d.dirtyValues.channelsModel.append(
-                        ModelUtils.modelToArray(root.channelsModel,
-                                                ["itemId", "text", "emoji", "color", "operator"]))
+                        ModelUtils.modelToArray(root.channelsModel, ["itemId"]))
 
             if (root.channelsModel && (root.channelsModel.count || d.dirtyValues.permissionType === PermissionTypes.Type.None)) {
                 inSelector.wholeCommunitySelected = false
-                inSelector.itemsModel = d.dirtyValues.channelsModel
+                inSelector.itemsModel = channelsSelectionModel
             } else {
                 inSelector.wholeCommunitySelected = true
                 inSelector.itemsModel = inModelCommunity
@@ -439,6 +438,14 @@ StatusScrollView {
                 }
             }
 
+            ChannelsSelectionModel {
+                id: channelsSelectionModel
+
+                sourceModel: d.dirtyValues.channelsModel
+
+                channelsModel: root.rootStore.chatCommunitySectionModule.model
+            }
+
             InDropdown {
                 id: inDropdown
 
@@ -457,15 +464,11 @@ StatusScrollView {
 
                     channels.forEach(channel => {
                         d.dirtyValues.channelsModel.append({
-                            itemId: channel.itemId,
-                            text: "#" + channel.name,
-                            emoji: channel.emoji,
-                            color: channel.color,
-                            operator: OperatorsUtils.Operators.None
+                            itemId: channel.itemId
                         })
                     })
 
-                    inSelector.itemsModel = d.dirtyValues.channelsModel
+                    inSelector.itemsModel = channelsSelectionModel
                     close()
                 }
 
