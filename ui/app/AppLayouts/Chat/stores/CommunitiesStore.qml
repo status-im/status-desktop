@@ -18,7 +18,6 @@ QtObject {
         property string holdings: qsTr("1 ETH")
         property string permissions: qsTr("View and Post")
         property string channels: qsTr("#general")
-
     }
 
     property var assetsModel: chatCommunitySectionModule.tokenList

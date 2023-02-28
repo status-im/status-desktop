@@ -46,7 +46,9 @@ SplitView {
 
                 rootStore: QtObject {
                     readonly property QtObject chatCommunitySectionModule: QtObject {
-                        readonly property var model: ChannelsModel {}
+                        readonly property var model: ChannelsModel {
+                            id: channelsModel
+                        }
                     }
 
                     readonly property QtObject mainModuleInst: QtObject {
@@ -87,6 +89,13 @@ SplitView {
 
             assetKeys: assetsModel.data.map(asset => asset.key)
             collectibleKeys: collectiblesModel.data.map(collectible => collectible.key)
+            channelKeys: {
+                const array = ModelUtils.modelToArray(channelsModel,
+                                                      ["itemId", "isCategory"])
+                const channelsOnly = array.filter(channel => !channel.isCategory)
+
+                return channelsOnly.map(channel => channel.itemId)
+            }
         }
     }
 }

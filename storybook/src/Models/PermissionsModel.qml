@@ -188,27 +188,15 @@ QtObject {
     function createChannelsModel1() {
         return [
                     {
-                        key: "general",
-                        text: "#general",
-                        color: "lightgreen",
-                        emoji: "👋"
+                        itemId: "_welcome"
                     },
                     {
-                        key: "faq",
-                        text: "#faq",
-                        color: "lightblue",
-                        emoji: "⚽"
+                        itemId: "_general"
                     }
                 ]
     }
 
     function createChannelsModel2() {
-        return [
-                    {
-                        key: "socks",
-                        iconSource: ModelsData.icons.socks,
-                        text: "Socks"
-                    }
-                ]
+        return []
     }
 }

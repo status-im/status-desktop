@@ -12,7 +12,6 @@ SortFilterProxyModel {
     property var assetsModel
     property var collectiblesModel
 
-
     readonly property ModelChangeTracker _assetsChanges: ModelChangeTracker {
         model: assetsModel
     }
@@ -49,7 +48,7 @@ SortFilterProxyModel {
             expression: {
                 _assetsChanges.revision
                 _collectiblesChanges.revision
-                getText(model.type, model.key, model.amount)
+                return getText(model.type, model.key, model.amount)
             }
         },
         ExpressionRole {
@@ -68,7 +67,7 @@ SortFilterProxyModel {
             expression: {
                 _assetsChanges.revision
                 _collectiblesChanges.revision
-                getIcon(model.type, model.key)
+                return getIcon(model.type, model.key)
             }
         },
         ExpressionRole {

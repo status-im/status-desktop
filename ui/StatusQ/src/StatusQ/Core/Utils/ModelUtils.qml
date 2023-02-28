@@ -12,6 +12,15 @@ QtObject {
             return Internal.ModelUtils.get(model, index)
     }
 
+    function getByKey(model, keyRole, keyValue, role = "") {
+        const idx = indexOf(model, keyRole, keyValue)
+
+        if (idx === -1)
+            return null
+
+        return get(model, idx, role)
+    }
+
     function modelToArray(model, roles) {
         if (!model)
             return []
@@ -44,6 +53,10 @@ QtObject {
                 return i
 
         return -1
+    }
+
+    function contains(model, role, key) {
+        return indexOf(model, role, key) !== -1
     }
 
     function checkItemsEquality(itemA, itemB, roles) {
