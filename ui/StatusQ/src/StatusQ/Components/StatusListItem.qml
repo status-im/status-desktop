@@ -271,6 +271,8 @@ Rectangle {
                     visible: !!root.subTitle
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     loading: root.loading
+                    maximumLineCount: 3
+                    elide: Text.ElideRight
                 }
 
                 StatusTextWithLoadingState {
