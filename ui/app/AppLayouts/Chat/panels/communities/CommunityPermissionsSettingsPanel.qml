@@ -36,16 +36,16 @@ SettingsPageLayout {
         readonly property string newPermissionViewState: "NEW_PERMISSION"
         readonly property string permissionsViewState: "PERMISSIONS"
         readonly property string editPermissionViewState: "EDIT_PERMISSION"
-        readonly property bool permissionsExist: store.permissionsModel.count > 0
+        readonly property bool permissionsExist: permissionsModel.count > 0
 
         signal saveChanges
         signal resetChanges
 
         property string permissionKeyToEdit
 
-        property ListModel holdingsToEditModel: ListModel {}
+        property var holdingsToEditModel
         property int permissionTypeToEdit: PermissionTypes.Type.None
-        property ListModel channelsToEditModel: ListModel {}
+        property var channelsToEditModel
         property bool isPrivateToEditValue: false
 
         onPermissionsExistChanged: {
@@ -55,7 +55,7 @@ SettingsPageLayout {
             }
         }
 
-        readonly property string initialState: root.store.permissionsModel.count > 0
+        readonly property string initialState: root.rootStore.permissionsModel.count > 0
                                                ? d.permissionsViewState : d.welcomeViewState
 
         function initializeData() {
@@ -169,7 +169,7 @@ SettingsPageLayout {
                 channelsTracker.revision
                 communityNewPermissionView.dirtyValues.permissionType
                 communityNewPermissionView.dirtyValues.isPrivate
-                const model = root.store.permissionsModel
+                const model = root.rootStore.permissionsModel
                 const count = model.rowCount()
 
                 for (let i = 0; i < count; i++) {
@@ -273,7 +273,7 @@ SettingsPageLayout {
             store: root.store
 
             function setInitialValuesFromIndex(index) {
-                const item = ModelUtils.get(root.store.permissionsModel, index)
+                const item = ModelUtils.get(root.rootStore.permissionsModel, index)
 
                 d.holdingsToEditModel = item.holdingsListModel
                 d.channelsToEditModel = item.channelsListModel
@@ -284,7 +284,7 @@ SettingsPageLayout {
             onEditPermissionRequested: {
                 setInitialValuesFromIndex(index)
                 d.permissionKeyToEdit = ModelUtils.get(
-                            root.store.permissionsModel, index, "key")
+                            root.rootStore.permissionsModel, index, "key")
                 root.state = d.editPermissionViewState
             }
 
@@ -294,7 +294,7 @@ SettingsPageLayout {
             }
 
             onRemovePermissionRequested: {
-                const key = ModelUtils.get(root.store.permissionsModel, index, "key")
+                const key = ModelUtils.get(root.rootStore.permissionsModel, index, "key")
                 root.store.removePermission(key)
             }
         }

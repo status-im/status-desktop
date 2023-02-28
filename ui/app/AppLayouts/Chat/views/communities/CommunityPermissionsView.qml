@@ -53,7 +53,7 @@ StatusScrollView {
         }
 
         Repeater {
-            model: root.store.permissionsModel
+            model: root.rootStore.permissionsModel
 
             delegate: PermissionItem {
                 Layout.preferredWidth: root.viewWidth

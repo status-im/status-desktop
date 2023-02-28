@@ -165,6 +165,10 @@ QtObject {
         stickersModule: stickersModuleInst
     }
 
+    property var permissionsModel: chatCommunitySectionModule.permissionsModel
+    property var assetsModel: chatCommunitySectionModule.tokenList
+    property var collectiblesModel: chatCommunitySectionModule.collectiblesModel
+
     function sendSticker(channelId, hash, replyTo, pack, url) {
         stickersModuleInst.send(channelId, hash, replyTo, pack, url)
     }
