@@ -1,10 +1,11 @@
-import NimQml, Tables, strutils, strformat, sequtils
+import NimQml, Tables, strutils, strformat, sequtils, stint
 
 import ./collectibles_item, ./collectible_trait_model
 
 type
   CollectibleRole* {.pure.} = enum
     Id = UserRole + 1,
+    TokenId
     Name
     ImageUrl
     BackgroundColor
@@ -51,6 +52,7 @@ QtObject:
   method roleNames(self: Model): Table[int, string] =
     {
       CollectibleRole.Id.int:"id",
+      CollectibleRole.TokenId.int:"tokenId",
       CollectibleRole.Name.int:"name",
       CollectibleRole.ImageUrl.int:"imageUrl",
       CollectibleRole.BackgroundColor.int:"backgroundColor",
@@ -74,6 +76,8 @@ QtObject:
     case enumRole:
     of CollectibleRole.Id:
       result = newQVariant(item.getId())
+    of CollectibleRole.TokenId:
+      result = newQVariant(item.getTokenId().toString())
     of CollectibleRole.Name:
       result = newQVariant(item.getName())
     of CollectibleRole.ImageUrl:

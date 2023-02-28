@@ -181,8 +181,8 @@ QtObject {
         return globalUtils.hex2Dec(value)
     }
 
-    function fetchCollectibles(slug) {
-        walletSectionCollectibles.fetchCollectibles(slug)
+    function fetchOwnedCollectibles(slug) {
+        walletSectionCollectibles.fetchOwnedCollectibles(slug)
     }
 
     function getCollectionMaxValue(traitType, value, maxValue, collectionIndex) {

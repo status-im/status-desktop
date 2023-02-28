@@ -62,16 +62,6 @@ type
 rpc(clientVersion, "web3"):
   discard
 
-rpc(getOpenseaCollectionsByOwner, "wallet"):
-  chainId: int
-  address: string
-
-rpc(getOpenseaAssetsByOwnerAndCollection, "wallet"):
-  chainId: int
-  address: string
-  collectionSlug: string
-  limit: int
-
 rpc(getEthereumChains, "wallet"):
   onlyEnabled: bool
 

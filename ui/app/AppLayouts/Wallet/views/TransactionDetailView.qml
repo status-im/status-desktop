@@ -29,6 +29,7 @@ Item {
     QtObject {
         id: d
         readonly property bool isIncoming: root.isTransactionValid ? root.transaction.to === currentAccount.address : false
+        readonly property bool isNFT: root.isTransactionValid ? root.transaction.isNFT : false
         readonly property string savedAddressNameTo: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.to) : ""
         readonly property string savedAddressNameFrom: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.from): ""
         readonly property string from: root.isTransactionValid ? !!savedAddressNameFrom ? savedAddressNameFrom : Utils.compactAddress(transaction.from, 4): ""
@@ -72,9 +73,9 @@ Item {
                 symbol: root.isTransactionValid ? transaction.symbol : ""
                 transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
                 shortTimeStamp: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
-                savedAddressName: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
-                title: d.isIncoming ? qsTr("Received %1 from %2").arg(RootStore.formatCurrencyAmount(cryptoValue, symbol)).arg(d.from) :
-                                    qsTr("Sent %1 to %2").arg(RootStore.formatCurrencyAmount(cryptoValue, symbol)).arg(d.to)
+                savedAddressNameTo: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
+                savedAddressNameFrom: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.from): ""
+                isSummary: false
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 state: "big"
@@ -153,9 +154,9 @@ Item {
                 symbol: root.isTransactionValid ? transaction.symbol : ""
                 transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
                 shortTimeStamp: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
-                savedAddressName: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
-                title: d.isIncoming ? qsTr("Received %1 from %2").arg(RootStore.formatCurrencyAmount(cryptoValue, symbol)).arg(d.from) :
-                                    qsTr("Sent %1 to %2").arg(RootStore.formatCurrencyAmount(cryptoValue, symbol)).arg(d.to)
+                savedAddressNameTo: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
+                savedAddressNameFrom: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.from): ""
+                isSummary: false
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 border.width: 1
@@ -184,6 +185,12 @@ Item {
                     maxWidth: parent.width
                     primaryText: qsTr("Nonce")
                     secondaryText: root.isTransactionValid ? RootStore.hex2Dec(root.transaction.nonce) : ""
+                }
+                InformationTile {
+                    maxWidth: parent.width
+                    primaryText: qsTr("TokenID")
+                    secondaryText: root.isTransactionValid ? root.transaction.tokenID : ""
+                    visible: root.isTransactionValid && d.isNFT
                 }
             }
         }

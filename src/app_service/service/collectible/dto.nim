@@ -1,4 +1,4 @@
-import json, Tables, strformat, strutils
+import json, Tables, stint, strformat, strutils
 
 
 type CollectibleTraitType* {.pure.} = enum
@@ -11,7 +11,7 @@ type CollectionTrait* = ref object
 
 type CollectionDto* = ref object
     name*, slug*, imageUrl*: string
-    ownedAssetCount*: int
+    ownedAssetCount*: Uint256
     trait*: Table[string, CollectionTrait]
 
 type CollectibleTrait* = ref object
@@ -19,8 +19,17 @@ type CollectibleTrait* = ref object
 
 type CollectibleDto* = ref object
     id*: int
+    tokenId*: Uint256
     name*, description*, permalink*, imageThumbnailUrl*, imageUrl*, address*, backgroundColor*: string
     properties*, rankings*, statistics*: seq[CollectibleTrait]
+
+proc newCollectibleDto*: CollectibleDto =
+  return CollectibleDto(
+    id: -1
+  )
+
+proc isValid*(self: CollectibleDto): bool =
+  return self.id >= 0
 
 proc isNumeric(s: string): bool =
   try:
@@ -33,7 +42,7 @@ proc `$`*(self: CollectionDto): string =
   return fmt"CollectionDto(name:{self.name}, slug:{self.slug}, owned asset count:{self.ownedAssetCount})"
 
 proc `$`*(self: CollectibleDto): string =
-  return fmt"CollectibleDto(id:{self.id}, name:{self.name}, description:{self.description}, permalink:{self.permalink}, address:{self.address}, imageUrl: {self.imageUrl}, imageThumbnailUrl: {self.imageThumbnailUrl}, backgroundColor: {self.backgroundColor})"
+  return fmt"CollectibleDto(id:{self.id}, token_id:{self.tokenId}, name:{self.name}, description:{self.description}, permalink:{self.permalink}, address:{self.address}, imageUrl: {self.imageUrl}, imageThumbnailUrl: {self.imageThumbnailUrl}, backgroundColor: {self.backgroundColor})"
 
 proc getCollectionTraits*(jsonCollection: JsonNode): Table[string, CollectionTrait] =
     var traitList: Table[string, CollectionTrait] = initTable[string, CollectionTrait]()
@@ -46,7 +55,7 @@ proc toCollectionDto*(jsonCollection: JsonNode): CollectionDto =
         name: jsonCollection{"name"}.getStr,
         slug: jsonCollection{"slug"}.getStr,
         imageUrl: jsonCollection{"image_url"}.getStr,
-        ownedAssetCount: jsonCollection{"owned_asset_count"}.getInt,
+        ownedAssetCount: stint.parse(jsonCollection{"owned_asset_count"}.getStr, Uint256),
         trait: getCollectionTraits(jsonCollection)
     )
 
@@ -70,6 +79,7 @@ proc getTrait*(jsonAsset: JsonNode, traitType: CollectibleTraitType): seq[Collec
 proc toCollectibleDto*(jsonAsset: JsonNode): CollectibleDto =
     return CollectibleDto(
         id: jsonAsset{"id"}.getInt,
+        tokenId: stint.parse(jsonAsset{"token_id"}.getStr, Uint256),
         name: jsonAsset{"name"}.getStr,
         description: jsonAsset{"description"}.getStr,
         permalink: jsonAsset{"permalink"}.getStr,

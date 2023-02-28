@@ -1,9 +1,10 @@
-import strformat
+import strformat, stint
 import ./collectible_trait_item
 
 type
   Item* = object
     id: int
+    tokenId: UInt256
     name: string
     imageUrl: string
     backgroundColor: string
@@ -15,6 +16,7 @@ type
 
 proc initItem*(
   id: int,
+  tokenId: UInt256,
   name: string,
   imageUrl: string,
   backgroundColor: string,
@@ -25,6 +27,7 @@ proc initItem*(
   stats: seq[CollectibleTrait]
 ): Item =
   result.id = id
+  result.tokenId = tokenId
   result.name = name
   result.imageUrl = imageUrl
   result.backgroundColor = if (backgroundColor == ""): "transparent" else: ("#" & backgroundColor)
@@ -35,11 +38,12 @@ proc initItem*(
   result.stats = stats
 
 proc initItem*: Item =
-  result = initItem(-1, "", "", "transparent", "Collectibles", "", @[], @[], @[])
+  result = initItem(-1, u256(0), "", "", "transparent", "Collectibles", "", @[], @[], @[])
 
 proc `$`*(self: Item): string =
   result = fmt"""Collectibles(
     id: {self.id},
+    tokenId: {self.tokenId},
     name: {self.name},
     imageUrl: {self.imageUrl},
     backgroundColor: {self.backgroundColor},
@@ -49,6 +53,9 @@ proc `$`*(self: Item): string =
 
 proc getId*(self: Item): int =
   return self.id
+
+proc getTokenId*(self: Item): UInt256 =
+  return self.tokenId
 
 proc getName*(self: Item): string =
   return self.name

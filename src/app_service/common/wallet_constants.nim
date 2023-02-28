@@ -1,0 +1,3 @@
+const ETH_TRANSACTION_TYPE* = "eth"
+const ERC20_TRANSACTION_TYPE* = "erc20"
+const ERC721_TRANSACTION_TYPE* = "erc721"

@@ -1,7 +1,8 @@
 import stint
 import ../../../../../app_service/service/wallet_account/dto as WalletDto
+import ../../../../../app_service/service/collectible/dto as CollectibleDto
 import ../../../../../app_service/service/transaction/dto
-export TransactionDto
+export TransactionDto, CollectibleDto
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -28,7 +29,7 @@ method getAccountByAddress*(self: AccessInterface, address: string): WalletAccou
 method loadTransactions*(self: AccessInterface, address: string, toBlock: string, limit: int, loadMore: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setTrxHistoryResult*(self: AccessInterface, transactions: seq[TransactionDto], address: string, wasFetchMore: bool) {.base.} =
+method setTrxHistoryResult*(self: AccessInterface, transactions: seq[TransactionDto], collectibles: seq[CollectibleDto], address: string, wasFetchMore: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setHistoryFetchState*(self: AccessInterface, addresses: seq[string], isFetching: bool) {.base.} =

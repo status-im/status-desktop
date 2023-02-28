@@ -110,7 +110,9 @@ ColumnLayout {
             symbol: modelDataValid && !!modelData.symbol ? modelData.symbol : ""
             transferStatus: modelDataValid ? RootStore.hex2Dec(modelData.txStatus) : ""
             shortTimeStamp: modelDataValid ? LocaleUtils.formatTime(modelData.timestamp * 1000, Locale.ShortFormat) : ""
-            savedAddressName: modelDataValid ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""
+            savedAddressNameTo: modelDataValid ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""
+            savedAddressNameFrom: modelDataValid ? RootStore.getNameForSavedWalletAddress(modelData.from) : ""
+            isSummary: true
             onClicked: launchTransactionDetail(modelData)
             loading: modelDataValid ? modelData.loadingTransaction : false
         }

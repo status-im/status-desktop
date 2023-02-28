@@ -49,6 +49,7 @@ type
     nonce*: string
     txStatus*: string
     value*: string
+    tokenId*: UInt256
     fromAddress*: string
     to*: string
     chainId*: int
@@ -77,6 +78,7 @@ proc getMaxTotalFees(maxFee: string, gasLimit: string): string =
 proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   result = TransactionDto()
   result.timestamp = stint.fromHex(UInt256, jsonObj{"timestamp"}.getStr)
+  result.tokenId = stint.fromHex(UInt256, jsonObj{"tokenId"}.getStr)
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("type", result.typeValue)
   discard jsonObj.getProp("address", result.address)
@@ -101,10 +103,42 @@ proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   result.totalFees = getTotalFees(result.maxPriorityFeePerGas, result.baseGasFees, result.gasUsed, result.maxFeePerGas)
   result.maxTotalFees = getMaxTotalFees(result.maxFeePerGas, result.gasLimit)
 
+proc `$`*(self: TransactionDto): string =
+  return fmt"""TransactionDto(
+    id:{self.id},
+    typeValue:{self.typeValue},
+    address:{self.address},
+    blockNumber:{self.blockNumber},
+    blockHash:{self.blockHash},
+    contract:{self.contract},
+    timestamp:{self.timestamp},
+    gasPrice:{self.gasPrice},
+    gasLimit:{self.gasLimit},
+    gasUsed:{self.gasUsed},
+    nonce:{self.nonce},
+    txStatus:{self.txStatus},
+    value:{self.value},
+    tokenId:{self.tokenId},
+    fromAddress:{self.fromAddress},
+    to:{self.to},
+    chainId:{self.chainId},
+    maxFeePerGas:{self.maxFeePerGas},
+    maxPriorityFeePerGas:{self.maxPriorityFeePerGas},
+    input:{self.input},
+    txHash:{self.txHash},
+    multiTransactionID:{self.multiTransactionID},
+    baseGasFees:{self.baseGasFees},
+    totalFees:{self.totalFees},
+    maxTotalFees:{self.maxTotalFees},
+    additionalData:{self.additionalData},
+    symbol:{self.symbol}
+  )"""
+
 proc toPendingTransactionDto*(jsonObj: JsonNode): TransactionDto =
   result = TransactionDto()
   result.value = "0x" & toHex(toUInt256(parseFloat(jsonObj{"value"}.getStr)))
   result.timestamp = u256(jsonObj{"timestamp"}.getInt)
+  result.tokenId = stint.fromHex(UInt256, jsonObj{"tokenId"}.getStr)
   discard jsonObj.getProp("hash", result.txHash)
   discard jsonObj.getProp("from", result.fromAddress)
   discard jsonObj.getProp("to", result.to)

@@ -4,6 +4,7 @@
 
 import stint
 import ../../common/conversion as service_conversion
+import ../../common/wallet_constants
 
 proc sortAsc[T](t1, t2: T): int =
   if (t1.fromNetwork.chainId > t2.fromNetwork.chainId): return 1
@@ -16,21 +17,46 @@ type
     address: string
     toBlock: Uint256
     limit: int
+    collectiblesLimit: int
     loadMore: bool
     allTxLoaded: bool
 
 const loadTransactionsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let
-    arg = decode[LoadTransactionsTaskArg](argEncoded)
-    limitAsHex = "0x" & eth_utils.stripLeadingZeros(arg.limit.toHex)
-    response = transactions.getTransfersByAddress(arg.chainId, arg.address, arg.toBlock, limitAsHex, arg.loadMore).result
-    output = %*{
-      "address": arg.address,
-      "chainId": arg.chainId,
-      "history": response,
-      "loadMore": arg.loadMore,
-      "allTxLoaded": response.getElems().len < arg.limit
-    }
+  let arg = decode[LoadTransactionsTaskArg](argEncoded)
+  let output = %* {
+    "address": arg.address,
+    "chainId": arg.chainId,
+    "history": "",
+    "collectibles": "",
+    "loadMore": arg.loadMore,
+    "allTxLoaded": ""
+  }
+  try:
+    let limitAsHex = "0x" & eth_utils.stripLeadingZeros(arg.limit.toHex)
+    let response = transactions.getTransfersByAddress(arg.chainId, arg.address, arg.toBlock, limitAsHex, arg.loadMore).result
+    output["history"] = response
+    output["allTxLoaded"] = %(response.getElems().len < arg.limit)
+
+    # Fetch collectibles for transactions
+    var uniqueIds: seq[collectibles.NFTUniqueID] = @[]
+    for txJson in response.getElems():
+      let tx = txJson.toTransactionDto()
+      if tx.typeValue == ERC721_TRANSACTION_TYPE:
+        let nftId = collectibles.NFTUniqueID(
+          contractAddress: tx.contract,
+          tokenID: tx.tokenId.toString(10)
+        )
+        if not uniqueIds.any(x => (x == nftId)):
+          uniqueIds.add(nftId)
+
+    if len(uniqueIds) > 0:
+      let collectiblesResponse = collectibles.getOpenseaAssetsByNFTUniqueID(arg.chainId, uniqueIds, arg.collectiblesLimit).result
+      output["collectibles"] = collectiblesResponse
+    
+  except Exception as e:
+    let errDesription = e.msg
+    error "error loadTransactionsTask: ", errDesription
+
   arg.finish(output)
 
 

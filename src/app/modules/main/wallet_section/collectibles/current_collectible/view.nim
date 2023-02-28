@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar
+import NimQml, sequtils, sugar, stint
 
 import ./io_interface
 import ../../../../../../app_service/service/network/dto as network_dto
@@ -20,6 +20,7 @@ QtObject:
 
       name: string
       id: string
+      tokenId: string
       description: string
       backgroundColor: string
       imageUrl: string
@@ -91,6 +92,15 @@ QtObject:
   QtProperty[QVariant] id:
     read = getID
     notify = idChanged
+
+  proc getTokenID(self: View): QVariant {.slot.} =
+    return newQVariant(self.tokenId)
+
+  proc tokenIdChanged(self: View) {.signal.}
+
+  QtProperty[QVariant] tokenId:
+    read = getTokenID
+    notify = tokenIdChanged
 
   proc getDescription(self: View): QVariant {.slot.} =
     return newQVariant(self.description)
@@ -205,6 +215,11 @@ QtObject:
     if (self.id != idString):
       self.id = idString
       self.idChanged()
+
+    let tokenIdString = collectible.tokenId.toString()
+    if (self.tokenId != tokenIdString):
+      self.tokenId = tokenIdString
+      self.tokenIdChanged()
 
     if (self.description != collectible.description):
       self.description = collectible.description

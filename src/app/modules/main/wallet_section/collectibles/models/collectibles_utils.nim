@@ -5,6 +5,7 @@ import collectibles_item, collectible_trait_item
 proc collectibleToItem*(c: CollectibleDto) : Item =
   return initItem(
     c.id,
+    c.tokenId,
     c.name,
     c.imageUrl,
     c.backgroundColor,
