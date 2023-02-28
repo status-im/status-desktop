@@ -1282,6 +1282,7 @@ QtObject:
       if (rpcResponseObj{"error"}.kind != JNull):
         let error = Json.decode($rpcResponseObj["error"], RpcError)
         error "Error requesting community info", msg = error.message
+        self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED, Args())
         return
 
       let curatedCommunities = parseCuratedCommunities(rpcResponseObj{"result"})
@@ -1290,8 +1291,8 @@ QtObject:
       self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADED, CuratedCommunitiesArgs(curatedCommunities: self.getCuratedCommunities()))
     except Exception as e:
       let errMsg = e.msg
-      error "error: ", errMsg
-      self.events.emit(SIGNAL_CURATEDCOMMUNITIES_LOADING_FAILED, Args())
+      error "error loading curated communities: ", errMsg
+      self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED, Args())
 
   proc requestCommunityInfo*(self: Service, communityId: string, importing = false) =
 

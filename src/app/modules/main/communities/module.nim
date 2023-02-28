@@ -40,6 +40,7 @@ type
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
+    curatedCommunitiesLoaded: bool
     mintingModule: minting_module.AccessInterface
 
 # Forward declaration
@@ -66,6 +67,7 @@ proc newModule*(
   )
   result.mintingModule = minting_module.newMintingModule(result, events, communityTokensService)
   result.moduleLoaded = false
+  result.curatedCommunitiesLoaded = false
 
 method delete*(self: Module) =
   self.view.delete
@@ -92,9 +94,12 @@ method viewDidLoad*(self: Module) =
   self.delegate.communitiesModuleDidLoad()
 
 method onActivated*(self: Module) =
+  if self.curatedCommunitiesLoaded:
+    return
   self.controller.asyncLoadCuratedCommunities()
 
 method curatedCommunitiesLoaded*(self: Module, curatedCommunities: seq[CuratedCOmmunity]) =
+  self.curatedCommunitiesLoaded = true
   self.setCuratedCommunities(curatedCommunities)
   self.view.setCuratedCommunitiesLoading(false)
 
@@ -102,6 +107,8 @@ method curatedCommunitiesLoading*(self: Module) =
   self.view.setCuratedCommunitiesLoading(true)
 
 method curatedCommunitiesLoadingFailed*(self: Module) =
+  # TODO we probably want to show an error in the UI later
+  self.curatedCommunitiesLoaded = true
   self.view.setCuratedCommunitiesLoading(false)
 
 proc createMemberItem(self: Module, memberId, requestId: string): MemberItem =
