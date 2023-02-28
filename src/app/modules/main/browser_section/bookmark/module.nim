@@ -16,6 +16,7 @@ type
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
+    bookmarksLoaded: bool
     controller: Controller
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, bookmarkService: bookmark_service.Service): Module =
@@ -24,6 +25,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
+  result.bookmarksLoaded = false
   result.controller = controller.newController(result, events, bookmarkService)
 
 method delete*(self: Module) =
@@ -36,14 +38,20 @@ method load*(self: Module) =
   self.controller.init()
   self.view.load()
 
-method isLoaded*(self: Module): bool =
-  return self.moduleLoaded
+method onActivated*(self: Module) =
+  if self.bookmarksLoaded:
+    return
 
-method viewDidLoad*(self: Module) =
   let bookmarks = self.controller.getBookmarks()
   for b in bookmarks:
     self.view.addItem(initItem(b.name, b.url, b.imageUrl))
 
+  self.bookmarksLoaded = true
+
+method isLoaded*(self: Module): bool =
+  return self.moduleLoaded
+
+method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.bookmarkDidLoad()
 
