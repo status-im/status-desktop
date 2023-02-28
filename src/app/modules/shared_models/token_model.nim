@@ -200,6 +200,10 @@ QtObject:
         if(balance.balance.getAmount() >= requiredGas):
           return true
 
+        break
+
+      break
+
     return false
 
   proc getTokenBalanceOnChain*(self: Model, chainId: int, tokenSymbol: string): CurrencyAmount =
@@ -212,6 +216,8 @@ QtObject:
           continue
 
         return balance.balance
+
+      break
 
     return newCurrencyAmount(
       0.0,

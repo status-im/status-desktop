@@ -15,7 +15,7 @@ StatusListItem {
     signal tokenSelected(var selectedToken)
 
     title: name
-    label: LocaleUtils.currencyAmountToLocaleString(enabledNetworkCurrencyBalance)
+    label: LocaleUtils.currencyAmountToLocaleString(totalCurrencyBalance)
     asset.name: symbol ? Style.png("tokens/" + symbol) : ""
     asset.isImage: true
     asset.width: 32
