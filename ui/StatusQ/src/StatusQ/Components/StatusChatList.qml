@@ -97,15 +97,12 @@ Item {
                         statusChatListCategoryItem.setupPopup()
                         highlighted = true
                         menuButton.highlighted = true
-                        let p = menuButton.mapToItem(statusChatListCategoryItem, menuButton.x, menuButton.y)
-                        let menuWidth = categoryPopupMenuSlot.item.width
                         categoryPopupMenuSlot.item.popup()
                     }
                     onAddButtonClicked: {
                         root.categoryAddButtonClicked(categoryId)
                     }
                 }
-                
             }
             
             Component {
@@ -114,7 +111,7 @@ Item {
                     id: draggable
                     objectName: model.name
                     width: root.width
-                    height: model.categoryOpened ? statusChatListItem.height : 0
+                    height: model.categoryOpened ? statusChatListItem.height + 4 /*spacing between non-collapsed items*/ : 0
                     visible: height
                     verticalPadding: 2
 
