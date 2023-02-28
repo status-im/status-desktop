@@ -16,7 +16,13 @@ type
     NewMessage,
     NewMessageWithPersonalMention,
     NewMessageWithGlobalMention,
-    IdentityVerificationRequest
+    IdentityVerificationRequest,
+    CommunityTokenPermissionCreated,
+    CommunityTokenPermissionUpdated,
+    CommunityTokenPermissionDeleted,
+    CommunityTokenPermissionCreationFailed,
+    CommunityTokenPermissionUpdateFailed,
+    CommunityTokenPermissionDeletionFailed
 
   NotificationDetails* = object
     notificationType*: NotificationType # the default value is `UnknownNotification`

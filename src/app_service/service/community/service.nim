@@ -1,4 +1,5 @@
 import NimQml, Tables, json, sequtils, std/sets, std/algorithm, strformat, strutils, chronicles, json_serialization, sugar
+import json_serialization/std/tables as ser_tables
 
 import ./dto/community as community_dto
 
@@ -84,6 +85,15 @@ type
     communityId*: string
     categoryId*: string
 
+  CommunityTokenPermissionArgs* = ref object of Args
+    communityId*: string
+    tokenPermission*: CommunityTokenPermissionDto
+    error*: string
+
+  CommunityTokenPermissionRemovedArgs* = ref object of Args
+    communityId*: string
+    permissionId*: string
+
   DiscordCategoriesAndChannelsArgs* = ref object of Args
     categories*: seq[DiscordCategoryDto]
     channels*: seq[DiscordChannelDto]
@@ -140,10 +150,19 @@ const SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_FINISHED* = "communityHistoryAr
 const SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED* = "discordCategoriesAndChannelsExtracted"
 const SIGNAL_DISCORD_COMMUNITY_IMPORT_FINISHED* = "discordCommunityImportFinished"
 const SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS* = "discordCommunityImportProgress"
+const SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED* = "communityTokenPermissionCreated"
+const SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED* = "communityTokenPermissionCreationFailed"
+const SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED* = "communityTokenPermissionUpdated"
+const SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATE_FAILED* = "communityTokenPermissionUpdateFailed"
+const SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED* = "communityTokenPermissionDeleted"
+const SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETION_FAILED* = "communityTokenPermissionDeletionFailed"
 
 const SIGNAL_CURATED_COMMUNITIES_LOADING* = "curatedCommunitiesLoading"
 const SIGNAL_CURATED_COMMUNITIES_LOADED* = "curatedCommunitiesLoaded"
 const SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED* = "curatedCommunitiesLoadingFailed"
+
+const TOKEN_PERMISSIONS_ADDED = "tokenPermissionsAdded"
+const TOKEN_PERMISSIONS_MODIFIED = "tokenPermissionsModified"
 
 QtObject:
   type
@@ -319,6 +338,14 @@ QtObject:
         return idx
     return -1
 
+  proc findIndexBySymbol(symbol: string, tokenCriteria: seq[TokenCriteriaDto]): int =
+    var idx = -1
+    for tc in tokenCriteria:
+      inc idx
+      if(tc.symbol == symbol):
+        return idx
+    return -1
+
   proc findIndexById(id: string, categories: seq[Category]): int =
     var idx = -1
     for category in categories:
@@ -487,6 +514,49 @@ QtObject:
       self.allCommunities[community.id] = community
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
 
+      # tokenPermission was added
+      if community.tokenPermissions.len > prev_community.tokenPermissions.len:
+        for id, tokenPermission in community.tokenPermissions:
+          if not prev_community.tokenPermissions.hasKey(id):
+            self.allCommunities[community.id].tokenPermissions[id] = tokenPermission
+
+            self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED,
+            CommunityTokenPermissionArgs(communityId: community.id, tokenPermission: tokenPermission))
+      elif community.tokenPermissions.len < prev_community.tokenPermissions.len:
+        for id, prvTokenPermission in prev_community.tokenPermissions:
+          if not community.tokenPermissions.hasKey(id):
+            self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED,
+            CommunityTokenPermissionRemovedArgs(communityId: community.id, permissionId: id))
+
+      else:
+        for id, tokenPermission in community.tokenPermissions:
+          if not prev_community.tokenPermissions.hasKey(id):
+            continue
+
+          let prevTokenPermission = prev_community.tokenPermissions[id]
+
+          var permissionUpdated = false
+
+          if tokenPermission.tokenCriteria.len != prevTokenPermission.tokenCriteria.len or
+            tokenPermission.isPrivate != prevTokenPermission.isPrivate or
+            tokenPermission.`type` != prevTokenPermission.`type`:
+
+              permissionUpdated = true
+
+          for tc in tokenPermission.tokenCriteria:
+            let index = findIndexBySymbol(tc.symbol, prevTokenPermission.tokenCriteria)
+            if index == -1:
+              continue
+
+            let prevTc = prevTokenPermission.tokenCriteria[index]
+            if tc.amount != prevTc.amount or tc.ensPattern != prevTc.ensPattern:
+              permissionUpdated = true
+              break
+
+          if permissionUpdated:
+            self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED, 
+              CommunityTokenPermissionArgs(communityId: community.id, tokenPermission: tokenPermission))
+
       if(not self.joinedCommunities.hasKey(community.id)):
         if (community.joined and community.isMember):
           self.joinedCommunities[community.id] = community
@@ -567,6 +637,13 @@ QtObject:
 
   proc getCuratedCommunities*(self: Service): seq[CuratedCommunity] =
     return toSeq(self.curatedCommunities.values)
+
+  proc getCommunityByIdFromAllCommunities*(self: Service, communityId: string): CommunityDto =
+    if(not self.allCommunities.hasKey(communityId)):
+      error "error: requested community doesn't exists", communityId
+      return
+
+    return self.allCommunities[communityId]
 
   proc getCommunityById*(self: Service, communityId: string): CommunityDto =
     if(not self.joinedCommunities.hasKey(communityId)):
@@ -1557,3 +1634,55 @@ QtObject:
     except Exception as e:
       error "Error extracting discord channels and categories", msg = e.msg
 
+  proc createOrEditCommunityTokenPermission*(self: Service, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
+    try:
+      let editing = tokenPermission.id != ""
+
+      var response: RpcResponse[JsonNode]
+
+      if editing:
+        response = status_go.editCommunityTokenPermission(communityId, tokenPermission.id, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.isPrivate)
+      else:
+        response = status_go.createCommunityTokenPermission(communityId, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.isPrivate)
+
+      if response.result != nil and response.result.kind != JNull:
+        var changesField = TOKEN_PERMISSIONS_ADDED
+        if editing:
+          changesField = TOKEN_PERMISSIONS_MODIFIED
+
+        for permissionId, permission in response.result["communityChanges"].getElems()[0][changesField].pairs():
+          let p = permission.toCommunityTokenPermissionDto()
+          self.allCommunities[communityId].tokenPermissions[permissionId] = p
+          self.joinedCommunities[communityId].tokenPermissions[permissionId] = p
+
+          var signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED
+          if editing:
+            signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED
+
+          self.events.emit(signal, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
+        return
+
+      var signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED
+      if editing:
+        signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATE_FAILED
+
+      self.events.emit(signal, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: tokenPermission))
+    except Exception as e:
+      error "Error creating/editing community token permission", msg = e.msg
+
+  proc deleteCommunityTokenPermission*(self: Service, communityId: string, permissionId: string) =
+    try:
+      let response = status_go.deleteCommunityTokenPermission(communityId, permissionId)
+      if response.result != nil and response.result.kind != JNull:
+        for permissionId in response.result["communityChanges"].getElems()[0]["tokenPermissionsRemoved"].getElems():
+          if self.allCommunities[communityId].tokenPermissions.hasKey(permissionId.getStr()):
+            self.allCommunities[communityId].tokenPermissions.del(permissionId.getStr())
+          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED,
+        CommunityTokenPermissionRemovedArgs(communityId: communityId, permissionId: permissionId.getStr))
+        return
+      var tokenPermission = CommunityTokenPermissionDto()
+      tokenPermission.id = permissionId
+      self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETION_FAILED,
+        CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: tokenPermission))
+    except Exception as e:
+      error "Error deleting community token permission", msg = e.msg

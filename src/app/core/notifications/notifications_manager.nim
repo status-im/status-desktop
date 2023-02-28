@@ -85,6 +85,12 @@ QtObject:
       self, "onMeMentionedIconBadgeNotification(int)", 2)
     signalConnect(singletonInstance.globalEvents, "showAcceptedContactRequest(QString, QString, QString)", 
       self, "onShowAcceptedContactRequest(QString, QString, QString)", 2)
+    signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionCreatedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionCreatedNotification(QString, QString, QString)", 2)
+    signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionUpdatedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionUpdatedNotification(QString, QString, QString)", 2)
+    signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionDeletedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionDeletedNotification(QString, QString, QString)", 2)
+    signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionCreationFailedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionCreationFailedNotification(QString, QString, QString)", 2)
+    signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionUpdateFailedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionUpdateFailedNotification(QString, QString, QString)", 2)
+    signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionDeletionFailedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionDeletionFailedNotification(QString, QString, QString)", 2)
 
     self.notificationSetUp = true
 
@@ -138,6 +144,30 @@ QtObject:
       isOneToOne: isOneToOne,
       isGroupChat: isGroupChat,
       messageId: messageId)
+    self.processNotification(title, message, details)
+
+  proc onShowCommunityTokenPermissionCreatedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
+    let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionCreated, sectionId: sectionId, isCommunitySection: true)
+    self.processNotification(title, message, details)
+
+  proc onShowCommunityTokenPermissionUpdatedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
+    let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionUpdated, sectionId: sectionId, isCommunitySection: true)
+    self.processNotification(title, message, details)
+
+  proc onShowCommunityTokenPermissionDeletedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
+    let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionDeleted, sectionId: sectionId, isCommunitySection: true)
+    self.processNotification(title, message, details)
+
+  proc onShowCommunityTokenPermissionCreationFailedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
+    let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionCreationFailed, sectionId: sectionId, isCommunitySection: true)
+    self.processNotification(title, message, details)
+
+  proc onShowCommunityTokenPermissionUpdateFailedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
+    let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionUpdateFailed, sectionId: sectionId, isCommunitySection: true)
+    self.processNotification(title, message, details)
+
+  proc onShowCommunityTokenPermissionDeletionFailedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
+    let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionDeletionFailed, sectionId: sectionId, isCommunitySection: true)
     self.processNotification(title, message, details)
 
   proc onShowNewContactRequestNotification*(self: NotificationsManager, title: string, message: string, 

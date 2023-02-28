@@ -1,0 +1,92 @@
+import NimQml, Tables
+import token_list_item
+
+type
+  ModelRole {.pure.} = enum
+    Key = UserRole + 1
+    Name
+    Shortname
+    Symbol
+    Color
+    Image
+    Category
+
+QtObject:
+  type TokenListModel* = ref object of QAbstractListModel
+    items*: seq[TokenListItem]
+
+  proc setup(self: TokenListModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: TokenListModel) =
+    self.items = @[]
+    self.QAbstractListModel.delete
+
+  proc newTokenListModel*(): TokenListModel =
+    new(result, delete)
+    result.setup
+
+  proc countChanged(self: TokenListModel) {.signal.}
+
+  proc getCount(self: TokenListModel): int {.slot.} =
+    self.items.len
+
+  QtProperty[int] count:
+    read = getCount
+    notify = countChanged
+
+  proc setItems*(self: TokenlistModel, items: seq[TokenListItem]) =
+    self.beginResetModel()
+    self.items = items
+    self.endResetModel()
+    self.countChanged()
+
+  proc addItems*(self: TokenlistModel, items: seq[TokenListItem]) =
+    if(items.len == 0):
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    let first = self.items.len
+    let last = first + items.len - 1
+    self.beginInsertRows(parentModelIndex, first, last)
+    self.items.add(items)
+    self.endInsertRows()
+    self.countChanged()
+
+  method roleNames(self: TokenListModel): Table[int, string] =
+    {
+      ModelRole.Key.int:"key",
+      ModelRole.Name.int:"name",
+      ModelRole.Symbol.int:"symbol",
+      ModelRole.Shortname.int:"shortName",
+      ModelRole.Color.int:"color",
+      ModelRole.Image.int:"iconSource",
+      ModelRole.Category.int:"category",
+    }.toTable
+
+  method rowCount(self: TokenlistModel, index: QModelIndex = nil): int =
+    return self.items.len
+
+  method data(self: TokenListModel, index: QModelIndex, role: int): QVariant =
+    if not index.isValid:
+      return
+    if index.row < 0 or index.row >= self.items.len:
+      return
+    let item = self.items[index.row]
+    let enumRole = role.ModelRole
+    case enumRole:
+      of ModelRole.Key:
+        result = newQVariant(item.getKey())
+      of ModelRole.Name:
+        result = newQVariant(item.getName())
+      of ModelRole.Symbol:
+        result = newQVariant(item.getSymbol())
+      of ModelRole.Shortname:
+        result = newQVariant(item.getSymbol())
+      of ModelRole.Color:
+        result = newQVariant(item.getColor())
+      of ModelRole.Image:
+        result = newQVariant(item.getImage())
+      of ModelRole.Category:
+        result = newQVariant(item.getCategory())

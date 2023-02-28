@@ -7,6 +7,11 @@ import model as chats_model
 import item as chat_item
 import ../../shared_models/user_item as user_item
 import ../../shared_models/user_model as user_model
+import ../../shared_models/token_permissions_model
+import ../../shared_models/token_permission_item
+import ../../shared_models/token_criteria_item
+import ../../shared_models/token_criteria_model
+import ../../shared_models/token_list_item
 
 import chat_content/module as chat_content_module
 import chat_content/users/module as users_module
@@ -24,8 +29,12 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/gif/service as gif_service
+import ../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../app_service/service/token/service as token_service
+import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/visual_identity/service as visual_identity
 import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
+import ../../../../app_service/service/community/dto/community as community_dto
 
 export io_interface
 
@@ -55,6 +64,8 @@ proc buildChatSectionUI(self: Module,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service)
 
+proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem
+
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
@@ -68,12 +79,15 @@ proc newModule*(
     communityService: community_service.Service,
     messageService: message_service.Service,
     gifService: gif_service.Service,
-    mailserversService: mailservers_service.Service
+    mailserversService: mailservers_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    tokenService: token_service.Service,
+    communityTokensService: community_tokens_service.Service
   ): Module =
   result = Module()
   result.delegate = delegate
   result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, nodeConfigurationService,
-  contactService, chatService, communityService, messageService, gifService, mailserversService)
+  contactService, chatService, communityService, messageService, gifService, mailserversService, walletAccountService, tokenService, communityTokensService)
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
@@ -288,6 +302,67 @@ proc initContactRequestsModel(self: Module) =
 
   self.view.contactRequestsModel().addItems(contactsWhoAddedMe)
 
+proc rebuildCommunityTokenPermissionsModel(self: Module) =
+  let community = self.controller.getMyCommunity()
+  var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
+  var allTokenRequirementsMet = false
+
+  for id, tokenPermission in community.tokenPermissions:
+    # TODO: for startes we only deal with "become member" permissions
+    if tokenPermission.`type` == TokenPermissionType.BecomeMember:
+      let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
+
+      # multiple permissions of the same type act as logical OR
+      # so if at least one of them is fulfilled we can mark the view
+      # as all lights green
+      if tokenPermissionItem.tokenCriteriaMet:
+          allTokenRequirementsMet = true
+
+      tokenPermissionsItems.add(tokenPermissionItem)
+
+  self.view.tokenPermissionsModel().setItems(tokenPermissionsItems)
+  self.view.setAllTokenRequirementsMet(allTokenRequirementsMet)
+
+proc initCommunityTokenPermissionsModel(self: Module) =
+  self.rebuildCommunityTokenPermissionsModel()
+
+proc buildTokenList(self: Module) =
+  
+  var tokenListItems: seq[TokenListItem]
+  var collectiblesListItems: seq[TokenListItem]
+
+  let erc20Tokens = self.controller.getTokenList()
+  let communityTokens = self.controller.getCommunityTokenList()
+
+  for token in erc20Tokens:
+    let tokenListItem = initTokenListItem(
+      key = token.symbol,
+      name = token.name,
+      symbol = token.symbol,
+      color = token.color,
+      image = "",
+      category = ord(TokenListItemCategory.General)
+    )
+
+    tokenListItems.add(tokenListItem)
+
+  for token in communityTokens:
+    let tokenListItem = initTokenListItem(
+      key = token.symbol,
+      name = token.name,
+      symbol = token.symbol,
+      color = "", # community tokens don't have `color`
+      image = token.image,
+      category = ord(TokenListItemCategory.Community)
+    )
+    collectiblesListItems.add(tokenListItem)
+
+  self.view.setTokenListItems(tokenListItems)
+  self.view.setCollectiblesListItems(collectiblesListItems)
+
+method onWalletAccountTokensRebuilt*(self: Module) =
+  self.rebuildCommunityTokenPermissionsModel()
+
 proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
   return map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
 
@@ -327,6 +402,8 @@ method load*(
     self.initContactRequestsModel()
   else:
     self.usersModule.load()
+    self.initCommunityTokenPermissionsModel()
+    self.buildTokenList()
 
   let activeChatId = self.controller.getActiveChatId()
   let isCurrentSectionActive = self.controller.getIsCurrentSectionActive()
@@ -664,6 +741,49 @@ method onChatMuted*(self: Module, chatId: string) =
 method onChatUnmuted*(self: Module, chatId: string) =
   self.view.chatsModel().changeMutedOnItemById(chatId, muted=false)
 
+method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, permissionId: string) =
+  self.view.tokenPermissionsModel().removeItemWithId(permissionId)
+  singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
+
+method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
+  if tokenPermission.`type` == TokenPermissionType.BecomeMember:
+    let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
+    self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
+    if tokenPermissionItem.tokenCriteriaMet:
+      self.view.setAllTokenRequirementsMet(true)
+  singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
+
+method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
+  if tokenPermission.`type` == TokenPermissionType.BecomeMember:
+    let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
+    self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
+    if tokenPermissionItem.tokenCriteriaMet:
+      self.view.setAllTokenRequirementsMet(true)
+      return
+
+    # we now need to check whether any other permission criteria where met.
+    let community = self.controller.getMyCommunity()
+    for id, permission in community.tokenPermissions:
+      if id != tokenPermission.id:
+        for tc in permission.tokenCriteria:
+          let balance = self.controller.allAccountsTokenBalance(tc.symbol)
+          let amount = tc.amount.parseFloat
+          let tokenCriteriaMet = balance >= amount
+          if tokenCriteriaMet:
+            return
+
+    self.view.setAllTokenRequirementsMet(false)
+  singletonInstance.globalEvents.showCommunityTokenPermissionUpdatedNotification(communityId, "Community permission updated", "A token permission has been updated")
+
+method onCommunityTokenPermissionCreationFailed*(self: Module, communityId: string) =
+  singletonInstance.globalEvents.showCommunityTokenPermissionCreationFailedNotification(communityId, "Failed to create community permission", "Something went wrong")
+
+method onCommunityTokenPermissionUpdateFailed*(self: Module, communityId: string) =
+  singletonInstance.globalEvents.showCommunityTokenPermissionUpdateFailedNotification(communityId, "Failed to update community permission", "Something went wrong")
+
+method onCommunityTokenPermissionDeletionFailed*(self: Module, communityId: string) =
+  singletonInstance.globalEvents.showCommunityTokenPermissionDeletionFailedNotification(communityId, "Failed to delete community permission", "Something went wrong")
+
 method onMarkAllMessagesRead*(self: Module, chatId: string) =
   self.updateBadgeNotifications(chatId, hasUnreadMessages=false, unviewedMentionsCount=0)
   let chatDetails = self.controller.getChatDetails(chatId)
@@ -995,3 +1115,65 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
 method joinSpectatedCommunity*(self: Module) =
   if self.usersModule != nil:
     self.usersModule.updateMembersList()
+
+method createOrEditCommunityTokenPermission*(self: Module, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, isPrivate: bool) =
+  var tokenPermission = CommunityTokenPermissionDto()
+  tokenPermission.id = permissionId
+  tokenPermission.isPrivate = isPrivate
+  tokenPermission.`type` = TokenPermissionType(permissionType)
+
+  let tokenCriteriaJsonObj = tokenCriteriaJson.parseJson
+  for tokenCriteria in tokenCriteriaJsonObj:
+
+    let viewAmount = tokenCriteria{"amount"}.getFloat
+    var tokenCriteriaDto = tokenCriteria.toTokenCriteriaDto
+    let contractAddresses = self.controller.getContractAddressesForToken(tokenCriteriaDto.symbol)
+    if contractAddresses.len == 0 and tokenCriteriaDto.`type` != TokenCriteriaType.ENS:
+      if permissionId == "":
+        self.onCommunityTokenPermissionCreationFailed(communityId)
+        return 
+      self.onCommunityTokenPermissionUpdateFailed(communityId)
+      return
+
+    tokenCriteriaDto.amount = viewAmount.formatBiggestFloat(ffDecimal)
+    tokenCriteriaDto.contractAddresses = contractAddresses
+    tokenPermission.tokenCriteria.add(tokenCriteriaDto)
+  
+  self.controller.createOrEditCommunityTokenPermission(communityId, tokenPermission)
+
+method deleteCommunityTokenPermission*(self: Module, communityId: string, permissionId: string) =
+  self.controller.deleteCommunityTokenPermission(communityId, permissionId)
+
+proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem =
+  var tokenCriteriaItems: seq[TokenCriteriaItem] = @[]
+  var allTokenCriteriaMet = true
+
+  for tc in tokenPermission.tokenCriteria:
+
+    let balance = self.controller.allAccountsTokenBalance(tc.symbol)
+    let amount = tc.amount.parseFloat
+    let tokenCriteriaMet = balance >= amount
+    let tokenCriteriaItem = initTokenCriteriaItem(
+      tc.symbol,
+      tc.name,
+      amount,
+      tc.`type`.int,
+      tc.ensPattern,
+      tokenCriteriaMet
+    )
+    if not tokenCriteriaMet:
+      allTokenCriteriaMet = false
+
+    tokenCriteriaItems.add(tokenCriteriaItem)
+
+  let tokenPermissionItem = initTokenPermissionItem(
+      tokenPermission.id, 
+      tokenPermission.`type`.int, 
+      tokenCriteriaItems,
+      @[], # TODO: handle chat list items
+      tokenPermission.isPrivate,
+      allTokenCriteriaMet
+  )
+
+  return tokenPermissionItem
+

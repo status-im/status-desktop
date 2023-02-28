@@ -125,3 +125,10 @@ QtObject:
       return parseCommunityTokens(response)
     except RpcException:
         error "Error getting community tokens", message = getCurrentExceptionMsg()
+
+  proc getCommunityTokenBySymbol*(self: Service, communityId: string, symbol: string): CommunityTokenDto =
+    let communityTokens = self.getCommunityTokens(communityId)
+    for token in communityTokens:
+      if token.symbol == symbol:
+        return token
+

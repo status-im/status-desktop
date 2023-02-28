@@ -157,7 +157,9 @@ proc newModule*[T](
     privacyService,
     mailserversService,
     nodeService,
-    communityTokensService
+    communityTokensService,
+    walletAccountService,
+    tokenService
   )
   result.moduleLoaded = false
 
@@ -512,6 +514,9 @@ method onChatsLoaded*[T](
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
+  walletAccountService: wallet_account_service.Service,
+  tokenService: token_service.Service,
+  communityTokensService: community_tokens_service.Service
 ) =
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
@@ -531,7 +536,10 @@ method onChatsLoaded*[T](
       communityService,
       messageService,
       gifService,
-      mailserversService
+      mailserversService,
+      walletAccountService,
+      tokenService,
+      communityTokensService
     )
     let channelGroupItem = self.createChannelGroupItem(channelGroup)
     self.view.model().addItem(channelGroupItem)
@@ -768,6 +776,9 @@ method communityJoined*[T](
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
+  walletAccountService: wallet_account_service.Service,
+  tokenService: token_service.Service,
+  communityTokensService: community_tokens_service.Service,
   setActive: bool = false,
 ) =
   var firstCommunityJoined = false
@@ -785,7 +796,10 @@ method communityJoined*[T](
       communityService,
       messageService,
       gifService,
-      mailserversService
+      mailserversService,
+      walletAccountService,
+      tokenService,
+      communityTokensService
     )
   let channelGroup = community.toChannelGroupDto()
   self.channelGroupModules[community.id].load(channelGroup, events, settingsService, nodeConfigurationService, contactsService,
@@ -960,6 +974,12 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
 method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, details: NotificationDetails) =
   if(details.notificationType == NotificationType.NewMessage or 
     details.notificationType == NotificationType.NewMessageWithPersonalMention or
+    details.notificationType == NotificationType.CommunityTokenPermissionCreated or
+    details.notificationType == NotificationType.CommunityTokenPermissionUpdated or
+    details.notificationType == NotificationType.CommunityTokenPermissionDeleted or
+    details.notificationType == NotificationType.CommunityTokenPermissionCreationFailed or
+    details.notificationType == NotificationType.CommunityTokenPermissionUpdateFailed or
+    details.notificationType == NotificationType.CommunityTokenPermissionDeletionFailed or
     details.notificationType == NotificationType.NewMessageWithGlobalMention):
     self.displayEphemeralNotification(title, subTitle, "", false, EphemeralNotificationType.Default.int, "", details)
   

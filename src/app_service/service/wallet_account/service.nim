@@ -829,3 +829,13 @@ QtObject:
       return
     let data = KeycardActivityArgs(success: true)
     self.events.emit(SIGNAL_KEYCARDS_SYNCHRONIZED, data)
+
+  proc allAccountsTokenBalance*(self: Service, symbol: string): float64 =
+    var totalTokenBalance = 0.0
+    for walletAccount in self.getWalletAccounts:
+      if walletAccount.walletType != WalletTypeWatch:
+        for token in walletAccount.tokens:
+          if token.symbol == symbol:
+            totalTokenBalance += token.getTotalBalanceOfSupportedChains()
+
+    return totalTokenBalance

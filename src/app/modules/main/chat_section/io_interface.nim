@@ -8,10 +8,13 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
+import ../../../../app_service/service/token/service as token_service
 
 import model as chats_model
 
 import ../../../core/eventemitter
+import ../../shared_models/token_list_item
+
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -324,4 +327,31 @@ method switchToChannel*(self: AccessInterface, channelName: string) =
   raise newException(ValueError, "No implementation available")
 
 method joinSpectatedCommunity*(self: AccessInterface) =
+  raise newException(ValueError, "No implementation available")
+
+method createOrEditCommunityTokenPermission*(self: AccessInterface, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, isPrivate: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method deleteCommunityTokenPermission*(self: AccessInterface, communityId: string, permissionId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityTokenPermissionCreated*(self: AccessInterface, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityTokenPermissionCreationFailed*(self: AccessInterface, communityId: string) =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityTokenPermissionUpdated*(self: AccessInterface, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityTokenPermissionUpdateFailed*(self: AccessInterface, communityId: string) =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityTokenPermissionDeleted*(self: AccessInterface, communityId: string, permissionId: string) =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityTokenPermissionDeletionFailed*(self: AccessInterface, communityId: string) =
+  raise newException(ValueError, "No implementation available")
+
+method onWalletAccountTokensRebuilt*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")
