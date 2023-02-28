@@ -26,6 +26,7 @@ ColumnLayout {
     property PrivacyStore privacyStore
     property ProfileStore profileStore
     property WalletStore walletStore
+    property var communitiesModel
 
     property QtObject dirtyValues: QtObject {
         property string displayName: descriptionPanel.displayName.text
@@ -158,7 +159,7 @@ ColumnLayout {
 
     StatusListItem {
         Layout.fillWidth: true
-        visible: Qt.platform.os == "osx"
+        visible: Qt.platform.os === Constants.mac
         title: qsTr("Biometric login and transaction authentication")
         asset.name: "touch-id"
         components: [ StatusSwitch {
@@ -218,13 +219,13 @@ ColumnLayout {
 
             Repeater {
                 id: communitiesRepeater
-                model: communitiesModule.model
+                model: root.communitiesModel
 
                 CommunityDelegate {
                     width: parent.width
                     visible: joined
                     community: model
-                    enabled: false
+                    sensor.enabled: false
                 }
             }
         }
@@ -246,7 +247,7 @@ ColumnLayout {
                     width: parent.width
                     account: model
                     showShevronIcon: false
-                    enabled: false
+                    sensor.enabled: false
                 }
             }
         }

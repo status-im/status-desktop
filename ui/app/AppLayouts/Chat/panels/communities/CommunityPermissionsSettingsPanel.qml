@@ -71,8 +71,7 @@ SettingsPageLayout {
             }
         }
 
-        readonly property string initialState: root.permissionsModel.count > 0
-                                               ? d.permissionsViewState : d.welcomeViewState
+        readonly property string initialState: d.permissionsExist ? d.permissionsViewState : d.welcomeViewState
 
         function initializeData() {
             holdingsToEditModel = emptyModel

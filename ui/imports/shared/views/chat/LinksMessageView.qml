@@ -159,6 +159,7 @@ Column {
                             anchors.centerIn: parent
                             text: "GIF"
                             font.pixelSize: 13
+                            color: "white"
                         }
                     }
                 }
