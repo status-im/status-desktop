@@ -5,7 +5,8 @@ import QtQuick.Layouts 1.14
 ToolBar {
     id: root
 
-    property string title
+    property string componentName
+
     property int figmaPagesCount: 0
 
     signal figmaPreviewClicked
@@ -13,16 +14,41 @@ ToolBar {
     RowLayout {
         anchors.fill: parent
 
-        TextField {
+        Item {
             Layout.fillWidth: true
+        }
 
-            text: root.title
+        TextField {
+            text: `pages/${root.componentName}Page.qml`
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter
 
             selectByMouse: true
             readOnly: true
             background: null
+        }
+
+        ToolButton {
+            text: "📋"
+
+            ToolTip.timeout: 2000
+            ToolTip.text: "Component name copied to the clipboard"
+
+            TextInput {
+                id: hiddenTextInput
+                text: root.componentName
+                visible: false
+            }
+
+            onClicked: {
+                hiddenTextInput.selectAll()
+                hiddenTextInput.copy()
+                ToolTip.visible = true
+            }
+        }
+
+        Item {
+            Layout.fillWidth: true
         }
 
         ToolSeparator {}

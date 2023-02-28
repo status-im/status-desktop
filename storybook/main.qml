@@ -136,7 +136,7 @@ ApplicationWindow {
             footer: PageToolBar {
                 id: pageToolBar
 
-                title: `pages/${root.currentPage}Page.qml`
+                componentName: root.currentPage
                 figmaPagesCount: currentPageModelItem.object
                                  ? currentPageModelItem.object.figma.count : 0
 
