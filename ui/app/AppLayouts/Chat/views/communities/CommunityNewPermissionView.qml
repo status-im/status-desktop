@@ -141,7 +141,7 @@ StatusScrollView {
             d.dirtyValues.channelsModel.clear()
 
             d.dirtyValues.channelsModel.append(
-                        ModelUtils.modelToArray(root.channelsModel, ["itemId"]))
+                        ModelUtils.modelToArray(root.channelsModel, ["key"]))
 
             if (root.channelsModel && (root.channelsModel.count || d.dirtyValues.permissionType === PermissionTypes.Type.None)) {
                 inSelector.wholeCommunitySelected = false
@@ -419,7 +419,7 @@ StatusScrollView {
 
                 if (!inSelector.wholeCommunitySelected)
                     for (let i = 0; i < d.dirtyValues.channelsModel.count; i++)
-                        selectedChannels.push(d.dirtyValues.channelsModel.get(i).itemId)
+                        selectedChannels.push(d.dirtyValues.channelsModel.get(i).key)
 
                 inDropdown.setSelectedChannels(selectedChannels)
                 inDropdown.open()
@@ -462,11 +462,8 @@ StatusScrollView {
                     inSelector.itemsModel = 0
                     inSelector.wholeCommunitySelected = false
 
-                    channels.forEach(channel => {
-                        d.dirtyValues.channelsModel.append({
-                            itemId: channel.itemId
-                        })
-                    })
+                    const modelData = channels.map(key => ({ key }))
+                    d.dirtyValues.channelsModel.append(modelData)
 
                     inSelector.itemsModel = channelsSelectionModel
                     close()

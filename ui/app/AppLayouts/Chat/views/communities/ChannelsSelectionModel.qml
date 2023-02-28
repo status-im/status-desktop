@@ -38,28 +38,28 @@ SortFilterProxyModel {
 
         property var metadata: new Map()
 
-        function get(itemId, key) {
-            const item = metadata.get(itemId)
-            return !!item ? item[key] : ""
+        function get(key, role) {
+            const item = metadata.get(key)
+            return !!item ? item[role] : ""
         }
     }
 
     proxyRoles: [
         ExpressionRole {
             name: "text"
-            expression: d.get(model.itemId, name)
+            expression: d.get(model.key, name)
         },
         ExpressionRole {
             name: "imageSource"
-            expression: d.get(model.itemId, name)
+            expression: d.get(model.key, name)
         },
         ExpressionRole {
             name: "emoji"
-            expression: d.get(model.itemId, name)
+            expression: d.get(model.key, name)
         },
         ExpressionRole {
             name: "color"
-            expression: d.get(model.itemId, name)
+            expression: d.get(model.key, name)
         },
         ExpressionRole {
             name: "operator"
