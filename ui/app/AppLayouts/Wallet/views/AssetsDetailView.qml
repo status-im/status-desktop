@@ -51,7 +51,7 @@ Item {
         width: parent.width
         asset.name: token && token.symbol ? Style.png("tokens/%1".arg(token.symbol)) : ""
         asset.isImage: true
-        primaryText: token ? token.name : ""
+        primaryText: token.name ?? ""
         secondaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkBalance) : ""
         tertiaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkCurrencyBalance) : ""
         balances: token && token.balances ? token.balances : null
@@ -290,7 +290,7 @@ Item {
                 Layout.fillWidth: true
             }
             InformationTile {
-                readonly property double changePctHour: token ? token.changePctHour : 0
+                readonly property double changePctHour: token.changePctHour ?? 0
                 maxWidth: parent.width
                 primaryText: qsTr("Hour")
                 secondaryText: changePctHour ? "%1%".arg(LocaleUtils.numberToLocaleString(changePctHour, 2)) : "---"
@@ -299,7 +299,7 @@ Item {
                                                                                                          Theme.palette.successColor1
             }
             InformationTile {
-                readonly property double changePctDay: token ? token.changePctDay : 0
+                readonly property double changePctDay: token.changePctDay ?? 0
                 maxWidth: parent.width
                 primaryText: qsTr("Day")
                 secondaryText: changePctDay ? "%1%".arg(LocaleUtils.numberToLocaleString(changePctDay, 2)) : "---"
@@ -308,7 +308,7 @@ Item {
                                                                                                        Theme.palette.successColor1
             }
             InformationTile {
-                readonly property double changePct24hour: token ? token.changePct24hour : 0
+                readonly property double changePct24hour: token.changePct24hour ?? 0
                 maxWidth: parent.width
                 primaryText: qsTr("24 Hours")
                 secondaryText: changePct24hour ? "%1%".arg(LocaleUtils.numberToLocaleString(changePct24hour, 2)) : "---"
@@ -355,7 +355,7 @@ Item {
                         font.pixelSize: 15
                         lineHeight: 22
                         lineHeightMode: Text.FixedHeight
-                        text: token ? token.description : ""
+                        text: token.description ?? ""
                         color: Theme.palette.directColor1
                         elide: Text.ElideRight
                         wrapMode: Text.Wrap
@@ -390,7 +390,7 @@ Item {
 
                             image.source: token  && token.builtOn !== "" ? Style.svg("tiny/" + RootStore.getNetworkIconUrl(token.builtOn)) : ""
                             tagPrimaryLabel.text: token && token.builtOn !== "" ? RootStore.getNetworkName(token.builtOn) : "---"
-                            tagSecondaryLabel.text: token && token.address !== "" ? token.address : "---"
+                            tagSecondaryLabel.text: token.address ?? "---"
                             visible: typeof token != "undefined" && token && token.builtOn !== "" && token.address !== ""
                             customBackground: Component {
                                 Rectangle {

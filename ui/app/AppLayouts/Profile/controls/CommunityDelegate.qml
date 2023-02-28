@@ -1,6 +1,4 @@
 import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core 0.1
 
 StatusListItem {
     property var community

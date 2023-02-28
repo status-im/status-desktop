@@ -126,7 +126,7 @@ ColumnLayout {
             spacing: 12
             Rectangle {
                 Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: Style.curent.padding
+                Layout.topMargin: Style.current.padding
                 Layout.preferredWidth: parent.width - 100
                 Layout.preferredHeight: 1
                 color: Theme.palette.directColor8
