@@ -27,16 +27,54 @@ StatusListItem {
     property string networkColor
     property string networkName
     property string shortTimeStamp
-    property string savedAddressName
+    property string savedAddressNameTo
+    property string savedAddressNameFrom
+    property bool isSummary: false
 
+    readonly property bool isModelDataValid: modelData !== undefined && !!modelData
+    readonly property bool isNFT: isModelDataValid && modelData.isNFT
+    readonly property string name: isModelDataValid ?
+                                        root.isNFT ?
+                                            modelData.nftName ? 
+                                                modelData.nftName : 
+                                                "#" + modelData.tokenID :
+                                            root.isSummary ? root.symbol : RootStore.formatCurrencyAmount(cryptoValue, symbol) :
+                                        "N/A"
+
+    readonly property string image: isModelDataValid ?
+                                        root.isNFT ?
+                                            modelData.nftImageUrl ? 
+                                                modelData.nftImageUrl : 
+                                                "" :
+                                            root.symbol ?
+                                                Style.png("tokens/%1".arg(root.symbol)) :
+                                                "" :
+                                        ""
+    
+    readonly property string toAddress: !!savedAddressNameTo ?
+                                            savedAddressNameTo :
+                                            isModelDataValid ?
+                                                Utils.compactAddress(modelData.to, 4) :
+                                                ""
+
+    readonly property string fromAddress: !!savedAddressNameFrom ?
+                                            savedAddressNameFrom :
+                                            isModelDataValid ?
+                                                Utils.compactAddress(modelData.from, 4) :
+                                                ""
     state: "normal"
     asset.isImage: !loading
-    asset.name: root.symbol ? Style.png("tokens/%1".arg(root.symbol)) : ""
+    asset.name: root.image
     asset.isLetterIdenticon: loading
-    title: modelData !== undefined && !!modelData ?
-               isIncoming ? qsTr("Receive %1").arg(root.symbol) : !!savedAddressName ?
-                            qsTr("Send %1 to %2").arg(root.symbol).arg(savedAddressName) :
-                            qsTr("Send %1 to %2").arg(root.symbol).arg(Utils.compactAddress(modelData.to, 4)): ""
+    title: root.isModelDataValid ?
+                isIncoming ? 
+                    isSummary ?
+                        qsTr("Receive %1").arg(root.name) :
+                        qsTr("Received %1 from %2").arg(root.name).arg(root.fromAddress):
+                    isSummary ?
+                        qsTr("Send %1 to %2").arg(root.name).arg(root.toAddress) :
+                        qsTr("Sent %1 to %2").arg(root.name).arg(root.toAddress) :
+                ""
     subTitle: shortTimeStamp
     inlineTagModel: 1
     inlineTagDelegate: InformationTag {
@@ -63,6 +101,7 @@ StatusListItem {
     }
     components: [
         ColumnLayout {
+            visible: !root.isNFT
             Row {
                 Layout.alignment: Qt.AlignRight
                 spacing: 4

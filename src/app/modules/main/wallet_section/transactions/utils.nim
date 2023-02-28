@@ -3,6 +3,7 @@ import ../../../../global/global_singleton
 
 import ../../../../../app_service/service/transaction/dto
 import ../../../../../app_service/service/currency/dto as currency_dto
+import ../../../../../app_service/service/collectible/dto as collectible_dto
 import ../../../shared_models/currency_amount
 import ../../../shared_models/currency_amount_utils
 
@@ -48,4 +49,34 @@ proc transactionToItem*(t: TransactionDto, resolvedSymbol: string, tokenFormat: 
         hex2GweiCurrencyAmount(t.totalFees, gweiFormat),
         hex2GweiCurrencyAmount(t.maxTotalFees, gweiFormat),
         resolvedSymbol
+      )
+
+proc transactionToNFTItem*(t: TransactionDto, c: CollectibleDto, ethFormat: CurrencyFormatDto, gweiFormat: CurrencyFormatDto): Item =
+  return initNFTItem(
+        t.id,
+        t.typeValue,
+        t.address,
+        t.blockNumber,
+        t.blockHash,
+        toInt(t.timestamp),
+        hex2EthCurrencyAmount(t.gasPrice, ethFormat),
+        parseInt(singletonInstance.utils.hex2Dec(t.gasLimit)),
+        parseInt(singletonInstance.utils.hex2Dec(t.gasUsed)),
+        t.nonce,
+        t.txStatus,
+        t.fromAddress,
+        t.to,
+        t.contract,
+        t.chainId,
+        hex2GweiCurrencyAmount(t.maxFeePerGas, gweiFormat),
+        hex2GweiCurrencyAmount(t.maxPriorityFeePerGas, gweiFormat),
+        t.input,
+        t.txHash,
+        t.multiTransactionID,
+        hex2GweiCurrencyAmount(t.baseGasFees, gweiFormat),
+        hex2GweiCurrencyAmount(t.totalFees, gweiFormat),
+        hex2GweiCurrencyAmount(t.maxTotalFees, gweiFormat),
+        t.tokenId,
+        c.name,
+        c.imageUrl
       )

@@ -16,7 +16,6 @@ type
     GasUsed
     Nonce
     TxStatus
-    Value
     From
     To
     Contract
@@ -27,11 +26,18 @@ type
     TxHash
     MultiTransactionID
     IsTimeStamp
+    IsNFT
     BaseGasFees
     TotalFees
     MaxTotalFees
-    Symbol
     LoadingTransaction
+    # Applies only to IsNFT == false
+    Value
+    Symbol
+    # Applies only to IsNFT == true
+    TokenID
+    NFTName
+    NFTImageURL
 
 QtObject:
   type
@@ -93,11 +99,15 @@ QtObject:
       ModelRole.TxHash.int:"txHash",
       ModelRole.MultiTransactionID.int:"multiTransactionID",
       ModelRole.IsTimeStamp.int: "isTimeStamp",
+      ModelRole.IsNFT.int: "isNFT",
       ModelRole.BaseGasFees.int: "baseGasFees",
       ModelRole.TotalFees.int: "totalFees",
       ModelRole.MaxTotalFees.int: "maxTotalFees",
       ModelRole.Symbol.int: "symbol",
-      ModelRole.LoadingTransaction.int: "loadingTransaction"
+      ModelRole.LoadingTransaction.int: "loadingTransaction",
+      ModelRole.TokenID.int: "tokenID",
+      ModelRole.NFTName.int: "nftName",
+      ModelRole.NFTImageURL.int: "nftImageUrl"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -154,7 +164,9 @@ QtObject:
     of ModelRole.MultiTransactionID:
       result = newQVariant(item.getMultiTransactionID())
     of ModelRole.IsTimeStamp:
-      result = newQVariant(item.getIsTimeStamp())      
+      result = newQVariant(item.getIsTimeStamp())
+    of ModelRole.IsNFT:
+      result = newQVariant(item.getIsNFT())
     of ModelRole.BaseGasFees:
       result = newQVariant(item.getBaseGasFees())
     of ModelRole.TotalFees:
@@ -165,6 +177,12 @@ QtObject:
       result = newQVariant(item.getSymbol())
     of ModelRole.LoadingTransaction:
       result = newQVariant(item.getLoadingTransaction())
+    of ModelRole.TokenID:
+      result = newQVariant(item.getTokenID().toString())
+    of ModelRole.NFTName:
+      result = newQVariant(item.getNFTName())
+    of ModelRole.NFTImageURL:
+      result = newQVariant(item.getNFTImageURL())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

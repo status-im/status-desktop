@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, strutils, strformat, stint
 
 import ./collections_item as collections_item
 
@@ -81,7 +81,7 @@ QtObject:
     of CollectionRole.ImageUrl:
       result = newQVariant(item.getImageUrl())
     of CollectionRole.OwnedAssetCount:
-      result = newQVariant(item.getOwnedAssetCount())
+      result = newQVariant(item.getOwnedAssetCount().toString())
     of CollectionRole.CollectiblesLoaded:
       result = newQVariant(item.getCollectiblesLoaded())
     of CollectionRole.CollectiblesModel:

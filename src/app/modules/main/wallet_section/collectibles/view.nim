@@ -42,11 +42,11 @@ QtObject:
     read = getFlatModel
     notify = flatModelChanged
 
-  proc fetchCollections*(self: View) {.slot.} =
-    self.delegate.fetchCollections()
+  proc fetchOwnedCollections*(self: View) {.slot.} =
+    self.delegate.fetchOwnedCollections()
 
-  proc fetchCollectibles*(self: View, collectionSlug: string) {.slot.} =
-    self.delegate.fetchCollectibles(collectionSlug)
+  proc fetchOwnedCollectibles*(self: View, collectionSlug: string) {.slot.} =
+    self.delegate.fetchOwnedCollectibles(collectionSlug)
 
   proc setCollections*(self: View, collections: seq[collections_item.Item], collectionsLoaded: bool) =
     self.model.setCollections(collections, collectionsLoaded)

@@ -31,21 +31,21 @@ proc delete*(self: Controller) =
   discard
 
 proc refreshCollections*(self: Controller, chainId: int, address: string) =
-  let collections = self.collectibleService.getCollections(chainId, address)
+  let collections = self.collectibleService.getOwnedCollections(chainId, address)
   self.delegate.setCollections(collections)
 
 proc refreshCollectibles*(self: Controller, chainId: int, address: string, collectionSlug: string) =
-  let collection = self.collectibleService.getCollection(chainId, address, collectionSlug)
+  let collection = self.collectibleService.getOwnedCollection(chainId, address, collectionSlug)
   self.delegate.updateCollection(collection)
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_COLLECTIONS_UPDATED) do(e:Args):
-    let args = CollectionsUpdateArgs(e)
+  self.events.on(SIGNAL_OWNED_COLLECTIONS_UPDATED) do(e:Args):
+    let args = OwnedCollectionsUpdateArgs(e)
     self.refreshCollections(args.chainId, args.address)
-    self.collectibleService.fetchAllCollectibles(args.chainId, args.address)
+    self.collectibleService.fetchAllOwnedCollectibles(args.chainId, args.address)
   
-  self.events.on(SIGNAL_COLLECTIBLES_UPDATED) do(e:Args):
-    let args = CollectiblesUpdateArgs(e)
+  self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATED) do(e:Args):
+    let args = OwnedCollectiblesUpdateArgs(e)
     self.refreshCollectibles(args.chainId, args.address, args.collectionSlug)
 
 proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
@@ -54,8 +54,8 @@ proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_serv
 proc getNetwork*(self: Controller): network_service.NetworkDto =
   return self.networkService.getNetworkForCollectibles()
 
-proc fetchCollections*(self: Controller, chainId: int, address: string) =
-  self.collectibleService.fetchCollections(chainId, address)
+proc fetchOwnedCollections*(self: Controller, chainId: int, address: string) =
+  self.collectibleService.fetchOwnedCollections(chainId, address)
 
-proc fetchCollectibles*(self: Controller, chainId: int, address: string, collectionSlug: string) =
-  self.collectibleService.fetchCollectibles(chainId, address, collectionSlug)
+proc fetchOwnedCollectibles*(self: Controller, chainId: int, address: string, collectionSlug: string) =
+  self.collectibleService.fetchOwnedCollectibles(chainId, address, collectionSlug)

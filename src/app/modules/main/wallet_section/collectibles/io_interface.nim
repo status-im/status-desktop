@@ -16,13 +16,13 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method switchAccount*(self: AccessInterface, accountIndex: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method fetchCollections*(self: AccessInterface) {.base.} =
+method fetchOwnedCollections*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setCollections*(self: AccessInterface, collections: CollectionsData) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method fetchCollectibles*(self: AccessInterface, collectionSlug: string) {.base.} =
+method fetchOwnedCollectibles*(self: AccessInterface, collectionSlug: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method updateCollection*(self: AccessInterface, collection: CollectionData) {.base.} =

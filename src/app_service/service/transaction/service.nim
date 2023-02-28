@@ -1,5 +1,6 @@
 import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm, math, random
 
+import ../../../backend/collectibles as collectibles
 import ../../../backend/transactions as transactions
 import ../../../backend/backend
 import ../../../backend/eth
@@ -16,6 +17,7 @@ import ../wallet_account/service as wallet_account_service
 import ../network/service as network_service
 import ../token/service as token_service
 import ../settings/service as settings_service
+import ../collectible/dto
 import ../eth/dto/transaction as transaction_data_dto
 import ../eth/dto/[method_dto, coder, method_dto]
 import ./dto as transaction_dto
@@ -31,6 +33,9 @@ logScope:
 
 include async_tasks
 include ../../common/json_utils
+
+# Maximum number of collectibles to be fetched at a time
+const collectiblesLimit = 200 
 
 # Signals which may be emitted by this service:
 const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
@@ -68,6 +73,7 @@ type
 type
   TransactionsLoadedArgs* = ref object of Args
     transactions*: seq[TransactionDto]
+    collectibles*: seq[CollectibleDto]
     address*: string
     wasFetchMore*: bool
     allTxLoaded*: bool
@@ -200,15 +206,19 @@ QtObject:
       self.watchTransaction(tx.txHash, tx.fromAddress, tx.to, tx.typeValue, tx.input, tx.chainId, track = false)
     return pendingTransactions
 
-  proc setTrxHistoryResult*(self: Service, historyJSON: string) {.slot.} =
+  proc onTransactionsLoaded*(self: Service, historyJSON: string) {.slot.} =
     let historyData = parseJson(historyJSON)
     let address = historyData["address"].getStr
     let chainID = historyData["chainId"].getInt
     let wasFetchMore = historyData["loadMore"].getBool
     let allTxLoaded = historyData["allTxLoaded"].getBool
     var transactions: seq[TransactionDto] = @[]
+    var collectibles: seq[CollectibleDto] = @[]
     for tx in historyData["history"].getElems():
       transactions.add(tx.toTransactionDto())
+
+    for c in historyData["collectibles"].getElems():
+      collectibles.add(c.toCollectibleDto())
 
     if self.allTxLoaded.hasKey(address):
       self.allTxLoaded[address] = self.allTxLoaded[address] and allTxLoaded
@@ -218,6 +228,7 @@ QtObject:
     # emit event
     self.events.emit(SIGNAL_TRANSACTIONS_LOADED, TransactionsLoadedArgs(
       transactions: transactions,
+      collectibles: collectibles,
       address: address,
       wasFetchMore: wasFetchMore
     ))
@@ -244,9 +255,10 @@ QtObject:
           address: address,
           tptr: cast[ByteAddress](loadTransactionsTask),
           vptr: cast[ByteAddress](self.vptr),
-          slot: "setTrxHistoryResult",
+          slot: "onTransactionsLoaded",
           toBlock: toBlock,
           limit: limit,
+          collectiblesLimit: collectiblesLimit,
           loadMore: loadMore,
           chainId: network.chainId,
         )

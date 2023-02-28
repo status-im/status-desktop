@@ -84,7 +84,7 @@ method switchAccount*(self: Module, accountIndex: int) =
   self.address = account.address
 
   self.controller.refreshCollections(self.chainId, self.address)
-  self.controller.fetchCollections(self.chainId, self.address)
+  self.controller.fetchOwnedCollections(self.chainId, self.address)
 
   self.currentCollectibleModule.setCurrentAddress(network, self.address)
 
@@ -115,8 +115,8 @@ method updateCollection*(self: Module, collection: CollectionData) =
     collection.collectiblesLoaded
   )
 
-method fetchCollections*(self: Module) =
-  self.controller.fetchCollections(self.chainId, self.address)
+method fetchOwnedCollections*(self: Module) =
+  self.controller.fetchOwnedCollections(self.chainId, self.address)
 
-method fetchCollectibles*(self: Module, collectionSlug: string) =
-  self.controller.fetchCollectibles(self.chainId, self.address, collectionSlug)
+method fetchOwnedCollectibles*(self: Module, collectionSlug: string) =
+  self.controller.fetchOwnedCollectibles(self.chainId, self.address, collectionSlug)

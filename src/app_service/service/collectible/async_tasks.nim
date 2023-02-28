@@ -1,32 +1,32 @@
 type
-  FetchCollectionsTaskArg = ref object of QObjectTaskArg
+  FetchOwnedCollectionsTaskArg = ref object of QObjectTaskArg
     chainId*: int
     address*: string
 
-const fetchCollectionsTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[FetchCollectionsTaskArg](argEncoded)
+const fetchOwnedCollectionsTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchOwnedCollectionsTaskArg](argEncoded)
   let output = %* {
     "chainId": arg.chainId,
     "address": arg.address,
     "collections": ""
   }
   try:
-    let response = backend.getOpenseaCollectionsByOwner(arg.chainId, arg.address)
+    let response = collectibles.getOpenseaCollectionsByOwner(arg.chainId, arg.address)
     output["collections"] = response.result
   except Exception as e:
     let errDesription = e.msg
-    error "error fetchCollectionsTaskArg: ", errDesription
+    error "error fetchOwnedCollectionsTaskArg: ", errDesription
   arg.finish(output)
 
 type
-  FetchCollectiblesTaskArg = ref object of QObjectTaskArg
+  FetchOwnedCollectiblesTaskArg = ref object of QObjectTaskArg
     chainId*: int
     address*: string
     collectionSlug: string
     limit: int
 
-const fetchCollectiblesTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[FetchCollectiblesTaskArg](argEncoded)
+const fetchOwnedCollectiblesTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchOwnedCollectiblesTaskArg](argEncoded)
   let output = %* {
     "chainId": arg.chainId,
     "address": arg.address,
@@ -34,7 +34,27 @@ const fetchCollectiblesTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcal
     "collectibles": ""
   }
   try:
-    let response = backend.getOpenseaAssetsByOwnerAndCollection(arg.chainId, arg.address, arg.collectionSlug, arg.limit)
+    let response = collectibles.getOpenseaAssetsByOwnerAndCollection(arg.chainId, arg.address, arg.collectionSlug, arg.limit)
+    output["collectibles"] = response.result
+  except Exception as e:
+    let errDesription = e.msg
+    error "error fetchOwnedCollectiblesTaskArg: ", errDesription
+  arg.finish(output)
+
+type
+  FetchCollectiblesTaskArg = ref object of QObjectTaskArg
+    chainId*: int
+    ids*: seq[collectibles.NFTUniqueID]
+    limit: int
+
+const fetchCollectiblesTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchCollectiblesTaskArg](argEncoded)
+  let output = %* {
+    "chainId": arg.chainId,
+    "collectibles": ""
+  }
+  try:
+    let response = collectibles.getOpenseaAssetsByNFTUniqueID(arg.chainId, arg.ids, arg.limit)
     output["collectibles"] = response.result
   except Exception as e:
     let errDesription = e.msg
