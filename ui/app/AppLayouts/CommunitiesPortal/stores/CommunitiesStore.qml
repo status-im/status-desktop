@@ -101,7 +101,7 @@ QtObject {
     }
 
     function setActiveCommunity(communityId) {
-        mainModule.setActiveSectionById(communityId);
+        root.mainModuleInst.setActiveSectionById(communityId);
     }
 
     function navigateToCommunity(communityId) {

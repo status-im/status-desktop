@@ -287,6 +287,7 @@ QtObject {
                 id: profilePopup
                 profileStore: rootStore.profileSectionStore.profileStore
                 contactsStore: rootStore.profileSectionStore.contactsStore
+                communitiesModel: rootStore.profileSectionStore.communitiesList
 
                 onClosed: {
                     if (profilePopup.parentPopup) {

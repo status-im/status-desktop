@@ -163,6 +163,14 @@ Item {
                 Global.settingsSubsection = subsection;
             }
         }
+
+        function onOpenSendModal(address: string) {
+            sendModal.open(address)
+        }
+
+        function onSwitchToCommunity(communityId: string) {
+            communitiesPortalLayoutContainer.communitiesStore.setActiveCommunity(communityId)
+        }
     }
 
     function changeAppSectionBySectionId(sectionId) {
@@ -1119,7 +1127,10 @@ Item {
                 this.open = false
             }
             onLinkActivated: {
-                Qt.openUrlExternally(link);
+                if (link.startsWith("#")) // internal link to section
+                    globalConns.onAppSectionBySectionTypeChanged(link.substring(1))
+                else
+                    Global.openLink(link)
             }
 
             onClose: {

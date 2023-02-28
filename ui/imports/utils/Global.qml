@@ -47,6 +47,9 @@ QtObject {
     signal setNthEnabledSectionActive(int nthSection)
     signal appSectionBySectionTypeChanged(int sectionType, int subsection)
 
+    signal openSendModal(string address)
+    signal switchToCommunity(string communityId)
+
     signal playSendMessageSound()
     signal playNotificationSound()
     signal playErrorSound()

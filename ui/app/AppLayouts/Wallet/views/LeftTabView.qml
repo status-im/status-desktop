@@ -169,9 +169,9 @@ Rectangle {
                 components: [
                     StatusIcon {
                         icon: {
-                            if (model.walletType == "watch")
+                            if (model.walletType === Constants.watchWalletType)
                                 return "show"
-                            else if (model.walletType == "key")
+                            if (model.walletType === Constants.keyWalletType)
                                 return "keycard"
 
                             return ""

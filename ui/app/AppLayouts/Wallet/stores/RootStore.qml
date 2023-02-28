@@ -141,6 +141,10 @@ QtObject {
             walletSection.switchAccount(newIndex)
     }
 
+    function switchAccountByAddress(address) {
+        walletSection.switchAccountByAddress(address)
+    }
+
     function generateNewAccount(password, accountName, color, emoji, path, derivedFrom) {
         return walletSectionAccounts.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)
     }
@@ -196,6 +200,10 @@ QtObject {
 
     function selectCollectible(slug, id) {
         walletSectionCurrentCollectible.update(slug, id)
+    }
+
+    function getNameForSavedWalletAddress(address) {
+        return walletSectionSavedAddresses.getNameByAddress(address)
     }
 
     function createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens) {

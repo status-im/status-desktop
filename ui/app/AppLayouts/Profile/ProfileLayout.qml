@@ -107,6 +107,7 @@ StatusSectionLayout {
                 profileStore: root.store.profileStore
                 privacyStore: root.store.privacyStore
                 contactsStore: root.store.contactsStore
+                communitiesModel: root.store.communitiesList
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth
             }
