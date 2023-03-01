@@ -2,6 +2,8 @@
 #include <QQmlEngine>
 #include "src/TextUtils.h"
 
+#include "StatusQ/typesregistration.h"
+
 class Setup : public QObject
 {
     Q_OBJECT
@@ -21,6 +23,8 @@ public slots:
             engine->addImportPath(path);
 
         qmlRegisterSingletonType<TextUtils>("TextUtils", 1, 0, "TextUtils", &TextUtils::qmlInstance);
+
+        registerStatusQTypes();
     }
 };
 
