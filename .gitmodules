@@ -26,6 +26,7 @@
 [submodule "vendor/semver.nim"]
 	path = vendor/semver.nim
 	url = https://github.com/euantorano/semver.nim
+	branch = main
 [submodule "spellchecking"]
 	path = spellchecking
 	url = https://github.com/status-im/desktop-spellchecking.git
@@ -56,9 +57,6 @@
 [submodule "vendor/isaac"]
 	path = vendor/isaac
 	url = https://github.com/pragmagic/isaac.git
-[submodule "vendor/news"]
-	path = vendor/news
-	url = https://github.com/Tormund/news
 [submodule "vendor/nim-bearssl"]
 	path = vendor/nim-bearssl
 	url = https://github.com/status-im/nim-bearssl
