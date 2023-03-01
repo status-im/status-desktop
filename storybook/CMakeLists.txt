@@ -59,6 +59,7 @@ add_executable(
   ${CORE_JS_FILES}
   ${STORYBOOK_QML_FILES}
   figma.json
+  README.md
 )
 
 target_compile_definitions(${PROJECT_NAME}
