@@ -10,9 +10,28 @@ QtObject {
         if (Number.isInteger(num))
             return 0
 
-        let parts = num.toString().split('.')
-        // Decimal trick doesn't work for numbers represented in scientific notation, hence the hardcoded fallback
-        return (parts.length > 1 && parts[1].indexOf("e") == -1) ? parts[1].length : 2
+        // According to the JS Reference:
+        //
+        // Scientific notation is used if the radix is 10 and the number's
+        // magnitude (ignoring sign) is greater than or equal to 10^21 or less
+        // than 10^-6. In this case, the returned string always explicitly
+        // specifies the sign of the exponent.
+        //
+        // In order to take it into account, numbers in scientific notation
+        // is handled separately.
+
+        if (Math.abs(num) < 10**-6) {
+            const split = num.toString().split('e-')
+            const base = parseFloat(split[0])
+            const exp = parseInt(split[1])
+            return fractionalPartLength(base) + exp
+        }
+
+        if (num >= 10**21) {
+            return 0
+        }
+
+        return num.toString().split('.')[1].length
     }
 
     function stripTrailingZeroes(numStr, locale) {
