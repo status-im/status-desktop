@@ -1,6 +1,6 @@
 import NimQml, stint, json, sequtils, sugar
 
-import ./io_interface, ./view, ./controller, ./item, ./utils
+import ./io_interface, ./view, ./controller, ./item, ./utils, ./multi_transaction_item
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
@@ -75,6 +75,22 @@ proc getResolvedSymbol*(self: Module, transaction: TransactionDto): string =
 proc transactionsToItems(self: Module, transactions: seq[TransactionDto], collectibles: seq[CollectibleDto]) : seq[Item] =
   let gweiFormat = self.controller.getCurrencyFormat("Gwei")
   let ethFormat = self.controller.getCurrencyFormat("ETH")
+
+  # TODO: Continue merging multi-transactions with transactions
+  #
+  # let transactionIDs = transactions.filter(t => t.multiTransactionID != MultiTransactionMissingID).map(t => t.multiTransactionID)
+  # let multiTransactions = self.controller.getMultiTransactions(transactionIDs)
+  # for mt in multiTransactions:
+  #   let mtItem = multiTransactionToItem(mt)
+  #
+  # Tip: depending of the new design best will be to replace the transaction.View
+  #   with a new ActivityEntry that contains eighter a transaction or a multi-transaction
+  # Refactor transaction Model to serve ActivityEntry istead of Views
+  #
+  # Here we should filter all transactions that are part of a multi-transaciton
+  #   and add them to the multi-transaction View associated with an ActivityEntry
+  #   and the remaining "free" transactions to the corresponding ActivityEntry
+  # TODO: check TransactionsItem changes
 
   transactions.map(t => (block:
     if t.typeValue == ERC721_TRANSACTION_TYPE:

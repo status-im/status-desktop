@@ -33,7 +33,7 @@ type MultiTransactionDto* = ref object of RootObj
   toAsset* {.serializedFieldName("toAsset").}: string
   fromAmount* {.serializedFieldName("fromAmount").}: string
   multiTxtype* {.serializedFieldName("type").}: MultiTransactionType
-  
+
 type
   TransactionDto* = ref object of RootObj
     id*: string
@@ -150,6 +150,20 @@ proc toPendingTransactionDto*(jsonObj: JsonNode): TransactionDto =
   discard jsonObj.getProp("additionalData", result.additionalData)
   discard jsonObj.getProp("data", result.input)
   discard jsonObj.getProp("symbol", result.symbol)
+
+proc toMultiTransactionDto*(jsonObj: JsonNode): MultiTransactionDto =
+  result = MultiTransactionDto()
+
+  discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("timestamp", result.timestamp)
+  discard jsonObj.getProp("fromAddress", result.fromAddress)
+  discard jsonObj.getProp("toAddress", result.toAddress)
+  discard jsonObj.getProp("fromAsset", result.fromAsset)
+  discard jsonObj.getProp("toAsset", result.toAsset)
+  discard jsonObj.getProp("fromAmount", result.fromAmount)
+  var multiTxType: int
+  discard jsonObj.getProp("type", multiTxType)
+  result.multiTxtype = cast[MultiTransactionType](multiTxType)
 
 proc cmpTransactions*(x, y: TransactionDto): int =
   # Sort proc to compare transactions from a single account.

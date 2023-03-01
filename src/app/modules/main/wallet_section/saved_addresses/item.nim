@@ -25,7 +25,7 @@ proc initItem*(
   result.isTest = isTest
 
 proc `$`*(self: Item): string =
-  result = fmt"""AllTokensItem(
+  result = fmt"""SavedAddressItem(
     name: {self.name},
     address: {self.address},
     favourite: {self.favourite},
