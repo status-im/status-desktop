@@ -1,5 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -42,7 +43,7 @@ Rectangle {
         id: layout
         anchors {
             fill: parent
-            topMargin: 48
+            topMargin: Qt.platform.os === "osx" && Window.visibility !== Window.FullScreen ? 48 : 12 // space reserved for Mac traffic lights (window icons)
             bottomMargin: 24
         }
 

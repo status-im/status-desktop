@@ -195,7 +195,7 @@ StatusWindow {
     Connections {
         target: applicationWindow
         function onClosing(close) {
-            if (Qt.platform.os === "osx") {
+            if (Qt.platform.os === Constants.mac) {
                 loader.sourceComponent = undefined
                 close.accepted = true
             } else {
@@ -261,12 +261,12 @@ StatusWindow {
         visible: true
         icon.source: {
             if (production) {
-                if (Qt.platform.os == "osx")
+                if (Qt.platform.os == Constants.mac)
                     return "imports/assets/icons/status-logo-round-rect.svg"
                 else
                     return "imports/assets/icons/status-logo-circle.svg"
             } else {
-                if (Qt.platform.os == "osx")
+                if (Qt.platform.os == Constants.mac)
                     return "imports/assets/icons/status-logo-dev-round-rect.svg"
                 else
                     return "imports/assets/icons/status-logo-dev-circle.svg"
@@ -345,13 +345,12 @@ StatusWindow {
         id: notificationWindow
     }
 
-    MacTrafficLights {
-//        parent: Overlay.overlay
+    MacTrafficLights { // FIXME should be a direct part of StatusAppNavBar
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.margins: 13
 
-        visible: Qt.platform.os === "osx" && !applicationWindow.isFullScreen
+        visible: Qt.platform.os === Constants.mac && !applicationWindow.isFullScreen
 
         onClose: {
             if (loader.sourceComponent != app) {
@@ -375,9 +374,3 @@ StatusWindow {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.5}
-}
-##^##*/
