@@ -130,6 +130,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusDotsLoadingIndicator"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
