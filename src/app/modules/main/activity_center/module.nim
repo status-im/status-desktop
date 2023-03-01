@@ -303,23 +303,5 @@ method setActivityCenterReadType*(self: Module, readType: int) =
 method getActivityCenterReadType*(self: Module): int =
   return self.controller.getActivityCenterReadType().int
 
-method groupCountersChanged*(self: Module) =
-  self.view.groupCountersChanged()
-
-method getAdminCount*(self: Module): int =
-    return self.controller.getActivityGroupCounter(ActivityCenterGroup.Admin)
-
-method getMentionsCount*(self: Module): int =
-    return self.controller.getActivityGroupCounter(ActivityCenterGroup.Mentions)
-
-method getRepliesCount*(self: Module): int =
-    return self.controller.getActivityGroupCounter(ActivityCenterGroup.Replies)
-
-method getContactRequestsCount*(self: Module): int =
-    return self.controller.getActivityGroupCounter(ActivityCenterGroup.ContactRequests)
-
-method getIdentityRequestsCount*(self: Module): int =
-    return self.controller.getActivityGroupCounter(ActivityCenterGroup.IdentityVerification)
-
-method getMembershipCount*(self: Module): int =
-    return self.controller.getActivityGroupCounter(ActivityCenterGroup.Membership)
+method setActivityGroupCounters*(self: Module, counters: Table[ActivityCenterGroup, int]) =
+  self.view.setActivityGroupCounters(counters)

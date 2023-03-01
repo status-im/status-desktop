@@ -51,6 +51,15 @@ const SIGNAL_MARK_NOTIFICATIONS_AS_DISMISSED* = "markNotificationsAsDismissed"
 
 const DEFAULT_LIMIT = 20
 
+# NOTE: temporary disable Transactions and System and we don't count All group
+const ACTIVITY_GROUPS = @[
+  ActivityCenterGroup.Mentions,
+  ActivityCenterGroup.Replies,
+  ActivityCenterGroup.Membership,
+  ActivityCenterGroup.Admin,
+  ActivityCenterGroup.ContactRequests,
+  ActivityCenterGroup.IdentityVerification
+]
 
 QtObject:
   type Service* = ref object of QObject
@@ -137,17 +146,17 @@ QtObject:
     self.threadpool.start(arg)
 
   proc getActivityCenterNotifications*(self: Service): seq[ActivityCenterNotificationDto] =
-    var cursorVal: JsonNode
-
-    if self.cursor == "":
-      cursorVal = newJNull()
-    else:
-      cursorVal = newJString(self.cursor)
-
     try:
-      let groupTypes = activityCenterNotificationTypesByGroup(self.activeGroup)
-      let callResult = backend.activityCenterNotificationsBy(cursorVal, DEFAULT_LIMIT, groupTypes, self.readType.int, true)
-      let activityCenterNotificationsTuple = parseActivityCenterNotifications(callResult.result)
+      let activityTypes = activityCenterNotificationTypesByGroup(self.activeGroup)
+      let response = backend.activityCenterNotifications(
+        backend.ActivityCenterNotificationsRequest(
+          cursor: self.cursor,
+          limit: DEFAULT_LIMIT,
+          activityTypes: activityTypes,
+          readType: self.readType.int
+        )
+      )
+      let activityCenterNotificationsTuple = parseActivityCenterNotifications(response.result)
 
       self.cursor = activityCenterNotificationsTuple[0];
       result = activityCenterNotificationsTuple[1]
@@ -155,25 +164,41 @@ QtObject:
     except Exception as e:
       error "Error getting activity center notifications", msg = e.msg
 
-  proc getActivityGroupCounter*(self: Service, group: ActivityCenterGroup): int =
+  proc getActivityCenterNotificationsCounters(self: Service, activityTypes: seq[int], readType: ActivityCenterReadType): Table[int, int] =
     try:
-      let groupTypes = activityCenterNotificationTypesByGroup(group)
-      let response = backend.activityCenterNotificationsCountBy(groupTypes, self.readType.int, true)
-
+      let response = backend.activityCenterNotificationsCount(
+        backend.ActivityCenterCountRequest(
+          activityTypes: activityTypes,
+          readType: readType.int,
+        )
+      )
+      var counters = initTable[int, int]()
       if response.result.kind != JNull:
-        return response.result.getInt
-    except Exception as e:
-      error "Error getting activity center notifications group count", msg = e.msg
-
-
-  proc getUnreadActivityCenterNotificationsCount*(self: Service): int =
-    try:
-      let response = backend.unreadActivityCenterNotificationsCount()
-
-      if response.result.kind != JNull:
-        return response.result.getInt
+        for activityType in activityTypes:
+          if response.result.contains($activityType):
+            counters.add(activityType, response.result[$activityType].getInt)
+      return counters
     except Exception as e:
       error "Error getting unread activity center notifications count", msg = e.msg
+
+  proc getActivityGroupCounters*(self: Service): Table[ActivityCenterGroup, int] =
+    let allActivityTypes = activityCenterNotificationTypesByGroup(ActivityCenterGroup.All)
+    let counters = self.getActivityCenterNotificationsCounters(allActivityTypes, self.readType)
+    var groupCounters = initTable[ActivityCenterGroup, int]()
+    for group in ACTIVITY_GROUPS:
+      var groupTotal = 0
+      for activityType in activityCenterNotificationTypesByGroup(group):
+        groupTotal = groupTotal + counters.getOrDefault(activityType, 0)
+      groupCounters.add(group, groupTotal)
+    return groupCounters
+
+  proc getUnreadActivityCenterNotificationsCount*(self: Service): int =
+    let activityTypes = activityCenterNotificationTypesByGroup(ActivityCenterGroup.All)
+    let counters = self.getActivityCenterNotificationsCounters(activityTypes, ActivityCenterReadType.Unread)
+    var total = 0
+    for activityType in activityTypes:
+      total = total + counters.getOrDefault(activityType, 0)
+    return total
 
   proc getHasUnseenActivityCenterNotifications*(self: Service): bool =
     try:
