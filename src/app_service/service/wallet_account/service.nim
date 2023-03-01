@@ -124,7 +124,6 @@ QtObject:
   # Forward declaration
   proc buildAllTokens(self: Service, accounts: seq[string], store: bool)
   proc checkRecentHistory*(self: Service)
-  proc checkConnected(self: Service)
   proc startWallet(self: Service)
   proc handleKeycardActions(self: Service, keycardActions: seq[KeycardActionDto])
   proc handleKeycardsState(self: Service, keycardsState: seq[KeyPairDto])
@@ -216,7 +215,7 @@ QtObject:
     withLock self.walletAccountsLock:
       result = toSeq(self.walletAccounts.values)
 
-  proc getAddresses(self: Service): seq[string] =
+  proc getAddresses*(self: Service): seq[string] =
     withLock self.walletAccountsLock:
       result = toSeq(self.walletAccounts.keys())
 
@@ -254,8 +253,10 @@ QtObject:
         of "wallet-tick-reload":
           self.buildAllTokens(self.getAddresses(), store = true)
           self.checkRecentHistory()
-        of "wallet-tick-check-connected":
-          self.checkConnected()
+
+  proc reloadAccountTokens*(self: Service) =
+    self.buildAllTokens(self.getAddresses(), store = true)
+    self.checkRecentHistory()
 
   proc getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
     let accounts = self.getWalletAccounts()
@@ -274,19 +275,6 @@ QtObject:
       return
 
     discard backend.startWallet()
-
-  proc checkConnected(self: Service) =
-    if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
-      return
-
-    try:
-      # TODO: add event for UI (Waiting for design)
-      discard backend.checkConnected()
-    except Exception as e:
-      let errDescription = e.msg
-      error "error: ", errDescription
-      return
-
 
   proc checkRecentHistory*(self: Service) =
     if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
@@ -861,3 +849,11 @@ QtObject:
             totalTokenBalance += token.getTotalBalanceOfSupportedChains()
 
     return totalTokenBalance
+
+  # needs to be re-written once cache for market, blockchain and collectibles is implemented
+  proc hasCache*(self: Service): bool =
+    withLock self.walletAccountsLock:
+      for address, accountDto in self.walletAccounts:
+        if self.walletAccounts[address].tokens.len > 0:
+          return true
+    return false

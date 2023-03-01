@@ -3,6 +3,7 @@ import io_interface
 import ../../../../../app_service/service/collectible/service as collectible_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
+import ../../../../../app_service/service/network_connection/service as network_connection_service
 import ../../../../core/eventemitter
 
 type
@@ -38,6 +39,12 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED) do(e:Args):
     let args = OwnedCollectiblesUpdateArgs(e)
     self.refreshCollectibles(args.chainId, args.address)
+
+  self.events.on(SIGNAL_REFRESH_COLLECTIBLES) do(e:Args):
+    let args = RetryCollectibleArgs(e)
+    let chainId = self.networkService.getNetworkForCollectibles().chainId
+    for address in args.addresses:
+      self.refreshCollectibles(chainId, address)
 
 proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)

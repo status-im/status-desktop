@@ -646,6 +646,19 @@ QtObject {
     readonly property string seedWalletType: "seed"
     readonly property string generatedWalletType: "generated"
 
+
+    readonly property QtObject walletConnections: QtObject {
+        readonly property string collectibles: "collectibles"
+        readonly property string blockchains: "blockchains"
+        readonly property string market: "market"
+    }
+
+    enum ConnectionStatus {
+        Success = 0,
+        Failure = 1,
+        Retrying = 2
+    }
+
     readonly property string dummyText: "Dummy"
     readonly property int dummyModelItems: 25
 

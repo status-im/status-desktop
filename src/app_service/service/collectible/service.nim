@@ -107,6 +107,14 @@ QtObject:
   proc init*(self: Service) =
     discard
 
+  # needs to be re-written once cache for colletibles works
+  proc areCollectionsLoaded*(self: Service): bool =
+    for chainId, adressesData in self.ownershipData:
+      for address, collectionsData in adressesData:
+        if collectionsData.allLoaded:
+          return true
+    return false
+
   proc prepareOwnershipData(self: Service, chainId: int, address: string, reset: bool = false) =
     if not self.ownershipData.hasKey(chainId):
       self.ownershipData[chainId] = newTable[string, CollectiblesData]()
