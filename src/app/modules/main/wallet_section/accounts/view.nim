@@ -188,7 +188,7 @@ QtObject:
         watchOnly.add(item)
 
       # Accounts imported with Seed phrase
-      elif item.getWalletType() == SEED:
+      elif item.getWalletType() == SEED and imported.all(x => cmpIgnoreCase(x.getDerivedfrom(), item.getDerivedFrom()) != 0):
         var generatedAccs1: Model = newModel()
         var filterItems: seq[Item] = items.filter(x => cmpIgnoreCase(x.getDerivedFrom(), item.getDerivedFrom()) == 0)
         generatedAccs1.setItems(filterItems)

@@ -419,6 +419,9 @@ proc buildKeyPairsList[T](self: Module[T], excludeAlreadyMigratedPairs: bool): s
       if(items[i].getPairType() == keyPairType.int):
         result.inc
 
+  let containsItemWithDerivationPath = proc(items: seq[KeyPairItem], derivedFromAddress: string): bool =
+    return items.any(x => cmpIgnoreCase(x.getDerivedFrom(), derivedFromAddress) == 0)
+
   let accounts = self.controller.getWalletAccounts()
   var items: seq[KeyPairItem]
   for a in accounts:
@@ -442,7 +445,7 @@ proc buildKeyPairsList[T](self: Module[T], excludeAlreadyMigratedPairs: bool): s
         item.addAccount(newKeyPairAccountItem(ga.name, ga.path, ga.address, ga.publicKey, ga.emoji, ga.color, icon, balance = 0.0))
       items.insert(item, 0) # Status Account must be at first place
       continue
-    if a.walletType == WalletTypeSeed:
+    if a.walletType == WalletTypeSeed and not containsItemWithDerivationPath(items, a.derivedfrom):
       let diffImports = countOfKeyPairsForType(items, KeyPairType.SeedImport)
       var item = newKeyPairItem(keyUid = a.keyUid,
         pubKey = a.publicKey,
@@ -458,7 +461,7 @@ proc buildKeyPairsList[T](self: Module[T], excludeAlreadyMigratedPairs: bool): s
         item.addAccount(newKeyPairAccountItem(ga.name, ga.path, ga.address, ga.publicKey, ga.emoji, ga.color, icon = "", balance = 0.0))
       items.add(item)
       continue
-    if a.walletType == WalletTypeKey:
+    if a.walletType == WalletTypeKey and not containsItemWithDerivationPath(items, a.derivedfrom):
       let diffImports = countOfKeyPairsForType(items, KeyPairType.PrivateKeyImport)
       var item = newKeyPairItem(keyUid = a.keyUid,
         pubKey = a.publicKey,
