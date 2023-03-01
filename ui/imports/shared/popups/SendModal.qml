@@ -484,7 +484,7 @@ StatusDialog {
         maxFiatFees: popup.isLoading ? "..." : popup.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, popup.store.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: d.recipientReady && amountToSendInput.cryptoValueToSend > 0 && !d.errorMode && !!amountToSendInput.input.text && amountToSendInput.input.valid
+        visible: d.recipientReady && amountToSendInput.cryptoValueToSend >= 0 && !d.errorMode && !!amountToSendInput.input.text && amountToSendInput.input.valid
         onNextButtonClicked: popup.sendTransaction()
     }
 
