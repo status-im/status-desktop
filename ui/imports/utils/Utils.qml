@@ -603,6 +603,20 @@ QtObject {
             return 34
     }
 
+    function getTimerString(timeInSecs) {
+        let result = ""
+        const hour = Math.floor(timeInSecs/60/60)
+        const mins = Math.floor(timeInSecs/60)
+        const secs = Math.floor(timeInSecs%60)
+        if(hour > 0 )
+            result += qsTr(" %n hour(s) ", "", hour)
+        if(mins > 0)
+            result += qsTr(" %n min(s) ", "", mins)
+        if(secs > 0)
+            result += qsTr(" %n sec(s) ", "", secs)
+        return result
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)

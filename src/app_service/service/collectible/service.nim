@@ -155,6 +155,14 @@ QtObject:
         of "wallet-tick-reload":
           self.resetAllOwnedCollectibles()
 
+  # needs to be re-written once cache for colletibles works
+  proc areCollectionsLoaded*(self: Service): bool =
+    for chainId, adressesData in self.ownershipData:
+      for address, collectionsData in adressesData:
+        if collectionsData.allLoaded:
+          return true
+    return false
+
   proc prepareOwnershipData(self: Service, chainId: int, address: string) =
     if not self.accountsOwnershipData.hasKey(chainId):
       self.accountsOwnershipData[chainId] = newAddressesData()
