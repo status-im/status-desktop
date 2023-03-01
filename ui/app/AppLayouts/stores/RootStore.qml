@@ -156,4 +156,29 @@ QtObject {
     function resolveENS(value) {
         mainModuleInst.resolveENS(value, "")
     }
+
+    property var networkConnectionModuleInst: networkConnectionModule
+
+    function getChainIdsJointString(chainIdsDown) {
+        let jointChainIdString = ""
+        for (const chain of chainIdsDown) {
+            jointChainIdString = (!!jointChainIdString) ? jointChainIdString + " & " : jointChainIdString
+            jointChainIdString += allNetworks.getNetworkFullName(parseInt(chain))
+        }
+        return jointChainIdString
+    }
+
+    function retryConnection(websiteDown) {
+        switch(websiteDown) {
+        case Constants.walletConnections.blockchains:
+            networkConnectionModule.refreshBlockchainValues()
+            break
+        case Constants.walletConnections.market:
+            networkConnectionModule.refreshMarketValues()
+            break
+        case Constants.walletConnections.collectibles:
+            networkConnectionModule.refreshCollectiblesValues()
+            break
+        }
+    }
 }

@@ -23,6 +23,7 @@ import communities/module as communities_module
 import node_section/module as node_section_module
 import networks/module as networks_module
 import communities/tokens/models/token_item
+import network_connection/module as network_connection_module
 import ../../../app_service/service/contacts/dto/contacts
 
 import ../../../app_service/service/keychain/service as keychain_service
@@ -57,6 +58,7 @@ import ../../../app_service/service/community_tokens/service as community_tokens
 import ../../../app_service/service/network/service as network_service
 import ../../../app_service/service/general/service as general_service
 import ../../../app_service/service/keycard/service as keycard_service
+import ../../../app_service/service/network_connection/service as network_connection_service
 import ../../../app_service/common/types
 import ../../../app_service/common/social_links
 
@@ -87,6 +89,7 @@ type
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
     keychainService: keychain_service.Service
+    networkConnectionService: network_connection_service.Service
     walletSectionModule: wallet_section_module.AccessInterface
     browserSectionModule: browser_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
@@ -98,6 +101,7 @@ type
     networksModule: networks_module.AccessInterface
     keycardSharedModule: keycard_shared_module.AccessInterface
     keycardSharedModuleKeycardSyncPurpose: keycard_shared_module.AccessInterface
+    networkConnectionModule: network_connection_module.AccessInterface
     moduleLoaded: bool
     chatsLoaded: bool
     communityDataLoaded: bool
@@ -141,7 +145,8 @@ proc newModule*[T](
   communityTokensService: community_tokens_service.Service,
   networkService: network_service.Service,
   generalService: general_service.Service,
-  keycardService: keycard_service.Service
+  keycardService: keycard_service.Service,
+  networkConnectionService: network_connection_service.Service
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -206,6 +211,7 @@ proc newModule*[T](
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
   result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
+  result.networkConnectionModule = network_connection_module.newModule(result, events, networkConnectionService)
 
 method delete*[T](self: Module[T]) =
   self.controller.delete
@@ -225,6 +231,7 @@ method delete*[T](self: Module[T]) =
     self.keycardSharedModule.delete
   if not self.keycardSharedModuleKeycardSyncPurpose.isNil:
     self.keycardSharedModuleKeycardSyncPurpose.delete
+  self.networkConnectionModule.delete
   self.view.delete
   self.viewVariant.delete
 
@@ -498,6 +505,7 @@ method load*[T](
   self.nodeSectionModule.load()
   # Load wallet last as it triggers events that are listened by other modules
   self.walletSectionModule.load()
+  self.networkConnectionModule.load()
 
   # Set active section on app start
   # If section is empty or profile then open the loading section until chats are loaded
@@ -657,6 +665,9 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if(not self.networksModule.isLoaded()):
     return
 
+  if(not self.networkConnectionModule.isLoaded()):
+    return
+
   self.moduleLoaded = true
   self.delegate.mainDidLoad()
 
@@ -694,6 +705,9 @@ method nodeSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method networksModuleDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method networkConnectionModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method viewDidLoad*[T](self: Module[T]) =

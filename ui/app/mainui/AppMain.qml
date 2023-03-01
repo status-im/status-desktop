@@ -602,7 +602,7 @@ Item {
 
                         objectName: "connectionInfoBanner"
                         Layout.fillWidth: true
-                        text: isConnected ? qsTr("Connected") : qsTr("Disconnected")
+                        text: isConnected ? qsTr("You are back online") : qsTr("Internet connection lost. Reconnect to ensure everything is up to date.")
                         type: isConnected ? ModuleWarning.Success : ModuleWarning.Danger
 
                         function updateState() {
@@ -673,6 +673,105 @@ Item {
                         onHideFinished: {
                             destroy()
                             bannersLayout.updateBanner = null
+                        }
+                    }
+                }
+
+                ConnectionWarnings {
+                    id: walletBlockchainConnectionBanner
+                    objectName: "walletBlockchainConnectionBanner"
+                    readonly property string jointChainIdString: appMain.rootStore.getChainIdsJointString(chainIdsDown)
+                    Layout.fillWidth: true
+                    websiteDown: Constants.walletConnections.blockchains
+                    text: {
+                        switch(connectionState) {
+                        case Constants.ConnectionStatus.Success:
+                            return qsTr("Pocket Network (POKT) connection successful")
+                        case Constants.ConnectionStatus.Failure:
+                            if(completelyDown) {
+                                updateTimer.restart()
+                                if(withCache)
+                                    return qsTr("POKT & Infura down. Token balances are as of %1. Retrying in %2.").arg(lastCheckedAt).arg(Utils.getTimerString(autoTryTimerInSecs))
+                                else
+                                    return qsTr("POKT & Infura down. Token balances cannot be retrieved. Retrying in %1.").arg(Utils.getTimerString(autoTryTimerInSecs))
+                            }
+                            else if(chainIdsDown.length > 0) {
+                                updateTimer.restart()
+                                if(chainIdsDown.length > 2) {
+                                    return qsTr("POKT & Infura down for <a href='#'>multiple chains </a>. Token balances for those chains cannot be retrieved. Retrying in %1.").arg(Utils.getTimerString(autoTryTimerInSecs))
+                                }
+                                else if(chainIdsDown.length === 1) {
+                                    return qsTr("POKT & Infura down for %1. %1 token balances are as of %2. Retrying in %3.").arg(jointChainIdString).arg(lastCheckedAt).arg(Utils.getTimerString(autoTryTimerInSecs))
+                                }
+                                else {
+                                    return qsTr("POKT & Infura down for %1. %1 token balances cannot be retrieved. Retrying in %2.").arg(jointChainIdString).arg(Utils.getTimerString(autoTryTimerInSecs))
+                                }
+                            }
+                            else
+                                return ""
+                        case Constants.ConnectionStatus.Retrying:
+                            return qsTr("Retrying connection to Pocket Network (POKT).")
+                        default:
+                            return ""
+                        }
+                    }
+                    onLinkActivated: {
+                        let tootipMessage = qsTr("Pocket Network (POKT) & Infura are currently both unavailable for %1. Balances for those chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
+                        toolTip.show(tootipMessage, 3000)
+                    }
+
+                    StatusToolTip {
+                        id: toolTip
+                        orientation: StatusToolTip.Orientation.Bottom
+                    }
+                }
+
+                ConnectionWarnings {
+                    id: walletCollectiblesConnectionBanner
+                    objectName: "walletCollectiblesConnectionBanner"
+                    Layout.fillWidth: true
+                    websiteDown: Constants.walletConnections.collectibles
+                    text: {
+                        switch(connectionState) {
+                        case Constants.ConnectionStatus.Success:
+                            return qsTr("Opensea connection successful")
+                        case Constants.ConnectionStatus.Failure:
+                            updateTimer.restart()
+                            if(withCache){
+                                return qsTr("Opensea down. Collectibles are as of %1. Retrying in %2.").arg(lastCheckedAt).arg(Utils.getTimerString(autoTryTimerInSecs))
+                            }
+                            else {
+                                return qsTr("Opensea down. Retrying in %1.").arg(Utils.getTimerString(autoTryTimerInSecs))
+                            }
+                        case Constants.ConnectionStatus.Retrying:
+                            return qsTr("Retrying connection to Opensea...")
+                        default:
+                            return ""
+                        }
+                    }
+                }
+
+
+                ConnectionWarnings {
+                    id: walletMarketConnectionBanner
+                    objectName: "walletMarketConnectionBanner"
+                    Layout.fillWidth: true
+                    websiteDown: Constants.walletConnections.market
+                    text: {
+                        switch(connectionState) {
+                        case Constants.ConnectionStatus.Success:
+                            return qsTr("CryptoCompare and CoinGecko connection successful")
+                        case Constants.ConnectionStatus.Failure: {
+                            updateTimer.restart()
+                            if(withCache) {
+                                return qsTr("CryptoCompare and CoinGecko down. Market values are as of %1. Retrying in %2.").arg(lastCheckedAt).arg(Utils.getTimerString(autoTryTimerInSecs))
+                            }
+                            else {
+                                return qsTr("CryptoCompare and CoinGecko down. Market values cannot be retrieved. Trying again in %1.").arg(Utils.getTimerString(autoTryTimerInSecs))
+                            }
+                        }
+                        case Constants.ConnectionStatus.Retrying:
+                            return qsTr("Retrying connection to CryptoCompare and CoinGecko...")
                         }
                     }
                 }
