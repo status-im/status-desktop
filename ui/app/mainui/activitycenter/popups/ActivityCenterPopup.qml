@@ -60,7 +60,7 @@ Popup {
         hasReplies: activityCenterStore.repliesCount > 0
         hasMentions: activityCenterStore.mentionsCount > 0
         hasContactRequests: activityCenterStore.contactRequestsCount > 0
-        hasIdentityRequests: activityCenterStore.identityRequestsCount > 0
+        hasIdentityVerification: activityCenterStore.identityVerificationCount > 0
         hasMembership: activityCenterStore.membershipCount > 0
         hideReadNotifications: activityCenterStore.activityCenterReadType === ActivityCenterStore.ActivityCenterReadType.Unread
         activeGroup: activityCenterStore.activeNotificationGroup

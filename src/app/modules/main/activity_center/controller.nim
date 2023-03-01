@@ -41,6 +41,10 @@ proc newController*(
 proc delete*(self: Controller) =
   discard
 
+proc updateActivityGroupCounters*(self: Controller) =
+  let counters = self.activityCenterService.getActivityGroupCounters()
+  self.delegate.setActivityGroupCounters(counters)
+
 proc init*(self: Controller) =
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED) do(e: Args):
     let args = ActivityCenterNotificationsArgs(e)
@@ -70,7 +74,7 @@ proc init*(self: Controller) =
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED) do(e: Args):
     self.delegate.unreadActivityCenterNotificationsCountChanged()
     self.delegate.hasUnseenActivityCenterNotificationsChanged()
-    self.delegate.groupCountersChanged()
+    self.updateActivityGroupCounters()
 
 proc hasMoreToShow*(self: Controller): bool =
    return self.activityCenterService.hasMoreToShow()
@@ -156,9 +160,8 @@ proc setActivityCenterReadType*(self: Controller, readType: ActivityCenterReadTy
   self.activityCenterService.resetCursor()
   let activityCenterNotifications = self.activityCenterService.getActivityCenterNotifications()
   self.delegate.resetActivityCenterNotifications(activityCenterNotifications)
+  self.updateActivityGroupCounters()
 
 proc getActivityCenterReadType*(self: Controller): ActivityCenterReadType =
   return self.activityCenterService.getActivityCenterReadType()
 
-proc getActivityGroupCounter*(self: Controller, group: ActivityCenterGroup): int =
-  return self.activityCenterService.getActivityGroupCounter(group)

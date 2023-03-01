@@ -46,6 +46,16 @@ type
     chainColor* {.serializedFieldName("chainColor").}: string
     shortName* {.serializedFieldName("shortName").}: string
 
+  ActivityCenterNotificationsRequest* = ref object of RootObj
+    cursor* {.serializedFieldName("cursor").}: string
+    limit* {.serializedFieldName("limit").}: int
+    activityTypes* {.serializedFieldName("activityTypes").}: seq[int]
+    readType* {.serializedFieldName("readType").}: int
+
+  ActivityCenterCountRequest* = ref object of RootObj
+    activityTypes* {.serializedFieldName("activityTypes").}: seq[int]
+    readType* {.serializedFieldName("readType").}: int
+
 rpc(clientVersion, "web3"):
   discard
 
@@ -162,20 +172,10 @@ rpc(addAccountWatch, "accounts"):
   emoji: string
 
 rpc(activityCenterNotifications, "wakuext"):
-  cursorVal: JsonNode
-  limit: int
+  request: ActivityCenterNotificationsRequest
 
-rpc(activityCenterNotificationsBy, "wakuext"):
-  cursorVal: JsonNode
-  limit: int
-  activityTypes: seq[int]
-  readType: int
-  accepted: bool
-
-rpc(activityCenterNotificationsCountBy, "wakuext"):
-  activityTypes: seq[int]
-  readType: int
-  accepted: bool
+rpc(activityCenterNotificationsCount, "wakuext"):
+  request: ActivityCenterCountRequest
 
 rpc(markAllActivityCenterNotificationsRead, "wakuext"):
   discard
@@ -192,16 +192,10 @@ rpc(acceptActivityCenterNotifications, "wakuext"):
 rpc(dismissActivityCenterNotifications, "wakuext"):
   ids: seq[string]
 
-rpc(unreadActivityCenterNotificationsCount, "wakuext"):
-  discard
-
 rpc(hasUnseenActivityCenterNotifications, "wakuext"):
   discard
 
 rpc(markAsSeenActivityCenterNotifications, "wakuext"):
-  discard
-
-rpc(unreadAndAcceptedActivityCenterNotificationsCount, "wakuext"):
   discard
 
 rpc(getBookmarks, "browsers"):

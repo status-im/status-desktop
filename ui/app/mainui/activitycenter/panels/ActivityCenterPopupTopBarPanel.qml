@@ -18,7 +18,7 @@ Item {
     property bool hasMentions: false
     property bool hasReplies: false
     property bool hasContactRequests: false
-    property bool hasIdentityRequests: false
+    property bool hasIdentityVerification: false
     property bool hasMembership: false
 
     property bool hideReadNotifications: false
@@ -54,7 +54,7 @@ Item {
                              { text: qsTr("Mentions"), group: ActivityCenterStore.ActivityCenterGroup.Mentions, visible: true, enabled: root.hasMentions },
                              { text: qsTr("Replies"), group: ActivityCenterStore.ActivityCenterGroup.Replies, visible: true, enabled: root.hasReplies },
                              { text: qsTr("Contact requests"), group: ActivityCenterStore.ActivityCenterGroup.ContactRequests, visible: true, enabled: root.hasContactRequests },
-                             { text: qsTr("Identity verification"), group: ActivityCenterStore.ActivityCenterGroup.IdentityVerification, visible: true, enabled: root.hasIdentityRequests },
+                             { text: qsTr("Identity verification"), group: ActivityCenterStore.ActivityCenterGroup.IdentityVerification, visible: true, enabled: root.hasIdentityVerification },
                              { text: qsTr("Transactions"), group: ActivityCenterStore.ActivityCenterGroup.Transactions, visible: false, enabled: true },
                              { text: qsTr("Membership"), group: ActivityCenterStore.ActivityCenterGroup.Membership, visible: true, enabled: root.hasMembership },
                              { text: qsTr("System"), group: ActivityCenterStore.ActivityCenterGroup.System, visible: false, enabled: true } ]
