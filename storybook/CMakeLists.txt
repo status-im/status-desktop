@@ -86,7 +86,7 @@ add_executable(QmlTests
 target_compile_definitions(QmlTests
                            PRIVATE QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
                            PRIVATE -DQUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qmlTests")
-target_link_libraries(QmlTests PRIVATE Qt5::QuickTest Qt5::Qml)
+target_link_libraries(QmlTests PRIVATE Qt5::QuickTest Qt5::Qml ${PROJECT_LIB})
 add_test(NAME QmlTests COMMAND QmlTests)
 
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ/src")
