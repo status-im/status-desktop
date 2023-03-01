@@ -882,7 +882,8 @@ QtObject:
       bannerJsonStr: string,
       encrypted: bool) =
     try:
-      var image = singletonInstance.utils.formatImagePath(imageUrl)
+      var bannerJson = bannerJsonStr.parseJson
+      bannerJson{"imagePath"} = newJString(singletonInstance.utils.formatImagePath(bannerJson["imagePath"].getStr))
       var tagsString = tags
       if len(tagsString) == 0:
         tagsString = "[]"
@@ -895,11 +896,11 @@ QtObject:
         access,
         color,
         tagsString,
-        image,
+        singletonInstance.utils.formatImagePath(imageUrl),
         aX, aY, bX, bY,
         historyArchiveSupportEnabled,
         pinMessageAllMembersEnabled,
-        bannerJsonStr,
+        $bannerJson,
         encrypted)
 
       if response.error != nil:
@@ -942,6 +943,8 @@ QtObject:
       let logoJson = parseJson(logoJsonStr)
       let cropRectJson = logoJson["cropRect"]
       var tagsString = tags
+      var bannerJson = bannerJsonStr.parseJson
+      bannerJson{"imagePath"} = newJString(singletonInstance.utils.formatImagePath(bannerJson["imagePath"].getStr))
       if len(tagsString) == 0:
         tagsString = "[]"
       let response = status_go.editCommunity(
@@ -953,12 +956,12 @@ QtObject:
         access,
         color,
         tagsString,
-        logoJson["imagePath"].getStr(),
+        singletonInstance.utils.formatImagePath(logoJson["imagePath"].getStr()),
         int(cropRectJson["x"].getFloat()),
         int(cropRectJson["y"].getFloat()),
         int(cropRectJson["x"].getFloat() + cropRectJson["width"].getFloat()),
         int(cropRectJson["y"].getFloat() + cropRectJson["height"].getFloat()),
-        bannerJsonStr,
+        $bannerJson,
         historyArchiveSupportEnabled,
         pinMessageAllMembersEnabled)
 
