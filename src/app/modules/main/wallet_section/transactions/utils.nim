@@ -8,6 +8,7 @@ import ../../../shared_models/currency_amount
 import ../../../shared_models/currency_amount_utils
 
 import ./item
+import ./multi_transaction_item
 
 proc hex2GweiCurrencyAmount(hexValueStr: string, gweiFormat: CurrencyFormatDto): CurrencyAmount =
   let value = parseFloat(singletonInstance.utils.hex2Gwei(hexValueStr))
@@ -79,4 +80,16 @@ proc transactionToNFTItem*(t: TransactionDto, c: CollectibleDto, ethFormat: Curr
         t.tokenId,
         c.name,
         c.imageUrl
+      )
+
+proc multiTransactionToItem*(t: MultiTransactionDto): MultiTransactionItem =
+  return initMultiTransactionItem(
+        t.id,
+        t.timestamp,
+        t.fromAddress,
+        t.toAddress,
+        t.fromAsset,
+        t.toAsset,
+        t.fromAmount,
+        t.multiTxtype
       )

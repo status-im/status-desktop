@@ -158,6 +158,16 @@ QtObject:
       error "error: ", errDescription
       return
 
+  proc getMultiTransactions*(self: Service, transactionIDs: seq[int]): seq[MultiTransactionDto] =
+    try:
+      let response = transactions.getMultiTransactions(transactionIDs).result
+
+      return response.getElems().map(x => x.toMultiTransactionDto())
+    except Exception as e:
+      let errDescription = e.msg
+      error "error: ", errDescription
+      return
+
   proc watchTransactionResult*(self: Service, watchTxResult: string) {.slot.} =
     let watchTxResult = parseJson(watchTxResult)
     let success = watchTxResult["isSuccessfull"].getBool
