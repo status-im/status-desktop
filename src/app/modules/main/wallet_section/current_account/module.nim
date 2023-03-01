@@ -30,6 +30,8 @@ type
 
 proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]])
 proc onCurrencyFormatsUpdated(self: Module)
+proc onAccountAdded(self: Module, account: WalletAccountDto)
+proc onAccountRemoved(self: Module, account: WalletAccountDto)
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -54,6 +56,14 @@ method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionCurrent", newQVariant(self.view))
 
   # these connections should be part of the controller's init method
+  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
+    let args = AccountSaved(e)
+    self.onAccountAdded(args.account)
+
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
+    let args = AccountDeleted(e)
+    self.onAccountRemoved(args.account)
+
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     self.switchAccount(self.currentAccountIndex)
 
@@ -107,46 +117,47 @@ method switchAccount*(self: Module, accountIndex: int) =
         return true
     return false
 
-  let defaultAccount = self.controller.getWalletAccount(0) # can safely do this as the account will always contain atleast one account
-  let walletAccount = self.controller.getWalletAccount(accountIndex)
-
   let migratedKeyPairs = self.controller.getAllMigratedKeyPairs()
   let currency = self.controller.getCurrentCurrency()
+  let currencyFormat = self.controller.getCurrencyFormat(currency)
 
   let chainIds = self.controller.getChainIds()
   let enabledChainIds = self.controller.getEnabledChainIds()
 
-  let defaultAccountTokenFormats = collect(initTable()):
-    for t in defaultAccount.tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
-  
-  let accountTokenFormats = collect(initTable()):
-    for t in walletAccount.tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
+  let defaultAccount = self.controller.getWalletAccount(0) # can safely do this as the account will always contain atleast one account
+  if not defaultAccount.isNil:
+    let defaultAccountTokenFormats = collect(initTable()):
+      for t in defaultAccount.tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
+    
+    let defaultAccountItem = walletAccountToItem(
+      defaultAccount,
+      chainIds,
+      enabledChainIds,
+      currency,
+      keyPairMigrated(migratedKeyPairs, defaultAccount.keyUid),
+      currencyFormat,
+      defaultAccountTokenFormats
+      )
+    
+    self.view.setDefaultWalletAccount(defaultAccountItem)
 
-  let currencyFormat = self.controller.getCurrencyFormat(currency)
+  let walletAccount = self.controller.getWalletAccount(accountIndex)
+  if not walletAccount.isNil:
+    let accountTokenFormats = collect(initTable()):
+      for t in walletAccount.tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
 
-  let defaultAccountItem = walletAccountToItem(
-    defaultAccount,
-    chainIds,
-    enabledChainIds,
-    currency,
-    keyPairMigrated(migratedKeyPairs, defaultAccount.keyUid),
-    currencyFormat,
-    defaultAccountTokenFormats
-    )
+    let accountItem = walletAccountToItem(
+      walletAccount,
+      chainIds,
+      enabledChainIds,
+      currency,
+      keyPairMigrated(migratedKeyPairs, walletAccount.keyUid),
+      currencyFormat,
+      accountTokenFormats
+      )
 
-  let accountItem = walletAccountToItem(
-    walletAccount,
-    chainIds,
-    enabledChainIds,
-    currency,
-    keyPairMigrated(migratedKeyPairs, walletAccount.keyUid),
-    currencyFormat,
-    accountTokenFormats
-    )
-
-  self.view.setDefaultWalletAccount(defaultAccountItem)
-  self.view.setData(accountItem)
-  self.setAssetsAndBalance(walletAccount.tokens)
+    self.view.setData(accountItem)
+    self.setAssetsAndBalance(walletAccount.tokens)
 
 method update*(self: Module, address: string, accountName: string, color: string, emoji: string) =
   self.controller.update(address, accountName, color, emoji)
@@ -165,3 +176,8 @@ proc onCurrencyFormatsUpdated(self: Module) =
 method findTokenSymbolByAddress*(self: Module, address: string): string =
   return self.controller.findTokenSymbolByAddress(address)
 
+proc onAccountAdded(self: Module, account: WalletAccountDto) =
+  self.switchAccount(self.currentAccountIndex)
+
+proc onAccountRemoved(self: Module, account: WalletAccountDto) =
+  self.switchAccount(self.currentAccountIndex)

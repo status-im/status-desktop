@@ -69,8 +69,8 @@ proc hex2Balance*(input: string, decimals: int): string =
   result = $i
   if(r > 0): result = fmt"{result}.{d}"
 
-type AccountSaved = ref object of Args
-  account: WalletAccountDto
+type AccountSaved* = ref object of Args
+  account*: WalletAccountDto
 
 type AccountDeleted* = ref object of Args
   account*: WalletAccountDto
@@ -173,7 +173,18 @@ QtObject:
       error "error: ", errDesription
       return
 
-  proc storeAccount*(self: Service, account: WalletAccountDto) =
+  proc updateRelatedAccounts(self: Service, derivedFrom: string, allAccounts: seq[WalletAccountDto]) =
+    withLock self.walletAccountsLock:
+      for wAcc in self.walletAccounts.mvalues:
+        if not wAcc.derivedFrom.isEmptyOrWhitespace and 
+          cmpIgnoreCase(wAcc.derivedFrom, derivedFrom) == 0:
+            wAcc.relatedAccounts = allAccounts.filter(x => not derivedFrom.isEmptyOrWhitespace and 
+              (cmpIgnoreCase(x.derivedFrom, derivedFrom) == 0))
+
+  proc storeAccount(self: Service, account: WalletAccountDto, allAccounts: seq[WalletAccountDto]) =
+    # updating related accounts for already added accounts
+    self.updateRelatedAccounts(account.derivedFrom, allAccounts)
+    # add new account to store    
     withLock self.walletAccountsLock:
       self.walletAccounts[account.address] = account
 
@@ -187,6 +198,9 @@ QtObject:
     withLock self.walletAccountsLock:
       result = self.walletAccounts[address]
       self.walletAccounts.del(address)
+    # updating related accounts for other accounts
+    let allAccounts = self.fetchAccounts()
+    self.updateRelatedAccounts(result.derivedFrom, allAccounts)
 
   proc walletAccountsContainsAddress*(self: Service, address: string): bool =
     withLock self.walletAccountsLock:
@@ -214,7 +228,7 @@ QtObject:
       for account in accounts:
         self.setEnsName(account)
         account.relatedAccounts = accounts.filter(x => not account.derivedFrom.isEmptyOrWhitespace and (cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0))
-        self.storeAccount(account)
+        self.storeAccount(account, accounts)
 
       self.buildAllTokens(self.getAddresses(), store = true)
       self.checkRecentHistory()
@@ -289,14 +303,22 @@ QtObject:
 
   proc addNewAccountToLocalStore(self: Service) =
     let accounts = self.fetchAccounts()
-    var newAccount = accounts[0]
+    var newAccount: WalletAccountDto
+    var found = false
     for account in accounts:
       if not self.walletAccountsContainsAddress(account.address):
+        found = true
         newAccount = account
-        self.setEnsName(newAccount)
-        newAccount.relatedAccounts = accounts.filter(x => cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0)
         break
-    self.storeAccount(newAccount)
+
+    if not found:
+      info "no new accounts identified to be stored"
+      return
+
+    self.setEnsName(newAccount)
+    newAccount.relatedAccounts = accounts.filter(x => cmpIgnoreCase(x.derivedFrom, newAccount.derivedFrom) == 0)
+
+    self.storeAccount(newAccount, accounts)
     self.buildAllTokens(@[newAccount.address], store = true)
     self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
