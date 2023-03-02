@@ -100,7 +100,7 @@ Popup {
                         return verificationRequestNotificationComponent
                     case ActivityCenterStore.ActivityCenterNotificationType.CommunityInvitation:
                         return communityInvitationNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.MembershipRequest:
+                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityMembershipRequest:
                         return membershipRequestNotificationComponent
                     case ActivityCenterStore.ActivityCenterNotificationType.CommunityRequest:
                         return communityRequestNotificationComponent
