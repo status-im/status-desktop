@@ -172,7 +172,9 @@ class StatusCommunityScreen:
             right_click_obj_by_name(CommunityScreenComponents.COMMUNITY_COLUMN_VIEW.value)
         else:
             print("Unknown method to create a channel: ", method)
-
+        # Without that sleep, the click sometimes lands next to the context menu, closing it and making the rest of the test fail
+        # The sleep seems to help wait for the context menu to be loaded completely
+        sleep_test(0.1)
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CHANNEL_MENU_ITEM.value)
 
         wait_for_object_and_type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, communityChannelName)
