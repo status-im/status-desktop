@@ -132,6 +132,7 @@ proc dos_chararray_delete(str: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_application_dir_path(): cstring {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_enable_hdpi(uiScaleFilePath: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_initialize_opengl() {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qguiapplication_try_enable_threaded_renderer() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_create() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_exec() {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_quit() {.cdecl, dynlib: dynLibName, importc.}
