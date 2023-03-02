@@ -238,6 +238,10 @@ def step(context, communityDescription: str):
 @Then("the community overview color is \"|any|\"")
 def step(context, color: str):
     _statusCommunityScreen.verify_community_overview_color(color)
+
+@Then("\"|any|\" title is displayed") 
+def step(context, community_settings_screen_name:str):
+    _statusCommunityScreen.verify_permission_screen_title(community_settings_screen_name)       
     
   
 

@@ -49,6 +49,7 @@ StatusScrollView {
                     font.pixelSize: 17
                     font.weight: Font.Bold
                     color: Theme.palette.directColor1
+                    objectName: "communityPermissionsWelcome"
                 }
                 StatusBaseText {
                     Layout.fillWidth: true

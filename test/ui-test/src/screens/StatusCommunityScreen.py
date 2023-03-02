@@ -56,6 +56,7 @@ class CommunityScreenComponents(Enum):
     INVITE_POPUP_NEXT_BUTTON = "community_InviteFriendsToCommunityPopup_NextButton"
     INVITE_POPUP_MESSAGE_INPUT = "community_ProfilePopupInviteMessagePanel_MessageInput"
     INVITE_POPUP_SEND_BUTTON = "community_InviteFriend_SendButton"
+    COMMUNITY_PERMISSIONS_WELCOME_SCREEN_TITLE = "communityPermissionsWelcome"
 
 class CommunitySettingsComponents(Enum):
     EDIT_COMMUNITY_SCROLL_VIEW = "communitySettings_EditCommunity_ScrollView"
@@ -151,7 +152,7 @@ class StatusCommunityScreen:
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_EDIT_CATEGORY_MENU_ITEM.value)
 
     def verify_community_name(self, communityName: str):
-        verify_text_matching(CommunityScreenComponents.COMMUNITY_HEADER_NAME_TEXT.value, communityName)
+        verify_text_matching(CommunityScreenComponents.COMMUNITY_HEADER_NAME_TEXT.value, communityName)   
         
     def verify_community_overview_name(self, communityName: str):
         verify_text_matching(CommunitySettingsComponents.COMMUNITY_NAME_TEXT.value, communityName)
@@ -446,5 +447,10 @@ class StatusCommunityScreen:
     def select_community_settings_option(self, option:str):
         if option=="Permissions":
             time.sleep(1)
-            click_obj_by_name(CommunitySettingsComponents.PERMISSIONS_BUTTON.value) 
+            click_obj_by_name(CommunitySettingsComponents.PERMISSIONS_BUTTON.value)
+     
+    def verify_permission_screen_title(self, option:str):
+        if option=="Permissions":
+            title = get_obj(CommunityScreenComponents.COMMUNITY_PERMISSIONS_WELCOME_SCREEN_TITLE.value)
+            verify_text(option, str(title)) 
                      
