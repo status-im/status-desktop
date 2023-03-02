@@ -18,8 +18,8 @@ QtObject:
     result.QObject.setup
     result.mintingModule = mintingModule
 
-  proc mintCollectible*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, network: string) {.slot.} =
-    self.mintingModule.mintCollectible(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, transferable, selfDestruct, network)
+  proc mintCollectible*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int) {.slot.} =
+    self.mintingModule.mintCollectible(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, transferable, selfDestruct, chainId)
 
 
 

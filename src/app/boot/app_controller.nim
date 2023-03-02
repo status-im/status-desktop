@@ -214,7 +214,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.settingsService, result.walletAccountService, result.transactionService,
     result.networkService, result.tokenService)
   result.tokensService = tokens_service.newService(statusFoundation.events, statusFoundation.threadpool,
-    result.networkService, result.transactionService)
+    result.transactionService)
   result.providerService = provider_service.newService(statusFoundation.events, statusFoundation.threadpool, result.ensService)
 
   # Modules
