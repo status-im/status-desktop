@@ -51,6 +51,18 @@ def step(context: any, settings_type:str):
     #TODO: Implement parameters for settings
     _settingsScreen.activate_community_permission_settings()
 
+@Given("\"|any|\" is clicked in the community sidebar")
+def step(context, community_sidebar_option:str):
+    _statusCommunityScreen.click_sidebar_option(community_sidebar_option)
+
+@Given("\"|any|\" should be an available option in Community Settings")
+def step(context, manage_community_option:str):
+    _statusCommunityScreen.verify_option_exists(manage_community_option)
+
+@Given("\"|any|\" section is selected") 
+def step(context, section_option:str):
+    _statusCommunityScreen.select_community_settings_option(section_option) 
+
 #########################
 ### ACTIONS region:
 #########################

@@ -441,4 +441,8 @@ class StatusCommunityScreen:
     def verify_option_exists(self, option:str):
         if option=="Permissions":
             title = get_obj(CommunitySettingsComponents.PERMISSIONS_BUTTON.value).title
-            verify_text(option, str(title))    
+            verify_text(option, str(title))
+              
+    def select_community_settings_option(self, option:str):
+        if option=="Permissions":
+            click_obj_by_name(CommunitySettingsComponents.PERMISSIONS_BUTTON.value)          

@@ -68,6 +68,10 @@ def step(context: any, settings_type:str):
 def step(context: any, settings_type:str):
     #TODO: Implement parameters for settings
     _settingsScreen.activate_community_permission_settings()
+
+@Given("the user opens the community named \"|any|\"")
+def step(context, community_name:str):
+    _settingsScreen.open_community(community_name)    
     
 #########################
 ### ACTIONS region:
