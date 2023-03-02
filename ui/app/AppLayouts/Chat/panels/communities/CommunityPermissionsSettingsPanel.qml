@@ -212,6 +212,24 @@ SettingsPageLayout {
                 return false
             }
 
+            permissionTypeLimitReached: {
+                const type = dirtyValues.permissionType
+                const limit = PermissionTypes.getPermissionsCountLimit(type)
+
+                if (limit === -1)
+                    return false
+
+                const model = root.permissionsModel
+                const count = model.rowCount()
+                let sameTypeCount = 0
+
+                for (let i = 0; i < count; i++)
+                    if (type === ModelUtils.get(model, i, "permissionType"))
+                        sameTypeCount++
+
+                return limit <= sameTypeCount
+            }
+
             onCreatePermissionClicked: {
                 const holdings = ModelUtils.modelToArray(
                                    dirtyValues.selectedHoldingsModel,
@@ -270,6 +288,7 @@ SettingsPageLayout {
                 target: root
                 property: "saveChangesButtonEnabled"
                 value: !communityNewPermissionView.duplicationWarningVisible
+                       && !communityNewPermissionView.permissionTypeLimitReached
                        && communityNewPermissionView.isFullyFilled
             }
         }

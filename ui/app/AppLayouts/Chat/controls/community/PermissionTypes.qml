@@ -69,4 +69,11 @@ QtObject {
         return permissionType === PermissionTypes.Type.Admin
                 || permissionType === PermissionTypes.Type.Member
     }
+
+    function getPermissionsCountLimit(permissionType) {
+        if (permissionType === PermissionTypes.Type.Member)
+            return 5
+
+        return -1
+    }
 }

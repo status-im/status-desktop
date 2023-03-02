@@ -54,6 +54,7 @@ StatusScrollView {
     property var selectedChannelsModel: ListModel {}
 
     property alias duplicationWarningVisible: duplicationPanel.visible
+    property bool permissionTypeLimitReached: false
 
     signal createPermissionClicked
 
@@ -539,7 +540,9 @@ StatusScrollView {
 
             visible: !root.isEditState
             text: qsTr("Create permission")
-            enabled: root.isFullyFilled && !root.duplicationWarningVisible
+            enabled: root.isFullyFilled
+                     && !root.duplicationWarningVisible
+                     && !root.permissionTypeLimitReached
 
             onClicked: root.createPermissionClicked()
         }
