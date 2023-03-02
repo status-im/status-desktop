@@ -26,8 +26,6 @@ Feature: Status Desktop community
         And the user creates a community named "myCommunity", with description "My community description", intro "Community Intro" and outro "Community Outro"
         And the user lands on the community named "myCommunity"
 
-	@mayfail
-	# TODO: Scenario broken since in the action of creating a channel `mainWindow_CommunityColumnView_CommunityColumnView` object is not ready.
     Scenario Outline: The admin creates a community channel
         When the admin creates a community channel named "<community_channel_name>", with description "<community_channel_description>", with the method "<method>"
         Then the channel named "<community_channel_name>" is open
@@ -36,7 +34,6 @@ Feature: Status Desktop community
             | test-channel    | Community channel description tested 1      | bottom_menu      |
             | test-channel2   | Community channel description tested 2      | right_click_menu |
 
-	@mayfail
     Scenario Outline: The admin edits a community channel
         Given the admin creates a community channel named "<community_channel_name>", with description "<community_channel_description>", with the method "bottom_menu"
         And the channel named "<community_channel_name>" is open
@@ -46,8 +43,6 @@ Feature: Status Desktop community
             | community_channel_name | community_channel_description   		  | new_community_channel_name  |
             | test-channel    		 | Community channel description tested 1 | new-test-channel            |
 
-	@mayfail
-	# TODO: Weak. Sometimes passes sometimes fails (standalone or as part of the sequence). To analyze.
     Scenario: The admin deletes a community channel
         Given the admin creates a community channel named "test-channel2", with description "My description", with the method "bottom_menu"
         And the channel named "test-channel2" is open
