@@ -32,6 +32,11 @@ Input {
         id: d
 
         property real amount: 0
+
+        function getEffectiveDigitsCount(str) {
+            const digits = LocaleUtils.getLocalizedDigitsCount(text, root.locale)
+            return str.startsWith(locale.decimalPoint) ? digits + 1 : digits
+        }
     }
 
     validator: DoubleValidator {
@@ -53,7 +58,7 @@ Input {
             return
         }
 
-        if (text.length > root.maximumLength) {
+        if (d.getEffectiveDigitsCount(text) > root.maximumLength) {
             root.validationError = qsTr("The maximum number of characters is %1").arg(root.maximumLength)
             return
         }
