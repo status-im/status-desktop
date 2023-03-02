@@ -38,6 +38,18 @@ QtObject {
         }
     }
 
+    function getLocalizedDigitsCount(str, locale = null) {
+        if (!str)
+            return 0
+
+        locale = locale || Qt.locale()
+
+        if (d.nonDigitCharacterRegExpLocale !== locale)
+            d.nonDigitCharacterRegExpLocale = locale
+
+        return str.replace(d.nonDigitCharacterRegExp, "").length
+    }
+
     function currencyAmountToLocaleString(currencyAmount, options = null, locale = null) {
         locale = locale || Qt.locale()
 
@@ -126,6 +138,15 @@ QtObject {
             firstDate.setHours(0, 0, 0) // discard time
             secondDate.setHours(0, 0, 0)
             return Math.round(Math.abs((firstDate - secondDate) / d.msInADay)) // Math.round: not all days are 24 hours long!
+        }
+
+        property var nonDigitCharacterRegExpLocale
+
+        readonly property var nonDigitCharacterRegExp: {
+            const localizedNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(
+                    n => LocaleUtils.numberToLocaleString(n, 0, nonDigitCharacterRegExpLocale))
+
+            return new RegExp(`[^${localizedNumbers.join("")}]`, "g")
         }
     }
 
