@@ -105,9 +105,18 @@ StatusDialog {
         property Timer waitTimer: Timer {
             interval: 1500
             onTriggered: {
-                let result = store.splitAndFormatAddressPrefix(recipientSelector.input.text, isBridgeTx, networkSelector.showUnpreferredNetworks)
-                popup.addressText = result.address
-                recipientSelector.input.text = result.formattedText
+                if (recipientSelector.isPending) {
+                    return
+                }
+                if (d.isENSValid)  {
+                    recipientSelector.input.text = d.resolvedENSAddress
+                    popup.addressText = d.resolvedENSAddress
+                } else {
+                    let result = store.splitAndFormatAddressPrefix(recipientSelector.input.text, isBridgeTx, networkSelector.showUnpreferredNetworks)
+                    popup.addressText = result.address
+                    recipientSelector.input.text = result.formattedText
+                }
+                
                 popup.recalculateRoutesAndFees()
             }
         }
@@ -403,7 +412,7 @@ StatusDialog {
                             d.waitTimer.restart()
                             if(!d.isAddressValid) {
                                 isPending = true
-                                Qt.callLater(d.resolveENS, input.edit.text)
+                                Qt.callLater(d.resolveENS, store.plainText(input.edit.text))
                             }
                         }
                     }
