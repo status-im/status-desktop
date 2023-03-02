@@ -8,8 +8,8 @@ proc deployCollectibles*(chainId: int, deploymentParams: JsonNode, txData: JsonN
   let payload = %* [chainId, deploymentParams, txData, utils.hashPassword(password)]
   return core.callPrivateRPC("collectibles_deploy", payload)
 
-proc getCommunityTokens*(communityId: string, chainId: int): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [communityId, chainId]
+proc getCommunityTokens*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [communityId]
   return core.callPrivateRPC("wakuext_getCommunityTokens", payload)
 
 proc addCommunityToken*(token: CommunityTokenDto): RpcResponse[JsonNode] {.raises: [Exception].} =

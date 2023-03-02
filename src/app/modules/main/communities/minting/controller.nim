@@ -34,8 +34,8 @@ proc init*(self: Controller) =
       return
     self.mintingModule.onUserAuthenticated(args.password)
 
-proc mintCollectibles*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters) =
-  self.communityTokensService.mintCollectibles(communityId, addressFrom, password, deploymentParams)
+proc mintCollectibles*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, chainId: int) =
+  self.communityTokensService.mintCollectibles(communityId, addressFrom, password, deploymentParams, chainId)
 
 proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_MINT_COLLECTIBLES_MINTING_MODULE_IDENTIFIER, keyUid: keyUid)

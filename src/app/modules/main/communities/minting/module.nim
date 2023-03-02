@@ -16,6 +16,7 @@ type
     viewVariant: QVariant
     tempAddressFrom: string
     tempCommunityId: string
+    tempChainId: int
     tempDeploymentParams: DeploymentParameters
 
 proc newMintingModule*(
@@ -39,9 +40,10 @@ method load*(self: Module) =
   self.view.load()
 
 method mintCollectible*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
-                        supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, network: string) =
+                        supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int) =
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
+  self.tempChainId = chainId
   self.tempDeploymentParams.name = name
   self.tempDeploymentParams.symbol = symbol
   self.tempDeploymentParams.description = description
@@ -59,8 +61,9 @@ method onUserAuthenticated*(self: Module, password: string) =
   defer: self.tempAddressFrom = ""
   defer: self.tempDeploymentParams = DeploymentParameters()
   defer: self.tempCommunityId = ""
+  defer: self.tempChainId = -1
   if password.len == 0:
     discard
     #TODO signalize somehow
   else:
-    self.controller.mintCollectibles(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams)
+    self.controller.mintCollectibles(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams, self.tempChainId)
