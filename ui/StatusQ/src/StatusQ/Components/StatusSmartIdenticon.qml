@@ -15,6 +15,7 @@ Loader {
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
+        bgRadius: bgWidth / 2
     }
 
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
