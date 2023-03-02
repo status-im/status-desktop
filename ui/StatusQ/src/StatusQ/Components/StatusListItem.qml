@@ -46,6 +46,7 @@ Rectangle {
             Theme.palette.dangerColor1 : Theme.palette.primaryColor1
         bgWidth: 40
         bgHeight: 40
+        bgRadius: bgWidth / 2
         bgColor: {
             if (sensor.containsMouse) {
                 return type === StatusListItem.Type.Secondary ||
