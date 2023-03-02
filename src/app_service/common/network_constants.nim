@@ -35,17 +35,17 @@ let OPENSEA_API_KEY_RESOLVED* =
   else:
     OPENSEA_API_KEY
 
-const DEFAULT_TORRENT_CONFIG_PORT = 9025
-let TORRENT_CONFIG_PORT* = if (existsEnv("PORT_SHIFT")):
-              DEFAULT_TORRENT_CONFIG_PORT + parseInt($getEnv("PORT_SHIFT"))
+const DEFAULT_TORRENT_CONFIG_PORT = 0 # Random
+let TORRENT_CONFIG_PORT* = if (existsEnv("TORRENT_PORT")):
+              parseInt($getEnv("TORRENT_PORT"))
             else:
               DEFAULT_TORRENT_CONFIG_PORT
 
-const DEFAUL_WAKU_V2_PORT = 60000
-let WAKU_V2_PORT* = if (existsEnv("PORT_SHIFT")):
-              DEFAUL_WAKU_V2_PORT + parseInt($getEnv("PORT_SHIFT"))
+const DEFAULT_WAKU_V2_PORT = 0 # Random
+let WAKU_V2_PORT* = if (existsEnv("WAKU_PORT")):
+              parseInt($getEnv("WAKU_PORT"))
             else:
-              DEFAUL_WAKU_V2_PORT
+              DEFAULT_WAKU_V2_PORT
 
 let DEFAULT_TORRENT_CONFIG_DATADIR* = joinPath(main_constants.defaultDataDir(), "data", "archivedata")
 let DEFAULT_TORRENT_CONFIG_TORRENTDIR* = joinPath(main_constants.defaultDataDir(), "data", "torrents")
