@@ -28,7 +28,6 @@ community_ProfilePopupInviteMessagePanel_MessageInput = {"container": community_
 community_InviteFriend_SendButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "InviteFriendsToCommunityPopup_SendButton", "type": "StatusButton", "visible": True}
 communitySettings_Members_NavigationListItem = {"container": statusDesktop_mainWindow, "objectName": "CommunitySettingsView_NavigationListItem_Members", "type": "StatusNavigationListItem", "visible": True}
 communitySettings_Permissions_NavigationListItem = {"container": statusDesktop_mainWindow, "objectName": "CommunitySettingsView_NavigationListItem_Permissions", "type": "StatusNavigationListItem", "visible": True}
-communitySettings_Permissions_NavigationListItem_Permissions = {"container": statusDesktop_mainWindow, "objectName": "CommunitySettingsView_NavigationListItem_Permissions_Permissions", "type": "StatusNavigationListItem", "visible": True}
 communitySettings_MembersTab_Members_ListView = {"container": statusDesktop_mainWindow, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "ListView", "visible": True}
 communitySettings_MembersTab_Member_Kick_Button = {"container": communitySettings_MembersTab_Members_ListView, "objectName": "MemberListIten_KickButton", "type": "StatusButton", "visible": True}
 communitySettings_KickModal_Kick_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}

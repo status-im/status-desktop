@@ -445,4 +445,6 @@ class StatusCommunityScreen:
               
     def select_community_settings_option(self, option:str):
         if option=="Permissions":
-            click_obj_by_name(CommunitySettingsComponents.PERMISSIONS_BUTTON.value)          
+            time.sleep(1)
+            click_obj_by_name(CommunitySettingsComponents.PERMISSIONS_BUTTON.value) 
+                     
