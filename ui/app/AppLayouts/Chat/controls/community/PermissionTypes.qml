@@ -69,4 +69,18 @@ QtObject {
         return permissionType === PermissionTypes.Type.Admin
                 || permissionType === PermissionTypes.Type.Member
     }
+
+    function getPermissionsCountLimit(permissionType) {
+        if (permissionType === PermissionTypes.Type.Member)
+            return 5
+
+        return -1
+    }
+
+    function getPermissionsLimitWarning(permissionType) {
+        if (permissionType !== PermissionTypes.Type.Member)
+            return ""
+
+        return qsTr("Max of 5 ‘become member’ permissions for this Community has been reached. You will need to delete an existing ‘become member’ permission before you can add a new one.")
+    }
 }

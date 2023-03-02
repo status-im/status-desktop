@@ -25,7 +25,8 @@ SplitView {
             isEditState: isEditStateCheckBox.checked
             isPrivate: isPrivateCheckBox.checked
             isOwner: isOwnerCheckBox.checked
-            duplicationWarningVisible: isDuplicationWarningVisibleCheckBox.checked
+            permissionDuplicated: isPermissionDuplicatedCheckBox.checked
+            permissionTypeLimitReached: isLimitReachedCheckBox.checked
 
             assetsModel: AssetsModel {}
             collectiblesModel: CollectiblesModel {}
@@ -78,9 +79,15 @@ SplitView {
                 }
 
                 CheckBox {
-                    id: isDuplicationWarningVisibleCheckBox
+                    id: isPermissionDuplicatedCheckBox
 
-                    text: "Is duplication warning visible"
+                    text: "Is permission duplicated"
+                }
+
+                CheckBox {
+                    id: isLimitReachedCheckBox
+
+                    text: "Is limit reached"
                 }
             }
 

@@ -10,12 +10,14 @@ import utils 1.0
 Control {
     id: root
 
+    property alias text: warningText.text
+
     spacing: Style.current.halfPadding
 
     QtObject {
         id: d
 
-        property int iconSize: 20
+        readonly property int iconSize: 20
     }
 
     contentItem: RowLayout {
@@ -29,12 +31,14 @@ Control {
             color: Theme.palette.dangerColor1
             icon: "warning"
         }
+
         StatusBaseText {
+            id: warningText
+
             Layout.fillWidth: true
             wrapMode: Text.Wrap
             font.pixelSize: Style.current.primaryTextFontSize
             color: Theme.palette.dangerColor1
-            text: qsTr("Permission with same properties is already active, edit properties to create a new permission.")
         }
     }
 }
