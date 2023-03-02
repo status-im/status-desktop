@@ -55,8 +55,6 @@ Feature: Status Desktop community
         When the admin deletes current channel
         Then the channel count is 1
 
-	@mayfail
-	# TODO: Weak. Sometimes passes sometimes fails (standalone or as part of the sequence). To analyze.
     Scenario Outline: The admin creates a community category
         Given the admin creates a community channel named "<channel_name>", with description "Some description", with the method "<method>"
         When the admin creates a community category named "<category_name>", with channels "<channel_name>" and with the method "<method>"

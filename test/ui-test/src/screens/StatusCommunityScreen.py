@@ -42,7 +42,6 @@ class CommunityScreenComponents(Enum):
     DELETE_CHANNEL_MENU_ITEM = "delete_Channel_StatusMenuItem"
     DELETE_CHANNEL_CONFIRMATION_DIALOG_DELETE_BUTTON = "delete_Channel_ConfirmationDialog_DeleteButton"
     NOT_CATEGORIZED_CHAT_LIST = "mainWindow_communityColumnView_statusChatList"
-    COMMUNITY_CHAT_LIST_CATEGORIES = "communityChatListCategories_Repeater"
     CHAT_INPUT_ROOT = "chatInput_Root"
     TOGGLE_PIN_MESSAGE_BUTTON = "chatView_TogglePinMessageButton"
     REPLY_TO_MESSAGE_BUTTON = "chatView_ReplyToMessageButton"
@@ -89,6 +88,7 @@ class CreateOrEditCommunityCategoryPopup(Enum):
     COMMUNITY_CATEGORY_LIST: str = "createOrEditCommunityCategoryChannelList_ListView"
     COMMUNITY_CATEGORY_LIST_ITEM_PLACEHOLDER: str = "createOrEditCommunityCategoryChannelList_ListItem_Placeholder"
     COMMUNITY_CATEGORY_BUTTON: str = "createOrEditCommunityCategoryBtn_StatusButton"
+    MODAL_CLOSE_BUTTON = "modal_Close_Button"
 
 class StatusCommunityScreen:
 
@@ -101,20 +101,23 @@ class StatusCommunityScreen:
 
         for index in range(listView.count):
             listItem = listView.itemAtIndex(index)
-            if (listItem.objectName.toLower() == community_channel_name.lower()):
+            name = listItem.objectName.toLower()
+            if (listItem.item.objectName.toLower() == "category_item_name_" + community_channel_name.lower()):
                 return True, listItem
         return False, None
 
     def _find_category_in_chat(self, community_category_name: str):
-        chatListCategories = get_obj(CommunityScreenComponents.COMMUNITY_CHAT_LIST_CATEGORIES.value)
+        chat_and_category_list = get_obj(CommunityScreenComponents.CHAT_LIST.value)
+        for i in range(chat_and_category_list.count):
+            chat_or_cat_loader = chat_and_category_list.itemAtIndex(i)
+            if chat_or_cat_loader.item.objectName != "categoryItem":
+                continue
+            if str(chat_or_cat_loader.item.title).lower() == community_category_name.lower():
+                return True, chat_or_cat_loader.item
 
-        for index in range(chatListCategories.count):
-            item = chatListCategories.itemAt(index)
-            if (item.objectName == community_category_name):
-                return True, item
         return False, None
 
-    def _toggle_channels_in_category_popop(self, community_channel_names: str):
+    def _toggle_channels_in_category_popup(self, community_channel_names: str):
         for channel_name in community_channel_names.split(", "):
             [loaded, channel] = self._find_channel_in_category_popup(channel_name)
             if loaded:
@@ -132,9 +135,9 @@ class StatusCommunityScreen:
         result = []
 
         for index in range(listView.count):
-            listItem = listView.itemAtIndex(index)
-            if (listItem.checked):
-                result.append(listItem.objectName.toLower())
+            listItemLoader = listView.itemAtIndex(index)
+            if (listItemLoader.item.checked):
+                result.append(listItemLoader.item.objectName.toLower())
 
         return result
 
@@ -144,8 +147,9 @@ class StatusCommunityScreen:
 
     def _open_category_edit_popup(self, category):
         # For some reason it clicks on a first channel in category instead of category
-        click_obj(category.chatListCategory.statusChatListCategoryItem)
-        right_click_obj(category.chatListCategory.statusChatListCategoryItem)
+        click_obj(category)
+        right_click_obj(category)
+        sleep_test(0.1)
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_EDIT_CATEGORY_MENU_ITEM.value)
 
     def verify_community_name(self, communityName: str):
@@ -193,10 +197,13 @@ class StatusCommunityScreen:
         else:
             verify_failure("Unknown method to create a category: ", method)
 
+        # Without that sleep, the click sometimes lands next to the context menu, closing it and making the rest of the test fail
+        # The sleep seems to help wait for the context menu to be loaded completely
+        sleep_test(0.1)
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CATEGORY_MENU_ITEM.value)
 
         wait_for_object_and_type(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_NAME_INPUT.value, community_category_name)
-        self._toggle_channels_in_category_popop(community_channel_names)
+        self._toggle_channels_in_category_popup(community_channel_names)
         click_obj_by_name(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_BUTTON.value)
 
     def edit_community_category(self, community_category_name, new_community_category_name, community_channel_names):
@@ -208,7 +215,7 @@ class StatusCommunityScreen:
         # Select all text in the input before typing
         wait_for_object_and_type(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_NAME_INPUT.value, "<Ctrl+a>")
         type_text(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_NAME_INPUT.value, new_community_category_name)
-        self._toggle_channels_in_category_popop(community_channel_names)
+        self._toggle_channels_in_category_popup(community_channel_names)
         click_obj_by_name(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_BUTTON.value)
 
     def delete_community_category(self, community_category_name):
@@ -232,15 +239,20 @@ class StatusCommunityScreen:
 
         self._open_category_edit_popup(category)
 
-        checked_channel_names = self._get_checked_channel_names_in_category_popup(community_channel_names[0])
-        split = community_channel_names.split(", ")
-        for channel_name in split:
-            if channel_name in checked_channel_names:
-                split.remove(channel_name)
+        community_channel_names_list = community_channel_names.split(", ")
+
+        checked_channel_names = self._get_checked_channel_names_in_category_popup(community_channel_names_list[0])
+        
+        # Close popup before checking the lists as we want the state to be clean whether it's a success or failure
+        click_obj_by_name(CreateOrEditCommunityCategoryPopup.MODAL_CLOSE_BUTTON.value)
+        
+        for community_channel_name in community_channel_names_list:
+            if "category_item_name_" + community_channel_name in checked_channel_names:
+                checked_channel_names.remove("category_item_name_" + community_channel_name)
             else:
-                verify_failure("Channel " + channel_name + " should be checked in category " + community_category_name)
+                verify_failure("Channel " + community_channel_name + " should be checked in category " + community_category_name)
         comma = ", "
-        verify(len(split) == 0, "Channel(s) " + comma.join(split) + " should not be checked in category " + community_category_name)
+        verify(len(checked_channel_names) == 0, "Channel(s) " + comma.join(checked_channel_names) + " should not be checked in category " + community_category_name)
     
     def open_edit_community_by_community_header(self):
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)

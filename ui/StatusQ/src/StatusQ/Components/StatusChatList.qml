@@ -54,6 +54,7 @@ Item {
                 id: categoryItemComponent
                 StatusChatListCategoryItem {
                     id: statusChatListCategoryItem
+                    objectName: "categoryItem"
                     
                     function setupPopup() {
                         categoryPopupMenuSlot.item.categoryItem = model
