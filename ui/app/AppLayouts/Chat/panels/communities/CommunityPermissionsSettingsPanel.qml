@@ -181,7 +181,7 @@ SettingsPageLayout {
             permissionType: d.permissionTypeToEdit
             isPrivate: d.isPrivateToEditValue
 
-            duplicationWarningVisible: {
+            permissionDuplicated: {
                 // dependencies
                 holdingsTracker.revision
                 channelsTracker.revision
@@ -210,6 +210,24 @@ SettingsPageLayout {
                 }
 
                 return false
+            }
+
+            permissionTypeLimitReached: {
+                const type = dirtyValues.permissionType
+                const limit = PermissionTypes.getPermissionsCountLimit(type)
+
+                if (limit === -1)
+                    return false
+
+                const model = root.permissionsModel
+                const count = model.rowCount()
+                let sameTypeCount = 0
+
+                for (let i = 0; i < count; i++)
+                    if (type === ModelUtils.get(model, i, "permissionType"))
+                        sameTypeCount++
+
+                return limit <= sameTypeCount
             }
 
             onCreatePermissionClicked: {
@@ -269,7 +287,8 @@ SettingsPageLayout {
             Binding {
                 target: root
                 property: "saveChangesButtonEnabled"
-                value: !communityNewPermissionView.duplicationWarningVisible
+                value: !communityNewPermissionView.permissionDuplicated
+                       && !communityNewPermissionView.permissionTypeLimitReached
                        && communityNewPermissionView.isFullyFilled
             }
         }

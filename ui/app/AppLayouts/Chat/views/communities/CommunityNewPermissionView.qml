@@ -1,5 +1,4 @@
 import QtQuick 2.14
-import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
@@ -12,9 +11,9 @@ import utils 1.0
 import shared.panels 1.0
 
 import AppLayouts.Chat.helpers 1.0
+import AppLayouts.Chat.controls.community 1.0
 import AppLayouts.Chat.panels.communities 1.0
 
-import "../../../Chat/controls/community"
 
 StatusScrollView {
     id: root
@@ -53,7 +52,8 @@ StatusScrollView {
     // roles: itemId, text, icon, emoji, color, colorId
     property var selectedChannelsModel: ListModel {}
 
-    property alias duplicationWarningVisible: duplicationPanel.visible
+    property bool permissionDuplicated: false
+    property bool permissionTypeLimitReached: false
 
     signal createPermissionClicked
 
@@ -359,9 +359,23 @@ StatusScrollView {
                 asset.name: PermissionTypes.getIcon(key)
                 asset.bgColor: "transparent"
                 closeButtonVisible: false
-                titleText.color: Theme.palette.primaryColor1
                 titleText.font.pixelSize: Theme.primaryTextFontSize
                 leftPadding: 6
+
+                Binding on bgColor {
+                    when: root.permissionTypeLimitReached
+                    value: Theme.palette.dangerColor3
+                }
+
+                Binding on titleText.color {
+                    when: root.permissionTypeLimitReached
+                    value: Theme.palette.dangerColor1
+                }
+
+                Binding on asset.color {
+                    when: root.permissionTypeLimitReached
+                    value: Theme.palette.dangerColor1
+                }
 
                 MouseArea {
                     anchors.fill: parent
@@ -529,13 +543,24 @@ StatusScrollView {
             onToggled: d.dirtyValues.isPrivate = checked
         }
 
-        PermissionDuplicationWarningPanel {
+        PermissionWarningPanel {
             id: duplicationPanel
 
             Layout.fillWidth: true
             Layout.topMargin: 50 // by desing
 
-            visible: false
+            text: {
+                if (root.permissionTypeLimitReached)
+                    return PermissionTypes.getPermissionsLimitWarning(
+                                d.dirtyValues.permissionType)
+
+                if (root.permissionDuplicated)
+                    return qsTr("Permission with same properties is already active, edit properties to create a new permission.")
+
+                return ""
+            }
+
+            visible: root.permissionDuplicated || root.permissionTypeLimitReached
         }
 
         StatusButton {
@@ -546,7 +571,9 @@ StatusScrollView {
 
             visible: !root.isEditState
             text: qsTr("Create permission")
-            enabled: root.isFullyFilled && !root.duplicationWarningVisible
+            enabled: root.isFullyFilled
+                     && !root.permissionDuplicated
+                     && !root.permissionTypeLimitReached
 
             onClicked: root.createPermissionClicked()
         }
