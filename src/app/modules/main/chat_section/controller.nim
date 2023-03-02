@@ -304,14 +304,11 @@ proc getMySectionId*(self: Controller): string =
 proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection
 
-proc getCommunityByIdFromAllCommunities*(self: Controller, communityId: string): CommunityDto =
-  return self.communityService.getCommunityByIdFromAllCommunities(communityId)
-
-proc getMyCommunity*(self: Controller): CommunityDto =
-  return self.getCommunityByIdFromAllCommunities(self.sectionId)
-
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
+
+proc getMyCommunity*(self: Controller): CommunityDto =
+  return self.getCommunityById(self.sectionId)
 
 proc getCategories*(self: Controller, communityId: string): seq[Category] =
   return self.communityService.getCategories(communityId)

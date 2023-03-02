@@ -17,10 +17,6 @@ proc unmuteCategory*(communityId: string, categoryId: string): RpcResponse[JsonN
   let payload = %* [communityId, categoryId]
   result = callPrivateRPC("unmuteCommunityCategory".prefix, payload)
 
-proc getJoinedComunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* []
-  result = callPrivateRPC("joinedCommunities".prefix, payload)
-
 proc getCuratedCommunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = callPrivateRPC("curatedCommunities".prefix, payload)
