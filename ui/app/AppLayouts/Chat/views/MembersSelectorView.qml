@@ -107,7 +107,7 @@ MembersSelectorBase {
                 return
             }
 
-            if (root.model.count === 0) {
+            if (root.model.count === 0 && !root.rootStore.contactsStore.hasPendingContactRequest(contactDetails.publicKey)) {
                 Global.openContactRequestPopup(contactDetails.publicKey,
                                                popup => popup.closed.connect(root.rejected))
                 return
