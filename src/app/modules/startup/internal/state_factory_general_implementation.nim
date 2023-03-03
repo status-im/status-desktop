@@ -57,6 +57,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newKeycardEnterSeedPhraseWordsState(flowType, backState)
   if stateToBeCreated == StateType.KeycardNotEmpty:
     return newKeycardNotEmptyState(flowType, backState)
+  if stateToBeCreated == StateType.KeycardNoPCSCService:
+    return newKeycardNoPCSCServiceState(flowType, backState)
   if stateToBeCreated == StateType.KeycardNotKeycard:
     return newKeycardNotKeycardState(flowType, backState)
   if stateToBeCreated == StateType.KeycardEmpty:
@@ -103,6 +105,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newLoginKeycardMaxPairingSlotsReachedState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardEmpty:
     return newLoginKeycardEmptyState(flowType, backState)
+  if stateToBeCreated == StateType.LoginNoPCSCService:
+    return newLoginNoPCSCServiceState(flowType, backState)
   if stateToBeCreated == StateType.LoginNotKeycard:
     return newLoginNotKeycardState(flowType, backState)
   if stateToBeCreated == StateType.ProfileFetching:

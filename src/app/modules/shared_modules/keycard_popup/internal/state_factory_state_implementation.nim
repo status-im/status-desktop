@@ -1,4 +1,9 @@
 proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
+  ## Check for some specific errors
+  if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    keycardEvent.error.len > 0 and
+    keycardEvent.error == ErrorPCSC:
+      return createState(StateType.NoPCSCService, state.flowType, nil)
   ## Handling factory reset or authentication or unlock keycard flow
   if state.flowType == FlowType.FactoryReset or
     state.flowType == FlowType.Authentication or

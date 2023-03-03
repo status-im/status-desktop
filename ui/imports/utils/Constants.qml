@@ -43,6 +43,7 @@ QtObject {
         readonly property string userProfileEnterSeedPhrase: "UserProfileEnterSeedPhrase"
         readonly property string userProfileWrongSeedPhrase: "UserProfileWrongSeedPhrase"
         readonly property string biometrics: "Biometrics"
+        readonly property string keycardNoPCSCService: "KeycardNoPCSCService"
         readonly property string keycardPluginReader: "KeycardPluginReader"
         readonly property string keycardInsertKeycard: "KeycardInsertKeycard"
         readonly property string keycardInsertedKeycard: "KeycardInsertedKeycard"
@@ -67,6 +68,7 @@ QtObject {
         readonly property string keycardMaxPinRetriesReached: "KeycardMaxPinRetriesReached"
         readonly property string keycardMaxPukRetriesReached: "KeycardMaxPukRetriesReached"
         readonly property string login: "Login"
+        readonly property string loginNoPCSCService: "LoginNoPCSCService"
         readonly property string loginPlugin: "LoginPlugin"
         readonly property string loginKeycardInsertKeycard: "LoginKeycardInsertKeycard"
         readonly property string loginKeycardInsertedKeycard: "LoginKeycardInsertedKeycard"
@@ -120,6 +122,7 @@ QtObject {
     }
 
     readonly property QtObject keycardSharedState: QtObject {
+        readonly property string noPCSCService: "NoPCSCService"
         readonly property string noState: "NoState"
         readonly property string pluginReader: "PluginReader"
         readonly property string readingKeycard: "ReadingKeycard"

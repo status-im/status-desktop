@@ -71,6 +71,10 @@ QtObject {
             normalColor: "transparent"
             text: qsTr("Cancel")
             visible: {
+                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.noPCSCService) {
+                    return true
+                }
+
                 switch (root.sharedKeycardModule.currentState.flowType) {
 
                 case Constants.keycardSharedFlow.setupNewKeycard:
@@ -516,6 +520,10 @@ QtObject {
             objectName: "PrimaryButton"
             height: Constants.keycard.general.footerButtonsHeight
             text: {
+                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.noPCSCService) {
+                    return qsTr("Retry")
+                }
+
                 switch (root.sharedKeycardModule.currentState.flowType) {
 
                 case Constants.keycardSharedFlow.setupNewKeycard:

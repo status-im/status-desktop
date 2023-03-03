@@ -2,6 +2,8 @@ proc ensureReaderAndCardPresenceOnboarding*(state: State, keycardFlowType: strin
   let backState = findBackStateWhichDoesNotBelongToAnyOfReadingStates(state)
   if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
     keycardEvent.error.len > 0:
+      if keycardEvent.error == ErrorPCSC:
+        return createState(StateType.KeycardNoPCSCService, state.flowType, backState)
       if keycardEvent.error == ErrorNoReader:
         controller.reRunCurrentFlowLater()
         if state.stateType == StateType.KeycardPluginReader:
