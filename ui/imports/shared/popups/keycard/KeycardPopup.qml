@@ -13,8 +13,8 @@ StatusModal {
     property var emojiPopup
 
     width: Constants.keycard.general.popupWidth
-    closePolicy: d.disableActionPopupButtons? Popup.NoAutoClose : Popup.CloseOnEscape
-    hasCloseButton: !d.disableActionPopupButtons
+    closePolicy: d.disableActionPopupButtons || d.disableCloseButton? Popup.NoAutoClose : Popup.CloseOnEscape
+    hasCloseButton: !d.disableActionPopupButtons && !d.disableCloseButton
 
     header.title: {
         switch (root.sharedKeycardModule.currentState.flowType) {

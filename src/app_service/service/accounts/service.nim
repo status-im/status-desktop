@@ -419,7 +419,7 @@ QtObject:
       let alias = generateAliasFromPk(whisperPublicKey)
       
       var accountDataJson = %* {
-        "name": alias,
+        "name": if displayName == "": alias else: displayName,
         "display-name": displayName,
         "address": address,
         "key-uid": keyUid,
@@ -442,7 +442,7 @@ QtObject:
         {
           "public-key": whisperPublicKey,
           "address": whisperAddress,
-          "name": alias,
+          "name": if displayName == "": alias else: displayName,
           "path": PATH_WHISPER,
           "chat": true,
           "derived-from": ""

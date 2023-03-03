@@ -639,6 +639,8 @@ proc updateKeyPairItemIfDataAreKnown[T](self: Module[T], address: string, item: 
   return false
 
 method onTokensRebuilt*[T](self: Module[T], accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
+  if self.getKeyPairForProcessing().isNil:
+    return
   let chainIds = self.controller.getChainIdsOfAllKnownNetworks()
   let currency = self.controller.getCurrency()
   for address, tokens in accountsTokens.pairs:
