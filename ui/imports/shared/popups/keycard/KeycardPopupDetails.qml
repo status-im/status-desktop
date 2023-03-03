@@ -34,6 +34,14 @@ QtObject {
         case Constants.keycardSharedState.importingFromKeycard:
         case Constants.keycardSharedState.copyingKeycard:
             return true
+        }
+
+        return false
+    }
+
+    // disables only close button (upper right "X" button)
+    readonly property bool disableCloseButton: {
+        switch (root.sharedKeycardModule.currentState.stateType) {
 
         case Constants.keycardSharedState.keyPairMigrateSuccess:
             return root.sharedKeycardModule.migratingProfileKeyPair()

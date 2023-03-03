@@ -143,7 +143,7 @@ OnboardingBasePage {
             if (errType === Constants.startupErrorType.setupAccError) {
                 if (error === Constants.existingAccountError) {
                     msgDialog.title = qsTr("Keys for this account already exist")
-                    msgDialog.text = qsTr("Keys for this account already exist and can't be added again. If you've lost\
+                    msgDialog.text = qsTr("Keys for this account already exist and can't be added again. If you've lost \
 your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase.")
                 } else {
                     msgDialog.title = qsTr("Login failed")
@@ -153,8 +153,8 @@ your password, passcode or Keycard, uninstall the app, reinstall and access your
             else if (errType === Constants.startupErrorType.importAccError) {
                 if (error === Constants.existingAccountError) {
                     msgDialog.title = qsTr("Keys for this account already exist")
-                    msgDialog.text = qsTr("Keys for this account already exist and can't be added again. If you've lost\
-your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase. In\
+                    msgDialog.text = qsTr("Keys for this account already exist and can't be added again. If you've lost \
+your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase. In \
 case of Keycard try recovering using PUK or reinstall the app and try login with the Keycard option.")
                 } else {
                     msgDialog.title = qsTr("Error importing seed")
