@@ -1,6 +1,7 @@
 import sequtils, sugar, chronicles
 import ../../../global/global_singleton
 import ../../../../constants as main_constants
+import ../../../../app_service/common/utils as common_utils
 import ../../../../app_service/service/keycard/constants
 import ../controller
 from ../../../../app_service/service/keycard/service import KCSFlowType
@@ -18,6 +19,7 @@ logScope:
 # General section
 proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State
 proc findBackStateWithTargetedStateType*(currentState: State, targetedStateType: StateType): State
+proc findBackStateWhichDoesNotBelongToAnyOfReadingStates*(currentState: State): State
 # Resolve state section
 proc ensureReaderAndCardPresenceOnboarding*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
 proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State

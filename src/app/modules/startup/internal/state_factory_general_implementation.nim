@@ -129,3 +129,31 @@ proc findBackStateWithTargetedStateType*(currentState: State, targetedStateType:
       return state
     state = state.getBackState
   return nil
+
+proc findBackStateWhichDoesNotBelongToAnyOfReadingStates*(currentState: State): State =
+  if currentState.isNil:
+    return nil
+  var state = currentState
+
+  const onboardingReadingStates = @[
+    StateType.KeycardPluginReader,
+    StateType.KeycardInsertKeycard,
+    StateType.KeycardInsertedKeycard,
+    StateType.KeycardReadingKeycard,
+    StateType.KeycardRecognizedKeycard
+  ]
+  const loginReadingStates = @[
+    StateType.Login,
+    StateType.LoginPlugin,
+    StateType.LoginKeycardInsertKeycard,
+    StateType.LoginKeycardInsertedKeycard,
+    StateType.LoginKeycardReadingKeycard,
+    StateType.LoginKeycardRecognizedKeycard
+  ]
+
+  while not state.isNil:
+    if not common_utils.arrayContains(onboardingReadingStates, state.stateType) and
+      not common_utils.arrayContains(loginReadingStates, state.stateType):
+        return state
+    state = state.getBackState
+  return nil

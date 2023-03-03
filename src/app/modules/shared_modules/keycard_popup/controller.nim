@@ -530,10 +530,15 @@ proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = ""
 #   self.cancelCurrentFlow()
 #   self.keycardService.startSignFlow(bip44Path, txHash)
 
-proc resumeCurrentFlowLater*(self: Controller) =
+proc reRunCurrentFlow*(self: Controller) =
   if not serviceApplicable(self.keycardService):
     return
-  self.keycardService.resumeCurrentFlowLater()
+  self.keycardService.reRunCurrentFlow()
+
+proc reRunCurrentFlowLater*(self: Controller) =
+  if not serviceApplicable(self.keycardService):
+    return
+  self.keycardService.reRunCurrentFlowLater()
 
 proc readyToDisplayPopup*(self: Controller) =
   let data = SharedKeycarModuleBaseArgs(uniqueIdentifier: self.uniqueIdentifier)
