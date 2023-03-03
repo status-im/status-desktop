@@ -25,7 +25,7 @@ method getNextQuinaryState*(self: LoginKeycardInsertKeycardState, controller: Co
 
 method resolveKeycardNextState*(self: LoginKeycardInsertKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
-  let state = ensureReaderAndCardPresenceLogin(self, keycardFlowType, keycardEvent, controller)
+  let state = ensureReaderAndCardPresenceAndResolveNextLoginState(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
   if keycardFlowType == ResponseTypeValueInsertCard and 

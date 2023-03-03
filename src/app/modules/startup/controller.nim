@@ -507,8 +507,11 @@ proc runGetMetadataFlow*(self: Controller, resolveAddress = false, exportMasterA
 proc resumeCurrentFlow*(self: Controller) =
   self.keycardService.resumeCurrentFlow()
 
-proc resumeCurrentFlowLater*(self: Controller) =
-  self.keycardService.resumeCurrentFlowLater()
+proc reRunCurrentFlow*(self: Controller) =
+  self.keycardService.reRunCurrentFlow()
+
+proc reRunCurrentFlowLater*(self: Controller) =
+  self.keycardService.reRunCurrentFlowLater()
 
 proc runFactoryResetPopup*(self: Controller) =
   self.delegate.runFactoryResetPopup()

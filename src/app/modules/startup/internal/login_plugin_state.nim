@@ -25,4 +25,5 @@ method getNextQuinaryState*(self: LoginPluginState, controller: Controller): Sta
 
 method resolveKeycardNextState*(self: LoginPluginState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
+  controller.setKeycardData("")
   return ensureReaderAndCardPresenceAndResolveNextLoginState(self, keycardFlowType, keycardEvent, controller)
