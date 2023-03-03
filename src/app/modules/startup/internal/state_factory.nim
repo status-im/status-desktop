@@ -27,6 +27,7 @@ proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, key
 proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
 
 include biometrics_state 
+include keycard_no_pcsc_service_state 
 include keycard_create_pin_state 
 include keycard_display_seed_phrase_state 
 include keycard_empty_state
@@ -63,6 +64,7 @@ include welcome_state_new_user
 include welcome_state_old_user
 include welcome_state
 include login_state
+include login_no_pcsc_service_state 
 include login_plugin_state
 include login_keycard_converted_to_regular_account_state
 include login_keycard_insert_keycard_state

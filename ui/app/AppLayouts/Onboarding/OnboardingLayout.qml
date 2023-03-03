@@ -66,6 +66,7 @@ OnboardingBasePage {
                 return seedPhraseInputViewComponent
 
             case Constants.startupState.login:
+            case Constants.startupState.loginNoPCSCService:
             case Constants.startupState.loginPlugin:
             case Constants.startupState.loginKeycardInsertKeycard:
             case Constants.startupState.loginKeycardInsertedKeycard:
@@ -104,6 +105,7 @@ OnboardingBasePage {
             case Constants.startupState.keycardEnterSeedPhraseWords:
                 return seedphraseWordsInputViewComponent
 
+            case Constants.startupState.keycardNoPCSCService:
             case Constants.startupState.keycardNotEmpty:
             case Constants.startupState.keycardNotKeycard:
             case Constants.startupState.keycardEmpty:

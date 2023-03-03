@@ -1,6 +1,8 @@
 proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
   if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
     keycardEvent.error.len > 0:
+      if keycardEvent.error == ErrorPCSC:
+        return createState(StateType.LoginNoPCSCService, state.flowType, nil)
       if keycardEvent.error == ErrorNoReader:
         controller.reRunCurrentFlowLater()
         if state.stateType == StateType.LoginPlugin:
