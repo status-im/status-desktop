@@ -4,10 +4,10 @@
 <context>
     <name>AppMain</name>
     <message numerus="yes">
-        <location filename="../app/mainui/AppMain.qml" line="540"/>
-        <location filename="../app/mainui/AppMain.qml" line="549"/>
-        <location filename="../app/mainui/AppMain.qml" line="540"/>
-        <location filename="../app/mainui/AppMain.qml" line="549"/>
+        <location filename="../app/mainui/AppMain.qml" line="541"/>
+        <location filename="../app/mainui/AppMain.qml" line="550"/>
+        <location filename="../app/mainui/AppMain.qml" line="541"/>
+        <location filename="../app/mainui/AppMain.qml" line="550"/>
         <source>%n issue(s)</source>
         <translation>
             <numerusform>%n issue</numerusform>
@@ -112,8 +112,8 @@
 <context>
     <name>DiscordImportProgressContents</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="242"/>
-        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="242"/>
+        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="245"/>
+        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="245"/>
         <source>%n more issue(s) downloading assets</source>
         <translation>
             <numerusform>%n more issue downloading assets</numerusform>
@@ -121,8 +121,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="289"/>
-        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="289"/>
+        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="292"/>
+        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="292"/>
         <source>‘%1’ was imported with %n issue(s).</source>
         <translation>
             <numerusform>‘%1’ was imported with %n issue.</numerusform>
@@ -157,8 +157,8 @@
 <context>
     <name>InvitationBubbleView</name>
     <message numerus="yes">
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="156"/>
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="156"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="165"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="165"/>
         <source>%n member(s)</source>
         <translation>
             <numerusform>%n member</numerusform>
@@ -240,8 +240,8 @@
 <context>
     <name>LocaleUtils</name>
     <message numerus="yes">
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="213"/>
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="213"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="229"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="229"/>
         <source>%n year(s) ago</source>
         <translation>
             <numerusform>%n year ago</numerusform>
@@ -249,8 +249,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="218"/>
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="218"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="234"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="234"/>
         <source>%n month(s) ago</source>
         <translation>
             <numerusform>%n month ago</numerusform>
@@ -258,8 +258,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="223"/>
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="223"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="239"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="239"/>
         <source>%n week(s) ago</source>
         <translation>
             <numerusform>%n week ago</numerusform>
@@ -267,8 +267,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="228"/>
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="228"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="244"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="244"/>
         <source>%n day(s) ago</source>
         <translation>
             <numerusform>yesterday</numerusform>
@@ -276,8 +276,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="233"/>
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="233"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="249"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="249"/>
         <source>%n hour(s) ago</source>
         <translation>
             <numerusform>%n hour ago</numerusform>
@@ -285,8 +285,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="238"/>
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="238"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="254"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="254"/>
         <source>%n min(s) ago</source>
         <comment>x minute(s) ago</comment>
         <translation>
@@ -295,8 +295,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="243"/>
-        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="243"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="259"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="259"/>
         <source>%n sec(s) ago</source>
         <comment>x second(s) ago</comment>
         <translation>
@@ -332,8 +332,8 @@
 <context>
     <name>NetworkFilter</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Wallet/controls/NetworkFilter.qml" line="39"/>
-        <location filename="../app/AppLayouts/Wallet/controls/NetworkFilter.qml" line="39"/>
+        <location filename="../app/AppLayouts/Wallet/controls/NetworkFilter.qml" line="50"/>
+        <location filename="../app/AppLayouts/Wallet/controls/NetworkFilter.qml" line="50"/>
         <source>%n network(s)</source>
         <translation>
             <numerusform>%n network</numerusform>
