@@ -112,12 +112,17 @@ Popup {
             asset.width: 24
             asset.isImage: true
             asset.name: Style.svg(model.iconUrl)
-            onClicked:  {
+            onClicked: {
                 if(root.multiSelection)
-                    checkBox.toggled()
+                    toggleModelIsActive()
                 else
                     radioButton.toggle()
             }
+
+            function toggleModelIsActive() {
+                model.isActive = !model.isActive
+            }
+
             components: [
                 StatusCheckBox {
                     id: checkBox
@@ -125,7 +130,7 @@ Popup {
                     checked: root.useNetworksExtraStoreProxy ? model.isActive : model.isEnabled
                     onToggled: {
                         if (root.useNetworksExtraStoreProxy) {
-                            model.isActive = !model.isActive
+                            toggleModelIsActive()
                         } else {
                             root.toggleNetwork(model)
                         }

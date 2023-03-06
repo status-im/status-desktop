@@ -105,7 +105,6 @@ StatusDialog {
             ]
             input.clearable: true
             input.rightPadding: 16
-            charLimit: 40
             validationMode: d.validationMode
         }
 
@@ -113,8 +112,9 @@ StatusDialog {
             id: addressInput
             implicitWidth: parent.width
             label: qsTr("Address")
-            input.edit.objectName: "savedAddressAddressInput"
-            placeholderText: qsTr("Ethereum Address")
+            objectName: "savedAddressAddressInput"
+            input.edit.objectName: "savedAddressAddressInputEdit"
+            placeholderText: qsTr("Ethereum address")
             maximumHeight: 66
             input.implicitHeight: Math.min(Math.max(input.edit.contentHeight + topPadding + bottomPadding, minimumHeight), maximumHeight) // setting height instead does not work
             enabled: !(root.edit || root.addAddress)

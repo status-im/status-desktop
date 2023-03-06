@@ -43,6 +43,14 @@ def is_loaded_visible_and_enabled(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEO
     except LookupError:
         return False, obj
 
+# Waits for the given object is loaded, visible and enabled.
+# It returns a tuple: True in case it is found. Otherwise, false. And the object itself.
+def is_object_loaded_visible_and_enabled(obj: object, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
+    try:
+        squish.waitForObject(obj, timeout)
+        return True
+    except LookupError:
+        return False
 
 # Waits for the given object is loaded and might be not visible and/or not enabled:
 # It returns a tuple: True in case it is found. Otherwise, false. And the object itself.

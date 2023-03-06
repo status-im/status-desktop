@@ -72,7 +72,7 @@ StatusListItem {
             onClicked: openSendModal(d.visibleAddress)
         },
         StatusRoundButton {
-            objectName: "savedAddressView_Delegate_menuButton"
+            objectName: "savedAddressView_Delegate_menuButton_" + root.name
             visible: !!root.name
             icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
             type: StatusRoundButton.Type.Quinary

@@ -44,6 +44,7 @@ class SavedAddressesScreen(Enum):
 class AddSavedAddressPopup(Enum):
     NAME_INPUT: str = "mainWallet_Saved_Addreses_Popup_Name_Input"
     ADDRESS_INPUT: str = "mainWallet_Saved_Addreses_Popup_Address_Input"
+    ADDRESS_INPUT_EDIT: str = "mainWallet_Saved_Addreses_Popup_Address_Input_Edit"
     ADD_BUTTON: str = "mainWallet_Saved_Addreses_Popup_Address_Add_Button"
 
 class SendPopup(Enum):
@@ -218,7 +219,11 @@ class StatusWalletScreen:
         click_obj_by_name(MainWalletScreen.SAVED_ADDRESSES_BUTTON.value)
         click_obj_by_name(SavedAddressesScreen.ADD_BUTTON.value)
         type_text(AddSavedAddressPopup.NAME_INPUT.value, name)
-        type_text(AddSavedAddressPopup.ADDRESS_INPUT.value, address)
+
+        type_text(AddSavedAddressPopup.ADDRESS_INPUT_EDIT.value, address)
+        addressInput = get_obj(AddSavedAddressPopup.ADDRESS_INPUT.value)
+        verify_equal(addressInput.plainText, address)
+        is_loaded_visible_and_enabled(AddSavedAddressPopup.ADD_BUTTON.value)
         click_obj_by_name(AddSavedAddressPopup.ADD_BUTTON.value)
 
     def _get_saved_address_delegate_item(self, name: str):
@@ -233,8 +238,9 @@ class StatusWalletScreen:
 
     def _find_saved_address_and_open_menu(self, name: str):
         item = self._get_saved_address_delegate_item(name)
-        obj = get_child_item_with_object_name(item, SavedAddressesScreen.DELEGATE_MENU_BUTTON_OBJECT_NAME.value)
-        click_obj(obj)
+        menuButton = get_child_item_with_object_name(item, f"{SavedAddressesScreen.DELEGATE_MENU_BUTTON_OBJECT_NAME.value}_{name}")
+        is_object_loaded_visible_and_enabled(menuButton)
+        click_obj(menuButton)
 
     def edit_saved_address(self, name: str, new_name: str):
         self._find_saved_address_and_open_menu(name)
@@ -252,17 +258,15 @@ class StatusWalletScreen:
     def toggle_favourite_for_saved_address(self, name: str):
         # Find the saved address and click favourite to toggle
         item = self._get_saved_address_delegate_item(name)
-        favouriteButton = get_child_item_with_object_name(item, SavedAddressesScreen.DELEGATE_FAVOURITE_BUTTON_OBJECT_NAME.value)
+        favouriteButton = item.statusListItemIcon
+        is_object_loaded_visible_and_enabled(favouriteButton)
         click_obj(favouriteButton)
 
     def check_favourite_status_for_saved_address(self, name: str, favourite: bool):
         # Find the saved address
         item = self._get_saved_address_delegate_item(name)
-        favouriteButton = get_child_item_with_object_name(item, SavedAddressesScreen.DELEGATE_FAVOURITE_BUTTON_OBJECT_NAME.value)
-
-        # if favourite is true, check that the favourite shows "unfavourite" icon and vice versa
-        wait_for_prop_value(favouriteButton, "icon.name", ("unfavourite" if favourite else "favourite"))
-        wait_for_prop_value(item, "titleTextIcon", ("star-icon" if favourite else ""))
+        favouriteButton = item.statusListItemIcon
+        wait_for_prop_value(favouriteButton, "asset.name", ("star-icon" if favourite else "favourite"))
 
     def toggle_network(self, network_name: str):
         is_loaded_visible_and_enabled(MainWalletScreen.NETWORK_SELECTOR_BUTTON.value, 2000)
