@@ -28,8 +28,7 @@ QtObject {
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 
-    property var collections: walletSectionCollectibles.model
-    property var flatCollectibles: walletSectionCollectibles.flatModel
+    property var flatCollectibles: walletSectionCollectibles.model
     property var currentCollectible: walletSectionCurrentCollectible
 
     property var savedAddresses: SortFilterProxyModel {
@@ -185,10 +184,6 @@ QtObject {
         return globalUtils.hex2Dec(value)
     }
 
-    function fetchOwnedCollectibles(slug) {
-        walletSectionCollectibles.fetchOwnedCollectibles(slug)
-    }
-
     function getCollectionMaxValue(traitType, value, maxValue, collectionIndex) {
         // Not Refactored Yet
 //        if(maxValue !== "")
@@ -198,8 +193,8 @@ QtObject {
 //            walletModelV2Inst.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString();
     }
 
-    function selectCollectible(slug, id) {
-        walletSectionCurrentCollectible.update(slug, id)
+    function selectCollectible(address, tokenId) {
+        walletSectionCurrentCollectible.update(address, tokenId)
     }
 
     function getNameForSavedWalletAddress(address) {

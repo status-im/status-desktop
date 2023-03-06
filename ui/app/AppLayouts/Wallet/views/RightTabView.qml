@@ -99,7 +99,7 @@ Item {
                     CollectiblesView {
                         collectiblesModel: RootStore.flatCollectibles
                         onCollectibleClicked: {
-                            RootStore.selectCollectible(collectionSlug, collectibleId)
+                            RootStore.selectCollectible(address, tokenId)
                             stack.currentIndex = 1
                         }
                     }

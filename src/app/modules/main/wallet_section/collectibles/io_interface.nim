@@ -16,16 +16,10 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method switchAccount*(self: AccessInterface, accountIndex: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method fetchOwnedCollections*(self: AccessInterface) {.base.} =
+method fetchOwnedCollectibles*(self: AccessInterface, limit: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setCollections*(self: AccessInterface, collections: CollectionsData) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method fetchOwnedCollectibles*(self: AccessInterface, collectionSlug: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method updateCollection*(self: AccessInterface, collection: CollectionData) {.base.} =
+method refreshCollectibles*(self: AccessInterface, chainId: int, address: string, collectibles: CollectiblesData) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
@@ -33,9 +27,6 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 
 # Methods called by submodules of this module
 method collectiblesModuleDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method collectionsModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method currentCollectibleModuleDidLoad*(self: AccessInterface) {.base.} =

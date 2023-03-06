@@ -30,23 +30,14 @@ proc newController*(
 proc delete*(self: Controller) =
   discard
 
-proc refreshCollections*(self: Controller, chainId: int, address: string) =
-  let collections = self.collectibleService.getOwnedCollections(chainId, address)
-  self.delegate.setCollections(collections)
+proc refreshCollectibles*(self: Controller, chainId: int, address: string) =
+  let collectibles = self.collectibleService.getOwnedCollectibles(chainId, address)
+  self.delegate.refreshCollectibles(chainId, address, collectibles)
 
-proc refreshCollectibles*(self: Controller, chainId: int, address: string, collectionSlug: string) =
-  let collection = self.collectibleService.getOwnedCollection(chainId, address, collectionSlug)
-  self.delegate.updateCollection(collection)
-
-proc init*(self: Controller) =
-  self.events.on(SIGNAL_OWNED_COLLECTIONS_UPDATED) do(e:Args):
-    let args = OwnedCollectionsUpdateArgs(e)
-    self.refreshCollections(args.chainId, args.address)
-    self.collectibleService.fetchAllOwnedCollectibles(args.chainId, args.address)
-  
-  self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATED) do(e:Args):
+proc init*(self: Controller) =  
+  self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED) do(e:Args):
     let args = OwnedCollectiblesUpdateArgs(e)
-    self.refreshCollectibles(args.chainId, args.address, args.collectionSlug)
+    self.refreshCollectibles(args.chainId, args.address)
 
 proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
@@ -54,8 +45,14 @@ proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_serv
 proc getNetwork*(self: Controller): network_service.NetworkDto =
   return self.networkService.getNetworkForCollectibles()
 
-proc fetchOwnedCollections*(self: Controller, chainId: int, address: string) =
-  self.collectibleService.fetchOwnedCollections(chainId, address)
+proc resetOwnedCollectibles*(self: Controller, chainId: int, address: string) =
+  self.collectibleService.resetOwnedCollectibles(chainId, address)
 
-proc fetchOwnedCollectibles*(self: Controller, chainId: int, address: string, collectionSlug: string) =
-  self.collectibleService.fetchOwnedCollectibles(chainId, address, collectionSlug)
+proc fetchOwnedCollectibles*(self: Controller, chainId: int, address: string, limit: int) =
+  self.collectibleService.fetchOwnedCollectibles(chainId, address, limit)
+
+proc getCollectible*(self: Controller, chainId: int, id: UniqueID) : CollectibleDto =
+  self.collectibleService.getCollectible(chainId, id)
+
+proc getCollection*(self: Controller, chainId: int, slug: string) : CollectionDto =
+  self.collectibleService.getCollection(chainId, slug)
