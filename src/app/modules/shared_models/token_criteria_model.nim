@@ -58,7 +58,7 @@ QtObject:
     case enumRole:
       of ModelRole.Key:
 
-        if item.getType() == ord(TokenCriteriaType.ENS):
+        if item.getType() == ord(TokenType.ENS):
           result = newQVariant(item.getEnsPattern())
         else:
           result = newQVariant(item.getSymbol())

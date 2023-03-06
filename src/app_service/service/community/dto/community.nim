@@ -34,15 +34,15 @@ type TokenPermissionType* {.pure.}= enum
   BecomeAdmin = 1,
   BecomeMember = 2
 
-type TokenCriteriaType* {.pure.}= enum
+type TokenType* {.pure.}= enum
   Unknown = 0,
   ERC20 = 1,
   ERC721 = 2,
-  ENS = 3
+  ENS = 3 # ENS is also ERC721 but we want to distinguish without heuristics
 
 type TokenCriteriaDto* = object
   contractAddresses* {.serializedFieldName("contract_addresses").}: Table[int, string]
-  `type`* {.serializedFieldName("type").}: TokenCriteriaType
+  `type`* {.serializedFieldName("type").}: TokenType
   symbol* {.serializedFieldName("symbol").}: string
   name* {.serializedFieldName("name").}: string
   amount* {.serializedFieldName("amount").}: string
@@ -171,8 +171,8 @@ proc toTokenCriteriaDto*(jsonObj: JsonNode): TokenCriteriaDto =
 
   var typeInt: int
   discard jsonObj.getProp("type", typeInt)
-  if (typeInt >= ord(low(TokenCriteriaType)) and typeInt <= ord(high(TokenCriteriaType))):
-      result.`type` = TokenCriteriaType(typeInt)
+  if (typeInt >= ord(low(TokenType)) and typeInt <= ord(high(TokenType))):
+      result.`type` = TokenType(typeInt)
 
   var contractAddressesObj: JsonNode
   if(jsonObj.getProp("contractAddresses", contractAddressesObj) and contractAddressesObj.kind == JObject):
@@ -188,7 +188,7 @@ proc toTokenCriteriaDto*(jsonObj: JsonNode): TokenCriteriaDto =
   # When `toTokenCriteriaDto` is called with data coming from
   # the front-end, there's a key field we have to account for
   if jsonObj.hasKey("key"):
-    if result.`type` == TokenCriteriaType.ENS:
+    if result.`type` == TokenType.ENS:
       discard jsonObj.getProp("key", result.ensPattern)
     else:
       discard jsonObj.getProp("key", result.symbol)
