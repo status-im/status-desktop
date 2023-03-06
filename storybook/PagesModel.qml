@@ -34,6 +34,14 @@ ListModel {
          section: "Views"
     }
     ListElement {
+         title: "CommunityNewCollectibleView"
+         section: "Views"
+    }
+    ListElement {
+         title: "CommunityCollectibleView"
+         section: "Views"
+    }
+    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }

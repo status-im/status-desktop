@@ -29,7 +29,7 @@ SplitView {
                 }
             }
             communitiesStore: QtObject {
-
+                readonly property TokenHoldersModel holdersModel: TokenHoldersModel {}
                 property var layer1Networks: NetworksModel.layer1Networks
                 property var layer2Networks: NetworksModel.layer2Networks
                 property var testNetworks: NetworksModel.testNetworks
@@ -39,9 +39,11 @@ SplitView {
                 function mintCollectible(communityId, address, artworkSource, name, symbol, description, supply,
                                          infiniteSupply, transferable, selfDestruct, chainId)
                 {
-                   logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
+                    logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
                 }
             }
+
+            tokensModel: ListModel {}
         }
     }
 
@@ -52,11 +54,5 @@ SplitView {
         SplitView.preferredHeight: 150
 
         logsView.logText: logs.logText
-
-        CheckBox {
-            id: isOwnerCheckBox
-
-            text: "Is owner"
-        }
     }
 }
