@@ -107,10 +107,10 @@ method communityEdited*(self: AccessInterface, community: CommunityDto) {.base.}
 method communityAdded*(self: AccessInterface, community: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method curatedCommunityAdded*(self: AccessInterface, community: CuratedCommunity) {.base.} =
+method curatedCommunityAdded*(self: AccessInterface, community: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method curatedCommunityEdited*(self: AccessInterface, community: CuratedCommunity) {.base.} =
+method curatedCommunityEdited*(self: AccessInterface, community: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method communityImported*(self: AccessInterface, community: CommunityDto) {.base.} =
@@ -155,5 +155,5 @@ method curatedCommunitiesLoading*(self: AccessInterface) {.base.} =
 method curatedCommunitiesLoadingFailed*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method curatedCommunitiesLoaded*(self: AccessInterface, curatedCommunities: seq[CuratedCOmmunity]) {.base.} =
+method curatedCommunitiesLoaded*(self: AccessInterface, curatedCommunities: seq[CommunityDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
