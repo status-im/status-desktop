@@ -27,12 +27,6 @@ type
     error*: string
     fromUserAction*: bool
 
-  CuratedCommunityArgs* = ref object of Args
-    curatedCommunity*: CuratedCommunity
-
-  CuratedCommunitiesArgs* = ref object of Args
-    curatedCommunities*: seq[CuratedCommunity]
-
   CommunitiesArgs* = ref object of Args
     communities*: seq[CommunityDto]
 
@@ -176,7 +170,6 @@ QtObject:
       activityCenterService: activity_center_service.Service
       messageService: message_service.Service
       communityTags: string # JSON string contraining tags map
-      curatedCommunities: Table[string, CuratedCommunity] # [community_id, CuratedCommunity]
       communities: Table[string, CommunityDto] # [community_id, CommunityDto]
       myCommunityRequests*: seq[CommunityMembershipRequestDto]
       historyArchiveDownloadTaskCommunityIds*: HashSet[string]
@@ -213,7 +206,6 @@ QtObject:
     result.activityCenterService = activityCenterService
     result.messageService = messageService
     result.communityTags = newString(0)
-    result.curatedCommunities = initTable[string, CuratedCommunity]()
     result.communities = initTable[string, CommunityDto]()
     result.myCommunityRequests = @[]
     result.historyArchiveDownloadTaskCommunityIds = initHashSet[string]()
@@ -224,18 +216,22 @@ QtObject:
       if community.joined:
         result[communityId] = community
 
+  proc getFilteredCuratedCommunities(self: Service): Table[string, CommunityDto] =
+    result = initTable[string, CommunityDto]()
+    for communityId, community in self.communities.pairs:
+      if community.listedInDirectory:
+        result[communityId] = community
+
   proc doConnect(self: Service) =
     self.events.on(SignalType.CommunityFound.event) do(e: Args):
       var receivedData = CommunitySignal(e)
       self.communities[receivedData.community.id] = receivedData.community
       self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: receivedData.community))
 
-      if self.curatedCommunities.contains(receivedData.community.id) and not self.curatedCommunities[receivedData.community.id].available:
-        let curatedCommunity = CuratedCommunity(available: true,
-                                                communityId: receivedData.community.id,
-                                                community: receivedData.community)
-        self.curatedCommunities[receivedData.community.id] = curatedCommunity
-        self.events.emit(SIGNAL_CURATED_COMMUNITY_FOUND, CuratedCommunityArgs(curatedCommunity: curatedCommunity))
+      if self.communities.contains(receivedData.community.id) and
+          self.communities[receivedData.community.id].listedInDirectory and not 
+          self.communities[receivedData.community.id].isAvailable:
+        self.events.emit(SIGNAL_CURATED_COMMUNITY_FOUND, CommunityArgs(community: self.communities[receivedData.community.id]))
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
@@ -426,10 +422,6 @@ QtObject:
           keepIf(self.myCommunityRequests, request => request.communityId != community.id)
 
         return
-
-      if(self.curatedCommunities.hasKey(community.id)):
-        self.curatedCommunities[community.id].available = true
-        self.curatedCommunities[community.id].community = community
 
       let prev_community = self.communities[community.id]
 
@@ -640,8 +632,8 @@ QtObject:
   proc getAllCommunities*(self: Service): seq[CommunityDto] =
     return toSeq(self.communities.values)
 
-  proc getCuratedCommunities*(self: Service): seq[CuratedCommunity] =
-    return toSeq(self.curatedCommunities.values)
+  proc getCuratedCommunities*(self: Service): seq[CommunityDto] =
+    return toSeq(self.getFilteredCuratedCommunities.values)
 
   proc getCommunityById*(self: Service, communityId: string): CommunityDto =
     if(not self.communities.hasKey(communityId)):
@@ -1351,16 +1343,14 @@ QtObject:
   proc onAsyncLoadCuratedCommunitiesDone*(self: Service, response: string) {.slot.} =
     try:
       let rpcResponseObj = response.parseJson
-      if (rpcResponseObj{"error"}.kind != JNull):
-        let error = Json.decode($rpcResponseObj["error"], RpcError)
-        error "Error requesting community info", msg = error.message
+      if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
+        error "Error requesting community info", msg = rpcResponseObj{"error"}.getStr
         self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED, Args())
         return
-
-      let curatedCommunities = parseCuratedCommunities(rpcResponseObj{"result"})
+      let curatedCommunities = parseCuratedCommunities(rpcResponseObj["response"]["result"])
       for curatedCommunity in curatedCommunities:
-        self.curatedCommunities[curatedCommunity.communityId] = curatedCommunity
-      self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADED, CuratedCommunitiesArgs(curatedCommunities: self.getCuratedCommunities()))
+        self.communities[curatedCommunity.id] = curatedCommunity
+      self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADED, CommunitiesArgs(communities: self.getCuratedCommunities()))
     except Exception as e:
       let errMsg = e.msg
       error "error loading curated communities: ", errMsg

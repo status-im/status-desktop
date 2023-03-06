@@ -46,8 +46,8 @@ proc init*(self: Controller) =
     self.delegate.onImportCommunityErrorOccured(args.community.id, args.error)
 
   self.events.on(SIGNAL_CURATED_COMMUNITY_FOUND) do(e:Args):
-    let args = CuratedCommunityArgs(e)
-    self.delegate.curatedCommunityAdded(args.curatedCommunity)
+    let args = CommunityArgs(e)
+    self.delegate.curatedCommunityAdded(args.community)
 
   self.events.on(SIGNAL_COMMUNITY_ADDED) do(e:Args):
     let args = CommunityArgs(e)
@@ -64,7 +64,7 @@ proc init*(self: Controller) =
     let args = CommunitiesArgs(e)
     for community in args.communities:
       self.delegate.communityEdited(community)
-      self.delegate.curatedCommunityEdited(CuratedCommunity(communityId: community.id, available: true, community:community))
+      self.delegate.curatedCommunityEdited(community)
 
   self.events.on(SIGNAL_COMMUNITY_MUTED) do(e:Args):
     let args = CommunityMutedArgs(e)
@@ -97,8 +97,8 @@ proc init*(self: Controller) =
     self.delegate.curatedCommunitiesLoadingFailed()
 
   self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADED) do(e:Args):
-    let args = CuratedCommunitiesArgs(e)
-    self.delegate.curatedCommunitiesLoaded(args.curatedCommunities)
+    let args = CommunitiesArgs(e)
+    self.delegate.curatedCommunitiesLoaded(args.communities)
 
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
@@ -106,7 +106,7 @@ proc getCommunityTags*(self: Controller): string =
 proc getAllCommunities*(self: Controller): seq[CommunityDto] =
   result = self.communityService.getAllCommunities()
 
-proc getCuratedCommunities*(self: Controller): seq[CuratedCommunity] =
+proc getCuratedCommunities*(self: Controller): seq[CommunityDto] =
   result = self.communityService.getCuratedCommunities()
 
 proc spectateCommunity*(self: Controller, communityId: string): string =

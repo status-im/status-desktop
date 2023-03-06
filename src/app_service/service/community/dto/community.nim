@@ -91,6 +91,7 @@ type CommunityDto* = object
   requestedToJoinAt*: int64
   isMember*: bool
   muted*: bool
+  listedInDirectory*: bool
   pendingRequestsToJoin*: seq[CommunityMembershipRequestDto]
   settings*: CommunitySettingsDto
   adminSettings*: CommunityAdminSettingsDto
@@ -101,10 +102,8 @@ type CommunityDto* = object
   tokenPermissions*: Table[string, CommunityTokenPermissionDto]
   communityTokensMetadata*: seq[CommunityTokensMetadataDto]
 
-type CuratedCommunity* = object
-    available*: bool
-    communityId*: string
-    community*: CommunityDto
+proc isAvailable*(communityDto: CommunityDto): bool =
+  return communityDto.name != "" and communityDto.description != ""
 
 type DiscordCategoryDto* = object
   id*: string
@@ -336,35 +335,24 @@ proc parseCommunities*(response: RpcResponse[JsonNode]): seq[CommunityDto] =
   result = map(response.result.getElems(),
     proc(x: JsonNode): CommunityDto = x.toCommunityDto())
 
-proc parseCuratedCommunities*(response: RpcResponse[JsonNode]): seq[CuratedCommunity] =
-  if (response.result["communities"].kind == JObject):
-    for (communityId, communityJson) in response.result["communities"].pairs():
-      result.add(CuratedCommunity(
-        available: true,
-        communityId: communityId,
-        community: communityJson.toCommunityDto()
-      ))
-  if (response.result["unknownCommunities"].kind == JArray):
-    for communityId in response.result["unknownCommunities"].items():
-      result.add(CuratedCommunity(
-        available: false,
-        communityId: communityId.getStr()
-      ))
+proc parseKnownCuratedCommunities(jsonCommunities: JsonNode): seq[CommunityDto] =
+  for _, communityJson in jsonCommunities.pairs():
+    var community = communityJson.toCommunityDto()
+    community.listedInDirectory = true
+    result.add(community)
 
-proc parseCuratedCommunities*(response: JsonNode): seq[CuratedCommunity] =
+proc parseUnknownCuratedCommunities(jsonCommunities: JsonNode): seq[CommunityDto] =
+  for communityId in jsonCommunities.items():
+    var community = CommunityDto()
+    community.id = communityId.getStr
+    community.listedInDirectory = true
+    result.add(community)
+
+proc parseCuratedCommunities*(response: JsonNode): seq[CommunityDto] =
   if (response["communities"].kind == JObject):
-    for (communityId, communityJson) in response["communities"].pairs():
-      result.add(CuratedCommunity(
-        available: true,
-        communityId: communityId,
-        community: communityJson.toCommunityDto()
-      ))
+    result = parseKnownCuratedCommunities(response["communities"])
   if (response["unknownCommunities"].kind == JArray):
-    for communityId in response["unknownCommunities"].items():
-      result.add(CuratedCommunity(
-        available: false,
-        communityId: communityId.getStr()
-      ))
+    result = concat(result, parseUnknownCuratedCommunities(response["unknownCommunities"]))
   
 proc contains(arrayToSearch: seq[int], searched: int): bool =
   for element in arrayToSearch:

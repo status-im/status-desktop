@@ -46,7 +46,7 @@ type
 # Forward declaration
 method setCommunityTags*(self: Module, communityTags: string)
 method setAllCommunities*(self: Module, communities: seq[CommunityDto])
-method setCuratedCommunities*(self: Module, curatedCommunities: seq[CuratedCommunity])
+method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto])
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -89,7 +89,6 @@ method viewDidLoad*(self: Module) =
 
   self.setCommunityTags(self.controller.getCommunityTags())
   self.setAllCommunities(self.controller.getAllCommunities())
-  self.setCuratedCommunities(self.controller.getCuratedCommunities())
 
   self.delegate.communitiesModuleDidLoad()
 
@@ -98,7 +97,7 @@ method onActivated*(self: Module) =
     return
   self.controller.asyncLoadCuratedCommunities()
 
-method curatedCommunitiesLoaded*(self: Module, curatedCommunities: seq[CuratedCOmmunity]) =
+method curatedCommunitiesLoaded*(self: Module, curatedCommunities: seq[CommunityDto]) =
   self.curatedCommunitiesLoaded = true
   self.setCuratedCommunities(curatedCommunities)
   self.view.setCuratedCommunitiesLoading(false)
@@ -167,17 +166,17 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       communityTokens = self.controller.getCommunityTokens(c.id)
     )
 
-method getCuratedCommunityItem(self: Module, c: CuratedCommunity): CuratedCommunityItem =
+method getCuratedCommunityItem(self: Module, c: CommunityDto): CuratedCommunityItem =
   return initCuratedCommunityItem(
-      c.communityId,
-      c.community.name,
-      c.community.description,
-      c.available,
-      c.community.images.thumbnail,
-      c.community.images.banner,
-      c.community.color,
-      c.community.tags,
-      len(c.community.members))
+      c.id,
+      c.name,
+      c.description,
+      c.isAvailable,
+      c.images.thumbnail,
+      c.images.banner,
+      c.color,
+      c.tags,
+      len(c.members))
 
 method getDiscordCategoryItem(self: Module, c: DiscordCategoryDto): DiscordCategoryItem =
   return initDiscordCategoryItem(
@@ -218,14 +217,14 @@ method communityEdited*(self: Module, community: CommunityDto) =
   self.view.model().editItem(self.getCommunityItem(community))
   self.view.communityChanged(community.id)
 
-method setCuratedCommunities*(self: Module, curatedCommunities: seq[CuratedCommunity]) =
+method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto]) =
   for community in curatedCommunities:
     self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
 
-method curatedCommunityAdded*(self: Module, community: CuratedCommunity) =
+method curatedCommunityAdded*(self: Module, community: CommunityDto) =
   self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
 
-method curatedCommunityEdited*(self: Module, community: CuratedCommunity) =
+method curatedCommunityEdited*(self: Module, community: CommunityDto) =
   self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
 
 method requestAdded*(self: Module) =

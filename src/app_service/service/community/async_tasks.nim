@@ -19,9 +19,12 @@ const asyncLoadCuratedCommunitiesTask: Task = proc(argEncoded: string) {.gcsafe,
   let arg = decode[AsyncLoadCuratedCommunitiesTaskArg](argEncoded)
   try:
     let response = status_go.getCuratedCommunities()
-    arg.finish(response)
+    arg.finish(%* {
+      "response": response,
+      "error": "",
+    })
   except Exception as e:
     arg.finish(%* {
-      "error": RpcError(message: e.msg),
+      "error": e.msg,
     })
 
