@@ -113,7 +113,7 @@ Item {
                 pubkey: root.pubkey
                 image: root.previewIcon
                 interactive: false
-                imageWidth: d.getSize(36, 64, 160)
+                imageWidth: d.getSize(36, 64, 170)
                 imageHeight: imageWidth
                 ensVerified: root.userIsEnsVerified
             }
@@ -121,7 +121,7 @@ Item {
             StatusRoundButton {
                 id: editButton
                 visible: root.editImageButtonVisible
-                anchors.bottom: userImage.bottom
+                anchors.top: userImage.top
                 anchors.right: userImage.right
                 anchors.rightMargin: Math.round(userImage.width / 10)
 
@@ -130,8 +130,8 @@ Item {
 
                 type: StatusRoundButton.Type.Secondary
                 icon.name: "edit_pencil"
-                icon.width: d.getSize(8, 12, 20)
-                icon.height: d.getSize(8, 12, 20)
+                icon.width: d.getSize(8, 12, 24)
+                icon.height: d.getSize(8, 12, 24)
 
                 onClicked: {
                     if (!!root.store.profileLargeImage)
@@ -249,13 +249,22 @@ Item {
 
     StatusMenu {
         id: imageEditMenu
+        width: 200
 
         StatusAction {
-            text: qsTr("Upload a file")
-            assetSettings.name: "download"
-            assetSettings.rotation: 180
+            text: qsTr("Select different image")
+            assetSettings.name: "image"
             onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
         }
+
+        StatusAction {
+            text: qsTr("Use an NFT")
+            assetSettings.name: "nft-profile"
+            onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
+            enabled: false // TODO enable this with the profile showcase
+        }
+
+        StatusMenuSeparator {}
 
         StatusAction {
             text: qsTr("Remove image")

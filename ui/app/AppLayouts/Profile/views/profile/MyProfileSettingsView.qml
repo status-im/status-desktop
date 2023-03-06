@@ -92,6 +92,8 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.leftMargin: Style.current.padding
         Layout.rightMargin: Style.current.padding
+        Layout.topMargin: 20
+        Layout.bottomMargin: 20
 
         store: root.profileStore
 
