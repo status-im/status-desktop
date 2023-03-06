@@ -130,7 +130,10 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     message.quotedMessage.contentType,
     message.quotedMessage.deleted,
     message.quotedMessage.discordMessage,
-    quotedMessageAuthorDetails
+    quotedMessageAuthorDetails,
+    message.albumId,
+    if (len(message.albumId) == 0): @[] else: @[message.image],
+    if (len(message.albumId) == 0): @[] else: @[message.id],
     ))
 
 method convertToItems*(

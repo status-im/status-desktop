@@ -61,6 +61,7 @@ type
     QuotedMessageAuthorEnsVerified
     QuotedMessageAuthorIsContact
     QuotedMessageAuthorColorHash
+    AlbumMessageImages
 
 QtObject:
   type
@@ -161,6 +162,7 @@ QtObject:
       ModelRole.QuotedMessageAuthorEnsVerified.int: "quotedMessageAuthorEnsVerified",
       ModelRole.QuotedMessageAuthorIsContact.int: "quotedMessageAuthorIsContact",
       ModelRole.QuotedMessageAuthorColorHash.int: "quotedMessageAuthorColorHash",
+      ModelRole.AlbumMessageImages.int: "albumMessageImages",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -305,6 +307,8 @@ QtObject:
       result = newQVariant(item.senderEnsVerified)
     of ModelRole.MessageAttachments:
       result = newQVariant(item.messageAttachments.join(" "))
+    of ModelRole.AlbumMessageImages:
+      result = newQVariant(item.albumMessageImages.join(" "))
 
   proc updateItemAtIndex(self: Model, index: int) =
     let ind = self.createIndex(index, 0, nil)
@@ -698,3 +702,23 @@ QtObject:
         item.seen = true
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, @[ModelRole.Seen.int])
+
+  proc updateAlbumIfExists*(self: Model, albumId: string, messageImage: string, messageId: string): bool =
+    for i in 0 ..< self.items.len:
+      let item = self.items[i]
+      if item.albumId == albumId:
+        # Check if message already in album
+        for j in 0 ..< item.albumMessageIds.len:
+          if item.albumMessageIds[j] == messageId:
+            return true
+        var albumImages = item.albumMessageImages
+        var albumMessagesIds = item.albumMessageIds
+        albumMessagesIds.add(messageId)
+        albumImages.add(messageImage)
+        item.albumMessageImages = albumImages
+        item.albumMessageIds = albumMessagesIds
+        
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[ModelRole.AlbumMessageImages.int])
+        return true
+    return false

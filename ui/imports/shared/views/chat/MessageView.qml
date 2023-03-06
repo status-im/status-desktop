@@ -76,6 +76,8 @@ Loader {
     property bool quotedMessageAuthorDetailsIsContact: false
     property var quotedMessageAuthorDetailsColorHash
 
+    property var album: []
+
     // External behavior changers
     property bool isInPinnedPopup: false // The pinned popup limits the number of buttons shown
     property bool disableHover: false // Used to force the HoverHandler to be active (useful for messages in popups)
@@ -570,6 +572,7 @@ Loader {
                         case StatusMessage.ContentType.Sticker:
                             return root.sticker;
                         case StatusMessage.ContentType.Image:
+
                             return root.messageImage;
                         }
                         if (root.isDiscordMessage && root.messageImage != "") {
@@ -577,6 +580,7 @@ Loader {
                         }
                         return "";
                     }
+                    album: root.album
 
                     amISender: root.amISender
                     sender.id: root.senderIsEnsVerified ? "" :  Utils.getCompressedPk(root.senderId)

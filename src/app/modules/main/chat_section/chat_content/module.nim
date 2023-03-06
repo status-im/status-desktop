@@ -220,7 +220,10 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     message.quotedMessage.contentType,
     message.quotedMessage.deleted,
     message.quotedMessage.discordMessage,
-    quotedMessageAuthorDetails
+    quotedMessageAuthorDetails,
+    message.albumId,
+    if (len(message.albumId) == 0): @[] else: @[message.image],
+    if (len(message.albumId) == 0): @[] else: @[message.id],
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy
