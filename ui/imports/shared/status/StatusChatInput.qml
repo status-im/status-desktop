@@ -357,10 +357,6 @@ Rectangle {
         } else if (event.key === Qt.Key_Escape && control.isReply) {
             control.isReply = false
             event.accepted = true
-        } else if (event.key === Qt.Key_Up && messageInputField.length === 0) {
-            event.accepted = true
-            control.keyUpPress()
-            return
         }
 
         const symbolPressed = event.text.length > 0 &&
@@ -887,7 +883,6 @@ Rectangle {
 
     function showImageArea(imagePathsOrData) {
         isImage = true;
-        isReply = false;
 
         imageArea.imageSource = imagePathsOrData
         control.fileUrlsAndSources = imageArea.imageSource
@@ -1245,6 +1240,18 @@ Rectangle {
                             bottomPadding: 9
                             leftPadding: 0
                             padding: 0
+                            Keys.onUpPressed: {
+                                if (isEdit) {
+                                    forceActiveFocus();
+                                } else {
+                                    if (messageInputField.length === 0) {
+                                        control.keyUpPress();
+                                    }
+                                }
+                                if (emojiSuggestions.visible) {
+                                    emojiSuggestions.listView.decrementCurrentIndex();
+                                }
+                            }
                             Keys.onPressed: {
                                 keyEvent = event;
                                 onKeyPress(event)
