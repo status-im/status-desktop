@@ -105,6 +105,7 @@ QtObject:
     tokenService: token_service.Service
     txCounter: Table[string, seq[int]]
     allTxLoaded: Table[string, bool]
+    allTransactions: Table[string, Table[string, TransactionDto]]
 
   # Forward declaration
   proc loadTransactions*(self: Service, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false)
@@ -128,6 +129,7 @@ QtObject:
     result.tokenService = tokenService
     result.txCounter = initTable[string, seq[int]]()
     result.allTxLoaded = initTable[string, bool]()
+    result.allTransactions = initTable[string, Table[string, TransactionDto]]()
 
   proc init*(self: Service) =
     self.events.on(SignalType.Wallet.event) do(e:Args):
@@ -167,6 +169,12 @@ QtObject:
       error "error: ", errDescription
       return
 
+  proc getAllTransactions*(self: Service, address: string): seq[TransactionDto] =
+    if not self.allTransactions.hasKey(address):
+      return @[]
+
+    return toSeq(self.allTransactions[address].values)
+  
   proc watchTransactionResult*(self: Service, watchTxResult: string) {.slot.} =
     let watchTxResult = parseJson(watchTxResult)
     let success = watchTxResult["isSuccessfull"].getBool
@@ -224,7 +232,9 @@ QtObject:
     var transactions: seq[TransactionDto] = @[]
     var collectibles: seq[CollectibleDto] = @[]
     for tx in historyData["history"].getElems():
-      transactions.add(tx.toTransactionDto())
+      let dto = tx.toTransactionDto()
+      self.allTransactions.mgetOrPut(address, initTable[string, TransactionDto]())[dto.txHash] = dto
+      transactions.add(dto)
 
     let collectiblesContainerJson = historyData["collectibles"]
     if collectiblesContainerJson.kind == JObject:

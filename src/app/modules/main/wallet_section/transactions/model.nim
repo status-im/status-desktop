@@ -188,6 +188,12 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
+  proc resetItems*(self: Model) =
+    self.beginResetModel()
+    self.items = @[]
+    self.endResetModel()
+    self.countChanged()
+
   proc getLastTxBlockNumber*(self: Model): string {.slot.} =
     if (self.items.len == 0):
       return "0x0"

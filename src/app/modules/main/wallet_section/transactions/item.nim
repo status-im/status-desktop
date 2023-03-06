@@ -258,34 +258,34 @@ proc getMaxFeePerGas*(self: Item): CurrencyAmount =
 proc getMaxPriorityFeePerGas*(self: Item): CurrencyAmount =
   return self.maxPriorityFeePerGas
 
-proc  getInput*(self: Item): string =
+proc getInput*(self: Item): string =
   return self.input
 
-proc  getTxHash*(self: Item): string =
+proc getTxHash*(self: Item): string =
   return self.txHash
 
-proc  getMultiTransactionID*(self: Item): int =
+proc getMultiTransactionID*(self: Item): int =
   return self.multiTransactionID
 
-proc  getIsTimeStamp*(self: Item): bool =
+proc getIsTimeStamp*(self: Item): bool =
   return self.isTimeStamp
 
-proc  getIsNFT*(self: Item): bool =
+proc getIsNFT*(self: Item): bool =
   return self.isNFT
 
-proc  getBaseGasFees*(self: Item): CurrencyAmount =
+proc getBaseGasFees*(self: Item): CurrencyAmount =
   return self.baseGasFees
 
-proc  getTotalFees*(self: Item): CurrencyAmount =
+proc getTotalFees*(self: Item): CurrencyAmount =
   return self.totalFees
 
-proc  getMaxTotalFees*(self: Item): CurrencyAmount =
+proc getMaxTotalFees*(self: Item): CurrencyAmount =
   return self.maxTotalFees  
 
-proc  getSymbol*(self: Item): string =
+proc getSymbol*(self: Item): string =
   return self.symbol
 
-proc  getLoadingTransaction*(self: Item): bool =
+proc getLoadingTransaction*(self: Item): bool =
   return self.loadingTransaction
 
 proc  getTokenID*(self: Item): UInt256 =

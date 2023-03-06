@@ -85,6 +85,9 @@ proc init*(self: Controller) =
     let args = TransactionsLoadedArgs(e)
     self.delegate.setHistoryFetchState(args.address, args.allTxLoaded, isFetching = false)
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
+    self.delegate.refreshTransactions()
+
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     # TODO: Rebuild Transaction items
     discard
@@ -122,6 +125,9 @@ proc suggestedFees*(self: Controller, chainId: int): string =
   let suggestedFees = self.transactionService.suggestedFees(chainId)
   return suggestedFees.toJson()
 
+proc getAllTransactions*(self: Controller, address: string): seq[TransactionDto] = 
+  return self.transactionService.getAllTransactions(address)
+
 proc suggestedRoutes*(self: Controller, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int, lockedInAmounts: string): string =
   let suggestedRoutes = self.transactionService.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
   return suggestedRoutes.toJson()
@@ -138,6 +144,8 @@ proc getEstimatedTime*(self: Controller, chainId: int, maxFeePerGas: string): Es
 proc getLastTxBlockNumber*(self: Controller): string =
   return self.transactionService.getLastTxBlockNumber(self.networkService.getNetworkForBrowser().chainId)
 
+proc getEnabledChainIds*(self: Controller): seq[int] = 
+  return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
 
 proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_TRANSACTION_MODULE_IDENTIFIER,

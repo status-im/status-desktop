@@ -170,7 +170,7 @@ ColumnLayout {
                 }
             }
         }
-        onAtYEndChanged: if (atYEnd && RootStore.historyTransactions.hasMore) fetchHistory()
+        onAtYEndChanged: if(atYEnd && RootStore.historyTransactions.count > 0 && RootStore.historyTransactions.hasMore) fetchHistory()
     }
 
     Component {
