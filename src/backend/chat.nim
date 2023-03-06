@@ -75,7 +75,7 @@ proc sendChatMessage*(
     }
   ])
 
-proc sendImages*(chatId: string, images: var seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc sendImages*(chatId: string, images: var seq[string], msg: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let imagesJson = %* images.map(image => %*
       {
         "chatId": chatId,
@@ -83,7 +83,7 @@ proc sendImages*(chatId: string, images: var seq[string]): RpcResponse[JsonNode]
         "imagePath": image,
         # TODO is this still needed
         # "ensName": preferredUsername,
-        "text": "🖼️"
+        "text": msg
       }
     )
   callPrivateRPC("sendChatMessages".prefix, %* [imagesJson])

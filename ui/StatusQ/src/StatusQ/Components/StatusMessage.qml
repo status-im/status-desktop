@@ -275,7 +275,9 @@ Control {
                     Loader {
                         active: root.messageDetails.contentType === StatusMessage.ContentType.Image && !editMode
                         visible: active
+
                         sourceComponent: Column {
+                            id: imagesColumn
                             spacing: 8
                             Loader {
                                 active: root.messageDetails.messageText !== ""
@@ -288,13 +290,46 @@ Control {
                                 }
                             }
 
+                            Loader {
+                                active: true
+                                sourceComponent: messageDetails.album.length > 1 ? albumComp : imageComp
+                            }
+
+                        }
+
+                        Component {
+                            id: imageComp
                             StatusImageMessage {
                                 source: root.messageDetails.messageContent
                                 onClicked: root.imageClicked(image, mouse, imageSource)
                                 shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
                             }
                         }
+
+                        Component {
+                            id: albumComp
+                            RowLayout {
+                                width: messageLayout.width
+                                spacing: 9
+                                Repeater {
+                                    model: root.messageDetails.album
+                                    StatusImageMessage {
+                                        Layout.alignment: Qt.AlignLeft
+                                        imageWidth: Math.min(parent.width / root.messageDetails.album.length - 9 * (root.messageDetails.album.length - 1), 144)
+                                        source: modelData
+                                        onClicked: root.imageClicked(image, mouse, imageSource)
+                                        shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
+                                    }
+                                }
+
+                                Item {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                }
+                            }
+                        }
                     }
+
                     Loader {
                         active: root.messageAttachments && !editMode
                         visible: active

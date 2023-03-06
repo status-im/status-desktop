@@ -243,6 +243,7 @@ Item {
             messageText: model.messageText
             unparsedText: model.unparsedText
             messageImage: model.messageImage
+            album: model.albumMessageImages.split(" ")
             messageTimestamp: model.timestamp
             messageOutgoingStatus: model.outgoingStatus
             resendError: model.resendError

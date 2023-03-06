@@ -167,26 +167,31 @@ QtObject {
         const chatContentModule = chatCommunitySectionModule.getChatContentModule()
         var result = false
 
-        if (fileUrlsAndSources.length > 0){
-            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrlsAndSources))
-            result = true
-        }
+        let textMsg = globalUtils.plainText(StatusQUtils.Emoji.deparse(text))
+        if (textMsg.trim() !== "") {
+            textMsg = interpretMessage(textMsg)
 
-        let msg = globalUtils.plainText(StatusQUtils.Emoji.deparse(text))
-        if (msg.trim() !== "") {
-            msg = interpretMessage(msg)
-
-            chatContentModule.inputAreaModule.sendMessage(
-                        msg,
-                        replyMessageId,
-                        Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
-                        false)
-
-            if (event)
+            if (event) {
                 event.accepted = true
-
-            result = true
+            }
         }
+
+        if (fileUrlsAndSources.length > 0) {
+            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrlsAndSources), textMsg.trim())
+            result = true
+
+        } else {
+            if (textMsg.trim() !== "") {
+                chatContentModule.inputAreaModule.sendMessage(
+                            textMsg,
+                            replyMessageId,
+                            Utils.isOnlyEmoji(textMsg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
+                            false)
+
+                result = true
+            }
+        }
+
         return result
     }
 

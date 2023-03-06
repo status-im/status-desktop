@@ -49,6 +49,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
 proc createChatIdentifierItem(self: Module): Item
 proc createFetchMoreMessagesItem(self: Module): Item
 proc setChatDetails(self: Module, chatDetails: ChatDto)
+proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto): bool
 
 method delete*(self: Module) =
   self.controller.delete
@@ -117,7 +118,10 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     quotedMessageContentType = -1,
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
-    quotedMessageAuthorDetails = ContactDetails()
+    quotedMessageAuthorDetails = ContactDetails(),
+    albumId = "",
+    albumMessageImages = @[],
+    albumMessageIds = @[],
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -172,7 +176,10 @@ proc createChatIdentifierItem(self: Module): Item =
     quotedMessageContentType = -1,
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
-    quotedMessageAuthorDetails = ContactDetails()
+    quotedMessageAuthorDetails = ContactDetails(),
+    albumId = "",
+    albumMessageImages = @[],
+    albumMessageIds = @[],
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module) =
@@ -201,7 +208,6 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
   pinnedMessages: seq[PinnedMessageDto]) =
   var viewItems: seq[Item]
 
-  var prevMessage = Item()
   if(messages.len > 0):
     for message in messages:
       # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
@@ -225,9 +231,13 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 
       var renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
 
-      # Skipping duplication text from image messages whith same text
-      if (prevMessage.contentType.ContentType == ContentType.Image and prevMessage.messageText == renderedMessageText):
-        renderedMessageText = ""
+      # Add image to album if album already exists
+      if (message.contentType.ContentType == ContentType.Image and len(message.albumId) != 0):
+        if (self.view.model().updateAlbumIfExists(message.albumId, message.image, message.id)):
+          continue
+
+        if (self.updateItemsByAlbum(viewItems, message)):
+          continue
 
       var transactionContract = message.transactionParameters.contract
       var transactionValue = message.transactionParameters.value
@@ -282,10 +292,11 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         message.quotedMessage.contentType,
         message.quotedMessage.deleted,
         message.quotedMessage.discordMessage,
-        quotedMessageAuthorDetails
+        quotedMessageAuthorDetails,
+        message.albumId,
+        if (len(message.albumId) == 0): @[] else: @[message.image],
+        if (len(message.albumId) == 0): @[] else: @[message.id],
         )
-
-      prevMessage = item
 
       for r in reactions:
         if(r.messageId == message.id):
@@ -360,6 +371,14 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
     if message.deleted or message.deletedForMe:
       continue
 
+    # Add image to album if album already exists
+    if (message.contentType.ContentType == ContentType.Image and len(message.albumId) != 0):
+      if (self.view.model().updateAlbumIfExists(message.albumId, message.image, message.id)):
+        continue
+      
+      if (self.updateItemsByAlbum(items, message)):
+        continue
+
     var item = initItem(
       message.id,
       message.communityId,
@@ -407,6 +426,9 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       message.quotedMessage.deleted,
       message.quotedMessage.discordMessage,
       quotedMessageAuthorDetails,
+      message.albumId,
+      if (len(message.albumId) == 0): @[] else: @[message.image],
+      if (len(message.albumId) == 0): @[] else: @[message.id],
     )
     items.add(item)
 
@@ -680,3 +702,22 @@ proc setChatDetails(self: Module, chatDetails: ChatDto) =
   self.view.setChatColor(chatDetails.color)
   self.view.setChatIcon(chatDetails.icon)
   self.view.setChatType(chatDetails.chatType.int)
+
+proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto): bool =
+  for i in 0 ..< items.len:
+    let item = items[i]
+    if item.albumId == message.albumId:
+      # Check if message already in album
+      for j in 0 ..< item.albumMessageIds.len:
+        if item.albumMessageIds[j] == message.id:
+          return true
+        
+        var albumImages = item.albumMessageImages
+        var albumMessagesIds = item.albumMessageIds
+        albumMessagesIds.add(message.id)
+        albumImages.add(message.image)
+        item.albumMessageImages = albumImages
+        item.albumMessageIds = albumMessagesIds
+        items[i] = item
+        return true
+  return false

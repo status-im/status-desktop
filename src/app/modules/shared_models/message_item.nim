@@ -56,6 +56,9 @@ type
     quotedMessageAuthorDisplayName: string
     quotedMessageAuthorAvatar: string
     quotedMessageAuthorDetails: ContactDetails
+    albumId: string
+    albumMessageImages: seq[string]
+    albumMessageIds: seq[string]
 
 proc initItem*(
     id,
@@ -97,6 +100,9 @@ proc initItem*(
     quotedMessageDeleted: bool,
     quotedMessageDiscordMessage: DiscordMessage,
     quotedMessageAuthorDetails: ContactDetails,
+    albumId: string,
+    albumMessageImages: seq[string],
+    albumMessageIds: seq[string],
     ): Item =
   result = Item()
   result.id = id
@@ -143,6 +149,9 @@ proc initItem*(
   result.quotedMessageContentType = quotedMessageContentType
   result.quotedMessageDeleted = quotedMessageDeleted
   result.quotedMessageAuthorDetails = quotedMessageAuthorDetails
+  result.albumId = albumId
+  result.albumMessageImages = albumMessageImages
+  result.albumMessageIds = albumMessageIds
 
   if quotedMessageContentType == ContentType.DiscordMessage.int:
     result.quotedMessageAuthorDisplayName = quotedMessageDiscordMessage.author.name
@@ -214,6 +223,9 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
     quotedMessageAuthorDetails = ContactDetails(),
+    albumId = "",
+    albumMessageImages = @[],
+    albumMessageIds = @[],
   )
 
 proc `$`*(self: Item): string =
@@ -339,6 +351,21 @@ proc `parsedText=`*(self: Item, value: seq[ParsedText]) {.inline.} =
 proc messageImage*(self: Item): string {.inline.} =
   self.messageImage
 
+proc albumId*(self: Item): string {.inline.} =
+  self.albumId
+
+proc albumMessageImages*(self: Item): seq[string] {.inline.} =
+  self.albumMessageImages
+
+proc `albumMessageImages=`*(self: Item, value: seq[string]) {.inline.} =
+  self.albumMessageImages = value
+
+proc albumMessageIds*(self: Item): seq[string] {.inline.} =
+  self.albumMessageIds
+
+proc `albumMessageIds=`*(self: Item, value: seq[string]) {.inline.} =
+  self.albumMessageIds = value
+
 proc messageContainsMentions*(self: Item): bool {.inline.} =
   self.messageContainsMentions
 
@@ -461,6 +488,9 @@ proc toJsonNode*(self: Item): JsonNode =
     "quotedMessageDeleted": self.quotedMessageDeleted,
     "quotedMessageAuthorDisplayName": self.quotedMessageAuthorDisplayName,
     "quotedMessageAuthorAvatar": self.quotedMessageAuthorAvatar,
+    "albumId": self.albumId,
+    "albumMessageImages": self.albumMessageImages,
+    "albumMessageIds": self.albumMessageIds,
   }
 
 proc editMode*(self: Item): bool {.inline.} =
