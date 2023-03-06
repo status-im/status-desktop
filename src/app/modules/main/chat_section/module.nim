@@ -1128,7 +1128,7 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
     let viewAmount = tokenCriteria{"amount"}.getFloat
     var tokenCriteriaDto = tokenCriteria.toTokenCriteriaDto
     let contractAddresses = self.controller.getContractAddressesForToken(tokenCriteriaDto.symbol)
-    if contractAddresses.len == 0 and tokenCriteriaDto.`type` != TokenCriteriaType.ENS:
+    if contractAddresses.len == 0 and tokenCriteriaDto.`type` != community_dto.TokenType.ENS:
       if permissionId == "":
         self.onCommunityTokenPermissionCreationFailed(communityId)
         return 
