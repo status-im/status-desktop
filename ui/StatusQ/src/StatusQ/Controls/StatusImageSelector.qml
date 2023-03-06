@@ -58,16 +58,28 @@ Control {
     property var acceptedImageExtensions: [".png", ".jpg", ".jpeg", ".heif", ".tif", ".tiff"]
 
     /*!
-       \qmlproperty var StatusImageSelector::headerHeight.
+       \qmlproperty bool StatusImageSelector::preview.
+       This property holds if the component's behavior is just preview (true) the image or load (false).
+    */
+    property bool preview: false
+
+    /*!
+       \qmlproperty int StatusImageSelector::headerHeight.
        This property holds the header height value including label heigh  + spacing between label and image rectangle.
     */
     readonly property int headerHeight: label.implicitHeight + rootImageSelector.spacing
 
     /*!
-       \qmlproperty var StatusImageSelector::buttonsInsideOffset.
+       \qmlproperty int StatusImageSelector::buttonsInsideOffset.
        This property holds the plus button inside offset value.
     */
     readonly property int buttonsInsideOffset: 10
+
+    /*!
+       \qmlproperty alias StatusImageSelector::file.
+       This property holds the image file source.
+    */
+    property alias file: image.source
 
     /*!
         \qmlsignal StatusImageSelector::fileSelected(url file)
@@ -140,6 +152,7 @@ Control {
                 id: dropArea
 
                 anchors.fill: parent
+                enabled: !root.preview
                 onDropped: d.loadFile(drop.urls)
             }
 
@@ -147,6 +160,7 @@ Control {
                 id: addButton
 
                 z: 1
+                visible: !preview
                 icon.name: "add"
                 type: StatusRoundButton.Type.Secondary
                 anchors {
