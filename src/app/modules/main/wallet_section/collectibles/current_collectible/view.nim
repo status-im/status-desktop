@@ -2,7 +2,7 @@ import NimQml, sequtils, sugar, stint
 
 import ./io_interface
 import ../../../../../../app_service/service/network/dto as network_dto
-import ../../../../../../app_service/service/collectible/dto as collectible_dto
+import ../models/collectibles_item
 import ../models/collectible_trait_item
 import ../models/collectible_trait_model
 
@@ -15,16 +15,7 @@ QtObject:
       networkColor: string
       networkIconUrl: string
 
-      collectionName: string
-      collectionImageUrl: string
-
-      name: string
-      id: string
-      tokenId: string
-      description: string
-      backgroundColor: string
-      imageUrl: string
-      permalink: string
+      collectible: Item
       propertiesModel: TraitModel
       rankingsModel: TraitModel
       statsModel: TraitModel
@@ -39,8 +30,7 @@ QtObject:
     new(result, delete)
     result.setup()
     result.delegate = delegate
-    result.description = "Collectibles"
-    result.backgroundColor = "transparent"
+    result.collectible = initItem()
     result.propertiesModel = newTraitModel()
     result.rankingsModel = newTraitModel()
     result.statsModel = newTraitModel()
@@ -76,7 +66,7 @@ QtObject:
     notify = networkIconUrlChanged
 
   proc getName(self: View): QVariant {.slot.} =
-    return newQVariant(self.name)
+    return newQVariant(self.collectible.getName())
 
   proc nameChanged(self: View) {.signal.}
 
@@ -85,7 +75,7 @@ QtObject:
     notify = nameChanged
 
   proc getID(self: View): QVariant {.slot.} =
-    return newQVariant(self.id)
+    return newQVariant(self.collectible.getId())
 
   proc idChanged(self: View) {.signal.}
 
@@ -94,7 +84,7 @@ QtObject:
     notify = idChanged
 
   proc getTokenID(self: View): QVariant {.slot.} =
-    return newQVariant(self.tokenId)
+    return newQVariant(self.collectible.getTokenId().toString())
 
   proc tokenIdChanged(self: View) {.signal.}
 
@@ -103,7 +93,7 @@ QtObject:
     notify = tokenIdChanged
 
   proc getDescription(self: View): QVariant {.slot.} =
-    return newQVariant(self.description)
+    return newQVariant(self.collectible.getDescription())
 
   proc descriptionChanged(self: View) {.signal.}
 
@@ -112,7 +102,7 @@ QtObject:
     notify = descriptionChanged
 
   proc getBackgroundColor(self: View): QVariant {.slot.} =
-    return newQVariant(self.backgroundColor)
+    return newQVariant(self.collectible.getBackgroundColor())
 
   proc backgroundColorChanged(self: View) {.signal.}
 
@@ -121,7 +111,7 @@ QtObject:
     notify = backgroundColorChanged
 
   proc getImageUrl(self: View): QVariant {.slot.} =
-    return newQVariant(self.imageUrl)
+    return newQVariant(self.collectible.getImageUrl())
 
   proc imageUrlChanged(self: View) {.signal.}
 
@@ -130,7 +120,7 @@ QtObject:
     notify = imageUrlChanged
 
   proc getCollectionName(self: View): QVariant {.slot.} =
-    return newQVariant(self.collectionName)
+    return newQVariant(self.collectible.getCollectionName())
 
   proc collectionNameChanged(self: View) {.signal.}
 
@@ -139,7 +129,7 @@ QtObject:
     notify = collectionNameChanged
 
   proc getCollectionImageUrl(self: View): QVariant {.slot.} =
-    return newQVariant(self.collectionImageUrl)
+    return newQVariant(self.collectible.getCollectionImageUrl())
 
   proc collectionImageUrlChanged(self: View) {.signal.}
 
@@ -148,7 +138,7 @@ QtObject:
     notify = collectionImageUrlChanged
 
   proc getPermalink(self: View): QVariant {.slot.} =
-    return newQVariant(self.permalink)
+    return newQVariant(self.collectible.getPermalink())
 
   proc permalinkChanged(self: View) {.signal.}
 
@@ -179,14 +169,14 @@ QtObject:
   proc getStats*(self: View): QVariant {.slot.} =
     return newQVariant(self.statsModel)
 
-  QtProperty[QVariant] rankings:
+  QtProperty[QVariant] stats:
     read = getStats
     notify = statsChanged
 
-  proc update*(self: View, collectionSlug: string, id: int) {.slot.} =
-    self.delegate.update(collectionSlug, id)
+  proc update*(self: View, address: string, tokenId: string) {.slot.} =
+    self.delegate.update(address, parse(tokenId, Uint256))
 
-  proc setData*(self: View, collection: collectible_dto.CollectionDto, collectible: collectible_dto.CollectibleDto, network: network_dto.NetworkDto) =
+  proc setData*(self: View, collectible: Item, network: network_dto.NetworkDto) =
     if (self.networkShortName != network.shortName):
       self.networkShortName = network.shortName
       self.networkShortNameChanged()
@@ -199,46 +189,21 @@ QtObject:
       self.networkIconUrl = network.iconURL
       self.networkIconUrlChanged()
 
-    if (self.collectionName != collection.name):
-      self.collectionName = collection.name
-      self.collectionNameChanged()
+    self.collectible = collectible
+    self.collectionNameChanged()
+    self.collectionImageUrlChanged()
+    self.nameChanged()
+    self.idChanged()
+    self.tokenIdChanged()
+    self.descriptionChanged()
+    self.backgroundColorChanged()
+    self.imageUrlChanged()
 
-    if (self.collectionImageUrl != collection.imageUrl):
-      self.collectionImageUrl = collection.imageUrl
-      self.collectionImageUrlChanged()
-    
-    if (self.name != collectible.name):
-      self.name = collectible.name
-      self.nameChanged()
-
-    let idString = $collectible.id
-    if (self.id != idString):
-      self.id = idString
-      self.idChanged()
-
-    let tokenIdString = collectible.tokenId.toString()
-    if (self.tokenId != tokenIdString):
-      self.tokenId = tokenIdString
-      self.tokenIdChanged()
-
-    if (self.description != collectible.description):
-      self.description = collectible.description
-      self.descriptionChanged()
-
-    let backgroundColor = if (collectible.backgroundColor == ""): "transparent" else: ("#" & collectible.backgroundColor)
-    if (self.backgroundColor != backgroundColor):
-      self.backgroundColor = backgroundColor
-      self.backgroundColorChanged()
-
-    if (self.imageUrl != collectible.imageUrl):
-      self.imageUrl = collectible.imageUrl
-      self.imageUrlChanged()
-
-    self.propertiesModel.setItems(collectible.properties.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)))
+    self.propertiesModel.setItems(collectible.getProperties())
     self.propertiesChanged()
 
-    self.rankingsModel.setItems(collectible.rankings.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)))
+    self.rankingsModel.setItems(collectible.getRankings())
     self.rankingsChanged()
 
-    self.statsModel.setItems(collectible.statistics.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)))
+    self.statsModel.setItems(collectible.getStats())
     self.statsChanged()

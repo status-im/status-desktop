@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar
+import NimQml, sequtils, sugar, stint
 
 import ../../../../../global/global_singleton
 
@@ -7,6 +7,9 @@ import ../io_interface as delegate_interface
 import ../../../../../../app_service/service/collectible/service as collectible_service
 import ../../../../../../app_service/service/collectible/dto as collectible_dto
 import ../../../../../../app_service/service/network/dto as network_dto
+
+import ../models/collectibles_item as collectibles_item
+import ../models/collectibles_utils
 
 export io_interface
 
@@ -45,8 +48,13 @@ method viewDidLoad*(self: Module) =
 method setCurrentAddress*(self: Module, network: network_dto.NetworkDto, address: string) =
   self.controller.setCurrentAddress(network, address)
 
-method update*(self: Module, collectionSlug: string, id: int) =
-  self.controller.update(collectionSlug, id)
+method update*(self: Module, address: string, tokenId: Uint256) =
+  let id = collectible_dto.UniqueID(
+    contractAddress: address,
+    tokenId: tokenId
+  )
+  self.controller.update(id)
 
 method setData*(self: Module, collection: collectible_dto.CollectionDto, collectible: collectible_dto.CollectibleDto, network: network_dto.NetworkDto) =
-  self.view.setData(collection, collectible, network)
+  let item = collectibleToItem(collectible, collection)
+  self.view.setData(item, network)

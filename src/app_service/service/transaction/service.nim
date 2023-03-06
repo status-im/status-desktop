@@ -217,8 +217,12 @@ QtObject:
     for tx in historyData["history"].getElems():
       transactions.add(tx.toTransactionDto())
 
-    for c in historyData["collectibles"].getElems():
-      collectibles.add(c.toCollectibleDto())
+    let collectiblesContainerJson = historyData["collectibles"]
+    if collectiblesContainerJson.kind == JObject:
+      let collectiblesJson = collectiblesContainerJson["assets"]
+      if collectiblesJson.kind == JArray:
+        for c in collectiblesJson.getElems():
+          collectibles.add(c.toCollectibleDto())
 
     if self.allTxLoaded.hasKey(address):
       self.allTxLoaded[address] = self.allTxLoaded[address] and allTxLoaded

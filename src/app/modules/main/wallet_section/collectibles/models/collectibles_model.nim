@@ -5,6 +5,7 @@ import ./collectibles_item, ./collectible_trait_model
 type
   CollectibleRole* {.pure.} = enum
     Id = UserRole + 1,
+    Address
     TokenId
     Name
     ImageUrl
@@ -14,11 +15,23 @@ type
     Properties
     Rankings
     Stats
+    CollectionName
+    CollectionSlug
+    CollectionImageUrl
+    IsLoading
+
+# Maximum number of owned collectibles to be fetched at a time
+const ownedCollectiblesFetchLimit = 200
 
 QtObject:
   type
     Model* = ref object of QAbstractListModel
       items: seq[Item]
+      allCollectiblesLoaded: bool
+      isFetching: bool
+
+  proc addLoadingItems(self: Model)
+  proc removeLoadingItems(self: Model)
 
   proc delete(self: Model) =
     self.items = @[]
@@ -27,13 +40,12 @@ QtObject:
   proc setup(self: Model) =
     self.QAbstractListModel.setup
 
-  proc newModel*(items: seq[Item]): Model =
+  proc newModel*(): Model =
     new(result, delete)
     result.setup
-    result.items = items
-
-  proc newModel*(): Model =
-    return newModel(@[])
+    result.items = @[]
+    result.allCollectiblesLoaded = false
+    result.isFetching = true
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
@@ -46,12 +58,50 @@ QtObject:
     read = getCount
     notify = countChanged
 
+  proc isFetchingChanged(self: Model) {.signal.}
+  proc getIsFetching*(self: Model): bool {.slot.} =
+    self.isFetching
+  QtProperty[bool] isFetching:
+    read = getIsFetching
+    notify = isFetchingChanged
+  proc setIsFetching(self: Model, value: bool) =
+    if value == self.isFetching:
+      return
+    if value:
+      self.addLoadingItems()
+    else:
+      self.removeLoadingItems()
+    self.isFetching = value
+    self.isFetchingChanged()
+
+  proc allCollectiblesLoadedChanged(self: Model) {.signal.}
+  proc getAllCollectiblesLoaded*(self: Model): bool {.slot.} =
+    self.allCollectiblesLoaded
+  QtProperty[bool] allCollectiblesLoaded:
+    read = getAllCollectiblesLoaded
+    notify = allCollectiblesLoadedChanged
+  proc setAllCollectiblesLoaded*(self: Model, value: bool) =
+    if value == self.allCollectiblesLoaded:
+      return
+    self.allCollectiblesLoaded = value
+    self.allCollectiblesLoadedChanged()
+
+  method canFetchMore*(self: Model, parent: QModelIndex): bool =
+    return not self.allCollectiblesLoaded and not self.isFetching
+
+  proc requestFetch(self: Model, limit: int) {.signal.}
+  method fetchMore*(self: Model, parent: QModelIndex) =
+    if not self.isFetching:
+      self.setIsFetching(true)
+      self.requestFetch(ownedCollectiblesFetchLimit)
+
   method rowCount*(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
   method roleNames(self: Model): Table[int, string] =
     {
       CollectibleRole.Id.int:"id",
+      CollectibleRole.Address.int:"address",
       CollectibleRole.TokenId.int:"tokenId",
       CollectibleRole.Name.int:"name",
       CollectibleRole.ImageUrl.int:"imageUrl",
@@ -61,6 +111,10 @@ QtObject:
       CollectibleRole.Properties.int:"properties",
       CollectibleRole.Rankings.int:"rankings",
       CollectibleRole.Stats.int:"stats",
+      CollectibleRole.CollectionName.int:"collectionName",
+      CollectibleRole.CollectionSlug.int:"collectionSlug",
+      CollectibleRole.CollectionImageUrl.int:"collectionImageUrl",
+      CollectibleRole.IsLoading.int:"isLoading",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -76,6 +130,8 @@ QtObject:
     case enumRole:
     of CollectibleRole.Id:
       result = newQVariant(item.getId())
+    of CollectibleRole.Address:
+      result = newQVariant(item.getAddress())
     of CollectibleRole.TokenId:
       result = newQVariant(item.getTokenId().toString())
     of CollectibleRole.Name:
@@ -100,15 +156,45 @@ QtObject:
       let traits = newTraitModel()
       traits.setItems(item.getStats())
       result = newQVariant(traits)
+    of CollectibleRole.CollectionName:
+      result = newQVariant(item.getCollectionName())
+    of CollectibleRole.CollectionSlug:
+      result = newQVariant(item.getCollectionSlug())
+    of CollectibleRole.CollectionImageUrl:
+      result = newQVariant(item.getCollectionImageUrl())
+    of CollectibleRole.IsLoading:
+      result = newQVariant(item.getIsLoading())
 
-  proc getItem*(self: Model, index: int): Item =
-    return self.items[index]
+  proc addLoadingItems(self: Model) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
 
-  proc setItems*(self: Model, items: seq[Item]) =
-    self.beginResetModel()
-    self.items = items
-    self.endResetModel()
+    let loadingItem = initLoadingItem()
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len + ownedCollectiblesFetchLimit - 1)
+    for i in 1..ownedCollectiblesFetchLimit:
+      self.items.add(loadingItem)
+    self.endInsertRows()
     self.countChanged()
 
-  proc appendItems*(self: Model, items: seq[Item]) =
-    self.setItems(concat(self.items, items))
+  proc removeLoadingItems(self: Model) =
+    for i in 0 ..< self.items.len:
+      if self.items[i].getIsLoading():
+        self.beginRemoveRows(newQModelIndex(), i, self.items.len-1)
+        self.items.delete(i, self.items.len-1)
+        self.endRemoveRows()
+        self.countChanged()
+        return
+
+  proc setItems*(self: Model, items: seq[Item], append: bool) =
+    self.setIsFetching(false)
+    if append:
+      let parentModelIndex = newQModelIndex()
+      defer: parentModelIndex.delete
+      self.beginInsertRows(parentModelIndex, self.items.len, self.items.len + items.len - 1)
+      self.items = concat(self.items, items)
+      self.endInsertRows()
+    else:
+      self.beginResetModel()
+      self.items = items
+      self.endResetModel()
+    self.countChanged()

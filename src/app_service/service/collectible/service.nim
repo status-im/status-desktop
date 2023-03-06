@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, sequtils, json, sugar, stint, hashes
+import NimQml, Tables, chronicles, sequtils, json, sugar, stint, hashes, strformat, times
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 
@@ -16,29 +16,14 @@ logScope:
   topics = "collectible-service"
 
 # Signals which may be emitted by this service:
-const SIGNAL_OWNED_COLLECTIONS_UPDATED* = "ownedCollectionsUpdated"
-const SIGNAL_OWNED_COLLECTIBLES_UPDATED* = "ownedCollectiblesUpdated"
+const SIGNAL_OWNED_COLLECTIBLES_UPDATE_STARTED* = "ownedCollectiblesUpdateStarted"
+const SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED* = "ownedCollectiblesUpdateFinished"
 const SIGNAL_COLLECTIBLES_UPDATED* = "collectiblesUpdated"
-
-# Maximum number of collectibles to be fetched at a time
-const limit = 200 
-
-# Unique identifier for collectible in a specific chain
-type
-  UniqueID* = object
-    contractAddress*: string
-    tokenId*: UInt256
-
-type
-  OwnedCollectionsUpdateArgs* = ref object of Args
-    chainId*: int
-    address*: string
 
 type
   OwnedCollectiblesUpdateArgs* = ref object of Args
     chainId*: int
     address*: string
-    collectionSlug*: string
 
 type
   CollectiblesUpdateArgs* = ref object of Args
@@ -46,32 +31,47 @@ type
     ids*: seq[UniqueID]
 
 type
-  CollectionData* = ref object
-    collection*: CollectionDto
-    collectiblesLoaded*: bool
-    collectibles*: OrderedTableRef[int, CollectibleDto]  # [collectibleId, CollectibleDto]
-
-proc newCollectionData*(collection: CollectionDto): CollectionData =
-  new(result)
-  result.collection = collection
-  result.collectiblesLoaded = false
-  result.collectibles = newOrderedTable[int, CollectibleDto]()
-
-type
-  CollectionsData* = ref object
-    collectionsLoaded*: bool
-    collections*: OrderedTableRef[string, CollectionData]  # [collectionSlug, CollectionData]
+  CollectiblesData* = ref object
+    isFetching*: bool
+    allLoaded*: bool
+    lastLoadWasFromStart*: bool
+    lastLoadFromStartTimestamp*: DateTime
+    lastLoadCount*: int
+    previousCursor*: string
+    nextCursor*: string
+    ids*: seq[UniqueID]
   
-proc newCollectionsData*(): CollectionsData =
+proc newCollectiblesData*(): CollectiblesData =
   new(result)
-  result.collectionsLoaded = false
-  result.collections = newOrderedTable[string, CollectionData]()
+  result.isFetching = false
+  result.allLoaded = false
+  result.lastLoadWasFromStart = false
+  result.lastLoadFromStartTimestamp = now() - initDuration(weeks = 1)
+  result.lastLoadCount = 0
+  result.previousCursor = ""
+  result.nextCursor = ""
+  result.ids = @[]
+
+proc `$`*(self: CollectiblesData): string =
+  return fmt"""CollectiblesData(
+    isFetching:{self.isFetching}, 
+    allLoaded:{self.allLoaded}, 
+    lastLoadWasFromStart:{self.lastLoadWasFromStart},
+    lastLoadFromStartTimestamp:{self.lastLoadFromStartTimestamp},
+    lastLoadCount:{self.lastLoadCount}, 
+    previousCursor:{self.previousCursor}, 
+    nextCursor:{self.nextCursor}, 
+    ids:{self.ids}
+  )"""
 
 type
-  AdressesData* = TableRef[string, CollectionsData]  # [address, CollectionsData]
+  AdressesData = TableRef[string, CollectiblesData]  # [address, CollectiblesData]
 
 type
-  ChainsData* = TableRef[int, AdressesData]  # [chainId, AdressesData]
+  ChainsData = TableRef[int, AdressesData]  # [chainId, AdressesData]
+
+type
+  CollectiblesResult = tuple[success: bool, collectibles: seq[CollectibleDto], collections: seq[CollectionDto], previousCursor: string, nextCursor: string]
 
 proc hash(x: UniqueID): Hash =
   result = x.contractAddress.hash !& x.tokenId.hash
@@ -84,7 +84,8 @@ QtObject:
       threadpool: ThreadPool
       networkService: network_service.Service
       ownershipData: ChainsData
-      data: TableRef[int, TableRef[UniqueID, CollectibleDto]]  # [chainId, [UniqueID, CollectibleDto]]
+      collectibles: TableRef[int, TableRef[UniqueID, CollectibleDto]]  # [chainId, [UniqueID, CollectibleDto]]
+      collections: TableRef[int, TableRef[string, CollectionDto]]  # [chainId, [slug, CollectionDto]]
 
   proc delete*(self: Service) =
       self.QObject.delete
@@ -100,115 +101,126 @@ QtObject:
     result.threadpool = threadpool
     result.networkService = networkService
     result.ownershipData = newTable[int, AdressesData]()
-    result.data = newTable[int, TableRef[UniqueID, CollectibleDto]]()
+    result.collectibles = newTable[int, TableRef[UniqueID, CollectibleDto]]()
+    result.collections = newTable[int, TableRef[string, CollectionDto]]()
 
   proc init*(self: Service) =
     discard
 
-  proc insertAddressIfNeeded*(self: Service, chainId: int, address: string) =
+  proc prepareOwnershipData(self: Service, chainId: int, address: string, reset: bool = false) =
     if not self.ownershipData.hasKey(chainId):
-      self.ownershipData[chainId] = newTable[string, CollectionsData]()
+      self.ownershipData[chainId] = newTable[string, CollectiblesData]()
 
     let chainData = self.ownershipData[chainId]
-    if not chainData.hasKey(address):
-      chainData[address] = newCollectionsData()
+    if reset or not chainData.hasKey(address):
+      chainData[address] = newCollectiblesData()
 
-  proc updateOwnedCollectionsCache*(self: Service, chainId: int, address: string, collections: seq[CollectionDto]) =
+    let addressData = self.ownershipData[chainId][address]
+    addressData.lastLoadWasFromStart = reset
+    if reset:
+      addressData.lastLoadFromStartTimestamp = now()
+
+
+  proc updateOwnedCollectibles(self: Service, chainId: int, address: string, previousCursor: string, nextCursor: string, collectibles: seq[CollectibleDto]) =
     try:
-      let oldAddressData = self.ownershipData[chainId][address]
+      let collectiblesData = self.ownershipData[chainId][address]
+      collectiblesData.previousCursor = previousCursor
+      collectiblesData.nextCursor = nextCursor
+      collectiblesData.allLoaded = (nextCursor == "")
 
-      # Start with empty object. Only add newly received collections, so removed ones are discarded
-      let newAddressData = newCollectionsData()
-      for collection in collections:
-        newAddressData.collections[collection.slug] = newCollectionData(collection)
-        if oldAddressData.collections.hasKey(collection.slug):
-          let oldCollection = oldAddressData.collections[collection.slug]
-          let newCollection = newAddressData.collections[collection.slug]
-          # Take collectibles from old collection
-          newCollection.collectiblesLoaded = oldCollection.collectiblesLoaded
-          newCollection.collectibles = oldCollection.collectibles
-
-      newAddressData.collectionsLoaded = true
-      self.ownershipData[chainId][address] = newAddressData
-
-      var data = OwnedCollectionsUpdateArgs()
-      data.chainId = chainId
-      data.address = address
-      
-      self.events.emit(SIGNAL_OWNED_COLLECTIONS_UPDATED, data)
-
-    except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
-
-  proc updateOwnedCollectiblesCache*(self: Service, chainId: int, address: string, collectionSlug: string, collectibles: seq[CollectibleDto]) =
-    try:
-      let collection = self.ownershipData[chainId][address].collections[collectionSlug]
-      collection.collectibles.clear()
-
+      var count = 0
       for collectible in collectibles:
-        collection.collectibles[collectible.id] = collectible
-      collection.collectiblesLoaded = true
-
-      var data = OwnedCollectiblesUpdateArgs()
-      data.chainId = chainId
-      data.address = address
-      data.collectionSlug = collectionSlug
-      self.events.emit(SIGNAL_OWNED_COLLECTIBLES_UPDATED, data)
+        let newId = UniqueID(
+          contractAddress: collectible.address,
+          tokenId: collectible.tokenId
+        )
+        if not collectiblesData.ids.any(id => newId == id):
+          collectiblesData.ids.add(newId)
+          count = count + 1
+      collectiblesData.lastLoadCount = count
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
 
-  proc updateCollectiblesCache*(self: Service, chainId: int, collectibles: seq[CollectibleDto]) =
-    if not self.data.hasKey(chainId):
-      self.data[chainId] = newTable[UniqueID, CollectibleDto]()
+  proc updateCollectiblesCache*(self: Service, chainId: int, collectibles: seq[CollectibleDto], collections: seq[CollectionDto]) =
+    if not self.collectibles.hasKey(chainId):
+      self.collectibles[chainId] = newTable[UniqueID, CollectibleDto]()
     
+    if not self.collections.hasKey(chainId):
+      self.collections[chainId] = newTable[string, CollectionDto]()
+  
     var data = CollectiblesUpdateArgs()
     data.chainId = chainId
+
+    for collection in collections:
+      let slug = collection.slug
+      self.collections[chainId][slug] = collection
+
 
     for collectible in collectibles:
       let id = UniqueID(
         contractAddress: collectible.address,
         tokenId: collectible.tokenId
       )
-      self.data[chainId][id] = collectible
+      self.collectibles[chainId][id] = collectible
       data.ids.add(id)
     
     self.events.emit(SIGNAL_COLLECTIBLES_UPDATED, data)
 
-  proc getOwnedCollections*(self: Service, chainId: int, address: string) : CollectionsData =
+  proc getOwnedCollectibles*(self: Service, chainId: int, address: string) : CollectiblesData =
     try:
       return self.ownershipData[chainId][address]
     except:
       discard
-    return newCollectionsData()
-
-  proc getOwnedCollection*(self: Service, chainId: int, address: string, collectionSlug: string) : CollectionData =
-    try:
-      return self.ownershipData[chainId][address].collections[collectionSlug]
-    except:
-      discard
-    return newCollectionData(CollectionDto())
+    return newCollectiblesData()
 
   proc getCollectible*(self: Service, chainId: int, id: UniqueID) : CollectibleDto =
     try:
-      return self.data[chainId][id]
+      return self.collectibles[chainId][id]
     except:
       discard
     return newCollectibleDto()
 
-  proc onRxCollectibles*(self: Service, response: string) {.slot.} =
+  proc getCollection*(self: Service, chainId: int, slug: string) : CollectionDto =
+    try:
+      return self.collections[chainId][slug]
+    except:
+      discard
+    return newCollectionDto()
+
+  proc processCollectiblesResult(responseObj: JsonNode) : CollectiblesResult =
+    result.success = false
+    let collectiblesContainerJson = responseObj["collectibles"]
+    if collectiblesContainerJson.kind == JObject:
+      let previousCursorJson = collectiblesContainerJson["previous"]
+      let nextCursorJson = collectiblesContainerJson["next"]
+      let collectiblesJson = collectiblesContainerJson["assets"]
+
+      if previousCursorJson.kind == JString and nextCursorJson.kind == JString:
+        result.previousCursor = previousCursorJson.getStr()
+        result.nextCursor = nextCursorJson.getStr()
+        for collectibleJson in collectiblesJson.getElems():
+          if collectibleJson.kind == JObject:
+            result.collectibles.add(collectibleJson.toCollectibleDto())
+            let collectionJson = collectibleJson["collection"]
+            if collectionJson.kind == JObject:
+              result.collections.add(collectionJson.toCollectionDto())
+            else:
+              return
+          else:
+            return
+        result.success = true
+
+  proc onRxCollectibles(self: Service, response: string) {.slot.} =
     try:
       let responseObj = response.parseJson
       if (responseObj.kind == JObject):
         let chainIdJson = responseObj["chainId"]
-        let collectiblesJson = responseObj["collectibles"]
-
-        if (chainIdJson.kind == JInt and
-          collectiblesJson.kind == JArray):
+        if chainIdJson.kind == JInt:
           let chainId = chainIdJson.getInt()
-          let collectibles = map(collectiblesJson.getElems(), proc(x: JsonNode): CollectibleDto = x.toCollectibleDto())
-          self.updateCollectiblesCache(chainId, collectibles)
+          let (success, collectibles, collections, _, _) = processCollectiblesResult(responseObj)
+          if success:
+            self.updateCollectiblesCache(chainId, collectibles, collections)
     except Exception as e:
       let errDescription = e.msg
       error "error onRxCollectibles: ", errDescription
@@ -223,79 +235,55 @@ QtObject:
         contractAddress: id.contractAddress,
         tokenID: id.tokenId.toString()
       )),
-      limit: limit
-    )
-    self.threadpool.start(arg)
-
-  proc onRxOwnedCollections*(self: Service, response: string) {.slot.} =
-    try:
-      let responseObj = response.parseJson
-      if (responseObj.kind == JObject):
-        let chainIdJson = responseObj["chainId"]
-        let addressJson = responseObj["address"]
-
-        let validAccount = (chainIdJson.kind == JInt and 
-          addressJson.kind == JString)
-        if (validAccount):
-          let chainId = chainIdJson.getInt()
-          let address = addressJson.getStr()
-
-          var collections: seq[CollectionDto]
-          let collectionsJson = responseObj["collections"]
-          if (collectionsJson.kind == JArray):
-            collections = map(collectionsJson.getElems(), proc(x: JsonNode): CollectionDto = x.toCollectionDto())
-
-          self.updateOwnedCollectionsCache(chainId, address, collections)
-    except Exception as e:
-      let errDescription = e.msg
-      error "error onRxOwnedCollections: ", errDescription
-
-  proc fetchOwnedCollections*(self: Service, chainId: int, address: string) =
-    self.insertAddressIfNeeded(chainId, address)
-
-    let arg = FetchOwnedCollectionsTaskArg(
-      tptr: cast[ByteAddress](fetchOwnedCollectionsTaskArg),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onRxOwnedCollections",
-      chainId: chainId,
-      address: address,
+      limit: len(ids)
     )
     self.threadpool.start(arg)
   
-  proc onRxOwnedCollectibles*(self: Service, response: string) {.slot.} =
+  proc onRxOwnedCollectibles(self: Service, response: string) {.slot.} =
     var data = OwnedCollectiblesUpdateArgs()
     try:
       let responseObj = response.parseJson
       if (responseObj.kind == JObject):
         let chainIdJson = responseObj["chainId"]
         let addressJson = responseObj["address"]
-        let collectionSlugJson = responseObj["collectionSlug"]
-        
-        let validCollection = (chainIdJson.kind == JInt and 
-          addressJson.kind == JString and 
-          collectionSlugJson.kind == JString)
-        if (validCollection):
-          let chainId = chainIdJson.getInt()
-          let address = addressJson.getStr()
-          let collectionSlug = collectionSlugJson.getStr()
-
-          var collectibles: seq[CollectibleDto]
-          let collectiblesJson = responseObj["collectibles"]
-          if (collectiblesJson.kind == JArray):
-            collectibles = map(collectiblesJson.getElems(), proc(x: JsonNode): CollectibleDto = x.toCollectibleDto())
-          self.updateOwnedCollectiblesCache(chainId, address, collectionSlug, collectibles)
-          self.updateCollectiblesCache(data.chainId, collectibles)
+        if (chainIdJson.kind == JInt and
+          addressJson.kind == JString):
+          data.chainId = chainIdJson.getInt()
+          data.address = addressJson.getStr()
+          self.ownershipData[data.chainId][data.address].isFetching = false
+          let (success, collectibles, collections, prevCursor, nextCursor) = processCollectiblesResult(responseObj)
+          if success:
+            self.updateCollectiblesCache(data.chainId, collectibles, collections)
+            self.updateOwnedCollectibles(data.chainId, data.address, prevCursor, nextCursor, collectibles)
     except Exception as e:
       let errDescription = e.msg
       error "error onRxOwnedCollectibles: ", errDescription
+    self.events.emit(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED, data)
 
-  proc fetchOwnedCollectibles*(self: Service, chainId: int, address: string, collectionSlug: string) =
-    self.insertAddressIfNeeded(chainId, address)
-    let collections = self.ownershipData[chainId][address].collections
+  proc resetOwnedCollectibles*(self: Service, chainId: int, address: string) =
+    self.prepareOwnershipData(chainId, address, true)
+    var data = OwnedCollectiblesUpdateArgs()
+    data.chainId = chainId
+    data.address = address
+    self.events.emit(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED, data)
 
-    if not collections.hasKey(collectionSlug):
-      error "error fetchOwnedCollectibles: Attempting to fetch collectibles from unknown collection: ", collectionSlug
+  proc fetchOwnedCollectibles*(self: Service, chainId: int, address: string, limit: int) =
+    self.prepareOwnershipData(chainId, address, false)
+
+    let collectiblesData = self.ownershipData[chainId][address]
+
+    if collectiblesData.isFetching:
       return
+
+    if collectiblesData.allLoaded:
+      return
+
+    collectiblesData.isFetching = true
+
+    var data = OwnedCollectiblesUpdateArgs()
+    data.chainId = chainId
+    data.address = address
+    self.events.emit(SIGNAL_OWNED_COLLECTIBLES_UPDATE_STARTED, data)
 
     let arg = FetchOwnedCollectiblesTaskArg(
       tptr: cast[ByteAddress](fetchOwnedCollectiblesTaskArg),
@@ -303,15 +291,7 @@ QtObject:
       slot: "onRxOwnedCollectibles",
       chainId: chainId,
       address: address,
-      collectionSlug: collectionSlug,
+      cursor: collectiblesData.nextCursor,
       limit: limit
     )
     self.threadpool.start(arg)
-
-  proc fetchAllOwnedCollectibles*(self: Service, chainId: int, address: string) =
-    try:
-      for collectionSlug, _ in self.ownershipData[chainId][address].collections:
-        self.fetchOwnedCollectibles(chainId, address, collectionSlug)
-    except Exception as e:
-      let errDescription = e.msg
-      error "error fetchAllOwnedCollectibles: ", errDescription

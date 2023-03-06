@@ -1,3 +1,4 @@
+import stint
 import ../../../../../../app_service/service/network/dto as network_dto
 import ../../../../../../app_service/service/collectible/dto as collectible_dto
 
@@ -17,7 +18,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method setCurrentAddress*(self: AccessInterface, network: network_dto.NetworkDto, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method update*(self: AccessInterface, collectionSlug: string, id: int) {.base.} =
+method update*(self: AccessInterface, address: string, tokenId: Uint256) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setData*(self: AccessInterface, collection: collectible_dto.CollectionDto, collectible: collectible_dto.CollectibleDto, network: network_dto.NetworkDto) {.base.} =

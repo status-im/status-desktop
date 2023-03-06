@@ -1,20 +1,16 @@
 import NimQml
 
-import ./models/collections_model as collections_model
-import ./models/collectibles_flat_proxy_model as flat_model
-import ./models/collections_item as collections_item
-import ./models/collectibles_item as collectibles_item
+import ./models/collectibles_model
+import ./models/collectibles_item
 import ./io_interface
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      model: collections_model.Model
-      flatModel: flat_model.Model
+      model: Model
 
   proc delete*(self: View) =
-    self.flatModel.delete
     self.model.delete
     self.QObject.delete
 
@@ -23,7 +19,7 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
     result.model = newModel()
-    result.flatModel = flat_model.newModel(result.model)
+    signalConnect(result.model, "requestFetch(int)", result, "fetchMoreOwnedCollectibles(int)")
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -35,21 +31,9 @@ QtObject:
     read = getModel
     notify = modelChanged
 
-  proc flatModelChanged*(self: View) {.signal.}
-  proc getFlatModel(self: View): QVariant {.slot.} =
-    return newQVariant(self.flatModel)
-  QtProperty[QVariant] flatModel:
-    read = getFlatModel
-    notify = flatModelChanged
+  proc fetchMoreOwnedCollectibles*(self: View, limit: int) {.slot.} =
+    self.delegate.fetchOwnedCollectibles(limit)
 
-  proc fetchOwnedCollections*(self: View) {.slot.} =
-    self.delegate.fetchOwnedCollections()
-
-  proc fetchOwnedCollectibles*(self: View, collectionSlug: string) {.slot.} =
-    self.delegate.fetchOwnedCollectibles(collectionSlug)
-
-  proc setCollections*(self: View, collections: seq[collections_item.Item], collectionsLoaded: bool) =
-    self.model.setCollections(collections, collectionsLoaded)
-
-  proc setCollectibles*(self: View, collectionsSlug: string, collectibles: seq[collectibles_item.Item], collectiblesLoaded: bool) =
-    self.model.updateCollectionCollectibles(collectionsSlug, collectibles, collectiblesLoaded)
+  proc setCollectibles*(self: View, collectibles: seq[Item], append: bool, allLoaded: bool) =
+    self.model.setItems(collectibles, append)
+    self.model.setAllCollectiblesLoaded(allLoaded)

@@ -18,14 +18,10 @@ proc `==`*(a, b: NFTUniqueID): bool =
   result = a.contractAddress == b.contractAddress and
     a.tokenID == b.tokenID
 
-rpc(getOpenseaCollectionsByOwner, "wallet"):
+rpc(getOpenseaAssetsByOwnerWithCursor, "wallet"):
   chainId: int
   address: string
-
-rpc(getOpenseaAssetsByOwnerAndCollection, "wallet"):
-  chainId: int
-  address: string
-  collectionSlug: string
+  cursor: string
   limit: int
 
 rpc(getOpenseaAssetsByNFTUniqueID, "wallet"):

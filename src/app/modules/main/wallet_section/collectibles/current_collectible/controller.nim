@@ -29,6 +29,7 @@ method setCurrentAddress*(self: Controller, network: network_dto.NetworkDto, add
   self.network = network
   self.address = address
 
-proc update*(self: Controller, collectionSlug: string, id: int) =
-  let collection = self.collectibleService.getOwnedCollection(self.network.chainId, self.address, collectionSlug)
-  self.delegate.setData(collection.collection, collection.collectibles[id], self.network)
+proc update*(self: Controller, id: collectible_service.UniqueID) =
+  let collectible = self.collectibleService.getCollectible(self.network.chainId, id)
+  let collection = self.collectibleService.getCollection(self.network.chainId, collectible.collectionSlug)
+  self.delegate.setData(collection, collectible, self.network)

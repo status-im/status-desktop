@@ -5,6 +5,7 @@ import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import utils 1.0
 import shared.controls 1.0
@@ -26,7 +27,7 @@ Item {
         asset.name: currentCollectible.collectionImageUrl
         asset.isImage: true
         primaryText: currentCollectible.collectionName
-        secondaryText: currentCollectible.id
+        secondaryText: "#" + currentCollectible.tokenId
         isNarrowMode: root.isNarrowMode
         networkShortName: currentCollectible.networkShortName
         networkColor: currentCollectible.networkColor
