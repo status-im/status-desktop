@@ -107,12 +107,24 @@ proc transactionsToItems(self: Module, transactions: seq[TransactionDto], collec
 proc setPendingTx(self: Module) =
   self.view.setPendingTx(self.transactionsToItems(self.controller.watchPendingTransactions(), @[]))
 
+method setEnabledChainIds*(self: Module) =
+  let enabledChainIds = self.controller.getEnabledChainIds()
+  self.view.setEnabledChainIds(enabledChainIds)
+
+method refreshTransactions*(self: Module) =
+  self.setEnabledChainIds()
+  self.view.resetTrxHistory()
+  self.view.setPendingTx(self.transactionsToItems(self.controller.getPendingTransactions(), @[]))
+  for account in self.controller.getWalletAccounts():
+    let transactions = self.controller.getAllTransactions(account.address)
+    self.view.setTrxHistoryResult(self.transactionsToItems(transactions, @[]), account.address, wasFetchMore=false)
+
 method viewDidLoad*(self: Module) =
   let accounts = self.getWalletAccounts()
 
   self.moduleLoaded = true
   self.delegate.transactionsModuleDidLoad()
-
+  self.setEnabledChainIds()
   self.setPendingTx()
 
 method switchAccount*(self: Module, accountIndex: int) =

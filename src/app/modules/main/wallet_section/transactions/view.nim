@@ -15,6 +15,7 @@ QtObject:
       model: Model
       modelVariant: QVariant
       fetchingHistoryState: Table[string, bool]
+      enabledChainIds: seq[int]
       isNonArchivalNode: bool
 
   proc delete*(self: View) =
@@ -72,14 +73,25 @@ QtObject:
       self.models[address].addPageSizeBuffer(limit)
     self.delegate.loadTransactions(address, toBlock, limit, loadMore)
 
+  proc resetTrxHistory*(self: View) =
+    for address in self.models.keys:
+      self.models[address].resetItems()
+
   proc setTrxHistoryResult*(self: View, transactions: seq[Item], address: string, wasFetchMore: bool) =
+    var toAddTransactions: seq[Item] = @[]
+    for tx in transactions:
+      if not self.enabledChainIds.contains(tx.getChainId()):
+        continue
+      
+      toAddTransactions.add(tx)
+
     if not self.models.hasKey(address):
       self.models[address] = newModel()
 
     self.models[address].removePageSizeBuffer()
-    self.models[address].addNewTransactions(transactions, wasFetchMore)
+    self.models[address].addNewTransactions(toAddTransactions, wasFetchMore)
     if self.fetchingHistoryState.hasKey(address) and self.fetchingHistoryState[address] and wasFetchMore:
-      self.models[address].addPageSizeBuffer(transactions.len)
+      self.models[address].addPageSizeBuffer(toAddTransactions.len)
 
   proc setHistoryFetchStateForAccounts*(self: View, addresses: seq[string], isFetching: bool) =
     for address in addresses:
@@ -105,6 +117,9 @@ QtObject:
 
   proc getIsNonArchivalNode(self: View): QVariant {.slot.} =
     return newQVariant(self.isNonArchivalNode)
+
+  proc setEnabledChainIds*(self: View, chainIds: seq[int]) =
+    self.enabledChainIds = chainIds
 
   proc isNonArchivalNodeChanged(self: View) {.signal.}
 
@@ -158,7 +173,7 @@ QtObject:
       discard
 
     return self.delegate.suggestedRoutes(account, parsedAmount, token, seqDisabledFromChainIDs, seqDisabledToChainIDs, seqPreferredChainIDs, sendType, lockedInAmounts)
-  
+
   proc getChainIdForChat*(self: View): int {.slot.} =
     return self.delegate.getChainIdForChat()
 
@@ -175,6 +190,9 @@ QtObject:
 
   proc setPendingTx*(self: View, pendingTx: seq[Item]) =
     for tx in pendingTx:
+      if not self.enabledChainIds.contains(tx.getChainId()):
+        continue
+
       let fromAddress = tx.getfrom()
       if not self.models.hasKey(fromAddress):
         self.models[fromAddress] = newModel()
