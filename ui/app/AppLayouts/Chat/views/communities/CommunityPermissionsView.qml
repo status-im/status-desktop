@@ -68,7 +68,7 @@ StatusScrollView {
                 ChannelsSelectionModel {
                     id: channelsSelectionModel
 
-                    sourceModel: model.channelsListModel
+                    sourceModel: model.channelsListModel ?? null
                     channelsModel: root.channelsModel
                 }
 
