@@ -79,7 +79,6 @@ SettingsPageLayout {
             chainIcon = ""
         }
 
-        // TO CHECK: Some backend properties are not working correctly
         function loadData(model) {
             deployState = model.deployState
             collectibleName = model.name
@@ -87,12 +86,12 @@ SettingsPageLayout {
             supplyText = model.supply.toString()
             infiniteSupply = model.infiniteSupply
             transferable = model.transferable
-            chainName = communitiesStore.getChainName(model.chainId) // Backend NOT WORKING
-            chainIcon = communitiesStore.getChainIcon(model.chainId) // Backend NOT WORKING
-            artworkSource = model.tokenUri // Backend NOT WORKING
-            symbol = model.symbol // Backend NOT WORKING
-            selfDestruct = model.selfDestruct // Backend NOT WORKING
-            chainId = model.chainId // Backend NOT WORKING
+            chainName = communitiesStore.getChainName(model.chainId)
+            chainIcon = communitiesStore.getChainIcon(model.chainId)
+            artworkSource = model.image
+            symbol = model.symbol
+            selfDestruct = model.remoteSelfDestruct
+            chainId = model.chainId
         }
     }
 

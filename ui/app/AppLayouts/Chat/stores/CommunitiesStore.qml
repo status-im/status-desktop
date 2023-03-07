@@ -22,13 +22,11 @@ QtObject {
     property var allNetworks: networksModule.all    
 
     function getChainName(chainId) {
-        // TODO: MOCKED now
-        return "Goerli"
+        return allNetworks.getNetworkFullName(chainId)
     }
 
     function getChainIcon(chainId) {
-        // TODO: MOCKED now
-        return "network/Network=Custom"
+        return allNetworks.getIconUrl(chainId)
     }
 
     // Token holders model: MOCKED DATA -> TODO: Update with real data
