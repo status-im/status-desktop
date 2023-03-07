@@ -183,10 +183,11 @@ ifneq ($(detected_OS),Windows)
  # order matters here, due to "-Wl,-as-needed"
  NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(QZXING)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
 else
- QZXING := vendor/DOtherSide/build/qzxing/libqzxing.dll
  ifneq ($(QML_DEBUG), false)
+  QZXING := vendor/DOtherSide/build/qzxing/Debug/qzxing.lib
   DOTHERSIDE := vendor/DOtherSide/build/lib/Debug/DOtherSide.dll
  else
+  QZXING := vendor/DOtherSide/build/qzxing/Release/qzxing.lib
   DOTHERSIDE := vendor/DOtherSide/build/lib/Release/DOtherSide.dll
  endif
  DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
