@@ -1,4 +1,5 @@
 ChannelsSelectionModel 1.0 ChannelsSelectionModel.qml
+CommunityCollectibleView 1.0 CommunityCollectibleView.qml
 CommunityNewCollectibleView 1.0 CommunityNewCollectibleView.qml
 CommunityNewPermissionView 1.0 CommunityNewPermissionView.qml
 CommunityPermissionsView 1.0 CommunityPermissionsView.qml

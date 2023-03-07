@@ -173,7 +173,6 @@ StatusSectionLayout {
     centerPanel: Loader {
         id: centerPanelContentLoader
         anchors.fill: parent
-        anchors.bottomMargin: 16
         active: root.community
         sourceComponent: StackLayout {
             currentIndex: d.currentIndex
