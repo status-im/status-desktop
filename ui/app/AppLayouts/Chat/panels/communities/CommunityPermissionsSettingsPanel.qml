@@ -52,7 +52,7 @@ SettingsPageLayout {
         readonly property string newPermissionViewState: "NEW_PERMISSION"
         readonly property string permissionsViewState: "PERMISSIONS"
         readonly property string editPermissionViewState: "EDIT_PERMISSION"
-        readonly property bool permissionsExist: permissionsModel.count > 0
+        readonly property bool permissionsExist: root.permissionsModel.count > 0
 
         signal saveChanges
         signal resetChanges
