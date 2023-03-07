@@ -80,7 +80,7 @@ QtObject:
     read = getGifColumnC
     notify = gifLoaded
 
-  proc updateGifColumns(self: View, data: seq[GifDto]) =
+  proc updateGifColumns*(self: View, data: seq[GifDto]) =
     var columnAData: seq[GifDto] = @[]
     var columnAHeight = 0
     var columnBData: seq[GifDto] = @[]
@@ -115,11 +115,21 @@ QtObject:
 
   proc getRecentsGifs*(self: View) {.slot.} =
     let data = self.delegate.getRecentsGifs()
-    self.updateGifColumns(data)
+    if data.len > 0:
+      self.updateGifColumns(data)
+      return
+
+    # recent gifs were not loaded yet, so we do it now
+    self.delegate.loadRecentGifs()
 
   proc getFavoritesGifs*(self: View) {.slot.} =
     let data = self.delegate.getFavoritesGifs()
-    self.updateGifColumns(data)
+    if data.len > 0:
+      self.updateGifColumns(data)
+      return
+
+    # favorite gifs were not loaded yet, so we do it now
+    self.delegate.loadFavoriteGifs()
 
   proc findGifDto(self: View, id: string): GifDto =
     for item in self.gifColumnAModel.gifs:
