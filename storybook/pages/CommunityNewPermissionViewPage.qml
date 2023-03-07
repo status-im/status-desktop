@@ -3,7 +3,6 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import AppLayouts.Chat.views.communities 1.0
-import AppLayouts.Chat.stores 1.0
 
 import Storybook 1.0
 import Models 1.0
@@ -15,8 +14,6 @@ SplitView {
     Logs { id: logs }
 
     Pane {
-        id: root
-
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
@@ -27,48 +24,21 @@ SplitView {
 
             isEditState: isEditStateCheckBox.checked
             isPrivate: isPrivateCheckBox.checked
+            isOwner: isOwnerCheckBox.checked
             duplicationWarningVisible: isDuplicationWarningVisibleCheckBox.checked
 
-            store: CommunitiesStore {
-                readonly property var assetsModel: AssetsModel {}
-                readonly property var collectiblesModel: CollectiblesModel {}
-                readonly property var channelsModel: ChannelsModel {}
-                readonly property var permissionConflict: QtObject {
-                    property bool exists: true
-                    property string holdings: "1 ETH"
-                    property string permissions: "View and Post"
-                    property string channels: "#general"
+            assetsModel: AssetsModel {}
+            collectiblesModel: CollectiblesModel {}
+            channelsModel: ChannelsModel {}
 
-                }
-
-                readonly property bool isOwner: isOwnerCheckBox.checked
-
-                function createPermission(holdings, permissions, isPrivate, channels) {
-                    logs.logEvent("CommunitiesStore::creatPermission")
-                }
-
-                function editPermission(key, holdings, permissions, channels, isPrivate) {
-                    logs.logEvent("CommunitiesStore::editPermission - key: " + key)
-                }
-
-                function removePermission(key) {
-                    logs.logEvent("CommunitiesStore::removePermission - key: " + key)
-                }
+            communityDetails: QtObject {
+                readonly property string name: "Socks"
+                readonly property string image: ModelsData.icons.socks
+                readonly property string color: "red"
             }
 
-            rootStore: QtObject {
-                readonly property QtObject chatCommunitySectionModule: QtObject {
-                    readonly property var model: ChannelsModel {}
-                }
-
-                readonly property QtObject mainModuleInst: QtObject {
-
-                    readonly property QtObject activeSection: QtObject {
-                        readonly property string name: "Socks"
-                        readonly property string image: ModelsData.icons.socks
-                        readonly property string color: "red"
-                    }
-                }
+            onCreatePermissionClicked: {
+                logs.logEvent("CommunityNewPermissionView::onCreatePermissionClicked")
             }
         }
     }
@@ -81,9 +51,7 @@ SplitView {
 
         logsView.logText: logs.logText
 
-
         ColumnLayout {
-
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
