@@ -109,7 +109,7 @@ Loader {
     property bool isStatusMessage: messageContentType === Constants.messageContentType.systemMessagePrivateGroupType
     property bool isSticker: messageContentType === Constants.messageContentType.stickerType
     property bool isDiscordMessage: messageContentType === Constants.messageContentType.discordMessageType
-    property bool isText: messageContentType === Constants.messageContentType.messageType || messageContentType === Constants.messageContentType.editType || isDiscordMessage
+    property bool isText: messageContentType === Constants.messageContentType.messageType || messageContentType === Constants.messageContentType.contactRequestType || isDiscordMessage
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
@@ -249,6 +249,7 @@ Loader {
 
         function convertContentType(value) {
             switch (value) {
+            case Constants.messageContentType.contactRequestType:
             case Constants.messageContentType.messageType:
                 return StatusMessage.ContentType.Text;
             case Constants.messageContentType.stickerType:
@@ -271,7 +272,6 @@ Loader {
             case Constants.messageContentType.statusType:
             case Constants.messageContentType.systemMessagePrivateGroupType:
             case Constants.messageContentType.gapType:
-            case Constants.messageContentType.editType:
             default:
                 return StatusMessage.ContentType.Unknown;
             }

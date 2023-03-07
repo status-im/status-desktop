@@ -14,7 +14,7 @@ type
     Audio = 8
     Community = 9
     Gap = 10
-    Edit = 11
+    ContactRequest = 11
     DiscordMessage = 12
     ContactIdentityVerification = 13
 
