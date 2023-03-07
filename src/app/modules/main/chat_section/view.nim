@@ -32,6 +32,8 @@ QtObject:
       collectiblesListModel: TokenListModel
       collectiblesListModelVariant: QVariant
       allTokenRequirementsMet: bool
+      requiresTokenPermissionToJoin: bool
+      amIMember: bool
       
   proc delete*(self: View) =
     self.model.delete
@@ -74,6 +76,8 @@ QtObject:
     result.tokenListModelVariant = newQVariant(result.tokenListModel)
     result.collectiblesListModel = newTokenListModel()
     result.collectiblesListModelVariant = newQVariant(result.collectiblesListModel)
+    result.amIMember = false
+    result.requiresTokenPermissionToJoin = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -380,6 +384,36 @@ QtObject:
 
   proc deleteCommunityTokenPermission*(self: View, communityId: string, permissionId: string) {.slot.} =
     self.delegate.deleteCommunityTokenPermission(communityId, permissionId)
+
+  proc requiresTokenPermissionToJoinChanged*(self: View) {.signal.}
+
+  proc getRequiresTokenPermissionToJoin(self: View): bool {.slot.} =
+    return self.requiresTokenPermissionToJoin
+
+  proc setRequiresTokenPermissionToJoin*(self: View, value: bool) =
+    if (value == self.requiresTokenPermissionToJoin):
+      return
+    self.requiresTokenPermissionToJoin = value
+    self.requiresTokenPermissionToJoinChanged()
+
+  QtProperty[bool] requiresTokenPermissionToJoin:
+    read = getRequiresTokenPermissionToJoin
+    notify = requiresTokenPermissionToJoinChanged
+
+  proc getAmIMember*(self: View): bool {.slot.} =
+    return self.amIMember
+
+  proc amIMemberChanged*(self: View) {.signal.}
+
+  proc setAmIMember*(self: View, value: bool) =
+    if (value == self.amIMember):
+      return
+    self.amIMember = value
+    self.amIMemberChanged()
+  
+  QtProperty[bool] amIMember:
+    read = getAmIMember
+    notify = amIMemberChanged
 
   proc getAllTokenRequirementsMet*(self: View): bool {.slot.} =
     return self.allTokenRequirementsMet

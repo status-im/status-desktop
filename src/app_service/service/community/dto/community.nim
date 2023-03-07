@@ -64,6 +64,7 @@ type CommunityTokensMetadataDto* = object
   description*: string
   image*: string
   symbol*: string
+  name*: string
   tokenType*: TokenType
 
 type CommunityDto* = object
@@ -165,6 +166,7 @@ proc toCommunityTokensMetadataDto*(jsonObj: JsonNode): CommunityTokensMetadataDt
   discard jsonObj.getProp("description", result.description)
   discard jsonObj.getProp("image", result.image)
   discard jsonObj.getProp("symbol", result.symbol)
+  discard jsonObj.getProp("name", result.name)
   var tokenTypeInt: int
   discard jsonObj.getProp("tokenType", tokenTypeInt)
   result.tokenType = intToEnum(tokenTypeInt, TokenType.ERC721)

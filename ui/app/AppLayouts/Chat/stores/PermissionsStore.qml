@@ -11,6 +11,8 @@ QtObject {
 
     readonly property bool isOwner: false
 
+    readonly property bool allTokenRequirementsMet: chatCommunitySectionModuleInst.allTokenRequirementsMet
+
     readonly property QtObject _d: QtObject {
         id: d
 

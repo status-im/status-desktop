@@ -78,6 +78,12 @@ QtObject:
   proc getItems*(self: TokenCriteriaModel): seq[TokenCriteriaItem] =
     return self.items
 
+  proc setItems*(self: TokenCriteriaModel, items: seq[TokenCriteriaItem]) =
+    self.beginResetModel()
+    self.items = items
+    self.endResetModel()
+    self.countChanged()
+
   proc addItem*(self: TokenCriteriaModel, item: TokenCriteriaItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
