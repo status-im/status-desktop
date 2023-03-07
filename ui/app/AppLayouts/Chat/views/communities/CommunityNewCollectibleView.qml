@@ -15,37 +15,35 @@ StatusScrollView {
     id: root
 
     property var store
-    property var tokensModel // TEMPORARY
     property int viewWidth: 560 // by design
+
+    // Collectible properties
+    property alias name: nameInput.text
+    property alias symbol: symbolInput.text
+    property alias description: descriptionInput.text
+    property alias supplyText: supplyInput.text
+    property alias infiniteSupply: unlimitedSupplyChecker.checked
+    property alias transferable: transferableChecker.checked
+    property alias selfDestruct: selfDestructChecker.checked
+    property url artworkSource
+    property int chainId
+    property string chainName
+    property string chainIcon
 
     signal chooseArtWork
     signal previewClicked
 
-    // TEMPORAL
-    signal mintCollectible(url artworkSource,
-                           string name,
-                           string symbol,
-                           string description,
-                           int supply,
-                           bool infiniteSupply,
-                           bool transferable,
-                           bool selfDestruct,
-                           int chainId)
-
     QtObject {
         id: d
 
-        readonly property bool isFullyFilled: d.artworkSource.toString().length > 0
-                                              && !!nameInput.text
-                                              && !!symbolInput.text
-                                              && !!descriptionInput.text
-                                              && (unlimitedSupplyItem.checked || (!unlimitedSupplyItem.checked && supplyInput.text.length > 0))
+        readonly property bool isFullyFilled: root.artworkSource.toString().length > 0
+                                              && !!root.name
+                                              && !!root.symbol
+                                              && !!root.description
+                                              && (root.infiniteSupply || (!root.infiniteSupply && root.supplyText.length > 0))
 
 
         readonly property int imageSelectorRectWidth: 280
-
-        property url artworkSource
-        property int networkSelected
     }
 
     contentWidth: mainLayout.width
@@ -65,8 +63,9 @@ StatusScrollView {
             uploadText: qsTr("Drag and Drop or Upload Artwork")
             additionalText: qsTr("Images only")
             acceptedImageExtensions: Constants.acceptedDragNDropImageExtensions
+            file: root.artworkSource
 
-            onFileSelected: d.artworkSource = file
+            onFileSelected: root.artworkSource = file
         }
 
         component CustomStatusInput: StatusInput {
@@ -164,7 +163,11 @@ StatusScrollView {
                 isChainVisible: false
                 multiSelection: false
 
-                onSingleNetworkSelected: d.networkSelected = chainId
+                onSingleNetworkSelected: {
+                    root.chainId = chainId
+                    root.chainName = chainName
+                    root.chainIcon = chainIcon
+                }
             }
         }
 
@@ -176,7 +179,7 @@ StatusScrollView {
         }
 
         CustomRowComponent {
-            id: unlimitedSupplyItem
+            id: unlimitedSupplyChecker
 
             label: qsTr("Unlimited supply")
             description: qsTr("Enable to allow the minting of additional collectibles in the future. Disable to specify a finite supply")
@@ -186,14 +189,14 @@ StatusScrollView {
         StatusInput {
             id: supplyInput
 
-            visible: !unlimitedSupplyItem.checked
+            visible: !unlimitedSupplyChecker.checked
             label: qsTr("Total finite supply")
             placeholderText: "1"
             validators: StatusIntValidator{bottom: 1; top: 999999999;}
         }
 
         CustomRowComponent {
-            id: transferibleChecker
+            id: transferableChecker
 
             label: qsTr("Not transferable (Soulbound)")
             description: qsTr("If enabled, the token is locked to the first address it is sent to and can never be transferred to another address. Useful for tokens that represent Admin permissions")
@@ -216,47 +219,7 @@ StatusScrollView {
             text: qsTr("Preview")
             enabled: d.isFullyFilled
 
-            onClicked: {
-                root.previewClicked()
-
-                // TEMPORAL
-                root.mintCollectible(d.artworkSource,
-                                     nameInput.text,
-                                     symbolInput.text,
-                                     descriptionInput.text,
-                                     parseInt(supplyInput.text),
-                                     unlimitedSupplyItem.checked,
-                                     transferibleChecker.checked,
-                                     selfDestructChecker.checked,
-                                     d.networkSelected)
-            }
-        }
-
-        // TEMPORAL:
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: backendChecker.implicitHeight
-            color: "darkgrey"
-            radius: 8
-
-            ColumnLayout {
-                id: backendChecker
-
-                StatusBaseText {
-                    Layout.margins: 16
-                    text: "Backend checker - Minted collectibles"
-                    font.bold: true
-                }
-
-                ListView {
-                    Layout.preferredWidth: 200
-                    Layout.preferredHeight: 100
-                    model: root.tokensModel
-                    delegate: Text {
-                        text: "name: " + name + ", descr: " + description + ", supply: " + supply + ", status: " + deployState
-                    }
-                }
-            }
+            onClicked: root.previewClicked()
         }
     }
 }

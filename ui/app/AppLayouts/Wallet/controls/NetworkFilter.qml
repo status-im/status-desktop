@@ -20,7 +20,7 @@ Item {
     property bool isChainVisible: true
     property bool multiSelection: true
 
-    signal singleNetworkSelected(int chainId)
+    signal singleNetworkSelected(int chainId, string chainName, string chainIcon)
 
     QtObject {
         id: d
@@ -105,7 +105,7 @@ Item {
         onSingleNetworkSelected: {
             d.selectedChainName = chainName
             d.selectedIconUrl = iconUrl
-            root.singleNetworkSelected(chainId)
+            root.singleNetworkSelected(chainId, chainName, iconUrl)
         }
     }
 }

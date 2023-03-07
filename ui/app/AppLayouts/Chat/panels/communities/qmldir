@@ -5,6 +5,8 @@ CommunityProfilePopupInviteFriendsPanel 1.0 CommunityProfilePopupInviteFriendsPa
 CommunityProfilePopupInviteMessagePanel 1.0 CommunityProfilePopupInviteMessagePanel.qml
 HidePermissionPanel 1.0 HidePermissionPanel.qml
 JoinPermissionsOverlayPanel 1.0 JoinPermissionsOverlayPanel.qml
+MintTokensFooterPanel 1.0 MintTokensFooterPanel.qml
 PermissionConflictWarningPanel 1.0 PermissionConflictWarningPanel.qml
 PermissionDuplicationWarningPanel 1.0 PermissionDuplicationWarningPanel.qml
 PermissionQualificationPanel 1.0 PermissionQualificationPanel.qml
+TokenHoldersPanel 1.0 TokenHoldersPanel.qml
