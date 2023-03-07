@@ -18,7 +18,7 @@ function check_version {
 function install_build_dependencies {
   echo "Install build dependencies"
   apt update
-  apt install -yq git build-essential pkg-config mesa-common-dev unixodbc-dev \
+  apt install -yq git build-essential pkg-config mesa-common-dev unixodbc-dev libpq-dev \
      libglu1-mesa-dev wget libpcsclite-dev libpcre3-dev libssl-dev libpulse-mainloop-glib0 \
      libxkbcommon-x11-dev extra-cmake-modules cmake
 }
