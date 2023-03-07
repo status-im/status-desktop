@@ -303,15 +303,9 @@ QtObject {
         return (/[A-Z]/.test(str))
     }
 
-    function convertSpacesToDashesAndUpperToLowerCase(str)
+    function convertSpacesToDashes(str)
     {
-        if (str.includes(" "))
-            str = str.replace(/ /g, "-")
-
-        if(hasUpperCaseLetter(str))
-            str = str.toLowerCase()
-
-        return str
+        return str.replace(/ /g, "-")
     }
 
     /* Validation section start */
