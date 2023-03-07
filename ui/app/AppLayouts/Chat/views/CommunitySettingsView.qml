@@ -246,8 +246,33 @@ StatusSectionLayout {
             }
 
             CommunityPermissionsSettingsPanel {
-                rootStore: root.rootStore
-                store: root.communityStore
+                readonly property PermissionsStore permissionsStore:
+                    rootStore.permissionsStore
+
+                permissionsModel: permissionsStore.permissionsModel
+                assetsModel: rootStore.assetsModel
+                collectiblesModel: rootStore.collectiblesModel
+                channelsModel: rootStore.chatCommunitySectionModule.model
+
+                communityDetails: QtObject {
+                    readonly property var _activeSection:
+                        rootStore.mainModuleInst.activeSection
+
+                    readonly property string name: _activeSection.name
+                    readonly property string image: _activeSection.image
+                    readonly property string color: _activeSection.color
+                }
+
+                onCreatePermissionRequested:
+                    permissionsStore.createPermission(holdings, permissionType,
+                                                      isPrivate, channels)
+
+                onUpdatePermissionRequested:
+                    permissionsStore.editPermission(
+                        key, holdings, permissionType, channels, isPrivate)
+
+                onRemovePermissionRequested:
+                    permissionsStore.removePermission(key)
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
             }

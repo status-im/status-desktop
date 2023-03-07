@@ -11,9 +11,25 @@ import utils 1.0
 SettingsPageLayout {
     id: root
 
-    property var rootStore
-    required property CommunitiesStore store
+    required property var permissionsModel
+    required property var assetsModel
+    required property var collectiblesModel
+    required property var channelsModel
+
+    // name, image, color properties expected
+    required property var communityDetails
+
+    property bool isOwner: false
+
     property int viewWidth: 560 // by design
+
+    signal createPermissionRequested(
+        int permissionType, var holdings, var channels, bool isPrivate)
+
+    signal updatePermissionRequested(
+        string key, int permissionType, var holdings, var channels, bool isPrivate)
+
+    signal removePermissionRequested(string key)
 
     function navigateBack() {
         if (root.state === d.newPermissionViewState) {
@@ -55,7 +71,7 @@ SettingsPageLayout {
             }
         }
 
-        readonly property string initialState: root.rootStore.permissionsModel.count > 0
+        readonly property string initialState: root.permissionsModel.count > 0
                                                ? d.permissionsViewState : d.welcomeViewState
 
         function initializeData() {
@@ -152,13 +168,16 @@ SettingsPageLayout {
 
             viewWidth: root.viewWidth
 
-            rootStore: root.rootStore
-            store: root.store
+            assetsModel: root.assetsModel
+            collectiblesModel: root.collectiblesModel
+            channelsModel: root.channelsModel
+            communityDetails: root.communityDetails
+            isOwner: root.isOwner
 
             isEditState: root.state === d.editPermissionViewState
 
-            holdingsModel: d.holdingsToEditModel
-            channelsModel: d.channelsToEditModel
+            selectedHoldingsModel: d.holdingsToEditModel
+            selectedChannelsModel: d.channelsToEditModel
 
             permissionType: d.permissionTypeToEdit
             isPrivate: d.isPrivateToEditValue
@@ -169,7 +188,7 @@ SettingsPageLayout {
                 channelsTracker.revision
                 communityNewPermissionView.dirtyValues.permissionType
                 communityNewPermissionView.dirtyValues.isPrivate
-                const model = root.rootStore.permissionsModel
+                const model = root.permissionsModel
                 const count = model.rowCount()
 
                 for (let i = 0; i < count; i++) {
@@ -185,8 +204,8 @@ SettingsPageLayout {
 
                     const same = (a, b) => ModelUtils.checkEqualitySet(a, b, ["key"])
 
-                    if (same(dirtyValues.holdingsModel, holdings)
-                            && same(dirtyValues.channelsModel, channels)
+                    if (same(dirtyValues.selectedHoldingsModel, holdings)
+                            && same(dirtyValues.selectedChannelsModel, channels)
                             && dirtyValues.permissionType === permissionType)
                         return true
                 }
@@ -196,16 +215,15 @@ SettingsPageLayout {
 
             onCreatePermissionClicked: {
                 const holdings = ModelUtils.modelToArray(
-                                   dirtyValues.holdingsModel,
+                                   dirtyValues.selectedHoldingsModel,
                                    ["key", "type", "amount"])
 
                 const channels = ModelUtils.modelToArray(
-                                   dirtyValues.channelsModel, ["key"])
+                                   dirtyValues.selectedChannelsModel, ["key"])
 
-                root.store.createPermission(holdings,
-                                            dirtyValues.permissionType,
-                                            dirtyValues.isPrivate,
-                                            channels)
+                root.createPermissionRequested(
+                            dirtyValues.permissionType, holdings, channels,
+                            dirtyValues.isPrivate)
 
                 root.state = d.permissionsViewState
             }
@@ -215,18 +233,15 @@ SettingsPageLayout {
 
                 function onSaveChanges() {
                     const holdings = ModelUtils.modelToArray(
-                                       dirtyValues.holdingsModel,
+                                       dirtyValues.selectedHoldingsModel,
                                        ["key", "type", "amount"])
 
                     const channels = ModelUtils.modelToArray(
-                                       dirtyValues.channelsModel, ["key"])
+                                       dirtyValues.selectedChannelsModel, ["key"])
 
-                    root.store.editPermission(
-                                d.permissionKeyToEdit,
-                                holdings,
-                                dirtyValues.permissionType,
-                                channels,
-                                dirtyValues.isPrivate)
+                    root.updatePermissionRequested(
+                                d.permissionKeyToEdit, dirtyValues.permissionType,
+                                holdings, channels, dirtyValues.isPrivate)
                 }
 
                 function onResetChanges() {
@@ -243,13 +258,13 @@ SettingsPageLayout {
             ModelChangeTracker {
                 id: holdingsTracker
 
-                model: communityNewPermissionView.dirtyValues.holdingsModel
+                model: communityNewPermissionView.dirtyValues.selectedHoldingsModel
             }
 
             ModelChangeTracker {
                 id: channelsTracker
 
-                model: communityNewPermissionView.dirtyValues.channelsModel
+                model: communityNewPermissionView.dirtyValues.selectedChannelsModel
             }
 
             Binding {
@@ -265,13 +280,17 @@ SettingsPageLayout {
         id: permissionsView
 
         CommunityPermissionsView {
+            permissionsModel: root.permissionsModel
+            assetsModel: root.assetsModel
+            collectiblesModel: root.collectiblesModel
+            channelsModel: root.channelsModel
+            communityDetails: root.communityDetails
+
             viewWidth: root.viewWidth
             height: root.height
-            rootStore: root.rootStore
-            store: root.store
 
             function setInitialValuesFromIndex(index) {
-                const item = ModelUtils.get(root.rootStore.permissionsModel, index)
+                const item = ModelUtils.get(root.permissionsModel, index)
 
                 d.holdingsToEditModel = item.holdingsListModel
                 d.channelsToEditModel = item.channelsListModel
@@ -282,7 +301,7 @@ SettingsPageLayout {
             onEditPermissionRequested: {
                 setInitialValuesFromIndex(index)
                 d.permissionKeyToEdit = ModelUtils.get(
-                            root.rootStore.permissionsModel, index, "key")
+                            root.permissionsModel, index, "key")
                 root.state = d.editPermissionViewState
             }
 
@@ -292,8 +311,8 @@ SettingsPageLayout {
             }
 
             onRemovePermissionRequested: {
-                const key = ModelUtils.get(root.rootStore.permissionsModel, index, "key")
-                root.store.removePermission(key)
+                const key = ModelUtils.get(root.permissionsModel, index, "key")
+                root.removePermissionRequested(key)
             }
         }
     }

@@ -9,6 +9,11 @@ QtObject {
 
     property var contactsStore
 
+    readonly property PermissionsStore permissionsStore: PermissionsStore {
+        activeSectionId: mainModuleInst.activeSection.id
+        chatCommunitySectionModuleInst: chatCommunitySectionModule
+    }
+
     property bool openCreateChat: false
     property string createChatInitMessage: ""
     property var createChatFileUrls: []
@@ -165,7 +170,6 @@ QtObject {
         stickersModule: stickersModuleInst
     }
 
-    property var permissionsModel: chatCommunitySectionModule.permissionsModel
     property var assetsModel: chatCommunitySectionModule.tokenList
     property var collectiblesModel: chatCommunitySectionModule.collectiblesModel
 

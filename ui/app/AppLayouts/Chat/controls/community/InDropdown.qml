@@ -18,7 +18,7 @@ StatusDropdown {
 
     property string communityName
     property string communityImage
-    property color communityColor
+    property string communityColor
 
     property var model
 

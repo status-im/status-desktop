@@ -2,21 +2,22 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
 
 import SortFilterProxyModel 0.2
 import shared.popups 1.0
 
 import AppLayouts.Chat.controls.community 1.0
-import AppLayouts.Chat.helpers 1.0
-import AppLayouts.Chat.stores 1.0
 
 StatusScrollView {
     id: root
 
-    property var rootStore
-    required property CommunitiesStore store
+    required property var permissionsModel
+    required property var assetsModel
+    required property var collectiblesModel
+    required property var channelsModel
+
+    // name, image, color properties expected
+    required property var communityDetails
 
     property int viewWidth: 560 // by design
 
@@ -41,27 +42,25 @@ StatusScrollView {
         ListModel {
             id: communityItemModel
 
-            readonly property var communityData: rootStore.mainModuleInst.activeSection
-
             Component.onCompleted: {
                 append({
-                    text: communityData.name,
-                    imageSource: communityData.image,
-                    color: communityData.color
+                    text: root.communityDetails.name,
+                    imageSource: root.communityDetails.image,
+                    color: root.communityDetails.color
                 })
             }
         }
 
         Repeater {
-            model: root.rootStore.permissionsModel
+            model: root.permissionsModel
 
             delegate: PermissionItem {
                 Layout.preferredWidth: root.viewWidth
 
                 holdingsListModel: HoldingsSelectionModel {
                     sourceModel: model.holdingsListModel
-                    assetsModel: store.assetsModel
-                    collectiblesModel: store.collectiblesModel
+                    assetsModel: root.assetsModel
+                    collectiblesModel: root.collectiblesModel
                 }
 
                 permissionType: model.permissionType
@@ -70,7 +69,7 @@ StatusScrollView {
                     id: channelsSelectionModel
 
                     sourceModel: model.channelsListModel
-                    channelsModel: rootStore.chatCommunitySectionModule.model
+                    channelsModel: root.channelsModel
                 }
 
                 channelsListModel: channelsSelectionModel.count

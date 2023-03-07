@@ -1,13 +1,13 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
-import AppLayouts.Chat.views.communities 1.0
-import AppLayouts.Chat.stores 1.0
-
-import Storybook 1.0
-import Models 1.0
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
+
+import AppLayouts.Chat.views.communities 1.0
+
+import Models 1.0
+import Storybook 1.0
 
 
 SplitView {
@@ -28,44 +28,37 @@ SplitView {
                     margins: 50
                 }
 
-                store: CommunitiesStore {
-                    id: mockedCommunity
+                permissionsModel: ListModel {
+                    id: permissionsModel
 
-                    readonly property ListModel permissionsModel: ListModel {
-                        Component.onCompleted: append(PermissionsModel.permissionsModelData)
-                    }
-
-                    readonly property AssetsModel assetsModel: AssetsModel {
-                        id: assetsModel
-                    }
-
-                    readonly property CollectiblesModel collectiblesModel: CollectiblesModel {
-                        id: collectiblesModel
-                    }
+                    Component.onCompleted: append(PermissionsModel.permissionsModelData)
                 }
 
-                rootStore: QtObject {
-                    readonly property QtObject chatCommunitySectionModule: QtObject {
-                        readonly property var model: ChannelsModel {
-                            id: channelsModel
-                        }
-                    }
-
-                    readonly property QtObject mainModuleInst: QtObject {
-                        readonly property QtObject activeSection: QtObject {
-                            readonly property string name: "Socks"
-                            readonly property string image: ModelsData.icons.socks
-                            readonly property string color: "red"
-                        }
-                    }
+                assetsModel: AssetsModel {
+                    id: assetsModel
                 }
 
-                onEditPermissionRequested:
-                    logs.logEvent("CommunityPermissionsView::editPermissionRequested - index: " + index)
-                onRemovePermissionRequested:
-                    logs.logEvent("CommunityPermissionsView::removePermissionRequested - index: " + index)
-                onDuplicatePermissionRequested:
-                    logs.logEvent("CommunityPermissionsView::duplicatePermissionRequested - index: " + index)
+                collectiblesModel: CollectiblesModel {
+                    id: collectiblesModel
+                }
+
+                channelsModel: ChannelsModel {
+                    id: channelsModel
+                }
+
+                communityDetails: QtObject {
+                    readonly property string name: "Socks"
+                    readonly property string image: ModelsData.icons.socks
+                    readonly property string color: "red"
+                }
+
+                function log(method, index) {
+                    logs.logEvent(`CommunityPermissionsView::${method} - index: ${index}`)
+                }
+
+                onEditPermissionRequested: log("editPermissionRequested", index)
+                onRemovePermissionRequested: log("removePermissionRequested", index)
+                onDuplicatePermissionRequested: log("duplicatePermissionRequested", index)
             }
         }
 
@@ -85,7 +78,7 @@ SplitView {
 
         CommunityPermissionsSettingsPanelEditor {
             anchors.fill: parent
-            model: mockedCommunity.permissionsModel
+            model: permissionsModel
 
             assetKeys: assetsModel.data.map(asset => asset.key)
             collectibleKeys: collectiblesModel.data.map(collectible => collectible.key)

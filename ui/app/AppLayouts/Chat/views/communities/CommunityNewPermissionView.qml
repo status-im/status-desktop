@@ -13,15 +13,20 @@ import shared.panels 1.0
 
 import AppLayouts.Chat.helpers 1.0
 import AppLayouts.Chat.panels.communities 1.0
-import AppLayouts.Chat.stores 1.0
 
 import "../../../Chat/controls/community"
 
 StatusScrollView {
     id: root
 
-    property var rootStore
-    required property CommunitiesStore store
+    required property var assetsModel
+    required property var collectiblesModel
+    required property var channelsModel
+
+    // name, image, color properties expected
+    required property var communityDetails
+
+    property bool isOwner: false
 
     property int viewWidth: 560 // by design
     property bool isEditState: false
@@ -35,18 +40,18 @@ StatusScrollView {
     readonly property alias dirtyValues: d.dirtyValues
 
     readonly property bool isFullyFilled:
-        dirtyValues.holdingsModel.count > 0 &&
+        dirtyValues.selectedHoldingsModel.count > 0 &&
         dirtyValues.permissionType !== PermissionTypes.Type.None &&
-        (d.isCommunityPermission || dirtyValues.channelsModel.count > 0)
+        (d.isCommunityPermission || dirtyValues.selectedChannelsModel.count > 0)
 
     property int permissionType: PermissionTypes.Type.None
     property bool isPrivate: false
 
     // roles: type, key, name, amount, imageSource
-    property var holdingsModel: ListModel {}
+    property var selectedHoldingsModel: ListModel {}
 
     // roles: itemId, text, icon, emoji, color, colorId
-    property var channelsModel: ListModel {}
+    property var selectedChannelsModel: ListModel {}
 
     property alias duplicationWarningVisible: duplicationPanel.visible
 
@@ -59,8 +64,8 @@ StatusScrollView {
     ModelsComparator {
         id: holdingsModelComparator
 
-        modelA: root.dirtyValues.holdingsModel
-        modelB: root.holdingsModel
+        modelA: root.dirtyValues.selectedHoldingsModel
+        modelB: root.selectedHoldingsModel
 
         roles: ["key", "amount"]
         mode: ModelsComparator.CompareMode.Set
@@ -69,8 +74,8 @@ StatusScrollView {
     ModelsComparator {
         id: channelsModelComparator
 
-        modelA: root.dirtyValues.channelsModel
-        modelB: root.channelsModel
+        modelA: root.dirtyValues.selectedChannelsModel
+        modelB: root.selectedChannelsModel
 
         roles: ["itemId"]
         mode: ModelsComparator.CompareMode.Set
@@ -89,7 +94,7 @@ StatusScrollView {
 
         onIsCommunityPermissionChanged: {
             if (isCommunityPermission) {
-                d.dirtyValues.channelsModel.clear()
+                d.dirtyValues.selectedChannelsModel.clear()
                 inSelector.wholeCommunitySelected = true
                 inSelector.itemsModel = inModelCommunity
             } else {
@@ -100,8 +105,8 @@ StatusScrollView {
         }
 
         readonly property QtObject dirtyValues: QtObject {
-            readonly property ListModel holdingsModel: ListModel {}
-            readonly property ListModel channelsModel: ListModel {}
+            readonly property ListModel selectedHoldingsModel: ListModel {}
+            readonly property ListModel selectedChannelsModel: ListModel {}
 
             property int permissionType: PermissionTypes.Type.None
             property bool isPrivate: false
@@ -112,17 +117,17 @@ StatusScrollView {
             }
 
             function getHoldingIndex(key) {
-                return ModelUtils.indexOf(holdingsModel, "key", key)
+                return ModelUtils.indexOf(selectedHoldingsModel, "key", key)
             }
 
             function getTokenKeysAndAmounts() {
-                return ModelUtils.modelToArray(holdingsModel, ["type", "key", "amount"])
+                return ModelUtils.modelToArray(selectedHoldingsModel, ["type", "key", "amount"])
                     .filter(item => item.type !== HoldingTypes.Type.Ens)
                     .map(item => ({ key: item.key, amount: item.amount }))
             }
 
             function getEnsNames() {
-                return ModelUtils.modelToArray(holdingsModel, ["type", "name"])
+                return ModelUtils.modelToArray(selectedHoldingsModel, ["type", "name"])
                     .filter(item => item.type === HoldingTypes.Type.Ens)
                     .map(item => item.name)
             }
@@ -130,20 +135,22 @@ StatusScrollView {
 
         function loadInitValues() {
             // Holdings:
-            d.dirtyValues.holdingsModel.clear()
-            d.dirtyValues.holdingsModel.append(
-                        ModelUtils.modelToArray(root.holdingsModel, ["type", "key", "amount"]))
+            d.dirtyValues.selectedHoldingsModel.clear()
+            d.dirtyValues.selectedHoldingsModel.append(
+                        ModelUtils.modelToArray(root.selectedHoldingsModel,
+                                                ["type", "key", "amount"]))
 
             // Permissions:
             d.dirtyValues.permissionType = root.permissionType
 
             // Channels
-            d.dirtyValues.channelsModel.clear()
+            d.dirtyValues.selectedChannelsModel.clear()
+            d.dirtyValues.selectedChannelsModel.append(
+                        ModelUtils.modelToArray(root.selectedChannelsModel, ["key"]))
 
-            d.dirtyValues.channelsModel.append(
-                        ModelUtils.modelToArray(root.channelsModel, ["key"]))
-
-            if (root.channelsModel && (root.channelsModel.count || d.dirtyValues.permissionType === PermissionTypes.Type.None)) {
+            if (root.selectedChannelsModel &&
+                    (root.selectedChannelsModel.rowCount()
+                     || d.dirtyValues.permissionType === PermissionTypes.Type.None)) {
                 inSelector.wholeCommunitySelected = false
                 inSelector.itemsModel = channelsSelectionModel
             } else {
@@ -187,22 +194,23 @@ StatusScrollView {
             addButton.visible: itemsModel.count < d.maxHoldingsItems
 
             itemsModel: HoldingsSelectionModel {
-                sourceModel: d.dirtyValues.holdingsModel
+                sourceModel: d.dirtyValues.selectedHoldingsModel
 
-                assetsModel: root.store.assetsModel
-                collectiblesModel: root.store.collectiblesModel
+                assetsModel: root.assetsModel
+                collectiblesModel: root.collectiblesModel
             }
 
             HoldingsDropdown {
                 id: dropdown
 
-                assetsModel: store.assetsModel
-                collectiblesModel: store.collectiblesModel
+                assetsModel: root.assetsModel
+                collectiblesModel: root.collectiblesModel
 
                 function addItem(type, item, amount) {
                     const key = item.key
 
-                    d.dirtyValues.holdingsModel.append({ type, key, amount })
+                    d.dirtyValues.selectedHoldingsModel.append(
+                                { type, key, amount })
                 }
 
                 function prepareUpdateIndex(key) {
@@ -210,8 +218,8 @@ StatusScrollView {
                     const existingIndex = d.dirtyValues.getHoldingIndex(key)
 
                     if (itemIndex !== -1 && existingIndex !== -1 && itemIndex !== existingIndex) {
-                        const previousKey = d.dirtyValues.holdingsModel.get(itemIndex).key
-                        d.dirtyValues.holdingsModel.remove(existingIndex)
+                        const previousKey = d.dirtyValues.selectedHoldingsModel.get(itemIndex).key
+                        d.dirtyValues.selectedHoldingsModel.remove(existingIndex)
                         return d.dirtyValues.getHoldingIndex(previousKey)
                     }
 
@@ -228,49 +236,54 @@ StatusScrollView {
                 }
 
                 onAddAsset: {
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.assetsModel, key)
+                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+                                        root.assetsModel, key)
                     addItem(HoldingTypes.Type.Asset, modelItem, amount)
                     dropdown.close()
                 }
 
                 onAddCollectible: {
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.collectiblesModel, key)
+                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+                                        root.collectiblesModel, key)
                     addItem(HoldingTypes.Type.Collectible, modelItem, amount)
                     dropdown.close()
                 }
 
                 onAddEns: {
-                    d.dirtyValues.holdingsModel.append(
+                    d.dirtyValues.selectedHoldingsModel.append(
                                 { type: HoldingTypes.Type.Ens, key: domain, amount: 1 })
                     dropdown.close()
                 }
 
                 onUpdateAsset: {
                     const itemIndex = prepareUpdateIndex(key)
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.assetsModel, key)
+                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(root.assetsModel, key)
 
-                    d.dirtyValues.holdingsModel.set(itemIndex,
-                                                    { type: HoldingTypes.Type.Asset, key, amount })
+                    d.dirtyValues.selectedHoldingsModel.set(
+                                itemIndex, { type: HoldingTypes.Type.Asset, key, amount })
                     dropdown.close()
                 }
 
                 onUpdateCollectible: {
                     const itemIndex = prepareUpdateIndex(key)
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(store.collectiblesModel, key)
+                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+                                        root.collectiblesModel, key)
 
-                    d.dirtyValues.holdingsModel.set(itemIndex,
-                                                    { type: HoldingTypes.Type.Collectible, key, amount })
+                    d.dirtyValues.selectedHoldingsModel.set(
+                                itemIndex,
+                                { type: HoldingTypes.Type.Collectible, key, amount })
                     dropdown.close()
                 }
 
                 onUpdateEns: {
-                    d.dirtyValues.holdingsModel.set(tokensSelector.editedIndex,
-                                                    { type: HoldingTypes.Type.Ens, key: domain, amount: 1 })
+                    d.dirtyValues.selectedHoldingsModel.set(
+                                tokensSelector.editedIndex,
+                                { type: HoldingTypes.Type.Ens, key: domain, amount: 1 })
                     dropdown.close()
                 }
 
                 onRemoveClicked: {
-                    d.dirtyValues.holdingsModel.remove(tokensSelector.editedIndex)
+                    d.dirtyValues.selectedHoldingsModel.remove(tokensSelector.editedIndex)
                     dropdown.close()
                 }
             }
@@ -349,7 +362,7 @@ StatusScrollView {
                 id: permissionsDropdown
 
                 initialPermissionType: d.dirtyValues.permissionType
-                enableAdminPermission: root.store.isOwner
+                enableAdminPermission: root.isOwner
 
                 onDone: {
                     if (d.dirtyValues.permissionType === permissionType) {
@@ -417,9 +430,13 @@ StatusScrollView {
 
                 const selectedChannels = []
 
-                if (!inSelector.wholeCommunitySelected)
-                    for (let i = 0; i < d.dirtyValues.channelsModel.count; i++)
-                        selectedChannels.push(d.dirtyValues.channelsModel.get(i).key)
+                if (!inSelector.wholeCommunitySelected) {
+                    const model = d.dirtyValues.selectedChannelsModel
+                    const count = model.count
+
+                    for (let i = 0; i < count; i++)
+                        selectedChannels.push(model.get(i).key)
+                }
 
                 inDropdown.setSelectedChannels(selectedChannels)
                 inDropdown.open()
@@ -430,10 +447,10 @@ StatusScrollView {
 
                 Component.onCompleted: {
                     append({
-                        imageSource: inDropdown.communityData.image,
-                        text: inDropdown.communityData.name,
+                        imageSource: inDropdown.communityImage,
+                        text: inDropdown.communityName,
                         operator: OperatorsUtils.Operators.None,
-                        color: inDropdown.communityData.color
+                        color: inDropdown.communityColor
                     })
                 }
             }
@@ -441,36 +458,34 @@ StatusScrollView {
             ChannelsSelectionModel {
                 id: channelsSelectionModel
 
-                sourceModel: d.dirtyValues.channelsModel
+                sourceModel: d.dirtyValues.selectedChannelsModel
 
-                channelsModel: root.rootStore.chatCommunitySectionModule.model
+                channelsModel: root.channelsModel
             }
 
             InDropdown {
                 id: inDropdown
 
-                model: root.rootStore.chatCommunitySectionModule.model
+                model: root.channelsModel
 
-                readonly property var communityData: rootStore.mainModuleInst.activeSection
-
-                communityName: communityData.name
-                communityImage: communityData.image
-                communityColor: communityData.color
+                communityName: root.communityDetails.name
+                communityImage: root.communityDetails.image
+                communityColor: root.communityDetails.color
 
                 onChannelsSelected: {
-                    d.dirtyValues.channelsModel.clear()
+                    d.dirtyValues.selectedChannelsModel.clear()
                     inSelector.itemsModel = 0
                     inSelector.wholeCommunitySelected = false
 
                     const modelData = channels.map(key => ({ key }))
-                    d.dirtyValues.channelsModel.append(modelData)
+                    d.dirtyValues.selectedChannelsModel.append(modelData)
 
                     inSelector.itemsModel = channelsSelectionModel
                     close()
                 }
 
                 onCommunitySelected: {
-                    d.dirtyValues.channelsModel.clear()
+                    d.dirtyValues.selectedChannelsModel.clear()
                     inSelector.wholeCommunitySelected = true
                     inSelector.itemsModel = inModelCommunity
                     close()
@@ -507,18 +522,6 @@ StatusScrollView {
             onToggled: d.dirtyValues.isPrivate = checked
         }
 
-        PermissionConflictWarningPanel {
-            id: conflictPanel
-
-            Layout.fillWidth: true
-            Layout.topMargin: 50 // by desing
-
-            visible: store.permissionConflict.exists
-            holdings: store.permissionConflict.holdings
-            permissions: store.permissionConflict.permissions
-            channels: store.permissionConflict.channels
-        }
-
         PermissionDuplicationWarningPanel {
             id: duplicationPanel
 
@@ -532,9 +535,7 @@ StatusScrollView {
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
-            Layout.topMargin: conflictPanel.visible
-                              ? conflictPanel.Layout.topMargin
-                              : Style.current.bigPadding
+            Layout.topMargin: Style.current.bigPadding
 
             visible: !root.isEditState
             text: qsTr("Create permission")
