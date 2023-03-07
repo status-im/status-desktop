@@ -4,10 +4,16 @@ import os
 import uri
 import chronicles
 import sequtils
+import NimQml
 
 import ../settings/service as settings_service
+import ../../../app/core/eventemitter
 import ../../../backend/backend
+import ../../../app/core/tasks/[qt, threadpool]
+import ../../../app/core/[main]
 import ./dto
+
+include ./async_tasks
 
 logScope:
   topics = "gif-service"
@@ -23,127 +29,192 @@ let TENOR_API_KEY_RESOLVED =
   else:
     TENOR_API_KEY
 
+const SIGNAL_LOAD_RECENT_GIFS_STARTED* = "loadRecentGifsStarted"
+const SIGNAL_LOAD_RECENT_GIFS_DONE* = "loadRecentGifsDone"
+
+const SIGNAL_LOAD_FAVORITE_GIFS_STARTED* = "loadFavoriteGifsStarted"
+const SIGNAL_LOAD_FAVORITE_GIFS_DONE* = "loadFavoriteGifsDone"
+
 type
-  Service* = ref object of RootObj
-    settingsService: settings_service.Service
-    favorites: seq[GifDto]
-    recents: seq[GifDto]
+  GifsArgs* = ref object of Args
+    gifs*: seq[GifDto]
+    error*: string
 
-proc delete*(self: Service) =
-  discard
+QtObject:
+  type
+    Service* = ref object of QObject
+      threadpool: ThreadPool
+      settingsService: settings_service.Service
+      favorites: seq[GifDto]
+      recents: seq[GifDto]
+      events: EventEmitter
 
-proc newService*(settingsService: settings_service.Service): Service =
-  result = Service()
-  result.settingsService = settingsService
-  result.favorites = @[]
-  result.recents = @[]
+  proc delete*(self: Service) =
+    discard
 
-proc setTenorAPIKey(self: Service) =
-  try:
-    let response = backend.setTenorAPIKey(TENOR_API_KEY_RESOLVED)
-    if(not response.error.isNil):
-      error "error setTenorAPIKey: ", errDescription = response.error.message
+  proc newService*(settingsService: settings_service.Service, events: EventEmitter, threadpool: ThreadPool): Service =
+    result = Service()
+    result.QObject.setup
+    result.settingsService = settingsService
+    result.events = events
+    result.threadpool = threadpool
+    result.favorites = @[]
+    result.recents = @[]
 
-  except Exception as e:
-    error "error: ", procName="setTenorAPIKey", errName = e.name, errDesription = e.msg
+  proc setTenorAPIKey(self: Service) =
+    try:
+      let response = backend.setTenorAPIKey(TENOR_API_KEY_RESOLVED)
+      if(not response.error.isNil):
+        error "error setTenorAPIKey: ", errDescription = response.error.message
 
-proc getRecentGifs(self: Service) =
-  try:
-    let response = backend.getRecentGifs()
+    except Exception as e:
+      error "error: ", procName="setTenorAPIKey", errName = e.name, errDesription = e.msg
 
-    if(not response.error.isNil):
-      error "error getRecentGifs: ", errDescription = response.error.message
+  proc getRecentGifs(self: Service) =
+    try:
+      let response = backend.getRecentGifs()
 
-    self.recents = map(response.result.getElems(), settingToGifDto)
+      if(not response.error.isNil):
+        error "error getRecentGifs: ", errDescription = response.error.message
 
-  except Exception as e:
-    error "error: ", procName="getRecentGifs", errName = e.name, errDesription = e.msg
+      self.recents = map(response.result.getElems(), settingToGifDto)
 
-proc getFavoriteGifs(self: Service) =
-  try:
-    let response = backend.getFavoriteGifs()
+    except Exception as e:
+      error "error: ", procName="getRecentGifs", errName = e.name, errDesription = e.msg
 
-    if(not response.error.isNil):
-      error "error getFavoriteGifs: ", errDescription = response.error.message
+  proc getFavoriteGifs(self: Service) =
+    try:
+      let response = backend.getFavoriteGifs()
 
-    self.favorites = map(response.result.getElems(), settingToGifDto)
+      if(not response.error.isNil):
+        error "error getFavoriteGifs: ", errDescription = response.error.message
 
-  except Exception as e:
-    error "error: ", procName="getFavoriteGifs", errName = e.name, errDesription = e.msg
+      self.favorites = map(response.result.getElems(), settingToGifDto)
 
-proc init*(self: Service) =
-  # set Tenor API Key
-  self.setTenorAPIKey()
+    except Exception as e:
+      error "error: ", procName="getFavoriteGifs", errName = e.name, errDesription = e.msg
 
-  # get recent and favorite gifs on the database
-  self.getRecentGifs()
-  self.getFavoriteGifs()
+  proc asyncLoadRecentGifs*(self: Service) =
+    self.events.emit(SIGNAL_LOAD_RECENT_GIFS_STARTED, Args())
+    try:
+      let arg = AsyncGetRecentGifsTaskArg(
+        tptr: cast[ByteAddress](asyncGetRecentGifsTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncGetRecentGifsDone"
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error loading recent gifs", msg = e.msg
 
-proc tenorQuery(self: Service, path: string): seq[GifDto] =
-  try:
-    let response = backend.fetchGifs(path)
-    let doc = response.result.str.parseJson()
+  proc onAsyncGetRecentGifsDone*(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+      if (rpcResponseObj{"error"}.kind != JNull):
+        let error = Json.decode($rpcResponseObj["error"], RpcError)
+        error "error loading recent gifs", msg = error.message
+        return
 
-    var items: seq[GifDto] = @[]
-    for json in doc["results"]:
-      items.add(tenorToGifDto(json))
+      self.recents = map(rpcResponseObj{"result"}.getElems(), settingToGifDto)
+      self.events.emit(SIGNAL_LOAD_RECENT_GIFS_DONE, GifsArgs(gifs: self.recents))
+    except Exception as e:
+      let errMsg = e.msg
+      error "error: ", errMsg
 
-    return items
-  except:
-    return @[]
+  proc asyncLoadFavoriteGifs*(self: Service) =
+    self.events.emit(SIGNAL_LOAD_FAVORITE_GIFS_STARTED, Args())
+    try:
+      let arg = AsyncGetFavoriteGifsTaskArg(
+        tptr: cast[ByteAddress](asyncGetFavoriteGifsTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncGetFavoriteGifsDone"
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error loading favorite gifs", msg = e.msg
 
-proc search*(self: Service, query: string): seq[GifDto] =
-  return self.tenorQuery(fmt("search?q={encodeUrl(query)}"))
+  proc onAsyncGetFavoriteGifsDone*(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+      if (rpcResponseObj{"error"}.kind != JNull):
+        let error = Json.decode($rpcResponseObj["error"], RpcError)
+        error "error loading favorite gifs", msg = error.message
+        return
 
-proc getTrendings*(self: Service): seq[GifDto] =
-  return self.tenorQuery("trending?")
+      self.favorites = map(rpcResponseObj{"result"}.getElems(), settingToGifDto)
+      self.events.emit(SIGNAL_LOAD_FAVORITE_GIFS_DONE, GifsArgs(gifs: self.favorites))
+    except Exception as e:
+      let errMsg = e.msg
+      error "error: ", errMsg
 
-proc getRecents*(self: Service): seq[GifDto] =
-  return self.recents
+  proc init*(self: Service) =
+    # set Tenor API Key
+    self.setTenorAPIKey()
 
-proc addToRecents*(self: Service, gifDto: GifDto) =
-  let recents = self.getRecents()
-  var newRecents: seq[GifDto] = @[gifDto]
-  var idx = 0
+  proc tenorQuery(self: Service, path: string): seq[GifDto] =
+    try:
+      let response = backend.fetchGifs(path)
+      let doc = response.result.str.parseJson()
 
-  while idx < MAX_RECENT - 1:
-    if idx >= recents.len:
-      break
+      var items: seq[GifDto] = @[]
+      for json in doc["results"]:
+        items.add(tenorToGifDto(json))
 
-    if recents[idx].id == gifDto.id:
+      return items
+    except:
+      return @[]
+
+  proc search*(self: Service, query: string): seq[GifDto] =
+    return self.tenorQuery(fmt("search?q={encodeUrl(query)}"))
+
+  proc getTrendings*(self: Service): seq[GifDto] =
+    return self.tenorQuery("trending?")
+
+  proc getRecents*(self: Service): seq[GifDto] =
+    return self.recents
+
+  proc addToRecents*(self: Service, gifDto: GifDto) =
+    let recents = self.getRecents()
+    var newRecents: seq[GifDto] = @[gifDto]
+    var idx = 0
+
+    while idx < MAX_RECENT - 1:
+      if idx >= recents.len:
+        break
+
+      if recents[idx].id == gifDto.id:
+        idx += 1
+        continue
+
+      newRecents.add(recents[idx])
       idx += 1
-      continue
 
-    newRecents.add(recents[idx])
-    idx += 1
+    self.recents = newRecents
+    let recent = %*{"items": map(newRecents, toJsonNode)}
+    discard backend.updateRecentGifs(recent)
 
-  self.recents = newRecents
-  let recent = %*{"items": map(newRecents, toJsonNode)}
-  discard backend.updateRecentGifs(recent)
+  proc getFavorites*(self: Service): seq[GifDto] =
+    return self.favorites
 
-proc getFavorites*(self: Service): seq[GifDto] =
-  return self.favorites
+  proc isFavorite*(self: Service, gifDto: GifDto): bool =
+    for favorite in self.favorites:
+      if favorite.id == gifDto.id:
+        return true
+    return false
 
-proc isFavorite*(self: Service, gifDto: GifDto): bool =
-  for favorite in self.favorites:
-    if favorite.id == gifDto.id:
-      return true
-  return false
+  proc toggleFavorite*(self: Service, gifDto: GifDto) =
+    var newFavorites: seq[GifDto] = @[]
+    var found = false
 
-proc toggleFavorite*(self: Service, gifDto: GifDto) =
-  var newFavorites: seq[GifDto] = @[]
-  var found = false
+    for favoriteGif in self.getFavorites():
+      if favoriteGif.id == gifDto.id:
+        found = true
+        continue
 
-  for favoriteGif in self.getFavorites():
-    if favoriteGif.id == gifDto.id:
-      found = true
-      continue
+      newFavorites.add(favoriteGif)
 
-    newFavorites.add(favoriteGif)
+    if not found:
+      newFavorites.add(gifDto)
 
-  if not found:
-    newFavorites.add(gifDto)
-
-  self.favorites = newFavorites
-  let favorites = %*{"items": map(newFavorites, toJsonNode)}
-  discard backend.updateFavoriteGifs(favorites)
+    self.favorites = newFavorites
+    let favorites = %*{"items": map(newFavorites, toJsonNode)}
+    discard backend.updateFavoriteGifs(favorites)
