@@ -85,6 +85,7 @@
 #endif
 
 #include <qqmlsortfilterproxymodeltypes.h>
+#include <QZXing.h>
 
 namespace {
 
@@ -103,6 +104,7 @@ void register_meta_types()
 #endif
 
     qqsfpm::registerTypes();
+    QZXing::registerQMLTypes();
 }
 
 }

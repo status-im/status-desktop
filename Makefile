@@ -149,7 +149,7 @@ endif
 
 MONITORING ?= false
 ifneq ($(MONITORING), false)
- DOTHERSIDE_CMAKE_PARAMS := ${DOTHERSIDE_CMAKE_PARAMS} -DMONITORING:BOOL=ON -DMONITORING_QML_ENTRY_POINT:STRING="/../monitoring/Main.qml"
+ DOTHERSIDE_CMAKE_PARAMS += -DMONITORING:BOOL=ON -DMONITORING_QML_ENTRY_POINT:STRING="/../monitoring/Main.qml"
 endif
 
 
@@ -175,18 +175,23 @@ ifneq ($(detected_OS),Windows)
    NIM_PARAMS += --passL:"-L$(QT5_LIBDIR)"
   endif
  endif
+ # We manually link QZXing to Nim application,
+ # because static libraries are not compiled into other static libraries (DOtherSide).
+ QZXING := vendor/DOtherSide/build/qzxing/libqzxing.a
  DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
  DOTHERSIDE_CMAKE_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
  # order matters here, due to "-Wl,-as-needed"
- NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
+ NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(QZXING)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
 else
  ifneq ($(QML_DEBUG), false)
+  QZXING := vendor/DOtherSide/build/qzxing/Debug/qzxing.lib
   DOTHERSIDE := vendor/DOtherSide/build/lib/Debug/DOtherSide.dll
  else
+  QZXING := vendor/DOtherSide/build/qzxing/Release/qzxing.lib
   DOTHERSIDE := vendor/DOtherSide/build/lib/Release/DOtherSide.dll
  endif
  DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
- NIM_PARAMS += -L:$(DOTHERSIDE)
+ NIM_PARAMS += -L:$(DOTHERSIDE) -L:$(QZXING)
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
 endif
 
@@ -238,6 +243,9 @@ $(DOTHERSIDE): | deps
 		cmake $(DOTHERSIDE_CMAKE_PARAMS)\
 			-DENABLE_DOCS=OFF \
 			-DENABLE_TESTS=OFF \
+			-DQZXING_USE_QML=ON \
+			-DQZXING_MULTIMEDIA=ON \
+			-DQZXING_USE_DECODER_QR_CODE=ON \
 			.. $(HANDLE_OUTPUT) && \
 		$(DOTHERSIDE_BUILD_CMD)
 

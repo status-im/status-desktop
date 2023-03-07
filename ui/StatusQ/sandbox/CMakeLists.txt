@@ -32,7 +32,8 @@ target_compile_definitions(${PROJECT_NAME}
                            PRIVATE SRC_DIR="${CMAKE_CURRENT_LIST_DIR}")
 target_link_libraries(
   ${PROJECT_NAME} PRIVATE Qt5::Core Qt5::Quick Qt5::QuickControls2
-                          SortFilterProxyModel)
+                          SortFilterProxyModel
+                      qzxing)
 
 if (APPLE)
   find_library(AppKit AppKit)
