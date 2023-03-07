@@ -246,7 +246,7 @@ $(DOTHERSIDE): | deps
 			-DQZXING_MULTIMEDIA=ON \
 			-DQZXING_USE_DECODER_QR_CODE=ON \
 			.. $(HANDLE_OUTPUT) && \
-		$(DOTHERSIDE_BUILD_CMD)
+		$(DOTHERSIDE_BUILD_CMD) && ls && ls qzxing
 
 STATUSGO := vendor/status-go/build/bin/libstatus.$(LIBSTATUS_EXT)
 STATUSGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSGO)")
