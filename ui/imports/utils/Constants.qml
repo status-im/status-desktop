@@ -404,7 +404,7 @@ QtObject {
         readonly property int audioType: 8
         readonly property int communityInviteType: 9
         readonly property int gapType: 10
-        readonly property int editType: 11
+        readonly property int contactRequestType: 11
         readonly property int discordMessageType: 12
     }
 
