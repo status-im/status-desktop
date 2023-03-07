@@ -244,6 +244,12 @@ proc init*(self: Controller) =
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionDeletionFailed(args.communityId)
 
+    self.events.on(SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED) do(e: Args):
+      let args = CommunityTokenMetadataArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityTokenMetadataAdded(args.communityId, args.tokenMetadata)
+
+
     self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
       self.delegate.onWalletAccountTokensRebuilt()
 

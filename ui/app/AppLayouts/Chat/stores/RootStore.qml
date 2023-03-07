@@ -1,6 +1,7 @@
 import QtQuick 2.13
 
 import utils 1.0
+import SortFilterProxyModel 0.2
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import shared.stores 1.0
 
@@ -30,6 +31,57 @@ QtObject {
     // Each `ChatLayout` has its own chatCommunitySectionModule
     // (on the backend chat and community sections share the same module since they are actually the same)
     property var chatCommunitySectionModule
+
+    property var communityItemsModel: chatCommunitySectionModule.model
+    
+    property var assetsModel: SortFilterProxyModel {
+        sourceModel: chatCommunitySectionModule.tokenList
+
+        proxyRoles: ExpressionRole {
+
+            // list of symbols for which pngs are stored to avoid
+            // accessing not existing resources and providing
+            // default icon
+            readonly property var pngs: [
+                "aKNC", "AST", "BLT", "CND", "DNT", "EQUAD", "HEZ", "LOOM", "MTH",
+                "PAY", "RCN", "SALT", "STRK", "TRST", "WBTC", "AKRO", "aSUSD", "BLZ",
+                "COB", "DPY", "ETH2x-FLI", "HST", "LPT", "MTL", "PBTC", "RDN", "SAN",
+                "STT", "TRX", "WETH", "0-native", "aLEND", "ATMChain", "BNB", "COMP",
+                "DRT", "ETHOS", "HT", "LRC", "MYB", "PLR", "renBCH", "SNGLS", "STX",
+                "TUSD", "WINGS", "0XBTC", "aLINK", "aTUSD", "BNT", "CUSTOM-TOKEN",
+                "DTA", "ETH", "ICN", "MANA", "NEXO", "POE", "renBTC", "SNM", "SUB",
+                "UBT", "WTC", "1ST", "aMANA", "aUSDC", "BQX", "CVC", "EDG", "EVX",
+                "ICOS", "MCO", "NEXXO", "POLY", "REN", "SNT", "SUPR", "UKG", "XAUR",
+                "aBAT", "AMB", "aUSDT", "BRLN", "DAI", "EDO", "FUEL", "IOST", "MDA",
+                "NMR", "POWR", "renZEC", "SNX", "SUSD", "UNI", "XPA", "ABT", "aMKR",
+                "aWBTC", "BTM", "DATA", "EKG", "FUN", "KDO", "MET", "NPXS", "PPP",
+                "REP", "SOCKS", "TAAS", "UPP", "XRL", "aBUSD", "AMPL", "aYFI", "BTU",
+                "DAT", "EKO", "FXC", "KIN", "MFG", "OGN", "PPT", "REQ", "SPANK",
+                "TAUD", "USDC", "XUC", "ABYSS", "ANT", "aZRX", "CDAI", "DCN", "ELF",
+                "GDC", "KNC", "MGO", "OMG", "PT", "RHOC", "SPIKE", "TCAD", "USDS",
+                "ZRX", "aDAI", "APPC", "BAL", "CDT", "DEFAULT-TOKEN", "EMONA", "GEN",
+                "Kudos", "MKR", "OST", "QKC", "RLC", "SPN", "TGBP", "USDT", "ZSC",
+                "aENJ", "aREN", "BAM", "Centra", "DGD", "ENG", "GNO", "LEND", "MLN",
+                "OTN", "QRL", "ROL", "STORJ", "TKN", "VERI", "AE", "aREP", "BAND",
+                "CFI", "DGX", "ENJ", "GNT", "LINK", "MOC", "PAXG", "QSP", "R",
+                "STORM", "TKX", "VIB", "aETH", "aSNX", "BAT", "CK", "DLT", "EOS",
+                "GRID", "LISK", "MOD", "PAX", "RAE", "SAI", "ST", "TNT", "WABI"
+            ]
+
+            function icon(symbol) {
+                if (pngs.indexOf(symbol) !== -1)
+                    return Style.png("tokens/" + symbol)
+
+                return Style.png("tokens/DEFAULT-TOKEN")
+            }
+
+            name: "iconSource"
+            expression: !!model.icon ? model.icon : icon(model.symbol)
+        }
+    }
+
+    property var collectiblesModel: chatCommunitySectionModule.collectiblesModel
+
     // Since qml component doesn't follow encaptulation from the backend side, we're introducing
     // a method which will return appropriate chat content module for selected chat/channel
     function currentChatContentModule(){
@@ -169,9 +221,6 @@ QtObject {
     property var stickersStore: StickersStore {
         stickersModule: stickersModuleInst
     }
-
-    property var assetsModel: chatCommunitySectionModule.tokenList
-    property var collectiblesModel: chatCommunitySectionModule.collectiblesModel
 
     function sendSticker(channelId, hash, replyTo, pack, url) {
         stickersModuleInst.send(channelId, hash, replyTo, pack, url)

@@ -21,8 +21,6 @@ export community_dto
 logScope:
   topics = "community-service"
 
-include ../../common/json_utils
-
 type
   CommunityArgs* = ref object of Args
     community*: CommunityDto
@@ -90,6 +88,10 @@ type
     tokenPermission*: CommunityTokenPermissionDto
     error*: string
 
+  CommunityTokenMetadataArgs* = ref object of Args
+    communityId*: string
+    tokenMetadata*: CommunityTokensMetadataDto
+
   CommunityTokenPermissionRemovedArgs* = ref object of Args
     communityId*: string
     permissionId*: string
@@ -156,6 +158,7 @@ const SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED* = "communityTokenPermissionUpda
 const SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATE_FAILED* = "communityTokenPermissionUpdateFailed"
 const SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED* = "communityTokenPermissionDeleted"
 const SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETION_FAILED* = "communityTokenPermissionDeletionFailed"
+const SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED* = "communityTokenMetadataAdded"
 
 const SIGNAL_CURATED_COMMUNITIES_LOADING* = "curatedCommunitiesLoading"
 const SIGNAL_CURATED_COMMUNITIES_LOADED* = "curatedCommunitiesLoaded"
@@ -357,6 +360,14 @@ QtObject:
         return idx
     return -1
 
+  proc findIndexBySymbol(symbol: string, tokens: seq[CommunityTokensMetadataDto]): int =
+    var idx = -1
+    for token in tokens:
+      inc idx
+      if(token.symbol == symbol):
+        return idx
+    return -1
+
   proc saveUpdatedCommunity(self: Service, community: var CommunityDto) =
     # Community data we get from the signals and responses don't contgain the pending requests
     # therefore, we must keep the old one
@@ -511,6 +522,15 @@ QtObject:
       if community.isMember and community.members != prev_community.members:
         self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED, 
         CommunityMembersArgs(communityId: community.id, members: community.members))
+
+      # token metadata was added
+      if community.communityTokensMetadata.len > prev_community.communityTokensMetadata.len:
+        for tokenMetadata in community.communityTokensMetadata:
+          if findIndexBySymbol(tokenMetadata.symbol, prev_community.communityTokensMetadata) == -1:
+            self.communities[community.id].communityTokensMetadata.add(tokenMetadata)
+            self.events.emit(SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED,
+                             CommunityTokenMetadataArgs(communityId: community.id,
+                                                        tokenMetadata: tokenMetadata))
 
       # tokenPermission was added
       if community.tokenPermissions.len > prev_community.tokenPermissions.len:

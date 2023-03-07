@@ -35,13 +35,24 @@ QtObject:
     read = getCount
     notify = countChanged
 
-  proc setItems*(self: TokenlistModel, items: seq[TokenListItem]) =
+  proc setItems*(self: TokenListModel, items: seq[TokenListItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
 
-  proc addItems*(self: TokenlistModel, items: seq[TokenListItem]) =
+  proc hasItem*(self: TokenListModel, symbol: string): bool =
+    for item in self.items:
+      if item.getSymbol() == symbol:
+        return true
+    return false
+
+  proc getItem*(self: TokenListModel, symbol: string): TokenListItem =
+    for item in self.items:
+      if item.getSymbol() == symbol:
+        return item
+
+  proc addItems*(self: TokenListModel, items: seq[TokenListItem]) =
     if(items.len == 0):
       return
 

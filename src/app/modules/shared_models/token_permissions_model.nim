@@ -1,5 +1,6 @@
 import NimQml, Tables
 import token_permission_item
+import token_criteria_model
 
 type
   ModelRole {.pure.} = enum
@@ -36,7 +37,7 @@ QtObject:
     }.toTable
 
   proc countChanged(self: TokenPermissionsModel) {.signal.}
-  proc getCount(self: TokenPermissionsModel): int {.slot.} =
+  proc getCount*(self: TokenPermissionsModel): int {.slot.} =
     self.items.len
   QtProperty[int] count:
     read = getCount
@@ -107,9 +108,8 @@ QtObject:
     if(idx == -1):
       return
 
-    self.items[idx].id = permissionId
     self.items[idx].`type` = item.`type`
-    self.items[idx].tokenCriteria = item.tokenCriteria
+    self.items[idx].tokenCriteria.setItems(item.tokenCriteria.getItems())
     self.items[idx].isPrivate = item.isPrivate
 
     let index = self.createIndex(idx, 0, nil)

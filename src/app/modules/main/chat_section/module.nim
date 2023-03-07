@@ -12,6 +12,7 @@ import ../../shared_models/token_permission_item
 import ../../shared_models/token_criteria_item
 import ../../shared_models/token_criteria_model
 import ../../shared_models/token_list_item
+import ../../shared_models/token_list_model
 
 import chat_content/module as chat_content_module
 import chat_content/users/module as users_module
@@ -65,6 +66,8 @@ proc buildChatSectionUI(self: Module,
   mailserversService: mailservers_service.Service)
 
 proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem
+
+proc buildTokenList*(self: Module)
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -303,6 +306,8 @@ proc initContactRequestsModel(self: Module) =
   self.view.contactRequestsModel().addItems(contactsWhoAddedMe)
 
 proc rebuildCommunityTokenPermissionsModel(self: Module) =
+  self.buildTokenList()
+
   let community = self.controller.getMyCommunity()
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
   var allTokenRequirementsMet = false
@@ -322,17 +327,17 @@ proc rebuildCommunityTokenPermissionsModel(self: Module) =
 
   self.view.tokenPermissionsModel().setItems(tokenPermissionsItems)
   self.view.setAllTokenRequirementsMet(allTokenRequirementsMet)
+  self.view.setRequiresTokenPermissionToJoin(tokenPermissionsItems.len > 0)
 
 proc initCommunityTokenPermissionsModel(self: Module) =
   self.rebuildCommunityTokenPermissionsModel()
 
 proc buildTokenList(self: Module) =
-  
   var tokenListItems: seq[TokenListItem]
   var collectiblesListItems: seq[TokenListItem]
 
+  let community = self.controller.getMyCommunity()
   let erc20Tokens = self.controller.getTokenList()
-  let communityTokens = self.controller.getCommunityTokenList()
 
   for token in erc20Tokens:
     let tokenListItem = initTokenListItem(
@@ -346,7 +351,7 @@ proc buildTokenList(self: Module) =
 
     tokenListItems.add(tokenListItem)
 
-  for token in communityTokens:
+  for token in community.communityTokensMetadata:
     let tokenListItem = initTokenListItem(
       key = token.symbol,
       name = token.name,
@@ -402,8 +407,9 @@ method load*(
     self.initContactRequestsModel()
   else:
     self.usersModule.load()
+    let community = self.controller.getMyCommunity()
+    self.view.setAmIMember(community.joined)
     self.initCommunityTokenPermissionsModel()
-    self.buildTokenList()
 
   let activeChatId = self.controller.getActiveChatId()
   let isCurrentSectionActive = self.controller.getIsCurrentSectionActive()
@@ -743,14 +749,18 @@ method onChatUnmuted*(self: Module, chatId: string) =
 
 method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, permissionId: string) =
   self.view.tokenPermissionsModel().removeItemWithId(permissionId)
+  self.view.setRequiresTokenPermissionToJoin(self.view.tokenPermissionsModel().getCount() > 0)
   singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
 
 method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
   if tokenPermission.`type` == TokenPermissionType.BecomeMember:
     let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
-    self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
+
     if tokenPermissionItem.tokenCriteriaMet:
       self.view.setAllTokenRequirementsMet(true)
+
+    self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
+    self.view.setRequiresTokenPermissionToJoin(true)
   singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
@@ -783,6 +793,23 @@ method onCommunityTokenPermissionUpdateFailed*(self: Module, communityId: string
 
 method onCommunityTokenPermissionDeletionFailed*(self: Module, communityId: string) =
   singletonInstance.globalEvents.showCommunityTokenPermissionDeletionFailedNotification(communityId, "Failed to delete community permission", "Something went wrong")
+
+method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMetadata: CommunityTokensMetadataDto) = 
+  let tokenListItem = initTokenListItem(
+    key = tokenMetadata.symbol,
+    name = tokenMetadata.name,
+    symbol = tokenMetadata.symbol,
+    color = "", # tokenMetadata doesn't provide a color
+    image = tokenMetadata.image,
+    category = ord(TokenListItemCategory.Community)
+  )
+
+  if tokenMetadata.tokenType == community_dto.TokenType.ERC721 and not self.view.collectiblesListModel().hasItem(tokenMetadata.symbol):
+    self.view.collectiblesListModel.addItems(@[tokenListItem])
+    return
+
+  if tokenMetadata.tokenType == community_dto.TokenType.ERC20 and not self.view.tokenListModel().hasItem(tokenMetadata.symbol):
+    self.view.tokenListModel.addItems(@[tokenListItem])
 
 method onMarkAllMessagesRead*(self: Module, chatId: string) =
   self.updateBadgeNotifications(chatId, hasUnreadMessages=false, unviewedMentionsCount=0)
