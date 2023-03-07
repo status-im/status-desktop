@@ -6,12 +6,13 @@ type
     TokenType = UserRole + 1
     TokenAddress
     Name
+    Symbol
     Description
     Supply
     InfiniteSupply
     Transferable
     RemoteSelfDestruct
-    NetworkId
+    ChainId
     DeployState
     Image
 
@@ -70,12 +71,13 @@ QtObject:
       ModelRole.TokenType.int:"tokenType",
       ModelRole.TokenAddress.int:"tokenAddress",
       ModelRole.Name.int:"name",
+      ModelRole.Symbol.int:"symbol",
       ModelRole.Description.int:"description",
       ModelRole.Supply.int:"supply",
       ModelRole.InfiniteSupply.int:"infiniteSupply",
       ModelRole.Transferable.int:"transferable",
       ModelRole.RemoteSelfDestruct.int:"remoteSelfDestruct",
-      ModelRole.NetworkId.int:"networkId",
+      ModelRole.ChainId.int:"chainId",
       ModelRole.DeployState.int:"deployState",
       ModelRole.Image.int:"image",
     }.toTable
@@ -94,6 +96,8 @@ QtObject:
         result = newQVariant(item.address)
       of ModelRole.Name:
         result = newQVariant(item.name)
+      of ModelRole.Symbol:
+        result = newQVariant(item.symbol)
       of ModelRole.Description:
         result = newQVariant(item.description)
       of ModelRole.Supply:
@@ -104,7 +108,7 @@ QtObject:
         result = newQVariant(item.transferable)
       of ModelRole.RemoteSelfDestruct:
         result = newQVariant(item.remoteSelfDestruct)
-      of ModelRole.NetworkId:
+      of ModelRole.ChainId:
         result = newQVariant(item.chainId)
       of ModelRole.DeployState:
         result = newQVariant(item.deployState.int)

@@ -77,9 +77,9 @@ QtObject:
       let contractGasUnits = "3702411"
 
       let txData = ens_utils.buildTransaction(parseAddress(addressFrom), 0.u256, contractGasUnits,
-      if suggestedFees.eip1559Enabled: "" else: $suggestedFees.gasPrice, suggestedFees.eip1559Enabled,
-      if suggestedFees.eip1559Enabled: $suggestedFees.maxPriorityFeePerGas else: "",
-      if suggestedFees.eip1559Enabled: $suggestedFees.maxFeePerGasM else: "")
+        if suggestedFees.eip1559Enabled: "" else: $suggestedFees.gasPrice, suggestedFees.eip1559Enabled,
+        if suggestedFees.eip1559Enabled: $suggestedFees.maxPriorityFeePerGas else: "",
+        if suggestedFees.eip1559Enabled: $suggestedFees.maxFeePerGasM else: "")
 
       let response = tokens_backend.deployCollectibles(chainId, %deploymentParams, %txData, password)
       let contractAddress = response.result["contractAddress"].getStr()

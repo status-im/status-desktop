@@ -155,6 +155,12 @@ QtObject:
         return item.getShortName()
     return ""
 
+  proc getNetworkFullName*(self: Model, chainId: int): string {.slot.} =
+    for item in self.items:
+      if(item.getChainId() == chainId):
+        return item.getChainName()
+    return ""
+
   proc getNetworkIconUrl*(self: Model, shortName: string): string {.slot.} =
     for item in self.items:
       if cmpIgnoreCase(item.getShortName(), shortName) == 0:
