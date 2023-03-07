@@ -46,7 +46,6 @@ Feature: Status Desktop Wallet
         And the user edits default account to "Default" name and "#FFCA0F" color
         Then the default account is updated to be named "DefaultStatus account" with color "#FFCA0F"
 
-    @mayfail
     Scenario Outline: The user can manage a saved address
         When the user adds a saved address named "<name>" and address "<address>"
         And the user toggles favourite for the saved address with name "<name>"
