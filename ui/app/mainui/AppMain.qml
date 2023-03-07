@@ -771,14 +771,14 @@ Item {
                                 }
 
                                 rootStore: appMain.rootChatStore
-                                chatView.emojiPopup: statusEmojiPopup
-                                chatView.stickersPopup: statusStickersPopupLoader.item
+                                emojiPopup: statusEmojiPopup
+                                stickersPopup: statusStickersPopupLoader.item
 
-                                chatView.onProfileButtonClicked: {
+                                onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                 }
 
-                                chatView.onOpenAppSearch: {
+                                onOpenAppSearch: {
                                     appSearch.openSearchPopup()
                                 }
 
@@ -876,16 +876,16 @@ Item {
                                             restoreMode: Binding.RestoreBindingOrValue
                                         }
 
-                                        chatView.emojiPopup: statusEmojiPopup
-                                        chatView.stickersPopup: statusStickersPopupLoader.item
+                                        emojiPopup: statusEmojiPopup
+                                        stickersPopup: statusStickersPopupLoader.item
 
                                         rootStore: appMain.rootChatStore
 
-                                        chatView.onProfileButtonClicked: {
+                                        onProfileButtonClicked: {
                                             Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                         }
 
-                                        chatView.onOpenAppSearch: {
+                                        onOpenAppSearch: {
                                             appSearch.openSearchPopup()
                                         }
 

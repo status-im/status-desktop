@@ -14,9 +14,12 @@ StackLayout {
     property RootStore rootStore
     readonly property var contactsStore: rootStore.contactsStore
 
-    property alias chatView: chatView
+    property var emojiPopup
+    property var stickersPopup
     signal importCommunityClicked()
     signal createCommunityClicked()
+    signal profileButtonClicked()
+    signal openAppSearch()
 
     onCurrentIndexChanged: {
         Global.closeCreateChatView()
@@ -36,6 +39,8 @@ StackLayout {
 
     ChatView {
         id: chatView
+        emojiPopup: root.emojiPopup
+        stickersPopup: root.stickersPopup
         contactsStore: root.contactsStore
         rootStore: root.rootStore
         membershipRequestPopup: membershipRequestPopupComponent
@@ -48,6 +53,12 @@ StackLayout {
         }
         onCreateCommunityClicked: {
             root.createCommunityClicked();
+        }
+        onProfileButtonClicked: {
+            root.profileButtonClicked()
+        }
+        onOpenAppSearch: {
+            root.openAppSearch()
         }
     }
 
