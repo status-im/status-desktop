@@ -572,11 +572,6 @@ QtObject {
         return JSON.stringify({imagePath: String(imgPath).replace("file://", ""), cropRect: cropRect})
     }
 
-    function containsOnlyDigits(msg) {
-        var reg = new RegExp('[+-]?([0-9]*[.])?[0-9]+')
-        return reg.test(msg)
-    }
-
     function addSocialLinkPrefix(link, type) {
         const prefix = Constants.socialLinkPrefixesByType[type]
         if (link.startsWith(prefix))

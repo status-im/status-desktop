@@ -68,7 +68,7 @@ StatusDialog {
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
-        if(!!popup.selectedAccount && !!assetSelector.selectedAsset && d.recipientReady && amountToSendInput.input.valid) {
+        if(!!popup.selectedAccount && !!assetSelector.selectedAsset && d.recipientReady && amountToSendInput.inputNumberValid) {
             popup.isLoading = true
             let amount = Math.round(amountToSendInput.cryptoValueToSend * Math.pow(10, assetSelector.selectedAsset.decimals))
             popup.store.suggestedRoutes(popup.selectedAccount.address, amount.toString(16), assetSelector.selectedAsset.symbol,
@@ -87,7 +87,7 @@ StatusDialog {
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
         readonly property string selectedSymbol: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.symbol : ""
         readonly property string inputSymbol: amountToSendInput.inputIsFiat ? popup.store.currentCurrency : selectedSymbol
-        readonly property bool errorMode: popup.isLoading || !recipientReady ? false : errorType !== Constants.NoError || networkSelector.errorMode || isNaN(amountToSendInput.input.text)
+        readonly property bool errorMode: popup.isLoading || !recipientReady ? false : errorType !== Constants.NoError || networkSelector.errorMode || !amountToSendInput.inputNumberValid
         readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending
         property bool isAddressValid: Utils.isValidAddress(popup.addressText)
         property bool isENSValid: false
@@ -253,7 +253,7 @@ StatusDialog {
                                 return RootStore.getNetworkIcon(chainId)
                             }
                             onSelectedAssetChanged: {
-                                if (!assetSelector.selectedAsset || !amountToSendInput.input.text || isNaN(amountToSendInput.input.text)) {
+                                if (!assetSelector.selectedAsset || !amountToSendInput.inputNumberValid) {
                                     return
                                 }
                                 popup.recalculateRoutesAndFees()
@@ -300,7 +300,7 @@ StatusDialog {
                             id: amountToReceive
                             Layout.alignment: Qt.AlignRight
                             Layout.fillWidth:true
-                            visible: popup.bestRoutes !== undefined && popup.bestRoutes.length > 0 && !!amountToSendInput.input.text && amountToSendInput.input.valid
+                            visible: popup.bestRoutes !== undefined && popup.bestRoutes.length > 0 && amountToSendInput.inputNumberValid
                             store: popup.store
                             isLoading: popup.isLoading
                             selectedSymbol: d.selectedSymbol
@@ -462,7 +462,7 @@ StatusDialog {
                         requiredGasInEth: d.totalFeesInEth
                         selectedAsset: assetSelector.selectedAsset
                         onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
-                        visible: d.recipientReady && !!assetSelector.selectedAsset && !!amountToSendInput.input.text
+                        visible: d.recipientReady && !!assetSelector.selectedAsset && amountToSendInput.inputNumberValid
                         errorType: d.errorType
                         isLoading: popup.isLoading
                         bestRoutes: popup.bestRoutes
@@ -476,7 +476,7 @@ StatusDialog {
                         anchors.right: parent.right
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
-                        visible: d.recipientReady && !!assetSelector.selectedAsset && networkSelector.advancedOrCustomMode && !!amountToSendInput.input.text
+                        visible: d.recipientReady && !!assetSelector.selectedAsset && networkSelector.advancedOrCustomMode && amountToSendInput.inputNumberValid
                         selectedTokenSymbol: d.selectedSymbol
                         isLoading: popup.isLoading
                         bestRoutes: popup.bestRoutes
@@ -494,7 +494,7 @@ StatusDialog {
         maxFiatFees: popup.isLoading ? "..." : popup.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, popup.store.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: d.recipientReady && amountToSendInput.cryptoValueToSend >= 0 && !d.errorMode && !!amountToSendInput.input.text && amountToSendInput.input.valid
+        visible: d.recipientReady && amountToSendInput.inputNumberValid && !d.errorMode
         onNextButtonClicked: popup.sendTransaction()
     }
 
