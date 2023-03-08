@@ -23,6 +23,8 @@ import ".."
 StatusDialog {
     id: root
 
+    closePolicy: Popup.CloseOnEscape
+
     property bool edit: false
     property bool addAddress: false
     property string address: Constants.zeroAddress // Setting as zero address since we don't have the address yet
