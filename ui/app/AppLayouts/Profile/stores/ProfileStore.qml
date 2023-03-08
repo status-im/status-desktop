@@ -22,6 +22,7 @@ QtObject {
     readonly property string socialLinksJson: profileModule.socialLinksJson
     readonly property var socialLinksModel: profileModule.socialLinksModel
     readonly property var temporarySocialLinksModel: profileModule.temporarySocialLinksModel // for editing purposes
+    readonly property var temporarySocialLinksJson: profileModule.temporarySocialLinksJson
     readonly property bool socialLinksDirty: profileModule.socialLinksDirty
 
     onUserDeclinedBackupBannerChanged: {
@@ -52,24 +53,28 @@ QtObject {
         root.profileModule.setDisplayName(displayName)
     }
 
-    function createCustomLink(text, url) {
-        root.profileModule.createCustomLink(text, url)
+    function createLink(text, url, linkType, icon) {
+        root.profileModule.createLink(text, url, linkType, icon)
     }
 
-    function removeCustomLink(uuid) {
-        root.profileModule.removeCustomLink(uuid)
+    function removeLink(uuid) {
+        root.profileModule.removeLink(uuid)
     }
 
     function updateLink(uuid, text, url) {
         root.profileModule.updateLink(uuid, text, url)
     }
 
+    function moveLink(fromRow, toRow, count) {
+        root.profileModule.moveLink(fromRow, toRow)
+    }
+
     function resetSocialLinks() {
         root.profileModule.resetSocialLinks()
     }
 
-    function saveSocialLinks() {
-        root.profileModule.saveSocialLinks()
+    function saveSocialLinks(silent = false) {
+        root.profileModule.saveSocialLinks(silent)
     }
 
     function setBio(bio) {

@@ -48,17 +48,8 @@ method isLoaded*(self: Module): bool =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-func hasCustomLink(socialLinks: seq[SocialLinkItem]): bool =
-  for socialLinkItem in socialLinks:
-    if socialLinkItem.linkType() == LinkType.Custom:
-      return true
-
 method viewDidLoad*(self: Module) =
   var socialLinkItems = toSocialLinkItems(self.controller.getSocialLinks())
-
-  # Add custom link placeholder
-  if not socialLinkItems.hasCustomLink:
-    socialLinkItems.add(initSocialLinkItem("", "", LinkType.Custom))
 
   self.view.socialLinksModel().setItems(socialLinkItems)
   self.view.temporarySocialLinksModel().setItems(socialLinkItems)

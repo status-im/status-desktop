@@ -92,6 +92,13 @@ public:
     /// Expose endInsertRows
     void publicEndRemoveRows() override;
 
+    /// Expose beginMoveRows
+    void publicBeginMoveRows(const QModelIndex &sourceParent, int sourceFirst, int sourceLast,
+                             const QModelIndex &destinationParent, int destinationChild) override;
+
+    /// Expose endMoveRows
+    void publicEndMoveRows() override;
+
     /// Expose beginInsertColumns
     void publicBeginInsertColumns(const QModelIndex &index, int first, int last) override;
 

@@ -15,11 +15,6 @@ Item {
     property alias displayName: displayNameInput
     property alias bio: bioInput
 
-    property var socialLinksModel
-
-    signal socialLinkChanged(string uuid, string text, string url)
-    signal addSocialLinksClicked
-
     implicitHeight: layout.implicitHeight
     implicitWidth: layout.implicitWidth
 
@@ -59,39 +54,7 @@ Item {
             maximumHeight: 108
             input.verticalAlignment: TextEdit.AlignTop
 
-            input.tabNavItem: socialLinksRepeater.count ? socialLinksRepeater.itemAt(0).input.edit : null
-        }
-
-        Repeater {
-            id: socialLinksRepeater
-
-            model: root.socialLinksModel
-            delegate: StaticSocialLinkInput {
-                objectName: model.text + "-socialLinkInput"
-
-                Layout.fillWidth: true
-                linkType: model.linkType
-                text: Utils.stripSocialLinkPrefix(model.url, model.linkType)
-                icon: model.icon
-
-                onTextChanged: root.socialLinkChanged(model.uuid, model.text, Utils.addSocialLinkPrefix(text, model.linkType))
-
-                input.tabNavItem: {
-                    if (index < socialLinksRepeater.count - 1) {
-                        return socialLinksRepeater.itemAt(index + 1).input.edit
-                    }
-                    return addMoreSocialLinksButton
-                }
-            }
-        }
-
-        StatusIconTextButton {
-            id: addMoreSocialLinksButton
-
-            objectName: "addMoreSocialLinksButton"
-            Layout.topMargin: -8 // by design
-            text: qsTr("Add more social links")
-            onClicked: root.addSocialLinksClicked()
+            input.tabNavItem: displayNameInput.input.edit
         }
     }
 }

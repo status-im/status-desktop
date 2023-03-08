@@ -16,6 +16,7 @@ StatusContactVerificationIcons 0.1 StatusContactVerificationIcons.qml
 StatusDateGroupLabel 0.1 StatusDateGroupLabel.qml
 StatusDescriptionListItem 0.1 StatusDescriptionListItem.qml
 StatusDotsLoadingIndicator 0.1 StatusDotsLoadingIndicator.qml
+StatusDraggableListItem 0.1 StatusDraggableListItem.qml
 StatusLetterIdenticon 0.1 StatusLetterIdenticon.qml
 StatusListItem 0.1 StatusListItem.qml
 StatusListSectionHeadline 0.1 StatusListSectionHeadline.qml

@@ -191,6 +191,18 @@ void DosQAbstractGenericModel<T>::publicEndRemoveRows()
 }
 
 template<class T>
+void DosQAbstractGenericModel<T>::publicBeginMoveRows(const QModelIndex& sourceParent, int sourceFirst, int sourceLast, const QModelIndex& destinationParent, int destinationChild)
+{
+    T::beginMoveRows(sourceParent, sourceFirst, sourceLast, destinationParent, destinationChild);
+}
+
+template<class T>
+void DosQAbstractGenericModel<T>::publicEndMoveRows()
+{
+    T::endMoveRows();
+}
+
+template<class T>
 void DosQAbstractGenericModel<T>::publicBeginResetModel()
 {
     T::beginResetModel();

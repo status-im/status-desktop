@@ -2,7 +2,6 @@ import QtQuick 2.14
 
 import utils 1.0
 
-import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
 StatusInput {
@@ -11,19 +10,13 @@ StatusInput {
     property int linkType
     property string icon
 
-    leftPadding: 18 // by design
+    leftPadding: Style.current.padding
+    input.clearable: true
 
-    placeholderText: {
-        if (linkType === Constants.socialLinkType.twitter) return qsTr("Twitter Handle")
-        if (linkType === Constants.socialLinkType.personalSite) return qsTr("Personal Site")
-        if (linkType === Constants.socialLinkType.github) return qsTr("Github")
-        if (linkType === Constants.socialLinkType.youtube) return qsTr("YouTube Channel")
-        if (linkType === Constants.socialLinkType.discord) return qsTr("Discord Handle")
-        if (linkType === Constants.socialLinkType.telegram) return qsTr("Telegram Handle")
-        return ""
-    }
+    placeholderText: ProfileUtils.linkTypeToDescription(linkType)
     input.asset {
         name: root.icon
+        color: ProfileUtils.linkTypeColor(root.linkType)
         width: 20
         height: 20
     }

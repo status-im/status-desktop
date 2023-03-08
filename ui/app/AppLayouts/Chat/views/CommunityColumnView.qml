@@ -257,7 +257,7 @@ Item {
                 property var categoryItem
 
                 StatusAction {
-                    text: categoryItem.muted ? qsTr("Unmute category") : qsTr("Mute category")
+                    text: !!categoryItem ? categoryItem.muted ? qsTr("Unmute category") : qsTr("Mute category") : ""
                     icon.name: "notification"
                     onTriggered: {
                         if (categoryItem.muted) {

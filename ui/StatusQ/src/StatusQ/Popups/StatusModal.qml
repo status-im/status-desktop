@@ -194,11 +194,10 @@ QC.Popup {
     parent: QC.Overlay.overlay
 
     width: 480
-    // implicitHeight: headerImpl.implicitHeight + contentItem.implicitHeight + footerImpl.implicitHeight
 
     padding: 0
-    topPadding: padding + headerImpl.implicitHeight
-    bottomPadding: padding + footerImpl.implicitHeight
+    topPadding: padding + headerImpl.height
+    bottomPadding: padding + footerImpl.height
     leftPadding: padding
     rightPadding: padding
 
@@ -218,6 +217,7 @@ QC.Popup {
             id: headerImpl
             anchors.top: parent.top
             width: visible ? parent.width : 0
+            height: visible ? implicitHeight : 0
 
             visible: root.showHeader
             title: header.title
@@ -246,6 +246,7 @@ QC.Popup {
             id: footerImpl
             anchors.bottom: parent.bottom
             width: visible ? parent.width : 0
+            height: visible ? implicitHeight : 0
             showFooter: root.showFooter
             visible: root.showFooter
         }

@@ -573,8 +573,8 @@ Pane {
                     Layout.leftMargin: column.anchors.leftMargin + Style.current.halfPadding
                     Layout.rightMargin: column.anchors.rightMargin + Style.current.halfPadding
                     bio: root.dirty ? root.dirtyValues.bio : d.contactDetails.bio
-                    userSocialLinksJson: root.dirty ? root.profileStore.temporarySocialLinksJson
-                                                    : d.contactDetails.socialLinks
+                    userSocialLinksJson: root.readOnly ? root.profileStore.temporarySocialLinksJson
+                                                       : d.contactDetails.socialLinks
                 }
 
                 GridLayout {
@@ -598,7 +598,7 @@ Pane {
                     StatusBaseInput {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 56
-                        leftPadding: 14
+                        leftPadding: Style.current.padding
                         rightPadding: Style.current.halfPadding
                         topPadding: 0
                         bottomPadding: 0
@@ -632,7 +632,7 @@ Pane {
                     StatusBaseInput {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 56
-                        leftPadding: 14
+                        leftPadding: Style.current.padding
                         rightPadding: Style.current.halfPadding
                         topPadding: 0
                         bottomPadding: 0

@@ -572,17 +572,6 @@ QtObject {
         return JSON.stringify({imagePath: String(imgPath).replace("file://", ""), cropRect: cropRect})
     }
 
-    function addSocialLinkPrefix(link, type) {
-        const prefix = Constants.socialLinkPrefixesByType[type]
-        if (link.startsWith(prefix))
-            return link
-        return prefix + link
-    }
-
-    function stripSocialLinkPrefix(link, type) {
-        return link.replace(Constants.socialLinkPrefixesByType[type], "")
-    }
-
     // handle translations for section names coming from app_sections_config.nim
     function translatedSectionName(sectionType, fallback) {
         switch(sectionType) {

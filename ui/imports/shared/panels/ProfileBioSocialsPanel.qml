@@ -23,16 +23,6 @@ Control {
     QtObject {
         id: d
 
-        function textToType(text) {
-            if (text === "__twitter") return Constants.socialLinkType.twitter
-            if (text === "__personal_site") return Constants.socialLinkType.personalSite
-            if (text === "__github") return Constants.socialLinkType.github
-            if (text === "__youtube") return Constants.socialLinkType.youtube
-            if (text === "__discord") return Constants.socialLinkType.discord
-            if (text === "__telegram") return Constants.socialLinkType.telegram
-            return Constants.socialLinkType.custom
-        }
-
         // Unfortunately, nim can't expose temporary QObjects thorugh slots
         // The only way to expose static models on demand is through json strings (see getContactDetailsAsJson)
         // Model is built here manually, which I know is completely wrong..
@@ -46,9 +36,9 @@ Control {
                 for (let i=0; i<links.length; i++) {
                     let obj = links[i]
                     const url = obj.url
-                    const type = textToType(obj.text)
+                    const type = ProfileUtils.linkTextToType(obj.text)
                     socialLinksModel.append({
-                                                "text": Utils.stripSocialLinkPrefix(url, type),
+                                                "text": type === Constants.socialLinkType.custom ? obj.text : ProfileUtils.stripSocialLinkPrefix(url, type),
                                                 "url": url,
                                                 "linkType": type,
                                                 "icon": obj.icon
@@ -68,21 +58,10 @@ Control {
     SortFilterProxyModel {
         id: sortedSocialLinksModel
 
-        function customsLastPredicate(linkTypeLeft, linkTypeRight) {
-            if (linkTypeLeft === Constants.socialLinkType.custom) return false
-            if (linkTypeRight === Constants.socialLinkType.custom) return true
-            return linkTypeLeft < linkTypeRight
-        }
-
         sourceModel: socialLinksModel
         filters: ExpressionFilter {
             expression: model.text !== "" && model.url !== ""
         }
-        sorters: [
-            ExpressionSorter {
-                expression: sortedSocialLinksModel.customsLastPredicate(modelLeft.linkType, modelRight.linkType)
-            }
-        ]
     }
 
     contentItem: ColumnLayout {

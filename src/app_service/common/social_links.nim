@@ -22,7 +22,7 @@ proc socialLinkTextToIcon(text: string): string =
   if (text == SOCIAL_LINK_YOUTUBE_ID): return "youtube"
   if (text == SOCIAL_LINK_DISCORD_ID): return "discord"
   if (text == SOCIAL_LINK_TELEGRAM_ID): return "telegram"
-  return ""
+  return "link"
 
 proc toSocialLinks*(jsonObj: JsonNode): SocialLinks =
   result = map(jsonObj.getElems(),
