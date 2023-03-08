@@ -36,7 +36,6 @@ proc newService*(events: EventEmitter, networkService: network_service.Service,
 proc fetchAddresses(self: Service) =
   try:
     let response = backend.getSavedAddresses()
-
     self.savedAddresses = map(
       response.result.getElems(),
       proc(x: JsonNode): SavedAddressDto = toSavedAddressDto(x)
