@@ -1219,6 +1219,23 @@ void dos_qabstractitemmodel_endRemoveRows(::DosQAbstractItemModel *vptr)
     model->publicEndRemoveRows();
 }
 
+void dos_qabstractitemmodel_beginMoveRows(DosQAbstractItemModel* vptr, ::DosQModelIndex* sourceParent, int sourceFirst, int sourceLast,
+                                          DosQModelIndex* destinationParent, int destinationChild)
+{
+    auto object = static_cast<QObject *>(vptr);
+    auto model = dynamic_cast<DOS::DosIQAbstractItemModelImpl *>(object);
+    auto sourceIndex = static_cast<QModelIndex *>(sourceParent);
+    auto destIndex = static_cast<QModelIndex *>(destinationParent);
+    model->publicBeginMoveRows(*sourceIndex, sourceFirst, sourceLast, *destIndex, destinationChild);
+}
+
+void dos_qabstractitemmodel_endMoveRows(DosQAbstractItemModel* vptr)
+{
+    auto object = static_cast<QObject *>(vptr);
+    auto model = dynamic_cast<DOS::DosIQAbstractItemModelImpl *>(object);
+    model->publicEndMoveRows();
+}
+
 void dos_qabstractitemmodel_beginInsertColumns(::DosQAbstractItemModel *vptr, ::DosQModelIndex *parentIndex, int first, int last)
 {
     auto object = static_cast<QObject *>(vptr);

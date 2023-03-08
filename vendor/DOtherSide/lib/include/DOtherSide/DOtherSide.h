@@ -666,6 +666,10 @@ DOS_API void DOS_CALL dos_qabstractitemmodel_beginRemoveRows(DosQAbstractItemMod
 /// \param vptr The QAbstractItemModel
 DOS_API void DOS_CALL dos_qabstractitemmodel_endRemoveRows(DosQAbstractItemModel *vptr);
 
+DOS_API void DOS_CALL dos_qabstractitemmodel_beginMoveRows(DosQAbstractItemModel *vptr, DosQModelIndex *sourceParent, int sourceFirst, int sourceLast,
+                                                           DosQModelIndex *destinationParent, int destinationChild);
+DOS_API void DOS_CALL dos_qabstractitemmodel_endMoveRows(DosQAbstractItemModel *vptr);
+
 /// \brief Calls the QAbstractItemModel::beginInsertColumns() function
 /// \param vptr The QAbstractItemModel
 /// \param parent The parent QModelIndex

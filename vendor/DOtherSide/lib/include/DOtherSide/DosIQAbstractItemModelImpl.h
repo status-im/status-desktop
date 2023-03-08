@@ -61,6 +61,13 @@ public:
     /// @see QAbstractItemModel::endRemoveRows
     virtual void publicEndRemoveRows() = 0;
 
+    /// @see QAbstractItemModel::beginMoveRows
+    virtual void publicBeginMoveRows(const QModelIndex &sourceParent, int sourceFirst, int sourceLast,
+                                     const QModelIndex &destinationParent, int destinationChild) = 0;
+
+    /// @see QAbstractItemModel::endMoveRows
+    virtual void publicEndMoveRows() = 0;
+
     /// @see QAbstractItemModel::beginInsertColumns
     virtual void publicBeginInsertColumns(const QModelIndex &index, int first, int last) = 0;
 

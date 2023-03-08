@@ -18,10 +18,10 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
-import SortFilterProxyModel 0.2
-
 ColumnLayout {
     id: root
+
+    spacing: 20
 
     property PrivacyStore privacyStore
     property ProfileStore profileStore
@@ -48,7 +48,6 @@ ColumnLayout {
         descriptionPanel.displayName.text = Qt.binding(() => { return profileStore.displayName })
         descriptionPanel.bio.text = Qt.binding(() => { return profileStore.bio })
         profileStore.resetSocialLinks()
-        descriptionPanel.reevaluateSocialLinkInputs()
         biometricsSwitch.checked = Qt.binding(() => { return biometricsSwitch.currentStoredValue })
         profileHeader.icon = Qt.binding(() => { return profileStore.profileLargeImage })
     }
@@ -93,8 +92,6 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.leftMargin: Style.current.padding
         Layout.rightMargin: Style.current.padding
-        Layout.topMargin: 20
-        Layout.bottomMargin: 20
 
         store: root.profileStore
 
@@ -109,32 +106,10 @@ ColumnLayout {
         editImageButtonVisible: true
     }
 
-    SortFilterProxyModel {
-        id: staticSocialLinksSubsetModel
-
-        function filterPredicate(linkType) {
-            return linkType === Constants.socialLinkType.twitter ||
-                   linkType === Constants.socialLinkType.personalSite
-        }
-
-        sourceModel: profileStore.temporarySocialLinksModel
-        filters: ExpressionFilter {
-            expression: staticSocialLinksSubsetModel.filterPredicate(model.linkType)
-        }
-        sorters: RoleSorter {
-            roleName: "linkType"
-        }
-    }
-
     ProfileDescriptionPanel {
         id: descriptionPanel
 
         readonly property bool isEnsName: profileStore.preferredName
-
-        function reevaluateSocialLinkInputs()  {
-            socialLinksModel = null
-            socialLinksModel = staticSocialLinksSubsetModel
-        }
 
         Layout.fillWidth: true
 
@@ -144,17 +119,22 @@ ColumnLayout {
         displayName.validationMode: StatusInput.ValidationMode.Always
         displayName.validators: isEnsName ? [] : Constants.validators.displayName
         bio.text: profileStore.bio
-        socialLinksModel: staticSocialLinksSubsetModel
-
-        onSocialLinkChanged: profileStore.updateLink(uuid, text, url)
-        onAddSocialLinksClicked: socialLinksModal.open()
     }
 
-    SocialLinksModal {
-        id: socialLinksModal
-        profileStore: root.profileStore
+    Separator {
+        Layout.fillWidth: true
+    }
 
-        onClosed: descriptionPanel.reevaluateSocialLinkInputs()
+    ProfileSocialLinksPanel {
+        id: socialLinksPanel
+
+        Layout.fillWidth: true
+        profileStore: root.profileStore
+        socialLinksModel: root.profileStore.temporarySocialLinksModel
+    }
+
+    Separator {
+        Layout.fillWidth: true
     }
 
     StatusListItem {
@@ -169,6 +149,11 @@ ColumnLayout {
             checked: currentStoredValue
         } ]
         onClicked: biometricsSwitch.toggle()
+    }
+
+    Separator {
+        Layout.fillWidth: true
+        visible: Qt.platform.os === Constants.mac
     }
 
     StatusTabBar {

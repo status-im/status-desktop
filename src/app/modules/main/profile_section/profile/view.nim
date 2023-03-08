@@ -90,35 +90,38 @@ QtObject:
     read = areSocialLinksDirty
     notify = socialLinksDirtyChanged
 
-  proc createCustomLink(self: View, text: string, url: string) {.slot.} =
-    self.temporarySocialLinksModel.appendItem(initSocialLinkItem(text, url, LinkType.Custom))
+  proc createLink(self: View, text: string, url: string, linkType: int, icon: string) {.slot.} =
+    self.temporarySocialLinksModel.appendItem(initSocialLinkItem(text, url, (LinkType)linkType, icon))
     self.temporarySocialLinksJsonChanged()
     self.socialLinksDirtyChanged()
 
-  proc removeCustomLink(self: View, uuid: string) {.slot.} =
+  proc removeLink(self: View, uuid: string) {.slot.} =
     if (self.temporarySocialLinksModel.removeItem(uuid)):
       self.temporarySocialLinksJsonChanged()
       self.socialLinksDirtyChanged()
 
-  proc updateLink(self: View, uuid: string, text: string, url: string): bool {.slot.} =
+  proc updateLink(self: View, uuid: string, text: string, url: string) {.slot.} =
     if (self.temporarySocialLinksModel.updateItem(uuid, text, url)):
       self.temporarySocialLinksJsonChanged()
       self.socialLinksDirtyChanged()
 
-  proc resetSocialLinks(self: View): bool {.slot.} =
+  proc moveLink(self: View, fromRow: int, toRow: int) {.slot.} =
+    discard self.temporarySocialLinksModel.moveItem(fromRow, toRow)
+
+  proc resetSocialLinks(self: View) {.slot.} =
     if (self.areSocialLinksDirty()):
       self.temporarySocialLinksModel.setItems(self.socialLinksModel.items)
       self.socialLinksDirtyChanged()
       self.temporarySocialLinksJsonChanged()
 
-
-  proc saveSocialLinks(self: View): bool {.slot.} =
+  proc saveSocialLinks(self: View, silent: bool = false): bool {.slot.} =
     result = self.delegate.saveSocialLinks()
     if (result):
       self.socialLinksModel.setItems(self.temporarySocialLinksModel.items)
-      self.socialLinksDirtyChanged()
       self.socialLinksJsonChanged()
       self.temporarySocialLinksJsonChanged()
+      if not silent:
+        self.socialLinksDirtyChanged()
 
   proc bioChanged*(self: View) {.signal.}
   proc getBio(self: View): string {.slot.} =

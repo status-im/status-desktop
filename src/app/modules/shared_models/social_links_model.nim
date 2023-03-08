@@ -45,20 +45,43 @@ QtObject:
     self.endResetModel()
 
   proc appendItem*(self: SocialLinksModel, item: SocialLinkItem) =
-    self.beginInsertRows(newQModelIndex(), self.items.len, self.items.len)
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
 
   proc removeItem*(self: SocialLinksModel, uuid: string): bool =
     for i in 0 ..< self.items.len:
       if (self.items[i].uuid == uuid):
-        if (self.items[i].linkType == LinkType.Custom):
-          self.beginRemoveRows(newQModelIndex(), i, i)
-          self.items.delete(i)
-          self.endRemoveRows()
-          return true
-        return false
+        let parentModelIndex = newQModelIndex()
+        defer: parentModelIndex.delete
+        self.beginRemoveRows(parentModelIndex, i, i)
+        self.items.delete(i)
+        self.endRemoveRows()
+        return true
     return false
+
+  # used only by the temp model to reorder items with DND; compat with ListModel::move(from, to, count)
+  proc moveItem*(self: SocialLinksModel, fromRow: int, toRow: int): bool =
+    if toRow < 0 or toRow > self.items.len - 1:
+      return false
+
+    let sourceIndex = newQModelIndex()
+    defer: sourceIndex.delete
+    let destIndex = newQModelIndex()
+    defer: destIndex.delete
+
+    var destRow = toRow
+    if toRow > fromRow:
+      inc(destRow)
+
+    let currentItem = self.items[fromRow]
+    self.beginMoveRows(sourceIndex, fromRow, fromRow, destIndex, destRow)
+    self.items.delete(fromRow)
+    self.items.insert(@[currentItem], toRow)
+    self.endMoveRows()
+    return true
 
   proc updateItem*(self: SocialLinksModel, uuid, text, url: string): bool =
     for i in 0 ..< self.items.len:
@@ -75,6 +98,7 @@ QtObject:
 
         if changedRoles.len > 0:
           let index = self.createIndex(i, 0, nil)
+          defer: index.delete
           self.dataChanged(index, index, changedRoles)
           return true
 

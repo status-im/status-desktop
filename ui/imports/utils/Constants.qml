@@ -577,6 +577,14 @@ QtObject {
         }
     }
 
+    readonly property QtObject regularExpressions: QtObject {
+        readonly property var alphanumericalExpanded: /^$|^[a-zA-Z0-9\-_ ]+$/
+    }
+
+    readonly property QtObject errorMessages: QtObject {
+        readonly property string alphanumericalExpandedRegExp: qsTr("Only letters, numbers, underscores, whitespaces and hyphens allowed")
+    }
+
     readonly property QtObject socialLinkType: QtObject {
         readonly property int custom: 0
         readonly property int twitter: 1
@@ -586,6 +594,8 @@ QtObject {
         readonly property int discord: 5
         readonly property int telegram: 6
     }
+
+    readonly property int maxSocialLinkTextLength: 24
 
     readonly property QtObject localPairingEventType: QtObject {
         readonly property int eventUnknown: -1
@@ -611,14 +621,6 @@ QtObject {
         Transferring = 2,
         Error = 3,
         Finished = 4
-    }
-
-    readonly property QtObject regularExpressions: QtObject {
-        readonly property var alphanumericalExpanded: /^$|^[a-zA-Z0-9\-_ ]+$/
-    }
-
-    readonly property QtObject errorMessages: QtObject {
-        readonly property string alphanumericalExpandedRegExp: qsTr("Only letters, numbers, underscores, whitespaces and hyphens allowed")
     }
 
     readonly property var socialLinkPrefixesByType: [ // NB order must match the "socialLinkType" enum above

@@ -153,4 +153,8 @@ ListModel {
         title: "LanguageCurrencySettings"
         section: "Settings"
     }
+    ListElement {
+        title: "ProfileSocialLinksPanel"
+        section: "Panels"
+    }
 }
