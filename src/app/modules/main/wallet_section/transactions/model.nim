@@ -211,13 +211,13 @@ QtObject:
 
       # add day headers to the transaction list
       var itemsWithDateHeaders: seq[Item] = @[]
-      var tempTimeStamp: Time
+      var tempTimeStamp: DateTime
       for tx in allTxs:
-        let durationInDays =  (tempTimeStamp.toTimeInterval() - fromUnix(tx.getTimestamp()).toTimeInterval()).days
+        let durationInDays =  between(fromUnix(tx.getTimestamp()).utc(), tempTimeStamp).days
         if(durationInDays != 0):
           itemsWithDateHeaders.add(initTimestampItem(tx.getTimestamp()))
         itemsWithDateHeaders.add(tx)
-        tempTimeStamp = fromUnix(tx.getTimestamp())             
+        tempTimeStamp = fromUnix(tx.getTimestamp()).utc()
 
       self.items = allTxs
       self.setItems(itemsWithDateHeaders)

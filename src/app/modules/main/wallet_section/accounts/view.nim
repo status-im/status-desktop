@@ -169,6 +169,7 @@ QtObject:
     var generatedAccounts: seq[GeneratedWalletItem] = @[]
 
     for item in items:
+      let item = item # TODO https://github.com/nim-lang/Nim/issues/16740
       #  Default Account
       if item.getWalletType() == "":
         statusDefaultAccountDerivedFrom = item.getDerivedFrom()

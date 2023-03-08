@@ -60,7 +60,7 @@ proc sendChatMessage*(
     stickerHash: string = "",
     stickerPack: string = "0",
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("sendChatMessage".prefix, %* [
+  result = callPrivateRPC("encodeChatMessage".prefix, %* [
     {
       "chatId": chatId,
       "text": msg,

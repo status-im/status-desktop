@@ -7,6 +7,8 @@ else:
 --opt:speed # -O3
 --debugger:native # passes "-g" to the C compiler
 --define:ssl # needed by the stdlib to enable SSL procedures
+--define:"libp2p_pki_schemes=secp256k1"
+--define:nimDisableCertificateValidation
 
 if defined(macosx):
   --dynlibOverrideAll # don't use dlopen()
@@ -37,7 +39,6 @@ else:
   # don't link libraries we're not actually using
   switch("passL", "-Wl,-as-needed")
 
---define:chronicles_line_numbers # useful when debugging
 
 # The compiler doth protest too much, methinks, about all these cases where it can't
 # do its (N)RVO pass: https://github.com/nim-lang/RFCs/issues/230

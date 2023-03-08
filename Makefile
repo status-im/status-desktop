@@ -10,6 +10,10 @@ SHELL := bash # the shell used internally by Make
 # used inside the included makefiles
 BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 
+EXCLUDED_NIM_PACKAGES := \
+	vendor/nwaku/vendor \
+	vendor/nim-dnsdisc/vendor
+
 # we don't want an error here, so we can handle things later, in the ".DEFAULT" target
 -include $(BUILD_SYSTEM_DIR)/makefiles/variables.mk
 

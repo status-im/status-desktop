@@ -1,5 +1,8 @@
 import NimQml, chronicles, os, strformat, strutils, times, md5, json
+import std/collections/sharedlist
 
+import chronos
+import stew/results
 import status_go
 import keycard_go
 import app/core/main
@@ -7,6 +10,9 @@ import constants as main_constants
 
 import app/global/global_singleton
 import app/boot/app_controller
+
+import apps/wakunode2/[config, wakunode2]
+import waku/v2/node/waku_node
 
 logScope:
   topics = "status-app"
@@ -77,7 +83,7 @@ proc setupRemoteSignalsHandling() =
       signal_handler(keycardServiceQObjPointer, p0, "receiveKeycardSignal")
   keycard_go.setSignalEventCallback(callbackKeycardGo)
 
-proc mainProc() =
+proc mainProc(rpcQueue: ptr SharedList[cstring]) =
   if main_constants.IS_MACOS and defined(production):
     setCurrentDir(getAppDir())
 
@@ -109,7 +115,7 @@ proc mainProc() =
   # init url manager before app controller
   statusFoundation.initUrlSchemeManager(urlSchemeEvent, singleInstance, openUri)
 
-  let appController = newAppController(statusFoundation)
+  let appController = newAppController(statusFoundation, rpcQueue)
   let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
 
   let isProductionQVariant = newQVariant(if defined(production): true else: false)
@@ -176,5 +182,51 @@ proc mainProc() =
   info "starting application..."
   app.exec()
 
+import waku/v2/protocol/waku_relay
+import waku/v2/protocol/waku_message
+import stew/base64
+
+proc serveRelayApi(list: ptr SharedList[cstring], node: WakuNode) {.async.} =
+  while true:
+    var items: seq[cstring]
+    list[].iterAndMutate do (item: cstring) -> bool:
+      items.add $item
+      deallocShared(item)
+      true
+    for item in items:
+      debug "publishing", item
+      try:
+        let
+          v = parseJson($item)
+
+        discard await node.waku_relay.publish(DefaultPubsubTopic, Base64Pad.decode(v["wakupayload"].getStr()))
+      except CatchableError as exc:
+        error "Couldn't publish", err = exc.msg, item
+
+    await sleepAsync(50.millis) # TODO replace with wakeup notification / channel
+
+proc runWaku(list: ptr SharedList[cstring]) {.thread.} =
+  var conf = WakuNodeConf.load().valueOr:
+    error "Cannot load waku configuration"
+    quit 1
+
+  conf.portsShift = 100
+  conf.discv5Discovery = true
+  conf.dnsDiscovery = true
+  conf.dnsDiscoveryUrl = "enrtree://AOGECG2SPND25EEFMAJ5WF3KSGJNSGV356DSTL2YVLLZWIV6SAYBM@prod.nodes.status.im"
+  let node = WakuNode.init(conf)
+
+  asyncSpawn serveRelayApi(list, node)
+
+  runForever()
+
 when isMainModule:
-  mainProc()
+  var rpcQueue: SharedList[cstring]
+  rpcQueue.init()
+
+  var t: Thread[ptr SharedList[cstring]]
+
+
+  createThread(t, runWaku, addr rpcQueue)
+
+  mainProc(addr rpcQueue)

@@ -1,5 +1,6 @@
 import NimQml, Tables, json, sequtils, strformat, chronicles, os, std/algorithm, strutils, uuids, base64
 import std/[times, os]
+import std/collections/sharedlist
 
 import ../../../app/core/tasks/[qt, threadpool]
 import ./dto/chat as chat_dto
@@ -110,6 +111,7 @@ QtObject:
     chats: Table[string, ChatDto] # [chat_id, ChatDto]
     channelGroups: OrderedTable[string, ChannelGroupDto] # [chatGroup_id, ChannelGroupDto]
     contactService: contact_service.Service
+    rpcQueue*: ptr SharedList[cstring]
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -117,7 +119,8 @@ QtObject:
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
-      contactService: contact_service.Service
+      contactService: contact_service.Service,
+      rpcQueue: ptr SharedList[cstring]
     ): Service =
     new(result, delete)
     result.QObject.setup
@@ -126,6 +129,7 @@ QtObject:
     result.contactService = contactService
     result.chats = initTable[string, ChatDto]()
     result.channelGroups = initOrderedTable[string, ChannelGroupDto]()
+    result.rpcQueue = rpcQueue
 
   # Forward declarations
   proc updateOrAddChat*(self: Service, chat: ChatDto)
@@ -160,7 +164,7 @@ QtObject:
         for community in receivedData.communities:
           if (community.joined):
             self.updateOrAddChannelGroup(community.toChannelGroupDto())
-  
+
   proc getChannelGroups*(self: Service): seq[ChannelGroupDto] =
     return toSeq(self.channelGroups.values)
 
@@ -235,7 +239,7 @@ QtObject:
         return i
       i.inc()
     return -1
-      
+
 
   proc chatsWithCategoryHaveUnreadMessages*(self: Service, communityId: string, categoryId: string): bool =
     if communityId == "" or categoryId == "":
@@ -299,7 +303,7 @@ QtObject:
     for chat in chats:
       if (chat.active):
         self.events.emit(SIGNAL_CHAT_CREATED, CreatedChatArgs(chat: chat))
-      
+
     for msg in messages:
       for chat in chats:
         if chat.id == msg.chatId:
@@ -409,13 +413,13 @@ QtObject:
           # If an image was copied to clipboard we're receiving it from there
           # as base64 encoded string. The base64 string will always have JPG data
           # because image_resizer (a few lines below) will always generate jpgs
-          # (which needs to be fixed as well). 
+          # (which needs to be fixed as well).
           #
           # We save the image data to a tmp location because image_resizer expects
           # a filepath to operate on.
           #
-          # TODO: 
-          # Make image_resizer work for all image types (and ensure the same 
+          # TODO:
+          # Make image_resizer work for all image types (and ensure the same
           # for base64 encoded string received via clipboard
           let base64Str = imagePathOrSource.replace(base64JPGPrefix, "")
           let bytes = base64.decode(base64Str)
@@ -459,6 +463,12 @@ QtObject:
         contentType,
         preferredUsername,
         communityId) # Only send a community ID for the community invites
+
+      var
+        msg = $response.result
+        tmp = allocShared0(msg.len + 1)
+      copyMem(tmp, addr msg[0], msg.len)
+      self.rpcQueue[].add(cast[cstring](tmp))
 
       let (chats, messages) = self.processMessageUpdateAfterSend(response)
       if chats.len == 0 or messages.len == 0:

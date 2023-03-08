@@ -212,6 +212,7 @@ QtObject:
     try:
       let accounts = self.fetchAccounts()
       for account in accounts:
+        let account = account # TODO https://github.com/nim-lang/Nim/issues/16740
         self.setEnsName(account)
         account.relatedAccounts = accounts.filter(x => not account.derivedFrom.isEmptyOrWhitespace and (cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0))
         self.storeAccount(account)
@@ -291,6 +292,7 @@ QtObject:
     let accounts = self.fetchAccounts()
     var newAccount = accounts[0]
     for account in accounts:
+      let account = account # TODO https://github.com/nim-lang/Nim/issues/16740
       if not self.walletAccountsContainsAddress(account.address):
         newAccount = account
         self.setEnsName(newAccount)

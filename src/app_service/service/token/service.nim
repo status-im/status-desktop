@@ -80,6 +80,7 @@ QtObject:
       let networks = self.networkService.getNetworks()
     
       for network in networks:
+        let network = network # TODO https://github.com/nim-lang/Nim/issues/16740
         var found = false
         for chainId in self.tokens.keys:
           if chainId == network.chainId:

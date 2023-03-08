@@ -1,7 +1,7 @@
 [submodule "vendor/nimbus-build-system"]
 	path = vendor/nimbus-build-system
 	url = https://github.com/status-im/nimbus-build-system.git
-	branch = status-desktop-1-2
+	branch = status-desktop
 [submodule "vendor/nimqml"]
 	path = vendor/nimqml
 	url = https://github.com/status-im/nimqml.git
@@ -114,3 +114,27 @@
 [submodule "vendor/nim-taskpools"]
 	path = vendor/nim-taskpools
 	url = https://github.com/status-im/nim-taskpools.git
+[submodule "vendor/nwaku"]
+	path = vendor/nwaku
+	url = https://github.com/status-im/nwaku
+[submodule "vendor/nim-toml-serialization"]
+	path = vendor/nim-toml-serialization
+	url = https://github.com/status-im/nim-toml-serialization.git
+[submodule "vendor/nim-regex"]
+	path = vendor/nim-regex
+	url = https://github.com/nitely/nim-regex.git
+[submodule "vendor/nim-unicodedb"]
+	path = vendor/nim-unicodedb
+	url = https://github.com/nitely/nim-unicodedb
+[submodule "vendor/nim-dnsdisc"]
+	path = vendor/nim-dnsdisc
+	url = https://github.com/status-im/nim-dnsdisc
+[submodule "vendor/dnsclient.nim.git"]
+	path = vendor/dnsclient.nim.git
+	url = https://github.com/ba0f3/dnsclient.nim.git
+[submodule "vendor/nim-sqlite3-abi"]
+	path = vendor/nim-sqlite3-abi
+	url = https://github.com/arnetheduck/nim-sqlite3-abi.git
+[submodule "vendor/nim-presto"]
+	path = vendor/nim-presto
+	url = https://github.com/status-im/nim-presto.git

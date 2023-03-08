@@ -1,4 +1,5 @@
 import NimQml, sequtils, chronicles, os, uuids
+import std/collections/sharedlist
 
 import ../../app_service/service/general/service as general_service
 import ../../app_service/service/keychain/service as keychain_service
@@ -136,7 +137,7 @@ proc connect(self: AppController) =
       elif defined(production):
         setLogLevel(LogLevel.INFO)
 
-proc newAppController*(statusFoundation: StatusFoundation): AppController =
+proc newAppController*(statusFoundation: StatusFoundation, rpcQueue: ptr SharedList[cstring]): AppController =
   result = AppController()
   result.storeDefaultKeyPair = false
   result.syncKeycardBasedOnAppWalletState = false
@@ -168,7 +169,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, 
     result.activityCenterService
   )
-  result.chatService = chat_service.newService(statusFoundation.events, statusFoundation.threadpool, result.contactsService)
+  result.chatService = chat_service.newService(statusFoundation.events, statusFoundation.threadpool, result.contactsService, rpcQueue)
   result.tokenService = token_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.networkService
   )
