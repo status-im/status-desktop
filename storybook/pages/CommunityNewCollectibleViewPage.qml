@@ -27,13 +27,11 @@ SplitView {
             CommunityNewCollectibleView {
                 anchors.fill: parent
                 anchors.margins: 50
-                store: QtObject {
-                    property var layer1Networks: NetworksModel.layer1Networks
-                    property var layer2Networks: NetworksModel.layer2Networks
-                    property var testNetworks: NetworksModel.testNetworks
-                    property var enabledNetworks: NetworksModel.enabledNetworks
-                    property var allNetworks: enabledNetworks
-                }
+                layer1Networks: NetworksModel.layer1Networks
+                layer2Networks: NetworksModel.layer2Networks
+                testNetworks: NetworksModel.testNetworks
+                enabledNetworks: NetworksModel.enabledNetworks
+                allNetworks: enabledNetworks
 
                 onPreviewClicked: logs.logEvent("CommunityNewCollectibleView::previewClicked")
             }

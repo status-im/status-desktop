@@ -16,10 +16,15 @@ Item {
     implicitWidth: 130
     implicitHeight: parent.height
 
-    property var store
+    property var layer1Networks
+    property var layer2Networks
+    property var testNetworks
+    property var enabledNetworks
+    property var allNetworks
     property bool isChainVisible: true
     property bool multiSelection: true
 
+    signal toggleNetwork(int chainId)
     signal singleNetworkSelected(int chainId, string chainName, string chainIcon)
 
     QtObject {
@@ -47,7 +52,7 @@ Item {
             statusListItemTitle.font.pixelSize: 13
             statusListItemTitle.font.weight: Font.Medium
             statusListItemTitle.color: Theme.palette.baseColor1
-            title: root.multiSelection ? (store.enabledNetworks.count === store.allNetworks.count ? qsTr("All networks") : qsTr("%n network(s)", "", store.enabledNetworks.count)) :
+            title: root.multiSelection ? (root.enabledNetworks.count === root.allNetworks.count ? qsTr("All networks") : qsTr("%n network(s)", "", root.enabledNetworks.count)) :
                                          d.selectedChainName
             asset.height: 24
             asset.width: asset.height
@@ -80,7 +85,7 @@ Item {
 
         Repeater {
             id: chainRepeater
-            model: store.enabledNetworks
+            model: root.enabledNetworks
             delegate: InformationTag {
                 tagPrimaryLabel.text: model.shortName
                 tagPrimaryLabel.color: model.chainColor
@@ -93,13 +98,13 @@ Item {
         id: selectPopup
         x: (parent.width - width + 5)
         y: (selectRectangleItem.height + 5)
-        layer1Networks: store.layer1Networks
-        layer2Networks: store.layer2Networks
-        testNetworks: store.testNetworks
+        layer1Networks: root.layer1Networks
+        layer2Networks: root.layer2Networks
+        testNetworks: root.testNetworks
         multiSelection: root.multiSelection
 
         onToggleNetwork: {
-            store.toggleNetwork(network.chainId)
+            root.toggleNetwork(network.chainId)
         }
 
         onSingleNetworkSelected: {

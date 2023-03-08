@@ -23,28 +23,16 @@ SplitView {
         CommunityMintTokensSettingsPanel {
             anchors.fill: parent
             anchors.topMargin: 50
-            transactionStore: QtObject {
-                readonly property var currentAccount: QtObject {
-                    readonly property string address: "0x0000001"
-                }
-            }
-            communitiesStore: QtObject {
-                readonly property TokenHoldersModel holdersModel: TokenHoldersModel {}
-                property var layer1Networks: NetworksModel.layer1Networks
-                property var layer2Networks: NetworksModel.layer2Networks
-                property var testNetworks: NetworksModel.testNetworks
-                property var enabledNetworks: NetworksModel.enabledNetworks
-                property var allNetworks: enabledNetworks
-
-                function mintCollectible(communityId, address, artworkSource, name, symbol, description, supply,
-                                         infiniteSupply, transferable, selfDestruct, chainId)
-                {
-                    logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
-                }
-            }
-
             tokensModel: ListModel {}
-        }
+            holdersModel: TokenHoldersModel {}
+            layer1Networks: NetworksModel.layer1Networks
+            layer2Networks: NetworksModel.layer2Networks
+            testNetworks: NetworksModel.testNetworks
+            enabledNetworks: NetworksModel.enabledNetworks
+            allNetworks: enabledNetworks
+
+            onMintCollectible: ogs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
+       }
     }
 
     LogsAndControlsPanel {
