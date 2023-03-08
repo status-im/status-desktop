@@ -981,6 +981,9 @@ QtObject {
     }
 
     function formatCurrencyAmount(amount, symbol, options = null, locale = null) {
+        if (isNaN(amount)) {
+            return "N/A"
+        }
         var currencyAmount = getCurrencyAmount(amount, symbol)
         return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
     }

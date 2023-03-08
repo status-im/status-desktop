@@ -53,7 +53,7 @@ QtObject {
         try {
             return Number.fromLocaleString(locale, num)
         } catch (_) {
-            return parseFloat(num)
+            return NaN
         }
     }
 
@@ -78,7 +78,7 @@ QtObject {
         if (typeof(currencyAmount) !== "object") {
             console.warn("Wrong type for currencyAmount: " + JSON.stringify(currencyAmount))
             console.trace()
-            return NaN
+            return "N/A"
         }
 
         // Parse options

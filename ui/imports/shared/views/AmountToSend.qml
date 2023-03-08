@@ -13,7 +13,8 @@ ColumnLayout {
     id: root
 
     property alias input: topAmountToSendInput
-    readonly property double inputNumber: topAmountToSendInput.text ? LocaleUtils.numberFromLocaleString(topAmountToSendInput.text) : 0
+    readonly property bool inputNumberValid: !!input.text && !isNaN(d.inputNumber)
+    readonly property double inputNumber: inputNumberValid ? d.inputNumber : 0
     readonly property int minSendCryptoDecimals: !inputIsFiat ? LocaleUtils.fractionalPartLength(inputNumber) : 0 
     readonly property int minReceiveCryptoDecimals: !inputIsFiat ? minSendCryptoDecimals + 1 : 0 
     readonly property int minSendFiatDecimals: inputIsFiat ? LocaleUtils.fractionalPartLength(inputNumber) : 0 
@@ -34,7 +35,7 @@ ColumnLayout {
         }
         delayed: true
     }
-    property var fiatValueToSend
+    property double fiatValueToSend
     Binding {
         target: root
         property: "fiatValueToSend"
@@ -54,6 +55,7 @@ ColumnLayout {
     QtObject {
         id: d
         readonly property string zeroString: LocaleUtils.numberToLocaleString(0, 2)
+        readonly property double inputNumber: LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)
         property Timer waitTimer: Timer {
             interval: 1000
             onTriggered: reCalculateSuggestedRoute()
@@ -100,8 +102,8 @@ ColumnLayout {
                 font: topAmountToSendInput.input.placeholder.font
             }
             Keys.onReleased: {
-                const amount = topAmountToSendInput.text.trim()
-                if (!Utils.containsOnlyDigits(amount) || isNaN(amount)) {
+                const amount = LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)
+                if (isNaN(amount)) {
                     return
                 }
                 d.waitTimer.restart()

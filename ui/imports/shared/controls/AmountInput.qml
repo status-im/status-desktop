@@ -63,11 +63,13 @@ Input {
             return
         }
 
-        try {
-            d.amount = LocaleUtils.numberFromLocaleString(text) || 0
+        let amount = LocaleUtils.numberFromLocaleString(text)
+        if (isNaN(amount)) {
+            d.amount = 0
+            root.validationError = qsTr("Invalid amount format")
+        } else {
+            d.amount = amount
             root.validationError = ""
-        } catch (err) {
-           root.validationError = qsTr("Invalid amount format")
         }
     }
 
