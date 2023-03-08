@@ -15,6 +15,8 @@ QtObject {
         chatCommunitySectionModuleInst: chatCommunitySectionModule
     }
 
+    readonly property CommunityTokensStore communityTokensStore: CommunityTokensStore {}
+
     property bool openCreateChat: false
     property string createChatInitMessage: ""
     property var createChatFileUrls: []

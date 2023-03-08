@@ -32,7 +32,7 @@ StatusScrollView {
     property string chainIcon
     property int deployState
 
-    signal deployCollectible(url artworkSource,
+    signal mintCollectible(url artworkSource,
                            string name,
                            string symbol,
                            string description,
@@ -231,7 +231,7 @@ StatusScrollView {
             text: qsTr("Mint")
 
             onClicked: {
-                root.deployCollectible(root.artworkSource,
+                root.mintCollectible(root.artworkSource,
                                      root.name,
                                      root.symbol,
                                      root.description,

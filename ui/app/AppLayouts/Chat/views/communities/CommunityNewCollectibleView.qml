@@ -14,7 +14,6 @@ import shared.panels 1.0
 StatusScrollView {
     id: root
 
-    property var store
     property int viewWidth: 560 // by design
 
     // Collectible properties
@@ -29,6 +28,13 @@ StatusScrollView {
     property int chainId
     property string chainName
     property string chainIcon
+
+    // Network related properties:
+    property var layer1Networks
+    property var layer2Networks
+    property var testNetworks
+    property var enabledNetworks
+    property var allNetworks
 
     signal chooseArtWork
     signal previewClicked
@@ -159,7 +165,11 @@ StatusScrollView {
             NetworkFilter {
                 visible: !rowComponent.isSwitchCase
                 Layout.preferredWidth: 160
-                store: root.store
+                layer1Networks: root.layer1Networks
+                layer2Networks: root.layer2Networks
+                testNetworks: root.testNetworks
+                enabledNetworks: root.testNetworks
+                allNetworks: root.allNetworks
                 isChainVisible: false
                 multiSelection: false
 

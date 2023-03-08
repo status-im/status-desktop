@@ -13,11 +13,35 @@ import utils 1.0
 SettingsPageLayout {
     id: root
 
-    property string communityId
+    // Models:
     property var tokensModel
-    property var communitiesStore
-    property var transactionStore
+    property var holdersModel
+
+    // Network related properties:
+    property var layer1Networks
+    property var layer2Networks
+    property var testNetworks
+    property var enabledNetworks
+    property var allNetworks
+
+    // Other properties:
+    property alias chainName: collectibleItem.chainName
+    property alias chainIcon: collectibleItem.chainIcon
+
     property int viewWidth: 560 // by design
+
+    signal mintCollectible(url artworkSource,
+                           string name,
+                           string symbol,
+                           string description,
+                           int supply,
+                           bool infiniteSupply,
+                           bool transferable,
+                           bool selfDestruct,
+                           int chainId)
+
+    signal requestChainName(int chainId)
+    signal requestChainIcon(int chainId)
 
     function navigateBack() {
         if (root.state === d.newCollectibleViewState) {
@@ -86,12 +110,12 @@ SettingsPageLayout {
             supplyText = model.supply.toString()
             infiniteSupply = model.infiniteSupply
             transferable = model.transferable
-            chainName = communitiesStore.getChainName(model.chainId)
-            chainIcon = communitiesStore.getChainIcon(model.chainId)
             artworkSource = model.image
             symbol = model.symbol
             selfDestruct = model.remoteSelfDestruct
             chainId = model.chainId
+            requestChainName(model.chainId)
+            requestChainIcon(model.chainId)
         }
     }
 
@@ -174,7 +198,11 @@ SettingsPageLayout {
 
         CommunityNewCollectibleView {
             anchors.fill: parent
-            store: root.communitiesStore
+            layer1Networks: root.layer1Networks
+            layer2Networks: root.layer2Networks
+            testNetworks: root.testNetworks
+            enabledNetworks: root.testNetworks
+            allNetworks: root.allNetworks
             name: collectibleItem.collectibleName
             artworkSource: collectibleItem.artworkSource
             symbol: collectibleItem.symbol
@@ -208,7 +236,7 @@ SettingsPageLayout {
         CommunityCollectibleView {
             anchors.fill: parent
             preview: d.preview
-            holdersModel: root.communitiesStore.holdersModel
+            holdersModel: root.holdersModel
             deployState: collectibleItem.deployState
             name: collectibleItem.collectibleName
             artworkSource: collectibleItem.artworkSource
@@ -222,18 +250,16 @@ SettingsPageLayout {
             chainName: collectibleItem.chainName
             chainIcon: collectibleItem.chainIcon
 
-            onDeployCollectible: {
-                root.communitiesStore.deployCollectible(root.communityId,
-                                                      root.transactionStore.currentAccount.address, /*TODO use address from SendModal*/
-                                                      name,
-                                                      symbol,
-                                                      description,
-                                                      supply,
-                                                      infiniteSupply,
-                                                      transferable,
-                                                      selfDestruct,
-                                                      chainId,
-                                                      artworkSource)
+            onMintCollectible: {
+                root.mintCollectible(artworkSource,
+                                     name,
+                                     symbol,
+                                     description,
+                                     supply,
+                                     infiniteSupply,
+                                     transferable,
+                                     selfDestruct,
+                                     chainId)
 
                 root.state = d.mintedCollectibleViewState
             }

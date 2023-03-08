@@ -34,19 +34,16 @@ StatusSectionLayout {
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     // TODO: get this model from backend?
     property var settingsMenuModel: [{name: qsTr("Overview"), icon: "show", enabled: true},
-                                     {name: qsTr("Members"), icon: "group-chat", enabled: true},
-                                     {name: qsTr("Permissions"), icon: "objects", enabled: root.rootStore.communityPermissionsEnabled},
-                                     {name: qsTr("Mint Tokens"), icon: "token", enabled: root.rootStore.communityTokensEnabled}]
-
+        {name: qsTr("Members"), icon: "group-chat", enabled: true},
+        {name: qsTr("Permissions"), icon: "objects", enabled: root.rootStore.communityPermissionsEnabled},
+        {name: qsTr("Mint Tokens"), icon: "token", enabled: root.rootStore.communityTokensEnabled}]
     // TODO: Next community settings options:
     //                        {name: qsTr("Airdrops"), icon: "airdrop"},
     //                        {name: qsTr("Token sales"), icon: "token-sale"},
     //                        {name: qsTr("Subscriptions"), icon: "subscription"},
-
     property var rootStore
     property var community
     property var chatCommunitySectionModule
-    required property CommunitiesStore communityStore
     property bool hasAddedContacts: false
     property var transactionStore: TransactionStore {}
 
@@ -198,18 +195,18 @@ StatusSectionLayout {
 
                 onEdited: {
                     const error = root.chatCommunitySectionModule.editCommunity(
-                        StatusQUtils.Utils.filterXSS(item.name),
-                        StatusQUtils.Utils.filterXSS(item.description),
-                        StatusQUtils.Utils.filterXSS(item.introMessage),
-                        StatusQUtils.Utils.filterXSS(item.outroMessage),
-                        item.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
-                        item.color.toString().toUpperCase(),
-                        item.selectedTags,
-                        Utils.getImageAndCropInfoJson(item.logoImagePath, item.logoCropRect),
-                        Utils.getImageAndCropInfoJson(item.bannerPath, item.bannerCropRect),
-                        item.options.archiveSupportEnabled,
-                        item.options.pinMessagesEnabled
-                    )
+                                    StatusQUtils.Utils.filterXSS(item.name),
+                                    StatusQUtils.Utils.filterXSS(item.description),
+                                    StatusQUtils.Utils.filterXSS(item.introMessage),
+                                    StatusQUtils.Utils.filterXSS(item.outroMessage),
+                                    item.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
+                                    item.color.toString().toUpperCase(),
+                                    item.selectedTags,
+                                    Utils.getImageAndCropInfoJson(item.logoImagePath, item.logoCropRect),
+                                    Utils.getImageAndCropInfoJson(item.bannerPath, item.bannerCropRect),
+                                    item.options.archiveSupportEnabled,
+                                    item.options.pinMessagesEnabled
+                                    )
                     if (error) {
                         errorDialog.text = error.error
                         errorDialog.open()
@@ -225,8 +222,8 @@ StatusSectionLayout {
                 onAirdropTokensClicked: { /* TODO in future */ }
                 onBackUpClicked: {
                     Global.openPopup(transferOwnershipPopup, {
-                        privateKey: root.chatCommunitySectionModule.exportCommunity(root.communityId),
-                    })
+                                         privateKey: root.chatCommunitySectionModule.exportCommunity(root.communityId),
+                                     })
                 }
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
             }
@@ -286,11 +283,35 @@ StatusSectionLayout {
             }
 
             CommunityMintTokensSettingsPanel {
-                communityId: root.community.id
-                communitiesStore: root.communityStore
-                transactionStore: root.transactionStore
+                readonly property CommunityTokensStore communityTokensStore:
+                    rootStore.communityTokensStore
+
                 tokensModel: root.community.communityTokens
+                holdersModel: communityTokensStore.holdersModel
+                layer1Networks: communityTokensStore.layer1Networks
+                layer2Networks: communityTokensStore.layer2Networks
+                testNetworks: communityTokensStore.testNetworks
+                enabledNetworks: communityTokensStore.enabledNetworks
+                allNetworks: communityTokensStore.allNetworks
+
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
+                onRequestChainName: chainName = communityTokensStore.getChainName(chainId)
+                onRequestChainIcon: chainIcon = communityTokensStore.getChainIcon(chainId)
+                onMintCollectible: {
+                    communityTokensStore.deployCollectible(root.community.id,
+                                                           root.transactionStore.currentAccount.address, /*TODO use address from SendModal*/
+                                                           name,
+                                                           symbol,
+                                                           description,
+                                                           supply,
+                                                           infiniteSupply,
+                                                           transferable,
+                                                           selfDestruct,
+                                                           chainId,
+                                                           artworkSource)
+
+                    root.state = d.mintedCollectibleViewState
+                }
             }
 
             onCurrentIndexChanged: root.backButtonName = centerPanelContentLoader.item.children[d.currentIndex].previousPageName
