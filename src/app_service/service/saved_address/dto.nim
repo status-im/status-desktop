@@ -10,6 +10,7 @@ type
     favourite*: bool
     chainShortNames*: string
     isTest*: bool
+    createdAt*: int64
 
 proc newSavedAddressDto*(
   name: string,
@@ -36,3 +37,4 @@ proc toSavedAddressDto*(jsonObj: JsonNode): SavedAddressDto =
   discard jsonObj.getProp("favourite", result.favourite)
   discard jsonObj.getProp("chainShortNames", result.chainShortNames)
   discard jsonObj.getProp("isTest", result.isTest)
+  discard jsonObj.getProp("createdAt", result.createdAt)

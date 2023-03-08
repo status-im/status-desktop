@@ -9,6 +9,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 import shared.controls 1.0
+import SortFilterProxyModel 0.2
 
 import "../stores"
 import "../popups"
@@ -107,7 +108,10 @@ Item {
         anchors.left: parent.left
         visible: listView.count > 0
         spacing: 5
-        model: RootStore.savedAddresses
+        model: SortFilterProxyModel {
+            sourceModel: RootStore.savedAddresses
+            sorters: RoleSorter { roleName: "createdAt"; sortOrder: Qt.DescendingOrder }
+        }
         delegate: SavedAddressesDelegate {
             id: savedAddressDelegate
 
