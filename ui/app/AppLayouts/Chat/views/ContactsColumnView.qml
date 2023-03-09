@@ -223,44 +223,6 @@ Item {
         }
     }
 
-    Component {
-        id: communitiesPopupComponent
-        CommunitiesPopup {
-            anchors.centerIn: parent
-            communitiesList: root.store.communitiesList
-            onSetActiveCommunity: {
-                root.store.setActiveCommunity(id)
-            }
-            onSetObservedCommunity: {
-                root.store.setObservedCommunity(id)
-            }
-            onClosed: {
-                destroy()
-            }
-            onOpenCommunityDetail: {
-                Global.openPopup(communityDetailPopup);
-            }
-            onImportCommunityClicked: {
-                root.importCommunityClicked();
-            }
-            onCreateCommunityClicked: {
-                root.createCommunityClicked();
-            }
-        }
-    }
-
-    Component {
-        id: communityDetailPopup
-        CommunityDetailPopup {
-            anchors.centerIn: parent
-            store: root.store
-            onClosed: {
-                Global.openPopup(communitiesPopupComponent)
-                destroy()
-            }
-        }
-    }
-
     Connections {
         target: root.store
 
