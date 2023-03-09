@@ -7,96 +7,110 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
-import shared.panels 1.0
-
 import utils 1.0
 
-Item {
+Control {
     id: root
 
-    property var collectibleModel
+    property string title: ""
+    property string subTitle: ""
+    property string backgroundColor: "transparent"
+    property url imageUrl : ""
+    property bool isLoading: false
+    property bool navigationIconVisible: false
 
-    signal collectibleClicked(string address, string tokenId)
-
-    QtObject {
-        id: d
-        readonly property bool modeDataValid: !!root.collectibleModel && root.collectibleModel !== undefined && root.collectibleModel.id >= 0
-    }
+    signal clicked
 
     implicitHeight: 225
     implicitWidth: 176
 
-    ColumnLayout {
-        width: parent.width
-        anchors.horizontalCenter: parent.horizontalCenter
+    background: Rectangle {
+        radius: 18
+        border.width: 1
+        border.color: Theme.palette.primaryColor1
+        color: Theme.palette.indirectColor3
+        visible: !root.isLoading && mouse.containsMouse
+    }
+
+    contentItem: ColumnLayout {
         spacing: 0
 
         StatusRoundedImage {
             id: image
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.topMargin: 8
-            Layout.bottomMargin: 0
-            implicitWidth: 160
-            implicitHeight: 160
+
+            Layout.alignment: Qt.AlignHCenter
+            Layout.margins: Style.current.halfPadding
+            Layout.fillWidth: true
+            Layout.preferredHeight: width
             radius: 12
-            image.source: d.modeDataValid ? root.collectibleModel.imageUrl : ""
+            image.source: root.imageUrl
             border.color: Theme.palette.baseColor2
             border.width: 1
             showLoadingIndicator: true
-            color: d.modeDataValid ? root.collectibleModel.backgroundColor : "transparent"
+            color: root.backgroundColor
+
             Loader {
                 anchors.fill: parent
-                active: root.collectibleModel.isLoading
+                active: root.isLoading
                 sourceComponent: LoadingComponent {radius: image.radius}
             }
         }
-        StatusTextWithLoadingState {
-            id: collectibleLabel
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.leftMargin: 8
-            Layout.topMargin: 9
-            Layout.preferredWidth: root.collectibleModel.isLoading ? 134 : 144
-            Layout.preferredHeight: 21
-            horizontalAlignment: Text.AlignLeft
-            verticalAlignment: Text.AlignVCenter
-            font.pixelSize: 15
-            customColor: Theme.palette.directColor1
-            font.weight: Font.DemiBold
-            elide: Text.ElideRight
-            text: root.collectibleModel.isLoading ? Constants.dummyText : d.modeDataValid ? root.collectibleModel.name : "..."
-            loading: root.collectibleModel.isLoading
+
+        RowLayout {
+            Layout.leftMargin: Style.current.halfPadding
+            Layout.rightMargin: Layout.leftMargin
+            Layout.fillWidth: !root.isLoading
+            Layout.preferredWidth: root.isLoading ? 134 : width
+
+            StatusTextWithLoadingState {
+                Layout.alignment: Qt.AlignLeft
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
+                font.pixelSize: 15
+                customColor: Theme.palette.directColor1
+                font.weight: Font.DemiBold
+                elide: Text.ElideRight
+                text: root.isLoading ? Constants.dummyText : root.title
+                loading: root.isLoading
+            }
+
+            StatusIcon {
+                Layout.alignment: Qt.AlignVCenter
+                visible: root.navigationIconVisible
+                icon: "next"
+                color: Theme.palette.baseColor1
+            }
         }
+
         StatusTextWithLoadingState {
-            id: collectionLabel
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.leftMargin: 8
-            Layout.preferredWidth: root.collectibleModel.isLoading ? 88 : 144
-            Layout.preferredHeight: 18
+            Layout.alignment: Qt.AlignLeft
+            Layout.leftMargin: Style.current.halfPadding
+            Layout.rightMargin: Layout.leftMargin
+            Layout.fillWidth: !root.isLoading
+            Layout.preferredWidth: root.isLoading ? 88 : width
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             font.pixelSize: 13
             customColor: Theme.palette.baseColor1
             elide: Text.ElideRight
-            text: root.collectibleModel.isLoading ? Constants.dummyText : d.modeDataValid ? root.collectibleModel.collectionName : "..."
-            loading: root.collectibleModel.isLoading
+            text: root.isLoading? Constants.dummyText : root.subTitle
+            loading: root.isLoading
+        }
+
+        // Filler
+        Item {
+            Layout.fillHeight: true
         }
     }
 
-    Rectangle {
-        anchors.fill: parent
-        radius: 18
-        border.width: 1
-        border.color: Theme.palette.primaryColor1
-        color: Theme.palette.indirectColor3
-        visible: !root.collectibleModel.isLoading && mouse.containsMouse
-    }
     MouseArea {
         id: mouse
         anchors.fill: parent
         hoverEnabled: true
         onClicked: {
-            if (d.modeDataValid && !root.collectibleModel.isLoading) {
-                root.collectibleClicked(root.collectibleModel.address, root.collectibleModel.tokenId);
+            if (!root.isLoading) {
+                root.clicked()
             }
         }
     }
