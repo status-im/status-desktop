@@ -82,8 +82,17 @@ QtObject {
         }
     }
 
-    property var collectiblesModel: chatCommunitySectionModule.collectiblesModel
+    property var collectiblesModel: SortFilterProxyModel {
+        sourceModel: chatCommunitySectionModule.collectiblesModel
 
+        proxyRoles: ExpressionRole {
+            function icon(icon) {
+                return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
+            }
+            name: "iconSource"
+            expression: icon(model.icon)
+        }
+    }
     // Since qml component doesn't follow encaptulation from the backend side, we're introducing
     // a method which will return appropriate chat content module for selected chat/channel
     function currentChatContentModule(){
