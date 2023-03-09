@@ -23,7 +23,7 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/chat/dto/chat
-import ./minting/module as minting_module
+import ./tokens/module as community_tokens_module
 
 export io_interface
 
@@ -41,7 +41,7 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
     curatedCommunitiesLoaded: bool
-    mintingModule: minting_module.AccessInterface
+    communityTokensModule: community_tokens_module.AccessInterface
 
 # Forward declaration
 method setCommunityTags*(self: Module, communityTags: string)
@@ -65,7 +65,7 @@ proc newModule*(
     contactsService,
     communityTokensService,
   )
-  result.mintingModule = minting_module.newMintingModule(result, events, communityTokensService)
+  result.communityTokensModule = community_tokens_module.newCommunityTokensModule(result, events, communityTokensService)
   result.moduleLoaded = false
   result.curatedCommunitiesLoaded = false
 
@@ -73,12 +73,12 @@ method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
-  self.mintingModule.delete
+  self.communityTokensModule.delete
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("communitiesModule", self.viewVariant)
   self.controller.init()
-  self.mintingModule.load()
+  self.communityTokensModule.load()
   self.view.load()
 
 method isLoaded*(self: Module): bool =

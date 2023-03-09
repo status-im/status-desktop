@@ -21,7 +21,7 @@ type
     tempDeploymentParams: DeploymentParameters
     tempTokenMetadata: CommunityTokensMetadataDto
 
-proc newMintingModule*(
+proc newCommunityTokensModule*(
     parent: parent_interface.AccessInterface,
     events: EventEmitter,
     communityTokensService: community_tokens_service.Service): Module =
@@ -29,7 +29,7 @@ proc newMintingModule*(
   result.parent = parent
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newMintingController(result, events, communityTokensService)
+  result.controller = controller.newCommunityTokensController(result, events, communityTokensService)
 
 method delete*(self: Module) =
   self.view.delete
@@ -44,11 +44,11 @@ method resetTempValues(self:Module) =
   self.tempChainId = 0
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("mintingModule", self.viewVariant)
+  singletonInstance.engine.setRootContextProperty("communityTokensModule", self.viewVariant)
   self.controller.init()
   self.view.load()
 
-method mintCollectible*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
+method deployCollectible*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
                         supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, image: string) =
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
@@ -73,4 +73,4 @@ method onUserAuthenticated*(self: Module, password: string) =
     discard
     #TODO signalize somehow
   else:
-    self.controller.mintCollectibles(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams, self.tempTokenMetadata, self.tempChainId)
+    self.controller.deployCollectibles(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams, self.tempTokenMetadata, self.tempChainId)

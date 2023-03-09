@@ -9,7 +9,7 @@ method delete*(self: AccessInterface) {.base.} =
 method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method mintCollectible*(self: AccessInterface, communityId: string, address: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, transferable: bool,
+method deployCollectible*(self: AccessInterface, communityId: string, address: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, transferable: bool,
                       selfDestruct: bool, chainId: int, image: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
