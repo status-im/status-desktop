@@ -61,7 +61,7 @@ QtObject:
       ModelRole.Symbol.int:"symbol",
       ModelRole.Shortname.int:"shortName",
       ModelRole.Color.int:"color",
-      ModelRole.Image.int:"iconSource",
+      ModelRole.Image.int:"icon",
       ModelRole.Category.int:"category",
     }.toTable
 
