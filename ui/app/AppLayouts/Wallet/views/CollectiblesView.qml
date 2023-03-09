@@ -54,10 +54,13 @@ Item {
             delegate: CollectibleView {
                 height: gridView.cellHeight
                 width: gridView.cellWidth
-                collectibleModel: model
-                onCollectibleClicked: {
-                    root.collectibleClicked(address, tokenId);
-                }
+                title: model.name ? model.name : "..."
+                subTitle: model.collectionName ? model.collectionName : ""
+                imageUrl: model.imageUrl ? model.imageUrl : ""
+                backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
+                isLoading: model.isLoading
+
+                onClicked: root.collectibleClicked(model.address, model.tokenId)
             }
 
             ScrollBar.vertical: StatusScrollBar {}
