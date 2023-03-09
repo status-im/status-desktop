@@ -1,7 +1,7 @@
 import strformat
 import ./member_model, ./member_item
 import ../main/communities/models/[pending_request_item, pending_request_model]
-import ../main/communities/minting/models/token_model as community_tokens_model
+import ../main/communities/tokens/models/token_model as community_tokens_model
 import ../../global/global_singleton
 
 import ../../../app_service/common/types

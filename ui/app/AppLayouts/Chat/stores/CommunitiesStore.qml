@@ -4,14 +4,14 @@ import QtQuick 2.15
 QtObject {
     id: root
 
-    property var mintingModuleInst: mintingModule ?? null
+    property var communityTokensModuleInst: communityTokensModule ?? null
 
     // Minting tokens:
-    function mintCollectible(communityId, address, name, symbol, description, supply,
+    function deployCollectible(communityId, address, name, symbol, description, supply,
                              infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
     {
-        mintingModuleInst.mintCollectible(communityId, address, name, symbol, description, supply,
-                                          infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
+        communityTokensModuleInst.deployCollectible(communityId, address, name, symbol, description, supply,
+                                                    infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
     }
 
     // Network selection properties:

@@ -222,8 +222,8 @@ SettingsPageLayout {
             chainName: collectibleItem.chainName
             chainIcon: collectibleItem.chainIcon
 
-            onMintCollectible: {
-                root.communitiesStore.mintCollectible(root.communityId,
+            onDeployCollectible: {
+                root.communitiesStore.deployCollectible(root.communityId,
                                                       root.transactionStore.currentAccount.address, /*TODO use address from SendModal*/
                                                       name,
                                                       symbol,

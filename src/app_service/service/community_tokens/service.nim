@@ -70,11 +70,15 @@ QtObject:
       let data = CommunityTokenDeployedStatusArgs(communityId: tokenDto.communityId, contractAddress: tokenDto.address, deployState: deployState)
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
 
-  proc mintCollectibles*(self: Service, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, chainId: int) =
+  proc deployCollectibles*(self: Service, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, chainId: int) =
     try:
       # TODO this will come from SendModal
       let suggestedFees = self.transactionService.suggestedFees(chainId)
       let contractGasUnits = "3702411"
+
+      if suggestedFees == nil:
+        error "Error deploying collectibles", message = "Can't get suggested fees"
+        return
 
       let txData = ens_utils.buildTransaction(parseAddress(addressFrom), 0.u256, contractGasUnits,
         if suggestedFees.eip1559Enabled: "" else: $suggestedFees.gasPrice, suggestedFees.eip1559Enabled,
@@ -119,7 +123,7 @@ QtObject:
       )
 
     except RpcException:
-      error "Error minting collectibles", message = getCurrentExceptionMsg()
+      error "Error deploying collectibles", message = getCurrentExceptionMsg()
 
   proc getCommunityTokens*(self: Service, communityId: string): seq[CommunityTokenDto] =
     try:
