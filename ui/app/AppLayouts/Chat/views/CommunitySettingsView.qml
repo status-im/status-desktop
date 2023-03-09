@@ -295,8 +295,6 @@ StatusSectionLayout {
                 allNetworks: communityTokensStore.allNetworks
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
-                onRequestChainName: chainName = communityTokensStore.getChainName(chainId)
-                onRequestChainIcon: chainIcon = communityTokensStore.getChainIcon(chainId)
                 onMintCollectible: {
                     communityTokensStore.deployCollectible(root.community.id,
                                                            root.transactionStore.currentAccount.address, /*TODO use address from SendModal*/
@@ -309,8 +307,6 @@ StatusSectionLayout {
                                                            selfDestruct,
                                                            chainId,
                                                            artworkSource)
-
-                    root.state = d.mintedCollectibleViewState
                 }
             }
 

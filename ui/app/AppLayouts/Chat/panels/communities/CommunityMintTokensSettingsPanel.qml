@@ -1,9 +1,12 @@
 import QtQuick 2.14
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
+import QtQml 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Chat.layouts 1.0
 import AppLayouts.Chat.views.communities 1.0
@@ -24,10 +27,6 @@ SettingsPageLayout {
     property var enabledNetworks
     property var allNetworks
 
-    // Other properties:
-    property alias chainName: collectibleItem.chainName
-    property alias chainIcon: collectibleItem.chainIcon
-
     property int viewWidth: 560 // by design
 
     signal mintCollectible(url artworkSource,
@@ -40,128 +39,65 @@ SettingsPageLayout {
                            bool selfDestruct,
                            int chainId)
 
-    signal requestChainName(int chainId)
-    signal requestChainIcon(int chainId)
-
     function navigateBack() {
-        if (root.state === d.newCollectibleViewState) {
-            root.state = d.initialState
-        } else if (root.state === d.previewCollectibleViewState) {
-            root.state = d.newCollectibleViewState
-        } else if (root.state === d.collectibleViewState) {
-            root.state = d.mintedCollectibleViewState
-        }
+        stackManager.pop(StackView.Immediate)
     }
 
     QtObject {
         id: d
 
-        readonly property string welcomeViewState: "WELCOME"
+        readonly property string initialViewState: "WELCOME_OR_LIST_COLLECTIBLES"
         readonly property string newCollectibleViewState: "NEW_COLLECTIBLE"
         readonly property string previewCollectibleViewState: "PREVIEW_COLLECTIBLE"
-        readonly property string mintedCollectibleViewState: "MINTED_COLLECTIBLE"
         readonly property string collectibleViewState: "VIEW_COLLECTIBLE"
 
         readonly property string welcomePageTitle: qsTr("Mint tokens")
         readonly property string newCollectiblePageTitle: qsTr("Create new collectible")
+        readonly property string newTokenButtonText: qsTr("Create new token")
         readonly property string backButtonText: qsTr("Back")
         readonly property string backTokensText: qsTr("Tokens")
 
         property bool preview: false
-
-        readonly property string initialState: root.tokensModel.count > 0 ? d.mintedCollectibleViewState : d.welcomeViewState
-    }
-
-    QtObject {
-        id: collectibleItem
-
-        property int deployState
-        property url artworkSource
         property string collectibleName
-        property string symbol
-        property string description
-        property string supplyText
-        property bool infiniteSupply: true
-        property bool transferable: true
-        property bool selfDestruct: true
-        property int chainId
-        property string chainName
-        property string chainIcon
-
-        function initialize() {
-            deployState = 1
-            artworkSource = ""
-            collectibleName = ""
-            symbol = ""
-            description = ""
-            supplyText = ""
-            infiniteSupply = true
-            transferable = true
-            selfDestruct = true
-            chainId = -1
-            chainName = ""
-            chainIcon = ""
-        }
-
-        function loadData(model) {
-            deployState = model.deployState
-            collectibleName = model.name
-            description = model.description
-            supplyText = model.supply.toString()
-            infiniteSupply = model.infiniteSupply
-            transferable = model.transferable
-            artworkSource = model.image
-            symbol = model.symbol
-            selfDestruct = model.remoteSelfDestruct
-            chainId = model.chainId
-            requestChainName(model.chainId)
-            requestChainIcon(model.chainId)
-        }
+        readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
     }
 
-    state:  d.initialState
+    content: StackView {
+        anchors.fill: parent
+        initialItem: d.initialItem
+
+        Component.onCompleted: stackManager.pushInitialState(d.initialViewState)
+    }
+
+    state: stackManager.currentState
     states: [
         State {
-            name: d.welcomeViewState
+            name: d.initialViewState
             PropertyChanges {target: root; title: d.welcomePageTitle}
             PropertyChanges {target: root; previousPageName: ""}
-            PropertyChanges {target: root; content: welcomeView}
             PropertyChanges {target: root; headerButtonVisible: true}
-            PropertyChanges {target: root; headerButtonText: qsTr("Create new token")}
+            PropertyChanges {target: root; headerButtonText: d.newTokenButtonText}
             PropertyChanges {target: root; headerWidth: root.viewWidth}
         },
         State {
             name: d.newCollectibleViewState
             PropertyChanges {target: root; title: d.newCollectiblePageTitle}
             PropertyChanges {target: root; previousPageName: d.welcomePageTitle}
-            PropertyChanges {target: root; content: newCollectiblesView}
             PropertyChanges {target: root; headerButtonVisible: false}
             PropertyChanges {target: root; headerWidth: 0}
         },
         State {
             name: d.previewCollectibleViewState
-            PropertyChanges {target: root; title: collectibleItem.collectibleName}
+            PropertyChanges {target: root; title: d.collectibleName}
             PropertyChanges {target: root; previousPageName: d.backButtonText}
-            PropertyChanges {target: root; content: collectibleView}
             PropertyChanges {target: root; headerButtonVisible: false}
             PropertyChanges {target: root; headerWidth: 0}
             PropertyChanges {target: d; preview: true}
         },
         State {
-            name: d.mintedCollectibleViewState
-            PropertyChanges {target: root; title: d.welcomePageTitle}
-            PropertyChanges {target: root; previousPageName: ""}
-            PropertyChanges {target: root; content: mintedTokensView}
-            PropertyChanges {target: root; headerButtonVisible: true}
-            PropertyChanges {target: root; headerButtonText: qsTr("Create new token")}
-            PropertyChanges {target: root; headerWidth: root.viewWidth}
-            PropertyChanges {target: d; preview: false}
-        },
-        State {
             name: d.collectibleViewState
-            PropertyChanges {target: root; title: collectibleItem.collectibleName}
+            PropertyChanges {target: root; title: d.collectibleName}
             PropertyChanges {target: root; previousPageName: d.backTokensText}
-            PropertyChanges {target: root; content: collectibleView}
             PropertyChanges {target: root; headerButtonVisible: false}
             PropertyChanges {target: root; headerWidth: 0}
             PropertyChanges {target: root; footer: mintTokenFooter}
@@ -169,11 +105,17 @@ SettingsPageLayout {
         }
     ]
 
-    onHeaderButtonClicked: {
-        if(root.state === d.welcomeViewState || root.state === d.mintedCollectibleViewState) {
-            root.state = d.newCollectibleViewState
-            collectibleItem.initialize()
+    onHeaderButtonClicked: stackManager.push(d.newCollectibleViewState, newCollectiblesView, null, StackView.Immediate)
+    onTokensModelChanged: {
+        if(root.tokensModel && root.tokensModel.count === 1) {
+            stackManager.stackView.replace(welcomeView, d.initialItem, StackView.Immediate)
         }
+    }
+
+    StackViewStates {
+        id: stackManager
+
+        stackView: root.contentItem
     }
 
     // Mint tokens possible view contents:
@@ -197,36 +139,32 @@ SettingsPageLayout {
         id: newCollectiblesView
 
         CommunityNewCollectibleView {
-            anchors.fill: parent
+            //anchors.fill: parent
+            viewWidth: root.viewWidth
             layer1Networks: root.layer1Networks
             layer2Networks: root.layer2Networks
             testNetworks: root.testNetworks
             enabledNetworks: root.testNetworks
             allNetworks: root.allNetworks
-            name: collectibleItem.collectibleName
-            artworkSource: collectibleItem.artworkSource
-            symbol: collectibleItem.symbol
-            description: collectibleItem.description
-            supplyText: collectibleItem.supplyText
-            infiniteSupply: collectibleItem.infiniteSupply
-            transferable: collectibleItem.transferable
-            selfDestruct: collectibleItem.selfDestruct
-            chainId: collectibleItem.chainId
-            chainName: collectibleItem.chainName
-            chainIcon: collectibleItem.chainIcon
 
-            onNameChanged: collectibleItem.collectibleName = name
-            onArtworkSourceChanged: collectibleItem.artworkSource = artworkSource
-            onSymbolChanged: collectibleItem.symbol = symbol
-            onDescriptionChanged: collectibleItem.description = description
-            onSupplyTextChanged: collectibleItem.supplyText = supplyText
-            onInfiniteSupplyChanged: collectibleItem.infiniteSupply = infiniteSupply
-            onTransferableChanged: collectibleItem.transferable = transferable
-            onSelfDestructChanged: collectibleItem.selfDestruct = selfDestruct
-            onChainIdChanged: collectibleItem.chainId = chainId
-            onChainNameChanged: collectibleItem.chainName = chainName
-            onChainIconChanged: collectibleItem.chainIcon = chainIcon
-            onPreviewClicked: root.state = d.previewCollectibleViewState
+            onPreviewClicked: {
+                stackManager.push(d.previewCollectibleViewState,
+                                  collectibleView,
+                                  {
+                                      name,
+                                      artworkSource,
+                                      symbol,
+                                      description,
+                                      supplyText,
+                                      infiniteSupply,
+                                      transferable,
+                                      selfDestruct,
+                                      chainId,
+                                      chainName,
+                                      chainIcon
+                                  },
+                                  StackView.Immediate)
+            }
         }
     }
 
@@ -234,21 +172,11 @@ SettingsPageLayout {
         id: collectibleView
 
         CommunityCollectibleView {
-            anchors.fill: parent
+            id: collectibleViewItem
+            //anchors.fill: parent
+            viewWidth: root.viewWidth
             preview: d.preview
             holdersModel: root.holdersModel
-            deployState: collectibleItem.deployState
-            name: collectibleItem.collectibleName
-            artworkSource: collectibleItem.artworkSource
-            symbol: collectibleItem.symbol
-            description: collectibleItem.description
-            supplyText: collectibleItem.supplyText
-            infiniteSupply: collectibleItem.infiniteSupply
-            transferable: collectibleItem.transferable
-            selfDestruct: collectibleItem.selfDestruct
-            chainId: collectibleItem.chainId
-            chainName: collectibleItem.chainName
-            chainIcon: collectibleItem.chainIcon
 
             onMintCollectible: {
                 root.mintCollectible(artworkSource,
@@ -261,7 +189,14 @@ SettingsPageLayout {
                                      selfDestruct,
                                      chainId)
 
-                root.state = d.mintedCollectibleViewState
+                stackManager.clear(d.initialViewState, StackView.Immediate)
+            }
+
+            Binding {
+                target: d
+                property: "collectibleName"
+                value: collectibleViewItem.name
+                restoreMode: Binding.RestoreBindingOrValue
             }
         }
     }
@@ -283,35 +218,42 @@ SettingsPageLayout {
 
         // TEMPORAL:
         Item {
-            anchors.fill: parent
+            id: mintedTokensViewItem
+            width: root.viewWidth
+            //anchors.fill: parent
 
             ColumnLayout {
                 id: backendChecker
                 width: parent.width
 
-                StatusBaseText {
-                    text: qsTr("Collectibles")
-                    font.pixelSize: Theme.primaryTextFontSize
-                    color: Theme.palette.baseColor1
-                }
+            viewWidth: root.viewWidth
+            model: root.tokensModel
+            onItemClicked: {
+                selectedCollectibleName = name
+                stackManager.push(d.collectibleViewState,
+                                  collectibleView,
+                                  {
+                                      "deployState": Qt.binding(() => deployState),
+                                      name,
+                                      artworkSource,
+                                      symbol,
+                                      description,
+                                      "supplyText": supply.toString(),
+                                      infiniteSupply,
+                                      transferable,
+                                      remoteSelfDestruct,
+                                      chainId,
+                                      chainName,
+                                      chainIcon
+                                  },
+                                  StackView.Immediate)
+            }
 
-                // TODO: We can probably use some wallet components (i.e. CollectibleView.qml)
-                ListView {
-                    Layout.preferredWidth: 560
-                    Layout.preferredHeight: childrenRect.height
-                    model: root.tokensModel
-                    delegate: StatusListItem {
-                        width: parent.width
-                        title: model.name + " - " + model.symbol
-                        subTitle: model.description
-                        titleAsideText: model.supply
-                        label: model.deployState
-                        onClicked: {
-                            root.state = d.collectibleViewState
-                            collectibleItem.loadData(model)
-                        }
-                    }
-                }
+            Binding {
+                target: d
+                property: "collectibleName"
+                value: mintedTokensViewItem.model.name
+                restoreMode: Binding.RestoreBindingOrValue
             }
         }
     }

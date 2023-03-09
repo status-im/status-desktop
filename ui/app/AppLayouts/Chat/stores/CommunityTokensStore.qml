@@ -19,15 +19,7 @@ QtObject {
     property var layer2Networks: networksModule.layer2
     property var testNetworks: networksModule.test
     property var enabledNetworks: networksModule.enabled
-    property var allNetworks: networksModule.all    
-
-    function getChainName(chainId) {
-        return allNetworks.getNetworkFullName(chainId)
-    }
-
-    function getChainIcon(chainId) {
-        return allNetworks.getIconUrl(chainId)
-    }
+    property var allNetworks: networksModule.all
 
     // Token holders model: MOCKED DATA -> TODO: Update with real data
     readonly property var holdersModel: ListModel {
