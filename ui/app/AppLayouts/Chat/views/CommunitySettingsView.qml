@@ -4,6 +4,8 @@ import QtQuick.Controls 2.14
 import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.13
 
+import SortFilterProxyModel 0.2
+
 import utils 1.0
 import shared.panels 1.0
 import shared.popups 1.0
@@ -250,7 +252,57 @@ StatusSectionLayout {
                     rootStore.permissionsStore
 
                 permissionsModel: permissionsStore.permissionsModel
-                assetsModel: rootStore.assetsModel
+
+                // temporary solution to provide icons for assets, similar
+                // method is used in wallet (constructing filename from asset's
+                // symbol) and is intended to be replaced by more robust
+                // solution soon.
+                assetsModel: SortFilterProxyModel {
+                    sourceModel: rootStore.assetsModel
+
+                    proxyRoles: ExpressionRole {
+
+                        // list of symbols for which pngs are stored to avoid
+                        // accessing not existing resources and providing
+                        // default icon
+                        readonly property var pngs: [
+                            "aKNC", "AST", "BLT", "CND", "DNT", "EQUAD", "HEZ", "LOOM", "MTH",
+                            "PAY", "RCN", "SALT", "STRK", "TRST", "WBTC", "AKRO", "aSUSD", "BLZ",
+                            "COB", "DPY", "ETH2x-FLI", "HST", "LPT", "MTL", "PBTC", "RDN", "SAN",
+                            "STT", "TRX", "WETH", "0-native", "aLEND", "ATMChain", "BNB", "COMP",
+                            "DRT", "ETHOS", "HT", "LRC", "MYB", "PLR", "renBCH", "SNGLS", "STX",
+                            "TUSD", "WINGS", "0XBTC", "aLINK", "aTUSD", "BNT", "CUSTOM-TOKEN",
+                            "DTA", "ETH", "ICN", "MANA", "NEXO", "POE", "renBTC", "SNM", "SUB",
+                            "UBT", "WTC", "1ST", "aMANA", "aUSDC", "BQX", "CVC", "EDG", "EVX",
+                            "ICOS", "MCO", "NEXXO", "POLY", "REN", "SNT", "SUPR", "UKG", "XAUR",
+                            "aBAT", "AMB", "aUSDT", "BRLN", "DAI", "EDO", "FUEL", "IOST", "MDA",
+                            "NMR", "POWR", "renZEC", "SNX", "SUSD", "UNI", "XPA", "ABT", "aMKR",
+                            "aWBTC", "BTM", "DATA", "EKG", "FUN", "KDO", "MET", "NPXS", "PPP",
+                            "REP", "SOCKS", "TAAS", "UPP", "XRL", "aBUSD", "AMPL", "aYFI", "BTU",
+                            "DAT", "EKO", "FXC", "KIN", "MFG", "OGN", "PPT", "REQ", "SPANK",
+                            "TAUD", "USDC", "XUC", "ABYSS", "ANT", "aZRX", "CDAI", "DCN", "ELF",
+                            "GDC", "KNC", "MGO", "OMG", "PT", "RHOC", "SPIKE", "TCAD", "USDS",
+                            "ZRX", "aDAI", "APPC", "BAL", "CDT", "DEFAULT-TOKEN", "EMONA", "GEN",
+                            "Kudos", "MKR", "OST", "QKC", "RLC", "SPN", "TGBP", "USDT", "ZSC",
+                            "aENJ", "aREN", "BAM", "Centra", "DGD", "ENG", "GNO", "LEND", "MLN",
+                            "OTN", "QRL", "ROL", "STORJ", "TKN", "VERI", "AE", "aREP", "BAND",
+                            "CFI", "DGX", "ENJ", "GNT", "LINK", "MOC", "PAXG", "QSP", "R",
+                            "STORM", "TKX", "VIB", "aETH", "aSNX", "BAT", "CK", "DLT", "EOS",
+                            "GRID", "LISK", "MOD", "PAX", "RAE", "SAI", "ST", "TNT", "WABI"
+                        ]
+
+                        function icon(symbol) {
+                            if (pngs.indexOf(symbol) !== -1)
+                                return Style.png("tokens/" + symbol)
+
+                            return Style.png("tokens/DEFAULT-TOKEN")
+                        }
+
+                        name: "iconSource"
+                        expression: !!model.icon ? model.icon : icon(model.symbol)
+                   }
+                }
+
                 collectiblesModel: rootStore.collectiblesModel
                 channelsModel: rootStore.chatCommunitySectionModule.model
 
