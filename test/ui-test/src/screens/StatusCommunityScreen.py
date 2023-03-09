@@ -55,8 +55,7 @@ class CommunityScreenComponents(Enum):
     EXISTING_CONTACTS_LISTVIEW = "community_InviteFirends_Popup_ExistinContacts_ListView"
     INVITE_POPUP_NEXT_BUTTON = "community_InviteFriendsToCommunityPopup_NextButton"
     INVITE_POPUP_MESSAGE_INPUT = "community_ProfilePopupInviteMessagePanel_MessageInput"
-    INVITE_POPUP_SEND_BUTTON = "community_InviteFriend_SendButton"
-    COMMUNITY_PERMISSIONS_WELCOME_SCREEN_TITLE = "communityPermissionsWelcome"
+    INVITE_POPUP_SEND_BUTTON = "community_InviteFriend_SendButton"    
 
 class CommunitySettingsComponents(Enum):
     EDIT_COMMUNITY_SCROLL_VIEW = "communitySettings_EditCommunity_ScrollView"
@@ -74,6 +73,9 @@ class CommunitySettingsComponents(Enum):
     MEMBERS_TAB_MEMBERS_LISTVIEW = "communitySettings_MembersTab_Members_ListView"
     MEMBER_KICK_BUTTON = "communitySettings_MembersTab_Member_Kick_Button"
     MEMBER_CONFIRM_KICK_BUTTON = "communitySettings_KickModal_Kick_Button"
+    
+class CommunityPermissionsComponents(Enum):
+    WELCOME_SCREEN_TITLE = "communityPermissions_welcome_title"
 
 class CommunityColorPanelComponents(Enum):
     HEX_COLOR_INPUT = "communitySettings_ColorPanel_HexColor_Input"
@@ -451,6 +453,6 @@ class StatusCommunityScreen:
      
     def verify_permission_screen_title(self, option:str):
         if option=="Permissions":
-            title = get_obj(CommunityScreenComponents.COMMUNITY_PERMISSIONS_WELCOME_SCREEN_TITLE.value)
+            title = get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_TITLE.value).text
             verify_text(option, str(title)) 
                      

@@ -43,13 +43,13 @@ StatusScrollView {
                     mipmap: true
                 }
                 StatusBaseText {
+                    objectName: "communityPermissionsWelcomeTitle"
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
                     text: qsTr("Permissions")
                     font.pixelSize: 17
                     font.weight: Font.Bold
                     color: Theme.palette.directColor1
-                    objectName: "communityPermissionsWelcome"
                 }
                 StatusBaseText {
                     Layout.fillWidth: true

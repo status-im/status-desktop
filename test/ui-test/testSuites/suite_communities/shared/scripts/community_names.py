@@ -31,7 +31,6 @@ communitySettings_Permissions_NavigationListItem = {"container": statusDesktop_m
 communitySettings_MembersTab_Members_ListView = {"container": statusDesktop_mainWindow, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "ListView", "visible": True}
 communitySettings_MembersTab_Member_Kick_Button = {"container": communitySettings_MembersTab_Members_ListView, "objectName": "MemberListIten_KickButton", "type": "StatusButton", "visible": True}
 communitySettings_KickModal_Kick_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
-communitySettings_Permissions_Welcome = {"container": statusDesktop_mainWindow, "objectName": "communityPermissionsWelcome", "type": "StatusBaseText", "visible": True}
 
 # Chat components
 chatView_TogglePinMessageButton = {"container": chatView_log, "objectName": "MessageView_toggleMessagePin", "type": "StatusFlatRoundButton", "visible": True}
@@ -83,3 +82,6 @@ communitySettings_EditCommunity_ColorPicker_Button = {"container": communitySett
 # Community color popup:
 communitySettings_ColorPanel_HexColor_Input = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelHexInput", "type": "TextEdit",  "visible": True}
 communitySettings_SaveColor_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelSelectColorButton", "type": "StatusButton", "visible": True}
+
+# Community permissions:
+communityPermissions_welcome_title = {"container": statusDesktop_mainWindow, "objectName": "communityPermissionsWelcomeTitle", "type": "StatusBaseText", "visible": True}
