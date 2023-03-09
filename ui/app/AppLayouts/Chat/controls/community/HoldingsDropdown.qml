@@ -122,30 +122,8 @@ StatusDropdown {
         }
     }
 
-    QtObject {
+    StatesStack {
         id: statesStack
-
-        property alias currentState: content.state
-        property int size: 0
-        property var states: []
-
-        function push(state) {
-            states.push(state)
-            currentState = state
-            size++
-        }
-
-        function pop() {
-            states.pop()
-            currentState = states.length ? states[states.length - 1] : ""
-            size--
-        }
-
-        function clear() {
-            currentState = ""
-            size = 0
-            states = []
-        }
     }
 
     width: d.defaultWidth
@@ -155,6 +133,7 @@ StatusDropdown {
         id: content
 
         spacing: d.backButtonToContentSpace
+        state: statesStack.currentState
 
         StatusIconTextButton {
             id: backButton

@@ -2,6 +2,8 @@ module StatusQ.Core.Utils
 
 EmojiJSON 1.0 emojiList.js
 JSONListModel 0.1 JSONListModel.qml
+StatesStack 0.1 StatesStack.qml
+StackViewStates 0.1 StackViewStates.qml
 ModelChangeGuard 0.1 ModelChangeGuard.qml
 ModelChangeTracker 0.1 ModelChangeTracker.qml
 ModelsComparator 0.1 ModelsComparator.qml
