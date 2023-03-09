@@ -17,6 +17,9 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method onActivated*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method communityDataLoaded*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setCommunityTags*(self: AccessInterface, communityTags: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

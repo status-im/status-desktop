@@ -110,6 +110,7 @@ type
     currentChunk*: int
 
 # Signals which may be emitted by this service:
+const SIGNAL_COMMUNITY_DATA_LOADED* = "communityDataLoaded"
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
 const SIGNAL_COMMUNITY_SPECTATED* = "communitySpectated"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
@@ -177,11 +178,7 @@ QtObject:
 
   # Forward declaration
   proc loadCommunityTags(self: Service): string
-  proc loadAllCommunities(self: Service): seq[CommunityDto]
   proc asyncLoadCuratedCommunities*(self: Service)
-  proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto]
-  proc loadMyPendingRequestsToJoin*(self: Service)
-  proc loadMyCanceledRequestsToJoin*(self: Service)
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string])
   proc handleCommunitiesSettingsUpdates(self: Service, communitiesSettings: seq[CommunitySettingsDto])
   proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
@@ -585,46 +582,61 @@ QtObject:
 
   proc init*(self: Service) =
     self.doConnect()
-    self.communityTags = self.loadCommunityTags();
 
-    let communities = self.loadAllCommunities()
-    for community in communities:
-      self.communities[community.id] = community
-      if (community.admin):
-        self.communities[community.id].pendingRequestsToJoin = self.pendingRequestsToJoinForCommunity(community.id)
-        self.communities[community.id].declinedRequestsToJoin = self.declinedRequestsToJoinForCommunity(community.id)
-        self.communities[community.id].canceledRequestsToJoin = self.canceledRequestsToJoinForCommunity(community.id)
+    try:
+      let arg = AsyncLoadCommunitiesDataTaskArg(
+        tptr: cast[ByteAddress](asyncLoadCommunitiesDataTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "asyncCommunitiesDataLoaded",
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error requesting communities data", msg = e.msg
 
-    let communitiesSettings = self.loadCommunitiesSettings()
-    for settings in communitiesSettings:
-      if self.communities.hasKey(settings.id):
-        self.communities[settings.id].settings = settings
+  proc asyncCommunitiesDataLoaded(self: Service, response: string) {.slot.} =
+    try:
+      let responseObj = response.parseJson
+      if (responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != ""):
+        error "error loading communities data", msg = responseObj{"error"}.getStr
+        return
 
-    self.loadMyPendingRequestsToJoin()
+      # Tags
+      var resultTags = newString(0)
+      toUgly(resultTags, responseObj["tags"]["result"])
+      self.communityTags = resultTags
+
+      # All communities
+      let communities = parseCommunities(responseObj["communities"])
+      for community in communities:
+        self.communities[community.id] = community
+        if (community.admin):
+          self.communities[community.id].pendingRequestsToJoin = self.pendingRequestsToJoinForCommunity(community.id)
+          self.communities[community.id].declinedRequestsToJoin = self.declinedRequestsToJoinForCommunity(community.id)
+          self.communities[community.id].canceledRequestsToJoin = self.canceledRequestsToJoinForCommunity(community.id)
+
+      # Communities settings
+      let communitiesSettings = parseCommunitiesSettings(responseObj["settings"])
+      for settings in communitiesSettings:
+        if self.communities.hasKey(settings.id):
+          self.communities[settings.id].settings = settings
+
+      # My pending requests
+      let myPendingRequestResponse = responseObj["myPendingRequestsToJoin"]
+      if myPendingRequestResponse{"result"}.kind != JNull:
+        for jsonCommunityReqest in myPendingRequestResponse["result"]:
+          let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
+          self.myCommunityRequests.add(communityRequest)
+
+      self.events.emit(SIGNAL_COMMUNITY_DATA_LOADED, Args())
+    except Exception as e:
+      let errDesription = e.msg
+      error "error loading all communities: ", errDesription
 
   proc loadCommunityTags(self: Service): string =
     let response = status_go.getCommunityTags()
     var result = newString(0)
     toUgly(result, response.result)
     return result
-
-  proc loadAllCommunities(self: Service): seq[CommunityDto] =
-    try:
-      let response = status_go.getAllCommunities()
-      return parseCommunities(response)
-    except Exception as e:
-      let errDesription = e.msg
-      error "error loading all communities: ", errDesription
-      return @[]
-
-  proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto] =
-    try:
-      let response = status_go.getCommunitiesSettings()
-      return parseCommunitiesSettings(response)
-    except Exception as e:
-      let errDesription = e.msg
-      error "error loading communities settings: ", errDesription
-      return
 
   proc getCommunityTags*(self: Service): string =
     return self.communityTags
@@ -803,30 +815,6 @@ QtObject:
 
     except Exception as e:
       error "Error requesting to join the community", msg = e.msg, communityId, ensName
-
-  proc loadMyPendingRequestsToJoin*(self: Service) =
-    try:
-      let response = status_go.myPendingRequestsToJoin()
-
-      if response.result.kind != JNull:
-        for jsonCommunityReqest in response.result:
-          let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
-          self.myCommunityRequests.add(communityRequest)
-          self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_ADDED, CommunityRequestArgs(communityRequest: communityRequest))
-    except Exception as e:
-      error "Error fetching my community requests", msg = e.msg
-
-  proc loadMyCanceledRequestsToJoin*(self: Service) =
-    try:
-      let response = status_go.myCanceledRequestsToJoin()
-
-      if response.result.kind != JNull:
-        for jsonCommunityReqest in response.result:
-          let communityRequest = jsonCommunityReqest.toCommunityMembershipRequestDto()
-          self.myCommunityRequests.add(communityRequest)
-          self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_ADDED, CommunityRequestArgs(communityRequest: communityRequest))
-    except Exception as e:
-      error "Error fetching my community requests", msg = e.msg
 
   proc canceledRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
     try:

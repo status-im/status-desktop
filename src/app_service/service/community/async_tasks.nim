@@ -2,6 +2,32 @@ include ../../common/json_utils
 include ../../../app/core/tasks/common
 
 type
+  AsyncLoadCommunitiesDataTaskArg = ref object of QObjectTaskArg
+
+const asyncLoadCommunitiesDataTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncLoadCommunitiesDataTaskArg](argEncoded)
+  try:
+    let responseTags = status_go.getCommunityTags()
+
+    let responseCommunities = status_go.getAllCommunities()
+
+    let responseSettings = status_go.getCommunitiesSettings()
+
+    let responseMyPendingRequestsToJoin = status_go.myPendingRequestsToJoin()
+
+    arg.finish(%* {
+      "tags": responseTags,
+      "communities": responseCommunities,
+      "settings": responseSettings,
+      "myPendingRequestsToJoin": responseMyPendingRequestsToJoin,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })
+
+type
   AsyncRequestCommunityInfoTaskArg = ref object of QObjectTaskArg
     communityId: string
     importing: bool

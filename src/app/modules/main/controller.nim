@@ -120,6 +120,22 @@ proc init*(self: Controller) =
       self.communityTokensService
     )
 
+  self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
+    self.delegate.onCommunityDataLoaded(
+      self.events,
+      self.settingsService,
+      self.nodeConfigurationService,
+      self.contactsService,
+      self.chatService,
+      self.communityService,
+      self.messageService,
+      self.gifService,
+      self.mailserversService,
+      self.walletAccountService,
+      self.tokenService,
+      self.communityTokensService
+    )
+
   self.events.on(SIGNAL_CHATS_LOADING_FAILED) do(e:Args):
     self.delegate.onChatsLoadingFailed()
 
