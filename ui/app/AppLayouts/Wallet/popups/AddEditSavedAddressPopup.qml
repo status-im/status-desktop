@@ -91,7 +91,7 @@ StatusDialog {
             id: nameInput
             implicitWidth: parent.width
             input.edit.objectName: "savedAddressNameInput"
-            placeholderText: qsTr("Address owner")
+            placeholderText: qsTr("Address name")
             label: qsTr("Name")
             validators: [
                 StatusMinLengthValidator {
