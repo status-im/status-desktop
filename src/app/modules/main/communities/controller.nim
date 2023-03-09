@@ -37,6 +37,9 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
+  self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
+    self.delegate.communityDataLoaded()
+
   self.events.on(SIGNAL_COMMUNITY_CREATED) do(e:Args):
     let args = CommunityArgs(e)
     self.delegate.communityAdded(args.community)

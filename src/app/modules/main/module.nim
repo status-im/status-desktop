@@ -99,6 +99,8 @@ type
     keycardSharedModule: keycard_shared_module.AccessInterface
     keycardSharedModuleKeycardSyncPurpose: keycard_shared_module.AccessInterface
     moduleLoaded: bool
+    chatsLoaded: bool
+    communityDataLoaded: bool
     statusUrlCommunityToSpectate: string
 
 # Forward declaration
@@ -165,6 +167,8 @@ proc newModule*[T](
     networkService
   )
   result.moduleLoaded = false
+  result.chatsLoaded = false
+  result.communityDataLoaded = false
 
   result.events = events
   result.urlsManager = urlsManager
@@ -534,6 +538,9 @@ method onChatsLoaded*[T](
   tokenService: token_service.Service,
   communityTokensService: community_tokens_service.Service
 ) =
+  self.chatsLoaded = true
+  if not self.communityDataLoaded:
+    return
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
   if activeSectionId == "":
@@ -573,6 +580,41 @@ method onChatsLoaded*[T](
   self.view.model().removeItem(LOADING_SECTION_ID)
 
   self.view.chatsLoaded()
+
+method onCommunityDataLoaded*[T](
+  self: Module[T],
+  events: EventEmitter,
+  settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
+  contactsService: contacts_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
+  messageService: message_service.Service,
+  gifService: gif_service.Service,
+  mailserversService: mailservers_service.Service,
+  walletAccountService: wallet_account_service.Service,
+  tokenService: token_service.Service,
+  communityTokensService: community_tokens_service.Service
+) =
+  self.communityDataLoaded = true
+  if not self.chatsLoaded:
+    return
+
+  self.onChatsLoaded(
+    self.controller.getChannelGroups(),
+    events,
+    settingsService,
+    nodeConfigurationService,
+    contactsService,
+    chatService,
+    communityService,
+    messageService,
+    gifService,
+    mailserversService,
+    walletAccountService,
+    tokenService,
+    communityTokensService
+  )
 
 method onChatsLoadingFailed*[T](self: Module[T]) =
   self.view.chatsLoadingFailed()

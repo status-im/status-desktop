@@ -91,10 +91,11 @@ method isLoaded*(self: Module): bool =
 method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
 
+  self.delegate.communitiesModuleDidLoad()
+
+method communityDataLoaded*(self: Module) =
   self.setCommunityTags(self.controller.getCommunityTags())
   self.setAllCommunities(self.controller.getAllCommunities())
-
-  self.delegate.communitiesModuleDidLoad()
 
 method onActivated*(self: Module) =
   if self.curatedCommunitiesLoaded:

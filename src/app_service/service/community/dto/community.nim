@@ -331,8 +331,8 @@ proc toCommunitySettingsDto*(jsonObj: JsonNode): CommunitySettingsDto =
   discard jsonObj.getProp("communityId", result.id)
   discard jsonObj.getProp("historyArchiveSupportEnabled", result.historyArchiveSupportEnabled)
 
-proc parseCommunities*(response: RpcResponse[JsonNode]): seq[CommunityDto] =
-  result = map(response.result.getElems(),
+proc parseCommunities*(response: JsonNode): seq[CommunityDto] =
+  result = map(response["result"].getElems(),
     proc(x: JsonNode): CommunityDto = x.toCommunityDto())
 
 proc parseKnownCuratedCommunities(jsonCommunities: JsonNode): seq[CommunityDto] =
@@ -391,8 +391,8 @@ proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
     encrypted: communityDto.encrypted,
   )
 
-proc parseCommunitiesSettings*(response: RpcResponse[JsonNode]): seq[CommunitySettingsDto] =
-  result = map(response.result.getElems(),
+proc parseCommunitiesSettings*(response: JsonNode): seq[CommunitySettingsDto] =
+  result = map(response["result"].getElems(),
     proc(x: JsonNode): CommunitySettingsDto = x.toCommunitySettingsDto())
 
 proc parseDiscordCategories*(response: RpcResponse[JsonNode]): seq[DiscordCategoryDto] =
