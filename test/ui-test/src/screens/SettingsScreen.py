@@ -145,6 +145,7 @@ class SettingsScreen:
         click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
         
     def activate_community_permission_settings(self):
+    
         click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_COMMUNITY_PERMISSIONS.value)
         click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
         
@@ -486,6 +487,7 @@ class SettingsScreen:
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_PENDING_REQUEST_TAB_BUTTON.value)
         contact_list = get_obj(ContactsViewScreen.RECEIVED_REQUESTS_CONTACT_PANEL_LIST_VIEW.value)
         verify_equal(contact_list.count, 1, "Checking if there is exactly one pending contact request") 
+        
     
     def open_community(self, community_name: str):
         communities_list = get_obj(CommunitiesSettingsScreen.LIST_PANEL.value)
@@ -495,4 +497,7 @@ class SettingsScreen:
             if str(delegate.title) == community_name:
                 click_obj(delegate)
                 return
-        verify(False, "Community not found")        
+        verify(False, "Community ")
+      
+    #def click_on_community(community_name:str):
+              

@@ -438,7 +438,7 @@ class StatusCommunityScreen:
         
     def click_sidebar_option(self, community_sidebar_option:str):
         #TODO Make compatible with other sidebar options
-        if community_sidebar_option == "Manage Community":
+        if community_sidebar_option=="Manage Community":
             click_obj_by_name(CommunityScreenComponents.WELCOME_MANAGE_COMMUNITY.value)    
             
     def verify_option_exists(self, option:str):

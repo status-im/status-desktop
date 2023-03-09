@@ -243,6 +243,13 @@ def step(context, color: str):
 def step(context, community_settings_screen_name:str):
     _statusCommunityScreen.verify_permission_screen_title(community_settings_screen_name)       
     
+  
+
+# @Given("\"Test-Community\" community exists")
+# def step(context):
+#     test.warning("TODO implement \"Test-Community\" community exists")
+
+
 @Then("\"|any|\" should be an available option in Community Settings")
 def step(context, manage_community_option:str):
     _statusCommunityScreen.verify_option_exists(manage_community_option)

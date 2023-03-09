@@ -123,7 +123,7 @@ class StatusWelcomeScreen:
                 message = 'Try clicking "I prefer to use password" until not visible and enabled (moved to the next screen)')
 
     def input_username(self, username: str):
-        common.clear_input_text(SignUpComponents.USERNAME_INPUT.value) 
+#         common.clear_input_text(SignUpComponents.USERNAME_INPUT.value) 
         type(SignUpComponents.USERNAME_INPUT.value, username)
         click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
 
