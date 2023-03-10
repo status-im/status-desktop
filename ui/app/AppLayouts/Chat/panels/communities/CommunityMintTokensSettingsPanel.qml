@@ -139,7 +139,6 @@ SettingsPageLayout {
         id: newCollectiblesView
 
         CommunityNewCollectibleView {
-            //anchors.fill: parent
             viewWidth: root.viewWidth
             layer1Networks: root.layer1Networks
             layer2Networks: root.layer2Networks
@@ -148,6 +147,7 @@ SettingsPageLayout {
             allNetworks: root.allNetworks
 
             onPreviewClicked: {
+                d.collectibleName = name
                 stackManager.push(d.previewCollectibleViewState,
                                   collectibleView,
                                   {
@@ -172,13 +172,12 @@ SettingsPageLayout {
         id: collectibleView
 
         CommunityCollectibleView {
-            id: collectibleViewItem
-            //anchors.fill: parent
             viewWidth: root.viewWidth
             preview: d.preview
             holdersModel: root.holdersModel
 
             onMintCollectible: {
+                d.collectibleName = name
                 root.mintCollectible(artworkSource,
                                      name,
                                      symbol,
@@ -190,13 +189,6 @@ SettingsPageLayout {
                                      chainId)
 
                 stackManager.clear(d.initialViewState, StackView.Immediate)
-            }
-
-            Binding {
-                target: d
-                property: "collectibleName"
-                value: collectibleViewItem.name
-                restoreMode: Binding.RestoreBindingOrValue
             }
         }
     }
@@ -212,33 +204,23 @@ SettingsPageLayout {
         }
     }
 
-    // TEMPORAL:
     Component {
         id: mintedTokensView
 
-        // TEMPORAL:
-        Item {
-            id: mintedTokensViewItem
-            width: root.viewWidth
-            //anchors.fill: parent
-
-            ColumnLayout {
-                id: backendChecker
-                width: parent.width
-
+        CommunityMintedTokensView {
             viewWidth: root.viewWidth
             model: root.tokensModel
             onItemClicked: {
-                selectedCollectibleName = name
+                d.collectibleName = name
                 stackManager.push(d.collectibleViewState,
                                   collectibleView,
                                   {
-                                      "deployState": Qt.binding(() => deployState),
+                                      deployState: Qt.binding(() => deployState),
                                       name,
                                       artworkSource,
                                       symbol,
                                       description,
-                                      "supplyText": supply.toString(),
+                                      supplyText: supply.toString(),
                                       infiniteSupply,
                                       transferable,
                                       remoteSelfDestruct,
@@ -247,13 +229,6 @@ SettingsPageLayout {
                                       chainIcon
                                   },
                                   StackView.Immediate)
-            }
-
-            Binding {
-                target: d
-                property: "collectibleName"
-                value: mintedTokensViewItem.model.name
-                restoreMode: Binding.RestoreBindingOrValue
             }
         }
     }

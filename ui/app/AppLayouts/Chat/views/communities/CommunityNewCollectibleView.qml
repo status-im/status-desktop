@@ -120,6 +120,7 @@ StatusScrollView {
             id: symbolInput
 
             label: qsTr("Token symbol")
+            charLimit: 5
             placeholderText: qsTr("Letter token abbreviation e.g. ABC")
             errorText: qsTr("Token symbol")
         }
@@ -226,6 +227,7 @@ StatusScrollView {
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
             Layout.topMargin: Style.current.padding
+            Layout.bottomMargin: Style.current.padding
             text: qsTr("Preview")
             enabled: d.isFullyFilled
 
