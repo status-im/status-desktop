@@ -150,6 +150,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusItemSelector"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
