@@ -16,6 +16,7 @@ logScope:
 type
   Service* = ref object
     dapps: Table[string, Dapp]
+    permissionsFetched: bool
 
 type R = Result[Dapp, string]
 
@@ -25,8 +26,13 @@ proc delete*(self: Service) =
 proc newService*(): Service =
   result = Service()
   result.dapps = initTable[string, Dapp]()
+  result.permissionsFetched = false
 
 proc init*(self: Service) =
+  discard
+
+proc fetchDappPermissions*(self: Service) =
+  # TODO later we can make this async, but it's not worth it for now
   try:
     let response = backend.getDappPermissions()
     for dapp in response.result.getElems().mapIt(it.toDapp()):
@@ -34,11 +40,13 @@ proc init*(self: Service) =
         continue
 
       self.dapps[dapp.name & dapp.address] = dapp
+    self.permissionsFetched = true
   except Exception as e:
-    let errDescription = e.msg
-    error "error: ", errDescription
+    error "error fetching permissions: ", msg=e.msg
 
 proc getDapps*(self: Service): seq[Dapp] =
+  if not self.permissionsFetched:
+    self.fetchDappPermissions()
   return toSeq(self.dapps.values)
 
 proc getDapp*(self: Service, name: string, address: string): Option[Dapp] =
