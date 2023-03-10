@@ -1,15 +1,19 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
 
+import utils 1.0
+
 ColumnLayout {
     spacing: 20
+
     StatusItemSelector {
         id: selector
-        icon: "qrc:/images/SNT.png"
+
+        icon: Style.png("tokens/SNT")
         iconSize: 24
         title: "Item Selector Title"
         defaultItemText: "Example: Empty items"
@@ -25,19 +29,23 @@ ColumnLayout {
             width: 200
             contentItem: ColumnLayout {
                 spacing: 10
+
                 StatusInput {
                     id: input
                     text: "Sample"
                     Layout.fillWidth: true
                 }
+
                 StatusButton {
                     Layout.alignment: Qt.AlignHCenter
+
                     text: "Add element"
                     onClicked: {
                         model.append({
                             text: input.text,
-                            imageSource: "qrc:/images/SNT.png",
-                            operator: model.count > 0 ? OperatorsUtils.Operators.Or : OperatorsUtils.Operators.None
+                            imageSource: Style.png("tokens/SNT"),
+                            operator: model.count > 0 ? OperatorsUtils.Operators.Or
+                                                      : OperatorsUtils.Operators.None
                         })
 
                         dropdown.close()
@@ -55,6 +63,7 @@ ColumnLayout {
 
     StatusButton {
         Layout.alignment: Qt.AlignHCenter
+
         text: "Clear list"
         onClicked: { selector.itemsModel.clear() }
     }

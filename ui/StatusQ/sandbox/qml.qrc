@@ -56,7 +56,6 @@
         <file>pages/StatusExpandableSettingsItemPage.qml</file>
         <file>pages/StatusImageCropPanelPage.qml</file>
         <file>pages/StatusInputPage.qml</file>
-        <file>pages/StatusItemSelectorPage.qml</file>
         <file>pages/StatusListPickerPage.qml</file>
         <file>pages/StatusMacNotificationPage.qml</file>
         <file>pages/StatusPasswordStrengthIndicatorPage.qml</file>
