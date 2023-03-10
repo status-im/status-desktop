@@ -8,6 +8,9 @@ import constants as main_constants
 import app/global/global_singleton
 import app/boot/app_controller
 
+when defined(macosx) and defined(arm64):
+  import posix
+
 logScope:
   topics = "status-app"
 
@@ -78,6 +81,19 @@ proc setupRemoteSignalsHandling() =
   keycard_go.setSignalEventCallback(callbackKeycardGo)
 
 proc mainProc() =
+
+  when defined(macosx) and defined(arm64):
+    echo "Experimental support for Apple Silicon"
+    var signalStack: cstring = cast[cstring](allocShared(SIGSTKSZ))
+    var ss: ptr Stack = cast[ptr Stack](allocShared0(sizeof(Stack)))
+    var ss2: ptr Stack = nil
+    ss.ss_sp = signalStack
+    ss.ss_flags = 0
+    ss.ss_size = SIGSTKSZ
+    if sigaltstack(ss[], ss2[]) < 0:
+        echo("sigaltstack error!")
+        quit()
+
   if main_constants.IS_MACOS and defined(production):
     setCurrentDir(getAppDir())
 

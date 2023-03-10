@@ -78,6 +78,8 @@ ifeq ($(detected_OS),Darwin)
  export MACOSX_DEPLOYMENT_TARGET
  PKG_TARGET := pkg-macos
  RUN_TARGET := run-macos
+ QMAKE_PATH := $(shell which qmake);
+ QT_ARCH := $(shell lipo -archs $(QMAKE_PATH))
 else ifeq ($(detected_OS),Windows)
  LIBSTATUS_EXT := dll
  PKG_TARGET := pkg-windows
@@ -115,10 +117,14 @@ endif
 ifeq ($(detected_OS),Darwin)
 BOTTLES_DIR := $(shell pwd)/bottles
 BOTTLES := $(addprefix $(BOTTLES_DIR)/,openssl@1.1 pcre)
-
+ifeq ($(QT_ARCH),arm64)
+	EXCLUDE_BOTTLES := 'linux'
+else
+	EXCLUDE_BOTTLES := 'arm|linux'
+endif
 $(BOTTLES): | $(BOTTLES_DIR)
-	echo -e "\033[92mFetching:\033[39m $(notdir $@) bottle"
-	./scripts/fetch-brew-bottle.sh $(notdir $@)
+	echo -e "\033[92mFetching:\033[39m $(notdir $@) bottle arch $(QT_ARCH)"
+	./scripts/fetch-brew-bottle.sh $(notdir $@) $(EXCLUDE_BOTTLES)
 
 $(BOTTLES_DIR):
 	echo -e "\033[92mUpdating:\033[39m macOS Homebrew"
@@ -197,11 +203,15 @@ endif
 
 
 ifeq ($(detected_OS),Darwin)
-  ifeq ("$(shell sysctl -nq hw.optional.arm64)","1")
-    # Building on M1 is still not supported, so in the meantime we crosscompile to amd64
-    DOTHERSIDE_CMAKE_PARAMS += -DCMAKE_OSX_ARCHITECTURES=x86_64
+ ifeq ("$(shell sysctl -nq hw.optional.arm64)","1")
+   ifneq ($(QT_ARCH),arm64)
+	STATUSGO_MAKE_PARAMS += GOBIN_SHARED_LIB_CFLAGS="CGO_ENABLED=1 GOOS=darwin GOARCH=amd64"
+	STATUSKEYCARDGO_MAKE_PARAMS += CGOFLAGS="CGO_ENABLED=1 GOOS=darwin GOARCH=amd64"
+	DOTHERSIDE_CMAKE_PARAMS += -DCMAKE_OSX_ARCHITECTURES=x86_64
+	QRCODEGEN_MAKE_PARAMS += CFLAGS="-target x86_64-apple-macos10.12"
 	NIM_PARAMS += --cpu:amd64 --os:MacOSX --passL:"-arch x86_64" --passC:"-arch x86_64"
   endif
+ endif
 endif
 
 RELEASE ?= false
@@ -257,7 +267,7 @@ status-go: $(STATUSGO)
 $(STATUSGO): | deps
 	echo -e $(BUILD_MSG) "status-go"
 	+ cd vendor/status-go && \
-	  $(MAKE) statusgo-shared-library $(HANDLE_OUTPUT)
+	  $(MAKE) statusgo-shared-library $(STATUSGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
 
 STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
 STATUSKEYCARDGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")
@@ -267,7 +277,7 @@ status-keycard-go: $(STATUSKEYCARDGO)
 $(STATUSKEYCARDGO): | deps
 	echo -e $(BUILD_MSG) "status-keycard-go"
 	+ cd vendor/status-keycard-go && \
-	  $(MAKE) build-lib $(HANDLE_OUTPUT)
+	  $(MAKE) build-lib $(STATUSKEYCARDGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
 
 QRCODEGEN := vendor/QR-Code-generator/c/libqrcodegen.a
 
@@ -633,6 +643,7 @@ zip-windows: check-pkg-target-windows $(STATUS_CLIENT_7Z)
 clean: | clean-common
 	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO) $(STATUSKEYCARDGO)
 	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
+	+ $(MAKE) -C vendor/QR-Code-generator/c/ --no-print-directory clean
 
 clean-git:
 	./scripts/clean-git.sh
