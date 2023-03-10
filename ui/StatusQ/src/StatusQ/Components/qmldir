@@ -53,3 +53,4 @@ LoadingComponent 0.1 LoadingComponent.qml
 StatusQrCodeScanner 0.1 StatusQrCodeScanner.qml
 StatusSyncDeviceDelegate 0.1 StatusSyncDeviceDelegate.qml
 StatusOnlineBadge 0.1 StatusOnlineBadge.qml
+StatusGroupBox 0.1 StatusGroupBox.qml

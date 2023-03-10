@@ -198,5 +198,6 @@
         <file>StatusQ/Core/Utils/ModelChangeTracker.qml</file>
         <file>StatusQ/Components/StatusQrCodeScanner.qml</file>
         <file>StatusQ/Components/StatusOnlineBadge.qml</file>
+        <file>StatusQ/Components/StatusGroupBox.qml</file>
     </qresource>
 </RCC>

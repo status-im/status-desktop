@@ -154,6 +154,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusGroupBox"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }

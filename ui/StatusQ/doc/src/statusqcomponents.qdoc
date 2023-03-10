@@ -11,32 +11,33 @@
        \li \l{StatusAddress}
        \li \l{StatusBadge}
        \li \l{StatusChatInfoToolBar}
-       \li \l{StatusChatList}
-       \li \l{StatusChatListItem}
-       \li \l{StatusImageSettings}
-       \li \l{StatusChatListCategory}
-       \li \l{StatusChatListCategoryItem}
        \li \l{StatusChatListAndCategories}
+       \li \l{StatusChatListCategoryItem}
+       \li \l{StatusChatListCategory}
+       \li \l{StatusChatListItem}
+       \li \l{StatusChatList}
        \li \l{StatusChatToolBar}
        \li \l{StatusContactRequestsIndicatorListItem}
        \li \l{StatusDescriptionListItem}
+       \li \l{StatusExpandableItem}
+       \li \l{StatusGroupBox}
+       \li \l{StatusImageSettings}
        \li \l{StatusItemSelector}
        \li \l{StatusLetterIdenticon}
+       \li \l{StatusListItemBadge}
        \li \l{StatusListItem}
        \li \l{StatusListPicker}
        \li \l{StatusListSectionHeadline}
        \li \l{StatusLoadingIndicator}
+       \li \l{StatusMacWindowButtons}
        \li \l{StatusMemberListItem}
+       \li \l{StatusMessageDetails}
+       \li \l{StatusMessage}
        \li \l{StatusNavigationListItem}
        \li \l{StatusNavigationPanelHeadline}
        \li \l{StatusRoundIcon}
        \li \l{StatusRoundedImage}
-       \li \l{StatusMacWindowButtons}
-       \li \l{StatusListItemBadge}
-       \li \l{StatusExpandableItem}
        \li \l{StatusSmartIdenticon}
-       \li \l{StatusMessage}
-       \li \l{StatusMessageDetails}
        \li \l{StatusTagSelector}
        \li \l{StatusToastMessage}
        \li \l{StatusWizardStepper}
