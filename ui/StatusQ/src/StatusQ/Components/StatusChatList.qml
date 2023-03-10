@@ -232,8 +232,7 @@ Item {
                             repeat: false
                             onTriggered: {
                                 if (dropArea.containsDrag) {
-                                    d.destinationPosition = root.model.get(draggable.DelegateModel.itemsIndex).position
-                                    statusChatListItems.items.move(dropArea.drag.source.DelegateModel.itemsIndex, draggable.DelegateModel.itemsIndex)
+                                    d.destinationPosition = index;
                                 }
                             }
                         }
