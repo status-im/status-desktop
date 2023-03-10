@@ -49,4 +49,8 @@ QtObject {
     function disconnectAddress(dappName, address) {
         return dappPermissionsModule.disconnectAddress(dappName, address)
     }
+
+    function loadDapps() {
+        dappPermissionsModule.loadDapps()
+    }
 }

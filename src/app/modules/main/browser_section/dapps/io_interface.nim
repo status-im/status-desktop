@@ -10,6 +10,12 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onActivated*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method loadDapps*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method hasPermission*(self: AccessInterface, hostname: string, address: string, permission: string): bool =
   raise newException(ValueError, "No implementation available")
 
