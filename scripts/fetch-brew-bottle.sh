@@ -10,10 +10,10 @@ function get_gh_pkgs_token() {
 }
 
 function get_bottle_json() {
-    brew info --json=v1 "${1}" | jq '
+    brew info --json=v1 "${1}" | jq "
         .[0].bottle.stable.files | to_entries
-        | map(select(.key | test("(arm|linux)") | not))
-        | first.value'
+        | map(select(.key | test(\"${2}\") | not))
+        | first.value"
 }
 
 function fetch_bottle() {
@@ -30,11 +30,12 @@ if [[ $(uname) != "Darwin" ]]; then
     exit 1
 fi
 
-if [[ $# -ne 1 ]]; then
-    echo "usage: $0 <bottle_name>" >&2
+if [[ $# -ne 2 ]]; then
+    echo "usage: $0 <bottle_name> <bottle_filter1|bottle_filter2>" >&2
     exit 1
 fi
 BOTTLE_NAME="${1}"
+BOTTLE_FILTER="${2}"
 BOTTLE_PATH="/tmp/${BOTTLE_NAME}.tar.gz"
 
 # GitHub Packages requires authentication.
@@ -49,7 +50,9 @@ else
 fi
 
 echo "${BOTTLE_NAME} - Finding bottle URL"
-BOTTLE_JSON=$(get_bottle_json "${BOTTLE_NAME}")
+echo "Excluding: ${BOTTLE_FILTER}"
+
+BOTTLE_JSON=$(get_bottle_json "${BOTTLE_NAME}" "${BOTTLE_FILTER}")
 BOTTLE_URL=$(echo "${BOTTLE_JSON}" | jq -r .url)
 BOTTLE_SHA=$(echo "${BOTTLE_JSON}" | jq -r .sha256)
 
