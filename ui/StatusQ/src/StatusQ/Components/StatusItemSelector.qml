@@ -1,6 +1,5 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14 as QC
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -41,23 +40,9 @@ import StatusQ.Core.Utils 0.1
    \endqml
    For a list of components available see StatusQ.
 */
-Rectangle {
+StatusGroupBox {
     id: root
-    /*!
-       \qmlproperty string StatusItemSelector::icon
-       This property holds the icon name for the icon represented on top of the component as a title icon.
-    */
-    property string icon
-    /*!
-       \qmlproperty int StatusItemSelector::iconSize
-       This property holds the icon size for the icon represented on top of the component as a title icon.
-    */
-    property int iconSize: 18
-    /*!
-       \qmlproperty string StatusItemSelector::title
-       This property holds the titel shown on top of the component.
-    */
-    property string title
+
     /*!
        \qmlproperty string StatusItemSelector::defaultItemText
        This property holds the default item text shown when the list of items is empty.
@@ -130,116 +115,84 @@ Rectangle {
     */
     signal itemClicked(var item, int index, var mouse)
 
-    color: Theme.palette.baseColor4
-    implicitHeight: columnLayout.implicitHeight + columnLayout.anchors.topMargin + columnLayout.anchors.bottomMargin
     implicitWidth: 560
-    radius: 16
     clip: true
 
-    ColumnLayout {
-        id: columnLayout
-        anchors.top: parent.top
-        anchors.topMargin: 12
-        anchors.bottomMargin: anchors.topMargin
-        anchors.left: parent.left
-        anchors.leftMargin: 16
-        anchors.right: parent.right
-        anchors.rightMargin: 16
-        spacing: 12
+    Flow {
+        id: flow
+
         clip: true
-        RowLayout {
-            id: headerRow
-            spacing: 8
-            Image {
-                sourceSize.width: width || undefined
-                sourceSize.height: height || undefined
-                fillMode: Image.PreserveAspectFit
-                mipmap: true
-                antialiasing: true
-                width: root.iconSize
-                height: width
-                source: root.icon
-            }
-            StatusBaseText {
-                Layout.alignment: Qt.AlignVCenter
-                text: root.title
-                color: Theme.palette.directColor1
-                font.pixelSize: 17
-            }
-        }        
-        Flow {
-            id: flow
-            Layout.fillWidth: true
-            spacing: 6
-            StatusListItemTag {
-                bgColor: Theme.palette.baseColor2
-                visible: !itemsModel || itemsModel.count === 0
-                title: root.defaultItemText
-                asset.name: root.defaultItemImageSource
-                asset.isImage: true
-                closeButtonVisible: false
-                titleText.color: Theme.palette.baseColor1
-                titleText.font.pixelSize: 15
-            }
-            Repeater {
-                model: itemsModel
+        width: root.availableWidth
+        spacing: 6
 
-                RowLayout {
-                    spacing: flow.spacing
+        StatusListItemTag {
+            bgColor: Theme.palette.baseColor2
+            visible: !itemsModel || itemsModel.count === 0
+            title: root.defaultItemText
+            asset.name: root.defaultItemImageSource
+            asset.isImage: true
+            closeButtonVisible: false
+            titleText.color: Theme.palette.baseColor1
+            titleText.font.pixelSize: 15
+        }
+        Repeater {
+            model: itemsModel
 
-                    StatusBaseText {                        
-                        visible: model.operator !== OperatorsUtils.Operators.None
-                        Layout.alignment: Qt.AlignVCenter
-                        text: OperatorsUtils.setOperatorTextFormat(model.operator)
-                        color: Theme.palette.primaryColor1
-                        font.pixelSize: 17
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                // Switch operator
-                                if(model.operator === OperatorsUtils.Operators.And)
-                                    model.operator = OperatorsUtils.Operators.Or
-                                else
-                                    model.operator = OperatorsUtils.Operators.And
-                            }
-                        }
-                    }
-                    StatusListItemTag {
-                        title: model.text
+            RowLayout {
+                spacing: flow.spacing
 
-                        asset.height: root.asset.height
-                        asset.width: root.asset.width
-                        asset.name: root.useLetterIdenticons ? model.text : (model.imageSource ?? "")
-                        asset.isImage: root.asset.isImage
-                        asset.bgColor: root.asset.bgColor
-                        asset.emoji: model.emoji ? model.emoji : ""
-                        asset.color: model.color ? model.color : ""
-                        asset.isLetterIdenticon: root.useLetterIdenticons
-                        //color: Theme.palette.primaryColor3
-                        closeButtonVisible: false
-                        titleText.color: Theme.palette.primaryColor1
-                        titleText.font.pixelSize: 15
-                        leftPadding: root.tagLeftPadding
-
-                        MouseArea {
-                            anchors.fill: parent
-                            enabled: root.itemsClickable
-                            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            acceptedButtons: Qt.LeftButton | Qt.RightButton
-                            onClicked: root.itemClicked(parent, model.index, mouse)
+                StatusBaseText {
+                    visible: model.operator !== OperatorsUtils.Operators.None
+                    Layout.alignment: Qt.AlignVCenter
+                    text: OperatorsUtils.setOperatorTextFormat(model.operator)
+                    color: Theme.palette.primaryColor1
+                    font.pixelSize: 17
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            // Switch operator
+                            if(model.operator === OperatorsUtils.Operators.And)
+                                model.operator = OperatorsUtils.Operators.Or
+                            else
+                                model.operator = OperatorsUtils.Operators.And
                         }
                     }
                 }
+                StatusListItemTag {
+                    title: model.text
+
+                    asset.height: root.asset.height
+                    asset.width: root.asset.width
+                    asset.name: root.useLetterIdenticons ? model.text : (model.imageSource ?? "")
+                    asset.isImage: root.asset.isImage
+                    asset.bgColor: root.asset.bgColor
+                    asset.emoji: model.emoji ? model.emoji : ""
+                    asset.color: model.color ? model.color : ""
+                    asset.isLetterIdenticon: root.useLetterIdenticons
+                    //color: Theme.palette.primaryColor3
+                    closeButtonVisible: false
+                    titleText.color: Theme.palette.primaryColor1
+                    titleText.font.pixelSize: 15
+                    leftPadding: root.tagLeftPadding
+
+                    MouseArea {
+                        anchors.fill: parent
+                        enabled: root.itemsClickable
+                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        onClicked: root.itemClicked(parent, model.index, mouse)
+                    }
+                }
             }
-            StatusRoundButton {
-                id: addItemButton
-                implicitHeight: 32
-                implicitWidth: implicitHeight
-                height: width
-                type: StatusRoundButton.Type.Secondary
-                icon.name: "add"
-            }
+        }
+        StatusRoundButton {
+            id: addItemButton
+            implicitHeight: 32
+            implicitWidth: implicitHeight
+            height: width
+            type: StatusRoundButton.Type.Secondary
+            icon.name: "add"
         }
     }
 }
