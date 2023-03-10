@@ -35,6 +35,7 @@ ColumnLayout {
     property var rootStore
     property var contactsStore
     property bool isActiveChannel: false
+
     property var emojiPopup
     property var stickersPopup
     property alias textInputField: chatInput
@@ -58,11 +59,9 @@ ColumnLayout {
     // FIXME: this should be section data related only to that view, not the active one
     readonly property var activeSectionData: rootStore.mainModuleInst ? rootStore.mainModuleInst.activeSection || {} : {}
 
-    // NOTE: Used this property change as it is the current way used for displaying new channel/chat data of content view.
-    // If in the future content is loaded dynamically, input focus should be activated when loaded / created content view.
-    onHeightChanged: {
-        if(root.height > 0) {
-            chatInput.forceInputActiveFocus()
+    onIsActiveChannelChanged: {
+        if (isActiveChannel) {
+            chatInput.forceInputActiveFocus();
         }
     }
 
