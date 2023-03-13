@@ -22,6 +22,8 @@ type
     outgoingStatus: string
     messageText: string
     unparsedText: string
+    # Saving the parsed text property because we need it to getRenderedText when mentions change
+    parsedText: seq[ParsedText]
     messageImage: string
     messageContainsMentions: bool
     sticker: string
@@ -68,7 +70,8 @@ proc initItem*(
     senderIsAdded: bool,
     outgoingStatus,
     text,
-    unparsedText,
+    unparsedText: string,
+    parsedText: seq[ParsedText],
     image: string,
     messageContainsMentions,
     seen: bool,
@@ -110,6 +113,7 @@ proc initItem*(
   result.outgoingStatus = outgoingStatus
   result.messageText = text
   result.unparsedText = unparsedText
+  result.parsedText = parsedText
   result.messageImage = image
   result.messageContainsMentions = messageContainsMentions
   result.timestamp = timestamp
@@ -184,6 +188,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     outgoingStatus = "",
     text = "",
     unparsedText = "",
+    parsedText = @[],
     image = "",
     messageContainsMentions = false,
     seen = true,
@@ -226,6 +231,7 @@ proc `$`*(self: Item): string =
     resendError:{$self.resendError},
     messageText:{self.messageText},
     unparsedText:{self.unparsedText},
+    parsedText:{$self.parsedText},
     messageContainsMentions:{self.messageContainsMentions},
     timestamp:{$self.timestamp},
     contentType:{$self.contentType.int},
@@ -323,6 +329,12 @@ proc unparsedText*(self: Item): string {.inline.} =
 
 proc `unparsedText=`*(self: Item, value: string) {.inline.} =
   self.unparsedText = value
+
+proc parsedText*(self: Item): seq[ParsedText] {.inline.} =
+  self.parsedText
+
+proc `parsedText=`*(self: Item, value: seq[ParsedText]) {.inline.} =
+  self.parsedText = value
 
 proc messageImage*(self: Item): string {.inline.} =
   self.messageImage

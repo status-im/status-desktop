@@ -92,6 +92,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     outgoingStatus = "",
     text = "",
     unparsedText = "",
+    parsedText = @[],
     image = "",
     messageContainsMentions = false,
     seen = true,
@@ -146,6 +147,7 @@ proc createChatIdentifierItem(self: Module): Item =
     outgoingStatus = "",
     text = "",
     unparsedText = "",
+    parsedText = @[],
     image = "",
     messageContainsMentions = false,
     seen = true,
@@ -248,6 +250,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         message.outgoingStatus,
         renderedMessageText,
         self.controller.replacePubKeysWithDisplayNames(message.text),
+        message.parsedText,
         message.image,
         message.containsContactMentions(),
         message.seen,
@@ -371,6 +374,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       message.outgoingStatus,
       renderedMessageText,
       self.controller.replacePubKeysWithDisplayNames(message.text),
+      message.parsedText,
       message.image,
       message.containsContactMentions(),
       message.seen,
@@ -544,12 +548,9 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.quotedMessageAuthorAvatar = updatedContact.icon
 
     if item.messageContainsMentions and item.mentionedUsersPks.anyIt(it == contactId):
-      let (message, err) = self.controller.getMessageById(item.id)
-      if err == "":
-        let chatDetails = self.controller.getChatDetails()
-        let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
-        item.messageText = self.controller.getRenderedText(message.parsedText, communityChats)
-        item.messageContainsMentions = message.containsContactMentions()
+      let chatDetails = self.controller.getChatDetails()
+      let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+      item.messageText = self.controller.getRenderedText(item.parsedText, communityChats)
 
 method deleteMessage*(self: Module, messageId: string) =
   self.controller.deleteMessage(messageId)
@@ -573,6 +574,7 @@ method onMessageEdited*(self: Module, message: MessageDto) =
     message.id,
     self.controller.getRenderedText(message.parsedText, communityChats),
     self.controller.replacePubKeysWithDisplayNames(message.text),
+    message.parsedText,
     message.contentType,
     message.containsContactMentions(),
     message.links,
