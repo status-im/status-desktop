@@ -67,7 +67,11 @@ QtObject {
     }
 
     // Airdrop tokens:
-    function airdrop(airdropTokens, address) {
-        console.warn("TODO: Airdrop backend call!")
+    function airdrop(communityId, airdropTokens, addresses) {
+        const addrArray = []
+        for(var i = 0; i < addresses.length; i++) {
+            addrArray.push(addresses[i]["text"])
+        }
+        communityTokensModuleInst.airdropCollectibles(communityId, JSON.stringify(airdropTokens), JSON.stringify(addrArray))
     }
 }

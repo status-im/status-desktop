@@ -42,6 +42,9 @@ proc init*(self: Controller) =
 proc deployCollectibles*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, chainId: int) =
   self.communityTokensService.deployCollectibles(communityId, addressFrom, password, deploymentParams, tokenMetadata, chainId)
 
+proc airdropCollectibles*(self: Controller, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
+  self.communityTokensService.airdropCollectibles(communityId, password, collectiblesAndAmounts, walletAddresses)
+
 proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_DEPLOY_COLLECTIBLES_COMMUNITY_TOKENS_MODULE_IDENTIFIER, keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
@@ -54,3 +57,6 @@ proc getSuggestedFees*(self: Controller, chainId: int): SuggestedFeesDto =
 
 proc getFiatValue*(self: Controller, cryptoBalance: string, cryptoSymbol: string): string =
   return self.communityTokensService.getFiatValue(cryptoBalance, cryptoSymbol)
+
+proc getCommunityTokenBySymbol*(self: Controller, communityId: string, symbol: string): CommunityTokenDto =
+  return self.communityTokensService.getCommunityTokenBySymbol(communityId, symbol)
