@@ -145,12 +145,6 @@ proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
     tuple[name: string, image: string, largeImage: string] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
-proc getMessageById*(self: Controller, chatId, messageId: string): MessageDto =
-  let (message, err) = self.messageService.fetchMessageByMessageId(chatId, messageId)
-  if(err.len > 0):
-    return MessageDto()
-  return message
-
 proc setActiveNotificationGroup*(self: Controller, group: ActivityCenterGroup) =
   self.activityCenterService.setActiveNotificationGroup(group)
   self.activityCenterService.resetCursor()

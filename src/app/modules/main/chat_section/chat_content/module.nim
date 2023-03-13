@@ -187,6 +187,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     message.outgoingStatus,
     self.controller.getRenderedText(message.parsedText, communityChats),
     self.controller.replacePubKeysWithDisplayNames(message.text),
+    message.parsedText,
     message.image,
     message.containsContactMentions(),
     message.seen,
@@ -345,12 +346,9 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
       item.quotedMessageAuthorAvatar = updatedContact.icon
 
     if item.messageContainsMentions and item.mentionedUsersPks.anyIt(it == contactId):
-      let (message, err) = self.controller.getMessageById(item.id)
-      if err == "":
-        let chatDetails = self.controller.getChatDetails()
-        let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
-        item.messageText = self.controller.getRenderedText(message.parsedText, communityChats)
-        item.messageContainsMentions = message.containsContactMentions()
+      let chatDetails = self.controller.getChatDetails()
+      let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+      item.messageText = self.controller.getRenderedText(item.parsedText, communityChats)
 
   if(self.controller.getMyChatId() == contactId):
     self.view.updateChatDetailsNameAndIcon(updatedContact.defaultDisplayName, updatedContact.icon)

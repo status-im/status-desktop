@@ -261,10 +261,6 @@ proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], commun
 proc replacePubKeysWithDisplayNames*(self: Controller, message: string): string =
   return self.messageService.replacePubKeysWithDisplayNames(message)
 
-proc getMessageById*(self: Controller, messageId: string):
-    tuple[message: MessageDto, error: string] =
-  return self.messageService.fetchMessageByMessageId(self.chatId, messageId)
-
 proc deleteMessage*(self: Controller, messageId: string) =
   self.messageService.deleteMessage(messageId)
 

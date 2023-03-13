@@ -23,6 +23,7 @@ proc createTestMessageItem(id: string, clock: int64): Item =
     outgoingStatus = "",
     text = "",
     unparsedText = "",
+    parsedText = @[],
     image = "",
     messageContainsMentions = false,
     seen = true,

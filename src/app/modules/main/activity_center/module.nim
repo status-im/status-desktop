@@ -105,6 +105,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     message.outgoingStatus,
     self.controller.getRenderedText(message.parsedText, communityChats),
     self.controller.replacePubKeysWithDisplayNames(message.text),
+    message.parsedText,
     message.image,
     message.containsContactMentions(),
     message.seen,

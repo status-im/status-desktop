@@ -588,6 +588,7 @@ QtObject:
       messageId: string,
       updatedMsg: string,
       updatedRawMsg: string,
+      updatedParsedText: seq[ParsedText],
       contentType: int,
       messageContainsMentions: bool,
       links: seq[string],
@@ -602,6 +603,7 @@ QtObject:
     self.items[ind].isEdited = true
     self.items[ind].links = links
     self.items[ind].mentionedUsersPks = mentionedUsersPks
+    self.items[ind].parsedText = updatedParsedText
 
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[
