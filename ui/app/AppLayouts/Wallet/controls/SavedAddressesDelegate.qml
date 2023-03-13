@@ -79,8 +79,17 @@ StatusListItem {
             radius: 8
             icon.name: "more"
             onClicked: {
-                editDeleteMenu.openMenu(root.name, root.address, root.favourite, root.chainShortNames, root.ens);
+                editDeleteMenu.openMenu(this, x - editDeleteMenu.width - statusListItemComponentsSlot.spacing, y + height + Style.current.halfPadding,
+                    {
+                        name: root.name,
+                        address: root.address,
+                        favourite: root.favourite,
+                        chainShortNames: root.chainShortNames,
+                        ens: root.ens,
+                    }
+                );
             }
+
         },
         StatusRoundButton {
             visible: !root.name
@@ -105,13 +114,18 @@ StatusListItem {
         property bool storeFavourite
         property string contactChainShortNames
         property string contactEns
-        function openMenu(name, address, favourite, chainShortNames, ens) {
-            contactName = name;
-            contactAddress = address;
-            storeFavourite = favourite;
-            contactChainShortNames = chainShortNames;
-            contactEns = ens;
-            popup();
+
+        readonly property int maxHeight: 341
+        height: implicitHeight > maxHeight ? maxHeight : implicitHeight
+        contentWidth: 216
+
+        function openMenu(parent, x, y, model) {
+            contactName = model.name;
+            contactAddress = model.address;
+            storeFavourite = model.favourite;
+            contactChainShortNames = model.chainShortNames;
+            contactEns = model.ens;
+            popup(parent, x, y);
         }
         onClosed: {
             contactName = "";
@@ -154,6 +168,22 @@ StatusListItem {
             assetSettings.name: "external"
             onTriggered: {
                 Global.openLink("https://etherscan.io/address/%1".arg(d.visibleAddress ? d.visibleAddress : root.ens))
+            }
+        }
+        StatusAction {
+            text: qsTr("View on Arbiscan")
+            objectName: "viewOnArbiscanAction"
+            assetSettings.name: "external"
+            onTriggered: {
+                Global.openLink("https://arbiscan.io/address/%1".arg(d.visibleAddress ? d.visibleAddress : root.ens))
+            }
+        }
+        StatusAction {
+            text: qsTr("View on Optimism Explorer")
+            objectName: "viewOnOptimismExplorerAction"
+            assetSettings.name: "external"
+            onTriggered: {
+                Global.openLink("https://optimistic.etherscan.io/address/%1".arg(d.visibleAddress ? d.visibleAddress : root.ens))
             }
         }
         StatusMenuSeparator { }
