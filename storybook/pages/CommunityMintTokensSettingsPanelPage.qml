@@ -31,7 +31,7 @@ SplitView {
             enabledNetworks: NetworksModel.enabledNetworks
             allNetworks: enabledNetworks
 
-            onMintCollectible: ogs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
+            onMintCollectible: logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
        }
     }
 
