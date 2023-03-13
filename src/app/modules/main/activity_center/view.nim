@@ -86,6 +86,9 @@ QtObject:
   proc markActivityCenterNotificationUnreadDone*(self: View, notificationId: string) =
      self.model.markActivityCenterNotificationUnread(notificationId)
 
+  proc removeActivityCenterNotifications*(self: View, notificationIds: seq[string]) =
+     self.model.removeNotifications(notificationIds)
+
   proc markAllChatMentionsAsRead*(self: View, communityId: string, chatId: string) =
     let notifsIds = self.model.getUnreadNotificationsForChat(chatId)
     for notifId in notifsIds:

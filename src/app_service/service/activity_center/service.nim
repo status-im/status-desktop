@@ -25,6 +25,9 @@ type
   MarkAsAcceptedNotificationProperties* = ref object of Args
     notificationIds*: seq[string]
 
+  RemoveActivityCenterNotificationsArgs* = ref object of Args
+    notificationIds*: seq[string]
+
   MarkAsDismissedNotificationProperties* = ref object of Args
     notificationIds*: seq[string]
 
@@ -48,6 +51,7 @@ const SIGNAL_MARK_NOTIFICATIONS_AS_READ* = "markNotificationsAsRead"
 const SIGNAL_MARK_NOTIFICATIONS_AS_UNREAD* = "markNotificationsAsUnread"
 const SIGNAL_MARK_NOTIFICATIONS_AS_ACCEPTED* = "markNotificationsAsAccepted"
 const SIGNAL_MARK_NOTIFICATIONS_AS_DISMISSED* = "markNotificationsAsDismissed"
+const SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED* = "activityCenterNotificationsRemoved"
 
 const DEFAULT_LIMIT = 20
 
@@ -93,12 +97,24 @@ QtObject:
     let filteredNotifications = filter(activityCenterNotifications, proc(notification: ActivityCenterNotificationDto): bool =
       return (self.readType == ActivityCenterReadType.All or not notification.read) and groupTypes.contains(notification.notificationType.int)
     )
+    let removedNotifications = filter(activityCenterNotifications, proc(notification: ActivityCenterNotificationDto): bool =
+      return notification.deleted
+    )
 
     if (filteredNotifications.len > 0):
       self.events.emit(
         SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
         ActivityCenterNotificationsArgs(activityCenterNotifications: filteredNotifications)
       )
+    
+    if (removedNotifications.len > 0):
+      var notificationIds: seq[string]
+      for notification in removedNotifications:
+        notificationIds.add(notification.id)
+
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED, RemoveActivityCenterNotificationsArgs(
+          notificationIds: notificationIds
+          ))
     # NOTE: this signal must fire even we have no new notifications to show
     self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
 
@@ -106,7 +122,8 @@ QtObject:
     self.asyncActivityNotificationLoad()
     self.events.on(SignalType.Message.event) do(e: Args):
       let receivedData = MessageSignal(e)
-      self.handleNewNotificationsLoaded(receivedData.activityCenterNotifications)
+      if (receivedData.activityCenterNotifications.len > 0):
+        self.handleNewNotificationsLoaded(receivedData.activityCenterNotifications)
 
   proc parseActivityCenterResponse*(self: Service, response: RpcResponse[JsonNode]) =
     var activityCenterNotifications: seq[ActivityCenterNotificationDto] = @[]

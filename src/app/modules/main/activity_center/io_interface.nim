@@ -54,6 +54,9 @@ method markActivityCenterNotificationReadDone*(self: AccessInterface, notificati
 method markActivityCenterNotificationUnreadDone*(self: AccessInterface, notificationIds: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method removeActivityCenterNotifications*(self: AccessInterface, notificationIds: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method acceptActivityCenterNotificationsDone*(self: AccessInterface, notificationIds: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 

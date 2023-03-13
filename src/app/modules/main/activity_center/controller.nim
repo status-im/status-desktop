@@ -76,6 +76,11 @@ proc init*(self: Controller) =
     self.delegate.hasUnseenActivityCenterNotificationsChanged()
     self.updateActivityGroupCounters()
 
+  self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_REMOVED) do(e: Args):
+    var evArgs = RemoveActivityCenterNotificationsArgs(e)
+    if (evArgs.notificationIds.len > 0):
+      self.delegate.removeActivityCenterNotifications(evArgs.notificationIds)
+
 proc hasMoreToShow*(self: Controller): bool =
    return self.activityCenterService.hasMoreToShow()
 

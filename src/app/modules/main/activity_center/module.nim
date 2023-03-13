@@ -239,6 +239,9 @@ method markActivityCenterNotificationUnreadDone*(self: Module, notificationIds: 
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationUnreadDone(notificationId)
 
+method removeActivityCenterNotifications*(self: Module, notificationIds: seq[string]) =
+  self.view.removeActivityCenterNotifications(notificationIds)
+
 method acceptActivityCenterNotificationsDone*(self: Module, notificationIds: seq[string]) =
   self.view.acceptActivityCenterNotificationsDone(notificationIds)
 
