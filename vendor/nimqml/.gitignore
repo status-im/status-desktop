@@ -1,0 +1,6 @@
+*.c
+*.o
+nimcache
+*.nimproject*
+*.exe
+*.qmlc
