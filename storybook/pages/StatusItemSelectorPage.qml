@@ -14,11 +14,11 @@ ColumnLayout {
         id: selector
 
         icon: Style.png("tokens/SNT")
-        iconSize: 24
         title: "Item Selector Title"
-        defaultItemText: "Example: Empty items"
 
-        itemsModel: ListModel {
+        placeholderText: "Example: Empty items"
+
+        model: ListModel {
             id: model
         }
 
@@ -65,6 +65,6 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
 
         text: "Clear list"
-        onClicked: { selector.itemsModel.clear() }
+        onClicked: model.clear()
     }
 }

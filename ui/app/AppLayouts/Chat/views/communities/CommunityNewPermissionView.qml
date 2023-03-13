@@ -96,11 +96,11 @@ StatusScrollView {
             if (isCommunityPermission) {
                 d.dirtyValues.selectedChannelsModel.clear()
                 inSelector.wholeCommunitySelected = true
-                inSelector.itemsModel = inModelCommunity
+                inSelector.model = inModelCommunity
             } else {
-                inSelector.itemsModel = 0
+                inSelector.model = 0
                 inSelector.wholeCommunitySelected = false
-                inSelector.itemsModel = channelsSelectionModel
+                inSelector.model = channelsSelectionModel
             }
         }
 
@@ -152,10 +152,10 @@ StatusScrollView {
                     (root.selectedChannelsModel.rowCount()
                      || d.dirtyValues.permissionType === PermissionTypes.Type.None)) {
                 inSelector.wholeCommunitySelected = false
-                inSelector.itemsModel = channelsSelectionModel
+                inSelector.model = channelsSelectionModel
             } else {
                 inSelector.wholeCommunitySelected = true
-                inSelector.itemsModel = inModelCommunity
+                inSelector.model = inModelCommunity
             }
 
             // Is private permission
@@ -187,13 +187,13 @@ StatusScrollView {
             Layout.fillWidth: true
             icon: Style.svg("contact_verified")
             title: qsTr("Who holds")
-            defaultItemText: qsTr("Example: 10 SNT")
+            placeholderText: qsTr("Example: 10 SNT")
             tagLeftPadding: 2
             asset.height: 28
             asset.width: asset.height
-            addButton.visible: itemsModel.count < d.maxHoldingsItems
+            addButton.visible: model.count < d.maxHoldingsItems
 
-            itemsModel: HoldingsSelectionModel {
+            model: HoldingsSelectionModel {
                 sourceModel: d.dirtyValues.selectedHoldingsModel
 
                 assetsModel: root.assetsModel
@@ -305,7 +305,7 @@ StatusScrollView {
                 dropdown.x = mouse.x + d.dropdownHorizontalOffset
                 dropdown.y = d.dropdownVerticalOffset
 
-                const modelItem = tokensSelector.itemsModel.get(index)
+                const modelItem = tokensSelector.model.get(index)
 
                 switch(modelItem.type) {
                     case HoldingTypes.Type.Asset:
@@ -343,7 +343,7 @@ StatusScrollView {
             iconSize: 24
             useIcons: true
             title: qsTr("Is allowed to")
-            defaultItemText: qsTr("Example: View and post")
+            placeholderText: qsTr("Example: View and post")
 
             QtObject {
                 id: permissionItemModelData
@@ -353,8 +353,8 @@ StatusScrollView {
                 readonly property string imageSource: PermissionTypes.getIcon(key)
             }
 
-            itemsModel: d.dirtyValues.permissionType !== PermissionTypes.Type.None
-                        ? permissionItemModelData : null
+            model: d.dirtyValues.permissionType !== PermissionTypes.Type.None
+                   ? permissionItemModelData : null
 
             addButton.visible: d.dirtyValues.permissionType === PermissionTypes.Type.None
 
@@ -413,7 +413,7 @@ StatusScrollView {
             icon: d.isCommunityPermission ? Style.svg("communities") : Style.svg("create-category")
             iconSize: 24
             title: qsTr("In")
-            defaultItemText: qsTr("Example: `#general` channel")
+            placeholderText: qsTr("Example: `#general` channel")
 
             useLetterIdenticons: !wholeCommunitySelected || !inDropdown.communityImage
 
@@ -474,20 +474,20 @@ StatusScrollView {
 
                 onChannelsSelected: {
                     d.dirtyValues.selectedChannelsModel.clear()
-                    inSelector.itemsModel = 0
+                    inSelector.model = 0
                     inSelector.wholeCommunitySelected = false
 
                     const modelData = channels.map(key => ({ key }))
                     d.dirtyValues.selectedChannelsModel.append(modelData)
 
-                    inSelector.itemsModel = channelsSelectionModel
+                    inSelector.model = channelsSelectionModel
                     close()
                 }
 
                 onCommunitySelected: {
                     d.dirtyValues.selectedChannelsModel.clear()
                     inSelector.wholeCommunitySelected = true
-                    inSelector.itemsModel = inModelCommunity
+                    inSelector.model = inModelCommunity
                     close()
                 }
             }
