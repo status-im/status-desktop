@@ -151,8 +151,8 @@ method currentUserWalletContainsAddress(self: Module, address: string): bool =
   return false
 
 proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: string, item: var pinned_msg_item.Item):
-  bool =
-  let (message, reactions, err) = self.controller.getMessageDetails(messageId)
+    bool =
+  let (message, err) = self.controller.getMessageById(messageId)
   if(err.len > 0):
     return false
 
@@ -222,17 +222,6 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy
-
-  for r in reactions:
-    if(r.messageId == message.id):
-      var emojiIdAsEnum: pinned_msg_reaction_item.EmojiId
-      if(pinned_msg_reaction_item.toEmojiIdAsEnum(r.emojiId, emojiIdAsEnum)):
-        let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
-        let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
-        item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id,
-        userWhoAddedThisReaction.userDefaultDisplayName(), r.id)
-      else:
-        error "wrong emoji id found when loading messages", methodName="buildPinnedMessageItem"
 
   return true
 
@@ -343,15 +332,21 @@ method amIChatAdmin*(self: Module): bool =
 method onContactDetailsUpdated*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)
   for item in self.view.pinnedModel().modelContactUpdateIterator(contactId):
-    if(item.senderId == contactId):
+    if item.senderId == contactId:
       item.senderDisplayName = updatedContact.defaultDisplayName
       item.senderOptionalName = updatedContact.optionalName
       item.senderEnsVerified = updatedContact.details.ensVerified
       item.senderIcon = updatedContact.icon
       item.senderTrustStatus = updatedContact.details.trustStatus
-    if(item.messageContainsMentions):
-      let (message, _, err) = self.controller.getMessageDetails(item.id)
-      if(err.len == 0):
+
+    if item.quotedMessageAuthorDetails.details.id == contactId:
+      item.quotedMessageAuthorDetails = updatedContact
+      item.quotedMessageAuthorDisplayName = updatedContact.defaultDisplayName
+      item.quotedMessageAuthorAvatar = updatedContact.icon
+
+    if item.messageContainsMentions and item.mentionedUsersPks.anyIt(it == contactId):
+      let (message, err) = self.controller.getMessageById(item.id)
+      if err == "":
         let chatDetails = self.controller.getChatDetails()
         let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
         item.messageText = self.controller.getRenderedText(message.parsedText, communityChats)

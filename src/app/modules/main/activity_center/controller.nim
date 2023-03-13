@@ -146,7 +146,7 @@ proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
 proc getMessageById*(self: Controller, chatId, messageId: string): MessageDto =
-  let (message, _, err) = self.messageService.getDetailsForMessage(chatId, messageId)
+  let (message, err) = self.messageService.fetchMessageByMessageId(chatId, messageId)
   if(err.len > 0):
     return MessageDto()
   return message
