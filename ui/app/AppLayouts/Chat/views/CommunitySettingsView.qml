@@ -36,9 +36,9 @@ StatusSectionLayout {
     property var settingsMenuModel: [{name: qsTr("Overview"), icon: "show", enabled: true},
         {name: qsTr("Members"), icon: "group-chat", enabled: true},
         {name: qsTr("Permissions"), icon: "objects", enabled: root.rootStore.communityPermissionsEnabled},
-        {name: qsTr("Mint Tokens"), icon: "token", enabled: root.rootStore.communityTokensEnabled}]
+        {name: qsTr("Mint Tokens"), icon: "token", enabled: root.rootStore.communityTokensEnabled},
+        {name: qsTr("Airdrops"), icon: "airdrop", enabled: root.rootStore.communityTokensEnabled}]
     // TODO: Next community settings options:
-    //                        {name: qsTr("Airdrops"), icon: "airdrop"},
     //                        {name: qsTr("Token sales"), icon: "token-sale"},
     //                        {name: qsTr("Subscriptions"), icon: "subscription"},
     property var rootStore
@@ -308,6 +308,17 @@ StatusSectionLayout {
                                                            chainId,
                                                            artworkSource)
                 }
+            }
+
+            CommunityAirdropsSettingsPanel {
+                readonly property CommunityTokensStore communityTokensStore:
+                    rootStore.communityTokensStore
+
+                assetsModel: rootStore.assetsModel
+                collectiblesModel: rootStore.collectiblesModel
+
+                onPreviousPageNameChanged: root.backButtonName = previousPageName
+                onAirdropClicked: communityTokensStore.airdrop(airdropTokens, chainId, address)
             }
 
             onCurrentIndexChanged: root.backButtonName = centerPanelContentLoader.item.children[d.currentIndex].previousPageName

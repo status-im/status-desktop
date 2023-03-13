@@ -55,4 +55,9 @@ QtObject {
                        }
                    ])
     }
+
+    // Airdrop tokens:
+    function airdrop(airdropTokens, address) {
+        console.warn("TODO: Airdrop backend call!")
+    }
 }
