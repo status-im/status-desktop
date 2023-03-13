@@ -29,7 +29,7 @@ StatusScrollView {
     property var selectedHoldingsModel: ListModel {}
 
     readonly property bool isFullyFilled: selectedHoldingsModel.count > 0 &&
-                                          addressess.itemsModel.count > 0
+                                          addressess.model.count > 0
 
     signal airdropClicked(var airdropTokens, string address)
 
@@ -57,13 +57,13 @@ StatusScrollView {
             Layout.fillWidth: true
             icon: Style.svg("token")
             title: qsTr("What")
-            defaultItemText: qsTr("Example: 1 SOCK")
+            placeholderText: qsTr("Example: 1 SOCK")
             tagLeftPadding: 2
             asset.height: 28
             asset.width: asset.height
-            addButton.visible: itemsModel.count < d.maxAirdropTokens
+            addButton.visible: model.count < d.maxAirdropTokens
 
-            itemsModel: HoldingsSelectionModel {
+            model: HoldingsSelectionModel {
                 sourceModel: root.selectedHoldingsModel
 
                 assetsModel: root.assetsModel
@@ -163,7 +163,7 @@ StatusScrollView {
                 dropdown.x = mouse.x + d.dropdownHorizontalOffset
                 dropdown.y = d.dropdownVerticalOffset
 
-                const modelItem = tokensSelector.itemsModel.get(index)
+                const modelItem = tokensSelector.model.get(index)
 
                 switch(modelItem.type) {
                 case HoldingTypes.Type.Asset:
@@ -213,17 +213,19 @@ StatusScrollView {
             Layout.fillWidth: true
             icon: Style.svg("member")
             title: qsTr("To")
-            defaultItemText: qsTr("Example: 12 addresses and 3 members")
+            placeholderText: qsTr("Example: 12 addresses and 3 members")
             tagLeftPadding: 2
             asset.height: 28
             asset.width: asset.height
 
+            model: ListModel {}
+
             addButton.onClicked: {
                 if(addressInput.text.length > 0)
-                    itemsModel.append({text: addressInput.text})
+                    model.append({text: addressInput.text})
             }
 
-            onItemClicked: addressess.itemsModel.remove(index)
+            onItemClicked: addressess.model.remove(index)
         }
 
         StatusButton {
@@ -239,7 +241,7 @@ StatusScrollView {
                                         root.selectedHoldingsModel,
                                         ["key", "type", "amount"])
 
-                root.airdropClicked(airdropTokens, addressess.itemsModel)
+                root.airdropClicked(airdropTokens, addressess.model)
             }
         }
     }

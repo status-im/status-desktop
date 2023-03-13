@@ -3,17 +3,19 @@ import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
 
 /*!
    \qmltype StatusItemSelector
-   \inherits Rectangle
+   \inherits StatusFlowSelector
    \inqmlmodule StatusQ.Components
    \since StatusQ.Components 0.1
-   \brief It allows to add items and display them as a tag item with an image and text. It also allows to store and display logical `and` / `or` operators into the list. Inherits \l{https://doc.qt.io/qt-6/qml-qtquick-rectangle.html}{Item}.
+   \brief It allows to add items and display them as a tag item with an image
+   and text. It also allows to store and display logical `and` / `or` operators
+   into the list.
 
-   The \c StatusItemSelector is populated with a data model. The data model is commonly a JavaScript array or a ListModel object with specific expected roles.
+   The \c StatusItemSelector is populated with a data model. The data model is
+   commonly a JavaScript array or a ListModel object with specific expected roles.
 
    Example of how the component looks like:
    \image status_item_selector.png
@@ -40,45 +42,41 @@ import StatusQ.Core.Utils 0.1
    \endqml
    For a list of components available see StatusQ.
 */
-StatusGroupBox {
+StatusFlowSelector {
     id: root
 
     /*!
-       \qmlproperty string StatusItemSelector::defaultItemText
-       This property holds the default item text shown when the list of items is empty.
-    */
-    property string defaultItemText
-    /*!
-       \qmlproperty url StatusItemSelector::defaultItemImageSource
-       This property holds the default item icon shown when the list of items is empty.
-    */
-    property url defaultItemImageSource: ""
-    /*!
-       \qmlproperty StatusRoundButton StatusItemSelector::addButton
-       This property holds an alias to the `add` button.
-    */
-    readonly property alias addButton: addItemButton
-    /*!
-       \qmlproperty ListModel StatusItemSelector::itemsModel
+       \qmlproperty ListModel StatusItemSelector::model
        This property holds the data that will be populated in the items selector.
 
        Here an example of the model roles expected:
        \qml
-            itemsModel: ListModel {
+        model: ListModel {
             ListElement {
                 text: "Socks"
                 imageSource: "qrc:imports/assets/png/tokens/SOCKS.png"
+                color: ""
+                emoji: ""
                 operator: Utils.Operator.None
             }
             ListElement {
                 text: "ZRX"
                 imageSource: "qrc:imports/assets/png/tokens/ZRX.png"
+                color: ""
+                emoji: ""
+                operator: Utils.Operator.Or
+            }
+            ListElement {
+                text: "Custom Token"
+                imageSource: ""
+                color: "red"
+                emoji: "⚽"
                 operator: Utils.Operator.Or
             }
         }
        \endqml
     */
-    property var itemsModel: ListModel { }
+    property alias model: repeater.model
     /*!
        \qmlproperty bool StatusItemSelector::useIcons
        This property determines if the imageSource role from the model will be handled as
@@ -115,84 +113,58 @@ StatusGroupBox {
     */
     signal itemClicked(var item, int index, var mouse)
 
+    placeholderItem.visible: repeater.count === 0
+
     implicitWidth: 560
-    clip: true
 
-    Flow {
-        id: flow
+    Repeater {
+        id: repeater
 
-        clip: true
-        width: root.availableWidth
-        spacing: 6
+        RowLayout {
+            spacing: flowSpacing
 
-        StatusListItemTag {
-            bgColor: Theme.palette.baseColor2
-            visible: !itemsModel || itemsModel.count === 0
-            title: root.defaultItemText
-            asset.name: root.defaultItemImageSource
-            asset.isImage: true
-            closeButtonVisible: false
-            titleText.color: Theme.palette.baseColor1
-            titleText.font.pixelSize: 15
-        }
-        Repeater {
-            model: itemsModel
-
-            RowLayout {
-                spacing: flow.spacing
-
-                StatusBaseText {
-                    visible: model.operator !== OperatorsUtils.Operators.None
-                    Layout.alignment: Qt.AlignVCenter
-                    text: OperatorsUtils.setOperatorTextFormat(model.operator)
-                    color: Theme.palette.primaryColor1
-                    font.pixelSize: 17
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            // Switch operator
-                            if(model.operator === OperatorsUtils.Operators.And)
-                                model.operator = OperatorsUtils.Operators.Or
-                            else
-                                model.operator = OperatorsUtils.Operators.And
-                        }
-                    }
-                }
-                StatusListItemTag {
-                    title: model.text
-
-                    asset.height: root.asset.height
-                    asset.width: root.asset.width
-                    asset.name: root.useLetterIdenticons ? model.text : (model.imageSource ?? "")
-                    asset.isImage: root.asset.isImage
-                    asset.bgColor: root.asset.bgColor
-                    asset.emoji: model.emoji ? model.emoji : ""
-                    asset.color: model.color ? model.color : ""
-                    asset.isLetterIdenticon: root.useLetterIdenticons
-                    //color: Theme.palette.primaryColor3
-                    closeButtonVisible: false
-                    titleText.color: Theme.palette.primaryColor1
-                    titleText.font.pixelSize: 15
-                    leftPadding: root.tagLeftPadding
-
-                    MouseArea {
-                        anchors.fill: parent
-                        enabled: root.itemsClickable
-                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        acceptedButtons: Qt.LeftButton | Qt.RightButton
-                        onClicked: root.itemClicked(parent, model.index, mouse)
+            StatusBaseText {
+                visible: model.operator !== OperatorsUtils.Operators.None
+                Layout.alignment: Qt.AlignVCenter
+                text: OperatorsUtils.setOperatorTextFormat(model.operator)
+                color: Theme.palette.primaryColor1
+                font.pixelSize: 17
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        // Switch operator
+                        if(model.operator === OperatorsUtils.Operators.And)
+                            model.operator = OperatorsUtils.Operators.Or
+                        else
+                            model.operator = OperatorsUtils.Operators.And
                     }
                 }
             }
-        }
-        StatusRoundButton {
-            id: addItemButton
-            implicitHeight: 32
-            implicitWidth: implicitHeight
-            height: width
-            type: StatusRoundButton.Type.Secondary
-            icon.name: "add"
+            StatusListItemTag {
+                title: model.text
+
+                asset.height: root.asset.height
+                asset.width: root.asset.width
+                asset.name: root.useLetterIdenticons ? model.text : (model.imageSource ?? "")
+                asset.isImage: root.asset.isImage
+                asset.bgColor: root.asset.bgColor
+                asset.emoji: model.emoji ? model.emoji : ""
+                asset.color: model.color ? model.color : ""
+                asset.isLetterIdenticon: root.useLetterIdenticons
+                closeButtonVisible: false
+                titleText.color: Theme.palette.primaryColor1
+                titleText.font.pixelSize: 15
+                leftPadding: root.tagLeftPadding
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: root.itemsClickable
+                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    onClicked: root.itemClicked(parent, model.index, mouse)
+                }
+            }
         }
     }
 }
