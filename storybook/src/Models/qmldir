@@ -8,4 +8,5 @@ AssetsModel 1.0 AssetsModel.qml
 CollectiblesModel 1.0 CollectiblesModel.qml
 ChannelsModel 1.0 ChannelsModel.qml
 AssetsCollectiblesIconsModel 1.0 AssetsCollectiblesIconsModel.qml
+MintedCollectiblesModel 1.0 MintedCollectiblesModel.qml
 TokenHoldersModel 1.0 TokenHoldersModel.qml

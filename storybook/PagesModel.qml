@@ -42,6 +42,10 @@ ListModel {
          section: "Views"
     }
     ListElement {
+         title: "CommunityMintedTokensView"
+         section: "Views"
+    }
+    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }
