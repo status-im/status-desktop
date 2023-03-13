@@ -499,8 +499,8 @@ QtObject:
     except Exception as e:
       error "error: ", procName="pinUnpinMessage", errName = e.name, errDesription = e.msg
 
-  proc getDetailsForMessage*(self: Service, chatId: string, messageId: string):
-    tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
+  proc fetchMessageByMessageId*(self: Service, chatId: string, messageId: string):
+      tuple[message: MessageDto, error: string] =
     try:
       let msgResponse = status_go.fetchMessageByMessageId(messageId)
       if(msgResponse.error.isNil):
@@ -509,14 +509,9 @@ QtObject:
       if(result.message.id.len == 0):
         result.error = "message with id: " & messageId & " doesn't exist"
         return
-
-      let reactionsResponse = status_go.fetchReactionsForMessageWithId(chatId, messageId)
-      if(reactionsResponse.error.isNil):
-        result.reactions = map(reactionsResponse.result.getElems(), proc(x: JsonNode): ReactionDto = x.toReactionDto())
-
     except Exception as e:
       result.error = e.msg
-      error "error: ", procName="getDetailsForMessage", errName = e.name, errDesription = e.msg
+      error "error: ", procName="fetchMessageByMessageId", errName = e.name, errDesription = e.msg
 
   proc finishAsyncSearchMessagesWithError*(self: Service, chatId, errorMessage: string) =
     error "error: ", procName="onAsyncSearchMessages", errDescription = errorMessage

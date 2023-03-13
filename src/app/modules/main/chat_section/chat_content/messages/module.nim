@@ -1,4 +1,4 @@
-import NimQml, chronicles
+import NimQml, chronicles, sequtils
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -529,7 +529,7 @@ method getNumberOfPinnedMessages*(self: Module): int =
 method updateContactDetails*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)
   for item in self.view.model().modelContactUpdateIterator(contactId):
-    if(item.senderId == contactId):
+    if item.senderId == contactId:
       item.senderDisplayName = updatedContact.defaultDisplayName
       item.senderOptionalName = updatedContact.optionalName
       item.senderIcon = updatedContact.icon
@@ -537,13 +537,15 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.senderIsAdded = updatedContact.details.added
       item.senderTrustStatus = updatedContact.details.trustStatus
       item.senderEnsVerified = updatedContact.details.ensVerified
-    if(item.quotedMessageAuthorDetails.details.id == contactId):
+
+    if item.quotedMessageAuthorDetails.details.id == contactId:
       item.quotedMessageAuthorDetails = updatedContact
       item.quotedMessageAuthorDisplayName = updatedContact.defaultDisplayName
       item.quotedMessageAuthorAvatar = updatedContact.icon
-    if(item.messageContainsMentions):
-      let (message, _, err) = self.controller.getMessageDetails(item.id)
-      if(err.len == 0):
+
+    if item.messageContainsMentions and item.mentionedUsersPks.anyIt(it == contactId):
+      let (message, err) = self.controller.getMessageById(item.id)
+      if err == "":
         let chatDetails = self.controller.getChatDetails()
         let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
         item.messageText = self.controller.getRenderedText(message.parsedText, communityChats)
@@ -645,78 +647,6 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
 
 method getMessages*(self: Module): seq[message_item.Item] =
   return self.view.model().items
-
-method getMessageById*(self: Module, messageId: string): message_item.Item =
-  let (message, _, err) = self.controller.getMessageDetails(messageId)
-  if(err.len == 0):
-    let sender = self.controller.getContactDetails(message.`from`)
-    let chatDetails = self.controller.getChatDetails()
-    let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
-
-    let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
-    var quotedMessageAuthorDetails = ContactDetails()
-    if message.quotedMessage.`from` != "":
-      if(message.`from` == message.quotedMessage.`from`):
-        quotedMessageAuthorDetails = sender
-      else:
-        quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
-        
-    var transactionContract = message.transactionParameters.contract
-    var transactionValue = message.transactionParameters.value
-    var isCurrentUser = sender.isCurrentUser
-    if(message.contentType.ContentType == ContentType.Transaction):
-      (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
-      if message.transactionParameters.fromAddress != "":
-        isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
-    var item = initItem(
-      message.id,
-      message.communityId,
-      message.responseTo,
-      message.`from`,
-      sender.defaultDisplayName,
-      sender.optionalName,
-      sender.icon,
-      sender.colorHash,
-      (isCurrentUser and message.contentType.ContentType != ContentType.DiscordMessage),
-      sender.details.added,
-      message.outgoingStatus,
-      renderedMessageText,
-      message.text,
-      message.image,
-      message.containsContactMentions(),
-      message.seen,
-      timestamp = message.timestamp,
-      clock = message.clock,
-      message.contentType.ContentType,
-      message.messageType,
-      message.contactRequestState,
-      sticker = message.sticker.url,
-      message.sticker.pack,
-      message.links,
-      newTransactionParametersItem(message.transactionParameters.id,
-        message.transactionParameters.fromAddress,
-        message.transactionParameters.address,
-        transactionContract,
-        transactionValue,
-        message.transactionParameters.transactionHash,
-        message.transactionParameters.commandState,
-        message.transactionParameters.signature),
-      message.mentionedUsersPks(),
-      sender.details.trustStatus,
-      sender.details.ensVerified,
-      message.discordMessage,
-      resendError = "",
-      message.mentioned,
-      message.quotedMessage.`from`,
-      message.quotedMessage.text,
-      self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
-      message.quotedMessage.contentType,
-      message.quotedMessage.deleted,
-      message.quotedMessage.discordMessage,
-      quotedMessageAuthorDetails,
-      )
-    return item
-  return nil
 
 method onMailserverSynced*(self: Module, syncedFrom: int64) =
   let chatDto = self.controller.getChatDetails()
