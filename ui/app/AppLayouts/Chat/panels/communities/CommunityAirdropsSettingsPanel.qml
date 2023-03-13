@@ -1,0 +1,103 @@
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
+
+import StatusQ.Controls 0.1
+import StatusQ.Core.Utils 0.1
+
+import AppLayouts.Chat.layouts 1.0
+import AppLayouts.Chat.views.communities 1.0
+
+import utils 1.0
+
+SettingsPageLayout {
+    id: root
+
+    // Token models:
+    required property var assetsModel
+    required property var collectiblesModel
+
+    property int viewWidth: 560 // by design
+
+    signal airdropClicked(var airdropTokens, string address)
+
+    // TODO: Update with stackmanager when #8736 is integrated
+    function navigateBack() {
+        stackManager.pop(StackView.Immediate)
+    }
+
+    QtObject {
+        id: d
+
+        readonly property string welcomeViewState: "WELCOME"
+        readonly property string newAirdropViewState: "NEW_AIRDROP"
+
+        readonly property string welcomePageTitle: qsTr("Airdrops")
+        readonly property string newAirdropViewPageTitle: qsTr("New airdrop")
+    }
+
+    content: StackView {
+        anchors.fill: parent
+        initialItem: welcomeView
+
+        Component.onCompleted: stackManager.pushInitialState(d.welcomeViewState)
+    }
+
+    state:  stackManager.currentState
+    states: [
+        State {
+            name: d.welcomeViewState
+            PropertyChanges {target: root; title: d.welcomePageTitle}
+            PropertyChanges {target: root; previousPageName: ""}
+            PropertyChanges {target: root; headerButtonVisible: true}
+            PropertyChanges {target: root; headerButtonText: qsTr("New Airdrop")}
+            PropertyChanges {target: root; headerWidth: root.viewWidth}
+        },
+        State {
+            name: d.newAirdropViewState
+            PropertyChanges {target: root; title: d.newAirdropViewPageTitle}
+            PropertyChanges {target: root; previousPageName: d.welcomePageTitle}
+            PropertyChanges {target: root; headerButtonVisible: false}
+            PropertyChanges {target: root; headerWidth: 0}
+        }
+    ]
+
+    onHeaderButtonClicked: stackManager.push(d.newAirdropViewState, newAirdropView, null, StackView.Immediate)
+
+    StackViewStates {
+        id: stackManager
+
+        stackView: root.contentItem
+    }
+
+    // Mint tokens possible view contents:
+    Component {
+        id: welcomeView
+
+        CommunityWelcomeSettingsView {
+            viewWidth: root.viewWidth
+            image: Style.png("community/airdrops8_1")
+            title: qsTr("Airdrop community tokens")
+            subtitle: qsTr("You can mint custom tokens and collectibles for your community")
+            checkersModel: [
+                qsTr("Reward individual members with custom tokens for their contribution"),
+                qsTr("Incentivise joining, retention, moderation and desired behaviour"),
+                qsTr("Require holding a token or NFT to obtain exclusive membership rights")
+            ]
+        }
+    }
+
+    Component {
+        id: newAirdropView
+
+        CommunityNewAirdropView {
+            assetsModel: root.assetsModel
+            collectiblesModel: root.collectiblesModel
+
+            onAirdropClicked: {
+                root.airdropClicked(airdropTokens, address)
+                stackManager.clear(d.welcomeViewState, StackView.Immediate)
+            }
+        }
+    }
+}

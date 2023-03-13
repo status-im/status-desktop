@@ -14,6 +14,7 @@ StatusDropdown {
 
     property var assetsModel
     property var collectiblesModel
+    property bool isENSTab: true
 
     property var usedTokens: []
     property var usedEnsNames: []
@@ -74,6 +75,8 @@ StatusDropdown {
         readonly property var holdingTypes: [
             HoldingTypes.Type.Asset, HoldingTypes.Type.Collectible, HoldingTypes.Type.Ens
         ]
+        readonly property var tabsModel: [qsTr("Assets"), qsTr("Collectibles"), qsTr("ENS")]
+        readonly property var tabsModelNoEns: [qsTr("Assets"), qsTr("Collectibles")]
         readonly property bool assetsReady: root.assetAmount > 0 && root.assetKey
         readonly property bool collectiblesReady: root.collectibleAmount > 0 && root.collectibleKey
         readonly property bool ensReady: d.ensDomainNameValid
@@ -179,13 +182,15 @@ StatusDropdown {
             ]
 
             onCurrentIndexChanged: {
-                d.currentHoldingType = d.holdingTypes[currentIndex]
-                d.setInitialFlow()
+                if(currentIndex >= 0) {
+                    d.currentHoldingType = d.holdingTypes[currentIndex]
+                    d.setInitialFlow()
+                }
             }
 
             Repeater {
                 id: tabLabelsRepeater
-                model: [qsTr("Assets"), qsTr("Collectibles"), qsTr("ENS")]
+                model: root.isENSTab ? d.tabsModel : d.tabsModelNoEns
 
                 StatusSwitchTabButton {
                     text: modelData
@@ -204,14 +209,14 @@ StatusDropdown {
             State {
                 name: HoldingsDropdown.FlowType.Selected
                 PropertyChanges {target: loader; sourceComponent: (d.currentHoldingType === HoldingTypes.Type.Asset) ? assetLayout :
-                                                                  ((d.currentHoldingType === HoldingTypes.Type.Collectible) ? collectibleLayout : ensLayout) }
+                                                                                                                       ((d.currentHoldingType === HoldingTypes.Type.Collectible) ? collectibleLayout : ensLayout) }
                 PropertyChanges {target: root; height: undefined} // use implicit height
             },
             State {
                 name: HoldingsDropdown.FlowType.List_Deep1
                 PropertyChanges {target: loader; sourceComponent: listLayout}
                 PropertyChanges {target: root; height: d.extendedContentHeight}
-                PropertyChanges {target: d; extendedDeepNavigation: false}                
+                PropertyChanges {target: d; extendedDeepNavigation: false}
             },
             State {
                 name: HoldingsDropdown.FlowType.List_Deep2
@@ -352,8 +357,8 @@ StatusDropdown {
             onRemoveClicked: root.removeClicked()
 
             Component.onCompleted: {
-                    if (d.collectibleAmountText.length === 0 && root.collectibleAmount)
-                        collectiblePanel.setAmount(root.collectibleAmount)
+                if (d.collectibleAmountText.length === 0 && root.collectibleAmount)
+                    collectiblePanel.setAmount(root.collectibleAmount)
             }
 
             Connections {
