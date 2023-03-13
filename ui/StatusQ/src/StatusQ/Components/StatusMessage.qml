@@ -256,9 +256,10 @@ Control {
                     Loader {
                         Layout.fillWidth: true
                         active: (!root.editMode && !!root.messageDetails.messageText && !root.hideMessage
-                                 && ((root.messageDetails.contentType === StatusMessage.ContentType.Text)
-                                     || (root.messageDetails.contentType === StatusMessage.ContentType.Emoji) ||
-                                     (root.messageDetails.contentType === StatusMessage.ContentType.DiscordMessage)))
+                                 && ((root.messageDetails.contentType === StatusMessage.ContentType.Text) ||
+                                     (root.messageDetails.contentType === StatusMessage.ContentType.Emoji) ||
+                                     (root.messageDetails.contentType === StatusMessage.ContentType.DiscordMessage) ||
+                                     (root.messageDetails.contentType === StatusMessage.ContentType.Invitation)))
                         visible: active
                         sourceComponent: StatusTextMessage {
                             objectName: "StatusMessage_textMessage"
