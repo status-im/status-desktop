@@ -30,6 +30,7 @@
         <file>StatusQ/Components/StatusEmoji.qml</file>
         <file>StatusQ/Components/StatusExpandableItem.qml</file>
         <file>StatusQ/Components/StatusImageCropPanel.qml</file>
+        <file>StatusQ/Components/StatusFlowSelector.qml</file>
         <file>StatusQ/Components/StatusItemSelector.qml</file>
         <file>StatusQ/Components/StatusLetterIdenticon.qml</file>
         <file>StatusQ/Components/StatusListItem.qml</file>

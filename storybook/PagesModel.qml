@@ -150,6 +150,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusFlowSelector"
+        section: "Components"
+    }
+    ListElement {
         title: "StatusItemSelector"
         section: "Components"
     }

@@ -20,6 +20,7 @@
        \li \l{StatusContactRequestsIndicatorListItem}
        \li \l{StatusDescriptionListItem}
        \li \l{StatusExpandableItem}
+       \li \l{StatusFlowSelector}
        \li \l{StatusGroupBox}
        \li \l{StatusImageSettings}
        \li \l{StatusItemSelector}
